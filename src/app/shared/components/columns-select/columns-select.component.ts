@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { tap } from 'rxjs';
 interface IColumns {
   id: string;
   name: string;
@@ -27,6 +29,11 @@ interface ISettings {
         width: 200px !important;
         max-width: 200px !important;
       }
+
+      #searchbar {
+        font-size: 14px;
+        height: 35px;
+      }
     `,
   ],
 })
@@ -49,11 +56,15 @@ export class ColumnsSelectComponent implements OnInit {
   columns: IColumns[] = [];
   @Input()
   leftList: boolean = false;
-
+  searchControl = new FormControl<string>(null);
+  selectAllControl = new FormControl(false);
   constructor() {}
 
   ngOnInit(): void {
     this.initColumns();
+    this.selectAllControl.valueChanges
+      .pipe(tap(checked => (checked ? this.selectAll() : this.initColumns())))
+      .subscribe();
   }
 
   private initColumns() {
@@ -103,6 +114,7 @@ export class ColumnsSelectComponent implements OnInit {
   }
 
   getColumns() {
+    const search = this.searchControl.value;
     const selectedColumns = this.columns.filter(column => column.show);
     const notSelectedColumns = this.columns.filter(column => !column.show);
     const sortedArray = notSelectedColumns.sort((a, b) => {
@@ -110,6 +122,23 @@ export class ColumnsSelectComponent implements OnInit {
       const bName = b?.name ?? '';
       return aName > bName ? 1 : bName > aName ? -1 : 0;
     });
-    return [...selectedColumns, ...sortedArray];
+    const columns = [...selectedColumns, ...sortedArray];
+    if (!search) {
+      return columns;
+    }
+    return columns.filter(column =>
+      (column.name ?? '').toLowerCase().includes(search.toLowerCase())
+    );
+  }
+
+  selectAll() {
+    Object.keys(this.allColumns).forEach(key => {
+      this.allColumns[key].show = true;
+    });
+
+    this.filterColumns();
+    this.columns = this.columns.map(column => {
+      return { ...column, show: true };
+    });
   }
 }

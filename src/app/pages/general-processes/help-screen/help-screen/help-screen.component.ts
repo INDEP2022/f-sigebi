@@ -1,9 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { takeUntil } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  takeUntil,
+  tap,
+  throwError,
+} from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import {
-  ListParams,
+  FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ScreenHelpService } from 'src/app/core/services/ms-business-rule/screen-help.service';
@@ -20,9 +28,13 @@ export class HelpScreenComponent extends BasePage implements OnInit {
   business: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
   totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject(new FilterParams());
+  screen: string = null;
 
-  constructor(private screenHelpService: ScreenHelpService) {
+  constructor(
+    private screenHelpService: ScreenHelpService,
+    private activatedRoute: ActivatedRoute
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -36,54 +48,69 @@ export class HelpScreenComponent extends BasePage implements OnInit {
       },
       columns: { ...HELP_SCREEN_COLUMNS },
     };
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.screen = params['screen'];
+      });
   }
 
   ngOnInit(): void {
-    this.business
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        if (change.action === 'filter') {
-          let filters = change.filter.filters;
-          filters.map((filter: any) => {
-            let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
-            if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-            } else {
-              delete this.columnFilters[field];
-            }
-          });
-          this.getBusiness();
-        }
-      });
-
+    this.columnsFilter().subscribe();
     this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getBusiness());
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(params => this.getBusiness(params).subscribe())
+      )
+      .subscribe();
   }
 
-  getBusiness() {
+  columnsFilter() {
+    return this.business.onChanged().pipe(
+      distinctUntilChanged(),
+      debounceTime(500),
+      takeUntil(this.$unSubscribe),
+      tap(dataSource => this.buildColumnFilter(dataSource))
+    );
+  }
+
+  buildColumnFilter(dataSource: any) {
+    const params = new FilterParams();
+    if (dataSource.action == 'filter') {
+      const filters = dataSource.filter.filters;
+      filters.forEach((filter: any) => {
+        const columns = this.settings.columns as any;
+        const operator = columns[filter.field]?.operator;
+        if (!filter.search) {
+          return;
+        }
+        params.addFilter(
+          filter.field,
+          filter.search,
+          operator || SearchFilter.EQ
+        );
+      });
+      this.params.next(params);
+    }
+  }
+
+  getBusiness(params: FilterParams) {
     this.loading = true;
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-    this.screenHelpService.getAll(params).subscribe({
-      next: resp => {
-        console.log(resp);
+    params.sortBy = 'businessRoleNumber:ASC';
+    params.addFilter('screenKey', this.screen);
+    return this.screenHelpService.getAll(params.getParams()).pipe(
+      catchError(error => {
+        this.loading = false;
+        this.business.load([]);
+        this.business.refresh();
+        return throwError(() => error);
+      }),
+      tap(resp => {
+        this.loading = false;
         this.totalItems = resp.count || 0;
         this.business.load(resp.data);
         this.business.refresh();
-        this.loading = false;
-        //resp.data;
-      },
-      error: error => {
-        this.loading = false;
-      },
-    });
+      })
+    );
   }
 }

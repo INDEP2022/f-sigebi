@@ -10,6 +10,10 @@
   margin-bottom: 0px;
 }
 
+button {
+  width: auto;
+}
+
 :host ::ng-deep form-field {
   .form-control[readonly] {
     &:focus ~ .form-bar:after,

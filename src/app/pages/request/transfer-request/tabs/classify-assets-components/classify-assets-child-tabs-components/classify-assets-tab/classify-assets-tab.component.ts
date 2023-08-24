@@ -504,6 +504,7 @@ export class ClassifyAssetsTabComponent
   }
   getLevels4(params: ListParams, id?: number, clean: boolean = false) {
     params['filter.parentId'] = '$eq:' + id.toString();
+    params['sortBy'] = `code:ASC`;
     params.limit = 100;
     this.fractionService
       .getAll(params)
@@ -521,6 +522,7 @@ export class ClassifyAssetsTabComponent
   }
   getLevels3(params: ListParams, id?: number, clean: boolean = false) {
     params['filter.parentId'] = '$eq:' + id.toString();
+    params['sortBy'] = `code:ASC`;
     params.limit = 100;
     this.fractionService
       .getAll(params)
@@ -537,6 +539,7 @@ export class ClassifyAssetsTabComponent
   }
   getLevels2(params: ListParams, id?: number, clean: boolean = false) {
     params['filter.parentId'] = '$eq:' + id.toString();
+    params['sortBy'] = `code:ASC`;
     params.limit = 100;
     this.fractionService
       .getAll(params)
@@ -553,6 +556,7 @@ export class ClassifyAssetsTabComponent
   }
   getLevels1(params: ListParams, id?: number, clean: boolean = false) {
     params['filter.parentId'] = '$eq:' + id.toString();
+    params['sortBy'] = `code:ASC`;
     delete params.text;
     delete params.inicio;
     delete params.pageSize;
@@ -575,6 +579,7 @@ export class ClassifyAssetsTabComponent
     if (id) {
       params['filter.parentId'] = '$eq:' + id.toString();
     }
+    params['sortBy'] = `code:ASC`;
     params.limit = 100;
     this.fractionService
       .getAll(params)
@@ -591,6 +596,7 @@ export class ClassifyAssetsTabComponent
   }
   getSection1(params: ListParams, id?: number) {
     params['filter.level'] = '$eq:' + 0;
+    params['sortBy'] = `id:ASC`;
     params.limit = 100;
     this.fractionService
       .getAll(params)
@@ -610,6 +616,7 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
+    params['sortBy'] = `id:ASC`;
     params.limit = 100;
     this.fractionService
       .getAll(params)
@@ -642,6 +649,7 @@ export class ClassifyAssetsTabComponent
         params['filter.id'] = '$eq:' + id.toString();
       }
     }
+    params['sortBy'] = `code:ASC`;
     params.limit = 100;
     this.fractionService
       .getAll(params)
@@ -679,6 +687,7 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
+    params['sortBy'] = `code:ASC`;
     delete params.text;
     delete params.inicio;
     delete params.pageSize;
@@ -714,6 +723,7 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
+    params['sortBy'] = `code:ASC`;
     params.limit = 100;
     this.fractionService
       .getAll(params)
@@ -745,6 +755,7 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
+    params['sortBy'] = `code:ASC`;
     params.limit = 100;
     this.fractionService
       .getAll(params)
@@ -776,6 +787,7 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
+    params['sortBy'] = `code:ASC`;
     params.limit = 100;
     this.fractionService
       .getAll(params)
@@ -910,6 +922,7 @@ export class ClassifyAssetsTabComponent
       goods.processStatus = 'CLASIFICAR_BIEN';
     } else {
       goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+      goods.status = 'ROP';
     }
 
     //Verificar que la cantidad transferente para los tipos de bienes

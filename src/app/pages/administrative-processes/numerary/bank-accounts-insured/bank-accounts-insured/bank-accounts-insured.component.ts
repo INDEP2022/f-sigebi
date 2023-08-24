@@ -72,7 +72,7 @@ export class BankAccountsInsuredComponent implements OnInit {
     let params = {
       PN_DELEGACION: this.form.controls['delegation'].value,
       PN_SUBDELEGACION: this.form.controls['subdelegation'].value,
-      PC_MONEDA: this.form.controls['currency'].value,
+      // PC_MONEDA: this.form.controls['currency'].value,
       PC_BANCO: this.form.controls['bank'].value,
       PF_INI: this.fromF,
       PF_FIN: this.toT,

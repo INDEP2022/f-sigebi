@@ -1,5 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+
+import * as FileSaver from 'file-saver';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import {
   catchError,
@@ -14,12 +22,16 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { FilePhotoSaveZipService } from 'src/app/core/services/ms-ldocuments/file-photo-save-zip.service';
-import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
+import {
+  FilePhotoService,
+  IPhotoFile,
+} from 'src/app/core/services/ms-ldocuments/file-photo.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared';
 import { PhotosHistoricComponent } from '../photos-historic/photos-historic.component';
 import { GoodPhotosService } from '../services/good-photos.service';
+import { PhotoComponent } from './photo/photo.component';
 
 @Component({
   selector: 'app-photos-list',
@@ -29,24 +41,15 @@ import { GoodPhotosService } from '../services/good-photos.service';
 export class PhotosListComponent extends BasePage implements OnInit {
   @Input() disabled: boolean = true;
   @Input() origin: number;
-  @Input()
-  get goodNumber() {
-    return this._goodNumber;
-  }
-  set goodNumber(value) {
-    this._goodNumber = value;
-    if (value) {
-      this.getData();
-    } else {
-      this.files = [];
-      this.errorMessage = '';
-    }
-  }
-  private _goodNumber: string | number;
+  @ViewChildren('photo') photos: QueryList<PhotoComponent>;
+  options = [
+    { value: 1, label: 'Visualizar' },
+    { value: 2, label: 'Editar' },
+  ];
   errorMessage: string = '';
   // lastConsecutive: number = 1;
-  filesToDelete: string[] = [];
-  files: string[] = [];
+  filesToDelete: IPhotoFile[] = [];
+  files: IPhotoFile[] = [];
   form: FormGroup;
   errorImages: string[] = [];
   constructor(
@@ -63,10 +66,54 @@ export class PhotosListComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       typedblClickAction: [1],
     });
+    this.service.showEvent.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        console.log(response);
+
+        if (response) {
+          this.getData();
+        }
+      },
+    });
+  }
+
+  get goodNumber() {
+    return this.service.selectedGood ? this.service.selectedGood.id : null;
   }
 
   get typedblClickAction() {
     return this.form ? this.form.get('typedblClickAction').value : 1;
+  }
+
+  get userName() {
+    return this.service.userName;
+  }
+
+  async download(all = false) {
+    this.alert(
+      'warning',
+      'Aviso',
+      'La descarga está en proceso, favor de esperar'
+    );
+    let photos: any[] = [];
+    this.photos.forEach(row => {
+      let file = row.file;
+      if (all) {
+        photos.push(file);
+        return;
+      }
+      if (this.filesToDelete.map(x => x.name).includes(row.file.name)) {
+        photos.push(file);
+      }
+    });
+    const zip = await this.service.downloadByGood(photos);
+    const name = this.goodNumber + '.zip';
+    zip.generateAsync({ type: 'blob' }).then(content => {
+      if (content) {
+        FileSaver.saveAs(content, name);
+        this.alert('success', 'Archivo Descargado Correctamente', '');
+      }
+    });
   }
 
   async ngOnInit() {
@@ -90,7 +137,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
 
   private async pufValidaProcesoBien() {
     const existe = await firstValueFrom(
-      this.proceedingService.getExistProceedings(this._goodNumber + '').pipe(
+      this.proceedingService.getExistProceedings(this.goodNumber + '').pipe(
         takeUntil(this.$unSubscribe),
         catchError(x => {
           return of({ data: [] as { no_acta: string }[] });
@@ -103,7 +150,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
 
   private async pufValidaUsuario() {
     const filterParams = new FilterParams();
-    filterParams.addFilter('typeNumber', 'CARBIEN');
+    filterParams.addFilter('typeNumber', 'ELIMFOTOS');
     // filterParams.addFilter('user', 'DR_SIGEBI');
     filterParams.addFilter(
       'user',
@@ -135,8 +182,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   private validRastrer() {
     if (localStorage.getItem('username').toUpperCase() !== 'SERA') {
       // this.userPermisions = false;
-      this.errorMessage =
-        'Solo el usuario SERA tiene permisos de escritura desde el rastreador';
+      this.errorMessage = 'No tiene permisos para eliminar las fotos';
     }
   }
 
@@ -161,10 +207,17 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   disabledDeleteAllPhotos() {
-    return this.files.length < 1 || this.errorMessage;
+    return this.validFilesToDelete.length < 1 || this.errorMessage;
   }
 
-  selectFile(image: string, event: Event) {
+  get validFilesToDelete() {
+    return this.files.filter(
+      row =>
+        row.usuario_creacion === this.userName || row.usuario_creacion === null
+    );
+  }
+
+  selectFile(image: IPhotoFile, event: Event) {
     const target = event.target as HTMLInputElement;
     const checked = target.checked;
     if (checked) {
@@ -176,46 +229,55 @@ export class PhotosListComponent extends BasePage implements OnInit {
 
   private async getData() {
     this.files = [];
-    // debugger;
     // this.lastConsecutive = 1;
-    this.filePhotoService
-      .getAll(this.goodNumber + '')
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: async response => {
-          if (response) {
-            // console.log(response);
-            // debugger;
+    if (this.goodNumber) {
+      this.filePhotoService
+        .getAll(this.goodNumber + '')
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: async response => {
             if (response) {
-              this.files = [...response];
-              this.errorMessage = null;
-              // const index = last.indexOf('F');
-              // this.lastConsecutive += +last.substring(index + 1, index + 5);
-              // const pufValidaUsuario = await this.pufValidaUsuario();
-              // if (pufValidaUsuario === 1) {
-              //   this.errorMessage = null;
-              // } else {
-              //   const noActa = await this.pufValidaProcesoBien();
-              //   if (noActa) {
-              //     this.errorMessage =
-              //       'No tiene permisos de escritura debio a que el bien ya fue recibido por el acta ' +
-              //       noActa +
-              //       ' y esta se encuentra cerrada';
-              //     // console.log(this.errorMessage);
-              //   } else {
-              //     this.errorMessage = null;
-              //   }
-              // }
+              // console.log(response);
+              if (response) {
+                this.files = [...response];
+                // this.errorMessage = null;
+                // return;
+                if (!this.errorMessage) {
+                  const pufValidaUsuario = await this.pufValidaUsuario();
+                  if (pufValidaUsuario === 1) {
+                    this.errorMessage = null;
+                  } else {
+                    const noActa = await this.pufValidaProcesoBien();
+                    if (noActa) {
+                      this.errorMessage =
+                        'No tiene permisos de eliminación debido a que el bien ya fue recibido por el acta ' +
+                        noActa +
+                        ' y esta se encuentra cerrada';
+                      // console.log(this.errorMessage);
+                    } else {
+                      this.errorMessage = null;
+                    }
+                  }
+                }
+              }
             }
-          }
-        },
-      });
+          },
+        });
+    } else {
+      this.errorMessage = null;
+    }
   }
 
   async confirmDelete(all = false) {
     // if (this.disabledDeletePhotos()) return;
     if (all) {
-      this.filesToDelete = [...this.files];
+      if (this.disabledDeleteAllPhotos()) {
+        return;
+      }
+      this.filesToDelete = [...this.validFilesToDelete];
+    }
+    if (this.disabledDeletePhotos()) {
+      return;
     }
     if (this.filesToDelete.length < 1) {
       this.alert(
@@ -238,16 +300,24 @@ export class PhotosListComponent extends BasePage implements OnInit {
     }
   }
 
+  validationUser(file: IPhotoFile) {
+    if (!file.usuario_creacion) return true;
+    if (file.usuario_creacion.length === 0) return true;
+    if (file.usuario_creacion.toUpperCase() === this.userName) return true;
+    return false;
+  }
+
   private async deleteSelectedFiles() {
     this.errorImages = [];
+    this.loader.load = true;
     const results = await Promise.all(
-      this.filesToDelete.map(async filename => {
-        const index = filename.indexOf('F');
-        const finish = filename.indexOf('.');
+      this.filesToDelete.map(async file => {
+        const index = file.name.indexOf('F');
+        const finish = file.name.indexOf('.');
         return await firstValueFrom(
           this.deleteFile(
-            +filename.substring(index + 1, finish),
-            filename
+            +file.name.substring(index + 1, finish),
+            file.name
           ).pipe(debounceTime(500))
         );
       })
@@ -269,6 +339,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         );
       }
     }
+    this.loader.load = false;
     this.filesToDelete = [];
     this.service.deleteEvent.next(true);
     this.getData();
@@ -331,7 +402,8 @@ export class PhotosListComponent extends BasePage implements OnInit {
     const config = {
       ...MODAL_CONFIG,
       initialState: {
-        accept: 'image/jpg,image/png',
+        accept:
+          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg',
         uploadFiles: false,
         service: this.filePhotoService,
         identificator: this.goodNumber + '',
@@ -353,7 +425,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         accept: '.zip',
         uploadFiles: false,
         service: this.filePhotoSaveZipService,
-        identificator: this.goodNumber + '',
+        identificator: [this.goodNumber],
         multiple: false,
         titleFinishUpload: 'Imagenes Cargadas Correctamente',
         questionFinishUpload: '¿Desea subir más imagenes?',

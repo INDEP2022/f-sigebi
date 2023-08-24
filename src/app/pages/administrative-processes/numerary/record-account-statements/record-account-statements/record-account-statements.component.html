@@ -26,7 +26,7 @@
               <ngx-select
                 [data]="bankAccountSelect"
                 [form]="form"
-                bindLabel="accountNumber"
+                bindLabel="cveAccount"
                 label="Seleccione una Cuenta"
                 [control]="'account'"
                 (change)="onBankAccountSelectChange($event)"
@@ -143,6 +143,8 @@
             <form-field [control]="form.get('balance')" label="Saldo">
               <input
                 type="text"
+                currencyMask
+                type="Formato Moneda"
                 class="form-control"
                 formControlName="balance"
                 [value]="balance"

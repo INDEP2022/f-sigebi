@@ -183,8 +183,8 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     // Filtro transferente emisora autoridad
     this.transferFilter();
 
-    const { warehouse, cordination, autorityState, goodState } = form;
-
+    const { warehouse, cordination, autorityState, goodState, gabinete } = form;
+    this.filters.gabinete = gabinete;
     if (warehouse.length) {
       this.filters.global.gstSelecStore = 'S';
       this.filters.global.cstStoreNumber = warehouse;
@@ -223,20 +223,47 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     const { transfers, transmitters, autorities } = form;
 
     const all = [...transfers, ...transmitters, ...autorities];
+    if (!transmitters.length && !autorities.length) {
+      if (transfers.length) {
+        this.filters.global.gstSelecProced = 'S';
+        this.filters.global.selecTransferee = 'S';
+        this.filters.global.ctTransfereeNumber = transfers.map(t => Number(t));
+      } else {
+        this.filters.global.ctTransfereeNumber = null;
+      }
+      return;
+    }
+    if (!autorities.length) {
+      if (transfers.length) {
+        this.filters.global.gstSelecProced = 'S';
+        this.filters.global.selecTransferee = 'S';
+        this.filters.global.csTransfereeNumber = transfers.map(t => Number(t));
+      } else {
+        this.filters.global.csTransfereeNumber = null;
+      }
+
+      if (transmitters.length) {
+        this.filters.global.selecStation = 'S';
+        this.filters.global.csStationNumber = transmitters;
+      } else {
+        this.filters.global.csStationNumber = null;
+      }
+      return;
+    }
     if (all.length) {
       this.filters.global.gstSelecProced = 'S';
     }
     if (transfers.length) {
       this.filters.global.selecTransferee = 'S';
-      this.filters.global.ctTransfereeNumber = transfers.map(t => Number(t));
+      this.filters.global.caTransfereeNumber = transfers.map(t => Number(t));
     } else {
-      this.filters.global.ctTransfereeNumber = null;
+      this.filters.global.caTransfereeNumber = null;
     }
     if (transmitters.length) {
       this.filters.global.selecStation = 'S';
-      this.filters.global.csStationNumber = transmitters;
+      this.filters.global.caStationNumber = transmitters;
     } else {
-      this.filters.global.csStationNumber = null;
+      this.filters.global.caStationNumber = null;
     }
     if (autorities.length) {
       this.filters.global.selecAuthority = 'S';

@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { saveAs } from 'file-saver';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, map, takeUntil, tap } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -16,6 +16,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { REQUEST_LIST_COLUMNS } from 'src/app/pages/siab-web/sami/consult-tasks/consult-tasks/consult-tasks-columns';
@@ -24,7 +25,7 @@ import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-consult-tasks',
   templateUrl: './consult-tasks.component.html',
-  styles: [],
+  styleUrls: ['./consult-tasks.component.scss'],
 })
 export class ConsultTasksComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -57,7 +58,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     public router: Router,
     private fb: FormBuilder,
     private regionalDelegacionService: RegionalDelegationService,
-    private transferentService: TransferenteService
+    private transferentService: TransferenteService,
+    private requestServevice: RequestService
   ) {
     super();
     this.settings = {
@@ -574,11 +576,12 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       this.taskService.getTasksByUser(filter).subscribe({
         next: response => {
           this.loading = false;
-          response.data.map((item: any) => {
+          response.data.map(async (item: any) => {
             item.taskNumber = item.id;
             item.requestId =
               item.requestId != null ? item.requestId : item.programmingId;
           });
+          console.log(response);
           resolve(response);
         },
         error: () => {
@@ -612,7 +615,12 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   }
 
   openTask(selected: any): void {
+    /*let typeProcess:any = ''
+    if(selected.processName == 'DocComplementaria'){
+      typeProcess = this.processDocComplementaria(selected);
+    }*/
     let obj2Storage = {
+      //typeProcess: selected.processName == 'DocComplementaria'? typeProcess : '',
       assignees: selected.assignees,
       displayName: this.userName,
       taskId: selected.requestId,
@@ -627,5 +635,49 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     } else {
       this.alert('warning', 'No disponible', 'Tarea no disponible');
     }
+  }
+
+  async processDocComplementaria(selected: any) {
+    let affair = await this.getRequest(selected.requestId);
+    switch (affair) {
+      case 33:
+        return 'BSRegistroSolicitudes';
+        break;
+
+      default:
+        return null;
+        break;
+    }
+  }
+
+  getRequest(id: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.id'] = `$eq:${id}`;
+      this.requestServevice.getAll(params).subscribe({
+        next: resp => {
+          resolve(resp.data[0]);
+        },
+      });
+    });
+  }
+
+  getAsyncTransferent(id: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.id'] = `$eq:${id}`;
+      this.transferentService
+        .getAll(params)
+        .pipe(
+          map(x => {
+            return x.data[0];
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resolve(resp.nameTransferent);
+          },
+        });
+    });
   }
 }

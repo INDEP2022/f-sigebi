@@ -2,6 +2,10 @@ import { Component, inject, Input, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import {
+  IHistoricalPhoto,
+  IPhotoFile,
+} from 'src/app/core/services/ms-ldocuments/file-photo.service';
 import { BasePage } from 'src/app/core/shared';
 import { getMimeTypeFromBase64 } from 'src/app/utils/functions/get-mime-type';
 
@@ -14,11 +18,12 @@ const Tiff = require('tiff.js');
   styles: [''],
 })
 export class PhotoClassComponent extends BasePage {
-  @Input() filename: string = '';
+  @Input() file: IPhotoFile | IHistoricalPhoto = null;
   @Input() goodNumber: string = null;
   @Input() typedblClickAction: number = 1;
   @ViewChild('container', { static: true })
   imgSrc: string | SafeResourceUrl = null;
+  base64: string;
   mimeType: string = null;
   loadingGif = LOADING_GIF;
   error: boolean = false;
@@ -36,7 +41,7 @@ export class PhotoClassComponent extends BasePage {
     const bytesSize = 4 * Math.ceil(base64.length / 3) * 0.5624896334383812;
     this.documentLength = bytesSize / 1000;
     const ext =
-      this.filename.substring(this.filename.lastIndexOf('.') + 1) ?? '';
+      this.file.name.substring(this.file.name.lastIndexOf('.') + 1) ?? '';
     // TODO: Checar cuando vengan pdf, img etc
     this.imgSrc = ext.toLowerCase().includes('tif')
       ? this.getUrlTiff(base64)
@@ -50,7 +55,7 @@ export class PhotoClassComponent extends BasePage {
       const tiff = new Tiff({ buffer });
       const canvas: HTMLCanvasElement = tiff.toCanvas();
       canvas.style.width = '100%';
-      console.log('llego aca', this.filename);
+      console.log('llego aca', this.file.name);
       return this.sanitizer.bypassSecurityTrustResourceUrl(canvas.toDataURL());
     } catch (error) {
       this.error = true;
@@ -61,7 +66,7 @@ export class PhotoClassComponent extends BasePage {
 
   protected getUrlDocument(base64: string) {
     let mimeType;
-    mimeType = getMimeTypeFromBase64(base64, this.filename);
+    mimeType = getMimeTypeFromBase64(base64, this.file.name);
     this.mimeType = mimeType;
     return this.sanitizer.bypassSecurityTrustResourceUrl(
       `data:${mimeType};base64, ${base64}`

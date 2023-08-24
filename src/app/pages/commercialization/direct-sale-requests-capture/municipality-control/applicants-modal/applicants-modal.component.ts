@@ -21,7 +21,6 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class ApplicantsModalComponent extends BasePage implements OnInit {
   title: string = 'Solicitante';
   applicant: any;
-  number = 0;
   applicantColumns: any[] = [];
   positions: number[] = [];
   edit: boolean = false;
@@ -30,7 +29,9 @@ export class ApplicantsModalComponent extends BasePage implements OnInit {
   departments: any[] = [];
   stateItems = new DefaultSelect();
   applicantForm: FormGroup = new FormGroup({});
+  applicantForm2: FormGroup = new FormGroup({});
   bodySolicitante: Solicitud;
+  @Output() refresh = new EventEmitter<boolean>();
   @Output() onConfirm = new EventEmitter<any>();
 
   constructor(
@@ -46,6 +47,7 @@ export class ApplicantsModalComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.getMunicipalities();
     this.getStates();
+    console.log(this.applicant);
 
     this.delegationService.getStates(new ListParams()).subscribe(data => {
       this.states = data.data;
@@ -65,8 +67,36 @@ export class ApplicantsModalComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.applicantForm = this.fb.group({
-      typeentgobId: [null, [Validators.required]],
       soladjinstgobId: [null],
+      typeentgobId: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      applicant: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      position: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      municipality: [null, [Validators.required]],
+      state: [null, [Validators.required]],
+      applicationDate: [null, [Validators.required]],
+      amount: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      phone: [null, [Validators.pattern(PHONE_PATTERN)]],
+      award: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      webmail: [null, Validators.pattern(EMAIL_PATTERN)],
+    });
+    this.applicantForm2 = this.fb.group({
+      typeentgobId: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       applicant: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -99,37 +129,24 @@ export class ApplicantsModalComponent extends BasePage implements OnInit {
       this.applicantForm.controls['typeentgobId'].setValue(
         this.applicantForm.controls['typeentgobId'].value.typeentgobId
       );
+      this.applicantForm.controls['applicationDate'].setValue(
+        new Date(this.applicantForm.value.applicationDate)
+      );
     } else {
       this.edit = false;
     }
-  }
-  createId() {
-    this.municipalityControlMainService.getSolicitantes().subscribe({
-      next: data => {
-        this.applicantColumns = data.data;
-        for (let i = 0; i < this.applicantColumns.length; i++) {
-          if (this.applicantColumns[i].soladjinstgobId > this.number) {
-            this.number = this.applicantColumns[i].soladjinstgobId;
-          }
-        }
-        this.handleSuccess();
-      },
-      error: err => {
-        this.number = 1;
-        this.handleSuccess();
-      },
-    });
   }
   close() {
     this.modalRef.hide();
   }
 
   save() {
-    this.createId();
+    this.handleSuccess();
   }
 
   handleSuccess() {
     this.bodySolicitante = this.applicantForm.value;
+    //console.log(this.bodySolicitante);
     if (this.edit) {
       this.municipalityControlMainService
         .updateSolicitante(this.bodySolicitante)
@@ -140,39 +157,38 @@ export class ApplicantsModalComponent extends BasePage implements OnInit {
               'Solicitante',
               'Actualizado Correctamente'
             );
+            this.refresh.emit(true);
             this.close();
-            location.reload();
+
+            // location.reload();
           },
           error: err => {
             this.onLoadToast(
               'warning',
               'advertencia',
-              'El Solicitante No Se Ha Actualizado Correctamente'
+              'El Solicitante no se ha Actualizado Correctamente'
             );
             this.close();
           },
         });
     } else {
-      this.number++;
-      this.applicantForm.value.soladjinstgobId = this.number;
-      console.log(this.applicantForm.value);
-      this.applicantForm.value.applicationDate =
-        this.applicantForm.value.applicationDate
-          .toLocaleDateString()
-          .toString();
+      this.bodySolicitante = this.applicantForm.value;
+      this.applicantForm2.patchValue(this.bodySolicitante);
+      // console.log(JSON.stringify(this.applicantForm2.value));
       this.municipalityControlMainService
-        .addSolicitante(this.bodySolicitante)
+        .addSolicitante(this.applicantForm2.value)
         .subscribe({
           next: data => {
             this.onLoadToast('success', 'Bien', 'Agregado Correctamente');
+            this.refresh.emit(true);
             this.close();
-            location.reload();
+            //  location.reload();
           },
           error: err => {
             this.onLoadToast(
               'warning',
-              'advertencia',
-              'El Bien No Se Ha Agragado Correctamente'
+              'Advertencia',
+              'El Bien no se ha Agragado Correctamente'
             );
             this.close();
           },

@@ -26,6 +26,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract turnReq: boolean;
   protected abstract createReport: boolean;
   protected abstract rejectReq: boolean;
+  protected abstract RequestEconomicResourcesReport: boolean;
   protected abstract title: string;
   protected abstract complementaryDoc: boolean;
   protected abstract requestInfo: IRequest;
@@ -91,6 +92,21 @@ export abstract class CompDocTasksComponent extends BasePage {
           this.expRequest = true;
           this.selectGoodForEyeVisit = false;
           this.validateGoodForEyeVisit = false;
+        } else if (affair == 33) {
+          //RESARCIMIENTO EN ESPECIES
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+        } else if (affair == 25) {
+          //NUMERARIO DECOMISADO DEVUELTO
+          this.regDocForm = true;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.turnReq = true;
         }
 
         break;
@@ -173,7 +189,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = true;
         this.rejectReq = true;
         break;
-      case 'BSRegistroSolicitudes':
+      /*case 'BSRegistroSolicitudes':
         //registro del formulario
         this.regDocForm = true;
         //buscar solicitudes de bienes
@@ -183,8 +199,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         //expedientes
         this.expRequest = true;
         this.saveRequest = true;
-        this.turnReq = true;
-        break;
+        break;*/
       case 'BSNotificarTransferente':
         this.listGoodSelectedTitle = 'Bienes Seleccionados';
         //ver registro
@@ -243,6 +258,17 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = true;
         this.saveRequest = true;
         this.turnReq = true;
+
+        if (affair == 25) {
+          this.regDocView = true;
+          this.viewSelectedGoods = true;
+          this.guidelines = true;
+          this.docRequest = true;
+          this.expRequest = true;
+          this.createReport = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+        }
         break;
       case 'GRAnalisisResarcimiento':
         this.regDocView = true;
@@ -254,6 +280,30 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = true;
         this.saveRequest = true;
         this.rejectReq = true;
+        this.turnReq = true;
+        break;
+      /* case 'RNRegistroDocumenComple':
+        //registro del formulario
+        this.regDocForm = true;
+        //buscar solicitudes de bienes
+        this.searchRequestSimGoods = true;
+        //seleccionar bienes
+        this.selectGoods = true;
+        //expedientes
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.turnReq = true;
+        break; */
+      case 'RNSolicitudRecursosEcono':
+        this.listGoodSelectedTitle = 'Bienes Seleccionados';
+        //ver registro
+        this.regDocView = true;
+        //visualizar los bienes seleccioandos
+        this.viewSelectedGoods = true;
+        this.docRequest = true;
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.RequestEconomicResourcesReport = true;
         this.turnReq = true;
         break;
       default:

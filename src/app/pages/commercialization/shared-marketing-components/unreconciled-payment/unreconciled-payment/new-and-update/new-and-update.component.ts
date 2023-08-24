@@ -11,6 +11,7 @@ import {
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { LotParamsService } from 'src/app/core/services/ms-lot-parameters/lot-parameters.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
@@ -45,6 +46,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   banks = new DefaultSelect();
   disabledSend: boolean = true;
   valInitClient: boolean = false;
+  layout: any;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -53,7 +55,8 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
     private comerClientsService: ComerClientsService,
     private accountMovementService: AccountMovementService,
     private paymentService: PaymentService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private comerEventosService: ComerEventosService
   ) {
     super();
   }
@@ -302,6 +305,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
     });
   }
 
+  // NO
   getLotes(lparams: ListParams) {
     const params = new FilterParams();
 
@@ -319,7 +323,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         params.addFilter('description', lparams.text, SearchFilter.ILIKE);
         // params.addFilter('cve_banco', lparams.text);
       }
-
+    params.sortBy = `idLot:ASC`;
     this.lotService.getLotbyEvent_(params.getParams()).subscribe({
       next: data => {
         console.log('EVENT', data);
@@ -408,6 +412,47 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       },
       error: err => {
         this.clients = new DefaultSelect();
+      },
+    });
+  }
+
+  // COMER_EVENTOS
+  getLotes__(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    if (lparams.text)
+      if (!isNaN(parseInt(lparams?.text))) {
+        console.log('SI');
+        params.addFilter('idLot', lparams.text, SearchFilter.EQ);
+        // params.addFilter('no_cuenta', lparams.text);
+      } else {
+        console.log('NO');
+
+        params.addFilter('processKey', lparams.text, SearchFilter.ILIKE);
+        // params.addFilter('cve_banco', lparams.text);
+      }
+
+    let obj = {
+      pAddress: this.layout,
+      idTpEvent: '6',
+    };
+    params.sortBy = `idLot:ASC`;
+    this.comerEventosService.GetEventXLot(obj, params.getParams()).subscribe({
+      next: data => {
+        console.log('EVENT', data);
+        let result = data.data.map(async (item: any) => {
+          item['idAndDesc'] = item.idLot + ' - ' + item.processKey;
+        });
+
+        Promise.all(result).then(resp => {
+          this.lotes = new DefaultSelect(data.data, data.count);
+        });
+      },
+      error: err => {
+        this.lotes = new DefaultSelect();
       },
     });
   }

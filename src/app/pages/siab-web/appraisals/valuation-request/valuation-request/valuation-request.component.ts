@@ -510,7 +510,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
     try {
       if (this.form.controls['lsbConCopiaCCP'].value != null) {
         if (this.idOficio != null) {
-          //InsertaUsuConCopia
+          //InsertaUsuConCopia  SP_INSERTAR_CONCOPIA_OFICIO
           //eliminar lsbCopia
         } else {
           //eliminar lsbCopia
@@ -545,19 +545,97 @@ export class valuationRequestComponent extends BasePage implements OnInit {
           this.m_comer.texto3 = this.form.controls['paragraph3'].value;
           this.m_comer.cve_oficio = this.m_comer.cve_oficio;
           this.m_comer.num_cv_armada = this.form.controls['folio'].value;
-          let rest: any = await this.officeManagement('A');
+          let rest: any = await this.officeManagement('A', this.m_comer);
           if (rest != 0) {
             let mComer: any = await this.getTrade(this.event);
             this.idOficio = mComer.id_oficio;
             this.form.controls['cveService'].setValue(mComer.cve_oficio);
           }
           for (const values of this.lsbConCopiaList) {
+            //InsertaUsuConCopia  SP_INSERTAR_CONCOPIA_OFICIO
+          }
+          if (rest > 0) {
+            this.alert('success', 'Datos Guardados', '');
+          } else {
+            this.alert('warning', 'No se pudo Guardar los Datos', '');
+          }
+        } else {
+          this.m_comer.id_evento = type;
+          this.m_comer.remitente = this.form.controls['sender'].value;
+          this.m_comer.destinatario = this.form.controls['addressee'].value;
+          this.m_comer.usuario_insert = this.user;
+          this.m_comer.ciudad = this.form.controls['Ciudad'].value;
+          this.m_comer.texto1 = this.form.controls['paragraph1'].value;
+          this.m_comer.texto2 = this.form.controls['paragraph2'].value;
+          this.m_comer.texto3 = this.form.controls['paragraph3'].value;
+          this.m_comer.cve_oficio = this.m_comer.cve_oficio;
+          this.m_comer.num_cv_armada = this.form.controls['folio'].value;
+          let rest: any = await this.officeManagement('R', this.m_comer);
+          let mComer: any = await this.getTrade(this.event);
+          this.idOficio = mComer.idOficio;
+          this.form.controls['cveService'].setValue(mComer.cve_oficio);
+          this.num_armada = mComer.num_cv_armada;
+          for (const values of this.lsbConCopiaList) {
+            //InsertaUsuConCopia  SP_INSERTAR_CONCOPIA_OFICIO
+          }
+          if (rest > 0) {
+            this.alert('success', 'Datos Guardados', '');
+          } else {
+            this.alert('warning', 'No se pudo Guardar los Datos', '');
           }
         }
       }
     } catch (error) {}
   }
-  async officeManagement(acction: string) {
+  async sedValuation() {
+    try {
+      let va_evento = this.event;
+      let type = await this.getType(this.event);
+      this.tipo = type;
+      if (this.tipo.direccion == 'I') {
+        this.title = 'OFICIO DE ' + this.tipo.tipo_aval + ' INMUEBLES';
+      } else if (this.tipo.direccion == 'M') {
+        this.title = 'OFICIO DE ' + this.tipo.tipo_aval + ' MUEBLES';
+      }
+      if (this.tipo.valor == '2') {
+        let mComer = await this.getTrade(this.event);
+        console.log(mComer);
+        this.m_comer = mComer;
+        this.m_comer.id_evento = va_evento;
+        this.m_comer.cve_oficio = this.m_comer.cve_oficio;
+        this.m_comer.remitente = this.form.controls['sender'].value;
+        this.m_comer.destinatario = this.form.controls['addressee'].value;
+        this.m_comer.usuario_insert = this.user;
+        this.m_comer.ciudad = this.form.controls['Ciudad'].value;
+        this.m_comer.texto1 = this.form.controls['paragraph1'].value;
+        this.m_comer.texto2 = this.form.controls['paragraph2'].value;
+        this.m_comer.texto3 = this.form.controls['paragraph3'].value;
+        this.m_comer.num_cv_armada = this.form.controls['folio'].value;
+        let rest: any = await this.officeManagement('E', this.m_comer);
+        if (rest > 0) {
+          this.controlControls();
+          this.loadGrid(va_evento, 'ENVIADO');
+          this.generateReport();
+          this.alert('success', 'Informacion Enviada', '');
+        } else {
+          this.alert('warning', 'Datos No Enviados', 'Vuelva a Intentar');
+        }
+      } else {
+        this.alert(
+          'warning',
+          'Es necesario Guardar cambios antes de Enviar los Datos',
+          ''
+        );
+      }
+    } catch (error) {}
+  }
+  generateReport() {
+    //no se contruyo un reporte
+  }
+  seeJob() {
+    this.generateReport();
+  }
+  async officeManagement(acction: string, mComer: any) {
     return new Promise((res, rej) => {
       //falta endpoit del PROCEDIMIENTO -	PA_GENERAR_O_AVALUADO
       // this.usersService.getUserOt(acction).subscribe({
@@ -576,6 +654,21 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   async postInsertUsuCopia(acction: string) {
     return new Promise((res, rej) => {
       //falta endpoit del PROCEDIMIENTO -	PA_GENERAR_O_AVALUADO
+      // this.usersService.getUserOt(acction).subscribe({
+      //   next: resp => {
+      //     console.log(resp);
+      //     res(resp);
+      //   },
+      //   error: eror => {
+      //     this.loader.load = false;
+      //     res(eror);
+      //   },
+      // });
+      res(0);
+    });
+  }
+  async postInsertUsuConCopia(acction: string) {
+    return new Promise((res, rej) => {
       // this.usersService.getUserOt(acction).subscribe({
       //   next: resp => {
       //     console.log(resp);

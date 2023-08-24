@@ -1,17 +1,32 @@
 export const PERSONAL_ESTATE_COLUMNS = {
-  numberGestion: {
-    title: 'Número de gestión',
+  goodId: {
+    title: 'Número de Gestión',
     type: 'number',
     sort: false,
   },
 
   descriptionGood: {
-    title: 'Descripción bien',
+    title: 'Descripción Bien',
     type: 'string',
     sort: false,
   },
-  quantityDelivery: {
-    title: 'Cantidad entregados',
+  amountDelivered: {
+    title: 'Cantidad Entregados',
+    type: 'number',
+    sort: false,
+  },
+  amountNotDelivered: {
+    title: 'Cantidad Bienes No Entregados',
+    type: 'number',
+    sort: false,
+  },
+  anountNotAccelted: {
+    title: 'Cantidad Bienes No Aceptados',
+    type: 'number',
+    sort: false,
+  },
+  amountNotWhithdrawn: {
+    title: 'Cantidad Bienes No Retirados',
     type: 'number',
     sort: false,
   },

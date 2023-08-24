@@ -1,6 +1,6 @@
 <form [formGroup]="form" class="form-material" (submit)="search()">
   <div class="row">
-    <form-field [control]="form.get('warehouse')" class="col-md-4">
+    <form-field [control]="form.get('warehouse')" class="col-md-5">
       <ngx-select
         [form]="form"
         [searchOnInit]="true"
@@ -15,17 +15,26 @@
         [labelTemplate]="warehouseLabel"
         [optionTemplate]="warehouseOption"></ngx-select>
       <ng-template #warehouseLabel let-item="item"
-        ><span [title]="item.description">{{
-          item.description
-        }}</span></ng-template
+        ><span [title]="item.idWarehouse + ' - ' + item.description"
+          >{{ item.idWarehouse }} - {{ item.description }}</span
+        ></ng-template
       >
       <ng-template #warehouseOption let-item="item"
-        ><span [title]="item.description">{{
-          item.description
-        }}</span></ng-template
+        ><span [title]="item.idWarehouse + ' - ' + item.description"
+          >{{ item.idWarehouse }} - {{ item.description }}</span
+        ></ng-template
       >
     </form-field>
-    <form-field [control]="form.get('cordination')" class="col-md-4">
+    <div class="col-md-1">
+      <button
+        tooltip="Buscar Almacén"
+        type="button"
+        class="btn btn-primary btn-sm active"
+        (click)="openWarehouseFilter()">
+        <i class="bx bx-list-plus bx-sm float-icon"></i>
+      </button>
+    </div>
+    <form-field [control]="form.get('cordination')" class="col-md-6">
       <ngx-select
         [form]="form"
         [searchOnInit]="true"
@@ -40,17 +49,19 @@
         [labelTemplate]="cordinationLabel"
         [optionTemplate]="cordinationOption"></ngx-select>
       <ng-template #cordinationLabel let-item="item"
-        ><span [title]="item.description">{{
-          item.description
-        }}</span></ng-template
+        ><span [title]="item.id + ' - ' + item.description"
+          >{{ item.id }} - {{ item.description }}</span
+        ></ng-template
       >
       <ng-template #cordinationOption let-item="item"
-        ><span [title]="item.description">{{
-          item.description
-        }}</span></ng-template
+        ><span [title]="item.id + ' - ' + item.description"
+          >{{ item.id }} - {{ item.description }}</span
+        ></ng-template
       >
     </form-field>
-    <form-field [control]="form.get('autorityState')" class="col-md-4">
+  </div>
+  <div class="row pt-3">
+    <form-field [control]="form.get('autorityState')" class="col-md-6">
       <ngx-select
         [form]="form"
         [searchOnInit]="true"
@@ -65,19 +76,17 @@
         [labelTemplate]="authLabel"
         [optionTemplate]="authOption"></ngx-select>
       <ng-template #authLabel let-item="item"
-        ><span [title]="item.descCondition">{{
-          item.descCondition
-        }}</span></ng-template
+        ><span [title]="item.id + ' - ' + item.descCondition"
+          >{{ item.id }} - {{ item.descCondition }}</span
+        ></ng-template
       >
       <ng-template #authOption let-item="item"
-        ><span [title]="item.descCondition">{{
-          item.descCondition
-        }}</span></ng-template
+        ><span [title]="item.id + ' - ' + item.descCondition"
+          >{{ item.id }} - {{ item.descCondition }}</span
+        ></ng-template
       >
     </form-field>
-  </div>
-  <div class="row pt-3">
-    <form-field [control]="form.get('goodState')" class="col-md-4">
+    <form-field [control]="form.get('goodState')" class="col-md-6">
       <ngx-select
         [form]="form"
         [searchOnInit]="true"
@@ -92,14 +101,14 @@
         [labelTemplate]="stateLabel"
         [optionTemplate]="stateOption"></ngx-select>
       <ng-template #stateLabel let-item="item"
-        ><span [title]="item.descCondition">{{
-          item.descCondition
-        }}</span></ng-template
+        ><span [title]="item.id + ' - ' + item.descCondition"
+          >{{ item.id }} - {{ item.descCondition }}</span
+        ></ng-template
       >
       <ng-template #stateOption let-item="item"
-        ><span [title]="item.descCondition">{{
-          item.descCondition
-        }}</span></ng-template
+        ><span [title]="item.id + ' - ' + item.descCondition">
+          {{ item.id }} - {{ item.descCondition }}</span
+        ></ng-template
       >
     </form-field>
   </div>

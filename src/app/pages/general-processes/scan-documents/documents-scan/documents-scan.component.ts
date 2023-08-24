@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -97,7 +98,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     private fileBrowserService: FileBrowserService,
     private modalService: BsModalService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private locations: Location
   ) {
     super();
     this.activatedRoute.queryParams
@@ -651,6 +653,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
             folioScan: this.originFolio,
             expedient: this.expedient,
             acta: this.acta,
+            P_NO_TRAMITE: this.P_NO_TRAMITE,
+            P_GEST_OK: this.P_GEST_OK,
           },
         }
       );
@@ -670,6 +674,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         {
           queryParams: {
             folio: this.originFolio,
+            expedient: this.expedient,
           },
         }
       );
@@ -686,5 +691,6 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         }
       );
     }
+    this.locations.back();
   }
 }

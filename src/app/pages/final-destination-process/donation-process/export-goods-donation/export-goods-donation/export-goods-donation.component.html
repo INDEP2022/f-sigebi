@@ -13,10 +13,16 @@
     </div>
     <div class="row">
       <div class="col-3">
-        <button class="btn btn-secondary btn-sm active">Definir Filtro</button>
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="openDefineFilter()">
+          Definir Filtro <i class="fa fa-filter" aria-hidden="true"></i>
+        </button>
       </div>
       <div class="col-3">
-        <button class="btn btn-secondary btn-sm active">Bienes</button>
+        <button class="btn btn-secondary btn-sm active" (click)="getall()">
+          Bienes
+        </button>
       </div>
       <div class="col-6">
         <button class="btn btn-secondary btn-sm active">Por Rastreador</button>
@@ -32,7 +38,7 @@
     <div class="d-flex justify-content-end mt-5">
       <app-columns-select
         [(settings)]="settings"
-        class="row justify-content-end">
+        class="row justify-content-end col-md-2">
       </app-columns-select>
     </div>
 

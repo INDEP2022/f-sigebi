@@ -98,7 +98,7 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
     return this.goodRepository.update7(route, model);
   }
 
-  getStatusAll(params: ListParams) {
+  getStatusAll(params: ListParams | string) {
     return this.goodRepository.getAllPaginated('good/status-good', params);
   }
   getStatusByGood(idGood: string | number): Observable<any> {
@@ -121,6 +121,12 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
 
   update(id: string | number, model: IGood): Observable<Object> {
     return this.goodRepository.update('good/good', id, model);
+  }
+  updateStatus(id: string | number, status: string): Observable<Object> {
+    return this.goodRepository.update22(
+      `good/good/updateGoodStatus/${id}/${status}`,
+      status
+    );
   }
 
   updateByBody(formData: Object) {
@@ -198,5 +204,11 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
     return this.get<IListResponse<IGood>>(
       `${GoodEndpoints.Good}?filter.requestId=$eq:${Norequest}`
     );
+  }
+  getExcel() {
+    return this.get<any>(GoodEndpoints.ExportExcelGoodBad);
+  }
+  donwloadExcel(token: string) {
+    return this.get(`${GoodEndpoints.ExportExcelGoodBad}/${token}`);
   }
 }

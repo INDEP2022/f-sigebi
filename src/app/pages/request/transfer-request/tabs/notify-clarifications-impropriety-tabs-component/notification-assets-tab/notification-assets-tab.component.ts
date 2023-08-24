@@ -1864,6 +1864,7 @@ export class NotificationAssetsTabComponent
                       id: data.goodId,
                       goodId: data.goodId,
                       goodStatus: 'ACLARADO',
+                      status: 'STA',
                     };
                     this.goodService.update(good).subscribe({
                       next: data => {
@@ -1884,6 +1885,7 @@ export class NotificationAssetsTabComponent
                       id: data.goodId,
                       goodId: data.goodId,
                       goodStatus: 'ACLARADO',
+                      status: 'STI',
                     };
                     this.goodService.update(good).subscribe({
                       next: data => {

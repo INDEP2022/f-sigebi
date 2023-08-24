@@ -20,6 +20,7 @@ import {
   throwError,
 } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { GoodTrackerEndpoints } from 'src/app/common/constants/endpoints/ms-good-tracker-endpoints';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
@@ -36,6 +37,7 @@ import { PartializeGoodService } from 'src/app/core/services/ms-partializate-goo
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { FullService } from 'src/app/layouts/full/full.service';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { environment } from 'src/environments/environment';
@@ -59,7 +61,13 @@ import { GoodsTableService } from './goods-table.service';
 @Component({
   selector: 'goods-table',
   templateUrl: './goods-table.component.html',
-  styles: [],
+  styles: [
+    `
+      .text-black {
+        color: black;
+      }
+    `,
+  ],
 })
 export class GoodsTableComponent extends BasePage implements OnInit {
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
@@ -114,11 +122,14 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     private procedings: ProceedingsService,
     private partializeGoodServ: PartializeGoodService,
     private photoService: PublicationPhotographsService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private fullService: FullService
   ) {
     super();
     this.settings.actions = false;
     this.settings.columns = this.goodsTableService.columns;
+    this.settings.rowClassFunction = (row: any) =>
+      row.data.socialCabite ? 'bg-success text-black' : '';
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
@@ -227,6 +238,15 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     this.$unSubscribe.subscribe({
       complete: () => this.saveFilterState(),
     });
+
+    this.goodsTableService.stateFlag
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(() => {
+          this.saveState = true;
+        })
+      )
+      .subscribe();
   }
 
   saveFilterState() {
@@ -243,7 +263,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
 
     if (this.selectedGooods.length > 1) {
       await this.alertInfo(
-        'info',
+        'warning',
         'Más de un Registro Seleccionado',
         'Se tomará el último registro seleccionado'
       );
@@ -352,7 +372,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
 
   async takeOneProcess(turnSelects: any) {
     await this.alertInfo(
-      'info',
+      'warning',
       'Más de un trámite seleccionado',
       'Se tomará el último Registro Seleccionado'
     );
@@ -461,7 +481,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
 
   include() {
     if (this.selectedGooods.length == 0) {
-      this.onLoadToast('info', 'Info', 'Debe seleccionar al menos un bien');
+      this.onLoadToast('warning', 'Debe seleccionar al menos un bien', '');
       return;
     }
     const goodIds = this.selectedGooods.map(good => good.goodNumber);
@@ -773,16 +793,33 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     });
   }
 
-  subscribeExcel() {
-    return this.socketService.goodsTrackerExcel().pipe(
+  subscribeExcel(token: string) {
+    console.log(token);
+
+    return this.socketService.goodsTrackerExcel(token).pipe(
       take(1),
-      switchMap(() => this.getExcel())
+      catchError(error => {
+        return throwError(() => error);
+      }),
+      tap(res => {
+        console.warn('RESPUESTA DEL SOCKET');
+        console.log({ res });
+        this.getExcel(token);
+      })
+      // switchMap(() => )
     );
   }
 
-  subscribePhotos() {
-    return this.socketService.exportGoodsTrackerPhotos().pipe(
+  subscribePhotos(token: string) {
+    return this.socketService.exportGoodsTrackerPhotos(token).pipe(
+      catchError(error => {
+        return throwError(() => error);
+      }),
       tap((res: any) => {
+        this.fullService.generatingFileFlag.next({
+          progress: res.percent,
+          showText: true,
+        });
         if (res.percent == 100 && res.path) {
           this.alert('success', 'Archivo Descargado Correctamente', '');
           const url = `${environment.API_URL}ldocument/${environment.URL_PREFIX}${res.path}`;
@@ -794,14 +831,31 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     );
   }
 
-  getExcel() {
-    return this.goodTrackerService.donwloadExcel().pipe(
-      catchError(error => {
-        this.alert('error', 'Error', 'No se Generó Correctamente el Archivo');
-        return throwError(() => error);
-      }),
-      tap(resp => this.downloadExcel(resp.file))
-    );
+  getExcel(token: string) {
+    this.alert('success', 'Archivo Descargado Correctamente', '');
+    const url = `${environment.API_URL}trackergood/${environment.URL_PREFIX}${GoodTrackerEndpoints.DownloadExcel}/${token}`;
+    console.log({ url });
+    window.open(url, '_blank');
+    // this.downloadExcel(resp.file);
+    this.fullService.generatingFileFlag.next({
+      progress: 100,
+      showText: true,
+    });
+    // return this.goodTrackerService.donwloadExcel(token).pipe(
+    //   // catchError(error => {
+    //   //   this.alert('error', 'Error', 'No se Generó Correctamente el Archivo');
+    //   //   this.fullService.generatingFileFlag.next({
+    //   //     progress: 100,
+    //   //     showText: true,
+    //   //   });
+    //   //   return throwError(() => error);
+    //   // }),
+    //   tap(resp => {
+    //     console.warn('excel');
+
+    //     console.log(resp);
+    //   })
+    // );
   }
 
   downloadExcel(base64String: string) {
@@ -809,7 +863,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
     const link = document.createElement('a');
     link.href = mediaType + base64String;
-    link.download = 'Rastreador_Bienes.xlsx';
+    link.download = 'Rastreador_Bienes.csv';
     link.click();
     link.remove();
     this.alert('success', 'Archivo Descargado Correctamente', '');
@@ -821,11 +875,15 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       next: resp => {
         this.excelLoading = false;
         this.alert(
-          'info',
-          'Aviso',
-          'El Archivo Excel está en Proceso de Generación, favor de esperar la Descarga'
+          'warning',
+          'El archivo excel está en proceso de generación, favor de esperar la descarga',
+          ''
         );
-        this.subscribeExcel().subscribe();
+        this.fullService.generatingFileFlag.next({
+          progress: 99,
+          showText: true,
+        });
+        this.subscribeExcel(resp.token).subscribe();
       },
       error: () => {
         this.excelLoading = false;
@@ -838,11 +896,11 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     this.goodTrackerService.getPhotos(this.filters).subscribe({
       next: res => {
         this.alert(
-          'info',
-          'Aviso',
-          'La Descarga está en Proceso, favor de Esperar'
+          'warning',
+          'La Descarga está en Proceso, favor de Esperar',
+          ''
         );
-        const $sub = this.subscribePhotos().subscribe();
+        const $sub = this.subscribePhotos(res.token).subscribe();
       },
       error: error => {
         console.log(error);

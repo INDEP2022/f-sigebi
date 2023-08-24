@@ -92,37 +92,37 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     }
     console.log('approved', arr);
     arr.forEach((good, index) => {
-      if (index !== 0) {
-        if (good.approved == true) {
-          const documents: IDocuments = {
-            numberProceedings: good.filenumber,
-            keySeparator: 60,
-            keyTypeDocument: 'ENTRE',
-            natureDocument: 'ORIGINAL',
-            descriptionDocument: 'PROCESO DE RECLAMACIÓN DE PAGO',
-            significantDate: this.significantDate(),
-            scanStatus: 'ESCANEADO',
-            userRequestsScan: this.user.usuario.user,
-            scanRequestDate: new Date(),
-            associateUniversalFolio: this.document.id,
-            flyerNumber: good.flyernumber,
-            goodNumber: good.id,
-            numberDelegationRequested: this.user.usuario.delegationNumber,
-            numberDepartmentRequest: this.user.usuario.departamentNumber,
-            numberSubdelegationRequests: this.user.usuario.subdelegationNumber,
-          };
+      // if (index !== 0) {
+      if (good.approved == true) {
+        const documents: IDocuments = {
+          numberProceedings: good.filenumber,
+          keySeparator: 60,
+          keyTypeDocument: 'ENTRE',
+          natureDocument: 'ORIGINAL',
+          descriptionDocument: 'PROCESO DE RECLAMACIÓN DE PAGO',
+          significantDate: this.significantDate(),
+          scanStatus: 'ESCANEADO',
+          userRequestsScan: this.user.usuario.user,
+          scanRequestDate: new Date(),
+          associateUniversalFolio: this.document.id,
+          flyerNumber: good.flyernumber,
+          goodNumber: good.id,
+          numberDelegationRequested: this.user.usuario.delegationNumber,
+          numberDepartmentRequest: this.user.usuario.departamentNumber,
+          numberSubdelegationRequests: this.user.usuario.subdelegationNumber,
+        };
 
-          this.documnetServices.create(documents).subscribe({
-            next: response => {
-              console.log(response);
-            },
-            error: err => {
-              console.log(err);
-              // this.alert('error', 'ERROR', err.error.message);
-            },
-          });
-        }
+        this.documnetServices.create(documents).subscribe({
+          next: response => {
+            console.log(response);
+          },
+          error: err => {
+            console.log(err);
+            // this.alert('error', 'ERROR', err.error.message);
+          },
+        });
       }
+      // }
     });
   }
 
@@ -230,11 +230,17 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   }
 
   toNextForm() {
+    if (!this.folioEscaneoNg) {
+      this.alert('warning', 'Debe Generar el Folio de Escaneo', '');
+      return;
+    }
     this.goNextForm();
   }
 
   goNextForm() {
     localStorage.setItem('archivoBase64', this.goodData);
+    localStorage.setItem('justification', this.justification);
+    localStorage.setItem('folioEscaneoNg', this.folioEscaneoNg);
     this.router.navigate([`/pages/general-processes/scan-documents`], {
       queryParams: { origin: 'FPROCRECPAG', folio: this.folioEscaneoNg },
     });
@@ -242,6 +248,11 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
 
   imprimirFolioEscaneo() {
     // if (this.dictamen) {
+    if (!this.folioEscaneoNg) {
+      this.alert('warning', 'Debe Generar el Folio de Escaneo', '');
+      return;
+    }
+
     if (this.folioEscaneoNg.folioUniversal == '') {
       this.alert('warning', 'No Tiene Folio de Escaneo para Imprimir.', '');
       return;
@@ -274,6 +285,10 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   }
 
   visualizacionFolioEscaneo() {
+    if (!this.folioEscaneoNg) {
+      this.alert('warning', 'Debe Generar el Folio de Escaneo', '');
+      return;
+    }
     if (this.folioEscaneoNg == '') {
       this.alert('warning', 'No Tiene Folio de Escaneo para Visualizar.', '');
       return;
@@ -315,6 +330,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   }
 
   goodData: any = null;
+  justification: any = null;
   cargarData(binaryExcel: any) {
     this.goodData = binaryExcel;
     // console.log('this.goodData', this.goodData);
@@ -322,5 +338,17 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
 
   actualizarVariable2(good: any) {
     this.good = good;
+  }
+  actualizarVariable3(justi: any) {
+    this.justification = justi;
+  }
+
+  actualizarVariable4(folio: any) {
+    this.folioEscaneoNg = folio;
+    if (folio) {
+      this.generateFo = true;
+    } else {
+      this.generateFo = false;
+    }
   }
 }

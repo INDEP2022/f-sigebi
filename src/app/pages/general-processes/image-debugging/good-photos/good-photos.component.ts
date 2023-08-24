@@ -66,8 +66,8 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
           if (response) {
             this.files = [...response];
             const last = response[response.length - 1];
-            const index = last.indexOf('F');
-            this.lastConsecutive += +last.substring(index + 1, index + 5);
+            const index = last.name.indexOf('F');
+            this.lastConsecutive += +last.name.substring(index + 1, index + 5);
           }
         },
       });

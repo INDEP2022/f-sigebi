@@ -76,7 +76,13 @@
           <div class="col-lg-3 col-md-2 col-sm-4 col-12">
             <button
               [ngClass]="{ loading: loadingBtn2 }"
-              [disabled]="!responsable || loadingBtn || loading || loadingBtn2"
+              [disabled]="
+                !responsable ||
+                loadingBtn ||
+                loading ||
+                loadingBtn2 ||
+                loadingBtn3
+              "
               (click)="attention()"
               class="btn btn-primary btn-sm active w-100">
               Atender
@@ -85,7 +91,13 @@
           <div class="col-lg-5 col-md-5 col-sm-4 col-12">
             <button
               [ngClass]="{ loading: loadingBtn }"
-              [disabled]="!responsable || loadingBtn || loading || loadingBtn2"
+              [disabled]="
+                !responsable ||
+                loadingBtn ||
+                loading ||
+                loadingBtn2 ||
+                loadingBtn3
+              "
               class="btn btn-success btn-sm w-100 active"
               type="button"
               (click)="file.click()">
@@ -102,7 +114,14 @@
           </div>
           <div class="col-lg-4 col-md-5 col-sm-4 col-12">
             <button
-              [disabled]="!responsable || loadingBtn || loading || loadingBtn2"
+              [ngClass]="{ loading: loadingBtn3 }"
+              [disabled]="
+                !responsable ||
+                loadingBtn ||
+                loading ||
+                loadingBtn2 ||
+                loadingBtn3
+              "
               (click)="exportarExcel()"
               class="btn btn-success btn-sm w-100 active">
               Exportar CSV <i class="bx bx-download float-icon"></i>
@@ -130,7 +149,7 @@
           <div class="col-12">
             <i class="fa fa-square" style="color: #686868"></i
             ><span style="font-weight: 500">
-              Doble Clic en la Columna de Motivo para Consultar Pantalla
+              Doble clic en la columna del motivo para consultar la pantalla
               &nbsp;&nbsp;
             </span>
           </div>
@@ -172,17 +191,18 @@
     </form>
   </div>
 </app-card>
-<app-card [header]="true">
+<app-card
+  *ngIf="responsable == 'REGIONALES' && delegationNumber == 0"
+  [header]="true">
   <div class="ch-content" header>
     <h5 class="title">BÚSQUEDA POR BIEN</h5>
   </div>
-
   <div body>
     <form class="form-material" [formGroup]="form2">
       <div class="col-md-2 mt-2">
         <div>
           <form-field [control]="form2.get('bien')" label="No. Bien">
-            <input type="text" class="form-control" formControlName="bien" />
+            <input type="number" class="form-control" formControlName="bien" />
           </form-field>
         </div>
       </div>

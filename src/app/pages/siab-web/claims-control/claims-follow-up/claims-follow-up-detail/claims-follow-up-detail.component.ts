@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITypeSiniester } from 'src/app/core/models/catalogs/type-siniester.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TypeSiniesterService } from 'src/app/core/services/catalogs/type-siniester.service';
 import { SeraLogService } from 'src/app/core/services/ms-audit/sera-log.service';
 import { BasePage } from 'src/app/core/shared';
@@ -50,6 +51,7 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private datePipe: DatePipe,
     private modalRef: BsModalRef,
+    private authService: AuthService,
     private typeSinisterService: TypeSiniesterService,
     private seraLogService: SeraLogService
   ) {
@@ -62,10 +64,10 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       { value: '2', description: '2DA CAPA' },
       { value: '3', description: '1ER CAPA / 2DA CAPA' },
     ]);
-    this.status = new DefaultSelect([
-      { value: '1', description: 'ABIERTO' },
-      { value: '2', description: 'CERRADO' },
-    ]);
+    // this.status = new DefaultSelect([
+    //   { value: '1', description: 'ABIERTO' },
+    //   { value: '2', description: 'CERRADO' },
+    // ]);
     this.prepareForm();
   }
   private prepareForm() {
@@ -83,11 +85,11 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       policyAffectedIn: [null],
       unitAdminUserIn: [null, [Validators.required]],
       detGoodoAffectedIn: [null, [Validators.required]],
-      claimedAmountIn: [null, [Validators.required]],
-      adjustedAmountIn: [null, [Validators.required]],
-      deductibleIn: [null, [Validators.required]],
-      coinsuranceIn: [null, [Validators.required]],
-      amountIndemnizedIn: [null, [Validators.required]],
+      claimedAmountIn: [null],
+      adjustedAmountIn: [null],
+      deductibleIn: [null],
+      coinsuranceIn: [null],
+      amountIndemnizedIn: [null],
       letterClaimIn: [null],
       orderOfEntryIn: [null],
       docOfficeMinConcluIn: [null],
@@ -97,7 +99,7 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       ],
       firstSecondLaterIn: [null],
       shapeConclusionIn: [null, [Validators.required]],
-      dateIndemnizationIn: [null, [Validators.required]],
+      dateIndemnizationIn: [null],
       docLetterRelcamationIn: [null],
       docAmountIndemnizedIn: [null],
     });
@@ -234,6 +236,11 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     this.getTipeSiniester(new ListParams());
     this.getObtnObtenUnidadesResp(new ListParams());
     this.getshapeConclusion(new ListParams());
+    this.getStatusSinister(new ListParams());
+    setTimeout(() => {
+      this.claimsFollowUpDetailForm.controls['statusIn'].setValue('1');
+      this.claimsFollowUpDetailForm.controls['shapeConclusionIn'].setValue('0');
+    }, 1000);
   }
 
   close() {
@@ -263,6 +270,13 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     });
   }
   getObtnObtenUnidadesResp(params: ListParams) {
+    if (params.text != null && params.text != '') {
+      params['filter.descripcion'] = `$ilike:${params.text}`;
+      delete params.text;
+      delete params['search'];
+    }
+    params['sortBy'] = 'descripcion:ASC';
+    // params['filter.no_delegacion'] = `$eq:${this.authService.decodeToken().department}`;
     this.seraLogService.getObtnObtenUnidadesResp(params).subscribe({
       next: response => {
         this.unitAdminUser = new DefaultSelect(response.data, response.count);
@@ -280,6 +294,22 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.shapeConclusion = new DefaultSelect([], 0, true);
+      },
+    });
+  }
+  getStatusSinister(params: ListParams) {
+    if (params.text != null && params.text != '') {
+      params['filter.descripcion'] = `$ilike:${params.text}`;
+      delete params.text;
+      delete params['search'];
+    }
+    this.typeSinisterService.getStatusSinister(params).subscribe({
+      next: response => {
+        console.log(response);
+        this.status = new DefaultSelect(response.data, response.count);
+      },
+      error: error => {
+        this.status = new DefaultSelect([], 0, true);
       },
     });
   }

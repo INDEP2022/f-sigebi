@@ -11,6 +11,7 @@ import { ITotalReconciledGoods } from './../../models/ms-proceedings/total-recon
 })
 export class DetailProceedingsDevolutionService extends HttpService {
   private readonly endpoint = ProceedingsEndpoints.DetailProceedingsDevollution;
+  private readonly endpoint2 = ProceedingsEndpoints.ProeedingsDevolution;
   constructor() {
     super();
     this.microservice = ProceedingsEndpoints.BasePath;
@@ -36,6 +37,12 @@ export class DetailProceedingsDevolutionService extends HttpService {
   getAll(params?: ListParams) {
     return this.get<IListResponse<any>>(this.endpoint, params);
   }
+  getAllByActNumber(id: any, params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      `${this.endpoint}?filter.numGoodProceedingsId=${id}`,
+      params
+    );
+  }
   getTotalReconciledGoods(proceedingId: string | number) {
     return this.get<IListResponse<ITotalReconciledGoods>>(
       `${this.endpoint}/get-total-movement-accounts-by-proceeding/${proceedingId}`
@@ -45,5 +52,10 @@ export class DetailProceedingsDevolutionService extends HttpService {
     return this.get<IListResponse<any>>(
       `${this.endpoint}?filter.numGoodId=${params}`
     );
+  }
+
+  updateProcedings(id: any, body: any) {
+    // console.log(id, body);
+    return this.put<IListResponse<any>>(`${this.endpoint}/${id}`, body);
   }
 }

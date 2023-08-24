@@ -33,6 +33,11 @@ export class DetailProceeDelRecService extends HttpService {
     return this.get(route, params);
   }
 
+  putProceedingsDeliveryReception(body: any, id: number) {
+    const route = `proceedings-delivery-reception/${id}`;
+    return this.put(route, body);
+  }
+
   PADelActaEntrega(actNumber: string | number) {
     return this.delete(`${ProceedingsEndpoints.PADelActaEntrega}/${actNumber}`);
   }
@@ -105,5 +110,34 @@ export class DetailProceeDelRecService extends HttpService {
   getProcedingbyId(id: number | string) {
     const route = `${ProceedingsEndpoints.ProeedingsDevolution}/${id}`;
     return this.get(route);
+  }
+  getProceding(report: number | string) {
+    const route = `${ProceedingsEndpoints.proceedingGet}/${report}`;
+    return this.get(route);
+  }
+
+  getProcedingbykey(key: number | string) {
+    const route = `${ProceedingsEndpoints.procedingDelivery}?filter.keysProceedings=$eq:${key}`;
+    return this.get(route);
+  }
+
+  getProceedingbyId(id: number) {
+    const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}?filter.numberProceedings=$eq:${id}`;
+    return this.get(route);
+  }
+
+  getProceedingByNoGood(id: number) {
+    const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}?filter.numberGood=$eq:${id}`;
+    return this.get(route);
+  }
+
+  getProceedingStatus(id: number) {
+    const route = `${ProceedingsEndpoints.procedingActa}/${id}`;
+    return this.get(route);
+  }
+
+  putActaStatus(id: number, params: any) {
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}/${id}`;
+    return this.put(route, params);
   }
 }

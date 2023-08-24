@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpEvent, HttpEventType } from '@angular/common/http';
+import { HttpEventType } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import {
@@ -23,11 +23,7 @@ import {
 
 export interface IServiceUpload {
   [others: string]: any;
-  uploadFile(
-    campo: any,
-    file: File,
-    fileField: string
-  ): Observable<HttpEvent<unknown>>;
+  uploadFile(campo: any, file: File, fileField: string): Observable<any>;
 }
 
 @Component({
@@ -103,8 +99,8 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
 
   private async loadZipFiles(response: any) {
     console.log(response);
-    const body = response.body;
-    if (body.rejectedPhotos && body.rejectedPhotos.length > 0) {
+    const body = response.body ?? null;
+    if (body && body.rejectedPhotos && body.rejectedPhotos.length > 0) {
       if (body.approvedPhotos && body.approvedPhotos.length > 0) {
         return this.completeWidthErrors();
       } else {

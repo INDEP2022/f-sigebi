@@ -34,7 +34,7 @@ const routes: Routes = [
       (await import('./tools/load-of-locators/load-of-locators.module'))
         .LoadOfLocatorsModule,
   },
-  {
+  /*{
     path: 'query-interconnection',
     loadChildren: async () =>
       (
@@ -42,7 +42,7 @@ const routes: Routes = [
           './tools/query-interconnection/query-interconnection.module'
         )
       ).QueryInterconnectionModule,
-  },
+  },*/
   {
     path: 'indicators',
     loadChildren: async () =>
@@ -69,6 +69,11 @@ const routes: Routes = [
     path: 'maintenance',
     loadChildren: async () =>
       (await import('./maintenance/maintenance.module')).MaintenanceModule,
+  },
+  {
+    path: 'tools',
+    loadChildren: async () =>
+      (await import('./tools/tools.module')).ToolsModule,
   },
 ];
 

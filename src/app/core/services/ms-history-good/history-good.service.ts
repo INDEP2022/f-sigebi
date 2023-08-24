@@ -141,4 +141,10 @@ export class HistoryGoodService extends HttpService {
       body
     );
   }
+  updateHistoricGoods(body: Partial<IHistoricGoodsAsegExtdom>) {
+    return this.put<IHistoricGoodsAsegExtdom>(
+      HistoryGoodEndpoints.HistoryStatusGood,
+      body
+    );
+  }
 }

@@ -766,12 +766,12 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.actaRecepttionForm.get('testigoOIC').setValue(res.witnessOic);
           this.actaRecepttionForm.get('testigoTwo').setValue(res.witness2);
           this.actaRecepttionForm.get('testigoTree').setValue(res.witness3);
-
+          this.cleanActa();
           subscription.unsubscribe();
         },
         error: error => {
           console.log(error);
-
+          this.cleanActa();
           subscription.unsubscribe();
         },
       });
@@ -1052,7 +1052,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         return;
       }
 
-      if (this.actasDefault.comptrollerWitness == null) {
+      if (!this.actasDefault.comptrollerWitness) {
         this.alert('warning', 'Indique el Testigo de la Contraloría', '');
         return;
       }
@@ -1671,13 +1671,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             if (good.di_acta != null) {
               this.alert(
                 'warning',
-                `Ese Bien ya se Encuentra en el Acta ${good.di_acta}`,
+                `Ese Bien ya se encuentra en el Acta ${good.di_acta}`,
                 'Debe Capturar un Acta.'
               );
             } else if (good.di_disponible == 'N') {
               this.onLoadToast(
                 'warning',
-                `El Bien ${good.id} tiene un Estatus Inválido para ser Asignado a algún Acta`
+                `El Bien ${good.id} tiene un estatus inválido para ser asignado a algún acta`
               );
               return;
             } else {
@@ -2143,6 +2143,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
 
   cleanActa() {
+    this.acordionDetail = false;
     this.actasDefault = null;
     this.actaRecepttionForm.get('cveActa').setValue('');
     this.actaRecepttionForm.get('direccion').setValue('');

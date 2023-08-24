@@ -55,9 +55,9 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         // this.selectGood(response)
       },
       error: err => {
-        this.resetForm();
         this.alert('error', 'No. Bien ' + this.noBien, 'No encontrado');
         this.formLoading = false;
+        this.resetForm();
       },
     });
   }
@@ -82,41 +82,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         }
       },
     });
-    // this.selectGood(this.service.getSavedGood());
-    // if (this.firstCase === true) {
-    // this.service.initFormGood();
-    // this.selectGood(this.serviceTab1.getSavedGood());
-    // this.moreParams.push(
-    //   'filter.goodClassNumber=$in:' + this.service.clasificators
-    // );
-    // }
-    // if (this.firstCase === false) {
-    // this.service.initFormGood();
-    // this.selectGood(this.serviceTab2.getSavedGood());
-    // this.moreParams.push(
-    //   'filter.goodClassNumber=$not:$null',
-    //   'filter.goodClassNumber=$not:$in:' + this.service.clasificators
-    // );
-    // }
-    // if (this.version === 1) {
-    // this.moreParams.push('filter.unit=$not:$null');
-    // this.moreParams.push('filter.extDomProcess=$not:$null');
-    // this.moreParams.push('filter.appraisalCurrencyKey=$not:$null');
-    // this.moreParams.push('filter.appraisedValue=$not:$null');
-    // this.moreParams.push('filter.val14=$not:$null');
-    // }
   }
-
-  // get service() {
-  //   return this.version === 1 ? this.service1 : this.service2;
-  //   // return this.version === 1
-  //   //   ? this.firstCase === true
-  //   //     ? this.serviceTab1
-  //   //     : this.serviceTab2
-  //   //   : this.firstCase === true
-  //   //     ? this.service2Tab1
-  //   //     : this.service2Tab2;
-  // }
 
   get formLoading() {
     return this.service.formLoading;
@@ -150,60 +116,6 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     this.service.firstCase = value;
   }
 
-  // get goodsList() {
-  //   // this.paramsGoods = new FilterParams();
-  //   // 1424, 1426, 1427, 1575, 1590;
-  //   // this.paramsGoods.addFilter2('filter.goodClassNumber=$eq:1424');
-  //   if (!this.paramsGoods.getParams().includes('goodClassNumber')) {
-  //     if (this.firstCase) {
-  //       this.paramsGoods.addFilter2(
-  //         'filter.goodClassNumber=$in:1424,1426,1427,1575,1590'
-  //       );
-  //     } else {
-  //       this.paramsGoods.addFilter2('filter.goodClassNumber=$not:$null');
-  //       this.paramsGoods.addFilter2(
-  //         'filter.goodClassNumber=$not:$in:1424,1426,1427,1575,1590'
-  //       );
-  //     }
-  //   }
-  //   // if (!this.paramsGoods.getParams().includes('unit')) {
-  //   //   this.paramsGoods.addFilter2('filter.unit=$in:LITRO,METRO,PAR,PIEZA,JUEGO,CAJAS,M3,KILOGRAMO,UNIDAD,MEDIDA');
-  //   // }
-
-  //   // this.paramsGoods.addFilter2('filter.goodClassNumber=$or:1427');
-  //   // this.paramsGoods.addFilter2('filter.goodClassNumber=$or:1575');
-  //   // this.paramsGoods.addFilter2('filter.goodClassNumber=$or:1590');
-  //   // this.paramsGoods.addFilter2('filter.goodClassNumber=$not:$null');
-  //   if (!this.paramsGoods.getParams().includes('extDomProcess')) {
-  //     this.paramsGoods.addFilter2('filter.extDomProcess=$not:$null');
-  //   }
-  //   // this.paramsGoods.addFilter2('filter.unit=$not:$null');
-  //   if (!this.paramsGoods.getParams().includes('appraisalCurrencyKey')) {
-  //     this.paramsGoods.addFilter2('filter.appraisalCurrencyKey=$not:$null');
-  //   }
-  //   // this.paramsGoods.addFilter2('filter.locationType=$not:$null');
-  //   // this.paramsGoods.addFilter2('filter.originSignals=$not:$null');
-  //   // this.paramsGoods.addFilter2('filter.registerInscrSol=$not:$null');
-  //   // this.paramsGoods.addFilter2('filter.proficientOpinion=$not:$null');
-  //   // this.paramsGoods.addFilter2('filter.valuerOpinion=$not:$null');
-  //   // this.paramsGoods.addFilter2('filter.opinion=$not:$null');
-  //   if (!this.paramsGoods.getParams().includes('appraisedValue')) {
-  //     this.paramsGoods.addFilter2('filter.appraisedValue=$not:$null');
-  //   }
-  //   if (!this.paramsGoods.getParams().includes('val14')) {
-  //     this.paramsGoods.addFilter2('filter.val14=$not:$null');
-  //   }
-  //   // this.paramsGoods.addFilter2('filter.rackNumber=$not:$null');
-  //   // this.paramsGoods.addFilter2('filter.appraisedValue=$not:$null');
-  //   // this.paramsGoods.addFilter2('filter.statusResourceRevision=$not:$null');
-  //   // this.paramsGoods.addFilter2('filter.fractionId=$not:$null');
-  //   return this.goodService.getAll(this.paramsGoods.getParams());
-  // }
-
-  // get cantidadRows() {
-  //   return this.form.get('cantidad2');
-  // }
-
   get noBien() {
     return this.form
       ? this.form.get('noBien')
@@ -211,36 +123,6 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         : null
       : null;
   }
-
-  // get cantPadre() {
-  //   return this.form.get('cantPadre');
-  // }
-
-  // get descripcion() {
-  //   return this.form.get('descripcion');
-  // }
-
-  // get avaluo() {
-  //   return this.form.get('avaluo');
-  // }
-  // get estatus() {
-  //   return this.form.get('estatus');
-  // }
-  // get extDom() {
-  //   return this.form.get('extDom');
-  // }
-  // get moneda() {
-  //   return this.form.get('moneda');
-  // }
-  // get expediente() {
-  //   return this.form.get('expediente');
-  // }
-  // get clasificador() {
-  //   return this.form.get('clasificador');
-  // }
-  // get importe() {
-  //   return this.form.get('importe');
-  // }
 
   get good() {
     return this.service.good;
@@ -276,12 +158,6 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     }
     return { bandera: 1, mensaje: '' };
   }
-
-  // private async getVerificaDesCargaMasiva() {
-  //   return firstValueFrom(
-  //     this.goodService.getValidMassiveDownload(this.good.goodId)
-  //   );
-  // }
 
   resetForm() {
     // this.service.formControl.
@@ -325,7 +201,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     );
   }
 
-  async selectGoodContent(good: IGood) {
+  async selectGoodContent(good: any) {
     let bandera;
     let clasif: number;
     this.service.verif_des = 0;
@@ -375,6 +251,15 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       // });
       // this.service.bienesPar = newBienesPar;
       // this.service.savePartializeds();
+
+      if (!good.goodClassNumber) {
+        this.alert(
+          'error',
+          'Parcialización',
+          'Bien ' + good.goodId + ' no cuenta con clasificador'
+        );
+        return;
+      }
       if ([1424, 1426].includes(+(good.goodClassNumber + ''))) {
         bandera = 0;
         const validacion = await this.validateGood(good);
@@ -385,14 +270,6 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         }
       } else {
         clasif = 1;
-      }
-      if (!good.goodClassNumber) {
-        this.alert(
-          'error',
-          'Parcialización',
-          'Bien ' + good.goodId + ' no cuenta con clasificador'
-        );
-        return;
       }
       try {
         this.service.noActa = await this.getNoActa(good);
@@ -474,7 +351,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     console.log(good);
   }
 
-  async selectGood(good: IGood) {
+  async selectGood(good: any) {
     await this.selectGoodContent(good);
     this.formLoading = false;
   }

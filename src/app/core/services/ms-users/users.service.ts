@@ -24,7 +24,7 @@ export class UsersService extends HttpService {
   }
 
   //http://sigebimsqa.indep.gob.mx/users/api/v1/seg-users
-  getAllSegUsers(_params: _Params) {
+  getAllSegUsers(_params?: _Params) {
     return this.get<IListResponse<any>>(UserEndpoints.SegUsers, _params);
   }
 

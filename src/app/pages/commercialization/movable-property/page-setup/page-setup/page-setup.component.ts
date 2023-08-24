@@ -59,17 +59,6 @@ export class PageSetupComponent extends BasePage implements OnInit {
       },
       columns: {
         ...PAGE_SETUP_COLUMNS,
-        visualiza: {
-          title: 'Visualizar',
-          sort: false,
-          type: 'custom',
-          valuePrepareFunction: (visualiza: string) =>
-            visualiza == '1' ? true : false,
-          renderComponent: CheckboxElementComponent<IConfigvtadmun>,
-          onComponentInitFunction: (
-            instance: CheckboxElementComponent<IConfigvtadmun>
-          ) => this.onVisualizaChange(instance),
-        },
       },
     };
   }
@@ -79,18 +68,6 @@ export class PageSetupComponent extends BasePage implements OnInit {
       next: () => this.getData(),
     });*/
 
-    this.activatedRoute.queryParams
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe((params2: any) => {
-        console.log(params2);
-        console.log(this.paramsScreen);
-        for (const key in this.paramsScreen) {
-          if (Object.prototype.hasOwnProperty.call(params2, key)) {
-            this.paramsScreen[key as keyof typeof this.paramsScreen] =
-              params2[key] ?? null;
-          }
-        }
-      });
     if (this.paramsScreen) {
       if (this.paramsScreen.PAR_MASIVO) {
         this.getData();
@@ -160,7 +137,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar Esta Configuración De Columnas?'
+      '¿Desea Eliminar esta Configuración de Columnas?'
     ).then(question => {
       if (question.isConfirmed) {
         this.remove(pageSetup);
@@ -176,7 +153,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.loading = false;
         this.onLoadToast(
           'success',
-          'Configuración De Columnas',
+          'Configuración de Columnas',
           'Eliminada Correctamente'
         );
         this.getData();
@@ -186,7 +163,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'error',
           'Error',
-          'Ocurrio Un Error Al Eliminar La Configuración De Columnas'
+          'Ocurrio un Error al Eliminar la Configuración de Columnas'
         );
       },
     });
@@ -223,6 +200,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
       ...this.params2.getValue(),
       ...this.columnFilters,
     };
+    console.log('params', params);
     this.configvtadmunService.getAllFilter(params).subscribe({
       next: response => {
         this.loading = false;
@@ -244,7 +222,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'error',
           'Error',
-          'Ocurrio Un Error Al Actualizar La Configuración De Columnas'
+          'Ocurrio un Error al Actualizar la Configuración de Columnas'
         );
         return throwError(() => error);
       }),
@@ -252,7 +230,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.loading = false;
         this.onLoadToast(
           'success',
-          'Configuración De Columnas',
+          'Configuración de Columnas',
           'Actualizada Correctamente'
         );
         this.getData();

@@ -2,11 +2,6 @@
   <div class="w-100" header>
     <div class="d-flex flex-wrap justify-content-between aling-items-center">
       <h5 class="modal-title">Actualización Tasa Interés</h5>
-      <div class="buttons">
-        <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
-          Cerrar
-        </button>
-      </div>
     </div>
   </div>
 
@@ -23,6 +18,7 @@
                 bindLabel="mes"
                 bindValue="value"
                 [multiple]="false"
+                [readonly]="true"
                 [closeOnSelect]="true"
                 [searchable]="false"
                 formControlName="month">
@@ -33,6 +29,7 @@
             <form-field [control]="form.get('year')" label="Año">
               <input
                 type="text"
+                [isDisabled]="true"
                 class="form-control"
                 [minDate]="minDate"
                 [bsConfig]="bsConfigFromYear"
@@ -81,6 +78,11 @@
               (click)="updateNumerary()">
               Guardar
               <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+            <button
+              class="btn btn-primary active btn-sm ml-3"
+              (click)="close()">
+              Cerrar
             </button>
           </div>
         </div>

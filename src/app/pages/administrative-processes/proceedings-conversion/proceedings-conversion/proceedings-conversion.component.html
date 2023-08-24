@@ -32,86 +32,85 @@
                 Conversión
               </h5>
             </div>
-            <form [formGroup]="proceedingsConversionForm" class="form-material">
-              <div class="float-right pl-3">
-                <button
-                  (click)="searchProcs()"
-                  class="btn btn-primary btn-sm active m-1"
-                  tooltip="Conversiones"
-                  containerClass="tooltip-style">
-                  <i class="bx bx-list-plus bx-sm float-icon"></i>
-                </button>
-              </div>
+            <!-- <form [formGroup]="proceedingsConversionForm" class="form-material"> -->
+            <div class="float-right pl-3">
+              <button
+                (click)="searchProcs()"
+                class="btn btn-primary btn-sm active m-1"
+                tooltip="Conversiones"
+                containerClass="tooltip-style">
+                <i class="bx bx-list-plus bx-sm float-icon"></i>
+              </button>
+            </div>
 
-              <div class="form-material">
-                <!-- apppcatd **************************************************************-->
-                <app-card [header]="false" [footer]="false">
-                  <div body>
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="row">
-                          <div class="col-md-12">
-                            <div class="card">
-                              <div class="card-body">
-                                <div class="row p-3">
-                                  <div class="col-md-3">
-                                    <div>
-                                      <label for="">No. Conversión: </label>
-                                      {{ conversion || '' }}
-                                    </div>
-                                  </div>
-                                  <div class="col-md-5">
-                                    <div>
-                                      <label for=""
-                                        >No. Bien Convertido (Bien Padre):
-                                      </label>
-                                      {{ goodFatherNumber || '' }}
-                                    </div>
-                                  </div>
-
-                                  <div class="col-md-3">
-                                    <div>
-                                      <label for="">No. Expediente: </label>
-                                      {{ fileNumber || '' }}
-                                    </div>
+            <div>
+              <!-- apppcatd **************************************************************-->
+              <app-card [header]="false" [footer]="false">
+                <div body>
+                  <div class="row form-material">
+                    <div class="col-md-12">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="card">
+                            <div class="card-body">
+                              <div class="row p-3">
+                                <div class="col-md-3">
+                                  <div>
+                                    <label for="">No. Conversión: </label>
+                                    {{ conversion || '' }}
                                   </div>
                                 </div>
-                                <div class="row p-3">
-                                  <div class="col-md-3">
-                                    <div>
-                                      <label for=""
-                                        >Averiguaci&oacute;n Previa:
-                                      </label>
-                                      {{ preAver || '' }}
-                                    </div>
-                                  </div>
-                                  <div class="col-md-5">
-                                    <div>
-                                      <label for=""
-                                        >No. Exp. del Transferente:
-                                      </label>
-                                      {{ trasnfer || '' }}
-                                    </div>
-                                  </div>
-                                  <div class="col-md-3">
-                                    <div>
-                                      <label for="">Hora de Creación: </label>
-                                      {{ time | date : 'hh:mm' }}
-                                    </div>
+                                <div class="col-md-5">
+                                  <div>
+                                    <label for=""
+                                      >No. Bien Convertido (Bien Padre):
+                                    </label>
+                                    {{ goodFatherNumber || '' }}
                                   </div>
                                 </div>
-                                <div class="row p-3">
-                                  <div class="col-md-3">
-                                    <div>
-                                      <label for="">Causa Penal: </label>
-                                      {{ criCase || '' }}
-                                    </div>
+
+                                <div class="col-md-3">
+                                  <div>
+                                    <label for="">No. Expediente: </label>
+                                    {{ fileNumber || '' }}
                                   </div>
-                                  <div class="col-md-7">
-                                    <div>
-                                      <label for="">Acta: </label>
-                                      {{ cveActa || '' }}
-                                    </div>
+                                </div>
+                              </div>
+                              <div class="row p-3">
+                                <div class="col-md-3">
+                                  <div>
+                                    <label for=""
+                                      >Averiguaci&oacute;n Previa:
+                                    </label>
+                                    {{ preAver || '' }}
+                                  </div>
+                                </div>
+                                <div class="col-md-5">
+                                  <div>
+                                    <label for=""
+                                      >No. Exp. del Transferente:
+                                    </label>
+                                    {{ trasnfer || '' }}
+                                  </div>
+                                </div>
+                                <div class="col-md-3">
+                                  <div>
+                                    <label for="">Hora de Creación: </label>
+                                    {{ time | date : 'hh:mm' }}
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row p-3">
+                                <div class="col-md-3">
+                                  <div>
+                                    <label for="">Causa Penal: </label>
+                                    {{ criCase || '' }}
+                                  </div>
+                                </div>
+                                <div class="col-md-7">
+                                  <div>
+                                    <label for="">Acta: </label>
+                                    {{ cveActa || '' }}
                                   </div>
                                 </div>
                               </div>
@@ -119,7 +118,8 @@
                           </div>
                         </div>
                       </div>
-                      <!-- <div class="row">
+                    </div>
+                    <!-- <div class="row">
                         <div class="col-md-12">
                           <div class="row">
                             <div class="col-md-12">
@@ -130,42 +130,42 @@
                           </div>
                         </div>
                       </div> -->
-                    </div>
-                    <div class="row m-3">
-                      <div class="col-4"></div>
-                      <div class="col-md-8 text-end">
-                        <button
-                          [disabled]="!actasDefault"
-                          (click)="actualizarActa()"
-                          type="button"
-                          class="btn btn-primary active btn-sm mr-3">
-                          Guardar
-                          <i aria-hidden="true" class="fa fa-save"></i>
-                        </button>
-                        <button
-                          [disabled]="!conversion"
-                          (click)="agregarActa()"
-                          type="button"
-                          class="btn btn-info active btn-sm mr-3">
-                          Nueva Acta
-                          <i class="bx bx-plus bx-sm float-icon"></i>
-                        </button>
-                        <button
-                          [disabled]="!conversion"
-                          type="button"
-                          class="btn btn-primary active btn-sm mr-3"
-                          (click)="searchActas()">
-                          Estatus Actas
-                          <i class="bx bx-search bx-sm float-icon"></i>
-                        </button>
-                        <button
-                          (click)="cleanActa()"
-                          type="button"
-                          class="btn btn-danger active btn-sm mr-3">
-                          Limpiar
-                          <i class="fa fa-eraser" aria-hidden="true"></i>
-                        </button>
-                        <!-- <button
+                  </div>
+                  <div class="row m-3">
+                    <div class="col-4"></div>
+                    <div class="col-md-8 text-end">
+                      <button
+                        [disabled]="!actasDefault"
+                        (click)="actualizarActa()"
+                        type="button"
+                        class="btn btn-primary active btn-sm mr-3">
+                        Guardar
+                        <i aria-hidden="true" class="fa fa-save"></i>
+                      </button>
+                      <button
+                        [disabled]="!conversion"
+                        (click)="agregarActa()"
+                        type="button"
+                        class="btn btn-info active btn-sm mr-3">
+                        Nueva Acta
+                        <i class="bx bx-plus bx-sm float-icon"></i>
+                      </button>
+                      <button
+                        [disabled]="!conversion"
+                        type="button"
+                        class="btn btn-primary active btn-sm mr-3"
+                        (click)="searchActas()">
+                        Estatus Actas
+                        <i class="bx bx-search bx-sm float-icon"></i>
+                      </button>
+                      <button
+                        (click)="cleanActa()"
+                        type="button"
+                        class="btn btn-danger active btn-sm mr-3">
+                        Limpiar
+                        <i class="fa fa-eraser" aria-hidden="true"></i>
+                      </button>
+                      <!-- <button
                           [disabled]="!actasDefault"
                           type="button"
                           class="btn btn-primary btn-sm active mr-2"
@@ -173,18 +173,16 @@
                           Guardar
                           <i aria-hidden="true" class="fa fa-save"></i>
                         </button> -->
-                      </div>
                     </div>
-                    <form
-                      [formGroup]="actaRecepttionForm"
-                      class="form-material">
-                      <div class="row">
-                        <div class="col-md-12">
-                          <div class="row">
-                            <div class="col-md-12">
-                              <div class="card">
-                                <div class="card-body">
-                                  <!-- <div class="col-md-4">
+                  </div>
+                  <form [formGroup]="actaRecepttionForm" class="form-material">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="card">
+                              <div class="card-body">
+                                <!-- <div class="col-md-4">
                                     <div>
                                       <form-field [control]="actaRecepttionForm.get('mes')">
                                         <input formControlName="mes" class="form-control" bsDatepicker
@@ -193,89 +191,89 @@
                                       </form-field>
                                     </div>
                                   </div> -->
-                                  <div class="col-md-8 mt-2">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('cveActa')
-                                        "
-                                        label="Clave de Acta">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="cveActa"
-                                          readonly />
-                                      </form-field>
-                                    </div>
+                                <div class="col-md-8 mt-2">
+                                  <div>
+                                    <form-field
+                                      [control]="
+                                        actaRecepttionForm.get('cveActa')
+                                      "
+                                      label="Clave de Acta">
+                                      <input
+                                        #inputValue
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="cveActa"
+                                        readonly />
+                                    </form-field>
                                   </div>
-                                  <div class="col-md-4 mt-3">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('respConv')
-                                        "
-                                        label="Responsable">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="respConv"
-                                          class="form-control"
-                                          readonly />
-                                      </form-field>
-                                    </div>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                  <div>
+                                    <form-field
+                                      [control]="
+                                        actaRecepttionForm.get('respConv')
+                                      "
+                                      label="Responsable">
+                                      <input
+                                        #inputValue
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="respConv"
+                                        class="form-control"
+                                        readonly />
+                                    </form-field>
                                   </div>
-                                  <div class="col-md-4 mt-3">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('testigoOIC')
-                                        "
-                                        label="Testigo de la Contralor&iacute;a">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="testigoOIC"
-                                          readonly />
-                                      </form-field>
-                                    </div>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                  <div>
+                                    <form-field
+                                      [control]="
+                                        actaRecepttionForm.get('testigoOIC')
+                                      "
+                                      label="Testigo de la Contralor&iacute;a">
+                                      <input
+                                        #inputValue
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="testigoOIC"
+                                        readonly />
+                                    </form-field>
                                   </div>
-                                  <div class="col-md-4 mt-3">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('testigoTwo')
-                                        "
-                                        label="Testigo">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="testigoTwo"
-                                          readonly />
-                                      </form-field>
-                                    </div>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                  <div>
+                                    <form-field
+                                      [control]="
+                                        actaRecepttionForm.get('testigoTwo')
+                                      "
+                                      label="Testigo">
+                                      <input
+                                        #inputValue
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="testigoTwo"
+                                        readonly />
+                                    </form-field>
                                   </div>
-                                  <div class="col-md-4 mt-3">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('testigoTree')
-                                        "
-                                        label="Testigo">
-                                        <input
-                                          readonly
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="testigoTree"
-                                          [disabled]="!validPermisos" />
-                                      </form-field>
-                                    </div>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                  <div>
+                                    <form-field
+                                      [control]="
+                                        actaRecepttionForm.get('testigoTree')
+                                      "
+                                      label="Testigo">
+                                      <input
+                                        readonly
+                                        #inputValue
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="testigoTree"
+                                        [disabled]="!validPermisos" />
+                                    </form-field>
                                   </div>
-                                  <!-- <div class="col-md-4">
+                                </div>
+                                <!-- <div class="col-md-4">
                                     <div>
                                       <form-field [control]="
                                           actaRecepttionForm.get('ejecuta')
@@ -285,25 +283,25 @@
                                       </form-field>
                                     </div>
                                   </div> -->
+                              </div>
+                              <div class="row mt-5">
+                                <div
+                                  class="col-md-12 col-sm-12 col-xs-12 pl-5 pr-5">
+                                  <form-field
+                                    [control]="
+                                      actaRecepttionForm.get('direccion')
+                                    "
+                                    label="Direcci&oacute;n">
+                                    <textarea
+                                      maxlength="1000"
+                                      type="text"
+                                      class="form-control"
+                                      formControlName="direccion"
+                                      rows="5"></textarea>
+                                  </form-field>
                                 </div>
-                                <div class="row mt-5">
-                                  <div
-                                    class="col-md-12 col-sm-12 col-xs-12 pl-5 pr-5">
-                                    <form-field
-                                      [control]="
-                                        actaRecepttionForm.get('direccion')
-                                      "
-                                      label="Direcci&oacute;n">
-                                      <textarea
-                                        maxlength="2000"
-                                        type="text"
-                                        class="form-control"
-                                        formControlName="direccion"
-                                        rows="5"></textarea>
-                                    </form-field>
-                                  </div>
-                                </div>
-                                <!-- <div class="row mt-5">
+                              </div>
+                              <!-- <div class="row mt-5">
                                   <div class="col-md-12 col-sm-12 col-xs-12">
                                     <form-field
                                       [control]="
@@ -354,106 +352,104 @@
                                     </form-field>
                                   </div>
                                 </div> -->
-                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </form>
-                    <div class="row"></div>
-                    <div class="row p-3">
-                      <div class="justify-content-end d-flex mb-2">
-                        <app-columns-select
-                          [defaultColumns]="5"
-                          [(settings)]="settings"></app-columns-select>
-                      </div>
-                      <div class="col-md-3"></div>
+                    </div>
+                  </form>
+                  <div class="row"></div>
+                  <div class="row p-3">
+                    <div class="justify-content-end d-flex mb-2">
+                      <app-columns-select
+                        [defaultColumns]="5"
+                        [(settings)]="settings"></app-columns-select>
+                    </div>
+                    <div class="col-md-3"></div>
 
-                      <div class="row mt-12 d-flex justify-content-center">
-                        <div class="col-md-12 justify-content-center">
-                          <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
+                    <div class="row mt-12 d-flex justify-content-center">
+                      <div class="col-md-12 justify-content-center">
+                        <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
 
-                          <div class="row">
-                            <form-loader *ngIf="loading"></form-loader>
-                            <div class="col-md-12">
-                              <!-- <div [class]="loading ? 'table-loading' : ''"> -->
-                              <ng-scrollbar
-                                [track]="'all'"
-                                [ngStyle]="{
-                                  height: loading ? '0px' : '400px'
-                                }">
-                                <ng2-smart-table
-                                  [attr.class]="
-                                    'table-bordered table-responsive'
-                                  "
-                                  [settings]="settings"
-                                  [source]="dataTableGood"
-                                  (userRowSelect)="selectData($event)">
-                                </ng2-smart-table>
-                              </ng-scrollbar>
-                              <!-- </div> -->
-                            </div>
-
-                            <app-pagination
-                              [params]="paramsList"
-                              [totalItems]="totalItems"></app-pagination>
-                            <form
-                              [formGroup]="actaGoodForm"
-                              class="form-material">
-                              <div class="row">
-                                <div class="col-6 mt-4">
-                                  <form-field
-                                    [control]="actaGoodForm.get('statusGood')"
-                                    label="Estatus Bien">
-                                    <input
-                                      [(ngModel)]="statusGood_"
-                                      type="text"
-                                      class="form-control"
-                                      formControlName="statusGood"
-                                      readonly />
-                                  </form-field>
-                                </div>
-                              </div>
-                            </form>
+                        <div class="row">
+                          <form-loader *ngIf="loading"></form-loader>
+                          <div class="col-md-12">
+                            <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+                            <ng-scrollbar
+                              [track]="'all'"
+                              [ngStyle]="{
+                                height: loading ? '0px' : '400px'
+                              }">
+                              <ng2-smart-table
+                                [attr.class]="'table-bordered table-responsive'"
+                                [settings]="settings"
+                                [source]="dataTableGood"
+                                (userRowSelect)="selectData($event)">
+                              </ng2-smart-table>
+                            </ng-scrollbar>
+                            <!-- </div> -->
                           </div>
+
+                          <app-pagination
+                            [params]="paramsList"
+                            [totalItems]="totalItems"></app-pagination>
+                          <form
+                            [formGroup]="actaGoodForm"
+                            class="form-material">
+                            <div class="row">
+                              <div class="col-6 mt-4">
+                                <form-field
+                                  [control]="actaGoodForm.get('statusGood')"
+                                  label="Estatus Bien">
+                                  <input
+                                    [(ngModel)]="statusGood_"
+                                    type="text"
+                                    class="form-control"
+                                    formControlName="statusGood"
+                                    readonly />
+                                </form-field>
+                              </div>
+                            </div>
+                          </form>
                         </div>
-                        <div class="row pt-2">
-                          <div class="col-md-12 text-center mt-4 mb-4">
-                            <button
-                              tooltip="Agregar Bien al Acta"
-                              containerClass="tooltip-style"
-                              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-                              type="button"
-                              (click)="addSelect()">
-                              <!-- Mover uno -->
-                              <i class="bx bx-chevron-down bx-md"></i>
-                            </button>
-                            <button
-                              tooltip="Agregar Bienes al Acta"
-                              containerClass="tooltip-style"
-                              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-                              type="button"
-                              (click)="addAll()">
-                              <!-- Mover todos -->
-                              <i class="bx bx-chevrons-down bx-md"></i>
-                            </button>
-                            <!-- <button class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button"
+                      </div>
+                      <div class="row pt-2">
+                        <div class="col-md-12 text-center mt-4 mb-4">
+                          <button
+                            tooltip="Agregar Bien al Acta"
+                            containerClass="tooltip-style"
+                            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                            type="button"
+                            (click)="addSelect()">
+                            <!-- Mover uno -->
+                            <i class="bx bx-chevron-down bx-md"></i>
+                          </button>
+                          <button
+                            tooltip="Agregar Bienes al Acta"
+                            containerClass="tooltip-style"
+                            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                            type="button"
+                            (click)="addAll()">
+                            <!-- Mover todos -->
+                            <i class="bx bx-chevrons-down bx-md"></i>
+                          </button>
+                          <!-- <button class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button"
                                 (click)="removeAll()">
                                 
                                 <i class="bx bx-chevrons-up bx-md"></i>
                               </button> -->
-                            <button
-                              tooltip="Quitar Bien del Acta"
-                              containerClass="tooltip-style"
-                              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-                              type="button"
-                              (click)="removeSelect()">
-                              <!-- Quitar uno -->
-                              <i class="bx bx-chevron-up bx-md"></i>
-                            </button>
-                          </div>
+                          <button
+                            tooltip="Quitar Bien del Acta"
+                            containerClass="tooltip-style"
+                            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                            type="button"
+                            (click)="removeSelect()">
+                            <!-- Quitar uno -->
+                            <i class="bx bx-chevron-up bx-md"></i>
+                          </button>
                         </div>
-                        <!-- <div class="d-flex justify-content-center">
+                      </div>
+                      <!-- <div class="d-flex justify-content-center">
                             <div class="text-center">
                               <button (click)="addSelect()" class="btn btn-success btn-sm active" type="button">
                                 Agregar <i class="fa fa-plus float-icon"></i>
@@ -469,34 +465,32 @@
                                                       </button>
                             </div>
                           </div> -->
-                        <div class="col-md-12">
-                          <h6>BIENES RELACIONADOS CON EL ACTA</h6>
-                          <div class="row">
-                            <form-loader *ngIf="loading2"></form-loader>
-                            <div class="col-md-12">
-                              <!-- <div [class]="loading ? 'table-loading' : ''"> -->
-                              <ng-scrollbar
-                                [track]="'all'"
-                                [ngStyle]="{
-                                  height: loading2 ? '0px' : '400px'
-                                }">
-                                <ng2-smart-table
-                                  class="table-responsive"
-                                  [attr.class]="
-                                    'table-bordered table-responsive'
-                                  "
-                                  [settings]="settings2"
-                                  (userRowSelect)="rowsSelected($event)"
-                                  [source]="dataRecepcionGood">
-                                </ng2-smart-table>
-                              </ng-scrollbar>
-                              <!-- </div> -->
-                            </div>
-                            <app-pagination
-                              [params]="paramsList2"
-                              [totalItems]="totalItems2"></app-pagination>
+                      <div class="col-md-12">
+                        <h6>BIENES RELACIONADOS CON EL ACTA</h6>
+                        <div class="row">
+                          <form-loader *ngIf="loading2"></form-loader>
+                          <div class="col-md-12">
+                            <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+                            <ng-scrollbar
+                              [track]="'all'"
+                              [ngStyle]="{
+                                height: loading2 ? '0px' : '400px'
+                              }">
+                              <ng2-smart-table
+                                class="table-responsive"
+                                [attr.class]="'table-bordered table-responsive'"
+                                [settings]="settings2"
+                                (userRowSelect)="rowsSelected($event)"
+                                [source]="dataRecepcionGood">
+                              </ng2-smart-table>
+                            </ng-scrollbar>
+                            <!-- </div> -->
                           </div>
-                          <!-- <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
+                          <app-pagination
+                            [params]="paramsList2"
+                            [totalItems]="totalItems2"></app-pagination>
+                        </div>
+                        <!-- <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
                               <div [class]="loading2 ? 'table-loading' : ''" class="overflow-auto">
                                 <ng2-smart-table [attr.class]="'table-bordered my-table'" [settings]="settings2"
                                   (userRowSelect)="rowsSelected($event)" [source]="dataRecepcion">
@@ -505,54 +499,54 @@
                                   [totalItems]="totalItems2"></app-pagination>
                               </div>
                             </ng-scrollbar> -->
-                        </div>
                       </div>
                     </div>
-                    <div
-                      class="d-flex mt-3 flex-row justify-content-center align-items-center">
-                      <!-- <div class="m-3">
+                  </div>
+                  <div
+                    class="d-flex mt-3 flex-row justify-content-center align-items-center">
+                    <!-- <div class="m-3">
                                       <button type="button" class="btn btn-primary active btn-sm" (click)="getDetail()">
                                         Detalle de Acta
                                         <i class="fas fa-edit bx-sm float-icon"></i>
                                       </button>
                                     </div> -->
-                      <!-- <div class="m-3">
+                    <!-- <div class="m-3">
                                       <button *ngIf="dataTableGoodsConvertion" type="button" class="btn btn-primary btn-sm active"
                                         (click)="savActa()">
                                         Guardar
                                         <i aria-hidden="true" class="fa fa-save"></i>
                                       </button>
                                     </div> -->
-                      <!-- <div class="m-3">
+                    <!-- <div class="m-3">
                                       <button class="btn btn-secondary btn-sm active" type="button" (click)="cargueMasive()">
                                         Carga Masiva
                                         <i class="fa fa-upload bx-sm float-icon"></i>
                                       </button>
                                     </div> -->
-                      <div class="m-3">
-                        <button
-                          type="button"
-                          class="btn btn-primary active btn-sm"
-                          (click)="Generar()">
-                          Imprimir
-                          <i class="bx bx-printer bx-sm float-icon"></i>
-                        </button>
-                      </div>
-                      <div class="m-3">
-                        <button
-                          [disabled]="!disabledBtnCerrar"
-                          type="button"
-                          class="btn btn-primary active btn-sm"
-                          (click)="cerrarActa(goodFatherNumber)">
-                          Cerrar Acta
-                          <i class="fas fa-close bx-sm float-icon"></i>
-                        </button>
-                      </div>
+                    <div class="m-3">
+                      <button
+                        type="button"
+                        class="btn btn-primary active btn-sm"
+                        (click)="Generar()">
+                        Imprimir
+                        <i class="bx bx-printer bx-sm float-icon"></i>
+                      </button>
+                    </div>
+                    <div class="m-3">
+                      <button
+                        [disabled]="!disabledBtnCerrar"
+                        type="button"
+                        class="btn btn-primary active btn-sm"
+                        (click)="cerrarActa(goodFatherNumber)">
+                        Cerrar Acta
+                        <i class="fas fa-close bx-sm float-icon"></i>
+                      </button>
                     </div>
                   </div>
-                </app-card>
-              </div>
-            </form>
+                </div>
+              </app-card>
+            </div>
+            <!-- </form> -->
             <div footer>
               <div
                 class="d-flex flex-row justify-content-center align-items-center"></div>

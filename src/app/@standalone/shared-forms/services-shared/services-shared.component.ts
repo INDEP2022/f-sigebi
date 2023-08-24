@@ -32,7 +32,9 @@ export class ServicesSharedComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getServices(new ListParams());
+  }
 
   getServices(params: ListParams) {
     this.service.getAll(params).subscribe(

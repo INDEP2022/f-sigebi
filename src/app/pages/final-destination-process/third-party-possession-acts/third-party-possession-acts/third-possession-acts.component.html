@@ -6,11 +6,30 @@
   <div body>
     <div class="row justify-content-center">
       <div class="col-12 col-sm-12 col-md-6">
-        <search-bar-simple
-          (eventEmit)="search($event)"
-          [label]="'No. Expediente'"
-          [placeholder]="''">
-        </search-bar-simple>
+        <div class="col-md-8">
+          <form [formGroup]="selectForm" class="form-material">
+            <form-field
+              [control]="selectForm.get('selectBar')"
+              label="No. Expediente">
+              <input
+                class="form-control"
+                type="number"
+                formControlName="selectBar"
+                max="1000000"
+                [value]="expedient2" />
+            </form-field>
+          </form>
+        </div>
+        <div class="col-md-4">
+          <button
+            type="button"
+            [disabled]="!selectForm.value.selectBar || selectForm.invalid"
+            class="btn btn-primary active btn-sm"
+            (click)="search()">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -459,22 +478,27 @@
                 <button
                   class="btn btn-primary active btn-sm mr-3"
                   (click)="openModalApplicant('nuevo')">
-                  Guardar Folio
+                  <i
+                    _ngcontent-nsy-c242=""
+                    aria-hidden="true"
+                    class="fa fa-save"></i>
                 </button>
                 <button
-                  class="btn btn-info active btn-sm mr-3"
-                  (click)="openScannerPage()">
-                  Escanear <i class="bx bx-file bx-sm float-icon"></i>
+                  tooltip="Generar Folio de Escaneo y Solicitud"
+                  containerClass="tooltip-style"
+                  class="btn btn-secondary btn-sm active m-1"
+                  (click)="openScannerPage('escanear')">
+                  <i class="bx bxs-printer"></i>
                 </button>
-                <button
-                  class="btn btn-info active btn-sm mr-3"
-                  (click)="validationAct()">
+                <!-- <button class="btn btn-info active btn-sm mr-3" (click)="validationAct()">
                   Validacion <i class="bx bx-file bx-sm float-icon"></i>
-                </button>
+                </button>-->
                 <button
-                  class="btn btn-info active btn-sm"
-                  (click)="viewPictures($event)">
-                  Folio <i class="bx bx-file bx-sm float-icon"></i>
+                  tooltip="Subir las imagenes del folio "
+                  containerClass="tooltip-style"
+                  class="btn btn-secondary btn-sm active m-1"
+                  (click)="openScannerPage('foto')">
+                  <i class="bx bxs-file-find"></i>
                 </button>
               </div>
             </div>
@@ -502,45 +526,21 @@
             </div>
           </div>
 
-          <div class="row">
-            <div class="d-flex align-items-center">
-              <div class="col-6 align-items-center">
-                <div class="mt-5">
-                  <form
-                    class="form-material form-horizontal"
-                    [formGroup]="formTable1"
-                    (ngSubmit)="onSubmit()">
-                    <div
-                      class="row mt-5 justify-content-start justify-content-sm-end">
-                      <div class="mb-3 pl-4 pr-4">
-                        <form-field [control]="formTable1.get('detail')">
-                          <input
-                            type="text"
-                            class="form-control"
-                            formControlName="detail"
-                            readonly />
-                        </form-field>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
-              <div class="col-6 align-items-center">
-                <div class="row">
-                  <div class="col-6">
-                    <span class="text-success mr-5"
-                      ><i class="fa fa-square"></i> Disponibles</span
-                    >
-                  </div>
-                  <div class="col-6">
-                    <span class="text-danger"
-                      ><i class="fa fa-square"></i> No disponibles</span
-                    >
-                  </div>
-                </div>
-              </div>
+          <!----   <div class="row">
+                        <div class="d-flex align-items-center">
+                            <div class="col-6 align-items-center">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <span class="text-success mr-5"><i class="fa fa-square"></i> Disponibles</span>
+                                    </div>
+                                    <div class="col-6">
+                                        <span class="text-danger"><i class="fa fa-square"></i> No disponibles</span
+                   
             </div>
-          </div>
+        </div>
+    </div>
+    </div>
+    </div> >------->
 
           <div class="row mt-5">
             <app-divider></app-divider>
@@ -557,7 +557,7 @@
                   [attr.class]="'table-bordered responsive'"
                   [settings]="settings2"
                   [source]="data2"></ng2-smart-table>
-                <app-pagination [params]="params5" [totalItems]="totalItems1">
+                <app-pagination [params]="params2" [totalItems]="totalItems1">
                 </app-pagination>
               </div>
             </div>

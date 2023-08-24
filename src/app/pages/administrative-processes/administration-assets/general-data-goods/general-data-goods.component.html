@@ -6,7 +6,8 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            (click)="updateGood()">
+            (click)="updateGood()"
+            [disabled]="!generalDataForm.valid">
             Guardar
             <i aria-hidden="true" class="fa fa-save"></i>
           </button>
@@ -21,7 +22,8 @@
           rows="4"
           class="form-control"
           type="text"
-          formControlName="descripcion"></textarea>
+          formControlName="descripcion"
+          maxlength="4000"></textarea>
       </form-field>
     </div>
     <div class="form-group row">
@@ -32,7 +34,8 @@
           <input
             class="form-control"
             type="number"
-            formControlName="cantidad" />
+            formControlName="cantidad"
+            oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
         </form-field>
       </div>
       <div class="col-md-6">
@@ -54,7 +57,8 @@
         <textarea
           class="form-control"
           type="text"
-          formControlName="observacion"></textarea>
+          formControlName="observacion"
+          maxlength="600"></textarea>
       </form-field>
     </div>
   </form>

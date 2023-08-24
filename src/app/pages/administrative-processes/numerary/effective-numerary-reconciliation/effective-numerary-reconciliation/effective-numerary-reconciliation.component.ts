@@ -90,7 +90,7 @@ export class EffectiveNumeraryReconciliationComponent
       PN_DELEGACION: this.form.controls['delegation'].value,
       PN_SUBDELEGACION: this.form.controls['subdelegation'].value,
       PC_MONEDA: this.form.controls['currency'].value,
-      PC_BANCO: this.form.controls['bank'].value,
+      // PC_BANCO: this.form.controls['bank'].value,
       PN_EXP_INI: this.form.controls['fileFrom'].value,
       PN_EXP_FIN: this.form.controls['fileTo'].value,
       PC_FEC_INI: this.fromF,
@@ -152,7 +152,7 @@ export class EffectiveNumeraryReconciliationComponent
     // params.page = _params.page;
     // params.limit = _params.limit;
     // if (val) params.addFilter3('filter.desc_moneda', _params.text);
-
+    _params.sortBy = `cve_moneda:ASC`;
     this.tableServ.getReg4WidthFilters(_params.getParams()).subscribe({
       next: data => {
         data.data.map(data => {

@@ -15,6 +15,10 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
+import { IUser } from 'src/app/core/models/administrative-processes/siab-sami-interaction/user.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
@@ -23,6 +27,7 @@ import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/scre
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { AnalysisResultModule } from 'src/app/pages/request/economic-compensation/analysis-result/analysis-result.module';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ScanningFoilComponent } from '../scanning-foil/scanning-foil.component';
 import { TABLE_SETTINGS2 } from './newSettings';
 interface IDs {
@@ -64,9 +69,9 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   //Reactive Forms
   form: FormGroup;
   disabledImport: boolean = true;
-  get justification() {
-    return this.form.get('justification');
-  }
+  // get justification() {
+  //   return this.form.get('justification');
+  // }
 
   numberFolioUniversal: any = '';
   @Output() emitirFolio = new EventEmitter<string>();
@@ -84,6 +89,8 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   dataA: any = 0;
   dataD: any = 0;
   paginadoNG: boolean = false;
+  justifications = new DefaultSelect<IUser>();
+  disabledYA: boolean = true;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -92,7 +99,9 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     private readonly historyGoodService: HistoryGoodService,
     private readonly screenStatusService: ScreenStatusService,
     private readonly documnetServices: DocumentsService,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    private readonly dynamicTablesService: DynamicTablesService,
+    private token: AuthService
   ) {
     super();
     this.settings = {
@@ -118,9 +127,9 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       },
       rowClassFunction: (row: any) => {
         if (row.data.approved == true) {
-          return 'text-approved';
+          return 'bg-success text-white';
         } else {
-          return 'text-no-approved';
+          return 'bg-no-approved';
         }
       },
     };
@@ -170,9 +179,27 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.cargarDataStorage();
   }
   test: any;
+  justi: any = '';
   async cargarDataStorage() {
+    const justification = localStorage.getItem('justification');
+    if (justification) {
+      this.justi = justification;
+      this.form.get('justification').setValue(this.justi);
+      setTimeout(() => {
+        this.valueJustification1();
+        this.removeItem('justification');
+      }, 2000);
+    }
+    const folioEscaneoNg = localStorage.getItem('folioEscaneoNg');
+    if (folioEscaneoNg) {
+      this.document = folioEscaneoNg;
+      setTimeout(() => {
+        this.cambiarValor4(folioEscaneoNg);
+        this.removeItem('folioEscaneoNg');
+      }, 2000);
+    }
+
     const base64Data = localStorage.getItem('archivoBase64');
-    console.log('console.log(base64Data)', base64Data);
     if (base64Data != null) {
       // Decodifica el archivo Base64 a un array de bytes
       const byteCharacters = atob(base64Data);
@@ -259,13 +286,15 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       // console.log("this.document1", this.document)
       // this.cambiarValor()
       // console.log('SU');
-      this.form.get('justification').setValue('');
+      // this.form.get('justification').setValue('');
+      delete params['page'];
+      delete params['limit'];
       this.massiveGoodService.getFProRecPag2CSV(params, binaryExcel).subscribe(
         (response: any) => {
           console.log('filter', filter);
-          this.document = null;
+          //this.document = null;
           // if (filter != 'no') {
-          this.cambiarValor();
+          // this.cambiarValor();
           // }
 
           this.totalItems = response.countA + response.countD;
@@ -296,7 +325,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
             this.cambiarValor3(this.good);
             this.data.refresh();
-            this.getDocument(this.goods);
+            // this.getDocument(this.goods);
             this.dataA = response.countA;
             this.dataD = response.countD;
 
@@ -375,38 +404,88 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.alert('warning', 'No hay Ningún Bien Válido Cargado', '');
         return;
       } else {
-        await this.change();
+        // BEGIN
+        //  SELECT 1
+        //    INTO EXISTE
+        //     FROM DOCUMENTOS
+        //       WHERE NO_BIEN = : BIENES.NO_BIEN
+        //       AND ESTATUS_ESCANEO = 'ESCANEADO'
+        //       AND FOLIO_UNIVERSAL =: FOLIO_UNIVERSAL;
         // this.validStatusXScreen(this.good);
+        let valid = 0;
+        let result = this.goods.map(async good => {
+          if (good.approved) {
+            const getDocumentByGood: any = await this.getDocumentByGood(good);
+            valid = valid + getDocumentByGood;
+          }
+        });
+
+        Promise.all(result).then(async (item: any) => {
+          console.log('val', valid);
+          if (valid == 0) {
+            await this.change();
+          } else {
+            this.alert(
+              'warning',
+              'Uno o Algunos de los Bienes no Tiene Documentos Escaneados',
+              ''
+            );
+            return;
+          }
+        });
       }
     }
   }
-
+  async getDocumentByGood(good: any) {
+    return new Promise((resolve, reject) => {
+      if (good.approved == true) {
+        const params = new FilterParams();
+        params.addFilter('goodNumber', good.id, SearchFilter.EQ);
+        params.addFilter('scanStatus', 'ESCANEADO', SearchFilter.EQ);
+        this.documnetServices.getAllFilter(params.getParams()).subscribe({
+          next: response => {
+            resolve(0);
+          },
+          error: err => {
+            resolve(1);
+          },
+        });
+      }
+    });
+  }
   async change() {
-    this.loading = true;
+    // this.loading = true;
     let result = this.goods.map(async good => {
       console.log('good', good);
       if (good.approved) {
         // good.status = ;
         let obj: any = {
           id: good.id,
-          goodId: good.id,
+          goodId: good.goodid,
           status: good.status == 'PRP' ? 'ADM' : 'PRP',
           // causeNumberChange: this.form.value.justification,
         };
-        const updateGoodsS = await this.updateGoodsS(obj);
+        const bb = await this.updateGoodsS(obj);
+        // INSERT INTO HISTORICO_ESTATUS_BIEN
+        const aa = await this.insertHistoricGood(good);
       }
     });
     Promise.all(result).then(resp => {
       this.alert(
         'success',
-        'Bienes Válidos Actualizados',
+        'Se ha Actualizado el Estatus de los Bienes',
+        // 'Bienes Válidos Actualizados',
         ''
-        // 'Se ha Actualizado el Estatus de los Bienes'
       );
       this.readExcel(this.test, 'no');
+      // this.readExcel(this.test, 'no');
       // this.addStatus();
       this.showStatus = true;
     });
+
+    // Promise.all(result).then(async (resp: any) => {
+
+    // });
   }
 
   async updateGoodsS(obj: any) {
@@ -420,6 +499,33 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           // this.loading = false;
           resolve(false);
           // this.idsNotExist.push({ id: good.id, reason: err.error.message });
+        },
+      });
+    });
+  }
+
+  //                (: BIENES.NO_BIEN, lv_ESTATUS, SYSDATE,: blk_toolbar.toolbar_usuario, 'FPROCRECPAG',: BLK_CONTROL.MOTIVO_CAMBIO,: BIENES.PROCESO_EXT_DOM);
+  // --LIP_MENSAJE('El estatus del bien ' || (: BIENES.NO_BIEN) || ' se cambio con éxito.', 'A');
+  async insertHistoricGood(obj: any) {
+    const historyGood: IHistoryGood = {
+      propertyNum: obj.id,
+      status: obj.status,
+      changeDate: new Date(),
+      userChange: this.token.decodeToken().preferred_username,
+      statusChangeProgram: 'FPROCRECPAG',
+      reasonForChange: this.form.get('justification').value,
+      registryNum: null,
+      extDomProcess: obj.extdomprocess,
+    };
+
+    return new Promise((resolve, reject) => {
+      this.historyGoodService.create(historyGood).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+          // this.loading = false;
         },
       });
     });
@@ -541,6 +647,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.dataA = 0;
     this.dataD = 0;
     this.loading = false;
+    this.disabledYA = true;
     this.cambiarValor();
   }
 
@@ -615,7 +722,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       next: response => {
         this.change2();
         this.cambiarValor();
-        this.document = null;
+        //this.document = null;
         this.alert(
           'success',
           'Proceso Terminado Correctamente',
@@ -626,7 +733,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         if (err.error.message == 'Este registro no existe!') {
           this.change2();
           this.cambiarValor();
-          this.document = null;
+          //this.document = null;
           this.valDocument = false;
           this.alert('success', 'Se ha Eliminado Correctamente el Folio', '');
         } else {
@@ -730,5 +837,23 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
   cambiarValor3(good: any) {
     this.hijoRef.actualizarVariable2(good);
+  }
+
+  valueJustification(event: any) {
+    console.log(event);
+    this.justi = event.value;
+    if (this.justi) {
+      this.hijoRef.actualizarVariable3(this.justi);
+    } else {
+      this.hijoRef.actualizarVariable3('');
+    }
+  }
+
+  valueJustification1() {
+    this.hijoRef.actualizarVariable3(this.justi);
+  }
+  cambiarValor4(folioEscaneoNg: any) {
+    console.log('folioEscaneoNg', folioEscaneoNg);
+    this.hijoRef.actualizarVariable4(folioEscaneoNg);
   }
 }
