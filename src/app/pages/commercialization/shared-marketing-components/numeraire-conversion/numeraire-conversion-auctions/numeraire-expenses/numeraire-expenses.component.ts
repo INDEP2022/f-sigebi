@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
 
 @Component({
@@ -10,7 +11,7 @@ export class NumeraireExpensesComponent
   extends BasePageTableNotServerPagination
   implements OnInit
 {
-  constructor() {
+  constructor(private dataService: SpentService) {
     super();
   }
 }
