@@ -51,6 +51,7 @@ export class ActsRegularizationNonExistenceComponent
   bienSelecionado: any = {};
   bienSelecionado2: any = {};
   actaSelected: string = '';
+  actaActual: any[] = [];
 
   listaActas: any[] = [];
   statusActa: String = '';
@@ -112,6 +113,7 @@ export class ActsRegularizationNonExistenceComponent
         );
 
         this.listaActas = data.data;
+        this.getGoods(event, data.data[0].id);
       },
       error: err => {
         console.log(err);
@@ -131,8 +133,6 @@ export class ActsRegularizationNonExistenceComponent
       },
       error: err => console.log(err),
     });
-
-    this.getGoods(event);
   }
 
   onCambioActa(event: any) {
@@ -192,7 +192,11 @@ export class ActsRegularizationNonExistenceComponent
       elabDate: [null, [Validators.required]],
       authorization: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(70),
+        ],
       ],
       sessionNumb: [null, [Validators.required, Validators.maxLength(200)]],
       caseNumb: [null, [Validators.required, Validators.maxLength(100)]],
@@ -206,7 +210,11 @@ export class ActsRegularizationNonExistenceComponent
       ],
       responsible: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(70),
+        ],
       ],
       witness1: [
         null,
@@ -291,23 +299,26 @@ export class ActsRegularizationNonExistenceComponent
     });
   }
 
-  getGoods(id: number) {
+  getGoods(id: number, actaRecibida?: any) {
     this.loading = true;
 
     const params1 = {
       ...this.params1.getValue(),
     };
 
+    console.log(actaRecibida);
+
     this.goodsService.getByExpedient_(id, params1).subscribe({
       next: async data => {
         let dataTabla1Creada: any[] = [];
+
         for (let ficha of data.data) {
           let fichaObjeto: any = {};
 
           fichaObjeto.id = ficha.id;
-          fichaObjeto.description = ficha.description;
+          fichaObjeto.description = ficha.description.toLowerCase();
           fichaObjeto.quantity = ficha.quantity;
-          fichaObjeto.act = this.listaActas[0];
+          fichaObjeto.act = actaRecibida;
           fichaObjeto.disponible = await this.getDisponible(ficha.id);
           dataTabla1Creada.push(fichaObjeto);
         }
@@ -331,6 +342,7 @@ export class ActsRegularizationNonExistenceComponent
       description: event.data.description,
       quantity: event.data.quantity,
       act: event.data.act,
+      disponible: event.data.disponible,
     };
 
     this.formTable1.controls['detail'].setValue(event.data.description);
@@ -340,6 +352,15 @@ export class ActsRegularizationNonExistenceComponent
     const filtra = this.dataTabla2.filter(
       item => item.id === this.bienSelecionado.id
     );
+
+    if (this.bienSelecionado.disponible === 'N') {
+      this.alert(
+        'error',
+        'ATENCIÓN',
+        'El bien tiene un estatus invalido para ser asignado a alguna acta.'
+      );
+      return;
+    }
     if (filtra.length < 1 && this.bienSelecionado.id) {
       this.dataTabla2 = [...this.dataTabla2, this.bienSelecionado];
       this.data2.load(this.dataTabla2);
