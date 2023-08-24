@@ -253,7 +253,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
           progress: 99,
           showText: true,
         });
-        this.downloadDocument('Atributos_nulos', 'excel', response.base64File);
+        this.downloadDocument('Atributos_Nulos', 'excel', response.base64File);
         this.modalRef.hide();
       },
       error: error => {
@@ -303,6 +303,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
     for (var i = 0; i < binaryString.length; i++) {
       bytes[i] = binaryString.charCodeAt(i);
     }
+
     return bytes.buffer;
   }
 }
