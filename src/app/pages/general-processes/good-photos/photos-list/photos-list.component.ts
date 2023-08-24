@@ -335,7 +335,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Eliminación de Fotos',
-          'Se Eliminaron las Fotos Correctamente'
+          'Las fotos seleccionadas se han eliminado'
         );
       }
     }

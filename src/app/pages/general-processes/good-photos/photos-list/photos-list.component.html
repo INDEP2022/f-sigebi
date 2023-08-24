@@ -76,7 +76,9 @@
               >Exportar Seleccionadas</a
             >
           </li>
-          <li role="menuitem">
+          <li
+            role="menuitem"
+            [class]="disabledDeleteAllPhotos() ? 'disabledDelete' : ''">
             <a class="dropdown-item" (click)="download(true)"
               >Exportar Fotos (Todas)</a
             >
