@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -44,13 +44,15 @@ export class SearchTabComponent extends BasePage implements OnInit {
   reloadGood: IGood;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   isDisabled: boolean = false;
+  queryParams: boolean = false;
   constructor(
     private fb: FormBuilder,
     private readonly goodService: GoodService,
     private readonly notifyService: NotificationService,
     private modalService: BsModalService,
     private router: Router,
-    private service: GoodFinderService
+    private service: GoodFinderService,
+    private route: ActivatedRoute
   ) {
     super();
     this.settings.actions = false;
@@ -61,16 +63,27 @@ export class SearchTabComponent extends BasePage implements OnInit {
   async ngOnInit() {
     this.prepareForm();
     const form = localStorage.getItem('formSearch');
+    this.route.queryParams.subscribe(async params => {
+      if (params['goodNumber']) {
+        this.searchTabForm.get('noBien').setValue(params['goodNumber']);
+        this.goodSelect = await this.getGood();
+        this.reloadGood = this.goodSelect;
+        //console.error(this.goodSelect);
+        this.queryParams = true;
+        this.search();
+      }
+    });
     if (form) {
       const newForm = JSON.parse(form);
       this.searchTabForm.get('noBien').setValue(newForm.noBien);
       localStorage.removeItem('formSearch');
+      this.queryParams = false;
       this.goodSelect = await this.getGood();
       this.reloadGood = this.goodSelect;
       //console.error(this.goodSelect);
       this.search();
     }
-    this.getGoodsSheard({ limit: 10, page: 1 });
+    this.getGoodsSheard(new ListParams());
     this.searchTabForm.get('noBien').valueChanges.subscribe({
       next: val => {
         this.searchTabForm.get('estatus').setValue('');
@@ -163,6 +176,8 @@ export class SearchTabComponent extends BasePage implements OnInit {
       this.classifGood = ssssubType.numClasifGoods;
       this.getGoodsSheard({ limit: 10, page: 1 });
       // this.searchTabForm.controls['noBien'].enable();
+      this.goods = new DefaultSelect([], 0, true);
+      this.params = new BehaviorSubject<FilterParams>(new FilterParams());
       console.log(this.classifGood);
     } else {
       this.classifGood = null;
@@ -199,8 +214,14 @@ export class SearchTabComponent extends BasePage implements OnInit {
       data: this.searchTabForm.get('noBien').value,
       exist: true,
     });
-    const respNotification = await this.searchNotifications();
+
     const respStatus = await this.searchStatus();
+    if (respStatus == false) {
+      this.alert('warning', 'El Bien no cuenta con un estatus valido', '');
+      return;
+    } else {
+      const respNotification = await this.searchNotifications();
+    }
     if (this.goodSelect) {
       this.searchTabForm.get('situacion').patchValue(this.goodSelect.situation);
       this.searchTabForm.get('destino').patchValue(this.goodSelect.destiny);
@@ -330,9 +351,10 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
   getGoodsSheard(params: ListParams) {
     //Provisional data
+    console.log(params);
     // this.searchTabForm.controls['noBien'].disable();
+
     this.loader.load = true;
-    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     let data = this.params.value;
     data.page = params.page;
     data.limit = params.limit;
@@ -340,24 +362,29 @@ export class SearchTabComponent extends BasePage implements OnInit {
     if (this.classifGood) {
       data.addFilter('goodClassNumber', this.classifGood);
     }
-    if (params.text != undefined && params.text != '') {
-      data.addFilter('description', params.text, SearchFilter.ILIKE);
+    if (!isNaN(parseFloat(params.text)) && isFinite(+params.text)) {
+      if (params.text != undefined && params.text != '') {
+        data.addFilter('id', params.text, SearchFilter.EQ);
+      }
+    } else {
+      if (params.text != undefined && params.text != '') {
+        data.addFilter('description', params.text, SearchFilter.ILIKE);
+      }
     }
-
     this.service.getAll2(data.getParams()).subscribe({
       next: data => {
-        this.dataGoods = data.data.map(clasi => {
-          return {
-            ...clasi,
-            info: `${clasi.id} - ${clasi.description ?? ''}`,
-          };
-        });
-        this.goods = new DefaultSelect(this.dataGoods, data.count);
+        // this.dataGoods = data.data.map(clasi => {
+        //   return {
+        //     ...clasi,
+        //     info: `${clasi.id} - ${clasi.description ?? ''}`,
+        //   };
+        // });
+        this.goods = new DefaultSelect(data.data, data.count);
         this.loader.load = false;
         // this.searchTabForm.controls['noBien'].enable();
       },
       error: err => {
-        this.goods = new DefaultSelect([], 0);
+        this.goods = new DefaultSelect([], 0, true);
         let error = '';
         this.loader.load = false;
         // if (err.status === 0) {
@@ -374,5 +401,8 @@ export class SearchTabComponent extends BasePage implements OnInit {
         this.searchTabForm.updateValueAndValidity();
       },
     });
+  }
+  goToRastreador() {
+    this.router.navigate(['/pages/general-processes/goods-tracker']);
   }
 }

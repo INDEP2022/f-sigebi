@@ -39,6 +39,7 @@ export class MunicipalityControlMainComponent
   data: IConfigvtadmun[] = [];
   columnFilters: any = [];
   assignedGoodColumns: any[] = [];
+  idGood: any;
   applicantSettings = {
     ...TABLE_SETTINGS,
     actions: {
@@ -84,8 +85,6 @@ export class MunicipalityControlMainComponent
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe((params2: any) => {
-        console.log(params2);
-        console.log(this.paramsScreen);
         for (const key in this.paramsScreen) {
           if (Object.prototype.hasOwnProperty.call(params2, key)) {
             this.paramsScreen[key as keyof typeof this.paramsScreen] =
@@ -96,12 +95,6 @@ export class MunicipalityControlMainComponent
     if (this.paramsScreen) {
       if (this.paramsScreen.PAR_MASIVO) {
         this.getData();
-      } else {
-        console.log('SIN PARAMETROS');
-        console.log(this.origin);
-        if (!this.origin) {
-          console.log(this.origin);
-        }
       }
     }
     this.dataFactGen
@@ -111,7 +104,7 @@ export class MunicipalityControlMainComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log('loooool');
+            // console.log('loooool');
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -184,13 +177,23 @@ export class MunicipalityControlMainComponent
     });
   }
   onClick(data: any) {
-    console.log(data);
+    // console.log(data);
   }
-  getDataGoods(id: any) {
-    this.msDirectawardService.getGoodsByApplicant(id).subscribe(data => {
-      this.assignedGoodColumns = data.data;
-      this.assignedGoodTotalItems = this.assignedGoodColumns.length;
-      console.log(this.assignedGoodColumns);
+  getDataGoods(id?: any) {
+    this.idGood = id;
+    this.msDirectawardService.getGoodsByApplicant(id).subscribe({
+      next: data => {
+        this.assignedGoodColumns = data.data;
+        this.assignedGoodTotalItems = this.assignedGoodColumns.length;
+        console.log(this.assignedGoodColumns);
+      },
+      error: err => {
+        this.onLoadToast(
+          'warning',
+          'Advertencia',
+          'No se han Encontrado Bienes para el Solicitante Seleccionado'
+        );
+      },
     });
   }
 
@@ -199,10 +202,10 @@ export class MunicipalityControlMainComponent
     this.assignedGoodTotalItems = this.assignedGoodColumns.length;
   }
   askDelete(row: any, type: string) {
-    console.log(row, type);
+    //console.log(row, type);
     this.alertQuestion(
       'question',
-      '¿Desea Eliminar Este Registro?',
+      '¿Desea Eliminar este Registro?',
       '',
       'Eliminar'
     ).then(question => {
@@ -234,46 +237,44 @@ export class MunicipalityControlMainComponent
       error: err => {
         this.onLoadToast(
           'warning',
-          'advertencia',
-          'El Solicitante No Se Ha Eliminado Correctamente'
+          'Advertencia',
+          'El Solicitante no se ha Eliminado Correctamente'
         );
       },
     });
   }
 
   deleteAssignedGood(row: any) {
-    console.log(row);
-    this.municipalityControlMainService
-      .deleteBienesAsignados(row.repvendcId)
-      .subscribe({
-        next: data => {
-          this.onLoadToast('success', 'Bien', 'Eliminado Correctamente');
-          // location.reload();
-          this.getData();
-        },
-        error: err => {
-          this.onLoadToast(
-            'warning',
-            'advertencia',
-            'El Bien No Se Ha Eliminado Correctamente'
-          );
-        },
-      });
+    // console.log(row);
+    this.msDirectawardService.deleteGoodsById(row.detbienesadjId).subscribe({
+      next: data => {
+        this.onLoadToast('success', 'Bien', 'Eliminado Correctamente');
+        // location.reload();
+        this.getData();
+      },
+      error: err => {
+        this.onLoadToast(
+          'warning',
+          'Advertencia',
+          'El bien no se ha Eliminado Correctamente'
+        );
+      },
+    });
   }
 
   openFormApplicant(applicant?: any) {
-    console.log(applicant);
+    //console.log(applicant);
     this.openModalApplicant({ applicant });
   }
 
   openModalApplicant(context?: Partial<ApplicantsModalComponent>) {
-    console.log(context);
+    //console.log(context);
     const modalRef = this.modalService.show(ApplicantsModalComponent, {
       initialState: { ...context },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.onConfirm.subscribe(data => {
+    modalRef.content.refresh.subscribe(data => {
       if (data) this.getData();
     });
   }
@@ -284,12 +285,12 @@ export class MunicipalityControlMainComponent
 
   openModalAssignedGood(context?: Partial<AssignedGoodsModalComponent>) {
     const modalRef = this.modalService.show(AssignedGoodsModalComponent, {
-      initialState: { ...context },
+      initialState: { ...context, ...this.assignedGoodColumns },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.onConfirm.subscribe(data => {
-      if (data) this.refreshGoods();
+    modalRef.content.refresh.subscribe(data => {
+      if (data) this.getDataGoods(this.idGood);
     });
   }
 }

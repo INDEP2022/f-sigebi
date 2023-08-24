@@ -401,7 +401,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //Seleccionar eventos
   selectEvent() {
-    this.cleanAllTables()
+    this.cleanAllTables();
     this.loadingCustomer = true;
     this.loadingLotEvent = true;
     this.loadingDesertLots = true;
@@ -524,7 +524,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.comerEventosService.pufGraceDate(modelWarranty).subscribe(
       res => {
         console.log(res);
-        this.dateMaxWarranty.setValue(new Date(this.correctDate(res.fecha_habil)));
+        this.dateMaxWarranty.setValue(
+          new Date(this.correctDate(res.fecha_habil))
+        );
       },
       err => {
         console.log(err);
@@ -534,13 +536,14 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.comerEventosService.pufGraceDate(modelPayment).subscribe(
       res => {
         console.log(res);
-        this.dateMaxPayment.setValue(new Date(this.correctDate(res.fecha_habil))); //TODO: Hay que corregir según un endpoint
+        this.dateMaxPayment.setValue(
+          new Date(this.correctDate(res.fecha_habil))
+        ); //TODO: Hay que corregir según un endpoint
       },
       err => {
         console.log(err);
       }
     );
-
 
     //TODO: Falta endpoint de insert
   }
@@ -792,8 +795,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       res => {
         console.log(res);
         this.formCustomerBanks
-        .get('validAmount')
-        .setValue(res.data[0].suma_total);
+          .get('validAmount')
+          .setValue(res.data[0].suma_total);
         this.loadingValidAmount = false;
       },
       err => {
@@ -822,7 +825,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR LOTE
   getLotsBanks(idLote: string) {
-    this.loadingLotBanks = true
+    this.loadingLotBanks = true;
     const paramsF = new FilterParams();
     paramsF.addFilter('SystemValid', 'R,D,B', SearchFilter.NOTIN);
     paramsF.addFilter('BatchID', idLote);
@@ -844,7 +847,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //DATOS DE COMPOSICIÓN DE PAGOS RECIBIDOS POR LOTE
   getPaymentLots(lotId: string) {
-    this.loadingPaymentLots = true
+    this.loadingPaymentLots = true;
     const paramsF = new FilterParams();
     paramsF.addFilter('lotId', lotId);
     this.spentService.getAllComerPagosRef(paramsF.getParams()).subscribe(
@@ -1071,7 +1074,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //Abrir modal de Pagos
   async unbundlePayments() {
-    if(this.dataBatch != null){
+    if (this.dataBatch != null) {
       const dataModel = await this.unbundlePaymentsFn();
       let modalConfig = MODAL_CONFIG;
       modalConfig = {
@@ -1084,12 +1087,15 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         class: 'modal-lg modal-dialog-centered',
         ignoreBackdropClick: true,
       };
-  
+
       this.modalService.show(ComerPaymentVirtComponent, modalConfig);
-    }else{
-      this.alert('warning','Debe Seleccionar un Pago Recibido en el Banco por Cliente','')
+    } else {
+      this.alert(
+        'warning',
+        'Debe Seleccionar un Pago Recibido en el Banco por Cliente',
+        ''
+      );
     }
-    
   }
 
   //Enviar a SIRSAE

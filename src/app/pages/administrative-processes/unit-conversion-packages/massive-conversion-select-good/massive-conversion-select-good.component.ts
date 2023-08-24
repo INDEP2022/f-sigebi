@@ -248,7 +248,7 @@ export class MassiveConversionSelectGoodComponent
 
   private asignarDescripcionLabelExcel(data: any): any {
     let item = {
-      'NUMERO BIEN': data.goodNumber,
+      'No. BIEN': data.goodNumber,
       DESCRIPCIÓN: data.description,
       CANTIDAD: data.amount,
       'UNIDAD MEDIDA': data.unitExtent,
@@ -485,6 +485,7 @@ export class MassiveConversionSelectGoodComponent
               map(x => x.data.length > 0)
             )
         );
+        console.log(encontro);
         if (encontro) {
           V_BANR = false;
         }
@@ -870,11 +871,11 @@ export class MassiveConversionSelectGoodComponent
     }
 
     if (whereNoGoods.length > 0) {
-      generalParams.addFilter(
+      /*  generalParams.addFilter(
         'goodNumber',
         whereNoGoods.toString(),
         SearchFilter.NOTIN
-      );
+      ); */
     }
 
     this.trackerGoodService

@@ -21,9 +21,9 @@
           (click)="newData()">
           Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
-        <button class="btn btn-danger btn-sm active" (click)="cleanData()">
+        <!-- <button class="btn btn-danger btn-sm active" (click)="cleanData()">
           Limpiar <i class="fas fa-eraser"> </i>
-        </button>
+        </button> -->
       </div>
     </div>
     <form class="form-material mt-5" [formGroup]="form">
@@ -141,7 +141,12 @@
         </div>
         <div class="col-md-4 mt-3">
           <form-field [control]="form.get('hourAttention')" label="Hora">
-            <!-- <input type="text" class="form-control" bsDatepicker formControlName="hourAttention" [bsConfig]="{
+            <input
+              type="text"
+              class="form-control"
+              bsDatepicker
+              formControlName="hourAttention"
+              [bsConfig]="{
                 withTimepicker: true,
                 dateInputFormat: 'DD/MM/YYYY h:mm a',
                 keepDatepickerOpened: true

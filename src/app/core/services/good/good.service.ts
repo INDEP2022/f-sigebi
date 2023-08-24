@@ -30,8 +30,11 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
     return this.goodRepository.getAllPaginated('good/good', params);
   }
 
-  getByFilter(params?: HttpParams): Observable<IListResponse<IGood>> {
-    return this.get('good', params);
+  getByFilter(
+    params?: HttpParams,
+    id?: string
+  ): Observable<IListResponse<IGood>> {
+    return this.get(`good?${id}`, params);
   }
 
   getById(id: string | number): Observable<any> {
@@ -95,7 +98,7 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
     return this.goodRepository.update7(route, model);
   }
 
-  getStatusAll(params: ListParams) {
+  getStatusAll(params: ListParams | string) {
     return this.goodRepository.getAllPaginated('good/status-good', params);
   }
   getStatusByGood(idGood: string | number): Observable<any> {
@@ -118,6 +121,12 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
 
   update(id: string | number, model: IGood): Observable<Object> {
     return this.goodRepository.update('good/good', id, model);
+  }
+  updateStatus(id: string | number, status: string): Observable<Object> {
+    return this.goodRepository.update22(
+      `good/good/updateGoodStatus/${id}/${status}`,
+      status
+    );
   }
 
   updateByBody(formData: Object) {

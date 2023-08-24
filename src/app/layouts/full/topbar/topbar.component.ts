@@ -8,7 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { finalize, Subject, takeUntil, tap } from 'rxjs';
 import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SweetalertModel } from 'src/app/core/shared';
@@ -17,6 +17,7 @@ import {
   HELP_SCREEN,
 } from 'src/app/utils/constants/main-routes';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
+import { FullService } from '../full.service';
 
 @Component({
   selector: 'app-topbar',
@@ -30,7 +31,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
   @Output() settingsButtonClicked = new EventEmitter();
   @Output() mobileMenuButtonClicked = new EventEmitter();
   $unSubscribe = new Subject<void>();
-
+  loading = false;
+  loadingText = 'Generando archivo, por favor espere';
+  loadingProgress = 0;
+  showLoadingText = true;
   get currentScreen() {
     return this.screenCodeService.$id.getValue();
   }
@@ -40,7 +44,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private screenCodeService: ScreenCodeService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private fullService: FullService
   ) {}
 
   openMobileMenu: boolean;
@@ -49,6 +54,30 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.openMobileMenu = false;
     this.element = document.documentElement;
     this.userName = this.authService.decodeToken().name;
+    this.subscribeToFileGeneration().subscribe();
+  }
+
+  subscribeToFileGeneration() {
+    return this.fullService.generatingFileFlag.pipe(
+      takeUntil(this.$unSubscribe),
+      tap(prog => {
+        console.warn('PROGRESO EN TOPBAR');
+
+        console.log({ prog });
+
+        this.loading = true;
+        const { progress, showText, text } = prog;
+        this.loadingProgress = progress;
+        this.showLoadingText = showText;
+        if (text) {
+          this.loadingText = text;
+        }
+        if (progress == 100) {
+          this.loading = false;
+        }
+      }),
+      finalize(() => (this.loading = false))
+    );
   }
 
   /**
@@ -117,6 +146,22 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.noScreenId();
       return;
     }
+    const helpScreens = [
+      'FINDICA_0042',
+      'FINDICA_0002',
+      'FINDICA_0006',
+      'FINDICA_0035_1',
+      'FINDICA_0001',
+      'FINDICA_0035_3',
+      'FINDICA_0035_2',
+      'FINDICA_0007',
+    ];
+    if (helpScreens.includes(this.currentScreen)) {
+      this.router.navigate(['/pages/general-processes/help-screen'], {
+        queryParams: { screen: this.currentScreen },
+      });
+      return;
+    }
     this.router.navigate([HELP_SCREEN], {
       queryParams: { screen: this.currentScreen },
     });
@@ -124,11 +169,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   binnacle() {
     if (!this.currentScreen) {
-      this.noScreenId();
+      this.router.navigate([BINNACLE_ROUTE]);
       return;
     }
     this.router.navigate([BINNACLE_ROUTE], {
-      queryParams: { screen: this.currentScreen },
+      queryParams: { origin: this.currentScreen },
     });
   }
 
@@ -138,17 +183,20 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   noScreenId() {
-    this.onLoadToast('error', 'Error', 'No existe un código de pantalla');
+    this.onLoadToast(
+      'warning',
+      'Advertencia',
+      'No existe un código de pantalla'
+    );
   }
 
   protected onLoadToast(icon: SweetAlertIcon, title: string, text: string) {
     let sweetalert = new SweetalertModel();
-    sweetalert.toast = true;
-    sweetalert.position = 'top-end';
-    sweetalert.timer = 6000;
     sweetalert.title = title;
     sweetalert.text = text;
     sweetalert.icon = icon;
+    sweetalert.showConfirmButton = true;
+    sweetalert.allowOutsideClick = false;
     Swal.fire(sweetalert);
   }
 }

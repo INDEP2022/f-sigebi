@@ -24,8 +24,12 @@ export class UsersService extends HttpService {
   }
 
   //http://sigebimsqa.indep.gob.mx/users/api/v1/seg-users
-  getAllSegUsers(_params: _Params) {
+  getAllSegUsers(_params?: _Params) {
     return this.get<IListResponse<any>>(UserEndpoints.SegUsers, _params);
+  }
+
+  getAllSegUsers2(_params: _Params) {
+    return this.get<IListResponse<any>>(UserEndpoints.GetAllSegUser, _params);
   }
 
   getAllDetailSegUsers(_params: _Params) {
@@ -187,6 +191,12 @@ export class UsersService extends HttpService {
   getOtValueFromUserName(name: string) {
     return this.get<IListResponse<any>>(
       UserEndpoints.SegUsers + '/getOtValueFromUser/' + name
+    );
+  }
+  postSpInsertWithcopyOfficia(body: any) {
+    return this.post<IListResponse<any>>(
+      UserEndpoints.SpInsertWithcopyOfficial,
+      body
     );
   }
 }

@@ -29,6 +29,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodsReview } from 'src/app/core/services/ms-good/goods-review.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -66,7 +67,7 @@ import { COLUMNS } from './columns';
 })
 export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
-
+  form2: FormGroup = new FormGroup({});
   data: LocalDataSource = new LocalDataSource();
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -90,6 +91,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   @ViewChild('file', { static: false }) myInput: ElementRef;
   loadingBtn: boolean = false;
   loadingBtn2: boolean = false;
+  loadingBtn3: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -106,7 +108,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private revisionReasonService: RevisionReasonService,
     private router: Router,
-    private titleService: Title
+    private titleService: Title,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -259,6 +262,18 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       }
     }
 
+    if (params['filter.goodNumber']) {
+      params['filter.goodNumber.id'] = params['filter.goodNumber'];
+      delete params['filter.goodNumber'];
+    }
+
+    params['sortBy'] = 'goodNumber:DESC';
+    if (params['filter.descriptionGood']) {
+      params['filter.goodNumber.description'] =
+        params['filter.descriptionGood'];
+      delete params['filter.descriptionGood'];
+    }
+
     this.goodsMotivesrev.getAll(params).subscribe({
       next: async (response: any) => {
         let result = response.data.map(async (item: any) => {
@@ -318,6 +333,10 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       option: [null, [Validators.required]],
       responsable: [null],
     });
+    this.form2 = this.fb.group({
+      bien: [null, [Validators.required]],
+      responsable: [null],
+    });
   }
 
   showInfo() {}
@@ -345,20 +364,89 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
-    fileReader.onload = () => this.readExcel(fileReader.result);
+    fileReader.onload = () => this.readExcel(files[0]);
+    // fileReader.onload = () => this.readExcel(fileReader.result);
   }
 
   // LEER EXCEL / CSV //
-  async readExcel(binaryExcel: string | ArrayBuffer) {
+  async readExcel(binaryExcel: string | ArrayBuffer | any) {
     try {
-      const excelImport = this.excelService.getData<any>(binaryExcel);
-      await this.attentionMassive(excelImport);
+      // await this.attentionMassive(binaryExcel);
+      this.alertQuestion(
+        'question',
+        '¿Está Seguro de dar por Atendidos los Bienes del Archivo?',
+        // 'Se Atenderán Todos los Bienes del Archivo',
+        // '¿Desea Continuar?'
+        ''
+      ).then(async question => {
+        if (question.isConfirmed) {
+          const formData = new FormData();
+          formData.append('file', binaryExcel);
+          formData.append('responsible', this.responsable);
+          formData.append('user', this.token.decodeToken().preferred_username);
+          formData.append('curform', 'FMATENCBIENESREV');
+          let obj = {
+            responsible: this.responsable,
+            user: this.token.decodeToken().preferred_username,
+            curform: 'FMATENCBIENESREV',
+          };
+          this.loadingBtn = true;
+          const attendedMassive: any = await this.attendedMassive(formData);
+
+          console.log('attendedMassive', attendedMassive);
+          if (attendedMassive == null)
+            return this.alert(
+              'warning',
+              'No se pudo cargar el archivo',
+              'Verifíquelo e intente nuevamente'
+            );
+
+          if (attendedMassive.length > 0) {
+            this.alertQuestion(
+              'question',
+              'Hay Bienes que no se pudieron atender',
+              '¿Quiere Visualizarlos?'
+            ).then(async question => {
+              if (question.isConfirmed) {
+                this.openForm(attendedMassive);
+              }
+            });
+            this.loadingBtn = false;
+            await this.getMotives();
+          } else {
+            this.alert(
+              'success',
+              'Todos los Bienes del Archivo Fueron Atendidos',
+              ''
+            );
+            this.loadingBtn = false;
+            await this.getMotives();
+          }
+          this.clearInput();
+        }
+      });
+      // const excelImport = this.excelService.getData<any>(binaryExcel);
+      // await this.attentionMassive(excelImport);
       // this.data1.load(excelImport);
       // this.showPagination = false;
       // this.totalItems = this.data1.count();
     } catch (error) {
       this.alert('error', 'Ocurrio un Error al leer el Archivo', '');
     }
+  }
+
+  async attendedMassive(formData: any) {
+    return new Promise((resolve, reject) => {
+      this.massiveGoodService.AttendedPorGoodReasonRev(formData).subscribe({
+        next: response => {
+          // //console.log('res', response);
+          resolve(response.data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
   }
 
   // FUNCIÓN DE BOTÓN DE ATENCIÓN MASIVA //
@@ -377,6 +465,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       '¿Está Seguro de dar por Atendidos los Bienes del Archivo?',
+      // 'Se Atenderán Todos los Bienes del Archivo',
+      // '¿Desea Continuar?'
       ''
     ).then(async question => {
       if (question.isConfirmed) {
@@ -402,7 +492,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
             if (good != null) {
               EXISTE = good.goodNumber.id;
-              vl_ID_EVENTO = good.eventId.id;
+              vl_ID_EVENTO = good.eventId ? good.eventId.id : null;
               ESTATUSB = good.status;
             } else {
               let obj = {
@@ -415,7 +505,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             if (EXISTE > 0) {
               let obj_: any = {
                 goodNumber: excelImport[i].NO_BIEN,
-                eventId: good.eventId.id,
+                eventId: good.eventId ? good.eventId.id : null,
                 goodType: good.goodType,
                 status: good.status,
                 manager: this.responsable,
@@ -782,6 +872,63 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     });
   }
 
+  exportarExcel() {
+    if (this.data.count() == 0) {
+      this.alert('warning', 'No hay Bienes en la Tabla', '');
+      return;
+    }
+    this.loadingBtn3 = true;
+    let params = {
+      ...this.paramsList.getValue(),
+      ...this.columnFilters,
+    };
+
+    if (this.selectedGender == 'all') {
+      params['filter.attended'] = `$eq:0`;
+      params['filter.manager'] = `$eq:${this.responsable}`;
+      params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+    } else if (this.selectedGender == 'immovables') {
+      params['filter.goodType'] = `$eq:I`;
+      params['filter.attended'] = `$eq:0`;
+      params['filter.manager'] = `$eq:${this.responsable}`;
+      params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+    } else if (this.selectedGender == 'movables') {
+      params['filter.goodType'] = `$eq:M`;
+      params['filter.manager'] = `$eq:${this.responsable}`;
+      params['filter.attended'] = `$eq:0`;
+      params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+    }
+    params['sortBy'] = 'goodNumber:DESC';
+    delete params['limit'];
+    delete params['page'];
+    this.massiveGoodService.GetAllGoodsMotivesRevExcel(params).subscribe({
+      next: async (response: any) => {
+        // Decodifica el archivo Base64 a un array de bytes
+        const base64 = response.base64File;
+        // const base64 = await this.decompressBase64ToString(response.data.base64File)
+        await this.downloadExcel(base64);
+
+        console.log('RESSS', response);
+      },
+      error: err => {
+        console.log('Errorr', err);
+        this.loadingBtn3 = false;
+      },
+    });
+  }
+
+  async downloadExcel(base64String: any) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = 'FMATENCBIENESREV.csv';
+    link.click();
+    link.remove();
+    this.alert('success', 'Archivo Descargado Correctamente', '');
+    this.loadingBtn3 = false;
+  }
+
   async returnJsonToCsv() {
     return this.data.getAll();
     this.data.getAll().then(resp => {
@@ -827,9 +974,19 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     ).then(async question => {
       if (question.isConfirmed) {
         this.loadingBtn2 = true;
+        if (!this.selectedRow.eventId) {
+          this.alert(
+            'warning',
+            'No se puede atender el bien porque no tiene evento asociado',
+            'Verifique'
+          );
+          return;
+        }
         let obj_: any = {
           goodNumber: this.selectedRow.goodNumber,
-          eventId: this.selectedRow.eventId.id,
+          eventId: this.selectedRow.eventId
+            ? this.selectedRow.eventId.id
+            : null,
           goodType: this.selectedRow.goodType,
           status: this.selectedRow.status,
           manager: this.responsable,
@@ -975,7 +1132,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       LV_RESPONSABLE: any = null;
     let LV_DESC1: any,
       LV_DESC: any = null;
-    let motivoTest = 'MotivoTEST';
+    let motivoTest = 'MotivoTEST11';
     let obj = {
       initialStatus: this.selectedRow.status,
       goodType: this.selectedRow.goodType,
@@ -1208,5 +1365,31 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   miFuncion() {
     this.getMotives();
     // //console.log('Función ejecutada desde el componente hijo');
+  }
+  async search() {
+    await this.getGoodResponable();
+  }
+  clear() {
+    this.form2.reset();
+  }
+
+  async getGoodResponable() {
+    const good = this.form2.get('bien').value;
+    if (!good) {
+      this.alert('warning', 'Debe Específicar el Bien a Consultar', '');
+    }
+    const params = new ListParams();
+    console.log('good', good);
+    params['filter.goodNumber.id'] = `$eq:${good}`;
+    params['filter.attended'] = `$eq:0`;
+    this.goodsMotivesrev.getAll(params).subscribe({
+      next: async (response: any) => {
+        console.log('RESP', response);
+        this.form2.get('responsable').setValue(response.data[0].manager);
+      },
+      error: err => {
+        this.alert('warning', 'No se Encontró el Bien Específicado', '');
+      },
+    });
   }
 }

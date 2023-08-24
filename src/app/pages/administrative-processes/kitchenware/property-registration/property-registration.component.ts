@@ -11,6 +11,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
   ListParams,
@@ -19,6 +20,7 @@ import {
 import { Repository } from 'src/app/common/repository/repository';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { KitchenwareModalGoodComponent } from '../kitchenware-modal-good/kitchenware-modal-good.component';
 import { PROPERTY_REGISTRATION_COLUMNS } from './property-registration-columns';
 
 @Component({
@@ -74,14 +76,16 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     private readonly menageServices: MenageService,
     private readonly goodFinderService: GoodFinderService,
     private repositoryService: Repository<IGood>,
-    private service: GoodFinderService
+    private service: GoodFinderService,
+    private modalService: BsModalService
   ) {
     super();
     this.settings.columns = PROPERTY_REGISTRATION_COLUMNS;
     this.settings.hideSubHeader = false;
-    this.settings.actions.add = false;
-    this.settings.actions.delete = true;
-    this.settings.actions.edit = false;
+    // this.settings.actions.add = false;
+    // this.settings.actions.delete = false;
+    // this.settings.actions.edit = false;
+    this.settings.actions = false;
   }
   ngOnInit(): void {
     this.buildForm();
@@ -99,9 +103,20 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' || filter.field == 'description'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                field = `filter.menajeDescription.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters = filters;
             } else {
@@ -130,10 +145,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       ],
       causePenal: [null],
       preliminaryInquiry: [null],
-      goodSelect: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      goodSelect: [null, [Validators.required]],
       goodsList: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.formGood = this.fb.group({
@@ -163,7 +175,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
         this.causePenal.setValue(this.expedient.criminalCase);
         this.preliminaryInquiry.setValue(this.expedient.preliminaryInquiry);
         this.goods = new DefaultSelect([], 0, true);
-        this.searchGoods(this.paramsSubject.getValue(), this.idExpedient);
+        // this.searchGoods(this.paramsSubject.getValue(), this.idExpedient);
       },
       error: err => {
         this.alert('warning', 'No Existe el Registro', '');
@@ -194,7 +206,27 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       this.cleandInfoGoods();
     }
   }
-
+  openSearchGoods() {
+    let expedient = this.idExpedient;
+    console.log(expedient);
+    let config: ModalOptions = {
+      initialState: {
+        expedient,
+        callback: (next: any) => {
+          if (next) {
+            console.log(next);
+            this.uploadTableMenaje(next.data);
+            this.goodSelect.setValue(
+              next.data.goodId + ' - ' + next.data.description
+            );
+          }
+        },
+      },
+      class: 'modal-xl modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(KitchenwareModalGoodComponent, config);
+  }
   //Busca el expediente
   searchGoods(paramsSubject?: ListParams, idExpedient?: number | string) {
     if (idExpedient) {
@@ -243,8 +275,11 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     if (this.columnFilters !== undefined) {
       for (let data of this.columnFilters) {
         if (data.search !== '') {
+          console.log(data);
           paramsF.addFilter(
-            data.field === 'id' ? 'menajeDescription.id' : data.field,
+            data.field === 'id'
+              ? 'menajeDescription.id'
+              : `menajeDescription.${data.field}`,
             data.search,
             data.field !== 'id' ? SearchFilter.ILIKE : SearchFilter.EQ
           );
@@ -254,12 +289,13 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     paramsF.addFilter('noGood', idGood);
     paramsF.page = this.params.value.page;
     paramsF.limit = this.params.value.limit;
-
+    console.log(paramsF);
     //Son los menajes que aparecen listados en la tabla
     this.menageServices.getMenaje(paramsF.getParams()).subscribe({
       next: response => {
         this.idGoodValue = idGood;
         if (response.count > 0) {
+          console.log(response);
           this.menajes.load(
             response.data.map((menaje: any) => {
               if (menaje.menajeDescription === null) {
@@ -272,8 +308,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
                 return {
                   noGoodMenaje: menaje.noGoodMenaje,
                   id: menaje.menajeDescription.id as number,
-                  description: menaje.menajeDescription
-                    .goodDescription as string,
+                  description: menaje.menajeDescription.description as string,
                 } as IGood;
               }
             })
@@ -283,7 +318,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
           this.totalItems = response.count;
           this.loading = false;
         } else {
-          this.alert('warning', 'Bien sin Menajes Asociados', ``);
+          this.alert('warning', 'Bien sin menajes asociados', ``);
           this.loading = false;
           this.menajes.load([]);
           this.menajes.refresh();
@@ -295,7 +330,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
         }
       },
       error: err => {
-        this.alert('warning', 'Bien sin Menajes Asociados', ``);
+        this.alert('warning', 'Bien sin menajes asociados', ``);
         this.menajes.load([]);
         this.menajes.refresh();
         this.loading = false;
@@ -418,7 +453,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.form.disable();
     this.numberFile.enable();
     this.formGood.disable();
-    this.goodSelect.enable();
+    this.goodSelect.disable();
     this.goods = new DefaultSelect([], 0);
     this.menajes.load([]);
     this.numberGoodSelect = null;

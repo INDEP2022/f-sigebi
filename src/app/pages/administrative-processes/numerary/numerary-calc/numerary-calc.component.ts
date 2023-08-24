@@ -411,7 +411,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     const response = await this.alertQuestion(
       'question',
       '¿Desea Continuar?',
-      '¿Se Continua con la Selección?'
+      ''
     );
     if (response.isConfirmed) {
       this.openModal();
@@ -423,8 +423,13 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     this.isLoadingStatusAccount = true;
     const params = {
       P_PROCNUM: this.idProcess.value,
-      P_FEC_PROCNUM: new Date(this.date.value),
+      P_FEC_PROCNUM: this.cambiarFormatoFecha(this.date.value),
     };
+    console.log({
+      params1: params,
+      date: this.date.value,
+      dateValid: new Date('20-08-2023'),
+    });
     this.downloadReport('blank', params, () => {
       this.isLoadingStatusAccount = false;
     });
@@ -434,12 +439,39 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   printDetailMovi() {
     this.isLoadingDetailMovi = true;
     const params = {
+      // this.idProcess.value
       P_PROCNUM: this.idProcess.value,
-      P_FEC_PROCNUM: new Date(this.date.value),
+      P_FEC_PROCNUM: this.cambiarFormatoFecha(this.date.value),
     };
-    this.downloadReport('blank', params, () => {
+    console.log('params111', params);
+    this.downloadReport('RCONBIENESPROC', params, () => {
       this.isLoadingDetailMovi = false;
     });
+  }
+
+  cambiarFormatoFecha(fechaOriginal: any) {
+    if (!fechaOriginal) return null;
+
+    let partesFecha = fechaOriginal.split('/');
+    let dia = partesFecha[0];
+    let mes = partesFecha[1];
+    let anio = partesFecha[2];
+
+    let fechaNueva = new Date(mes + '/' + dia + '/' + anio);
+
+    let nuevoAnio: any = fechaNueva.getFullYear();
+    let nuevoMes: any = fechaNueva.getMonth() + 1;
+    let nuevoDia: any = fechaNueva.getDate();
+
+    if (nuevoMes < 10) {
+      nuevoMes = '0' + nuevoMes;
+    }
+    if (nuevoDia < 10) {
+      nuevoDia = '0' + nuevoDia;
+    }
+
+    let fechaFormateada = nuevoAnio + '-' + nuevoMes + '-' + nuevoDia;
+    return fechaFormateada;
   }
 
   isLoadingProrraComission = false;
@@ -447,7 +479,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     if (this.currency.value === 'P') {
       const params = {
         P_PROCNUM: this.idProcess.value,
-        P_FEC_PROCNUM: new Date(this.date.value),
+        P_FEC_PROCNUM: this.cambiarFormatoFecha(this.date.value),
+        // P_FEC_PROCNUM: new Date(this.date.value),
       };
       this.downloadReport('blank', params, () => {
         this.isLoadingProrraComission = false;
@@ -463,6 +496,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
 
   downloadReport(reportName: string, params: any, cb: () => void = null) {
     //this.loadingText = 'Generando reporte ...';
+    console.log('params', params);
     this.siabService.fetchReport(reportName, params).subscribe({
       next: response => {
         this.loading = false;
@@ -621,8 +655,9 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       if (this.requestNumeDet.solnumId !== null) {
         const response = await this.alertQuestion(
           'question',
-          '¿Se ejecuta el cálculo?',
-          '¿Desea continuar?'
+          '¿Desea Ejecutar el Cálculo?',
+          '',
+          'Ejecutar'
         );
         if (response.isConfirmed) {
           const vResul = await this.pupElimCalculNume(this.idProcess.value);

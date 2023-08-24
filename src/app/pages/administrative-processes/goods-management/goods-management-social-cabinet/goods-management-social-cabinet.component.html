@@ -7,18 +7,34 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <!--Options-->
-        <div class="col-md-9 mb-3 mt-3">
-          <!-- <form-field
-            [control]="form.get('file')"
-            label="Cargar Bienes por Archivo TXT">
-            <input
-              class="form-control mb-3 mt-3"
-              type="file"
-              id="formFile"
-              accept=".txt"
-              formControlName="file"
-              (change)="onFileChange($event)" />
-          </form-field> -->
+        <div class="col-lg-3 col-md-12 mt-3">
+          <div style="display: flex; column-gap: 15px">
+            <form-field [control]="form.get('good')" label="No. de Bien">
+              <input
+                class="form-control"
+                formControlName="good"
+                type="string"
+                maxlength="13" />
+            </form-field>
+            <button
+              [disabled]="loading"
+              class="btn btn-primary btn-sm active"
+              type="button"
+              (click)="searchGood()">
+              Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-4 mt-3">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="goToRastreador()">
+            Cargar Rastreador
+            <i aria-hidden="true" class="fa fa-upload"></i>
+          </button>
+        </div>
+        <div class="col-lg-3 col-md-4 mt-3">
           <button
             class="btn btn-success btn-sm active"
             [disabled]="loading"
@@ -37,7 +53,7 @@
             accept=".csv"
             (change)="onFileChange($event)" />
         </div>
-        <div class="clearButton col-md-3 mb-5">
+        <div class="clearButton col-lg-3 col-md-4 mt-3">
           <button
             class="btn btn-danger btn-sm active"
             type="button"
@@ -63,7 +79,7 @@
           </div>
         </div> -->
       </div>
-      <div class="row">
+      <div class="row mt-5">
         <div class="col-md-4 titleTabs">
           <label for="" class="mb-1">Proceso Gabinete Social</label>
         </div>

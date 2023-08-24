@@ -38,7 +38,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.min(1),
-          Validators.max(parseInt(String(this.good.quantity))),
+          //Validators.max(parseInt(String(this.good.quantity))),
         ],
       ],
     });
@@ -56,6 +56,9 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
     this.loading = true;
     // Llamar servicio para agregar caratula
     this.loading = false;
+    //const ableQuantity = this.good.quantity
+    //const reservedQuantity = this.reserveForm.controls['reserve'].value;
+
     let availableAmount: number =
       parseInt(String(this.good.quantity)) -
       parseInt(this.reserveForm.controls['reserve'].value);

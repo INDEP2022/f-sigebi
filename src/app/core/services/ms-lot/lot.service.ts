@@ -67,6 +67,9 @@ export class LotService extends HttpService {
   lotApp(id: any, params: ListParams): Observable<IListResponse<any>> {
     return this.get('apps/query-winners-report/' + id, params);
   }
+  querysp(id: any, params: ListParams): Observable<IListResponse<any>> {
+    return this.get('apps/query-sp-consult-unpaid-lots/' + id, params);
+  }
 
   updateMandate(body: {
     pGood: number | string;
@@ -350,11 +353,11 @@ export class LotService extends HttpService {
   }
 
   //get-lot-comer-ref-guarentee
-  getLotComerRefGuarentee(params?: string){
-    return this.get('apps/get-lot-comer-ref-guarantee', params)
+  getLotComerRefGuarentee(params?: string) {
+    return this.get('apps/get-lot-comer-ref-guarantee', params);
   }
 
-  pupValidaMandatoNfac(body: IPupValidateMandatoNfac){
-    return this.post('apps/pup-valida-mandato-to-nfac', body)
+  pupValidaMandatoNfac(body: IPupValidateMandatoNfac) {
+    return this.post('apps/pup-valida-mandato-to-nfac', body);
   }
 }

@@ -123,6 +123,30 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
     const route = `${this.routeHistory}/acts-his-foluniv-ssf3`;
     return this.httpClient.post(`${environment.API_URL}/${route}`, formData);
   }
+
+  getProgrammingDelivery(_params: ListParams) {
+    const params = this.makeParams(_params);
+    const delivery = ProgrammingGoodEndpoints.GetDeliverys;
+    const path = `${environment.API_URL}/${this.route}/${delivery}?${params}`;
+
+    return this.httpClient.get(path);
+  }
+
+  getProgrammingDeliveryGood(_params: ListParams) {
+    const params = this.makeParams(_params);
+    const deliveryGood = ProgrammingGoodEndpoints.GetDeliveryGoods;
+    const path = `${environment.API_URL}/${this.route}/${deliveryGood}?${params}`;
+
+    return this.httpClient.get(path);
+  }
+
+  updateProgrammingDeliveryGood(id: number, body: Object) {
+    const deliveryGood = ProgrammingGoodEndpoints.GetDeliveryGoods;
+    const path = `${environment.API_URL}/${this.route}/${deliveryGood}/${id}`;
+
+    return this.httpClient.put(path, body);
+  }
+
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {

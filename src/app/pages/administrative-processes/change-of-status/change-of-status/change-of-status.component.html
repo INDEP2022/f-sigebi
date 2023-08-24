@@ -11,7 +11,7 @@
             <div class="col">
               <form-field
                 [control]="form.get('numberGood')"
-                label="Número de Bien">
+                label="No. de Bien">
                 <input
                   type="text"
                   class="form-control"
@@ -123,14 +123,14 @@
             <app-user-shared
               [form]="formNew"
               [userField]="'issuingUser'"
-              [label]="'Usuario Emisor'"></app-user-shared>
+              [label]="'Usuario Solicita'"></app-user-shared>
           </div>
         </div>
         <div class="row mt-5">
           <div class="col-md-12 col-sm-12 col-xs-12">
             <form-field
               [control]="formNew.get('description')"
-              label="Descripción">
+              label="Justificación">
               <textarea
                 type="text"
                 class="form-control"

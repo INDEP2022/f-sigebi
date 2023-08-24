@@ -7,6 +7,7 @@ import {
   IParameterConcept,
   IParameterConceptCreate,
   IParameterConceptUpdate,
+  IReadParameter,
 } from '../../models/ms-comer-concepts/parameter-concept';
 
 @Injectable({
@@ -48,6 +49,13 @@ export class ParametersConceptsService extends HttpService {
         };
       })
     );
+  }
+
+  readParameters(conceptId: number, address: string) {
+    return this.post<IReadParameter>(ComerConceptEndpoints.ReadParameters, {
+      conceptId,
+      address,
+    });
   }
 
   private getAddress(address: string) {

@@ -367,6 +367,7 @@ export class JuridicalRulingComponent
   goodSelect: any;
   formLoading: boolean;
   loadingDic: boolean = false;
+  origin: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -417,6 +418,12 @@ export class JuridicalRulingComponent
       notaryNumber: null,
       cveChargeRem: null,
     };
+  }
+
+  back() {
+    if (this.origin == 'FCONGENRASTREADOR') {
+      this.router.navigate(['pages/general-processes/goods-tracker']);
+    }
   }
 
   async saveDataForm() {
@@ -720,6 +727,7 @@ export class JuridicalRulingComponent
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe((params: any) => {
+        this.origin = params.origin ?? '';
         if (params?.NO_EXP) {
           this.legalForm.get('noExpediente').patchValue(params.NO_EXP);
           this.legalForm.get('tipoDictaminacion').setValue('DESTRUCCION');
@@ -2232,6 +2240,7 @@ export class JuridicalRulingComponent
           PAQUETE: V_PAQUETE,
           NO_EXP: noExpediente,
           origin: 'FACTJURDICTAMAS',
+          origin2: this.origin,
         },
       }
     );
@@ -2525,6 +2534,7 @@ export class JuridicalRulingComponent
             good: this.goodSelect.id,
             screen: 'FACTJURDICTAMAS',
             NO_EXP: this.legalForm.get('noExpediente').value,
+            origin2: this.origin,
           },
         });
       }
@@ -3018,6 +3028,7 @@ export class JuridicalRulingComponent
             TIPO: tipo_dict,
             PAQUETE: v_paquete,
             NO_EXP: noExpediente,
+            origin3: this.origin,
           },
         }
       );

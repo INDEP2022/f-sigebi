@@ -6,7 +6,7 @@
     <button
       class="btn btn-primary btn-sm active"
       type="button"
-      [disabled]="disabled || errorMessage !== null"
+      [disabled]="disabled"
       (click)="openFileUploader()">
       Subir Fotos
       <i class="fa fa-upload"></i>
@@ -33,9 +33,10 @@
           formControlName="typedblClickAction"
           [clearable]="false"
           [searchable]="false"
-          [readonly]="files.length < 1 || disabled || errorMessage !== null">
-          <ng-option [value]="1">Visualizar</ng-option>
-          <ng-option [value]="2">Editar</ng-option>
+          [readonly]="files.length < 1 || disabled">
+          <ng-option *ngFor="let option of options" [value]="option.value">
+            {{ option.label }}
+          </ng-option>
         </ng-select>
       </form-field>
     </form>
@@ -55,7 +56,7 @@
           id="button-basic"
           dropdownToggle
           class="btn btn-primary dropdown-toggle btn-sm active"
-          [class]="disabled || errorMessage !== null ? 'disabled' : ''"
+          [class]="disabled ? 'disabled' : ''"
           type="button"
           aria-controls="dropdown-basic">
           <div class="d-flex align-items-center">
@@ -68,6 +69,18 @@
           class="dropdown-menu dropdown-menu-right"
           role="menu"
           aria-labelledby="button-basic">
+          <li
+            role="menuitem"
+            [class]="filesToDelete.length === 0 ? 'disabledDelete' : ''">
+            <a class="dropdown-item" (click)="download()"
+              >Exportar Seleccionadas</a
+            >
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" (click)="download(true)"
+              >Exportar Fotos (Todas)</a
+            >
+          </li>
           <li role="menuitem">
             <a class="dropdown-item" (click)="openZipUploader()"
               >Carga Masiva (ZIP)</a
@@ -111,9 +124,10 @@
           <div class="row">
             <div class="col-md-12">
               <app-photo
+                #photo
                 (refreshFiles)="refresh($event)"
                 [typedblClickAction]="typedblClickAction"
-                [filename]="image"
+                [file]="image"
                 [goodNumber]="goodNumber + ''"></app-photo>
             </div>
           </div>
@@ -121,7 +135,10 @@
                     type="checkbox"
                     class="float-check checkbox-color checkbox-primary"
                     id="check2" /> -->
-          <form-check for="keep-{{ i }}" class="float-check">
+          <form-check
+            for="keep-{{ i }}"
+            class="float-check"
+            *ngIf="validationUser(image)">
             <input
               type="checkbox"
               id="keep-{{ i }}"

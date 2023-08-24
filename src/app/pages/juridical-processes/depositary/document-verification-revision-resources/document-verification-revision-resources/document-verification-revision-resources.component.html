@@ -21,21 +21,30 @@
             </div>
           </div>
         </div>
+        <div class="row m-3">
+          <div class="col-4"></div>
+          <div class="col-md-8 text-end">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm mr-3"
+              (click)="searchExpedient()">
+              Buscar Expedientes
+              <i class="bx bx-search bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
         <div class="row">
           <div class="col-md-12">
             <div class="row">
               <div class="col-md-12">
                 <div class="card">
-                  <div class="row m-3 flex-row justify-content-end">
+                  <!-- <div class="row m-3 flex-row justify-content-end">
                     <div class="col-md-8 text-end">
-                      <button
-                        type="button"
-                        class="btn btn-primary btn-sm active"
-                        (click)="searchExpedient()">
-                        <i class="bx bx-list-plus bx-sm float-icon"></i>
+                      <button type="button" class="btn btn-primary btn-sm active" (click)="searchExpedient()">
+                        Buscar Expedientes<i class="bx bx-search bx-sm float-icon"></i>
                       </button>
                     </div>
-                  </div>
+                  </div> -->
                   <div class="card-body mt-4 mb-4">
                     <div class="form-group row p-4">
                       <div class="col-md-3">
@@ -154,14 +163,6 @@
             Limpiar
             <i class="fa fa-eraser" aria-hidden="true"></i>
           </button>
-          <!-- <button
-                                [disabled]="!actasDefault"
-                                type="button"
-                                class="btn btn-primary btn-sm active mr-2"
-                                (click)="savActa()">
-                                Guardar
-                                <i aria-hidden="true" class="fa fa-save"></i>
-                              </button> -->
         </div>
       </div>
     </form>
@@ -201,15 +202,12 @@
             label="Fecha Acuerdo Inicial">
             <input
               class="form-control"
-              formControlName="agreementDate"
-              bsDatepicker
-              [readOnly]="form.get('di_disponible').value == 'N'"
-              [bsConfig]="{
-                dateInputFormat: 'DD-MM-YYYY'
-              }"
               [ngClass]="{
                 'bg-success text-white': form.get('di_disponible').value == 'S'
-              }" />
+              }"
+              formControlName="agreementDate"
+              [readOnly]="true"
+              oninput="if(this.value.length > 1000) this.value = this.value.slice(0, 1000)" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
@@ -218,6 +216,7 @@
               class="form-control"
               formControlName="status"
               [readOnly]="true"
+              (dblclick)="showHistory()"
               oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3)"
               [ngClass]="{
                 'bg-success text-white': form.get('di_disponible').value == 'S'
@@ -411,10 +410,11 @@
           <ng2-smart-table
             id="table"
             [attr.class]="'table-bordered table-responsive'"
-            [settings]="tableSettings"
-            [source]="dataTableDicta.data"></ng2-smart-table>
+            [settings]="tableSettingsDoc"
+            [source]="dataTableDocument.data"
+            (userRowSelect)="userRowSelect($event)"></ng2-smart-table>
           <app-pagination
-            [totalItems]="dataTableDicta.count"
+            [totalItems]="totalItemsDocument"
             [filterParams]="params"></app-pagination>
         </div>
       </div>
@@ -430,7 +430,9 @@
             type="button"
             class="btn btn-primary btn-sm active ml-2 mr-2"
             (click)="btnSeleccionarDocumentos()"
-            [disabled]="form.get('di_disponible').value == 'N'">
+            [disabled]="
+              selectedKey == null || form.get('di_disponible').value == 'N'
+            ">
             Seleccionar Documentos
           </button>
         </div>
@@ -499,10 +501,10 @@
             <ng2-smart-table
               id="table"
               [attr.class]="'table-bordered table-responsive'"
-              [settings]="tableSettingsDoc"
-              [source]="dataTableDoc.data"></ng2-smart-table>
+              [settings]="tableSettings"
+              [source]="dataTable.data"></ng2-smart-table>
             <app-pagination
-              [totalItems]="dataTableDoc.count"
+              [totalItems]="totalItemsDic"
               [filterParams]="paramsDoc"></app-pagination>
           </div>
         </div>

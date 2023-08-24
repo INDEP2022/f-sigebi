@@ -43,16 +43,24 @@ export class EventAppService extends HttpService {
   }
 
   postDetResumer(params: any) {
-    return this.post(`EventEndpoints.DetResumen`, params);
+    return this.post(EventEndpoints.DetResumen, params);
   }
   postPaGetsRequestType(model: any) {
     return this.post(`application/paGetsRequestType`, model);
   }
   postDetRemesa(params: any) {
-    return this.post(`EventEndpoints.DetRemesa`, params);
+    return this.post(EventEndpoints.DetRemesa, params);
   }
 
   postResumen(params: any) {
-    return this.post(`Eventendpoints.Resumen`, params);
+    return this.post(EventEndpoints.Resumen, params);
+  }
+
+  postResumenRemesa(params: any) {
+    return this.post(EventEndpoints.ResumenRemesa, params);
+  }
+
+  getEvent(id: any) {
+    return this.get(`${EventEndpoints.Event}/${id}`);
   }
 }

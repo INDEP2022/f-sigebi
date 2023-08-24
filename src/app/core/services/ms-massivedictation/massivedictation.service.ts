@@ -15,7 +15,7 @@ export class MassiveDictationService extends HttpService {
   deleteGoodOpinion(body: { goodIds?: string[]; identifier?: string }) {
     console.log(this.route.P_ELIMINA_BIENES_DICTAMENT);
     console.log(body);
-    return this.post(`${this.route.P_ELIMINA_BIENES_DICTAMENT}`, body);
+    return this.delete(`${this.route.P_ELIMINA_DICTA_MAS_IVA}`, body);
   }
 
   deleteDictationMoreTax(id: string) {

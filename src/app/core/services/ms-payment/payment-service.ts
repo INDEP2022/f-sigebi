@@ -9,9 +9,24 @@ export interface IComerPaymentsRefVir {
 }
 
 export interface IComerReldisDisp {
-  user: string,
-  inddistance: number,
-  indsirsae: number,
-  numberRecord: number,
-  indlibpg: number
+  user: string;
+  inddistance: number;
+  indsirsae: number;
+  numberRecord: number;
+  indlibpg: number;
+}
+
+export interface IOI_DTO {
+  idEvento: string;
+  idLote: string;
+  pTipo: string;
+  clkpv: string;
+}
+
+export interface IOI {
+  oi: string;
+  monto: string;
+  tipo: string;
+  devolucion: string;
+  mandato: string;
 }

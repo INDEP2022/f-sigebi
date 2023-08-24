@@ -140,7 +140,30 @@
                     </div> -->
                   </div>
                   <div class="row pt-4">
-                    <form-field
+                    <ng-custom-select-loading
+                      [form]="form"
+                      [path]="pathClasification"
+                      [updateValues]="true"
+                      label="No. Clasificación del Bien"
+                      formControlName="noClasif"
+                      value="numClasifGoods"
+                      bindLabel="description"
+                      paramSearch="filter.description"
+                      prefixSearch="$ilike"
+                      seconParamSearch="filter.numClasifGoods"
+                      [labelTemplate]="clasLabel"
+                      [optionTemplate]="clasOption">
+                    </ng-custom-select-loading>
+                    <ng-template #clasLabel let-item="item">
+                      {{ item.numClasifGoods }} - {{ item.description }}
+                    </ng-template>
+                    <ng-template #clasOption let-item="item">
+                      <div
+                        [title]="item.numClasifGoods + '-' + item.description">
+                        {{ item.numClasifGoods }} - {{ item.description }}
+                      </div>
+                    </ng-template>
+                    <!-- <form-field
                       [control]="form.get('noClasif')"
                       label="No. Clasificación Bien">
                       <input
@@ -151,16 +174,22 @@
                         readonly
                         (change)="updateClasif($event)"
                         (customEvent)="handleEvent($event)" />
-                    </form-field>
+                    </form-field> -->
                   </div>
                   <div class="row pt-3">
-                    <form-field [control]="form.get('status')" label="Estatus">
+                    <app-goods-status-shared
+                      [form]="form"
+                      goodStatusField="status"
+                      labelStatus="
+                        Estatus
+                      "></app-goods-status-shared>
+                    <!-- <form-field [control]="form.get('status')" label="Estatus">
                       <input
                         type="text"
                         class="form-control"
                         formControlName="status"
                         readonly />
-                    </form-field>
+                    </form-field> -->
                   </div>
                   <div class="row pt-3 buttons" style="margin: auto">
                     <button
@@ -237,7 +266,22 @@
                     </form-field>
                   </div>
                   <div class="row pt-3">
-                    <form-field
+                    <div class="col-md-4">
+                      <ng-custom-select-loading
+                        [form]="form"
+                        [path]="pathUnit"
+                        [readonly]="disabledBienes"
+                        [updateValues]="true"
+                        label="Unidad"
+                        formControlName="unidad"
+                        value="unit"
+                        bindLabel="unit"
+                        paramSearch="filter.unit"
+                        prefixSearch="$ilike">
+                      </ng-custom-select-loading>
+                    </div>
+
+                    <!-- <form-field
                       [control]="form.get('unidad')"
                       label="Unidad"
                       class="col-md-4">
@@ -247,7 +291,7 @@
                         class="form-control"
                         [readonly]="disabledBienes"
                         maxlength="30" />
-                    </form-field>
+                    </form-field> -->
                     <form-field
                       class="col-md-4"
                       [control]="form.get('cantidad')"
@@ -314,13 +358,14 @@
                   <div class="form-group row">
                     <ng-custom-select-loading
                       [form]="form"
+                      [path]="pathSubdelegation"
+                      [isLoadInOnInit]="false"
                       [readonly]="disabledBienes"
                       [limit]="1000"
                       [labelTemplate]="coordinationLabel"
                       [optionTemplate]="coordinationOption"
                       formControlName="subdelegation"
-                      label="Sub Delegación"
-                      path="catalog/api/v1/subdelegation/get-all"
+                      label="Oficina de Atención Regional"
                       value="id"
                       bindLabel="description"
                       paramSearch="filter.id"

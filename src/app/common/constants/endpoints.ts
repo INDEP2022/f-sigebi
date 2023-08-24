@@ -13,6 +13,7 @@ export enum ENDPOINT_LINKS {
   Batch = 'catalog/batch',
   Battery = 'catalog/battery',
   City = 'catalog/city-sera',
+  CityAll = 'city-sera',
   calendar = 'catalog/calendar',
   calendarId = 'catalog/api/v1/calendar',
   ClaimConclusion = 'catalog/claim-conclusion',
@@ -201,4 +202,9 @@ export enum ENDPOINT_LINKS {
   Departamentuser = 'departament',
   insertDocumentFolio = 'application/insertDocumentFolio',
   insertDocumentFol = 'application/insertDocumentFolio2',
+  insertDocument = 'application/setDocuments',
+  documentFolio = 'documents/folio',
+  setStatus = 'application/setbienVstatus',
+  documentHist = 'application/setHistBien',
+  guarantee = 'application/get-guarantee',
 }

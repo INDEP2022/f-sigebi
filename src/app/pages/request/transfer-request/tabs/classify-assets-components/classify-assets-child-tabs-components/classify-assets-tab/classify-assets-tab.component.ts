@@ -910,6 +910,7 @@ export class ClassifyAssetsTabComponent
       goods.processStatus = 'CLASIFICAR_BIEN';
     } else {
       goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+      goods.status = 'ROP';
     }
 
     //Verificar que la cantidad transferente para los tipos de bienes
@@ -1346,6 +1347,7 @@ export class ClassifyAssetsTabComponent
   setNoClasifyGood(fraction: any) {
     if (fraction.fractionCode != null) {
       if (fraction.fractionCode.length === 8) {
+        debugger;
         if (fraction.clasificationId) {
           this.classiGoodsForm.controls['goodClassNumber'].setValue(
             fraction.clasificationId

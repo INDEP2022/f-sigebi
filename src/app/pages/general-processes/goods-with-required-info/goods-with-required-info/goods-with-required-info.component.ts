@@ -7,11 +7,13 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
+import { IAttribGoodBad } from 'src/app/core/models/ms-good/good';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IParamsLegalOpinionsOffice } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/legal-opinions-office.component';
 import { GOODS_WITH_REQUIRED_INFO_COLUMNS } from './goods-with-required-info-columns';
-
 @Component({
   selector: 'app-goods-with-required-info',
   templateUrl: './goods-with-required-info.component.html',
@@ -21,6 +23,12 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
   attribGoodBad: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
   totalItems: number = 0;
+  groups: any;
+  addMo: string;
+  motives: any[] = [];
+  dataExcel: any[] = [];
+  goodBad: IAttribGoodBad[];
+  userName: string;
   params = new BehaviorSubject<ListParams>(new ListParams());
   @Output() customEvent = new EventEmitter<string>();
 
@@ -46,6 +54,8 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private excelService: ExcelService,
+    private token: AuthService,
     private goodService: GoodService,
     public router: Router,
     private activatedRoute: ActivatedRoute
@@ -53,6 +63,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
     super();
     //this.settings.actions = false;
     //this.settings.columns = GOODS_WITH_REQUIRED_INFO_COLUMNS;
+    this.userName = this.token.decodeToken().username;
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
@@ -121,6 +132,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    params['sortBy'] = `id:DESC`;
     if (this.paramsCurrentScreen.TIPO_PROC) {
       params['filter.pair1'] = this.paramsCurrentScreen.TIPO_PROC;
     }
@@ -131,15 +143,35 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
       next: resp => {
         console.log(resp);
         this.totalItems = resp.count || 0;
+        this.goodBad = resp.data;
+        this.dataExcel = resp.data;
         this.attribGoodBad.load(resp.data);
         this.attribGoodBad.refresh();
         this.loading = false;
+        this.groups = this.goodBad.reduce((groups, good) => {
+          const id = good.id;
+          const motive = good?.motive.replace(this.addMo, '');
+          const array = [];
+          array.push(motive);
+          return array;
+        }, {});
+
         //resp.data;
       },
       error: error => {
         this.loading = false;
       },
     });
+  }
+  get motivesAsSelect() {
+    return this.motives.map(motive => ({
+      value: motive.id,
+      label: motive.motive,
+    }));
+  }
+
+  selectMotive(motive: any) {
+    console.log(`Se seleccionó el motivo ${motive.label}`);
   }
 
   openGood(data: any): void {
@@ -197,5 +229,17 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
         }
       );
     }
+  }
+  exportToExcel() {
+    this.loading = true;
+    if (this.goodBad.length == 0) {
+      this.alert('info', 'No hay información para descargar', '');
+      this.loading = false;
+      return;
+    }
+    const filename: string = this.userName + '-AtributosNulos';
+    this.loading = false;
+    this.excelService.export(this.dataExcel, { filename });
+    this.alert('success', 'Datos Exportados', '');
   }
 }

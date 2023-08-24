@@ -333,10 +333,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           type: 'custom',
           showAlways: true,
           valuePrepareFunction: (isSelected: boolean, row: IGood) =>
-            this.isGoodSelectedValid(row),
+            this.isGoodSelected(row),
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.onGoodSelectValid(instance),
+            this.onGoodSelect(instance),
         },
         goodId: {
           title: 'No. Bien',
@@ -766,12 +766,12 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.actaRecepttionForm.get('testigoOIC').setValue(res.witnessOic);
           this.actaRecepttionForm.get('testigoTwo').setValue(res.witness2);
           this.actaRecepttionForm.get('testigoTree').setValue(res.witness3);
-
+          this.cleanActa();
           subscription.unsubscribe();
         },
         error: error => {
           console.log(error);
-
+          this.cleanActa();
           subscription.unsubscribe();
         },
       });
@@ -1052,7 +1052,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         return;
       }
 
-      if (this.actasDefault.comptrollerWitness == null) {
+      if (!this.actasDefault.comptrollerWitness) {
         this.alert('warning', 'Indique el Testigo de la Contraloría', '');
         return;
       }
@@ -1205,6 +1205,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.isLoading = true;
     // this.createConversion();
     // this.createConversion();
+    if (!this.conversion)
+      return this.alert('warning', 'Debe Seleccionar una Conversión', '');
     await this.updateConversion();
     // this.edit ? this.update() : this.create();
     let params = {
@@ -1308,7 +1310,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.selectedRow = event.data;
     console.log(this.selectedRow);
     await this.getStatusGoodService(this.selectedRow.status);
-    this.selectedGooods = event.selected;
+    // this.selectedGooods = event.selected;
     this.changeDetectorRef.detectChanges();
   }
   selectActa(data: IActasConversion) {
@@ -1663,43 +1665,43 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           );
           return;
         } else {
-          console.log('aaa', this.goods);
+          console.log('aaa', this.selectedGooods);
 
           let result = this.selectedGooods.map(async (good: any) => {
             if (good.di_acta != null) {
               this.alert(
                 'warning',
-                `Ese Bien ya se Encuentra en el Acta ${good.di_acta}`,
+                `Ese Bien ya se encuentra en el Acta ${good.di_acta}`,
                 'Debe Capturar un Acta.'
               );
             } else if (good.di_disponible == 'N') {
               this.onLoadToast(
                 'warning',
-                `El Bien ${good.id} tiene un Estatus Inválido para ser Asignado a algún Acta`
+                `El Bien ${good.id} tiene un estatus inválido para ser asignado a algún acta`
               );
               return;
             } else {
               console.log('GOOD', good);
               this.loading2 = true;
 
-              if (!this.dataRecepcion.some((v: any) => v === good)) {
-                let indexGood = this.dataTableGood_.findIndex(
-                  _good => _good.id == good.id
-                );
-                console.log('indexGood', indexGood);
-                // if (indexGood != -1)
-                // this.dataTableGood_[indexGood].di_disponible = 'N';
+              // if (!this.dataRecepcion.some((v: any) => v === good)) {
+              // let indexGood = this.dataTableGood_.findIndex(
+              //   _good => _good.id == good.id
+              // );
+              // console.log('indexGood', indexGood);
+              // if (indexGood != -1)
+              // this.dataTableGood_[indexGood].di_disponible = 'N';
 
-                await this.createDET(good);
-                // this.dataTableGood_ = this.bienes;
-                // this.dataRecepcion.push(good);
-                // this.dataRecepcion = [...this.dataRecepcion];
-              }
+              await this.createDET(good);
+              // this.dataTableGood_ = this.bienes;
+              // this.dataRecepcion.push(good);
+              // this.dataRecepcion = [...this.dataRecepcion];
+              // }
             }
           });
 
           Promise.all(result).then(async item => {
-            this.getGoodsByStatus(this.fileNumber);
+            await this.getGoodsByStatus(this.fileNumber);
             await this.getDetailProceedingsDevollution(this.actasDefault.id);
           });
         }
@@ -2141,6 +2143,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
 
   cleanActa() {
+    this.acordionDetail = false;
     this.actasDefault = null;
     this.actaRecepttionForm.get('cveActa').setValue('');
     this.actaRecepttionForm.get('direccion').setValue('');

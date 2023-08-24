@@ -287,7 +287,7 @@
                 </form-radio>
               </div>
 
-              <!--<form-field
+              <form-field
                 [control]="performForm.get('value')"
                 *ngIf="showTypeValor">
                 <ngx-select
@@ -313,7 +313,7 @@
                   [readonly]="true"
                   label="Tipo Valor"
                   (fetchItems)="getValueSelect($event)"></ngx-select>
-              </form-field> -->
+              </form-field>
             </div>
           </div>
 
@@ -327,8 +327,8 @@
                   formControlName="city" />
               </form-field>
             </div>
-
-            <!-- <div class="col-md-4">
+            <!--Realizar npm i-->
+            <div class="col-md-4">
               <form-field
                 [control]="performForm.get('startDate')"
                 label="Fecha Inicio Operativo">
@@ -366,7 +366,7 @@
                   [minDate]="minDateFecElab"
                   bsDatepicker />
               </form-field>
-            </div>-->
+            </div>
           </div>
 
           <div class="row pt-4">
@@ -596,8 +596,8 @@
                     [form]="searchGoodsForm"
                     control="municipality"
                     [data]="municipailitites"
-                    value="idMunicipality"
-                    bindLabel="nameMunicipality"
+                    value="municipalityKey"
+                    bindLabel="municipality"
                     label="Municipio"
                     (change)="municipalitySearchSelect($event)"
                     (fetchItems)="getMunicipalities($event)"></ngx-select>
@@ -611,9 +611,9 @@
                     [form]="searchGoodsForm"
                     control="colony"
                     [data]="localities"
-                    value="id"
-                    bindLabel="nameLocation"
-                    label="Colonia"
+                    value="townshipKey"
+                    bindLabel="township"
+                    label="Localidad"
                     (fetchItems)="getLocalities($event)"></ngx-select>
                 </form-field>
               </div>

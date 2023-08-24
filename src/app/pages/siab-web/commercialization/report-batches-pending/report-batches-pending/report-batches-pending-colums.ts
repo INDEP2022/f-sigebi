@@ -1,9 +1,11 @@
+import { DatePipe } from '@angular/common';
+
 export const CAPTURE_LINES = {
-  event: {
+  id_evento: {
     title: 'Evento',
     sort: false,
   },
-  allotment: {
+  id_lote: {
     title: 'Lote',
     sort: false,
   },
@@ -11,23 +13,28 @@ export const CAPTURE_LINES = {
     title: 'RFC',
     sort: false,
   },
-  reference: {
+  referencia: {
     title: 'Referencia',
     sort: false,
   },
-  status: {
+  estatus: {
     title: 'Estado',
     sort: false,
   },
-  typeLC: {
+  tipo_lc: {
     title: 'Tipo de LC',
     sort: false,
   },
-  effectiveDate: {
-    title: 'Fecha de vigencia',
+  fec_vigencia: {
+    title: 'Fecha de Vigencia',
     sort: false,
+    valuePrepareFunction: (fecha_pago: string) => {
+      const datePipe = new DatePipe('en-US');
+      const fechaObjeto = new Date(fecha_pago);
+      return datePipe.transform(fechaObjeto, 'dd/MM/yyyy');
+    },
   },
-  amount: {
+  monto: {
     title: 'Monto',
     sort: false,
   },
@@ -35,42 +42,42 @@ export const CAPTURE_LINES = {
     title: 'Personalización',
     sort: false,
   },
-  amountPayable: {
-    title: 'Monto a pagar',
+  monto_pagar: {
+    title: 'Monto a Pagar',
     sort: false,
   },
-  view: {
+  vista: {
     title: 'Vista',
     sort: false,
   },
 };
 
 export const CAPTURE_LINES_CLIENTS = {
-  event: {
+  id_evento: {
     title: 'Evento',
     sort: false,
   },
-  cveEvent: {
-    title: 'cve Evento',
+  cve_proceso: {
+    title: 'Cve Evento',
     sort: false,
   },
-  typeGood: {
-    title: 'Tipo de bien',
+  direccion_des: {
+    title: 'Tipo de Bien',
     sort: false,
   },
-  allotment: {
+  id_lote: {
     title: 'Lote',
     sort: false,
   },
-  lp: {
-    title: 'LP',
+  lote_publico: {
+    title: 'Lote Publico',
     sort: false,
   },
-  description: {
+  descripcion: {
     title: 'Descripción',
     sort: false,
   },
-  client: {
+  cliente: {
     title: 'Cliente',
     sort: false,
   },
@@ -78,24 +85,24 @@ export const CAPTURE_LINES_CLIENTS = {
     title: 'RFC',
     sort: false,
   },
-  tel: {
+  telefono: {
     title: 'Teléfono',
     sort: false,
   },
-  email: {
+  correoweb: {
     title: 'Correo',
     sort: false,
   },
-  price: {
+  precio_final: {
     title: 'Precio',
     sort: false,
   },
-  amountPayment: {
-    title: 'Monto pagado',
+  monto_pagado: {
+    title: 'Monto Pagado',
     sort: false,
   },
-  pendingPayment: {
-    title: 'Pago pendiente',
+  pendiente_pagar: {
+    title: 'Pago Pendiente',
     sort: false,
   },
 };

@@ -5,124 +5,461 @@
     </div>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
-      <div class="row">
-        <div class="col-md-1">
-          <form-field [control]="form.get('event')" label="Evento">
-            <input type="text" class="form-control" formControlName="event" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field
-            [control]="form.get('folios')"
-            label="Folios de oficio de Aval&oacute;o">
-            <input type="text" class="form-control" formControlName="folios" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-radio label="Oficio de respuesta">
-            <input type="radio" formControlName="radio" value="cat" />
-          </form-radio>
-        </div>
-        <div class="col-md-2">
-          <form-radio label="Oficio de cancelaci&oacute;n">
-            <input type="radio" formControlName="radio" value="dog" />
-          </form-radio>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('folio')" label="Folio">
-            <input type="text" class="form-control" formControlName="folio" />
-          </form-field>
-        </div>
-        <div class="col-md-1">
-          <form-field [control]="form.get('cve')" label="Clave">
-            <input type="text" class="form-control" formControlName="cve" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('city')" label="Ciudad">
-            <input type="text" class="form-control" formControlName="city" />
-          </form-field>
-        </div>
+    <div class="d-flex justify-content-end">
+      <div class="ml-auto" style="margin-top: -20px">
+        <p class="font-weight-bold" style="border-bottom: 1px solid black">
+          {{ dateNow | date : 'dd/MM/yyyy - HH:mm:ss' }}
+        </p>
       </div>
-      <div class="row pt-5">
-        <div class="col-md-2">
-          <form-field
-            [control]="form.get('receptionDate')"
-            label="Fecha Recepci&oacute;n">
-            <input
-              type="text"
-              placeholder=""
-              class="form-control"
-              bsDatepicker
-              formControlName="receptionDate"
-              [bsConfig]="{ isAnimated: true }" />
-          </form-field>
+    </div>
+    <div class="d-flex justify-content-center mb-3" style="margin-top: -20px">
+      <h3>
+        <span id="lblTipoAccOficio">{{ lblTipoAccOficio }}</span>
+        <span id="lbltipOficio">{{ lbltipOficio }}</span>
+        <span> PARA </span>
+        <span id="lblDireccion">{{ lblDireccion }}</span>
+        <small>
+          <span id="lblCvlOfocio">{{ lblCvlOfocio }}</span>
+        </small>
+      </h3>
+    </div>
+
+    <br />
+    <!--  -->
+    <div>
+      <form class="form-material" [formGroup]="form">
+        <div class="row">
+          <div class="col-md-5">
+            <form-field [control]="form.get('event')" label="Evento">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="event"
+                [(ngModel)]="event" />
+            </form-field>
+          </div>
+          <div class="col-md-7">
+            <form-field [control]="form.get('office')">
+              <ngx-select
+                [searchOnInit]="true"
+                (fetchItems)="getOffices($event)"
+                [data]="offices"
+                [form]="form"
+                bindLabel="cveJob"
+                label="Folios de oficios de Avalúos"
+                control="office">
+              </ngx-select>
+            </form-field>
+          </div>
         </div>
-        <div class="col-md-2">
-          <form-field
-            [control]="form.get('elaborationDate')"
-            label="Fecha Elaboraci&oacute;n">
-            <input
-              type="text"
-              placeholder=""
-              class="form-control"
-              bsDatepicker
-              formControlName="elaborationDate"
-              [bsConfig]="{ isAnimated: true }" />
-          </form-field>
+        <!--  -->
+        <div class="row mt-3" *ngIf="pnlControles">
+          <div class="col-md-3"></div>
+          <div class="col-md-4" style="margin-left: -20px">
+            <form-radio label="Oficio de Respuesta">
+              <input
+                type="radio"
+                value="cat"
+                [(ngModel)]="radioValueOne"
+                (change)="onRadioChange()"
+                [value]="true"
+                formControlName="radioOne" />
+            </form-radio>
+          </div>
+          <div class="col-md-4 ml-auto">
+            <form-radio label="Oficio de Cancelación">
+              <input
+                type="radio"
+                value="dog"
+                formControlName="radioTwo"
+                [(ngModel)]="redioValueTwo"
+                (change)="onRadioChangeTwo()"
+                [value]="true" />
+            </form-radio>
+          </div>
+          <div class="col-md-2"></div>
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-6 alert alert-info">
+        <!--  -->
+        <div class="row mt-3">
           <div class="col-md-4">
-            <form-field [control]="form.get('sender')" label="Remitente">
+            <form-field [control]="form.get('fol')" label="Folio">
+              <input type="text" class="form-control" formControlName="key" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('key')" label="Clave">
+              <input type="text" class="form-control" formControlName="key" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('cityCi')" label="Ciudad">
+              <!-- <ngx-select
+                [searchOnInit]="true"
+                (fetchItems)="getCitiesList($event)"
+                [data]="cityList"
+                [form]="form"
+                value="idCity"
+                label="Ciudad"
+                bindLabel="legendOffice"
+                control="cityCi">
+              </ngx-select> -->
               <input
                 type="text"
                 class="form-control"
-                formControlName="sender" />
-            </form-field>
-          </div>
-          <div class="col-md-8">
-            <form-field [control]="form.get('senderTxt')" label="Texto Mensaje">
-              <textarea
-                class="form-control"
-                type="text"
-                formControlName="senderTxt"></textarea>
+                formControlName="cityCi" />
             </form-field>
           </div>
         </div>
-        <div class="col-md-6 alert alert-info">
-          <div class="col-md-4">
-            <form-field [control]="form.get('addressee')" label="Destinatario">
+        <!--  -->
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <form-field [control]="form.get('dateRec')" label="Fecha Recepción">
               <input
                 type="text"
                 class="form-control"
-                formControlName="addressee" />
+                formControlName="dateRec"
+                bsDatepicker />
             </form-field>
           </div>
-          <div class="col-md-8">
+          <div class="col-md-6">
             <form-field
-              [control]="form.get('addresseeTxt')"
-              label="Texto Mensaje">
-              <textarea
-                class="form-control"
+              [control]="form.get('dateEla')"
+              label="Fecha Elaboración">
+              <input
                 type="text"
-                formControlName="addresseeTxt"></textarea>
+                class="form-control"
+                formControlName="dateEla"
+                bsDatepicker />
             </form-field>
           </div>
         </div>
-      </div>
-      <div class="ch-content">
-        <h5 class="title">Bienes</h5>
-      </div>
-      <div class="table-responsive">
+        <!--  -->
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <form-field [control]="form.get('remi')" label="Remitente">
+              <input type="text" class="form-control" formControlName="remi" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('dest')" label="Destinatario">
+              <input type="text" class="form-control" formControlName="dest" />
+            </form-field>
+          </div>
+        </div>
+        <!--  -->
+        <div class="row mt-5">
+          <div class="col-md-12">
+            <form-field [control]="form.get('ref')" label="Referencia">
+              <textarea class="form-control" formControlName="ref"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <!--  -->
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <form-field [control]="form.get('aten')" label="Atención">
+              <textarea class="form-control" formControlName="aten"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <!--  -->
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <form-field [control]="form.get('espe')" label="Especificaciones">
+              <textarea class="form-control" formControlName="espe"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <!--  -->
+      </form>
+    </div>
+    <!--  -->
+    <div>
+      <app-card [header]="true">
+        <div header>
+          <div class="ch-content">
+            <h5 class="title">Con Copia Para:</h5>
+          </div>
+        </div>
+        <div body>
+          <form class="form-material" [formGroup]="formThree">
+            <div>
+              <div>
+                <form-radio label="Por Delegación">
+                  <input type="radio" [value]="true" formControlName="byDel" />
+                </form-radio>
+              </div>
+            </div>
+            <div>
+              <div class="row mt-3">
+                <div class="col-md-6">
+                  <form-field
+                    [control]="formThree.get('user')"
+                    label="Usuario y Nombre">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="user" />
+                  </form-field>
+                </div>
+                <div class="col-md-6">
+                  <form-field
+                    [control]="formThree.get('del')"
+                    label="Delegación">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="del" />
+                  </form-field>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5"></div>
+              <div class="col-md-3">
+                <button id="btnAgregar" class="btn btn-default btn-block">
+                  Agregar Usuario
+                </button>
+              </div>
+              <div class="col-md-3">
+                <button id="Button2" class="btn btn-danger btn-block">
+                  Quitar Usuario
+                </button>
+              </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-10">
+                <select multiple class="form-control" id="lsbConCopia"></select>
+              </div>
+              <div class="col-md-1"></div>
+            </div>
+          </form>
+        </div>
+      </app-card>
+    </div>
+    <br />
+    <!--  -->
+    <div class="mt-5">
+      <div>
         <ng2-smart-table
           [settings]="settings"
           [source]="data"></ng2-smart-table>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>
-    </form>
+      <div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
+    </div>
+    <!--  -->
+    <div class="mt-5">
+      <div>
+        <ng2-smart-table
+          [settings]="settingsTwo"
+          [source]="dataTwo"></ng2-smart-table>
+      </div>
+      <div>
+        <app-pagination [params]="paramsTwo" [totalItems]="totalItemsTwo">
+        </app-pagination>
+      </div>
+    </div>
+    <!--  -->
+    <div>
+      <div>
+        <form class="form-material" [formGroup]="formTwo">
+          <!--  -->
+          <!-- <div class="row" *ngIf="pnlControles2"> -->
+          <div class="row" *ngIf="true">
+            <div class="col-md-4">
+              <form-field
+                [control]="formTwo.get('allGood')"
+                label="Total de Bienes">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="allGood" />
+              </form-field>
+            </div>
+            <div class="col-md-5">
+              <form-field
+                [control]="formTwo.get('selectedGood')"
+                label="Bienes Seleccionados">
+                <ng-select
+                  addTagText="Agregar Elemento"
+                  formControlName="selectedGood"
+                  class="form-control scroll-line"
+                  bindValue="value"
+                  bindLabel="label"
+                  [items]="listKeyOffice">
+                </ng-select>
+              </form-field>
+            </div>
+            <!-- <div class="col-md-3" *ngIf="btnMotCan"> -->
+            <div class="col-md-3" *ngIf="true">
+              <button
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="reasonsForChange()">
+                Motivos de Cambio a REV
+              </button>
+            </div>
+          </div>
+          <!--  -->
+          <div class="row">
+            <div class="col-md-6">
+              <button
+                class="btn btn-sm btn-success active"
+                (click)="exportExcel()">
+                Exportar a Excel
+                <i class="bx bx-download float-icon"></i>
+              </button>
+            </div>
+            <div class="col-md-6">
+              <button type="button" class="btn btn-sm btn-success active">
+                Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
+              </button>
+            </div>
+          </div>
+          <!--  -->
+          <!-- <div class="row mt-5">
+                    <div class="col-md-12">
+                      <form-field [control]="formTwo.get('ref')" label="Referencia">
+                        <textarea class="form-control" formControlName="ref"></textarea>
+                      </form-field>
+                    </div>
+                  </div> -->
+          <!--  -->
+          <!-- <div class="row mt-2">
+                    <div class="col-md-12">
+                      <form-field [control]="formTwo.get('aten')" label="Atención">
+                        <textarea class="form-control" formControlName="aten"></textarea>
+                      </form-field>
+                    </div>
+                  </div> -->
+          <!--  -->
+          <!-- <div class="row mt-2">
+                    <div class="col-md-12">
+                      <form-field [control]="formTwo.get('espe')" label="Especificaciones">
+                        <textarea class="form-control" formControlName="espe"></textarea>
+                      </form-field>
+                    </div>
+                  </div> -->
+          <!--  -->
+          <div class="d-flex justify-content-center">
+            <div class="m-3" *ngIf="btnModificar">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Modificar Oficio
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+            </div>
+            <div class="m-3" *ngIf="btnVerOficio">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Visualizar Oficio
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+            </div>
+            <div class="m-3" *ngIf="btnGuardar">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Guardar Oficio
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+            </div>
+            <div class="m-3" *ngIf="btnEnviar">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Enviar Oficio
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+            </div>
+          </div>
+          <!--  -->
+
+          <!--  -->
+          <!-- Modal #1 -->
+          <div
+            style="border: 1px solid black; padding: 10px; border-radius: 20px">
+            <p>Este es el modal #1</p>
+            <div>
+              <form class="form-material" [formGroup]="formDialogOne">
+                <div class="row mt-5">
+                  <div class="col-md-12">
+                    <form-field
+                      [control]="formDialogOne.get('noti')"
+                      label="Notificaciones">
+                      <textarea
+                        class="form-control"
+                        formControlName="noti"></textarea>
+                    </form-field>
+                  </div>
+                </div>
+                <!--  -->
+              </form>
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <button type="button" class="btn btn-primary btn-sm active">
+                    Cerrar
+                    <i aria-hidden="true" class="fa fa-save"></i>
+                  </button>
+                </div>
+                <div class="m-3">
+                  <button type="button" class="btn btn-primary btn-sm active">
+                    Continuar
+                    <i aria-hidden="true" class="fa fa-save"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--  -->
+          <!-- Modal #2 -->
+          <div
+            style="border: 1px solid black; padding: 10px; border-radius: 20px"
+            class="mt-5">
+            <p>Este es el modal #2</p>
+            <div>
+              <div class="row mt-5">
+                <div class="col-md-12">
+                  <p>Notificaciones</p>
+                </div>
+              </div>
+              <!--  -->
+              <div class="mt-5">
+                <div>
+                  <p>Motivos de Cancelación</p>
+                </div>
+                <div>
+                  <ng2-smart-table
+                    [settings]="settingsModal"
+                    [source]="dataModal"
+                    (userRowSelect)="onUserRowSelect($event)"></ng2-smart-table>
+                </div>
+                <div>
+                  <app-pagination
+                    [params]="paramsModal"
+                    [totalItems]="totalItemsModal">
+                  </app-pagination>
+                </div>
+              </div>
+              <!--  -->
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="modifySelectedRows()">
+                    Aceptar
+                  </button>
+                </div>
+                <div class="m-3">
+                  <button type="button" class="btn btn-primary btn-sm active">
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!--  -->
   </div>
 </app-card>

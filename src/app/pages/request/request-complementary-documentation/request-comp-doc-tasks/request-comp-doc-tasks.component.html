@@ -86,6 +86,16 @@
             Notificacion
           </button>
         </div>
+        <div class="mx-1" *ngIf="RequestEconomicResourcesReport">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="openRequestResourcesReport()">
+            Solicitud Recursos Económicos
+            <i class="bx bx-notepad mr-1 float-icon"></i>
+          </button>
+        </div>
         <div class="mx-1" *ngIf="createReport">
           <button
             type="button"
@@ -178,6 +188,29 @@
     <app-request-information-similar-goods
       [request]="requestInfo"></app-request-information-similar-goods>
 
+    <div
+      *ngIf="processDetonate == 'RES_ESPECIE' && process == 'register-request'">
+      <app-card [header]="false" class="p-10">
+        <div body>
+          <form [formGroup]="emailForm" class="form-material">
+            <div class="row">
+              <div class="col-md-3">
+                <form-field
+                  [control]="emailForm.get('emailUser')"
+                  label="Correo Usuario">
+                  <input
+                    type="email"
+                    id="email"
+                    class="form-control"
+                    formControlName="emailUser" />
+                </form-field>
+              </div>
+            </div>
+          </form>
+        </div>
+      </app-card>
+    </div>
+
     <div>
       <tabset class="md-tabs" #staticTabs>
         <tab
@@ -235,7 +268,9 @@
           *ngIf="viewSelectedGoods"
           heading="{{ listGoodSelectedTitle }}"
           id="goodsListTab">
-          <app-goods-list [requestId]="requestId"></app-goods-list>
+          <app-goods-list
+            [requestId]="requestId"
+            [processDetonate]="processDetonate"></app-goods-list>
         </tab>
         <tab *ngIf="guidelines" heading="Lineamientos" id="guidelinesTab">
           <app-guidelines></app-guidelines>

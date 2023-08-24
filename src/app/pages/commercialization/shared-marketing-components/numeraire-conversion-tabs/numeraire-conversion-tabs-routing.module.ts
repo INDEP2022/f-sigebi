@@ -7,6 +7,10 @@ const routes: Routes = [
     path: '',
     component: NumeraireConversionTabsComponent,
   },
+  {
+    path: ':id',
+    component: NumeraireConversionTabsComponent,
+  },
 ];
 
 @NgModule({

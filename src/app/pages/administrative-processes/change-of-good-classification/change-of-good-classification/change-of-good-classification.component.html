@@ -12,7 +12,7 @@
       <div class="col-6">
         <h6>Actual Clasificación</h6>
       </div>
-      <div class="col-6 text-end">
+      <div class="col-6 text-end" *ngIf="origin && origin > 0">
         <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
           Regresar
           <i class="fas fa-arrow-circle-left"></i>
@@ -28,7 +28,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="numberGood" />
+              formControlName="numberGood"
+              [readonly]="readOnlyGood" />
           </form-field>
         </div>
         <div class="col-md-10 col-sm-12 col-xs-12">
@@ -43,8 +44,10 @@
           </form-field>
         </div>
       </div>
-      <div class="row mt-3">
-        <div class="col-md-10 col-sm-12 col-xs-12">
+      <div class="row">
+        <div
+          class="col-sm-12 col-xs-12 mt-3"
+          [class]="showExpedient ? 'col-md-10' : 'col-md-12'">
           <form-field
             [control]="form.get('clasification')"
             label="No. Clasificación Bien">
@@ -64,7 +67,7 @@
               formControlName="descriptionClasification" />
           </form-field>
         </div> -->
-        <div class="col-md-2 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-12 col-xs-12 mt-3" *ngIf="showExpedient">
           <form-field [control]="form.get('numberFile')" label="No. Expediente">
             <input
               type="text"
@@ -79,14 +82,31 @@
     <form [formGroup]="formNew" class="form-material fixTopInput">
       <div class="row mt-5">
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <app-classification-of-goods-shared
+          <ng-custom-select-loading
             [form]="formNew"
-            [patchValue]="true"
-            (descriptionClasification)="
-              onChange($event)
-            "></app-classification-of-goods-shared>
+            [path]="pathClasification"
+            label="Clasificación del Bien"
+            formControlName="classificationOfGoods"
+            value="numClasifGoods"
+            bindLabel="description"
+            paramSearch="filter.description"
+            prefixSearch="$ilike"
+            seconParamSearch="filter.numClasifGoods"
+            [labelTemplate]="clasLabel"
+            [optionTemplate]="clasOption"
+            (valueChange)="onChange($event)"></ng-custom-select-loading>
+          <ng-template #clasLabel let-item="item">
+            {{ item.numClasifGoods }} - {{ item.description }}
+          </ng-template>
+          <ng-template #clasOption let-item="item">
+            <div [title]="item.numClasifGoods + '-' + item.description">
+              {{ item.numClasifGoods }} - {{ item.description }}
+            </div>
+          </ng-template>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
+        <div
+          class="col-sm-12 col-xs-12 mt-3"
+          [class]="showExpedient ? 'col-md-3' : 'col-md-6'">
           <form-field [control]="unitXClassif" label="Unidad">
             <ng-select class="form-control" formControlName="unitXClassif">
               <ng-option [value]="null">Seleccione un valor</ng-option>
@@ -96,16 +116,25 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
-          <form-field
+        <div class="col-md-3 col-sm-12 col-xs-12 mt-3" *ngIf="showExpedient">
+          <ng-custom-select-loading
+            [form]="formNew"
+            [path]="pathExpedient"
+            label="Nuevo No. Expediente"
+            formControlName="fileNumberNew"
+            value="id"
+            bindLabel="id"
+            paramSearch="filter.id"
+            prefixSearch="$eq"></ng-custom-select-loading>
+
+          <!-- <form-field
             [control]="formNew.get('fileNumberNew')"
             label="Nuevo No. Expediente">
             <input
               type="text"
               class="form-control"
-              formControlName="fileNumberNew"
-              readonly />
-          </form-field>
+              formControlName="fileNumberNew" />
+          </form-field> -->
         </div>
       </div>
       <div class="row mt-5">
@@ -119,25 +148,23 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <div class="d-flex">
-            <div>
-              <button
-                type="button"
-                class="btn btn-primary btn-sm active"
-                [disabled]="disabledButton()"
-                (click)="showAlert()">
-                Guardar
-                <i aria-hidden="true" class="fa fa-save"></i>
-              </button>
-              <button
-                class="btn btn-danger btn-sm active ml-3"
-                type="button"
-                (click)="clear()">
-                Limpiar
-                <i class="fa fa-eraser"></i>
-              </button>
-            </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <div>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="disabledButton()"
+              (click)="showAlert()">
+              Guardar
+              <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+            <button
+              class="btn btn-danger btn-sm active ml-3"
+              type="button"
+              (click)="clear()">
+              Limpiar
+              <i class="fa fa-eraser"></i>
+            </button>
           </div>
         </div>
       </div>

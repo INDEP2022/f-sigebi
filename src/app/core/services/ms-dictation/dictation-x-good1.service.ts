@@ -44,6 +44,9 @@ export class DictationXGood1Service extends HttpService {
   }) {
     return this.delete(this.route.DictationXGood1, body);
   }
+  removDictamen(body: any) {
+    return this.delete(this.route.DictationXGood1, body);
+  }
 
   createDictaXGood1(body: any) {
     return this.post(this.route.DictationXGood1, body);

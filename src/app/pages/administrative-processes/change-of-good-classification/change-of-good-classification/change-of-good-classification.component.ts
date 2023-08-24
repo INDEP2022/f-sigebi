@@ -16,6 +16,8 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { PreviousRouteService } from 'src/app/common/services/previous-route.service';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
+import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
+import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { ILabelOKey } from 'src/app/core/models/catalogs/label-okey.model';
 import { IStatusCode } from 'src/app/core/models/catalogs/status-code.model';
 import { IUnitXClassif } from 'src/app/core/models/ms-classifygood/ms-classifygood.interface';
@@ -25,12 +27,13 @@ import { LabelGoodService } from 'src/app/core/services/catalogs/label-good.serv
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { ClassifyGoodService } from 'src/app/core/services/ms-classifygood/ms-classifygood.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
+import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { getClassColour } from 'src/app/pages/general-processes/goods-characteristics/goods-characteristics/good-table-vals/good-table-vals.component';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ChangeOfGoodCharacteristicService } from '../services/change-of-good-classification.service';
 import { CharacteristicGoodCellComponent } from './characteristicGoodCell/characteristic-good-cell.component';
 import { ATRIBUT_ACT_COLUMNS } from './columns';
@@ -48,15 +51,20 @@ export class ChangeOfGoodClassificationComponent
   origin: number = null;
   usuarVal: string;
   form: FormGroup;
-  status = new DefaultSelect<IStatusCode>();
+  finalStatus: any[];
+  // status = new DefaultSelect<IStatusCode>();
   goodChange = 0;
   goodChange2 = 0;
   statusSelect: IStatusCode;
+  currentClasif: IGoodSssubtype;
+  newClasif: IGoodSssubtype;
   units: IUnitXClassif[] = [];
   noEtiqs: string[] = [];
   endProcess: boolean = false;
   destinations: ILabelOKey[] = [];
   loadingGood = false;
+  readOnlyGood = false;
+  old: any;
   // listAtributAct: any[] = [];
   // listAtributNew: IAttribClassifGoods[] = [];
   btnNewAtribut: boolean = true;
@@ -65,6 +73,7 @@ export class ChangeOfGoodClassificationComponent
   newDescription: string;
   service = inject(ChangeOfGoodCharacteristicService);
   initValue = false;
+  showExpedient = false;
   // atributActSettings = { ...this.settings };
   // pageSizeOptions = [5, 10, 15, 20];
   // limit: FormControl = new FormControl(5);
@@ -133,14 +142,18 @@ export class ChangeOfGoodClassificationComponent
     private readonly goodServices: GoodService,
     private readonly classifyGoodServices: ClassifyGoodService,
     private readonly labeGoodServices: LabelGoodService,
+    private goodFinderService: GoodFinderService,
     private readonly goodsQueryServices: GoodsQueryService,
     private readonly dynamicCatalogsService: DynamicCatalogsService,
     private readonly goodSssubtypeService: GoodSssubtypeService,
     private previousRouteService: PreviousRouteService,
     private statusScreenService: StatusXScreenService,
+    private segAcessXAreasService: SegAcessXAreasService,
     private router: Router
   ) {
     super();
+    this.buildForm();
+    this.buildFormNew();
     this.atributActSettings = {
       ...this.settings,
       actions: null,
@@ -160,9 +173,6 @@ export class ChangeOfGoodClassificationComponent
         add: false,
         edit: true,
         delete: false,
-      },
-      edit: {
-        editButtonContent: '<span class="fa fa-eye text-success mx-2"></span>',
       },
       columns: {
         ...ATRIBUT_ACT_COLUMNS,
@@ -205,11 +215,36 @@ export class ChangeOfGoodClassificationComponent
     // };
   }
 
+  private async initializeForm() {
+    const filterParams = new FilterParams();
+    filterParams.limit = 100000;
+    console.log(localStorage.getItem('username'));
+    filterParams.addFilter(
+      'user',
+      localStorage.getItem('username'),
+      SearchFilter.ILIKE
+    );
+    const results = await firstValueFrom(
+      this.segAcessXAreasService
+        .getAll(filterParams.getParams())
+        .pipe(catchError(x => of(null)))
+    );
+    if (results) {
+      if (results.data && results.data.length > 0) {
+        if (results.data[0].delegationNumber + '' === '0') {
+          this.showExpedient = true;
+          this.fileNumberNew.addValidators(Validators.required);
+        }
+      }
+    }
+  }
+
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe({
       next: param => {
         if (param['numberGood']) {
           console.log(param);
+          this.readOnlyGood = true;
           this.numberGood.setValue(param['numberGood']);
           if (this.previousRouteService.getHistory().length > 1) {
             this.origin = 1;
@@ -223,8 +258,7 @@ export class ChangeOfGoodClassificationComponent
       },
     });
 
-    this.buildForm();
-    this.buildFormNew();
+    this.initializeForm();
     this.numberGood.valueChanges
       .pipe(
         distinctUntilChanged(),
@@ -261,6 +295,10 @@ export class ChangeOfGoodClassificationComponent
   clear() {
     this.form.reset();
     this.formNew.reset();
+    setTimeout(() => {
+      this.goodChange++;
+    }, 500);
+
     // this.dataAct.reset();
     // this.listAtributNew = [];
   }
@@ -309,10 +347,7 @@ export class ChangeOfGoodClassificationComponent
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      fileNumberNew: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      fileNumberNew: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -343,25 +378,28 @@ export class ChangeOfGoodClassificationComponent
     // this.listAtributAct = [];
     // this.refreshTableAct(this.listAtributAct);
     this.loadingGood = true;
-    this.router.navigate([], {
-      relativeTo: this.activatedRoute,
-      queryParams: { numberGood: this.numberGood.value },
-      queryParamsHandling: 'merge', // remove to replace all query params by provided
-    });
+    // this.router.navigate([], {
+    //   relativeTo: this.activatedRoute,
+    //   queryParams: { numberGood: this.numberGood.value },
+    //   queryParamsHandling: 'merge', // remove to replace all query params by provided
+    // });
 
     const filterParams = new FilterParams();
     filterParams.addFilter('id', this.numberGood.value);
     const response = await firstValueFrom(
-      this.goodServices
-        .getAll(filterParams.getParams())
+      this.goodFinderService
+        .goodFinder(filterParams.getParams())
         .pipe(catchError(x => of({ data: [] })))
     );
     if (response.data && response.data.length > 0) {
       this.loadingGood = false;
       this.good = response.data[0];
-      const status = await firstValueFrom(this.getStatusXPantalla());
+      this.finalStatus = await firstValueFrom(this.getStatusXPantalla());
       // console.log(this.usuarVal, this.usuarVal.substring(0, 3));
-      if (status.length === 0 && this.usuarVal.substring(0, 3) === 'TLP') {
+      if (
+        this.finalStatus.length === 0 &&
+        this.usuarVal.substring(0, 3) === 'TLP'
+      ) {
         this.alertInfo(
           'error',
           'Cambio de Clasificador',
@@ -411,6 +449,7 @@ export class ChangeOfGoodClassificationComponent
   }
 
   setGood(good: IGood, clasif: IGoodSssubtype) {
+    this.currentClasif = clasif;
     this.descriptionGood.setValue(good.description);
     this.clasification.setValue(
       good.goodClassNumber + ' - ' + clasif.description
@@ -433,9 +472,37 @@ export class ChangeOfGoodClassificationComponent
     //5457740
   }
 
-  onChange(event: any) {
-    // console.log(event);
-    this.newDescription = event;
+  get pathClasification() {
+    return 'catalog/api/v1/good-sssubtype?sortBy=numClasifGoods:ASC';
+  }
+
+  get pathExpedient() {
+    return 'expedient/api/v1/expedient';
+  }
+
+  onChange(event: IGoodSssubtype) {
+    console.log(event);
+    // return;
+    this.newClasif = event;
+    let LVALIDA = true;
+    if (event && LVALIDA) {
+      let type = this.currentClasif.numType as IGoodType;
+      let subType = this.currentClasif.numSubType as IGoodSubType;
+      let newType = this.newClasif.numType as IGoodType;
+      let newSubType = this.currentClasif.numSubType as IGoodSubType;
+      if (
+        type &&
+        type.id + '' === '7' &&
+        subType &&
+        subType.id + '' === '1' &&
+        newType &&
+        newType.id + '' === '7' &&
+        newSubType &&
+        newSubType.id + '' === '34'
+      ) {
+      }
+    }
+    this.newDescription = event.description;
     this.unitXClassif.setValue(null);
     this.destination.setValue(null);
     this.getUnitiXClasif();
@@ -451,6 +518,7 @@ export class ChangeOfGoodClassificationComponent
       this.classificationOfGoods.value,
       SearchFilter.EQ
     );
+    params.addFilter3('sortBy', 'unit:ASC');
     this.classifyGoodServices
       .getUnitiXClasif(params.getParams())
       .pipe(takeUntil(this.$unSubscribe))
@@ -471,6 +539,7 @@ export class ChangeOfGoodClassificationComponent
       this.classificationOfGoods.value,
       SearchFilter.EQ
     );
+    params.addFilter3('sortBy', 'unit:ASC');
     this.classifyGoodServices
       .getEtiqXClasif(params.getParams())
       .pipe(takeUntil(this.$unSubscribe))
@@ -485,7 +554,7 @@ export class ChangeOfGoodClassificationComponent
           this.onLoadToast(
             'error',
             'ERROR',
-            'Error al cargar los numeros de etiquetas para el destino'
+            'Error al Cargar los Números de Etiquetas para el Destino'
           );
         },
       });
@@ -494,6 +563,7 @@ export class ChangeOfGoodClassificationComponent
   getDestination() {
     let params = new FilterParams();
     params.addFilter('id', `${this.noEtiqs}`, SearchFilter.IN);
+    params.addFilter3('sortBy', 'description:ASC');
     this.labeGoodServices
       .getEtiqXClasif(params.getParams())
       .pipe(takeUntil(this.$unSubscribe))
@@ -537,6 +607,7 @@ export class ChangeOfGoodClassificationComponent
   private updateFirsTable() {
     this.currentClasification.setValue(this.classificationOfGoods.value);
     this.descriptionClasification.setValue(this.newDescription);
+
     this.data.forEach(atrib => {
       if (atrib.value !== undefined) {
         this.good[atrib.column] = atrib.value;
@@ -552,20 +623,21 @@ export class ChangeOfGoodClassificationComponent
 
   updateSecondTable() {
     this.formNew.reset();
-    this.fileNumberNew.setValue(this.numberFile.value);
+
     setTimeout(() => {
       this.goodChange2++;
     }, 100);
   }
 
-  addAtribut() {
+  async addAtribut() {
     const putGood: any = {
       id: Number(this.good.id),
       goodId: Number(this.good.goodId),
       goodClassNumber: this.classificationOfGoods.value,
-      fileeNumber: this.fileNumberNew.value,
+      fileNumber: this.fileNumberNew.value,
       unitMeasure: this.unitXClassif.value,
       destiny: this.destination.value,
+      // status: this.finalStatus,
     };
     let contador = 0;
     for (let index = 0; index < this.data.length; index++) {

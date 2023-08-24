@@ -30,8 +30,33 @@ export class GoodTableValsComponent extends BasePage {
   @Input() avaluo: boolean;
   @Input() di_numerario_conciliado: string;
   @Input() good: IGood;
-  @Input() disabled: boolean;
+  @Input() get disabled() {
+    return this._disabled;
+  }
+  set disabled(value) {
+    this._disabled = value;
+    this.show = false;
+    if (value) {
+      this.settings = {
+        ...this.settings,
+        edit: {
+          editButtonContent: '<i class="fa fa-eye text-success mx-2"></i>',
+        },
+      };
+    } else {
+      this.settings = {
+        ...this.settings,
+        edit: {
+          editButtonContent:
+            '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
+        },
+      };
+    }
+    this.show = true;
+  }
+  show = false;
   @Input() goodChange: number;
+  _disabled: boolean;
   service = inject(GoodsCharacteristicsService);
   constructor() {
     super();
@@ -43,9 +68,6 @@ export class GoodTableValsComponent extends BasePage {
         add: false,
         edit: true,
         delete: false,
-      },
-      edit: {
-        editButtonContent: '<span class="fa fa-eye text-success mx-2"></span>',
       },
       hideSubHeader: false,
       columns: {

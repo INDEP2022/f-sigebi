@@ -6,7 +6,6 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IComerEvent,
   IFindAllComerGoodXlotTotal,
-  IGraceDate,
 } from '../../models/ms-event/event.model';
 
 @Injectable({
@@ -89,16 +88,10 @@ export class ComerEventService extends HttpService {
   }
 
   postDetEvento(params: any) {
-    return this.post<IListResponse<IFindAllComerGoodXlotTotal>>(
-      PrepareEventEndpoints.DetEvent,
-      params
-    );
+    return this.post(PrepareEventEndpoints.DetEvent, params);
   }
 
   postResumenAdmvxr(params: any) {
-    return this.post<IListResponse<IFindAllComerGoodXlotTotal>>(
-      PrepareEventEndpoints.ResumenAdmvxr,
-      params
-    );
+    return this.post(PrepareEventEndpoints.ResumenAdmvxr, params);
   }
 }

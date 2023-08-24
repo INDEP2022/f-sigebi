@@ -160,9 +160,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         edit: true,
         delete: false,
       },
-      edit: {
-        editButtonContent: '<span class="fa fa-eye text-success mx-2"></span>',
-      },
       columns: {
         ...ATRIBUT_ACT_COLUMNS,
         value: {
@@ -235,9 +232,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
               this.searchGoodSon(data.goodFatherNumber);
               this.searchSituation(data.goodFatherNumber);
               this.searchGoodRelDocuments(data.goodFatherNumber);
-              if (data.typeConv == 2) {
-                this.getAllGoodChild(data.goodFatherNumber);
-              }
+              this.getAllGoodChild(data.goodFatherNumber);
+              // if (data.typeConv == 2) {
+              //   this.getAllGoodChild(data.goodFatherNumber);
+              // }
             }
           }
         },
@@ -279,11 +277,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       },
     });
   }
-  /**
-   * @method: metodo para iniciar el formulario
-   * @author:  Alexander Alvarez
-   * @since: 27/09/2022
-   */
   private buildForm() {
     this.form = this.fb.group({
       id: [null],
@@ -399,31 +392,11 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       paramsF.addFilter('goodId', e);
       this.serviceGood.getAllFilter(paramsF.getParams()).subscribe({
         next: res => {
+          console.log(res);
           this.good = res.data[0];
           this.goodForTableChar = res.data[0];
           console.log(this.goodForTableChar);
           if (conversionData.typeConv == '2') {
-            this.id.setValue(res.data[0]['id']);
-            this.observation.setValue(res.data[0]['observations']);
-            this.descriptionSon.setValue(res.data[0]['description']);
-            this.quantity.setValue(res.data[0]['quantity']);
-            this.classifier.setValue(res.data[0]['goodClassNumber']);
-            this.classificationOfGoods = Number(res.data[0]['goodClassNumber']);
-            // debugger;
-            if (this.classificationOfGoods) {
-              console.log(this.classificationOfGoods);
-              setTimeout(() => {
-                this.goodChange++;
-              }, 1000);
-            }
-
-            this.unitOfMeasure.setValue(res.data[0]['unit']);
-            this.destinationLabel.setValue(res.data[0]['labelNumber']);
-            this.statusCode = res.data[0]['status'];
-            this.numberGoodSon.setValue(e);
-            this.searchStatus(res.data[0]['status']);
-            // this.getAttributesGood(res.data[0]['goodClassNumber']);
-          } else if (conversionData.typeConv == '1') {
             this.observation.setValue('');
             this.descriptionSon.setValue('');
             this.quantity.setValue('');
@@ -432,17 +405,42 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.destinationLabel.setValue('');
             this.numberGoodSon.setValue('');
             this.searchStatus('');
+
+            this.classificationOfGoods = Number(res.data[0]['goodClassNumber']);
+            if (this.classificationOfGoods) {
+              console.log(this.classificationOfGoods);
+              setTimeout(() => {
+                this.goodChange++;
+              }, 1000);
+            }
+
+            this.flagCargMasiva = true;
+            this.flagCambia = true;
+            // this.getAttributesGood(res.data[0]['goodClassNumber']);
+          } else if (conversionData.typeConv == '1') {
+            this.id.setValue(res.data[0]['id']);
+            this.observation.setValue(res.data[0]['observations']);
+            this.descriptionSon.setValue(res.data[0]['description']);
+            this.quantity.setValue(res.data[0]['quantity']);
+            this.classifier.setValue(res.data[0]['goodClassNumber']);
+
+            this.unitOfMeasure.setValue(res.data[0]['unit']);
+            this.destinationLabel.setValue(res.data[0]['labelNumber']);
+            this.statusCode = res.data[0]['status'];
+            this.numberGoodSon.setValue(e);
+            this.searchStatus(res.data[0]['status']);
+
             this.classificationOfGoods = Number(res.data[0]['goodClassNumber']);
             if (this.classificationOfGoods) {
               this.goodChange++;
             }
-            this.flagCargMasiva = true;
+            this.flagCargMasiva = false;
             this.flagCargaImagenes = true;
             this.flagFinConversion = true;
             this.flagCambia = true;
-            this.flagUpdate = true;
-            this.flagGoodNew = true;
-            this.flagGoodDelete = true;
+            this.flagUpdate = false;
+            this.flagGoodNew = false;
+            this.flagGoodDelete = false;
           }
         },
       });
@@ -533,7 +531,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     };
     this.serviceGood.update(data).subscribe(
       res => {
-        this.alert('success', 'Bien', `Actualizado Correctamente`);
+        this.alert('success', 'El Bien se ha Actualizado', ``);
       },
       err => {
         this.alert(
@@ -564,13 +562,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           this.flagGoodNew = true;
           this.flagGoodDelete = true;
           this.loader.load = false;
-        } else {
-          this.flagActa = false;
-          this.flagCargMasiva = false;
-          this.flagCargaImagenes = false;
-          this.flagFinConversion = false;
-          this.loader.load = false;
         }
+        this.loader.load = false;
       },
       err => {
         console.log(err);
@@ -603,8 +596,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         } else {
           const result = await this.alertQuestion(
             'question',
-            'Finalizar Conversión',
-            '¿ Estas Seguro de FINALIZAR la Captura de la Conversión ?'
+            '¿Desea Finalizar la Captura de Conversión?',
+            ''
           );
 
           if (result.isConfirmed) {
@@ -722,6 +715,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         this.router.navigate(['pages/general-processes/good-photos'], {
           queryParams: {
             numberGood: this.form.value.numberGoodFather,
+            origin: 'FCONVBIENHIJOS',
           },
         });
       },
@@ -741,14 +735,18 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   applyGood(event: any) {
-    /*if (this.selectedRow.status == 'CVD' || this.selectedRow.status == 'CAN') {
+    if (this.goodData.status == 'CVD' || this.goodData.status == 'CAN') {
+      this.alert('warning', `El Bien ya ha sido convertido`, ``);
+      return;
+    }
+    if (this.tipo.value == '2') {
       this.alert(
-        'error',
-        `El Bien estatus del bien con id: ${this.numberGoodFather.value}`,
-        `ya ha sido convertido`
+        'warning',
+        `No se puede crear Bienes hijos en un Bien tipo Conversión`,
+        ``
       );
-    }*/
-    //crear segun el nuemero pardre en referencia y copiar los demas valores al bien
+      return;
+    }
     console.log(this.good);
     this.alertQuestion(
       'question',
@@ -759,13 +757,16 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         let good = this.good;
         delete good.id;
         delete good.goodId;
+        delete good.statusDetails;
+        delete good.menaje;
         good.goodReferenceNumber = this.goodFatherNumber$.getValue();
         good.almacen =
           this.good.almacen != null ? this.good.almacen.idWarehouse : '';
         good.delegationNumber = this.good.delegationNumber.id;
         good.expediente = this.good.expediente.id;
         good.subDelegationNumber = this.good.subDelegationNumber.id;
-        good.lotNumber = this.good.lotNumber.id;
+        good.lotNumber =
+          this.good.lotNumber != null ? this.good.lotNumber.id : null;
         console.log(good);
         this.serviceGood.crateGood(good).subscribe(
           res => {
@@ -802,6 +803,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
   //Eliminar bien hijo
   deletGood(event: any) {
+    if (this.tipo.value == '2') {
+      this.alert(
+        'warning',
+        `No se puede crear Bienes hijos en un Bien tipo Conversión`,
+        ``
+      );
+      return;
+    }
     //console.log("el evento es -> ",this.selectedRow.data);
     if (event != null && this.selectedRow != undefined) {
       //console.log("el evento es -> ",JSON.stringify(this.selectedRow));

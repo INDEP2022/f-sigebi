@@ -6,6 +6,7 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDocumentsDictumXState,
   KeyDocument,
+  KeyDocumentPeer,
 } from '../../models/ms-documents/documents-dictum-x-state.model';
 
 @Injectable({
@@ -31,10 +32,28 @@ export class DocumentsDictumXStateService extends HttpService {
   }
   getDocumentsDictamen(
     params?: string
-  ): Observable<IListResponse<KeyDocument>> {
+  ): Observable<IListResponse<KeyDocumentPeer>> {
+    return this.get<IListResponse<KeyDocumentPeer>>(
+      DocumentsEndpoints.DocumentRequestPerGood,
+      params
+    );
+  }
+  getDocFoDIcta(params?: string): Observable<IListResponse<KeyDocument>> {
     return this.get<IListResponse<KeyDocument>>(
       DocumentsEndpoints.DocumentsForDictum,
       params
+    );
+  }
+  createDocsRevi(revision: IDocumentsDictumXState) {
+    return this.post<IListResponse<IDocumentsDictumXState>>(
+      DocumentsEndpoints.DocumentsDictuXState,
+      revision
+    );
+  }
+  update(revision: IDocumentsDictumXState) {
+    return this.put<IListResponse<IDocumentsDictumXState>>(
+      DocumentsEndpoints.DocumentsDictuXState,
+      revision
     );
   }
 }

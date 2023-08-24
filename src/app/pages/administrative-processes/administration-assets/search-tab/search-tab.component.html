@@ -30,12 +30,20 @@
                       [data]="goods"
                       [form]="searchTabForm"
                       value="id"
-                      bindLabel="info"
+                      bindLabel="description"
                       label="Bien"
                       control="noBien"
-                      (change)="onChangeGood($event)">
+                      (change)="onChangeGood($event)"
+                      [labelTemplate]="userLabel"
+                      [optionTemplate]="userOption">
                     </ngx-select>
                   </form-field>
+                  <ng-template #userLabel let-item="item"
+                    >{{ item.id }} - {{ item.description }}</ng-template
+                  >
+                  <ng-template #userOption let-item="item"
+                    >{{ item.id }} - {{ item.description }}</ng-template
+                  >
                   <!-- <goods-filter-shared [reloadGood]="reloadGood" [clean]="cleanGood" [form]="searchTabForm"
                     goodField="noBien" [classifGood]="classifGood" (good)="onChangeGood($event)"></goods-filter-shared> -->
                 </div>
@@ -87,7 +95,7 @@
                 </div>
               </div>
               <div class="col-md-6 d-flex justify-content-end">
-                <div class="m-3">
+                <div class="m-4">
                   <button
                     class="btn btn-sm btn-primary active mr-2"
                     (click)="search()">
@@ -99,9 +107,16 @@
                     Limpiar <i class="fas fa-eraser"></i>
                   </button>
                   <button
-                    class="btn btn-sm btn-primary active"
+                    class="btn btn-sm btn-primary active mr-2"
                     (click)="openPhotos()">
                     Ver Fotos <i class="fas fa-eye"></i>
+                  </button>
+                  <button
+                    class="btn btn-sm btn-primary active"
+                    (click)="goToRastreador()"
+                    *ngIf="queryParams">
+                    Regresar
+                    <i class="fas fa-arrow-circle-left"></i>
                   </button>
                 </div>
               </div>
