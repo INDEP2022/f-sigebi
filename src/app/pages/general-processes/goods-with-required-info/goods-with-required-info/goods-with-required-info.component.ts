@@ -249,10 +249,10 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
           'Aviso',
           'El Archivo Excel está en Proceso de Generación, favor de esperar la Descarga'
         );
-        this.fullService.generatingFileFlag.next({
-          progress: 99,
-          showText: true,
-        });
+        // this.fullService.generatingFileFlag.next({
+        //   progress: 99,
+        //   showText: true,
+        // });
         this.downloadDocument('Atributos_Nulos', 'excel', response.base64File);
         this.modalRef.hide();
       },
