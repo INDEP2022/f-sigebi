@@ -38,7 +38,7 @@ var users: any[] = [
   styles: [],
 })
 export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
-  title: string = '¿DESEA TURNAR LA SOLICITUD SELECCIONADA?';
+  title: string = '¿SELECCIONE EL USUARIO A TURNAR?';
   paragraphs: any[] = [];
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   public event: EventEmitter<any> = new EventEmitter();
