@@ -94,13 +94,17 @@ export const AUCTION_REPORT_COLUMNS1 = {
   vigencia: {
     title: 'Vigencia',
     sort: false,
-    /*valuePrepareFunction: (date: Date) => {
+    valuePrepareFunction: (date: Date) => {
       //var raw = new Date(`'${date}'`);
       //console.log(raw);
       var raw = new Date(date);
-      var formatted = new DatePipe('en-EN').transform(date, 'dd/MM/yyyy', 'UTC');
+      var formatted = new DatePipe('en-EN').transform(
+        date,
+        'dd/MM/yyyy',
+        'UTC'
+      );
       return formatted;
-    },*/
+    },
     filter: {
       type: 'custom',
       component: CustomDateFilterComponent,

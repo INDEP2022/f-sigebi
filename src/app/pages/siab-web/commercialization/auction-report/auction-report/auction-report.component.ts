@@ -111,6 +111,7 @@ export class auctionReportComponent extends BasePage implements OnInit {
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log(this.columnFilters[field]);
             } else {
               delete this.columnFilters[field];
             }
@@ -347,7 +348,7 @@ export class auctionReportComponent extends BasePage implements OnInit {
   }
 
   getDataSettlement() {
-    this.loading = false;
+    this.loading = true;
     let param = {
       ...this.params.getValue(),
       ...this.columnFilters,
