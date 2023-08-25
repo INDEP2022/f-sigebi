@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -35,17 +36,34 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   data2 = EXAMPLE_DATA2;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  origin: string = null;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) {
     super();
     this.settings = { ...this.settings, actions: false };
     this.settings2 = { ...this.settings, actions: false };
     this.settings.columns = COLUMNS1;
     this.settings2.columns = COLUMNS2;
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.origin = params['origin'];
+      });
   }
 
   ngOnInit(): void {
     this.initForm();
+  }
+
+  goBack() {
+    //FCONGENRASTREADOR
+    if (this.origin == 'FCONGENRASTREADOR') {
+      this.router.navigate([`/pages/general-processes/goods-tracker`]);
+    }
   }
 
   initForm() {

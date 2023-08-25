@@ -426,11 +426,6 @@ export class ConsultationGoodsCommercialSalesComponent
           this.loading = false;
         },
         err => {
-          this.alert(
-            'error',
-            'Se presentó un error inesperado al obtener los Bienes',
-            ''
-          );
           this.dataGoods.load([]);
           this.totalItems = 0;
           this.modelSave = null;
