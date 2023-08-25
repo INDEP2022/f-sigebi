@@ -9,6 +9,12 @@ const routes: Routes = [
     data: { title: 'Consulta de inmuebles' },
   },
   {
+    path: 'propertyInm',
+    loadChildren: async () =>
+      (await import('./propertyInm/propertyInm.module')).PropertyInmModule,
+    data: { title: 'Consulta de Muebles' },
+  },
+  {
     path: 'scanned-documents',
     loadChildren: async () =>
       (await import('./scanned-documents/scanned-documents.module'))
