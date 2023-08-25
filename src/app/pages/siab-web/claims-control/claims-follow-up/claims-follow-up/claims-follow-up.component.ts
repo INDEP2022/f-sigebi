@@ -293,15 +293,16 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
   }
   edit(siniester: any) {
     console.log(siniester);
-    if (siniester.estatus == 'ABIERTO') {
-      this.openForm(siniester);
-    } else {
-      this.alert(
-        'warning',
-        'El siniestro se encuentra cerrada, no se puede actualizar',
-        ''
-      );
-    }
+    this.openForm(siniester);
+    // if (siniester.estatus == 'ABIERTO') {
+
+    // } else {
+    //   this.alert(
+    //     'warning',
+    //     'El siniestro se encuentra cerrada, no se puede actualizar',
+    //     ''
+    //   );
+    // }
   }
 
   delete(bank: any) {

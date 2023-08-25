@@ -1210,15 +1210,15 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     await this.updateConversion();
     // this.edit ? this.update() : this.create();
     let params = {
-      id_conv: this.conversion,
-      id_bien: this.goodFatherNumber,
-      DESTYPE: this.origin,
+      ID_CONV: this.conversion,
+      ID_BIEN: this.goodFatherNumber,
+      // DESTYPE: this.origin,
     };
-    console.log(params);
+    console.log('params report', params);
     if (this.witnessOic != null) {
       this.siabService
-        // .fetchReport('ACTACONVSTES', params)
-        .fetchReportBlank('blank')
+        .fetchReport('ACTACONVCTES', params)
+        // .fetchReportBlank('blank')
         .subscribe(response => {
           if (response !== null) {
             const blob = new Blob([response], { type: 'application/pdf' });
@@ -1254,8 +1254,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         });
     } else {
       this.siabService
-        // .fetchReport('ACTACONVCTES', params)
-        .fetchReportBlank('blank')
+        .fetchReport('ACTACONVCTES', params)
+        // .fetchReportBlank('blank')
         .subscribe(response => {
           if (response !== null) {
             const blob = new Blob([response], { type: 'application/pdf' });
