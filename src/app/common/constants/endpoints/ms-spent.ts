@@ -9,4 +9,5 @@ export enum SpentEndpoints {
   ComerPaymentRefGensV2 = 'comer-payment-ref-gens/V2',
   V2Total = 'comer-payment-ref-gens/V2Total',
   PupObttotDevPenalizes = 'aplication/pup-obttot-dev-penalizes',
+  FillExpenses = 'aplication/fill-expenses',
 }

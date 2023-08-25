@@ -212,6 +212,12 @@ export const COLUMNS = {
 };
 
 export const COLUMNS_CARGADOS = {
+  paymentId: {
+    title: 'ID Pago',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+  },
   movementNumber: {
     title: 'No. Movimiento',
     // width: '15%',
@@ -238,14 +244,9 @@ export const COLUMNS_CARGADOS = {
     type: 'string',
     sort: false,
   },
-  bill: {
-    title: 'Cuenta',
-    // width: '15%',
-    type: 'string',
-    sort: false,
-  },
-  referenceOri: {
-    title: 'Referencia OI',
+
+  reference: {
+    title: 'Referencia',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -256,14 +257,26 @@ export const COLUMNS_CARGADOS = {
     type: 'string',
     sort: false,
   },
+  amount: {
+    title: 'Monto',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  bill: {
+    title: 'Cuenta',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+  },
   branchOffice: {
     title: 'Sucursal',
     // width: '15%',
     type: 'string',
     sort: false,
   },
-  amount: {
-    title: 'Monto',
+  referenceOri: {
+    title: 'Referencia OI',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -320,18 +333,7 @@ export const COLUMNS_CARGADOS = {
       }
     },
   },
-  paymentId: {
-    title: 'ID Pago',
-    // width: '15%',
-    type: 'string',
-    sort: false,
-  },
-  reference: {
-    title: 'Referencia',
-    // width: '15%',
-    type: 'string',
-    sort: false,
-  },
+
   lotPub: {
     title: 'Lote Pub.',
     // width: '15%',
