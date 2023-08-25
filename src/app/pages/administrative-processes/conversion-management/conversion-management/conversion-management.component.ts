@@ -46,7 +46,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   isFormModified = false;
 
   enable: boolean = false;
-
+  view: boolean = false;
   dataSelect = new DefaultSelect<any>();
 
   get idConversion() {
@@ -271,6 +271,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.conversion = response.data[0];
         console.log(this.conversion);
         this.idConversion.setValue(Number(response.data[0].id));
+        this.view = true;
         if (response.data[0].fCreate != null) {
           this.date.setValue(this.formatDate(response.data[0].fCreate));
         }
@@ -488,6 +489,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   clean() {
     this.form.reset();
     this.saved = true;
+    this.view = false;
     // this.form.markAllAsTouched();
   }
   formatDate(fecha: string) {
@@ -504,5 +506,12 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     if (this.enable) {
       this.isFormModified = true;
     }
+  }
+  passwordId() {
+    this.alert(
+      'success',
+      `Id Conversión: ${this.conversion.id} , Password: ${this.conversion.pwAccess}`,
+      ''
+    );
   }
 }
