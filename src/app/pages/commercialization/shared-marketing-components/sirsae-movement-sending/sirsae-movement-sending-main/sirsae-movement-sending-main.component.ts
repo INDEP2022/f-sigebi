@@ -756,11 +756,12 @@ export class SirsaeMovementSendingMainComponent
   async GET_AUX_ESTATUS() {
     const params = new FilterParams();
     params.addFilter('idEvent', this.eventSelected.id, SearchFilter.EQ);
-    params.addFilter(
-      'lotPublic',
-      this.selectedBatch.lotPublic,
-      SearchFilter.EQ
-    );
+    if (this.selectedBatch)
+      params.addFilter(
+        'lotPublic',
+        this.selectedBatch.lotPublic,
+        SearchFilter.EQ
+      );
     params.addFilter('idStatusVta', 'PAG,GARA', SearchFilter.NOTIN);
     return new Promise((resolve, reject) => {
       this.lotService.getLotbyEvent_(params.getParams()).subscribe({
@@ -1006,7 +1007,7 @@ export class SirsaeMovementSendingMainComponent
       }
 
     params.addFilter('idEvent', this.eventSelected.id, SearchFilter.EQ);
-    params.addFilter('idStatusVta', 'PAG', SearchFilter.EQ);
+    params.addFilter('idStatusVta', 'PAG', SearchFilter.NOT);
 
     this.lotService.getLotbyEvent_(params.getParams()).subscribe({
       next: data => {

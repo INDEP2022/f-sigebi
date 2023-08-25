@@ -696,7 +696,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       // debugger;
       const result = await this.validationsV1(v_importe, v_estatus);
       console.log(result, this.good);
-      return;
+      // return;
       v_verif_des = this.service.verif_des;
       v_importe = result.v_importe;
       v_estatus = result.v_estatus;

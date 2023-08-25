@@ -413,9 +413,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
                 this.goodChange++;
               }, 1000);
             }
-
-            this.flagCargMasiva = true;
+            this.flagCargMasiva = false;
+            this.flagCargaImagenes = true;
+            this.flagFinConversion = true;
             this.flagCambia = true;
+            this.flagUpdate = true;
+            this.flagGoodNew = false;
+            this.flagGoodDelete = false;
+
             // this.getAttributesGood(res.data[0]['goodClassNumber']);
           } else if (conversionData.typeConv == '1') {
             this.id.setValue(res.data[0]['id']);
@@ -423,7 +428,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.descriptionSon.setValue(res.data[0]['description']);
             this.quantity.setValue(res.data[0]['quantity']);
             this.classifier.setValue(res.data[0]['goodClassNumber']);
-
             this.unitOfMeasure.setValue(res.data[0]['unit']);
             this.destinationLabel.setValue(res.data[0]['labelNumber']);
             this.statusCode = res.data[0]['status'];
@@ -434,13 +438,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             if (this.classificationOfGoods) {
               this.goodChange++;
             }
-            this.flagCargMasiva = false;
-            this.flagCargaImagenes = true;
-            this.flagFinConversion = true;
-            this.flagCambia = true;
-            this.flagUpdate = false;
-            this.flagGoodNew = false;
-            this.flagGoodDelete = false;
+            // this.flagCargMasiva = true;
+            // this.flagCambia = true;
           }
         },
       });
@@ -767,6 +766,12 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         good.subDelegationNumber = this.good.subDelegationNumber.id;
         good.lotNumber =
           this.good.lotNumber != null ? this.good.lotNumber.id : null;
+        good.observations = this.observation.value;
+        good.description = this.description.value;
+        good.quantity = this.quantity.value;
+        good.classifier = this.classifier.value;
+        good.unit = this.unitOfMeasure.value;
+        good.labelNumber = this.destinationLabel.value;
         console.log(good);
         this.serviceGood.crateGood(good).subscribe(
           res => {
