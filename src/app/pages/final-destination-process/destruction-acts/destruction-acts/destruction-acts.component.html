@@ -9,6 +9,13 @@
           <div class="row mb-5">
             <div class="col-md-8">
               <button
+                *ngIf="qParams.expedient"
+                class="btn btn-primary active btn-sm mr-3"
+                (click)="goBack()">
+                Regresar
+                <i class="fas fa-arrow-circle-left"></i>
+              </button>
+              <button
                 type="button"
                 class="btn btn-primary active btn-sm mr-3"
                 (click)="searchDataExp()">

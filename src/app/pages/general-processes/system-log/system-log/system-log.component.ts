@@ -103,7 +103,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.EQ;
             field = `filter.${filter.field}`;
             filter.field == 'destable'
-              ? (searchFilter = SearchFilter.EQ)
+              ? (searchFilter = SearchFilter.ILIKE)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
