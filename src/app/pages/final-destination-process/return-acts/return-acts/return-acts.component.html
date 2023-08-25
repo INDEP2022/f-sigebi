@@ -4,6 +4,14 @@
   </div>
 
   <div body>
+    <div class="row" *ngIf="origin">
+      <div class="col-md-12">
+        <button class="btn btn-primary active btn-sm" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+    </div>
     <form
       [formGroup]="expForm"
       class="form-material justify-content-center"
