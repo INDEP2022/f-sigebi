@@ -15,4 +15,5 @@ export enum PaymentEndPoints {
   BusquedaPagosMae = 'search-payments-mae',
   getOI = 'application/obtener-oi',
   Delete = 'search-payments-det/delete-search-payments',
+  validSystem = 'comer-valid-system',
 }

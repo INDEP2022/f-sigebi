@@ -270,4 +270,10 @@ export class MsDepositaryService extends HttpService {
       `${DepositaryEndPoints.PaymentBulk}/${process}/type/${action}`
     );
   }
+
+  getSearchPaymentProcess(idSearch: number, newSearch: number) {
+    return this.get(
+      `${DepositaryEndPoints.SearchPaymentProcess}/search/${idSearch}/new/${newSearch}`
+    );
+  }
 }

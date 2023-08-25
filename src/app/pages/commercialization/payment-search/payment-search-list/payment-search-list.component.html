@@ -53,13 +53,21 @@
             <form-field
               [control]="searchForm.get('validity')"
               label="Válido Sistema">
-              <ng-select
+              <!-- <ng-select
                 formControlName="validity"
                 [searchable]="false"
                 class="form-control"
                 [clearable]="false">
                 <ng-option value="1">NULO</ng-option>
                 <ng-option value="2">B</ng-option>
+              </ng-select> -->
+              <ng-select class="form-control" formControlName="validity">
+                <!-- <ng-option [value]="null">Seleccione un valor</ng-option> -->
+                <ng-option
+                  *ngFor="let row of validSystem"
+                  [value]="row.valsisKey">
+                  {{ row.valsisDescription }}
+                </ng-option>
               </ng-select>
             </form-field>
           </div>
@@ -193,7 +201,7 @@
         <button
           type="button"
           class="btn btn-sm btn-info active m-3"
-          (click)="(changeProcess2)">
+          (click)="changeProcess2()">
           <i class="bx bx-file text-light float-icon"></i>
           Cambio de Proceso
         </button>
@@ -238,8 +246,8 @@
           <div>
             <button
               class="btn btn-sm btn-success active me-2 font-size-14"
-              (click)="openForm()"
-              [disabled]="!searchForm.valid">
+              (click)="openForm()">
+              <!-- [disabled]="!searchForm.valid" -->
               <i class="bx bx-plus text-light float-icon"></i>
               Agregar Registro
             </button>

@@ -121,10 +121,10 @@ export class PaymentService extends HttpService {
   PUP_PROC_NUEVO(evento: string) {
     return this.get(`application/fcomer111-pup-proc-new/${evento}`);
   }
-  getBusquedaPag(params?: number) {
+  getBusquedaPag(params?: any) {
     return this.get(
-      PaymentEndPoints.BusquedaPagosDet,
-      `&filter.tsearchId=$eq:${5}`
+      `${PaymentEndPoints.BusquedaPagosDet}?filter.tsearchId=$eq:${5}`,
+      params
     );
   }
   // postComerPagoRefVirt(body: IComerPaymentsRefVir) {
@@ -150,5 +150,15 @@ export class PaymentService extends HttpService {
 
   UpdateRecord(params: any) {
     return this.put(PaymentEndPoints.BusquedaPagosDet, params);
+  }
+
+  getValidSystem(filter?: string) {
+    if (filter != null) {
+      return this.get(
+        `${PaymentEndPoints.validSystem}?filter.valsisKey=$eq:${filter}`
+      );
+    } else {
+      return this.get(`${PaymentEndPoints.validSystem}`);
+    }
   }
 }

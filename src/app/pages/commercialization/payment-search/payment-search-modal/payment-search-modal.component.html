@@ -88,13 +88,21 @@
           <form-field
             [control]="paymentForm.get('systemValidity')"
             label="Válido Sistema">
-            <ng-select
+            <!-- <ng-select
               formControlName="systemValidity"
               [searchable]="false"
               class="form-control"
               [clearable]="false">
               <ng-option value="1">NULO</ng-option>
               <ng-option value="2">B</ng-option>
+            </ng-select> -->
+            <ng-select class="form-control" formControlName="systemValidity">
+              <!-- <ng-option [value]="null">Seleccione un valor</ng-option> -->
+              <ng-option
+                *ngFor="let row of validSystem"
+                [value]="row.valsisKey">
+                {{ row.valsisDescription }}
+              </ng-option>
             </ng-select>
           </form-field>
         </div>

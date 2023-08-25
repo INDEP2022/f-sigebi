@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -73,6 +73,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   LV_USR_CON: number = 0;
 
   LV_VAL_SISTEMA: string;
+  validSystem: any[] = [];
 
   //params = new BehaviorSubject<FilterParams>(new FilterParams());
   paymentSettings = {
@@ -124,11 +125,12 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getValidSystem();
     this.prepareForm();
     this.getParametercomer('SUPUSUCOMER');
     this.getBusquedaPagDet(5);
     this.searchID(5);
-    this.pagosArchivos(5, 2);
+    //this.pagosArchivos(5, 2);
     this.localdata
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -142,16 +144,17 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
             switch (filter.field) {
               case 'movement':
                 field = 'filter.numbermovement';
-                searchFilter = SearchFilter.EQ;
+                console.log('ENTRA A MOVEMENT');
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'date':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'originalReference':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'reference':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'amount':
                 searchFilter = SearchFilter.ILIKE;
@@ -285,7 +288,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
 
   search() {
     let LV_TOTREG: number;
-
+    console.log('validity -> ', this.searchForm.get('validity').value);
     this.searchID(5);
 
     if (this.searchForm.get('system').value == 1) {
@@ -418,15 +421,27 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     // }
   }
 
-  openModal2(context?: Partial<PaymentSearchProcessComponent>) {
-    const modalRef = this.modalService.show(PaymentSearchProcessComponent, {
-      initialState: { ...context },
+  openModal2(data?: any) {
+    console.log('Data Modal2-> ', data);
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        callback: (next: boolean) => {
+          if (next) {
+          }
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
+    };
+    this.modalService.show(PaymentSearchProcessComponent, config);
   }
 
-  changeProcess2() {}
+  changeProcess2() {
+    const elemC = document.getElementById('typeId') as HTMLInputElement;
+    console.log('Data elemC-> ', elemC.value);
+    this.openModal2(elemC.value);
+  }
 
   addRow(rows: any[]) {
     this.paymentColumns = [...this.paymentColumns, ...rows];
@@ -580,6 +595,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     this.dataRows = [];
     this.localdata.load(this.dataRows);
     this.localdata.refresh();
+    console.log('PARAMS', params);
     //Provisional data
     //this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     let data = this.params.value;
@@ -602,36 +618,75 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
             this.accountMovementService.getPaymentTypeSat(_params).subscribe(
               response => {
                 if (response != null && response != undefined) {
-                  console.log('Resp PaymentSat', response.data[0].description);
+                  if (res.data[i].validSystem) {
+                    console.log(
+                      'Resp PaymentSat',
+                      response.data[0].description
+                    );
+                    this.paymentService
+                      .getValidSystem(res.data[i].validSystem)
+                      .subscribe(resp => {
+                        let item = {
+                          movement: res.data[i].numbermovement,
+                          date: res.data[i].date,
+                          originalReference: res.data[i].referenceori,
+                          reference: res.data[i].reference,
+                          amount: res.data[i].amount,
+                          cve: res.data[i].cveBank,
+                          code: res.data[i].code,
+                          publicBatch: res.data[i].batchPublic,
+                          event: res.data[i].idEvent,
+                          systemValidity: resp.data[0].valsisDescription,
+                          result: res.data[i].result,
+                          paymentId: res.data[i].payId,
+                          batchId: res.data[i].batchId,
+                          entryOrderId: res.data[i].numbermovement,
+                          satDescription: response.data[0].description,
+                          type: res.data[i].guy,
+                          inconsistencies: res.data[i].idinconsis,
+                        };
 
-                  let item = {
-                    movement: res.data[i].numbermovement,
-                    date: res.data[i].date,
-                    originalReference: res.data[i].referenceori,
-                    reference: res.data[i].reference,
-                    amount: res.data[i].amount,
-                    cve: res.data[i].cveBank,
-                    code: res.data[i].code,
-                    publicBatch: res.data[i].batchPublic,
-                    event: res.data[i].idEvent,
-                    systemValidity: res.data[i].validSystem,
-                    result: res.data[i].result,
-                    paymentId: res.data[i].payId,
-                    batchId: res.data[i].batchId,
-                    entryOrderId: res.data[i].numbermovement,
-                    satDescription: response.data[0].description,
-                    type: res.data[i].guy,
-                    inconsistencies: res.data[i].idinconsis,
-                  };
-                  console.log(
-                    'Descripcion Pag Sat-> ',
-                    this.getPaymentSat(params, res.data[i].idGuySat) // <- Undefine
-                  );
-                  this.dataRows.push(item);
-                  this.localdata.load(this.dataRows);
-                  console.log('this dataRows: ', this.dataRows);
-                  console.log('this localData: ', this.localdata);
-                  this.totalItems = res.count;
+                        console.log(
+                          'Descripcion Pag Sat-> ',
+                          this.getPaymentSat(params, res.data[i].idGuySat) // <- Undefine
+                        );
+                        this.dataRows.push(item);
+                        this.localdata.load(this.dataRows);
+                        console.log('this dataRows: ', this.dataRows);
+                        console.log('this localData: ', this.localdata);
+                        this.totalItems = res.count;
+                      });
+                  } else {
+                    let item = {
+                      movement: res.data[i].numbermovement,
+                      date: res.data[i].date,
+                      originalReference: res.data[i].referenceori,
+                      reference: res.data[i].reference,
+                      amount: res.data[i].amount,
+                      cve: res.data[i].cveBank,
+                      code: res.data[i].code,
+                      publicBatch: res.data[i].batchPublic,
+                      event: res.data[i].idEvent,
+                      systemValidity: res.data.valsisDescription,
+                      result: res.data[i].result,
+                      paymentId: res.data[i].payId,
+                      batchId: res.data[i].batchId,
+                      entryOrderId: res.data[i].numbermovement,
+                      satDescription: response.data[0].description,
+                      type: res.data[i].guy,
+                      inconsistencies: res.data[i].idinconsis,
+                    };
+
+                    console.log(
+                      'Descripcion Pag Sat-> ',
+                      this.getPaymentSat(params, res.data[i].idGuySat) // <- Undefine
+                    );
+                    this.dataRows.push(item);
+                    this.localdata.load(this.dataRows);
+                    console.log('this dataRows: ', this.dataRows);
+                    console.log('this localData: ', this.localdata);
+                    this.totalItems = res.count;
+                  }
                 }
               },
               error => {
@@ -970,5 +1025,43 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     } else {
       this.pupProcesa();
     }
+  }
+
+  getValidSystem() {
+    this.paymentService.getValidSystem().subscribe(
+      resp => {
+        if (resp != null && resp != undefined) {
+          console.log('valid system ', resp);
+          this.validSystem = resp.data;
+        }
+        console.log('valid system 2 ', this.validSystem);
+      },
+      err => {
+        console.log('error', err);
+      }
+    );
+  }
+
+  getValidSystemFilter(filter: string): string {
+    let aux = '';
+    if (filter != null) {
+      console.log('system valid filter-> ', filter);
+      this.paymentService.getValidSystem(filter).subscribe(
+        resp => {
+          if (resp != null && resp != undefined) {
+            console.log(
+              'valid getValidSystemFilter ',
+              resp.data[0].valsisDescription
+            );
+            aux = resp.data[0].valsisDescription;
+          }
+        },
+        err => {
+          console.log('error', err);
+        }
+      );
+    }
+    console.log('salida aux ', aux);
+    return aux;
   }
 }

@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -19,6 +20,9 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
   payment: any;
   eventItems = new DefaultSelect();
   batchItems = new DefaultSelect();
+
+  validSystem: any[] = [];
+
   @Output() refresh = new EventEmitter<any>();
   @Output() onAdd = new EventEmitter<any>();
   @Output() onEdit = new EventEmitter<any>();
@@ -64,11 +68,16 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
     },
   ];
 
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private paymentService: PaymentService
+  ) {
     super();
   }
 
   ngOnInit(): void {
+    this.getValidSystem();
     this.prepareForm();
     this.getEvents({ page: 1, text: '' });
     this.getBatches({ page: 1, text: '' });
@@ -176,5 +185,20 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
     const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
     const year = date.getUTCFullYear().toString();
     return `${day}/${month}/${year}`;
+  }
+
+  getValidSystem() {
+    this.paymentService.getValidSystem().subscribe(
+      resp => {
+        if (resp != null && resp != undefined) {
+          console.log('valid system ', resp);
+          this.validSystem = resp.data;
+        }
+        console.log('valid system 2 ', this.validSystem);
+      },
+      err => {
+        console.log('error', err);
+      }
+    );
   }
 }

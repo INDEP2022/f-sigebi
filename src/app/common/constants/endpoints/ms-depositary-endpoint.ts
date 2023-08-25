@@ -32,4 +32,5 @@ export enum DepositaryEndPoints {
   PaymentEfeDup = 'comer-payment/pa-payment-efe-dup-nref',
   PaymentFiles = 'comer-payment/files-payment/type-action',
   PaymentBulk = 'comer-payment/massive-payment/system',
+  SearchPaymentProcess = 'comer-payment/change-payment-process',
 }
