@@ -4,18 +4,59 @@
   </div>
 
   <div body>
-    <div class="buttons mb-4">
-      <div *ngIf="origin && origin > 0">
+    <div class="buttons mb-5">
+      <div *ngIf="origin">
         <button class="btn btn-primary active btn-sm" (click)="back()">
           Regresar
           <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>
-    <form [formGroup]="form">
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-6" style="display: flex; column-gap: 15px">
+          <form-field [control]="form.get('noBien')" label="No. de Bien Padre">
+            <input
+              class="form-control"
+              formControlName="noBien"
+              [readOnly]="origin"
+              maxlength="10" />
+          </form-field>
+          <button
+            *ngIf="origin === null"
+            [disabled]="formLoading || form.invalid"
+            class="btn btn-primary btn-sm active"
+            type="button"
+            (click)="searchGood()">
+            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+          <button
+            *ngIf="origin === null"
+            [disabled]="formLoading"
+            class="btn btn-danger btn-sm active"
+            type="button"
+            (click)="resetForm()">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+          <div
+            [class]="
+              loading || loadingExcel || !data || data.length === 0
+                ? 'disabled'
+                : ''
+            "
+            class="mb-4 ml-2"
+            style="width: 150px"
+            (click)="exportExcel()">
+            <app-excel-report
+              text="Exportar a Excel"
+              [elementToExport]="elementToExport"
+              [externalClick]="flagDownload"
+              [nameExcel]="nameExcel"></app-excel-report>
+          </div>
+        </div>
+      </div>
       <div class="col-lg-7 col-md-12">
-        <app-partializes-table
-          (selectPartializedGood)="select($event)"></app-partializes-table>
+        <app-partializes-table [noBien]="noBienValue"></app-partializes-table>
       </div>
       <div class="col-lg-5 col-md-12">
         <app-partialized-tree-view

@@ -44,8 +44,7 @@ export class GoodPartializeService extends HttpService {
   getSons2(fatherIndicator: string) {
     return this.get<IListResponse<IPartializedGoods>>(
       this.endpoint +
-        '?limit=10000&filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
-        '&filter.grandSonIndicator=$null&filter.fatherIndicator=$eq:' +
+        '?limit=100000&filter.fatherIndicator=$eq:' +
         fatherIndicator +
         '&sortBy=childIndicator:ASC'
     ).pipe(catchError(err => of({ data: [] as IPartializedGoods[] })));
@@ -692,8 +691,8 @@ export class GoodPartializeService extends HttpService {
     // ];
     return this.get<IListResponse<IPartializedGoods>>(
       this.endpoint +
-        // '?limit=10000&filter.fatherIndicator=$not:$null&filter.childIndicator=$null' +
-        `?filter.goodNumber=$eq:${goodNumber}&sortBy=fatherIndicator:DESC`
+        '?limit=10000&filter.fatherIndicator=$not:$null&filter.childIndicator=$null' +
+        `&filter.goodNumber=$eq:${goodNumber}&sortBy=fatherIndicator:DESC`
     ).pipe(
       catchError(err => of({ data: [] as IPartializedGoods[] })),
       map(data =>

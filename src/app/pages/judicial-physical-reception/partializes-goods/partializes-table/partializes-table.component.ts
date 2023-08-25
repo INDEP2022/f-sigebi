@@ -1,5 +1,6 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs';
+import { IPartializedGoods } from 'src/app/core/models/ms-partialize-goods/partialize-good.model';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
 import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
 import { PartializesGoodsService } from '../services/partializes-goods.service';
@@ -10,13 +11,19 @@ import { PartializesGoodsService } from '../services/partializes-goods.service';
   styleUrls: ['./partializes-table.component.scss'],
 })
 export class PartializesTableComponent
-  extends BasePageTableNotServerPagination<any>
+  extends BasePageTableNotServerPagination<IPartializedGoods>
   implements OnInit
 {
-  @Output() selectPartializedGood = new EventEmitter<number>();
-  loadingExcel = false;
-  flagDownload = false;
-  elementToExport: any[];
+  @Input() get noBien() {
+    return this._noBien;
+  }
+  set noBien(value) {
+    if (!value) return;
+    this._noBien = value;
+    this.getData();
+  }
+
+  private _noBien: number;
   constructor(
     private serviceData: PartializesGoodsService,
     private partializeService: GoodPartializeService
@@ -42,27 +49,12 @@ export class PartializesTableComponent
     };
   }
 
-  exportExcel() {
-    this.loadingExcel = true;
-    this.elementToExport = [];
-    const arrayDetails: any[] = [];
-    this.data.forEach(item => {
-      arrayDetails.push({
-        PARCIALIZACION: item.partializedId,
-        BIEN: item.goodNumber.id,
-        DESCRIPCION: item.description,
-      });
-    });
-    this.elementToExport = [...arrayDetails];
-    this.flagDownload = !this.flagDownload;
-    this.loadingExcel = false;
-  }
-
   override getData() {
-    if (this.serviceData.numberGoodQueryParams) {
+    if (this.noBien) {
       this.loading = true;
+      this.serviceData.loading = true;
       this.partializeService
-        .getData(+this.serviceData.numberGoodQueryParams)
+        .getData(+this.noBien)
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: response => {
@@ -71,43 +63,24 @@ export class PartializesTableComponent
               this.data = response.data.map(x => {
                 return { ...x, noBien: x.goodNumber.id };
               });
+              this.serviceData.data = this.data;
               this.totalItems = this.data.length;
               this.dataTemp = [...this.data];
               this.getPaginated(this.params.value);
               this.loading = false;
+              this.serviceData.loading = false;
             } else {
               this.notGetData();
+              this.serviceData.data = [];
+              this.serviceData.loading = false;
             }
           },
           error: err => {
             this.notGetData();
+            this.serviceData.data = [];
+            this.serviceData.loading = false;
           },
         });
     }
   }
-
-  // override getParams() {
-  //   let params = {
-  //     ...this.params.getValue(),
-  //     ...this.columnFilters,
-  //   };
-  //   if (this.serviceData.numberGoodQueryParams) {
-  //     params = {
-  //       ...params,
-  //       'filter.goodNumber': '$eq:' + this.serviceData.numberGoodQueryParams,
-  //     };
-  //   }
-  //   return params;
-  // }
-
-  select(item: any) {
-    console.log(item);
-
-    this.selectPartializedGood.emit(item.noBien);
-  }
-
-  // override async extraOperationsGetData() {
-  //   this.serviceData.items = await this.data.getAll();
-  //   console.log(this.serviceData.items);
-  // }
 }
