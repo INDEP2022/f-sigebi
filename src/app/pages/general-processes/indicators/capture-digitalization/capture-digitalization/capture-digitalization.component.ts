@@ -56,6 +56,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
   info: Info;
   nombreUser: string = '';
   flyerTypes: any;
+  excelLoading: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters: any = [];
   P_T_CUMP: number = 0;
@@ -454,6 +455,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       noStation: Number(this.formCapture.value.noStation),
       noAuthorityts: Number(this.formCapture.value.noStation),
     };
+
     this.documentsService
       .getDocCaptureFind(this.search, params)
       // .pipe(timeout(50000))
@@ -461,22 +463,23 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
         next: data => {
           this.loading = false;
           this.capturasDig = data.result;
+          console.log(this.capturasDig);
           let noCumple = data.result.filter(
             (elemento: any) => elemento.cumplio == 0
           );
           let cumple = data.result.filter(
             (elemento: any) => elemento.cumplio == 1
           );
-          this.P_T_CUMP = cumple.length;
-          this.P_T_NO_CUMP = noCumple.length;
+          this.P_T_CUMP = data.info.total_cumplio;
+          this.P_T_NO_CUMP = data.info.total_no_cumplio;
+          this.P_CUMP = (this.P_T_CUMP / data.result.count) * 100;
+          // this.P_T_CUMP = cumple.length;ss
+          // this.P_T_NO_CUMP = noCumple.length;
           // this.P_T_NO_CUMP = data.info.total_no_cumplio;
-          this.P_CUMP = (this.P_T_CUMP / data.result.length) * 100;
           this.dataFactCapt.load(this.capturasDig);
           this.dataFactCapt.refresh();
-          this.totalItemsCaptura = data.result.length;
-          this.loading = false;
-          // this.P_T_CUMP = data.info.total_cumplio;
-          // this.P_CUMP = data.info.porcen_cumplidos;
+          // this.totalItemsCaptura = data.result.length;f
+          // this.totalItemsCaptura = data.count;
         },
         error: () => {
           this.loading = false;
@@ -511,4 +514,75 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     // this.formCapture.value.user = event.user
   }
   goBack() {}
+  exportAll(): void {
+    this.excelLoading = true;
+    this.documentsService.getExcel().subscribe({
+      next: response => {
+        this.excelLoading = false;
+        this.alert(
+          'warning',
+          'El archivo se esta generando, favor de esperar la descarga',
+          ''
+        );
+        // this.fullService.generatingFileFlag.next({
+        //   progress: 99,
+        //   showText: true,
+        // });
+        this.downloadDocument('-CapturaYdigita', 'excel', response.base64File);
+        // this.modalRef.hide();
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+
+  //Descargar Excel
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.excelLoading = true;
+    this.alert('success', 'El Reporte se ha Descargado', '');
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    // this.fullService.generatingFileFlag.next({
+    //   progress: 100,
+    //   showText: false,
+    // });
+
+    return bytes.buffer;
+  }
 }
