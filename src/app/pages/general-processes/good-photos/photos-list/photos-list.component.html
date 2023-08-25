@@ -71,12 +71,14 @@
           aria-labelledby="button-basic">
           <li
             role="menuitem"
-            [class]="filesToDelete.length === 0 ? 'disabledDelete' : ''">
+            [class]="filesToDelete.length === 0 ? 'disabledOption' : ''">
             <a class="dropdown-item" (click)="download()"
               >Exportar Seleccionadas</a
             >
           </li>
-          <li role="menuitem">
+          <li
+            role="menuitem"
+            [class]="files.length === 0 ? 'disabledOption' : ''">
             <a class="dropdown-item" (click)="download(true)"
               >Exportar Fotos (Todas)</a
             >

@@ -41,7 +41,7 @@ export class PhotoGaleryComponent extends BasePage implements OnInit {
       ['/pages/administrative-processes/administration-assets'],
       {
         queryParams: {
-          goodNumber: good.id,
+          goodNumber: good.goodNumber,
           origin: 'FCONGENRASTREADOR',
         },
       }

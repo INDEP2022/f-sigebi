@@ -210,11 +210,6 @@ export class SearchTabComponent extends BasePage implements OnInit {
       this.alert('warning', 'Datos Búsqueda', 'Debe Seleccionar un Bien', '');
       return;
     }
-    this.dataSearch.emit({
-      data: this.searchTabForm.get('noBien').value,
-      exist: true,
-    });
-
     const respStatus = await this.searchStatus();
     if (respStatus == false) {
       this.alert('warning', 'El Bien no cuenta con un estatus valido', '');
@@ -222,6 +217,10 @@ export class SearchTabComponent extends BasePage implements OnInit {
     } else {
       const respNotification = await this.searchNotifications();
     }
+    this.dataSearch.emit({
+      data: this.searchTabForm.get('noBien').value,
+      exist: true,
+    });
     if (this.goodSelect) {
       this.searchTabForm.get('situacion').patchValue(this.goodSelect.situation);
       this.searchTabForm.get('destino').patchValue(this.goodSelect.destiny);

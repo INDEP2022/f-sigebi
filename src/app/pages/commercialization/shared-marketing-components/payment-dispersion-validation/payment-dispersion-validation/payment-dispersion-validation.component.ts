@@ -145,6 +145,7 @@ export class PaymentDispersionValidationComponent
   loadingBtnExcel3: boolean = false;
   loadingBtnExcel4: boolean = false;
 
+  eventSelectedVal: boolean = false;
   constructor(
     private fb: FormBuilder,
     private excelService: ExcelService,
@@ -1308,7 +1309,7 @@ export class PaymentDispersionValidationComponent
   clear() {
     this.form.reset();
     this.form2.reset();
-
+    this.eventSelectedVal = false;
     this.getComerEvents(new ListParams());
 
     this.lotByEvent.load([]);
@@ -1374,6 +1375,7 @@ export class PaymentDispersionValidationComponent
   }
 
   async search() {
+    this.eventSelectedVal = true;
     this.disabledBtnCerrar = true;
     this.acordionOpen = true;
     this.params.getValue().page = 1;

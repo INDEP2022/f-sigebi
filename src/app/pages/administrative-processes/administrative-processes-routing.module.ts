@@ -267,7 +267,7 @@ export const routes: Routes = [
             './unit-conversion-packages/unit-conversion-packages.module'
           ).then(m => m.UnitConversionPackagesModule),
         data: {
-          screen: 'FMTOPAQUETE_0001',
+          screen: 'FMTOPAQUETE',
           title: 'Conversión Masiva Parcialización Inversa',
         },
       }, // FMTOPAQUETE_0001

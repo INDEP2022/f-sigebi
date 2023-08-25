@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
@@ -90,6 +91,11 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   totalItemsNavigate: number = 0;
   newLimitparamsActNavigate = new FormControl(1);
   navigateProceedings: boolean = false;
+  qParams = {
+    origin: '',
+    expedient: '',
+    type: '',
+  };
 
   //DATOS DEL EXPEDIENTE
   expType: string;
@@ -106,13 +112,23 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     private goodService: GoodService,
     private serviceDetailProc: DetailProceeDelRecService,
     private serviceTransferent: TransferenteService,
-    private authService: AuthService
+    private authService: AuthService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router
   ) {
     super();
+
     this.settings = { ...this.settings, actions: false };
     this.settings2 = { ...this.settings, actions: false };
     this.settings.columns = COLUMNSTABL1;
     this.settings2.columns = COLUMNSTABLE2;
+  }
+
+  goBack() {
+    //FCONGENRASTREADOR
+    if (this.qParams.origin == 'FCONGENRASTREADOR') {
+      this.router.navigate([`/pages/general-processes/goods-tracker`]);
+    }
   }
 
   ngOnInit(): void {
@@ -122,6 +138,15 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     this.getEdoPhase();
 
     this.newProceeding();
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.qParams.origin = params['origin'];
+        this.qParams.expedient = params['NO_EXPEDIENTE_F'];
+        this.qParams.type = params['TIPO_DICTA_F'];
+        this.actForm.get('expedient').setValue(this.qParams.expedient);
+        this.searchDataExp();
+      });
   }
 
   initializesForm() {

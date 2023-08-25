@@ -343,7 +343,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           this.isSearch = false;
           this.loading = false;
           this.form.reset();
-          this.alert('error', 'ERROR', err.error.message);
+          this.alert('warning', 'Atención', err.error.message);
         },
       });
   }
@@ -426,8 +426,8 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           this.form.reset();
           if (err.status === 500) {
             this.alert(
-              'error',
-              'ERROR',
+              'warning',
+              'Atención',
               'No se pudo obtener todos los datos relacionados'
             );
           }
