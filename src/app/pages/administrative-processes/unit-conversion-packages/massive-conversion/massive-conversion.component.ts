@@ -636,7 +636,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         // this.goodDescription.setValue(res.numberGoodFather);
         // this.amount.setValue(res.numberGoodFather);
         this.measurementUnit.setValue(res.unit);
-        this.getCatalogClassGood({ text: res.status }, true);
+        console.log(res.status)
+        this.getCatalogGoodStatus({ text: res.status }, true);
         // this.status2.setValue(res.numberGoodFather);
 
         if (
@@ -944,7 +945,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     const noPackage = this.noPackage.value.numberPackage;
     if (this.dataPrevisualization.length === 0) {
       this.alert(
-        'error',
+        'warning',
         titleInit + ' de paquete ' + noPackage,
         'No puede ' + messageInit + ' un paquete sin bienes'
       );
@@ -1309,6 +1310,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
             case 'V':
               this.validaButton.PB_VALIDA = false;
               this.validaButton.PB_AUTORIZA = true;
+              this.form.disable({ onlySelf: true, emitEvent: false });
               // pAsuntoInit = 'Validación';
               pMessageStatus = 'validado';
               break;
@@ -1317,6 +1319,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
               pMessageStatus = 'autorizado';
               this.validaButton.PB_AUTORIZA = false;
               this.validaButton.PB_CERRAR = true;
+              this.form.disable({ onlySelf: true, emitEvent: false });
               break;
             case 'C':
               // pAsuntoInit = 'Autorización';
@@ -2005,7 +2008,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         if (res && res.data && res.data.length > 0) {
           this.noPackage.setValue(res.data[0]);
           this.loading = false;
-          this.validateButtons(this.noPackage.value.statusPaq);
+          this.validateButtons(this.noPackage.value.statuspack);
         } else {
           // this.dataPackageEnc = null;
         }
