@@ -56,6 +56,7 @@ export class GoodsListComponent
   $trackedGoods = this.store.select(getTrackedGoods);
   @Input() changeDescription: string;
   @Input() set files(files: any[]) {
+    debugger;
     if (files.length === 0) return;
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
@@ -126,13 +127,14 @@ export class GoodsListComponent
 
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
+      debugger;
       this.data.load([]);
       this.availableToUpdate = [];
       this.idsNotExist = [];
       this.showError = false;
 
       this.ids = this.excelService.getData(binaryExcel);
-      if (this.ids[0].No_bien === undefined) {
+      if (this.ids[0].no_bien === undefined) {
         this.alert(
           'error',
           'Ocurrio un error al leer el archivo',
@@ -308,7 +310,7 @@ export class GoodsListComponent
         if (response && response.length > 0) {
           this.ids = response.map(x => {
             return {
-              No_bien: +x.goodNumber,
+              no_bien: +x.goodNumber,
             };
           });
           this.fillData(this.ids);
@@ -380,7 +382,7 @@ export class GoodsListComponent
     if (ids) {
       filterParams.addFilter(
         'id',
-        String(ids.map(row => row.No_bien)),
+        String(ids.map(row => row.no_bien)),
         SearchFilter.IN
       );
     }
