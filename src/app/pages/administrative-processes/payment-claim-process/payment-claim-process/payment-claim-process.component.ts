@@ -353,9 +353,9 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           if (filter != 'no') {
             this.alert(
               'error',
-              'No hay Registros para la Reclamación de pago en el Archivo Cargado.',
+              'Archivo Inválido',
               // 'No existen registros disponibles para el proceso de reclamación de pago en el archivo cargado',
-              ''
+              'Verifique e intente nuevamente'
             );
           }
           // this.onLoadToast('warning', 'No hay datos disponibles', '');
