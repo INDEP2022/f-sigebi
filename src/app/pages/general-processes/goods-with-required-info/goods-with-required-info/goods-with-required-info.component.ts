@@ -247,7 +247,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
         this.excelLoading = false;
         this.alert(
           'warning',
-          'El archivo está en proceso de generación, favor de esperar la descarga',
+          'El archivo se esta generando, favor de esperar la descarga',
           ''
         );
         // this.fullService.generatingFileFlag.next({
