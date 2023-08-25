@@ -2,10 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SpentEndpoints } from 'src/app/common/constants/endpoints/ms-spent';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import {
-  IListResponseMessage,
-  IResponse,
-} from '../../interfaces/list-response.interface';
+import { IListResponseMessage } from '../../interfaces/list-response.interface';
 import {
   IComerExpense,
   IFillExpenseData,
@@ -41,9 +38,6 @@ export class SpentService extends HttpService {
   }
 
   fillExpenses(body: IFillExpensesDTO) {
-    return this.post<IResponse<IFillExpenseData>>(
-      SpentEndpoints.FillExpenses,
-      body
-    );
+    return this.post<IFillExpenseData>(SpentEndpoints.FillExpenses, body);
   }
 }

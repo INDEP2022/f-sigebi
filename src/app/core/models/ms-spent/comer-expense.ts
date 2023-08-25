@@ -61,7 +61,7 @@ export interface IComerExpense {
 }
 
 export interface IFillExpensesDTO {
-  idEvent: number;
+  idEvent: string;
   idStatusVta: string;
 }
 
