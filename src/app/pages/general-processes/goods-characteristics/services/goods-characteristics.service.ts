@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ICharacteristicValue } from 'src/app/core/models/good/good-characteristic';
+import { IPhotoFile } from 'src/app/core/services/ms-ldocuments/file-photo.service';
 
 export class ICharacteristicsWidthData {
   data: ICharacteristicValue[];
@@ -21,7 +22,7 @@ export class GoodsCharacteristicsService extends ICharacteristicsWidthData {
   disabledNoClasifBien = true;
   disabledDescripcion = true;
   haveTdictaUser = false;
-  files: string[] = [];
+  files: IPhotoFile[] = [];
   // di_numerario_conciliado: string;
 
   // newGood: any;

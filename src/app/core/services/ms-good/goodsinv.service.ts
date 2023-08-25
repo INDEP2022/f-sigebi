@@ -102,6 +102,11 @@ export class GoodsInvService extends HttpService {
     return this.post<IListResponse<IClient>>(`${route}?${params}`, formData);
   }
 
+  getClientName(formData: Object): Observable<IListResponse<IClient>> {
+    const route = IGoodsinvEndpoint.GetClients;
+    return this.post<IListResponse<IClient>>(`${route}`, formData);
+  }
+
   getDestructionView(
     _params: ListParams
   ): Observable<IListResponse<IGoodInvDestructionView>> {

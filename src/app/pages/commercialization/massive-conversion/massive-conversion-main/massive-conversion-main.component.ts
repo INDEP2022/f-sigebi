@@ -114,7 +114,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     validityDate: new FormControl(null),
   });
 
-  dataSource = new LocalDataSource();
+  dataSource: LocalDataSource = new LocalDataSource();
   rfcSource = new LocalDataSource();
   clientSource = new LocalDataSource();
   lcsSource = new LocalDataSource();
