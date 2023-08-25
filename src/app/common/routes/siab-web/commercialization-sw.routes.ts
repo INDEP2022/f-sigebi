@@ -66,6 +66,10 @@ export const COMMERCIALIZATION_SW_ROUTES = [
         label: 'Carga de pagos',
         link: '/pages/siab-web/commercialization/payload',
       },
+      {
+        label: 'Automobiles',
+        link: '/pages/siab-web/commercialization/automobiles',
+      },
     ],
   },
 ];
