@@ -71,6 +71,10 @@ export class DataFilterComponent extends BasePage implements OnInit {
   @ViewChild('goodNumbersInput', { static: true })
   goodNumbersInput: ElementRef<HTMLInputElement>;
   goodNumbersControl = new FormControl(null);
+
+  @ViewChild('inventoryInput', { static: true })
+  inventoryInput: ElementRef<HTMLInputElement>;
+  inventoryControl = new FormControl(null);
   constructor(
     private fb: FormBuilder,
     private goodLabelService: LabelOkeyService,
@@ -98,6 +102,40 @@ export class DataFilterComponent extends BasePage implements OnInit {
     };
     this.goodNumbersControl.reset();
     fileReader.readAsText(file);
+  }
+
+  invFileChange(event: Event) {
+    if (!this.isValidFile(event)) {
+      this.inventoryControl.reset();
+      return;
+    }
+    const file = this.getFileFromEvent(event);
+    const fileReader = new FileReader();
+    fileReader.onload = e => {
+      this.readTxtInv(e.target.result);
+    };
+    this.inventoryControl.reset();
+    fileReader.readAsText(file);
+  }
+
+  readTxtInv(txt: string | ArrayBuffer) {
+    if (typeof txt != 'string') {
+      this.alert('error', 'Error', 'Archivo Inválido');
+      return;
+    }
+    const goodNumbersArrPlain = txt.split(',');
+
+    const goodNumbers = goodNumbersArrPlain.map(goodNum => goodNum.trim());
+    if (!goodNumbers.length) {
+      this.alert(
+        'error',
+        'Error',
+        'El Archivo esta vació o tiene elementos inválidos'
+      );
+      return;
+    }
+
+    this.form.get('inventario').setValue(goodNumbers);
   }
 
   readTxt(txt: string | ArrayBuffer) {
