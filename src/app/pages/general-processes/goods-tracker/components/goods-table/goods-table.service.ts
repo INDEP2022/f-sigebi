@@ -43,18 +43,22 @@ export class GoodsTableService {
       title: 'No. Fotos',
       sort: false,
       valuePrepareFunction: (value: string | number) => Number(value),
+      class: '',
     },
     fileNumber: {
       title: 'No. Expediente',
+      class: '',
       sort: false,
     },
     goodNumber: {
       title: 'No. Bien',
       sort: false,
+      class: '',
     },
     socialCabite: {
       title: 'Gabinete Social',
       sort: false,
+      class: '',
       valuePrepareFunction: (value: string) =>
         value ? SOCIAL_G_STATUSES[value] ?? 'Desconocido' : '',
     },

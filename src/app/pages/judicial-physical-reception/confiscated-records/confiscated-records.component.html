@@ -10,10 +10,17 @@
           <div class="row">
             <div class="col">
               <button
+                *ngIf="returnToTracker"
+                class="btn btn-primary active btn-sm mr-2 mb-2"
+                (click)="gotoTracker()">
+                Regresar
+                <i class="fas fa-arrow-circle-left"></i>
+              </button>
+              <button
                 id="expedient-number"
                 type="button"
                 id="expedient-number"
-                class="btn btn-primary active btn-sm mr-2"
+                class="btn btn-primary active btn-sm mr-2 mb-2"
                 [class]="loading ? 'disabled' : ''"
                 (click)="searchButton()">
                 Buscar
@@ -28,7 +35,7 @@
               </button> -->
               <button
                 [class]="loading ? 'disabled' : ''"
-                class="btn btn-danger btn-sm active"
+                class="btn btn-danger btn-sm active mb-2"
                 (click)="clearAll()">
                 Limpiar <i class="fas fa-eraser"> </i>
               </button>

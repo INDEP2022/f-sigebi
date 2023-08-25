@@ -113,10 +113,10 @@ export class AuxList2Component extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     console.log('SI', params);
-    if (params['filter.cve_banco']) {
-      this.REFERENCIA = params['filter.cve_banco'];
-      delete params['filter.cve_banco'];
-    }
+    // if (params['filter.cve_banco']) {
+    //   this.REFERENCIA = params['filter.cve_banco'];
+    //   delete params['filter.cve_banco'];
+    // }
 
     if (params['filter.id_evento']) {
       params['filter.idEvento'] = params['filter.id_evento'];
@@ -176,7 +176,7 @@ export class AuxList2Component extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = 'Actualizado';
-    this.alert('success', `Registro ${message} Correctamente`, '');
+    this.alert('success', `Referencia del Pago ${message} Correctamente`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
@@ -184,7 +184,11 @@ export class AuxList2Component extends BasePage implements OnInit {
 
   handleError() {
     const message: string = 'Actualizar';
-    this.alert('error', `Error al Intentar ${message} el Registro`, '');
+    this.alert(
+      'error',
+      `Error al Intentar ${message} la Referencia del Pago`,
+      ''
+    );
     this.loading = false;
   }
 
