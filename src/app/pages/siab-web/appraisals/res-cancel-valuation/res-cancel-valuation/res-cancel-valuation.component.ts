@@ -694,11 +694,39 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       }
     } else if (typeOffice == 3) {
       this.addReasons();
+      if (this.selectedRowsCancel.length == 0) {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Para Continuar es Necesario Seleccionar Bienes'
+        );
+      }
+      let countOne: number = 0;
+      let countTwo: number = 0;
+      for (const x of this.selectedRowsCancel) {
+        countOne++;
+        if (x.motivos != ' ') {
+          countTwo++;
+        }
+      }
+      if (countOne != countTwo) {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Para Continuar es Necesario que Seleccione los Motivos por los Cuales se va a Enviar a REV el Bien'
+        );
+      }
     }
   }
 
   addReasons() {
     this.validatedReasons();
+    let arrayChange: any[] = [];
+    for (const x of this.selectedRowsCancel) {
+      this.changeChar(x.motivos);
+      arrayChange = x;
+    }
+    this.selectedRowsCancel = arrayChange;
   }
 
   validatedReasons() {
@@ -713,7 +741,55 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     }
   }
 
-  selection() {}
+  changeChar(chain: string): string {
+    let replacements = [
+      { from: '&nbsp;', to: '' },
+      { from: 'nbsp;', to: '' },
+      { from: 'amp;NBSP;', to: '' },
+      { from: '&amp;nbsp;', to: '' },
+      { from: '&amp;amp;nbsp;', to: '' },
+      { from: '&AMP;AMP;NBSP;', to: '' },
+      { from: '&amp;', to: '' },
+      { from: '&AMP;', to: '' },
+      { from: '&#193;', to: 'Á' },
+      { from: '#193;', to: 'Á' },
+      { from: '&#225;', to: 'á' },
+      { from: '#225;', to: 'á' },
+      { from: '&#201;', to: 'É' },
+      { from: '#201;', to: 'É' },
+      { from: '&#233;', to: 'é' },
+      { from: '#233;', to: 'é' },
+      { from: '&#205;', to: 'Í' },
+      { from: '&#237;', to: 'í' },
+      { from: '&#211;', to: 'Ó' },
+      { from: '#211;', to: 'Ó' },
+      { from: '&#243;', to: 'ó' },
+      { from: '#243;', to: 'ó' },
+      { from: '&#218;', to: 'Ú' },
+      { from: '#218;', to: 'Ú' },
+      { from: '&#250;', to: 'ú' },
+      { from: '#250;', to: 'ú' },
+      { from: '&amp;amp;#225;', to: 'á' },
+      { from: '&amp;amp;#233;', to: 'é' },
+      { from: '&amp;amp;#237;', to: 'í' },
+      { from: '&amp;amp;#243;', to: 'ó' },
+      { from: '&amp;amp;#250;', to: 'ú' },
+      { from: '&#241;', to: 'ñ' },
+      { from: '&#209;', to: 'Ñ' },
+      { from: '&amp;#209;', to: 'Ñ' },
+      { from: '&#220;', to: 'Ü' },
+      { from: '&#252;', to: 'ü' },
+      { from: '&quot;', to: '' },
+      { from: "'", to: '' },
+    ];
+
+    for (let replacement of replacements) {
+      chain = chain.split(replacement.from).join(replacement.to);
+    }
+
+    return chain;
+  }
+
   //
 
   override ngOnDestroy(): void {
