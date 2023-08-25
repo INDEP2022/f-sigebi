@@ -146,7 +146,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     folio: '',
     acta: '',
   };
-
+  validateGoods: boolean = true;
   disabledBtnImage: boolean = false;
   disabledBtnImprimir: boolean = false;
   disabledBtnEscaneo: boolean = false;
@@ -199,7 +199,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   dataTableGood: LocalDataSource = new LocalDataSource();
   bienes: IGood[] = [];
   //folioScan: number;
-  consec: number;
+  consec: string | number;
   loadingDoc: boolean = false;
   invoiceDetailsForm: ModelForm<any>;
   dataDelivery: any[] = [];
@@ -528,15 +528,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
       //this.getDetailProceedingsDevollution(this.fileNumber);
       this.afterScanning();
       this.afterScanningExpedient();
+      this.disabledBtnReplicar = true;
     }
   }
 
   initForm() {
-    // this.actaRecepttionForm = this.fb.group({
-    //   elaboradate: [null, [Validators.required]],
-    //   fAct: [null, [Validators.required]],
-    //   fCap: [null, [Validators.required]],
-    // })
     this.form = this.fb.group({
       find: [null],
       statusAct: [
@@ -640,9 +636,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       elaboradate: [null],
       fechaact: [null],
       fechacap: [null],
-
-      // witness1: [null],
-      // witness2: [null],
     });
   }
 
@@ -655,8 +648,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   onSubmit() { }
 
   search(event: any) {
-    // this.loadingExpedient = true;
-    // this.loadingExpedient = true;
+
     this.getExpedient(event);
     event = '';
   }
@@ -821,6 +813,16 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
   actasDefault: any = null;
   searchActas(actas?: string) {
+
+    if (this.fileNumber == 0 || this.fileNumber == null) {
+      this.alertInfo(
+        'warning',
+        'No se Puede Buscar Actas sin Selecccionar el Expediente',
+        ''
+      );
+      return;
+    }
+
     actas = this.cveActa;
     const expedienteNumber = this.fileNumber;
     const actaActual = this.actasDefault;
@@ -903,6 +905,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
         // parrafo2: next.parrafo2,
         // parrafo3: next.parrafo3,
       });
+
+      this.formScan.get('scanningFoli').patchValue(next.universalFolio);
       // Pasar clave a esta función
       this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
 
@@ -939,7 +943,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
               console.log('data', data);
               this.loading2 = false;
               this.Exportdate = true;
-              this.disabledBtnEscaneo = true;
+              //this.disabledBtnEscaneo = true;
               this.disabledBtnImprimir = true;
               this.disabledBtnImage = true;
             });
@@ -1329,6 +1333,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
             await this.getDetailProceedingsDevollution(this.actasDefault.id);
           });
           this.Exportdate = false;
+          this.validateGoods = true;
           this.selectedGooodsValid = [];
         }
       }
@@ -1425,6 +1430,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.actasDefault = null;
     this.statusCanc = null;
     this.selectedGooods = [];
+    this.Exportdate = false;
   }
   cargueMasive() {
     const workSheet = XLSX.utils.json_to_sheet(this.dataDelivery, {
@@ -1470,7 +1476,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   agregarActa() {
     if (this.fileNumber == 0 || this.fileNumber == null) {
       this.alertInfo(
-        'error',
+        'warning',
         'No se Puede Crear una Nueva Acta sin Selecccionar el Expediente',
         ''
       );
@@ -1643,6 +1649,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
             delete this.actasDefault.numDelegation1Description;
             delete this.actasDefault.numDelegation2Description;
             delete this.actasDefault.numTransfer_;
+            this.actasDefault.universalFolio = this.consec;
             this.proceedingsDeliveryReceptionService
               .editProceeding(this.actasDefault.id, this.actasDefault)
               .subscribe({
@@ -1740,7 +1747,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   getDocumentsByFlyer(flyerNum: string | number) {
-    const title = 'Folios relacionados con el expediente';
+    const title = 'Folios relacionados con el volonte';
     const modalRef = this.openDocumentsModal(flyerNum, title);
     modalRef.content.selected
       .pipe(takeUntil(this.$unSubscribe))
@@ -1932,6 +1939,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         tap(_document => {
           this.formScan.get('scanningFoli').setValue(_document.id);
           this.disabledBtnReplicar = true;
+          this.consec = _document.id;
         }),
         switchMap(_document => {
           this.dataRecepcion.universalFolio =
@@ -2278,7 +2286,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
   ValidGoods(): void {
     if (this.bienes.length === 0) {
-      this.alertInfo('warning', 'No Hay Ningún Bien a Comprar', '');
+      this.alertInfo('warning', 'No Hay Ningún Bien a Comparar', '');
       return;
     }
 
@@ -2305,7 +2313,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       );
       console.log('SE ENCONTRARON:', this.contador, 'QUE SON:', this.vTotalB);
     } else {
-      this.alertInfo('warning', 'No Hay Ningún Bien a Comprar', '');
+      this.alertInfo('warning', 'No Existe el Bien de Gastos', '');
     }
   }
 
@@ -2404,8 +2412,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
               this.actaRecepttionForm.get('fechaact').setValue(formattedfecActa);
               this.actaRecepttionForm.get('fechacap').setValue(formattedfecCapture);
               this.getDetailProceedingsDevollution(data.data[i].id);
+              this.actaRecepttionForm.get('scanningFoli').setValue(data.data[i].universalFolio);
 
             }
+            //this.formScan.get('scanningFoli').patchValue(next.universalFolio);
             this.generarDatosDesdeUltimosCincoDigitos(data.data[i].keysProceedings);
           }
         },

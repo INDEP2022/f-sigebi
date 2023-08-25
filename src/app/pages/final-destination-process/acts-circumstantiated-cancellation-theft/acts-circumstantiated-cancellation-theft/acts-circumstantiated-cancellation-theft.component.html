@@ -8,12 +8,14 @@
         <div class="row">
             <div class="d-flex justify-content-end mb-2">
                 <div>
-                    <button type="button" tooltip="Nuevo" containerClass="tooltip-style" class="btn btn-primary btn-sm active ml-2 mr-2" (click)="goBack()" *ngIf="origin != null">
-            Regresar <i class="bx bx-arrow-back bx-sm float-icon"></i>
-          </button>
-                    <button type="button" class="btn btn-primary btn-sm active" (click)="searchExpedient()" *ngIf="origin == null">
-            <i class="bx bx-list-plus bx-sm float-icon"></i>
-          </button>
+                    <button type="button" tooltip="Nuevo" containerClass="tooltip-style"
+                        class="btn btn-primary btn-sm active ml-2 mr-2" (click)="goBack()" *ngIf="origin != null">
+                        Regresar <i class="bx bx-arrow-back bx-sm float-icon"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm active" (click)="searchExpedient()"
+                        *ngIf="origin == null">
+                        <i class="bx bx-list-plus bx-sm float-icon"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -73,21 +75,21 @@
           <i aria-hidden="true" class="fa fa-save"></i>
         </button> -->
                 <button (click)="agregarActa()" type="button" class="btn btn-info active btn-sm mr-3">
-          Nueva Acta
-          <i class="bx bx-plus bx-sm float-icon"></i>
-        </button>
+                    Nueva Acta
+                    <i class="bx bx-plus bx-sm float-icon"></i>
+                </button>
                 <button type="button" class="btn btn-primary active btn-sm mr-3" (click)="searchActas()">
-          Estatus Actas
-          <i class="bx bx-search bx-sm float-icon"></i>
-        </button>
+                    Estatus Actas
+                    <i class="bx bx-search bx-sm float-icon"></i>
+                </button>
                 <button type="button" class="btn btn-primary active btn-sm mr-3" (click)="cerrarActa()">
-          Cerrar Acta
-          <i class="fas fa-close bx-sm float-icon"></i>
-        </button>
+                    Cerrar Acta
+                    <i class="fas fa-close bx-sm float-icon"></i>
+                </button>
                 <button (click)="cleanActa()" type="button" class="btn btn-danger active btn-sm mr-3">
-          Limpiar
-          <i class="fa fa-eraser" aria-hidden="true"></i>
-        </button>
+                    Limpiar
+                    <i class="fa fa-eraser" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
         <form [formGroup]="actaRecepttionForm" class="form-material">
@@ -221,62 +223,79 @@
                                     <div class="col-md-8 mt-2">
                                         <div>
                                             <form-field [control]="actaRecepttionForm.get('cveActa')" label="Acta">
-                                                <input #inputValue type="text" class="form-control" formControlName="cveActa" readonly />
+                                                <input #inputValue type="text" class="form-control"
+                                                    formControlName="cveActa" readonly />
                                             </form-field>
                                         </div>
                                     </div>
                                     <div class="col-md-4 mt-2">
                                         <div>
-                                            <form-field [control]="actaRecepttionForm.get('direccion')" label="Dirección">
-                                                <input #inputValue type="text" class="form-control" formControlName="direccion" class="form-control" readonly />
+                                            <form-field [control]="actaRecepttionForm.get('direccion')"
+                                                label="Dirección">
+                                                <input #inputValue type="text" class="form-control"
+                                                    formControlName="direccion" class="form-control" readonly />
                                             </form-field>
                                         </div>
                                     </div>
                                     <div class="col-md-4 mt-3">
                                         <div>
-                                            <form-field [control]="actaRecepttionForm.get('testigoOne')" label="Autoridad">
-                                                <input type="text" class="form-control" formControlName="testigoOne" readonly/>
+                                            <form-field [control]="actaRecepttionForm.get('testigoOne')"
+                                                label="Autoridad">
+                                                <input type="text" class="form-control" formControlName="testigoOne"
+                                                    readonly />
                                             </form-field>
                                         </div>
                                     </div>
                                     <div class="col-md-4 mt-3">
                                         <div>
-                                            <form-field [control]="actaRecepttionForm.get('testigoTree')" label="Elabora">
-                                                <input #inputValue type="text" class="form-control" formControlName="testigoTree" class="form-control" readonly />
+                                            <form-field [control]="actaRecepttionForm.get('testigoTree')"
+                                                label="Elabora">
+                                                <input #inputValue type="text" class="form-control"
+                                                    formControlName="testigoTree" class="form-control" readonly />
                                             </form-field>
                                         </div>
                                     </div>
                                     <div class="col-md-4 mt-3">
                                         <div>
-                                            <form-field [control]="actaRecepttionForm.get('testigoOIC')" label="Testigo de la Contralor&iacute;a">
-                                                <input #inputValue type="text" class="form-control" readonly formControlName="testigoOIC" />
+                                            <form-field [control]="actaRecepttionForm.get('testigoOIC')"
+                                                label="Testigo de la Contralor&iacute;a">
+                                                <input #inputValue type="text" class="form-control" readonly
+                                                    formControlName="testigoOIC" />
                                             </form-field>
                                         </div>
                                     </div>
                                     <div class="card-body">
-                                        <form-field class="col-md-12 col-sm-12 col-12 p-2" [control]="actaRecepttionForm.get('observaciones')" label="Observaciones">
-                                            <textarea maxlength="500" class="form-control text-justify" formControlName="observaciones" rows="2" readonly></textarea>
+                                        <form-field class="col-md-12 col-sm-12 col-12 p-2"
+                                            [control]="actaRecepttionForm.get('observaciones')" label="Observaciones">
+                                            <textarea maxlength="500" class="form-control text-justify"
+                                                formControlName="observaciones" rows="2" readonly></textarea>
                                         </form-field>
                                     </div>
 
                                     <div class="col-md-4 mt-3">
                                         <div>
-                                            <form-field [control]="actaRecepttionForm.get('elaboradate')" label="Fec. Elaboración">
-                                                <input type="text" class="form-control" formControlName="elaboradate" readonly/>
+                                            <form-field [control]="actaRecepttionForm.get('elaboradate')"
+                                                label="Fec. Elaboración">
+                                                <input type="text" class="form-control" formControlName="elaboradate"
+                                                    readonly />
                                             </form-field>
                                         </div>
                                     </div>
                                     <div class="col-md-4 mt-3">
                                         <div>
-                                            <form-field [control]="actaRecepttionForm.get('fechaact')" label="Fec. Acta">
-                                                <input type="text" class="form-control" formControlName="fechaact" readonly/>
+                                            <form-field [control]="actaRecepttionForm.get('fechaact')"
+                                                label="Fec. Acta">
+                                                <input type="text" class="form-control" formControlName="fechaact"
+                                                    readonly />
                                             </form-field>
                                         </div>
                                     </div>
                                     <div class="col-md-4 mt-3">
                                         <div>
-                                            <form-field [control]="actaRecepttionForm.get('fechacap')" label="Fec. Captura">
-                                                <input type="text" class="form-control" formControlName="fechacap" readonly/>
+                                            <form-field [control]="actaRecepttionForm.get('fechacap')"
+                                                label="Fec. Captura">
+                                                <input type="text" class="form-control" formControlName="fechacap"
+                                                    readonly />
                                             </form-field>
                                         </div>
                                     </div>
@@ -302,7 +321,8 @@
                             <ng-scrollbar [track]="'all'" [ngStyle]="{
                   height: loading ? '0px' : '400px'
                 }">
-                                <ng2-smart-table [attr.class]="'table-bordered table-responsive'" [settings]="settings" [source]="dataTableGood" (userRowSelect)="selectData($event)">
+                                <ng2-smart-table [attr.class]="'table-bordered table-responsive'" [settings]="settings"
+                                    [source]="dataTableGood" (userRowSelect)="selectData($event)">
                                 </ng2-smart-table>
                             </ng-scrollbar>
                             <!-- </div> -->
@@ -312,7 +332,8 @@
                             <div class="row">
                                 <div class="col-6 mt-4">
                                     <form-field [control]="actaGoodForm.get('statusGood')" label="Estatus Bien">
-                                        <input [(ngModel)]="statusGood_" type="text" class="form-control" formControlName="statusGood" readonly />
+                                        <input [(ngModel)]="statusGood_" type="text" class="form-control"
+                                            formControlName="statusGood" readonly />
                                     </form-field>
                                 </div>
                             </div>
@@ -320,125 +341,97 @@
                         <div class="col-6 align-items-center">
                             <div class="row">
                                 <div class="col-6">
-                                    <span class="text-success mr-5"><i class="fa fa-square"></i> Disponibles</span
-                  >
+                                    <span class="text-success mr-5"><i class="fa fa-square"></i> Disponibles</span>
+                                </div>
+                                <div class="col-6">
+                                    <span class="text-black"><i class="fa fa-square"></i> No disponibles</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-6">
-                  <span class="text-black"
-                    ><i class="fa fa-square"></i> No disponibles</span
-                  >
+                <div class="row pt-2">
+                    <div class="col-md-12 text-center mt-4 mb-4">
+                        <button tooltip="Agregar Bien al Acta" containerClass="tooltip-style"
+                            class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="addSelect()">
+                            <!-- Mover uno -->
+                            <i class="bx bx-chevron-down bx-md"></i>
+                        </button>
+                        <button tooltip="Agregar Bienes al Acta" containerClass="tooltip-style"
+                            class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="addAll()">
+                            <!-- Mover todos -->
+                            <i class="bx bx-chevrons-down bx-md"></i>
+                        </button>
+                        <button class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button"
+                            (click)="removeAll()">
+                            <!-- Quitar todos -->
+
+                            <i class="bx bx-chevrons-up bx-md"></i>
+                        </button>
+                        <button tooltip="Quitar Bien del Acta" containerClass="tooltip-style"
+                            class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button"
+                            (click)="removeSelect()">
+                            <!-- Quitar uno -->
+                            <i class="bx bx-chevron-up bx-md"></i>
+                        </button>
+                    </div>
                 </div>
-              </div>
+
+                <div class="col-md-12">
+                    <h6>BIENES RELACIONADOS CON EL ACTA</h6>
+                    <div class="row">
+                        <form-loader *ngIf="loading2"></form-loader>
+                        <div class="col-md-12">
+                            <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+                            <ng-scrollbar [track]="'all'" [ngStyle]="{height: loading2 ? '0px' : '400px'}">
+                                <ng2-smart-table class="table-responsive"
+                                    [attr.class]="'table-bordered table-responsive'" [settings]="settings2"
+                                    (userRowSelect)="rowsSelected($event)" [source]="dataRecepcionGood">
+                                </ng2-smart-table>
+                            </ng-scrollbar>
+                            <!-- </div> -->
+                        </div>
+                        <app-pagination [params]="paramsList2" [totalItems]="totalItems2"></app-pagination>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-        <div class="row pt-2">
-          <div class="col-md-12 text-center mt-4 mb-4">
-            <button
-              tooltip="Agregar Bien al Acta"
-              containerClass="tooltip-style"
-              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-              type="button"
-              (click)="addSelect()">
-              <!-- Mover uno -->
-              <i class="bx bx-chevron-down bx-md"></i>
-            </button>
-            <button
-              tooltip="Agregar Bienes al Acta"
-              containerClass="tooltip-style"
-              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-              type="button"
-              (click)="addAll()">
-              <!-- Mover todos -->
-              <i class="bx bx-chevrons-down bx-md"></i>
-            </button>
-            <button
-              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-              type="button"
-              (click)="removeAll()">
-              <!-- Quitar todos -->
 
-              <i class="bx bx-chevrons-up bx-md"></i>
-            </button>
-            <button
-              tooltip="Quitar Bien del Acta"
-              containerClass="tooltip-style"
-              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-              type="button"
-              (click)="removeSelect()">
-              <!-- Quitar uno -->
-              <i class="bx bx-chevron-up bx-md"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="col-md-12">
-          <h6>BIENES RELACIONADOS CON EL ACTA</h6>
-          <div class="row">
-            <form-loader *ngIf="loading2"></form-loader>
-            <div class="col-md-12">
-              <!-- <div [class]="loading ? 'table-loading' : ''"> -->
-              <ng-scrollbar
-                [track]="'all'"
-                [ngStyle]="{
-                  height: loading2 ? '0px' : '400px'
-                }">
-                <ng2-smart-table
-                  class="table-responsive"
-                  [attr.class]="'table-bordered table-responsive'"
-                  [settings]="settings2"
-                  (userRowSelect)="rowsSelected($event)"
-                  [source]="dataRecepcionGood">
-                </ng2-smart-table>
-              </ng-scrollbar>
-              <!-- </div> -->
-            </div>
-            <app-pagination
-              [params]="paramsList2"
-              [totalItems]="totalItems2"></app-pagination>
-          </div>
-        </div>
-      </div>
-
-      <form [formGroup]="formScan" class="form-material">
-        <div class="container">
-          <!-- Apartado folio de escaneo -->
-          <div class="row">
-            <div class="col-sm-12 col-12 col-md-12">
-              <div class="row">
-                <div class="col-sm-12 col-12 col-md-3 text-center">
-                  <span
-                    title="Generar Folio de Escaneo y Solicitud"
-                    containerClass="tooltip-style">
-                    <button
-                      [disabled]="!actasDefault"
-                      (click)="createScannerFoil()"
-                      class="btn btn-secondary btn-sm active m-1">
-                      <i class="bx bxs-file-find"></i>
-                    </button>
-                  </span>
+            <form [formGroup]="formScan" class="form-material">
+                <div class="container">
+                    <!-- Apartado folio de escaneo -->
+                    <div class="row">
+                        <div class="col-sm-12 col-12 col-md-12">
+                            <div class="row">
+                                <div class="col-sm-12 col-12 col-md-3 text-center">
+                                    <span title="Generar Folio de Escaneo y Solicitud" containerClass="tooltip-style">
+                                        <button [disabled]="!actasDefault" (click)="createScannerFoil()"
+                                            class="btn btn-secondary btn-sm active m-1">
+                                            <i class="bx bxs-file-find"></i>
+                                        </button>
+                                    </span>
                                     <span title="Escanear" containerClass="tooltip-style">
-                    <button
-                      [disabled]="!disabledBtnEscaneo"
-                      (click)="openScannerPage()"
-                      class="btn btn-secondary btn-sm active m-1">
-                      <i class="bx bxs-file"></i>
-                    </button>
-                  </span>
+                                        <button [disabled]="!disabledBtnEscaneo" (click)="openScannerPage()"
+                                            class="btn btn-secondary btn-sm active m-1">
+                                            <i class="bx bxs-file"></i>
+                                        </button>
+                                    </span>
                                 </div>
                                 <div class="col-sm-12 col-12 col-md-6 w-100">
                                     <form [formGroup]="formScan" class="form-material">
                                         <div class="col-md-full col-sm-12 col-xs-12">
-                                            <form-field label="Folio de Escaneo" [control]="formScan.get('scanningFoli')">
-                                                <input [readonly]="true" type="text" class="form-control" formControlName="scanningFoli" />
+                                            <form-field label="Folio de Escaneo"
+                                                [control]="formScan.get('scanningFoli')">
+                                                <input [readonly]="true" type="text" class="form-control"
+                                                    formControlName="scanningFoli" />
                                             </form-field>
                                         </div>
                                         <div class="col-md-12 col-sm-12 col-12">
                                             <div class="d-flex justify-content-center">
                                                 <div class="m-3">
-                                                    <button [disabled]="!disabledBtnReplicar" (click)="replicate()" type="button" class="btn btn-primary btn-sm active">
-                            Replicar Folio
-                          </button>
+                                                    <button [disabled]="!disabledBtnReplicar" (click)="replicate()"
+                                                        type="button" class="btn btn-primary btn-sm active">
+                                                        Replicar Folio
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -446,62 +439,42 @@
                                 </div>
                                 <div class="col-sm-12 col-12 col-md-3 text-center">
                                     <span title="imprimir Solicitud de Escaneo" containerClass="tooltip-style">
-                    <button
-                      [disabled]="!disabledBtnImprimir"
-                      (click)="showMessageDigitalization()"
-                      class="btn btn-secondary btn-sm active m-1">
-                      <i class="bx bxs-printer"></i>
-                    </button>
-                    <!--  [disabled]="true"-->
-                  </span>
+                                        <button [disabled]="!disabledBtnImprimir" (click)="showMessageDigitalization()"
+                                            class="btn btn-secondary btn-sm active m-1">
+                                            <i class="bx bxs-printer"></i>
+                                        </button>
+                                        <!--  [disabled]="true"-->
+                                    </span>
                                     <span title="Consulta de Imágenes Escaneadas" containerClass="tooltip-style">
-                    <button
-                      [disabled]="!disabledBtnImage"
-                      (click)="viewPictures($event)"
-                      class="btn btn-secondary btn-sm active m-1">
-                      <i class="bx bxs-file-find"></i>
-                    </button>
-                    <!--"showScannerFoil()"
+                                        <button [disabled]="!disabledBtnImage" (click)="viewPictures($event)"
+                                            class="btn btn-secondary btn-sm active m-1">
+                                            <i class="bx bxs-file-find"></i>
+                                        </button>
+                                        <!--"showScannerFoil()"
                     "viewPictures($event)"-->
-                  </span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                </form>
+            </form>
+        </div>
+    </div>
+
+    <div footer>
+        <div class="row m-3">
+            <div class="col-4"></div>
+            <div class="col-md-8 text-end">
+                <button class="btn btn-secondary btn-sm active btn-sm mr-3" (click)="ValidGoods()">
+                    Valida Bienes
+                </button>
+                <button [disabled]="!Exportdate" class="btn btn-sm btn-success active" type="button"
+                    (click)="exportToExcel()">
+                    Exportar Datos
+                    <i class="bx bx-download float-icon"></i>
+                </button>
             </div>
         </div>
-
-        <div footer>
-            <div class="row m-3">
-                <div class="col-4"></div>
-                <div class="col-md-8 text-end">
-                    <button class="btn btn-secondary btn-sm active btn-sm mr-3" (click)="ValidGoods()">
-          Valida Bienes
-        </button>
-                    <button [disabled]="!Exportdate" class="btn btn-sm btn-success active" type="button" (click)="exportToExcel()">
-          Exportar Datos
-          <i class="bx bx-download float-icon"></i>
-        </button>
-                </div>
-            </div>
-
-            <!-- <div class="row m-3">
-      <div class="col-4"></div>
-      <div class="col-md-8 text-end">
-        <div class="col-6">
-        <button class="btn btn-secondary btn-sm active text-center text-md-right">
-          Valida Bienes
-        </button>
-        </div>
-        <div class="col-6">
-        <button [disabled]="!Exportdate" class="btn btn-sm btn-success active" type="button" (click)="exportToExcel()">
-          Exportar Datos
-          <i class="bx bx-download float-icon"></i>
-        </button>
-        </div>
-      </div>
-    </div> -->
-        </div>
+    </div>
 </app-card>
