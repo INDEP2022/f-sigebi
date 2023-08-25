@@ -180,6 +180,7 @@ export class HistoricalGoodSituationComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    params['sortBy'] = `fec_cambio:DESC`;
     this.historyGoodServie.getHistoryGoodStatus(this.goodId, params).subscribe({
       next: response => {
         this.data.load(response.data);
