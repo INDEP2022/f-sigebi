@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { IGood } from 'src/app/core/models/ms-good/good';
 
 export interface IDs {
-  No_bien: number;
+  no_bien: number;
 }
 @Injectable({
   providedIn: 'root',

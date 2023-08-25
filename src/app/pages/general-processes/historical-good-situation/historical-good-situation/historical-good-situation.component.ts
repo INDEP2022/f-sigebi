@@ -42,6 +42,7 @@ export class HistoricalGoodSituationComponent
     estHist: '', // EST_HIST
     fecCam: '', // FEC_CAM
   };
+  allReg: any[] = [];
   goodId: number = null;
   // params = new BehaviorSubject(new FilterParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -180,9 +181,11 @@ export class HistoricalGoodSituationComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    params['sortBy'] = `fec_cambio:DESC`;
     this.historyGoodServie.getHistoryGoodStatus(this.goodId, params).subscribe({
       next: response => {
-        this.data.load(response.data);
+        this.allReg = response.data;
+        this.data.load(this.allReg);
         this.data.refresh();
         console.log(this.data);
         this.loading = false;

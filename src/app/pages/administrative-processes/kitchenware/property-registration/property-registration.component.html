@@ -73,11 +73,17 @@
           <form-field
             [control]="form.get('goodSelect')"
             label="Seleccione un Bien para ver sus Menajes">
-            <input
+            <textarea
+              type="text"
+              rows="4"
+              class="form-control"
+              formControlName="goodSelect"
+              (click)="openSearchGoods()"></textarea>
+            <!-- <input
               type="text"
               class="form-control"
               formControlName="goodSelect"
-              (click)="openSearchGoods()" />
+              (click)="openSearchGoods()" />  -->
           </form-field>
           <!-- <form-field [control]="form.get('goodSelect')">
             <ngx-select
