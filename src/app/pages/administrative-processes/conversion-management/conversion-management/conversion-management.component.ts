@@ -152,7 +152,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             `Id Conversión: ${this.conversion.id} , Password: ${this.password}`,
-            'Se ha Generado y Aplicado la Contraseña a la Conversión'
+            'Se ha generado y aplicado la contraseña a la conversión'
           );
           this.loader.load = false;
           this.saved = true;
