@@ -78,17 +78,30 @@
         </div>
       </div>
       <div #scrollContainer class="row">
-        <div class="col-6 mt-2">
-          <form-field
-            [control]="form.get('event_')"
-            label="Si Desea Consultar un Evento en Particular, Selecciónelo">
-            <input
-              style="display: none"
-              formControlName="event_"
-              type="text"
-              class="form-control"
-              readonly />
-          </form-field>
+        <div class="col-6">
+          <div style="padding-top: 6px" class="mr-2">
+            <span>
+              <i
+                tooltip=""
+                containerClass="tooltip-style"
+                class="fas fa-info-circle text-warning mr-1">
+              </i>
+            </span>
+            <span>
+              <label
+                for=""
+                style="font-size: 10px; font-weight: 600; color: #74788d"
+                >Si desea consultar un Evento en particular, selecciónelo</label
+              >
+            </span>
+          </div>
+          <!-- <span>
+            <i tooltip="" containerClass="tooltip-style" class="fas fa-info-circle text-warning mr-1">
+            </i>
+          </span>
+          <form-field [control]="form.get('event_')" label="Si Desea Consultar un Evento en Particular, Selecciónelo">
+            <input style="display: none" formControlName="event_" type="text" class="form-control" readonly />
+          </form-field> -->
         </div>
       </div>
     </form>
@@ -99,7 +112,7 @@
     <accordion [isAnimated]="true">
       <accordion-group [isOpen]="cargado">
         <div accordion-heading class="d-flex justify-content-between">
-          <h5>PAGOS REFERENCIADOS CARGADOS DESDE EL CSV</h5>
+          <h5>PAGOS REFERENCIADOS CARGADOS</h5>
         </div>
         <div class="row">
           <div *ngIf="cargado" class="col-md-8 d-flex mt-3 mb-3">
@@ -115,7 +128,7 @@
                 <label
                   for=""
                   style="font-size: 10px; font-weight: 600; color: #74788d"
-                  >La Siguiente Tabla es de sólo Visualización.</label
+                  >La siguiente tabla es de sólo visualización.</label
                 >
               </span>
             </div>
@@ -124,6 +137,7 @@
             *ngIf="cargado"
             class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
             <app-columns-select
+              [defaultColumns]="7"
               [(settings)]="settings2"
               [leftList]="true"></app-columns-select>
           </div>
@@ -202,13 +216,17 @@
                 Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
             </div>
-            <!-- <div>
-              <button [disabled]="loading || loadingBtn2" (click)="refresh()" type="button"
-                tooltip="Limpiar Filtros y Actualizar Tabla" containerClass="tooltip-style"
+            <div>
+              <button
+                [disabled]="loading || loadingBtn2"
+                (click)="refresh()"
+                type="button"
+                tooltip="Limpiar Filtros y Actualizar Tabla"
+                containerClass="tooltip-style"
                 class="btn btn-primary btn-sm active mb-3 mr-3">
-                Actualizar Filtros <i class="fas fa-sync-alt"> </i>
+                Actualizar <i class="fas fa-sync-alt"> </i>
               </button>
-            </div> -->
+            </div>
           </div>
         </div>
       </div>

@@ -60,6 +60,27 @@ export interface IComerExpense {
   comerEven: IComerEven;
 }
 
+export interface IFillExpensesDTO {
+  idEvent: string;
+  idStatusVta: string;
+}
+
+export interface IFillExpenseData {
+  combined: IFillExpenseDataCombined[];
+  totevent: number;
+  updateAllowed: boolean;
+  ApplyUpdateAllowed: boolean;
+  ApplyEnabled: boolean;
+  ApplyNavigable: boolean;
+}
+
+export interface IFillExpenseDataCombined {
+  id_gasto: string;
+  descripcion: string;
+  monto: string;
+  id_solicitudpago?: string;
+  cvman?: string;
+}
 export interface IComerEven {
   id: number;
   eventTpId: string;

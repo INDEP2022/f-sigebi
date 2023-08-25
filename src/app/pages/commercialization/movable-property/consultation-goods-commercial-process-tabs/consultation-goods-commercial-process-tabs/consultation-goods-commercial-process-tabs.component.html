@@ -5,6 +5,14 @@
     </div>
   </div>
   <div body>
+    <div class="row" *ngIf="origin">
+      <div class="col-md-12">
+        <button class="btn btn-primary active btn-sm" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+    </div>
     <div class="md-tabs">
       <tabset>
         <tab heading="VENTAS" id="tab1">
