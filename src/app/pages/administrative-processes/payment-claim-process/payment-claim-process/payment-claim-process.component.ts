@@ -228,10 +228,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
   private buildForm() {
     this.form = this.fb.group({
-      justification: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      justification: [null, [Validators.pattern(STRING_PATTERN)]],
       documVal: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
