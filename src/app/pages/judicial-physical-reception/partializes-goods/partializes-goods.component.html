@@ -11,17 +11,6 @@
           <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
-      <div
-        [class]="
-          loading || loadingExcel || items.length === 0 ? 'disabled' : ''
-        "
-        (click)="exportExcel()">
-        <app-excel-report
-          text="Exportar a Excel"
-          [elementToExport]="elementToExport"
-          [externalClick]="flagDownload"
-          [nameExcel]="'Reporte Bienes Parcializados.xlsx'"></app-excel-report>
-      </div>
     </div>
     <form [formGroup]="form">
       <div class="col-lg-7 col-md-12">

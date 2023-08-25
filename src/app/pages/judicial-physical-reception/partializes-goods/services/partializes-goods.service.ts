@@ -6,6 +6,6 @@ import { IPartializedGoodList } from 'src/app/core/models/ms-partialize-goods/pa
 })
 export class PartializesGoodsService {
   items: IPartializedGoodList[] = [];
-  numberGoodQueryParams: string;
+  numberGoodQueryParams: string = '1697373';
   constructor() {}
 }

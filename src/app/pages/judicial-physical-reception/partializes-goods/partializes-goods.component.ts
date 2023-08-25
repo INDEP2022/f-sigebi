@@ -20,13 +20,11 @@ import { PartializesGoodsService } from './services/partializes-goods.service';
   styleUrls: ['partializes-goods.component.scss'],
 })
 export class PartializesGoodsComponent extends BasePage implements OnInit {
-  elementToExport: any[];
   form: FormGroup;
   itemsTree: ITreeItem[] = [];
   origin: number = 0;
   loadingTree = false;
-  loadingExcel = false;
-  flagDownload = false;
+
   @ViewChild('sideMenu') sideMenu: ElementRef;
   totalItems: number = 0;
 
@@ -50,40 +48,24 @@ export class PartializesGoodsComponent extends BasePage implements OnInit {
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe({
       next: param => {
-        if (param['numberGood']) {
-          if (this.previousRouteService.getHistory().length > 1) {
-            this.origin = 1;
-            this.serviceData.numberGoodQueryParams = param['numberGood'];
-            this.select(param['numberGood']);
-          }
-          // this.select(param['numberGood']);
-          // this.origin = 1;
-        } else {
-          this.serviceData.numberGoodQueryParams = null;
-          this.origin = 0;
-        }
+        // if (param['numberGood']) {
+        //   if (this.previousRouteService.getHistory().length > 1) {
+        //     this.origin = 1;
+        //     this.serviceData.numberGoodQueryParams = param['numberGood'];
+        //     this.select(param['numberGood']);
+        //   }
+        //   // this.select(param['numberGood']);
+        //   // this.origin = 1;
+        // } else {
+        //   this.serviceData.numberGoodQueryParams = null;
+        //   this.origin = 0;
+        // }
       },
     });
   }
 
   back() {
     return this.location.back();
-  }
-
-  exportExcel() {
-    this.loadingExcel = true;
-    this.elementToExport = [];
-    const arrayDetails: any[] = [];
-    this.items.forEach(item => {
-      arrayDetails.push({
-        PARCIALIZACION: item.partializedId,
-        BIEN: item.goodNumber,
-        DESCRIPCION: item.description,
-      });
-    });
-    this.elementToExport = [...arrayDetails];
-    this.flagDownload = !this.flagDownload;
-    this.loadingExcel = false;
   }
 
   select(goodNumber: number) {
@@ -99,7 +81,7 @@ export class PartializesGoodsComponent extends BasePage implements OnInit {
           console.log(response);
           if (response[0].subItems.length === 0) {
             this.alert(
-              'error',
+              'warning',
               'Bien ' + goodNumber,
               'No tiene bienes parcializados'
             );
