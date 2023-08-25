@@ -32,6 +32,7 @@ export abstract class BasePageTableNotServerPagination<
       },
     };
     this.searchNotServerPagination();
+    this.searchParams();
   }
 
   ngOnInit(): void {
@@ -44,6 +45,16 @@ export abstract class BasePageTableNotServerPagination<
     return {
       ...this.params.getValue(),
     };
+  }
+
+  searchParams() {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: resp => {
+        if (this.data) {
+          this.getPaginated(resp);
+        }
+      },
+    });
   }
 
   getData() {
