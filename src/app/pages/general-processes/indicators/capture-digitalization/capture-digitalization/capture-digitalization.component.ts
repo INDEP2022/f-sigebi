@@ -58,6 +58,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
   flyerTypes: any;
   excelLoading: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsFilter = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters: any = [];
   P_T_CUMP: number = 0;
   P_T_NO_CUMP: number = 0;
@@ -430,10 +431,6 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
 
   find() {
     this.loading = true;
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
     this.from = this.datePipe.transform(
       this.formCapture.controls['fecStart'].value,
       'yyyy-MM-dd'
@@ -455,7 +452,10 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       noStation: Number(this.formCapture.value.noStation),
       noAuthorityts: Number(this.formCapture.value.noStation),
     };
-
+    let params = {
+      ...this.paramsFilter.getValue(),
+      ...this.columnFilters,
+    };
     this.documentsService
       .getDocCaptureFind(this.search, params)
       // .pipe(timeout(50000))
@@ -463,6 +463,8 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
         next: data => {
           this.loading = false;
           this.capturasDig = data.result;
+          console.log(data);
+          this.totalItemsCaptura = data.count;
           console.log(this.capturasDig);
           let noCumple = data.result.filter(
             (elemento: any) => elemento.cumplio == 0
@@ -479,7 +481,6 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
           this.dataFactCapt.load(this.capturasDig);
           this.dataFactCapt.refresh();
           // this.totalItemsCaptura = data.result.length;f
-          // this.totalItemsCaptura = data.count;
         },
         error: () => {
           this.loading = false;
