@@ -164,4 +164,5 @@ export class GoodTrackerMap {
     relExpe: null,
   };
   gabinete?: boolean;
+  inventario?: any;
 }

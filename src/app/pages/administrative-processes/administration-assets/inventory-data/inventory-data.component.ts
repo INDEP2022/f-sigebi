@@ -406,6 +406,14 @@ export class InventoryDataComponent
           return;
         }
         const inventoryNumber: number = await this.createInventory();
+        if (this.inventoryDataForm.get('responsable').value === null) {
+          this.alert(
+            'warning',
+            'Datos Inventario',
+            'Es Necesario que sea Ingresado el Nombre del Responsable'
+          );
+          return;
+        }
         if (inventoryNumber !== null) {
           this.dataIn.forEach((item: any) => {
             this.createLineaInventory(

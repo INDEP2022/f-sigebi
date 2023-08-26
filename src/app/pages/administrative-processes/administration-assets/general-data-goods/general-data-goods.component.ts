@@ -152,7 +152,7 @@ export class GeneralDataGoodsComponent
         this.viewAct = !this.viewAct;
         this.disableUpdate = !this.disableUpdate;
         this.good = resp;
-        this.alert('success', 'Datos generales, actualizados con éxito.', '');
+        this.alert('success', 'El Bien se ha Actualizado', '');
         setTimeout(() => {
           this.goodChange++;
         }, 100);

@@ -290,7 +290,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     private serviceNotification: NotificationService,
     private serviceHistoryGood: HistoryGoodService,
     private authService: AuthService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
   ) {
     super();
   }

@@ -22,6 +22,20 @@ const routes: Routes = [
         .ActDeliveryReceptionModule,
     data: { title: 'Actas entrega recepcion' },
   },
+  {
+    path: 'consultation-of-records',
+    loadChildren: async () =>
+      (await import('./consultation-of-records/consultation-of-records.module'))
+        .ConsultationOfRecordsModule,
+    data: { title: 'Constancia constancias' },
+  },
+  {
+    path: 'consultation-real-state',
+    loadChildren: async () =>
+      (await import('./consultation-real-state/consultation-real-state.module'))
+        .ConsultationRealStateModule,
+    data: { title: 'Consulta de inmuebles' },
+  },
 ];
 
 @NgModule({

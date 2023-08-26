@@ -141,6 +141,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
   labela: boolean = false;
   expForm: FormGroup;
   closea: boolean;
+  origin: string = null;
   constructor(
     private fb: FormBuilder,
     private proceedingsService: ProceedingsService,
@@ -165,6 +166,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
+        this.origin = params['origin'];
         this.P_NO_TRAMITE = params['P_NO_TRAMITE']
           ? Number(params['P_NO_TRAMITE'])
           : null;
@@ -191,6 +193,13 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
     this.settingsGoods.columns = GOODS_COLUMNS;
     this.proceedingsColumns = { ...this.settings, actions: false };
     this.proceedingsColumns.columns = this.proceedingsColumns;
+  }
+
+  goBack() {
+    //FCONGENRASTREADOR
+    if (this.origin == 'FCONGENRASTREADOR') {
+      this.router.navigate([`/pages/general-processes/goods-tracker`]);
+    }
   }
 
   ngOnInit(): void {
