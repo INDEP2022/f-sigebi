@@ -91,7 +91,16 @@ export class FindActaComponent extends BasePage implements OnInit {
               case 'statusProceedings':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
               case 'numTransfer':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'numeraryFolio':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'typeProceedings':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'dateElaborationReceipt':

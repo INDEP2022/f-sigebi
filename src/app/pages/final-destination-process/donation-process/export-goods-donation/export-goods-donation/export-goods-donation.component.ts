@@ -32,7 +32,9 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     this.settings.columns = COLUMNS_EXPORT_GOODS;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+
+  }
 
   settingsChange($event: any): void {
     this.settings = $event;
@@ -45,20 +47,11 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   }
 
   mapearDatos(response: any) {
+    this.data1 = []; // Se inicializa vavicio para que no se duplique al dar click
+    this.data.load(this.data1);
     for (let i = 0; i < response.data.length; i++) {
       console.log('DATA: ', response.data[i]);
 
-      /* let dataForm = {
-         no_bien: response.data[i].no_bien,
-         descripcion: response.data[i].descripcion,
-         cantidad: response.data[i].cantidad,
-         no_clasif_bien: response.data[i].no_clasif_bien,
-         no_transferente: response.data[i].no_transferente,
-         estatus: response.data[i].estatus,
-         fecha_liberacion: response.data[i].fecha_liberacion,
-         no_expediente: response.data[i].no_expediente,
-       };
-       this.data1.push(dataForm); // invocar los dos servicios */
       let padre =
         response.data[i].no_bien_padre_parcializacion != null
           ? response.data[i].no_bien_padre_parcializacion
@@ -79,24 +72,28 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
               console.log('res -> ', res);
 
               let dataForm = {
-                no_bien: response.data[i].no_bien,
-                descripcion: response.data[i].descripcion,
-                cantidad: response.data[i].cantidad,
-                no_clasif_bien: response.data[i].no_clasif_bien,
-                no_transferente: response.data[i].no_transferente,
-                estatus: response.data[i].estatus,
-                no_expediente: response.data[i].no_expediente,
+                numberGood: response.data[i].no_bien,
+                description: response.data[i].descripcion,
+                quantity: response.data[i].cantidad,
+                clasificationNumb: response.data[i].no_clasif_bien,
+                tansfNumb: response.data[i].no_transferente,
+                status: response.data[i].estatus,
+                proceedingsNumb: response.data[i].no_expediente,
                 delAdmin: res.del_administra,
-                elDeliv: res.del_recibe,
-                // fecha_liberacion: res.fecha_recepcion,
+                delDeliv: res.del_recibe,
+                recepDate: res.fecha_recepcion,
               };
+
+              console.log('DATA FORM ->', dataForm);
+
               this.data1.push(dataForm); // invocar todos tres servicios
+              this.data.load(this.data1); // cuando ya pasa todo, se mapea la info
             },
           });
         },
       });
     }
-    this.data.load(this.data1); // cuando ya pasa todo
+
   }
 
   getall() {
@@ -106,20 +103,20 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
         this.generarAlerta(response);
       },
       error: err => {
-        console.log(err);
+        console.log('err ->', err);
         this.data.load(this.data1);
       },
     });
   }
 
   generarAlerta(response: any) {
-    if (response.data.length > 7) {
+    if (response.data.length > 1000) {
       // cambiar a 1000 se coloca para prueba
       this.alertQuestion(
         'info',
         'Se recuperarán ' +
-          response.data.length +
-          ' registros ¿Deseas continuar? ',
+        response.data.length +
+        ' registros ¿Deseas continuar? ',
         '',
         'Si',
         'No'
@@ -136,21 +133,3 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     }
   }
 }
-
-// const EXAMPLE_DATA = [
-//   {
-//     numberGood: 123,
-//     description: 'PRUEBA',
-//     quantity: 1,
-//     clasificationNumb: 1,
-//     tansfNumb: 1,
-//     delAdmin: 1,
-//     delDeliv: 1,
-//     recepDate: '01/01/2022',
-//     status: 1,
-//     proceedingsNumb: 1,
-//     cpd: false,
-//     adm: false,
-//     RDA: false,
-//   },
-// ];
