@@ -740,7 +740,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           const di_dispo = await this.getStatusScreen(obj);
           item['di_disponible'] = di_dispo;
           const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
-          console.log('acta', acta);
+          //console.log('acta', acta);
           item['acta_'] = acta;
           item.di_disponible = acta != null ? 'N' : di_dispo;
         });
@@ -783,7 +783,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     return new Promise((resolve, reject) => {
       this.proceedingsService.getGetFactDbConvBien(good, exp).subscribe({
         next: async (state: any) => {
-          console.log('acta', state);
+          //console.log('acta', state);
           resolve(state.data[0].cve_acta);
         },
         error: () => {
@@ -981,6 +981,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           this.getGoodsByStatus(this.fileNumber);
           this.getActaGoodExp(this.paramsScreen.acta, this.fileNumber);
           this.getDetailProceedingsDevollution(this.paramsScreen.acta);
+          this.afterScanning();
         },
         error: () => {
           this.bienesLoading = false;
@@ -2315,8 +2316,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     );
   }
 
-
-
   ValidGoods(): void {
 
     console.log('this.bienes1 -->', this.dataRecepcion);
@@ -2350,7 +2349,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     if (this.contador > 0) {
       this.onLoadToast(
         'success',
-        'Se Encontraton ' + this.contador + ' Bienes',
+        'Se Encontraron ' + this.contador + ' No. Bien',
         'Que Son: ' + this.vTotalB
       );
       console.log('SE ENCONTRARON:', this.contador, 'QUE SON:', this.vTotalB);
