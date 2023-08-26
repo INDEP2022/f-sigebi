@@ -466,7 +466,8 @@
         <div class="row m-3">
             <div class="col-4"></div>
             <div class="col-md-8 text-end">
-                <button class="btn btn-secondary btn-sm active btn-sm mr-3" (click)="ValidGoods()">
+                <button [disabled]="!validateGoods" class="btn btn-secondary btn-sm active btn-sm mr-3"
+                    (click)="ValidGoods()">
                     Valida Bienes
                 </button>
                 <button [disabled]="!Exportdate" class="btn btn-sm btn-success active" type="button"

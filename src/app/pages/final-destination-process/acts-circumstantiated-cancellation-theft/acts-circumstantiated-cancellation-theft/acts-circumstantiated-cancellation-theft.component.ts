@@ -146,7 +146,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     folio: '',
     acta: '',
   };
-  validateGoods: boolean = true;
+  validateGoods: boolean = false;
   disabledBtnImage: boolean = false;
   disabledBtnImprimir: boolean = false;
   disabledBtnEscaneo: boolean = false;
@@ -670,6 +670,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.causa = this.expedient.criminalCase;
         this.transfer = this.expedient.transferNumber;
 
+        this.validateGoods = true;
         console.log('this.expedient ', this.expedient);
         console.log('this.causa ', this.expedient.criminalCase);
 
@@ -1431,6 +1432,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.statusCanc = null;
     this.selectedGooods = [];
     this.Exportdate = false;
+    this.validateGoods = false;
+    this.disabledBtnImprimir = false;
+    this.disabledBtnImage = false;
+    this.disabledBtnReplicar = false;
   }
   cargueMasive() {
     const workSheet = XLSX.utils.json_to_sheet(this.dataDelivery, {
@@ -1605,6 +1610,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.expedient
       //this.expedient.circumstantialRecord
     );
+
     if (this.actasDefault != null) {
       if (this.actasDefault.keysProceedings == null) {
         this.alert('warning', 'No Existe Acta para Cerrar', '');
@@ -2284,8 +2290,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
     );
   }
 
+
+
   ValidGoods(): void {
-    if (this.bienes.length === 0) {
+
+    console.log('this.bienes -->', this.dataRecepcion);
+
+    if (this.dataRecepcion.length == 0) {
       this.alertInfo('warning', 'No Hay Ningún Bien a Comparar', '');
       return;
     }
@@ -2293,7 +2304,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.contador = 0;
     this.vTotalB = '';
 
-    for (const bien of this.bienes) {
+    for (const bien of this.dataRecepcion) {
       if (bien.goodId >= 1) {
         this.contador++;
 
@@ -2304,6 +2315,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
         }
       }
     }
+
+    console.log('this.bienes -->', this.dataRecepcion);
 
     if (this.contador > 0) {
       this.onLoadToast(
@@ -2412,8 +2425,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
               this.actaRecepttionForm.get('fechaact').setValue(formattedfecActa);
               this.actaRecepttionForm.get('fechacap').setValue(formattedfecCapture);
               this.getDetailProceedingsDevollution(data.data[i].id);
-              this.actaRecepttionForm.get('scanningFoli').setValue(data.data[i].universalFolio);
-
+              console.log('LLEGA ->', data.data[i].universalFolio);
+              //this.actaRecepttionForm.get('scanningFoli').setValue(data.data[i].universalFolio);
             }
             //this.formScan.get('scanningFoli').patchValue(next.universalFolio);
             this.generarDatosDesdeUltimosCincoDigitos(data.data[i].keysProceedings);
@@ -2423,6 +2436,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
           this.loading = false;
         },
       });
+
+    // HABILITAR UNA VEZ REGRESE DEL ESCANEO 
+    this.disabledBtnImprimir = true;
+    this.disabledBtnImage = true;
+    this.validateGoods = true;
+    this.Exportdate = true;
   }
 
   afterScanningExpedient() {
