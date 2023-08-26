@@ -31,7 +31,7 @@ export const COLUMNS_EXPORT_GOODS = {
     sort: false,
   },
   delDeliv: {
-    title: 'Del_Admin',
+    title: 'Del_Recibe',
     type: 'number',
     sort: false,
   },
