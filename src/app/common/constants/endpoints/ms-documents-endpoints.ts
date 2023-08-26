@@ -17,4 +17,5 @@ export enum DocumentsEndpoints {
   ApplicationGetMaxConsec = 'application/getMaxConsec',
   ComerceDocumentsXmlT = 'comerce-documents-xml-t',
   DocumentRequestPerGoodNew = 'documents-request-per-good',
+  GetDocument = 'application/getDocument-pag',
 }
