@@ -29,7 +29,7 @@ export const COPY = {
 };
 
 export const GOODSEXPEDIENT_COLUMNS_GOODS = {
-  goodId: {
+  goodNumber: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
@@ -39,12 +39,12 @@ export const GOODSEXPEDIENT_COLUMNS_GOODS = {
     type: 'string',
     sort: false,
   },
-  quantity: {
+  amount: {
     title: 'Cantidad',
     type: 'string',
     sort: false,
   },
-  acta_: {
+  minutesKey: {
     title: 'Acta',
     type: 'string',
     sort: false,
