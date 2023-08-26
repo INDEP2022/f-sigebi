@@ -263,8 +263,8 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
           if (Number(resp.data[0].count) === 0) {
             this.alert(
               'warning',
-              'El Dictamen no ha sido enviado',
-              'No es posible firmarlo'
+              'El Dictamen no ha sido firmado',
+              'No es posible ver los oficios relacionados'
             );
           }
 

@@ -59,7 +59,7 @@ export class GoodsListComponent
   ngGlobal: any;
   @Input() changeDescription: string;
   @Input() set files(files: any[]) {
-    debugger;
+    // debugger;
     if (files.length === 0) return;
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);

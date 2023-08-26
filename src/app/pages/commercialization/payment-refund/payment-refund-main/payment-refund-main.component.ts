@@ -1,11 +1,16 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { PaymentDevolutionService } from 'src/app/core/services/ms-paymentdevolution/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { TableCheckboxComponent } from '../../massive-conversion/components/table-checkbox/table-checkbox.component';
 import { ChangeRfcModalComponent } from './change-rfc-modal/change-rfc-modal.component';
@@ -39,6 +44,24 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   layout: string = 'MAIN'; // 'MAIN', 'EXPENSE REQUEST', 'MAINTENANCE'
   @ViewChild('refundTabs', { static: false }) refundTabs?: TabsetComponent;
   @ViewChild('tabsContainer', { static: false }) tabsContainer: ElementRef;
+  // Control Table
+  dataTableControl: LocalDataSource = new LocalDataSource();
+  dataTableParamsControl = new BehaviorSubject<ListParams>(new ListParams());
+  loadingControl: boolean = false;
+  totalControl: number = 0;
+  totalControl_Count: number = 0;
+  testDataControl: any[] = [];
+  columnFiltersControl: any = [];
+  // Control Table
+  dataTableRelationEvent: LocalDataSource = new LocalDataSource();
+  dataTableParamsRelationEvent = new BehaviorSubject<ListParams>(
+    new ListParams()
+  );
+  loadingRelationEvent: boolean = false;
+  totalRelationEvent: number = 0;
+  testDataRelationEvent: any[] = [];
+  columnFiltersRelationEvent: any = [];
+  //
   controlForm: FormGroup = new FormGroup({});
   selectedAccounts: any[] = [];
   selectedPayment: any[] = [];
@@ -62,10 +85,12 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   controlSettings = {
     ...TABLE_SETTINGS,
     actions: false,
+    hideSubHeader: false,
   };
   eventSettings = {
     ...TABLE_SETTINGS,
     actions: false,
+    hideSubHeader: false,
   };
   accountSettings = {
     ...TABLE_SETTINGS,
@@ -231,7 +256,11 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     },
   ];
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private svPaymentDevolutionService: PaymentDevolutionService
+  ) {
     super();
     this.controlSettings.columns = REFUND_CONTROL_COLUMNS;
     this.eventSettings.columns = RELATED_EVENT_COLUMNS;
@@ -252,8 +281,12 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         renderComponent: CheckValidKeyComponent,
       },
     };
+    this.eventsTotalQuantity = 0;
+    this.eventsTotalAmount = 0;
     this.prepareForm();
     this.getData();
+    this.loadingDataTableControl();
+    this.loadingDataTableRelationEvent();
   }
 
   private prepareForm(): void {
@@ -406,7 +439,8 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
 
   filter(event: Event) {
     let { value } = event.target as HTMLInputElement;
-    console.log(value);
+    console.log(value, this.controlForm.get('filter').value);
+    this.loadingDataTableControl();
   }
 
   refresh() {
@@ -466,4 +500,162 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   }
 
   sendRequests() {}
+
+  loadingDataTableControl() {
+    //Filtrado por columnas
+    this.dataTableControl
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              ctlDevPagId: () => (searchFilter = SearchFilter.EQ),
+              cveCtlDevPag: () => (searchFilter = SearchFilter.ILIKE),
+              idEstatus: () => (searchFilter = SearchFilter.EQ),
+              direccion: () => (searchFilter = SearchFilter.EQ),
+              idTipoDisp: () => (searchFilter = SearchFilter.EQ),
+              idOrigen: () => (searchFilter = SearchFilter.EQ),
+            };
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFiltersControl[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersControl[field];
+            }
+          });
+          this.dataTableParamsControl = this.pageFilter(
+            this.dataTableParamsControl
+          );
+          //Su respectivo metodo de busqueda de datos
+          this.getControlData();
+        }
+      });
+    console.log(this.controlForm.get('filter').value);
+    if (this.controlForm.get('filter').value) {
+      this.columnFiltersControl['filter.idEstatus'] = `${
+        this.controlForm.get('filter').value == 'P'
+          ? '$eq:PROC'
+          : this.controlForm.get('filter').value == 'C'
+          ? '$eq:CONC'
+          : '$null'
+      }`;
+    }
+    // this.columnFiltersControl['filter.creationdate'] = `$order:desc`;
+    //observador para el paginado
+    this.dataTableParamsControl
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getControlData());
+  }
+
+  getControlData() {
+    this.loadingControl = true;
+    let params = {
+      ...this.dataTableParamsControl.getValue(),
+      ...this.columnFiltersControl,
+    };
+    console.log('PARAMS ', params);
+    this.svPaymentDevolutionService.getCtlDevPagH(params).subscribe({
+      next: res => {
+        console.log('DATA Control', res);
+        this.testDataControl = res.data;
+        this.dataTableControl.load(this.testDataControl);
+        this.totalControl = res.count;
+        this.totalControl_Count = res.totalLength;
+        this.loadingControl = false;
+      },
+      error: error => {
+        console.log(error);
+        this.testDataControl = [];
+        this.dataTableControl.load([]);
+        this.totalControl = 0;
+        this.totalControl_Count = 0;
+        this.loadingControl = false;
+      },
+    });
+  }
+
+  loadingDataTableRelationEvent() {
+    //Filtrado por columnas
+    this.dataTableRelationEvent
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              eventId: () => (searchFilter = SearchFilter.EQ),
+              numPayments: () => (searchFilter = SearchFilter.EQ),
+            };
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFiltersRelationEvent[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersRelationEvent[field];
+            }
+          });
+          this.dataTableParamsRelationEvent = this.pageFilter(
+            this.dataTableParamsRelationEvent
+          );
+          //Su respectivo metodo de busqueda de datos
+          this.getRelationEventData();
+        }
+      });
+    // this.columnFiltersRelationEvent['filter.creationdate'] = `$order:desc`;
+    //observador para el paginado
+    this.dataTableParamsRelationEvent
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getRelationEventData());
+  }
+
+  getRelationEventData() {
+    this.loadingRelationEvent = true;
+    let params = {
+      ...this.dataTableParamsRelationEvent.getValue(),
+      ...this.columnFiltersRelationEvent,
+    };
+    // let params_1 = new ListParams();
+    // params_1 = { ...params };
+    // console.log('PARAMS ', params, params_1);
+    this.svPaymentDevolutionService.getEatCtlPagE(params).subscribe({
+      next: (res: any) => {
+        console.log('DATA RelationEvent', res);
+        this.testDataRelationEvent = res.data;
+        this.dataTableRelationEvent.load(this.testDataRelationEvent);
+        this.totalRelationEvent = res.count;
+        this.eventsTotalQuantity = res.numPaymentsTotal;
+        this.eventsTotalAmount = res.paymentsAmountTotal;
+        this.loadingRelationEvent = false;
+      },
+      error: error => {
+        console.log(error);
+        this.testDataRelationEvent = [];
+        this.dataTableRelationEvent.load([]);
+        this.totalRelationEvent = 0;
+        this.eventsTotalQuantity = 0;
+        this.eventsTotalAmount = 0;
+        this.loadingRelationEvent = false;
+      },
+    });
+  }
 }
