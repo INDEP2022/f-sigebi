@@ -1,66 +1,117 @@
+import { DatePipe } from '@angular/common';
+
 export const REFUND_CONTROL_COLUMNS = {
-  id: {
+  ctlDevPagId: {
     title: 'Id',
     type: 'number',
     sort: false,
   },
-  key: {
+  cveCtlDevPag: {
     title: 'Clave',
     type: 'string',
     sort: false,
   },
-  status: {
+  idEstatus: {
     title: 'Estatus',
     type: 'string',
     sort: false,
   },
-  dispersion: {
+  direccion: {
     title: 'Dis.',
     type: 'string',
     sort: false,
   },
-  dispersionType: {
+  idTipoDisp: {
     title: 'Tipo Dispersión',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      if (value !== null) {
+        if (value == '1') {
+          return 'Por Cliente';
+        } else {
+          return 'Por Lote';
+        }
+      } else {
+        return '';
+      }
+    },
   },
-  origin: {
+  idOrigen: {
     title: 'Origen',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      if (value !== null) {
+        if (value == '1') {
+          return 'No Ganadores';
+        } else {
+          return 'Ganadores';
+        }
+      } else {
+        return '';
+      }
+    },
   },
-  createDate: {
+  fecCreacion: {
     title: 'Fecha Creación',
     type: 'string',
     sort: false,
+    filter: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+    },
   },
-  endDate: {
+  fecTermino: {
     title: 'Fecha Término',
     type: 'string',
     sort: false,
+    filter: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+    },
   },
 };
 
 export const RELATED_EVENT_COLUMNS = {
-  id: {
+  eventId: {
     title: 'Id',
     type: 'number',
     sort: false,
   },
-  cve: {
+  processKey: {
     title: 'Cve. Proceso',
     type: 'string',
     sort: false,
+    filter: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.event) {
+        if (row.event.processKey) {
+          return row.event.processKey;
+        } else {
+          return 'Clave NO Encontrada';
+        }
+      } else {
+        return 'Clave NO Encontrada';
+      }
+    },
   },
-  quantity: {
+  numPayments: {
     title: 'Cantidad',
     type: 'number',
     sort: false,
   },
-  amount: {
+  paymentsAmount: {
     title: 'Monto',
     type: 'number',
     sort: false,
+    filter: false,
   },
 };
 
