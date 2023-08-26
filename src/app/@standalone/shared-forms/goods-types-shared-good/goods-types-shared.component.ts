@@ -174,17 +174,17 @@ export class GoodsTypesSharedGoodComponent extends BasePage implements OnInit {
         this.onSssubtypesChange(response);
       }
     } else {
-      this.type.setValue('');
-      this.types = new DefaultSelect([], 0);
-      this.subtype.setValue('');
-      this.subtypes = new DefaultSelect([], 0);
-      this.ssubtype.setValue('');
-      this.ssubtypes = new DefaultSelect([], 0);
-      this.sssubtype.setValue('');
-      this.sssubtypes = new DefaultSelect([], 0);
-      this.form.get('situacion').setValue('');
-      this.form.get('destino').setValue('');
-      this.form.get('estatus').setValue('');
+      this.type.setValue(null);
+      this.types = new DefaultSelect([], 0, true);
+      this.subtype.setValue(null);
+      this.subtypes = new DefaultSelect([], 0, true);
+      this.ssubtype.setValue(null);
+      this.ssubtypes = new DefaultSelect([], 0, true);
+      this.sssubtype.setValue(null);
+      this.sssubtypes = new DefaultSelect([], 0, true);
+      this.form.get('situacion').setValue(null);
+      this.form.get('destino').setValue(null);
+      this.form.get('estatus').setValue(null);
       this.goodSssubtypeChange.emit(null);
     }
   }

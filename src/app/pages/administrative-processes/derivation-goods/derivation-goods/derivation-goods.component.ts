@@ -16,7 +16,12 @@ import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.s
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  DOUBLE_POSITIVE_PATTERN,
+  NUMBERS_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { GoodsComponent } from '../goods/goods.component';
 import { PwComponent } from '../pw/pw.component';
 import { ActaConvertionFormComponent } from './acta-convertion-form/acta-convertion.component'; // Importa el componente de tu modal
@@ -277,11 +282,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       },
     });
   }
-  /**
-   * @method: metodo para iniciar el formulario
-   * @author:  Alexander Alvarez
-   * @since: 27/09/2022
-   */
   private buildForm() {
     this.form = this.fb.group({
       id: [null],
@@ -306,23 +306,42 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(NUMBERS_PATTERN), Validators.required],
       ],
-      observation: [null, [Validators.pattern(STRING_PATTERN)]],
-      descriptionSon: [
+      observation: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN), Validators.max(600)],
       ],
-      quantity: [null, [Validators.required]],
+      descriptionSon: [null, [Validators.required, Validators.max(1250)]],
+      quantity: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(DOUBLE_POSITIVE_PATTERN),
+          Validators.max(16),
+        ],
+      ],
       classifier: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.max(6),
+        ],
       ],
       unitOfMeasure: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.max(10),
+        ],
       ],
       destinationLabel: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.max(2),
+        ],
       ],
     });
     // this.getAll();
@@ -397,6 +416,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       paramsF.addFilter('goodId', e);
       this.serviceGood.getAllFilter(paramsF.getParams()).subscribe({
         next: res => {
+          console.log(res);
           this.good = res.data[0];
           this.goodForTableChar = res.data[0];
           console.log(this.goodForTableChar);
@@ -406,41 +426,49 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.descriptionSon.setValue(res.data[0]['description']);
             this.quantity.setValue(res.data[0]['quantity']);
             this.classifier.setValue(res.data[0]['goodClassNumber']);
+            this.unitOfMeasure.setValue(res.data[0]['unit']);
+            this.destinationLabel.setValue(res.data[0]['labelNumber']);
+            this.statusCode = res.data[0]['status'];
+            this.numberGoodSon.setValue(e);
+            this.searchStatus(res.data[0]['status']);
             this.classificationOfGoods = Number(res.data[0]['goodClassNumber']);
-            // debugger;
             if (this.classificationOfGoods) {
               console.log(this.classificationOfGoods);
               setTimeout(() => {
                 this.goodChange++;
               }, 1000);
             }
+            this.flagCargMasiva = true;
+            this.flagCargaImagenes = true;
+            this.flagFinConversion = true;
+            this.flagCambia = true;
+            this.flagUpdate = true;
+            this.flagGoodNew = true;
+            this.flagGoodDelete = true;
+            this.flagCargMasiva = true;
 
-            this.unitOfMeasure.setValue(res.data[0]['unit']);
-            this.destinationLabel.setValue(res.data[0]['labelNumber']);
-            this.statusCode = res.data[0]['status'];
-            this.numberGoodSon.setValue(e);
-            this.searchStatus(res.data[0]['status']);
             // this.getAttributesGood(res.data[0]['goodClassNumber']);
           } else if (conversionData.typeConv == '1') {
-            this.observation.setValue('');
-            this.descriptionSon.setValue('');
-            this.quantity.setValue('');
-            this.classifier.setValue('');
-            this.unitOfMeasure.setValue('');
-            this.destinationLabel.setValue('');
-            this.numberGoodSon.setValue('');
-            this.searchStatus('');
+            this.observation.setValue(null);
+            this.descriptionSon.setValue(null);
+            this.quantity.setValue(null);
+            this.classifier.setValue(null);
+            this.unitOfMeasure.setValue(null);
+            this.destinationLabel.setValue(null);
+            this.numberGoodSon.setValue(null);
+            this.searchStatus(null);
             this.classificationOfGoods = Number(res.data[0]['goodClassNumber']);
             if (this.classificationOfGoods) {
               this.goodChange++;
             }
             this.flagCargMasiva = false;
-            this.flagCargaImagenes = true;
-            this.flagFinConversion = true;
-            this.flagCambia = true;
-            this.flagUpdate = true;
+            this.flagCargaImagenes = false;
+            this.flagFinConversion = false;
+            this.flagCambia = false;
+            this.flagUpdate = false;
             this.flagGoodNew = false;
             this.flagGoodDelete = false;
+            this.flagCargMasiva = false;
           }
         },
       });
@@ -520,18 +548,30 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     });
   }
   updateGood() {
+    if (this.goodData.status == 'CVD' || this.goodData.status == 'CAN') {
+      this.alert('warning', `El Bien ya ha sido convertido`, ``);
+      return;
+    }
+    console.log(this.numberGoodSon.value);
+    if (this.numberGoodSon.value == null) {
+      this.alert('warning', `Debe llenar los campos requeridos`, ``);
+      return;
+    }
+    this.loader.load = true;
     const data = {
       id: this.id.value,
-      goodId: this.numberGoodFather.value,
+      goodId: this.numberGoodSon.value,
       observations: this.observation.value,
       quantity: this.quantity.value,
       goodClassNumber: this.classifier.value,
       unit: this.unitOfMeasure.value,
       labelNumber: this.destinationLabel.value,
     };
+    console.log(data);
     this.serviceGood.update(data).subscribe(
       res => {
-        this.alert('success', 'Bien', `Actualizado Correctamente`);
+        this.alert('success', 'El Bien se ha Actualizado', ``);
+        this.loader.load = false;
       },
       err => {
         this.alert(
@@ -539,6 +579,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           'Bien',
           'No se Pudo Actualizar el Bien, por favor Intentelo Nuevamente'
         );
+        this.loader.load = false;
       }
     );
   }
@@ -562,13 +603,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           this.flagGoodNew = true;
           this.flagGoodDelete = true;
           this.loader.load = false;
-        } else {
-          this.flagActa = false;
-          this.flagCargMasiva = false;
-          this.flagCargaImagenes = false;
-          this.flagFinConversion = false;
-          this.loader.load = false;
         }
+        this.loader.load = false;
       },
       err => {
         console.log(err);
@@ -601,8 +637,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         } else {
           const result = await this.alertQuestion(
             'question',
-            'Finalizar Conversión',
-            '¿ Estas Seguro de FINALIZAR la Captura de la Conversión ?'
+            '¿Desea Finalizar la Captura de Conversión?',
+            ''
           );
 
           if (result.isConfirmed) {
@@ -720,6 +756,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         this.router.navigate(['pages/general-processes/good-photos'], {
           queryParams: {
             numberGood: this.form.value.numberGoodFather,
+            origin: 'FCONVBIENHIJOS',
           },
         });
       },
@@ -739,14 +776,19 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   applyGood(event: any) {
-    /*if (this.selectedRow.status == 'CVD' || this.selectedRow.status == 'CAN') {
-      this.alert(
-        'error',
-        `El Bien estatus del bien con id: ${this.numberGoodFather.value}`,
-        `ya ha sido convertido`
-      );
-    }*/
-    //crear segun el nuemero pardre en referencia y copiar los demas valores al bien
+    if (this.goodData.status == 'CVD' || this.goodData.status == 'CAN') {
+      this.alert('warning', `El Bien ya ha sido convertido`, ``);
+      return;
+    }
+    // if (this.tipo.value == '2') {
+    //   this.alert(
+    //     'warning',
+    //     `No se puede crear Bienes hijos en un Bien tipo Conversión`,
+    //     ``
+    //   );
+    //   return;
+    // }
+
     console.log(this.good);
     this.alertQuestion(
       'question',
@@ -754,9 +796,12 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       '¿Desea Continuar?'
     ).then(q => {
       if (q.isConfirmed) {
+        this.loader.load = true;
         let good = this.good;
         delete good.id;
         delete good.goodId;
+        delete good.statusDetails;
+        delete good.menaje;
         good.goodReferenceNumber = this.goodFatherNumber$.getValue();
         good.almacen =
           this.good.almacen != null ? this.good.almacen.idWarehouse : '';
@@ -765,12 +810,20 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         good.subDelegationNumber = this.good.subDelegationNumber.id;
         good.lotNumber =
           this.good.lotNumber != null ? this.good.lotNumber.id : null;
+        good.observations = this.observation.value;
+        good.description = this.description.value;
+        good.quantity = this.quantity.value;
+        good.classifier = this.classifier.value;
+        good.unit = this.unitOfMeasure.value;
+        good.labelNumber = this.destinationLabel.value;
         console.log(good);
         this.serviceGood.crateGood(good).subscribe(
           res => {
             this.createRelDocument(res);
+            this.loader.load = false;
           },
           err => {
+            this.loader.load = false;
             this.alert(
               'error',
               'No. Bien Hijo',
@@ -801,6 +854,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
   //Eliminar bien hijo
   deletGood(event: any) {
+    if (this.tipo.value == '2') {
+      this.alert(
+        'warning',
+        `No se puede crear Bienes hijos en un Bien tipo Conversión`,
+        ``
+      );
+      return;
+    }
     //console.log("el evento es -> ",this.selectedRow.data);
     if (event != null && this.selectedRow != undefined) {
       //console.log("el evento es -> ",JSON.stringify(this.selectedRow));
@@ -820,6 +881,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         '¿Desea Continuar?'
       ).then(q => {
         if (q.isConfirmed) {
+          this.loader.load = true;
           let data = {
             id: this.selectedRow.id,
             goodId: this.selectedRow.goodId,
@@ -833,9 +895,11 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
               );
               this.getAllGoodChild(this.goodFatherNumber$.getValue());
               delete this.selectedRow;
+              this.loader.load = false;
             },
             err => {
               this.alert('error', 'error ', err.message);
+              this.loader.load = false;
             }
           );
         }
@@ -847,6 +911,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
 
   onRowSelect(event: any) {
     console.log(event.data);
+    this.id.setValue(event.data.id);
     this.numberGoodSon.setValue(event.data.goodId);
     this.observation.setValue(event.data.observations);
     this.descriptionSon.setValue(event.data.description);
@@ -942,5 +1007,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     this.conversionData = [];
     this.dataGoods2 = [];
     this.pw();
+  }
+  clean() {
+    this.observation.setValue('');
+    this.descriptionSon.setValue('');
+    this.quantity.setValue('');
+    this.classifier.setValue('');
+    this.unitOfMeasure.setValue('');
+    this.destinationLabel.setValue('');
+    this.numberGoodSon.setValue('');
   }
 }

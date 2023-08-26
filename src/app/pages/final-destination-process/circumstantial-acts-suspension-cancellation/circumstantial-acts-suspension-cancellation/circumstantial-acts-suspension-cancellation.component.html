@@ -1,16 +1,25 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">
-      &Aacute;ctas Circunstanciadas Suspensi&oacute;n/Cancelaci&oacute;n
+      {{ title }}
     </h5>
   </div>
 
   <div body>
+    <div class="row" *ngIf="queryParams.origin">
+      <div class="col-md-12">
+        <button class="btn btn-primary active btn-sm" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+    </div>
     <div class="row justify-content-center">
       <div class="col-12 col-sm-12 col-md-6">
         <search-bar-simple
           (eventEmit)="search($event)"
           [label]="''"
+          [initValue]="inputValue"
           [placeholder]="'N&uacute;mero de expediente'">
         </search-bar-simple>
       </div>
@@ -162,7 +171,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="form.get('statusAct')"
-                label="Estatus &Aacute;cta">
+                label="Estatus Acta">
                 <input
                   type="text"
                   class="form-control"
@@ -239,6 +248,7 @@
               [formControlName]="'universalFolio'"
               [cveDocument]="form.get('act').value"
               [noExpedient]="expediente"
+              [actaSC]="true"
               [statusProceeding]="form.get('statusAct').value"
               [cveScreen]="'FACTCIRCUN_0001'"
               [reportPrint]="'RGERGENSOLICDIGIT'">
@@ -263,10 +273,7 @@
               <button
                 [disabled]="deleteAct"
                 class="btn btn-red btn-sm active m-3">
-                Eliminar Acta<i
-                  class="fa fa-trash"
-                  aria-hidden="true"
-                  (click)="deleteActa()"></i>
+                Eliminar Acta
               </button>
             </div>
           </div>
@@ -336,15 +343,24 @@
           </div>
         </div>
 
-        <div class="row pt-2">
-          <div class="col-md-12 text-center">
-            <button type="button" class="mx-2 btn btn-secondary btn-sm active">
-              <i class="fa fa-angle-up"></i>
-            </button>
-            <button type="button" class="mx-2 btn btn-secondary btn-sm active">
-              <i class="fa fa-angle-down"></i>
-            </button>
-          </div>
+        <div class="col-md-12 text-center mt-3 mb-4">
+          <button
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button"
+            (click)="addSelect()"
+            data-toggle="tooltip"
+            [title]="'Agregar'">
+            <i class="bx bx-chevron-down bx-md"></i>
+          </button>
+          <button
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button"
+            data-toggle="tooltip"
+            [title]="'Eliminar'"
+            (click)="removeSelect()">
+            <!-- Quitar uno -->
+            <i class="bx bx-chevron-up bx-md"></i>
+          </button>
         </div>
 
         <div class="row mt-5 justify-content-end mt-3">

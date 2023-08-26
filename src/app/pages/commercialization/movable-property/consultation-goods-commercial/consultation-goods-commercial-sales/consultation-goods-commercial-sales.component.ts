@@ -317,7 +317,7 @@ export class ConsultationGoodsCommercialSalesComponent
       const data = goodCheck.map((row: any) => this.transFormColums(row));
       this.excelService.export(data, { filename });
     } else {
-      this.alert('warning', 'No Seleccionó ningún Registro', '');
+      this.alert('warning', 'No Seleccionó Ningún Registro', '');
     }
   }
 
@@ -362,11 +362,7 @@ export class ConsultationGoodsCommercialSalesComponent
       );
     } else {
       this.loading = false;
-      this.alert(
-        'warning',
-        'Debe especificar al menos un parámetro de búsqueda',
-        ''
-      );
+      this.alert('warning', 'Debe completar al menos un campo de búsqueda', '');
     }
   }
 
@@ -411,11 +407,7 @@ export class ConsultationGoodsCommercialSalesComponent
     this.modelSave = model;
 
     if (Object.keys(model).length === 0) {
-      this.alert(
-        'warning',
-        'Debe especificar al menos un parámetro de búsqueda',
-        ''
-      );
+      this.alert('warning', 'Debe completar al menos un campo de búsqueda', '');
       this.loading = false;
     } else {
       const paramsF = new FilterParams();
@@ -434,11 +426,6 @@ export class ConsultationGoodsCommercialSalesComponent
           this.loading = false;
         },
         err => {
-          this.alert(
-            'error',
-            'Se presentó un error inesperado al obtener los Bienes',
-            ''
-          );
           this.dataGoods.load([]);
           this.totalItems = 0;
           this.modelSave = null;

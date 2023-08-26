@@ -16,7 +16,11 @@
     role="menu"
     aria-labelledby="button-basic">
     <li (click)="$event.stopPropagation()" role="menu" class="dropdown-item">
-      <input type="text" [formControl]="searchControl" class="form-control" />
+      <input
+        type="text"
+        id="searchbar"
+        [formControl]="searchControl"
+        class="form-control" />
     </li>
     <li (click)="$event.stopPropagation()" role="menu" class="dropdown-item">
       <input

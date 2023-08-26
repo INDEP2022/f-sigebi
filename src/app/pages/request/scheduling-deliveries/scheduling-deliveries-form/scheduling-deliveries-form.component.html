@@ -54,7 +54,7 @@
               control="typeEvent"
               [data]="TypeEventOptions"
               value="id"
-              (change)="typeEventSelect($event)"
+              (change)="typeEventSelect($event, 'typeEvent')"
               bindLabel="nameEvent"
               label="Tipo de Evento"></ngx-select>
           </div>
@@ -89,6 +89,7 @@
                 value="id"
                 bindLabel="nameAndId"
                 label="Transferente"
+                (change)="typeEventSelect($event, 'transferent')"
                 (fetchItems)="getTransferentSelect($event)"></ngx-select>
             </form-field>
           </div>
@@ -103,6 +104,7 @@
               value="organizationCode"
               bindLabel="name"
               label="Almac&eacute;n"
+              (change)="typeEventSelect($event, 'organization')"
               (fetchItems)="getWarehouseSelect($event)"></ngx-select>
           </div>
 
@@ -435,15 +437,18 @@
           <app-columns-select
             [(settings)]="settingsSearchDest"></app-columns-select>
         </div>
-
-        <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive pt-3'"
-          [settings]="settingsSearchDest"
-          [source]="infoGoodDestruction">
-        </ng2-smart-table>
-        <app-pagination
-          [params]="paramsSearchDest"
-          [totalItems]="totalItemsSearchDest"></app-pagination>
+        <div [class]="loadingGoodsDest ? 'table-loading' : ''">
+          <ng2-smart-table
+            (userRowSelect)="goodsSelectDest($event.selected)"
+            [attr.class]="'table-bordered table-responsive pt-3'"
+            [settings]="settingsSearchDest"
+            event
+            [source]="infoGoodDestruction">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsSearchDest"
+            [totalItems]="totalItemsSearchDest"></app-pagination>
+        </div>
       </div>
     </div>
 
@@ -551,14 +556,16 @@
             [(settings)]="settingsSearchDevol"></app-columns-select>
         </div>
 
-        <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive pt-3'"
-          [settings]="settingsSearchDevol"
-          [source]="infoGoodDevolution">
-        </ng2-smart-table>
-        <app-pagination
-          [params]="paramsSearchDevol"
-          [totalItems]="totalItemsSearchDevol"></app-pagination>
+        <div [class]="loadingGoodsDevolution ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive pt-3'"
+            [settings]="settingsSearchDevol"
+            [source]="infoGoodDevolution">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsSearchDevol"
+            [totalItems]="totalItemsSearchDevol"></app-pagination>
+        </div>
       </div>
     </div>
 
@@ -666,15 +673,16 @@
           <app-columns-select
             [(settings)]="settingsSearchDonation"></app-columns-select>
         </div>
-
-        <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive pt-3'"
-          [settings]="settingsSearchDonation"
-          [source]="infoGoodDonation">
-        </ng2-smart-table>
-        <app-pagination
-          [params]="paramsSearchDonation"
-          [totalItems]="totalItemsSearchDonation"></app-pagination>
+        <div [class]="loadingGoodsDonation ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive pt-3'"
+            [settings]="settingsSearchDonation"
+            [source]="infoGoodDonation">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsSearchDonation"
+            [totalItems]="totalItemsSearchDonation"></app-pagination>
+        </div>
       </div>
     </div>
 
@@ -797,15 +805,16 @@
           <app-columns-select
             [(settings)]="settingsSearchSales"></app-columns-select>
         </div>
-
-        <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive pt-3'"
-          [settings]="settingsSearchSales"
-          [source]="infoGoodSales">
-        </ng2-smart-table>
-        <app-pagination
-          [params]="paramsSearchSales"
-          [totalItems]="totalItemsSearchSales"></app-pagination>
+        <div [class]="loadingGoodsSales ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive pt-3'"
+            [settings]="settingsSearchSales"
+            [source]="infoGoodSales">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsSearchSales"
+            [totalItems]="totalItemsSearchSales"></app-pagination>
+        </div>
       </div>
     </div>
 
@@ -834,7 +843,9 @@
     <div class="row pt-3" *ngIf="filterPreviewGood">
       <div class="btn-toolbar pt-3">
         <app-columns-select [(settings)]="settings"></app-columns-select>
-        <button class="btn btn-primary btn-sm active">
+        <button
+          (click)="addGoodsProgrammingDelivery()"
+          class="btn btn-primary btn-sm active">
           Agregar <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
         <button class="btn btn-danger btn-sm active">

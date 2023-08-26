@@ -95,6 +95,7 @@ export class ChangeOfGoodClassificationComponent
   get currentClasification() {
     return this.form.get('currentClasification');
   }
+
   get descriptionClasification() {
     return this.form.get('descriptionClasification');
   }
@@ -417,6 +418,10 @@ export class ChangeOfGoodClassificationComponent
     } else {
       this.loading = false;
       this.alert('error', 'Error', 'Bien no encontrado');
+      this.numberGood.setValue(null);
+      this.descriptionGood.setValue(null);
+      this.clasification.setValue(null);
+      this.numberFile.setValue(null);
     }
   }
 
@@ -474,6 +479,10 @@ export class ChangeOfGoodClassificationComponent
 
   get pathClasification() {
     return 'catalog/api/v1/good-sssubtype?sortBy=numClasifGoods:ASC';
+  }
+
+  get pathExpedient() {
+    return 'expedient/api/v1/expedient';
   }
 
   onChange(event: IGoodSssubtype) {
@@ -603,6 +612,7 @@ export class ChangeOfGoodClassificationComponent
   private updateFirsTable() {
     this.currentClasification.setValue(this.classificationOfGoods.value);
     this.descriptionClasification.setValue(this.newDescription);
+
     this.data.forEach(atrib => {
       if (atrib.value !== undefined) {
         this.good[atrib.column] = atrib.value;
@@ -618,7 +628,7 @@ export class ChangeOfGoodClassificationComponent
 
   updateSecondTable() {
     this.formNew.reset();
-    this.fileNumberNew.setValue(this.numberFile.value);
+
     setTimeout(() => {
       this.goodChange2++;
     }, 100);
@@ -629,7 +639,7 @@ export class ChangeOfGoodClassificationComponent
       id: Number(this.good.id),
       goodId: Number(this.good.goodId),
       goodClassNumber: this.classificationOfGoods.value,
-      fileeNumber: this.fileNumberNew.value,
+      fileNumber: this.fileNumberNew.value,
       unitMeasure: this.unitXClassif.value,
       destiny: this.destination.value,
       // status: this.finalStatus,
@@ -668,6 +678,12 @@ export class ChangeOfGoodClassificationComponent
           // this.dataAct.refresh();
           // this.form.reset();
           this.updateSecondTable();
+          this.form
+            .get('clasification')
+            .setValue(
+              putGood.goodClassNumber + '-' + this.newClasif.description
+            );
+          this.form.get('numberFile').setValue(putGood.fileNumber);
         },
         error: err => {
           this.alert(

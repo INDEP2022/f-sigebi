@@ -485,7 +485,7 @@ export class MassiveConversionSelectGoodComponent
               map(x => x.data.length > 0)
             )
         );
-        console.log(encontro)
+        console.log(encontro);
         if (encontro) {
           V_BANR = false;
         }
@@ -581,7 +581,7 @@ export class MassiveConversionSelectGoodComponent
           return {
             id: goodNumber,
             message:
-              'No puede agregar bienes cuyo paquete no está en ESTATUS_PAQ X',
+              'No puede agregar bienes cuyo paquete no está en estatus X',
           };
           // return await new Promise<any>((resolve, reject) => {
           //   resolve({
@@ -890,7 +890,7 @@ export class MassiveConversionSelectGoodComponent
             this.alert('success', 'Se Encontraron Registros', '');
           } else {
             this.data.load([]);
-            this.alert('error', 'No se Encontraron Registros', '');
+            // this.alert('warning', 'No se Encontraron Registros', '');
           }
 
           this.loading = false;

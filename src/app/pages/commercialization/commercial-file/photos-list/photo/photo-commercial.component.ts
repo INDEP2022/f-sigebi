@@ -33,23 +33,27 @@ export class PhotoCommercialComponent
     super();
   }
 
+  get filename() {
+    return this.file.name;
+  }
+
   ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges) {
     console.log(changes);
-    if (changes['filename']) {
+    if (changes['file']) {
       this.filenameChange();
     }
   }
 
   private filenameChange() {
     this.loading = true;
-    console.log(this.filename);
-    let index = this.filename.indexOf('F');
-    let finish = this.filename.indexOf('.');
+    console.log(this.file.name);
+    let index = this.file.name.indexOf('F');
+    let finish = this.file.name.indexOf('.');
     // console.log(index);
     this.service
-      .getById(this.goodNumber, +this.filename.substring(index + 1, finish))
+      .getById(this.goodNumber, +this.file.name.substring(index + 1, finish))
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: base64 => {
@@ -69,9 +73,12 @@ export class PhotoCommercialComponent
   }
 
   editPhoto() {
-    const index = this.filename.indexOf('F');
-    let finish = this.filename.indexOf('.');
-    this.editService.consecNumber = +this.filename.substring(index + 1, finish);
+    const index = this.file.name.indexOf('F');
+    let finish = this.file.name.indexOf('.');
+    this.editService.consecNumber = +this.file.name.substring(
+      index + 1,
+      finish
+    );
     const config = {
       ...MODAL_CONFIG,
       initialState: {

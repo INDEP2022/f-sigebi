@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITypeSiniester } from 'src/app/core/models/catalogs/type-siniester.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TypeSiniesterService } from 'src/app/core/services/catalogs/type-siniester.service';
 import { SeraLogService } from 'src/app/core/services/ms-audit/sera-log.service';
 import { BasePage } from 'src/app/core/shared';
@@ -50,6 +51,7 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private datePipe: DatePipe,
     private modalRef: BsModalRef,
+    private authService: AuthService,
     private typeSinisterService: TypeSiniesterService,
     private seraLogService: SeraLogService
   ) {
@@ -229,16 +231,19 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       this.claimsFollowUpDetailForm.controls['description'].setValue(
         this.good.description
       );
+      setTimeout(() => {
+        this.claimsFollowUpDetailForm.controls['statusIn'].setValue('1');
+        this.claimsFollowUpDetailForm.controls['shapeConclusionIn'].setValue(
+          '0'
+        );
+      }, 1000);
     }
-
-    this.getTipeSiniester(new ListParams());
+    setTimeout(() => {
+      this.getTipeSiniester(new ListParams());
+    }, 1000);
     this.getObtnObtenUnidadesResp(new ListParams());
     this.getshapeConclusion(new ListParams());
     this.getStatusSinister(new ListParams());
-    setTimeout(() => {
-      this.claimsFollowUpDetailForm.controls['statusIn'].setValue('1');
-      this.claimsFollowUpDetailForm.controls['shapeConclusionIn'].setValue('0');
-    }, 1000);
   }
 
   close() {
@@ -274,6 +279,7 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       delete params['search'];
     }
     params['sortBy'] = 'descripcion:ASC';
+    // params['filter.no_delegacion'] = `$eq:${this.authService.decodeToken().department}`;
     this.seraLogService.getObtnObtenUnidadesResp(params).subscribe({
       next: response => {
         this.unitAdminUser = new DefaultSelect(response.data, response.count);

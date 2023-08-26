@@ -20,10 +20,12 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { COLUMNS } from '../massive-reclassification-goods/columns';
 import {
   IDs,
@@ -54,8 +56,10 @@ export class GoodsListComponent
   idsNotExist: NotData[] = [];
   showError: boolean = false;
   $trackedGoods = this.store.select(getTrackedGoods);
+  ngGlobal: any;
   @Input() changeDescription: string;
   @Input() set files(files: any[]) {
+    debugger;
     if (files.length === 0) return;
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
@@ -86,6 +90,8 @@ export class GoodsListComponent
     private procedureManagement: ProcedureManagementService,
     private excelService: ExcelService,
     private store: Store,
+    private globalVarService: GlobalVarsService,
+    private goodTrackerService: GoodTrackerService,
     private readonly goodServices: GoodService
   ) {
     super();
@@ -126,13 +132,14 @@ export class GoodsListComponent
 
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
+      debugger;
       this.data.load([]);
       this.availableToUpdate = [];
       this.idsNotExist = [];
       this.showError = false;
 
       this.ids = this.excelService.getData(binaryExcel);
-      if (this.ids[0].No_bien === undefined) {
+      if (this.ids[0].no_bien === undefined) {
         this.alert(
           'error',
           'Ocurrio un error al leer el archivo',
@@ -308,13 +315,45 @@ export class GoodsListComponent
         if (response && response.length > 0) {
           this.ids = response.map(x => {
             return {
-              No_bien: +x.goodNumber,
+              no_bien: +x.goodNumber,
             };
           });
           this.fillData(this.ids);
         }
       },
     });
+    this.globalVarService
+      .getGlobalVars$()
+      .pipe(first(), takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          this.ngGlobal = global;
+          if (this.ngGlobal.REL_BIENES) {
+            this.loader.load = true;
+            const paramsF = new FilterParams();
+            paramsF.addFilter('identificator', this.ngGlobal.REL_BIENES);
+            paramsF.limit = 100000000;
+            this.goodTrackerService
+              .getAllTmpTracker(paramsF.getParams())
+              .subscribe({
+                next: res => {
+                  this.loader.load = false;
+                  if (res.data && res.data.length > 0) {
+                    this.ids = res.data.map(x => {
+                      return {
+                        no_bien: +x.goodNumber,
+                      };
+                    });
+                    this.fillData(this.ids);
+                  }
+                },
+                error: err => {
+                  this.loader.load = false;
+                },
+              });
+          }
+        },
+      });
     this.classificationOfGoods.valueChanges
       .pipe(
         distinctUntilChanged(),
@@ -380,7 +419,7 @@ export class GoodsListComponent
     if (ids) {
       filterParams.addFilter(
         'id',
-        String(ids.map(row => row.No_bien)),
+        String(ids.map(row => row.no_bien)),
         SearchFilter.IN
       );
     }

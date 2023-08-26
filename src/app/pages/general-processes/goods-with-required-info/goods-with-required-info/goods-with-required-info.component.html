@@ -17,6 +17,20 @@
 
   <div body>
     <div class="row">
+      <div class="d-flex justify-content-end">
+        <div class="m-3">
+          <!-- <input type="file" name="file1" #file1 class="d-none" formControlName="file1"
+                          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                          (change)="onFileChangeDelivery($event)" /> -->
+          <button
+            class="btn btn-success btn-sm ml-2 active"
+            type="button"
+            (click)="exportAll()">
+            Exportar a Excel
+            <i class="bx bx-download float-icon"></i>
+          </button>
+        </div>
+      </div>
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <div class="table-responsive">

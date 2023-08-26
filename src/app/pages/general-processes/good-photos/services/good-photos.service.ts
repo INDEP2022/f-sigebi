@@ -1,4 +1,4 @@
-import { Injectable, QueryList } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import * as JSZip from 'jszip';
 import { map, Subject } from 'rxjs';
@@ -19,6 +19,12 @@ export class GoodPhotosService extends HttpService {
   constructor() {
     super();
     this.microservice = GoodFinderEndpoint.GoodFinderBase;
+  }
+
+  get userName() {
+    return localStorage.getItem('username')
+      ? localStorage.getItem('username').toUpperCase()
+      : null;
   }
   getAll(params?: _Params) {
     const route = GoodFinderEndpoint.GoodQuery;
@@ -61,13 +67,13 @@ export class GoodPhotosService extends HttpService {
     return new Blob(byteArrays, { type: contentType });
   }
 
-  async downloadByGood(photos: QueryList<PhotoComponent>) {
+  async downloadByGood(photos: PhotoComponent[]) {
     const zip = new JSZip();
     photos.forEach(photo => {
       // console.log(photo.filename);
-      // console.log(photo.base64);
+      console.log(photo);
       const b = this.base64toBlob(photo.base64, 'base64');
-      zip.file(photo.filename, b);
+      zip.file(photo.file.name, b);
     });
     return zip;
   }

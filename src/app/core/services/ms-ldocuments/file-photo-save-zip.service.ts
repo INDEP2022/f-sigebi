@@ -24,6 +24,8 @@ export class FilePhotoSaveZipService extends HttpService {
     const formData = new FormData();
     formData.append(fileField, file, `FU_${uuidv4()}.${ext}`);
     formData.append('goodNumber', `${identificator}`);
+    const user = localStorage.getItem('username').toUpperCase();
+    formData.append('userCreation', user);
     formData.append('recordNumber', '305315076');
     formData.append('photoDate', new Date().toISOString());
     formData.append('photoDateHc', new Date().toISOString());

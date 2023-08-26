@@ -54,10 +54,10 @@ export class RecordAccountStatementsAccountsService
   }
 
   getDataAccount(
-    accountNumber: string | number,
+    cveAccount: string,
     params?: ListParams
   ): Observable<IListResponse<IRecordAccountStatements>> {
-    const route = `${this.route2}?filter.numberAccount=$eq:${accountNumber}`;
+    const route = `${this.route2}?filter.cveAccount=$eq:${cveAccount}`;
     return this.get(route, params);
   }
 
@@ -68,8 +68,8 @@ export class RecordAccountStatementsAccountsService
     return this.get(route, params);
   }
 
-  getFactasStatusCta(accountNumber: number): Observable<IFactasStatusCta> {
-    const route = `${this.route3}/get-factas-status-cta/${accountNumber}`;
+  getFactasStatusCta(cveAccount: string): Observable<IFactasStatusCta> {
+    const route = `${this.route3}/get-factas-status-cta/${cveAccount}`;
     return this.get(route);
   }
 

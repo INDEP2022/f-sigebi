@@ -61,7 +61,13 @@ import { GoodsTableService } from './goods-table.service';
 @Component({
   selector: 'goods-table',
   templateUrl: './goods-table.component.html',
-  styles: [],
+  styles: [
+    `
+      .text-black {
+        color: black;
+      }
+    `,
+  ],
 })
 export class GoodsTableComponent extends BasePage implements OnInit {
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
@@ -122,6 +128,8 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     super();
     this.settings.actions = false;
     this.settings.columns = this.goodsTableService.columns;
+    this.settings.rowClassFunction = (row: any) =>
+      row.data.socialCabite ? 'bg-success text-black' : '';
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
@@ -230,6 +238,15 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     this.$unSubscribe.subscribe({
       complete: () => this.saveFilterState(),
     });
+
+    this.goodsTableService.stateFlag
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(() => {
+          this.saveState = true;
+        })
+      )
+      .subscribe();
   }
 
   saveFilterState() {
@@ -246,7 +263,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
 
     if (this.selectedGooods.length > 1) {
       await this.alertInfo(
-        'info',
+        'warning',
         'Más de un Registro Seleccionado',
         'Se tomará el último registro seleccionado'
       );
@@ -355,7 +372,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
 
   async takeOneProcess(turnSelects: any) {
     await this.alertInfo(
-      'info',
+      'warning',
       'Más de un trámite seleccionado',
       'Se tomará el último Registro Seleccionado'
     );
@@ -464,7 +481,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
 
   include() {
     if (this.selectedGooods.length == 0) {
-      this.onLoadToast('info', 'Info', 'Debe seleccionar al menos un bien');
+      this.onLoadToast('warning', 'Debe seleccionar al menos un bien', '');
       return;
     }
     const goodIds = this.selectedGooods.map(good => good.goodNumber);
@@ -858,9 +875,9 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       next: resp => {
         this.excelLoading = false;
         this.alert(
-          'info',
-          'Aviso',
-          'El Archivo Excel está en Proceso de Generación, favor de esperar la Descarga'
+          'warning',
+          'El archivo excel está en proceso de generación, favor de esperar la descarga',
+          ''
         );
         this.fullService.generatingFileFlag.next({
           progress: 99,
@@ -879,9 +896,9 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     this.goodTrackerService.getPhotos(this.filters).subscribe({
       next: res => {
         this.alert(
-          'info',
-          'Aviso',
-          'La Descarga está en Proceso, favor de Esperar'
+          'warning',
+          'La Descarga está en Proceso, favor de Esperar',
+          ''
         );
         const $sub = this.subscribePhotos(res.token).subscribe();
       },

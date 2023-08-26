@@ -165,7 +165,7 @@ export const SEARCH_SALES_TABLE = {
 };
 
 export const SEARCH_DESTRUCTION_TABLE = {
-  tem: {
+  item: {
     title: 'ÍTEM',
     type: 'string',
     sort: false,
@@ -177,13 +177,13 @@ export const SEARCH_DESTRUCTION_TABLE = {
     sort: false,
   },
 
-  managementNum: {
+  managementNumGoodId: {
     title: 'No. Gestión',
     type: 'number',
     sort: false,
   },
 
-  descriptionGood: {
+  goodDescription: {
     title: 'Descripción Bien',
     type: 'string',
     sort: false,
@@ -201,7 +201,7 @@ export const SEARCH_DESTRUCTION_TABLE = {
     sort: false,
   },
 
-  bienSiabNum: {
+  goodSiabNum: {
     title: 'No. INDEP',
     type: 'number',
     sort: false,

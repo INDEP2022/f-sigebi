@@ -7,6 +7,7 @@ import { ExecuteSchedulingDeliveriesComponent } from './execute-scheduling-deliv
 import { InputFieldComponent } from './execute-scheduling-deliveries/input-field/input-field.component';
 import { SchedulingDeliveriesFormComponent } from './scheduling-deliveries-form/scheduling-deliveries-form.component';
 import { SchedulingDeliveriesRoutigModule } from './scheduling-deliveries-routing.module';
+import { TypeDeliveryModelComponent } from './type-delivery-model/type-delivery-model.component';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { SchedulingDeliveriesRoutigModule } from './scheduling-deliveries-routin
     ExecuteSchedulingDeliveriesComponent,
     DeliveriesConstancyFormComponent,
     InputFieldComponent,
+    TypeDeliveryModelComponent,
   ],
   imports: [
     CommonModule,
