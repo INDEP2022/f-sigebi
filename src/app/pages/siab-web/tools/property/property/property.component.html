@@ -14,7 +14,8 @@
         <div>
           <button
             class="btn btn-primary btn-sm active mr-3"
-            (click)="generateReport()">
+            (click)="generateReport()"
+            [disabled]="validator">
             Generar Reporte
           </button>
         </div>
