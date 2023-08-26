@@ -231,4 +231,11 @@ export class GoodprocessService extends HttpService {
       `${GoodprocessEndpoints.ReceptionBpmBackup}/${idGood}/${goodId}`
     );
   }
+
+  GetMinuteDetailDelivery(expedient: any, params: _Params) {
+    return this.get(
+      `${GoodprocessEndpoints.GetMinuteDetailDelivery}/${expedient}`,
+      params
+    );
+  }
 }
