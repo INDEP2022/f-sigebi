@@ -18,4 +18,5 @@ export enum DocumentsEndpoints {
   ComerceDocumentsXmlT = 'comerce-documents-xml-t',
   DocumentRequestPerGoodNew = 'documents-request-per-good',
   ExportExcelcaptura = 'application/get-data-ind-rec-doc-export',
+  GetDocument = 'application/getDocument-pag',
 }

@@ -100,11 +100,7 @@ export class ActsRegularizationNonExistenceComponent
     this.proceedingsDelivery.getProceeding(event).subscribe({
       next: data => {
         this.response = true;
-        this.alert(
-          'success',
-          'Expediente Encontrado',
-          'El expediente ha sido encontrado'
-        );
+        this.alert('success', 'Expediente Encontrado', '');
 
         this.listaActas = data.data;
         this.getGoods(event, data.data[0].id);
