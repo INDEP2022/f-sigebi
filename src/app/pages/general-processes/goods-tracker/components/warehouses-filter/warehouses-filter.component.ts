@@ -47,7 +47,6 @@ export class WarehousesFilterComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       columns: {
-        ...WAREHOUSES_FILTER_COLUMNS,
         seleccionar: {
           title: 'Selección',
           sort: false,
@@ -60,6 +59,7 @@ export class WarehousesFilterComponent extends BasePage implements OnInit {
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onWarehouseSelect(instance),
         },
+        ...WAREHOUSES_FILTER_COLUMNS,
       },
       actions: false,
       hideSubHeader: false,
@@ -110,7 +110,10 @@ export class WarehousesFilterComponent extends BasePage implements OnInit {
 
   buildColumnFilter(dataSource: any) {
     const params = new FilterParams();
-    params.addFilter('stateCode.id', this.form.controls.state.value ?? '');
+    if (this.form.controls.state.value) {
+      params.addFilter('stateCode.id', this.form.controls.state.value ?? '');
+    }
+
     if (dataSource.action == 'filter') {
       const filters = dataSource.filter.filters;
       filters.forEach((filter: any) => {
