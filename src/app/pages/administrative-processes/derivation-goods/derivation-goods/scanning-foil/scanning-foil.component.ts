@@ -134,14 +134,14 @@ export class ScanningFoilComponent
       this.alert(
         'question',
         'Información',
-        'El Paquete ya tiene Folio de Escaneo.'
+        'El Paquete ya tiene Folio de Escaneo'
       );
       return;
     }
     this.alertQuestion(
       'question',
       'Se Generará un Nuevo Folio de Escaneo para el Paquete Autorizado',
-      '¿Deseas continuar?',
+      '¿Desea continuar?',
       'Continuar'
     ).then(q => {
       if (q.isConfirmed) {
