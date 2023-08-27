@@ -82,26 +82,27 @@ export class CreateActaComponent extends BasePage implements OnInit {
     for (let i = 1900; i <= this.currentYear; i++) {
       this.years.push(i);
     }
-
+    console.log('expediente,', this.expedient);
     await this.actaForm();
-    console.log(this.expedient);
+
     // OBTENEMOS DELEGACIÓN DEL USUARIO //
-    const paramsSender = new ListParams();
-    paramsSender.text = this.authService.decodeToken().preferred_username;
-    await this.get___Senders(paramsSender);
+    this.getDataSelectInitial();
+    // const paramsSender = new ListParams();
+    // paramsSender.text = this.authService.decodeToken().preferred_username;
+    // await this.get___Senders(paramsSender);
   }
 
   async actaForm() {
     this.actaRecepttionForm = this.fb.group({
       acta: [null, Validators.required],
-      type: [null, Validators.required],
-      claveTrans: [null, Validators.required],
-      administra: [null, Validators.required],
+      type: [null],
+      claveTrans: [null],
+      administra: [null],
       cveReceived: [null, Validators.required],
-      consec: [null, Validators.required],
+      consec: [null],
       // ejecuta: [null],
-      anio: [null, [Validators.required]],
-      mes: [null, [Validators.required]],
+      anio: [null],
+      mes: [null],
       cveActa: [null],
       direccion: [null],
       observaciones: [null],
@@ -237,6 +238,8 @@ export class CreateActaComponent extends BasePage implements OnInit {
   }
 
   consultREG_TRANSFERENTES(lparams: ListParams) {
+    if (!this.expedient) return;
+    if (!this.expedient.transferNumber) return;
     let obj = {
       transfereeNumber: this.expedient.transferNumber,
       expedientType: this.expedient.expedientType,
@@ -278,27 +281,47 @@ export class CreateActaComponent extends BasePage implements OnInit {
   }
 
   agregarActa() {
-    const acta = this.actaRecepttionForm.value.acta;
-    const type = this.actaRecepttionForm.value.type;
-    const claveTrans = this.actaRecepttionForm.value.claveTrans;
-    const cveReceived = this.actaRecepttionForm.value.cveReceived;
-    const administra = this.actaRecepttionForm.value.administra;
-    const consec = this.actaRecepttionForm.value.consec;
+    const acta = !this.actaRecepttionForm.value.acta
+      ? ''
+      : this.actaRecepttionForm.value.acta;
+    const type = !this.actaRecepttionForm.value.type
+      ? ''
+      : this.actaRecepttionForm.value.type;
+    const claveTrans = !this.actaRecepttionForm.value.claveTrans
+      ? ''
+      : this.actaRecepttionForm.value.claveTrans;
+    const cveReceived = !this.actaRecepttionForm.value.cveReceived
+      ? ''
+      : this.actaRecepttionForm.value.cveReceived;
+    const administra = !this.actaRecepttionForm.value.administra
+      ? ''
+      : this.actaRecepttionForm.value.administra;
+    const consec = !this.actaRecepttionForm.value.consec
+      ? ''
+      : this.actaRecepttionForm.value.consec;
 
-    const anio = this.actaRecepttionForm.value.anio;
-    const mes = this.actaRecepttionForm.value.mes;
+    const anio = !this.actaRecepttionForm.value.anio
+      ? ''
+      : this.actaRecepttionForm.value.anio;
+    const mes = !this.actaRecepttionForm.value.mes
+      ? ''
+      : this.actaRecepttionForm.value.mes;
 
     const miCadenaAnio = anio + '';
-    const miSubcadena = miCadenaAnio.slice(2, 5);
+    let miSubcadena = '';
+    if (miCadenaAnio) miSubcadena = miCadenaAnio.slice(2, 5);
 
-    let consec_ = consec.toString().padStart(4, '0');
-    if (consec_.length > 4) {
-      consec_ = consec_.toString().slice(0, 4);
+    let consec_ = '';
+    if (consec) {
+      consec_ = consec.toString().padStart(4, '0');
+      if (consec_.length > 4) {
+        consec_ = consec_.toString().slice(0, 4);
+      }
     }
 
-    const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${cveReceived}/${consec_}/${miSubcadena
-      .toString()
-      .padStart(2, '0')}/${mes.value.toString().padStart(2, '0')}`;
+    const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${cveReceived}/${consec_}/${
+      !miSubcadena ? '' : miSubcadena.toString().padStart(2, '0')
+    }/${!mes ? '' : mes.value.toString().padStart(2, '0')}`;
     console.log(cveActa);
 
     if (cveActa) {
@@ -346,7 +369,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       approvalUserXAdmon: null,
       numRegister: null,
       captureDate: new Date(),
-      numDelegation1: this.delegationToolbar,
+      numDelegation1: this.delegation,
       numDelegation2: null,
       identifier: null,
       label: null,
@@ -439,5 +462,13 @@ export class CreateActaComponent extends BasePage implements OnInit {
           );
       }
     });
+  }
+  async getDataSelectInitial() {
+    this.delegation = this.authService.decodeToken().department;
+    this.stagecreated = await this.delegationWhere();
+    console.log('aaaaaaaaa', this.stagecreated);
+    await this.validacionFirst();
+    this.consulREG_DEL_DESTR(new ListParams());
+    // this.consulREG_DEL_ADMIN(new ListParams());
   }
 }

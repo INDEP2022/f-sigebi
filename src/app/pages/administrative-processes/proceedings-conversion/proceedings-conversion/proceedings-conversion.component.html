@@ -79,6 +79,12 @@
                               <div class="row p-3">
                                 <div class="col-md-3">
                                   <div>
+                                    <label for="">No. Expediente: </label>
+                                    {{ noExpediente || '' }}
+                                  </div>
+                                </div>
+                                <div class="col-md-3">
+                                  <div>
                                     <label for=""
                                       >Averiguaci&oacute;n Previa:
                                     </label>
@@ -93,12 +99,12 @@
                                     {{ trasnfer || '' }}
                                   </div>
                                 </div>
-                                <div class="col-md-3">
+                                <!-- <div class="col-md-3">
                                   <div>
                                     <label for="">Hora de Creación: </label>
                                     {{ time | date : 'hh:mm' }}
                                   </div>
-                                </div>
+                                </div> -->
                               </div>
                               <div class="row p-3">
                                 <div class="col-md-3">
@@ -197,7 +203,7 @@
                                       [control]="
                                         actaRecepttionForm.get('cveActa')
                                       "
-                                      label="Clave de Acta">
+                                      label="Cve. Acta">
                                       <input
                                         #inputValue
                                         type="text"
@@ -534,7 +540,8 @@
                     </div>
                     <div class="m-3">
                       <button
-                        [disabled]="!disabledBtnCerrar"
+                        [ngClass]="{ loading: loadingBtn }"
+                        [disabled]="!disabledBtnCerrar || loadingBtn"
                         type="button"
                         class="btn btn-primary active btn-sm"
                         (click)="cerrarActa(goodFatherNumber)">
