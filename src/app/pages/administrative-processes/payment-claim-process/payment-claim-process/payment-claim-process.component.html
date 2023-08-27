@@ -67,12 +67,13 @@
           <div class="d-flex justify-content-between">
             <div>
               <button
-                [disabled]="!document"
+                [ngClass]="{ loading: loadingBtn }"
+                [disabled]="!document || loadingBtn"
                 type="button"
                 class="btn btn-primary btn-sm active"
                 (click)="changeStatusGood()">
                 Actualizar
-                <i class="fas fa-sync-alt"> </i>
+                <i *ngIf="!loadingBtn" class="fas fa-sync-alt"> </i>
               </button>
             </div>
             <div>
