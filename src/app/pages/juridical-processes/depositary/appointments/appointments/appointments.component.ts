@@ -36,6 +36,7 @@ import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
 import {
   IDepositaryAppointments,
   IDepositaryAppointments_custom,
+  IPersonsModDepositary,
 } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -2180,7 +2181,9 @@ export class AppointmentsComponent
         this.loadingRadioSelect = true;
         this.appointmentsService
           .getCValFoUni({
-            adminTypeKey: this.depositaryAppointment.cveGuyAdministrator,
+            adminTypeKey: this.depositaryAppointment.cveGuyAdministrator
+              ? this.depositaryAppointment.cveGuyAdministrator
+              : '',
             goodNumber: this.noBienReadOnly,
             screen: this.screenKey,
           })
@@ -2231,7 +2234,9 @@ export class AppointmentsComponent
         this.loadingRadioSelect = true;
         this.appointmentsService
           .getCValFoRev({
-            adminTypeKey: this.depositaryAppointment.cveGuyAdministrator,
+            adminTypeKey: this.depositaryAppointment.cveGuyAdministrator
+              ? this.depositaryAppointment.cveGuyAdministrator
+              : '',
             goodNumber: this.noBienReadOnly,
             screen: this.screenKey,
           })
@@ -2845,6 +2850,7 @@ export class AppointmentsComponent
               data.appointmentNum
             );
           }
+          this.getPersonXNom();
         },
         error: error => {
           console.log(error);
@@ -2914,6 +2920,7 @@ export class AppointmentsComponent
                 body.appointmentNum
               );
               this.alertInfo('success', 'Registro Guardado Correctamente', '');
+              this.getPersonXNom();
             } else {
               let _saveFolioDepositary = localStorage.getItem(
                 '_saveFolioDepositary'
@@ -2938,6 +2945,7 @@ export class AppointmentsComponent
                 body.appointmentNum
               );
               this.alertInfo('success', 'Registro Guardado Correctamente', '');
+              this.getPersonXNom();
             }
           });
         },
@@ -3026,5 +3034,53 @@ export class AppointmentsComponent
       },
     };
     return this.modalService.show(EmailAppointmentComponent, config);
+  }
+
+  getPersonXNom() {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter(
+      'appointmentNum',
+      this.depositaryAppointment.numberAppointment
+    );
+    params.addFilter('personNum', this.depositaryAppointment.personNumber.id);
+
+    this.appointmentsService
+      .getPersonsModDepositary(params.getParams())
+      .subscribe({
+        next: data => {
+          console.log('DATA SELECT', data);
+        },
+        error: error => {
+          console.log(error);
+          if (error.status == 400) {
+            this.createPersonXNom();
+          }
+        },
+      });
+  }
+
+  createPersonXNom() {
+    let body: Partial<IPersonsModDepositary> = {
+      appointmentNum: Number(this.depositaryAppointment.numberAppointment),
+      personNum: this.depositaryAppointment.personNumber.id + '',
+      process: 'S',
+      dateExecution: new Date(),
+      sentSirsae: 'N',
+      modifyStatus: 'N',
+      // indicted: '',
+      // dateShipment: '',
+      // sendSirsae: '',
+      // nbOrigin: '',
+    };
+
+    this.appointmentsService.createPersonsModDepositary(body).subscribe({
+      next: data => {
+        console.log('DATA Crear ', data);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
   }
 }
