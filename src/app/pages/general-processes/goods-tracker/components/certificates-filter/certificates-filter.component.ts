@@ -55,6 +55,7 @@ export class CertificatesFilterComponent implements OnInit {
 
   getGoodStatuses(params: ListParams) {
     params.limit = 100;
+    params['sortBy'] = 'status:ASC';
     this.statusGoodService.getAll(params).subscribe({
       next: res => (this.goodStatuses = new DefaultSelect(res.data, res.count)),
       error: error => {

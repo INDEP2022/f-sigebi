@@ -70,6 +70,7 @@ export class LocationFilterComponent implements OnInit {
     } else {
       _params.addFilter('description', search, SearchFilter.ILIKE);
     }
+    _params.sortBy = 'idWarehouse:ASC';
     this.warehouseService
       .getAllFilter(_params.getParams())
       // this.warehouseService.getAll(params)
@@ -90,6 +91,7 @@ export class LocationFilterComponent implements OnInit {
     }
     params.text = '';
     params['search'] = '';
+    params['sortBy'] = 'id:ASC';
     this.delegationService.getAll(params).subscribe({
       next: res => (this.delegations = new DefaultSelect(res.data, res.count)),
       error: () => {
@@ -107,6 +109,7 @@ export class LocationFilterComponent implements OnInit {
     }
     params.text = '';
     params['search'] = '';
+    params['sortBy'] = 'id:ASC';
     this.statesService.getAll(params).subscribe({
       next: res =>
         (this.autorityStates = new DefaultSelect(res.data, res.count)),
@@ -125,6 +128,7 @@ export class LocationFilterComponent implements OnInit {
     }
     params.text = '';
     params['search'] = '';
+    params['sortBy'] = 'id:ASC';
     this.statesService.getAll(params).subscribe({
       next: res => (this.goodStates = new DefaultSelect(res.data, res.count)),
       error: () => {
