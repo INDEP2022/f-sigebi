@@ -20,19 +20,16 @@ import { PartializesGoodsService } from './services/partializes-goods.service';
   styleUrls: ['partializes-goods.component.scss'],
 })
 export class PartializesGoodsComponent extends BasePage implements OnInit {
-  elementToExport: any[];
   form: FormGroup;
   itemsTree: ITreeItem[] = [];
-  origin: number = 0;
+  origin: number = null;
   loadingTree = false;
-  loadingExcel = false;
-  flagDownload = false;
+  noBienValue: number = null;
   @ViewChild('sideMenu') sideMenu: ElementRef;
   totalItems: number = 0;
-
-  get items() {
-    return this.serviceData.items;
-  }
+  loadingExcel = false;
+  flagDownload = false;
+  elementToExport: any[];
 
   constructor(
     private fb: FormBuilder,
@@ -51,33 +48,47 @@ export class PartializesGoodsComponent extends BasePage implements OnInit {
     this.activatedRoute.queryParams.subscribe({
       next: param => {
         if (param['numberGood']) {
-          if (this.previousRouteService.getHistory().length > 1) {
-            this.origin = 1;
-            this.serviceData.numberGoodQueryParams = param['numberGood'];
-            this.select(param['numberGood']);
-          }
-          // this.select(param['numberGood']);
-          // this.origin = 1;
+          this.origin = 1;
+          // this.serviceData.numberGoodQueryParams = param['numberGood'];
+          this.noBien.setValue(param['numberGood']);
+          this.noBienValue = this.noBien.value;
+          this.showTable();
+          // 1697373
         } else {
-          this.serviceData.numberGoodQueryParams = null;
-          this.origin = 0;
+          // this.serviceData.numberGoodQueryParams = null;
+          this.origin = null;
         }
       },
     });
   }
 
-  back() {
-    return this.location.back();
+  get formLoading() {
+    return this.serviceData.loading;
+  }
+
+  get noBien() {
+    return this.form.get('noBien') ?? null;
+  }
+
+  get data() {
+    return this.serviceData.data;
+  }
+
+  searchGood() {
+    if (this.noBien) {
+      this.noBienValue = this.noBien.value;
+      this.showTable();
+    }
   }
 
   exportExcel() {
     this.loadingExcel = true;
     this.elementToExport = [];
     const arrayDetails: any[] = [];
-    this.items.forEach(item => {
+    this.data.forEach(item => {
       arrayDetails.push({
         PARCIALIZACION: item.partializedId,
-        BIEN: item.goodNumber,
+        BIEN: item.goodNumber.id,
         DESCRIPCION: item.description,
       });
     });
@@ -86,21 +97,34 @@ export class PartializesGoodsComponent extends BasePage implements OnInit {
     this.loadingExcel = false;
   }
 
-  select(goodNumber: number) {
+  back() {
+    this.previousRouteService.back();
+  }
+  get nameExcel() {
+    return 'Reporte Bienes Parcializados ' + this.noBienValue + '.xlsx';
+  }
+
+  resetForm() {
+    this.form.reset();
+    this.noBienValue = null;
+    // this.serviceData.numberGoodQueryParams = null;
+  }
+
+  showTable() {
     // console.log(row);
     // debugger;
     this.loadingTree = true;
     this.treeViewService.selected = null;
     this.service
-      .getTreePartialize(goodNumber)
+      .getTreePartialize(this.noBienValue)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
           console.log(response);
           if (response[0].subItems.length === 0) {
             this.alert(
-              'error',
-              'Bien ' + goodNumber,
+              'warning',
+              'Bien ' + this.noBienValue,
               'No tiene bienes parcializados'
             );
           }

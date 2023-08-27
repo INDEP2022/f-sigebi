@@ -6,40 +6,75 @@
   </div>
   <div body>
     <div class="row">
-      <form [formGroup]="form" class="form-material">
-        <form-field
-          [control]="form.get('file')"
-          label="Seleccione un archivo a procesar (excel)">
-          <input type="file" class="form-control" formControlName="file" />
-        </form-field>
-      </form>
-
-      <div class="justify-content-end btn-toolbar">
-        <button class="btn btn-primary btn-sm active">
-          Consultar información
-        </button>
-        <button class="btn btn-info btn-sm active">Descargar resultado</button>
+      <div class="col-md-6">
+        <form [formGroup]="form" class="form-material">
+          <label
+            for=""
+            style="font-size: 10px; font-weight: 600; color: #74788d"
+            >Seleccione un Archivo a Procesar (excel)</label
+          >
+          <form-field [control]="form.get('file')">
+            <input
+              type="file"
+              accept=".xlsx"
+              formControlName="file"
+              (change)="chargeFile($event)" />
+            <!--<input type="file" class="form-control" formControlName="file" />-->
+          </form-field>
+        </form>
+      </div>
+      <div class="col-md-6 mt-5">
+        <div class="justify-content-end btn-toolbar">
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            [disabled]="!form.valid"
+            (click)="consult()">
+            Consultar información
+          </button>
+          <button class="btn btn-info btn-sm active" [disabled]="!form.valid">
+            Descargar resultado
+          </button>
+        </div>
       </div>
     </div>
 
     <div class="row pt-5">
-      <label class="title">Validaciones de la información de excel</label>
+      <label class="title">Validaciones de la Información de Excel</label>
     </div>
     <div class="row pt-3">
-      <label class="title">Duplicadas excel</label>
+      <div class="col-md-3">
+        <label class="title">Claves únicas repetidas en Excel: </label>
+      </div>
+      <div class="col-md-3">
+        {{ totalRepeated }}
+      </div>
     </div>
     <div class="row pt-3">
-      <label class="title">Registros excel</label>
+      <div class="col-md-3">
+        <label class="title">Total de registros en Excel: </label>
+      </div>
+      <div class="col-md-3">
+        {{ totalExcelRecords }}
+      </div>
     </div>
     <div class="row pt-3">
-      <label class="title">Total a buscar</label>
+      <div class="col-md-3">
+        <label class="title">Total de claves a buscar: </label>
+      </div>
+      <div class="col-md-3">
+        {{ splitCveUnicas }}
+      </div>
     </div>
     <div class="row pt-3">
-      <label class="title">Total registros econtrados</label>
+      <div class="col-md-3">
+        <label class="title">Total de regitros encontrados: </label>
+      </div>
+      <div class="col-md-3">
+        {{ totalRepeated }}
+      </div>
     </div>
-
-    <div class="row pt-5">
-      <label class="title">Total Dos</label>
-    </div>
+    <!--<div class="row pt-5">
+      <label class="title"> Total Dos</label>
+    </div>-->
   </div>
 </app-card>

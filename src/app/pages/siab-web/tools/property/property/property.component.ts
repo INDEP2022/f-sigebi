@@ -24,6 +24,7 @@ export class PropertyComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
   array: any = [];
+  validator = true;
   constructor(private goodSssubtypeService: GoodSssubtypeService) {
     super();
     this.settings = {
@@ -48,25 +49,28 @@ export class PropertyComponent extends BasePage implements OnInit {
   onSelectDelegation(instance: CheckboxElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: data => {
-        //this.selectDelegation(data.row, data.toggle),
-        console.log(data.toggle, data.row.numClasifGoods);
-        if (data.toggle == true) {
-        }
-
+        let index;
+        let validate = false;
         const existe = this.array.some(
-          (objeto: any) => objeto.id === data.row.numClasifGoods
+          (numero: number) => numero === data.row.numClasifGoods
         );
         console.log(existe);
         if (existe) {
-          const index = this.array.findIndex(
-            (objeto: any) => objeto.id === data.row.id
+          index = this.array.findIndex(
+            (numero: number) => numero === data.row.numClasifGoods
           );
+          validate = true;
           console.log(index);
           this.array.splice(index, 1);
         } else {
           this.array.push(data.row.numClasifGoods);
         }
         console.log(this.array);
+        if (validate == true) {
+          this.validator = true;
+        } else {
+          this.validator = false;
+        }
       },
     });
   }

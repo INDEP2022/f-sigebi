@@ -142,7 +142,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="observation" />
+                formControlName="observation"
+                maxlength="600" />
             </form-field>
           </div>
         </div>
@@ -155,7 +156,8 @@
               <textarea
                 type="text"
                 class="form-control"
-                formControlName="descriptionSon">
+                formControlName="descriptionSon"
+                maxlength="1250">
               </textarea>
             </form-field>
           </div>
@@ -165,18 +167,20 @@
           <div class="col-md-3 col-sm-12 col-xs-12">
             <form-field [control]="form.get('quantity')" label="Cantidad">
               <input
-                type="text"
+                type="number"
                 class="form-control"
-                formControlName="quantity" />
+                formControlName="quantity"
+                oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16);" />
             </form-field>
           </div>
 
           <div class="col-md-3 col-sm-12 col-xs-12">
             <form-field [control]="form.get('classifier')" label="Clasificador">
               <input
-                type="text"
+                type="number"
                 class="form-control"
-                formControlName="classifier" />
+                formControlName="classifier"
+                oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);" />
             </form-field>
           </div>
 
@@ -187,7 +191,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="unitOfMeasure" />
+                formControlName="unitOfMeasure"
+                maxlength="10" />
             </form-field>
           </div>
 
@@ -196,15 +201,16 @@
               [control]="form.get('destinationLabel')"
               label="Etiqueta de Destino">
               <input
-                type="text"
+                type="number"
                 class="form-control"
-                formControlName="destinationLabel" />
+                formControlName="destinationLabel"
+                oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
             </form-field>
           </div>
         </div>
 
         <div class="row mt-5 text-center">
-          <div class="col-md-6 col-sm-6 col-xs-12">
+          <div class="col-md-4 col-sm-6 col-xs-12">
             <button
               [disabled]="flagCambia"
               class="btn btn-primary btn-sm active mr-3"
@@ -212,7 +218,12 @@
               Cambiar Estatus
             </button>
           </div>
-          <div class="col-md-6 col-sm-6 col-xs-12">
+          <div class="col-md-4 col-sm-6 col-xs-12">
+            <button class="btn btn-danger btn-sm active mr-3" (click)="clean()">
+              Limpiar <i class="fas fa-eraser"> </i>
+            </button>
+          </div>
+          <div class="col-md-4 col-sm-6 col-xs-12">
             <button
               [disabled]="flagUpdate"
               class="btn btn-primary btn-sm active mr-3"
