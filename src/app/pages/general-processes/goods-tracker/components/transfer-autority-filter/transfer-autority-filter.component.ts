@@ -75,6 +75,7 @@ export class TransferAutorityFilterComponent implements OnInit {
     }
     params.text = '';
     params['search'] = '';
+    params['sortBy'] = 'id:ASC';
     this.trasnferService.getAll(params).subscribe({
       next: res => (this.transfers = new DefaultSelect(res.data, res.count)),
       error: () => {
@@ -119,6 +120,7 @@ export class TransferAutorityFilterComponent implements OnInit {
       );
     }
     this.transmitterParams.search = '';
+    this.transmitterParams.sortBy = 'id:ASC';
     this.stationService
       .getAllFilter(this.transmitterParams.getParams())
       .subscribe({
@@ -162,6 +164,7 @@ export class TransferAutorityFilterComponent implements OnInit {
       const stations = this.form.controls.transmitters.value.join(',');
       this.autoritiesParams.addFilter('idStation', stations, SearchFilter.IN);
     }
+    this.autoritiesParams.sortBy = 'idAuthority:ASC';
     this.autorityService
       .getAllFilter(this.autoritiesParams.getParams())
       .subscribe({
