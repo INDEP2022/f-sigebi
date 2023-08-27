@@ -293,12 +293,14 @@
               <form-field
                 [control]="form.get('fecElabRec')"
                 label="Fecha Elaboraci&oacute;n Recibo">
-                <input
+                  <input
                   bsDatepicker
+                  ngModel
                   class="form-control"
                   [maxlength]="10"
                   [class]="!isEnablefecElabRec ? 'disabled' : ''"
                   formControlName="fecElabRec" />
+                
               </form-field>
             </div>
           </div>
