@@ -292,11 +292,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   // );
   async generatePaswword() {
     if (this.tipo.value === null) {
-      this.alert(
-        'warning',
-        'Administración de Conversión de Bienes',
-        'El Campo Tipo es Requerido'
-      );
+      this.alert('warning', 'Atención', 'El Campo Tipo es Requerido');
       return;
     }
 
