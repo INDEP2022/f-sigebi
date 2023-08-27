@@ -140,6 +140,7 @@ export class ClasificationFilterComponent extends BasePage implements OnInit {
     }
     params.text = '';
     params['search'] = '';
+    params['sortBy'] = 'id:ASC';
     this.goodTypesService.getAll(params).subscribe({
       next: response => {
         this.changeSubloading(false);
@@ -166,6 +167,7 @@ export class ClasificationFilterComponent extends BasePage implements OnInit {
     } else {
       _params.addFilter('nameSubtypeGood', search, SearchFilter.ILIKE);
     }
+    _params.sortBy = 'id:ASC';
     this.goodSubtypeService.getAllFilter(_params.getParams()).subscribe({
       next: response => {
         console.log(response);
@@ -196,6 +198,7 @@ export class ClasificationFilterComponent extends BasePage implements OnInit {
     } else {
       _params.addFilter('description', search, SearchFilter.ILIKE);
     }
+    _params.sortBy = 'id:ASC';
     this.goodSsubtypeService.getAllFilter(_params.getParams()).subscribe({
       next: response => {
         this.changeSubloading(false);
@@ -228,6 +231,7 @@ export class ClasificationFilterComponent extends BasePage implements OnInit {
     _params.addFilter('numType', types.join(','), SearchFilter.IN);
     _params.addFilter('numSubType', subtypes.join(','), SearchFilter.IN);
     _params.addFilter('numSsubType', ssubtypes.join(','), SearchFilter.IN);
+    _params.sortBy = 'id:ASC';
     this.goodSssubtypeService.getFilter(_params.getParams()).subscribe({
       next: response => {
         this.changeSubloading(false);
