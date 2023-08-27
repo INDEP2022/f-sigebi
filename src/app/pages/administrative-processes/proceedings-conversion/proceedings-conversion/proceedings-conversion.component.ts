@@ -125,6 +125,26 @@ export interface IGoodJobManagement {
       .registros-movidos {
         background-color: yellow;
       }
+
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
     `,
   ],
 })
@@ -282,6 +302,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   disabledBtnCerrar: boolean = true;
   disabledBtnActas: boolean = true;
   statusGood_: any;
+  loadingBtn: boolean = false;
   constructor(
     private authService: AuthService,
     protected flyerService: FlyersService,
@@ -403,7 +424,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.actasConvertionCommunicationService.ejecutarFuncion$.subscribe(
       (next: any) => {
         // console.log('SI WILM', next);
@@ -423,7 +444,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       this.origin = params.get('origin');
       // console.log(this.origin);
     });
-    this.initFormPostGetUserData();
+    await this.initFormPostGetUserData();
 
     this.dataTableGood
       .onChanged()
@@ -704,7 +725,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     });
   }
 
-  initFormPostGetUserData() {
+  async initFormPostGetUserData() {
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe((params: any) => {
@@ -753,7 +774,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             ? res.fileNumber.preliminaryInquiry
             : null;
           this.criCase = res.fileNumber ? res.fileNumber.criminalCase : null;
-          this.cveActa = res.minutesErNumber;
+          this.cveActa = res.cveActaConv;
+          // this.cveActa = res.minutesErNumber;
           this.userRes = res.fileNumber
             ? res.fileNumber.usrResponsibleFile
             : null;
@@ -856,21 +878,90 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       this.proceedingsConversionForm.value.noExpedient;
     // this.getGoods1(params);
   }
-
+  noExpediente: any = '';
   getExpedient(id: number) {
     this.expedientService.getById(id).subscribe({
       next: (data: any) => {
         // this.loading = false;
         this.expedient = data;
         this.trasnfer = this.expedient.expTransferNumber;
+        this.noExpediente = this.expedient.id;
+        this.preAver = this.expedient.preliminaryInquiry;
+        this.criCase = this.expedient.criminalCase;
         this.actaRecepttionForm.value.claveTrans = this.trasnfer;
         // // console.log(this.expedient);
         this.getGoodsByStatus(this.fileNumber);
       },
-      error: () => console.error('expediente nulo'),
+      error: () => {
+        this.noExpediente = '';
+        this.expedient = this.getDataNullExpediente();
+        this.trasnfer = '';
+        this.preAver = '';
+        this.criCase = '';
+        this.actaRecepttionForm.value.claveTrans = '';
+        console.log('expediente nulo');
+      },
     });
   }
 
+  getDataNullExpediente() {
+    const expedient: any = {
+      alienationDate: null,
+      articleValidated: null,
+      authorityNumber: null,
+      authorityOrdersDictum: null,
+      batteryNumber: null,
+      circumstantialRecord: null,
+      confiscateDictamineDate: null,
+      courtName: null,
+      courtNumber: null,
+      crimeKey: null,
+      crimeStatus: null,
+      criminalCase: null,
+      dateAgreementAssurance: null,
+      dateForesight: null,
+      date_Dictamines: null,
+      destructionDate: null,
+      dictaminationDate: null,
+      dictaminationReturnDate: null,
+      donationDate: null,
+      expTransferNumber: null,
+      expedientStatus: null,
+      expedientType: null,
+      federalEntityKey: null,
+      foresight: null,
+      id: null,
+      identifier: null,
+      indicatedName: null,
+      comptrollerWitness: null,
+      initialAgreement: null,
+      initialAgreementDate: null,
+      insertDate: null,
+      insertMethod: null,
+      insertedBy: null,
+      insertionDatehc: null,
+      keyPenalty: null,
+      keySaveValue: null,
+      lockerNumber: null,
+      ministerialActOfFaith: null,
+      ministerialDate: null,
+      mpName: null,
+      nameInstitution: null,
+      notificationDate: null,
+      notifiedTo: null,
+      observations: null,
+      observationsForecast: null,
+      placeNotification: null,
+      preliminaryInquiry: null,
+      protectionKey: null,
+      receptionDate: null,
+      registerNumber: null,
+      shelfNumber: null,
+      stationNumber: null,
+      transferNumber: null,
+    };
+    return expedient;
+  }
   getGoodsByStatus(id: number) {
     this.loading = true;
 
@@ -1079,6 +1170,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                 delete this.actasDefault.numDelegation1Description;
                 delete this.actasDefault.numDelegation2Description;
                 delete this.actasDefault.numTransfer_;
+                this.loadingBtn = true;
                 this.proceedingsDeliveryReceptionService
                   .editProceeding(this.actasDefault.id, this.actasDefault)
                   .subscribe({
@@ -1096,7 +1188,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                               this.actaRecepttionForm.value.cveActa;
                             // console.log('SIIII', resp);
                           },
-                          error: error => {},
+                          error: error => {
+                            this.loadingBtn = false;
+                          },
                         });
                       // this.loading = false;
                       let obj = {
@@ -1115,6 +1209,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                         ''
                       );
                       // this.alert('success', 'Acta cerrada', '');
+                      this.loadingBtn = false;
                       this.disabledBtnCerrar = false;
                       this.disabledBtnActas = false;
                       this.getGoodsByStatus(this.fileNumber);
@@ -1124,6 +1219,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                       // this.initForm();
                     },
                     error: error => {
+                      this.loadingBtn = false;
                       this.alert(
                         'error',
                         'Ocurrió un Error al Cerrar el Acta',
@@ -1336,14 +1432,35 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       modalConfig
     );
     modalRef.content.onSave.subscribe((next: any) => {
-      // console.log('aaaa', next);
-      this.paramsScreen.PAR_IDCONV = next.id;
+      console.log('aaaa', next);
+      // this.paramsScreen.PAR_IDCONV = next.id;
       // console.log(this.paramsScreen.PAR_IDCONV);
-
-      this.initForm();
+      this.getDataConversionFromModal(next);
+      // this.initForm();
     });
   }
 
+  getDataConversionFromModal(res: any) {
+    this.fileNumber = res.fileNumber;
+    this.conversion = res.id;
+    this.goodFatherNumber = res.goodFatherNumber;
+    this.fCreate = this.datePipe.transform(res.fCreate, 'dd/MM/yyyy');
+    this.typeConv = res.typeConv;
+    this.statusConv = res.statusConv;
+    this.witnessOic = res.witnessOic;
+    this.cveActa = res.cveActaConv;
+    this.userRes = res.fileNumber ? res.fileNumber.usrResponsibleFile : null;
+    this.actaGoodForm.value.acta = this.cveActa;
+    this.time = new Date().toISOString().slice(0, 16);
+    this.getExpedient(this.fileNumber);
+    // this.getActasByConversion(this.cveActa);
+    // this.getStatusDeliveryCveExpendiente(this.cveActa);
+    this.actaRecepttionForm.get('respConv').setValue(res.respConv);
+    this.actaRecepttionForm.get('testigoOIC').setValue(res.witnessOic);
+    this.actaRecepttionForm.get('testigoTwo').setValue(res.witness2);
+    this.actaRecepttionForm.get('testigoTree').setValue(res.witness3);
+    this.cleanActa();
+  }
   getDetail() {
     this.acordionDetail = true;
     // this.actasConvertionCommunicationService.enviarDatos(this.conversion);
@@ -2061,6 +2178,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
 
   agregarActa() {
+    if (!this.fileNumber || this.fileNumber == 0) {
+      return this.alert(
+        'warning',
+        'Conversión sin expediente',
+        'No es posible generar el Acta'
+      );
+    }
     const responsable = this.actaRecepttionForm.get('respConv').value;
     const testigoTwo = this.actaRecepttionForm.get('testigoTwo').value;
     const testigoTree = this.actaRecepttionForm.get('testigoTree').value;

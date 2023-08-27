@@ -51,6 +51,26 @@ interface NotData {
         max-height: 345px; /* Cambia el valor según tus necesidades */
         overflow-y: auto;
       }
+
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
     `,
   ],
 })
@@ -91,6 +111,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   paginadoNG: boolean = false;
   justifications = new DefaultSelect<IUser>();
   disabledYA: boolean = true;
+  loadingBtn: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -410,6 +431,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         //       AND FOLIO_UNIVERSAL =: FOLIO_UNIVERSAL;
         // this.validStatusXScreen(this.good);
         let valid = 0;
+        this.loadingBtn = true;
         let result = this.goods.map(async good => {
           if (good.approved) {
             const getDocumentByGood: any = await this.getDocumentByGood(good);
@@ -427,6 +449,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
               'Uno o Algunos de los Bienes no Tiene Documentos Escaneados',
               ''
             );
+            this.loadingBtn = false;
             return;
           }
         });
@@ -474,6 +497,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         // 'Bienes Válidos Actualizados',
         ''
       );
+      this.loadingBtn = false;
       this.readExcel(this.test, 'no');
       // this.readExcel(this.test, 'no');
       // this.addStatus();
