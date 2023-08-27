@@ -246,9 +246,9 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
       next: response => {
         this.excelLoading = false;
         this.alert(
-          'info',
-          'Aviso',
-          'El Archivo Excel está en Proceso de Generación, favor de esperar la Descarga'
+          'warning',
+          'El archivo se esta generando, favor de esperar la descarga',
+          ''
         );
         // this.fullService.generatingFileFlag.next({
         //   progress: 99,
@@ -293,7 +293,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
     document.body.removeChild(a);
     this._toastrService.clear();
     this.excelLoading = true;
-    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    this.alert('success', 'El Reporte se ha Descargado', '');
     URL.revokeObjectURL(objURL);
   }
 

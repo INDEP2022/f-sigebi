@@ -14,7 +14,7 @@
         </div>
       </div> -->
       <div class="row mt-5">
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('idConversion')"
             label="Id Conversión">
@@ -25,6 +25,14 @@
               [max-length]="10" />
           </form-field>
         </div>
+        <div class="col-md-1 col-sm-12 col-xs-12" *ngIf="view">
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="passwordId()">
+            Ver <i class="fa fa-eye" aria-hidden="true"></i>
+          </button>
+        </div>
+
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('noBien')"

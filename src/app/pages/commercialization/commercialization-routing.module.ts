@@ -341,6 +341,19 @@ const routes: Routes = [
     data: { title: 'Reporte de Ing. por Mandato' },
   },
   {
+    path: 'mandate-income-reports-i',
+    loadChildren: async () =>
+      (
+        await import(
+          './mandate-income-reports-i/mandate-income-reports-i.module'
+        )
+      ).MandateIncomeReportsIModule,
+    data: {
+      title: 'Reporte de Ing. por Mandato I',
+      screen: 'FCOMEREPINGXMAND_I',
+    },
+  },
+  {
     path: 'remittances-recorded-region',
     loadChildren: async () =>
       (
