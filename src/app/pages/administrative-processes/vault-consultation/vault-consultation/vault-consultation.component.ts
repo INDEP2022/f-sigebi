@@ -151,6 +151,7 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
 
   search() {
     this.loading = true;
+    this.params.getValue()['sortBy'] = `idSafe:DESC`;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
