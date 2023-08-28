@@ -430,7 +430,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       date: this.date.value,
       dateValid: new Date('20-08-2023'),
     });
-    this.downloadReport('blank', params, () => {
+    this.downloadReport('RRELBIENESPROC', params, () => {
       this.isLoadingStatusAccount = false;
     });
   }
