@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
@@ -9,6 +10,7 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { EventProgrammingService } from 'src/app/core/services/ms-event-programming/event-programing.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
@@ -31,7 +33,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   detail: boolean = false;
   data: LocalDataSource = new LocalDataSource();
   data1: LocalDataSource = new LocalDataSource();
-
+  origin: '';
+  delegation: string;
   totalItems: number = 0;
   totalItems1: number = 0;
 
@@ -55,8 +58,10 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private donationService: DonationService,
+    private router: Router,
     private excelService: ExcelService,
     private serviceUser: UsersService,
+    private regionalDelegacionService: RegionalDelegationService,
     private segAccessXAreas: SegAcessXAreasService,
     private eventProgrammingService: EventProgrammingService,
     private indUserService: IndUserService,
@@ -156,21 +161,25 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     //this.getUsers(new ListParams());
     const user: any = this.authService.decodeToken() as any;
     this.user = user.username;
-
+    this.delegation = this.authService.decodeToken().delegacionreg;
+    // this.form.get('noDelegation1').setValue(this.delegation);
+    // this.form.get('elaborated').setValue(this.user);
     console.log(this.user, user);
-
+    // console.log(this.delegation);
     this.inicialice();
   }
 
   initForm() {
     this.form = this.fb.group({
       cveActa: [null, []],
-      estatusAct: ['TODOS', []],
+      estatusAct: ['', []],
       noDelegation1: [null, [Validators.pattern(STRING_PATTERN)]],
       elaborated: [null, []],
     });
     this.form.get('elaborated').disable();
     this.form.get('noDelegation1').disable();
+    // this.form.get('elaborated').setValue(this.user);
+    // this.form.get('noDelegation1').setValue(this.delegation);
     this.getEventComDonation(new ListParams());
   }
 
@@ -181,7 +190,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     //this.search(false);
     this.response = true;
     const state = this.status ? this.status : '';
-    const cveAc = this.cveEvent;
+    const cveAc = this.form.get('cveActa').value
+      ? this.form.get('cveActa').value
+      : '';
     const noDelegation1 = this.form.get('noDelegation1').value
       ? this.form.get('noDelegation1').value
       : '';
@@ -295,6 +306,30 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       },
     });
   }
+  goDetailDonation() {
+    this.router.navigate(
+      [
+        '/pages/final-destination-process/donation-process/approval-for-donation/capture-approval-donation',
+      ],
+      {
+        queryParams: {
+          origin: this.origin,
+          recordId: this.params1.getValue()['filter.recordId'],
+          cveEvent: this.cveEvent,
+        },
+      }
+    );
+  }
+  // getDelegationRegional(id: number | string) {
+  //   const params = new ListParams();
+  //   params['filter.id'] = `$eq:${id}`;
+  //   this.regionalDelegacionService.getAll(params).subscribe({
+  //     next: resp => {
+  //       this.delegation = resp.data[0].id + ' - ' + resp.data[0].description;
+  //     },
+  //     error: error => { },
+  //   });
+  // }
 
   /*getEventComDonationExcel(
     actType?: string | number,
@@ -331,6 +366,9 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       },
     });
   }*/
+  selectedDetailActa(event: any) {
+    console.log(event.data);
+  }
 
   getEventComDonationExcel(cveAct?: string | number) {
     this.loading = true;
@@ -468,7 +506,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.form.get('cveActa').setValue('');
     this.validate = true;
     this.status = null;
-    this.form.get('estatusAct').setValue('TODOS');
+    this.form.get('estatusAct').setValue('');
     this.getDetailComDonation(-1);
   }
 
