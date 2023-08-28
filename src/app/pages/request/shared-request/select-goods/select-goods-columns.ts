@@ -4,7 +4,7 @@ export const GOODS_RES_DEV_INV_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  descriptionGood: {
+  goodDescription: {
     title: 'Descripción',
     type: 'string',
     sort: false,
@@ -43,7 +43,7 @@ export const GOODS_RES_DEV_INV_COLUMNS = {
     sort: false,
   },
 
-  destiny: {
+  destination: {
     title: 'Destino',
     type: 'string',
     sort: false,
@@ -55,7 +55,7 @@ export const GOODS_RES_DEV_INV_COLUMNS = {
     sort: false,
   },
 
-  requestId: {
+  solicitudId: {
     title: 'No. Solicitud de la Transferencia',
     type: 'string',
     sort: false,
@@ -70,7 +70,7 @@ export const GOODS_RES_DEV_INV_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  relevantTypeId: {
+  typeRelevantId: {
     title: 'Tipo Relevante',
     type: 'string',
     sort: false,
