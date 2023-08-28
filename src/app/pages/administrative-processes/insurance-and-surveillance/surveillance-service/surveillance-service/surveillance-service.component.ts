@@ -354,7 +354,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         this.form.get('total').setValue(response.count);
         this.loading = false;
         setTimeout(() => {
-          this.performScroll()
+          this.performScroll();
         }, 100);
         // resolve(response.data);
       },
@@ -365,7 +365,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         this.form.get('total').setValue('0');
         this.loading = false;
         setTimeout(() => {
-          this.performScroll()
+          this.performScroll();
         }, 100);
         // resolve(null);
       },
@@ -531,7 +531,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => { },
+                callback: (data: any) => {},
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -546,7 +546,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => { },
+                callback: (data: any) => {},
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -683,11 +683,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       const getPaValidPeriod_: any = await this.getPaValidaPeriodo(obj);
 
       if (getPaValidPeriod_ === 'error mes') {
-        this.alert(
-          'warning',
-          'Ya Existe Relación con este Período',
-          ''
-        );
+        this.alert('warning', 'Ya Existe Relación con este Período', '');
         return;
       }
 

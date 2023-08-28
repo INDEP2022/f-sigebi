@@ -294,4 +294,11 @@ export class DocumentsService extends HttpService {
   getComerceDocumentsXmlT(params: _Params) {
     return this.get(DocumentsEndpoints.ComerceDocumentsXmlT, params);
   }
+
+  getExcel() {
+    return this.get<any>(DocumentsEndpoints.ExportExcelcaptura);
+  }
+  donwloadExcel(token: string) {
+    return this.get(`${DocumentsEndpoints.ExportExcelcaptura}/${token}`);
+  }
 }

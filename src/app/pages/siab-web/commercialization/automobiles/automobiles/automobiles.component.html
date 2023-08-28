@@ -1,0 +1,56 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Automoviles</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="ch-content">
+      <h5 class="title">Filtros de b&uacute;squeda</h5>
+    </div>
+    <br />
+    <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="row pt-4">
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('NoBien')"
+            label="No. Clasificación de Bien">
+            <input type="text" class="form-control" formControlName="NoBien" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('allotment')" label="Lote">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="allotment" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form.valid"
+              (click)="show = !show">
+              Consultar
+            </button>
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="justify-content-center">
+            <button
+              type="submit"
+              class="btn btn-secondary btn-sm active"
+              [disabled]="!form.valid">
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="table-responsive mt-5 mb-5">
+      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+    </div>
+  </div>
+</app-card>

@@ -1,4 +1,80 @@
-<app-card [header]="true">
+<app-modal>
+  <div header class="d-flex justify-content-between">
+    <div>
+      <h5 class="title">{{ title }}</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="table-padding"></div>
+    <div class="justify-content-end d-flex mb-2">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
+    <div *ngIf="op === 'select-area'">
+      <form-loader *ngIf="loading"></form-loader>
+      <div class="col-md-12">
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <ng2-smart-table
+            [attr.class]="'table-responsive table-bordered'"
+            [settings]="settings"
+            [source]="data">
+            <!-- (userRowSelect)="onUserRowSelect($event)" (delete)="showDeleteMsg($event)"> -->
+          </ng2-smart-table>
+        </ng-scrollbar>
+        <app-pagination [params]="params" [totalItems]="totalItemsModal">
+        </app-pagination>
+      </div>
+    </div>
+    <div *ngIf="op === 'see-error'">
+      <div class="row mt-3 pt-2 scroll-table">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          class="col-md-12"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+      </div>
+      <div class="row mt-5">
+        <div class="col-12 text-center">
+          <button type="button" class="btn btn-primary active">Salir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="op === 'check-goods'">
+    <div class="row mt-5">
+      <div class="col-md-6 text-center">
+        <button type="button" class="btn btn-primary active">Si</button>
+      </div>
+      <div class="col-md-6 text-center">
+        <button type="button" class="btn btn-primary active">No</button>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="handleSuccess()">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="return()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
+
+<!-- <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">{{ title }}</h5>
   </div>
@@ -21,11 +97,7 @@
         </div>
       </div>
       <div class="row mt-3 pt-2 scroll-table">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          class="col-md-12"
-          [settings]="settings"
-          [source]="data">
+        <ng2-smart-table [attr.class]="'table-bordered'" class="col-md-12" [settings]="settings" [source]="data">
         </ng2-smart-table>
       </div>
       <div class="row mt-5">
@@ -37,11 +109,7 @@
 
     <div *ngIf="op === 'see-error'">
       <div class="row mt-3 pt-2 scroll-table">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          class="col-md-12"
-          [settings]="settings"
-          [source]="data">
+        <ng2-smart-table [attr.class]="'table-bordered'" class="col-md-12" [settings]="settings" [source]="data">
         </ng2-smart-table>
       </div>
       <div class="row mt-5">
@@ -62,4 +130,4 @@
       </div>
     </div>
   </div>
-</app-card>
+</app-card> -->

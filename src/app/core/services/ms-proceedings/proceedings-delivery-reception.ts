@@ -120,5 +120,4 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}`;
     return this.get(route, params);
   }
-
 }
