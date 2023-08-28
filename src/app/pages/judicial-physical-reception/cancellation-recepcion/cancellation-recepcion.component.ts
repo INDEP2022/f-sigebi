@@ -270,7 +270,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   subDelUser: string;
   departmentUser: string;
 
-  returnToTracker: boolean= false
+  returnToTracker: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -290,13 +290,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     private serviceNotification: NotificationService,
     private serviceHistoryGood: HistoryGoodService,
     private authService: AuthService,
-    private activatedRoute: ActivatedRoute,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.returnToTracker = false
+    this.returnToTracker = false;
 
     this.prepareForm();
     this.form.get('year').setValue(format(new Date(), 'yyyy'));
@@ -358,7 +358,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
     this.getDataUser();
 
-    this.queryParamsFn()
+    this.queryParamsFn();
   }
 
   queryParamsFn() {
