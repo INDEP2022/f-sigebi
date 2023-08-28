@@ -147,7 +147,7 @@ export class GoodsTableService {
       class: 'bg-primary',
     },
     clasif: {
-      title: 'Número de Clasificación',
+      title: 'No. Clasificación',
       sort: false,
       class: 'bg-primary',
     },
@@ -405,7 +405,7 @@ export class GoodsTableService {
       class: 'bg-warning',
     },
     extDomIniProcess: {
-      title: 'Historico del Proceso',
+      title: 'Histórico del Proceso',
       sort: false,
       type: 'custom',
       renderComponent: LinkCellComponent<ITrackedGood>,
@@ -662,7 +662,7 @@ export class GoodsTableService {
       },
     },
     keyPositionRelief: {
-      title: 'Clave Oficio',
+      title: 'Cve. Oficio',
       sort: false,
       type: 'custom',
       renderComponent: LinkCellComponent<ITrackedGood>,
@@ -725,12 +725,12 @@ export class GoodsTableService {
       class: 'bg-success-soft',
     },
     vaultNumber: {
-      title: 'No. Bovéda',
+      title: 'No. Bóveda',
       sort: false,
       class: 'bg-success-soft',
     },
     vaultDesc: {
-      title: 'Desc. Bovéda',
+      title: 'Desc. Bóveda',
       sort: false,
       class: 'bg-success-soft',
     },
@@ -940,7 +940,7 @@ export class GoodsTableService {
       sort: false,
     },
     keyEvent: {
-      title: 'Clave del Evento',
+      title: 'Cve. Evento',
       sort: false,
       type: 'custom',
       renderComponent: LinkCellComponent<ITrackedGood>,
@@ -1038,7 +1038,7 @@ export class GoodsTableService {
       class: 'bg-info',
     },
     eventDate: {
-      title: 'Fec. Evento',
+      title: 'Fecha Evento',
       sort: false,
       type: 'custom',
       renderComponent: LinkCellComponent<ITrackedGood>,

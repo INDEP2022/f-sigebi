@@ -5,12 +5,12 @@ import { DeliveryConstancy } from 'src/app/common/constants/endpoints/ms-deliver
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { CertificatesDeliveryEndpoints } from '../../models/ms-delivery-constancy/ms-delivery-constancy-model';
+import { CertificatesGoodsEndpoints } from '../../models/ms-delivery-constancy/ms-delivery-constancy-model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CertificatesDeliveryService extends HttpService {
+export class CertificatesGoodsService extends HttpService {
   constructor(private http: HttpClient) {
     super();
     this.microservice = DeliveryConstancy.Base;
@@ -18,24 +18,25 @@ export class CertificatesDeliveryService extends HttpService {
 
   getAll(
     params?: ListParams | string
-  ): Observable<IListResponse<CertificatesDeliveryEndpoints>> {
-    return this.get<IListResponse<CertificatesDeliveryEndpoints>>(
-      DeliveryConstancy.CertificatesDelivery,
+  ): Observable<IListResponse<CertificatesGoodsEndpoints>> {
+    return this.get<IListResponse<CertificatesGoodsEndpoints>>(
+      DeliveryConstancy.CertificatesGood,
       params
     );
   }
 
-  create(body: Object) {
-    return this.post(DeliveryConstancy.CertificatesDelivery, body);
+  create(body: CertificatesGoodsEndpoints) {
+    return this.post(DeliveryConstancy.CertificatesGood, body);
   }
 
-  update(body: any) {
-    const route = `${DeliveryConstancy.CertificatesDelivery}/${body.certificateId}`;
-    return this.put(route, body);
+  /* update(good: IGood | any) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.put(route, good);
   }
+
 
   remove(id: string | number) {
-    const route = `${DeliveryConstancy.CertificatesDelivery}/${id}`;
+    const route = `${GoodEndpoints.Good}/${id}`;
     return this.delete(route);
-  }
+  } */
 }
