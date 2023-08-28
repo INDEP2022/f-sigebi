@@ -16,6 +16,13 @@ const routes: Routes = [
     data: { title: 'Documentos escaneados' },
   },
   {
+    path: 'outside-trades',
+    loadChildren: async () =>
+      (await import('./outside-trades/outside-trades.module'))
+        .OutsideTradesModule,
+    data: { title: 'Oficios externos', screen: 'Oficios_Externos.aspx' },
+  },
+  {
     path: 'query-interconnection',
     loadChildren: async () =>
       (await import('./query-interconnection/query-interconnection.module'))
