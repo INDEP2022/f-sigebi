@@ -724,6 +724,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       id: parseInt(idConversion),
       cveActaConv: this.form.get('actConvertion').value,
       statusConv: 2,
+      typeConv: 2,
     };
     console.log('ress conversions :', conversions);
 
@@ -993,6 +994,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         tipoConv: this.tipo.value,
         pGoodFatherNumber: this.numberGoodFather.value,
         expedientNuember: this.numberDossier.value,
+        idConversion: this.form.get('idConversion').value,
         callback: (receipt: any, keyDoc: string) => {
           if (receipt && keyDoc) {
           }
