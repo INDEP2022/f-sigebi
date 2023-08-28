@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DocumentsEndpoints } from 'src/app/common/constants/endpoints/ms-documents-endpoints';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
@@ -32,6 +33,10 @@ export class DocumentsDictumStatetMService extends HttpService {
       this.route.DocumentsDictuXStateM,
       params
     );
+  }
+
+  getAllGetDocument(params?: ListParams) {
+    return this.get<any>(this.route.GetDocument, params);
   }
 
   create(body: IDocumentsDictumXStateM) {

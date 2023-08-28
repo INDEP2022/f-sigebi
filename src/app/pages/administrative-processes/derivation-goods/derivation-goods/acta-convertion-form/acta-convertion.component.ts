@@ -55,6 +55,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   refresh: boolean = false;
   save: boolean = true;
   insertParaphs: boolean = true;
+  idConversion: string;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -78,7 +79,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   }
 
   insertarParrafos(descTransferente: string) {
-    this.parrafo1 = `- - - En la Ciudad de ______________, siendo las _____ horas, del día ____de ________ de 200__, se encuentran presentes en la Bodega ubicada en la calle de ________________________ de esta Ciudad, el C. _____________________ con cargo de ___________________, de la empresa ______________ y el C. ___________________ adscrito a _______________ del Instituto para Devolver al Pueblo lo Robado (INDEP), Organismo Descentralizado de la Administración Pública Federal; ambos con el fin de llevar a cabo la validación y conversión de bienes muebles transferidos y en administración del INDEP - - - - - - - - - - - - - - - - - - - - - - - - -\n
+    this.parrafo1 = `- - - En la Ciudad de ______________, siendo las _____ horas, del día ____de ________ de 202__, se encuentran presentes en la Bodega ubicada en la calle de ________________________ de esta Ciudad, el C. _____________________ con cargo de ___________________, de la empresa ______________ y el C. ___________________ adscrito a _______________ del Instituto para Devolver al Pueblo lo Robado (INDEP), Organismo Descentralizado de la Administración Pública Federal; ambos con el fin de llevar a cabo la validación y conversión de bienes muebles transferidos y en administración del INDEP - - - - - - - - - - - - - - - - - - - - - - - - -\n
     - - -Intervienen como testigos de asistencia los CC. _______________________, y _____________________, - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - -\n\n
     -------------------------------------------------- A N T E C E D E N T E S ------------------------------------------\n
     - - - l. Los bienes muebles fueron transferidos al INDEP por [_____________________________], con fundamento en los artículos 3 de la LFAEBSP, 12 y 13 del Reglamento de la ley en comento. - -\n
@@ -93,12 +94,12 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
 
     this.parrafo3 = `- - - CUARTA.- Los  valores de conversión determinados en la Cláusula Tercera son una referencia para ejecutar el destino de [ precisar destino -venta-donación o destrucción__] de los bienes muebles, por lo que cada registro SIAB conserva el número de expediente y de bien, así como los atributos de referencia recibidos del transferente - - - - - - - - - - -  -- - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - -\n\n
     - - - - - - - - - - - - - - - - - - - - - - - - - -  CIERRE DEL ACTA --------------------------------------------\n
-    Se da por concluida la presente acta, siendo las ____ horas del día ____ de __________ de 200__, firmando  al margen y al calce por las personas que en ella intervienen, para todos los efectos a que haya lugar. - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n\n\n\n
+    Se da por concluida la presente acta, siendo las ____ horas del día ____ de __________ de 202__, firmando  al margen y al calce por las personas que en ella intervienen, para todos los efectos a que haya lugar. - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n\n\n\n
     \t\t\tPOR EL TLP\t\t\tPOR EL INDEP\n\n\n\n\n\n
     \t\t\tC. _____________________\t\t\t\t\t\t\t\tC. _____________________\n\n\n\n
     Ultima página del Acta Administrativa de Validación y Conversión de Unidades de Medida de Bienes Muebles con Clave ${
       this.selectItem2 != null ? this.selectItem2 : ''
-    } de fecha ___ de  _________ de 2008, constante de ____ fojas. - - - - - - - - - - - - -`;
+    } de fecha ___ de  _________ de 2023, constante de ____ fojas. - - - - - - - - - - - - -`;
     //hay q actualizar atravez el id de convercion los parrofos
   }
   close() {
@@ -392,7 +393,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   printAct() {
     let params = {
       PCLAVE: this.selectItem2,
-      PDESTINO: 'DESTINO',
+      PDESTINO: '',
     };
 
     this.siabService
@@ -501,6 +502,22 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
         // this.alert('error', 'error', error.message);
       },
     });
+    let conversions = {
+      id: parseInt(this.idConversion),
+      cveActaConv: this.selectItem2,
+    };
+    console.log('ress conversions :', conversions);
+
+    this.convertiongoodService.update(this.idConversion, conversions).subscribe(
+      async res => {
+        if (res.statusCode == 200 && res.message[0] == 'ok') {
+          this.printMinutes = true;
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
   putMinuteConversion(payload: any) {
     // putMinuteConversion

@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http-wcontet.service';
 import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
-import { IDepositaryAppointments } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
+import {
+  IDepositaryAppointments,
+  IPersonsModDepositary,
+} from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import {
   IScreenStatusCValRevocation,
@@ -120,6 +123,12 @@ export class AppointmentsService {
   }
   getByGood_distinctElaborationDate(goodId: number) {
     return this.msGoodprocessService.getByGood_distinctElaborationDate(goodId);
+  }
+  getPersonsModDepositary(params: _Params) {
+    return this.msDepositaryService.getPersonsModDepositary(params);
+  }
+  createPersonsModDepositary(body: Partial<IPersonsModDepositary>) {
+    return this.msDepositaryService.createPersonsModDepositary(body);
   }
 
   /**

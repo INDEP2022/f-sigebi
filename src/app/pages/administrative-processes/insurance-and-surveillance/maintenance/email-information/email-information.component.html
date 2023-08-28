@@ -2,39 +2,21 @@
   <form [formGroup]="form" (ngSubmit)="send()" class="form-material">
     <div class="row mt-4">
       <div class="col-md-8">
-        <form-field
-          [control]="form.get('reasonForChange')"
-          label="Motivo de Cambio">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="reasonForChange" />
+        <form-field [control]="form.get('reasonForChange')" label="Motivo de Cambio">
+          <input type="text" class="form-control" formControlName="reasonForChange" />
         </form-field>
       </div>
       <div class="col-md-4">
         <form-field [control]="form.get('date')" label="Fecha de Solicitud">
-          <input
-            type="text"
-            [minDate]="maxDate"
-            formControlName="date"
-            class="form-control"
-            bsDatepicker />
+          <input type="text" [minDate]="maxDate" formControlName="date" class="form-control" bsDatepicker />
         </form-field>
       </div>
     </div>
     <div class="row mt-4">
       <div class="col-md-6">
         <form-field class="form-group" [control]="form.get('from')">
-          <ngx-select
-            [form]="form"
-            [searchOnInit]="true"
-            [data]="VigEmailSend"
-            (change)="onChangeFrom($event)"
-            bindLabel="emailSend"
-            label="Envía"
-            value="id"
-            [showTooltip]="true"
-            (fetchItems)="getVigEmailSend($event)"
+          <ngx-select [form]="form" [searchOnInit]="true" [data]="VigEmailSend" (change)="onChangeFrom($event)"
+            bindLabel="emailSend" label="Envía" value="id" [showTooltip]="true" (fetchItems)="getVigEmailSend($event)"
             [control]="'from'"></ngx-select>
 
           <!-- <ng-custom-select
@@ -53,16 +35,8 @@
       </div>
       <div class="col-md-6">
         <form-field [control]="form.get('to')">
-          <ngx-select
-            [form]="form"
-            [searchOnInit]="true"
-            [data]="VigEmailBook"
-            (change)="onChangeTo($event)"
-            bindLabel="bookEmail"
-            label="Para"
-            value="id"
-            [showTooltip]="true"
-            (fetchItems)="getVigMailBook($event)"
+          <ngx-select [form]="form" [searchOnInit]="true" [data]="VigEmailBook" (change)="onChangeTo($event)"
+            bindLabel="bookEmail" label="Para" value="id" [showTooltip]="true" (fetchItems)="getVigMailBook($event)"
             [control]="'to'"></ngx-select>
           <!-- <ng-custom-select [isLoadInOnInit]="false" [moreParams]="{
               'filter.bookType': '$eq:P',
@@ -80,16 +54,8 @@
     <div class="row mt-4">
       <div class="col-md-6">
         <form-field [control]="form.get('cc')">
-          <ngx-select
-            [form]="form"
-            [searchOnInit]="true"
-            [data]="VigCC"
-            (change)="onChangeCc($event)"
-            bindLabel="bookEmail"
-            label="CC"
-            value="id"
-            [showTooltip]="true"
-            (fetchItems)="getCC($event)"
+          <ngx-select [form]="form" [searchOnInit]="true" [data]="VigCC" (change)="onChangeCc($event)"
+            bindLabel="bookEmail" label="CC" value="id" [showTooltip]="true" (fetchItems)="getCC($event)"
             [control]="'cc'"></ngx-select>
 
           <!-- <ng-custom-select [isLoadInOnInit]="false" [moreParams]="{
@@ -105,16 +71,8 @@
       </div>
       <div class="col-md-6">
         <form-field [control]="form.get('type')">
-          <ngx-select
-            [form]="form"
-            [searchOnInit]="true"
-            [data]="VigEmailBody"
-            (change)="changeType($event)"
-            bindLabel="body"
-            label="Tipo"
-            value="id"
-            [showTooltip]="true"
-            (fetchItems)="getBody($event)"
+          <ngx-select [form]="form" [searchOnInit]="true" [data]="VigEmailBody" (change)="changeType($event)"
+            bindLabel="body" label="Tipo" value="id" [showTooltip]="true" (fetchItems)="getBody($event)"
             [control]="'type'"></ngx-select>
           <!-- <ng-custom-select (valueChange)="changeType($event)" [isLoadInOnInit]="true"
             [moreParams]="{ 'filter.status': '$eq:1' }" class="form-control" path="email/api/v1/vig-email-body"
@@ -130,30 +88,19 @@
     <div class="row mt-4">
       <div class="col-md-6">
         <form-field [control]="form.get('issue')" label="Asunto">
-          <input
-            readonly
-            type="text"
-            class="form-control px-3"
-            formControlName="issue" />
+          <input readonly type="text" class="form-control px-3" formControlName="issue" />
         </form-field>
       </div>
       <div class="col-md-6">
         <form-field [control]="form.get('textBody')" label="Cuerpo">
-          <input
-            readonly
-            type="text"
-            class="form-control px-3"
-            formControlName="textBody" />
+          <input readonly type="text" class="form-control px-3" formControlName="textBody" />
         </form-field>
       </div>
     </div>
 
     <div class="row mt-4 text-center">
       <div>
-        <button
-          (click)="cleanForm()"
-          type="button"
-          class="btn btn-danger btn-sm active mr-2">
+        <button (click)="cleanForm()" type="button" class="btn btn-danger btn-sm active mr-2">
           Limpiar
           <i class="fa fa-eraser" aria-hidden="true"></i>
         </button>

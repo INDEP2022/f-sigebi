@@ -430,7 +430,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       date: this.date.value,
       dateValid: new Date('20-08-2023'),
     });
-    this.downloadReport('blank', params, () => {
+    this.downloadReport('RRELBIENESPROC', params, () => {
       this.isLoadingStatusAccount = false;
     });
   }
@@ -482,7 +482,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
         P_FEC_PROCNUM: this.cambiarFormatoFecha(this.date.value),
         // P_FEC_PROCNUM: new Date(this.date.value),
       };
-      this.downloadReport('blank', params, () => {
+      this.downloadReport('RCONBIENESPROC_COMIS', params, () => {
         this.isLoadingProrraComission = false;
       });
     } else {
