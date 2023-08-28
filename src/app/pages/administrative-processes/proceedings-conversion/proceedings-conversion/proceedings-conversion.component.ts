@@ -125,6 +125,26 @@ export interface IGoodJobManagement {
       .registros-movidos {
         background-color: yellow;
       }
+
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
     `,
   ],
 })
@@ -282,6 +302,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   disabledBtnCerrar: boolean = true;
   disabledBtnActas: boolean = true;
   statusGood_: any;
+  loadingBtn: boolean = false;
   constructor(
     private authService: AuthService,
     protected flyerService: FlyersService,
@@ -338,7 +359,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onGoodSelect(instance),
         },
-        goodId: {
+        goodNumber: {
           title: 'No. Bien',
           type: 'number',
           sort: false,
@@ -348,12 +369,12 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           type: 'string',
           sort: false,
         },
-        quantity: {
+        amount: {
           title: 'Cantidad',
           type: 'string',
           sort: false,
         },
-        acta_: {
+        minutesKey: {
           title: 'Acta',
           type: 'string',
           sort: false,
@@ -403,10 +424,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.actasConvertionCommunicationService.ejecutarFuncion$.subscribe(
       (next: any) => {
-        console.log('SI WILM', next);
+        // console.log('SI WILM', next);
         this.ejecutarFuncion();
       }
     );
@@ -421,15 +442,15 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.pageParams.PAR_IDCONV ||= this.route.snapshot.params?.['PAR_IDCONV'];
     this.route.queryParamMap.subscribe(params => {
       this.origin = params.get('origin');
-      console.log(this.origin);
+      // console.log(this.origin);
     });
-    this.initFormPostGetUserData();
+    await this.initFormPostGetUserData();
 
     this.dataTableGood
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
-        console.log('SI');
+        // console.log('SI');
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
@@ -440,10 +461,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              goodId: () => (searchFilter = SearchFilter.EQ),
+              goodNumber: () => (searchFilter = SearchFilter.EQ),
               description: () => (searchFilter = SearchFilter.ILIKE),
-              quantity: () => (searchFilter = SearchFilter.EQ),
-              acta_: () => (searchFilter = SearchFilter.ILIKE),
+              amount: () => (searchFilter = SearchFilter.EQ),
+              minutesKey: () => (searchFilter = SearchFilter.ILIKE),
               status: () => (searchFilter = SearchFilter.ILIKE),
             };
 
@@ -453,7 +474,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
               // this.columnFilters[field] = `${filter.search}`;
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
 
-              // console.log(
+              // // console.log(
               //   'this.columnFilters[field]',
               //   this.columnFilters[field]
               // );
@@ -485,7 +506,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
-        console.log('SI');
+        // console.log('SI');
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
@@ -570,7 +591,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       this.screenKey,
       this.authService.decodeToken().preferred_username
     );
-    console.log(this.userTracker);
+    // console.log(this.userTracker);
     this.proceedingsConversionForm = this.fb.group({
       idConversion: [null],
       goodFatherNumber: [null],
@@ -655,14 +676,14 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             this.updateRe = true;
             this.delete = true;
             this.insert = true;
-            console.log('readYes and writeYes');
+            // console.log('readYes and writeYes');
             this.validPermisos = true;
           } else if (
             filter.readingPermission == 'S' &&
             filter.writingPermission == 'N'
           ) {
             this.read = true;
-            console.log('readYes and writeNO');
+            // console.log('readYes and writeNO');
           } else if (
             filter.readingPermission == 'N' &&
             filter.writingPermission == 'S'
@@ -670,7 +691,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             this.insert = true;
             this.validPermisos = true;
             this.validPermisos = true;
-            console.log('readNo and writeYes');
+            // console.log('readNo and writeYes');
           } else {
             this.alert(
               'info',
@@ -704,7 +725,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     });
   }
 
-  initFormPostGetUserData() {
+  async initFormPostGetUserData() {
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe((params: any) => {
@@ -722,7 +743,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       if (this.paramsScreen.PAR_IDCONV) {
         this.initForm();
       } else {
-        console.log('SIN PARAMETROS');
+        // console.log('SIN PARAMETROS');
         if (!this.origin) {
           // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de Actas
           // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de Actas
@@ -740,7 +761,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       .getById(body.PAR_IDCONV)
       .subscribe({
         next: (res: IConvertiongood) => {
-          console.log(res);
+          // console.log(res);
           // this.loading = false;
           this.fileNumber = res.fileNumber ? res.fileNumber.id : res.fileNumber;
           this.conversion = res.id;
@@ -753,7 +774,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             ? res.fileNumber.preliminaryInquiry
             : null;
           this.criCase = res.fileNumber ? res.fileNumber.criminalCase : null;
-          this.cveActa = res.minutesErNumber;
+          this.cveActa = res.cveActaConv;
+          // this.cveActa = res.minutesErNumber;
           this.userRes = res.fileNumber
             ? res.fileNumber.usrResponsibleFile
             : null;
@@ -770,7 +792,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           subscription.unsubscribe();
         },
         error: error => {
-          console.log(error);
+          // console.log(error);
           this.cleanActa();
           subscription.unsubscribe();
         },
@@ -802,12 +824,12 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     params['search'] = params['search'] ? params['search'] : '';
     this.convertiongoodService.getRegSender(params).subscribe({
       next: data => {
-        console.log(data);
+        // console.log(data);
         this.senders = new DefaultSelect(data.data, data.count);
         this.isLoadingSender = false;
       },
       error: err => {
-        console.log(err);
+        // console.log(err);
         this.select = new DefaultSelect([], 0);
         this.isLoadingSender = false;
       },
@@ -815,7 +837,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
 
   changeSender(sender: IRSender) {
-    console.log({ sender });
+    // console.log({ sender });
     this.proceedingsConversionForm
       .get('delRemNumber')
       .setValue(sender.no_delegacion);
@@ -856,21 +878,90 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       this.proceedingsConversionForm.value.noExpedient;
     // this.getGoods1(params);
   }
-
+  noExpediente: any = '';
   getExpedient(id: number) {
     this.expedientService.getById(id).subscribe({
       next: (data: any) => {
         // this.loading = false;
         this.expedient = data;
         this.trasnfer = this.expedient.expTransferNumber;
+        this.noExpediente = this.expedient.id;
+        this.preAver = this.expedient.preliminaryInquiry;
+        this.criCase = this.expedient.criminalCase;
         this.actaRecepttionForm.value.claveTrans = this.trasnfer;
-        // console.log(this.expedient);
+        // // console.log(this.expedient);
         this.getGoodsByStatus(this.fileNumber);
       },
-      error: () => console.error('expediente nulo'),
+      error: () => {
+        this.noExpediente = '';
+        this.expedient = this.getDataNullExpediente();
+        this.trasnfer = '';
+        this.preAver = '';
+        this.criCase = '';
+        this.actaRecepttionForm.value.claveTrans = '';
+        console.log('expediente nulo');
+      },
     });
   }
 
+  getDataNullExpediente() {
+    const expedient: any = {
+      alienationDate: null,
+      articleValidated: null,
+      authorityNumber: null,
+      authorityOrdersDictum: null,
+      batteryNumber: null,
+      circumstantialRecord: null,
+      confiscateDictamineDate: null,
+      courtName: null,
+      courtNumber: null,
+      crimeKey: null,
+      crimeStatus: null,
+      criminalCase: null,
+      dateAgreementAssurance: null,
+      dateForesight: null,
+      date_Dictamines: null,
+      destructionDate: null,
+      dictaminationDate: null,
+      dictaminationReturnDate: null,
+      donationDate: null,
+      expTransferNumber: null,
+      expedientStatus: null,
+      expedientType: null,
+      federalEntityKey: null,
+      foresight: null,
+      id: null,
+      identifier: null,
+      indicatedName: null,
+      comptrollerWitness: null,
+      initialAgreement: null,
+      initialAgreementDate: null,
+      insertDate: null,
+      insertMethod: null,
+      insertedBy: null,
+      insertionDatehc: null,
+      keyPenalty: null,
+      keySaveValue: null,
+      lockerNumber: null,
+      ministerialActOfFaith: null,
+      ministerialDate: null,
+      mpName: null,
+      nameInstitution: null,
+      notificationDate: null,
+      notifiedTo: null,
+      observations: null,
+      observationsForecast: null,
+      placeNotification: null,
+      preliminaryInquiry: null,
+      protectionKey: null,
+      receptionDate: null,
+      registerNumber: null,
+      shelfNumber: null,
+      stationNumber: null,
+      transferNumber: null,
+    };
+    return expedient;
+  }
   getGoodsByStatus(id: number) {
     this.loading = true;
 
@@ -878,24 +969,30 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-    console.log('1412212', params);
-    this.goodService.getByExpedient_(id, params).subscribe({
+    // console.log('1412212', params);
+    params['sortBy'] = `goodNumber:DESC`;
+    this.GoodprocessService_.GetMinuteDetailDelivery(id, params).subscribe({
       next: data => {
         this.bienes = data.data;
 
-        console.log('Bienes', this.bienes);
+        // console.log('Bienes', this.bienes);
 
         let result = data.data.map(async (item: any) => {
           let obj = {
             vcScreen: 'FACTDBCONVBIEN',
-            pNumberGood: item.id,
+            pNumberGood: item.goodNumber,
           };
           const di_dispo = await this.getStatusScreen(obj);
           item['di_disponible'] = di_dispo;
-          const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
-          console.log('acta', acta);
-          item['acta_'] = acta;
-          item.di_disponible = acta != null ? 'N' : di_dispo;
+          if (item.minutesKey) {
+            item.di_disponible = 'N';
+          }
+          item['quantity'] = item.amount;
+          item['di_acta'] = item.minutesKey;
+          item['id'] = item.goodNumber;
+          // const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
+          // // console.log('acta', acta);
+          // item['acta_'] = acta;
         });
 
         Promise.all(result).then(item => {
@@ -905,7 +1002,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
           this.totalItems = data.count;
           this.loading = false;
-          // console.log(this.bienes);
+          // // console.log(this.bienes);
         });
       },
       error: error => {
@@ -921,7 +1018,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.proceedingsService.getGetFactDbConvBien(good, exp).subscribe({
         next: async (state: any) => {
-          console.log('acta', state);
+          // console.log('acta', state);
           resolve(state.data[0].cve_acta);
         },
         error: () => {
@@ -937,7 +1034,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.detailProceeDelRecService.getAllFiltered(params).subscribe({
         next: data => {
-          // console.log('data', data);
+          // // console.log('data', data);
           this.loading2 = false;
           resolve(true);
         },
@@ -954,10 +1051,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       this.GoodprocessService_.getScreenGood(body).subscribe({
         next: async (state: any) => {
           if (state.data) {
-            console.log('di_dispo', state);
+            // console.log('di_dispo', state);
             resolve('S');
           } else {
-            console.log('di_dispo', state);
+            // console.log('di_dispo', state);
             resolve('N');
           }
         },
@@ -976,11 +1073,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         this.dataTableGoodsConvertion.refresh();
         // this.loading = false;
         this.totalItems = data.count;
-        console.log(this.dataTableGoodsConvertion);
+        // console.log(this.dataTableGoodsConvertion);
       },
       error: error => {
         // this.loading = false;
-        // console.log(error);
+        // // console.log(error);
         // this.dataTableGoodsConvertion.load([]);
         // this.dataTableGoodsConvertion.refresh();
       },
@@ -1025,9 +1122,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   getGoods(id: number) {
     this.convertiongoodService.getById(id).subscribe({
       next: (data: any) => {
-        console.log(data);
+        // console.log(data);
       },
-      error: (error: any) => console.log(error),
+      error: (error: any) => {},
     });
   }
 
@@ -1035,8 +1132,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     // this.getGoodStatusDescription(dataGoodRes, count, total);
   }
   async cerrarActa(father: string | number) {
-    console.log('this.actasDefault', this.actasDefault);
-    console.log('this.conversion', this.conversion);
+    // console.log('this.actasDefault', this.actasDefault);
+    // console.log('this.conversion', this.conversion);
     if (this.actasDefault != null) {
       if (this.actasDefault.keysProceedings == null) {
         this.alert('warning', 'No Existe Acta para Cerrar', '');
@@ -1059,7 +1156,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
       const toolbar_user = this.authService.decodeToken().preferred_username;
       const cadena = this.cveActa ? this.cveActa.indexOf('?') : 0;
-      console.log('cadena', cadena);
+      // console.log('cadena', cadena);
 
       if (cadena != 0 && this.userName == toolbar_user) {
         null;
@@ -1073,6 +1170,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                 delete this.actasDefault.numDelegation1Description;
                 delete this.actasDefault.numDelegation2Description;
                 delete this.actasDefault.numTransfer_;
+                this.loadingBtn = true;
                 this.proceedingsDeliveryReceptionService
                   .editProceeding(this.actasDefault.id, this.actasDefault)
                   .subscribe({
@@ -1088,9 +1186,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                           next: resp => {
                             this.cveActa =
                               this.actaRecepttionForm.value.cveActa;
-                            console.log('SIIII', resp);
+                            // console.log('SIIII', resp);
                           },
-                          error: error => {},
+                          error: error => {
+                            this.loadingBtn = false;
+                          },
                         });
                       // this.loading = false;
                       let obj = {
@@ -1109,6 +1209,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                         ''
                       );
                       // this.alert('success', 'Acta cerrada', '');
+                      this.loadingBtn = false;
                       this.disabledBtnCerrar = false;
                       this.disabledBtnActas = false;
                       this.getGoodsByStatus(this.fileNumber);
@@ -1118,6 +1219,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                       // this.initForm();
                     },
                     error: error => {
+                      this.loadingBtn = false;
                       this.alert(
                         'error',
                         'Ocurrió un Error al Cerrar el Acta',
@@ -1179,11 +1281,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       vc_pantalla: 'FACTDBCONVBIEN',
     };
 
-    // console.log('re', obj);
+    // // console.log('re', obj);
     return new Promise((resolve, reject) => {
       this.screenStatusService.getAllFiltro_(obj).subscribe({
         next: (resp: any) => {
-          console.log('ESCR', resp);
+          // console.log('ESCR', resp);
           resolve(resp.data[0].statusFinal);
         },
         error: (error: any) => {
@@ -1210,15 +1312,15 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     await this.updateConversion();
     // this.edit ? this.update() : this.create();
     let params = {
-      id_conv: this.conversion,
-      id_bien: this.goodFatherNumber,
-      DESTYPE: this.origin,
+      ID_CONV: this.conversion,
+      // ID_BIEN: this.goodFatherNumber,
+      // DESTYPE: this.origin,
     };
-    console.log(params);
+    // console.log('params report', params);
     if (this.witnessOic != null) {
       this.siabService
-        // .fetchReport('ACTACONVSTES', params)
-        .fetchReportBlank('blank')
+        .fetchReport('ACTACONVCTES', params)
+        // .fetchReportBlank('blank')
         .subscribe(response => {
           if (response !== null) {
             const blob = new Blob([response], { type: 'application/pdf' });
@@ -1254,8 +1356,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         });
     } else {
       this.siabService
-        // .fetchReport('ACTACONVCTES', params)
-        .fetchReportBlank('blank')
+        .fetchReport('ACTACONVCTES', params)
+        // .fetchReportBlank('blank')
         .subscribe(response => {
           if (response !== null) {
             const blob = new Blob([response], { type: 'application/pdf' });
@@ -1308,14 +1410,14 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   async selectData(event: { data: IGood; selected: any }) {
     this.selectedRow = event.data;
-    console.log(this.selectedRow);
+    // console.log(this.selectedRow);
     await this.getStatusGoodService(this.selectedRow.status);
     // this.selectedGooods = event.selected;
     this.changeDetectorRef.detectChanges();
   }
   selectActa(data: IActasConversion) {
     this.selectedActa = data;
-    console.log(this.selectedRow);
+    // console.log(this.selectedRow);
     this.changeDetectorRef.detectChanges();
   }
 
@@ -1331,13 +1433,34 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     );
     modalRef.content.onSave.subscribe((next: any) => {
       console.log('aaaa', next);
-      this.paramsScreen.PAR_IDCONV = next.id;
-      console.log(this.paramsScreen.PAR_IDCONV);
-
-      this.initForm();
+      // this.paramsScreen.PAR_IDCONV = next.id;
+      // console.log(this.paramsScreen.PAR_IDCONV);
+      this.getDataConversionFromModal(next);
+      // this.initForm();
     });
   }
 
+  getDataConversionFromModal(res: any) {
+    this.fileNumber = res.fileNumber;
+    this.conversion = res.id;
+    this.goodFatherNumber = res.goodFatherNumber;
+    this.fCreate = this.datePipe.transform(res.fCreate, 'dd/MM/yyyy');
+    this.typeConv = res.typeConv;
+    this.statusConv = res.statusConv;
+    this.witnessOic = res.witnessOic;
+    this.cveActa = res.cveActaConv;
+    this.userRes = res.fileNumber ? res.fileNumber.usrResponsibleFile : null;
+    this.actaGoodForm.value.acta = this.cveActa;
+    this.time = new Date().toISOString().slice(0, 16);
+    this.getExpedient(this.fileNumber);
+    // this.getActasByConversion(this.cveActa);
+    // this.getStatusDeliveryCveExpendiente(this.cveActa);
+    this.actaRecepttionForm.get('respConv').setValue(res.respConv);
+    this.actaRecepttionForm.get('testigoOIC').setValue(res.witnessOic);
+    this.actaRecepttionForm.get('testigoTwo').setValue(res.witness2);
+    this.actaRecepttionForm.get('testigoTree').setValue(res.witness3);
+    this.cleanActa();
+  }
   getDetail() {
     this.acordionDetail = true;
     // this.actasConvertionCommunicationService.enviarDatos(this.conversion);
@@ -1364,7 +1487,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           ``
         );
         this.getGoodsByStatus(this.fileNumber);
-        console.log(data);
+        // console.log(data);
       },
       error: error => {
         console.error(error);
@@ -1375,7 +1498,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   create() {
     // this.loading = true;
     this.mover.emit(this.registro);
-    console.log(this.registro);
+    // console.log(this.registro);
     this.proceedingsDeliveryReceptionService
       .createDetail(this.createCon)
       .subscribe({
@@ -1407,12 +1530,12 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   //     .update(this.conversion, this.createCon)
   //     .subscribe({
   //       next: data => {
-  //         console.log(data);
+  //         // console.log(data);
   //         // Recorrer todos los registros y actualizar uno por uno
   //         // const records = data;
   //         // for (const item of records) {
   //         //   this.convertiongoodService.updateActa(item, this.createCon).subscribe((response) => {
-  //         //     console.log('Registro actualizado:', response);
+  //         //     // console.log('Registro actualizado:', response);
   //         //   });
   //         // }
 
@@ -1429,7 +1552,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       .update(this.conversion, this.proceedingsConversionForm.value)
       .subscribe({
         next: data => {
-          console.log(data);
+          // console.log(data);
           // this.loading = false;
           // this.loading = false;
         },
@@ -1447,7 +1570,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     // this.loading = true;
     this.goodService.updateByBody(this.actaRecepttionForm.value).subscribe({
       next: (data: any) => {
-        console.log(data);
+        // console.log(data);
         // this.loading = false;
       },
       error: error => {
@@ -1461,7 +1584,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.goodService.getById(id).subscribe({
       next: (data: IGoodStatus) => {
         this.statusGoodName = data.goodStatus;
-        console.log(this.statusGoodName);
+        // console.log(this.statusGoodName);
       },
       error: error => {
         console.error('no existe el bien');
@@ -1485,7 +1608,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           next: data => {
             let name = data.data[0].authorityName;
             this.actas = data;
-            console.log(this.actas);
+            // console.log(this.actas);
             resolve(true);
           },
           error: error => {
@@ -1518,7 +1641,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
     let modalRef = this.modalService.show(FindActaGoodComponent, modalConfig);
     modalRef.content.onSave.subscribe(async (next: any) => {
-      console.log(next);
+      // console.log(next);
       if (next) {
         this.alert(
           'success',
@@ -1605,7 +1728,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           responsable: '',
         });
 
-        console.log(this.actaRecepttionForm.value);
+        // console.log(this.actaRecepttionForm.value);
       },
     });
   }
@@ -1631,16 +1754,16 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
 
   selectProceedings(event: any) {
-    console.log(event);
+    // console.log(event);
   }
   selectGoods(event: any) {
-    console.log(event);
+    // console.log(event);
   }
   rowSelected2(event: any) {
-    console.log(event);
+    // console.log(event);
   }
   deleteGoodActa(event: any) {
-    console.log(event);
+    // console.log(event);
   }
   toggleDisabled() {}
   // ------------------------------------------------------------------------------------------------ //
@@ -1665,7 +1788,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           );
           return;
         } else {
-          console.log('aaa', this.selectedGooods);
+          // console.log('aaa', this.selectedGooods);
 
           let result = this.selectedGooods.map(async (good: any) => {
             if (good.di_acta != null) {
@@ -1681,14 +1804,14 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
               );
               return;
             } else {
-              console.log('GOOD', good);
+              // console.log('GOOD', good);
               this.loading2 = true;
 
               // if (!this.dataRecepcion.some((v: any) => v === good)) {
               // let indexGood = this.dataTableGood_.findIndex(
               //   _good => _good.id == good.id
               // );
-              // console.log('indexGood', indexGood);
+              // // console.log('indexGood', indexGood);
               // if (indexGood != -1)
               // this.dataTableGood_[indexGood].di_disponible = 'N';
 
@@ -1734,7 +1857,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
               this.dataRecepcionGood.load(this.dataRecepcion);
               this.dataRecepcionGood.refresh();
               this.totalItems2 = data.count;
-              console.log('data', data);
+              // console.log('data', data);
               this.loading2 = false;
             });
           },
@@ -1768,7 +1891,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         if (this.dataTableGood_.length > 0) {
           this.loading2 = true;
           let result = this.dataTableGood_.map(async _g => {
-            console.log(_g);
+            // console.log(_g);
 
             if (_g.di_disponible == 'N') {
               return;
@@ -1780,7 +1903,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                 goodV => goodV.numberGood == _g.id
               );
 
-              console.log('valid', valid);
+              // console.log('valid', valid);
               await this.createDET(_g);
               if (!valid) {
                 // this.dataRecepcion = [...this.dataRecepcion, _g];
@@ -1828,7 +1951,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         if (this.selectedGooodsValid.length > 0) {
           // this.goods = this.goods.concat(this.selectedGooodsValid);
           let result = this.selectedGooodsValid.map(async good => {
-            console.log('good', good);
+            // console.log('good', good);
             this.dataRecepcion = this.dataRecepcion.filter(
               (_good: any) => _good.id != good.id
             );
@@ -1872,7 +1995,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       } else {
         if (this.dataRecepcion.length > 0) {
           this.dataRecepcion.forEach(good => {
-            console.log('this.dataRecepcion', this.dataRecepcion);
+            // console.log('this.dataRecepcion', this.dataRecepcion);
             this.dataRecepcion = this.dataRecepcion.filter(
               _good => _good.id != good.id
             );
@@ -1991,7 +2114,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.detailProceeDelRecService.deleteDetailProcee(params).subscribe({
         next: data => {
-          console.log('data', data);
+          // console.log('data', data);
           // this.loading2 = false;
           resolve(true);
         },
@@ -2043,7 +2166,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   async getStatusGoodService(status: any) {
     this.statusGoodService.getById(status).subscribe({
       next: async (resp: any) => {
-        console.log('resp.data', resp);
+        // console.log('resp.data', resp);
         this.statusGood_ = resp.description;
         // this.statusGoodForm.get('statusGood').setValue(resp.description)
       },
@@ -2055,6 +2178,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
 
   agregarActa() {
+    if (!this.fileNumber || this.fileNumber == 0) {
+      return this.alert(
+        'warning',
+        'Conversión sin expediente',
+        'No es posible generar el Acta'
+      );
+    }
     const responsable = this.actaRecepttionForm.get('respConv').value;
     const testigoTwo = this.actaRecepttionForm.get('testigoTwo').value;
     const testigoTree = this.actaRecepttionForm.get('testigoTree').value;
@@ -2079,7 +2209,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         );
       }
 
-      console.log(next);
+      // console.log(next);
       this.totalItems2 = 0;
       this.acordionDetail = false;
       this.actasDefault = next;
@@ -2119,7 +2249,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       // );
       await this.getDetailProceedingsDevollution(this.actasDefault.id);
     });
-    console.log(this.authService.decodeToken());
+    // console.log(this.authService.decodeToken());
   }
 
   delegationToolbar: any = null;
@@ -2134,10 +2264,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         const data = value.data[0].usuario;
         if (data) this.delegationToolbar = data.delegationNumber;
 
-        console.log('SI', value);
+        // console.log('SI', value);
       },
       error(err) {
-        console.log('NO');
+        // console.log('NO');
       },
     });
   }
@@ -2179,7 +2309,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
 
   ejecutarFuncion() {
-    console.log('SIO');
+    // console.log('SIO');
     this.cleanActa();
     // Lógica de la función que se ejecutará sin cerrar el modal
   }

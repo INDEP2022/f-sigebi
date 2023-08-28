@@ -18,6 +18,7 @@ import {
   throwError,
 } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import {
   FilterParams,
   ListParams,
@@ -164,6 +165,16 @@ export class ResquestNumberingChangeComponent
         title: 'Fecha',
         width: '30%',
         sort: false,
+        valuePrepareFunction: (text: string) => {
+          console.log('text', text);
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
+          }`;
+        },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
+        },
       },
       amount: {
         title: 'Monto',
@@ -497,6 +508,11 @@ export class ResquestNumberingChangeComponent
     if (this.modal?.isShown) {
     }
     this.loading = false;
+    this.delegationNumber = this.token.decodeToken().department;
+    setTimeout(async () => {
+      await this.getUsuario(new ListParams());
+      await this.getUsuario1(new ListParams());
+    }, 1000);
     //this.people$ = this.goodprocessService.getTodos();
   }
   clearModel() {
@@ -1111,7 +1127,7 @@ export class ResquestNumberingChangeComponent
         ) {
           motivo = 'ASEGURADO PERECEDERO';
         }
-        if (good.goodClassNumber == '319' || good.goodClassNumber == '1078') {
+        if (good.goodClassNumber == 319 || good.goodClassNumber == 1078) {
           motivo = 'ASEGURADO SEMOVIENTE';
         }
 
@@ -1247,27 +1263,6 @@ export class ResquestNumberingChangeComponent
           return;
         }
 
-        // if (good.expediente) {
-        //   if (!good.expediente.id) {
-        //     message = 'El Bien ' + good.id + ' No tiene Número de Expediente';
-        //     this.handleSuccess(message);
-        //     // this.validate = true;
-        //     return;
-        //   }
-        // } else {
-        //   message = 'El Bien ' + good.id + ' No tiene Número de Expediente';
-        //   this.handleSuccess(message);
-        //   // this.validate = true;
-        //   return;
-        // }
-
-        // if (good.expediente)
-        //   if (!good.expediente.preliminaryInquiry) {
-        //     message = 'El Bien ' + good.id + ' No tiene Averiguación Previa';
-        //     this.handleSuccess(message);
-        //     // this.validate = true;
-        //     return;
-        //   }
         if (good.status == 'ADM') {
           situacionJuridica = 'ASEGURADO';
         }
@@ -2003,9 +1998,9 @@ export class ResquestNumberingChangeComponent
     this.formaplicationData.controls['authorizeDate'].disable();
     this.formaplicationData.controls['dateRequestChangeNumerary'].disable();
 
-    const paramsSender = new ListParams();
-    paramsSender.text = this.token.decodeToken().preferred_username;
-    await this.get___Senders(paramsSender);
+    // const paramsSender = new ListParams();
+    // paramsSender.text = this.token.decodeToken().preferred_username;
+    // await this.get___Senders(paramsSender);
 
     this.formaplicationData.controls;
   }

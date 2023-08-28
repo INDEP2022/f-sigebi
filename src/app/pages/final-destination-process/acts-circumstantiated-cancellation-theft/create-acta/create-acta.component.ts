@@ -32,6 +32,9 @@ export class CreateActaComponent extends BasePage implements OnInit {
   fileNumber: any;
   detalleActa: IProceedingDeliveryReception;
   witnessOic: any;
+  witnessTes: any;
+  witnessAdm: any;
+  cve_recibe: any;
   @Output() onSave = new EventEmitter<any>();
   arrayDele: any[] = [];
   dele = new DefaultSelect<any>();
@@ -39,7 +42,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
   expedient: any;
   testigoTree: any;
   responsable: any;
-  testigoTwo: any;
+  testigoOne: any;
   years: number[] = [];
   foolio: number;
   mes: any;
@@ -93,16 +96,18 @@ export class CreateActaComponent extends BasePage implements OnInit {
       anio: [null, [Validators.required]],
       mes: [null, [Validators.required]],
       cveActa: [null],
-      direccion: [null],
+      direccion: [null, [Validators.required]],
       observaciones: [null],
-      testigoOIC: [null],
-      testigoTwo: [null],
-      testigoTree: [null],
-      respConv: [null],
+      testigoOIC: [null, [Validators.required]],
+      testigoOne: [null, [Validators.required]],
+      testigoTree: [null, [Validators.required]],
+      respConv: [null, [Validators.required]],
       parrafo1: [null],
       parrafo2: [null],
       parrafo3: [null],
       elaboradate: [null, Validators.required],
+      fechaact: [null, Validators.required],
+      fechacap: [null, Validators.required],
       // witness1: [null],
       // witness2: [null],
     });
@@ -221,10 +226,14 @@ export class CreateActaComponent extends BasePage implements OnInit {
     const acta = this.actaRecepttionForm.value.acta;
     const type = this.actaRecepttionForm.value.type;
     const claveTrans = this.actaRecepttionForm.value.claveTrans;
+    const respConv = this.actaRecepttionForm.value.respConv;
     //const cveReceived = this.actaRecepttionForm.value.cveReceived;
     const administra = this.actaRecepttionForm.value.administra;
     const consec = this.actaRecepttionForm.value.consec;
     this.witnessOic = this.actaRecepttionForm.value.testigoOIC;
+    this.witnessTes = this.actaRecepttionForm.value.testigoOne;
+    this.witnessAdm = this.actaRecepttionForm.value.testigoTree;
+    //this.cve_recibe = this.actaRecepttionForm.value.respConv;
     const anio = this.actaRecepttionForm.value.anio;
     const mes = this.actaRecepttionForm.value.mes;
 
@@ -244,7 +253,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     }
 
     //const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${cveReceived}/${consec_}/${miSubcadena
-    const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${consec_}/${miSubcadena
+    const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${respConv}/${consec_}/${miSubcadena
       .toString()
       .padStart(2, '0')}/${mes.value.toString().padStart(2, '0')}`;
     console.log('cveActa -->', cveActa);
@@ -277,24 +286,25 @@ export class CreateActaComponent extends BasePage implements OnInit {
     let obj: any = {
       keysProceedings: cveActa,
       elaborationDate: this.actaRecepttionForm.value.elaboradate,
-      datePhysicalReception: this.actaRecepttionForm.value.elaboradate,
+      datePhysicalReception: this.actaRecepttionForm.value.fechaact,
       address: this.actaRecepttionForm.value.direccion,
       statusProceedings: 'ABIERTA',
       elaborate: this.authService.decodeToken().preferred_username,
       numFile: this.fileNumber,
-      witness1: this.testigoTwo,
-      witness2: this.testigoTree,
+      witness1: this.witnessTes,
+      witness2: this.witnessAdm,
       typeProceedings: 'ROBO',
       dateElaborationReceipt: this.mes,
       dateDeliveryGood: null,
       responsible: this.responsable,
       destructionMethod: null,
-      observations: null,
+      observations: this.actaRecepttionForm.value.observaciones,
       approvedXAdmon: null,
       approvalDateXAdmon: null,
       approvalUserXAdmon: null,
       numRegister: null,
-      captureDate: new Date(),
+      //captureDate: new Date(),
+      captureDate: this.actaRecepttionForm.value.fechacap,
       numDelegation1: 6,
       numDelegation2: null,
       identifier: null,
@@ -303,7 +313,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       numeraryFolio: this.foolio,
       numTransfer: null,
       idTypeProceedings: null,
-      receiptKey: null,
+      receiptKey: this.cve_recibe,
       comptrollerWitness: this.witnessOic,
       numRequest: null,
       closeDate: null,
@@ -328,7 +338,11 @@ export class CreateActaComponent extends BasePage implements OnInit {
           this.handleSuccess();
         },
         error: error => {
-          this.alert('error', 'Ha Ocurrido al Intentar Crear un Acta', '');
+          this.alert(
+            'error',
+            'Ha Ocurrido un Error al Intentar Crear un Acta',
+            ''
+          );
         },
       });
   }

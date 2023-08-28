@@ -69,7 +69,6 @@ export class SchedulingDeliveriesFormComponent
   searchSalesForm: FormGroup = new FormGroup({});
   goodsToProgram: any[] = [];
   SearchSalesData: any[] = [];
-
   goodDesSelect: IGoodInvAvailableView[] = [];
   disabledTypeEvent: boolean = false;
   disabledTransferent: boolean = false;

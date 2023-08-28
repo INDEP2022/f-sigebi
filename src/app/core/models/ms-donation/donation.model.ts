@@ -32,3 +32,25 @@ export interface IFilterDonation {
   statusId: string;
   noLabel: number;
 }
+export interface IGoodDonation {
+  actId: number;
+  cveAct: string;
+  elaborationDate: string;
+  estatusAct: string;
+  elaborated: string;
+  fileId: number;
+  witness1: string;
+  witness2: string;
+  actType: string;
+  observElimination: string;
+  observations: string;
+  captureDate: string;
+  noDelegation1: number;
+  noDelegation2: string;
+  identifier: string;
+  folioUniversal: number;
+  closeDate: string;
+  timeCaptureDate: string;
+  closeHcDate: string;
+  registreNumber: number;
+}

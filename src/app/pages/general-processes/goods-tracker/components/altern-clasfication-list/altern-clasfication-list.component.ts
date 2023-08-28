@@ -1,6 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  takeUntil,
+  tap,
+  throwError,
+} from 'rxjs';
 import {
   FilterParams,
   SearchFilter,
@@ -20,9 +29,8 @@ export class AlternClasficationListComponent
   extends BasePage
   implements OnInit
 {
-  clasifications: IAlternativeClasification[] = [];
+  clasifications = new LocalDataSource();
   selectedClasifications: IAlternativeClasification[] = [];
-  childSelected: string[] | number[] = [];
   totalItems = 0;
   params = new BehaviorSubject(new FilterParams());
   constructor(
@@ -33,11 +41,11 @@ export class AlternClasficationListComponent
     this.settings = {
       ...this.settings,
       columns: {
-        ...ALTERN_CLASIFICATION_COLUMS,
         select: {
           title: 'Selección',
           sort: false,
           type: 'custom',
+          filter: false,
           valuePrepareFunction: (
             value: boolean,
             clasification: IAlternativeClasification
@@ -47,8 +55,10 @@ export class AlternClasficationListComponent
             instance: CheckboxElementComponent<IAlternativeClasification>
           ) => this.onSelect(instance),
         },
+        ...ALTERN_CLASIFICATION_COLUMS,
       },
       actions: false,
+      hideSubHeader: false,
     };
   }
 
@@ -73,49 +83,85 @@ export class AlternClasficationListComponent
       this.selectedClasifications.push(clasfication);
     } else {
       this.selectedClasifications = this.selectedClasifications.filter(
-        clasif => clasif.id == clasfication.id
+        clasif => clasif.id != clasfication.id
       );
     }
   }
 
   ngOnInit(): void {
+    this.columnsFilter().subscribe();
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
-        tap(params => {
-          this.getAll(params).subscribe();
-        })
+        tap(params => this.getLots(params).subscribe())
       )
       .subscribe();
   }
 
-  getAll(params?: FilterParams) {
+  columnsFilter() {
+    return this.clasifications.onChanged().pipe(
+      distinctUntilChanged(),
+      debounceTime(500),
+      takeUntil(this.$unSubscribe),
+      tap(dataSource => this.buildColumnFilter(dataSource))
+    );
+  }
+
+  buildColumnFilter(dataSource: any) {
+    const params = new FilterParams();
+    if (dataSource.action == 'filter') {
+      const filters = dataSource.filter.filters;
+      filters.forEach((filter: any) => {
+        const columns = this.settings.columns as any;
+        const operator = columns[filter.field]?.operator;
+        if (!filter.search) {
+          return;
+        }
+        params.addFilter(
+          filter.field,
+          filter.search,
+          operator || SearchFilter.EQ
+        );
+      });
+      this.params.next(params);
+    }
+  }
+
+  getLots(params: FilterParams) {
     const _params = params ?? new FilterParams();
     _params.addFilter('id', 11, SearchFilter.GTE);
+    _params.sortBy = 'id:ASC';
     this.loading = true;
     return this.alternClasificationService
       .getAllFilter(_params.getParams())
       .pipe(
         catchError(error => {
           this.loading = false;
-          this.clasifications = [];
+          this.clasifications.load([]);
+          this.clasifications.refresh();
           this.totalItems = 0;
-          if (error.status >= 500) {
-            this.alert(
-              'error',
-              'Error',
-              'Ocurrió un error al obtener la clasificación alterna'
-            );
-          }
           return throwError(() => error);
         }),
-        tap(res => {
+        tap(response => {
           this.loading = false;
-          this.clasifications = res.data;
-          this.totalItems = res.count;
+          console.log(response.data);
+          this.clasifications.load(response.data);
+          this.clasifications.refresh();
+          this.totalItems = response.count;
         })
       );
   }
+
+  // ngOnInit(): void {
+  //   this.params
+  //     .pipe(
+  //       takeUntil(this.$unSubscribe),
+  //       tap(params => {
+  //         this.getAll(params).subscribe();
+  //       })
+  //     )
+  //     .subscribe();
+  // }
 
   confirm() {
     this.modalRef.content.callback(this.selectedClasifications);

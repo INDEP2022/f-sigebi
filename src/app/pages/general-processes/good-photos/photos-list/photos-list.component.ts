@@ -99,11 +99,11 @@ export class PhotosListComponent extends BasePage implements OnInit {
     this.photos.forEach(row => {
       let file = row.file;
       if (all) {
-        photos.push(file);
+        photos.push(row);
         return;
       }
       if (this.filesToDelete.map(x => x.name).includes(row.file.name)) {
-        photos.push(file);
+        photos.push(row);
       }
     });
     const zip = await this.service.downloadByGood(photos);
@@ -335,7 +335,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Eliminación de Fotos',
-          'Se Eliminaron las Fotos Correctamente'
+          'Las fotos seleccionadas se han eliminado'
         );
       }
     }

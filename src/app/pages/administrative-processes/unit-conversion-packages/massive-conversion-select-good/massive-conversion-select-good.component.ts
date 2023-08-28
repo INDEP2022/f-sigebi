@@ -138,8 +138,8 @@ export class MassiveConversionSelectGoodComponent
       console.log(params);
       if (this.contador > 0) {
         this.filter();
-        this.contador++;
       }
+      this.contador++;
     });
     let packageEnc: IPackageGoodEnc = this.noPackage.value;
     if (packageEnc.cat_etiqueta_bien) {
@@ -474,78 +474,24 @@ export class MassiveConversionSelectGoodComponent
       let encontro;
       let V_CUENTA;
       if (v_bani) {
-        const filterParams = new FilterParams();
-        filterParams.addFilter('numberPackage', this.selectedPackage);
-        filterParams.addFilter('numberGood', goodNumber);
-        encontro = await firstValueFrom(
-          this.packageGoodService
-            .getPaqDestinationDet(filterParams.getParams())
-            .pipe(
-              catchError(x => of({ data: [] })),
-              map(x => x.data.length > 0)
-            )
-        );
-        console.log(encontro);
-        if (encontro) {
+        if (
+          this.dataPrevisualization.find(
+            x => x.numberGood + '' === goodNumber + ''
+          )
+        ) {
           V_BANR = false;
         }
       }
 
       if (V_BANR) {
         V_CUENTA = await firstValueFrom(this.obtainVCuenta(goodNumber));
+        console.log(V_CUENTA);
         if (V_CUENTA > 0) {
           V_BANR = false;
         }
       }
       if (V_BANR) {
         console.log('Entro a registrar');
-        let V_NO_TRANSFERENTE;
-        // if (numberTransferee) {
-        //   // const transferentSplit = transfer
-        //   V_NO_TRANSFERENTE = await firstValueFrom(
-        //     this.obtainTransferent(numberTransferee)
-        //   );
-        // }
-
-        // const V_NO_DELEGACION = await firstValueFrom(
-        //   this.obtainDelegation(delegation)
-        // );
-        // console.log(V_NO_DELEGACION);
-        // if (packageEnc.numbertrainemiaut) {
-        //   await firstValueFrom(
-        //     this.expedientService.update(fileNumber, {
-        //       id: fileNumber,
-        //       transferNumber: +packageEnc.numbertrainemiaut,
-        //     })
-        //   );
-        // }
-        // let change = 0;
-        // let body: any = {
-        //   id: id,
-        //   goodId: goodNumber,
-        // };
-        // if (packageEnc.numberDelegation) {
-        //   body = { ...body, delegationNumber: packageEnc.numberDelegation };
-        //   change++;
-        // }
-        // if (packageEnc.numberClassifyGood) {
-        //   body = { ...body, goodClassNumber: packageEnc.numberClassifyGood };
-        //   change++;
-        // }
-        // if (packageEnc.numberLabel) {
-        //   body = { ...body, labelNumber: packageEnc.numberLabel };
-        //   change++;
-        // }
-        // if (packageEnc.status) {
-        //   body = { ...body, status: packageEnc.status };
-        //   change++;
-        // }
-        // if (packageEnc.numberStore) {
-        //   body = { ...body, storeNumber: packageEnc.numberStore };
-        //   change++;
-        // }
-        // await firstValueFrom(this.goodService.update(body));
-
         await firstValueFrom(
           this.packageGoodService.insertPaqDestDec({
             numberPackage: this.selectedPackage,
@@ -556,9 +502,6 @@ export class MassiveConversionSelectGoodComponent
             nbOrigin: packageEnc.nbOrigin,
           })
         );
-        // return await new Promise<any>((resolve, reject) => {
-        //   resolve(null);
-        // });
         return null;
       } else {
         if (encontro) {
@@ -566,22 +509,11 @@ export class MassiveConversionSelectGoodComponent
             id: goodNumber,
             message: 'No puede agregar bienes ya registrados',
           };
-          // return await new Promise<any>((resolve, reject) => {
-          //   resolve({
-          //     id: goodNumber,
-          //     message: 'No puede agregar bienes ya registrados',
-          //   });
-          // });
-          // this.alert(
-          //   'error',
-          //   'ERROR',
-          //   'No puede agregar bienes ya registrados'
-          // );
         } else {
           return {
             id: goodNumber,
             message:
-              'No puede agregar bienes cuyo paquete no está en ESTATUS_PAQ X',
+              'No puede agregar bienes con un estatus de paquete diferente a cancelado',
           };
           // return await new Promise<any>((resolve, reject) => {
           //   resolve({
@@ -890,7 +822,7 @@ export class MassiveConversionSelectGoodComponent
             this.alert('success', 'Se Encontraron Registros', '');
           } else {
             this.data.load([]);
-            this.alert('error', 'No se Encontraron Registros', '');
+            // this.alert('warning', 'No se Encontraron Registros', '');
           }
 
           this.loading = false;

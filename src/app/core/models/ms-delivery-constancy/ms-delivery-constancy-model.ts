@@ -63,3 +63,17 @@ export interface CertificatesDeliveryEndpoints {
   reasonsNotRetired?: number;
   oicCall?: string;
 }
+
+export interface CertificatesGoodsEndpoints {
+  certificateId?: number;
+  goodId?: number;
+  quantity?: number;
+  userCreation?: string;
+  userModification?: string;
+  creationDate?: string;
+  modificationDate?: string;
+  version?: number;
+  transactionId?: number;
+  siabGoodNum?: number;
+  goodsDeliveryScheduleId?: number;
+}

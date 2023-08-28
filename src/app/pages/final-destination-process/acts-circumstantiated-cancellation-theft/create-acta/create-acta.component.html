@@ -14,7 +14,7 @@
                 [control]="actaRecepttionForm.get('acta')"
                 label="Acta">
                 <ng-select formControlName="acta" class="form-control pt-1">
-                  <ng-option value="RFP">RFP</ng-option>
+                  <ng-option value="ACTCIRCU">ACTCIRCU</ng-option>
                 </ng-select>
               </form-field>
             </div>
@@ -55,8 +55,21 @@
           <div class="col-md-3 mt-2">
             <div>
               <form-field
+                [control]="actaRecepttionForm.get('respConv')"
+                label="Recibe">
+                <input
+                  maxlength="6"
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="respConv" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
                 [control]="actaRecepttionForm.get('administra')"
-                label="Administra">
+                label="Adm.">
                 <ng-select
                   formControlName="administra"
                   class="form-control pt-1">
@@ -141,7 +154,7 @@
             <div>
               <form-field
                 [control]="actaRecepttionForm.get('elaboradate')"
-                label="Fecha de Elaboración">
+                label="Fec. Elaboración">
                 <input
                   [ngClass]="{ 'not-press bg-gray': !disabledSend }"
                   #datepickerElement
@@ -153,19 +166,100 @@
               </form-field>
             </div>
           </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-md-12 col-sm-12 col-xs-12">
-            <form-field
-              [control]="actaRecepttionForm.get('direccion')"
-              label="Direcci&oacute;n">
-              <textarea
-                maxlength="2000"
-                type="text"
-                class="form-control pt-1"
-                formControlName="direccion"
-                rows="5"></textarea>
-            </form-field>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
+                [control]="actaRecepttionForm.get('fechaact')"
+                label="Fec. Acta">
+                <input
+                  #datepickerElement
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="fechaact"
+                  bsDatepicker
+                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
+                [control]="actaRecepttionForm.get('fechacap')"
+                label="Fec. Captura">
+                <input
+                  #datepickerElement
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="fechacap"
+                  bsDatepicker
+                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
+                [control]="actaRecepttionForm.get('direccion')"
+                label="Direcci&oacute;n">
+                <input
+                  maxlength="1000"
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="direccion" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
+                [control]="actaRecepttionForm.get('observaciones')"
+                label="Observaciones">
+                <textarea
+                  maxlength="1000"
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="observaciones"></textarea>
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
+                [control]="actaRecepttionForm.get('testigoOne')"
+                label="Autoridad">
+                <input
+                  maxlength="100"
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="testigoOne" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
+                [control]="actaRecepttionForm.get('testigoTree')"
+                label="Elabora">
+                <input
+                  maxlength="100"
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="testigoTree" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-3 mt-2">
+            <div>
+              <form-field
+                [control]="actaRecepttionForm.get('testigoOIC')"
+                label="Testigo de la Contr.">
+                <input
+                  maxlength="100"
+                  type="text"
+                  class="form-control pt-1"
+                  formControlName="testigoOIC" />
+              </form-field>
+            </div>
           </div>
         </div>
       </div>

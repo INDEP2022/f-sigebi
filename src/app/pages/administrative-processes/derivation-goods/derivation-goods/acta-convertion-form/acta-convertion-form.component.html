@@ -91,7 +91,7 @@
       [tipoConv]="tipoConv"
       cveScreen="FCONVBIENHIJOS"
       reportPrint="RGERGENSOLICDIGIT"
-      [expedientNumber]="expedientNuember"
+      [expedientNumber]="expedientNumber"
       [refresh]="refresh"
       (documentEmmit)="document($event)">
     </app-scanning-foil>
@@ -154,8 +154,7 @@
         <button
           type="button"
           class="btn btn-primary active"
-          (click)="createMinuteConversion()"
-          [disabled]="save">
+          (click)="createMinuteConversion()">
           Guardar
           <i aria-hidden="true" class="fa fa-save"></i>
         </button>

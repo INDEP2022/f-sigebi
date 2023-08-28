@@ -75,12 +75,14 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   loadingBtn: boolean = false;
   loadingBtn2: boolean = false;
   cargado: boolean = false;
+  cargado2: boolean = false;
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   @ViewChild('file') fileInput: ElementRef;
   settings2 = { ...this.settings };
   title: string = 'PAGOS REFERENCIADOS';
   loading2: boolean = false;
   @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
+  titleCarga: string = 'PAGOS REFERENCIADOS CARGADOS DESDE EL CSV';
   constructor(
     private fb: FormBuilder,
     private paymentService: PaymentService,
@@ -423,8 +425,14 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
     params.page = lparams.page;
     params.limit = lparams.limit;
-
-    if (lparams.text) params.addFilter('id', lparams.text, SearchFilter.EQ);
+    if (lparams.text)
+      if (!isNaN(parseInt(lparams?.text))) {
+        console.log('SI');
+        params.addFilter('id', lparams.text, SearchFilter.EQ);
+      } else {
+        console.log('NO');
+        params.addFilter('processKey', lparams.text, SearchFilter.ILIKE);
+      }
 
     params.addFilter('address', this.layout, SearchFilter.EQ);
 
@@ -450,7 +458,6 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    let params__ = '';
     if (lparams?.text.length > 0)
       params.addFilter('bankCode', lparams.text, SearchFilter.ILIKE);
     // if (!isNaN(parseInt(lparams?.text))) {
@@ -464,7 +471,8 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     // params__ = `?filter.cveBank=${lparams.text}`;
     // params.addFilter('cve_banco', lparams.text);
     // }
-
+    params.sortBy = `bankCode:ASC`;
+    // params.addFilter('code', '$null', SearchFilter.NOT)
     // this.hideError();
     return new Promise((resolve, reject) => {
       this.bankService.getAll_(params.getParams()).subscribe({
@@ -505,6 +513,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     this.dataCargada.load([]);
     this.dataCargada.refresh();
     this.searchWithEvent = false;
+    this.cargado2 = false;
     this.cargado = false;
     this.getBanks(new ListParams());
     this.getComerEvents(new ListParams());
@@ -538,6 +547,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         ).then(async question => {
           if (question.isConfirmed) {
             // PUP_PROC_ANT;
+            this.titleCarga = '';
             await this.onButtonClick();
           }
         });
@@ -549,6 +559,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         ).then(async question => {
           if (question.isConfirmed) {
             // PUP_PROC_NUEVO;
+            this.titleCarga = 'PAGOS REFERENCIADOS CARGADOS';
             const pupNew: any = await this.PUP_PROC_NUEVO(
               this.eventSelected.id
             );
@@ -557,7 +568,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             } else {
               if (pupNew.data.length == 0) {
                 this.alert(
-                  'success',
+                  'warning',
                   `No hay Pagos Pendientes del Evento: ${this.eventSelected.id}`,
                   ''
                 );
@@ -598,16 +609,21 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       formData.append('bank', this.bankSelected.bankCode);
       this.loadingBtn = true;
       const cargaPagosCSV: any = await this.PUP_PROC_ANT(formData);
-
+      console.log('cargaPagosCSV', cargaPagosCSV);
       if (cargaPagosCSV.status == 200) {
         const data = cargaPagosCSV.data;
         if (data.COMER_PAGOREF.length == 0) {
-          this.alert('warning', 'No se Procesó Ningún Pago', 'Archivo Cargado');
+          this.alert('warning', 'No se procesó ningún pago', 'Archivo Cargado');
           this.form2.get('BLK_CTRL_CUANTOS').setValue(data.BLK_CTRL_CUANTOS);
           this.form2.get('BLK_CTRL_MONTO').setValue(data.BLK_CTRL_MONTO);
           this.dataCargada.load([]);
           this.dataCargada.refresh();
-          this.cargado = true;
+          this.getPayments('no');
+          this.cargado2 = true;
+          setTimeout(() => {
+            this.cargado = true;
+          }, 1000);
+
           this.loadingBtn = false;
           // BLK_CTRL_CUANTOS
           // BLK_CTRL_MONTO
@@ -665,7 +681,11 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             // this.title = 'PAGOS REFERENCIADOS CARGADOS DESDE EL CSV'
             this.dataCargada.load(arr);
             this.dataCargada.refresh();
-            this.cargado = true;
+            this.getPayments('no');
+            this.cargado2 = true;
+            setTimeout(() => {
+              this.cargado = true;
+            }, 1000);
             this.loadingBtn = false;
           });
         }

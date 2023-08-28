@@ -134,19 +134,19 @@ export class ScanningFoilComponent
       this.alert(
         'question',
         'Información',
-        'El Paquete ya tiene Folio de Escaneo.'
+        'El Paquete ya tiene Folio de Escaneo'
       );
       return;
     }
     this.alertQuestion(
       'question',
       'Se Generará un Nuevo Folio de Escaneo para el Paquete Autorizado',
-      '¿Deseas continuar?',
+      '¿Desea continuar?',
       'Continuar'
     ).then(q => {
       if (q.isConfirmed) {
         const documents: IDocuments = {
-          numberProceedings: this.good.fileNumber,
+          numberProceedings: this.expedientNumber,
           keySeparator: '60',
           keyTypeDocument: 'ENTRE',
           natureDocument: 'ORIGINAL',
@@ -156,8 +156,8 @@ export class ScanningFoilComponent
           userRequestsScan: this.user.usuario.user,
           scanRequestDate: new Date(),
           associateUniversalFolio: null,
-          flyerNumber: Number(this.good.flyerNumber),
-          goodNumber: Number(this.good.id),
+          // flyerNumber: Number(this.good.flyerNumber),
+          goodNumber: Number(this.good),
           numberDelegationRequested: this.user.usuario.delegationNumber,
           numberDepartmentRequest: this.user.usuario.departamentNumber,
           numberSubdelegationRequests: this.user.usuario.subdelegationNumber,

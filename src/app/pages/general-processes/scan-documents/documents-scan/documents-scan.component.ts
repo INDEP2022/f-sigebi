@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -97,7 +98,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     private fileBrowserService: FileBrowserService,
     private modalService: BsModalService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private locations: Location
   ) {
     super();
     this.activatedRoute.queryParams
@@ -222,11 +224,15 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         }
         const { id } = document;
         const { expedient, folio } = this.controls;
+        const _params = new FilterParams();
         if (document.numberProceedings) {
           expedient.setValue(Number(document.numberProceedings));
         }
+        // else {
+        //   expedient.setValue(this.expedientNumber);
+        //   _params.addFilter('numberProceedings', this.expedientNumber);
+        // }
         folio.setValue(this.folio);
-        const _params = new FilterParams();
         _params.addFilter('numberProceedings', document.numberProceedings);
         this.documentsParams.next(_params);
         this.loadImages(id).subscribe(
@@ -689,5 +695,6 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         }
       );
     }
+    this.locations.back();
   }
 }

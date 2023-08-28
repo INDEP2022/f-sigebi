@@ -99,6 +99,13 @@ export class MsDepositaryService extends HttpService {
     );
   }
 
+  createPersonsModDepositary(body: Partial<IPersonsModDepositary>) {
+    return this.post<IListResponse<IPersonsModDepositary>>(
+      DepositaryEndPoints.PersonsModDepositary,
+      body
+    );
+  }
+
   getPaymentRefParamsDep(
     params: IPaymendtDepParamsDep
   ): Observable<IListResponse<any>> {
