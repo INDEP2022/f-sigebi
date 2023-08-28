@@ -784,12 +784,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   }
   printScanFile() {
     if (this.good === undefined) {
-      this.alert(
-        'warning',
-        'Solicitud de escaneo',
-        'No existe folio de escaneo',
-        ''
-      );
+      this.alert('warning', 'Atención', 'No existe folio de escaneo', '');
       return;
     }
     if (this.form.get('scanningFoli').value !== '') {
@@ -798,23 +793,13 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       };
       this.downloadReport(this.reportPrint, params);
     } else {
-      this.alert(
-        'warning',
-        'Solicitud de escaneo',
-        'No existe folio de escaneo',
-        ''
-      );
+      this.alert('warning', 'Atención', 'No existe folio de escaneo', '');
     }
   }
 
   scan() {
     if (this.good === undefined) {
-      this.alert(
-        'warning',
-        'Regularización Jurídica',
-        'No existe folio de escaneo',
-        ''
-      );
+      this.alert('warning', 'Atención', 'No existe folio de escaneo', '');
       return;
     }
     console.log(this.form.get('scanningFoli').value);
@@ -822,7 +807,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'question',
         'Se abrirá la pantalla de escaneo para el folio de escaneo del Bien consultado',
-        '¿Deseas continuar?',
+        '¿Desea continuar?',
         'Continuar'
       ).then(q => {
         if (q.isConfirmed) {
@@ -830,12 +815,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      this.alert(
-        'warning',
-        'Regularización Jurídica',
-        'No existe folio de escaneo',
-        ''
-      );
+      this.alert('warning', 'Atención', 'No existe folio de escaneo', '');
     }
   }
   generateFoli() {
@@ -845,18 +825,13 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       this.scanningFoli.value
     );
     if (this.good === null || this.good === undefined) {
-      this.alert(
-        'warning',
-        'Regularización Jurídica',
-        'Debe cargar un Bien',
-        ''
-      );
+      this.alert('warning', 'Atención', 'Debe cargar un Bien', '');
       return;
     }
     if (this.document !== undefined) {
       this.alert(
         'warning',
-        'Regularización Jurídica',
+        'Atención',
         'El número de Bien para este proceso ya tiene folio de escaneo.'
       );
       return;
@@ -937,12 +912,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   }
   seeImages() {
     if (this.good === undefined) {
-      this.alert(
-        'warning',
-        'Regularización Jurídica',
-        'No existe folio de escaneo',
-        ''
-      );
+      this.alert('warning', 'Atención', 'No existe folio de escaneo', '');
       return;
     }
     if (this.document !== undefined) {
@@ -962,7 +932,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           } else {
             this.alert(
               'warning',
-              'Regularización Jurídica',
+              'Atención',
               'No existe documentación para este folio',
               ''
             );
@@ -971,7 +941,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'Regularización Jurídica',
+        'Atención',
         'No tiene folio de escaneo para visualizar.',
         ''
       );

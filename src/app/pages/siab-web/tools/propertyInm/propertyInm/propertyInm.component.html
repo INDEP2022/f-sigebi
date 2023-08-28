@@ -1,0 +1,41 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Consulta de Muebles</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-8 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <app-columns-select
+          [(settings)]="settings"
+          [leftList]="true"></app-columns-select>
+        <div>
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="generateReport()">
+            Generar Reporte
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data"
+              (userRowSelect)="rowsSelected($event)">
+            </ng2-smart-table>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -28,7 +28,7 @@ import { ConvertiongoodService } from '../../../../../core/services/ms-convertio
 })
 export class ActaConvertionFormComponent extends BasePage implements OnInit {
   delegationForm: ModelForm<IDelegation>;
-  expedientNuember: string;
+  expedientNumber: string;
   conversion: any;
   edit: boolean = false;
   flagNewActa: boolean = false;
@@ -55,6 +55,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   refresh: boolean = false;
   save: boolean = true;
   insertParaphs: boolean = true;
+  idConversion: string;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -74,7 +75,8 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    //nombre de reporte RGERGENSOLICDIGIT
+    //nombre de reporte RGERGENSOLICDIGIT.
+    console.log(this.expedientNumber);
   }
 
   insertarParrafos(descTransferente: string) {
@@ -501,6 +503,22 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
         // this.alert('error', 'error', error.message);
       },
     });
+    let conversions = {
+      id: parseInt(this.idConversion),
+      cveActaConv: this.selectItem2,
+    };
+    console.log('ress conversions :', conversions);
+
+    this.convertiongoodService.update(this.idConversion, conversions).subscribe(
+      async res => {
+        if (res.statusCode == 200 && res.message[0] == 'ok') {
+          this.printMinutes = true;
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
   putMinuteConversion(payload: any) {
     // putMinuteConversion

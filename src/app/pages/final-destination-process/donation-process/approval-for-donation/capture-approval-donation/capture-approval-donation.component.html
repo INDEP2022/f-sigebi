@@ -25,10 +25,15 @@
           <div class="row mt-5">
             <div class="col-md-6">
               <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="regisForm.get('type')" label="Tipo">
+                <!-- <form-field [control]="regisForm.get('type')" label="Tipo">
                   <select class="form-control" formControlName="type">
                     <option>Tipo Evento</option>
                   </select>
+                </form-field> -->
+                <form-field [control]="regisForm.get('type')" label="Tipo">
+                  <ng-select formControlName="type" class="form-control pt-1">
+                    <ng-option value="COMPDON">COMPDON</ng-option>
+                  </ng-select>
                 </form-field>
               </div>
             </div>
@@ -68,7 +73,8 @@
                   <input
                     type="text"
                     class="form-control"
-                    formControlName="folio" />
+                    formControlName="folio"
+                    maxlength="4" />
                 </form-field>
               </div>
             </div>

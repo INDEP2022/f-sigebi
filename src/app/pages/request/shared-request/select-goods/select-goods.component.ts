@@ -10,6 +10,7 @@ import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { AppliGoodResDevViewService } from 'src/app/core/services/ms-commer-concepts/appli-good-res-dev-inv-view.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
@@ -99,7 +100,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
     //private goodService: GoodService,
     private genericService: GenericService,
-    //private goodProcessService: GoodProcessService,
+    private goodProcessService: GoodProcessService,
     private requestService: RequestService,
     private rejectedGoodService: RejectedGoodService,
     private affairService: AffairService,
@@ -298,7 +299,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       }
 
       if (info.statusKey) {
-        this.params.getValue()['filter.statusKey'] = `$eq:${info.statusKey}`;
+        this.params.getValue()['filter.stateKey'] = `$eq:${info.statusKey}`;
       }
       if (info.warehouseCode) {
         this.params.getValue()[
@@ -307,7 +308,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       }
       if (info.descriptionGood) {
         this.params.getValue()[
-          'filter.descriptionGood'
+          'filter.goodDescription'
         ] = `$eq:${info.descriptionGood}`;
       }
       if (info.stationId) {
@@ -322,7 +323,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         ] = `$eq:${info.authorityId}`;
       }
       if (info.actFolio) {
-        this.params.getValue()['filter.actFolio'] = `$eq:${info.actFolio}`;
+        this.params.getValue()['filter.folioAct'] = `$eq:${info.actFolio}`;
       }
       if (info.transferFile) {
         this.params.getValue()[
@@ -331,12 +332,14 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       }
       if (info.relevantTypeId) {
         this.params.getValue()[
-          'filter.relevantTypeId'
+          'filter.typeRelevantId'
         ] = `$eq:${info.relevantTypeId}`;
       }
 
-      this.goodResDevInvService.getAll(this.params.getValue()).subscribe({
+      console.log('this.params.getValue()', this.params.getValue());
+      this.goodProcessService.goodResDevInv(this.params.getValue()).subscribe({
         next: response => {
+          console.log('goods-res-dev', response);
           this.goodColumns.load(response.data);
           this.goodTotalItems = response.count;
           this.loading = false;
@@ -345,6 +348,14 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
           this.loading = false;
         },
       });
+      /*this.goodResDevInvService.getAll(this.params.getValue()).subscribe({
+        next: response => {
+          
+        },
+        error: error => {
+          this.loading = false;
+        },
+      }); */
     }
 
     /*const params = new BehaviorSubject<ListParams>(new ListParams());
