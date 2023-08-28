@@ -118,7 +118,6 @@ export class CreateActaComponent extends BasePage implements OnInit {
   }
 
   async getDate() {
-
     // const formattedDate = moment(date).format('DD-MM-YYYY');
 
     const fechaEscritura: any = new Date();
@@ -339,7 +338,11 @@ export class CreateActaComponent extends BasePage implements OnInit {
           this.handleSuccess();
         },
         error: error => {
-          this.alert('error', 'Ha Ocurrido un Error al Intentar Crear un Acta', '');
+          this.alert(
+            'error',
+            'Ha Ocurrido un Error al Intentar Crear un Acta',
+            ''
+          );
         },
       });
   }

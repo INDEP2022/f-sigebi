@@ -32,9 +32,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     this.settings.columns = COLUMNS_EXPORT_GOODS;
   }
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   settingsChange($event: any): void {
     this.settings = $event;
@@ -93,7 +91,6 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
         },
       });
     }
-
   }
 
   getall() {
@@ -115,8 +112,8 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'info',
         'Se recuperarán ' +
-        response.data.length +
-        ' registros ¿Deseas continuar? ',
+          response.data.length +
+          ' registros ¿Deseas continuar? ',
         '',
         'Si',
         'No'
