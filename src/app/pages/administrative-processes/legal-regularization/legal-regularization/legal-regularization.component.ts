@@ -14,7 +14,29 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 @Component({
   selector: 'app-legal-regularization',
   templateUrl: './legal-regularization.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class LegalRegularizationComponent extends BasePage implements OnInit {
   //Reactive Forms
@@ -30,7 +52,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
   viewFol: boolean = true;
   refresh: boolean = false;
   disableButton: boolean = true;
-
+  loadingBtn: boolean = false;
   get numberGood() {
     return this.form.get('numberGood');
   }
@@ -178,6 +200,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
       );
       return;
     }
+    this.loadingBtn = true;
     const res = await this.validDocument();
     console.log(res);
     if (res) {
@@ -193,6 +216,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
           this.postHistoryGood();
         },
         error: error => {
+          this.loadingBtn = false;
           this.alert('error', 'Ha ocurrido un error', error.error.message);
         },
       });
@@ -217,6 +241,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
           },
           error: err => {
             console.log(err);
+            this.loadingBtn = false;
             res(valid);
             this.alert(
               'warning',
@@ -248,10 +273,12 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
           `La Justificación de la Regularización Jurídica del Bien ${this.good.id} se actualizó`
         );
         //this.clean();
+        this.loadingBtn = false;
         this.loadGood();
       },
       error: error => {
         console.log(error);
+        this.loadingBtn = false;
         this.loading = false;
       },
     });

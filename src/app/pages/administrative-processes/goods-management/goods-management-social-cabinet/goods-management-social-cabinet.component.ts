@@ -163,7 +163,16 @@ export class GoodsManagementSocialCabinetComponent
               .subscribe({
                 next: res => {
                   if (res.data && res.data.length > 0) {
-                    res.data.forEach(x => {});
+                    let response2: number[] = [];
+                    res.data.forEach(item => {
+                      if (item.goodNumber) {
+                        response2.push(+item.goodNumber);
+                        this.saveInTemp(this.identifier, item.goodNumber + '');
+                      }
+                    });
+                    this.selectedGoodstxt = response2;
+                    this.getData();
+                    // this.pageLoading = false;
                   } else {
                     this.pageLoading = false;
                     this.disabledProcess = true;

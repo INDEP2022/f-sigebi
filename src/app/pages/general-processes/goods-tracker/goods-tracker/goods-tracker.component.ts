@@ -183,8 +183,16 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     // Filtro transferente emisora autoridad
     this.transferFilter();
 
-    const { warehouse, cordination, autorityState, goodState, gabinete } = form;
-    this.filters.gabinete = gabinete;
+    const {
+      warehouse,
+      cordination,
+      autorityState,
+      goodState,
+      gabinete,
+      inventario,
+    } = form;
+    this.filters.gabinete = gabinete ?? null;
+    this.filters.inventario = inventario?.length ? inventario : null;
     if (warehouse.length) {
       this.filters.global.gstSelecStore = 'S';
       this.filters.global.cstStoreNumber = warehouse;

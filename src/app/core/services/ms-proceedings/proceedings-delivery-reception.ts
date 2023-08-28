@@ -115,4 +115,9 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   getByFilter_(params?: _Params): Observable<IListResponse<any>> {
     return this.get<IListResponse<any>>(`${this.endpoint}`, params);
   }
+
+  getStatusDeliveryCveExpendienteAll(params?: ListParams) {
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}`;
+    return this.get(route, params);
+  }
 }

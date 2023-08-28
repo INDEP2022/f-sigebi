@@ -82,6 +82,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   title: string = 'PAGOS REFERENCIADOS';
   loading2: boolean = false;
   @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
+  titleCarga: string = 'PAGOS REFERENCIADOS CARGADOS DESDE EL CSV';
   constructor(
     private fb: FormBuilder,
     private paymentService: PaymentService,
@@ -546,6 +547,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         ).then(async question => {
           if (question.isConfirmed) {
             // PUP_PROC_ANT;
+            this.titleCarga = '';
             await this.onButtonClick();
           }
         });
@@ -557,6 +559,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         ).then(async question => {
           if (question.isConfirmed) {
             // PUP_PROC_NUEVO;
+            this.titleCarga = 'PAGOS REFERENCIADOS CARGADOS';
             const pupNew: any = await this.PUP_PROC_NUEVO(
               this.eventSelected.id
             );
@@ -610,7 +613,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       if (cargaPagosCSV.status == 200) {
         const data = cargaPagosCSV.data;
         if (data.COMER_PAGOREF.length == 0) {
-          this.alert('warning', 'No se Procesó Ningún Pago', 'Archivo Cargado');
+          this.alert('warning', 'No se procesó ningún pago', 'Archivo Cargado');
           this.form2.get('BLK_CTRL_CUANTOS').setValue(data.BLK_CTRL_CUANTOS);
           this.form2.get('BLK_CTRL_MONTO').setValue(data.BLK_CTRL_MONTO);
           this.dataCargada.load([]);
