@@ -13,6 +13,7 @@ import { IProgrammingDeliveryGood } from 'src/app/core/models/good-programming/p
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { CertificatesDeliveryService } from 'src/app/core/services/ms-delivery-constancy/certificates-delivery.service';
+import { CertificatesGoodsService } from 'src/app/core/services/ms-delivery-constancy/certificates-goods.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -79,6 +80,7 @@ export class DeliveriesConstancyFormComponent
 
   private programmingGoodService = inject(ProgrammingGoodService);
   private certifiDeliveryService = inject(CertificatesDeliveryService);
+  private certifiGoodsService = inject(CertificatesGoodsService);
   private auth = inject(AuthService);
 
   constructor(
@@ -166,6 +168,8 @@ export class DeliveriesConstancyFormComponent
       oicParticipates: [null],
       oicName: [null],
       oicCall: [null],
+      //
+      closing: [null],
     });
     this.typeReceptor = this.deliveryConstancyForm.get('receiverType').value;
   }
@@ -255,46 +259,75 @@ export class DeliveriesConstancyFormComponent
     });
   }
 
-  confirm() {
+  async confirm() {
     let idProgDelivery = this.progEntrega.id;
     let folio = this.progEntrega.folio;
     let userAuth = this.auth.decodeToken();
+
+    //GENERAR REPORTE
+    //this.generateReport()
+
+    //CREATE CERTIFICADO DE ENTREGA
+    let deliveryForm = this.deliveryConstancyForm.getRawValue();
+    deliveryForm.certificateId = 999943; //ingresar el dato
+    deliveryForm.deliveryScheduleId = idProgDelivery;
+    deliveryForm.folio = folio;
+    deliveryForm.userCreation = userAuth.username;
+    deliveryForm.userModification = userAuth.username;
+    deliveryForm.creationDate = moment(new Date()).format('YYYY-MM-DD');
+    deliveryForm.modificationDate = moment(new Date()).format('YYYY-MM-DD');
+    deliveryForm.oficioDate =
+      deliveryForm.oficioDate != null
+        ? moment(deliveryForm.oficioDate).format('YYYY-MM-DD')
+        : null;
+    deliveryForm.closing = null;
+    const created = await this.createCertificateDelivery(deliveryForm);
+
+    //ACTUALIZA PROGRAMACION ENTREGA BIENES
     this.goods.map(async (item: any, _i: number) => {
       const index = _i + 1;
       let total = Number(item[this.lsColumnaTot]);
       total = total + Number(item[this.lsColumna]);
 
-      const body: any = {};
-      body['id'] = item.id;
-      body['goodId'] = item.goodId;
-      body[this.lsColumnaTot] = total;
-      const updated = await this.updateProgrammingDeliveryGood(body); //Actualiza la tabla de programacion entrega bienes
-      //console.log(updated)
+      const bodyConstanceDelivery: any = {};
+      bodyConstanceDelivery['id'] = item.id;
+      bodyConstanceDelivery['goodId'] = item.goodId;
+      bodyConstanceDelivery[this.lsColumnaTot] = total;
+
+      console.log(bodyConstanceDelivery);
+      //Actualiza la tabla de programacion entrega bienes
+      const updated = await this.updateProgrammingDeliveryGood(
+        bodyConstanceDelivery
+      );
+
+      const bodyConstanceGood: any = {};
+      bodyConstanceGood.certificateId = 999943; //incresar el certificateId
+      bodyConstanceGood.transactionId = item.transactionId;
+      bodyConstanceGood.siabGoodNumber = item.siabGoodNumber;
+      bodyConstanceGood.goodId = item.goodId;
+      bodyConstanceGood.quantity = item[this.lsColumna];
+      bodyConstanceGood.goodsDeliveryScheduleId = item.id;
+      bodyConstanceGood.userCreation = userAuth.username;
+      bodyConstanceGood.userModification = userAuth.username;
+      bodyConstanceGood.creationDate = moment(new Date()).format('YYYY-MM-DD');
+      bodyConstanceGood.modificationDate = moment(new Date()).format(
+        'YYYY-MM-DD'
+      );
+
+      console.log(bodyConstanceGood);
+      //Actualiza la tabla de certificado bienes
+      const createConstGood = await this.createCertificateGood(
+        bodyConstanceGood
+      );
+
       if (index == this.goods.length) {
-        let deliveryForm = this.deliveryConstancyForm.getRawValue();
-        deliveryForm.certificateId = null; //ingresar el dato
-        deliveryForm.deliveryScheduleId = idProgDelivery;
-        deliveryForm.folio = folio;
-        deliveryForm.userCreation = userAuth.username;
-        deliveryForm.userModification = userAuth.username;
-        deliveryForm.creationDate = moment(new Date()).format('YYYY-MM-DD');
-        deliveryForm.modificationDate = moment(new Date()).format('YYYY-MM-DD');
-        deliveryForm.oficioDate =
-          deliveryForm.oficioDate != null
-            ? moment(deliveryForm.oficioDate).format('YYYY-MM-DD')
-            : null;
-        //console.log(deliveryForm)
-        const created = await this.createCertificateDelivery(deliveryForm); //Crea un registro de certificado de entrega
-
-        if (created) {
-          //generar reporte
-
-          this.event.emit(deliveryForm);
-          this.close();
-        }
+        this.event.emit(deliveryForm);
+        this.close();
       }
     });
   }
+
+  generateReport() {}
 
   close() {
     this.modalRef.hide();
@@ -331,6 +364,20 @@ export class DeliveriesConstancyFormComponent
             'error',
             'No se pudo crear la constancia de entrega'
           );
+        },
+      });
+    });
+  }
+
+  createCertificateGood(body: Object) {
+    return new Promise((resolve, reject) => {
+      this.certifiGoodsService.create(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(error);
+          this.onLoadToast('error', 'No se pudo crear la constancia de bienes');
         },
       });
     });
