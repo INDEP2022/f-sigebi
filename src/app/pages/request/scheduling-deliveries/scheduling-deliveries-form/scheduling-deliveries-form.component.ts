@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { addDays } from 'date-fns';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -19,7 +20,9 @@ import {
   NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { IprogrammingDelivery } from 'src/app/pages/siab-web/sami/receipt-generation-sami/receipt-table-goods/ireceipt';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { IGoodDelivery } from './good-delivery.interface';
 import {
   SCHEDULING_DELIVERIES_COLUMNS,
   SCHEDULING_DELIVERIES_SALES_COLUMNS,
@@ -48,9 +51,12 @@ export class SchedulingDeliveriesFormComponent
   filterDonation: boolean = true;
   filterSales: boolean = true;
   loadingGoodsDest: boolean = false;
+  saveLoading: boolean = false;
+  isReadOnly: boolean = true;
   loadingGoodsDevolution: boolean = false;
   loadingGoodsDonation: boolean = false;
   loadingGoodsSales: boolean = false;
+  disableStore: boolean = false;
   TypeEventOptions = new DefaultSelect(TypeEvent);
   warehouse = new DefaultSelect<IWarehouse>();
   transferences = new DefaultSelect<ITransferente>();
@@ -63,16 +69,22 @@ export class SchedulingDeliveriesFormComponent
   searchSalesForm: FormGroup = new FormGroup({});
   goodsToProgram: any[] = [];
   SearchSalesData: any[] = [];
-
   goodDesSelect: IGoodInvAvailableView[] = [];
-
+  disabledTypeEvent: boolean = false;
+  disabledTransferent: boolean = false;
+  disabledWarehouse: boolean = false;
+  disabledStartDate: boolean = false;
+  disabledEndDate = false;
+  disableTransfer: boolean = false;
   infoGoodDestruction = new LocalDataSource();
   infoGoodDevolution = new LocalDataSource();
   infoGoodDonation = new LocalDataSource();
   infoGoodSales = new LocalDataSource();
   regionalDelegationNum: number = 0;
-  idProgrammingDelivery: string = '';
+  idProgrammingDelivery: number = 0;
+  programmingDeliveryInfo: IprogrammingDelivery;
   typeUser: string = '';
+  nameUser: string = '';
   clientName: string = '';
   idTypeEvent: number = 0;
   organizationCode: string = '';
@@ -92,6 +104,7 @@ export class SchedulingDeliveriesFormComponent
   totalItemsSearchDevol: number = 0;
   totalItemsSearchDonation: number = 0;
   totalItemsSearchSales: number = 0;
+  programmingDelId: number = 0;
   settingsSearchSales = {
     ...this.settings,
     selectMode: 'multi',
@@ -150,14 +163,16 @@ export class SchedulingDeliveriesFormComponent
   getInfoUserLog() {
     this.programmingRequestService.getUserInfo().subscribe({
       next: async (response: any) => {
+        console.log('response', response);
         this.regionalDelegationNum = response.department;
         this.typeUser = response.employeetype;
+        this.nameUser = response.username;
         this.getWarehouseSelect(new ListParams());
         this.getClientSelect(new ListParams());
-
+        this.checkProgrammingDelivery();
         const getClientName = await this.getClientName();
 
-        if (getClientName) this.checkProgrammingDelivery();
+        //if (getClientName)
       },
       error: error => {},
     });
@@ -182,26 +197,124 @@ export class SchedulingDeliveriesFormComponent
   checkProgrammingDelivery() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.delRegId'] = this.regionalDelegationNum;
-    params.getValue()['filter.client'] = this.clientName;
+    params.getValue()['filter.cretationUser'] = this.nameUser;
+    //params.getValue()['filter.client'] = this.clientName;
+
     this.programmingRequestService
       .getProgrammingDelivery(params.getValue())
       .subscribe({
-        next: response => {
+        next: async response => {
           console.log('Programación entrega', response);
           this.idProgrammingDelivery = response.data[0].id;
+          this.programmingDeliveryInfo = response.data[0];
+
+          if (this.programmingDeliveryInfo?.startDate) {
+            this.programmingDeliveryInfo.startDate = moment(
+              this.programmingDeliveryInfo.startDate
+            ).format('DD/MM/YYYY HH:mm:ss');
+          }
+
+          if (this.programmingDeliveryInfo?.endDate) {
+            this.programmingDeliveryInfo.endDate = moment(
+              this.programmingDeliveryInfo.endDate
+            ).format('DD/MM/YYYY HH:mm:ss');
+          }
+          if (this.programmingDeliveryInfo.typeEvent)
+            this.disabledTypeEvent = true;
+
+          if (this.programmingDeliveryInfo.typeEvent == 5) {
+            this.idTypeEvent = this.programmingDeliveryInfo?.typeEvent;
+            this.programmingDeliveryInfo.typeEventInfo = 'DESTRUCCIÓN';
+          }
+
+          if (this.programmingDeliveryInfo.transferId) {
+            this.disableTransfer = true;
+            const transportableName = await this.transportableName(
+              this.programmingDeliveryInfo.transferId
+            );
+            this.programmingDeliveryInfo.transferName = transportableName;
+          }
+
+          if (this.programmingDeliveryInfo.store) {
+            this.disableStore = true;
+            const showStoreName = await this.getNameWarehouse(
+              this.programmingDeliveryInfo.store
+            );
+            this.programmingDeliveryInfo.storeName = showStoreName;
+          }
+
+          console.log('info', this.programmingDeliveryInfo);
+          this.schedulingDeliverieForm.patchValue(this.programmingDeliveryInfo);
         },
         error: error => {},
       });
+    /*const formData = {
+      id: 16901,
+      delRegId: this.regionalDelegationNum,
+      cretationUser: this.nameUser,
+      creationDate: new Date(),
+      modificationUser: this.nameUser,
+      modificationDate: new Date(),
+    };
+
+    this.programmingRequestService
+      .createProgrammingDelivery(formData)
+      .subscribe({
+        next: (data: any) => {
+          console.log('programación entrega creada', data);
+          this.programmingDelId = data.id;
+        },
+        error: error => {},
+      }); */
+  }
+
+  transportableName(transportable: number) {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.id'] = transportable;
+      this.transferentService.getAll(params.getValue()).subscribe({
+        next: response => {
+          console.log('response', response);
+          resolve(response.data[0].nameTransferent);
+        },
+        error: error => {},
+      });
+      /*this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
+        next: response => {
+          console.log('alk', response);
+          resolve(response.data[0].name);
+        },
+        error: error => {},
+      }); */
+    });
+  }
+
+  getNameWarehouse(warehouse: number) {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.organizationCode'] = warehouse;
+      this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
+        next: response => {
+          console.log('alk', response);
+          resolve(response.data[0].name);
+        },
+        error: error => {},
+      });
+    });
   }
 
   prepareForm() {
     const tomorrow = addDays(new Date(), 1);
     this.schedulingDeliverieForm = this.fb.group({
+      id: [null],
       typeEvent: [null],
+      typeEventInfo: [null],
       startDate: [null, [Validators.required]],
       store: [null],
+      storeName: [null],
       endDate: [null, [Validators.required]],
       transferId: [null],
+      transferName: [null],
       client: [null],
       email: [
         null,
@@ -375,7 +488,7 @@ export class SchedulingDeliveriesFormComponent
     params['filter.orderBy'] = `name:ASC`;
     params['filter.name'] = `$ilike:${params.text}`;
     params['filter.regionalDelegation'] = this.regionalDelegationNum;
-    params['filter.managedBy'] = 'Tercero';
+    //params['filter.managedBy'] = 'Tercero';
     //params['filter.managedBy'] = 'SAE';
     this.goodsQueryService.getCatStoresView(params).subscribe({
       next: data => {
@@ -447,8 +560,88 @@ export class SchedulingDeliveriesFormComponent
   }
 
   saveProgDelivery() {
-    this.schedulingDeliverieForm.get('typeUser').setValue(this.typeUser);
-    console.log('schedulingDeliverieForm', this.schedulingDeliverieForm.value);
+    let typeEvent: any;
+    let store: any;
+    let transferent: any;
+    if (this.programmingDeliveryInfo?.typeEvent) {
+      typeEvent = this.programmingDeliveryInfo?.typeEvent;
+    } else {
+      typeEvent = this.schedulingDeliverieForm.get('typeEvent');
+    }
+
+    if (this.programmingDeliveryInfo?.store) {
+      store = this.programmingDeliveryInfo?.store;
+    } else {
+      store = this.schedulingDeliverieForm.get('store');
+    }
+
+    if (this.programmingDeliveryInfo?.transferId) {
+      transferent = this.programmingDeliveryInfo?.transferId;
+    } else {
+      transferent = this.schedulingDeliverieForm.get('transferId');
+    }
+
+    this.schedulingDeliverieForm.get('id').setValue(this.idProgrammingDelivery);
+    console.log(
+      'startDate',
+      new Date(this.schedulingDeliverieForm.get('startDate').value)
+    );
+    console.log(
+      'endDate',
+      new Date(this.schedulingDeliverieForm.get('endDate').value)
+    );
+    const infoSave: IprogrammingDelivery = {
+      id: this.schedulingDeliverieForm.get('id').value,
+      typeEvent: typeEvent,
+      startDate: this.schedulingDeliverieForm.get('startDate').value,
+      store: store,
+      endDate: this.schedulingDeliverieForm.get('endDate').value,
+      transferId: transferent,
+      client: this.schedulingDeliverieForm.get('client').value,
+      email: this.schedulingDeliverieForm.get('email').value,
+      officeDestructionNumber: this.schedulingDeliverieForm.get(
+        'officeDestructionNumber'
+      ).value,
+      company: this.schedulingDeliverieForm.get('company').value,
+      addressee: this.schedulingDeliverieForm.get('addressee').value,
+      placeDestruction:
+        this.schedulingDeliverieForm.get('placeDestruction').value,
+      chargeAddressee:
+        this.schedulingDeliverieForm.get('chargeAddressee').value,
+      locationDestruction: this.schedulingDeliverieForm.get(
+        'locationDestruction'
+      ).value,
+      addressAddressee:
+        this.schedulingDeliverieForm.get('addressAddressee').value,
+      taxpayerName: this.schedulingDeliverieForm.get('taxpayerName').value,
+      metodDestruction:
+        this.schedulingDeliverieForm.get('metodDestruction').value,
+      legalRepresentativeName: this.schedulingDeliverieForm.get(
+        'legalRepresentativeName'
+      ).value,
+      term: this.schedulingDeliverieForm.get('term').value,
+      status: 'PROG_ENTREGA',
+      statusAut: 'SIN_BIENES',
+      statusInstance: 'SIN_INSTANCIA',
+      statusInstanceNumber: 'SIN_INSTANCIA',
+      typeUser: this.typeUser,
+    };
+
+    console.log('infoSave', infoSave);
+    this.programmingRequestService
+      .updateProgrammingDelivery(this.idProgrammingDelivery, infoSave)
+      .subscribe({
+        next: response => {
+          console.log('prog Del', response);
+          this.disabledTypeEvent = true;
+          this.disabledTransferent = true;
+          this.disabledWarehouse = true;
+          this.checkProgrammingDelivery();
+        },
+        error: error => {
+          console.log('Error ap actualizar', error);
+        },
+      });
   }
 
   startDateSelect(date: any) {
@@ -456,6 +649,8 @@ export class SchedulingDeliveriesFormComponent
   }
 
   endDateSelect(_endDate: any) {
+    console.log('this.startDate1', this.startDate);
+    console.log('this.startDate2', this.programmingDeliveryInfo.startDate);
     if (this.startDate < _endDate) {
       this.schedulingDeliverieForm
         .get('endDate')
@@ -1778,7 +1973,55 @@ export class SchedulingDeliveriesFormComponent
   addGoodsProgrammingDelivery() {
     if (this.goodDesSelect.length > 0) {
       this.goodDesSelect.map(good => {
-        console.log('good', good);
+        const goodForm: IGoodDelivery = {
+          programmingDeliveryId: this.programmingDelId,
+          managementNum: good?.managementNum,
+          client: good?.client,
+          delRegSol: good?.delRegSol,
+          descriptionGood: good?.descriptionGood,
+          quantity: good?.quantity,
+          dictumCompensation: good?.dictumCompensation,
+          commercialEvent: good?.commercialEvent,
+          bill: good?.bill,
+          item: good?.item,
+          commercialLot: good?.commercialLot,
+          inventoryNum: good?.inventoryNum,
+          satResolution: good?.satResolution,
+          uomCode: good?.uomCode,
+          type: good?.type,
+          transactionId: good?.transactionId,
+          bienSiabNum: good?.bienSiabNum,
+          origin: good?.origin,
+          commercialEventDate: good?.commercialEventDate,
+          organizationId: good?.organizationId,
+          relevant_type: good?.relevant_type,
+          locatorId: good?.locatorId,
+          inventoryItemId: good?.inventoryItemId,
+        };
+
+        console.log(
+          'Guardar en programación entrega bienes con id de reservación'
+        );
+
+        this.programmingRequestService
+          .createGoodProgrammingDevilery(goodForm)
+          .subscribe({
+            next: response => {
+              console.log('response', response);
+            },
+            error: error => {
+              console.log('error', error);
+            },
+          });
+        console.log('datos a mandar a reservar en inventario');
+        console.log('inventoryNum', good.inventoryNum);
+        console.log('uomCode', good?.uomCode);
+        console.log('organizationId', good?.organizationId);
+        console.log('inventoryItemId', good?.inventoryItemId);
+        console.log('origen referencia', 'ProgramacionEntrega/');
+        console.log('cantidadReserva', good?.quantity);
+        console.log('subInventoryCode', good?.eventType);
+        console.log('locatorID', good?.locatorId);
       });
     } else {
       this.alert(

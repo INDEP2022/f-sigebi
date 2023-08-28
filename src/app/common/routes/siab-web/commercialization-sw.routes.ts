@@ -66,7 +66,6 @@ export const COMMERCIALIZATION_SW_ROUTES = [
         label: 'Oficios externos',
         link: '/pages/siab-web/tools/outside-trades',
       },
-
       {
         label: 'Oficios internos',
         link: '/pages/siab-web/tools/inside-trades',
@@ -74,6 +73,10 @@ export const COMMERCIALIZATION_SW_ROUTES = [
       {
         label: 'Carga de pagos',
         link: '/pages/siab-web/commercialization/payload',
+      },
+      {
+        label: 'Automobiles',
+        link: '/pages/siab-web/commercialization/automobiles',
       },
     ],
   },
