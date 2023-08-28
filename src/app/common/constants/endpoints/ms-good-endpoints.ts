@@ -75,6 +75,7 @@ export enum GoodProcessPoints {
   ProcedureStatusGood = 'application/procedure-status-good',
   UpdateProcedingNumber = 'application/updateProceedingsNumber',
   UpdateMassiveStore = 'application/updateMassiveStore',
+  GetGoodsResDevInv = 'application/goods-res-dev-inv-view',
 }
 
 export enum GoodFinderEndpoint {

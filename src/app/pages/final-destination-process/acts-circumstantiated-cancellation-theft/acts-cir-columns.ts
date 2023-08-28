@@ -79,7 +79,6 @@ export const ACTAS = {
     title: 'Id',
     type: 'number',
     sort: false,
-
   },
   keysProceedings: {
     title: 'Clave Acta',

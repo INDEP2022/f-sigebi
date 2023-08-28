@@ -138,7 +138,7 @@ export class ComerEventosService extends HttpService {
   }
 
   /* SUMATORIA DE TOTALES */
-  getAmountsMtodisp(body: {clientId: number, eventId: number}){
-    return this.post('application/get-amounts', body)
+  getAmountsMtodisp(body: { clientId: number; eventId: number }) {
+    return this.post('application/get-amounts', body);
   }
 }

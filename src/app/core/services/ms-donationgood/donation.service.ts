@@ -9,11 +9,12 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDonationGood,
   IFilterDonation,
+  IGoodDonation,
 } from '../../models/ms-donation/donation.model';
 
 const api: string = DonationEndPoint.donation;
 const donationEvent = DonationEndPoint.eventComDonation;
-
+const endpoint: string = DonationEndPoint.eventComDonation;
 @Injectable({
   providedIn: 'root',
 })
@@ -23,6 +24,7 @@ export class DonationService
 {
   constructor(private donationRepository: DonationRepository<IDonationGood>) {
     super();
+
     this.microservice = 'donationgood';
   }
 
@@ -76,5 +78,9 @@ export class DonationService
 
   deleteAdmonDonation(id: number) {
     return this.delete(`admon-donation/${id}`);
+  }
+  createD(goodDon: IGoodDonation) {
+    const route = `${endpoint}`;
+    return this.post(route, goodDon);
   }
 }
