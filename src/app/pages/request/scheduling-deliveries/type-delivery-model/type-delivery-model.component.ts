@@ -28,6 +28,7 @@ export class TypeDeliveryModelComponent extends BasePage implements OnInit {
 
   confirm() {
     this.event.emit(this.typeForm.getRawValue());
+    this.close();
   }
 
   close() {

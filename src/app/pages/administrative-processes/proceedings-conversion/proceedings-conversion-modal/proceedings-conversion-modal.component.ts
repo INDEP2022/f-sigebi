@@ -79,8 +79,8 @@ export class ProceedingsConversionModalComponent
               id: () => (searchFilter = SearchFilter.EQ),
               fileNumber: () => (searchFilter = SearchFilter.EQ),
               goodFatherNumber: () => (searchFilter = SearchFilter.EQ),
-              witnessOic: () => (searchFilter = SearchFilter.EQ),
-              cveActaConv: () => (searchFilter = SearchFilter.EQ),
+              witnessOic: () => (searchFilter = SearchFilter.ILIKE),
+              cveActaConv: () => (searchFilter = SearchFilter.ILIKE),
             };
 
             search[filter.field]();
