@@ -210,7 +210,7 @@ export class ExpenseConceptsListComponent
                   });
                   this.alert(
                     'success',
-                    'Copiado de Parametros',
+                    'Copiado de Parámetros',
                     'Realizado Correctamente'
                   );
                   // this.filesToDelete = [];
@@ -226,15 +226,16 @@ export class ExpenseConceptsListComponent
                 } else {
                   this.alert(
                     'error',
-                    'ERROR',
+                    'Copiado de Parámetros',
                     'No se pudieron copiar los parámetros'
                   );
                 }
               },
               error: err => {
+                console.log(err);
                 this.alert(
                   'error',
-                  'ERROR',
+                  'Copiado de Parámetros',
                   'No se pudieron copiar los parámetros'
                 );
               },
