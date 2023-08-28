@@ -188,12 +188,9 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   public callReport() {
     const forfeitureKey = this.form.get('forfeitureKey').value;
 
-    if (!forfeitureKey) {
-      this.onLoadToast(
-        'warning',
-        'Es necesario contar con la Clave del Decomiso',
-        ''
-      );
+    if (forfeitureKey === null) {
+      console.log(forfeitureKey);
+      this.alert('warning', 'Es necesario contar con la Cve. Decomiso', '');
     } else {
       const params = {
         P_Clave_Decomiso: forfeitureKey,
@@ -260,13 +257,13 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       const fileExtension = selectedFile.name.split('.').pop()?.toLowerCase();
       if (fileExtension !== 'csv') {
         this.alert('warning', 'El Archivo debe Tener la Extensión CSV.', '');
-        return; // Sale de la función si la extensión no es correcta
+        return;
       }
-      // Add your validation logic here to check the filename
-      const expectedFilename = 'FRELDECOMISO.csv'; // Change this to the expected filename
+
+      const expectedFilename = 'FRELDECOMISO.csv';
       if (selectedFile.name !== expectedFilename) {
         this.alert('warning', 'El Nombre del Archivo no es Correcto', '');
-        return; // Exit the function early if filename is incorrect
+        return;
       }
 
       // Limpia cualquier evento onload anterior
@@ -327,7 +324,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
 
   async aprove() {
     if (this.dataExcel.length === 0) {
-      this.alert('info', 'Se debe importar el archivo excel', '');
+      this.alert('warning', 'Se debe importar el archivo excel', '');
       return;
     }
     const user = this.authService.decodeToken();
@@ -386,7 +383,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       this.file.get('processed').patchValue(insertResp['sucess']);
       this.file.get('wrong').patchValue(insertResp['error']);
       if (this.file.get('processed').value > 0) {
-        this.alert('success', 'Registros Procesados con Éxito', '');
+        this.alert('success', 'Registros Aprobados', '');
       }
     } catch (err) {
       // Verificar si err es de tipo HttpErrorResponse
@@ -516,7 +513,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
             err.status === 400 ||
             err.message.includes('No se encontrarón registros')
           ) {
-            this.alert('error', 'No se encontraron registros', '');
+            this.alert('warning', 'No se encontraron registros', '');
             return;
           }
         },
