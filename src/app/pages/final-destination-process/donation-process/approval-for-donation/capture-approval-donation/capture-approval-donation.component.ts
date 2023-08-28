@@ -37,6 +37,7 @@ export class CaptureApprovalDonationComponent
 {
   regisForm: FormGroup;
   siabForm: FormGroup;
+  foolio: number;
   bsValueToYear: Date = new Date();
   minModeToYear: BsDatepickerViewMode = 'year'; // change for month:year
   bsConfigToYear: Partial<BsDatepickerConfig>;
@@ -116,17 +117,32 @@ export class CaptureApprovalDonationComponent
       type: [null, []],
       area: [null, [Validators.pattern(STRING_PATTERN)]],
       year: [this.bsValueToYear, []],
-      folio: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      folio: [
+        null,
+        [Validators.pattern(KEYGENERATION_PATTERN), Validators.maxLength(4)],
+      ],
       captureDate: [null, []],
       keyEvent: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
     });
+    this.regisForm.get('area').setValue(this.paramsScreen.area);
   }
+  // lv_TRAN      Varchar2(4);
+  // lv_TIPO      Varchar2(4);
+  // lv_AREA      Varchar2(10);
+  // lv_CONS      Varchar2(10);
+  // lv_TIPO_ACTA INDICADORES_PARAMETRO.TIPO_ACTA% type;
+  // lv_FOLIO     Number;
 
   createDon(donationGood: IGoodDonation) {
     this.loading = true;
-    // let params = {
-
-    // }
+    const folio = this.regisForm.value.folio;
+    const acta = this.regisForm.value.type;
+    let year = this.regisForm.value.year;
+    const area = this.regisForm.value.area;
+    let folio_ = folio.toString().padStart(4, '0');
+    this.foolio = folio_;
+    const cveActa = `${acta}/${area}/${year}/${folio_}/${this.type}`;
+    console.log('cveActa -->', cveActa);
     this.donationService.createD(donationGood).subscribe({
       next: resp => {
         console.log('guardado');

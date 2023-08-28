@@ -162,6 +162,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     const user: any = this.authService.decodeToken() as any;
     this.user = user.username;
     this.delegation = this.authService.decodeToken().delegacionreg;
+    this.area = this.authService.decodeToken().department;
     // this.form.get('noDelegation1').setValue(this.delegation);
     // this.form.get('elaborated').setValue(this.user);
     console.log(this.user, user);
@@ -316,6 +317,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
           origin: this.origin,
           recordId: this.params1.getValue()['filter.recordId'],
           cveEvent: this.cveEvent,
+          area: this.area,
         },
       }
     );
