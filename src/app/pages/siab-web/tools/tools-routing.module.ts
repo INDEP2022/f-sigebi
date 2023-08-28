@@ -23,6 +23,12 @@ const routes: Routes = [
     data: { title: 'Oficios externos', screen: 'Oficios_Externos.aspx' },
   },
   {
+    path: 'inside-trades',
+    loadChildren: async () =>
+      (await import('./inside-trades/inside-trades.module')).InsideTradesModule,
+    data: { title: 'Oficios internos', screen: 'Oficios_Internos.aspx' },
+  },
+  {
     path: 'query-interconnection',
     loadChildren: async () =>
       (await import('./query-interconnection/query-interconnection.module'))
