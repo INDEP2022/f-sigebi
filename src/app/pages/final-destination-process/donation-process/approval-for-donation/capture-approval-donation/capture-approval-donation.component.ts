@@ -141,6 +141,16 @@ export class CaptureApprovalDonationComponent
     const area = this.regisForm.value.area;
     let folio_ = folio.toString().padStart(4, '0');
     this.foolio = folio_;
+
+    // this.eventComDonacion.cveActa =
+    //   this.eventComDonacion.tipo +
+    //   '/' +
+    //   this.global.regi +
+    //   '/' +
+    //   this.eventComDonacion.anio +
+    //   '/' +
+    //   this.global.cons;
+
     const cveActa = `${acta}/${area}/${year}/${folio_}/${this.type}`;
     console.log('cveActa -->', cveActa);
     this.donationService.createD(donationGood).subscribe({
