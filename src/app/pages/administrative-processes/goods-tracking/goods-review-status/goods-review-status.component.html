@@ -4,15 +4,13 @@
     <div class="justify-content-end">
       <h6 style="margin-top: 8px; margin-bottom: 0px" class="title">
         RESPONSABLE:
-        <strong
-          style="
+        <strong style="
             font-weight: bold;
             font-size: 25px;
             margin-left: 10px;
             margin-right: 10px;
           ">
-          {{ responsable2 }}</strong
-        >
+          {{ responsable2 }}</strong>
       </h6>
     </div>
   </div>
@@ -26,104 +24,70 @@
       </div> -->
       <div class="row mb-3 mt-3">
         <!--Package type-->
-        <div
-          class="col-lg-5 col-md-12 col-sm-12 col-12 align-self-center mb-3 mt-3">
+        <div class="col-lg-5 col-md-12 col-sm-12 col-12 align-self-center mb-3 mt-3">
           <div class="row justify-content-between">
             <div class="col-lg-4 col-md-4 col-sm-4 col-6">
               <form-radio label="Muebles">
-                <input
-                  [disabled]="
+                <input [disabled]="
                     !responsable || loadingBtn || loading || loadingBtn2
-                  "
-                  type="radio"
-                  [(ngModel)]="selectedGender"
-                  (change)="handleGenderChange()"
-                  formControlName="option"
+                  " type="radio" [(ngModel)]="selectedGender" (change)="handleGenderChange()" formControlName="option"
                   value="movables" />
               </form-radio>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-6">
               <form-radio label="Inmuebles">
-                <input
-                  [disabled]="
+                <input [disabled]="
                     !responsable || loadingBtn || loading || loadingBtn2
-                  "
-                  [(ngModel)]="selectedGender"
-                  (change)="handleGenderChange()"
-                  type="radio"
-                  formControlName="option"
+                  " [(ngModel)]="selectedGender" (change)="handleGenderChange()" type="radio" formControlName="option"
                   value="immovables" />
               </form-radio>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-6">
               <form-radio label="Todos">
-                <input
-                  [disabled]="
+                <input [disabled]="
                     !responsable || loadingBtn || loading || loadingBtn2
-                  "
-                  [(ngModel)]="selectedGender"
-                  (change)="handleGenderChange()"
-                  type="radio"
-                  formControlName="option"
+                  " [(ngModel)]="selectedGender" (change)="handleGenderChange()" type="radio" formControlName="option"
                   value="all" />
               </form-radio>
             </div>
           </div>
         </div>
         <!--Actions-->
-        <div
-          class="col-lg-7 col-md-12 col-sm-12 col-12 align-self-center mb-3 mt-3">
+        <div class="col-lg-7 col-md-12 col-sm-12 col-12 align-self-center mb-3 mt-3">
           <div class="col-lg-3 col-md-2 col-sm-4 col-12">
-            <button
-              [ngClass]="{ loading: loadingBtn2 }"
-              [disabled]="
+            <button [ngClass]="{ loading: loadingBtn2 }" [disabled]="
                 !responsable ||
                 loadingBtn ||
                 loading ||
                 loadingBtn2 ||
                 loadingBtn3
-              "
-              (click)="attention()"
-              class="btn btn-primary btn-sm active w-100">
+              " (click)="attention()" class="btn btn-primary btn-sm active w-100">
               Atender
             </button>
           </div>
           <div class="col-lg-5 col-md-5 col-sm-4 col-12">
-            <button
-              [ngClass]="{ loading: loadingBtn }"
-              [disabled]="
+            <button [ngClass]="{ loading: loadingBtn }" [disabled]="
                 !responsable ||
                 loadingBtn ||
                 loading ||
                 loadingBtn2 ||
                 loadingBtn3
-              "
-              class="btn btn-success btn-sm w-100 active"
-              type="button"
-              (click)="file.click()">
+              " class="btn btn-success btn-sm w-100 active" type="button" (click)="file.click()">
               Atención Masiva
               <i *ngIf="!loadingBtn" class="bx bx-upload float-icon"></i>
             </button>
-            <input
-              type="file"
-              name="file"
-              #file
-              class="d-none"
+            <input type="file" name="file" #file class="d-none"
               accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
               (change)="onFileChange($event)" />
           </div>
           <div class="col-lg-4 col-md-5 col-sm-4 col-12">
-            <button
-              [ngClass]="{ loading: loadingBtn3 }"
-              [disabled]="
+            <button [ngClass]="{ loading: loadingBtn3 }" [disabled]="
                 !responsable ||
                 loadingBtn ||
                 loading ||
                 loadingBtn2 ||
                 loadingBtn3
-              "
-              (click)="exportarExcel()"
-              class="btn btn-success btn-sm w-100 active">
+              " (click)="exportarExcel()" class="btn btn-success btn-sm w-100 active">
               Exportar CSV <i class="bx bx-download float-icon"></i>
             </button>
           </div>
@@ -135,10 +99,7 @@
       <h5 class="title">Bienes Estatus REV</h5>
       <div class="row justify-content-end mr-1">
         <div class="col-12">
-          <app-columns-select
-            [defaultColumns]="7"
-            (settingsChange)="settingsChange($event)"
-            [settings]="settings"
+          <app-columns-select [defaultColumns]="7" (settingsChange)="settingsChange($event)" [settings]="settings"
             class="row justify-content-end"></app-columns-select>
         </div>
       </div>
@@ -147,8 +108,7 @@
       <div class="col-md-6">
         <div class="row">
           <div class="col-12">
-            <i class="fa fa-square" style="color: #686868"></i
-            ><span style="font-weight: 500">
+            <i class="fa fa-square" style="color: #686868"></i><span style="font-weight: 500">
               Doble clic en la columna del motivo para consultar la pantalla
               &nbsp;&nbsp;
             </span>
@@ -159,15 +119,9 @@
     <div class="row pt-4">
       <form-loader *ngIf="loading"></form-loader>
       <div class="col-md-12">
-        <ng-scrollbar
-          [track]="'all'"
-          [ngStyle]="{ height: loading ? '0px' : '500px' }">
-          <ng2-smart-table
-            [attr.class]="'table-bordered table-responsive'"
-            class="table-responsive"
-            [settings]="settings"
-            [source]="data"
-            (userRowSelect)="selectRow($event)">
+        <ng-scrollbar [track]="'all'" [ngStyle]="{ height: loading ? '0px' : '500px' }">
+          <ng2-smart-table [attr.class]="'table-bordered table-responsive'" class="table-responsive"
+            [settings]="settings" [source]="data" (userRowSelect)="selectRow($event)">
           </ng2-smart-table>
         </ng-scrollbar>
       </div>
@@ -191,9 +145,7 @@
     </form>
   </div>
 </app-card>
-<app-card
-  *ngIf="responsable == 'REGIONALES' && delegationNumber == 0"
-  [header]="true">
+<app-card *ngIf="responsable == 'REGIONALES' && delegationNumber == 0" [header]="true">
   <div class="ch-content" header>
     <h5 class="title">BÚSQUEDA POR BIEN</h5>
   </div>
@@ -209,26 +161,17 @@
       <div class="col-md-3 mt-2">
         <div>
           <form-field [control]="form2.get('responsable')" label="Responsable">
-            <input
-              readonly
-              type="text"
-              class="form-control"
-              formControlName="responsable"
-              readonly />
+            <input readonly type="text" class="form-control" formControlName="responsable" readonly />
           </form-field>
         </div>
       </div>
       <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
-        <button
-          (click)="search()"
-          class="btn btn-sm btn-block btn-primary active">
+        <button (click)="search()" class="btn btn-sm btn-block btn-primary active">
           Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
       </div>
       <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
-        <button
-          (click)="clear()"
-          class="btn btn-sm btn-block btn-danger active">
+        <button (click)="clear()" class="btn btn-sm btn-block btn-danger active">
           Limpiar <i class="fas fa-eraser"> </i>
         </button>
       </div>
