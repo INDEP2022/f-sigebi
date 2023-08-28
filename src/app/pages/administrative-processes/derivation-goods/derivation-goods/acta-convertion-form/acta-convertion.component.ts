@@ -28,7 +28,7 @@ import { ConvertiongoodService } from '../../../../../core/services/ms-convertio
 })
 export class ActaConvertionFormComponent extends BasePage implements OnInit {
   delegationForm: ModelForm<IDelegation>;
-  expedientNuember: string;
+  expedientNumber: string;
   conversion: any;
   edit: boolean = false;
   flagNewActa: boolean = false;
@@ -75,7 +75,8 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    //nombre de reporte RGERGENSOLICDIGIT
+    //nombre de reporte RGERGENSOLICDIGIT.
+    console.log(this.expedientNumber);
   }
 
   insertarParrafos(descTransferente: string) {

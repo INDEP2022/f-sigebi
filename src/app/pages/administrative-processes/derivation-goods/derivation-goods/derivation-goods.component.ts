@@ -986,14 +986,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         localStorage.setItem('conversion', JSON.stringify(this.conversionData));
       }
       let config = { ...MODAL_CONFIG, class: 'modal-xl modal-dialog-centered' };
-      console.log(this.tipo.value);
+      console.log(this.numberDossier.value);
       config.initialState = {
         proceeding: {},
         numberFoli: this.numberFoli,
         actConvertion: this.actConvertion.value,
         tipoConv: this.tipo.value,
         pGoodFatherNumber: this.numberGoodFather.value,
-        expedientNuember: this.numberDossier.value,
+        expedientNumber: this.numberDossier.value,
         idConversion: this.form.get('idConversion').value,
         callback: (receipt: any, keyDoc: string) => {
           if (receipt && keyDoc) {

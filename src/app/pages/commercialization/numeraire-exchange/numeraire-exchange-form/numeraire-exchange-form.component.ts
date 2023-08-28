@@ -625,9 +625,10 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     });
     if (messages.length > 0) {
       this.alert(
-        'error',
-        'Error',
-        `El Archivo no Contiene las Columnas ${messages.join(', ')}`
+        'warning',
+        'El Archivo es inválido',
+        // `El Archivo no Contiene las Columnas ${messages.join(', ')}`
+        ''
       );
       return false;
     }
