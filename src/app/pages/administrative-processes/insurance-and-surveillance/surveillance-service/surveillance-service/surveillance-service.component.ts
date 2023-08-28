@@ -34,6 +34,26 @@ import { SURVEILLANCE_SERVICE_COLUMNS } from './surveillance-service-columns';
         height: 90%;
         width: 51%;
       }
+
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
     `,
   ],
 })
@@ -56,6 +76,10 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
   disabledProcess: boolean = false;
   @ViewChild('file') fileInput: ElementRef;
   jsonToCsv: any[] = [];
+  loadingBtn: boolean = false;
+  loadingBtn1: boolean = false;
+  loadingBtn2: boolean = false;
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   constructor(
     private fb: FormBuilder,
     private delegationService: DelegationService,
@@ -329,6 +353,9 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
         this.form.get('total').setValue(response.count);
         this.loading = false;
+        setTimeout(() => {
+          this.performScroll()
+        }, 100);
         // resolve(response.data);
       },
       error: error => {
@@ -337,6 +364,9 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         this.totalItems = 0;
         this.form.get('total').setValue('0');
         this.loading = false;
+        setTimeout(() => {
+          this.performScroll()
+        }, 100);
         // resolve(null);
       },
     });
@@ -501,7 +531,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => {},
+                callback: (data: any) => { },
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -516,7 +546,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => {},
+                callback: (data: any) => { },
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -539,7 +569,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     try {
       // const excelImport = this.excelService.getData<any>(binaryExcel);
       // console.log('excelImport', excelImport);
-
+      this.loadingBtn = true;
       const deleteVIG_SUPERVISION_TMP_ = await this.deleteVIG_SUPERVISION_TMP(
         this.objectDelete
       );
@@ -562,9 +592,11 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         await this.createVIG_SUPERVISION_TMP(formData);
 
       if (createVIG_SUPERVISION_TMP_) {
+        this.loadingBtn = false;
         this.alert('success', 'Archivo Cargado Correctamente', '');
         this.clearInput();
       } else {
+        this.loadingBtn = false;
         this.alert(
           'error',
           'Ha Ocurrido un Error al Intentar Crear los Registros',
@@ -573,6 +605,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         this.clearInput();
       }
     } catch (error) {
+      this.loadingBtn = false;
       this.alert('error', 'Ocurrió un Error al Leer el Archivo', 'Error');
     }
   }
@@ -646,13 +679,14 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       };
 
       console.log('objjj', obj);
+
       const getPaValidPeriod_: any = await this.getPaValidaPeriodo(obj);
 
       if (getPaValidPeriod_ === 'error mes') {
         this.alert(
           'warning',
           'Ya Existe Relación con este Período',
-          'relation "lv_mes" already exists'
+          ''
         );
         return;
       }
@@ -883,10 +917,12 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         ).then(async question => {
           if (question.isConfirmed) {
             console.log('SI');
+
             let obj = {
               delegationNo: this.delegationDefault.delegationNumber,
               lvCvePeriod: LV_CVE_PERIODO,
             };
+            this.loadingBtn1 = true;
             const getDataVIG_SUPERVISION_TMP_: any =
               await this.getDataVIG_SUPERVISION_TMP(obj);
             LV_TOTREGISTRO = getDataVIG_SUPERVISION_TMP_;
@@ -918,6 +954,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
                   };
                   await this.LV_WHERE(objWhere);
                 } else {
+                  this.loadingBtn1 = false;
                   this.alert(
                     'warning',
                     'No Existen Carga de Bienes en este Período para Generar Aleatorios',
@@ -926,6 +963,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
                   return;
                 }
               } else {
+                this.loadingBtn1 = false;
                 this.alert(
                   'error',
                   'Ha Ocurrido un Error al Intentar Generar Aleatorios',
@@ -933,6 +971,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
                 );
               }
             } else {
+              this.loadingBtn1 = false;
               this.alert('warning', 'No Hay Bienes Cargados', '');
             }
           }
@@ -1025,11 +1064,13 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         this.getVigSupervisionDet_();
 
         console.log('RESPUESTA', response);
+        this.loadingBtn1 = false;
         this.alert('success', 'Se Generaron Los Aleatorios Correctamente', '');
 
         // resolve(response.data[0]);
       },
       error: error => {
+        this.loadingBtn1 = false;
         this.loading = false;
         // resolve(null
       },
@@ -1055,12 +1096,14 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
     const cveProcess = this.form.get('process').value;
     if (cveProcess == null) {
+      this.form.get('process').markAsTouched();
       this.alert('warning', 'El Tipo de Proceso es un Valor Requerido', '');
       return;
     }
 
     const period = this.form.get('period').value;
     if (period == null) {
+      this.form.get('period').markAsTouched();
       this.alert('warning', 'El Período es un Valor Requerido', '');
       return;
     }
@@ -1082,6 +1125,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     ] = `$eq:${this.delegationMae.delegationType}`;
     delete params.limit;
     delete params.page;
+    this.loadingBtn2 = true;
     this.survillanceService.getVigSupervisionAllExcel(params).subscribe({
       next: async (response: any) => {
         // Decodifica el archivo Base64 a un array de bytes
@@ -1091,7 +1135,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
         console.log('RESSS', response);
       },
-      error(err) {
+      error: err => {
+        this.loadingBtn2 = false;
         console.log('Errorr', err);
       },
     });
@@ -1138,6 +1183,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     link.download = 'Servicio_De_Vigilancia.csv';
     link.click();
     link.remove();
+    this.loadingBtn2 = false;
     this.alert('success', 'Archivo Descargado Correctamente', '');
   }
 
@@ -1211,5 +1257,14 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     console.log('DATEEEE', data);
     const formattedDate = moment(data).format('YYYY-MM-DD');
     return formattedDate;
+  }
+
+  performScroll() {
+    if (this.scrollContainer) {
+      this.scrollContainer.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
   }
 }

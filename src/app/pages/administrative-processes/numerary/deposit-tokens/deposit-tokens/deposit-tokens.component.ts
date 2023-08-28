@@ -61,8 +61,7 @@ import { CustomMultiSelectFilterComponent } from './filterAccount';
 })
 export class DepositTokensComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   form: FormGroup;
 
   data1: LocalDataSource = new LocalDataSource();
@@ -152,9 +151,8 @@ export class DepositTokensComponent
           // width: '13%',
           type: 'html',
           valuePrepareFunction: (text: string) => {
-            return `${
-              text ? text.split('T')[0].split('-').reverse().join('/') : ''
-            }`;
+            return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''
+              }`;
           },
           filter: {
             type: 'custom',
@@ -169,9 +167,8 @@ export class DepositTokensComponent
           type: 'html',
           valuePrepareFunction: (text: string) => {
             console.log('text', text);
-            return `${
-              text ? text.split('T')[0].split('-').reverse().join('/') : ''
-            }`;
+            return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''
+              }`;
 
             // let date = new Date((Number(text) - 25569) * 86400 * 1000);
             // let fechaString = date.toString();
@@ -305,9 +302,8 @@ export class DepositTokensComponent
           type: 'html',
           valuePrepareFunction: (text: string) => {
             console.log('text', text);
-            return `${
-              text ? text.split('T')[0].split('-').reverse().join('/') : ''
-            }`;
+            return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''
+              }`;
           },
           filter: {
             type: 'custom',
@@ -356,9 +352,8 @@ export class DepositTokensComponent
           type: 'html',
           valuePrepareFunction: (text: string) => {
             console.log('text', text);
-            return `${
-              text ? text.split('T')[0].split('-').reverse().join('/') : ''
-            }`;
+            return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''
+              }`;
           },
           filter: {
             type: 'custom',
@@ -566,7 +561,7 @@ export class DepositTokensComponent
       });
   }
 
-  ngOnChanges() {}
+  ngOnChanges() { }
 
   getAccount() {
     this.loading = true;
@@ -853,7 +848,7 @@ export class DepositTokensComponent
     }
   }
 
-  async importar() {}
+  async importar() { }
 
   onFileChange(event: Event) {
     const files = (event.target as HTMLInputElement).files;
@@ -1032,7 +1027,7 @@ export class DepositTokensComponent
       Promise.all(result).then(i => {
         console.log('jsonToCsv', arr);
         this.jsonToCsv = arr;
-        this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+        this.excelService.export(this.jsonToCsv, { type: 'xlsx', filename });
         this.alert('success', 'Archivo Descargado Correctamente', '');
         this.loadingBtn2 = false;
       });
@@ -1168,7 +1163,7 @@ export class DepositTokensComponent
       'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
     const link = document.createElement('a');
     link.href = mediaType + base64String;
-    link.download = 'CARINSFICHDEPO.csv';
+    link.download = 'CARINSFICHDEPO.xlsx';
     link.click();
     link.remove();
     this.alert('success', 'Archivo Descargado Correctamente', '');
@@ -1220,7 +1215,7 @@ export class DepositTokensComponent
     modalConfig.initialState = {
       noCuenta,
       data,
-      callback: (next: boolean) => {},
+      callback: (next: boolean) => { },
     };
     this.modalService.show(DepositTokensModalComponent, modalConfig);
   }

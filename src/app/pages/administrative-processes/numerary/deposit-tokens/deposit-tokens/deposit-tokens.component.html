@@ -8,14 +8,12 @@
         <!-- <div class="col-md-4 mt-3"> -->
         <div class="row">
           <div class="col-12">
-            <i class="fa fa-square" style="color: #e2c103"></i
-            ><span style="font-weight: 500">
+            <i class="fa fa-square" style="color: #e2c103"></i><span style="font-weight: 500">
               Movimientos con Bienes Conciliados &nbsp;&nbsp;
             </span>
           </div>
           <div class="col-12">
-            <i class="fa fa-square" style="color: #686868"></i
-            ><span style="font-weight: 500">
+            <i class="fa fa-square" style="color: #686868"></i><span style="font-weight: 500">
               Doble Clic en la Columna de Depósito para Conciliar &nbsp;&nbsp;
             </span>
           </div>
@@ -29,18 +27,12 @@
               <div class="col-10 justify-content-end align-items-end mt-3 mb-3">
                 <!-- <app-columns-select style="margin-right: -45px" [defaultColumns]="10"
                   [(settings)]="settings"></app-columns-select> -->
-                <button
-                  (click)="addMovement()"
-                  [disabled]="loading || loadingBtn2"
-                  type="button"
-                  containerClass="tooltip-style"
-                  class="btn btn-info btn-sm active ml-2 mr-2">
+                <button (click)="addMovement()" [disabled]="loading || loadingBtn2" type="button"
+                  containerClass="tooltip-style" class="btn btn-info btn-sm active ml-2 mr-2">
                   Agregar
                   <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
-                <button
-                  [disabled]="loading || loadingBtn2"
-                  class="btn btn-primary btn-sm active mr-5"
+                <button [disabled]="loading || loadingBtn2" class="btn btn-primary btn-sm active mr-5"
                   (click)="openForm()">
                   Movimientos
                 </button>
@@ -50,16 +42,10 @@
                   [(settings)]="settings"></app-columns-select> -->
               </div>
               <div class="col-md-2 text-end d-flex flex-row-reverse mt-3 mb-3">
-                <app-columns-select
-                  *ngIf="!validExcel"
-                  [defaultColumns]="7"
-                  [(settings)]="settings"
+                <app-columns-select *ngIf="!validExcel" [defaultColumns]="7" [(settings)]="settings"
                   [leftList]="true"></app-columns-select>
 
-                <app-columns-select
-                  *ngIf="validExcel"
-                  [defaultColumns]="9"
-                  [(settings)]="settings2"
+                <app-columns-select *ngIf="validExcel" [defaultColumns]="9" [(settings)]="settings2"
                   [leftList]="true"></app-columns-select>
               </div>
               <!-- <div class="col-2 d-flex justify-content-end align-items-end">
@@ -74,15 +60,9 @@
       <form-loader *ngIf="loading"></form-loader>
       <div *ngIf="!validExcel" class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng-scrollbar
-            [track]="'all'"
-            [ngStyle]="{ height: loading ? '0px' : '500px' }">
-            <ng2-smart-table
-              id="fichas"
-              (delete)="showDeleteAlert($event.data)"
-              (userRowSelect)="onCustomAction($event)"
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
+          <ng-scrollbar [track]="'all'" [ngStyle]="{ height: loading ? '0px' : '500px' }">
+            <ng2-smart-table id="fichas" (delete)="showDeleteAlert($event.data)"
+              (userRowSelect)="onCustomAction($event)" [attr.class]="'table-bordered'" [settings]="settings"
               [source]="data1">
             </ng2-smart-table>
           </ng-scrollbar>
@@ -100,10 +80,7 @@
             </span>
           </div> -->
           <div class="col-12">
-            <app-pagination
-              *ngIf="showPagination"
-              [params]="paramsList"
-              [totalItems]="totalItems">
+            <app-pagination *ngIf="showPagination" [params]="paramsList" [totalItems]="totalItems">
             </app-pagination>
           </div>
         </div>
@@ -111,15 +88,9 @@
 
       <div *ngIf="validExcel" class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng-scrollbar
-            [track]="'all'"
-            [ngStyle]="{ height: loading ? '0px' : '500px' }">
-            <ng2-smart-table
-              id="fichas"
-              (delete)="showDeleteAlert($event.data)"
-              (userRowSelect)="onCustomAction2($event)"
-              [attr.class]="'table-bordered'"
-              [settings]="settings2"
+          <ng-scrollbar [track]="'all'" [ngStyle]="{ height: loading ? '0px' : '500px' }">
+            <ng2-smart-table id="fichas" (delete)="showDeleteAlert($event.data)"
+              (userRowSelect)="onCustomAction2($event)" [attr.class]="'table-bordered'" [settings]="settings2"
               [source]="data2">
             </ng2-smart-table>
           </ng-scrollbar>
@@ -138,15 +109,8 @@
         <div class="col-md-12">
           <div class="row">
             <div class="col-12 pl-5 pr-5">
-              <form-field
-                [control]="form.get('descriptionGood')"
-                label="Descripción del Bien">
-                <textarea
-                  readonly
-                  cols="2"
-                  rows="3"
-                  type="text"
-                  class="form-control"
+              <form-field [control]="form.get('descriptionGood')" label="Descripción del Bien">
+                <textarea readonly cols="2" rows="3" type="text" class="form-control"
                   formControlName="descriptionGood"></textarea>
               </form-field>
             </div>
@@ -160,49 +124,31 @@
           <div class="col-2 mt-4">
             <div class="row">
               <div class="col-md-12 mt-3 text-center">
-                <button
-                  [disabled]="loading || loadingBtn2"
-                  class="btn btn-success btn-sm active w-100"
-                  style="font-size: 12px"
-                  type="button"
-                  (click)="file.click()">
+                <button [disabled]="loading" class="btn btn-success btn-sm active w-100" style="font-size: 12px"
+                  type="button" (click)="file.click()">
                   Importar CSV
                   <i class="bi bi-file-earmark-excel-fill"></i>
                 </button>
-                <input
-                  type="file"
-                  name="file"
-                  #file
-                  class="d-none"
+                <input type="file" name="file" #file class="d-none"
                   accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                   (change)="onFileChange($event)" />
               </div>
               <div class="col-md-12 mt-3 text-center">
-                <button
-                  [ngClass]="{ loading: loadingBtn2 }"
-                  [disabled]="loading || loadingBtn2"
-                  (click)="exportar()"
-                  style="font-size: 12px"
-                  class="btn btn-success btn-sm active w-100">
-                  Exportar CSV
+                <button [ngClass]="{ loading: loadingBtn2 }" [disabled]="loading || loadingBtn2" (click)="exportar()"
+                  style="font-size: 12px" class="btn btn-success btn-sm active w-100">
+                  Exportar Excel
                   <i *ngIf="!loadingBtn2" class="bx bx-upload float-icon"></i>
                 </button>
               </div>
 
               <div class="col-md-12 mt-3 text-center">
-                <button
-                  [disabled]="loading || loadingBtn2"
-                  (click)="actualizarFunc()"
-                  class="btn btn-primary btn-sm active w-100">
+                <button [disabled]="loading" (click)="actualizarFunc()" class="btn btn-primary btn-sm active w-100">
                   Actualizar
                   <i class="fas fa-sync-alt"> </i>
                 </button>
               </div>
               <div class="col-md-12 mt-3 text-center">
-                <button
-                  [disabled]="loading || loadingBtn2"
-                  (click)="desconciliarFunc()"
-                  class="btn btn-primary btn-sm active w-100">
+                <button [disabled]="loading" (click)="desconciliarFunc()" class="btn btn-primary btn-sm active w-100">
                   Desconciliar
                 </button>
               </div>
@@ -212,31 +158,18 @@
             <div class="row">
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('bank')" label="Banco">
-                  <input
-                    readonly
-                    type="text"
-                    class="form-control"
-                    formControlName="bank" />
+                  <input readonly type="text" class="form-control" formControlName="bank" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('account')" label="Cuenta">
-                  <input
-                    readonly
-                    type="number"
-                    class="form-control"
-                    formControlName="account"
-                    min="1"
+                  <input readonly type="number" class="form-control" formControlName="account" min="1"
                     pattern="^[0-9]+" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('square')" label="Plaza">
-                  <input
-                    readonly
-                    type="text"
-                    class="form-control"
-                    formControlName="square" />
+                  <input readonly type="text" class="form-control" formControlName="square" />
                 </form-field>
               </div>
             </div>
@@ -245,33 +178,19 @@
             <div class="row">
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('currency')" label="Moneda">
-                  <input
-                    readonly
-                    type="text"
-                    class="form-control"
-                    formControlName="currency" />
+                  <input readonly type="text" class="form-control" formControlName="currency" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('branch')" label="Sucursal">
-                  <input
-                    readonly
-                    type="number"
-                    class="form-control"
-                    formControlName="branch"
-                    min="1"
+                  <input readonly type="number" class="form-control" formControlName="branch" min="1"
                     pattern="^[0-9]+" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('balanceOf')" label="Saldo de">
-                  <input
-                    [(ngModel)]="dateMovemInicio"
-                    (ngModelChange)="dateMovementInicio($event)"
-                    bsDatepicker
-                    type="text"
-                    class="form-control"
-                    formControlName="balanceOf" />
+                  <input [(ngModel)]="dateMovemInicio" (ngModelChange)="dateMovementInicio($event)" bsDatepicker
+                    type="text" class="form-control" formControlName="balanceOf" />
                 </form-field>
               </div>
             </div>
@@ -279,36 +198,19 @@
           <div class="col-3 mt-4">
             <div class="row">
               <div class="col-md-12 mt-3">
-                <form-field
-                  [control]="form.get('description')"
-                  label="Descripción">
-                  <input
-                    readonly
-                    type="text"
-                    class="form-control"
-                    formControlName="description" />
+                <form-field [control]="form.get('description')" label="Descripción">
+                  <input readonly type="text" class="form-control" formControlName="description" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field
-                  [control]="form.get('accountType')"
-                  label="Tipo de Cuenta">
-                  <input
-                    readonly
-                    type="text"
-                    class="form-control"
-                    formControlName="accountType" />
+                <form-field [control]="form.get('accountType')" label="Tipo de Cuenta">
+                  <input readonly type="text" class="form-control" formControlName="accountType" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('balanceAt')" label="Saldo al">
-                  <input
-                    [(ngModel)]="dateMovemFin"
-                    [minDate]="dateMovemInicio"
-                    (ngModelChange)="dateMovementFin($event)"
-                    bsDatepicker
-                    type="text"
-                    class="form-control"
+                  <input [(ngModel)]="dateMovemFin" [minDate]="dateMovemInicio"
+                    (ngModelChange)="dateMovementFin($event)" bsDatepicker type="text" class="form-control"
                     formControlName="balanceAt" />
                 </form-field>
               </div>
@@ -320,26 +222,17 @@
               <div class="col-md-6 mt-3"></div>
               <div class="col-md-4 mt-3">
                 <form-field [control]="form.get('di_saldo')" label="Saldo">
-                  <input
-                    readonly
-                    type="text"
-                    class="form-control"
-                    formControlName="di_saldo" />
+                  <input readonly type="text" class="form-control" formControlName="di_saldo" />
                 </form-field>
               </div>
               <div class="col-md-2 mt-4 text-center">
-                <button
-                  [ngClass]="{ loading: loadingBtn }"
-                  [disabled]="
+                <button [ngClass]="{ loading: loadingBtn }" [disabled]="
                     !dataMovements ||
                     !dateMovemFin ||
                     !dateMovemInicio ||
                     loading ||
                     loadingBtn2
-                  "
-                  (click)="calcularSaldo()"
-                  style="width: 80%"
-                  class="btn btn-primary btn-sm active">
+                  " (click)="calcularSaldo()" style="width: 80%" class="btn btn-primary btn-sm active">
                   Calcular
                 </button>
               </div>
