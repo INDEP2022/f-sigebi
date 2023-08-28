@@ -182,11 +182,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     if (this.noBien.value !== null) {
       this.searchGoods(this.noBien.value);
     } else {
-      this.alert(
-        'warning',
-        'Administración de Conversión de Bienes',
-        'Se debe Ingresar el Numero del Bien'
-      );
+      this.alert('warning', 'Se debe Ingresar el Numero del Bien', '');
     }
   }
 
@@ -204,11 +200,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.getConversion(this.good.id);
       },
       error: err => {
-        this.alert(
-          'warning',
-          'Administración de Conversión de Bienes',
-          'Bien no Existe'
-        );
+        this.alert('warning', 'No existe el No. Bien', '');
         this.form.reset();
         console.log(err);
       },
