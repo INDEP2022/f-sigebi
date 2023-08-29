@@ -2,13 +2,16 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
-import { FilterParams, ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { COLUMNS } from 'src/app/pages/request/shared-request/goods-not-transferred/columns';
 import { RELATED_FOLIO_COLUMNS } from '../acts-cir-columns';
 
 @Component({
@@ -18,7 +21,8 @@ import { RELATED_FOLIO_COLUMNS } from '../acts-cir-columns';
 })
 export class ModalScanningFoilComponent<T = any>
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   $obs: (params?: _Params, body?: any) => Observable<IListResponse<any>>;
   service: DocumentsService;
   title: string = '';
@@ -102,21 +106,21 @@ export class ModalScanningFoilComponent<T = any>
     this.loading = true;
     this.documentsService.getAllFilter(params).subscribe({
       next: resp => {
-        console.log("resp ", resp);
+        console.log('resp ', resp);
         for (let i = 0; i < resp.data.length; i++) {
           let params = {
             id: resp.data[i].id,
             sheets: resp.data[i].sheets,
-            descriptionDocument: resp.data[i].descriptionDocument
-          }
+            descriptionDocument: resp.data[i].descriptionDocument,
+          };
           this.rows.push(params);
           this.data.load(this.rows);
         }
         this.loading = false;
-        console.log("resp ", resp);
+        console.log('resp ', resp);
         this.totalItems = resp.count;
         console.log('totalItems->', this.totalItems);
-        console.log('resp -->', resp.count)
+        console.log('resp -->', resp.count);
       },
       error: error => {
         this.loading = false;
