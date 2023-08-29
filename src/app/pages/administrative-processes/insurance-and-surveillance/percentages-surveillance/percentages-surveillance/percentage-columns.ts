@@ -42,17 +42,19 @@ export const PERCENTAGE_COLUMNS = {
       config: {
         selectText: 'Todos',
         list: [
-          { value: '1', title: 'Ferronal' },
-          { value: '2', title: 'INDEP' },
+          { value: 'S', title: 'INDEP' },
+          { value: 'F', title: 'Ferronal' },
         ],
       },
     },
     valuePrepareFunction: (_cell: any, row: any) => {
       const type = row.delegationType;
-      if (type == 1) {
+      if (type == 'F') {
         return 'Ferronal';
-      } else {
+      } else if (type == 'S') {
         return 'INDEP';
+      } else {
+        return type;
       }
     },
   },
@@ -60,5 +62,9 @@ export const PERCENTAGE_COLUMNS = {
     title: 'Porcentaje %',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (_cell: any, row: any) => {
+      const percentage = row.percentage;
+      return percentage + '%';
+    },
   },
 };

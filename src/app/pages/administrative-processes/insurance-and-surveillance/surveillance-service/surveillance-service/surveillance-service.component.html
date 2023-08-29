@@ -14,16 +14,25 @@
             <div class="row mt-4">
               <div class="col-12 mt-3">
                 <form-field [control]="form.get('delegation')">
-                  <ngx-select [form]="form" [data]="delegations" (change)="changeDelegations($event)"
-                    bindLabel="numberAndDescrip" label="Delegación" value="delegationNumber"
-                    (fetchItems)="getDelegation($event)" control="delegation"></ngx-select>
+                  <ngx-select
+                    [form]="form"
+                    [data]="delegations"
+                    (change)="changeDelegations($event)"
+                    bindLabel="numberAndDescrip"
+                    label="Delegación"
+                    value="delegationNumber"
+                    (fetchItems)="getDelegation($event)"
+                    control="delegation"></ngx-select>
                 </form-field>
               </div>
             </div>
             <div class="row mt-4">
               <div class="col-md-6 mt-3">
                 <form-field [control]="form.get('process')" label="Proceso">
-                  <ng-select [readonly]="!disabledProcess" (change)="cleanPeriod($event)" class="form-control"
+                  <ng-select
+                    [readonly]="!disabledProcess"
+                    (change)="cleanPeriod($event)"
+                    class="form-control"
                     formControlName="process">
                     <!-- <ng-option [value]="null">Seleccione un proceso</ng-option> -->
                     <ng-option value="1">Supervisión</ng-option>
@@ -33,8 +42,15 @@
               </div>
               <div class="col-md-6 mt-3">
                 <form-field [control]="form.get('period')">
-                  <ngx-select (change)="addDate($event)" [readonly]="!disabledPeriod" [form]="form" [data]="periods"
-                    bindLabel="cvePeriod" label="Período" value="cvePeriod" (fetchItems)="getPeriods($event)"
+                  <ngx-select
+                    (change)="addDate($event)"
+                    [readonly]="!disabledPeriod"
+                    [form]="form"
+                    [data]="periods"
+                    bindLabel="cvePeriod"
+                    label="Clave Período"
+                    value="cvePeriod"
+                    (fetchItems)="getPeriods($event)"
                     control="period"></ngx-select>
                   <!-- <input type="number" class="form-control" formControlName="period" min="1" pattern="^[0-9]+" /> -->
                 </form-field>
@@ -43,26 +59,46 @@
             <div class="row mt-4">
               <div class="col-md-4 mt-3">
                 <form-field [control]="form.get('from')" label="Período del">
-                  <input readonly type="text" formControlName="from" class="form-control" />
+                  <input
+                    readonly
+                    type="text"
+                    formControlName="from"
+                    class="form-control" />
                 </form-field>
               </div>
               <div class="col-md-4 mt-3">
                 <form-field [control]="form.get('to')" label="al">
-                  <input readonly type="text" formControlName="to" class="form-control" />
+                  <input
+                    readonly
+                    type="text"
+                    formControlName="to"
+                    class="form-control" />
                 </form-field>
               </div>
               <div class="col-md-4 mt-3">
-                <form-field [control]="form.get('total')" label="Total Aleatorios">
-                  <input readonly type="text" formControlName="total" class="form-control" />
+                <form-field
+                  [control]="form.get('total')"
+                  label="Total Aleatorios">
+                  <input
+                    readonly
+                    type="text"
+                    formControlName="total"
+                    class="form-control" />
                 </form-field>
               </div>
             </div>
             <div class="row mt-4">
               <div class="col-12 mt-3 text-center justify-content-center">
-                <button (click)="searchSupervisionDet()" type="button" class="btn btn-primary btn-sm active mr-2">
+                <button
+                  (click)="searchSupervisionDet()"
+                  type="button"
+                  class="btn btn-primary btn-sm active mr-2">
                   Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
                 </button>
-                <button (click)="cleanForm()" type="button" class="btn btn-danger btn-sm active ml-2">
+                <button
+                  (click)="cleanForm()"
+                  type="button"
+                  class="btn btn-danger btn-sm active ml-2">
                   Limpiar <i class="fas fa-eraser"> </i>
                 </button>
               </div>
@@ -81,8 +117,12 @@
               <div class="col-12">
                 <div class="row">
                   <div class="col-12 mt-3">
-                    <form-field [control]="formRegistro.get('processTwo')" label="Proceso">
-                      <ng-select class="form-control" formControlName="processTwo">
+                    <form-field
+                      [control]="formRegistro.get('processTwo')"
+                      label="Proceso">
+                      <ng-select
+                        class="form-control"
+                        formControlName="processTwo">
                         <!-- <ng-option [value]="null"
                           >Seleccione un proceso</ng-option
                         > -->
@@ -91,14 +131,30 @@
                       </ng-select>
                     </form-field>
                   </div>
-                  <div class="col-md-6 mt-5" style="margin-top: 23px !important">
-                    <form-field [control]="formRegistro.get('fromTwo')" label="Período del">
-                      <input type="text" formControlName="fromTwo" class="form-control" bsDatepicker />
+                  <div
+                    class="col-md-6 mt-5"
+                    style="margin-top: 23px !important">
+                    <form-field
+                      [control]="formRegistro.get('fromTwo')"
+                      label="Período del">
+                      <input
+                        type="text"
+                        formControlName="fromTwo"
+                        class="form-control"
+                        bsDatepicker />
                     </form-field>
                   </div>
-                  <div class="col-md-6 mt-5" style="margin-top: 23px !important">
-                    <form-field [control]="formRegistro.get('toTwo')" label="al">
-                      <input type="text" formControlName="toTwo" class="form-control" bsDatepicker />
+                  <div
+                    class="col-md-6 mt-5"
+                    style="margin-top: 23px !important">
+                    <form-field
+                      [control]="formRegistro.get('toTwo')"
+                      label="al">
+                      <input
+                        type="text"
+                        formControlName="toTwo"
+                        class="form-control"
+                        bsDatepicker />
                     </form-field>
                   </div>
                 </div>
@@ -107,36 +163,60 @@
                 <div class="row">
                   <div class="col-1"></div>
                   <div #scrollContainer class="col-5 text-center">
-                    <button [ngClass]="{ loading: loadingBtn }" style="font-size: 14px"
-                      class="btn btn-success active btn-sm mt-4 w-100" type="button" (click)="cargarArchivo()">
+                    <button
+                      [ngClass]="{ loading: loadingBtn }"
+                      style="font-size: 14px"
+                      class="btn btn-success active btn-sm mt-4 w-100"
+                      type="button"
+                      (click)="cargarArchivo()">
                       Cargar Archivo
-                      <i *ngIf="!loadingBtn" class="bi bi-file-earmark-excel-fill"></i>
+                      <i
+                        *ngIf="!loadingBtn"
+                        class="bi bi-file-earmark-excel-fill"></i>
                     </button>
-                    <input type="file" name="file" #file class="d-none"
+                    <input
+                      type="file"
+                      name="file"
+                      #file
+                      class="d-none"
                       accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                       (change)="onFileChange($event)" />
-                    <button (click)="revisarCarga()" type="button" class="btn btn-primary btn-sm active mt-4 w-100">
+                    <button
+                      (click)="revisarCarga()"
+                      type="button"
+                      class="btn btn-primary btn-sm active mt-4 w-100">
                       Revisar Carga
                       <i class="bx bx-search-alt bx-sm float-icon"></i>
                     </button>
                   </div>
                   <div class="col-5 text-center">
-                    <button [ngClass]="{ loading: loadingBtn1 }" (click)="generaAleatorios()" type="button"
+                    <button
+                      [ngClass]="{ loading: loadingBtn1 }"
+                      (click)="generaAleatorios()"
+                      type="button"
                       class="btn btn-info btn-sm active mt-4 w-100">
                       Generar Aleatorios
                     </button>
-
-                    <button [ngClass]="{ loading: loadingBtn2 }" style="font-size: 14px" (click)="exportar()"
-                      type="button" class="btn btn-success active btn-sm mt-4 w-100">
-                      Exportar Reporte <i *ngIf="!loadingBtn2" class="bx bx-upload float-icon"></i>
+                    <button
+                      type="button"
+                      (click)="generarReport()"
+                      class="btn btn-primary btn-sm active mt-4 w-100">
+                      Crear Reporte
                     </button>
                   </div>
                   <div class="col-1"></div>
                   <div class="col-3"></div>
                   <div class="col-6 text-center">
-                    <button [disabled]="!delegationMae" type="button" (click)="generarReport()" style="width: 80%"
-                      class="btn btn-primary btn-sm active mt-4">
-                      Crear Reporte
+                    <button
+                      [ngClass]="{ loading: loadingBtn2 }"
+                      style="font-size: 14px; width: 80%"
+                      (click)="exportar()"
+                      type="button"
+                      class="btn btn-success active btn-sm mt-4 w-100">
+                      Exportar Reporte
+                      <i
+                        *ngIf="!loadingBtn2"
+                        class="bx bx-upload float-icon"></i>
                     </button>
                   </div>
                   <div class="col-3"></div>
@@ -156,8 +236,13 @@
           <form-loader *ngIf="loading"></form-loader>
           <div class="col-md-12">
             <div [class]="loading ? 'table-loading' : ''">
-              <ng-scrollbar [track]="'all'" [ngStyle]="{ height: loading ? '0px' : '500px' }">
-                <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="goods">
+              <ng-scrollbar
+                [track]="'all'"
+                [ngStyle]="{ height: loading ? '0px' : '500px' }">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings"
+                  [source]="goods">
                 </ng2-smart-table>
               </ng-scrollbar>
             </div>
@@ -168,7 +253,9 @@
           </div> -->
         </div>
       </div>
-      <app-pagination [params]="paramsList" [totalItems]="totalItems"></app-pagination>
+      <app-pagination
+        [params]="paramsList"
+        [totalItems]="totalItems"></app-pagination>
     </div>
   </div>
 </app-card>
