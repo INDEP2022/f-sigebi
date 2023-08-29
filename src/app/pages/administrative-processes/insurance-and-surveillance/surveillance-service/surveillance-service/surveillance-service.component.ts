@@ -472,7 +472,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Debe seleccionar una Delegación',
-        'Es un valor requerido para generar el reporte'
+        'El valor es requerido para generar el reporte'
       );
       return;
     } else {
@@ -486,8 +486,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       this.form.get('process').markAsTouched();
       this.alert(
         'warning',
-        'El Tipo de Proceso es un Valor Requerido para Generar el Reporte',
-        ''
+        'Debe seleccionar un Tipo de Proceso',
+        'El valor es requerido para generar el reporte'
       );
       return;
     } else {
@@ -501,8 +501,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       this.form.get('period').markAsTouched();
       this.alert(
         'warning',
-        'El Período es un Valor Requerido para Generar el Reporte',
-        ''
+        'Debe seleccionar un Periodo',
+        'El valor es requerido para generar el reporte'
       );
       return;
     } else {
