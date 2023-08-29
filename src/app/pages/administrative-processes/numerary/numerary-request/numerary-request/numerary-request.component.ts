@@ -170,7 +170,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     const { currency } = this.form.value;
 
     if (!currency) {
-      this.alert('error', 'ERROR', 'Debe seleccionar el tipo de moneda');
+      this.alert('warning', 'Atención', 'Debe seleccionar el tipo de moneda');
       return;
     }
 
@@ -256,7 +256,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
         error: err => {
           this.totalItems = 0;
           if (err.status == 400) {
-            this.alert('error', 'ERROR', 'No existe la solicitud');
+            this.alert('warning', 'Atención', 'No existe la solicitud');
           }
         },
       });
@@ -308,7 +308,11 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
       const desc = await this.getDesDelegation(data.delegationNumber, etapa);
       this.form.get('desc_del').patchValue(desc);
     } else {
-      this.alert('error', 'ERROR', 'Error en la descripción de la solicitud');
+      this.alert(
+        'warning',
+        'Atención',
+        'No se encuentra la descripción de la solicitud'
+      );
     }
 
     await this.getName(data.user);
@@ -472,12 +476,20 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     const { solnumType, description } = this.form.value;
 
     if (!solnumType) {
-      this.alert('error', 'ERROR', 'Debe especificar el tipo de solicitud');
+      this.alert(
+        'warning',
+        'Atención',
+        'Debe especificar el tipo de solicitud'
+      );
       return;
     }
 
     if (!description) {
-      this.alert('error', 'ERROR', 'Debe ingresar el concepto de la solicitud');
+      this.alert(
+        'warning',
+        'Atención',
+        'Debe ingresar el concepto de la solicitud'
+      );
       return;
     }
 
@@ -509,7 +521,11 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
           .patchValue(detailsUser.delegation.description);
         this.form.get('name').patchValue(detailsUser.userDetail.name);
       } else {
-        this.alert('error', 'ERROR', 'Debe ingresar un bien para ser guardado');
+        this.alert(
+          'warning',
+          'Atención',
+          'Debe ingresar un bien para ser guardado'
+        );
         return;
       }
 
@@ -517,7 +533,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
         const valid = this.data1[i].valid ?? '';
         if (valid) {
           if (valid == 'N') {
-            this.alert('error', 'ERROR', 'Error hay bienes que no son validos');
+            this.alert('warning', 'Atención', 'Hay bienes que no son validos');
             return;
           }
         }
@@ -531,7 +547,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
         const valid = this.data1[i].valid ?? '';
         if (valid) {
           if (valid == 'N') {
-            this.alert('error', 'ERROR', 'Error hay bienes que no son validos');
+            this.alert('warning', 'Atención', 'Hay bienes que no son validos');
             return;
           }
         }
@@ -849,7 +865,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
       error: error => {
         if (error.status == 400) {
           if (error.error.message.includes('Conciliado')) {
-            this.alert('error', 'ERROR', error.error.message);
+            this.alert('warning', 'Atención', error.error.message);
           }
         }
         this.loading = false;
@@ -877,8 +893,8 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
           error: error => {
             if (error.error.message.includes('solicitudes_nume_det')) {
               this.alert(
-                'error',
-                'Error',
+                'warning',
+                'Atención',
                 'No puede borrar solicitud numerario debido a que contiene solicitudes numerario detalle, favor de eliminar primero solicitudes numerario detalle'
               );
             } else {
