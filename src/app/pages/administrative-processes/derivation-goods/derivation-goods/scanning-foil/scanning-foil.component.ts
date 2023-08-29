@@ -131,11 +131,7 @@ export class ScanningFoilComponent
     // }
     console.log(this.numberFoli);
     if (this.numberFoli !== undefined && this.numberFoli !== null) {
-      this.alert(
-        'question',
-        'Información',
-        'El Paquete ya tiene Folio de Escaneo'
-      );
+      this.alert('warning', 'Atención', 'Ya existe un folio de escaneo');
       return;
     }
     this.alertQuestion(
