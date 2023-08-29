@@ -72,20 +72,11 @@
             editDialogData ? 'Editando Porcentajes' : 'Agregando Porcentajes'
           }}
         </h5>
-        <!-- <div class="buttons">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
-          <button
-            class="btn btn-primary active btn-sm ml-3"
-            (click)="closeDialogPercentage()">
-            Cerrar
-          </button>
-        </div> -->
       </div>
     </div>
     <div body>
       <form class="form-material" [formGroup]="form">
         <div class="row">
-          <!-- *ngIf="editDialogData" -->
           <div class="col-4 mt-4">
             <form-field [control]="form.get('cveProcess')" label="Proceso">
               <ng-select
@@ -98,10 +89,24 @@
                   {{ process.name }}
                 </ng-option>
               </ng-select>
-              <!-- <input
-                type="text"
-                formControlName="cveProcess"
-                class="form-control" /> -->
+            </form-field>
+          </div>
+          <div class="col-8 mt-4">
+            <form-field [control]="form.get('delegationNumber')">
+              <ngx-select
+                [readonly]="!disabledEdit"
+                [form]="form"
+                [data]="delegations"
+                (change)="llenarCampos($event)"
+                (fetchItems)="getDelegation($event)"
+                value="delegationNumber"
+                bindLabel="numberAndDescription"
+                control="delegationNumber"
+                label="Delegación"
+                [searchOnInit]="false"
+                [showTooltip]="true"
+                termMaxLength="30">
+              </ngx-select>
             </form-field>
           </div>
           <div class="col-4 mt-4">
@@ -119,12 +124,6 @@
                   >{{ type.name }}</ng-option
                 >
               </ng-select>
-              <!-- <input readonly type="text" formControlName="delegationType" class="form-control" /> -->
-              <!-- <ng-select formControlName="delegationType" class="form-control">
-                <ng-option [value]="type.value" *ngFor="let type of delegationTypes">{{
-                  type.name
-                  }}</ng-option>
-              </ng-select> -->
             </form-field>
           </div>
           <div class="col-4 mt-4">
@@ -133,36 +132,11 @@
               [control]="form.get('percentage')"
               label="Porcentaje">
               <input
+                min="1"
                 max="100"
                 type="number"
                 formControlName="percentage"
                 class="form-control" />
-            </form-field>
-          </div>
-          <div class="col-12 mt-4">
-            <form-field [control]="form.get('delegationNumber')">
-              <ngx-select
-                [readonly]="!disabledEdit"
-                [form]="form"
-                [data]="delegations"
-                (change)="llenarCampos($event)"
-                (fetchItems)="getDelegation($event)"
-                value="delegationNumber"
-                bindLabel="numberAndDescription"
-                control="delegationNumber"
-                label="Delegación"
-                [searchOnInit]="false"
-                [showTooltip]="true"
-                termMaxLength="30">
-              </ngx-select>
-
-              <!-- <ng-custom-select class="form-control" path="survillance/api/v1/views/v-vig-delegations"
-                value="delegationNumber" formControlName="delegationNumber" prefixSearch="$ilike"
-                paramSearch="filter.description" [initOption]="editDialogData?.delegationView" [isLoadInOnInit]="false">
-                <ng-template let-item>
-                  {{ item.delegationNumber + '-' + item.description }}
-                </ng-template>
-              </ng-custom-select> -->
             </form-field>
           </div>
         </div>
@@ -176,7 +150,7 @@
               style="float: right"
               [disabled]="!form.valid"
               type="button"
-              class="btn btn-primary active mr-2"
+              class="btn btn-sm btn-primary active mr-2"
               (click)="saveInServerPercentage()">
               {{ editDialogData ? 'Actualizar' : 'Guardar' }}
               <span *ngIf="editDialogData"
@@ -190,7 +164,7 @@
           <div class="col-6">
             <button
               style="float: left"
-              class="btn btn-danger active ml-2"
+              class="btn btn-danger btn-sm active ml-2 btn-block"
               (click)="closeDialogPercentage()">
               Cerrar
             </button>
@@ -199,52 +173,4 @@
       </div>
     </div>
   </app-modal>
-  <!-- <div class="modal-header">
-    <h4 class="modal-title pull-left font-size-16">
-      {{ editDialogData ? 'Editando Porcentajes' : 'Agregando Porcentajes' }}
-    </h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="closeDialogPercentage()">
-      <span aria-hidden="true">×</span>
-    </button>
-  </div> -->
-  <!-- <div class="modal-body form-material" [formGroup]="form">
-    <form-field [control]="form.get('cveProcess')" label="Proceso">
-      <ng-select formControlName="cveProcess" class="form-control">
-        <ng-option [value]="process.value" *ngFor="let process of processes">
-          {{ process.name }}
-        </ng-option>
-      </ng-select>
-    </form-field>
-    <form-field [control]="form.get('delegationNumber')" label="Delegación">
-      <ng-custom-select class="form-control" path="survillance/api/v1/views/v-vig-delegations" value="delegationNumber"
-        formControlName="delegationNumber" prefixSearch="$ilike" paramSearch="filter.description"
-        [initOption]="editDialogData?.delegationView" [isLoadInOnInit]="false">
-        <ng-template let-item>
-          {{ item.delegationNumber + '-' + item.description }}
-        </ng-template>
-      </ng-custom-select>
-    </form-field>
-    <form-field [control]="form.get('delegationType')" label="Tipo Delegación">
-      <ng-select formControlName="delegationType" class="form-control">
-        <ng-option [value]="type.value" *ngFor="let type of delegationTypes">{{
-          type.name
-          }}</ng-option>
-      </ng-select>
-    </form-field>
-    <form-field [control]="form.get('percentage')" label="Porcentaje">
-      <input max="100" type="number" formControlName="percentage" class="form-control" />
-    </form-field>
-  </div> -->
-  <!-- <div class="modal-footer">
-    <button [disabled]="!form.valid || loading" type="button"
-      class="btn btn-primary active btn-sm font-weight-bold shadow-none" (click)="saveInServerPercentage()">
-      Guardar
-      <i class="fas fa-paper-plane"></i>
-    </button>
-    <button type="button" class="bg-danger btn btn-sm font-weight-bold shadow-none text-white"
-      (click)="closeDialogPercentage()">
-      Cerrar
-      <i class="fas fa-times"></i>
-    </button>
-  </div> -->
 </ng-template>

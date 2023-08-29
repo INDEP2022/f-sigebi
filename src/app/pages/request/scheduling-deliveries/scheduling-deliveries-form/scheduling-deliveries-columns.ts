@@ -5,36 +5,36 @@ export const SCHEDULING_DELIVERIES_COLUMNS = {
     sort: false,
   },
 
-  numberInventary: {
+  inventoryNumber: {
     title: 'No. Inventario',
     type: 'number',
     sort: false,
   },
 
-  numberGestion: {
+  goodId: {
     title: 'No. Gestión',
     type: 'number',
     sort: false,
   },
 
-  goodDescription: {
+  descriptionGood: {
     title: 'Descripción Bien',
     type: 'string',
     sort: false,
   },
-  quantityEstates: {
+  amountGood: {
     title: 'Cantidad Bienes',
     type: 'string',
     sort: false,
   },
 
-  unitOfMeasuremet: {
+  unit: {
     title: 'Unidad de Medida',
     type: 'number',
     sort: false,
   },
 
-  saeNumber: {
+  siabGoodNumber: {
     title: 'No. INDEP',
     type: 'number',
     sort: false,
@@ -127,19 +127,19 @@ export const SEARCH_SALES_TABLE = {
     sort: false,
   },
 
-  quantityEstates: {
+  quantity: {
     title: 'Cantidad Bienes',
     type: 'number',
     sort: false,
   },
 
-  unitOfMeasuremet: {
+  uomCode: {
     title: 'Unidad de Medida',
     type: 'number',
     sort: false,
   },
 
-  saeNumber: {
+  bienSiabNum: {
     title: 'No. INDEP',
     type: 'number',
     sort: false,
@@ -177,13 +177,13 @@ export const SEARCH_DESTRUCTION_TABLE = {
     sort: false,
   },
 
-  managementNumGoodId: {
+  managementNum: {
     title: 'No. Gestión',
     type: 'number',
     sort: false,
   },
 
-  goodDescription: {
+  descriptionGood: {
     title: 'Descripción Bien',
     type: 'string',
     sort: false,
@@ -201,7 +201,7 @@ export const SEARCH_DESTRUCTION_TABLE = {
     sort: false,
   },
 
-  goodSiabNum: {
+  bienSiabNum: {
     title: 'No. INDEP',
     type: 'number',
     sort: false,

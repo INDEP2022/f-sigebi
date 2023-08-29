@@ -441,7 +441,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     console.log(token);
     this.dataUserLogged = token;
     this.initFormPostGetUserData();
-    this.actaReception = this.actasDefault;
+    // this.actaReception = this.actasDefault;
     this.goodForm();
     this.actaForm();
     this.formFolio();
@@ -737,7 +737,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
           //console.log('acta', acta);
           item['acta_'] = acta;
-          item.di_disponible = acta != null ? 'N' : di_dispo;
+          // item.di_disponible = acta != null ? 'N' : di_dispo;
         });
 
         Promise.all(result).then(item => {
@@ -795,6 +795,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
   searchExpedient(provider?: IExpedient) {
     this.loadingExpedient = true;
+    this.dataRecepcionGood.load([]);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       provider,
@@ -1049,7 +1050,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
           return;
         } else {
           console.log('aaa', this.goods);
-
           let result = this.selectedGooods.map(async (good: any) => {
             if (good.di_acta != null) {
               this.alert(
@@ -1382,7 +1382,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
             );
             let index = this.dataTableGood_.findIndex(g => g.id === good.id);
             this.dataRecepcion = [];
-            this.dataRecepcionGood.load(this.dataRecepcion);
+            this.dataRecepcionGood.load([]);
             this.Exportdate = false;
             // if (index != -1) {
             //   if (this.dataTableGood_[index].est_disponible) {
