@@ -16,6 +16,7 @@
     </form-field>
     <div class="col-md-1">
       <button
+        tooltip="Seleccionar desde archivo txt"
         (click)="goodNumbersInput.click()"
         type="button"
         class="btn btn-primary btn-sm active">
@@ -223,14 +224,6 @@
         oninput="if(this.value.length > 200) this.value = this.value.slice(0, 200)"
         class="form-control"></textarea>
     </form-field>
-
-    <!-- <form-check label="Gabinete Social" for="gabinete" class="col-md-4">
-      <input
-        type="checkbox"
-        formControlName="gabinete"
-        id="gabinete"
-        class="form-control" />
-    </form-check> -->
   </div>
 
   <div class="row pt-3">
@@ -241,6 +234,39 @@
         oninput="if(this.value.length > 200) this.value = this.value.slice(0, 200)"
         class="form-control"></textarea>
     </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field
+      [control]="form.get('inventario')"
+      class="col-md-4"
+      label="Inventario SAMI">
+      <ng-select
+        addTagText="Agregar Elemento"
+        class="form-control scroll-line"
+        formControlName="inventario"
+        [items]="[]"
+        [addTag]="true"
+        [multiple]="true">
+      </ng-select>
+      <!-- <input type="text" formControlName="goodNum" class="form-control" /> -->
+    </form-field>
+    <div class="col-md-1">
+      <button
+        tooltip="Seleccionar desde archivo txt"
+        (click)="inventoryInput.click()"
+        type="button"
+        class="btn btn-primary btn-sm active">
+        <i class="bx bx-list-plus bx-sm float-icon"></i>
+      </button>
+    </div>
+    <form-check label="Gabinete Social" for="gabinete" class="col-md-4">
+      <input
+        type="checkbox"
+        formControlName="gabinete"
+        id="gabinete"
+        class="form-control" />
+    </form-check>
   </div>
 
   <!-- <div class="row pt-5"> -->
@@ -277,5 +303,13 @@
     #goodNumbersInput
     (change)="goodNumbersFileChange($event)"
     [formControl]="goodNumbersControl"
+    type="file" />
+</div>
+
+<div [style.display]="'none'">
+  <input
+    #inventoryInput
+    (change)="invFileChange($event)"
+    [formControl]="inventoryControl"
     type="file" />
 </div>

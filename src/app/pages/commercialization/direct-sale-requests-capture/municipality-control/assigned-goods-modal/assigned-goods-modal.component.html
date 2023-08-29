@@ -4,102 +4,163 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="goodForm">
-      <!--- <div class="row">
-                <div class="col-sm-12 col-md-6">
-                    <form-field [control]="goodForm.get('repvendcId')" label="No. Bien">
-                        <input type="text" class="form-control" formControlName="repvendcId" />
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <form-field [control]="goodForm.get('batchId')" label="Delegación">
-                        <input type="number" class="form-control" formControlName="batchId" />
-                    </form-field>
-                </div>
-            </div>---->
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="goodForm.get('bill')" label="Descripción">
-            <input type="text" class="form-control" formControlName="bill" />
+          <form-field
+            [control]="goodForm.get('soladjinstgobId')"
+            label="Id Solicitante">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="soladjinstgobId" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
           <form-field
-            [control]="goodForm.get('labelsent')"
-            label="Valor Avalúo">
+            [control]="goodForm.get('typeentgobId')"
+            label="Id Tipo de Bien">
             <input
               type="text"
               class="form-control"
-              formControlName="labelsent" />
+              formControlName="typeentgobId"
+              maxlength="2" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="goodForm.get('estateNumber')" label="No. Bien">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="estateNumber" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="goodForm.get('description')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description"
+              maxlength="100" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="goodForm.get('delegation')">
+            <ngx-select
+              [form]="goodForm"
+              [data]="delegationItems"
+              label="Delegación"
+              value="description"
+              bindLabel="description"
+              (fetchItems)="getDelegation()"
+              control="delegation">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="goodForm.get('location')" label="Ubicación">
+            <input
+              type="text"
+              formControlName="location"
+              class="form-control"
+              maxlength="50" />
           </form-field>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
           <form-field
-            [control]="goodForm.get('sayDelivery')"
-            label="Direccion de Entrega">
+            [control]="goodForm.get('worthappraisal')"
+            label="Valor Avalúo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="worthappraisal" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="goodForm.get('appraisalDate')"
+            label="Fecha Avalúo">
             <input
               type="text"
-              formControlName="sayDelivery"
               class="form-control"
+              formControlName="appraisalDate"
+              [maxDate]="maxDate"
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field [control]="goodForm.get('job')" label="Oficio">
-            <input type="text" class="form-control" formControlName="job" />
-          </form-field>
-        </div>
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="goodForm.get('managed')" label="Dirigido">
-            <input type="text" class="form-control" formControlName="managed" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-md-6">
           <form-field
-            [control]="goodForm.get('addresssent')"
-            label="Direccion Origen">
+            [control]="goodForm.get('sessionNumber')"
+            label="No. Sesion">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="addresssent" />
+              formControlName="sessionNumber" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="goodForm.get('ranksEstate')"
+            label="Clasificación Bien">
+            <input
+              type="text"
+              formControlName="ranksEstate"
+              class="form-control"
+              maxlength="20" />
           </form-field>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="goodForm.get('labelBatch')"
-            label="Lote de Etiquetas">
-            <input
-              type="text"
-              formControlName="labelBatch"
-              class="form-control" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="goodForm.get('paragraph1')"
-            label="Descripcíon">
+          <form-field [control]="goodForm.get('mandate')" label="Mandato">
             <textarea
               rows="2"
-              formControlName="paragraph1"
-              class="form-control"></textarea>
+              formControlName="mandate"
+              class="form-control"
+              maxlength="20"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="goodForm.get('rankssiab')"
+            label="Clasificación Siab">
+            <input
+              type="text"
+              formControlName="rankssiab"
+              class="form-control"
+              maxlength="50" />
           </form-field>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="goodForm.get('userSignature')"
-            label="Firmante">
+          <form-field [control]="goodForm.get('comments')" label="Comentarios">
             <input
-              type="text"
-              formControlName="userSignature"
-              class="form-control" />
+              type="boxtext"
+              formControlName="comments"
+              class="form-control"
+              maxlength="100" />
           </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <small for="" class="">Visualizar</small>
+          <div class="d-flex">
+            <form-radio label="Si">
+              <input type="radio" formControlName="visualize" value="1" />
+            </form-radio>
+            <form-radio label="No">
+              <input type="radio" formControlName="visualize" value="0" />
+            </form-radio>
+          </div>
         </div>
       </div>
     </form>

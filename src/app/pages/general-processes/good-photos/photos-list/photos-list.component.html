@@ -71,12 +71,14 @@
           aria-labelledby="button-basic">
           <li
             role="menuitem"
-            [class]="filesToDelete.length === 0 ? 'disabledDelete' : ''">
+            [class]="filesToDelete.length === 0 ? 'disabledOption' : ''">
             <a class="dropdown-item" (click)="download()"
               >Exportar Seleccionadas</a
             >
           </li>
-          <li role="menuitem">
+          <li
+            role="menuitem"
+            [class]="files.length === 0 ? 'disabledOption' : ''">
             <a class="dropdown-item" (click)="download(true)"
               >Exportar Fotos (Todas)</a
             >
@@ -127,7 +129,7 @@
                 #photo
                 (refreshFiles)="refresh($event)"
                 [typedblClickAction]="typedblClickAction"
-                [filename]="image"
+                [file]="image"
                 [goodNumber]="goodNumber + ''"></app-photo>
             </div>
           </div>
@@ -135,7 +137,10 @@
                     type="checkbox"
                     class="float-check checkbox-color checkbox-primary"
                     id="check2" /> -->
-          <form-check for="keep-{{ i }}" class="float-check">
+          <form-check
+            for="keep-{{ i }}"
+            class="float-check"
+            *ngIf="validationUser(image)">
             <input
               type="checkbox"
               id="keep-{{ i }}"

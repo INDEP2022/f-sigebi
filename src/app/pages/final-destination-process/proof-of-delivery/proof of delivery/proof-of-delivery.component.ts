@@ -109,6 +109,7 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   T_PROMES: any;
   noActa: any;
   statusActa: any;
+  origin: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   @Input() depositaryAppointment: IDepositaryAppointments_custom;
   @ViewChild('mySmartTable') mySmartTable: any;
@@ -191,6 +192,13 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
         this.handleCaptureChange('massive');
       }
     });
+  }
+
+  goBack() {
+    //FCONGENRASTREADOR
+    if (this.origin == 'FCONGENRASTREADOR') {
+      this.router.navigate([`/pages/general-processes/goods-tracker`]);
+    }
   }
 
   initForm() {

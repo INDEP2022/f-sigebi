@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -46,15 +46,15 @@ export class PrintMassiveAccountComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      file: [null, Validators.required],
-      depositDate: [null, Validators.required],
-      depositDateTo: [null, Validators.required],
+      file: [null],
+      depositDate: [null],
+      depositDateTo: [null],
 
-      transferenceDate: [null, Validators.required],
-      transferenceDateTo: [null, Validators.required],
+      transferenceDate: [null],
+      transferenceDateTo: [null],
 
-      receptionDate: [null, Validators.required],
-      receptionDateTo: [null, Validators.required],
+      receptionDate: [null],
+      receptionDateTo: [null],
     });
     console.log('formmm', this.form);
   }
@@ -112,20 +112,29 @@ export class PrintMassiveAccountComponent extends BasePage implements OnInit {
     );
 
     const idExp = this.form.controls['file'].value;
-    let params = {
-      PN_EXPEDIENTE: idExp.id,
-      PF_DEPOSITO_INI: this.depositD,
-      PF_DEPOSITO_FIN: this.depositT,
-      PF_TRANSFERENCIA_INI: this.transfD,
-      PF_TRANSFERENCIA_FIN: this.transfT,
-      PF_RECEPCION_INI: this.recepctD,
-      PF_RECEPCION_FIN: this.recepctT,
-    };
+    let params: any = {};
+    if (idExp) params.PN_EXPEDIENTE = idExp;
+    if (this.depositD) params.PF_DEPOSITO_INI = this.depositD;
+    if (this.depositT) params.PF_DEPOSITO_FIN = this.depositT;
+    if (this.transfD) params.PF_TRANSFERENCIA_INI = this.transfD;
+    if (this.transfT) params.PF_TRANSFERENCIA_FIN = this.transfT;
+    if (this.recepctD) params.PF_RECEPCION_INI = this.recepctD;
+    if (this.recepctT) params.PF_RECEPCION_FIN = this.recepctT;
+
+    // let params = {
+    //   PN_EXPEDIENTE: idExp.id,
+    //   PF_DEPOSITO_INI: this.depositD,
+    //   PF_DEPOSITO_FIN: this.depositT,
+    //   PF_TRANSFERENCIA_INI: this.transfD,
+    //   PF_TRANSFERENCIA_FIN: this.transfT,
+    //   PF_RECEPCION_INI: this.recepctD,
+    //   PF_RECEPCION_FIN: this.recepctT,
+    // };
 
     console.log('params', params);
     this.siabService
-      // .fetchReport('FGERADBIMPRMASIVA', params)
-      .fetchReportBlank('blank')
+      .fetchReport('RGERADBIMPRMASIVA', params)
+      // .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });

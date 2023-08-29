@@ -95,6 +95,7 @@ export class ChangeOfGoodClassificationComponent
   get currentClasification() {
     return this.form.get('currentClasification');
   }
+
   get descriptionClasification() {
     return this.form.get('descriptionClasification');
   }
@@ -417,6 +418,10 @@ export class ChangeOfGoodClassificationComponent
     } else {
       this.loading = false;
       this.alert('error', 'Error', 'Bien no encontrado');
+      this.numberGood.setValue(null);
+      this.descriptionGood.setValue(null);
+      this.clasification.setValue(null);
+      this.numberFile.setValue(null);
     }
   }
 
@@ -474,6 +479,10 @@ export class ChangeOfGoodClassificationComponent
 
   get pathClasification() {
     return 'catalog/api/v1/good-sssubtype?sortBy=numClasifGoods:ASC';
+  }
+
+  get pathExpedient() {
+    return 'expedient/api/v1/expedient';
   }
 
   onChange(event: IGoodSssubtype) {
@@ -669,6 +678,12 @@ export class ChangeOfGoodClassificationComponent
           // this.dataAct.refresh();
           // this.form.reset();
           this.updateSecondTable();
+          this.form
+            .get('clasification')
+            .setValue(
+              putGood.goodClassNumber + '-' + this.newClasif.description
+            );
+          this.form.get('numberFile').setValue(putGood.fileNumber);
         },
         error: err => {
           this.alert(

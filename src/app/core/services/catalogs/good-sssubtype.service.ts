@@ -24,6 +24,16 @@ export class GoodSssubtypeService
     return this.goodSssubtypeRepository.getAllPaginated(this.route, params);
   }
 
+  getById2(
+    id: any,
+    params?: ListParams
+  ): Observable<IListResponse<IGoodSssubtype>> {
+    return this.goodSssubtypeRepository.getAllPaginated(
+      this.route,
+      id + params
+    );
+  }
+
   getAllSssubtype(params?: string): Observable<IListResponse<IGoodSssubtype>> {
     return this.get<IListResponse<IGoodSssubtype>>(
       'good-sssubtype/getAllGoodSssubtypeCustom',

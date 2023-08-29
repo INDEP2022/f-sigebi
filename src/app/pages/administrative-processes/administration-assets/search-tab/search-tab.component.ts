@@ -207,21 +207,20 @@ export class SearchTabComponent extends BasePage implements OnInit {
       this.searchTabForm.get('noBien').value === '' ||
       this.searchTabForm.get('noBien').value === null
     ) {
-      this.alert('warning', 'Datos Búsqueda', 'Debe Seleccionar un Bien', '');
+      this.alert('warning', 'Atención', 'Debe Seleccionar un Bien', '');
       return;
+    }
+    const respStatus = await this.searchStatus();
+    if (respStatus == false) {
+      this.alert('warning', 'El Bien no cuenta con un estatus válido', '');
+      return;
+    } else {
+      const respNotification = await this.searchNotifications();
     }
     this.dataSearch.emit({
       data: this.searchTabForm.get('noBien').value,
       exist: true,
     });
-
-    const respStatus = await this.searchStatus();
-    if (respStatus == false) {
-      this.alert('warning', 'El Bien no cuenta con un estatus valido', '');
-      return;
-    } else {
-      const respNotification = await this.searchNotifications();
-    }
     if (this.goodSelect) {
       this.searchTabForm.get('situacion').patchValue(this.goodSelect.situation);
       this.searchTabForm.get('destino').patchValue(this.goodSelect.destiny);
@@ -286,7 +285,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
       this.searchTabForm.get('noBien').value === '' ||
       this.searchTabForm.get('noBien').value === null
     ) {
-      this.alert('warning', 'Datos Búsqueda', 'Debe Seleccionar un Bien');
+      this.alert('warning', 'Atención', 'Debe Seleccionar un Bien');
       return;
     }
     const array: any[] = [this.searchTabForm.get('noBien').value];

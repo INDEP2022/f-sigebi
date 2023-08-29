@@ -1,5 +1,6 @@
 export enum GoodEndpoints {
   Good = `good`,
+  GoodDescription = 'good/getDescription',
   GoodGetSiab = `goods-siab`,
   GoodFraction = 'good/queryFraction',
   GetGoodById = `good/getGoodById`,
@@ -37,6 +38,7 @@ export enum GoodEndpoints {
   TmpTotGoodsProgrammed = 'tmp-tot-goods-programmed',
   goodStatus = 'good/filter-status',
   GoodNumberSol = 'good/get-data-good-typegood',
+  ExportExcelGoodBad = 'attrib-good-bad/get-all-export',
 }
 
 export enum GoodProcessPoints {
@@ -74,6 +76,7 @@ export enum GoodProcessPoints {
   ProcedureStatusGood = 'application/procedure-status-good',
   UpdateProcedingNumber = 'application/updateProceedingsNumber',
   UpdateMassiveStore = 'application/updateMassiveStore',
+  GetGoodsResDevInv = 'application/goods-res-dev-inv-view',
 }
 
 export enum GoodFinderEndpoint {

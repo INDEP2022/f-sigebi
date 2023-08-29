@@ -8,7 +8,7 @@
       <div class="row">
         <div class="col-5">
           <div class="ch-content">
-            <h5 class="title">PERÍODOS DE SUPERVISIÓN Y VALIDACIÓN</h5>
+            <h5 class="title">PERIODOS DE SUPERVISIÓN Y VALIDACIÓN</h5>
           </div>
           <form action="" [formGroup]="form" class="form-material">
             <div class="row mt-4">
@@ -48,7 +48,7 @@
                     [form]="form"
                     [data]="periods"
                     bindLabel="cvePeriod"
-                    label="Período"
+                    label="Clave Periodo"
                     value="cvePeriod"
                     (fetchItems)="getPeriods($event)"
                     control="period"></ngx-select>
@@ -58,7 +58,7 @@
             </div>
             <div class="row mt-4">
               <div class="col-md-4 mt-3">
-                <form-field [control]="form.get('from')" label="Período del">
+                <form-field [control]="form.get('from')" label="Periodo del">
                   <input
                     readonly
                     type="text"
@@ -136,7 +136,7 @@
                     style="margin-top: 23px !important">
                     <form-field
                       [control]="formRegistro.get('fromTwo')"
-                      label="Período del">
+                      label="Periodo del">
                       <input
                         type="text"
                         formControlName="fromTwo"
@@ -162,14 +162,17 @@
               <div class="col-12 mt-4">
                 <div class="row">
                   <div class="col-1"></div>
-                  <div class="col-5 text-center">
+                  <div #scrollContainer class="col-5 text-center">
                     <button
+                      [ngClass]="{ loading: loadingBtn }"
                       style="font-size: 14px"
                       class="btn btn-success active btn-sm mt-4 w-100"
                       type="button"
                       (click)="cargarArchivo()">
                       Cargar Archivo
-                      <i class="bi bi-file-earmark-excel-fill"></i>
+                      <i
+                        *ngIf="!loadingBtn"
+                        class="bi bi-file-earmark-excel-fill"></i>
                     </button>
                     <input
                       type="file"
@@ -188,30 +191,32 @@
                   </div>
                   <div class="col-5 text-center">
                     <button
+                      [ngClass]="{ loading: loadingBtn1 }"
                       (click)="generaAleatorios()"
                       type="button"
                       class="btn btn-info btn-sm active mt-4 w-100">
                       Generar Aleatorios
                     </button>
-
                     <button
-                      style="font-size: 14px"
-                      (click)="exportar()"
                       type="button"
-                      class="btn btn-success active btn-sm mt-4 w-100">
-                      Exportar Reporte <i class="bx bx-upload float-icon"></i>
+                      (click)="generarReport()"
+                      class="btn btn-primary btn-sm active mt-4 w-100">
+                      Crear Reporte
                     </button>
                   </div>
                   <div class="col-1"></div>
                   <div class="col-3"></div>
                   <div class="col-6 text-center">
                     <button
-                      [disabled]="!delegationMae"
+                      [ngClass]="{ loading: loadingBtn2 }"
+                      style="font-size: 14px; width: 80%"
+                      (click)="exportar()"
                       type="button"
-                      (click)="generarReport()"
-                      style="width: 80%"
-                      class="btn btn-primary btn-sm active mt-4">
-                      Crear Reporte
+                      class="btn btn-success active btn-sm mt-4 w-100">
+                      Exportar Reporte
+                      <i
+                        *ngIf="!loadingBtn2"
+                        class="bx bx-upload float-icon"></i>
                     </button>
                   </div>
                   <div class="col-3"></div>

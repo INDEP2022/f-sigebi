@@ -59,31 +59,7 @@
         </div>
       </div>
     </form>
-    <div class="row mt-4">
-      <form action="" class="form-material" [formGroup]="dateDelAlForm">
-        <div class="col-md-8">
-          <app-date-initial-finish
-            *ngIf="dateDelAlForm"
-            [form]="dateDelAlForm"
-            [form2]="dateDelAlForm"
-            formInitial="del"
-            formFin="al"
-            labelInicioName="Fecha del"
-            labelFinName="al"
-            (formEmit)="(dateDelAlForm)">
-          </app-date-initial-finish>
-        </div>
-        <div class="col-md-4">
-          <button
-            class="btn btn-sm btn-success active"
-            [disabled]="!dateDelAlForm.valid"
-            (click)="exportDelAl()">
-            Exportar a Excel por Fecha
-            <i class="bx bx-download float-icon"></i>
-          </button>
-        </div>
-      </form>
-    </div>
+
     <br />
     <div class="row pt-4" *ngIf="newSiniester">
       <div class="ch-content">
@@ -116,6 +92,32 @@
       <app-pagination
         [params]="params"
         [totalItems]="totalItems"></app-pagination>
+    </div>
+    <hr />
+    <div class="row mt-4">
+      <form action="" class="form-material" [formGroup]="dateDelAlForm">
+        <div class="col-md-8">
+          <app-date-initial-finish
+            *ngIf="dateDelAlForm"
+            [form]="dateDelAlForm"
+            [form2]="dateDelAlForm"
+            formInitial="del"
+            formFin="al"
+            labelInicioName="Fecha del"
+            labelFinName="al"
+            (formEmit)="(dateDelAlForm)">
+          </app-date-initial-finish>
+        </div>
+        <div class="col-md-4">
+          <button
+            class="btn btn-sm btn-success active"
+            [disabled]="!dateDelAlForm.valid"
+            (click)="exportDelAl()">
+            Exportar a Excel por Fecha
+            <i class="bx bx-download float-icon"></i>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </app-card>

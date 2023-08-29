@@ -26,6 +26,7 @@ export enum ProceedingsEndpoints {
   ExistProceedings = 'aplication/getExistsproceedings',
   GetUnion = 'aplication/getUnionTables',
   GetFactDbConvBien = 'aplication/getFactDbConvBien',
+  GetFacCircuNr = 'aplication/get-fact-db-act-circu',
   GetProcedding = 'aplication/getMaxFile',
   GetCustom = 'proceedings-devolution/getAllCustom',
   getAct = 'aplication/getActDev',

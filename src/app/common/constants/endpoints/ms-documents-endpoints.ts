@@ -19,4 +19,6 @@ export enum DocumentsEndpoints {
   DocumentRequestPerGoodNew = 'documents-request-per-good',
   pupGenerateUniversalFolio = 'application/pupGenerateUniversalFolio',
   postDocuments = 'application/insertDocuments',
+  ExportExcelcaptura = 'application/get-data-ind-rec-doc-export',
+  GetDocument = 'application/getDocument-pag',
 }

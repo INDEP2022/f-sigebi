@@ -574,21 +574,25 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   getGoodClassDescriptions() {
     this.goodClassification.valueChanges.subscribe(res => {
-      console.log(res);
+      // console.log(res, this.goodClassification.value);
       if (this.goodClassification.value != null) {
         const paramsF = new FilterParams();
-        paramsF.addFilter('numClasifGoods', this.goodClassification.value);
+        paramsF.addFilter('numClasifGoods', res.numClasifGoods);
         this.goodSssubtypeService
           .getAllSssubtype(paramsF.getParams())
-          .subscribe(
-            res => {
+          .subscribe({
+            next: res => {
               console.log(res);
-              this.descGoodClass = res['data'][0].description;
+              if (res.data && res.data.length > 0) {
+                this.descGoodClass = res.data[0].description;
+              } else {
+                this.descGoodClass = null;
+              }
             },
-            err => {
+            error: err => {
               this.descGoodClass = null;
-            }
-          );
+            },
+          });
       }
     });
   }
@@ -636,11 +640,12 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         // this.goodDescription.setValue(res.numberGoodFather);
         // this.amount.setValue(res.numberGoodFather);
         this.measurementUnit.setValue(res.unit);
-        this.getCatalogClassGood({ text: res.status }, true);
+        console.log(res.status);
+        this.getCatalogGoodStatus({ text: res.status }, true);
         // this.status2.setValue(res.numberGoodFather);
 
         if (
-          ['C', 'X', 'L'].includes(
+          ['C', 'X', 'L', 'P', 'V', 'A'].includes(
             res.statuspack.toString().toLocaleUpperCase()
           )
         ) {
@@ -944,7 +949,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     const noPackage = this.noPackage.value.numberPackage;
     if (this.dataPrevisualization.length === 0) {
       this.alert(
-        'error',
+        'warning',
         titleInit + ' de paquete ' + noPackage,
         'No puede ' + messageInit + ' un paquete sin bienes'
       );
@@ -1322,7 +1327,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
               // pAsuntoInit = 'Autorización';
               this.validaButton.PB_CERRAR = false;
               pMessageStatus = 'cerrado';
-              this.form.disable({ onlySelf: true, emitEvent: false });
               break;
             default:
               break;
@@ -2005,7 +2009,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         if (res && res.data && res.data.length > 0) {
           this.noPackage.setValue(res.data[0]);
           this.loading = false;
-          this.validateButtons(this.noPackage.value.statusPaq);
+          this.validateButtons(this.noPackage.value.statuspack);
         } else {
           // this.dataPackageEnc = null;
         }
@@ -2398,6 +2402,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   getCatalogClassGood(e?: ListParams, research?: boolean) {
     const paramsF = new FilterParams();
     if (e) {
+      console.log(e);
       if (e.text != '') {
         if (isNaN(parseInt(e.text))) {
           paramsF.addFilter('description', e.text, SearchFilter.ILIKE);
@@ -2407,26 +2412,29 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       } else {
         paramsF.page = e.page;
       }
+      this.goodSssubtypeService
+        .getAllSssubtype(e ? paramsF.getParams() : '')
+        .subscribe({
+          next: res => {
+            if (res && res.data) {
+              const newData = res.data.map((e: any) => {
+                return {
+                  ...e,
+                  labelValue: `${e.numClasifGoods} - ${e.description}`,
+                };
+              });
+              this.dataGoodClass = new DefaultSelect(newData, res.count);
+              research ? this.goodClassification.setValue(newData[0]) : '';
+            } else {
+              this.dataGoodClass = new DefaultSelect();
+            }
+          },
+          error: err => {
+            console.log(err);
+            this.dataGoodClass = new DefaultSelect();
+          },
+        });
     }
-
-    this.goodSssubtypeService
-      .getAllSssubtype(e ? paramsF.getParams() : '')
-      .subscribe(
-        res => {
-          const newData = res.data.map((e: any) => {
-            return {
-              ...e,
-              labelValue: `${e.numClasifGoods} - ${e.description}`,
-            };
-          });
-          this.dataGoodClass = new DefaultSelect(newData, res.count);
-          research ? this.goodClassification.setValue(newData[0]) : '';
-        },
-        err => {
-          console.log(err);
-          this.dataGoodClass = new DefaultSelect();
-        }
-      );
   }
 
   getCatalogTransferent(e?: ListParams, research?: boolean) {

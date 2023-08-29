@@ -6,8 +6,8 @@
     <div class="ms-3 mb-2"></div>
     <div class="row mt-3">
       <div class="col-sm-12 col-md-6 col-lg-6">
-        <div class="form-material">
-          <h6 class="d-inline">SOLICITANTES</h6>
+        <div class="col-md-6 ch-content">
+          <h5 class="title">SOLICITANTES</h5>
         </div>
       </div>
       <div class="col-sm-12 col-md-6 col-lg-6">
@@ -48,16 +48,12 @@
     <div class="ms-3 mb-2"></div>
     <div class="row mt-3">
       <div class="col-sm-12 col-md-6 col-lg-6">
-        <div class="form-material">
-          <h6 class="d-inline">BIENES ASIGNADOS</h6>
+        <div class="col-md-6 ch-content">
+          <h5 class="title">BIENES ASIGNADOS</h5>
         </div>
       </div>
       <div class="col-sm-12 col-md-6 col-lg-6">
         <div class="d-flex flex-row-reverse">
-          <div class="">
-            <app-columns-select
-              [(settings)]="assignedGoodSettings"></app-columns-select>
-          </div>
           <div class="me-2">
             <button
               type="button"
@@ -67,6 +63,10 @@
               (click)="openFormAssignedGood()">
               Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
+          </div>
+          <div class="">
+            <app-columns-select
+              [(settings)]="assignedGoodSettings"></app-columns-select>
           </div>
         </div>
       </div>

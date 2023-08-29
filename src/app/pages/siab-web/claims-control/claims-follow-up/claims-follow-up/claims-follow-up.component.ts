@@ -43,19 +43,6 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
         position: 'right',
       },
       columns: {
-        officialConclusion: {
-          title: 'Ver Oficio Conclusión',
-          width: '5%',
-          type: 'custom',
-          sort: false,
-          renderComponent: ButtonColumnComponent,
-          onComponentInitFunction: (instance: any) => {
-            instance.onClick.subscribe((row: any) => {
-              console.log(row);
-              this.seeOfficialConclusion(row);
-            });
-          },
-        },
         officeMail: {
           title: 'Ver Oficio Correo',
           width: '5%',
@@ -79,6 +66,19 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
             instance.onClick.subscribe((row: any) => {
               console.log(row);
               this.seeClaimLetter(row);
+            });
+          },
+        },
+        officialConclusion: {
+          title: 'Ver Oficio Conclusión',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          renderComponent: ButtonColumnComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              console.log(row);
+              this.seeOfficialConclusion(row);
             });
           },
         },
@@ -268,7 +268,11 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           this.totalItems = data.count | 0;
           this.loading = false;
         },
-        error: error => (this.loading = false),
+        error: error => {
+          this.loading = false;
+          this.lawyers = [];
+          this.totalItems = 0;
+        },
       });
   }
   openForm(siniester?: any) {
@@ -293,15 +297,16 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
   }
   edit(siniester: any) {
     console.log(siniester);
-    if (siniester.estatus == 'ABIERTO') {
-      this.openForm(siniester);
-    } else {
-      this.alert(
-        'warning',
-        'El siniestro se encuentra cerrada, no se puede actualizar',
-        ''
-      );
-    }
+    this.openForm(siniester);
+    // if (siniester.estatus == 'ABIERTO') {
+
+    // } else {
+    //   this.alert(
+    //     'warning',
+    //     'El siniestro se encuentra cerrada, no se puede actualizar',
+    //     ''
+    //   );
+    // }
   }
 
   delete(bank: any) {
@@ -334,7 +339,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Siniestros Seguimiento',
-        'No se encontro documento oficio conclusión.'
+        'No se encontró documento oficio conclusión.'
       );
     }
   }
@@ -357,7 +362,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Siniestros Seguimiento',
-        'No se encontro documento oficio correo.'
+        'No se encontró documento oficio correo.'
       );
     }
   }
@@ -381,7 +386,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Siniestros Seguimiento',
-        'No se encontro documento oficio reclamación.'
+        'No se encontró documento oficio reclamación.'
       );
     }
   }

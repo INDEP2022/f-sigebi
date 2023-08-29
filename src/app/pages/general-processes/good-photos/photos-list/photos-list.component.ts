@@ -22,7 +22,10 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { FilePhotoSaveZipService } from 'src/app/core/services/ms-ldocuments/file-photo-save-zip.service';
-import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
+import {
+  FilePhotoService,
+  IPhotoFile,
+} from 'src/app/core/services/ms-ldocuments/file-photo.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared';
@@ -45,8 +48,8 @@ export class PhotosListComponent extends BasePage implements OnInit {
   ];
   errorMessage: string = '';
   // lastConsecutive: number = 1;
-  filesToDelete: string[] = [];
-  files: string[] = [];
+  filesToDelete: IPhotoFile[] = [];
+  files: IPhotoFile[] = [];
   form: FormGroup;
   errorImages: string[] = [];
   constructor(
@@ -82,20 +85,27 @@ export class PhotosListComponent extends BasePage implements OnInit {
     return this.form ? this.form.get('typedblClickAction').value : 1;
   }
 
+  get userName() {
+    return this.service.userName;
+  }
+
   async download(all = false) {
     this.alert(
       'warning',
       'Aviso',
       'La descarga está en proceso, favor de esperar'
     );
-    let photos: any;
-    if (!all) {
-      photos = this.photos.filter(row =>
-        this.filesToDelete.includes(row.filename)
-      );
-    } else {
-      photos = this.photos;
-    }
+    let photos: any[] = [];
+    this.photos.forEach(row => {
+      let file = row.file;
+      if (all) {
+        photos.push(row);
+        return;
+      }
+      if (this.filesToDelete.map(x => x.name).includes(row.file.name)) {
+        photos.push(row);
+      }
+    });
     const zip = await this.service.downloadByGood(photos);
     const name = this.goodNumber + '.zip';
     zip.generateAsync({ type: 'blob' }).then(content => {
@@ -197,10 +207,17 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   disabledDeleteAllPhotos() {
-    return this.files.length < 1 || this.errorMessage;
+    return this.validFilesToDelete.length < 1 || this.errorMessage;
   }
 
-  selectFile(image: string, event: Event) {
+  get validFilesToDelete() {
+    return this.files.filter(
+      row =>
+        row.usuario_creacion === this.userName || row.usuario_creacion === null
+    );
+  }
+
+  selectFile(image: IPhotoFile, event: Event) {
     const target = event.target as HTMLInputElement;
     const checked = target.checked;
     if (checked) {
@@ -224,6 +241,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
               if (response) {
                 this.files = [...response];
                 // this.errorMessage = null;
+                // return;
                 if (!this.errorMessage) {
                   const pufValidaUsuario = await this.pufValidaUsuario();
                   if (pufValidaUsuario === 1) {
@@ -256,7 +274,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
       if (this.disabledDeleteAllPhotos()) {
         return;
       }
-      this.filesToDelete = [...this.files];
+      this.filesToDelete = [...this.validFilesToDelete];
     }
     if (this.disabledDeletePhotos()) {
       return;
@@ -282,16 +300,24 @@ export class PhotosListComponent extends BasePage implements OnInit {
     }
   }
 
+  validationUser(file: IPhotoFile) {
+    if (!file.usuario_creacion) return true;
+    if (file.usuario_creacion.length === 0) return true;
+    if (file.usuario_creacion.toUpperCase() === this.userName) return true;
+    return false;
+  }
+
   private async deleteSelectedFiles() {
     this.errorImages = [];
+    this.loader.load = true;
     const results = await Promise.all(
-      this.filesToDelete.map(async filename => {
-        const index = filename.indexOf('F');
-        const finish = filename.indexOf('.');
+      this.filesToDelete.map(async file => {
+        const index = file.name.indexOf('F');
+        const finish = file.name.indexOf('.');
         return await firstValueFrom(
           this.deleteFile(
-            +filename.substring(index + 1, finish),
-            filename
+            +file.name.substring(index + 1, finish),
+            file.name
           ).pipe(debounceTime(500))
         );
       })
@@ -309,10 +335,11 @@ export class PhotosListComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Eliminación de Fotos',
-          'Se Eliminaron las Fotos Correctamente'
+          'Las fotos seleccionadas se han eliminado'
         );
       }
     }
+    this.loader.load = false;
     this.filesToDelete = [];
     this.service.deleteEvent.next(true);
     this.getData();

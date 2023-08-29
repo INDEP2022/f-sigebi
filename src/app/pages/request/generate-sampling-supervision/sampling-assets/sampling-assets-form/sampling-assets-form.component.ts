@@ -9,6 +9,7 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
@@ -101,6 +102,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   private authService = inject(AuthService);
   private goodService = inject(GoodService);
   private transferentService = inject(TransferenteService);
+  private goodsinvService = inject(GoodsInvService);
 
   constructor(
     private fb: FormBuilder,
@@ -359,10 +361,11 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   getGoods() {
     const filter = this.params2.getValue().getParams();
-    this.goodService.getAll(filter).subscribe({
+    this.goodsinvService.getSamplingGoodView(filter).subscribe({
       next: resp => {
         console.log(resp.data);
         this.paragraphs2.load(resp.data);
+        this.totalItems2 = resp.count;
       },
       error: error => {
         console.log(error);

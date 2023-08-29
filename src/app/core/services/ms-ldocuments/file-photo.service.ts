@@ -18,6 +18,21 @@ export interface IHistoricalPhoto {
   deletedDate: Date;
 }
 
+export interface IPhotoFile {
+  no_bien: string;
+  no_consec: number;
+  fec_foto: string;
+  ubicacion: string;
+  no_registro: number;
+  fec_foto_hc: string;
+  publ_img_cat_web?: any;
+  existe_fs: number;
+  existe_prod?: any;
+  nb_origen?: any;
+  usuario_creacion: string;
+  name: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -29,15 +44,14 @@ export class FilePhotoService extends HttpService {
     this.microservice = IDocumentEndpoints.Base;
   }
 
-  getAll(goodNumber: string) {
-    return this.post<IListResponseMessage<{ name: string }>>(
+  getAll(goodNumber: string): Observable<IPhotoFile[]> {
+    return this.post<IListResponseMessage<IPhotoFile>>(
       IDocumentEndpoints.filePhotos,
       { goodNumber }
     ).pipe(
-      catchError(x => of({ data: [] as { name: string }[] })),
+      catchError(x => of({ data: [] as IPhotoFile[] })),
       map(response => {
-        if (response && response.data)
-          return response.data.map(item => item.name);
+        if (response && response.data) return response.data;
         else {
           return [];
         }
@@ -59,7 +73,7 @@ export class FilePhotoService extends HttpService {
           return response.map(item =>
             this.getById(
               goodNumber,
-              +item.substring(item.indexOf('F'), item.length)
+              +item.name.substring(item.name.indexOf('F'), item.name.length)
             )
           );
         else {
@@ -180,7 +194,9 @@ export class FilePhotoService extends HttpService {
     const formData = new FormData();
     formData.append(fileField, file, `FU_${uuidv4()}.${ext}`);
     formData.append('goodNumber', `${identificator}`);
+    const user = localStorage.getItem('username').toUpperCase();
     // formData.append('consecNumber', this.consecNumber++ + '');
+    formData.append('userCreation', user);
     formData.append('recordNumber', '305315076');
     formData.append('photoDate', new Date().toISOString());
     formData.append('photoDateHc', new Date().toISOString());

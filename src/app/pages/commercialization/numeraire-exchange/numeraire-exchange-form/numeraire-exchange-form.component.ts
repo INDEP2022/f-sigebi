@@ -625,9 +625,10 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     });
     if (messages.length > 0) {
       this.alert(
-        'error',
-        'Error',
-        `El Archivo no Contiene las Columnas ${messages.join(', ')}`
+        'warning',
+        'El Archivo es inválido',
+        // `El Archivo no Contiene las Columnas ${messages.join(', ')}`
+        ''
       );
       return false;
     }
@@ -918,7 +919,11 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         catchError(err => {
           console.log('error', err);
           const message = err.error.message;
-          this.alert('error', 'Error', message);
+          this.alert(
+            'warning',
+            'Atención',
+            'El  No. Bien introducido es inválido'
+          );
           throw err;
         })
       )
@@ -994,6 +999,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   async pupValidateMassive(): Promise<void> {
     try {
+      this.loader.load = true;
       // const body = {
       //   availableMasive: this.dataTableMassive.map(item => {
       //     return {
@@ -1075,6 +1081,8 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
               });
               this.openDialogGoodStatus(goodFather, goodGenerate);
               this.clear();
+            } else {
+              this.alert('warning', 'Bienes no encontrados', '');
             }
             this.loader.load = false;
           }),
@@ -1085,6 +1093,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
                 'Error',
                 'Ocurrió un error Insertar los Datos Asegúrese de que los Datos sean Correctos y no estén Duplicados'
               );
+              this.loader.load = false;
             }
             console.log('err', err);
             throw err;

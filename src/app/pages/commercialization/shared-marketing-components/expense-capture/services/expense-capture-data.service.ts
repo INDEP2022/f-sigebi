@@ -51,6 +51,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   vatWithholding = 0;
   total = 0;
   totalMandatos = 0;
+  V_BIEN_REP_ROBO = 0;
+  PB_VEHICULO_REP_ROBO_DISPLAYED = true;
+  PB_VEHICULO_REP_ROBO_ENABLED = false;
+  SELECT_CAMBIA_CLASIF_DISPLAYED = true;
+  SELECT_CAMBIA_CLASIF_ENABLED = false;
   constructor(
     private fb: FormBuilder,
     private parameterService: ParametersConceptsService,
@@ -121,7 +126,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return this.parameterService.readParameters(+conceptId, this.address).pipe(
       take(1),
       catchError(x => {
-        this.alert('error', 'El concepto no está parametrizado', '');
+        // this.alert('error', 'El concepto no está parametrizado', '');
         this.resetParams();
         return of(null);
       }),
@@ -129,10 +134,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         console.log(response);
         if (response) {
           this.fillParams(response);
+          return true;
         } else {
-          this.alert('error', 'El concepto no está parametrizado', '');
+          this.alert('warning', 'El concepto no está parametrizado', '');
+          return false;
         }
-        return null;
       })
     );
   }

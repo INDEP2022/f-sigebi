@@ -1,30 +1,30 @@
 export const SAT_CATALOGS_COLUMNS = {
-  allotment: {
+  batchId: {
     title: 'Lote',
     sort: false,
   },
-  client: {
+  customer: {
     title: 'Cliente',
     sort: false,
   },
-  use: {
-    title: 'Uso Comprobable',
+  usoComp: {
+    title: 'Uso Comprobante',
     sort: false,
   },
-  unit: {
+  unite: {
     title: 'Unidad',
     sort: false,
   },
-  service: {
-    title: 'Producto o servicio',
+  prod: {
+    title: 'Producto/Servicio',
     sort: false,
   },
-  payMeth: {
-    title: 'Método de pago',
+  payment: {
+    title: 'Método de Pago',
     sort: false,
   },
-  typeRelationship: {
-    title: 'Tipo de relación',
+  relation: {
+    title: 'Tipo de Relación',
     sort: false,
   },
 };

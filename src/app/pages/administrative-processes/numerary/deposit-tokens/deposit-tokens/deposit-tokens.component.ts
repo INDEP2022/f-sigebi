@@ -129,9 +129,19 @@ export class DepositTokensComponent
               options: this.getUniqueValues('cveAccount'),
             },
           },
-          valuePrepareFunction: (text: string) => {
-            console.log('account', text);
-            return text;
+          valuePrepareFunction: (value: any) => {
+            return value != null ? value : '';
+          },
+          filterFunction(cell?: any, search?: string): boolean {
+            let column = cell;
+            if (
+              column?.toUpperCase() >= search.toUpperCase() ||
+              search === ''
+            ) {
+              return true;
+            } else {
+              return false;
+            }
           },
           sort: false,
         },
@@ -557,6 +567,7 @@ export class DepositTokensComponent
   }
 
   ngOnChanges() {}
+
   getAccount() {
     this.loading = true;
     let params: any = {
@@ -661,6 +672,7 @@ export class DepositTokensComponent
             this.data1.load(response.data);
             this.data1.refresh();
             console.log('AQUI', response);
+            console.log('this.data1 ', this.data1);
             this.validExcel = false;
             this.loading = false;
           });
@@ -1020,7 +1032,7 @@ export class DepositTokensComponent
       Promise.all(result).then(i => {
         console.log('jsonToCsv', arr);
         this.jsonToCsv = arr;
-        this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+        this.excelService.export(this.jsonToCsv, { type: 'xlsx', filename });
         this.alert('success', 'Archivo Descargado Correctamente', '');
         this.loadingBtn2 = false;
       });
@@ -1132,7 +1144,19 @@ export class DepositTokensComponent
           // resolve(true);
         },
         error: err => {
-          this.alert('error', 'Error al Descargar el Archivo', '');
+          if (
+            err.error.message ==
+            'more than one row returned by a subquery used as an expression'
+          ) {
+            this.alert(
+              'warning',
+              'No se puede generar el excel por la cantidad de registros',
+              ''
+            );
+          } else {
+            this.alert('error', 'Error al Descargar el Archivo', '');
+          }
+
           this.loadingBtn2 = false;
           // resolve(false);
         },
@@ -1144,7 +1168,7 @@ export class DepositTokensComponent
       'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
     const link = document.createElement('a');
     link.href = mediaType + base64String;
-    link.download = 'CARINSFICHDEPO.csv';
+    link.download = 'CARINSFICHDEPO.xlsx';
     link.click();
     link.remove();
     this.alert('success', 'Archivo Descargado Correctamente', '');

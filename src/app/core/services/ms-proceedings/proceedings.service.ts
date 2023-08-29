@@ -203,6 +203,11 @@ export class ProceedingsService extends HttpService {
       `${ProceedingsEndpoints.GetFactDbConvBien}?no_bien=${good}&no_expediente=${exp}`
     );
   }
+  getGetFactCir(good: any, exp: any) {
+    return this.get<IResponse>(
+      `${ProceedingsEndpoints.GetFacCircuNr}?no_bien=${good}&no_expediente=${exp}`
+    );
+  }
 
   creaDetailProceedingsDevollution(good: any) {
     return this.post<IResponse>(

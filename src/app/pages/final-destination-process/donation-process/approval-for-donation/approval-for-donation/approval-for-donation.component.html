@@ -36,7 +36,7 @@
               class="form-control"
               [clearable]="false"
               (change)="getRowSelec($event)">
-              <ng-option value="TODOS">TODOS </ng-option>
+              <ng-option value="">TODOS </ng-option>
               <ng-option value="ABIERTA">ABIERTA </ng-option>
               <ng-option value="CERRADA">CERRADA </ng-option>
             </ng-select>
@@ -174,7 +174,8 @@
             <ng2-smart-table
               [attr.class]="'table-bordered table-responsive'"
               [settings]="settings1"
-              [source]="data1">
+              [source]="data1"
+              (rowSelect)="selectedDetailActa($event)">
             </ng2-smart-table>
           </div>
         </div>
@@ -186,10 +187,16 @@
         <div class="col-md-8 mb-3"></div>
         <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
           <div>
-            <button
-              class="btn btn-primary active btn-sm"
-              routerLink="capture-approval-donation">
+            <!-- <button class="btn btn-primary active btn-sm" routerLink="capture-approval-donation">
               Captura de Evento
+            </button> -->
+            <button
+              type="button"
+              tooltip="Nuevo"
+              containerClass="tooltip-style"
+              class="btn btn-primary btn-sm active ml-2 mr-2"
+              (click)="goDetailDonation()">
+              Captura de Evento <i class="bx bx-edit bx-sm float-icon"></i>
             </button>
           </div>
         </div>

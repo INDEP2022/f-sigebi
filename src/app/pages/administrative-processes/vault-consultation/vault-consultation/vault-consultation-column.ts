@@ -18,17 +18,30 @@ export const COUNT_SAFE_COLUMNS = {
   stateCode: {
     title: 'Entidad',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.stateDetail?.descCondition;
+    },
   },
   municipalityCode: {
     title: 'Municipio',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.municipalityDetail?.nameMunicipality;
+    },
   },
   cityCode: {
     title: 'Ciudad',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.cityDetail?.nameCity;
+    },
   },
   localityCode: {
     title: 'Localidad',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.localityDetail?.nameLocation;
+    },
   },
 };
 

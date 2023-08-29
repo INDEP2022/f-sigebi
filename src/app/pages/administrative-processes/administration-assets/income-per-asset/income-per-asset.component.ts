@@ -49,17 +49,17 @@ export class IncomePerAssetComponent
     this.assetSettings.actions = false;
     this.assetSettings.hideSubHeader = false;
     this.assetSettings.columns = {
-      bank: {
+      cve_banco: {
         title: 'Banco',
         type: 'number',
         sort: false,
       },
-      account: {
+      cve_cuenta: {
         title: 'Cuenta',
         type: 'string',
         sort: false,
       },
-      depositDate: {
+      fec_movimiento: {
         title: 'Fecha Depósito',
         sort: false,
         type: 'html',
@@ -72,23 +72,31 @@ export class IncomePerAssetComponent
           type: 'custom',
           component: CustomDateFilterComponent,
         },
+        filterFunction(cell?: any, search?: string): boolean {
+          let column = cell;
+          if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+            return true;
+          } else {
+            return false;
+          }
+        },
       },
-      fol: {
+      folio_ficha: {
         title: 'Folio',
         type: 'string',
         sort: false,
       },
-      currency: {
+      cve_moneda: {
         title: 'Moneda',
         type: 'string',
         sort: false,
       },
-      amount: {
+      deposito: {
         title: 'Importe',
         type: 'string',
         sort: false,
       },
-      concept: {
+      cve_concepto: {
         title: 'Concepto',
         type: 'string',
         sort: false,
@@ -98,7 +106,7 @@ export class IncomePerAssetComponent
         type: 'string',
         sort: false,
       },
-      transferDate: {
+      fec_calculo_intereses: {
         title: 'Fecha Transferencia',
         sort: false,
         type: 'html',
@@ -111,22 +119,30 @@ export class IncomePerAssetComponent
           type: 'custom',
           component: CustomDateFilterComponent,
         },
+        filterFunction(cell?: any, search?: string): boolean {
+          let column = cell;
+          if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+            return true;
+          } else {
+            return false;
+          }
+        },
       },
     };
     this.depositSettings.actions = false;
     this.depositSettings.hideSubHeader = false;
     this.depositSettings.columns = {
-      bank: {
+      cve_banco: {
         title: 'Banco',
         type: 'number',
         sort: false,
       },
-      account: {
+      cve_cuenta: {
         title: 'Cuenta',
         type: 'string',
         sort: false,
       },
-      depositDate: {
+      fec_movimiento: {
         title: 'Fecha Depósito',
         sort: false,
         type: 'html',
@@ -139,18 +155,26 @@ export class IncomePerAssetComponent
           type: 'custom',
           component: CustomDateFilterComponent,
         },
+        filterFunction(cell?: any, search?: string): boolean {
+          let column = cell;
+          if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+            return true;
+          } else {
+            return false;
+          }
+        },
       },
-      fol: {
+      folio_ficha: {
         title: 'Folio',
         type: 'string',
         sort: false,
       },
-      currency: {
+      cve_moneda: {
         title: 'Moneda',
         type: 'string',
         sort: false,
       },
-      amount: {
+      deposito: {
         title: 'Importe',
         type: 'string',
         sort: false,
@@ -178,14 +202,22 @@ export class IncomePerAssetComponent
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
-              case 'bank':
+              case 'cve_banco':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'depositDate':
-                filter.search = this.returnParseDate(filter.search);
+              case 'cve_cuenta':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'account':
+              case 'fec_movimiento':
+                if (filter.search) {
+                  filter.search = `${this.returnParseDate(
+                    filter.search
+                  )} 00:00:00`;
+                }
+                searchFilter = SearchFilter.SD;
+                field = `filter.${filter.field}`;
+                break;
+              case 'deposito':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -220,19 +252,29 @@ export class IncomePerAssetComponent
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
-              case 'bank':
+              case 'cve_banco':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'account':
+              case 'cve_cuenta':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'depositDate':
-                filter.search = this.returnParseDate(filter.search);
-                searchFilter = SearchFilter.EQ;
+              case 'fec_movimiento':
+                if (filter.search) {
+                  filter.search = `${this.returnParseDate(
+                    filter.search
+                  )} 00:00:00`;
+                }
+                searchFilter = SearchFilter.SD;
+                field = `filter.${filter.field}`;
                 break;
-              case 'transferDate':
-                filter.search = this.returnParseDate(filter.search);
-                searchFilter = SearchFilter.EQ;
+              case 'fec_calculo_intereses':
+                if (filter.search) {
+                  filter.search = `${this.returnParseDate(
+                    filter.search
+                  )} 00:00:00`;
+                }
+                searchFilter = SearchFilter.SD;
+                field = `filter.${filter.field}`;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -262,16 +304,13 @@ export class IncomePerAssetComponent
       .then(async (response: any) => {
         this.depositList = await Promise.all(
           response.map(async (deposit: any) => {
-            const responseAccount: any = await this.searchAccount(
-              deposit.no_cuenta
-            );
             return {
-              bank: responseAccount.data[0].cve_banco,
-              account: responseAccount.data[0].cve_cuenta,
-              depositDate: deposit.fec_movimiento,
-              fol: deposit.folio_ficha,
-              currency: responseAccount.data[0].cve_moneda,
-              amount: deposit.deposito,
+              cve_banco: deposit.cve_banco,
+              cve_cuenta: deposit.cve_cuenta,
+              fec_movimiento: deposit.fec_movimiento,
+              folio_ficha: deposit.folio_ficha,
+              cve_moneda: deposit.cve_moneda,
+              deposito: deposit.deposito,
             };
           })
         );
@@ -321,21 +360,19 @@ export class IncomePerAssetComponent
   searchIncomeFromTheAsset(goodId: number) {
     this.incomeFromTheAsset(goodId)
       .then(async (response: any) => {
+        console.log(response);
         this.assetList = await Promise.all(
           response.map(async (deposit: any) => {
-            const responseAccount: any = await this.searchAccount(
-              deposit.no_cuenta
-            );
             return {
-              bank: responseAccount.data[0].cve_banco,
-              account: responseAccount.data[0].cve_cuenta,
-              depositDate: deposit.fec_movimiento,
-              fol: deposit.folio_ficha,
-              currency: responseAccount.data[0].cve_moneda,
-              amount: deposit.deposito,
-              concept: deposit.cve_concepto,
+              cve_banco: deposit.cve_banco,
+              cve_cuenta: deposit.cve_cuenta,
+              fec_movimiento: deposit.fec_movimiento,
+              folio_ficha: deposit.folio_ficha,
+              cve_moneda: deposit.cve_moneda,
+              deposito: deposit.deposito,
+              cve_concepto: deposit.cve_concepto,
               description: 'TRASPASO COBRO DE CHEQUE',
-              transferDate: deposit.fec_calculo_intereses,
+              fec_calculo_intereses: deposit.fec_calculo_intereses,
             };
           })
         );

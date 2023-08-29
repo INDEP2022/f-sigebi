@@ -33,7 +33,7 @@
         <div class="col-md-6">
           <form-field
             [control]="claimsFollowUpDetailForm.get('fecRepCabiIn')"
-            label="Fecha de Reporte a la CABI">
+            label="Fecha de Reporte a la CAB">
             <input
               type="text"
               formControlName="fecRepCabiIn"
@@ -81,7 +81,7 @@
         </div>
         <div class="col-md-4">
           <form-field
-            label="N&uacute;mero de Siniestro"
+            label="No. Siniestro"
             [control]="claimsFollowUpDetailForm.get('sinisterIn')">
             <input
               class="form-control"
@@ -145,8 +145,8 @@
           </form-field>
         </div>
       </div>
-      <hr />
-      <div class="row pt-4">
+
+      <div class="row pt-4" style="margin-top: 8%">
         <div class="col-md-6">
           <form-field
             label="Monto Reclamo Segun Carta de Reclamación"
@@ -217,7 +217,8 @@
           </form-field>
         </div>
       </div>
-      <div class="row">
+
+      <div class="row" style="margin-top: 8%">
         <div class="col-md-7">
           <label
             for=""
@@ -296,7 +297,8 @@
                 type="text"
                 formControlName="dateIndemnizationIn"
                 class="form-control"
-                bsDatepicker />
+                bsDatepicker
+                [bsConfig]="{ adaptivePosition: true }" />
             </form-field>
           </div>
         </div>
@@ -308,7 +310,8 @@
               type="text"
               formControlName="letterClaimIn"
               class="form-control"
-              bsDatepicker />
+              bsDatepicker
+              [bsConfig]="{ adaptivePosition: true }" />
           </form-field>
         </div>
       </div>

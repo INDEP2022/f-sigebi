@@ -4,19 +4,21 @@
   </div>
   <div body>
     <div class="justify-content-end btn-toolbar">
-      <button
-        type="button"
-        [routerLink]="['execute-schelude-delivery']"
-        class="btn btn-primary btn-sm active">
+      <button type="button" class="btn btn-primary btn-sm active mr-2">
         Enviar programaci&oacute;n <i class="bx bx-send"></i>
       </button>
 
-      <button
-        (click)="saveProgDelivery()"
+      <confirm-button
+        [disabled]="!schedulingDeliverieForm.valid"
+        [loading]="loading"
+        [btnSmall]="true"
+        (click)="saveProgDelivery()"></confirm-button>
+      <!--<button
+       
         type="button"
         class="btn btn btn-primary btn-sm active">
         Guardar <i aria-hidden="true" class="fa fa-save"></i>
-      </button>
+      </button> -->
 
       <button (click)="close()" class="btn btn-primary btn-sm active">
         Regresar <i class="fas fa-arrow-circle-left"></i>
@@ -48,16 +50,27 @@
     <form [formGroup]="schedulingDeliverieForm" class="form-material">
       <div class="row pt-3" *ngIf="!showDetailProgramming">
         <div class="col-md-6">
-          <div class="pt-3">
+          <div class="pt-3" *ngIf="disabledTypeEvent == false">
             <ngx-select
               [form]="schedulingDeliverieForm"
               control="typeEvent"
               [data]="TypeEventOptions"
               value="id"
-              (change)="typeEventSelect($event)"
+              (change)="typeEventSelect($event, 'typeEvent')"
               bindLabel="nameEvent"
               label="Tipo de Evento"></ngx-select>
           </div>
+          <!--<div class="pt-3" *ngIf="disabledTypeEvent == true">
+            <ngx-select
+              [form]="schedulingDeliverieForm"
+              control="typeEventInfo"
+              [data]="TypeEventOptions"
+              value="nameEvent"
+              [readonly]="true"
+              (change)="typeEventSelect($event, 'typeEvent')"
+              bindLabel="nameEvent"
+              label="Tipo de Evento"></ngx-select>
+          </div> -->
 
           <div class="pt-3">
             <form-field
@@ -79,7 +92,7 @@
             </form-field>
           </div>
 
-          <div class="pt-3">
+          <div class="pt-3" *ngIf="disableTransfer == false">
             <form-field [control]="schedulingDeliverieForm.get('transferId')">
               <ngx-select
                 [form]="schedulingDeliverieForm"
@@ -89,13 +102,30 @@
                 value="id"
                 bindLabel="nameAndId"
                 label="Transferente"
+                (change)="typeEventSelect($event, 'transferent')"
                 (fetchItems)="getTransferentSelect($event)"></ngx-select>
             </form-field>
           </div>
+
+          <!--<div class="pt-3" *ngIf="disableTransfer == true">
+            <form-field [control]="schedulingDeliverieForm.get('transferName')">
+              <ngx-select
+                [form]="schedulingDeliverieForm"
+                control="transferName"
+                [showTooltip]="true"
+                [readonly]="true"
+                [data]="transferences"
+                value="nameAndId"
+                bindLabel="nameAndId"
+                label="Transferente"
+                (change)="typeEventSelect($event, 'transferent')"
+                (fetchItems)="getTransferentSelect($event)"></ngx-select>
+            </form-field>
+          </div> -->
         </div>
 
         <div class="col-md-6">
-          <div class="pt-3">
+          <div class="pt-3" *ngIf="disableStore == false">
             <ngx-select
               [form]="schedulingDeliverieForm"
               control="store"
@@ -103,8 +133,21 @@
               value="organizationCode"
               bindLabel="name"
               label="Almac&eacute;n"
+              (change)="typeEventSelect($event, 'organization')"
               (fetchItems)="getWarehouseSelect($event)"></ngx-select>
           </div>
+
+          <!--<div class="pt-3" *ngIf="disableStore == true">
+            <ngx-select
+              [form]="schedulingDeliverieForm"
+              control="storeName"
+              [data]="warehouse"
+              value="name"
+              bindLabel="name"
+              [readonly]="true"
+              label="Almac&eacute;n"
+              (fetchItems)="getWarehouseSelect($event)"></ngx-select>
+          </div> -->
 
           <div class="pt-3">
             <form-field
@@ -112,7 +155,6 @@
               label="Fecha Final de Entrega">
               <input
                 class="form-control"
-                [minDate]="startDate"
                 [daysDisabled]="[6, 0]"
                 [bsConfig]="{
                   withTimepicker: true,
@@ -437,8 +479,10 @@
         </div>
         <div [class]="loadingGoodsDest ? 'table-loading' : ''">
           <ng2-smart-table
+            (userRowSelect)="goodsSelectDest($event.selected)"
             [attr.class]="'table-bordered table-responsive pt-3'"
             [settings]="settingsSearchDest"
+            event
             [source]="infoGoodDestruction">
           </ng2-smart-table>
           <app-pagination
@@ -552,14 +596,16 @@
             [(settings)]="settingsSearchDevol"></app-columns-select>
         </div>
 
-        <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive pt-3'"
-          [settings]="settingsSearchDevol"
-          [source]="infoGoodDevolution">
-        </ng2-smart-table>
-        <app-pagination
-          [params]="paramsSearchDevol"
-          [totalItems]="totalItemsSearchDevol"></app-pagination>
+        <div [class]="loadingGoodsDevolution ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive pt-3'"
+            [settings]="settingsSearchDevol"
+            [source]="infoGoodDevolution">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsSearchDevol"
+            [totalItems]="totalItemsSearchDevol"></app-pagination>
+        </div>
       </div>
     </div>
 
@@ -667,15 +713,16 @@
           <app-columns-select
             [(settings)]="settingsSearchDonation"></app-columns-select>
         </div>
-
-        <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive pt-3'"
-          [settings]="settingsSearchDonation"
-          [source]="infoGoodDonation">
-        </ng2-smart-table>
-        <app-pagination
-          [params]="paramsSearchDonation"
-          [totalItems]="totalItemsSearchDonation"></app-pagination>
+        <div [class]="loadingGoodsDonation ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive pt-3'"
+            [settings]="settingsSearchDonation"
+            [source]="infoGoodDonation">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsSearchDonation"
+            [totalItems]="totalItemsSearchDonation"></app-pagination>
+        </div>
       </div>
     </div>
 
@@ -798,15 +845,16 @@
           <app-columns-select
             [(settings)]="settingsSearchSales"></app-columns-select>
         </div>
-
-        <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive pt-3'"
-          [settings]="settingsSearchSales"
-          [source]="infoGoodSales">
-        </ng2-smart-table>
-        <app-pagination
-          [params]="paramsSearchSales"
-          [totalItems]="totalItemsSearchSales"></app-pagination>
+        <div [class]="loadingGoodsSales ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive pt-3'"
+            [settings]="settingsSearchSales"
+            [source]="infoGoodSales">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsSearchSales"
+            [totalItems]="totalItemsSearchSales"></app-pagination>
+        </div>
       </div>
     </div>
 
@@ -835,7 +883,9 @@
     <div class="row pt-3" *ngIf="filterPreviewGood">
       <div class="btn-toolbar pt-3">
         <app-columns-select [(settings)]="settings"></app-columns-select>
-        <button class="btn btn-primary btn-sm active">
+        <button
+          (click)="addGoodsProgrammingDelivery()"
+          class="btn btn-primary btn-sm active">
           Agregar <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
         <button class="btn btn-danger btn-sm active">

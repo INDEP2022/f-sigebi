@@ -10,10 +10,10 @@
           <div class="col-md-4">
             <form-field [control]="form.get('idEvent')" label="Id Evento">
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 formControlName="idEvent"
-                [maxlength]="7" />
+                [max-length]="7" />
             </form-field>
           </div>
           <div class="col-md-4">
@@ -21,19 +21,19 @@
               [control]="form.get('lotePublico')"
               label="Lote Público">
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 formControlName="lotePublico"
-                [maxlength]="8" />
+                [max-length]="8" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field [control]="form.get('garantia')" label="Garantía">
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 formControlName="garantia"
-                [maxlength]="15" />
+                [max-length]="15" />
             </form-field>
           </div>
         </div>
@@ -42,10 +42,18 @@
       <div class="d-flex mb-3">
         <div class="ml-auto">
           <button
-            class="btn btn-primary btn-sm active"
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="resetForm()">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+          <button
+            type="button"
+            tooltip="Agregar"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active"
             (click)="getLotByFilters()"
             [disabled]="!form.valid">
-            Agregar
+            Agregar <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
       </div>
