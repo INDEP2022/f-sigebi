@@ -335,7 +335,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Siniestros Seguimiento',
-        'No se encontro documento oficio conclusión.'
+        'No se encontró documento oficio conclusión.'
       );
     }
   }
@@ -358,7 +358,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Siniestros Seguimiento',
-        'No se encontro documento oficio correo.'
+        'No se encontró documento oficio correo.'
       );
     }
   }
@@ -382,7 +382,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Siniestros Seguimiento',
-        'No se encontro documento oficio reclamación.'
+        'No se encontró documento oficio reclamación.'
       );
     }
   }
