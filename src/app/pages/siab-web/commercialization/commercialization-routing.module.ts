@@ -131,6 +131,12 @@ const routes: Routes = [
       (await import('./payload/payload.module')).PayloadModule,
     data: { title: 'Carga de pagos', scree: 'CargaPagos' },
   },
+  {
+    path: 'automobiles',
+    loadChildren: async () =>
+      (await import('./automobiles/automobiles.module')).AutomobilesgModule,
+    data: { title: 'Automobiles', scree: 'Automoviles' },
+  },
 ];
 
 @NgModule({

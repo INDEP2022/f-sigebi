@@ -31,18 +31,26 @@ export class UserAccessComponent extends BasePage implements OnInit {
     private modalService: BsModalService
   ) {
     super();
-    this.settings = {
-      ...this.settings,
+    // this.settings = {
+    //   ...this.settings,
 
-      hideSubHeader: false,
-      actions: {
-        columnTitle: 'Acciones',
-        edit: true,
-        delete: true,
-        add: false,
-      },
-      columns: USER_ACCESS_COLUMNS,
-    };
+    //   hideSubHeader: false,
+    //   actions: {
+    //     columnTitle: 'Acciones',
+    //     edit: true,
+    //     delete: true,
+    //     add: false,
+    //   },
+
+    //   columns: USER_ACCESS_COLUMNS,
+    // };
+
+    this.settings.columns = USER_ACCESS_COLUMNS;
+
+    this.settings.hideSubHeader = false;
+    this.settings.actions.add = false;
+    this.settings.actions.delete = true;
+    this.settings.actions.edit = true;
   }
 
   ngOnInit(): void {
@@ -71,8 +79,8 @@ export class UserAccessComponent extends BasePage implements OnInit {
               console.log('filter.search', filter.search);
               if (filter.search == 'motionDate') {
               }
-              this.columnFilters[field] = `${filter.search}`;
-              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              // this.columnFilters[field] = `${filter.search}`;
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
 
               console.log(
                 'this.columnFilters[field]',
@@ -99,6 +107,9 @@ export class UserAccessComponent extends BasePage implements OnInit {
 
   getAccessUsers(): void {
     this.loading = true;
+    this.users.load([]);
+    this.users.refresh();
+    this.totalItems = 0;
     let params: any = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
@@ -114,6 +125,9 @@ export class UserAccessComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: () => {
+        this.users.load([]);
+        this.users.refresh();
+        this.totalItems = 0;
         this.loading = false;
       },
     });
@@ -131,11 +145,11 @@ export class UserAccessComponent extends BasePage implements OnInit {
           next: response => {
             this.alert('success', 'Registro eliminado correctamente', '');
             this.getAccessUsers();
-            this.loading = false;
+            // this.loading = false;
           },
           error: () => {
             this.alert('error', 'Error al eliminar el registro', '');
-            this.loading = false;
+            // this.loading = false;
           },
         });
         // this.deleteUser(event.data);

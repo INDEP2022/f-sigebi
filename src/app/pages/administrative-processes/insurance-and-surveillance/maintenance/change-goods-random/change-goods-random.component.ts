@@ -145,16 +145,16 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
       this.alert('warning', 'Debe Seleccionar un Año', '');
       return;
     }
-    if (!this.form.value.period) {
-      this.alert('warning', 'Debe Seleccionar un Periodo', '');
-      return;
-    }
     if (!this.delegationDefault) {
       this.alert('warning', 'Debe Seleccionar una Delegación', '');
       return;
     }
     if (!this.form.value.process) {
       this.alert('warning', 'Debe Seleccionar un Proceso', '');
+      return;
+    }
+    if (!this.form.value.period) {
+      this.alert('warning', 'Debe Seleccionar un Periodo', '');
       return;
     }
     let data = {
