@@ -468,10 +468,11 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       this.delegationMae.delegationNumber == null
     ) {
       LV_VALIDAREP = 0;
+      this.form.get('delegation').markAsTouched();
       this.alert(
         'warning',
-        'La Delegación Regional es un Valor Requerido para Generar el Reporte',
-        ''
+        'Debe seleccionar una Delegación',
+        'Es un valor requerido para generar el reporte'
       );
       return;
     } else {
