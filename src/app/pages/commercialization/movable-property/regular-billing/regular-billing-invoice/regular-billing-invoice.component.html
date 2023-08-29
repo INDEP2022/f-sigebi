@@ -311,7 +311,8 @@
         [ngStyle]="{ height: loading ? '0px' : 'auto' }"
         [attr.class]="'table-bordered table-responsive mb-4'"
         [settings]="settings"
-        [source]="dataFilter">
+        [source]="dataFilter"
+        (rowSelect)="getComerDetInvocie($event.data)">
       </ng2-smart-table>
     </div>
     <app-pagination [params]="paramsList" [totalItems]="totalItems">
@@ -350,7 +351,7 @@
         </form-field>
       </div>
       <div class="col-md-2">
-        <form-field [control]="formFactura.get('count')" label="Número Factura">
+        <form-field [control]="formFactura.get('count')" label="No. Factura">
           <input
             type="number"
             class="form-control"
@@ -391,4 +392,75 @@
       </div>
     </div>
   </form>
+
+  <form class="form-material" [formGroup]="formDetalle">
+    <div class="row pt-5">
+      <div class="col-md-2">
+        <form-field [control]="formFactura.get('count')" label="No. Registros">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="count"
+            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field [control]="formDetalle.get('totalI')" label="Total Importe">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="totalI"
+            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field [control]="formDetalle.get('totalIva')" label="Total Iva">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="totalIva"
+            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field [control]="formDetalle.get('total')" label="Total">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="total"
+            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field
+          [control]="formDetalle.get('countTotal')"
+          label="Cantidad Total Bienes">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="countTotal"
+            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+        </form-field>
+      </div>
+    </div>
+  </form>
+
+  <div class="row pt-3">
+    <div class="col-12 d-flex justify-content-end pb-3">
+      <app-columns-select
+        [(settings)]="settings2"
+        [leftList]="true"></app-columns-select>
+    </div>
+    <form-loader *ngIf="loading2"></form-loader>
+    <div>
+      <ng2-smart-table
+        [ngStyle]="{ height: loading2 ? '0px' : 'auto' }"
+        [attr.class]="'table-bordered table-responsive mb-4'"
+        [settings]="settings2"
+        [source]="dataFilter2">
+      </ng2-smart-table>
+    </div>
+    <app-pagination [params]="paramsList2" [totalItems]="totalItems2">
+    </app-pagination>
+  </div>
 </div>
