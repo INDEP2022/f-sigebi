@@ -62,18 +62,18 @@ export class FindAllExpedientComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-              filter.field == 'preliminaryInquiry' ||
-              filter.field == 'criminalCase' ||
-              filter.field == 'expTransferNumber' ||
-              filter.field == 'insertDate' ||
-              filter.field == 'authorityNumber' ||
-              filter.field == 'identifier' ||
-              filter.field == 'signatory' ||
-              filter.field == 'crimeKey' ||
-              filter.field == 'expedientType' ||
-              filter.field == 'courtName' ||
-              filter.field == 'indicatedName' ||
-              filter.field == 'insertedBy'
+            filter.field == 'preliminaryInquiry' ||
+            filter.field == 'criminalCase' ||
+            filter.field == 'expTransferNumber' ||
+            filter.field == 'insertDate' ||
+            filter.field == 'authorityNumber' ||
+            filter.field == 'identifier' ||
+            filter.field == 'signatory' ||
+            filter.field == 'crimeKey' ||
+            filter.field == 'expedientType' ||
+            filter.field == 'courtName' ||
+            filter.field == 'indicatedName' ||
+            filter.field == 'insertedBy'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {

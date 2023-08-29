@@ -98,7 +98,8 @@ export interface ExampleData1 {
 })
 export class ResquestNumberingChangeComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   selectedGooods: any[] = [];
   selectedGooodsValid: any[] = [];
 
@@ -166,8 +167,9 @@ export class ResquestNumberingChangeComponent
         sort: false,
         valuePrepareFunction: (text: string) => {
           console.log('text', text);
-          return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''
-            }`;
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
+          }`;
         },
         filter: {
           type: 'custom',
@@ -506,7 +508,7 @@ export class ResquestNumberingChangeComponent
     if (this.modal?.isShown) {
     }
     this.loading = false;
-    this.delegationNumber = this.token.decodeToken().department
+    this.delegationNumber = this.token.decodeToken().department;
     setTimeout(async () => {
       await this.getUsuario(new ListParams());
       await this.getUsuario1(new ListParams());
@@ -857,8 +859,9 @@ export class ResquestNumberingChangeComponent
       params['filter.vaultNumber'] = `$eq:${this.form.get('vault').value}`;
 
     if (this.form.get('delegation').value !== null)
-      params['filter.delegationNumber'] = `$eq:${this.form.get('delegation').value
-        }`;
+      params['filter.delegationNumber'] = `$eq:${
+        this.form.get('delegation').value
+      }`;
 
     if (estados.length > 0) {
       params['filter.status'] = `$in:${estados.join(',')}`;
@@ -1897,7 +1900,7 @@ export class ResquestNumberingChangeComponent
               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
               type: 'pdf',
             },
-            callback: (data: any) => { },
+            callback: (data: any) => {},
           }, //pasar datos por aca
           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
           ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -2053,7 +2056,7 @@ export class ResquestNumberingChangeComponent
           await this.getUsuario1(new ListParams());
         }, 1000);
       },
-      error: async () => { },
+      error: async () => {},
     });
   }
 }

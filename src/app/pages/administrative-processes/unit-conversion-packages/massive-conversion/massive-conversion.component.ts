@@ -260,7 +260,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         }
       );
     });
-
   }
 
   initByLocalStorage() {
@@ -641,7 +640,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         // this.goodDescription.setValue(res.numberGoodFather);
         // this.amount.setValue(res.numberGoodFather);
         this.measurementUnit.setValue(res.unit);
-        console.log(res.status)
+        console.log(res.status);
         this.getCatalogGoodStatus({ text: res.status }, true);
         // this.status2.setValue(res.numberGoodFather);
 
@@ -2095,8 +2094,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.dataErrors = [];
     this.unitConversionDataService.clearPrevisualizationData.next(true);
   }
-
-
 
   validateButtons(status: string) {
     const vBtn = this.validaButton;

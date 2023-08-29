@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
+import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -34,12 +37,24 @@ export class CaptureApprovalDonationComponent
 {
   regisForm: FormGroup;
   siabForm: FormGroup;
+  foolio: number;
   bsValueToYear: Date = new Date();
   minModeToYear: BsDatepickerViewMode = 'year'; // change for month:year
   bsConfigToYear: Partial<BsDatepickerConfig>;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   bsModalRef?: BsModalRef;
+  // @Input() getDetailComDonation: Function;
+  // @Input() idActa: number | string;
+  type = 'COMPDON';
+  origin = 'FMCOMDONAC_1';
+  donationGood: IGoodDonation;
+  paramsScreen: IParamsDonac = {
+    origin: '',
+    recordId: '',
+    cveEvent: '',
+    area: '',
+  };
   data = EXAMPLE_DATA;
   info = [
     {
@@ -54,16 +69,47 @@ export class CaptureApprovalDonationComponent
     },
   ];
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private router: Router,
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private activatedRoute: ActivatedRoute,
+    private donationService: DonationService
+  ) {
     super();
-    this.settings = { ...this.settings, actions: false };
-    this.settings.columns = COLUMNS_APPROVAL_DONATION;
+    // this.settings = { ...this.settings, actions: false };
+    // this.settings.columns = COLUMNS_APPROVAL_DONATION;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      columns: { ...COLUMNS_APPROVAL_DONATION },
+      noDataMessage: 'No se encontrarón registros',
+    };
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(paramsQuery => {
+        this.origin = paramsQuery['origin'] ?? null;
+        this.paramsScreen.recordId = paramsQuery['recordId'] ?? null;
+        this.paramsScreen.cveEvent = paramsQuery['cveEvent'] ?? null;
+        this.paramsScreen.area = paramsQuery['area'] ?? null;
+        this.paramsScreen.area = paramsQuery['area'] ?? null;
+        if (this.origin == 'FMCOMDONAC_1') {
+          for (const key in this.paramsScreen) {
+            if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
+              this.paramsScreen[key as keyof typeof this.paramsScreen] =
+                paramsQuery[key] ?? null;
+            }
+          }
+        }
+      });
     this.configDatePicker();
     this.initForm();
-    this.openModal('Seleccione el Área a Trabajar', 'select-area');
+    // this.openModal('Seleccione el Área a Trabajar', 'select-area');
+    this.regisForm.get('type').setValue(this.type);
   }
 
   initForm() {
@@ -71,9 +117,49 @@ export class CaptureApprovalDonationComponent
       type: [null, []],
       area: [null, [Validators.pattern(STRING_PATTERN)]],
       year: [this.bsValueToYear, []],
-      folio: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      folio: [
+        null,
+        [Validators.pattern(KEYGENERATION_PATTERN), Validators.maxLength(4)],
+      ],
       captureDate: [null, []],
       keyEvent: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+    });
+    this.regisForm.get('area').setValue(this.paramsScreen.area);
+  }
+  // lv_TRAN      Varchar2(4);
+  // lv_TIPO      Varchar2(4);
+  // lv_AREA      Varchar2(10);
+  // lv_CONS      Varchar2(10);
+  // lv_TIPO_ACTA INDICADORES_PARAMETRO.TIPO_ACTA% type;
+  // lv_FOLIO     Number;
+
+  createDon(donationGood: IGoodDonation) {
+    this.loading = true;
+    const folio = this.regisForm.value.folio;
+    const acta = this.regisForm.value.type;
+    let year = this.regisForm.value.year;
+    const area = this.regisForm.value.area;
+    let folio_ = folio.toString().padStart(4, '0');
+    this.foolio = folio_;
+
+    // this.eventComDonacion.cveActa =
+    //   this.eventComDonacion.tipo +
+    //   '/' +
+    //   this.global.regi +
+    //   '/' +
+    //   this.eventComDonacion.anio +
+    //   '/' +
+    //   this.global.cons;
+
+    const cveActa = `${acta}/${area}/${year}/${folio_}/${this.type}`;
+    console.log('cveActa -->', cveActa);
+    this.donationService.createD(donationGood).subscribe({
+      next: resp => {
+        console.log('guardado');
+      },
+      error: err => {
+        this.loading = false;
+      },
     });
   }
 
@@ -107,6 +193,14 @@ export class CaptureApprovalDonationComponent
     );
     this.bsModalRef.content.closeBtnName = 'Close';
   }
+  goBackDonation() {
+    this.router.navigate(['/pages/general-processes/scan-documents'], {
+      queryParams: {
+        // origin: this.origin,
+        // acta: this.actaRecepttionForm.get('type').value,
+      },
+    });
+  }
 }
 
 const EXAMPLE_DATA = [
@@ -129,3 +223,10 @@ const EXAMPLE_DATA = [
     coordAdmin: 'DELELGACIÓN REG.',
   },
 ];
+
+export interface IParamsDonac {
+  origin: string;
+  recordId: string;
+  cveEvent: string;
+  area: string;
+}
