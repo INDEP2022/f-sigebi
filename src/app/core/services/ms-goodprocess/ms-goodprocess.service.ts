@@ -231,4 +231,9 @@ export class GoodprocessService extends HttpService {
       `${GoodprocessEndpoints.ReceptionBpmBackup}/${idGood}/${goodId}`
     );
   }
+
+  getDataFromGood(id: any) {
+    const route = `${GoodprocessEndpoints.getDataFromGood}/${id}`;
+    return this.get(route);
+  }
 }

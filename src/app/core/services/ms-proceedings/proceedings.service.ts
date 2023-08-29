@@ -281,4 +281,19 @@ export class ProceedingsService extends HttpService {
       { minutes }
     );
   }
+
+  deleteProceedingById(id: any) {
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}/${id}`;
+    return this.delete(route);
+  }
+
+  postConstDelivery(params: any) {
+    const route = `${ProceedingsEndpoints.constDelivery}`;
+    return this.post(route, params);
+  }
+
+  postConstGood(params: any) {
+    const route = `${ProceedingsEndpoints.DetailProceedingsDevollution}`;
+    return this.post(route, params);
+  }
 }

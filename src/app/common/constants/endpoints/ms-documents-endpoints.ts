@@ -17,4 +17,6 @@ export enum DocumentsEndpoints {
   ApplicationGetMaxConsec = 'application/getMaxConsec',
   ComerceDocumentsXmlT = 'comerce-documents-xml-t',
   DocumentRequestPerGoodNew = 'documents-request-per-good',
+  pupGenerateUniversalFolio = 'application/pupGenerateUniversalFolio',
+  postDocuments = 'application/insertDocuments',
 }

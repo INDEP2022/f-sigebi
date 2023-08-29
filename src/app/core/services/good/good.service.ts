@@ -210,4 +210,9 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
     const route = `${GoodEndpoints.goodStatus}?filter.fileNumber=$eq:${expedient}`;
     return this.get(route);
   }
+
+  getByGood(good: any) {
+    const route = `${GoodEndpoints.GetAllGoodQuery}?filter.goodId=$eq:${good}`;
+    return this.get(route);
+  }
 }

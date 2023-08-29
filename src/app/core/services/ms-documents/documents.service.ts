@@ -294,4 +294,23 @@ export class DocumentsService extends HttpService {
   getComerceDocumentsXmlT(params: _Params) {
     return this.get(DocumentsEndpoints.ComerceDocumentsXmlT, params);
   }
+
+  postPupGenerateFolio(params: any) {
+    const route = `${DocumentsEndpoints.pupGenerateUniversalFolio}`;
+    return this.post(route, params);
+  }
+
+  postDocuments(params: any) {
+    const route = `${DocumentsEndpoints.postDocuments}`;
+    return this.post(route, params);
+  }
+
+  getDocumentsCursor(folio: any) {
+    const route = `${DocumentsEndpoints.postDocuments}?filter.scanStatus=$ilike:ESCANEADO&filter.file.universalFolio${folio}`;
+    return this.get(route);
+  }
+  getDocumentsCursor2(folio: any, expedient: any) {
+    const route = `${DocumentsEndpoints.postDocuments}?filter.scanStatus=$eq:${expedient}&filter.file.universalFolio${folio}`;
+    return this.get(route);
+  }
 }
