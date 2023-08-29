@@ -306,7 +306,10 @@ export class DocumentFormComponent extends BasePage implements OnInit {
           next: resp => {
             resolve(resp);
           },
-          error: error => {},
+          error: error => {
+            reject(error);
+            this.onLoadToast('error', 'Ocurrio un error al subir el documento');
+          },
         });
     });
   }

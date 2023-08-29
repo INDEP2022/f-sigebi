@@ -19,7 +19,7 @@ export class CreateOrEditEmailMaintenencekDialogComponent
 {
   form: ModelForm<IVigEmailSend>;
 
-  title: string = 'CORREO DE RESPONSABLES DE ENVÍO';
+  title: string = 'Correo de Responsables de Envío';
   edit: boolean = false;
   emailSend: IVigEmailSend;
   data: any;
