@@ -89,7 +89,7 @@ export class SchedulingDeliveriesFormComponent
   idTypeEvent: number = 0;
   organizationCode: string = '';
   transferent: number = 0;
-  goodsToProgramData: any[] = [];
+  goodsToProgramData = new LocalDataSource();
   date = new Date();
   startDate = new Date();
   endDate = new Date();
@@ -205,7 +205,7 @@ export class SchedulingDeliveriesFormComponent
       .subscribe({
         next: async response => {
           console.log('Programación entrega', response);
-          this.idProgrammingDelivery = response.data[0].id;
+          this.programmingDelId = response.data[0].id;
           this.programmingDeliveryInfo = response.data[0];
 
           if (this.programmingDeliveryInfo?.startDate) {
@@ -246,26 +246,29 @@ export class SchedulingDeliveriesFormComponent
           console.log('info', this.programmingDeliveryInfo);
           this.schedulingDeliverieForm.patchValue(this.programmingDeliveryInfo);
         },
-        error: error => {},
-      });
-    /*const formData = {
-      id: 16901,
-      delRegId: this.regionalDelegationNum,
-      cretationUser: this.nameUser,
-      creationDate: new Date(),
-      modificationUser: this.nameUser,
-      modificationDate: new Date(),
-    };
+        error: error => {
+          console.log('no hay programación', error);
+          const formData = {
+            id: 16902,
+            delRegId: this.regionalDelegationNum,
+            cretationUser: this.nameUser,
+            creationDate: new Date(),
+            modificationUser: this.nameUser,
+            modificationDate: new Date(),
+          };
 
-    this.programmingRequestService
-      .createProgrammingDelivery(formData)
-      .subscribe({
-        next: (data: any) => {
-          console.log('programación entrega creada', data);
-          this.programmingDelId = data.id;
+          this.programmingRequestService
+            .createProgrammingDelivery(formData)
+            .subscribe({
+              next: (data: any) => {
+                console.log('programación entrega creada', data);
+                this.programmingDelId = data.id;
+              },
+              error: error => {},
+            });
         },
-        error: error => {},
-      }); */
+      });
+    /* */
   }
 
   transportableName(transportable: number) {
@@ -555,7 +558,7 @@ export class SchedulingDeliveriesFormComponent
     }
 
     if (this.idTypeEvent && this.organizationCode) {
-      this.checkProgrammingDelivery();
+      //this.checkProgrammingDelivery();
     }
   }
 
@@ -1975,28 +1978,29 @@ export class SchedulingDeliveriesFormComponent
       this.goodDesSelect.map(good => {
         const goodForm: IGoodDelivery = {
           programmingDeliveryId: this.programmingDelId,
-          managementNum: good?.managementNum,
+          goodId: good?.managementNum,
           client: good?.client,
-          delRegSol: good?.delRegSol,
+          delReg: good?.delRegSol,
           descriptionGood: good?.descriptionGood,
-          quantity: good?.quantity,
-          dictumCompensation: good?.dictumCompensation,
+          amountGood: good?.quantity,
+          compensationOpinion: good?.dictumCompensation,
           commercialEvent: good?.commercialEvent,
-          bill: good?.bill,
+          invoice: good?.bill,
           item: good?.item,
           commercialLot: good?.commercialLot,
-          inventoryNum: good?.inventoryNum,
-          satResolution: good?.satResolution,
-          uomCode: good?.uomCode,
-          type: good?.type,
+          inventoryNumber: good?.inventoryNum,
+          resolutionSat: good?.satResolution,
+          unit: good?.uomCode,
+          typeProgrammingId: good?.type,
           transactionId: good?.transactionId,
-          bienSiabNum: good?.bienSiabNum,
-          origin: good?.origin,
+          siabGoodNumber: good?.bienSiabNum,
+          origen: good?.origin,
           commercialEventDate: good?.commercialEventDate,
-          organizationId: good?.organizationId,
-          relevant_type: good?.relevant_type,
+          tranferId: good?.organizationId,
+          typeRelevantId: good?.relevant_type,
           locatorId: good?.locatorId,
           inventoryItemId: good?.inventoryItemId,
+          foundInd: 'N',
         };
 
         console.log(
@@ -2008,6 +2012,9 @@ export class SchedulingDeliveriesFormComponent
           .subscribe({
             next: response => {
               console.log('response', response);
+              this.params
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.showInfoProgrammingDelivery());
             },
             error: error => {
               console.log('error', error);
@@ -2030,6 +2037,21 @@ export class SchedulingDeliveriesFormComponent
         'Se requiere seleccionar un bien para agregar a la programación de entrega'
       );
     }
+  }
+
+  showInfoProgrammingDelivery() {
+    this.params.getValue()['filter.programmingDeliveryId'] =
+      this.programmingDelId;
+    this.programmingRequestService
+      .getGoodsProgrammingDelivery(this.params.getValue())
+      .subscribe({
+        next: response => {
+          console.log('programming goodDelivery', response);
+          this.goodsToProgramData.load(response.data);
+          this.totalItems = response.count;
+        },
+        error: error => {},
+      });
   }
 
   addEstate(event: Event) {}
