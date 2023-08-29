@@ -14,6 +14,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { CertificatesDeliveryService } from 'src/app/core/services/ms-delivery-constancy/certificates-delivery.service';
 import { CertificatesGoodsService } from 'src/app/core/services/ms-delivery-constancy/certificates-goods.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -56,6 +57,7 @@ export class DeliveriesConstancyFormComponent
   goods: IProgrammingDeliveryGood[] = [];
   regDele: number = null;
   progEntrega: any = null;
+  constanceForm?: any = null;
   deliveryConstancyForm: FormGroup = new FormGroup({});
   showClientForm: boolean = true;
   personalEstates: boolean = true;
@@ -76,12 +78,15 @@ export class DeliveriesConstancyFormComponent
   selectReasonNoDelive = new DefaultSelect();
   selectReasonNoWithdrawn = new DefaultSelect();
 
+  btnTitle: string = 'Guardar';
+
   public event: EventEmitter<any> = new EventEmitter();
 
   private programmingGoodService = inject(ProgrammingGoodService);
   private certifiDeliveryService = inject(CertificatesDeliveryService);
   private certifiGoodsService = inject(CertificatesGoodsService);
   private auth = inject(AuthService);
+  private goodService = inject(GoodService);
 
   constructor(
     private modalRef: BsModalRef,
@@ -98,12 +103,12 @@ export class DeliveriesConstancyFormComponent
   ngOnInit(): void {
     this.settings.columns = PERSONAL_ESTATE_COLUMNS;
     this.prepareForm();
-    //personalEstateData
     this.regDele = this.progEntrega.delRegId;
     this.listTypeConstances = new DefaultSelect(
       typeContances,
       typeContances.length
     );
+    this.isEdit();
     this.personalEstateData = this.goods;
     setTimeout(() => {
       this.setColumns();
@@ -172,6 +177,19 @@ export class DeliveriesConstancyFormComponent
       closing: [null],
     });
     this.typeReceptor = this.deliveryConstancyForm.get('receiverType').value;
+  }
+
+  isEdit() {
+    if (this.edit == true) {
+      this.btnTitle = 'Actualizar';
+      this.deliveryConstancyForm.patchValue(this.constanceForm);
+      const certiType = this.constanceForm.certificateType;
+      this.typeConstancy = +certiType;
+      this.deliveryConstancyForm.controls['certificateType'].setValue(
+        Number(certiType)
+      );
+      this.getCertificateGood();
+    }
   }
 
   validateClientSeccion(): boolean {
@@ -260,6 +278,16 @@ export class DeliveriesConstancyFormComponent
   }
 
   async confirm() {
+    if (this.edit == false) {
+      this.create();
+    } else {
+      this.update();
+    }
+  }
+
+  generateReport() {}
+
+  async create() {
     let idProgDelivery = this.progEntrega.id;
     let folio = this.progEntrega.folio;
     let userAuth = this.auth.decodeToken();
@@ -269,7 +297,7 @@ export class DeliveriesConstancyFormComponent
 
     //CREATE CERTIFICADO DE ENTREGA
     let deliveryForm = this.deliveryConstancyForm.getRawValue();
-    deliveryForm.certificateId = 999943; //ingresar el dato
+    deliveryForm.certificateId = 999953; //ingresar el dato
     deliveryForm.deliveryScheduleId = idProgDelivery;
     deliveryForm.folio = folio;
     deliveryForm.userCreation = userAuth.username;
@@ -301,7 +329,7 @@ export class DeliveriesConstancyFormComponent
       );
 
       const bodyConstanceGood: any = {};
-      bodyConstanceGood.certificateId = 999943; //incresar el certificateId
+      bodyConstanceGood.certificateId = 999953; //incresar el certificateId
       bodyConstanceGood.transactionId = item.transactionId;
       bodyConstanceGood.siabGoodNumber = item.siabGoodNumber;
       bodyConstanceGood.goodId = item.goodId;
@@ -321,13 +349,45 @@ export class DeliveriesConstancyFormComponent
       );
 
       if (index == this.goods.length) {
+        this.onLoadToast('success', 'Se creo el certificado de constacia');
         this.event.emit(deliveryForm);
         this.close();
       }
     });
   }
 
-  generateReport() {}
+  async update() {
+    let idProgDelivery = this.progEntrega.id;
+    let folio = this.progEntrega.folio;
+    let userAuth = this.auth.decodeToken();
+
+    //GENERAR REPORTE
+    //this.generateReport()
+
+    //CREATE CERTIFICADO DE ENTREGA
+    let deliveryForm = this.deliveryConstancyForm.getRawValue();
+    deliveryForm.oficioDate =
+      deliveryForm.oficioDate != null
+        ? moment(deliveryForm.oficioDate).format('YYYY-MM-DD')
+        : null;
+    deliveryForm.modificationDate = moment(new Date()).format('YYYY-MM-DD');
+    deliveryForm.userModification = userAuth.username;
+
+    let certify: any = {};
+    for (const key in deliveryForm) {
+      const element = deliveryForm[key];
+      if (element != null) {
+        certify[key] = element;
+      }
+    }
+    console.log(certify);
+
+    const created = await this.updateCertificateDelivery(certify);
+
+    this.onLoadToast('success', 'Se actualizo la constancia');
+    this.event.emit(true);
+    this.close();
+  }
 
   close() {
     this.modalRef.hide();
@@ -378,6 +438,57 @@ export class DeliveriesConstancyFormComponent
         error: error => {
           reject(error);
           this.onLoadToast('error', 'No se pudo crear la constancia de bienes');
+        },
+      });
+    });
+  }
+
+  getCertificateGood() {
+    this.personalEstateData = [];
+    const params = new ListParams();
+    params['filter.certificateId'] = `$eq:${this.constanceForm.certificateId}`;
+    this.certifiGoodsService.getAll(params).subscribe({
+      next: (resp: any) => {
+        console.log(resp);
+        resp.data.map(async (item: any) => {
+          let body: any = {};
+          body.goodId = item.goodId;
+          body[this.lsColumna] = item.quantity;
+          const descrip = await this.getGood(item.goodId);
+          body.descriptionGood = descrip;
+
+          this.personalEstateData.push(body);
+
+          this.personalEstateData = [...this.personalEstateData];
+        });
+      },
+    });
+  }
+
+  getGood(id: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.goodId'] = `$eq:${id}`;
+      this.programmingGoodService.getProgrammingDeliveryGood(params).subscribe({
+        next: (resp: any) => {
+          resolve(resp.data[0].descriptionGood);
+        },
+      });
+    });
+  }
+
+  updateCertificateDelivery(body: any) {
+    return new Promise((resolve, reject) => {
+      this.certifiDeliveryService.update(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(error);
+          this.onLoadToast(
+            'error',
+            'No se pudo crear la constancia de entrega'
+          );
         },
       });
     });

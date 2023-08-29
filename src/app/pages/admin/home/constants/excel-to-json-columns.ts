@@ -23,7 +23,7 @@ export const EXCEL_TO_JSON_COLUMNS = {
 
 export const EXCEL_TO_JSON = {
   idD: {
-    title: 'Clave Decomiso',
+    title: 'Cve. Decomiso',
     sort: false,
   },
   id: {

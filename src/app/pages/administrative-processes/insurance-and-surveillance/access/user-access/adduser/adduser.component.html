@@ -35,8 +35,8 @@
           <form-field class="mt-4" [control]="form.get('userRole')" label="Rol">
             <ng-select formControlName="userRole" class="form-control">
               <!-- <ng-option value=null>Seleccione un Rol</ng-option> -->
-              <ng-option value="1">Rol 1</ng-option>
-              <ng-option value="2">Rol 2</ng-option>
+              <ng-option value="1">Administrador</ng-option>
+              <!-- <ng-option value="2">Rol 2</ng-option> -->
             </ng-select>
             <!-- <input type="text" formControlName="userRole" class="form-control" /> -->
           </form-field>
@@ -64,7 +64,7 @@
             [disabled]="!form.valid"
             type="button"
             style="float: right"
-            class="btn btn-primary active"
+            class="btn btn-primary active btn-sm"
             (click)="guardarRegistro()">
             {{ editDialogData ? 'Actualizar' : 'Guardar' }}
             <span *ngIf="editDialogData"><i class="fas fa-sync-alt"> </i></span>
@@ -74,7 +74,10 @@
           </button>
         </div>
         <div class="col-6" style="float: left">
-          <button type="button" class="btn btn-danger active" (click)="close()">
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm btn-block"
+            (click)="close()">
             Cerrar
           </button>
         </div>

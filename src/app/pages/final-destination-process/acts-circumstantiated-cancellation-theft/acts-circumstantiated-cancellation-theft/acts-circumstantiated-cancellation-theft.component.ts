@@ -64,9 +64,6 @@ import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings
 import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
-import { ObservationsComponent } from '../../../general-processes/work-mailbox/components/observations/observations.component';
-import { Estatus } from 'src/app/core/models/ms-good/good';
-import { data } from '../../../administrative-processes/siab-sami-interaction/refunds/payment-request/data';
 
 export type IGoodAndAvailable = IGood & {
   available: boolean;
@@ -111,7 +108,8 @@ export type IGoodAndAvailable = IGood & {
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   response: boolean = false;
   form: FormGroup;
   selectedRow: IGood;
@@ -345,95 +343,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
         // }
       },
     };
-    // this.settings = { ...this.settings, actions: false };
-    // this.settings.columns = COLUMNS1;
-    // this.settings2 = { ...this.settings, actions: false };
-    // this.settings2.columns = COLUMNS2;
-    this.validPermisos = !this.validPermisos;
-    this.settings = {
-      ...this.settings,
-      hideSubHeader: false,
-      actions: false,
-      // selectMode: 'multi',
-      selectedRowIndex: -1,
-      mode: 'external',
-      // columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
-      columns: {
-        name: {
-          filter: false,
-          sort: false,
-          title: 'Selección',
-          type: 'custom',
-          showAlways: true,
-          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
-            this.isGoodSelectedValid(row),
-          renderComponent: CheckboxElementComponent,
-          onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.onGoodSelectValid(instance),
-        },
-        goodId: {
-          title: 'No. Bien',
-          type: 'number',
-          sort: false,
-        },
-        description: {
-          title: 'Descripción',
-          type: 'string',
-          sort: false,
-        },
-        quantity: {
-          title: 'Cantidad',
-          type: 'string',
-          sort: false,
-        },
-        acta_: {
-          title: 'Acta',
-          type: 'string',
-          sort: false,
-          // valuePrepareFunction: (cell: any, row: any) => {
-          //   return row.acta_;
-          // },
-        },
-        status: {
-          title: 'Estatus',
-          type: 'string',
-          sort: false,
-        },
-      },
-      rowClassFunction: (row: any) => {
-        if (row.data.di_disponible == 'S') {
-          return 'bg-success text-white';
-        } else {
-          return 'bg-dark text-white';
-        }
-
-        // if (row.data.status === 'CNE') {
-        //   return 'bg-success text-white';
-        // } else if (
-        //   row.data.status === 'RRE' ||
-        //   row.data.status === 'VXR' ||
-        //   row.data.status === 'DON'
-        // ) {
-        //   return 'bg-dark text-white';
-        // } else {
-        //   return 'bg-success text-white';
-        // }
-      },
-    };
-    this.settings2 = {
-      ...this.settings,
-      hideSubHeader: false,
-      actions: false,
-      selectMode: 'multi',
-      columns: { ...COPY },
-      rowClassFunction: (row: any) => {
-        // if (row.data.di_disponible == 'S') {
-        //   return 'text-white';
-        // } else {
-        return 'bg-light text-black';
-        // }
-      },
-    };
   }
 
   ngOnInit(): void {
@@ -443,7 +352,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     console.log(token);
     this.dataUserLogged = token;
     this.initFormPostGetUserData();
-    this.actaReception = this.actasDefault;
+    // this.actaReception = this.actasDefault;
     this.goodForm();
     this.actaForm();
     this.formFolio();
@@ -519,7 +428,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
   // MAPEO o LLAMAR DATOS DESPUES DE ESCANEAR
   formFolio() {
-    console.log("formFolio");
+    console.log('formFolio');
     this.formScan.patchValue({
       scanningFoli: this.consec,
     });
@@ -528,7 +437,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     });
 
     if (this.fileNumber != null) {
-
       console.log('ENTRA -->');
       this.getGoodsByStatus(this.fileNumber);
       //this.getDetailProceedingsDevollution(this.fileNumber);
@@ -652,10 +560,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
       statusGood: [null],
     });
   }
-  onSubmit() { }
+  onSubmit() {}
 
   search(event: any) {
-
     this.getExpedient(event);
     event = '';
   }
@@ -730,30 +637,30 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
         console.log('Bienes', this.bienes);
 
-
         let result = data.data.map(async (item: any) => {
           this.wheelNumber = item.flyerNumber;
           let obj = {
             vcScreen: 'FACTCIRCUNR_0001',
-            pNumberGood: item.id,
+            pNumberGood: item.goodId,
           };
           const di_dispo = await this.getStatusScreen(obj);
           item['di_disponible'] = di_dispo;
-          const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
-          //console.log('acta', acta);
-          item['acta_'] = acta;
-          item.di_disponible = acta != null ? 'N' : di_dispo;
+          if (item.minutesKey) {
+            item['di_disponible'] = 'N';
+          }
+          item['quantity'] = item.amount;
+          item['di_acta'] = item.minutesKey;
+          item['id'] = item.goodId;
         });
 
         Promise.all(result).then(item => {
           this.dataTableGood_ = this.bienes;
           this.dataTableGood.load(this.bienes);
           this.dataTableGood.refresh();
-          // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
+
           this.totalItems = data.count;
           this.loadingBienes = false;
           this.loadingBienes = false;
-          // console.log(this.bienes);
         });
       },
       error: error => {
@@ -766,10 +673,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.GoodprocessService_.getScreenGood(body).subscribe({
         next: async (state: any) => {
           if (state.data) {
-            console.log('di_dispo', state);
+            // console.log('di_disponible', state);
             resolve('S');
           } else {
-            console.log('di_dispo', state);
+            // console.log('di_disponible', state);
             resolve('N');
           }
         },
@@ -781,13 +688,30 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
   async getActaGoodExp(good: any, exp: any) {
     return new Promise((resolve, reject) => {
-      this.proceedingsService.getGetFactDbConvBien(good, exp).subscribe({
+      this.proceedingsService.getGetFactCir(good, exp).subscribe({
         next: async (state: any) => {
           //console.log('acta', state);
           resolve(state.data[0].cve_acta);
         },
         error: () => {
           resolve(null);
+        },
+      });
+    });
+  }
+  async getActaGood(good: any) {
+    const params = new ListParams();
+    params['filter.numberGood'] = `$eq:${good.id}`;
+    return new Promise((resolve, reject) => {
+      this.detailProceeDelRecService.getAllFiltered(params).subscribe({
+        next: data => {
+          // // console.log('data', data);
+          this.loading2 = false;
+          resolve(true);
+        },
+        error: error => {
+          this.loading2 = false;
+          resolve(false);
         },
       });
     });
@@ -800,6 +724,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
   searchExpedient(provider?: IExpedient) {
     this.loadingExpedient = true;
+    this.dataRecepcionGood.load([]);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       provider,
@@ -821,7 +746,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
   actasDefault: any = null;
   searchActas(actas?: string) {
-
     this.consec = null;
     if (this.fileNumber == 0 || this.fileNumber == null) {
       this.alertInfo(
@@ -855,14 +779,22 @@ export class ActsCircumstantiatedCancellationTheftComponent
       // Limpiar formulario una vez consulte
       this.actaRecepttionForm.reset();
 
-      const dateElabora = next.elaborationDate != null ? new Date(next.elaborationDate) : null;
-      const formattedfecElaborate = dateElabora != null ? this.formatDate(dateElabora) : null;
+      const dateElabora =
+        next.elaborationDate != null ? new Date(next.elaborationDate) : null;
+      const formattedfecElaborate =
+        dateElabora != null ? this.formatDate(dateElabora) : null;
 
-      const dateActa = next.datePhysicalReception != null ? new Date(next.datePhysicalReception) : null;
-      const formattedfecActa = dateActa != null ? this.formatDate(dateActa) : null;
+      const dateActa =
+        next.datePhysicalReception != null
+          ? new Date(next.datePhysicalReception)
+          : null;
+      const formattedfecActa =
+        dateActa != null ? this.formatDate(dateActa) : null;
 
-      const dateCapture = next.captureDate != null ? new Date(next.captureDate) : null;
-      const formattedfecCapture = dateCapture != null ? this.formatDate(dateCapture) : null;
+      const dateCapture =
+        next.captureDate != null ? new Date(next.captureDate) : null;
+      const formattedfecCapture =
+        dateCapture != null ? this.formatDate(dateCapture) : null;
 
       this.actasDefault = next;
       // this.fCreate = this.datePipe.transform(
@@ -989,42 +921,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         },
       });
   }
-  onGoodSelect(instance: CheckboxElementComponent) {
-    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: data => this.goodSelectedChange(data.row, data.toggle),
-    });
-  }
-  isGoodSelected(_good: IGood) {
-    const exists = this.selectedGooods.find(good => good.id == _good.id);
-    return !exists ? false : true;
-  }
-  goodSelectedChange(good: IGood, selected: boolean) {
-    if (selected) {
-      this.selectedGooods.push(good);
-    } else {
-      this.selectedGooods = this.selectedGooods.filter(
-        _good => _good.id != good.id
-      );
-    }
-  }
-  onGoodSelectValid(instance: CheckboxElementComponent) {
-    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: data => this.goodSelectedChangeValid(data.row, data.toggle),
-    });
-  }
-  isGoodSelectedValid(_good: IGood) {
-    const exists = this.selectedGooodsValid.find(good => good.id == _good.id);
-    return !exists ? false : true;
-  }
-  goodSelectedChangeValid(good: IGood, selected?: boolean) {
-    if (selected) {
-      this.selectedGooodsValid.push(good);
-    } else {
-      this.selectedGooodsValid = this.selectedGooodsValid.filter(
-        _good => _good.id != good.id
-      );
-    }
-  }
+
   selectedGooodsValid: any[] = [];
   selectedGooods: any[] = [];
   goodsValid: any;
@@ -1047,7 +944,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
           return;
         } else {
           console.log('aaa', this.goods);
-
           let result = this.selectedGooods.map(async (good: any) => {
             if (good.di_acta != null) {
               this.alert(
@@ -1095,6 +991,42 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.alert('warning', 'Seleccione Primero el Bien a Asignar.', '');
     }
   }
+  onGoodSelect(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChange(data.row, data.toggle),
+    });
+  }
+  isGoodSelected(_good: IGood) {
+    const exists = this.selectedGooods.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+  goodSelectedChange(good: IGood, selected: boolean) {
+    if (selected) {
+      this.selectedGooods.push(good);
+    } else {
+      this.selectedGooods = this.selectedGooods.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
+  onGoodSelectValid(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChangeValid(data.row, data.toggle),
+    });
+  }
+  isGoodSelectedValid(_good: IGood) {
+    const exists = this.selectedGooodsValid.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+  goodSelectedChangeValid(good: IGood, selected?: boolean) {
+    if (selected) {
+      this.selectedGooodsValid.push(good);
+    } else {
+      this.selectedGooodsValid = this.selectedGooodsValid.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
   async createDET(good: any) {
     // if (this.dataRecepcion.length > 0) {
     // let result = this.dataRecepcion.map(async good => {
@@ -1121,6 +1053,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
     };
 
     await this.saveGoodActas(obj);
+
+    // let obj_: any = {
+    //   id: good.id,
+    //   goodId: good.id,
+    //   status: await this.getScreenStatus(good),
+    // };
+    // // UPDATE BIENES
   }
   async saveGoodActas(body: any) {
     return new Promise((resolve, reject) => {
@@ -1175,7 +1114,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     //   status: await this.getScreenStatus(good),
     // };
     // // UPDATE BIENES
-    // await this.updateGood(obj_);
+    // await this.goodService.updateStatus(obj_.goodId, 'ADM');
 
     // // INSERT HISTORIC
     // await this.saveHistoric(obj_);
@@ -1380,7 +1319,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
             );
             let index = this.dataTableGood_.findIndex(g => g.id === good.id);
             this.dataRecepcion = [];
-            this.dataRecepcionGood.load(this.dataRecepcion);
+            this.dataRecepcionGood.load([]);
             this.Exportdate = false;
             // if (index != -1) {
             //   if (this.dataTableGood_[index].est_disponible) {
@@ -1402,7 +1341,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.selectedGooodsValid = event.selected;
   }
 
-  /*actualizarActa() {
+  actualizarActa() {
     if (!this.actasDefault) {
       this.alertInfo('warning', 'Debe Seleccionar un Acta', '');
       return;
@@ -1427,7 +1366,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           // this.loading = false
         },
       });
-  }*/
+  }
 
   // LIMPIAR CAMPOS
   cleanActa() {
@@ -1465,8 +1404,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     nameFile.placeholder = `${newMsg}`;
   }
 
-  btnDetail() { }
-  sendOffice() { }
+  btnDetail() {}
+  sendOffice() {}
 
   Scanner() {
     /*if (this.formScan.get('scanningFoli').value) {
@@ -1540,14 +1479,22 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
       // Const formato de fecha
 
-      const dateElabora = next.elaborationDate != null ? new Date(next.elaborationDate) : null;
-      const formattedfecElaborate = dateElabora != null ? this.formatDate(dateElabora) : null;
+      const dateElabora =
+        next.elaborationDate != null ? new Date(next.elaborationDate) : null;
+      const formattedfecElaborate =
+        dateElabora != null ? this.formatDate(dateElabora) : null;
 
-      const dateActa = next.datePhysicalReception != null ? new Date(next.datePhysicalReception) : null;
-      const formattedfecActa = dateActa != null ? this.formatDate(dateActa) : null;
+      const dateActa =
+        next.datePhysicalReception != null
+          ? new Date(next.datePhysicalReception)
+          : null;
+      const formattedfecActa =
+        dateActa != null ? this.formatDate(dateActa) : null;
 
-      const dateCapture = next.captureDate != null ? new Date(next.captureDate) : null;
-      const formattedfecCapture = dateCapture != null ? this.formatDate(dateCapture) : null;
+      const dateCapture =
+        next.captureDate != null ? new Date(next.captureDate) : null;
+      const formattedfecCapture =
+        dateCapture != null ? this.formatDate(dateCapture) : null;
 
       this.actaRecepttionForm.patchValue({
         acta: next.id,
@@ -1608,7 +1555,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     });
   }
 
-  // Cammbiar formato de fecha 
+  // Cammbiar formato de fecha
 
   formatDate(date: Date): string {
     const day = date.getUTCDate().toString().padStart(2, '0');
@@ -1618,9 +1565,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   async cerrarActa() {
-
     if (this.consec == null) {
-      this.alert('warning', 'No se puede Cerrar el Acta sin Folio de Escaneo', '');
+      this.alert(
+        'warning',
+        'No se puede Cerrar el Acta sin Folio de Escaneo',
+        ''
+      );
       return;
     }
     console.log('this.actasDefault', this.actasDefault);
@@ -1919,9 +1869,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         'error',
         'Error',
         'Al localizar la información de Volante: ' +
-        flyerNumber +
-        ' y Expediente: ' +
-        this.fileNumber
+          flyerNumber +
+          ' y Expediente: ' +
+          this.fileNumber
       );
       return;
     }
@@ -2016,7 +1966,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => { },
+              callback: (data: any) => {},
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
@@ -2106,7 +2056,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                     urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                     type: 'pdf',
                   },
-                  callback: (data: any) => { },
+                  callback: (data: any) => {},
                 },
                 class: 'modal-lg modal-dialog-centered',
                 ignoreBackdropClick: true,
@@ -2129,9 +2079,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   async replicate() {
-
     if (this.data1 == 'CERRADA') {
-      this.alert('warning', 'No se Puede Replicar el Folio de Escaneo en un Acta Cerrada', '');
+      this.alert(
+        'warning',
+        'No se Puede Replicar el Folio de Escaneo en un Acta Cerrada',
+        ''
+      );
       return;
     }
     if (!this.dataRecepcion) {
@@ -2229,8 +2182,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   saveNewUniversalFolio_Replicate() {
-
-    let folio = this.dataRecepcion.universalFolio != null ? this.dataRecepcion.universalFolio : this.consec;
+    let folio =
+      this.dataRecepcion.universalFolio != null
+        ? this.dataRecepcion.universalFolio
+        : this.consec;
 
     const document = {
       numberProceedings: this.fileNumber,
@@ -2318,7 +2273,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   ValidGoods(): void {
-
     console.log('this.bienes1 -->', this.dataRecepcion);
 
     if (this.dataRecepcion.length === 0) {
@@ -2330,10 +2284,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.vTotalB = '';
 
     for (const bien of this.dataRecepcion) {
-
-      console.log("entra al for ", bien);
+      console.log('entra al for ', bien);
       if (bien != null) {
-        console.log("Entra al if y al for");
+        console.log('Entra al if y al for');
         this.contador++;
 
         if (this.contador === 1) {
@@ -2345,7 +2298,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     }
 
     console.log('this.bienes -->', this.dataRecepcion);
-    console.log("Contador ", this.contador);
+    console.log('Contador ', this.contador);
 
     if (this.contador > 0) {
       this.onLoadToast(
@@ -2410,10 +2363,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   afterScanning() {
-    console.log("afterScanning");
+    console.log('afterScanning');
     this.loading = true;
 
-    this.params.getValue()['filter.id'] = this.actaRecepttionForm.get('type').value;
+    this.params.getValue()['filter.id'] =
+      this.actaRecepttionForm.get('type').value;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -2423,38 +2377,75 @@ export class ActsCircumstantiatedCancellationTheftComponent
       .getStatusDeliveryCveExpendienteAll(params)
       .subscribe({
         next: data => {
-          console.log("getStatusDeliveryCveExpendienteAll ", data);
+          console.log('getStatusDeliveryCveExpendienteAll ', data);
           this.loading = false;
           for (let i = 0; i < data.count; i++) {
             //console.log("data for ", data.data[i].numeraryFolio);
             if (data.data[i] != null && data.data[i] != undefined) {
-
               this.actasDefault = data.data[i];
 
               // Const formato de fecha
 
-              const dateElabora = data.data[i].elaborationDate != null ? new Date(data.data[i].elaborationDate) : null;
-              const formattedfecElaborate = dateElabora != null ? this.formatDate(dateElabora) : null;
+              const dateElabora =
+                data.data[i].elaborationDate != null
+                  ? new Date(data.data[i].elaborationDate)
+                  : null;
+              const formattedfecElaborate =
+                dateElabora != null ? this.formatDate(dateElabora) : null;
 
-              const dateActa = data.data[i].datePhysicalReception != null ? new Date(data.data[i].datePhysicalReception) : null;
-              const formattedfecActa = dateActa != null ? this.formatDate(dateActa) : null;
+              const dateActa =
+                data.data[i].datePhysicalReception != null
+                  ? new Date(data.data[i].datePhysicalReception)
+                  : null;
+              const formattedfecActa =
+                dateActa != null ? this.formatDate(dateActa) : null;
 
-              const dateCapture = data.data[i].captureDate != null ? new Date(data.data[i].captureDate) : null;
-              const formattedfecCapture = dateCapture != null ? this.formatDate(dateCapture) : null;
+              const dateCapture =
+                data.data[i].captureDate != null
+                  ? new Date(data.data[i].captureDate)
+                  : null;
+              const formattedfecCapture =
+                dateCapture != null ? this.formatDate(dateCapture) : null;
 
-              this.actaRecepttionForm.get('consec').setValue(data.data[i].numeraryFolio);
-              this.actaRecepttionForm.get('cveActa').setValue(data.data[i].keysProceedings);
-              this.actaRecepttionForm.get('direccion').setValue(data.data[i].address);
-              this.actaRecepttionForm.get('testigoOne').setValue(data.data[i].witness1);
-              this.actaRecepttionForm.get('testigoTree').setValue(data.data[i].witness2);
-              this.actaRecepttionForm.get('testigoOIC').setValue(data.data[i].comptrollerWitness);
-              this.actaRecepttionForm.get('administra').setValue(data.data[i].approvedXAdmon);
-              this.actaRecepttionForm.get('observaciones').setValue(data.data[i].observations);
-              this.actaRecepttionForm.get('respConv').setValue(data.data[i].receiptKey);
-              this.actaRecepttionForm.get('parrafo1').setValue(data.data[i].parrafo1);
-              this.actaRecepttionForm.get('elaboradate').setValue(formattedfecElaborate);
-              this.actaRecepttionForm.get('fechaact').setValue(formattedfecActa);
-              this.actaRecepttionForm.get('fechacap').setValue(formattedfecCapture);
+              this.actaRecepttionForm
+                .get('consec')
+                .setValue(data.data[i].numeraryFolio);
+              this.actaRecepttionForm
+                .get('cveActa')
+                .setValue(data.data[i].keysProceedings);
+              this.actaRecepttionForm
+                .get('direccion')
+                .setValue(data.data[i].address);
+              this.actaRecepttionForm
+                .get('testigoOne')
+                .setValue(data.data[i].witness1);
+              this.actaRecepttionForm
+                .get('testigoTree')
+                .setValue(data.data[i].witness2);
+              this.actaRecepttionForm
+                .get('testigoOIC')
+                .setValue(data.data[i].comptrollerWitness);
+              this.actaRecepttionForm
+                .get('administra')
+                .setValue(data.data[i].approvedXAdmon);
+              this.actaRecepttionForm
+                .get('observaciones')
+                .setValue(data.data[i].observations);
+              this.actaRecepttionForm
+                .get('respConv')
+                .setValue(data.data[i].receiptKey);
+              this.actaRecepttionForm
+                .get('parrafo1')
+                .setValue(data.data[i].parrafo1);
+              this.actaRecepttionForm
+                .get('elaboradate')
+                .setValue(formattedfecElaborate);
+              this.actaRecepttionForm
+                .get('fechaact')
+                .setValue(formattedfecActa);
+              this.actaRecepttionForm
+                .get('fechacap')
+                .setValue(formattedfecCapture);
               this.getDetailProceedingsDevollution(data.data[i].id);
 
               this.data1 = data.data[i].statusProceedings;
@@ -2462,7 +2453,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
               //this.actaRecepttionForm.get('scanningFoli').setValue(data.data[i].universalFolio);
             }
             //this.formScan.get('scanningFoli').patchValue(next.universalFolio);
-            this.generarDatosDesdeUltimosCincoDigitos(data.data[i].keysProceedings);
+            this.generarDatosDesdeUltimosCincoDigitos(
+              data.data[i].keysProceedings
+            );
           }
         },
         error: error => {
@@ -2470,7 +2463,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         },
       });
 
-    // HABILITAR UNA VEZ REGRESE DEL ESCANEO 
+    // HABILITAR UNA VEZ REGRESE DEL ESCANEO
     this.disabledBtnImprimir = true;
     this.disabledBtnImage = true;
     this.validateGoods = true;
@@ -2487,7 +2480,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
           this.causa = data.criminalCase;
           this.transfer = data.transferNumber;
         }
-        this.actaRecepttionForm.get('claveTrans').setValue(data.authorityNumber);
+        this.actaRecepttionForm
+          .get('claveTrans')
+          .setValue(data.authorityNumber);
       },
       error: () => {
         this.loadingExpedient = false;

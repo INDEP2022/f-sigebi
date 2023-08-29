@@ -412,7 +412,7 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
       });
   }
 
-  seleccionarNumero(event: any) { }
+  seleccionarNumero(event: any) {}
   DelegacionName_() {
     return this.delegationDefault.description;
   }

@@ -8,10 +8,15 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from '../../../../shared/shared.module';
 import { PercentagesSurveillanceRoutingModule } from './percentages-surveillance-routing.module';
+import { AddAndUpdateComponent } from './percentages-surveillance/add-and-update/add-and-update.component';
 import { FiltercustomComponent } from './percentages-surveillance/filtercustom/filtercustom.component';
 import { PercentagesSurveillanceComponent } from './percentages-surveillance/percentages-surveillance.component';
 @NgModule({
-  declarations: [PercentagesSurveillanceComponent, FiltercustomComponent],
+  declarations: [
+    PercentagesSurveillanceComponent,
+    FiltercustomComponent,
+    AddAndUpdateComponent,
+  ],
   imports: [
     CommonModule,
     PercentagesSurveillanceRoutingModule,
