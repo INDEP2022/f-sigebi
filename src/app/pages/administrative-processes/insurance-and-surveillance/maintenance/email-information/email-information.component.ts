@@ -169,7 +169,7 @@ export class EmailInformationComponent extends BasePage {
     params.addFilter('status', 1, SearchFilter.EQ);
     if (lparams.text) params.search = lparams.text;
     // params.addFilter('nameSend', lparams.text, SearchFilter.ILIKE);
-    params.sortBy = `nameSend:ASC`
+    params.sortBy = `nameSend:ASC`;
     return new Promise((resolve, reject) => {
       this.emailService.getVigEmailSend(params.getParams()).subscribe({
         next: async (response: any) => {
@@ -209,7 +209,7 @@ export class EmailInformationComponent extends BasePage {
     // if (lparams.text)
     //   // params.search = lparams.text;
     //   params.addFilter('bookName', lparams.text, SearchFilter.ILIKE);
-    params.sortBy = `bookName:ASC`
+    params.sortBy = `bookName:ASC`;
     return new Promise((resolve, reject) => {
       this.emailService.getVigMailBook(params.getParams()).subscribe({
         next: async (response: any) => {
@@ -245,10 +245,9 @@ export class EmailInformationComponent extends BasePage {
     params.addFilter('bookType', 'C', SearchFilter.EQ);
     params.addFilter('bookStatus', 1, SearchFilter.EQ);
 
-    if (lparams.text)
-      params.search = lparams.text;
+    if (lparams.text) params.search = lparams.text;
     // params.addFilter('bookName', lparams.text, SearchFilter.ILIKE);
-    params.sortBy = `bookName:ASC`
+    params.sortBy = `bookName:ASC`;
     return new Promise((resolve, reject) => {
       this.emailService.getVigMailBook(params.getParams()).subscribe({
         next: async (response: any) => {

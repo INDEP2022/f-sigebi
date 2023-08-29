@@ -125,9 +125,6 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.token = this.authService.decodeToken();
-    setTimeout(() => {
-      $('[data-toggle="tooltip"]').tooltip('show');
-    });
 
     // this.getGood(new ListParams)
     // this.filterParams.getValue().addFilter('description', '', SearchFilter.ILIKE)
@@ -191,12 +188,9 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   public callReport() {
     const forfeitureKey = this.form.get('forfeitureKey').value;
 
-    if (!forfeitureKey) {
-      this.onLoadToast(
-        'info',
-        'Es necesario contar con la Clave del Decomiso',
-        ''
-      );
+    if (forfeitureKey === null) {
+      console.log(forfeitureKey);
+      this.alert('warning', 'Es necesario contar con la Cve. Decomiso', '');
     } else {
       const params = {
         P_Clave_Decomiso: forfeitureKey,
@@ -204,19 +198,41 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
 
       this.report.fetchReport('RRELDECOMISO', params).subscribe({
         next: response => {
-          const blob = new Blob([response], { type: 'application/pdf' });
-          const url = URL.createObjectURL(blob);
-          let config = {
-            initialState: {
-              documento: {
-                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                type: 'pdf',
+          console.log(response);
+
+          // Check if the response is not empty and not a placeholder response
+          if (response.byteLength > 975) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
               },
-            },
-            class: 'modal-lg modal-dialog-centered',
-            ignoreBackdropClick: true,
-          };
-          this.modalService.show(PreviewDocumentsComponent, config);
+              class: 'modal-lg modal-dialog-centered',
+              ignoreBackdropClick: true,
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            this.alert(
+              'warning',
+              'La Cve. Decomiso no existe para generar el reporte',
+              ''
+            );
+
+            // Additional actions for handling the case when the key does not exist
+          }
+        },
+        error: err => {
+          this.alert(
+            'warning',
+            'La Cve. Decomiso no existe para generar el reporte',
+            ''
+          );
+
+          // Additional actions for handling the case when the key does not exist
         },
       });
     }
@@ -235,6 +251,21 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
         throw new Error('Please select one file.');
       }
 
+      const selectedFile = files[0];
+      console.log(selectedFile.name);
+
+      const fileExtension = selectedFile.name.split('.').pop()?.toLowerCase();
+      if (fileExtension !== 'csv') {
+        this.alert('warning', 'El Archivo debe Tener la Extensión CSV.', '');
+        return;
+      }
+
+      const expectedFilename = 'FRELDECOMISO.csv';
+      if (selectedFile.name !== expectedFilename) {
+        this.alert('warning', 'El Nombre del Archivo no es Correcto', '');
+        return;
+      }
+
       // Limpia cualquier evento onload anterior
       this.fileReader.onload = null;
 
@@ -250,7 +281,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       };
 
       // Lee el contenido binario del archivo
-      this.fileReader.readAsBinaryString(files[0]);
+      this.fileReader.readAsBinaryString(selectedFile);
     } catch (error) {
       console.error('Error:', error);
       // Maneja el error de acuerdo a tus necesidades
@@ -287,13 +318,13 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   }
 
   exportCsv() {
-    const filename: string = 'Archivo Prueba';
+    const filename: string = 'FRELDECOMISO';
     this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
   }
 
   async aprove() {
     if (this.dataExcel.length === 0) {
-      this.alert('info', 'Se debe importar el archivo excel', '');
+      this.alert('warning', 'Se debe importar el archivo excel', '');
       return;
     }
     const user = this.authService.decodeToken();
@@ -352,7 +383,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       this.file.get('processed').patchValue(insertResp['sucess']);
       this.file.get('wrong').patchValue(insertResp['error']);
       if (this.file.get('processed').value > 0) {
-        this.alert('success', 'Registros Procesados con Éxito', '');
+        this.alert('success', 'Registros Aprobados', '');
       }
     } catch (err) {
       // Verificar si err es de tipo HttpErrorResponse
@@ -362,9 +393,9 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
           (err.error && err.error.includes('column "undefined" does not exist'))
         ) {
           this.alert(
-            'error',
-            'Todas las columnas deben contar con información',
-            ''
+            'warning',
+            'Archivo sin Información',
+            'Asegúrese de Subir el Archivo Correcto'
           );
         } else {
           this.alert('error', 'Error desconocido.', '');
@@ -474,11 +505,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
         error: err => {
           const forfeitureKey = this.form.get('forfeitureKey').value;
           if (!forfeitureKey) {
-            this.alert(
-              'info',
-              'Es necesario contar con la Clave del Decomiso',
-              ''
-            );
+            this.alert('warning', 'Ingrese Cve. Decomiso', '');
             return;
           }
 
@@ -486,7 +513,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
             err.status === 400 ||
             err.message.includes('No se encontrarón registros')
           ) {
-            this.alert('error', 'No se encontraron registros', '');
+            this.alert('warning', 'No se encontraron registros', '');
             return;
           }
         },
