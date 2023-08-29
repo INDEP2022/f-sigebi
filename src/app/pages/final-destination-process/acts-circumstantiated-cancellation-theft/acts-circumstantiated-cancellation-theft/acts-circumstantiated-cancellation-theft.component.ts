@@ -310,7 +310,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         },
       },
       rowClassFunction: (row: any) => {
-        if (row.data.di_dispo == 'S') {
+        if (row.data.di_disponible == 'S') {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -646,7 +646,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           const di_dispo = await this.getStatusScreen(obj);
           item['di_disponible'] = di_dispo;
           if (item.minutesKey) {
-            item.di_dispo = 'N';
+            item['di_disponible'] = 'N';
           }
           item['quantity'] = item.amount;
           item['di_acta'] = item.minutesKey;
@@ -701,7 +701,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
   async getActaGood(good: any) {
     const params = new ListParams();
-    params['filter.goodId'] = `$eq:${good.id}`;
+    params['filter.numberGood'] = `$eq:${good.id}`;
     return new Promise((resolve, reject) => {
       this.detailProceeDelRecService.getAllFiltered(params).subscribe({
         next: data => {
