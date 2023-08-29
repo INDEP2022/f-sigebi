@@ -71,7 +71,7 @@ export class GoodPhotosService extends HttpService {
     const zip = new JSZip();
     photos.forEach(photo => {
       // console.log(photo.filename);
-      // console.log(photo.base64);
+      console.log(photo);
       const b = this.base64toBlob(photo.base64, 'base64');
       zip.file(photo.file.name, b);
     });

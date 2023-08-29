@@ -74,12 +74,18 @@ export const ACTAS = {
     type: 'string',
     sort: false,
   },
+
+  id: {
+    title: 'Id',
+    type: 'number',
+    sort: false,
+  },
   keysProceedings: {
     title: 'Clave Acta',
     type: 'string',
     sort: false,
   },
-  idTypeProceedings: {
+  typeProceedings: {
     title: 'Tipo de Acta',
     type: 'string',
     sort: false,
@@ -98,7 +104,7 @@ export const ACTAS = {
     sort: false,
   },
   numeraryFolio: {
-    title: 'Folio Universal',
+    title: 'Folio',
     type: 'string',
     sort: false,
   },
@@ -107,7 +113,7 @@ export const ACTAS = {
     type: 'number',
     sort: false,
   },
-  dateElaborationReceipt: {
+  elaborationDate: {
     title: 'Fecha de Elaboración',
     type: 'html',
     sort: false,

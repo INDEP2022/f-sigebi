@@ -3,4 +3,5 @@ export enum InterfaceSirsaeEndpoints {
   AccountDetail = 'sirsae-state-account-detail',
   InterfaceSirsae = 'interfacesirsae',
   PupBusqueda = 'sirsae/pup-query',
+  ValidPayments = 'sirsae/valid-payments',
 }

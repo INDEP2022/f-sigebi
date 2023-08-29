@@ -1,21 +1,21 @@
 export const ERRORS_NULL_DATA_COLUMNS = {
-  event: {
+  eventId: {
     title: 'Evento',
     sort: false,
   },
-  good: {
+  goodNumber: {
     title: 'Bien',
     sort: false,
   },
-  allotment: {
+  batchPublic: {
     title: 'Lote',
     sort: false,
   },
-  errorDescription: {
+  downloadMistake: {
     title: 'Descripción de Error',
     sort: false,
   },
-  invoice: {
+  billId: {
     title: 'ID Factura',
     sort: false,
   },

@@ -161,7 +161,7 @@
             <div class="row">
               <div class="col-md-12 mt-3 text-center">
                 <button
-                  [disabled]="loading || loadingBtn2"
+                  [disabled]="loading"
                   class="btn btn-success btn-sm active w-100"
                   style="font-size: 12px"
                   type="button"
@@ -184,14 +184,14 @@
                   (click)="exportar()"
                   style="font-size: 12px"
                   class="btn btn-success btn-sm active w-100">
-                  Exportar CSV
+                  Exportar Excel
                   <i *ngIf="!loadingBtn2" class="bx bx-upload float-icon"></i>
                 </button>
               </div>
 
               <div class="col-md-12 mt-3 text-center">
                 <button
-                  [disabled]="loading || loadingBtn2"
+                  [disabled]="loading"
                   (click)="actualizarFunc()"
                   class="btn btn-primary btn-sm active w-100">
                   Actualizar
@@ -200,7 +200,7 @@
               </div>
               <div class="col-md-12 mt-3 text-center">
                 <button
-                  [disabled]="loading || loadingBtn2"
+                  [disabled]="loading"
                   (click)="desconciliarFunc()"
                   class="btn btn-primary btn-sm active w-100">
                   Desconciliar

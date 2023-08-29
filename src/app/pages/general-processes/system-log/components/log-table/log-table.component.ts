@@ -35,9 +35,8 @@ export class LogTableComponent extends BasePage implements OnInit, OnChanges {
   totalItems = 0;
   constructor(private seraLogService: SeraLogService) {
     super();
-    (this.settings.columns = LOG_TABLE_COLUMNS),
-      (this.settings.actions = false),
-      (this.settings.hideSubHeader = false);
+    this.settings.columns = LOG_TABLE_COLUMNS;
+    this.settings.actions = false;
   }
 
   ngOnInit(): void {
