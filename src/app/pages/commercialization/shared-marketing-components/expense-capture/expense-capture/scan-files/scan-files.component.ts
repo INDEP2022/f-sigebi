@@ -52,13 +52,16 @@ export class ScanFilesComponent extends BasePage implements OnInit {
   //DATA DE USUARIO
   getDataUser() {
     this.user = this.authService.decodeToken();
-    const routeUser = `?filter.name=$eq:${this.user}`;
+    console.log(this.user);
+    const routeUser = `?filter.name=$eq:${this.user.preferred_username}`;
     this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
-      const resJson = JSON.parse(JSON.stringify(res.data[0]));
-      this.userData = resJson;
-      this.delUser = resJson.usuario.delegationNumber;
-      this.subDelUser = resJson.usuario.subdelegationNumber;
-      this.departmentUser = resJson.usuario.departamentNumber;
+      if (res && res.data && res.data.length > 0) {
+        const resJson = JSON.parse(JSON.stringify(res.data[0]));
+        this.userData = resJson;
+        this.delUser = resJson.usuario.delegationNumber;
+        this.subDelUser = resJson.usuario.subdelegationNumber;
+        this.departmentUser = resJson.usuario.departamentNumber;
+      }
     });
   }
 
