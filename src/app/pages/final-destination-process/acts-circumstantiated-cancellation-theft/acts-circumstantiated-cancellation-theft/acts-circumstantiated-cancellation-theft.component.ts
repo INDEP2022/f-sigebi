@@ -280,7 +280,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onGoodSelectValid(instance),
         },
-        id: {
+        goodId: {
           title: 'No. Bien',
           type: 'number',
           sort: false,
@@ -310,7 +310,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         },
       },
       rowClassFunction: (row: any) => {
-        if (row.data.di_disponible == 'S') {
+        if (row.data.di_dispo == 'S') {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -641,16 +641,16 @@ export class ActsCircumstantiatedCancellationTheftComponent
           this.wheelNumber = item.flyerNumber;
           let obj = {
             vcScreen: 'FACTCIRCUNR_0001',
-            pNumberGood: item.id,
+            pNumberGood: item.goodId,
           };
           const di_dispo = await this.getStatusScreen(obj);
           item['di_disponible'] = di_dispo;
           if (item.minutesKey) {
-            item.di_disponible = 'N';
+            item.di_dispo = 'N';
           }
           item['quantity'] = item.amount;
           item['di_acta'] = item.minutesKey;
-          item['id'] = item.goodNumber;
+          item['id'] = item.goodId;
         });
 
         Promise.all(result).then(item => {
@@ -701,7 +701,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
   async getActaGood(good: any) {
     const params = new ListParams();
-    params['filter.numberGood'] = `$eq:${good.id}`;
+    params['filter.goodId'] = `$eq:${good.id}`;
     return new Promise((resolve, reject) => {
       this.detailProceeDelRecService.getAllFiltered(params).subscribe({
         next: data => {
