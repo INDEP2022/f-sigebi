@@ -53,6 +53,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
   userName: string;
   captura: ICaptureDigFilter;
   capturasDig: ICaptureDigFilter[] = [];
+  exportCaptura: ICaptureDigFilter;
   info: Info;
   nombreUser: string = '';
   flyerTypes: any;
@@ -388,7 +389,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       P_CUMP: this.P_CUMP,
       P_USR: this.formCapture.value.user,
     };
-    console.log('params', params);
+    // console.log('params', params);
     this.siabService
       .fetchReport('RINDICA_0001', params)
       // .fetchReportBlank('blank')
@@ -465,6 +466,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
           this.capturasDig = data.result;
           console.log(data);
           this.totalItemsCaptura = data.count;
+          this.exportCaptura = this.search;
           console.log(this.capturasDig);
           let noCumple = data.result.filter(
             (elemento: any) => elemento.cumplio == 0
@@ -474,13 +476,13 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
           );
           this.P_T_CUMP = data.info.total_cumplio;
           this.P_T_NO_CUMP = data.info.total_no_cumplio;
-          this.P_CUMP = (this.P_T_CUMP / data.result.count) * 100;
+          this.P_CUMP = (this.P_T_CUMP / data.count) * 100;
           // this.P_T_CUMP = cumple.length;ss
           // this.P_T_NO_CUMP = noCumple.length;
           // this.P_T_NO_CUMP = data.info.total_no_cumplio;
           this.dataFactCapt.load(this.capturasDig);
           this.dataFactCapt.refresh();
-          // this.totalItemsCaptura = data.result.length;f
+          this.totalItemsCaptura = data.count;
         },
         error: () => {
           this.loading = false;
@@ -517,8 +519,8 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
   goBack() {}
   exportAll(): void {
     this.excelLoading = true;
-    this.documentsService.getExcel().subscribe({
-      next: response => {
+    this.documentsService.getExcel(this.search).subscribe({
+      next: data => {
         this.excelLoading = false;
         this.alert(
           'warning',
@@ -529,7 +531,8 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
         //   progress: 99,
         //   showText: true,
         // });
-        this.downloadDocument('-CapturaYdigita', 'excel', response.base64File);
+        // console.log(response.data)
+        this.downloadDocument('-CapturaYdigita', 'excel', data.base64File);
         // this.modalRef.hide();
       },
       error: error => {
