@@ -623,69 +623,25 @@ export class ActsCircumstantiatedCancellationTheftComponent
     });
   }
 
-  // getGoodsByStatus(id: number) {
-  //   this.loadingBienes = true;
-  //   let params: any = {
-  //     ...this.paramsList.getValue(),
-  //     ...this.columnFilters,
-  //   };
-  //   this.goodService.getByExpedient_(id, params).subscribe({
-  //     next: data => {
-  //       this.loadingBienes = false;
-  //       this.loadingBienes = false;
-  //       this.bienes = data.data;
-
-  //       console.log('Bienes', this.bienes);
-
-  //       let result = data.data.map(async (item: any) => {
-  //         this.wheelNumber = item.flyerNumber;
-  //         let obj = {
-  //           vcScreen: 'FACTCIRCUNR_0001',
-  //           pNumberGood: item.id,
-  //         };
-  //         const di_dispo = await this.getStatusScreen(obj);
-  //         item['di_disponible'] = di_dispo;
-  //         const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
-  //         //console.log('acta', acta);
-  //         item['acta_'] = acta;
-  //         // item.di_disponible = acta != null ? 'N' : di_dispo;
-  //       });
-
-  //       Promise.all(result).then(item => {
-  //         this.dataTableGood_ = this.bienes;
-  //         this.dataTableGood.load(this.bienes);
-  //         this.dataTableGood.refresh();
-
-  //         this.totalItems = data.count;
-  //         this.loadingBienes = false;
-  //         this.loadingBienes = false;
-
-  //       });
-  //     },
-  //     error: error => {
-  //       this.loading = false;
-  //     },
-  //   });
-  // }
   getGoodsByStatus(id: number) {
-    this.loading = true;
-
+    this.loadingBienes = true;
     let params: any = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-    // console.log('1412212', params);
-    params['sortBy'] = `goodNumber:DESC`;
-    this.GoodprocessService_.GetMinuteDetailDelivery(id, params).subscribe({
+    this.goodService.getByExpedient_(id, params).subscribe({
       next: data => {
+        this.loadingBienes = false;
+        this.loadingBienes = false;
         this.bienes = data.data;
 
-        // console.log('Bienes', this.bienes);
+        console.log('Bienes', this.bienes);
 
         let result = data.data.map(async (item: any) => {
+          this.wheelNumber = item.flyerNumber;
           let obj = {
             vcScreen: 'FACTCIRCUNR_0001',
-            pNumberGood: item.goodNumber,
+            pNumberGood: item.id,
           };
           const di_dispo = await this.getStatusScreen(obj);
           item['di_disponible'] = di_dispo;
@@ -695,26 +651,20 @@ export class ActsCircumstantiatedCancellationTheftComponent
           item['quantity'] = item.amount;
           item['di_acta'] = item.minutesKey;
           item['id'] = item.goodNumber;
-          // const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
-          // // console.log('acta', acta);
-          // item['acta_'] = acta;
         });
 
         Promise.all(result).then(item => {
           this.dataTableGood_ = this.bienes;
           this.dataTableGood.load(this.bienes);
           this.dataTableGood.refresh();
-          // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
+
           this.totalItems = data.count;
-          this.loading = false;
-          // // console.log(this.bienes);
+          this.loadingBienes = false;
+          this.loadingBienes = false;
         });
       },
       error: error => {
         this.loading = false;
-        this.dataTableGood.load([]);
-        this.dataTableGood.refresh();
-        this.totalItems = 0;
       },
     });
   }
@@ -738,7 +688,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
   async getActaGoodExp(good: any, exp: any) {
     return new Promise((resolve, reject) => {
-      this.proceedingsService.getGetFactDbConvBien(good, exp).subscribe({
+      this.proceedingsService.getGetFactCir(good, exp).subscribe({
         next: async (state: any) => {
           //console.log('acta', state);
           resolve(state.data[0].cve_acta);
