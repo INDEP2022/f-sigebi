@@ -1,43 +1,43 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS = {
-  coordinacion_regional: {
+  RegionalCoordination: {
     title: 'Coord. Regional',
     sort: false,
   },
-  cve_oficio_externo: {
+  OficioExterno: {
     title: 'Cve. Oficio Externo',
     sort: false,
   },
-  no_expediente: {
+  ExpendientNumber: {
     title: 'No. Expediente',
     sort: false,
   },
-  no_volante: {
+  VolanteNumber: {
     title: 'No. Volante',
     sort: false,
   },
-  no_tramite: {
+  TramiteNumber: {
     title: 'No. Trámite',
     sort: false,
   },
-  urecepcion: {
+  ReceivingUnit: {
     title: 'Usuario',
     sort: false,
   },
-  programa: {
+  Program: {
     title: 'Programa',
     sort: false,
   },
-  finicia: {
+  StartDate: {
     title: 'Fecha Inicio Ind.',
     sort: false,
   },
-  fmaxima: {
+  MaxDate: {
     title: 'Fecha Fin Ind.',
     sort: false,
   },
-  cumplio: {
+  Fulfilled: {
     title: 'Cumplió',
     sort: false,
     type: 'custom',

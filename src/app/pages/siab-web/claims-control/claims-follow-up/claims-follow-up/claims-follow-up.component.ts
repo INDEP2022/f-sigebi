@@ -268,7 +268,11 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           this.totalItems = data.count | 0;
           this.loading = false;
         },
-        error: error => (this.loading = false),
+        error: error => {
+          this.loading = false;
+          this.lawyers = [];
+          this.totalItems = 0;
+        },
       });
   }
   openForm(siniester?: any) {
@@ -335,7 +339,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Siniestros Seguimiento',
-        'No se encontro documento oficio conclusión.'
+        'No se encontró documento oficio conclusión.'
       );
     }
   }
@@ -358,7 +362,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Siniestros Seguimiento',
-        'No se encontro documento oficio correo.'
+        'No se encontró documento oficio correo.'
       );
     }
   }
@@ -382,7 +386,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Siniestros Seguimiento',
-        'No se encontro documento oficio reclamación.'
+        'No se encontró documento oficio reclamación.'
       );
     }
   }

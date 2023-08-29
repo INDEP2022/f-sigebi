@@ -42,12 +42,7 @@
           <button
             type="submit"
             class="btn btn-primary active btn-sm text-wrap ml-2"
-            (click)="searchDictation()"
-            [disabled]="
-              !form.value.expedientNumber ||
-              !form.value.id ||
-              !form.value.wheelNumber
-            ">
+            (click)="searchDictation()">
             Buscar
           </button>
         </div>
@@ -262,7 +257,7 @@
                   class="dropdown-item"
                   style="color: blue"
                   (click)="onClickLoadByIdentifier()">
-                  <i class="bx bx-layer"></i> Cargar de Identificador
+                  <i class="bx bx-layer"></i> Cargar Identificador
                 </a>
               </li>
               <li role="menuitem">

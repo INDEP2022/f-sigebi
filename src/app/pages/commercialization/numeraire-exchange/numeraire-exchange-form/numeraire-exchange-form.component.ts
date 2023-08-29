@@ -625,9 +625,10 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     });
     if (messages.length > 0) {
       this.alert(
-        'error',
-        'Error',
-        `El Archivo no Contiene las Columnas ${messages.join(', ')}`
+        'warning',
+        'El Archivo es inválido',
+        // `El Archivo no Contiene las Columnas ${messages.join(', ')}`
+        ''
       );
       return false;
     }
@@ -854,6 +855,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
           await this.pupCreateGood();
         }
       } else {
+        this.loader.load = false;
         const questionResponse = await this.alertQuestion(
           'question',
           'Advertencia',
@@ -917,7 +919,11 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         catchError(err => {
           console.log('error', err);
           const message = err.error.message;
-          this.alert('error', 'Error', message);
+          this.alert(
+            'warning',
+            'Atención',
+            'El  No. Bien introducido es inválido'
+          );
           throw err;
         })
       )
