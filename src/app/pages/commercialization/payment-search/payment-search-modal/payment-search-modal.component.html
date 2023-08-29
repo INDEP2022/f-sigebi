@@ -27,11 +27,11 @@
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
           <form-field
-            [control]="paymentForm.get('originalReference')"
+            [control]="paymentForm.get('referenceori')"
             label="Referencia Original">
             <input
               type="text"
-              formControlName="originalReference"
+              formControlName="referenceori"
               class="form-control" />
           </form-field>
         </div>
@@ -98,9 +98,7 @@
             </ng-select> -->
             <ng-select class="form-control" formControlName="systemValidity">
               <!-- <ng-option [value]="null">Seleccione un valor</ng-option> -->
-              <ng-option
-                *ngFor="let row of validSystem"
-                [value]="row.valsisKey">
+              <ng-option *ngFor="let row of validSystem" value="row.valsisKey">
                 {{ row.valsisDescription }}
               </ng-option>
             </ng-select>

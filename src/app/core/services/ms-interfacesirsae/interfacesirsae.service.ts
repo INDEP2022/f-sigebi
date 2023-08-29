@@ -56,4 +56,8 @@ export class InterfacesirsaeService extends HttpService {
   actEstEve(evento: any) {
     return this.get(`sirsae/actEstEve/${evento}`);
   }
+
+  postPubBusqueda(params: any) {
+    return this.post(InterfaceSirsaeEndpoints.PupBusqueda, params);
+  }
 }

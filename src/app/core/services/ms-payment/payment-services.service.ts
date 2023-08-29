@@ -161,4 +161,8 @@ export class PaymentService extends HttpService {
       return this.get(`${PaymentEndPoints.validSystem}`);
     }
   }
+
+  postCreateRecord(params: any) {
+    return this.post(PaymentEndPoints.BusquedaPagosDet, params);
+  }
 }

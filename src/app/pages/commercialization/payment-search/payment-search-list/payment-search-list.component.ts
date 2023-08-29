@@ -20,6 +20,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { BankMovementType } from 'src/app/core/services/ms-bank-movement/bank-movement.service';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
+import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -118,7 +119,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     private msDepositaryService: MsDepositaryService,
     private bankMovementType: BankMovementType,
     private authService: AuthService,
-    private indUserService: IndUserService
+    private indUserService: IndUserService,
+    private interfacesirsaeService: InterfacesirsaeService
   ) {
     super();
     this.paymentSettings.columns = PAYMENT_COLUMNS;
@@ -130,7 +132,6 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     this.getParametercomer('SUPUSUCOMER');
     this.getBusquedaPagDet(5);
     this.searchID(5);
-    //this.pagosArchivos(5, 2);
     this.localdata
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -145,12 +146,12 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
               case 'movement':
                 field = 'filter.numbermovement';
                 console.log('ENTRA A MOVEMENT');
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'date':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'originalReference':
+              case 'referenceori':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'reference':
@@ -212,6 +213,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getTableData());
+    //this.pagosArchivos(5, 2);
   }
 
   private prepareForm(): void {
@@ -315,13 +317,19 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       }
     } else {
       //Servicio PUP_BUSQUEDA
+      let params = {
+        keyBank: this.searchForm.get('bank').value,
+        amount: this.searchForm.get('amount').value,
+        ref: this.searchForm.get('reference').value,
+      };
+      this.PupBusqueda(params);
 
       this.searchID(this.LV_TOTREG);
       if (this.LV_TOTREG == 0) {
         this.alert(
           'warning',
           'Información',
-          'No se generaron registros de la consulta'
+          'No se Generaron Registros de la Consulta'
         );
       } else {
         this.getBusquedaPagMae(5);
@@ -369,14 +377,40 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
 
   openModal(context?: Partial<PaymentSearchModalComponent>) {
     const modalRef = this.modalService.show(PaymentSearchModalComponent, {
-      initialState: { ...context },
+      initialState: {
+        ...context,
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.onAdd.subscribe(data => {
       if (data) {
-        console.log('Data Recibida', data);
-        this.addRow(data);
+        console.log('Data Recibida ADD', data);
+        let param = {
+          payId: data.paymentId,
+          processId: Number(this.processId),
+          batchId: data.batchId,
+          idEvent: data.event,
+          // idCustomer: Number(this.idCustomer),
+          idGuySat: Number(2),
+          // idselect: Number(this.idselect),
+          // incomeid: Number(this.incomeid),
+          // idinconsis: Number(data.newData.inconsistencies),
+          tsearchId: Number(5),
+          numbermovement: Number(0),
+          date: data.date != null ? new Date(data.date) : null,
+          reference: data.reference,
+          referenceori: data.referenceori,
+          amount: data.amount,
+          cveBank: data.cve,
+          code: data.code,
+          batchPublic: data.publicBatch,
+          validSystem: data.systemValidity,
+          result: data.result,
+          account: this.account,
+          guy: data.type,
+        };
+        this.CreateAddRow(param);
       }
     });
     modalRef.content.onEdit.subscribe(data => {
@@ -385,7 +419,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         //this.editRow(data);
         console.log('Data Editar', data);
         let param = {
-          tsearchId: elemC.value,
+          tsearchId: Number(5),
           payId: data.newData.paymentId,
           processId: Number(this.processId),
           batchId: Number(data.newData.batchId),
@@ -398,7 +432,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           numbermovement: Number(data.newData.entryOrderId),
           date: data.newData.date != null ? new Date(data.newData.date) : null,
           reference: data.newData.reference,
-          referenceori: data.newData.originalReference,
+          referenceori: data.newData.referenceori,
           amount: data.newData.amount,
           cveBank: data.newData.cve,
           code: Number(data.newData.code),
@@ -444,10 +478,12 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   addRow(rows: any[]) {
-    this.paymentColumns = [...this.paymentColumns, ...rows];
+    console.log('Add Row->', rows);
+    this.paymentColumns = [...this.paymentColumns, rows];
     this.totalItems = this.paymentColumns.length;
-    this.addRows.push(...rows);
+    this.addRows.push(rows);
     console.log(this.addRows);
+    this.CreateAddRow(rows);
   }
 
   editRow(data: any) {
@@ -540,7 +576,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       let data = this.excelService.getData(binaryExcel);
       console.log(data);
     } catch (error) {
-      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+      this.onLoadToast('error', 'Ocurrio un Error al Leer el Archivo', 'Error');
     }
   }
 
@@ -612,11 +648,15 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         console.log('Res -> ', res);
         const params = new ListParams();
         for (let i = 0; i < res.count; i++) {
+          console.log('Entra al FOR', res.data);
           if (res.data[i] != undefined) {
+            console.log('Res.Data-> ', res.data);
             const _params: any = params;
             _params['filter.idType'] = `$eq:${res.data[i].idGuySat}`;
+            console.log('Filter-> ', _params);
             this.accountMovementService.getPaymentTypeSat(_params).subscribe(
               response => {
+                console.log('GetPaymentTypeSat->', response);
                 if (response != null && response != undefined) {
                   if (res.data[i].validSystem) {
                     console.log(
@@ -629,7 +669,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
                         let item = {
                           movement: res.data[i].numbermovement,
                           date: res.data[i].date,
-                          originalReference: res.data[i].referenceori,
+                          referenceori: res.data[i].referenceori,
                           reference: res.data[i].reference,
                           amount: res.data[i].amount,
                           cve: res.data[i].cveBank,
@@ -660,7 +700,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
                     let item = {
                       movement: res.data[i].numbermovement,
                       date: res.data[i].date,
-                      originalReference: res.data[i].referenceori,
+                      referenceori: res.data[i].referenceori,
                       reference: res.data[i].reference,
                       amount: res.data[i].amount,
                       cve: res.data[i].cveBank,
@@ -695,14 +735,13 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
             );
           }
         }
-        this.addRow(this.dataRows);
       },
       error: err => {
-        this.alert(
-          'warning',
-          'Información',
-          'No hay bienes que mostrar con los filtros seleccionado'
-        );
+        // this.alert(
+        //   'warning',
+        //   'Información',
+        //   'No hay bienes que mostrar con los filtros seleccionado'
+        // );
       },
     });
   }
@@ -761,6 +800,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       console.log('Resp Search Id-> ', resp);
       if (resp != null && resp != undefined) {
         this.LV_TOTREG = resp.count;
+
         console.log('Resp BusquedaId-> ', resp.count);
       }
     });
@@ -932,11 +972,17 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     this.paymentService.UpdateRecord(params).subscribe(
       resp => {
         if (resp != null && resp != undefined) {
+          this.alert(
+            'success',
+            'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+            'Registro Actualizado'
+          );
           console.log('Resp ActualizarReg', resp);
+          //this.getTableData();
         }
       },
       error => {
-        this.alert('error', '', '');
+        this.alert('error', 'Error', error);
       }
     );
   }
@@ -1063,5 +1109,29 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     }
     console.log('salida aux ', aux);
     return aux;
+  }
+
+  CreateAddRow(params: any) {
+    console.log('params post ->>', params);
+    this.paymentService.postCreateRecord(params).subscribe({
+      next: resp => {
+        console.log('Resp CreateAddRow', resp);
+        if (resp != null && resp != undefined) {
+          console.log('CreateAddRow-> ', resp);
+          this.alert('success', '', 'Registro Guardado Correctamente.');
+        }
+      },
+      error: err => {
+        this.alert('error', '', 'El Registro ya Existe');
+      },
+    });
+  }
+
+  PupBusqueda(params: any) {
+    this.interfacesirsaeService.postPubBusqueda(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('PupBúsqueda', resp);
+      }
+    });
   }
 }

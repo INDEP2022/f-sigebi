@@ -81,12 +81,13 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.getEvents({ page: 1, text: '' });
     this.getBatches({ page: 1, text: '' });
+    console.log('systemValidity', this.paymentForm.get('systemValidity').value);
   }
 
   private prepareForm(): void {
     this.paymentForm = this.fb.group({
       date: [null, [Validators.required]],
-      originalReference: [
+      referenceori: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
@@ -146,9 +147,10 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
+    console.log('ValsisKey', this.paymentForm.get('valsisKey').value);
     console.log('2');
-    // const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    // this.onLoadToast('success', this.title, `${message} Correctamente`);
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     console.log('PaymentForm -> ', this.paymentForm.value);
     this.edit
