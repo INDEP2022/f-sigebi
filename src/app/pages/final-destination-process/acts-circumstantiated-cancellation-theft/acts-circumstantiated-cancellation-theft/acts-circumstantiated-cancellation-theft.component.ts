@@ -1387,6 +1387,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.disabledBtnReplicar = false;
     this.data1 = null;
     this.consec = null;
+    this.actaGoodForm.reset();
   }
   cargueMasive() {
     const workSheet = XLSX.utils.json_to_sheet(this.dataDelivery, {
@@ -1720,7 +1721,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   getDocumentsByFlyer(flyerNum: string | number) {
-    const title = 'Folios relacionados con el volonte';
+    const title = 'Folios relacionados con el volante';
     const modalRef = this.openDocumentsModal(flyerNum, title);
     modalRef.content.selected
       .pipe(takeUntil(this.$unSubscribe))
