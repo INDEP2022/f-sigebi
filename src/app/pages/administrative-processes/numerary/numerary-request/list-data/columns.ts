@@ -7,7 +7,7 @@ export const COLUMNS = {
     title: 'Fecha',
     sort: false,
     valuePrepareFunction: (value: string) => {
-      return value ? value.split('-').reverse().join('-') : '';
+      return value ? value.split('-').reverse().join('/') : '';
     },
   },
   solnumStatus: {

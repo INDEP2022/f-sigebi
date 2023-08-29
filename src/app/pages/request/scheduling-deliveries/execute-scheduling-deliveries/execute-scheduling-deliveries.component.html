@@ -1,6 +1,18 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Ejecutar programaci&oacute;n de entrega</h5>
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <h5 class="title">Ejecutar programaci&oacute;n de entrega</h5>
+      </div>
+      <div class="p-2">
+        <button
+          (click)="finalizeDelivery()"
+          type="button"
+          class="btn btn-sm btn-primary active">
+          Finalizar Entrega
+        </button>
+      </div>
+    </div>
   </div>
   <div body style="margin-top: -30px">
     <h5 class="title">
@@ -115,9 +127,9 @@
           <i class="fa fa-folder-open" aria-hidden="true"></i></a
         >&nbsp;
 
-        <button class="btn btn-primary btn-sm active">
+        <!-- <button class="btn btn-primary btn-sm active">
           Guardar <i class="fa fa-save" aria-hidden="true"></i>
-        </button>
+        </button> -->
       </div>
 
       <div class="btn-toolbar pt-5">
@@ -160,9 +172,15 @@
         class="table-responsive pt-5"
         *ngIf="this.programmingDetailPanel.status == 'EJECUTAR_ENTREGA'">
         <div class="btn-toolbar">
+          <button
+            (click)="editConstancy()"
+            class="btn btn-primary btn-sm active"
+            *ngIf="this.programmingDetailPanel.typeEvent != 3">
+            Editar <i class="fa fa-pencil" aria-hidden="true"></i>
+          </button>
           <button (click)="newDocument()" class="btn btn-primary btn-sm active">
-            <i class="fa fa-folder" aria-hidden="true"></i> Documentos de la
-            constancia
+            Documentos de la constancia
+            <i class="fa fa-folder" aria-hidden="true"></i>
           </button>
         </div>
 
