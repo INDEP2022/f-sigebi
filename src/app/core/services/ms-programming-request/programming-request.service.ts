@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGoodDelivery } from 'src/app/pages/request/scheduling-deliveries/scheduling-deliveries-form/good-delivery.interface';
 import { IprogrammingDelivery } from 'src/app/pages/siab-web/sami/receipt-generation-sami/receipt-table-goods/ireceipt';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
@@ -197,6 +198,16 @@ export class ProgrammingRequestService {
     );
   }
 
+  createProgrammingDelivery(formData: Object) {
+    const route = `programminggood/api/v1/programming-delivery`;
+    return this.http.post(`${environment.API_URL}/${route}`, formData);
+  }
+
+  updateProgrammingDelivery(id: number, formData: Object) {
+    const route = `programminggood/api/v1/programming-delivery/${id}`;
+    return this.http.put(`${environment.API_URL}/${route}`, formData);
+  }
+
   getGoodsProgrammingDelivery(_params: ListParams) {
     const params = this.makeParams(_params);
     const route = `programminggood/api/v1/programming-delivery-good`;
@@ -204,5 +215,10 @@ export class ProgrammingRequestService {
       `${environment.API_URL}${route}`,
       { params }
     );
+  }
+
+  createGoodProgrammingDevilery(goodDelivery: IGoodDelivery) {
+    const route = `programminggood/api/v1/programming-delivery-good`;
+    return this.http.post(`${environment.API_URL}${route}`, goodDelivery);
   }
 }

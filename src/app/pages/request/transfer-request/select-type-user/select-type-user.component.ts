@@ -13,6 +13,7 @@ import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.m
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
@@ -55,6 +56,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   private authService = inject(AuthService);
   private orderService = inject(OrderServiceService);
   private router = inject(Router);
+  private goodfinderService = inject(GoodFinderService);
 
   constructor(private modalRef: BsModalRef) {
     super();
@@ -203,8 +205,9 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       requestUpdate.id = this.data.id;
       requestUpdate.targetUserType = this.userForm.controls['typeUser'].value;
       requestUpdate.targetUser = this.user.id;
+      //actualiza el process status y el good status de la solicitud
+      const status = await this.updateStatus();
       //Todo: enviar la solicitud
-
       const requestResult = await this.saveRequest(requestUpdate);
       if (requestResult === true) {
         //TODO: generar o recuperar el reporte
@@ -552,5 +555,30 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     }
 
     return result;
+  }
+
+  updateStatus() {
+    return new Promise((resolve, reject) => {
+      let body: any = { request: 0, status: '', process: '' };
+      body.request = Number(this.data.id);
+      body.status = 'VERIFICAR_CUMPLIMIENTO'; //good.processStatus
+      body.process = 'verify-compliance';
+      body.statusGood = 'ROP'; // good.status
+
+      this.goodfinderService.updateStatusProcess(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          reject('Error al actualizar los estados');
+          console.log('Error al actualizar los estados ', error);
+          this.onLoadToast(
+            'error',
+            'Error al actualizar el estado de los Bienes',
+            ''
+          );
+        },
+      });
+    });
   }
 }

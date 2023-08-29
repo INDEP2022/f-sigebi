@@ -60,10 +60,11 @@
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
           <button
-            [disabled]="!form.valid"
+            [ngClass]="{ loading: loadingBtn }"
+            [disabled]="!form.valid || loadingBtn"
             class="btn btn-primary btn-sm active mr-3"
             (click)="updateStatus()">
-            Actualizar <i class="fas fa-sync-alt"> </i>
+            Actualizar <i *ngIf="!loadingBtn" class="fas fa-sync-alt"> </i>
           </button>
           <!-- <button
             [disabled]="form.invalid"

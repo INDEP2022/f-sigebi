@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { takeUntil } from 'rxjs';
+import { BasePage } from 'src/app/core/shared';
 
 @Component({
   template: `
@@ -7,6 +10,14 @@ import { Component } from '@angular/core';
         <h5 class="title">Administración Bienes</h5>
       </div>
       <div body>
+        <div class="row" *ngIf="origin">
+          <div class="col-md-12">
+            <button class="btn btn-primary active btn-sm" (click)="goBack()">
+              Regresar
+              <i class="fas fa-arrow-circle-left"></i>
+            </button>
+          </div>
+        </div>
         <div class="md-tabs">
           <tabset>
             <tab heading="Datos Búsqueda">
@@ -52,11 +63,27 @@ import { Component } from '@angular/core';
     </app-card>
   `,
 })
-export class AdministrationAssetsComponent {
+export class AdministrationAssetsComponent extends BasePage {
   dataSearch: boolean;
   data: any;
   chargeData(event: any) {
     this.dataSearch = event.exist;
     this.data = event.data;
+  }
+  origin: string = null;
+
+  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
+    super();
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.origin = params['origin'];
+      });
+  }
+  goBack() {
+    //FCONGENRASTREADOR
+    if (this.origin == 'FCONGENRASTREADOR') {
+      this.router.navigate([`/pages/general-processes/goods-tracker`]);
+    }
   }
 }

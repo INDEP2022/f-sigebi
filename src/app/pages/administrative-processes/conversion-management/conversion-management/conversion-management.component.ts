@@ -46,7 +46,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   isFormModified = false;
 
   enable: boolean = false;
-
+  view: boolean = false;
   dataSelect = new DefaultSelect<any>();
 
   get idConversion() {
@@ -152,7 +152,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             `Id Conversión: ${this.conversion.id} , Password: ${this.password}`,
-            'Se ha Generado y Aplicado la Contraseña a la Conversión'
+            'Se ha generado y aplicado la contraseña a la conversión'
           );
           this.loader.load = false;
           this.saved = true;
@@ -182,11 +182,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     if (this.noBien.value !== null) {
       this.searchGoods(this.noBien.value);
     } else {
-      this.alert(
-        'warning',
-        'Administración de Conversión de Bienes',
-        'Se debe Ingresar el Numero del Bien'
-      );
+      this.alert('warning', 'Se debe Ingresar el Numero del Bien', '');
     }
   }
 
@@ -204,11 +200,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.getConversion(this.good.id);
       },
       error: err => {
-        this.alert(
-          'warning',
-          'Administración de Conversión de Bienes',
-          'Bien no Existe'
-        );
+        this.alert('warning', 'No existe el No. Bien', '');
         this.form.reset();
         console.log(err);
       },
@@ -271,6 +263,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.conversion = response.data[0];
         console.log(this.conversion);
         this.idConversion.setValue(Number(response.data[0].id));
+        this.view = true;
         if (response.data[0].fCreate != null) {
           this.date.setValue(this.formatDate(response.data[0].fCreate));
         }
@@ -291,11 +284,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   // );
   async generatePaswword() {
     if (this.tipo.value === null) {
-      this.alert(
-        'warning',
-        'Administración de Conversión de Bienes',
-        'El Campo Tipo es Requerido'
-      );
+      this.alert('warning', 'Atención', 'El Campo Tipo es Requerido');
       return;
     }
 
@@ -488,6 +477,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   clean() {
     this.form.reset();
     this.saved = true;
+    this.view = false;
     // this.form.markAllAsTouched();
   }
   formatDate(fecha: string) {
@@ -504,5 +494,12 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     if (this.enable) {
       this.isFormModified = true;
     }
+  }
+  passwordId() {
+    this.alert(
+      'success',
+      `Id Conversión: ${this.conversion.id} , Password: ${this.conversion.pwAccess}`,
+      ''
+    );
   }
 }

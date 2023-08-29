@@ -116,4 +116,24 @@ export class ComerInvoiceService extends HttpService {
   generateFolio(data: { pEvent: string; ptpevento: string }) {
     return this.post(ENDPOINT_INVOICE.GenerateFolio, data);
   }
+
+  comerPostQuery(data: {
+    useCompSat: string;
+    cveUnitSat: string;
+    cveProdServSat: string;
+    cveShapePayment: string;
+    cveTypeRelationSat: string;
+    type: number;
+    idEventRelImg: number;
+    typeVoucher: string;
+    total: number;
+    idEvent: number;
+    idInvoice: number;
+    iva: number;
+    price: number;
+    noDelegation: number;
+    dateImpression: string;
+  }) {
+    return this.post(ENDPOINT_INVOICE.ComerPostQuery, data);
+  }
 }

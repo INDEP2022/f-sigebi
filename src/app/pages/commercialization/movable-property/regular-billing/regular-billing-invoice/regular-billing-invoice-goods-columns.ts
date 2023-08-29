@@ -1,5 +1,5 @@
 export const REGULAR_GOODS_COLUMN = {
-  noBien: {
+  goodNot: {
     title: 'No. Bien',
     sort: false,
   },
@@ -11,12 +11,12 @@ export const REGULAR_GOODS_COLUMN = {
     title: 'Descripción',
     sort: false,
   },
-  sum: {
+  price: {
     title: 'Importe',
     sort: false,
   },
-  iva: {
-    title: 'IVA',
+  vat: {
+    title: 'Iva',
     sort: false,
   },
   total: {
@@ -35,15 +35,15 @@ export const REGULAR_GOODS_COLUMN = {
     title: 'Modelo',
     sort: false,
   },
-  serie: {
+  series: {
     title: 'Serie',
     sort: false,
   },
-  mandate: {
+  downloadcvman: {
     title: 'Mandato',
     sort: false,
   },
-  registration: {
+  tuition: {
     title: 'Matrícula',
     sort: false,
   },
@@ -52,7 +52,7 @@ export const REGULAR_GOODS_COLUMN = {
     sort: false,
   },
   prod: {
-    title: 'Producción',
+    title: 'Prod./Serv.',
     sort: false,
   },
 };

@@ -1,26 +1,25 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, map, takeUntil } from 'rxjs';
+import { BehaviorSubject, of, takeUntil } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { CertificatesDeliveryService } from 'src/app/core/services/ms-delivery-constancy/certificates-delivery.service';
+import { CertificatesGoodsService } from 'src/app/core/services/ms-delivery-constancy/certificates-goods.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DocumentFormComponent } from '../../shared-request/document-form/document-form.component';
+import { JSON_TO_CSV } from 'src/app/pages/admin/home/constants/json-to-csv';
 import { DeliveriesConstancyFormComponent } from '../deliveries-constancy-form/deliveries-constancy-form.component';
+import { DocumentConstanceModalComponent } from '../document-constance-modal/document-constance-modal.component';
 import { TypeDeliveryModelComponent } from '../type-delivery-model/type-delivery-model.component';
 import {
   CONSTANCY_DELIVERY_COLUMNS,
   GOOD_DELIVERY_COLUMN,
 } from './columns/good-delivery-columns';
 
-const testdata = [
-  {
-    certificateId: 1,
-    folio: 'hjhjhjhjh',
-  },
-];
 @Component({
   selector: 'app-execute-scheduling-deliveries',
   templateUrl: './execute-scheduling-deliveries.component.html',
@@ -30,6 +29,7 @@ export class ExecuteSchedulingDeliveriesComponent
   extends BasePage
   implements OnInit
 {
+  @ViewChild('table2', { static: false }) table2: any;
   showSearchForm: boolean = true;
   constancyDelivered: boolean = false;
   constancyNoDelivered: boolean = false;
@@ -56,14 +56,21 @@ export class ExecuteSchedulingDeliveriesComponent
   constancyParams = new BehaviorSubject<ListParams>(new ListParams());
   constancyTotalItems: number = 0;
   constancyDeliveryColumns = CONSTANCY_DELIVERY_COLUMNS;
+  loadingT2: boolean = false;
 
   goodDeliveredSelected: any = [];
   regDelegationId: number = null;
   bsModelRef: BsModalRef;
+  jsonToCsv = JSON_TO_CSV;
+  constanceSelected: any = {};
+  is: boolean = false;
 
   private programmingService = inject(ProgrammingGoodService);
   private transferenteService = inject(TransferenteService);
   private certifiDeliveryService = inject(CertificatesDeliveryService);
+  private excelService = inject(ExcelService);
+  private wcontet = inject(WContentService);
+  private certifiGoodsService = inject(CertificatesGoodsService);
 
   constructor(private modalService: BsModalService) {
     super();
@@ -127,7 +134,7 @@ export class ExecuteSchedulingDeliveriesComponent
 
       edit: {
         editButtonContent:
-          '<i class="fa fa-eye text-primary mx-2 mr-2" tooltip="Vista Previa" containerClass="tooltip-style" ></i>',
+          '<i class="fa fa-eye text-primary mx-2 mr-2" tooltip="Vista Previa" containerClass="tooltip-style"></i>',
       },
       delete: {
         deleteButtonContent:
@@ -135,7 +142,13 @@ export class ExecuteSchedulingDeliveriesComponent
       },
     };
 
-    this.constancyDeliveryArray = testdata;
+    this.constancyParams.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      if (this.programmingDetailPanel.id) {
+        this.getCertificateDelivery(data);
+      }
+    });
+
+    //this.constancyDeliveryArray = testdata;
   }
 
   certificateDelivery(constancy: number) {
@@ -163,41 +176,64 @@ export class ExecuteSchedulingDeliveriesComponent
     certificateDelivery.content.event.subscribe((data: any) => {
       console.log(data);
       const typeEvent = this.programmingDetailPanel.typeEvent;
-
-      let certifyArray: any = {};
+      this.loadingT2 = true;
       const typeReceptor = data.receiverType;
-      certifyArray.certificateId = data.certificateId;
-      certifyArray.folio = data.folio;
-      certifyArray.certificateType = data.certificateType;
-
       if (typeEvent == 1 && typeReceptor == 'CLIENTE') {
-        certifyArray.identificator = data.clientIden;
-        certifyArray.IdennNum = data.clientIdennNum;
-        certifyArray.name = data.cliente;
+        this.constancyDeliveryArray['identificator'] = data.clientIden;
+        this.constancyDeliveryArray['IdennNum'] = data.clientIdennNum;
+        this.constancyDeliveryArray['name'] = data.cliente;
       } else if (typeEvent != 1 && typeReceptor != 'CLIENTE') {
-        certifyArray.identificator = data.repLegalIden;
-        certifyArray.IdennNum = data.repLegalIdenNum;
-        certifyArray.name = data.repLegal;
+        this.constancyDeliveryArray['identificator'] = data.repLegalIden;
+        this.constancyDeliveryArray['IdennNum'] = data.repLegalIdenNum;
+        this.constancyDeliveryArray['name'] = data.repLegal;
       }
 
-      this.constancyDeliveryArray = [
-        ...this.constancyDeliveryArray,
-        certifyArray,
-      ];
+      this.constancyDeliveryArray = [...this.constancyDeliveryArray];
+      this.loadingT2 = false;
     });
   }
 
   newDocument() {
-    const newDocument = this.modalService.show(DocumentFormComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    if (
+      this.constanceSelected == null ||
+      this.constanceSelected.certificateId == null
+    ) {
+      this.onLoadToast('info', 'Es necesario seleccionar una constancia');
+      return;
+    }
+
+    if (
+      this.constanceSelected.closing == null ||
+      this.constanceSelected.closing == 'N'
+    ) {
+      this.onLoadToast(
+        'info',
+        'Para adjuntar documentos es necesario cerrar la constancia'
+      );
+      return;
+    }
+
+    const newDocument = this.modalService.show(
+      DocumentConstanceModalComponent,
+      {
+        initialState: {
+          certificate: this.constanceSelected,
+          goodDelivery: this.programmingDetailPanel,
+        },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
   }
 
-  editConstancy(data: any) {
+  editConstancy() {
     let config: ModalOptions = {
       initialState: {
-        data,
+        goods: this.goodDeliveredSelected,
+        typeEvent: +this.programmingDetailPanel.typeEvent,
+        progEntrega: this.programmingDetailPanel,
+        constanceForm: this.constanceSelected,
+        edit: true,
         callback: (next: boolean) => {
           if (next) {
             debugger;
@@ -214,6 +250,9 @@ export class ExecuteSchedulingDeliveriesComponent
     );
     this.bsModelRef.content.event.subscribe((data: any) => {
       console.log(data);
+      if (data == true) {
+        this.getCertificateDelivery(new ListParams());
+      }
     });
   }
 
@@ -231,7 +270,7 @@ export class ExecuteSchedulingDeliveriesComponent
 
   getSchedulingDelivery() {
     const params = new ListParams();
-    params['filter.id'] = `$eq:${16896}`;
+    params['filter.id'] = `$eq:${16894}`; //16896
     this.programmingService
       .getProgrammingDelivery(params)
       .pipe(
@@ -288,6 +327,22 @@ export class ExecuteSchedulingDeliveriesComponent
     });
   }
 
+  updateProgrammingGoodDelivery(body: any) {
+    return new Promise((resolve, reject) => {
+      this.programmingService
+        .updateProgrammingDeliveryGood(body.id, body)
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+          error: error => {
+            reject(error);
+            this.onLoadToast('error', 'No se actualizo el bien entregado');
+          },
+        });
+    });
+  }
+
   selectRows(event: any) {
     console.log(event.selected);
     this.goodDeliveredSelected = event.selected;
@@ -329,7 +384,7 @@ export class ExecuteSchedulingDeliveriesComponent
     for (let index = 0; index < this.goodDeliveredSelected.length; index++) {
       const item = this.goodDeliveredSelected[index];
       const typeEvent = this.programmingDetailPanel.typeEvent;
-      if (typeEvent == 1 && item.commercialEvent == null) {
+      if (typeEvent === 1 && item.commercialEvent == null) {
         this.onLoadToast(
           'info',
           'El bien debe tener un evento comercial. Consulte a su administrador.'
@@ -385,34 +440,102 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   getCertificateDelivery(params: ListParams) {
+    this.loadingT2 = true;
     const progDeliveryId = this.programmingDetailPanel.id;
     params['filter.deliveryScheduleId'] = `$eq:${progDeliveryId}`;
-    this.certifiDeliveryService.getAll().subscribe({
-      next: resp => {
+    this.certifiDeliveryService.getAll(params).subscribe({
+      next: (resp: any) => {
         const typeEvent = this.programmingDetailPanel.typeEvent;
         resp.data.map((item: any) => {
-          let certifyArray: any = {};
           const typeReceptor = item.receiverType;
-          certifyArray.certificateId = item.certificateId;
-          certifyArray.folio = item.folio;
-          certifyArray.certificateType = item.certificateType;
           if (typeEvent == 1 && typeReceptor == 'CLIENTE') {
-            certifyArray.identificator = item.clientIden;
-            certifyArray.IdennNum = item.clientIdennNum;
-            certifyArray.name = item.cliente;
+            item['identificator'] = item.clientIden;
+            item['IdennNum'] = item.clientIdennNum;
+            item['name'] = item.cliente;
           } else if (typeEvent != 1 && typeReceptor != 'CLIENTE') {
-            certifyArray.identificator = item.repLegalIden;
-            certifyArray.IdennNum = item.repLegalIdenNum;
-            certifyArray.name = item.repLegal;
+            item['identificator'] = item.repLegalIden;
+            item['IdennNum'] = item.repLegalIdenNum;
+            item['name'] = item.repLegal;
           }
-          this.constancyDeliveryArray.push(certifyArray);
         });
-        this.constancyDeliveryArray = [...this.constancyDeliveryArray];
+        this.constancyDeliveryArray = resp.data;
+        this.constancyTotalItems = resp.count;
+        this.displayCloseConstanceIcon();
+        this.loadingT2 = false;
+      },
+      error: error => {
+        console.log(error);
+        if (error.status != 400) {
+          this.onLoadToast(
+            'error',
+            'Ocurrio un error al cargar los certificados de constancia'
+          );
+        }
+        this.loadingT2 = false;
+        this.constancyDeliveryArray = [];
+        this.constancyTotalItems = 0;
       },
     });
   }
 
-  delivery() {
+  displayCloseConstanceIcon() {
+    setTimeout(() => {
+      const table = document.getElementById('table2');
+      const tbody = table.children[0].children[1].children;
+      for (let index = 0; index < tbody.length; index++) {
+        const ele: any = tbody[index];
+        const isclose = this.constancyDeliveryArray[index].closing;
+        if (isclose != null && isclose != 'N') {
+          console.log(ele.children[6].children[1].children[1].hidden);
+          ele.children[6].children[1].children[1].hidden = true;
+        }
+      }
+    }, 300);
+  }
+
+  delivery(executionType: string, causa?: string) {
+    if (
+      this.goodDeliveredSelected.length == 0 ||
+      this.goodDeliveredSelected > 1
+    ) {
+      this.onLoadToast(
+        'info',
+        'Debe tener un bien seleccionado para la ejecucide entrega'
+      );
+      return;
+    }
+    let colDestino = '';
+
+    if (executionType == 'entragados') {
+      colDestino = 'amountDelivered'; //Cantidad Entregados
+    } else {
+      if (causa == 'NO ENTREGADOS') {
+        colDestino = 'amountNotDelivered'; //CantidadNoEntregados
+      } else if (causa == 'NO ACEPTADOS') {
+        colDestino = 'anountNotAccelted'; //CantidadNoAceptados
+      } else {
+        colDestino = 'amountNotWhithdrawn'; //CantidadNoRetirados
+      }
+    }
+
+    this.goodDeliveredSelected.map((item: any) => {
+      const goodTotal = item.amountGood;
+      const sumGoods =
+        Number(item.sunGoodEnt) +
+        Number(item.sumGoodNoAce) +
+        Number(item.sumGoodNoEnt) +
+        Number(item.sumGoodNoRet);
+      const total = goodTotal - sumGoods;
+      const body: any = {};
+      body['id'] = item.id;
+      body[colDestino] = total;
+      console.log(body);
+      //Consultar si lo que se actualizara esta correcto
+      //this.updateProgrammingGoodDelivery(body)
+    });
+  }
+
+  noDelivery(executionType: string) {
     if (
       this.goodDeliveredSelected.length == 0 ||
       this.goodDeliveredSelected > 1
@@ -424,6 +547,10 @@ export class ExecuteSchedulingDeliveriesComponent
       return;
     }
 
+    this.openTypeReason(executionType);
+  }
+
+  openTypeReason(executionType: string) {
     const typeEvent = this.programmingDetailPanel.typeEvent;
     let config: ModalOptions = {
       initialState: {
@@ -442,6 +569,31 @@ export class ExecuteSchedulingDeliveriesComponent
     );
     this.bsModelRef.content.event.subscribe((data: any) => {
       console.log(data);
+      this.delivery(executionType, data.type);
+    });
+  }
+
+  async exportCsv() {
+    const filename: string = 'Bienes';
+    const params = new ListParams();
+    params.limit = 100;
+    const goodsFile: any = await this.getAsyncProgrammingDeliveryGood(params);
+    //type: 'csv',
+    this.excelService.export(goodsFile, { filename });
+  }
+
+  getAsyncProgrammingDeliveryGood(params: ListParams) {
+    return new Promise((resolve, reject) => {
+      params[
+        'filter.programmingDeliveryId'
+      ] = `$eq:${this.programmingDetailPanel.id}`;
+
+      this.programmingService.getProgrammingDeliveryGood(params).subscribe({
+        next: (resp: any) => {
+          resolve(resp.data);
+        },
+        error: error => {},
+      });
     });
   }
 
@@ -450,6 +602,180 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   close(event: any) {
+    this.loadingT2 = true;
+    let body: any = {};
+    body.certificateId = event.certificateId;
+    body.closing = 'Y';
+    //actializar certificates-delivery
+    this.certifiDeliveryService.update(body).subscribe({
+      next: resp => {
+        const index = this.constancyDeliveryArray.indexOf(event);
+        if (index != -1) {
+          this.constancyDeliveryArray[index].closing = 'Y';
+          this.constancyDeliveryArray = [...this.constancyDeliveryArray];
+          //luego actualizar los botones
+          this.displayCloseConstanceIcon();
+        }
+        this.onLoadToast('success', 'Constancia cerrada');
+        this.loadingT2 = false;
+      },
+      error: error => {
+        this.onLoadToast('error', 'No se pudo cerrar la constancia');
+        this.loadingT2 = false;
+      },
+    });
+  }
+
+  selectConstance(event: any) {
+    if (event.isSelected == false) {
+      this.constanceSelected = {};
+      return;
+    }
     console.log(event);
+    this.constanceSelected = event.data;
+  }
+
+  async finalizeDelivery() {
+    let lbNoEnt: boolean = false;
+
+    const params1 = new ListParams();
+    params1['filter.closing'] = `$eq:N`;
+    const constDeliveryClosed: any = await this.getAllCertificates(params1);
+
+    if (
+      this.constancyDeliveryArray.length == 0 &&
+      constDeliveryClosed.count > 0
+    ) {
+      this.onLoadToast('info', 'Todas las constancias deben estar cerradas');
+      return;
+    }
+
+    let noHaveField: number = 0;
+    const constDelivery: any = await this.getAllCertificates(new ListParams());
+
+    //Todo:call endpoint who verify if certifi have documents
+
+    const params3 = new ListParams();
+    params3.limit = 100;
+    const listProgGoods: any = await this.getAllProgramminDeliveryGoods(
+      params3
+    );
+    for (let index = 0; index < listProgGoods.length; index++) {
+      const item = listProgGoods[index];
+
+      if (item.sumGoodNoEnt > 0) {
+        lbNoEnt = true;
+        item.status = 'BIENES_NO_ENTREGADOS';
+      }
+
+      const total =
+        Number(item.amountGood) -
+        (Number(item.sunGoodEnt) -
+          Number(item.sumGoodNoRet) -
+          Number(item.sumGoodNoAce) -
+          Number(item.sumGoodNoEnt));
+      item.amountNotRescheduled = total;
+
+      const body: any = {};
+      body.id = item.id;
+      body.id = item.amountNotRescheduled;
+      body.status = item.status;
+
+      const updated = await this.updateProgrammingGoodDelivery(body);
+    }
+
+    //Todo: Averiguar donde se encuentra el EstatusProgramming para actualizarlo
+    //abrir el modal de turnado
+  }
+
+  haveDocuments() {
+    return new Promise(async (resolve, reject) => {
+      let noHaveField: number = 0;
+      const constDelivery: any = await this.getAllCertificates(
+        new ListParams()
+      );
+
+      debugger;
+      constDelivery.data.map(async (item: any, _i: number) => {
+        const index = _i + 1;
+        const param = new ListParams();
+        param['filter.certificateId'] = `$eq:${item.certificateId}`;
+        const certifyGood: any = await this.getConstancyGood(param);
+        /*this.doSomthing(certifyGood)
+          .then((result:any) => {
+            console.log(result)
+          })*/
+
+        certifyGood.data.map(async (item2: any) => {
+          const body: any = {};
+          body.xidBien = item2.goodId;
+          body.xtipoDocumento = 19;
+          const fields: any = await this.getDocumentConstance(body);
+
+          const have = fields.data.filter((x: any) => {
+            return Number(x.xtipoDocumento) == 19;
+          });
+          noHaveField = have.length == 0 ? noHaveField + 1 : noHaveField;
+          console.log(noHaveField);
+        });
+        if (constDelivery.data.length == index) {
+          resolve(noHaveField);
+        }
+      });
+    });
+  }
+
+  getAllCertificates(params: ListParams) {
+    return new Promise((resolve, reject) => {
+      const progDeliveryId = this.programmingDetailPanel.id;
+      params['filter.deliveryScheduleId'] = `$eq:${progDeliveryId}`;
+      this.certifiDeliveryService
+        .getAll(params)
+        .pipe(
+          catchError((e: any) => {
+            if (e.status == 400) return of({ data: [], count: 0 });
+            throw e;
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+        });
+    });
+  }
+
+  getAllProgramminDeliveryGoods(params: ListParams) {
+    return new Promise((resolve, reject) => {
+      params[
+        'filter.programmingDeliveryId'
+      ] = `$eq:${this.programmingDetailPanel.id}`;
+      this.programmingService.getProgrammingDeliveryGood(params).subscribe({
+        next: (resp: any) => {
+          resolve(resp.data);
+        },
+      });
+    });
+  }
+
+  getConstancyGood(params: ListParams) {
+    return new Promise((resolve, reject) => {
+      this.certifiGoodsService.getAll(params).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+      });
+    });
+  }
+
+  getDocumentConstance(body: any) {
+    //5319436
+    return new Promise((resolve, reject) => {
+      this.wcontet.getDocumentos(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+      });
+    });
   }
 }

@@ -33,6 +33,8 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   file: File = null;
   registerLvl = '';
   isreadOnly = true;
+  selecteditem: any = null;
+  typeDocReadOnly: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -132,6 +134,12 @@ export class DocumentFormComponent extends BasePage implements OnInit {
         this.registerLvl = 'Expediente';
         this.isreadOnly = false;
       }
+    } else if (this.typeDoc === 'doc-constance') {
+      console.log(this.parameter);
+      this.documentForm.controls['xidBien'].setValue(this.parameter.xidBien);
+      this.registerLvl = 'Expediente';
+      this.isreadOnly = true;
+      this.typeDocReadOnly == true;
     }
   }
 
@@ -175,6 +183,8 @@ export class DocumentFormComponent extends BasePage implements OnInit {
       let deleRegId = 0;
       if (this.typeDoc === 'doc-buscar') {
         deleRegId = this.parameter.xdelegacionRegional;
+      } else if (this.typeDoc === 'doc-constance') {
+        deleRegId = this.parameter.xDelegacionRegional;
       } else {
         deleRegId = this.parameter.regionalDelegacionId;
       }
@@ -191,7 +201,16 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   getDocType(params: ListParams) {
     this.wcontentService.getDocumentTypes(params).subscribe({
       next: (resp: any) => {
-        this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
+        if (this.typeDoc == 'doc-constance') {
+          const result = resp.data.filter((x: any) => {
+            return Number(x.ddocType) == 19;
+          });
+          this.typesDocuments = result;
+          this.selecteditem = result[0].ddocType;
+          this.documentForm.controls['typesDocuments'].setValue(19);
+        } else {
+          this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
+        }
       },
     });
   }
@@ -231,12 +250,15 @@ export class DocumentFormComponent extends BasePage implements OnInit {
       'warning',
       'Confirmación',
       '¿Estás seguro que desea crear un nuevo documento?'
-    ).then(question => {
+    ).then(async question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
         const doctype = this.documentForm.controls['xtipoDocumento'].value;
         let docName = '';
         if (this.typeDoc !== 'doc-bien') {
+          docName = 'Reporte_' + doctype + this.formatDate() + '.pdf';
+        }
+        if (this.typeDoc === 'doc-constance') {
           docName = 'Reporte_' + doctype + this.formatDate() + '.pdf';
         } else {
           docName = 'Imagen_' + doctype + this.formatDate() + '.img';
@@ -255,7 +277,13 @@ export class DocumentFormComponent extends BasePage implements OnInit {
         delete form['document'];
 
         if (this.typeDoc !== 'doc-bien') {
-          this.saveDocument(docName, '.pdf', form);
+          //sube imagen para un documento de constancia
+          if (this.typeDoc === 'doc-constance') {
+            this.loopGoods(docName, '.pdf', form);
+          } else {
+            const result = await this.saveDocument(docName, '.pdf', form);
+            if (result) this.successMessage();
+          }
         } else {
           this.saveGoodImgs(docName, '.img', form);
         }
@@ -265,26 +293,25 @@ export class DocumentFormComponent extends BasePage implements OnInit {
 
   //sube documentos
   saveDocument(docName: string, type: string, form: any) {
-    this.wcontentService
-      .addDocumentToContent(
-        docName,
-        type,
-        JSON.stringify(form),
-        this.file,
-        '.pdf'
-      )
-      .subscribe({
-        next: resp => {
-          this.alert(
-            'success',
-            'Documento Guardado',
-            'El documento se guardó correctamente'
-          );
-
-          this.close();
-        },
-        error: error => {},
-      });
+    return new Promise((resolve, reject) => {
+      this.wcontentService
+        .addDocumentToContent(
+          docName,
+          type,
+          JSON.stringify(form),
+          this.file,
+          '.pdf'
+        )
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+          error: error => {
+            reject(error);
+            this.onLoadToast('error', 'Ocurrio un error al subir el documento');
+          },
+        });
+    });
   }
 
   //sube imagenes
@@ -302,6 +329,22 @@ export class DocumentFormComponent extends BasePage implements OnInit {
           this.close();
         },
       });
+  }
+
+  loopGoods(docName: string, type: string, form: any) {
+    const listSplited = this.documentForm.get('xidBien').value.split(' ');
+    const ids = listSplited.filter((x: any) => {
+      return x != '';
+    });
+    console.log(ids);
+    ids.map(async (item: any, _i: any) => {
+      const index = _i + 1;
+      form.xidBien = item;
+      const result = await this.saveDocument(docName, type, form);
+      if (ids.length == index) {
+        this.successMessage();
+      }
+    });
   }
 
   close() {
@@ -325,5 +368,15 @@ export class DocumentFormComponent extends BasePage implements OnInit {
         }
       }
     );
+  }
+
+  successMessage() {
+    this.alert(
+      'success',
+      'Documento Guardado',
+      'El documento se guardó correctamente'
+    );
+
+    this.close();
   }
 }

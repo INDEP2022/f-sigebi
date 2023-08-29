@@ -96,7 +96,7 @@ export class EmailBookConfigComponent
   }
   getVigMailBook(listParams = new ListParams()): void {
     if (this.formControlRegionalDelegation.invalid) {
-      this.alert('error', 'Debe seleccionar una delegación regional', '');
+      this.alert('error', 'Debe Seleccionar una Delegación Regional', '');
       this.emailsBook.load([]);
       return;
     }
@@ -126,7 +126,7 @@ export class EmailBookConfigComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(result => {
       if (!result?.isConfirmed) {
         return;
@@ -141,7 +141,7 @@ export class EmailBookConfigComponent
       next: () => {
         this.alert(
           'success',
-          'Dirección de correo electronico',
+          'Dirección de Correo Electronico',
           'Eliminado correctamente'
         );
         this.emailsBook.remove(data);

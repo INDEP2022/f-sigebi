@@ -88,7 +88,7 @@ export class CreateOrEditEmailBookDialogComponent extends BasePage {
       this.form.markAllAsTouched();
       this.alert(
         'error',
-        'Formulario invalido, complete los campos requeridos',
+        'Formulario Invalido, Complete los Campos Requeridos',
         ''
       );
       return;
@@ -117,7 +117,7 @@ export class CreateOrEditEmailBookDialogComponent extends BasePage {
         this.isLoading = false;
       },
       error: error => {
-        this.alert('error', 'Error al guardar registros', '');
+        this.alert('error', 'Error al Guardar Registros', '');
         this.isLoading = false;
       },
     });

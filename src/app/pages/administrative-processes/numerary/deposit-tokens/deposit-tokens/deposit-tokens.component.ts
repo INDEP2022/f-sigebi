@@ -1032,7 +1032,7 @@ export class DepositTokensComponent
       Promise.all(result).then(i => {
         console.log('jsonToCsv', arr);
         this.jsonToCsv = arr;
-        this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+        this.excelService.export(this.jsonToCsv, { type: 'xlsx', filename });
         this.alert('success', 'Archivo Descargado Correctamente', '');
         this.loadingBtn2 = false;
       });
@@ -1168,7 +1168,7 @@ export class DepositTokensComponent
       'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
     const link = document.createElement('a');
     link.href = mediaType + base64String;
-    link.download = 'CARINSFICHDEPO.csv';
+    link.download = 'CARINSFICHDEPO.xlsx';
     link.click();
     link.remove();
     this.alert('success', 'Archivo Descargado Correctamente', '');
