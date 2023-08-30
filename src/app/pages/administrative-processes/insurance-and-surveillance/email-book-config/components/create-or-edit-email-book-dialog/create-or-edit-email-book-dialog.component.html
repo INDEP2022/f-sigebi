@@ -18,21 +18,22 @@
         value="delegationNumber"
         class="form-control"
         path="survillance/api/v1/views/v-vig-delegations"
-        paramSearch="filter.description"
-        prefixSearch="$ilike"
+        paramSearch="search"
         formControlName="delegationNumber">
         <ng-template let-item>
-          {{ item.description }}
+          {{ item.delegationNumber }} - {{ item.description }}
         </ng-template>
       </ng-custom-select>
     </form-field>
-    <form-field [control]="form.get('bookName')" label="Nombre">
-      <input
-        required
-        type="text"
-        formControlName="bookName"
-        class="form-control" />
-    </form-field>
+    <div class="mt-4">
+      <form-field [control]="form.get('bookName')" label="Nombre">
+        <input
+          required
+          type="text"
+          formControlName="bookName"
+          class="form-control" />
+      </form-field>
+    </div>
     <!--  <form-field [control]="form.get('id')" label="ID">
       <input type="text" formControlName="id" class="form-control" />
     </form-field>-->
