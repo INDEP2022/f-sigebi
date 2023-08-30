@@ -695,6 +695,18 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         }
       );
     }
+    if (this.origin == 'FACTCONST_0001') {
+      this.router.navigate(
+        ['/pages/final-destination-process/proof-of-delivery'],
+        {
+          queryParams: {
+            folio: this.originFolio,
+            acta: this.acta,
+            expediente: this.expedient,
+          },
+        }
+      );
+    }
     this.locations.back();
   }
 }

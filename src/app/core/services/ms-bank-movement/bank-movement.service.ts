@@ -62,4 +62,10 @@ export class BankMovementType extends HttpService {
     const route = `${ParameterComerEndpoints.BankMovements}/${id}`;
     return this.delete(route);
   }
+
+  getParameterMod(params: string, user: any) {
+    return this.get(
+      `${ParameterComerEndpoints.ParameterMod}?filter.parameter=$eq:${params}&filter.value=$eq:${user}`
+    );
+  }
 }

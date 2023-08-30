@@ -17,26 +17,34 @@
       <div
         class="p-2"
         *ngIf="
-          programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS' ||
-          programmingDetailPanel.status == 'FORMATO_RECLAMACION_SAE' ||
-          programmingDetailPanel.status == 'FORMATO_RECLAMACION_TE' ||
-          programmingDetailPanel.status == 'RESTITUCION_BIENES'
+          statusProgramming == 'BIENES_NO_ENTREGADOS' ||
+          statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
+          statusProgramming == 'FORMATO_RECLAMACION_TE' ||
+          statusProgramming == 'RESTITUCION_BIENES'
         ">
         <button
-          (click)="(finalizeClassify)"
+          (click)="finalizeClassify()"
           type="button"
           class="btn btn-sm btn-primary active">
           Finalizar Clasificación
         </button>
       </div>
-      <div
-        class="p-2"
-        *ngIf="programmingDetailPanel.status == 'VERIFICACION_BIENES'">
+      <div class="p-2" *ngIf="statusProgramming == 'VERIFICACION_BIENES'">
         <button
           (click)="finalizeVerify()"
           type="button"
           class="btn btn-sm btn-primary active">
           Finalizar Verificación
+        </button>
+      </div>
+      <div
+        class="p-2"
+        *ngIf="statusProgramming == 'APROBAR_NO_ENT_ESP' || statusProgramming == 'APROBAR_NO_ENT_NUM">
+        <button
+          (click)="sendApprove()"
+          type="button"
+          class="btn btn-sm btn-primary active">
+          Enviar Aprobación
         </button>
       </div>
     </div>
@@ -246,8 +254,11 @@
     </div>
     <!-- FIN -->
     <!-- EJECUCION PROGRAMACION ENTREGA BIENES TIPO REST -->
-    <div>
-      <!-- *ngIf="statusProgramming == 'APROBAR_NO_ENT_ESP' || statusProgramming == 'APROBAR_NO_ENT_NUM'" -->
+    <div
+      *ngIf="
+        statusProgramming == 'APROBAR_NO_ENT_ESP' ||
+        statusProgramming == 'APROBAR_NO_ENT_NUM'
+      ">
       <hr />
       <div class="row">
         <div class="d-flex">
@@ -255,7 +266,6 @@
             <h5>Ejecuci&oacute;n Entrega de Bienes</h5>
           </div>
           <div class="p-2">
-            <!-- *ngIf="statusProgramming == 'RESTITUCION_BIENES' || statusProgramming == 'APROBAR_NO_ENT_ESP' || statusProgramming == 'APROBAR_NO_ENT_NUM'" -->
             <button
               type="button"
               class="btn btn-sm btn-primary active"
@@ -305,13 +315,13 @@
           >Fotografias <i class="fa fa-picture-o" aria-hidden="true"></i></a
         >&nbsp;
         <!-- lsEstatusProgramacion -->
-        <!-- <a
-          *ngIf="programmingDetailPanel.status == 'RESTITUCION_BIENES'"
+        <a
+          *ngIf="statusProgramming == 'RESTITUCION_BIENES'"
           style="cursor: pointer"
           (click)="photos()"
           class="link-primary"
-          >Expediente <i class="fa fa-picture-o" aria-hidden="true"></i></a
-        >&nbsp; -->
+          >Expediente <i class="fa fa-file" aria-hidden="true"></i></a
+        >&nbsp;
         <a
           *ngIf="programmingDetailPanel.status == 'EJECUTAR_ENTREGA'"
           style="cursor: pointer"

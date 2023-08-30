@@ -70,7 +70,7 @@ export class UserAccessComponent extends BasePage implements OnInit {
             const search: any = {
               userKey: () => (searchFilter = SearchFilter.ILIKE),
               userRole: () => (searchFilter = SearchFilter.EQ),
-              estAccess: () => (searchFilter = SearchFilter.ILIKE),
+              estAccess: () => (searchFilter = SearchFilter.EQ),
             };
 
             search[filter.field]();
