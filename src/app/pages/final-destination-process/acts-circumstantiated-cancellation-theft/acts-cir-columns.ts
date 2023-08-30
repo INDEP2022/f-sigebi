@@ -170,7 +170,7 @@ export class IDetailProceedingsDeliveryReceptionNew {
 }
 export const RELATED_FOLIO_COLUMNS = {
   id: {
-    title: 'Folio',
+    title: 'Folio Universal',
     sort: false,
   },
   sheets: {
