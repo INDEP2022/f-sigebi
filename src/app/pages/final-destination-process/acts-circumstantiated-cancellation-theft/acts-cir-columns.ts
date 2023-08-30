@@ -152,6 +152,22 @@ export const COPY = {
   // },
 };
 
+function validationCheck(checked: boolean) {
+  if (checked) {
+  }
+}
+
+export interface IDataGoodsTable {
+  goodId: number;
+  description: string;
+  quantity: number;
+  identifier: string;
+  status: string;
+  desEstatus: string;
+  seleccion: boolean;
+  improcedente: boolean;
+  disponible: boolean;
+}
 export class IGoodStatus {
   goodClassNumber: string | number;
   goodStatus: string;
