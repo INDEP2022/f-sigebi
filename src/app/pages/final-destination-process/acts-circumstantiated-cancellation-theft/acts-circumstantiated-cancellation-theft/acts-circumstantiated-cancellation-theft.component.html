@@ -20,8 +20,7 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            (click)="searchExpedient()"
-            *ngIf="origin == null">
+            (click)="searchExpedient()">
             <i class="bx bx-list-plus bx-sm float-icon"></i>
           </button>
         </div>
@@ -76,14 +75,14 @@
     <div class="row m-3">
       <div class="col-4"></div>
       <div class="col-md-8 text-end">
-        <button
+        <!-- <button
           [disabled]="!actasDefault"
           (click)="actualizarActa()"
           type="button"
           class="btn btn-primary active btn-sm mr-3">
           Guardarr
           <i aria-hidden="true" class="fa fa-save"></i>
-        </button>
+        </button> -->
         <button
           (click)="agregarActa()"
           type="button"
@@ -396,12 +395,13 @@
                   [source]="dataTableGood"
                   (userRowSelect)="selectData($event)">
                 </ng2-smart-table>
+                <app-pagination
+                  [params]="paramsList"
+                  [totalItems]="totalItems"></app-pagination>
               </ng-scrollbar>
               <!-- </div> -->
             </div>
-            <app-pagination
-              [params]="paramsList"
-              [totalItems]="totalItems"></app-pagination>
+
             <form [formGroup]="actaGoodForm" class="form-material">
               <div class="row">
                 <div class="col-6 mt-4">
@@ -527,12 +527,12 @@
                   (userRowSelect)="rowsSelected($event)"
                   [source]="dataRecepcionGood">
                 </ng2-smart-table>
+                <app-pagination
+                  [params]="paramsList2"
+                  [totalItems]="totalItems2"></app-pagination>
               </ng-scrollbar>
               <!-- </div> -->
             </div>
-            <app-pagination
-              [params]="paramsList2"
-              [totalItems]="totalItems2"></app-pagination>
           </div>
         </div>
       </div>

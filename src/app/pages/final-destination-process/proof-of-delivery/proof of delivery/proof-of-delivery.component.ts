@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
@@ -22,13 +22,14 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { IDepositaryAppointments_custom } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
+import { IComerLot } from 'src/app/core/models/ms-parametercomer/parameter';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionsService } from 'src/app/core/services/catalogs/fractions.service';
-import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
@@ -41,7 +42,11 @@ import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { ComerEventForm } from 'src/app/pages/commercialization/shared-marketing-components/event-preparation/utils/forms/comer-event-form';
 import { ModalScanningFoilTableComponent } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/modal-scanning-foil/modal-scanning-foil.component';
+import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import { ModalExpedientGenerateComponent } from '../modal-expedient-generate/modal-expedient-generate.component';
 import { ModalGoodDonationComponent } from '../modal-good-donation/modal-good-donation.component';
 import { ModalSearchActsComponent } from '../modal-search-acts/modal-search-acts.component';
@@ -110,16 +115,21 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   noActa: any;
   statusActa: any;
   origin: any;
+  origin2: any;
+  globalParameter: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  ngGlobal: IGlobalVars = null;
   @Input() depositaryAppointment: IDepositaryAppointments_custom;
   @ViewChild('mySmartTable') mySmartTable: any;
+  @Input() lotSelected: IComerLot;
+  @Input() onlyBase = false;
+  eventForm = this.fb.group(new ComerEventForm());
 
   constructor(
     private fb: FormBuilder,
     private expedientService: ExpedientService,
     private detailProceeDelRecService: DetailProceeDelRecService,
     private goodService: GoodService,
-    private parameterCatService: ParameterCatService,
     private authService: AuthService,
     private modalService: BsModalService,
     private notificationService: NotificationService,
@@ -132,9 +142,32 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
     private screenStatusService: ScreenStatusService,
     private programmingGoodReceiptService: ProgrammingGoodReceiptService,
     private proceedingSusPcancelService: ProceedingSusPcancelService,
-    private goodprocessService: GoodprocessService
+    private goodprocessService: GoodprocessService,
+    private globalVarsService: GlobalVarsService,
+    private activatedRoute: ActivatedRoute,
+    private goodTrackerService: GoodTrackerService
   ) {
     super();
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.folioScan = params['folioScan']
+          ? Number(params['folioScan'])
+          : null;
+      });
+    this.globalVarsService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          this.ngGlobal = global;
+          console.log('GLOBAL ', this.ngGlobal);
+          if (this.ngGlobal.REL_BIENES) {
+            console.log('GLOBAL ', this.ngGlobal.REL_BIENES);
+            this.backRastreador(this.ngGlobal.REL_BIENES);
+          }
+        },
+      });
   }
 
   settings1 = {
@@ -781,12 +814,6 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
                     this.PupLanzaReporte();
                   },
                 });
-
-                ///
-                //Falta Integrar el de guardar en documentos
-                ///
-                //this.folioScan = response.data[0].folio
-                //this.PupLanzaReporte();
               },
             });
           }
@@ -867,8 +894,8 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
     } else {
       this.alertInfo(
         'warning',
-        'No Tiene Folio de Escaneo para Continuar a la Pantalla de Escaneo',
-        ''
+        'Alerta',
+        'No Tiene Folio de Escaneo para Continuar a la Pantalla de Escaneo'
       );
     }
   }
@@ -1261,13 +1288,44 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
     ).then(res => {
       console.log(res);
       if (res.isConfirmed) {
-        this.router.navigate([`/pages/general-processes/goods-tracker`], {
-          queryParams: {
-            origin: 'FACTCONST_0001',
-            PAR_MASIVO: 'S',
-          },
-        });
+        // this.router.navigate([`/pages/general-processes/goods-tracker`], {
+        //   queryParams: {
+        //     origin: 'FACTCONST_0001',
+        //     PAR_MASIVO: 'S',
+        //   },
+        // });
+        this.loadFromGoodsTracker();
       }
+    });
+  }
+
+  async loadFromGoodsTracker() {
+    const global = await this.globalVarsService.getVars();
+    this.globalVarsService.updateSingleGlobal('REL_BIENES', 0, global);
+    // const selfState = await this.eventPreparationService.getState();
+    // this.eventPreparationService.updateState({
+    //   ...selfState,
+    //   eventForm: this.eventForm,
+    //   lastLot: Number(this.lotSelected.id) ?? -1,
+    //   lastPublicLot: this.lotSelected.publicLot ?? 1,
+    //   executionType: this.onlyBase ? 'base' : 'normal',
+    // });
+
+    this.router.navigate([GOODS_TACKER_ROUTE], {
+      queryParams: {
+        origin: 'FACTCONST_0001',
+      },
+    });
+  }
+
+  backRastreador(global: any) {
+    let params = {
+      pParameter: global,
+      pNumberParameter: 1,
+      pUser: this.user,
+    };
+    this.goodTrackerService.PaInsGoodParameters(params).subscribe({
+      next: response => {},
     });
   }
 

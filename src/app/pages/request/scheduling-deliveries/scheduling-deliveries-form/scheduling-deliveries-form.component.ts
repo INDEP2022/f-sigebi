@@ -27,6 +27,7 @@ import { IprogrammingDelivery } from 'src/app/pages/siab-web/sami/receipt-genera
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
 import { NotificationDestructionFormComponent } from '../notification-destruction-form/notification-destruction-form.component';
+import { NotificationDestructionFoundFormComponent } from '../notification-destruction-found-form/notification-destruction-found-form.component';
 import {
   SCHEDULING_DELIVERIES_COLUMNS,
   SCHEDULING_DELIVERIES_SALES_COLUMNS,
@@ -2240,6 +2241,25 @@ export class SchedulingDeliveriesFormComponent
     });
   }
 
+  checkExistNotificationDestructionFond() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.programmingDeliveryId'] = this.programmingDelId;
+      params.getValue()['filter.typeNotification'] = '2';
+      this.notificationService
+        .getNotificationDestruction(params.getValue())
+        .subscribe({
+          next: response => {
+            console.log('response', response);
+            resolve(true);
+          },
+          error: error => {
+            console.log('error', error);
+            resolve(false);
+          },
+        });
+    });
+  }
   showReportDestruction() {
     let config = {
       ...MODAL_CONFIG,
@@ -2258,16 +2278,51 @@ export class SchedulingDeliveriesFormComponent
     this.modalService.show(ShowReportComponentComponent, config);
   }
 
+  showReportDestructionFond() {
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-xl modal-dialog-centered',
+    };
+    config.initialState = {
+      idprogDel: this.programmingDelId,
+      typeNotification: 2,
+      callback: (next: boolean) => {
+        if (next) {
+          //this.showReportDestruction();
+        }
+      },
+    };
+
+    this.modalService.show(ShowReportComponentComponent, config);
+  }
+
   notificationDestruccionFond() {
-    this.goodsToProgramData.getElements().then(data => {
+    this.goodsToProgramData.getElements().then(async data => {
       if (data.length > 0) {
         if (this.programmingDeliveryInfo.statusNotification == 'Y') {
-        } else {
-          this.alert(
-            'warning',
-            'Acción Invalida',
-            'Es necesario generar la notificación de destrucción de fondos y valores'
-          );
+          const checkExistNotification =
+            await this.checkExistNotificationDestructionFond();
+          if (checkExistNotification) {
+            this.showReportDestructionFond();
+          } else {
+            let config = {
+              ...MODAL_CONFIG,
+              class: 'modal-xl modal-dialog-centered',
+            };
+            config.initialState = {
+              idprogDel: this.programmingDelId,
+              callback: (next: boolean) => {
+                if (next) {
+                  this.showReportDestructionFond();
+                }
+              },
+            };
+
+            this.modalService.show(
+              NotificationDestructionFoundFormComponent,
+              config
+            );
+          }
         }
       } else {
         this.alert(
