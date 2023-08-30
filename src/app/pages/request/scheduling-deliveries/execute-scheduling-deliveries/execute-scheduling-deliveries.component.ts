@@ -14,10 +14,12 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { JSON_TO_CSV } from 'src/app/pages/admin/home/constants/json-to-csv';
 import { DeliveriesConstancyFormComponent } from '../deliveries-constancy-form/deliveries-constancy-form.component';
 import { DocumentConstanceModalComponent } from '../document-constance-modal/document-constance-modal.component';
+import { PhotosConstanceModalComponent } from '../photos-constance-modal/photos-constance-modal.component';
 import { TypeDeliveryModelComponent } from '../type-delivery-model/type-delivery-model.component';
 import {
   CONSTANCY_DELIVERY_COLUMNS,
   GOOD_DELIVERY_COLUMN,
+  PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS,
 } from './columns/good-delivery-columns';
 
 @Component({
@@ -29,12 +31,16 @@ export class ExecuteSchedulingDeliveriesComponent
   extends BasePage
   implements OnInit
 {
+  @ViewChild('table', { static: false }) table: any;
   @ViewChild('table2', { static: false }) table2: any;
   showSearchForm: boolean = true;
   constancyDelivered: boolean = false;
   constancyNoDelivered: boolean = false;
   constancyNoAcept: boolean = false;
   constancyNoRetired: boolean = false;
+  showDetailProgDestruc: boolean = true;
+
+  statusProgramming: string = '';
 
   programmingDetailPanel: any = {};
   GoodDeliverySettings = {
@@ -57,6 +63,22 @@ export class ExecuteSchedulingDeliveriesComponent
   constancyTotalItems: number = 0;
   constancyDeliveryColumns = CONSTANCY_DELIVERY_COLUMNS;
   loadingT2: boolean = false;
+
+  progDelivGoodTypeRestSettings: any = {
+    ...TABLE_SETTINGS,
+    selectMode: '',
+    actions: false,
+    columns: PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS,
+  };
+  progDelivGoodTypeRestArray: any = [];
+  progDelivGoodTypeRestParams = new BehaviorSubject<ListParams>(
+    new ListParams()
+  );
+  progDelivGoodTypeRestTotalItems: number = 0;
+  progDelivGoodTypeRestColumns = PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS;
+  loadingEEB: boolean = false;
+  listObservation: any = [];
+  goodRestSelected: any = {};
 
   goodDeliveredSelected: any = [];
   regDelegationId: number = null;
@@ -147,6 +169,31 @@ export class ExecuteSchedulingDeliveriesComponent
         this.getCertificateDelivery(data);
       }
     });
+
+    this.progDelivGoodTypeRestColumns.approveCheck = {
+      ...this.progDelivGoodTypeRestColumns.approveCheck,
+      onComponentInitFunction: this.approvedSelected.bind(this),
+    };
+
+    this.progDelivGoodTypeRestColumns.observation = {
+      ...this.progDelivGoodTypeRestColumns.observation,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          this.setObservations(data);
+        });
+      },
+    };
+    this.progDelivGoodTypeRestParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(data => {
+        if (
+          this.programmingDetailPanel.id &&
+          (this.statusProgramming == 'APROBAR_NO_ENT_ESP' ||
+            this.statusProgramming == 'APROBAR_NO_ENT_NUM')
+        ) {
+          this.getProgrammingGoodDelivery(data);
+        }
+      });
 
     //this.constancyDeliveryArray = testdata;
   }
@@ -291,7 +338,20 @@ export class ExecuteSchedulingDeliveriesComponent
           this.programmingDetailPanel.emailAddressCenterTe =
             resp.emailAddressCenterTe;
           this.programmingDetailPanel.status = resp.status;
-          this.programmingDetailPanel.delRegId = resp.delRegId;
+          this.programmingDetailPanel.officeDestructionNumber =
+            resp.officeDestructionNumber;
+          this.programmingDetailPanel.metodDestruction = resp.metodDestruction;
+          this.programmingDetailPanel.locationDestruction =
+            resp.locationDestruction;
+          this.programmingDetailPanel.addressee = resp.addressee;
+          this.programmingDetailPanel.term = resp.term;
+          this.programmingDetailPanel.taxpayerName = resp.taxpayerName;
+          this.programmingDetailPanel.chargeAddressee = resp.chargeAddressee;
+          this.programmingDetailPanel.company = resp.company;
+          this.programmingDetailPanel.legalRepresentativeName =
+            resp.legalRepresentativeName;
+          this.programmingDetailPanel.placeDestruction = resp.placeDestruction;
+
           this.getTransferent(resp.transferId);
 
           this.getProgrammingGoodDelivery(new ListParams());
@@ -310,21 +370,61 @@ export class ExecuteSchedulingDeliveriesComponent
 
   getProgrammingGoodDelivery(params: ListParams) {
     this.loading = true;
+    this.loadingEEB = true;
     params[
       'filter.programmingDeliveryId'
     ] = `$eq:${this.programmingDetailPanel.id}`;
     this.programmingService.getProgrammingDeliveryGood(params).subscribe({
       next: (resp: any) => {
         console.log(resp);
+        resp.data.map((item: any) => {
+          item['faltante'] =
+            Number(item.amountGood) -
+            (Number(item.sunGoodEnt) +
+              Number(item.sumGoodNoEnt) +
+              Number(item.sumGoodNoAce) +
+              Number(item.sumGoodNoRet));
+        });
+
+        //
         this.goodDeliveryArray = resp.data;
         this.devgoodTotalItems = resp.count;
         this.loading = false;
+        this.setProgramDeliveryGoodColumns();
+
+        //
+        resp.data.map((item: any) => {
+          item.approveCheck =
+            item.approveEnEsp == null || item.approveEnEsp == 'N'
+              ? false
+              : true;
+        });
+        this.progDelivGoodTypeRestArray = resp.data;
+        this.progDelivGoodTypeRestTotalItems = resp.count;
+        this.loadingEEB = false;
       },
       error: error => {
         this.loading = false;
         console.log(error);
       },
     });
+  }
+
+  setProgramDeliveryGoodColumns() {
+    setTimeout(() => {
+      const table = this.table.grid.getColumns();
+      const cantNoAcep = table.find((x: any) => x.id == 'anountNotAccelted');
+      const sumNoAcep = table.find((x: any) => x.id == 'sumGoodNoAce');
+      const cantNoRet = table.find((x: any) => x.id == 'amountNotWhithdrawn');
+      const sumNoRet = table.find((x: any) => x.id == 'sumGoodNoRet');
+
+      if (Number(this.programmingDetailPanel.typeEvent) != 1) {
+        cantNoAcep.hide = true;
+        sumNoAcep.hide = true;
+        cantNoRet.hide = true;
+        sumNoRet.hide = true;
+      }
+    }, 300);
   }
 
   updateProgrammingGoodDelivery(body: any) {
@@ -337,7 +437,8 @@ export class ExecuteSchedulingDeliveriesComponent
           },
           error: error => {
             reject(error);
-            this.onLoadToast('error', 'No se actualizo el bien entregado');
+            this.onLoadToast('error', 'No se actualizo los bienes entregados');
+            this.loadingEEB = false;
           },
         });
     });
@@ -345,6 +446,16 @@ export class ExecuteSchedulingDeliveriesComponent
 
   selectRows(event: any) {
     console.log(event.selected);
+    /*const index = this.goodDeliveryArray.indexOf(event.data);
+
+    const table = document.getElementById('table');
+    const tbody = table.children[0].children[1].children;
+    const ele: any = tbody[index];
+    const cantEnt =
+      ele.children[11].children[0].children[0].children[0].children[0]
+        .children[0].children[0].children[0];
+    cantEnt.disabled = true;*/
+
     this.goodDeliveredSelected = event.selected;
   }
 
@@ -631,7 +742,6 @@ export class ExecuteSchedulingDeliveriesComponent
       this.constanceSelected = {};
       return;
     }
-    console.log(event);
     this.constanceSelected = event.data;
   }
 
@@ -695,7 +805,6 @@ export class ExecuteSchedulingDeliveriesComponent
         new ListParams()
       );
 
-      debugger;
       constDelivery.data.map(async (item: any, _i: number) => {
         const index = _i + 1;
         const param = new ListParams();
@@ -776,6 +885,99 @@ export class ExecuteSchedulingDeliveriesComponent
           resolve(resp);
         },
       });
+    });
+  }
+
+  finalizeClassify() {}
+
+  finalizeVerify() {}
+
+  photos() {
+    let typeDoc = null;
+    let nomProcess = null;
+
+    if (this.goodRestSelected.id == null) {
+      this.onLoadToast('info', 'Debe tener un bien seleccionado');
+      return;
+    }
+    if (this.statusProgramming == 'APROBAR_NO_ENT_ESP') {
+      typeDoc = 209;
+      nomProcess = 'Aprobar RestituciEspecie';
+    } else if (this.statusProgramming == 'RESTITUCION_BIENES') {
+      typeDoc = 208;
+      nomProcess = 'RestituciBienes';
+    } else {
+      typeDoc = 209;
+      nomProcess = 'Bienes No Entregados';
+    }
+    const newDocument = this.modalService.show(PhotosConstanceModalComponent, {
+      initialState: {
+        //certificate: this.constanceSelected,
+        progGood: this.goodRestSelected,
+        typeDoc: typeDoc,
+        nomProcess: nomProcess,
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+  }
+
+  selectGoodTypeRestRows(event: any) {
+    if (event.isSelected == false) {
+      this.goodRestSelected = [];
+      return;
+    }
+    this.goodRestSelected = event.data;
+  }
+
+  approvedSelected(event: any) {
+    event.toggle.subscribe(async (data: any) => {
+      this.loadingEEB = true;
+      const body: any = {};
+      body.id = data.row.id;
+      body.approveEnEsp = event.toggle == true ? 'Y' : 'N';
+      const updated = await this.updateProgrammingGoodDelivery(body);
+      if (updated) {
+        this.loadingEEB = false;
+      }
+    });
+  }
+
+  setObservations(event: any) {
+    const index = this.progDelivGoodTypeRestArray.indexOf(event.data);
+    this.progDelivGoodTypeRestArray[index].observation =
+      this.progDelivGoodTypeRestArray[index].observation != ''
+        ? event.text
+        : null;
+
+    const idx = this.listObservation.indexOf(
+      this.progDelivGoodTypeRestArray[index]
+    );
+    if (this.listObservation.length == 0 || idx == -1) {
+      this.listObservation.push(this.progDelivGoodTypeRestArray[index]);
+    } else {
+      this.listObservation[idx].observation =
+        this.progDelivGoodTypeRestArray[index].observation;
+    }
+  }
+
+  save() {
+    if (
+      this.statusProgramming == 'APROBAR_NO_ENT_ESP' ||
+      this.statusProgramming == 'APROBAR_NO_ENT_NUM'
+    )
+      console.log(this.listObservation[0].observation);
+    this.listObservation.map(async (item: any, _i: number) => {
+      const index = _i + 1;
+      const body: any = {};
+      body.id = item.id;
+      body.observation = item.observation;
+
+      const updated = await this.updateProgrammingGoodDelivery(body);
+
+      if (this.listObservation.length == index) {
+        this.onLoadToast('success', 'Entrega de bienes actualizado');
+      }
     });
   }
 }

@@ -4,12 +4,39 @@
       <div class="mr-auto p-2">
         <h5 class="title">Ejecutar programaci&oacute;n de entrega</h5>
       </div>
-      <div class="p-2">
+      <div
+        class="p-2"
+        *ngIf="programmingDetailPanel.status == 'EJECUTAR_ENTREGA'">
         <button
           (click)="finalizeDelivery()"
           type="button"
           class="btn btn-sm btn-primary active">
           Finalizar Entrega
+        </button>
+      </div>
+      <div
+        class="p-2"
+        *ngIf="
+          programmingDetailPanel.status == 'BIENES_NO_ENTREGADOS' ||
+          programmingDetailPanel.status == 'FORMATO_RECLAMACION_SAE' ||
+          programmingDetailPanel.status == 'FORMATO_RECLAMACION_TE' ||
+          programmingDetailPanel.status == 'RESTITUCION_BIENES'
+        ">
+        <button
+          (click)="(finalizeClassify)"
+          type="button"
+          class="btn btn-sm btn-primary active">
+          Finalizar Clasificación
+        </button>
+      </div>
+      <div
+        class="p-2"
+        *ngIf="programmingDetailPanel.status == 'VERIFICACION_BIENES'">
+        <button
+          (click)="finalizeVerify()"
+          type="button"
+          class="btn btn-sm btn-primary active">
+          Finalizar Verificación
         </button>
       </div>
     </div>
@@ -43,7 +70,18 @@
           <form class="form-horizontal" style="margin: 0 auto">
             <div class="form-group">
               <label class="col-lg-5 text-right">Tipo evento:</label>
-              <span> {{ programmingDetailPanel.typeEvent }} </span>
+              <span *ngIf="programmingDetailPanel.typeEvent == 1">
+                Ventas
+              </span>
+              <span *ngIf="programmingDetailPanel.typeEvent == 2">
+                Donación
+              </span>
+              <span *ngIf="programmingDetailPanel.typeEvent == 3">
+                Destrucción
+              </span>
+              <span *ngIf="programmingDetailPanel.typeEvent == 4">
+                Devolución
+              </span>
             </div>
 
             <div class="form-group">
@@ -79,13 +117,20 @@
               <span> {{ programmingDetailPanel.store }} </span>
             </div>
 
-            <div class="form-group">
+            <div
+              class="form-group"
+              *ngIf="programmingDetailPanel.typeEvent == 1">
               <label class="col-lg-4 text-right">Cliente:</label>
               <span> {{ programmingDetailPanel.client }} </span>
             </div>
           </form>
         </div>
-        <div class="col-md-6" *ngIf="programmingDetailPanel?.typeUser == 'TLP'">
+        <div
+          class="col-md-6"
+          *ngIf="
+            programmingDetailPanel?.typeUser == 'TLP' &&
+            programmingDetailPanel.status == 'FORMATO_RECLAMACION_SAE'
+          ">
           <div class="form-group">
             <label class="col-lg-4 text-right">Correo Dirección:</label>
             <span> {{ programmingDetailPanel.emailAddressCenterTe }} </span>
@@ -93,10 +138,180 @@
         </div>
       </div>
     </div>
+
+    <!-- Detalle Programación por Destrucción -->
+    <div *ngIf="programmingDetailPanel.typeEvent == 5">
+      <hr />
+      <div class="row">
+        <h5 class="title">
+          <p>
+            <a
+              class="text-color"
+              (click)="showDetailProgDestruc = true"
+              *ngIf="!showDetailProgDestruc">
+              <i class="fa fa-angle-right" aria-hidden="true"></i>
+              Programaci&oacute;n por Destrucci&oacute;n</a
+            >
+          </p>
+
+          <p>
+            <a
+              class="text-color"
+              (click)="showDetailProgDestruc = false"
+              *ngIf="showDetailProgDestruc">
+              <i class="fa fa-angle-down" aria-hidden="true"></i>
+              Programaci&oacute;n por Destrucci&oacute;n</a
+            >
+          </p>
+        </h5>
+      </div>
+      <div class="row" *ngIf="showDetailProgDestruc">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-4 text-right">No. Of&iacute;cio:</label>
+            <span> {{ programmingDetailPanel.officeDestructionNumber }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-4 text-right"
+              >M&eacute;todo Destrucci&oacute;n:</label
+            >
+            <span> {{ programmingDetailPanel.metodDestruction }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-4 text-right"
+              >Ubicaci&oacute;n Destrucci&oacute;n:</label
+            >
+            <span> {{ programmingDetailPanel.metodDestruction }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-4 text-right">Nombre Destinatario:</label>
+            <span> {{ programmingDetailPanel.addressee }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-4 text-right"
+              >Plazo &#40;d&iacute;as&#41;:</label
+            >
+            <span> {{ programmingDetailPanel.term }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-4 text-right">Nombre Contribuyente:</label>
+            <span> {{ programmingDetailPanel.taxpayerName }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-4 text-right">Cargo Destinatario:</label>
+            <span> {{ programmingDetailPanel.chargeAddressee }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-4 text-right">Empresa:</label>
+            <span> {{ programmingDetailPanel.company }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-4 text-right"
+              >Nombre Representante Legal:</label
+            >
+            <span> {{ programmingDetailPanel.legalRepresentativeName }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-4 text-right"
+              >Direcci&oacute;n Destinatario:</label
+            >
+            <span> {{ programmingDetailPanel.addressAddressee }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-4 text-right">Lugar Destrucci&oacute;n:</label>
+            <span> {{ programmingDetailPanel.placeDestruction }} </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- FIN -->
+    <!-- EJECUCION PROGRAMACION ENTREGA BIENES TIPO REST -->
+    <div>
+      <!-- *ngIf="statusProgramming == 'APROBAR_NO_ENT_ESP' || statusProgramming == 'APROBAR_NO_ENT_NUM'" -->
+      <hr />
+      <div class="row">
+        <div class="d-flex">
+          <div class="mr-auto p-2">
+            <h5>Ejecuci&oacute;n Entrega de Bienes</h5>
+          </div>
+          <div class="p-2">
+            <!-- *ngIf="statusProgramming == 'RESTITUCION_BIENES' || statusProgramming == 'APROBAR_NO_ENT_ESP' || statusProgramming == 'APROBAR_NO_ENT_NUM'" -->
+            <button
+              type="button"
+              class="btn btn-sm btn-primary active"
+              (click)="photos()">
+              Fotografías <i class="fa fa-file" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="p-2">
+            <button
+              type="button"
+              class="btn btn-sm btn-primary active"
+              (click)="save()">
+              Guardar <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <div class="table-responsive">
+            <div [class]="loadingEEB ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="progDelivGoodTypeRestSettings"
+                [source]="progDelivGoodTypeRestArray"
+                (rowSelect)="selectGoodTypeRestRows($event)"
+                ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
+              </ng2-smart-table>
+            </div>
+          </div>
+          <app-pagination
+            [params]="progDelivGoodTypeRestParams"
+            [totalItems]="progDelivGoodTypeRestTotalItems"></app-pagination>
+        </div>
+      </div>
+    </div>
+    <!-- FIN -->
     <hr />
     <div class="row pt-3">
       <h5 class="title">Ejecuci&oacute;n entrega de bienes</h5>
       <div class="form-inline justify-content-end btn-toolbar">
+        <a
+          *ngIf="programmingDetailPanel.status == 'RESTITUCION_BIENES'"
+          style="cursor: pointer"
+          (click)="photos()"
+          class="link-primary"
+          >Fotografias <i class="fa fa-picture-o" aria-hidden="true"></i></a
+        >&nbsp;
+        <!-- lsEstatusProgramacion -->
+        <!-- <a
+          *ngIf="programmingDetailPanel.status == 'RESTITUCION_BIENES'"
+          style="cursor: pointer"
+          (click)="photos()"
+          class="link-primary"
+          >Expediente <i class="fa fa-picture-o" aria-hidden="true"></i></a
+        >&nbsp; -->
         <a
           *ngIf="programmingDetailPanel.status == 'EJECUTAR_ENTREGA'"
           style="cursor: pointer"
@@ -106,6 +321,7 @@
           <i class="fa fa-folder-open" aria-hidden="true"></i></a
         >&nbsp;
         <a
+          *ngIf="programmingDetailPanel.typeEvent != 3"
           (click)="certificateDelivery(2)"
           style="cursor: pointer"
           class="link-primary"
@@ -113,6 +329,10 @@
           <i class="fa fa-folder-open" aria-hidden="true"></i></a
         >&nbsp;
         <a
+          *ngIf="
+            programmingDetailPanel.typeEvent == 1 &&
+            programmingDetailPanel.status == 'EJECUTAR_ENTREGA'
+          "
           (click)="certificateDelivery(3)"
           style="cursor: pointer"
           class="link-primary"
@@ -120,6 +340,10 @@
           <i class="fa fa-folder-open" aria-hidden="true"></i></a
         >&nbsp;
         <a
+          *ngIf="
+            programmingDetailPanel.typeEvent == 1 &&
+            programmingDetailPanel.status == 'EJECUTAR_ENTREGA'
+          "
           (click)="certificateDelivery(4)"
           style="cursor: pointer"
           class="link-primary"
@@ -154,6 +378,7 @@
             <div [class]="loading ? 'table-loading' : ''">
               <ng2-smart-table
                 #table
+                id="table"
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="GoodDeliverySettings"
                 [source]="goodDeliveryArray"
