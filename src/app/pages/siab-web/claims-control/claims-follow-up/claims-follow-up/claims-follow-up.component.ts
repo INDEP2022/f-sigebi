@@ -268,7 +268,11 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           this.totalItems = data.count | 0;
           this.loading = false;
         },
-        error: error => (this.loading = false),
+        error: error => {
+          this.loading = false;
+          this.lawyers = [];
+          this.totalItems = 0;
+        },
       });
   }
   openForm(siniester?: any) {

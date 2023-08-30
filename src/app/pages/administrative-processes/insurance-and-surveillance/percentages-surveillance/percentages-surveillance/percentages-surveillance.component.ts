@@ -32,8 +32,8 @@ export class PercentagesSurveillanceComponent
   ];
 
   delegationTypes = [
-    { name: 'Ferronal', value: '1' },
-    { name: 'INDEP', value: '2' },
+    { name: 'INDEP', value: 'S' },
+    { name: 'Ferronal', value: 'F' },
   ];
 
   totalItems: number = 0;
@@ -44,7 +44,7 @@ export class PercentagesSurveillanceComponent
   form = new FormGroup({
     percentage: new FormControl(null, [
       Validators.required,
-      Validators.min(0),
+      Validators.min(1),
       Validators.max(100),
     ]),
     cveProcess: new FormControl('', [Validators.required]),
@@ -169,12 +169,14 @@ export class PercentagesSurveillanceComponent
 
   async getPercentages() {
     this.loading = true;
+    this.sources.load([]);
+    this.sources.refresh();
+    this.totalItems = 0;
     let params = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
 
-    console.log('this.columnFilters', this.columnFilters);
     if (params['filter.delegation_']) {
       if (!isNaN(parseInt(params['filter.delegation_']))) {
         console.log('SI');
@@ -189,6 +191,7 @@ export class PercentagesSurveillanceComponent
       }
     }
 
+    params['sortBy'] = 'delegationNumber:DESC';
     // delegation
     this.survillanceService.getVigProcessPercentages(params).subscribe({
       next: response => {
@@ -208,6 +211,9 @@ export class PercentagesSurveillanceComponent
         });
       },
       error: () => {
+        this.sources.load([]);
+        this.sources.refresh();
+        this.totalItems = 0;
         this.loading = false;
       },
     });
@@ -260,11 +266,11 @@ export class PercentagesSurveillanceComponent
 
         this.alert('success', 'Registro eliminado correctamente', '');
         this.getPercentages();
-        this.loading = false;
+        // this.loading = false;
       },
       error: err => {
         this.alert('error', 'Error al eliminar el registro', '');
-        this.loading = false;
+        // this.loading = false;
       },
     });
   }
@@ -275,7 +281,7 @@ export class PercentagesSurveillanceComponent
     this.dialogPercentageRef = this.dialogService.show(
       this.dialogPercentageTemplateRef,
       {
-        class: 'modal-xl',
+        class: 'modal-lg modal-dialog-centered',
         ignoreBackdropClick: true,
       }
     );
@@ -364,7 +370,17 @@ export class PercentagesSurveillanceComponent
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    params.addFilter('description', lparams.text, SearchFilter.ILIKE);
+    if (lparams?.text)
+      if (!isNaN(parseInt(lparams?.text))) {
+        console.log('SI');
+        params.addFilter('delegationNumber', lparams.text, SearchFilter.EQ);
+        // params.addFilter('no_cuenta', lparams.text);
+      } else {
+        console.log('NO');
+
+        params.addFilter('description', lparams.text, SearchFilter.ILIKE);
+        // params.addFilter('cve_banco', lparams.text);
+      }
 
     return new Promise((resolve, reject) => {
       this.survillanceService
@@ -382,12 +398,12 @@ export class PercentagesSurveillanceComponent
                 response.data,
                 response.count
               );
-              this.loading = false;
+              // this.loading = false;
             });
           },
           error: error => {
             this.delegations = new DefaultSelect();
-            this.loading = false;
+            // this.loading = false;
             resolve(null);
           },
         });
@@ -395,7 +411,11 @@ export class PercentagesSurveillanceComponent
   }
 
   async llenarCampos(event: any) {
-    // this.form.get('delegationType').setValue(event.typeDelegation);
+    // if (event) {
+    //   this.form.get('delegationType').setValue(event.typeDelegation);
+    // } else {
+    //   this.form.get('delegationType').setValue(null);
+    // }
     console.log('event', event);
   }
 }

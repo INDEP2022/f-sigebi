@@ -855,6 +855,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
           await this.pupCreateGood();
         }
       } else {
+        this.loader.load = false;
         const questionResponse = await this.alertQuestion(
           'question',
           'Advertencia',
@@ -918,7 +919,11 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         catchError(err => {
           console.log('error', err);
           const message = err.error.message;
-          this.alert('error', 'Error', message);
+          this.alert(
+            'warning',
+            'Atención',
+            'El  No. Bien introducido es inválido'
+          );
           throw err;
         })
       )
