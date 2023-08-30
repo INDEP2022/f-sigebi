@@ -84,5 +84,5 @@ export interface IUpdateManagement {
   id: number;
   status: string;
   userTurned: string;
-  actualDate: string;
+  actualDate: Date;
 }

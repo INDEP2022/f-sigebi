@@ -910,22 +910,25 @@ export class ActsCircumstantiatedCancellationTheftComponent
       .subscribe({
         next: (data: any) => {
           this.gTramite = data;
-          this.updateReg = {
-            id: Number(this.paramsScreen.P_NO_TRAMITE),
-            status: this.statusFinal,
-            userTurned: this.authService.decodeToken().username,
-            actualDate: this.datePipe.transform(this.dateToday, 'dd/MM/yyyy'),
-          };
-          console.log('this.gTramite', this.gTramite);
-          this.fileNumber = this.gTramite.expedient;
-          this.getExpedient(this.fileNumber);
-          this.getGoodsByStatus(this.fileNumber);
-          this.getActaGoodExp(this.paramsScreen.acta, this.fileNumber);
-          this.getDetailProceedingsDevollution(this.paramsScreen.acta);
-          this.afterScanning();
-          if (this.paramsScreen.P_GEST_OK == '1') {
-            this.upddateTramite(Number(this.paramsScreen.P_NO_TRAMITE));
+          if (this.gTramite.status == 'RFI') {
+            this.updateReg = {
+              id: Number(this.paramsScreen.P_NO_TRAMITE),
+              status: this.statusFinal,
+              userTurned: this.authService.decodeToken().username,
+              actualDate: new Date(),
+            };
+            console.log('this.gTramite', this.gTramite);
+            this.fileNumber = this.gTramite.expedient;
+            this.getExpedient(this.fileNumber);
+            this.getGoodsByStatus(this.fileNumber);
+            this.getActaGoodExp(this.paramsScreen.acta, this.fileNumber);
+            this.getDetailProceedingsDevollution(this.paramsScreen.acta);
+            this.afterScanning();
+            if (this.paramsScreen.P_GEST_OK == '1') {
+              this.upddateTramite(Number(this.paramsScreen.P_NO_TRAMITE));
+            }
           }
+          console.log();
         },
         error: () => {
           this.bienesLoading = false;
