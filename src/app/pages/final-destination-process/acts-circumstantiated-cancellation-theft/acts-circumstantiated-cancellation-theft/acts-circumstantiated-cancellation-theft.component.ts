@@ -1,10 +1,20 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
-import { LocalDataSource } from 'ng2-smart-table';
+import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
+
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
@@ -15,6 +25,7 @@ import {
   catchError,
   Observable,
   of,
+  skip,
   switchMap,
   takeUntil,
   tap,
@@ -54,12 +65,17 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import * as XLSX from 'xlsx';
-import { COPY, RELATED_FOLIO_COLUMNS } from '../acts-cir-columns';
+import {
+  COPY,
+  IDataGoodsTable,
+  RELATED_FOLIO_COLUMNS,
+} from '../acts-cir-columns';
 import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { FindAllExpedientComponent } from '../find-all-expedient/find-all-expedient.component';
 //import { IExpedient } from 'C:/indep/f-sigebi/src/app/core/models/ms-expedient/expedient';
 
+import { IUpdateManagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
@@ -124,6 +140,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   selectedGood: IGoodAndAvailable;
   totalItems2: number = 0;
   loadDetail: number = 0;
+  updateReg: IUpdateManagement;
   dictationData: IDictation;
   loading2: boolean = false;
   goods: string;
@@ -185,6 +202,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   aprevia: string = '';
   causa: string = '';
   annio: string = '';
+  dateToday = new Date();
   noExpediente: number = 0;
   fileNumber: number;
   columnFilters: any = [];
@@ -214,6 +232,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
   contador: number = 0;
   vTotalB: string = '';
+  @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
+  @ViewChild('tableDocs') tableDocs: Ng2SmartTableComponent;
+  @ViewChild('myInput') inputEl: ElementRef;
+  @Output() onConfirm = new EventEmitter<any>();
+  @Input() registro: any;
+  @Output() mover = new EventEmitter();
 
   dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
   dataGoodsSelected = new Map<number, IGoodAndAvailable>();
@@ -233,6 +257,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     private proceedingsService: ProceedingsService,
     private datePipe: DatePipe,
     private router: Router,
+    private route: ActivatedRoute,
     private statusGoodService: StatusGoodService,
     private changeDetectorRef: ChangeDetectorRef,
     private jasperService: SiabService,
@@ -299,9 +324,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
           title: 'Acta',
           type: 'string',
           sort: false,
-          // valuePrepareFunction: (cell: any, row: any) => {
-          //   return row.acta_;
-          // },
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.keysProceedings;
+          },
         },
         status: {
           title: 'Estatus',
@@ -334,13 +359,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
       hideSubHeader: false,
       actions: false,
       selectMode: 'multi',
-      columns: { ...COPY },
+      // selectedRowIndex: -1,
+      // mode: 'external',
+      columns: {
+        ...COPY,
+      },
       rowClassFunction: (row: any) => {
-        // if (row.data.di_disponible == 'S') {
-        //   return 'text-white';
-        // } else {
         return 'bg-light text-black';
-        // }
       },
     };
   }
@@ -359,15 +384,106 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
     this.dateElaboration = this.datePipe.transform(this.time, 'dd/MM/yyyy');
 
-    // const claveActa = "RFP/D/AEROBANOBRAS/CCB/TIJ/0066/98/02"; // Año 2019, Mes Febrero
-    // const resultado = this.generarDatosDesdeUltimosCincoDigitos(claveActa);
+    this.dataTableGood
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        // console.log('SI');
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
 
-    // if (resultado) {
-    //   console.log(`Año: ${resultado.anio}`);
-    //   console.log(`Mes: ${resultado.mes}`);
-    // } else {
-    //   console.log("Clave de acta no válida.");
-    // }
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              goodNumber: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.ILIKE),
+              amount: () => (searchFilter = SearchFilter.EQ),
+              minutesKey: () => (searchFilter = SearchFilter.ILIKE),
+              status: () => (searchFilter = SearchFilter.ILIKE),
+            };
+
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              // this.columnFilters[field] = `${filter.search}`;
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+
+              // // console.log(
+              //   'this.columnFilters[field]',
+              //   this.columnFilters[field]
+              // );
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.paramsList = this.pageFilter(this.paramsList);
+          //Su respectivo metodo de busqueda de datos
+          this.getGoodsByStatus(this.fileNumber);
+        }
+      });
+    this.paramsList
+      .pipe(
+        skip(1),
+        tap(() => {
+          this.getGoodsByStatus(this.fileNumber);
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {
+        // this.getGoodsByStatus(this.fileNumber)
+      });
+    // this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+    //   this.getGoodsByStatus(this.fileNumber);
+    // });
+
+    this.dataRecepcionGood
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        // console.log('SI');
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              numberGood: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.ILIKE),
+              amount: () => (searchFilter = SearchFilter.EQ),
+            };
+
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters2[field];
+            }
+          });
+          this.paramsList2 = this.pageFilter(this.paramsList2);
+          //Su respectivo metodo de busqueda de datos
+          this.getDetailProceedingsDevollution(this.actasDefault.id);
+        }
+      });
+    this.paramsList2
+      .pipe(
+        skip(1),
+        tap(() => {
+          this.getDetailProceedingsDevollution(this.actasDefault.id);
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {
+        // this.getGoodsByStatus(this.fileNumber)
+      });
   }
 
   generarDatosDesdeUltimosCincoDigitos(
@@ -611,7 +727,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           .get('testigoTree')
           .setValue(this.expedient.witness2);*/
 
-        this.actaRecepttionForm;
+        // this.actaRecepttionForm;
 
         this.getGoodsByStatus(this.fileNumber);
       },
@@ -646,7 +762,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           const di_dispo = await this.getStatusScreen(obj);
           item['di_disponible'] = di_dispo;
           if (item.minutesKey) {
-            item['di_disponible'] = 'N';
+            item.di_disponible = 'N';
           }
           item['quantity'] = item.amount;
           item['di_acta'] = item.minutesKey;
@@ -667,6 +783,43 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.loading = false;
       },
     });
+  }
+  getQueryParams(name: string) {
+    return this.route.snapshot.queryParamMap.get(name);
+  }
+  convertDataGoods(data: { data: any[] }) {
+    const _data = data.data.map((data: any) => {
+      return {
+        goodId: data.no_bien,
+        description: data.descripcion,
+        quantity: data.cantidad,
+        identifier: data.identificador,
+        status: data.estatus,
+        proceedingsNumber: data.no_expediente,
+        goodClassNumber: data.no_clasif_bien,
+        registerNumber: data.no_registro,
+        available: data.disponible == 'N' ? true : false,
+        selected: this.dataGoodsSelected.has(data.no_bien),
+      };
+    });
+    return _data;
+  }
+
+  convertDataGoodsAvailable(data: any) {
+    const _data = data.data.map((data: any) => {
+      return {
+        goodNumber: data.no_bien,
+        goods: data.descripcion,
+        classify: data.no_clasif_bien,
+        registerNumber: data.no_registro,
+        available: data.disponible == 'N' ? true : false,
+        managementNumber: this.paramsScreen.P_NO_TRAMITE,
+      };
+    });
+    return _data;
+  }
+  reviewGoodData(dataGoodRes: IDataGoodsTable, count: number, total: number) {
+    // this.getGoodStatusDescription(dataGoodRes, count, total);
   }
   async getStatusScreen(body: any) {
     return new Promise((resolve, reject) => {
@@ -907,17 +1060,42 @@ export class ActsCircumstantiatedCancellationTheftComponent
         next: (data: any) => {
           this.gTramite = data;
           console.log('this.gTramite', this.gTramite);
-          console.log('fileNumber ->', this.fileNumber);
           this.fileNumber = this.gTramite.expedient;
           this.getExpedient(this.fileNumber);
           this.getGoodsByStatus(this.fileNumber);
           this.getActaGoodExp(this.paramsScreen.acta, this.fileNumber);
           this.getDetailProceedingsDevollution(this.paramsScreen.acta);
           this.afterScanning();
+          if (
+            this.gTramite.status == 'RFI' &&
+            this.paramsScreen.P_GEST_OK == '1'
+          ) {
+            this.updateReg = {
+              id: Number(this.paramsScreen.P_NO_TRAMITE),
+              status: this.statusFinal,
+              userTurned: this.authService.decodeToken().username,
+              actualDate: new Date(),
+            };
+            this.upddateTramite(Number(this.paramsScreen.P_NO_TRAMITE));
+          }
+          console.log('sin parametros = 1');
         },
         error: () => {
           this.bienesLoading = false;
           console.error('error ');
+        },
+      });
+  }
+
+  upddateTramite(tramite: number) {
+    this.procedureManagementService
+      .updateTramite(tramite, this.updateReg)
+      .subscribe({
+        next: data => {
+          console.log('actualizado');
+        },
+        error: () => {
+          this.loading = false;
         },
       });
   }
@@ -943,7 +1121,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           );
           return;
         } else {
-          console.log('aaa', this.goods);
+          // console.log('aaa', this.goods);
           let result = this.selectedGooods.map(async (good: any) => {
             if (good.di_acta != null) {
               this.alert(
@@ -958,7 +1136,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
               );
               return;
             } else {
-              console.log('GOOD', good);
+              // console.log('GOOD', good);
               this.loading2 = true;
 
               if (!this.dataRecepcion.some((v: any) => v === good)) {
@@ -969,8 +1147,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 this.Exportdate = true;
 
                 console.log('indexGood', indexGood);
-                // if (indexGood != -1)
-                // this.dataTableGood_[indexGood].di_disponible = 'N';
+                if (indexGood != -1)
+                  this.dataTableGood_[indexGood].di_disponible = 'N';
 
                 await this.createDET(good);
                 // this.dataTableGood_ = this.bienes;
@@ -1003,6 +1181,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   goodSelectedChange(good: IGood, selected: boolean) {
     if (selected) {
       this.selectedGooods.push(good);
+      console.log(this.selectedGooods);
     } else {
       this.selectedGooods = this.selectedGooods.filter(
         _good => _good.id != good.id
@@ -1015,12 +1194,15 @@ export class ActsCircumstantiatedCancellationTheftComponent
     });
   }
   isGoodSelectedValid(_good: IGood) {
-    const exists = this.selectedGooodsValid.find(good => good.id == _good.id);
+    const exists = this.selectedGooodsValid.find(
+      good => good.goodId == _good.id
+    );
     return !exists ? false : true;
   }
   goodSelectedChangeValid(good: IGood, selected?: boolean) {
     if (selected) {
       this.selectedGooodsValid.push(good);
+      console.log(this.selectedGooodsValid);
     } else {
       this.selectedGooodsValid = this.selectedGooodsValid.filter(
         _good => _good.id != good.id
@@ -1097,7 +1279,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     // if (this.selectedGooodsValid.length > 0) {
     //   this.loading2 = true;
     //   let result = this.selectedGooodsValid.map(async good => {
-
+    console.log(good);
     const valid: any = await this.getGoodsDelete(good.numberGood);
     if (valid != null) {
       let obj: any = {
@@ -1164,7 +1346,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
   async selectData(event: { data: IGood; selected: any }) {
     this.selectedRow = event.data;
-    console.log('select RRR', this.selectedRow);
+    // console.log('select RRR', this.selectedRow);
 
     await this.getStatusGoodService(this.selectedRow.status);
     this.selectedGooods = event.selected;
@@ -1203,7 +1385,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         if (this.dataTableGood_.length > 0) {
           this.loading2 = true;
           let result = this.dataTableGood_.map(async _g => {
-            console.log(_g);
+            // console.log(_g);
 
             if (_g.di_disponible == 'N') {
               return;
@@ -1212,11 +1394,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
             if (_g.di_disponible == 'S') {
               _g.di_disponible = 'N';
               let valid = this.dataRecepcion.some(
-                (goodV: any) => goodV.numberGood == _g.id
+                (goodV: any) => goodV.goodId == _g.id
               );
 
               this.Exportdate = true;
-              console.log('valid', valid);
+              // console.log('valid', valid);
               await this.createDET(_g);
               if (!valid) {
                 // this.dataRecepcion = [...this.dataRecepcion, _g];
@@ -1242,7 +1424,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       );
       return;
     } else {
-      console.log('this.actasDefault ', this.actasDefault);
+      // console.log('this.actasDefault ', this.actasDefault);
 
       if (this.actasDefault == null) {
         this.alert(
@@ -1268,7 +1450,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
               (_good: any) => _good.id != good.id
             );
             let index = this.dataTableGood_.findIndex(
-              g => g.id === good.numberGood
+              g => g.id === good.goodId
             );
             // if (index != -1) {
             //   this.dataTableGood_[index].di_disponible = 'S';
@@ -1288,7 +1470,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         }
       }
     }
-    console.log('selectedGooodsValid--', this.selectedGooodsValid);
+    // console.log('selectedGooodsValid--', this.selectedGooodsValid);
   }
 
   //Quitar todos
@@ -1309,7 +1491,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         );
         return;
       } else {
-        console.log('DataRecepcion', this.dataRecepcion);
+        // console.log('DataRecepcion', this.dataRecepcion);
 
         if (this.dataRecepcion.length > 0) {
           this.dataRecepcion.forEach((good: any) => {
@@ -1463,7 +1645,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         );
       }
 
-      console.log('data modal next ', next);
+      // console.log('data modal next ', next);
       this.totalItems2 = 0;
       this.actasDefault = next;
       // this.fCreate = this.datePipe.transform(next.dateElaborationReceipt,'dd/MM/yyyy');
@@ -1475,7 +1657,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.disabledBtnActas = true;
         //this.disabledBtnCerrar = true;
       }
-      console.log('NEXT', next);
+      // console.log('NEXT', next);
 
       // Const formato de fecha
 
@@ -1525,7 +1707,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
       this.data1 = next.statusProceedings;
       // Se mapea Autoridad cuando se crea nueva acta
-      console.log('AUTORITHY --', this.authorityNumber);
+      // console.log('AUTORITHY --', this.authorityNumber);
       this.actaRecepttionForm.get('claveTrans').setValue(this.authorityNumber);
 
       // Se mapea Mes  y año al crear nueva acta
@@ -1533,7 +1715,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
       await this.getDetailProceedingsDevollution(this.actasDefault.id);
     });
-    console.log(this.authService.decodeToken());
+    // console.log(this.authService.decodeToken());
   }
   delegationToolbar: any = null;
   getDelegation(params: FilterParams) {
@@ -1547,7 +1729,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         const data = value.data[0].usuario;
         if (data) this.delegationToolbar = data.delegationNumber;
 
-        console.log('SI', value);
+        // console.log('SI', value);
       },
       error(err) {
         console.log('NO');
@@ -1573,12 +1755,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
       );
       return;
     }
-    console.log('this.actasDefault', this.actasDefault);
-    console.log(
-      'this.circumstantialRecord',
-      this.expedient
-      //this.expedient.circumstantialRecord
-    );
+    // console.log('this.actasDefault', this.actasDefault);
+    // console.log(
+    //   'this.circumstantialRecord',
+    //   this.expedient
+    //   //this.expedient.circumstantialRecord
+    // );
 
     if (this.data1 != null) {
       if (this.data1 == null) {
@@ -1605,7 +1787,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
       const toolbar_user = this.authService.decodeToken().preferred_username;
       const cadena = this.cveActa ? this.cveActa.indexOf('?') : 0;
-      console.log('cadena', cadena);
+      // console.log('cadena', cadena);
 
       if (
         cadena != 0 &&
@@ -1630,7 +1812,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
               .subscribe({
                 next: async data => {
                   this.loading = false;
-                  console.log(data);
+                  // console.log(data);
                   let obj = {
                     pActaNumber: this.actasDefault.id,
                     pStatusActa: 'CERRADA',
@@ -1691,7 +1873,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.fileNumber !== null &&
       this.actaRecepttionForm.get('cveActa').value !== 'null'
     ) {
-      console.log('Redirigiendo a la página de actas');
+      // console.log('Redirigiendo a la página de actas');
     } else {
       this.alert('info', 'Necesitas un Número de Expedientes con Acta', '');
       this.loadingExcel = false;
@@ -1707,12 +1889,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
   viewPictures(event: any) {
     let foliouniversal = this.formScan.get('scanningFoli').value;
-    console.log('FOLIO PARA IMA -->', foliouniversal);
+    // console.log('FOLIO PARA IMA -->', foliouniversal);
     if (foliouniversal == null) {
       this.alert('warning', 'No Tiene Folio de Escaneo para Visualizar', '');
       return;
     }
-    console.log(event);
+    // console.log(event);
     if (!this.wheelNumber) {
       this.onLoadToast('error', 'Error', 'ésta acta no tiene volante asignado');
       return;
@@ -1764,7 +1946,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     if (!folio && this.actasDefault.universalFolio) {
       folio = this.actasDefault.universalFolio;
     }
-    console.log('PICTURES ', folio, document);
+    // console.log('PICTURES ', folio, document);
     const config = {
       ...MODAL_CONFIG,
       ignoreBackdropClick: false,
@@ -1780,12 +1962,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
     nameAndExtension: string,
     folioUniversal: string | number
   ) {
-    console.log(
-      'DOCUMENT PDF UPLOAD ',
-      blobFile,
-      nameAndExtension,
-      folioUniversal
-    );
+    // console.log(
+    //   'DOCUMENT PDF UPLOAD ',
+    //   blobFile,
+    //   nameAndExtension,
+    //   folioUniversal
+    // );
     // UPLOAD PDF TO DOCUMENTS
     // this._blockErrors.blockAllErrors = true;
     // const formData = new FormData();

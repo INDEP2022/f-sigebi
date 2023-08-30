@@ -178,8 +178,18 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    params.addFilter('description', lparams.text, SearchFilter.ILIKE);
+    if (lparams?.text)
+      if (!isNaN(parseInt(lparams?.text))) {
+        console.log('SI');
+        params.addFilter('delegationNumber', lparams.text, SearchFilter.EQ);
+        // params.addFilter('no_cuenta', lparams.text);
+      } else {
+        console.log('NO');
 
+        params.addFilter('description', lparams.text, SearchFilter.ILIKE);
+        // params.addFilter('cve_banco', lparams.text);
+      }
+    params.sortBy = `delegationNumber:ASC`;
     return new Promise((resolve, reject) => {
       this.survillanceService
         .getViewVigDelegations(params.getParams())

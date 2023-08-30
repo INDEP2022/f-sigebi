@@ -327,7 +327,7 @@
                   formControlName="city" />
               </form-field>
             </div>
-            <!--Realizar npm i-->
+
             <div class="col-md-4">
               <form-field
                 [control]="performForm.get('startDate')"
@@ -449,8 +449,8 @@
                   [form]="performForm"
                   control="storeId"
                   [data]="warehouse"
-                  value="description"
-                  bindLabel="description"
+                  value="name"
+                  bindLabel="name"
                   (change)="showWarehouse($event)"
                   (fetchItems)="getWarehouseSelect($event)"></ngx-select>
               </form-field>
@@ -462,8 +462,8 @@
                   control="storeId"
                   [data]="warehouse"
                   [searchable]="showWarehouseInfo"
-                  value="idWarehouse"
-                  bindLabel="description"></ngx-select>
+                  value="organizationCode"
+                  bindLabel="name"></ngx-select>
               </form-field>
             </div>
           </div>
