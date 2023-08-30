@@ -14,4 +14,5 @@ export enum ParameterGoodEndpoints {
   PupCalculaDevolucion = 'application/pup-calcula-devolucion',
   GetDelegationGlobal = 'application/getDelegationGlobal',
   CatMotivesrev = 'cat-motivesrev',
+  PupArmaClave = 'application/pup-weapon-key',
 }
