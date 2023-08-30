@@ -23,4 +23,10 @@ export class IndUserService extends HttpService {
   getAllNameOtval(params?: _Params): Observable<IListResponse<IUserNameOtval>> {
     return this.get(UserEndpoints.NameOtval, params);
   }
+
+  getSegAccessAreas(params: string) {
+    return this.get(
+      `${UserEndpoints.SegAccessAreas}?filter.user=$eq:${params}`
+    );
+  }
 }
