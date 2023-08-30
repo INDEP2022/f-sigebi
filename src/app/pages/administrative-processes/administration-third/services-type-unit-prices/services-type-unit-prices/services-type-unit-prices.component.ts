@@ -66,7 +66,7 @@ export class ServicesTypeUnitPricesComponent
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'description':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
