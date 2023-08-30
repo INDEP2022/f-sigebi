@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-regular-billing-tab',
@@ -10,6 +11,7 @@ export class RegularBillingTabComponent implements OnInit {
   invoices: any[] = [];
   count: number = 0;
   filter: any = {};
+  form: FormGroup;
   constructor() {}
 
   ngOnInit(): void {}

@@ -7,6 +7,8 @@ import { Repository } from 'src/app/common/repository/repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from './../../interfaces/list-response.interface';
 
+import { HttpParams } from '@angular/common/http';
+import { INotificationDestruction } from '../../models/ms-notification/notification-destruction';
 import {
   INotification,
   INotificationInquiry,
@@ -321,5 +323,30 @@ export class NotificationService extends HttpService {
   getByFileNumber(fileNumber: string | number) {
     const route = this.route.byFileNumber;
     return this.get(`notification/maxCFlyer/${fileNumber}`);
+  }
+
+  getNotificationDestruction(
+    _params: ListParams
+  ): Observable<IListResponse<INotificationDestruction>> {
+    const params = this.makeParams(_params);
+    const route = this.route.NotificationDestruction;
+    return this.get<IListResponse<INotificationDestruction>>(
+      `${route}?${params}`
+    );
+  }
+
+  createNotificationDestruction(
+    notificationDestruction: INotificationDestruction
+  ) {
+    const route = this.route.NotificationDestruction;
+    return this.post(route, notificationDestruction);
+  }
+
+  private makeParams(params: ListParams): HttpParams {
+    let httpParams: HttpParams = new HttpParams();
+    Object.keys(params).forEach(key => {
+      httpParams = httpParams.append(key, (params as any)[key]);
+    });
+    return httpParams;
   }
 }
