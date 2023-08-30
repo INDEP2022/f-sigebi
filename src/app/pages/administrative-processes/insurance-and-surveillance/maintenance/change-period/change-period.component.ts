@@ -9,6 +9,7 @@ import { SurvillanceService } from 'src/app/core/services/ms-survillance/survill
 import { BasePage } from 'src/app/core/shared/base-page';
 import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { SharedService } from '../service/services';
 
 @Component({
   selector: 'app-change-period',
@@ -53,7 +54,10 @@ export class ChangePeriodComponent extends BasePage {
   maxDate: number = 2050;
   periods = new DefaultSelect();
   disabledPeriod: boolean = false;
-  constructor(private survillanceService: SurvillanceService) {
+  constructor(
+    private survillanceService: SurvillanceService,
+    private sharedService: SharedService
+  ) {
     super();
   }
 
@@ -63,7 +67,7 @@ export class ChangePeriodComponent extends BasePage {
       this.years.push(i);
     }
     // this.prepareForm();
-
+    this.sharedService.setCurrentTab(2);
     this.dateDestino();
   }
   dateDestino() {
@@ -202,6 +206,7 @@ export class ChangePeriodComponent extends BasePage {
     this.delegationDefault = null;
     this.processDefault = null;
     this.form.reset();
+    this.updateSharedVariable(null);
   }
 
   // OBTENER PERIODOS //
@@ -317,6 +322,7 @@ export class ChangePeriodComponent extends BasePage {
 
   changeDelegations(event: any) {
     this.delegationDefault = event;
+    this.updateSharedVariable(event);
     if (event) {
       this.form.get('delegationDestiny').setValue(event.numberAndDescrip);
       if (this.delegationDefault && this.anio && this.process) {
@@ -346,5 +352,9 @@ export class ChangePeriodComponent extends BasePage {
     }
 
     this.getPeriods(new ListParams());
+  }
+
+  updateSharedVariable(value: any): void {
+    this.sharedService.setSharedVariable(value);
   }
 }

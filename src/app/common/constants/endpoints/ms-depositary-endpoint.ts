@@ -27,4 +27,11 @@ export enum DepositaryEndPoints {
   PaymentRefVentaSbm = 'payment-ref/venta-sbm', // VALIDA_PAGOSREF.VENTA_SBM
   UpdateStatusBase = 'validate-payments-ref/updateStatusBase', // MODIFICA_ESTATUS_BASES_ANT
   UpdateGeneralStatus = 'validate-payments-ref/updateGeneralStatus',
+  SearchPayment = 'comer-payment/search-payment',
+  GetPaymentChange = 'comer-payment/change-payment/type-action',
+  PaymentEfeDup = 'comer-payment/pa-payment-efe-dup-nref',
+  PaymentFiles = 'comer-payment/files-payment/type-action',
+  PaymentBulk = 'comer-payment/massive-payment/system',
+  SearchPaymentProcess = 'comer-payment/change-payment-process',
+  ComerPaymentSelect = 'comer-payment/selection-payment/selection',
 }

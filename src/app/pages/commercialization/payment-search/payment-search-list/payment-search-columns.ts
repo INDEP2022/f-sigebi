@@ -9,7 +9,7 @@ export const PAYMENT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  originalReference: {
+  referenceori: {
     title: 'Referencia Original',
     type: 'string',
     sort: false,
