@@ -1,6 +1,6 @@
 export const EMAIL_BODY_COLUMNS = {
   id: {
-    title: 'Identificador',
+    title: 'Id',
     type: 'string',
     sort: false,
   },

@@ -45,13 +45,14 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   isSelect: any[] = [];
   dataRebill: DefaultSelect = new DefaultSelect();
   loading2: boolean = false;
-
+  buttons: boolean = false;
   settings2 = {
     ...this.settings,
     actions: false,
   };
 
   @Output() comer: EventEmitter<any> = new EventEmitter(null);
+  @Output() formG: EventEmitter<FormGroup> = new EventEmitter();
 
   get idAllotment() {
     return this.form.get('idAllotment');
@@ -181,30 +182,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             return val ? val.split('-').reverse().join('/') : '';
           },
         },
-        // price: {
-        //   title: 'Precio',
-        //   sort: false,
-        //   filter: {
-        //     type: 'custom',
-        //     component: CustomFilterComponent,
-        //   },
-        // },
-        // vat: {
-        //   title: 'IVA',
-        //   sort: false,
-        //   filter: {
-        //     type: 'custom',
-        //     component: CustomFilterComponent,
-        //   },
-        // },
-        // total: {
-        //   title: 'Total',
-        //   sort: false,
-        //   filter: {
-        //     type: 'custom',
-        //     component: CustomFilterComponent,
-        //   },
-        // },
       },
     };
   }
@@ -420,6 +397,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       iva: [null],
       date: [null],
       causerebillId: [null],
+      check: [null],
     });
 
     this.formFactura = this.fb.group({
@@ -446,6 +424,11 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.form.reset();
     }
     console.warn('Your order has been submitted');
+  }
+
+  disabledButtons() {
+    const { check } = this.form.value;
+    this.buttons = check;
   }
 
   openPrevPdf() {

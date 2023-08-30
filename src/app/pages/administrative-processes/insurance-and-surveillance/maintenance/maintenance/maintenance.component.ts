@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import * as moment from 'moment';
+import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { BasePage } from 'src/app/core/shared';
@@ -7,6 +8,7 @@ import { ChangeGoodsRandomComponent } from '../change-goods-random/change-goods-
 import { ChangePeriodComponent } from '../change-period/change-period.component';
 import { DeletePeriodComponent } from '../delete-period/delete-period.component';
 import { EmailInformationComponent } from '../email-information/email-information.component';
+import { SharedService } from '../service/services';
 
 @Component({
   selector: 'app-maintenance',
@@ -14,9 +16,16 @@ import { EmailInformationComponent } from '../email-information/email-informatio
   styles: [],
 })
 export class MaintenanceComponent extends BasePage implements OnInit {
+  currentTab: number = 1;
+  @ViewChild('tabset') tabset: TabsetComponent;
+  @ViewChild('tab1') tab1: TabsetComponent;
+  @ViewChild('tab2') tab2: TabsetComponent;
+  @ViewChild('tab3') tab3: TabsetComponent;
+
   constructor(
     private survillanceService: SurvillanceService,
-    private token: AuthService
+    private token: AuthService,
+    private sharedService: SharedService
   ) {
     super();
   }
@@ -30,7 +39,9 @@ export class MaintenanceComponent extends BasePage implements OnInit {
   @ViewChild(EmailInformationComponent)
   emailInformationComponent: EmailInformationComponent;
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.sharedService.setCurrentTab(1);
+  }
 
   onClickChangeGoodsRandom() {
     const form = this.changeGoodsRandomComponent.getFormChangeGoodsRandom();
@@ -107,7 +118,18 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.error({ error });
-        this.alert('error', 'Ha Ocurrido un Error', error.error.message);
+        if (
+          error.error.message ==
+          'Error, no se pudo obtener la dirección del correo.'
+        ) {
+          this.alert(
+            'warning',
+            'No se encontraron los correos',
+            'Verifique que estos pertenezcan a la delegación seleccionada'
+          );
+        } else {
+          this.alert('error', 'Ha Ocurrido un Error', error.error.message);
+        }
       },
     });
   }
@@ -125,7 +147,17 @@ export class MaintenanceComponent extends BasePage implements OnInit {
         }
       },
       error: error => {
-        console.error({ error });
+        if (
+          error.error.message ==
+          'Error, no se pudo obtener la dirección del correo.'
+        ) {
+          this.alert(
+            'warning',
+            'No se encontraron los correos',
+            'Verifique que estos pertenezcan a la delegación seleccionada'
+          );
+          return;
+        }
 
         if (
           error.error.message ==
@@ -175,7 +207,18 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.error({ error });
-        this.alert('error', 'Ha Ocurrido un Error', error.error.message);
+        if (
+          error.error.message ==
+          'Error, no se pudo obtener la dirección del correo.'
+        ) {
+          this.alert(
+            'warning',
+            'No se encontraron los correos',
+            'Verifique que estos pertenezcan a la delegación seleccionada'
+          );
+        } else {
+          this.alert('error', 'Ha Ocurrido un Error', error.error.message);
+        }
       },
     });
   }
@@ -450,5 +493,21 @@ export class MaintenanceComponent extends BasePage implements OnInit {
   returnParseDate_(data: Date) {
     const formattedDate = moment(data).format('YYYY-MM-DD');
     return formattedDate;
+  }
+
+  changeTab(tabNumber: number): void {
+    console.log('tabNumber', tabNumber);
+    this.currentTab = tabNumber;
+    this.sharedService.setCurrentTab(tabNumber);
+  }
+  onTabChanged(event: any) {
+    const tab = event.target.outerText;
+
+    if (tab == 'Eliminar Periodos') this.currentTab = 1;
+    if (tab == 'Cambiar Periodos') this.currentTab = 2;
+    if (tab == 'Cambiar Bienes de Número Aleatorio') this.currentTab = 3;
+    this.sharedService.setCurrentTab(this.currentTab);
+
+    console.log('tab', event.target.outerText);
   }
 }
