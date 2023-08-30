@@ -154,10 +154,10 @@ export class MassiveReclassificationGoodsComponent
     } else {
       newClassNumber = this.classificationOfGoods.value;
     }
-    setTimeout(() => {
-      this.loading = false;
-    }, 1000);
-    return;
+    // setTimeout(() => {
+    //   this.loading = false;
+    // }, 1000);
+    // return;
     // console.log(this.selectedGooods);
     forkJoin(
       this.selectedGooods.map(good => {
