@@ -123,14 +123,20 @@ export class ServicesTypeUnitPricesComponent
   }
 
   showDeleteAlert(service?: IStrategyTypeService) {
-    this.alertQuestion('warning', '', '¿Desea borrar este registro?').then(
-      question => {
-        if (question.isConfirmed) {
-          this.delete(service.serviceTypeNumber);
-          this.alert('success', 'Registro Eliminado Correctamente', '');
-        }
+    this.alertQuestion(
+      'warning',
+      'Servicio para Precio Unitario',
+      '¿Desea Eliminar este Registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(service.serviceTypeNumber);
+        this.alert(
+          'success',
+          'Servicio para Precio Unitario',
+          'Eliminado Correctamente'
+        );
       }
-    );
+    });
   }
 
   delete(id: number) {

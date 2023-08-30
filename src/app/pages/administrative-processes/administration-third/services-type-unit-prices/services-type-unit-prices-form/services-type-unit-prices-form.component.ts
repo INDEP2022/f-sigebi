@@ -18,7 +18,7 @@ export class ServicesTypeUnitPricesFormComponent
   serviceForm: ModelForm<IStrategyTypeService>;
   service: IStrategyTypeService;
 
-  title: string = 'Exitoso';
+  title: string = 'Servicio para Precio Unitario';
   edit: boolean = false;
 
   constructor(
@@ -77,7 +77,7 @@ export class ServicesTypeUnitPricesFormComponent
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.alert(
       'success',
-      this.edit ? '' : this.title,
+      this.edit ? 'Servicio para Precio Unitario' : this.title,
       `${message} Correctamente`
     );
     this.loading = false;
