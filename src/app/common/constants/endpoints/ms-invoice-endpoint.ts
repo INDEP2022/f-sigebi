@@ -26,4 +26,6 @@ export enum ENDPOINT_INVOICE {
   ComerDetFactura = 'comer-detbills',
   ComerInconsistencies = 'application/get-data-eat-exists',
   ComerPostQuery = 'application/get-eat-invoice-query',
+  ComerFactInvoiceIncons = 'comer-fact-inconsistencies',
+  ComerFactInvoiceI = 'comer-fact-inconsistencies/get-data-custom',
 }

@@ -16,6 +16,7 @@ import {
   IGoodResDevInvView,
   IGoodsInv,
 } from '../../models/ms-goodsinv/goodsinv.model';
+import { ISamplingGoodView } from '../../models/ms-goodsinv/sampling-good-view.model';
 
 @Injectable({
   providedIn: 'root',
@@ -115,6 +116,13 @@ export class GoodsInvService extends HttpService {
     return this.get<IListResponse<IGoodInvDestructionView>>(
       `${route}?${params}`
     );
+  }
+
+  getSamplingGoodView(
+    params: ListParams | string
+  ): Observable<IListResponse<ISamplingGoodView>> {
+    const route = IGoodsinvEndpoint.getSamplingGoodView;
+    return this.get<IListResponse<ISamplingGoodView>>(`${route}`, params);
   }
 
   private makeParams(params: ListParams | string): HttpParams {

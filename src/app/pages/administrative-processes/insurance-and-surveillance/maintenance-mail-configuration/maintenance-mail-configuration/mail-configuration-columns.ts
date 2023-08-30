@@ -24,7 +24,7 @@ export const EMAIL_CONFIG_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (_cell: any, row: any) => {
-      return row.status == '1' ? 'SI' : 'NO';
+      return row.status == '1' ? 'Activo' : 'Inactivo';
     },
   },
 };

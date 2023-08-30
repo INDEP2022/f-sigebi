@@ -27,11 +27,11 @@
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
           <form-field
-            [control]="paymentForm.get('originalReference')"
+            [control]="paymentForm.get('referenceori')"
             label="Referencia Original">
             <input
               type="text"
-              formControlName="originalReference"
+              formControlName="referenceori"
               class="form-control" />
           </form-field>
         </div>
@@ -88,13 +88,25 @@
           <form-field
             [control]="paymentForm.get('systemValidity')"
             label="Válido Sistema">
-            <ng-select
+            <!-- <ng-select
               formControlName="systemValidity"
               [searchable]="false"
               class="form-control"
               [clearable]="false">
               <ng-option value="1">NULO</ng-option>
               <ng-option value="2">B</ng-option>
+            </ng-select> -->
+
+            <ng-select
+              class="form-control"
+              formControlName="systemValidity"
+              (change)="extractKey($event)">
+              <ng-option
+                *ngFor="let row of validSystem"
+                [value]="row.valsisDescription">
+                <!-- valsisKey -->
+                {{ row.valsisDescription }}
+              </ng-option>
             </ng-select>
           </form-field>
         </div>
@@ -142,10 +154,16 @@
           <form-field
             [control]="paymentForm.get('satDescription')"
             label="Descripción Pago SAT">
-            <input
+            <!-- <input
               type="text"
               formControlName="satDescription"
-              class="form-control" />
+              class="form-control" /> -->
+            <ng-select class="form-control" formControlName="satDescription">
+              <!-- <ng-option [value]="null">Seleccione un valor</ng-option> -->
+              <ng-option *ngFor="let row of dataSat" [value]="row.idType">
+                {{ row.description }}
+              </ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>
