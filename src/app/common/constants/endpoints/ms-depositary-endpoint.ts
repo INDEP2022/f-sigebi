@@ -33,4 +33,5 @@ export enum DepositaryEndPoints {
   PaymentFiles = 'comer-payment/files-payment/type-action',
   PaymentBulk = 'comer-payment/massive-payment/system',
   SearchPaymentProcess = 'comer-payment/change-payment-process',
+  ComerPaymentSelect = 'comer-payment/selection-payment/selection',
 }

@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -21,6 +22,7 @@ import { AccountMovementService } from 'src/app/core/services/ms-account-movemen
 import { BankMovementType } from 'src/app/core/services/ms-bank-movement/bank-movement.service';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -40,7 +42,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   addRows: any[] = [];
   editRows: any[] = [];
-  selectedRows: any[] = [];
+  selectedRows: any = [];
   paymentColumns: any[] = [];
   dataRows: any[] = [];
   totalItems: number = 0;
@@ -50,6 +52,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   banks = new DefaultSelect();
   columnFilters: any = [];
   sssubtypes = new DefaultSelect<any>();
+  flag: boolean = false;
+  selectedFile: File | null = null;
 
   LV_MSG_PROCESO: string;
   LV_EST_PROCESO: number = 1;
@@ -76,13 +80,15 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   LV_VAL_SISTEMA: string;
   validSystem: any[] = [];
 
+  keyValidEdit: string;
+
   //params = new BehaviorSubject<FilterParams>(new FilterParams());
   paymentSettings = {
     ...TABLE_SETTINGS,
     hideSubHeader: false,
     rowClassFunction: (row: { data: { available: any } }) =>
       row.data.available ? 'available' : 'not-available',
-    selectMode: 'multi',
+    selectMode: 'multi', //multi
     actions: {
       columnTitle: 'Acciones',
       edit: true,
@@ -120,7 +126,9 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     private bankMovementType: BankMovementType,
     private authService: AuthService,
     private indUserService: IndUserService,
-    private interfacesirsaeService: InterfacesirsaeService
+    private interfacesirsaeService: InterfacesirsaeService,
+    private lotService: LotService,
+    private http: HttpClient
   ) {
     super();
     this.paymentSettings.columns = PAYMENT_COLUMNS;
@@ -289,8 +297,12 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   search() {
+    // console.log(
+    //   'valido sistema key -> ',
+    //   this.searchForm.get('validity').value
+    // );
     let LV_TOTREG: number;
-    console.log('validity -> ', this.searchForm.get('validity').value);
+
     this.searchID(5);
 
     if (this.searchForm.get('system').value == 1) {
@@ -410,7 +422,9 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           account: this.account,
           guy: data.type,
         };
-        this.CreateAddRow(param);
+        this.getCreateValidSys(data.systemValidity, param);
+        //this.CreateAddRow(param);
+        //this.getTableData();
       }
     });
     modalRef.content.onEdit.subscribe(data => {
@@ -418,6 +432,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       if (data) {
         //this.editRow(data);
         console.log('Data Editar', data);
+        console.log('fecha a editar -> ', data.newData.date);
         let param = {
           tsearchId: Number(5),
           payId: data.newData.paymentId,
@@ -437,12 +452,15 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           cveBank: data.newData.cve,
           code: Number(data.newData.code),
           batchPublic: Number(data.newData.publicBatch),
-          validSystem: data.newData.systemValidity,
+          validSystem: this.keyValidEdit,
           result: data.newData.result,
           account: this.account,
           guy: data.newData.type,
         };
-        this.updateRecord(param);
+        this.getValidSystemKey(data.newData.systemValidity, param);
+        console.log('ParamsUpdate->', param);
+        // this.updateRecord(param);
+        //this.getTableData();
       }
     });
   }
@@ -500,7 +518,31 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   selectRows(rows: any[]) {
-    this.selectedRows = rows;
+    console.log('row ', rows);
+    if (rows.length > 0) {
+      this.selectedRows = rows;
+      console.log('SelectRows', this.selectedRows[0].id_select);
+      this.flag = true;
+    } else {
+      this.flag = false;
+      this.selectedRows = [];
+    }
+  }
+
+  changeCheckBox() {
+    console.log('this.selectedRows-> ', this.selectedRows);
+    const elemC = document.getElementById('typeId') as HTMLInputElement;
+    console.log('SearchId-> ', elemC.value);
+
+    if (elemC.value == null || elemC.value == '') {
+      this.alert(
+        'warning',
+        '',
+        'No se Ha Seleccionado el Campo Tipo de Búsqueda'
+      );
+    } else {
+      this.SelectPago(this.selectedRows[0].id_select, elemC.value);
+    }
   }
 
   async getCsv(event: Event) {
@@ -534,6 +576,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       ).then(async question => {
         if (question.isConfirmed) {
           // add PUP_CAMBIO_MASIV_LOTES;
+          //this.PupCambioMasivo();
         }
       });
     }
@@ -645,7 +688,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
 
     this.paymentService.getBusquedaPag(params).subscribe({
       next: res => {
-        console.log('Res -> ', res);
+        console.log('getBusquedaPag -> ', res);
         const params = new ListParams();
         for (let i = 0; i < res.count; i++) {
           console.log('Entra al FOR', res.data);
@@ -684,6 +727,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
                           satDescription: response.data[0].description,
                           type: res.data[i].guy,
                           inconsistencies: res.data[i].idinconsis,
+                          id_select: res.data[i].idselect,
                         };
 
                         console.log(
@@ -715,6 +759,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
                       satDescription: response.data[0].description,
                       type: res.data[i].guy,
                       inconsistencies: res.data[i].idinconsis,
+                      id_select: res.data[i].idselect,
                     };
 
                     console.log(
@@ -969,6 +1014,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   updateRecord(params: any) {
+    console.log('Update ParamsFinal-> ', params);
     this.paymentService.UpdateRecord(params).subscribe(
       resp => {
         if (resp != null && resp != undefined) {
@@ -979,6 +1025,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           );
           console.log('Resp ActualizarReg', resp);
           //this.getTableData();
+          this.getTableData();
+          this.localdata.refresh();
         }
       },
       error => {
@@ -1120,6 +1168,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           console.log('CreateAddRow-> ', resp);
           this.alert('success', '', 'Registro Guardado Correctamente.');
         }
+        this.getTableData();
+        this.localdata.refresh();
       },
       error: err => {
         this.alert('error', '', 'El Registro ya Existe');
@@ -1133,5 +1183,93 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         console.log('PupBúsqueda', resp);
       }
     });
+  }
+  getValidSystemKey(filter: string, param: any) {
+    if (filter != null) {
+      console.log('Params ValidSystem->', param);
+      console.log('system valid filter-> ', filter);
+      this.paymentService.getValidSystemDesc(filter).subscribe(
+        resp => {
+          if (resp != null && resp != undefined) {
+            console.log('valid valsisKey ', resp.data[0].valsisKey);
+            param.validSystem = resp.data[0].valsisKey;
+            this.updateRecord(param);
+          }
+        },
+        err => {
+          console.log('error', err);
+        }
+      );
+    }
+  }
+
+  getCreateValidSys(filter: string, param: any) {
+    if (filter != null) {
+      console.log('Params ValidSystem->', param);
+      console.log('system valid filter-> ', filter);
+      this.paymentService.getValidSystemDesc(filter).subscribe(
+        resp => {
+          if (resp != null && resp != undefined) {
+            console.log('valid valsisKey ', resp.data[0].valsisKey);
+            param.validSystem = resp.data[0].valsisKey;
+            this.CreateAddRow(param);
+          }
+        },
+        err => {
+          console.log('error', err);
+        }
+      );
+    }
+  }
+
+  PupCambioMasivo(params: any) {
+    this.lotService.postCambioMasivo(params).subscribe(
+      resp => {
+        if (resp != null && resp != undefined) {
+          console.log('PupCambioMasivo->', resp);
+          this.alert(
+            'success',
+            'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+            resp.message
+          );
+        }
+      },
+      error => {
+        console.log('error ', error);
+        this.alert(
+          'error',
+          'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+          error.error.message
+        );
+      }
+    );
+  }
+
+  SelectPago(multiple: number, idSearch: any) {
+    this.msDepositaryService
+      .getComerPaymentSelect(multiple, idSearch)
+      .subscribe(
+        resp => {
+          if (resp != null && resp != undefined) {
+            this.alert('success', '', 'Se Procesaron los Registros');
+          }
+        },
+        err => {
+          this.alert('error', '', 'No Se Procesaron los Registros');
+        }
+      );
+  }
+
+  onUpload(event: any) {
+    this.selectedFile = event.target.files[0];
+    console.log('onUpload -> ', this.selectedFile);
+    if (this.selectedFile) {
+      const formData = new FormData();
+      formData.append('file', this.selectedFile);
+      // formData.forEach((value, key) => {
+      //   console.log(key, value);
+      // });
+      this.PupCambioMasivo(this.selectedFile);
+    }
   }
 }

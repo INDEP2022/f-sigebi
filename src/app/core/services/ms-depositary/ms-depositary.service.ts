@@ -283,4 +283,10 @@ export class MsDepositaryService extends HttpService {
       `${DepositaryEndPoints.SearchPaymentProcess}/search/${idSearch}/new/${newSearch}`
     );
   }
+
+  getComerPaymentSelect(multiple: number, idSearch: any) {
+    return this.get(
+      `${DepositaryEndPoints.ComerPaymentSelect}/${multiple}/type/${idSearch}`
+    );
+  }
 }

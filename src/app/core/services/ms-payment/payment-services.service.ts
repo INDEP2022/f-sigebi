@@ -162,6 +162,16 @@ export class PaymentService extends HttpService {
     }
   }
 
+  getValidSystemDesc(filter?: string) {
+    if (filter != null) {
+      return this.get(
+        `${PaymentEndPoints.validSystem}?filter.valsisDescription=$eq:${filter}`
+      );
+    } else {
+      return this.get(`${PaymentEndPoints.validSystem}`);
+    }
+  }
+
   postCreateRecord(params: any) {
     return this.post(PaymentEndPoints.BusquedaPagosDet, params);
   }

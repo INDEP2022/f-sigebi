@@ -205,11 +205,17 @@
           <i class="bx bx-file text-light float-icon"></i>
           Cambio de Proceso
         </button>
+
         <button
           class="btn btn-primary btn-sm active mr-3"
-          (click)="getCsv($event)">
+          (click)="loadCSV2.click()">
           <i class="fas fa-sync-alt"></i>
-          Cambiar Lotes
+          Cambiar Lotes<input
+            #loadCSV2
+            hidden
+            type="file"
+            accept=".csv"
+            (change)="onUpload($event)" />
         </button>
       </div>
     </div>
@@ -275,16 +281,20 @@
         </ng-scrollbar>
       </div>
     </div>
-    <div class="row">
-      <div class="col-sm-12 col-md-12 text-center">
-        <div>
-          <button
-            class="btn btn-sm btn-success active me-2 font-size-14"
-            (click)="systemAplicado()"
-            [disabled]="false">
-            Aplicado
-          </button>
-        </div>
+    <div class="row mb-4">
+      <div class="col-md-12-col-sm12 col-xs-12 text-center">
+        <button
+          class="btn btn-sm btn-success active m-3"
+          (click)="systemAplicado()"
+          [disabled]="false">
+          Aplicado
+        </button>
+        <button
+          class="btn btn-sm btn-info active m-3"
+          (click)="changeCheckBox()"
+          [disabled]="!flag">
+          Selección
+        </button>
       </div>
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
