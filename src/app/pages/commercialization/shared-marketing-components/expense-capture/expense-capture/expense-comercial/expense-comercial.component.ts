@@ -23,6 +23,7 @@ import { SpentIService } from '../../services/spentI.service';
 import { SpentMService } from '../../services/spentM.service';
 import { NotifyComponent } from '../notify/notify.component';
 import { COLUMNS } from './columns';
+
 @Component({
   selector: 'app-expense-comercial',
   templateUrl: './expense-comercial.component.html',
@@ -167,7 +168,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   reloadLoteEvent(event: any) {
-    console.log(event);
+    // console.log(event);
     if (event)
       this.comerEventService
         .getMANDXEVENTO(event)
@@ -196,7 +197,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   notify() {
-    console.log('Notificar');
+    // console.log('Notificar');
     let config: ModalOptions = {
       initialState: {
         // message,
@@ -244,7 +245,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     if (this.PVALIDADET === 'S') {
       const V_EXIST = await this.getParamValConcept(this.conceptNumber.value);
       if (V_EXIST) {
-        console.log(V_EXIST);
+        // console.log(V_EXIST);
         this.URCOORDREGCHATARRA_AUTOMATICO(3);
         this.CARGA_BIENES_LOTE_XDELRES(
           this.eventNumber.value,
@@ -283,7 +284,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   async fillForm(event: IComerExpense) {
-    console.log(event);
+    // console.log(event);
     this.data = event;
     if (!event.conceptNumber) {
       this.alert('warning', 'No cuenta con un concepto de pago', '');
@@ -291,9 +292,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     }
     this.conceptNumber.setValue(event.conceptNumber);
     const responsePayments = await this.validPayments(event);
-    console.log(responsePayments);
-    if (!responsePayments.data) {
-      this.alert('error', responsePayments.message, '');
+    // console.log(responsePayments);
+    if (responsePayments.message[0] !== 'OK') {
+      this.alert('error', responsePayments.message[0], '');
       return;
     }
     if (!event.eventNumber) {
@@ -371,7 +372,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   get pathProvider() {
-    return 'interfaceesirsae/api/v1/supplier?sortBy=clkPv:ASC';
+    return 'interfaceesirsae/api/v1/supplier?filter.clkPv=$eq:45677&sortBy=clkPv:ASC';
   }
 
   get dataCompositionExpenses() {
@@ -421,12 +422,14 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
                   })
                   .pipe(
                     catchError(x => of(null)),
-                    tap(x => console.log(x))
+                    tap(x => {
+                      // console.log(x)
+                    })
                   )
               );
-              console.log(result);
+              // console.log(result);
               if (!result) {
-                console.log('ERROR');
+                // console.log('ERROR');
                 errors.push(row.goodNumber);
               } else {
                 // if(result.message[0]){

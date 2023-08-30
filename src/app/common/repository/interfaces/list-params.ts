@@ -25,7 +25,7 @@ export class FilterParams {
   limit?: number = 10;
   search?: string = '';
   sortBy?: string = null;
-  private filters: string[] = [];
+  filters: string[] = [];
 
   constructor(filter?: FilterParams) {
     if (filter) {
@@ -118,6 +118,7 @@ export enum SearchFilter {
   OR = '$or',
   NOTIN = '$not:$in',
   SD = '$sd',
+  LIKE2 = '$like',
 }
 
 export interface DynamicFilterLike {
