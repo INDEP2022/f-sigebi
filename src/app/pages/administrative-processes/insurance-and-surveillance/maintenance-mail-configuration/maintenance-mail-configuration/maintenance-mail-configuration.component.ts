@@ -117,6 +117,8 @@ export class MaintenanceMailConfigurationComponent
           }
         },
       },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     };
     this.modalService.show(
       CreateOrEditEmailMaintenencekDialogComponent,
