@@ -17,9 +17,9 @@ export class CreateOrEditEmailMaintenencekDialogComponent
   extends BasePage
   implements OnInit
 {
-  form: ModelForm<IVigEmailSend>;
+  form: ModelForm<{}>;
 
-  title: string = 'CORREO DE RESPONSABLES DE ENVÍO';
+  title: string = 'Correo de Responsables de Envío';
   edit: boolean = false;
   emailSend: IVigEmailSend;
   data: any;
@@ -41,7 +41,6 @@ export class CreateOrEditEmailMaintenencekDialogComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      id: [null, [Validators.required]],
       emailSend: [
         null,
         [Validators.required, Validators.pattern(EMAIL_PATTERN2)],
@@ -71,14 +70,17 @@ export class CreateOrEditEmailMaintenencekDialogComponent
     this.loading = true;
     this.emailService.createSendEmail(this.form.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        (this.loading = false),
+          this.alert('warning', 'El Correo Ingresado ya Existe', '');
+      },
     });
   }
 
   update() {
     this.loading = true;
     this.emailService
-      .updateSendEmail(this.form.controls['id'].value, this.form.value)
+      .updateSendEmail(this.emailSend.id, this.form.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

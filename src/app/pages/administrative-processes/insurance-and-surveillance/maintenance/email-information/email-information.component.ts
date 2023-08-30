@@ -16,6 +16,7 @@ import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { SharedService } from '../service/services';
 
 @Component({
   selector: 'app-email-information',
@@ -29,9 +30,12 @@ export class EmailInformationComponent extends BasePage {
   VigCC = new DefaultSelect();
   VigEmailBody = new DefaultSelect();
   // form: FormGroup;
+  delegationDetail: any;
+  currentTab: number = 1;
   constructor(
     // private fb: FormBuilder,
-    private emailService: EmailService
+    private emailService: EmailService,
+    private sharedService: SharedService
   ) {
     super();
   }
@@ -58,9 +62,95 @@ export class EmailInformationComponent extends BasePage {
   @ViewChild('Send') Send: ElementRef;
 
   @Output() eventEmailInformation = new EventEmitter();
-
+  valTab: boolean = false;
   ngOnInit(): void {
     this.getDate();
+    console.log('delegationDetail', this.delegationDetail);
+
+    this.sharedService.getCurrentTab().subscribe(tabNumber => {
+      if (this.currentTab == tabNumber) {
+        // VALIDACIÓN PARA SABER SI SE ENCUENTRA EN LA MISMA TAB //
+        this.valTab = true;
+      } else {
+        this.valTab = false;
+        this.currentTab = tabNumber;
+      }
+    });
+
+    this.sharedService.getSharedVariable().subscribe(value => {
+      console.log('value222', value);
+      if (this.valTab) {
+        // SI SE ENCUENTRA EN LA MISMA TAB PODRÁ SETEAR EL VALOR DE LA DELEGACIÓN
+
+        if (!value) {
+          // VERIFICA QUE EL VALOR DE LA DELEGACIÓN ES NULL
+
+          this.delegationDetail = value;
+          this.form.get('to').setValue(null);
+          this.form.get('cc').setValue(null);
+          this.VigCC = new DefaultSelect([], 0);
+          this.VigEmailBook = new DefaultSelect([], 0);
+        } else {
+          if (this.delegationDetail) {
+            if (
+              this.delegationDetail.delegationNumber != value.delegationNumber
+            ) {
+              this.delegationDetail = value;
+              this.form.get('to').setValue(null);
+              this.form.get('cc').setValue(null);
+              this.VigCC = new DefaultSelect([], 0);
+              this.VigEmailBook = new DefaultSelect([], 0);
+
+              this.getVigMailBook(new ListParams());
+              this.getCC(new ListParams());
+            }
+          } else {
+            this.delegationDetail = value;
+            this.form.get('to').setValue(null);
+            this.form.get('cc').setValue(null);
+            this.VigCC = new DefaultSelect([], 0);
+            this.VigEmailBook = new DefaultSelect([], 0);
+            this.getVigMailBook(new ListParams());
+            this.getCC(new ListParams());
+          }
+        }
+      } else {
+        // SI SE ENCUENTRA EN UNA TAB DIFERENTE
+
+        if (!value) {
+          // VERIFICA QUE EL VALOR DE LA DELEGACIÓN ES NULL
+
+          this.form.get('to').setValue(null);
+          this.form.get('cc').setValue(null);
+          this.VigCC = new DefaultSelect([], 0);
+          this.VigEmailBook = new DefaultSelect([], 0);
+          this.delegationDetail = value;
+        } else {
+          if (this.delegationDetail) {
+            if (
+              this.delegationDetail.delegationNumber != value.delegationNumber
+            ) {
+              this.delegationDetail = value;
+              this.form.get('to').setValue(null);
+              this.form.get('cc').setValue(null);
+              this.VigCC = new DefaultSelect([], 0);
+              this.VigEmailBook = new DefaultSelect([], 0);
+              this.getVigMailBook(new ListParams());
+              this.getCC(new ListParams());
+            }
+          } else {
+            this.delegationDetail = value;
+            this.form.get('to').setValue(null);
+            this.form.get('cc').setValue(null);
+            this.VigCC = new DefaultSelect([], 0);
+            this.VigEmailBook = new DefaultSelect([], 0);
+            this.getVigMailBook(new ListParams());
+            this.getCC(new ListParams());
+          }
+        }
+      }
+    });
+
     // this.prepareForm();
   }
   save() {
@@ -132,6 +222,9 @@ export class EmailInformationComponent extends BasePage {
   }
 
   cleanForm() {
+    this.delegationDetail = null;
+    this.VigCC = new DefaultSelect([], 0);
+    this.VigEmailBook = new DefaultSelect([], 0);
     this.form.get('type').setValue('');
     this.form.reset();
   }
@@ -169,7 +262,7 @@ export class EmailInformationComponent extends BasePage {
     params.addFilter('status', 1, SearchFilter.EQ);
     if (lparams.text) params.search = lparams.text;
     // params.addFilter('nameSend', lparams.text, SearchFilter.ILIKE);
-
+    params.sortBy = `nameSend:ASC`;
     return new Promise((resolve, reject) => {
       this.emailService.getVigEmailSend(params.getParams()).subscribe({
         next: async (response: any) => {
@@ -205,10 +298,16 @@ export class EmailInformationComponent extends BasePage {
     params.addFilter('bookType', 'P', SearchFilter.EQ);
     params.addFilter('bookStatus', 1, SearchFilter.EQ);
 
-    if (lparams.text)
-      // params.search = lparams.text;
-      params.addFilter('bookName', lparams.text, SearchFilter.ILIKE);
-
+    if (lparams.text) params.search = lparams.text;
+    // if (lparams.text)
+    //   // params.search = lparams.text;
+    //   params.addFilter('bookName', lparams.text, SearchFilter.ILIKE);
+    params.sortBy = `bookName:ASC`;
+    params.addFilter(
+      'delegationNumber',
+      this.delegationDetail.delegationNumber,
+      SearchFilter.EQ
+    );
     return new Promise((resolve, reject) => {
       this.emailService.getVigMailBook(params.getParams()).subscribe({
         next: async (response: any) => {
@@ -244,10 +343,14 @@ export class EmailInformationComponent extends BasePage {
     params.addFilter('bookType', 'C', SearchFilter.EQ);
     params.addFilter('bookStatus', 1, SearchFilter.EQ);
 
-    if (lparams.text)
-      // params.search = lparams.text;
-      params.addFilter('bookName', lparams.text, SearchFilter.ILIKE);
-
+    if (lparams.text) params.search = lparams.text;
+    // params.addFilter('bookName', lparams.text, SearchFilter.ILIKE);
+    params.sortBy = `bookName:ASC`;
+    params.addFilter(
+      'delegationNumber',
+      this.delegationDetail.delegationNumber,
+      SearchFilter.EQ
+    );
     return new Promise((resolve, reject) => {
       this.emailService.getVigMailBook(params.getParams()).subscribe({
         next: async (response: any) => {

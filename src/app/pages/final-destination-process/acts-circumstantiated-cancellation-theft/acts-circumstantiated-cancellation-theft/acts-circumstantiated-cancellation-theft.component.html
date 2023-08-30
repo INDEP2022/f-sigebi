@@ -59,12 +59,13 @@
                     >
                     <div>{{ aprevia || '' }}</div>
                   </div>
-                  <div class="col-md-3">
+
+                  <!-- <div class="col-md-3">
                     <label for="" class="col-form-label"
                       >Fecha de Elaboración:</label
                     >
                     <div>{{ dateElaboration || '00/00/0000' }}</div>
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </div>
@@ -75,14 +76,14 @@
     <div class="row m-3">
       <div class="col-4"></div>
       <div class="col-md-8 text-end">
-        <!-- <button
+        <button
           [disabled]="!actasDefault"
           (click)="actualizarActa()"
           type="button"
           class="btn btn-primary active btn-sm mr-3">
           Guardarr
           <i aria-hidden="true" class="fa fa-save"></i>
-        </button> -->
+        </button>
         <button
           (click)="agregarActa()"
           type="button"
@@ -120,7 +121,7 @@
             <div class="col-md-12">
               <div class="card">
                 <div class="card-body">
-                  <div class="col-md-4 mt-3">
+                  <!-- <div class="col-md-4 mt-3">
                     <div>
                       <form-field
                         [control]="actaRecepttionForm.get('type')"
@@ -165,49 +166,23 @@
                       </form-field>
                     </div>
                   </div>
-                  <div class="col-md-4 mt-3">
+                 <div class="col-md-4 mt-3">
                     <div>
                       <form-field
-                        [control]="actaRecepttionForm.get('testigoOIC')"
-                        label="Testigo de la Contralor&iacute;a">
-                        <input
-                          #inputValue
-                          type="text"
-                          class="form-control"
-                          formControlName="testigoOIC"
-                          readonly />
-                      </form-field>
-                    </div>
-                  </div>
-                  <div class="col-md-4 mt-3">
-                    <div>
-                      <form-field
-                        [control]="actaRecepttionForm.get('testigoTwo')"
-                        label="Testigo">
-                        <input
-                          #inputValue
-                          type="text"
-                          class="form-control"
-                          formControlName="testigoTwo"
-                          readonly />
-                      </form-field>
-                    </div>
-                  </div>
-                  <div class="col-md-4 mt-3">
-                    <div>
-                      <form-field
-                        [control]="actaRecepttionForm.get('testigoTree')"
-                        label="Admin.">
+                        [control]="actaRecepttionForm.get('administra')"
+                        label="Adm.">
                         <input
                           readonly
                           #inputValue
                           type="text"
                           class="form-control"
-                          formControlName="testigoTree"
+                          formControlName="administra"
                           [disabled]="!validPermisos" />
                       </form-field>
                     </div>
                   </div>
+                  
+                  
                   <div class="col-md-4 mt-3">
                     <div>
                       <form-field
@@ -251,13 +226,23 @@
                           class="form-control"
                           readonly />
                       </form-field>
-                      <!-- <form-field [control]="actaRecepttionForm.get('mes')" label="Mes">
-                        <input type="text" class="form-control" [bsConfig]="bsConfigFromMonth" #dp="bsDatepicker"
-                          bsDatepicker [(bsValue)]="bsValueFromMonth" formControlName="mes" />
-                      </form-field> -->
                     </div>
-                  </div>
-                  <div class="col-md-12 mt-2">
+                  </div> -->
+                  <!-- <div class="col-md-4 mt-3">
+                    <div>
+                       <form-field
+                        [control]="actaRecepttionForm.get('cveActa')"
+                        label="Acta">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="cveActa"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div> -->
+                  <div class="col-md-8 mt-2">
                     <div>
                       <form-field
                         [control]="actaRecepttionForm.get('cveActa')"
@@ -271,18 +256,62 @@
                       </form-field>
                     </div>
                   </div>
-                  <div class="card-body">
-                    <form-field
-                      class="col-md-12 col-sm-12 col-12 p-2"
-                      [control]="actaRecepttionForm.get('direccion')"
-                      label="Dirección">
-                      <textarea
-                        maxlength="500"
-                        class="form-control text-justify"
-                        formControlName="direccion"
-                        rows="5"
-                        readonly></textarea>
-                    </form-field>
+                  <div class="col-md-4 mt-2">
+                    <div>
+                      <form-field
+                        [control]="actaRecepttionForm.get('direccion')"
+                        label="Dirección">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="direccion"
+                          class="form-control"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="actaRecepttionForm.get('testigoOne')"
+                        label="Autoridad">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="testigoOne"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="actaRecepttionForm.get('testigoTree')"
+                        label="Elabora">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="testigoTree"
+                          class="form-control"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="actaRecepttionForm.get('testigoOIC')"
+                        label="Testigo de la Contralor&iacute;a">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          readonly
+                          formControlName="testigoOIC" />
+                      </form-field>
+                    </div>
                   </div>
                   <div class="card-body">
                     <form-field
@@ -293,9 +322,49 @@
                         maxlength="500"
                         class="form-control text-justify"
                         formControlName="observaciones"
-                        rows="5"
+                        rows="2"
                         readonly></textarea>
                     </form-field>
+                  </div>
+
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="actaRecepttionForm.get('elaboradate')"
+                        label="Fec. Elaboración">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="elaboradate"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="actaRecepttionForm.get('fechaact')"
+                        label="Fec. Acta">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="fechaact"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="actaRecepttionForm.get('fechacap')"
+                        label="Fec. Captura">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="fechacap"
+                          readonly />
+                      </form-field>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -365,6 +434,45 @@
             </div>
           </div>
         </div>
+        <!-- <div class="row pt-2">
+          <div class="col-md-12 text-center mt-4 mb-4">
+            <button
+              tooltip="Agregar Bien al Acta"
+              containerClass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+              type="button"
+              (click)="addSelect()">
+           
+              <i class="bx bx-chevron-down bx-md"></i>
+            </button>
+            <button
+              tooltip="Agregar Bienes al Acta"
+              containerClass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+              type="button"
+              (click)="addAll()">
+      
+              <i class="bx bx-chevrons-down bx-md"></i>
+            </button>
+            <button
+              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+              type="button"
+              (click)="removeAll()">
+
+
+              <i class="bx bx-chevrons-up bx-md"></i>
+            </button>
+            <button
+              tooltip="Quitar Bien del Acta"
+              containerClass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+              type="button"
+              (click)="removeSelect()">
+          
+              <i class="bx bx-chevron-up bx-md"></i>
+            </button>
+          </div>
+        </div> -->
         <div class="row pt-2">
           <div class="col-md-12 text-center mt-4 mb-4">
             <button
@@ -389,8 +497,6 @@
               class="btn btn-secondary btn-sm active m-3 p-1 pointer"
               type="button"
               (click)="removeAll()">
-              <!-- Quitar todos -->
-
               <i class="bx bx-chevrons-up bx-md"></i>
             </button>
             <button
@@ -413,9 +519,7 @@
               <!-- <div [class]="loading ? 'table-loading' : ''"> -->
               <ng-scrollbar
                 [track]="'all'"
-                [ngStyle]="{
-                  height: loading2 ? '0px' : '400px'
-                }">
+                [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
                 <ng2-smart-table
                   class="table-responsive"
                   [attr.class]="'table-bordered table-responsive'"
@@ -525,6 +629,7 @@
       <div class="col-4"></div>
       <div class="col-md-8 text-end">
         <button
+          [disabled]="!validateGoods"
           class="btn btn-secondary btn-sm active btn-sm mr-3"
           (click)="ValidGoods()">
           Valida Bienes
@@ -539,22 +644,5 @@
         </button>
       </div>
     </div>
-
-    <!-- <div class="row m-3">
-      <div class="col-4"></div>
-      <div class="col-md-8 text-end">
-        <div class="col-6">
-        <button class="btn btn-secondary btn-sm active text-center text-md-right">
-          Valida Bienes
-        </button>
-        </div>
-        <div class="col-6">
-        <button [disabled]="!Exportdate" class="btn btn-sm btn-success active" type="button" (click)="exportToExcel()">
-          Exportar Datos
-          <i class="bx bx-download float-icon"></i>
-        </button>
-        </div>
-      </div>
-    </div> -->
   </div>
 </app-card>

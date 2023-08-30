@@ -12,6 +12,7 @@ import { SurvillanceService } from 'src/app/core/services/ms-survillance/survill
 import { BasePage } from 'src/app/core/shared/base-page';
 import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { SharedService } from '../service/services';
 import { ListRandomsComponent } from './list-randoms/list-randoms.component';
 
 @Component({
@@ -23,7 +24,8 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private survillanceService: SurvillanceService
+    private survillanceService: SurvillanceService,
+    private sharedService: SharedService
   ) {
     super();
   }
@@ -52,6 +54,7 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
     for (let i = 2010; i <= this.currentYear; i++) {
       this.years.push(i);
     }
+    this.sharedService.setCurrentTab(3);
   }
 
   getFormChangeGoodsRandom() {
@@ -142,19 +145,19 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
 
   listBienes() {
     if (!this.form.value.year) {
-      this.alert('warning', 'Debe Seleccionar un Año', '');
-      return;
-    }
-    if (!this.form.value.period) {
-      this.alert('warning', 'Debe Seleccionar un Periodo', '');
+      this.alert('warning', 'Debe seleccionar un año', '');
       return;
     }
     if (!this.delegationDefault) {
-      this.alert('warning', 'Debe Seleccionar una Delegación', '');
+      this.alert('warning', 'Debe seleccionar una delegación', '');
       return;
     }
     if (!this.form.value.process) {
-      this.alert('warning', 'Debe Seleccionar un Proceso', '');
+      this.alert('warning', 'Debe seleccionar un proceso', '');
+      return;
+    }
+    if (!this.form.value.period) {
+      this.alert('warning', 'Debe seleccionar un periodo', '');
       return;
     }
     let data = {
@@ -191,7 +194,7 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
         }
       },
       error: error => {
-        this.alert('warning', 'No Hay Bienes Disponibles', '');
+        this.alert('warning', 'No hay bienes disponibles', '');
         this.loading = false;
       },
     });
@@ -206,6 +209,7 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
     this.disabledPeriod = false;
     this.periods = new DefaultSelect([], 0);
     this.form.reset();
+    this.updateSharedVariable(null);
   }
 
   // -------------------------------------------------------------------------------------------------------------- //
@@ -346,6 +350,7 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
   // FUNCION DE DELEGACION //
   changeDelegations(event: any) {
     this.delegationDefault = event;
+    this.updateSharedVariable(event);
     if (event) {
       if (this.delegationDefault && this.anio && this.process) {
         this.disabledPeriod = true;
@@ -415,5 +420,9 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
   seleccionarNumero(event: any) {}
   DelegacionName_() {
     return this.delegationDefault.description;
+  }
+
+  updateSharedVariable(value: any): void {
+    this.sharedService.setSharedVariable(value);
   }
 }

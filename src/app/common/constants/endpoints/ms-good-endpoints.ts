@@ -36,6 +36,7 @@ export enum GoodEndpoints {
   GoodsMotivesrev2 = 'goods-motivesrev',
   Sgood = `good/searchGoods`,
   TmpTotGoodsProgrammed = 'tmp-tot-goods-programmed',
+  goodStatus = 'good/filter-status',
   GoodNumberSol = 'good/get-data-good-typegood',
   ExportExcelGoodBad = 'attrib-good-bad/get-all-export',
 }
@@ -75,6 +76,7 @@ export enum GoodProcessPoints {
   ProcedureStatusGood = 'application/procedure-status-good',
   UpdateProcedingNumber = 'application/updateProceedingsNumber',
   UpdateMassiveStore = 'application/updateMassiveStore',
+  GetGoodsResDevInv = 'application/goods-res-dev-inv-view',
 }
 
 export enum GoodFinderEndpoint {

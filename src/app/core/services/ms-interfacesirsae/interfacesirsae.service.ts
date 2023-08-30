@@ -3,7 +3,11 @@ import { InterfaceSirsaeEndpoints } from 'src/app/common/constants/endpoints/ms-
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { ISirsaeStateAccountDetail } from '../../models/ms-interfacesirsae/interfacesirsae';
-import { ISendSirsae, ISendSirsaeLot } from './interfacesirsae-model';
+import {
+  ISendSirsae,
+  ISendSirsaeLot,
+  IValidPaymentsDTO,
+} from './interfacesirsae-model';
 
 @Injectable({
   providedIn: 'root',
@@ -49,11 +53,19 @@ export class InterfacesirsaeService extends HttpService {
     return this.post('sirsae/sendReadSirsae', body);
   }
 
+  validPayments(body: IValidPaymentsDTO) {
+    return this.post(InterfaceSirsaeEndpoints.ValidPayments, body);
+  }
+
   validatePaymentsXcli(evento: any) {
     return this.get(`sirsae/validatePaymentsXcli/${evento}`);
   }
 
   actEstEve(evento: any) {
     return this.get(`sirsae/actEstEve/${evento}`);
+  }
+
+  postPubBusqueda(params: any) {
+    return this.post(InterfaceSirsaeEndpoints.PupBusqueda, params);
   }
 }

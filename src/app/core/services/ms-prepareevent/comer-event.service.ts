@@ -94,4 +94,10 @@ export class ComerEventService extends HttpService {
   postResumenAdmvxr(params: any) {
     return this.post(PrepareEventEndpoints.ResumenAdmvxr, params);
   }
+
+  getNotification(idEvent: number, idLote: number) {
+    return this.get<IListResponse<any>>(
+      `${PrepareEventEndpoints.ShowNotification}?pEvent=${idEvent}&pBatch=${idLote}`
+    );
+  }
 }
