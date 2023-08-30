@@ -83,4 +83,9 @@ export class ExpedientService extends HttpService {
     const route = `${ExpedientEndpoints.SelectNoTransfer}`;
     return this.post(route, params);
   }
+
+  getExpedient(expedient: any) {
+    const route = `${ExpedientEndpoints.Base}?filter.id=$eq:${expedient}`;
+    return this.get(route);
+  }
 }

@@ -232,6 +232,11 @@ export class GoodprocessService extends HttpService {
     );
   }
 
+  getDataFromGood(id: any) {
+    const route = `${GoodprocessEndpoints.getDataFromGood}/${id}`;
+    return this.get(route);
+  }
+
   GetMinuteDetailDelivery(expedient: any, params: _Params) {
     return this.get(
       `${GoodprocessEndpoints.GetMinuteDetailDelivery}/${expedient}`,

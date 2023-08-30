@@ -6,13 +6,15 @@
     <div class="row" [class.table-loading]="loading">
       <div style="overflow: auto">
         <ng2-smart-table
-          [source]="rows"
+          [source]="data"
           [settings]="settings"
           (userRowSelect)="selectedRow = $event.data"></ng2-smart-table>
       </div>
-      <app-pagination
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+      <!-- <app-pagination
         [filterParams]="$params"
-        [totalItems]="totalItems"></app-pagination>
+        [totalItems]="totalItems"></app-pagination> -->
     </div>
   </div>
 

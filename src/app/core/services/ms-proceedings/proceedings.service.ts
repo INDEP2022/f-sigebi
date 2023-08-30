@@ -203,6 +203,11 @@ export class ProceedingsService extends HttpService {
       `${ProceedingsEndpoints.GetFactDbConvBien}?no_bien=${good}&no_expediente=${exp}`
     );
   }
+  getGetFactCir(good: any, exp: any) {
+    return this.get<IResponse>(
+      `${ProceedingsEndpoints.GetFacCircuNr}?no_bien=${good}&no_expediente=${exp}`
+    );
+  }
 
   creaDetailProceedingsDevollution(good: any) {
     return this.post<IResponse>(
@@ -280,5 +285,20 @@ export class ProceedingsService extends HttpService {
       'aplication/getMinutesDeliveryReception',
       { minutes }
     );
+  }
+
+  deleteProceedingById(id: any) {
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}/${id}`;
+    return this.delete(route);
+  }
+
+  postConstDelivery(params: any) {
+    const route = `${ProceedingsEndpoints.constDelivery}`;
+    return this.post(route, params);
+  }
+
+  postConstGood(params: any) {
+    const route = `${ProceedingsEndpoints.DetailProceedingsDevollution}`;
+    return this.post(route, params);
   }
 }

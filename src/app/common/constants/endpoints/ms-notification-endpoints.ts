@@ -36,4 +36,6 @@ export enum NotificationEndpoints {
   byFileNumber = `notification/maxCFlyer`,
 
   confirmStatus = `application/post-pup-valida-estatus-bien`,
+
+  NotificationDestruction = `notificaciones_destruccion`,
 }
