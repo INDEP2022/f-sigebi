@@ -102,6 +102,8 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       dateIndemnizationIn: [null],
       docLetterRelcamationIn: [null],
       docAmountIndemnizedIn: [null],
+      dateOfficeMailIn: [null],
+      dateOfficeMinConcluIn: [null],
     });
     if (this.siniester) {
       console.log(this.siniester);
