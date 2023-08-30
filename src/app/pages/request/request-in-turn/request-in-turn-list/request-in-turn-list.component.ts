@@ -164,7 +164,11 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
         this.loading = false;
         this.totalItems = 0;
         this.paragraphs.load([]);
-        this.onLoadToast('error', '', `${error.error.message}`);
+        this.onLoadToast(
+          'warning',
+          'No hay Solicitudes',
+          `Intente con otros filtros`
+        );
         console.log(error);
       },
     });

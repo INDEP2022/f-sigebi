@@ -3,8 +3,8 @@
     <h4 class="modal-title pull-left font-size-16">
       {{
         oldData
-          ? 'EDITANDO LIBRETA DE DIRECCIONES ELECTRÓNICAS'
-          : 'AGREGANDO LIBRETA DE DIRECCIONES ELECTRÓNICAS'
+          ? 'EDITAR LIBRETA DE DIRECCIONES ELECTRÓNICAS'
+          : 'NUEVA LIBRETA DE DIRECCIONES ELECTRÓNICAS'
       }}
     </h4>
   </div>
@@ -18,21 +18,22 @@
         value="delegationNumber"
         class="form-control"
         path="survillance/api/v1/views/v-vig-delegations"
-        paramSearch="filter.description"
-        prefixSearch="$ilike"
+        paramSearch="search"
         formControlName="delegationNumber">
         <ng-template let-item>
-          {{ item.description }}
+          {{ item.delegationNumber }} - {{ item.description }}
         </ng-template>
       </ng-custom-select>
     </form-field>
-    <form-field [control]="form.get('bookName')" label="Nombre">
-      <input
-        required
-        type="text"
-        formControlName="bookName"
-        class="form-control" />
-    </form-field>
+    <div class="mt-4">
+      <form-field [control]="form.get('bookName')" label="Nombre">
+        <input
+          required
+          type="text"
+          formControlName="bookName"
+          class="form-control" />
+      </form-field>
+    </div>
     <!--  <form-field [control]="form.get('id')" label="ID">
       <input type="text" formControlName="id" class="form-control" />
     </form-field>-->

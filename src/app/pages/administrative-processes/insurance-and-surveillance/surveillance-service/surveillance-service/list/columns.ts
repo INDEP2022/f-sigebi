@@ -1,6 +1,6 @@
 export const COLUMNS = {
   recordId: {
-    title: 'ID. Registro',
+    title: 'Consecutivo',
     type: 'string',
     sort: false,
   },
