@@ -27,7 +27,7 @@ export class HttpService {
   protected get<T = any>(route: string, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
-    console.log(url);
+    // console.log(url);
     return this.httpClient.get<T>(`${url}`, { params });
   }
   protected get2<T = any>(route: string, _params?: _Params) {
@@ -39,14 +39,14 @@ export class HttpService {
   protected post<T = any>(route: string, body: {}, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
-    console.log('url', url);
+    // console.log('url', url);
     return this.httpClient.post<T>(`${url}`, body, { params });
   }
 
   protected put<T = any>(route: string, body?: {}, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
-    console.log(url, params);
+    // console.log(url, params);
     return this.httpClient.put<T>(`${url}`, body, { params });
   }
 
@@ -65,7 +65,7 @@ export class HttpService {
   protected delete<T = any>(route: string, body?: {}, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
-    console.log(url);
+    // console.log(url);
     return this.httpClient.delete<T>(`${url}`, { params, body });
   }
 
@@ -75,7 +75,7 @@ export class HttpService {
    * @returns regresa la ruta completa: 'http://sigebimsqa.indep.gob.mx/microservice/api/{route}'
    */
   protected buildRoute(route: string): string {
-    console.log(route);
+    // console.log(route);
     return `${this.url}${this.microservice}/${this.prefix}${route}`;
   }
 
