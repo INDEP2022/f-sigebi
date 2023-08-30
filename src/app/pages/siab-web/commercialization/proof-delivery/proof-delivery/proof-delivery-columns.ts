@@ -1,6 +1,6 @@
 export const PROOF_DELIVERY_COLUMNS = {
   id_invoice: {
-    title: 'ID Factura',
+    title: 'Id. Factura',
     sort: false,
   },
   event: {
@@ -24,7 +24,7 @@ export const PROOF_DELIVERY_COLUMNS = {
     sort: false,
   },
   date: {
-    title: 'Fecha timbrado',
+    title: 'Fecha Timbrado',
     sort: false,
   },
   invoice: {

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ENDPOINT_INVOICE } from 'src/app/common/constants/endpoints/ms-invoice-endpoint';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 
@@ -14,6 +15,14 @@ export class ComerInvoiceService extends HttpService {
 
   getAll(params: _Params | string) {
     return this.get<IListResponse<any>>(ENDPOINT_INVOICE.ComerInovice, params);
+  }
+
+  getInvoiceForniture(year: string, params: ListParams) {
+    return this.get(`${ENDPOINT_INVOICE.GetInvoiceForniture}${year}`, params);
+  }
+
+  getInvoiceByEvent(event: number) {
+    return this.get(`${ENDPOINT_INVOICE.GetInvoiceEvent}${event}`);
   }
 
   create(data: any) {
