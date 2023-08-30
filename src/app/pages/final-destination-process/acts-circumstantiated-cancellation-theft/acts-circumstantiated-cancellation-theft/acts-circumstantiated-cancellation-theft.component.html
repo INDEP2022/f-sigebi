@@ -13,14 +13,14 @@
             tooltip="Nuevo"
             containerClass="tooltip-style"
             class="btn btn-primary btn-sm active ml-2 mr-2"
-            (click)="goBack()">
+            (click)="goBack()"
+            *ngIf="origin != null">
             Regresar <i class="bx bx-arrow-back bx-sm float-icon"></i>
           </button>
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            (click)="searchExpedient()"
-            *ngIf="origin == null">
+            (click)="searchExpedient()">
             <i class="bx bx-list-plus bx-sm float-icon"></i>
           </button>
         </div>
@@ -395,12 +395,13 @@
                   [source]="dataTableGood"
                   (userRowSelect)="selectData($event)">
                 </ng2-smart-table>
+                <app-pagination
+                  [params]="paramsList"
+                  [totalItems]="totalItems"></app-pagination>
               </ng-scrollbar>
               <!-- </div> -->
             </div>
-            <app-pagination
-              [params]="paramsList"
-              [totalItems]="totalItems"></app-pagination>
+
             <form [formGroup]="actaGoodForm" class="form-material">
               <div class="row">
                 <div class="col-6 mt-4">
@@ -526,12 +527,12 @@
                   (userRowSelect)="rowsSelected($event)"
                   [source]="dataRecepcionGood">
                 </ng2-smart-table>
+                <app-pagination
+                  [params]="paramsList2"
+                  [totalItems]="totalItems2"></app-pagination>
               </ng-scrollbar>
               <!-- </div> -->
             </div>
-            <app-pagination
-              [params]="paramsList2"
-              [totalItems]="totalItems2"></app-pagination>
           </div>
         </div>
       </div>
