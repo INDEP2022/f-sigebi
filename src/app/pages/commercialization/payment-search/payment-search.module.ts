@@ -7,10 +7,15 @@ import { CustomSelectComponent } from 'src/app/@standalone/shared-forms/custom-s
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PaymentSearchListComponent } from './payment-search-list/payment-search-list.component';
 import { PaymentSearchModalComponent } from './payment-search-modal/payment-search-modal.component';
+import { PaymentSearchProcessComponent } from './payment-search-process/payment-search-process.component';
 import { PaymentSearchRoutingModule } from './payment-search-routing.module';
 
 @NgModule({
-  declarations: [PaymentSearchListComponent, PaymentSearchModalComponent],
+  declarations: [
+    PaymentSearchListComponent,
+    PaymentSearchModalComponent,
+    PaymentSearchProcessComponent,
+  ],
   imports: [
     CommonModule,
     PaymentSearchRoutingModule,
