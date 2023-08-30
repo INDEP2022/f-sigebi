@@ -468,6 +468,8 @@ export class InventoryDataComponent
       this.goodService.getById(this.goodId).subscribe({
         next: (response: any) => {
           this.classificationOfGoods = Number(response.data[0].goodClassNumber);
+          console.log(this.classificationOfGoods);
+
           this.good = response.data[0];
           if (!this.loadInventary) {
             setTimeout(() => {
