@@ -42,6 +42,7 @@ export class MailBodyListDataComponent extends BasePage implements OnInit {
     this.settings.columns = EMAIL_BODY_COLUMNS;
     this.settings.actions.delete = false;
     this.settings.actions.edit = false;
+    this.settings.actions = false;
     this.dataDocs.count = 0;
   }
 

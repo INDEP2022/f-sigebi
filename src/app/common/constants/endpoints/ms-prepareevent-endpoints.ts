@@ -15,4 +15,5 @@ export enum PrepareEventEndpoints {
   getFindAllComerGoodXlotTotal = 'comer-good-xlot/findAllComerGoodXlotTotal',
   FindAllComerGoodXlotTotal = 'comer-good-xlot/findAllComerGoodXlotTotal',
   ResumenEvento = 'application/eventResume',
+  ShowNotification = 'application/pup-show-notification',
 }
