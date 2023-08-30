@@ -112,7 +112,7 @@ export class EventPermissionControlComponent
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               user: () => (searchFilter = SearchFilter.ILIKE),
-              eventId: () => (searchFilter = SearchFilter.EQ),
+              name: () => (searchFilter = SearchFilter.ILIKE),
               date: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
@@ -167,7 +167,7 @@ export class EventPermissionControlComponent
           this.getUserEvent(response.id);
         } else {
           //TODO: CHECK MESSAGE
-          this.alert('info', 'No se Encontraron Registros', '');
+          this.alert('info', 'No se encontraron registros', '');
         }
 
         this.loading = false;
@@ -196,7 +196,7 @@ export class EventPermissionControlComponent
 
   openForm(comerUser?: IComerUsuaTxEvent) {
     if (!this.event_) {
-      this.alert('warning', 'Debe Seleccionar un Evento', '');
+      this.alert('warning', 'Debe seleccionar un evento', '');
       return;
     }
     const modalConfig = MODAL_CONFIG;
@@ -244,7 +244,7 @@ export class EventPermissionControlComponent
           if (filter != 'x') {
             this.alertInfo(
               'warning',
-              'No se Encontraron Eventos Asociados',
+              'No se encontraron eventos asociados',
               ''
             ).then(question => {
               if (question.isConfirmed) {
@@ -255,7 +255,7 @@ export class EventPermissionControlComponent
             });
             this.comerEventSelect = new DefaultSelect();
           } else {
-            this.alert('warning', 'No se Encontraron Eventos', '');
+            this.alert('warning', 'No se encontraron eventos', '');
             this.comerEventSelect = new DefaultSelect();
             this.getComerEvents(new ListParams(), 'o');
           }
@@ -278,6 +278,9 @@ export class EventPermissionControlComponent
 
   getcomerUsersAutxEvent(): void {
     this.loading = true;
+    this.comerUsuaTxEvent.load([]);
+    this.comerUsuaTxEvent.refresh();
+    this.totalItems = 0;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -286,7 +289,6 @@ export class EventPermissionControlComponent
       this.loading = false;
       return;
     }
-    this.totalItems = 0;
     if (params['filter.date']) {
       var fecha = new Date(params['filter.date']);
 
@@ -300,18 +302,29 @@ export class EventPermissionControlComponent
       params['filter.date'] = `$eq:${fechaFormateada}`;
       // delete params['filter.date'];
     }
+
+    if (params['filter.name']) {
+      params['filter.userInfo.name'] = params['filter.name'];
+      delete params['filter.name'];
+    }
     console.log(this.event_);
     params['filter.eventId'] = `$eq:${this.event_.id_evento}`;
     this.usersService.getComerUsersAutXEvent(params).subscribe({
       next: response => {
-        console.log(response.data);
-        this.totalItems = response.count;
-        this.comerUsuaTxEvent.load(response.data);
-        this.comerUsuaTxEvent.refresh();
-        this.loading = false;
+        console.log('users,', response.data);
+        let result = response.data.map(async (item: any) => {
+          item['name'] = item.userInfo.name;
+        });
+
+        Promise.all(result).then(async (resp: any) => {
+          this.comerUsuaTxEvent.load(response.data);
+          this.comerUsuaTxEvent.refresh();
+          this.totalItems = response.count;
+          this.loading = false;
+        });
       },
       error: err => {
-        this.alert('warning', 'No se Encontraron Usuarios Por Eventos', '');
+        this.alert('warning', 'No se encontraron usuarios por eventos', '');
         this.comerUsuaTxEvent.load([]);
         this.comerUsuaTxEvent.refresh();
         this.totalItems = 0;
@@ -322,7 +335,7 @@ export class EventPermissionControlComponent
 
   questionDelete($event: any) {
     console.log($event);
-    this.alertQuestion('question', '¿Desea Eliminar el Registro?', '').then(
+    this.alertQuestion('question', '¿Desea eliminar el registro?', '').then(
       question => {
         if (question.isConfirmed) {
           let obj = {
@@ -332,14 +345,14 @@ export class EventPermissionControlComponent
           };
           this.usersService.deleteComerUsersAutXEvent(obj).subscribe({
             next: response => {
-              this.alert('success', 'El Registro se Eliminó Correctamente', '');
+              this.alert('success', 'El registro se eliminó correctamente', '');
 
               this.getcomerUsersAutxEvent();
             },
             error: error => {
               this.alert(
                 'error',
-                'Ocurrió un Error al Eliminar el Registro',
+                'Ocurrió un error al eliminar el registro',
                 ''
               );
             },
