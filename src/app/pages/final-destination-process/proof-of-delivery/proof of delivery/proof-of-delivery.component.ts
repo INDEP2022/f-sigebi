@@ -778,6 +778,7 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
                     this.folioScanbool = true;
                     this.folioScan = resp.data[0].folio_universal;
                     console.log(this.folioScan);
+                    this.PupLanzaReporte();
                   },
                 });
 
@@ -857,8 +858,8 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
             queryParams: {
               origin: 'FACTCONST_0001',
               folio: this.folioScan,
-              expediente: this.expedient,
-              proceeding: this.idProceeding,
+              expedient: this.expedient,
+              acta: this.idProceeding,
             },
           });
         }

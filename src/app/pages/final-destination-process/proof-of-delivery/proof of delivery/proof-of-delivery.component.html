@@ -538,7 +538,8 @@
                 class="col-12 col-md-2 mt-3 mt-md-0 text-center text-md-right">
                 <button
                   class="btn btn-sm btn-secondary active"
-                  [disabled]="!boton || !folioScanbool">
+                  [disabled]="!boton || !folioScanbool"
+                  (click)="replicate()">
                   Replicar Folio
                 </button>
               </div>

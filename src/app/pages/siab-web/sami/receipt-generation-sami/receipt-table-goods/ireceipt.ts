@@ -154,10 +154,10 @@ export interface IprogrammingDelivery {
   typeEventInfo?: string;
   transferName?: any;
   storeName?: any;
-  startDate?: string;
-  startDateInfo?: string;
+  startDate?: any;
+  startDateInfo?: Date;
   endDateInfo?: string;
-  endDate?: string;
+  endDate?: any;
   client?: string;
   store?: number;
   officeDestructionNumber?: any;
