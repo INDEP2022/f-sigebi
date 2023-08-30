@@ -892,6 +892,8 @@ export class ExecuteSchedulingDeliveriesComponent
 
   finalizeVerify() {}
 
+  sendApprove() {}
+
   photos() {
     let typeDoc = null;
     let nomProcess = null;

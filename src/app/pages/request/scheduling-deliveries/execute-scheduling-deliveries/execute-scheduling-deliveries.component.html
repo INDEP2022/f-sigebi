@@ -39,7 +39,10 @@
       </div>
       <div
         class="p-2"
-        *ngIf="statusProgramming == 'APROBAR_NO_ENT_ESP' || statusProgramming == 'APROBAR_NO_ENT_NUM">
+        *ngIf="
+          statusProgramming == 'APROBAR_NO_ENT_ESP' ||
+          statusProgramming == 'APROBAR_NO_ENT_NUM'
+        ">
         <button
           (click)="sendApprove()"
           type="button"
