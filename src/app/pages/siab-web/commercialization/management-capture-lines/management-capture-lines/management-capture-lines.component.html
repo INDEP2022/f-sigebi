@@ -80,13 +80,13 @@
               [searchable]="false"
               class="form-control"
               [clearable]="false">
-              <ng-option value="1">Garant&iacute;a de seriedad</ng-option>
-              <ng-option value="2">Garant&iacute;a de cumplimiento</ng-option>
-              <ng-option value="1"
+              <ng-option value="GSE">Garant&iacute;a de seriedad</ng-option>
+              <ng-option value="GCN">Garant&iacute;a de cumplimiento</ng-option>
+              <ng-option value="GCE"
                 >Garant&iacute;a de cumplimiento Extempor&aacute;nea</ng-option
               >
-              <ng-option value="2">Liquidaci&oacute;n</ng-option>
-              <ng-option value="2"
+              <ng-option value="LIQN">Liquidaci&oacute;n</ng-option>
+              <ng-option value="LIQE"
                 >Liquidaci&oacute;n Extempor&aacute;nea</ng-option
               >
             </ng-select>
@@ -99,6 +99,7 @@
             <input
               type="text"
               placeholder=""
+              [minDate]="maxDate"
               class="form-control"
               bsDatepicker
               formControlName="dateValidity"
@@ -147,7 +148,8 @@
             <button
               type="button"
               class="btn btn-primary btn-sm active"
-              [disabled]="!formAdm.valid">
+              [disabled]="!formAdm.valid"
+              (click)="accept()">
               Aceptar
             </button>
           </div>
