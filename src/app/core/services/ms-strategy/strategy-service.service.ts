@@ -7,7 +7,10 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IMeasurementUnits } from '../../models/catalogs/measurement-units.model';
-import { IStrategyService } from '../../models/ms-strategy-service/strategy-service.model';
+import {
+  IStrategyService,
+  IStrategyTypeService,
+} from '../../models/ms-strategy-service/strategy-service.model';
 
 @Injectable({
   providedIn: 'root',
@@ -102,5 +105,28 @@ export class StrategyServiceService extends HttpService {
   //T_REP_ENT
   pupValidaIndicaVal(model: any) {
     return this.post(`folio-delivered-weather/validIndicationVal`, model);
+  }
+
+  getAllType(
+    params?: ListParams | string
+  ): Observable<IListResponse<IStrategyTypeService>> {
+    return this.get<IListResponse<IStrategyTypeService>>(
+      StrategyEndpoints.StrategyServiceType,
+      params
+    );
+  }
+
+  updateType(model: IStrategyTypeService, id: number | string) {
+    const route = `${StrategyEndpoints.StrategyServiceType}/${id}`;
+    return this.put(route, model);
+  }
+
+  createType(model: IStrategyTypeService) {
+    return this.post(StrategyEndpoints.StrategyServiceType, model);
+  }
+
+  removeType(id: string | number): Observable<Object> {
+    const route = `${StrategyEndpoints.StrategyServiceType}/${id}`;
+    return this.delete(route);
   }
 }

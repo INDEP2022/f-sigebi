@@ -1659,6 +1659,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       }
       //Se limpia el campo de folio de escaneo cuando se genera nueva acta
       this.formScan.reset();
+
       // Const formato de fecha
       const dateElabora =
         next.elaborationDate != null ? new Date(next.elaborationDate) : null;

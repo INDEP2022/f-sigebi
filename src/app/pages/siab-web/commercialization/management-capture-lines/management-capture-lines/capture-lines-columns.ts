@@ -1,29 +1,29 @@
 export const CAPTURA_LINES_COLUMNS = {
-  id: {
+  lc: {
     title: 'ID',
     sort: false,
   },
-  allotment: {
+  lote_publico: {
     title: 'LP',
     sort: false,
   },
-  amount: {
+  importe: {
     title: 'Importe',
     sort: false,
   },
-  status: {
+  estatus: {
     title: 'Estado',
     sort: false,
   },
-  type: {
+  tipo: {
     title: 'Tipo',
     sort: false,
   },
-  reference: {
+  referencia: {
     title: 'Referencia',
     sort: false,
   },
-  dateValidity: {
+  fec_vigencia: {
     title: 'Fecha Vigencia',
     sort: false,
   },
@@ -35,11 +35,11 @@ export const CAPTURA_LINES_COLUMNS = {
     title: 'ID Cliente',
     sort: false,
   },
-  client: {
+  clientcliente: {
     title: 'Cliente',
     sort: false,
   },
-  penalty: {
+  monto_pena: {
     title: 'Pena',
     sort: false,
   },

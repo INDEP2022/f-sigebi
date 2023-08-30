@@ -34,7 +34,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
   @Input() override settings: any;
   @Input() service: ICharacteristicsWidthData;
   @Input() initValue = true;
-  @Input() inventary: any;
+  @Input() inventary: any[];
   @Input() loadInventary: boolean = false;
   @Input() set goodChange(value: number) {
     this._goodChange = value;
@@ -111,15 +111,18 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
                 }
 
                 if (this.inventary) {
+                  const inventaryRow = this.inventary.find(
+                    row => row.typeInventoryNumber === item.columnNumber
+                  );
                   return {
                     column,
                     attribute: item.attribute,
                     value:
                       this.initValue === true
-                        ? this.inventary[index]
+                        ? inventaryRow
                           ? this.getValueInventary(
                               fecha,
-                              this.inventary[index].valueAttributeInventory
+                              inventaryRow.valueAttributeInventory
                             )
                           : null
                         : null,
