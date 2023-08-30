@@ -124,8 +124,7 @@ export type IGoodAndAvailable = IGood & {
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   response: boolean = false;
   form: FormGroup;
   selectedRow: IGood;
@@ -676,7 +675,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       statusGood: [null],
     });
   }
-  onSubmit() {}
+  onSubmit() { }
 
   search(event: any) {
     this.getExpedient(event);
@@ -931,6 +930,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       }
       // Limpiar formulario una vez consulte
       this.actaRecepttionForm.reset();
+      this.formScan.reset();
 
       const dateElabora =
         next.elaborationDate != null ? new Date(next.elaborationDate) : null;
@@ -1679,8 +1679,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     nameFile.placeholder = `${newMsg}`;
   }
 
-  btnDetail() {}
-  sendOffice() {}
+  btnDetail() { }
+  sendOffice() { }
 
   Scanner() {
     /*if (this.formScan.get('scanningFoli').value) {
@@ -1750,10 +1750,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.disabledBtnActas = true;
         //this.disabledBtnCerrar = true;
       }
-      // console.log('NEXT', next);
+      //Se limpia el campo de folio de escaneo cuando se genera nueva acta
+      this.formScan.reset();
 
       // Const formato de fecha
-
       const dateElabora =
         next.elaborationDate != null ? new Date(next.elaborationDate) : null;
       const formattedfecElaborate =
@@ -1807,6 +1807,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
 
       await this.getDetailProceedingsDevollution(this.actasDefault.id);
+
+
     });
     // console.log(this.authService.decodeToken());
   }
@@ -1840,7 +1842,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   async cerrarActa() {
-    if (this.consec == null) {
+    let folio = this.formScan.get('scanningFoli').value
+    if (folio == null) {
       this.alert(
         'warning',
         'No se puede Cerrar el Acta sin Folio de Escaneo',
@@ -2144,9 +2147,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         'error',
         'Error',
         'Al localizar la información de Volante: ' +
-          flyerNumber +
-          ' y Expediente: ' +
-          this.fileNumber
+        flyerNumber +
+        ' y Expediente: ' +
+        this.fileNumber
       );
       return;
     }
@@ -2241,7 +2244,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => {},
+              callback: (data: any) => { },
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
@@ -2331,7 +2334,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                     urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                     type: 'pdf',
                   },
-                  callback: (data: any) => {},
+                  callback: (data: any) => { },
                 },
                 class: 'modal-lg modal-dialog-centered',
                 ignoreBackdropClick: true,
