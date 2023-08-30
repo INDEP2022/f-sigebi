@@ -39,7 +39,7 @@ export const BOOK_EMAIL_COLUMNS = {
     type: 'text',
     sort: false,
     valuePrepareFunction: (_cell: any, row: any) => {
-      return row.bookStatus == '1' ? 'SI' : 'NO';
+      return row.bookStatus == '1' ? 'Activo' : 'Inactivo';
     },
   },
 };

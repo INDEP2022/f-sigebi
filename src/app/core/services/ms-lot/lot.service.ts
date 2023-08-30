@@ -360,4 +360,10 @@ export class LotService extends HttpService {
   pupValidaMandatoNfac(body: IPupValidateMandatoNfac) {
     return this.post('apps/pup-valida-mandato-to-nfac', body);
   }
+
+  postCambioMasivo(file: File) {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.post(LotEndpoints.PupCambioMasv, formData);
+  }
 }

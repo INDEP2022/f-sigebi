@@ -1,0 +1,58 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Notificación de destrucción para autoridad</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="pt-3">
+            <form-field
+              [control]="form.get('nameAddressee')"
+              label="Nombre Destinatario">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="nameAddressee" />
+            </form-field>
+          </div>
+          <div class="pt-3">
+            <form-field
+              [control]="form.get('postAddressee')"
+              label="Cargo Destinantario">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="postAddressee" />
+            </form-field>
+          </div>
+          <div class="pt-3">
+            <form-field
+              [control]="form.get('addressAddressee')"
+              label="Dirección Destinatario">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="addressAddressee" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          [text]="'Aceptar'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
