@@ -1,9 +1,9 @@
 export const REGULAR_BILLING_UNSETTLED_COLUMNS = {
-  allotment: {
+  lote_publico: {
     title: 'Lote',
     sort: false,
   },
-  situation: {
+  leyenda: {
     title: 'Situación',
     sort: false,
   },

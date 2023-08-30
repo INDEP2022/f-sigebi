@@ -1,0 +1,48 @@
+<app-modal>
+  <div header class="d-flex justify-content-between">
+    <h5 class="modal-title">Actas</h5>
+  </div>
+  <div body>
+    <div class="row pt-2 body">
+      <div class="col-md-12">
+        <ng2-smart-table
+          class="col-md-12"
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="data1"
+          (userRowSelect)="onRowSelect($event)">
+        </ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+  </div>
+
+  <div footer>
+    <div class="row">
+      <div class="col-md-3"></div>
+      <div class="col-md-3">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="cveActaSend()">
+          Seleccionar
+          <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="col-md-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active mr-2"
+          style="width: 100px"
+          (click)="close()">
+          Cerrar
+        </button>
+      </div>
+      <div class="col-md-3"></div>
+    </div>
+    <div
+      class="m-3 d-flex justify-content-end"
+      style="padding-right: 40px"></div>
+  </div>
+</app-modal>
