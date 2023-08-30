@@ -25,3 +25,18 @@ export const COLUMNS2 = {
     sort: false,
   },
 };
+
+export const RELATED_FOLIO_COLUMNS = {
+  id: {
+    title: 'Folio',
+    sort: false,
+  },
+  sheets: {
+    title: 'Documentos',
+    sort: false,
+  },
+  descriptionDocument: {
+    title: 'Descripción del Documento',
+    sort: false,
+  },
+};

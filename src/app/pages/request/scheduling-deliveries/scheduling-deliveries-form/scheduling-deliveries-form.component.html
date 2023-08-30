@@ -60,7 +60,7 @@
               bindLabel="nameEvent"
               label="Tipo de Evento"></ngx-select>
           </div>
-          <div class="pt-3" *ngIf="disabledTypeEvent == true">
+          <!--<div class="pt-3" *ngIf="disabledTypeEvent == true">
             <ngx-select
               [form]="schedulingDeliverieForm"
               control="typeEventInfo"
@@ -70,7 +70,7 @@
               (change)="typeEventSelect($event, 'typeEvent')"
               bindLabel="nameEvent"
               label="Tipo de Evento"></ngx-select>
-          </div>
+          </div> -->
 
           <div class="pt-3">
             <form-field
@@ -107,7 +107,7 @@
             </form-field>
           </div>
 
-          <div class="pt-3" *ngIf="disableTransfer == true">
+          <!--<div class="pt-3" *ngIf="disableTransfer == true">
             <form-field [control]="schedulingDeliverieForm.get('transferName')">
               <ngx-select
                 [form]="schedulingDeliverieForm"
@@ -121,7 +121,7 @@
                 (change)="typeEventSelect($event, 'transferent')"
                 (fetchItems)="getTransferentSelect($event)"></ngx-select>
             </form-field>
-          </div>
+          </div> -->
         </div>
 
         <div class="col-md-6">
@@ -137,7 +137,7 @@
               (fetchItems)="getWarehouseSelect($event)"></ngx-select>
           </div>
 
-          <div class="pt-3" *ngIf="disableStore == true">
+          <!--<div class="pt-3" *ngIf="disableStore == true">
             <ngx-select
               [form]="schedulingDeliverieForm"
               control="storeName"
@@ -147,7 +147,7 @@
               [readonly]="true"
               label="Almac&eacute;n"
               (fetchItems)="getWarehouseSelect($event)"></ngx-select>
-          </div>
+          </div> -->
 
           <div class="pt-3">
             <form-field

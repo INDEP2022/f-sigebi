@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -13,6 +13,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { ComerDetailInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-dinvocie.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { ParameterInvoiceService } from 'src/app/core/services/ms-parameterinvoice/parameterinvoice.service';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
@@ -34,16 +35,24 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   formDetalle: FormGroup = new FormGroup({});
   formFactura: FormGroup = new FormGroup({});
   dataFilter: LocalDataSource = new LocalDataSource();
+  dataFilter2: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
+  columnFilters2: any = [];
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
+  paramsList2 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  totalItems2: number = 0;
   isSelect: any[] = [];
   dataRebill: DefaultSelect = new DefaultSelect();
-
+  loading2: boolean = false;
+  buttons: boolean = false;
   settings2 = {
     ...this.settings,
     actions: false,
   };
+
+  @Output() comer: EventEmitter<any> = new EventEmitter(null);
+  @Output() formG: EventEmitter<FormGroup> = new EventEmitter();
 
   get idAllotment() {
     return this.form.get('idAllotment');
@@ -55,11 +64,13 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private excelService: ExcelService,
     private comerInvoice: ComerInvoiceService,
-    private comerRebilService: ParameterInvoiceService
+    private comerRebilService: ParameterInvoiceService,
+    private comerDetInvoice: ComerDetailInvoiceService
   ) {
     super();
 
     this.settings2.columns = { ...REGULAR_GOODS_COLUMN };
+    this.settings2.hideSubHeader = false;
 
     this.settings = {
       ...this.settings,
@@ -171,30 +182,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             return val ? val.split('-').reverse().join('/') : '';
           },
         },
-        // price: {
-        //   title: 'Precio',
-        //   sort: false,
-        //   filter: {
-        //     type: 'custom',
-        //     component: CustomFilterComponent,
-        //   },
-        // },
-        // vat: {
-        //   title: 'IVA',
-        //   sort: false,
-        //   filter: {
-        //     type: 'custom',
-        //     component: CustomFilterComponent,
-        //   },
-        // },
-        // total: {
-        //   title: 'Total',
-        //   sort: false,
-        //   filter: {
-        //     type: 'custom',
-        //     component: CustomFilterComponent,
-        //   },
-        // },
       },
     };
   }
@@ -246,6 +233,85 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (this.totalItems > 0) this.getAllComer();
     });
+
+    this.dataFilter2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            const search: any = {
+              goodNot: () => (searchFilter = SearchFilter.EQ),
+              amount: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.ILIKE),
+              price: () => (searchFilter = SearchFilter.EQ),
+              vat: () => (searchFilter = SearchFilter.EQ),
+              total: () => (searchFilter = SearchFilter.EQ),
+              brand: () => (searchFilter = SearchFilter.ILIKE),
+              subBrand: () => (searchFilter = SearchFilter.ILIKE),
+              model: () => (searchFilter = SearchFilter.ILIKE),
+              series: () => (searchFilter = SearchFilter.ILIKE),
+              downloadcvman: () => (searchFilter = SearchFilter.ILIKE),
+              tuition: () => (searchFilter = SearchFilter.ILIKE),
+              unit: () => (searchFilter = SearchFilter.ILIKE),
+              prod: () => (searchFilter = SearchFilter.ILIKE),
+            };
+
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters2[field];
+            }
+          });
+          this.paramsList2 = this.pageFilter(this.paramsList2);
+          this.getComerDetInovice();
+        }
+      });
+
+    this.paramsList2.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (this.totalItems2 > 0) this.getComerDetInovice();
+    });
+  }
+
+  getComerDetInvocie(data: any) {
+    this.paramsList2.getValue()[
+      'filter.eventId'
+    ] = `${SearchFilter.EQ}:${data.eventId}`;
+    this.paramsList2.getValue()[
+      'filter.billId'
+    ] = `${SearchFilter.EQ}:${data.billId}`;
+    this.getComerDetInovice();
+  }
+
+  getComerDetInovice() {
+    const params = {
+      ...this.paramsList2.getValue(),
+      ...this.columnFilters2,
+      ...{ sortBy: 'batchId:ASC' },
+    };
+
+    this.loading2 = true;
+    this.comerDetInvoice.getAll(params).subscribe({
+      next: resp => {
+        this.loading2 = false;
+        this.totalItems2 = resp.count;
+        this.dataFilter2.load(resp.data);
+        this.dataFilter2.refresh();
+      },
+      error: () => {
+        this.loading2 = false;
+        this.totalItems2 = 0;
+        this.dataFilter2.load([]);
+        this.dataFilter2.refresh();
+      },
+    });
   }
 
   getAllComer() {
@@ -259,15 +325,32 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     this.comerInvoice.getAll(params).subscribe({
       next: resp => {
         this.loading = false;
+        this.comer.emit({
+          val: resp.data[0].eventId,
+          count: resp.count,
+          data: resp.data,
+          filter: params,
+        });
         this.totalItems = resp.count;
         this.dataFilter.load(resp.data);
         this.dataFilter.refresh();
+        this.paramsList2.getValue()[
+          'filter.eventId'
+        ] = `${SearchFilter.EQ}:${resp.data[0].eventId}`;
+        this.paramsList2.getValue()[
+          'filter.billId'
+        ] = `${SearchFilter.EQ}:${resp.data[0].billId}`;
+        this.getComerDetInovice();
       },
       error: () => {
         this.loading = false;
         this.totalItems = 0;
         this.dataFilter.load([]);
         this.dataFilter.refresh();
+
+        this.totalItems2 = 0;
+        this.dataFilter2.load([]);
+        this.dataFilter2.refresh();
       },
     });
   }
@@ -314,6 +397,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       iva: [null],
       date: [null],
       causerebillId: [null],
+      check: [null],
     });
 
     this.formFactura = this.fb.group({
@@ -340,6 +424,11 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.form.reset();
     }
     console.warn('Your order has been submitted');
+  }
+
+  disabledButtons() {
+    const { check } = this.form.value;
+    this.buttons = check;
   }
 
   openPrevPdf() {

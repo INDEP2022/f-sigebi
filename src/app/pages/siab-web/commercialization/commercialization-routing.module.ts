@@ -132,6 +132,13 @@ const routes: Routes = [
     data: { title: 'Carga de pagos', scree: 'CargaPagos' },
   },
   {
+    path: 'form-load-appraisals',
+    loadChildren: async () =>
+      (await import('./form-load-appraisals/form-load-appraisals.module'))
+        .FormLoadAppraisalsModule,
+    data: { title: 'Caraga Avaluos', scree: 'CargaAvaluos' },
+  },
+  {
     path: 'automobiles',
     loadChildren: async () =>
       (await import('./automobiles/automobiles.module')).AutomobilesgModule,

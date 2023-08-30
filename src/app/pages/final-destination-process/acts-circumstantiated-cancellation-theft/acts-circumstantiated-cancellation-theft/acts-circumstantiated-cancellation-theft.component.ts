@@ -343,95 +343,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
         // }
       },
     };
-    // this.settings = { ...this.settings, actions: false };
-    // this.settings.columns = COLUMNS1;
-    // this.settings2 = { ...this.settings, actions: false };
-    // this.settings2.columns = COLUMNS2;
-    this.validPermisos = !this.validPermisos;
-    this.settings = {
-      ...this.settings,
-      hideSubHeader: false,
-      actions: false,
-      // selectMode: 'multi',
-      selectedRowIndex: -1,
-      mode: 'external',
-      // columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
-      columns: {
-        name: {
-          filter: false,
-          sort: false,
-          title: 'Selección',
-          type: 'custom',
-          showAlways: true,
-          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
-            this.isGoodSelectedValid(row),
-          renderComponent: CheckboxElementComponent,
-          onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.onGoodSelectValid(instance),
-        },
-        goodId: {
-          title: 'No. Bien',
-          type: 'number',
-          sort: false,
-        },
-        description: {
-          title: 'Descripción',
-          type: 'string',
-          sort: false,
-        },
-        quantity: {
-          title: 'Cantidad',
-          type: 'string',
-          sort: false,
-        },
-        acta_: {
-          title: 'Acta',
-          type: 'string',
-          sort: false,
-          // valuePrepareFunction: (cell: any, row: any) => {
-          //   return row.acta_;
-          // },
-        },
-        status: {
-          title: 'Estatus',
-          type: 'string',
-          sort: false,
-        },
-      },
-      rowClassFunction: (row: any) => {
-        if (row.data.di_disponible == 'S') {
-          return 'bg-success text-white';
-        } else {
-          return 'bg-dark text-white';
-        }
-
-        // if (row.data.status === 'CNE') {
-        //   return 'bg-success text-white';
-        // } else if (
-        //   row.data.status === 'RRE' ||
-        //   row.data.status === 'VXR' ||
-        //   row.data.status === 'DON'
-        // ) {
-        //   return 'bg-dark text-white';
-        // } else {
-        //   return 'bg-success text-white';
-        // }
-      },
-    };
-    this.settings2 = {
-      ...this.settings,
-      hideSubHeader: false,
-      actions: false,
-      selectMode: 'multi',
-      columns: { ...COPY },
-      rowClassFunction: (row: any) => {
-        // if (row.data.di_disponible == 'S') {
-        //   return 'text-white';
-        // } else {
-        return 'bg-light text-black';
-        // }
-      },
-    };
   }
 
   ngOnInit(): void {
@@ -441,7 +352,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     console.log(token);
     this.dataUserLogged = token;
     this.initFormPostGetUserData();
-    this.actaReception = this.actasDefault;
+    // this.actaReception = this.actasDefault;
     this.goodForm();
     this.actaForm();
     this.formFolio();
@@ -730,25 +641,26 @@ export class ActsCircumstantiatedCancellationTheftComponent
           this.wheelNumber = item.flyerNumber;
           let obj = {
             vcScreen: 'FACTCIRCUNR_0001',
-            pNumberGood: item.id,
+            pNumberGood: item.goodId,
           };
           const di_dispo = await this.getStatusScreen(obj);
           item['di_disponible'] = di_dispo;
-          const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
-          //console.log('acta', acta);
-          item['acta_'] = acta;
-          item.di_disponible = acta != null ? 'N' : di_dispo;
+          if (item.minutesKey) {
+            item['di_disponible'] = 'N';
+          }
+          item['quantity'] = item.amount;
+          item['di_acta'] = item.minutesKey;
+          item['id'] = item.goodId;
         });
 
         Promise.all(result).then(item => {
           this.dataTableGood_ = this.bienes;
           this.dataTableGood.load(this.bienes);
           this.dataTableGood.refresh();
-          // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
+
           this.totalItems = data.count;
           this.loadingBienes = false;
           this.loadingBienes = false;
-          // console.log(this.bienes);
         });
       },
       error: error => {
@@ -761,10 +673,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.GoodprocessService_.getScreenGood(body).subscribe({
         next: async (state: any) => {
           if (state.data) {
-            console.log('di_dispo', state);
+            // console.log('di_disponible', state);
             resolve('S');
           } else {
-            console.log('di_dispo', state);
+            // console.log('di_disponible', state);
             resolve('N');
           }
         },
@@ -776,13 +688,30 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
   async getActaGoodExp(good: any, exp: any) {
     return new Promise((resolve, reject) => {
-      this.proceedingsService.getGetFactDbConvBien(good, exp).subscribe({
+      this.proceedingsService.getGetFactCir(good, exp).subscribe({
         next: async (state: any) => {
           //console.log('acta', state);
           resolve(state.data[0].cve_acta);
         },
         error: () => {
           resolve(null);
+        },
+      });
+    });
+  }
+  async getActaGood(good: any) {
+    const params = new ListParams();
+    params['filter.numberGood'] = `$eq:${good.id}`;
+    return new Promise((resolve, reject) => {
+      this.detailProceeDelRecService.getAllFiltered(params).subscribe({
+        next: data => {
+          // // console.log('data', data);
+          this.loading2 = false;
+          resolve(true);
+        },
+        error: error => {
+          this.loading2 = false;
+          resolve(false);
         },
       });
     });
@@ -795,6 +724,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
   searchExpedient(provider?: IExpedient) {
     this.loadingExpedient = true;
+    this.dataRecepcionGood.load([]);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       provider,
@@ -991,42 +921,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         },
       });
   }
-  onGoodSelect(instance: CheckboxElementComponent) {
-    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: data => this.goodSelectedChange(data.row, data.toggle),
-    });
-  }
-  isGoodSelected(_good: IGood) {
-    const exists = this.selectedGooods.find(good => good.id == _good.id);
-    return !exists ? false : true;
-  }
-  goodSelectedChange(good: IGood, selected: boolean) {
-    if (selected) {
-      this.selectedGooods.push(good);
-    } else {
-      this.selectedGooods = this.selectedGooods.filter(
-        _good => _good.id != good.id
-      );
-    }
-  }
-  onGoodSelectValid(instance: CheckboxElementComponent) {
-    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: data => this.goodSelectedChangeValid(data.row, data.toggle),
-    });
-  }
-  isGoodSelectedValid(_good: IGood) {
-    const exists = this.selectedGooodsValid.find(good => good.id == _good.id);
-    return !exists ? false : true;
-  }
-  goodSelectedChangeValid(good: IGood, selected?: boolean) {
-    if (selected) {
-      this.selectedGooodsValid.push(good);
-    } else {
-      this.selectedGooodsValid = this.selectedGooodsValid.filter(
-        _good => _good.id != good.id
-      );
-    }
-  }
+
   selectedGooodsValid: any[] = [];
   selectedGooods: any[] = [];
   goodsValid: any;
@@ -1049,7 +944,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
           return;
         } else {
           console.log('aaa', this.goods);
-
           let result = this.selectedGooods.map(async (good: any) => {
             if (good.di_acta != null) {
               this.alert(
@@ -1097,6 +991,42 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.alert('warning', 'Seleccione Primero el Bien a Asignar.', '');
     }
   }
+  onGoodSelect(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChange(data.row, data.toggle),
+    });
+  }
+  isGoodSelected(_good: IGood) {
+    const exists = this.selectedGooods.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+  goodSelectedChange(good: IGood, selected: boolean) {
+    if (selected) {
+      this.selectedGooods.push(good);
+    } else {
+      this.selectedGooods = this.selectedGooods.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
+  onGoodSelectValid(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChangeValid(data.row, data.toggle),
+    });
+  }
+  isGoodSelectedValid(_good: IGood) {
+    const exists = this.selectedGooodsValid.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+  goodSelectedChangeValid(good: IGood, selected?: boolean) {
+    if (selected) {
+      this.selectedGooodsValid.push(good);
+    } else {
+      this.selectedGooodsValid = this.selectedGooodsValid.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
   async createDET(good: any) {
     // if (this.dataRecepcion.length > 0) {
     // let result = this.dataRecepcion.map(async good => {
@@ -1123,6 +1053,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
     };
 
     await this.saveGoodActas(obj);
+
+    // let obj_: any = {
+    //   id: good.id,
+    //   goodId: good.id,
+    //   status: await this.getScreenStatus(good),
+    // };
+    // // UPDATE BIENES
   }
   async saveGoodActas(body: any) {
     return new Promise((resolve, reject) => {
@@ -1177,7 +1114,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     //   status: await this.getScreenStatus(good),
     // };
     // // UPDATE BIENES
-    // await this.updateGood(obj_);
+    // await this.goodService.updateStatus(obj_.goodId, 'ADM');
 
     // // INSERT HISTORIC
     // await this.saveHistoric(obj_);
@@ -1382,7 +1319,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
             );
             let index = this.dataTableGood_.findIndex(g => g.id === good.id);
             this.dataRecepcion = [];
-            this.dataRecepcionGood.load(this.dataRecepcion);
+            this.dataRecepcionGood.load([]);
             this.Exportdate = false;
             // if (index != -1) {
             //   if (this.dataTableGood_[index].est_disponible) {
@@ -1404,7 +1341,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.selectedGooodsValid = event.selected;
   }
 
-  /*actualizarActa() {
+  actualizarActa() {
     if (!this.actasDefault) {
       this.alertInfo('warning', 'Debe Seleccionar un Acta', '');
       return;
@@ -1429,7 +1366,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           // this.loading = false
         },
       });
-  }*/
+  }
 
   // LIMPIAR CAMPOS
   cleanActa() {
@@ -1450,6 +1387,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.disabledBtnReplicar = false;
     this.data1 = null;
     this.consec = null;
+    this.actaGoodForm.reset();
   }
   cargueMasive() {
     const workSheet = XLSX.utils.json_to_sheet(this.dataDelivery, {
@@ -1783,7 +1721,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   getDocumentsByFlyer(flyerNum: string | number) {
-    const title = 'Folios relacionados con el volonte';
+    const title = 'Folios relacionados con el volante';
     const modalRef = this.openDocumentsModal(flyerNum, title);
     modalRef.content.selected
       .pipe(takeUntil(this.$unSubscribe))
