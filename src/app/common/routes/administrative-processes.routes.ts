@@ -295,6 +295,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             link: '/pages/administrative-processes/services-unit-prices',
           },
           {
+            label: 'Servicios de tipo para precios unitarios',
+            link: '/pages/administrative-processes/services-type-unit-prices',
+          },
+          {
             label: 'Especificaciones para precios unitarios',
             link: '/pages/administrative-processes/specs',
           },
