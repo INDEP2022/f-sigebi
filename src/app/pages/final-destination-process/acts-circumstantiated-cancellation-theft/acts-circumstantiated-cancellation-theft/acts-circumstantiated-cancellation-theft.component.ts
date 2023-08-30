@@ -141,7 +141,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
   totalItems2: number = 0;
   loadDetail: number = 0;
   updateReg: IUpdateManagement;
-  updateReg: IUpdateManagement;
   dictationData: IDictation;
   loading2: boolean = false;
   goods: string;
@@ -204,7 +203,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
   causa: string = '';
   annio: string = '';
   dateToday = new Date();
-  dateToday = new Date();
   noExpediente: number = 0;
   fileNumber: number;
   columnFilters: any = [];
@@ -240,12 +238,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
   @Output() onConfirm = new EventEmitter<any>();
   @Input() registro: any;
   @Output() mover = new EventEmitter();
-  @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
-  @ViewChild('tableDocs') tableDocs: Ng2SmartTableComponent;
-  @ViewChild('myInput') inputEl: ElementRef;
-  @Output() onConfirm = new EventEmitter<any>();
-  @Input() registro: any;
-  @Output() mover = new EventEmitter();
 
   dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
   dataGoodsSelected = new Map<number, IGoodAndAvailable>();
@@ -265,7 +257,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     private proceedingsService: ProceedingsService,
     private datePipe: DatePipe,
     private router: Router,
-    private route: ActivatedRoute,
     private route: ActivatedRoute,
     private statusGoodService: StatusGoodService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -336,9 +327,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
           valuePrepareFunction: (cell: any, row: any) => {
             return row.keysProceedings;
           },
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.keysProceedings;
-          },
         },
         status: {
           title: 'Estatus',
@@ -371,11 +359,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       hideSubHeader: false,
       actions: false,
       selectMode: 'multi',
-      // selectedRowIndex: -1,
-      // mode: 'external',
-      columns: {
-        ...COPY,
-      },
       // selectedRowIndex: -1,
       // mode: 'external',
       columns: {
