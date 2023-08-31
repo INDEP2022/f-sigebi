@@ -125,6 +125,18 @@ export class GoodsInvService extends HttpService {
     return this.get<IListResponse<ISamplingGoodView>>(`${route}`, params);
   }
 
+  getStoresProgramming(
+    _params: ListParams,
+    data: Object
+  ): Observable<IListResponse<ISamplingGoodView>> {
+    const params = this.makeParams(_params);
+    const route = IGoodsinvEndpoint.getStoresProgramming;
+    return this.post<IListResponse<ISamplingGoodView>>(
+      `${route}?${params}`,
+      data
+    );
+  }
+
   private makeParams(params: ListParams | string): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {
