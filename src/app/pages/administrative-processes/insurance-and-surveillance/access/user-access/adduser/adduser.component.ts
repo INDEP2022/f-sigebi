@@ -119,7 +119,8 @@ export class AdduserComponent extends BasePage implements OnInit {
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    params.addFilter('user', lparams.text, SearchFilter.ILIKE);
+    if (lparams.text) params.search = lparams.text;
+    // params.addFilter('user', lparams.text, SearchFilter.ILIKE);
 
     return new Promise((resolve, reject) => {
       this.securityService.getAllUsersTracker(params.getParams()).subscribe({

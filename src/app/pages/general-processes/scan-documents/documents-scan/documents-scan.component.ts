@@ -224,11 +224,15 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         }
         const { id } = document;
         const { expedient, folio } = this.controls;
+        const _params = new FilterParams();
         if (document.numberProceedings) {
           expedient.setValue(Number(document.numberProceedings));
         }
+        // else {
+        //   expedient.setValue(this.expedientNumber);
+        //   _params.addFilter('numberProceedings', this.expedientNumber);
+        // }
         folio.setValue(this.folio);
-        const _params = new FilterParams();
         _params.addFilter('numberProceedings', document.numberProceedings);
         this.documentsParams.next(_params);
         this.loadImages(id).subscribe(
@@ -687,6 +691,18 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           queryParams: {
             folio: this.originFolio,
             cveActa: this.cveActa,
+          },
+        }
+      );
+    }
+    if (this.origin == 'FACTCONST_0001') {
+      this.router.navigate(
+        ['/pages/final-destination-process/proof-of-delivery'],
+        {
+          queryParams: {
+            folio: this.originFolio,
+            acta: this.acta,
+            expediente: this.expedient,
           },
         }
       );

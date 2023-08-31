@@ -37,6 +37,7 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
     actions: {
       columnTitle: 'Acciones',
       position: 'right',
+      add: false,
       edit: true,
       delete: true,
     },
@@ -72,8 +73,10 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             /*  SPECIFIC CASES*/
+            console.log('Antes switch');
             switch (filter.field) {
               case 'providerId':
+                console.log('case');
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -83,7 +86,7 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
 
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log(filter.search);
+              console.log('FilterClg-> ', filter.search);
             } else {
               delete this.columnFilters[field];
             }
@@ -112,8 +115,10 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   }
 
   getProviders() {
+    console.log('getProviders-> ', this.params.getValue());
     this.providerService.getAll(this.params.getValue()).subscribe(data => {
       this.providerItems = new DefaultSelect(data.data, data.count);
+      console.log('this.providerItem-> ', this.providerItems);
     });
   }
 
@@ -133,25 +138,29 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
         },
       });
     } else {
+      let params = {
+        ...this.params.getValue(),
+        ...this.columnFilters,
+      };
       this.loading = true;
-      this.providerService
-        .getAllWithFilters(this.filterParams.getValue().getParams())
-        .subscribe({
-          next: response => {
-            this.providerColumns = response.data;
-            this.data.load(this.providerColumns);
-            this.totalItems = response.count;
-            this.loading = false;
-          },
-          error: error => {
-            this.showError(error);
-            this.loading = false;
-          },
-        });
+      console.log('Params->', this.filterParams.getValue().getParams());
+      this.providerService.getAllWithFilters(params).subscribe({
+        next: response => {
+          this.providerColumns = response.data;
+          this.data.load(this.providerColumns);
+          this.totalItems = response.count;
+          this.loading = false;
+        },
+        error: error => {
+          this.showError(error);
+          this.loading = false;
+        },
+      });
     }
   }
 
   selectProvider(provider: IComerProvider) {
+    console.log('selectProvider', provider);
     this.isSelected = true;
     this.providerForm.patchValue(provider);
     this.selectedProvider = provider;
@@ -228,9 +237,46 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
       ...this.providerForm.value,
     };
     delete this.selectedProvider.customer;
+    console.log('this.selectedProvider-> ', this.selectedProvider);
+    let item = {
+      providerId: this.selectedProvider.providerId,
+      nameReason: this.selectedProvider.nameReason,
+      rfc: this.selectedProvider.rfc,
+      street: this.selectedProvider.street,
+      clkedo: this.selectedProvider.clkedo,
+      colony: this.selectedProvider.colony,
+      clkmun: this.selectedProvider.clkmun,
+      cityDesc: this.selectedProvider.cityDesc,
+      clkCountry: this.selectedProvider.clkCountry,
+      stateDesc: this.selectedProvider.stateDesc,
+      delegation: this.selectedProvider.delegation,
+      fax: this.selectedProvider.fax,
+      commission: this.selectedProvider.commission,
+      phone: this.selectedProvider.phone,
+      curp: this.selectedProvider.curp,
+      typePerson: this.selectedProvider.typePerson,
+      preponderantAct: this.selectedProvider.preponderantAct,
+      cp: this.selectedProvider.cp,
+      contractNo: this.selectedProvider.contractNo,
+      esCustomer: this.selectedProvider.esCustomer,
+      bank: this.selectedProvider.bank,
+      branch: this.selectedProvider.branch,
+      checkingCta: this.selectedProvider.checkingCta,
+      key: this.selectedProvider.key,
+      userCreation: this.selectedProvider.userCreation,
+      formPayment: this.selectedProvider.formPayment,
+      webMail: this.selectedProvider.webMail,
+      customerId: this.selectedProvider.customerId,
+      references: this.selectedProvider.references,
+    };
     const provider = { ...this.selectedProvider };
+    console.log(
+      'Botón GuardarDatos-> ',
+      this.selectedProvider.providerId,
+      provider
+    );
     this.providerService
-      .update(this.selectedProvider.providerId, provider)
+      .update(this.selectedProvider.providerId, item)
       .subscribe({
         next: resp => {
           this.getData(), this.onLoadToast('success', resp.message, '');

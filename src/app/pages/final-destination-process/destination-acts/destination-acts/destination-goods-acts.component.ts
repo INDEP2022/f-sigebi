@@ -15,6 +15,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DestinationActsDelegationComponent } from '../destination-acts-delegation/destination-acts-delegation.component';
 
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -82,6 +83,10 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
   loading2: boolean = this.loading;
   disableClosedAct: boolean = false;
   title: string = 'Actas de Destino de Bienes';
+  queryParams = {
+    origin: '',
+    noExpedient: '',
+  };
   get userAuth() {
     return this.authService.decodeToken().username;
   }
@@ -103,7 +108,9 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     private historygoodService: HistoryGoodService,
     private authService: AuthService,
     private goodprocessService: GoodProcessService,
-    private proceedingsDetailDel: ProceedingsDeliveryReceptionService
+    private proceedingsDetailDel: ProceedingsDeliveryReceptionService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
     this.settings1 = {
@@ -135,7 +142,25 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     this.settings1.columns = COLUMNS1;
     this.settings2.columns = COLUMNS2;
   }
+
+  goBack() {
+    //FCONGENRASTREADOR
+    if (this.queryParams.origin == 'FCONGENRASTREADOR') {
+      this.router.navigate([`/pages/general-processes/goods-tracker`]);
+    }
+  }
+
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        if (params['origin']) {
+          console.error(params);
+          this.queryParams.origin = params['origin'];
+          this.queryParams.noExpedient = params['noExpedient'];
+          this.searchByExp(this.queryParams.noExpedient);
+        }
+      });
     this.initForm();
     this.pupInitForm();
     this.getEdo();

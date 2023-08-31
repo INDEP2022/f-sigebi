@@ -476,6 +476,13 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       ]);
       return;
     }
+    if (this.origin == GOOD_TRACKER_ORIGINS.ProofDelivery) {
+      this.saveState = true;
+      this.router.navigate([
+        '/pages/final-destination-process/proof-of-delivery',
+      ]);
+      return;
+    }
     this.location.back();
   }
 
@@ -514,10 +521,12 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     this.getTmpNextVal()
       .pipe(
         switchMap(identifier =>
-          this.goodTrackerService.includeAll({
-            ...this.filters,
-            identifier,
-          })
+          this.goodTrackerService
+            .includeAll({
+              ...this.filters,
+              identifier,
+            })
+            .pipe(map(() => identifier))
         )
       )
       .subscribe({
@@ -564,10 +573,10 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       this.selectedGooods.map(async good => {
         if (good.select) {
           lst_good = lst_good + `${good.goodNumber},`;
-          this.insertListPhoto(Number(good.goodNumber));
+          await this.insertListPhoto(Number(good.goodNumber));
           if (lst_good.length > 3600) {
             lst_good = lst_good.substring(0, lst_good.length - 1);
-            this.insertListPhoto(Number(good.goodNumber));
+            await this.insertListPhoto(Number(good.goodNumber));
             lst_good = '';
           }
         }
@@ -649,7 +658,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       // if (!v_parcialization) return;
 
       this.jasperServ
-        .fetchReport('blank' /*'RCEDINFCONNUMERARIO'*/, {
+        .fetchReport('RCEDINFCONNUMERARIO' /*'RCEDINFCONNUMERARIO'*/, {
           P_NO_BIEN: lnu_good,
           P_IDENTIFICADOR: v_parcialization,
         })

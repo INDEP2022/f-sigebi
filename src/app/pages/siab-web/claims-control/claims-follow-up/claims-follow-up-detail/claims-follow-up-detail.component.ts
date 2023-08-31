@@ -102,6 +102,8 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       dateIndemnizationIn: [null],
       docLetterRelcamationIn: [null],
       docAmountIndemnizedIn: [null],
+      dateOfficeMailIn: [null],
+      dateOfficeMinConcluIn: [null],
     });
     if (this.siniester) {
       console.log(this.siniester);
@@ -231,16 +233,19 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       this.claimsFollowUpDetailForm.controls['description'].setValue(
         this.good.description
       );
+      setTimeout(() => {
+        this.claimsFollowUpDetailForm.controls['statusIn'].setValue('1');
+        this.claimsFollowUpDetailForm.controls['shapeConclusionIn'].setValue(
+          '0'
+        );
+      }, 1000);
     }
-
-    this.getTipeSiniester(new ListParams());
+    setTimeout(() => {
+      this.getTipeSiniester(new ListParams());
+    }, 1000);
     this.getObtnObtenUnidadesResp(new ListParams());
     this.getshapeConclusion(new ListParams());
     this.getStatusSinister(new ListParams());
-    setTimeout(() => {
-      this.claimsFollowUpDetailForm.controls['statusIn'].setValue('1');
-      this.claimsFollowUpDetailForm.controls['shapeConclusionIn'].setValue('0');
-    }, 1000);
   }
 
   close() {

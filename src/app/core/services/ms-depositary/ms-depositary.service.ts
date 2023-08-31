@@ -99,6 +99,13 @@ export class MsDepositaryService extends HttpService {
     );
   }
 
+  createPersonsModDepositary(body: Partial<IPersonsModDepositary>) {
+    return this.post<IListResponse<IPersonsModDepositary>>(
+      DepositaryEndPoints.PersonsModDepositary,
+      body
+    );
+  }
+
   getPaymentRefParamsDep(
     params: IPaymendtDepParamsDep
   ): Observable<IListResponse<any>> {
@@ -243,5 +250,47 @@ export class MsDepositaryService extends HttpService {
 
   MODIFICA_ESTATUS_ANT(body: any) {
     return this.put(`${DepositaryEndPoints.UpdateGeneralStatus}`, body);
+  }
+
+  postSearchPay(params: any) {
+    return this.post(DepositaryEndPoints.SearchPayment, params);
+  }
+
+  getPaymentChange(process: number, action: number) {
+    return this.get(
+      `${DepositaryEndPoints.GetPaymentChange}/${process}/type/${action}`
+    );
+  }
+
+  postPaymentEfeDup(params: any) {
+    return this.post(DepositaryEndPoints.PaymentEfeDup, params);
+  }
+
+  getPaymentFile(searchId: any, action: number) {
+    return this.get(
+      `${DepositaryEndPoints.PaymentFiles}/${searchId}/type/${action}`
+    );
+  }
+
+  getPaymentBulk(process: string, action: number) {
+    return this.get(
+      `${DepositaryEndPoints.PaymentBulk}/${process}/type/${action}`
+    );
+  }
+
+  getSearchPaymentProcess(idSearch: number, newSearch: number) {
+    return this.get(
+      `${DepositaryEndPoints.SearchPaymentProcess}/search/${idSearch}/new/${newSearch}`
+    );
+  }
+
+  getComerPaymentSelect(multiple: number, idSearch: any) {
+    return this.get(
+      `${DepositaryEndPoints.ComerPaymentSelect}/${multiple}/type/${idSearch}`
+    );
+  }
+
+  getComerDetLcGrief(reference: number | string){
+    return this.get(`application/comer-det-lc-grief/${reference}`)
   }
 }

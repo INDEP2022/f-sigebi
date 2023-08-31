@@ -315,6 +315,28 @@ export class LotService extends HttpService {
     return this.get<{ totlot: string; catlot: string; aprolot: string }>(url);
   }
 
+  impLotExcel(body: {
+    file: File;
+    event: string;
+    eventType: string;
+    validGood: string;
+    clean: string;
+    statusVta: string;
+    address: string;
+    user: string;
+  }) {
+    const formData = new FormData();
+    formData.append('file', body.file);
+    formData.append('event', body.event);
+    formData.append('eventType', body.eventType);
+    formData.append('validGood', body.validGood);
+    formData.append('clean', body.clean);
+    formData.append('statusVta', body.statusVta);
+    formData.append('address', body.address);
+    formData.append('user', body.user);
+    return this.post('apps/pup-imp-excel-lote', formData);
+  }
+
   // ------------------------
   PUP_ENTRA(body: any) {
     // PUP_ENTRA
@@ -359,5 +381,11 @@ export class LotService extends HttpService {
 
   pupValidaMandatoNfac(body: IPupValidateMandatoNfac) {
     return this.post('apps/pup-valida-mandato-to-nfac', body);
+  }
+
+  postCambioMasivo(file: File) {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.post(LotEndpoints.PupCambioMasv, formData);
   }
 }

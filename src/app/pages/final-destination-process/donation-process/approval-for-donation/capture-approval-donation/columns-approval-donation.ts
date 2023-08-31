@@ -1,12 +1,12 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 export const COLUMNS_APPROVAL_DONATION = {
   ref: {
-    title: 'Ref',
+    title: 'Ref.',
     type: 'number',
     sort: false,
   },
   goods: {
-    title: 'Bien',
+    title: 'No. Bien',
     type: 'number',
     sort: false,
   },
@@ -31,7 +31,7 @@ export const COLUMNS_APPROVAL_DONATION = {
     sort: false,
   },
   proceedings: {
-    title: 'Expediente',
+    title: 'No. Expediente',
     type: 'number',
     sort: false,
   },

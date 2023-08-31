@@ -29,14 +29,13 @@ export class CertificatesDeliveryService extends HttpService {
     return this.post(DeliveryConstancy.CertificatesDelivery, body);
   }
 
-  /* update(good: IGood | any) {
-    const route = `${GoodEndpoints.Good}`;
-    return this.put(route, good);
+  update(body: any) {
+    const route = `${DeliveryConstancy.CertificatesDelivery}/${body.certificateId}`;
+    return this.put(route, body);
   }
 
-
   remove(id: string | number) {
-    const route = `${GoodEndpoints.Good}/${id}`;
+    const route = `${DeliveryConstancy.CertificatesDelivery}/${id}`;
     return this.delete(route);
-  } */
+  }
 }

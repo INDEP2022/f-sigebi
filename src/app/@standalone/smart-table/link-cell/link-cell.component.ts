@@ -20,6 +20,7 @@ export class LinkCellComponent<T = any> implements OnInit, ViewCell {
   @Input() rowData: T;
   @Output() onNavigate = new EventEmitter<T>();
   link: string;
+  validateValue: boolean = true;
   constructor() {}
 
   ngOnInit(): void {
@@ -27,6 +28,9 @@ export class LinkCellComponent<T = any> implements OnInit, ViewCell {
   }
 
   onLinkClick() {
+    if (!this.value && this.validateValue) {
+      return;
+    }
     this.onNavigate.emit(this.rowData);
   }
 }

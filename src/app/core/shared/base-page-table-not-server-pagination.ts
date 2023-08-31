@@ -32,6 +32,7 @@ export abstract class BasePageTableNotServerPagination<
       },
     };
     this.searchNotServerPagination();
+    this.searchParams();
   }
 
   ngOnInit(): void {
@@ -44,6 +45,16 @@ export abstract class BasePageTableNotServerPagination<
     return {
       ...this.params.getValue(),
     };
+  }
+
+  searchParams() {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: resp => {
+        if (this.data) {
+          this.getPaginated(resp);
+        }
+      },
+    });
   }
 
   getData() {
@@ -116,10 +127,10 @@ export abstract class BasePageTableNotServerPagination<
   }
 
   getPaginated(params: ListParams) {
-    const cantidad = params.page * params.limit;
+    const cantidad = params.page * params.pageSize;
     this.dataPaginated.load([
       ...this.dataTemp.slice(
-        (params.page - 1) * params.limit,
+        (params.page - 1) * params.pageSize,
         cantidad > this.dataTemp.length ? this.dataTemp.length : cantidad
       ),
     ]);

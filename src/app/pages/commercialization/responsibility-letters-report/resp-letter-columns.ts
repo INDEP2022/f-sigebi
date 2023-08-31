@@ -65,7 +65,7 @@ export const RESPO_REPORT_COLUMNS = {
 };
 export const COMEMR_BIENES_COLUMNS = {
   goodNumber: {
-    title: 'Bien',
+    title: 'No. Bien',
     type: 'text',
     sort: false,
   },

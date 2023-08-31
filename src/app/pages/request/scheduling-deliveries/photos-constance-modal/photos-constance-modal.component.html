@@ -1,0 +1,133 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Fotografías</h5>
+  </div>
+  <div body style="margin-top: -30px">
+    <div class="row">
+      <div class="d-flex">
+        <div class="mr-auto p-2">
+          <h5 class="title">
+            <p>
+              <a
+                class="text-color"
+                (click)="showSearchFilter = true"
+                *ngIf="!showSearchFilter">
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                Búsqueda de las imágen</a
+              >
+            </p>
+
+            <p>
+              <a
+                class="text-color"
+                (click)="showSearchFilter = false"
+                *ngIf="showSearchFilter">
+                <i class="fa fa-angle-down" aria-hidden="true"> </i>
+                Búsqueda de las imágen</a
+              >
+            </p>
+          </h5>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="row pt-4"
+      *ngIf="showSearchFilter"
+      style="padding: 10px 20px 10px">
+      <form [formGroup]="filterForm" class="form-material">
+        <div class="row">
+          <div class="col-md-3">
+            <form-field
+              [control]="filterForm.get('management')"
+              label="No&#46; Gesti&oacute;n">
+              <input
+                type="string"
+                class="form-control"
+                maxlength="30"
+                formControlName="management" />
+            </form-field>
+          </div>
+          <div class="col-md-5">
+            <form-field [control]="filterForm.get('typeGood')">
+              <ngx-select
+                [form]="filterForm"
+                control="typeGood"
+                [data]="typeGoods"
+                value="description"
+                bindLabel="description"
+                label="Tipo de Bien"
+                (fetchItems)="getTypeRelevant($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+        </div>
+      </form>
+      <div class="row">
+        <div class="d-flex justify-content-end">
+          <div class="p-2">
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="searchPhotos()">
+              Buscar <i class="bx bx-search-alt-2"></i>
+            </button>
+          </div>
+          <div class="p-2">
+            <button class="btn btn-danger btn-sm active" (click)="clean()">
+              Limpiar <i class="fas fa-eraser"> </i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <!-- *ngIf="!formLoading" -->
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <div class="row pt-4">
+            <div class="d-flex">
+              <app-columns-select
+                class="float-right"
+                [(settings)]="settings"></app-columns-select>
+              <div class="ml-auto p-2">
+                <!-- <button [disabled]="statusTask == 'FINALIZADA'" class="btn btn-primary btn-sm active"
+                                            (click)="filter()">
+                                            Recargar <i class="fas fa-sync-alt"> </i>
+                                        </button> -->
+                <button
+                  class="btn btn-primary btn-sm active"
+                  (click)="uploadFiles()">
+                  Adjuntar Imagenes
+                  <i class="fa fa-upload" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="paragraphs"
+            (edit)="seePhoto($event.data)">
+          </ng2-smart-table
+          ><!-- (delete)="uploadFiles($event.data)" (edit)="openPhotos($event.data)" -->
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

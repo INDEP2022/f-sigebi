@@ -508,6 +508,11 @@ export class ResquestNumberingChangeComponent
     if (this.modal?.isShown) {
     }
     this.loading = false;
+    this.delegationNumber = this.token.decodeToken().department;
+    setTimeout(async () => {
+      await this.getUsuario(new ListParams());
+      await this.getUsuario1(new ListParams());
+    }, 1000);
     //this.people$ = this.goodprocessService.getTodos();
   }
   clearModel() {
@@ -1993,9 +1998,9 @@ export class ResquestNumberingChangeComponent
     this.formaplicationData.controls['authorizeDate'].disable();
     this.formaplicationData.controls['dateRequestChangeNumerary'].disable();
 
-    const paramsSender = new ListParams();
-    paramsSender.text = this.token.decodeToken().preferred_username;
-    await this.get___Senders(paramsSender);
+    // const paramsSender = new ListParams();
+    // paramsSender.text = this.token.decodeToken().preferred_username;
+    // await this.get___Senders(paramsSender);
 
     this.formaplicationData.controls;
   }

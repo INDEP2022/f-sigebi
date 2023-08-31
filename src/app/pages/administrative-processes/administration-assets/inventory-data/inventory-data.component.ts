@@ -296,8 +296,8 @@ export class InventoryDataComponent
     if (this.inventorySelect === null) {
       this.alert(
         'warning',
-        'Datos Inventario',
-        'Debe Seleccionar un Inventario para Obtener sus Atributos.'
+        'Atención',
+        'Debe seleccionar un inventario para obtener sus atributos'
       );
       return;
     }
@@ -373,8 +373,8 @@ export class InventoryDataComponent
         if (required) {
           this.alert(
             'warning',
-            'Datos Inventario',
-            'Debe llenar los Valores Requeridos.'
+            'Atención',
+            'Debe llenar los valores requeridos'
           );
           return;
         }
@@ -385,11 +385,7 @@ export class InventoryDataComponent
             item.value
           );
         });
-        this.alert(
-          'success',
-          'Datos Inventario',
-          'El Inventario se ha Actualizado'
-        );
+        this.alert('success', 'El Inventario se ha Actualizado', '');
       } else {
         let required: boolean = false;
         this.dataIn.forEach((item: any) => {
@@ -400,12 +396,20 @@ export class InventoryDataComponent
         if (required) {
           this.alert(
             'warning',
-            'Datos Inventario',
-            'Debe llenar los Valores Requeridos.'
+            'Atención',
+            'Debe llenar los Valores Requeridos'
           );
           return;
         }
         const inventoryNumber: number = await this.createInventory();
+        if (this.inventoryDataForm.get('responsable').value === null) {
+          this.alert(
+            'warning',
+            'Atención',
+            'Es necesario que sea ingresado el nombre del responsable'
+          );
+          return;
+        }
         if (inventoryNumber !== null) {
           this.dataIn.forEach((item: any) => {
             this.createLineaInventory(
@@ -414,11 +418,7 @@ export class InventoryDataComponent
               item.value
             );
           });
-          this.alert(
-            'success',
-            'Datos Inventario',
-            'El inventario se ha Guardado.'
-          );
+          this.alert('success', 'El inventario se ha Guardado.', '');
           this.inventoryDataForm.get('responsable').reset();
         } else {
           this.alert(
@@ -431,8 +431,8 @@ export class InventoryDataComponent
     } else {
       this.alert(
         'warning',
-        'Datos Inventario',
-        'Debe Seleccionar un Inventario o Genear Nuevos Atributos'
+        'Atención',
+        'Debe seleccionar un inventario o genear nuevos atributos'
       );
     }
   }
@@ -460,6 +460,8 @@ export class InventoryDataComponent
       this.goodService.getById(this.goodId).subscribe({
         next: (response: any) => {
           this.classificationOfGoods = Number(response.data[0].goodClassNumber);
+          console.log(this.classificationOfGoods);
+
           this.good = response.data[0];
           if (!this.loadInventary) {
             setTimeout(() => {
@@ -500,8 +502,8 @@ export class InventoryDataComponent
     if (this.inventoryDataForm.get('fechaInventario').value === null) {
       this.alert(
         'warning',
-        'Datos Inventario',
-        'Debe Registrar la Fecha en la que se Toma el Inventario'
+        'Atención',
+        'Debe registrar la fecha en la que se toma el inventario'
       );
       return;
     }
@@ -509,8 +511,8 @@ export class InventoryDataComponent
     if (this.inventoryDataForm.get('responsable').value === null) {
       this.alert(
         'warning',
-        'Datos Inventario',
-        'Es Necesario que sea Ingresado el Nombre del Responsable'
+        'Atención',
+        'Es necesario que sea ingresado el nombre del responsable'
       );
       return;
     }
@@ -527,8 +529,8 @@ export class InventoryDataComponent
     if (vb_hay_inv_anterior) {
       const response = await this.alertQuestion(
         'question',
-        'Datos Inventario',
-        '¿Desea Traer los Valores del Inventario Anterior?'
+        'Atención',
+        '¿Desea traer los valores del inventario anterior?'
       );
       if (response.isConfirmed) {
         const atributes: any[] = await this.getAtributeBack(
