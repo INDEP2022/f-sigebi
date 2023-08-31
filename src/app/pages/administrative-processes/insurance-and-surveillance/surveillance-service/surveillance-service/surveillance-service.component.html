@@ -13,17 +13,20 @@
           <form action="" [formGroup]="form" class="form-material">
             <div class="row mt-4">
               <div class="col-12 mt-3">
-                <form-field [control]="form.get('delegation')">
-                  <ngx-select
-                    [form]="form"
-                    [data]="delegations"
-                    (change)="changeDelegations($event)"
-                    bindLabel="numberAndDescrip"
-                    label="Delegación"
-                    value="delegationNumber"
-                    (fetchItems)="getDelegation($event)"
-                    control="delegation"></ngx-select>
+                <form-field
+                  [control]="form.get('delegation')"
+                  label="Delegación">
+                  <input
+                    readonly
+                    type="text"
+                    formControlName="delegation"
+                    class="form-control" />
                 </form-field>
+                <!-- <form-field [control]="form.get('delegation')">
+                  <ngx-select [form]="form" [data]="delegations" (change)="changeDelegations($event)"
+                    bindLabel="numberAndDescrip" label="Delegación" value="delegationNumber"
+                    (fetchItems)="getDelegation($event)" control="delegation"></ngx-select>
+                </form-field> -->
               </div>
             </div>
             <div class="row mt-4">
@@ -139,9 +142,12 @@
                       label="Periodo del">
                       <input
                         type="text"
+                        [(ngModel)]="dateMovemInicio"
+                        (ngModelChange)="dateMovementInicio($event)"
                         formControlName="fromTwo"
                         class="form-control"
-                        bsDatepicker />
+                        bsDatepicker
+                        [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
                     </form-field>
                   </div>
                   <div
@@ -202,6 +208,7 @@
                       (click)="generarReport()"
                       class="btn btn-primary btn-sm active mt-4 w-100">
                       Crear Reporte
+                      <i class="bx bx-printer bx-sm float-icon"></i>
                     </button>
                   </div>
                   <div class="col-1"></div>

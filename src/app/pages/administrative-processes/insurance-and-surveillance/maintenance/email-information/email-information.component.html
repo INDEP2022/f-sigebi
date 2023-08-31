@@ -54,8 +54,8 @@
       <div class="col-md-6">
         <form-field [control]="form.get('to')">
           <ngx-select
+            [readonly]="!delegationDetail"
             [form]="form"
-            [searchOnInit]="true"
             [data]="VigEmailBook"
             (change)="onChangeTo($event)"
             bindLabel="bookEmail"
@@ -81,8 +81,8 @@
       <div class="col-md-6">
         <form-field [control]="form.get('cc')">
           <ngx-select
+            [readonly]="!delegationDetail"
             [form]="form"
-            [searchOnInit]="true"
             [data]="VigCC"
             (change)="onChangeCc($event)"
             bindLabel="bookEmail"

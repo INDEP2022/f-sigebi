@@ -7,4 +7,5 @@ export enum GoodTrackerEndpoints {
   GoodPhotos = 'trackergood/apps/get-photo-tracker',
   TempTracker = 'tmptracker',
   DownloadExcel = 'trackergood/apps/download-excel',
+  PaInsGoodParameters = 'trackergood/apps/pa-ins-good-parameters',
 }
