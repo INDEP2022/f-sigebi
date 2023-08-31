@@ -25,6 +25,10 @@ export class ComerInvoiceService extends HttpService {
     return this.get(`${ENDPOINT_INVOICE.GetInvoiceEvent}${event}`);
   }
 
+  getAllInvoicePag(params: ListParams) {
+    return this.get<IListResponse<any>>(ENDPOINT_INVOICE.GetInvoicePag, params);
+  }
+
   create(data: any) {
     return this.post(ENDPOINT_INVOICE.ComerInovice, data);
   }
@@ -62,6 +66,10 @@ export class ComerInvoiceService extends HttpService {
 
   copyInvoice(data: Object) {
     return this.post(ENDPOINT_INVOICE.CopyInvoice, data);
+  }
+
+  getBill(body: any, params: ListParams) {
+    return this.post(ENDPOINT_INVOICE.GetInvoice, body, params);
   }
 
   getValidPayments(params?: _Params) {

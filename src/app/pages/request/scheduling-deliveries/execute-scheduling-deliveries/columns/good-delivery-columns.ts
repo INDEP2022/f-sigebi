@@ -1,6 +1,8 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { InputFieldComponent } from '../input-field/input-field.component';
+import { SelectFieldComponent } from '../select-field/select-field.component';
 import { TextareaFieldComponent } from '../textarea-field/textarea-field.component';
+import { TypeRestitutionFieldComponent } from '../type-restitution-field/type-restitution-field.component';
 
 export const GOOD_DELIVERY_COLUMN = {
   item: {
@@ -243,6 +245,106 @@ export const PROG_DELIVERY_GOOD_TYPE_REST_COLUMNS = {
   causeNotDelivered: {
     title: 'Causa No Entregados',
     type: 'string',
+    sort: false,
+  },
+  observation: {
+    title: 'Observaciones',
+    type: 'custom',
+    class: 'custom-field',
+    filter: false,
+    renderComponent: TextareaFieldComponent,
+    onComponentInitFunction(instance: any) {},
+    sort: false,
+  },
+};
+
+export const PROG_DELIVERY_GOOD_NO_DELIVERED = {
+  foundInd: {
+    title: 'Encontrado',
+    type: 'string',
+    sort: false,
+  },
+  typeRestitution: {
+    title: 'Restitución',
+    type: 'custom',
+    class: 'custom-field',
+    filter: false,
+    renderComponent: TypeRestitutionFieldComponent,
+    onComponentInitFunction(instance: any) {},
+    sort: false,
+  },
+  item: {
+    title: 'ITEM',
+    type: 'string',
+    sort: false,
+  },
+  inventoryNumber: {
+    title: 'No. Inventario',
+    type: 'string',
+    sort: false,
+  },
+  goodId: {
+    title: 'No. Gestion',
+    type: 'string',
+    sort: false,
+  },
+  descriptionGood: {
+    title: 'Descripción Del Bien',
+    type: 'string',
+    sort: false,
+  },
+  siabGoodNumber: {
+    title: 'No. SAE',
+    type: 'string',
+    sort: false,
+  },
+  commercialLot: {
+    title: 'Lote Comercial',
+    type: 'string',
+    sort: false,
+  },
+  commercialEvent: {
+    title: 'Evento Comercial',
+    type: 'string',
+    sort: false,
+  },
+  invoice: {
+    title: 'Factura',
+    type: 'string',
+    sort: false,
+  },
+  compensationOpinion: {
+    title: 'Dictaminación Resarcimiento',
+    type: 'string',
+    sort: false,
+  },
+  resolutionSat: {
+    title: 'Resolución SAT',
+    type: 'string',
+    sort: false,
+  },
+  amountGood: {
+    title: 'Cantidad Bienes',
+    type: 'string',
+    sort: false,
+  },
+  unit: {
+    title: 'Unidad De Medida',
+    type: 'string',
+    sort: false,
+  },
+  sumGoodNoEnt: {
+    title: 'Total Bienes No Entregados',
+    type: 'string',
+    sort: false,
+  },
+  causeNotDelivered: {
+    title: 'Causa No Entregados',
+    type: 'custom',
+    class: 'custom-field',
+    filter: false,
+    renderComponent: SelectFieldComponent,
+    onComponentInitFunction(instance: any) {},
     sort: false,
   },
   observation: {

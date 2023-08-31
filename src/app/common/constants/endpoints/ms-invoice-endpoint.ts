@@ -25,6 +25,8 @@ export enum ENDPOINT_INVOICE {
   DetailGetGeograficaExcel = 'application/get-getDetalleFacturasExcel-export',
   Fcomer112ICountHeader = 'application/fcomer112ICountHeader',
   GenerateFolio = 'ctrl-invoice/generate-folios',
+  GetInvoice = 'application/get-invoice',
+  GetInvoicePag = 'application/get-invoice-pag',
   ComerDetFactura = 'comer-detbills',
   ComerInconsistencies = 'application/get-data-eat-exists',
   ComerPostQuery = 'application/get-eat-invoice-query',

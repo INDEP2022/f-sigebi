@@ -9,7 +9,7 @@
       <h5 class="title">B&uacute;squeda de pagos</h5>
     </div>
     <form class="form-material" [formGroup]="form">
-      <div class="row pt-3">
+      <div class="row pt-5">
         <div class="col-md-2">
           <form-field [control]="form.get('serie')" label="Serie">
             <input type="text" class="form-control" formControlName="serie" />
@@ -37,38 +37,62 @@
           <div class="justify-content-center">
             <button
               type="button"
-              class="btn btn-primary btn-sm active"
+              class="btn btn-primary active btn-sm"
+              (click)="search()"
               [disabled]="!form.valid">
               Buscar
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
           </div>
         </div>
       </div>
     </form>
-    <div class="ch-content" header>
+
+    <div class="row pt-4">
+      <div class="ch-content">
+        <h5 class="title">Detalle de facturas</h5>
+      </div>
+      <div class="col-md-8 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <app-columns-select
+          [(settings)]="settings"
+          [leftList]="true"></app-columns-select>
+      </div>
+    </div>
+    <!--<div class="ch-content" header>
       <h5 class="title">Detalle de facturas</h5>
       <div class="col-md-5 buttons">
         <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>
-    </div>
+    </div>-->
     <div class="table-responsive">
       <ng2-smart-table
         [settings]="settings"
         [source]="data1"
         (userRowSelect)="selectRow($event.data)"></ng2-smart-table>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
     </div>
-    <div class="row pt-3" *ngIf="rowSelected">
-      <div class="ch-content" header>
-        <h5 class="title">Detalle de Pagos</h5>
-        <div class="col-md-5 buttons">
-          <app-columns-select [(settings)]="settings2"></app-columns-select>
+
+    <div *ngIf="rowSelected">
+      <div class="row pt-4">
+        <div class="ch-content">
+          <h5 class="title">Detalle de Pagos</h5>
+        </div>
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <app-columns-select
+            [(settings)]="settings2"
+            [leftList]="true"></app-columns-select>
         </div>
       </div>
       <div class="table-responsive">
         <ng2-smart-table
           [settings]="settings2"
-          [source]="data2"
-          (edit)="openForm($event.data)"></ng2-smart-table>
+          (edit)="openForm($event.data)"
+          [source]="data2"></ng2-smart-table>
+        <app-pagination [params]="params2" [totalItems]="totalItems2">
+        </app-pagination>
       </div>
     </div>
   </div>

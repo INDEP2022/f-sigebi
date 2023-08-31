@@ -8,29 +8,47 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="form.get('event')" label="Evento">
-            <input type="text" class="form-control" formControlName="event" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('allotment')" label="lote">
+          <form-field [control]="form.get('id_factura')" label="Id Factura">
             <input
               type="text"
               class="form-control"
-              formControlName="allotment" />
+              formControlName="id_factura" />
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('reference')" label="Referencia">
+          <form-field [control]="form.get('id_pago')" label="Id Pago">
+            <input type="text" class="form-control" formControlName="id_pago" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('id_evento')" label="Evento">
             <input
               type="text"
               class="form-control"
-              formControlName="reference" />
+              formControlName="id_evento" />
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('amount')" label="Monto">
-            <input type="text" class="form-control" formControlName="amount" />
+          <form-field [control]="form.get('lote_publico')" label="lote">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="lote_publico" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('referencia')" label="Referencia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="referencia" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('monto')" label="Monto">
+            <input type="text" class="form-control" formControlName="monto" />
           </form-field>
         </div>
       </div>
@@ -39,7 +57,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [type]="'button'" (click)="close()"></confirm-button>
+        <confirm-button [type]="'button'" (click)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

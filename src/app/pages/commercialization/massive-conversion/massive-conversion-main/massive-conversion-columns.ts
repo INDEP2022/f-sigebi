@@ -2,6 +2,7 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 
 export const SETTING_DATA = {
   ...TABLE_SETTINGS,
+  hideSubHeader: false,
   actions: false,
   columns: {
     eventId: {
@@ -107,6 +108,7 @@ export const SETTING_DATA = {
 
 export const SETTING_LCS = {
   ...TABLE_SETTINGS,
+  hideSubHeader: false,
   actions: false,
   columns: {
     idlcg: {
@@ -174,6 +176,7 @@ export const SETTING_LCS = {
 
 export const SETTING_RFC = {
   ...TABLE_SETTINGS,
+  hideSubHeader: false,
   actions: {
     columnTitle: 'Acciones',
     position: 'left',
