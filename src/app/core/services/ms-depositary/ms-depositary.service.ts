@@ -289,4 +289,8 @@ export class MsDepositaryService extends HttpService {
       `${DepositaryEndPoints.ComerPaymentSelect}/${multiple}/type/${idSearch}`
     );
   }
+
+  getComerDetLcGrief(reference: number | string){
+    return this.get(`application/comer-det-lc-grief/${reference}`)
+  }
 }

@@ -97,7 +97,7 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
   getInfoTask() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     this.task = JSON.parse(localStorage.getItem('Task'));
-    params.getValue()['filter.id'] = this.task.id;
+    params.getValue()['filter.id'] = `$eq:${this.task.id}`;
     this.taskService.getAll(params.getValue()).subscribe({
       next: response => {
         this.infoTask = response.data[0];
