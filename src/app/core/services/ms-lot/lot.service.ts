@@ -43,6 +43,11 @@ export class LotService extends HttpService {
     return this.post(route, value);
   }
 
+  getConsultPayLots(params?: ListParams) {
+    const route = `${LotEndpoints.AppsConsultPayLots}`;
+    return this.get(route, params);
+  }
+
   pubCancelPackage(value: any) {
     const route = `${LotEndpoints.pubCancelPackage}`;
     return this.post(route, value);
