@@ -218,7 +218,7 @@ export class DeliveriesConstancyFormComponent
 
   setColumns() {
     console.log(this.table);
-
+    debugger;
     const table = this.table.grid.getColumns();
     const type1 = table.find((x: any) => x.id == 'amountDelivered');
     type1.hide = true;

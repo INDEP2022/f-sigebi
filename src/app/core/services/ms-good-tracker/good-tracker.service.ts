@@ -116,4 +116,9 @@ export class GoodTrackerService extends HttpService {
   getPhotos(tmp: GoodTrackerMap) {
     return this.post<{ token: string }>(GoodTrackerEndpoints.GoodPhotos, tmp);
   }
+
+  PaInsGoodParameters(params: any) {
+    const route = `${GoodTrackerEndpoints.PaInsGoodParameters}`;
+    return this.post(route, params);
+  }
 }

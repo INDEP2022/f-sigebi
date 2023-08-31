@@ -405,9 +405,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   getTask() {
     const task = JSON.parse(localStorage.getItem('Task'));
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.id'] = task.id;
+    params.getValue()['filter.id'] = `$eq:${task.id}`;
     this.taskService.getAll(params.getValue()).subscribe({
       next: response => {
+        console.log('task', response);
         this.task = response.data[0];
       },
       error: error => {},

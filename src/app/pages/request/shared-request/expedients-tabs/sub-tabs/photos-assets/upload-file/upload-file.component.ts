@@ -29,6 +29,9 @@ export class UploadFileComponent extends BasePage implements OnInit {
   date: string = '';
   userLogName: string = '';
   goodProg: any;
+  nomProcess?: string = '';
+  typeDoc?: any = null;
+
   constructor(
     private bsModalRef: BsModalRef,
     private requestService: RequestService,
@@ -82,6 +85,39 @@ export class UploadFileComponent extends BasePage implements OnInit {
             xnombreProceso: 'Ejecutar Recepcion',
           };
 
+          const contentType = 'img';
+          const docName = `IMG_${this.date}${contentType}`;
+
+          /* this.wContentService
+            .addImagesToContent(
+              docName,
+              contentType,
+              JSON.stringify(formData),
+              fileEvent.file
+            )
+            .subscribe({
+              next: data => {
+                this.bsModalRef.content.callBack(true);
+                this.close();
+              },
+              error: error => {},
+            }); */
+        });
+      }
+      if (this.process == 'scheduling-deliveries') {
+        const { index, fileEvents } = uploadEvent;
+        this.idGood = this.data.id;
+        fileEvents.forEach(fileEvent => {
+          const formData = {
+            xidcProfile: 'NSBDB_Gral',
+            dDocAuthor: this.userLogName,
+            xidSolicitud: this.idRequest,
+            xidTransferente: this.data.tranferId,
+            xidBien: this.idGood,
+            xnombreProceso: this.nomProcess,
+            xtipoDocumento: this.typeDoc,
+            xDelegacionRegional: this.data.delReg,
+          };
           const contentType = 'img';
           const docName = `IMG_${this.date}${contentType}`;
 

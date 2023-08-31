@@ -1,0 +1,54 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="serviceForm">
+      <div class="row">
+        <div class="col-md-8 mt-4">
+          <form-field
+            label="Descripción"
+            [control]="serviceForm.get('description')">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="80"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-4 mt-4">
+          <form-field
+            label="No. de Registro"
+            [control]="serviceForm.get('registryNumber')">
+            <input
+              type="number"
+              class="form-control"
+              maxlength="80"
+              formControlName="registryNumber" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-2">
+        <button
+          type="'button'"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
+      <div class="m-2">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

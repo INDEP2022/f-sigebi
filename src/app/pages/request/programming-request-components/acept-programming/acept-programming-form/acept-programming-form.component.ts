@@ -26,6 +26,7 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
@@ -167,7 +168,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     private wcontentService: WContentService,
     private sanitizer: DomSanitizer,
     private stateService: StateOfRepublicService,
-    private domicilieService: DomicileService
+    private domicilieService: DomicileService,
+    private goodsQueryService: GoodsQueryService
   ) {
     super();
     this.settings = {
@@ -310,7 +312,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   getTask() {
     const task = JSON.parse(localStorage.getItem('Task'));
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.id'] = task.id;
+    params.getValue()['filter.id'] = `$eq:${task.id}`;
     this.taskService.getAll(params.getValue()).subscribe({
       next: response => {
         this.task = response.data[0];
@@ -382,11 +384,18 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   getwarehouse() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.idWarehouse'] = this.programming.storeId;
-    this.warehouseService.getAll(params.getValue()).subscribe(data => {
+    params.getValue()['filter.organizationCode'] = this.programming.storeId;
+    this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
+      next: response => {
+        this.nameWarehouse = response.data[0].name;
+        this.formLoading = false;
+      },
+      error: error => {},
+    });
+    /*this.warehouseService.getAll(params.getValue()).subscribe(data => {
       this.nameWarehouse = data.data[0].description;
       this.formLoading = false;
-    });
+    }); */
   }
 
   getUsersProgramming() {
@@ -634,12 +643,17 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         'question',
         'Aprobar Programación',
         `¿Esta seguro de aprobar la programación con folio: ${this.programming.folio}?`
-      ).then(question => {
+      ).then(async question => {
         if (question.isConfirmed) {
           this.sendEmailUsers();
-          this.createTaskNotification();
-          this.createTaskExecuteProgramming();
-          this.createTaskFormalize();
+          const createTaskNotification: any =
+            await this.createTaskNotification();
+
+          console.log('createTaskNotification', createTaskNotification);
+          if (createTaskNotification) {
+            this.createTaskExecuteProgramming();
+            this.createTaskFormalize(createTaskNotification);
+          }
         }
       });
     } else {
@@ -819,39 +833,43 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   //Creamos la tarea de notificación al delegado regional//
   async createTaskNotification() {
-    const _task = JSON.parse(localStorage.getItem('Task'));
-    const user: any = this.authService.decodeToken();
-    let body: any = {};
+    return new Promise(async (resolve, reject) => {
+      const _task = JSON.parse(localStorage.getItem('Task'));
+      const user: any = this.authService.decodeToken();
+      let body: any = {};
 
-    body['idTask'] = _task.id;
-    body['userProcess'] = user.username;
-    body['type'] = 'SOLICITUD_PROGRAMACION';
-    body['subtype'] = 'Aceptar_Programacion';
-    body['ssubtype'] = 'APPROVE';
+      body['idTask'] = _task.id;
+      body['userProcess'] = user.username;
+      body['type'] = 'SOLICITUD_PROGRAMACION';
+      body['subtype'] = 'Aceptar_Programacion';
+      body['ssubtype'] = 'APPROVE';
 
-    let task: any = {};
-    task['id'] = 0;
-    task['assignees'] = _task.assignees;
-    task['assigneesDisplayname'] = _task.assigneesDisplayname;
-    task['creator'] = user.username;
-    task['taskNumber'] = Number(this.programmingId);
-    task[
-      'title'
-    ] = `Notificación de Programación con folio: ${this.programming.folio}`;
-    task['programmingId'] = this.programmingId;
-    //task['requestId'] = this.programmingId;
-    task['expedientId'] = 0;
-    task['idDelegationRegional'] = user.department;
-    task['urlNb'] = 'pages/request/programming-request/schedule-notify';
-    task['processName'] = 'SolicitudProgramacion';
-    task['idAuthority'] = this.programming.autorityId;
-    task['idStore'] = this.programming.storeId;
-    task['idTransferee'] = this.programming.tranferId;
-    task['nbTransferee'] = this.programming.transferentName;
-    body['task'] = task;
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = _task.assignees;
+      task['assigneesDisplayname'] = _task.assigneesDisplayname;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(this.programmingId);
+      task[
+        'title'
+      ] = `Notificación de Programación con folio: ${this.programming.folio}`;
+      task['programmingId'] = this.programmingId;
+      //task['requestId'] = this.programmingId;
+      task['expedientId'] = 0;
+      task['idDelegationRegional'] = user.department;
+      task['urlNb'] = 'pages/request/programming-request/schedule-notify';
+      task['processName'] = 'SolicitudProgramacion';
+      task['idAuthority'] = this.programming.autorityId;
+      task['idStore'] = this.programming.storeId;
+      task['idTransferee'] = this.programming.tranferId;
+      task['nbTransferee'] = this.programming.transferentName;
+      body['task'] = task;
 
-    await this.createTaskOrderService(body);
-    this.loading = false;
+      const createTask: any = await this.createTaskOrderService(body);
+      if (createTask) resolve(createTask);
+
+      this.loading = false;
+    });
   }
 
   //Creamos la tarea de ejecutar la recepción//
@@ -887,7 +905,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   }
 
   //Creamos la tarea de Formalizar la recepción//
-  async createTaskFormalize() {
+  async createTaskFormalize(createTaskNotification: any) {
     const _task = JSON.parse(localStorage.getItem('Task'));
     const user: any = this.authService.decodeToken();
     let body: any = {};
@@ -912,9 +930,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     task['idAuthority'] = this.programming.autorityId;
     task['idStore'] = this.programming.storeId;
     task['idTransferee'] = this.programming.tranferId;
+    task['identificationKey'] = createTaskNotification.task.id;
     task['nbTransferee'] = this.programming.transferentName;
     body['task'] = task;
-
+    console.log('body formalizar', body);
     const taskResult: any = await this.createTaskOrderService(body);
     this.loading = false;
     if (taskResult || taskResult == false) {
@@ -931,6 +950,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(resp);
+          console.log('tarea formalizar', resp);
         },
         error: error => {
           reject(false);
@@ -940,12 +960,20 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   }
   warehouseNameT(idWarehouse: number) {
     return new Promise((resolve, reject) => {
-      this.warehouseService.getById(idWarehouse).subscribe({
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.organizationCode'] = idWarehouse;
+      this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
+        next: response => {
+          resolve(response.data[0].name);
+        },
+        error: error => {},
+      });
+      /*this.warehouseService.getById(idWarehouse).subscribe({
         next: response => {
           return resolve(response.description);
         },
         error: error => {},
-      });
+      }); */
     });
   }
 
