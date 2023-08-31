@@ -59,6 +59,10 @@ export class PaymentService extends HttpService {
     return this.put(`${PaymentEndPoints.ComerPaymentRef}/${id}`, params);
   }
 
+  updatePayments(body: any) {
+    return this.put(PaymentEndPoints.UpdatePayments, body);
+  }
+
   sendReadSirsaeFcomer113(params: any) {
     return this.post(PaymentEndPoints.SendReadSirsaeFcomer113, params);
   }
