@@ -30,9 +30,10 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     super();
     this.settings = { ...this.settings, actions: false };
     this.settings.columns = COLUMNS_EXPORT_GOODS;
+    this.settings.hideSubHeader = false;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   settingsChange($event: any): void {
     this.settings = $event;
@@ -41,6 +42,11 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   openDefineFilter() {
     this.router.navigate([
       `/pages/parameterization/filters-of-goods-for-donation`,
+    ]);
+  }
+  openDefineFilter1() {
+    this.router.navigate([
+      `/pages/general-processes/goods-tracker`,
     ]);
   }
 
@@ -53,7 +59,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       let padre =
         response.data[i].no_bien_padre_parcializacion != null
           ? response.data[i].no_bien_padre_parcializacion
-          : '0';
+          : '1';
 
       const model = {} as IGoodsExportPost;
       (model.noBien = response.data[i].no_bien),
@@ -67,7 +73,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
 
           this.detailProceeDelRecService.getProceding(acta).subscribe({
             next: res => {
-              console.log('res -> ', res);
+              console.log('res 2 -> ', res);
 
               let dataForm = {
                 numberGood: response.data[i].no_bien,
@@ -86,7 +92,24 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
 
               this.data1.push(dataForm); // invocar todos tres servicios
               this.data.load(this.data1); // cuando ya pasa todo, se mapea la info
-            },
+
+            }, error: err => {
+              console.log('DATA error 2222->');
+              let dataForm = {
+                numberGood: response.data[i].no_bien,
+                description: response.data[i].descripcion,
+                quantity: response.data[i].cantidad,
+                clasificationNumb: response.data[i].no_clasif_bien,
+                tansfNumb: response.data[i].no_transferente,
+                status: response.data[i].estatus,
+                proceedingsNumb: response.data[i].no_expediente,
+              };
+
+              console.log('DATA FORM 2222->', dataForm);
+
+              this.data1.push(dataForm); // invocar todos tres servicios
+              this.data.load(this.data1);
+            }
           });
         },
       });
@@ -98,6 +121,8 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       next: response => {
         console.log('Respuesta ', response);
         this.generarAlerta(response);
+        this.totalItems = response.count;
+        // console.log('response.count -->', response.count);
       },
       error: err => {
         console.log('err ->', err);
@@ -112,8 +137,8 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'info',
         'Se recuperarán ' +
-          response.data.length +
-          ' registros ¿Deseas continuar? ',
+        response.data.length +
+        ' registros ¿Deseas continuar? ',
         '',
         'Si',
         'No'
@@ -128,5 +153,8 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     } else {
       this.mapearDatos(response);
     }
+  }
+  callRastreador() {
+    window.open('/pages/general-processes/goods-tracker', '_blank');
   }
 }
