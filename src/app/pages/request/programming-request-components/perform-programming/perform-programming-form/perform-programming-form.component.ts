@@ -1391,7 +1391,6 @@ export class PerformProgrammingFormComponent
 
     this.stateService.getAll(params).subscribe({
       next: data => {
-        console.log('data', data);
         const filterStates = data.data.filter(_states => {
           return _states.stateCode;
         });
@@ -1487,7 +1486,7 @@ export class PerformProgrammingFormComponent
 
   getWarehouseSelect(params: ListParams) {
     const user: any = this.authService.decodeToken();
-    console.log('user', user);
+
     params['sortBy'] = 'name:ASC';
     this.showWarehouseInfo = true;
     const data: Object = {
@@ -1497,7 +1496,6 @@ export class PerformProgrammingFormComponent
     };
     this.goodsinvService.getStoresProgramming(params, data).subscribe({
       next: response => {
-        console.log('almacenes', response);
         this.warehouse = new DefaultSelect(response.data, response.count);
       },
       error: error => {
@@ -2741,7 +2739,7 @@ export class PerformProgrammingFormComponent
           this.performForm.get('autorityId').setValue(this.autorityId);
         }
 
-        if (this.warehouseId > 0)
+        if (this.warehouseId)
           this.performForm.get('storeId').setValue(this.warehouseId);
 
         if (this.dataProgramming?.folio)
@@ -2759,7 +2757,6 @@ export class PerformProgrammingFormComponent
 
         this.performForm.get('startDate').setValue(startDate);
         this.performForm.get('endDate').setValue(endDate);
-        console.log('this.performForm', this.performForm.value);
 
         this.loading = true;
         this.formLoading = true;
@@ -2942,6 +2939,9 @@ export class PerformProgrammingFormComponent
           if (this.autorityId) {
             this.performForm.get('autorityId').setValue(this.autorityId);
           }
+
+          if (this.warehouseId)
+            this.performForm.get('storeId').setValue(this.warehouseId);
           this.loading = true;
           this.formLoading = true;
           const folio: any = await this.generateFolio(this.performForm.value);
@@ -2972,7 +2972,6 @@ export class PerformProgrammingFormComponent
               storeId: this.performForm.get('storeId').value,
             };
 
-            console.log('guardar', data);
             this.programmingGoodService
               .updateProgramming(this.idProgramming, data)
               .subscribe({
@@ -3236,13 +3235,11 @@ export class PerformProgrammingFormComponent
       }); */
 
       if (this.dataProgramming.storeId > 0) {
-        console.log('storeId', this.dataProgramming.storeId);
         const params = new BehaviorSubject<ListParams>(new ListParams());
         params.getValue()['filter.organizationCode'] =
           this.dataProgramming.storeId;
         this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
           next: response => {
-            console.log('almacenes', response);
             this.performForm.get('storeId').setValue(response.data[0].name);
             this.warehouseId = response.data[0].organizationCode;
             this.warehouseUbication = response.data[0].address1;
