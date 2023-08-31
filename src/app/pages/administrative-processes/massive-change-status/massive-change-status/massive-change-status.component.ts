@@ -118,7 +118,8 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
       .subscribe({
         next: global => {
           this.ngGlobal = global;
-          if (this.ngGlobal.REL_BIENES && this.data['data'] == null) {
+          console.log({longitud_tabla: this.data['data'].length})
+          if (this.ngGlobal.REL_BIENES && this.data['data'].length == 0) {
             console.log(this.ngGlobal.REL_BIENES);
             const paramsF = new FilterParams();
             paramsF.addFilter('identificator', this.ngGlobal.REL_BIENES);
