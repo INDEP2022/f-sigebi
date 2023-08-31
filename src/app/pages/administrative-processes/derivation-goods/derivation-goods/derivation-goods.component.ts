@@ -307,15 +307,15 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       ],
       observation: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.max(600)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(600)],
       ],
-      descriptionSon: [null, [Validators.required, Validators.max(1250)]],
+      descriptionSon: [null, [Validators.required, Validators.maxLength(1250)]],
       quantity: [
         null,
         [
           Validators.required,
           Validators.pattern(DOUBLE_POSITIVE_PATTERN),
-          Validators.max(16),
+          Validators.maxLength(16),
         ],
       ],
       classifier: [
@@ -323,7 +323,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(POSITVE_NUMBERS_PATTERN),
-          Validators.max(6),
+          Validators.maxLength(6),
         ],
       ],
       unitOfMeasure: [
@@ -331,7 +331,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.max(10),
+          Validators.maxLength(10),
         ],
       ],
       destinationLabel: [
@@ -339,7 +339,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(POSITVE_NUMBERS_PATTERN),
-          Validators.max(2),
+          Validators.maxLength(2),
         ],
       ],
     });
@@ -827,9 +827,15 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         good.goodReferenceNumber = this.goodFatherNumber$.getValue();
         good.almacen =
           this.good.almacen != null ? this.good.almacen.idWarehouse : '';
-        good.delegationNumber = this.good.delegationNumber.id;
+        good.delegationNumber =
+          this.good.delegationNumber.id != null
+            ? this.good.delegationNumber.id
+            : null;
         good.expediente = this.good.expediente.id;
-        good.subDelegationNumber = this.good.subDelegationNumber.id;
+        good.subDelegationNumber =
+          this.good.subDelegationNumber.id != null
+            ? this.good.subDelegationNumber.id
+            : null;
         good.lotNumber =
           this.good.lotNumber != null ? this.good.lotNumber.id : null;
         good.observations = this.observation.value;
