@@ -415,7 +415,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
               const result = await firstValueFrom(
                 this.screenService
                   .PUP_VAL_BIEN_ROBO({
-                    goodNumber: '524', //row.goodNumber,
+                    goodNumber: row.goodNumber,
                     type: 'U',
                     screenKey: 'FCOMER084',
                     conceptNumber: this.conceptNumber.value,
