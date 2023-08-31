@@ -150,7 +150,7 @@
                       bindLabel="description"
                       paramSearch="filter.description"
                       prefixSearch="$ilike"
-                      seconParamSearch="filter.numClasifGoods"
+                      secondParamSearch="filter.numClasifGoods"
                       [labelTemplate]="clasLabel"
                       [optionTemplate]="clasOption">
                     </ng-custom-select-loading>
@@ -368,7 +368,9 @@
                       label="Oficina de Atención Regional"
                       value="id"
                       bindLabel="description"
-                      paramSearch="filter.id"
+                      paramSearch="filter.description"
+                      prefixSearch="$ilike"
+                      secondParamSearch="filter.id"
                       (valueChange)="updateSubdelegation($event)">
                     </ng-custom-select-loading>
 

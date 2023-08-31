@@ -1,22 +1,22 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const COLUMNS = {
-  eventId: {
-    title: 'Evento',
+  user: {
+    title: 'Usuario',
     type: 'string',
     sort: false,
     width: '20%',
   },
-  user: {
+  name: {
     title: 'Nombre',
     type: 'string',
     sort: false,
-    width: '40%',
+    width: '60%',
   },
   date: {
     title: 'Fecha',
     sort: false,
-    width: '40%',
+    width: '20%',
     type: 'html',
     valuePrepareFunction: (text: string) => {
       console.log('text', text);

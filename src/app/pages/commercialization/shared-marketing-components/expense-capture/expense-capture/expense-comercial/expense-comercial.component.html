@@ -34,31 +34,12 @@
                 id="expenseNumber"
                 title="Gastos del Área Comercial"
                 (selectRow)="fillForm($event)"></app-select-modal-table-shared>
-
-              <!-- <ng-custom-select-loading
-                [form]="form"
-                formControlName="expenseNumber"
-                label="Id"
-                [path]="pathComerExpenses"
-                value="expenseNumber"
-                bindLabel="expenseNumber"
-                paramSearch="filter.expenseNumber"
-                prefixSearch="$eq"
-                (valueChange)="fillForm($event)">
-              </ng-custom-select-loading> -->
-
-              <!-- <form-field [control]="expenseNumber" label="Id">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="expenseNumber"
-                  maxlength="11" />
-              </form-field> -->
             </div>
           </div>
           <div class="row mt-4 ml-0">
             <ng-custom-select-loading
               [form]="form"
+              [updateValues]="true"
               formControlName="conceptNumber"
               label="Concepto"
               [path]="pathConcept"
@@ -66,8 +47,7 @@
               bindLabel="description"
               paramSearch="filter.description"
               prefixSearch="$ilike"
-              paramExternalSearch="filter.id"
-              [externalSearch]="conceptNumber.value"
+              secondParamSearch="filter.id"
               [labelTemplate]="conceptLabel"
               [optionTemplate]="conceptOption">
             </ng-custom-select-loading>
@@ -111,6 +91,7 @@
           <div class="row mt-4 ml-0">
             <ng-custom-select-loading
               [form]="form"
+              [updateValues]="true"
               formControlName="eventNumber"
               label="Evento"
               [path]="pathEvent"
@@ -118,8 +99,7 @@
               bindLabel="processKey"
               paramSearch="filter.processKey"
               prefixSearch="$ilike"
-              paramExternalSearch="filter.id"
-              [externalSearch]="eventNumber.value"
+              secondParamSearch="filter.id"
               [labelTemplate]="eventLabel"
               [optionTemplate]="eventOption"
               (valueChange)="reloadLoteEvent($event)">
@@ -136,6 +116,7 @@
           <div class="row mt-4 ml-0">
             <ng-custom-select-loading
               [form]="form"
+              [updateValues]="true"
               formControlName="lotNumber"
               label="Lote"
               [path]="pathLote"
@@ -143,8 +124,7 @@
               bindLabel="description"
               paramSearch="filter.description"
               prefixSearch="$ilike"
-              paramExternalSearch="filter.idLot"
-              [externalSearch]="lotNumber.value"
+              secondParamSearch="filter.idLot"
               [labelTemplate]="lotLabel"
               [optionTemplate]="lotOption">
             </ng-custom-select-loading>
@@ -188,6 +168,7 @@
           <div class="row mt-4 ml-0">
             <ng-custom-select-loading
               [form]="form"
+              [updateValues]="true"
               formControlName="clkpv"
               label="Proveedor"
               [path]="pathProvider"
@@ -195,32 +176,22 @@
               bindLabel="pvName"
               paramSearch="filter.pvName"
               prefixSearch="$ilike"
-              paramExternalSearch="filter.clkPv"
-              [externalSearch]="clkpv.value"
+              secondParamSearch="filter.clkPv"
+              secondPrefixSearch="$eq"
               [labelTemplate]="providerLabel"
               [optionTemplate]="providerOption">
             </ng-custom-select-loading>
-            <!-- <ng-custom-select-loading
-              [form]="form"
-              formControlName="clkpv"
-              label="Proveedor"
-              [path]="pathProvider"
-              value="clkPv"
-              bindLabel="pvName"
-              paramSearch="filter.pvName"
-              paramExternalSearch="filter.clkPv"
-              [externalSearch]="clkpv.value"
-              prefixSearch="$ilike"
-              [labelTemplate]="providerLabel"
-              [optionTemplate]="providerOption">
-            </ng-custom-select-loading> -->
             <ng-template #providerLabel let-item="item">
               {{ item.clkPv }} - {{ item.pvName }}
             </ng-template>
-            <ng-template #providerOption let-item="item">
-              <div [title]="item.clkPv + '-' + item.pvName">
+            <ng-template #providerOption ng-option-tmp let-item="item">
+              <span class="ng-option-tmp">
                 {{ item.clkPv }} - {{ item.pvName }}
-              </div>
+              </span>
+
+              <!-- <div [title]="item.clkPv + '-' + item.pvName">
+                {{ item.clkPv }} - {{ item.pvName }}
+              </div> -->
             </ng-template>
           </div>
           <div class="row mt-4 ml-0">
@@ -232,6 +203,7 @@
               value="description"
               bindLabel="description"
               paramSearch="filter.description"
+              prefixSearch="$ilike"
               [limit]="1000">
             </ng-custom-select-loading>
           </div>

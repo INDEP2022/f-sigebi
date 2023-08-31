@@ -173,10 +173,19 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         this.formLoading = false;
       }
     }
-    if (this.idprogDel) {
+    if (this.idprogDel && this.typeNotification == 1) {
       console.log('this.idprogDel', this.idprogDel);
       console.log('this.typeNotification', this.typeNotification);
       let linkDoc: string = `${this.urlBaseReport}NotificacionParaDestruccion.jasper&ID_PROG_ENTREGA=${this.idprogDel}`;
+      this.src = linkDoc;
+      console.log('this.src', this.src);
+      this.formLoading = false;
+    }
+
+    if (this.idprogDel && this.typeNotification == 2) {
+      console.log('this.idprogDel', this.idprogDel);
+      console.log('this.typeNotification', this.typeNotification);
+      let linkDoc: string = `${this.urlBaseReport}NotificacionDestruccionFondos.jasper&ID_PROG_ENTREGA=${this.idprogDel}`;
       this.src = linkDoc;
       console.log('this.src', this.src);
       this.formLoading = false;
