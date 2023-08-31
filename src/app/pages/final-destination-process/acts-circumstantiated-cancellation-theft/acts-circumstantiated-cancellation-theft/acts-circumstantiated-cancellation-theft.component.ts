@@ -124,8 +124,7 @@ export type IGoodAndAvailable = IGood & {
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   response: boolean = false;
   form: FormGroup;
   selectedRow: IGood;
@@ -676,7 +675,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       statusGood: [null],
     });
   }
-  onSubmit() {}
+  onSubmit() { }
 
   search(event: any) {
     this.getExpedient(event);
@@ -931,6 +930,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       }
       // Limpiar formulario una vez consulte
       this.actaRecepttionForm.reset();
+      this.formScan.reset();
 
       const dateElabora =
         next.elaborationDate != null ? new Date(next.elaborationDate) : null;
@@ -1400,9 +1400,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
               this.Exportdate = true;
               // console.log('valid', valid);
               await this.createDET(_g);
-              if (!valid) {
-                // this.dataRecepcion = [...this.dataRecepcion, _g];
-              }
+              // if (!valid) {
+              //   // this.dataRecepcion = [...this.dataRecepcion, _g];
+              // }
             }
           });
           Promise.all(result).then(async item => {
@@ -1474,51 +1474,144 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   //Quitar todos
+  // removeAll() {
+  //   if (this.actasDefault == null) {
+  //     this.alert(
+  //       'warning',
+  //       'Debe Especificar/Buscar el Acta para Despues Eliminar el Bien de Esta.',
+  //       'Debe Capturar un Acta.'
+  //     );
+  //     return;
+  //   } else {
+  //     if (this.statusCanc == 'CERRADA') {
+  //       this.alert(
+  //         'warning',
+  //         'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+  //         ''
+  //       );
+  //       return;
+  //     } else {
+  //       // console.log('DataRecepcion', this.dataRecepcion);
+
+  //       if (this.dataRecepcion.length > 0) {
+  //         this.dataRecepcion.forEach((good: any) => {
+  //           console.log('this.dataRecepcion', this.dataRecepcion);
+  //           this.dataRecepcion = this.dataRecepcion.filter(
+  //             (_good: any) => _good.id != good.id
+  //           );
+  //           // let index = this.dataTableGood_.findIndex(g => g.id === good.id);
+  //           let index = this.dataTableGood_.findIndex(
+  //             g => g.id === good.goodId
+  //           );
+  //           this.dataRecepcion = [];
+  //           this.dataRecepcionGood.load([]);
+  //           this.Exportdate = false;
+  //           if (index != -1) {
+  //             if (this.dataTableGood_[index].di_dispo) {
+  //               this.dataTableGood_[index].di_dispo = 'S';
+  //             }
+  //             // if (this.dataTableGood_[index].di_dispo) {
+  //             //   this.dataTableGood_[index].di_dispo = 'S';
+  //             // }
+  //           }
+  //         });
+  //         this.goodsValid = [];
+  //       }
+  //     }
+  //   }
+  // }
+  // removeAll() {
+  //   if (this.statusCanc == 'CERRADA') {
+  //     this.alert(
+  //       'warning',
+  //       'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+  //       ''
+  //     );
+  //     return;
+  //   } else {
+  //     // console.log('this.actasDefault ', this.actasDefault);
+
+  //     if (this.actasDefault == null) {
+  //       this.alert(
+  //         'warning',
+  //         'Debe Especificar/Buscar el Acta para Despues Eliminar el Bien de Esta.',
+  //         ''
+  //       );
+  //       return;
+  //     } else {
+  //       if (this.selectedGooodsValid.length > 0) {
+  //         // this.goods = this.goods.concat(this.selectedGooodsValid);
+  //         let result = this.selectedGooodsValid.map(async good => {
+  //           console.log('good', good);
+  //           this.dataRecepcion = this.dataRecepcion.filter(
+  //             (_good: any) => _good.id != good.id
+  //           );
+  //           let index = this.dataTableGood_.findIndex(
+  //             g => g.id === good.goodId
+  //           );
+
+  //           await this.deleteDET(good);
+  //           // this.selectedGooods = [];
+  //         });
+
+  //         Promise.all(result).then(async item => {
+  //           this.getGoodsByStatus(Number(this.fileNumber));
+  //           await this.getDetailProceedingsDevollution(this.actasDefault.id);
+  //         });
+  //         this.Exportdate = false;
+  //         this.validateGoods = true;
+  //         this.selectedGooodsValid = [];
+  //         this.loading2 = true;
+
+  //       }
+  //     }
+  //   }
+  //   // console.log('selectedGooodsValid--', this.selectedGooodsValid);
+  // }
+
   removeAll() {
     if (this.actasDefault == null) {
       this.alert(
         'warning',
-        'Debe Especificar/Buscar el Acta para Despues Eliminar el Bien de Esta.',
-        'Debe Capturar un Acta.'
+        'No existe un Acta en la cual Asignar el Bien.',
+        'Debe capturar un acta.'
       );
       return;
     } else {
       if (this.statusCanc == 'CERRADA') {
         this.alert(
           'warning',
-          'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+          'El Acta ya esta Cerrada, no puede Realizar Modificaciones a esta',
           ''
         );
         return;
       } else {
-        // console.log('DataRecepcion', this.dataRecepcion);
-
         if (this.dataRecepcion.length > 0) {
-          this.dataRecepcion.forEach((good: any) => {
-            console.log('this.dataRecepcion', this.dataRecepcion);
-            this.dataRecepcion = this.dataRecepcion.filter(
-              (_good: any) => _good.id != good.id
+          this.loading2 = true;
+          let result = this.dataRecepcion.map(async (_g: any) => {
+            // console.log(_g);
+            _g.di_disponible = 'S';
+            let valid = this.dataRecepcion.some(
+              (goodV: any) => goodV.goodId == _g.id
             );
-            let index = this.dataTableGood_.findIndex(g => g.id === good.id);
-            this.dataRecepcion = [];
-            this.dataRecepcionGood.load([]);
-            this.Exportdate = false;
-            // if (index != -1) {
-            //   if (this.dataTableGood_[index].est_disponible) {
-            //     this.dataTableGood_[index].est_disponible = 'S';
-            //   }
 
-            //   if (this.dataTableGood_[index].di_disponible) {
-            //     this.dataTableGood_[index].di_disponible = 'S';
-            //   }
+            this.Exportdate = true;
+            // console.log('valid', valid);
+
+            await this.deleteDET(_g);
+            // if (!valid) {
+            //   // this.dataRecepcion = [...this.dataRecepcion, _g];
             // }
           });
-          this.goodsValid = [];
+          Promise.all(result).then(async item => {
+            this.getGoodsByStatus(Number(this.fileNumber));
+            await this.getDetailProceedingsDevollution(this.actasDefault.id);
+            //this.actasDefault = null;
+          });
         }
       }
     }
   }
-
   rowsSelected(event: any) {
     this.selectedGooodsValid = event.selected;
   }
@@ -1586,8 +1679,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     nameFile.placeholder = `${newMsg}`;
   }
 
-  btnDetail() {}
-  sendOffice() {}
+  btnDetail() { }
+  sendOffice() { }
 
   Scanner() {
     /*if (this.formScan.get('scanningFoli').value) {
@@ -1657,10 +1750,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.disabledBtnActas = true;
         //this.disabledBtnCerrar = true;
       }
-      // console.log('NEXT', next);
+      //Se limpia el campo de folio de escaneo cuando se genera nueva acta
+      this.formScan.reset();
 
       // Const formato de fecha
-
       const dateElabora =
         next.elaborationDate != null ? new Date(next.elaborationDate) : null;
       const formattedfecElaborate =
@@ -1714,6 +1807,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
 
       await this.getDetailProceedingsDevollution(this.actasDefault.id);
+
+
     });
     // console.log(this.authService.decodeToken());
   }
@@ -1747,7 +1842,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   async cerrarActa() {
-    if (this.consec == null) {
+    let folio = this.formScan.get('scanningFoli').value
+    if (folio == null) {
       this.alert(
         'warning',
         'No se puede Cerrar el Acta sin Folio de Escaneo',
@@ -2051,9 +2147,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         'error',
         'Error',
         'Al localizar la información de Volante: ' +
-          flyerNumber +
-          ' y Expediente: ' +
-          this.fileNumber
+        flyerNumber +
+        ' y Expediente: ' +
+        this.fileNumber
       );
       return;
     }
@@ -2148,7 +2244,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => {},
+              callback: (data: any) => { },
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
@@ -2238,7 +2334,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                     urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                     type: 'pdf',
                   },
-                  callback: (data: any) => {},
+                  callback: (data: any) => { },
                 },
                 class: 'modal-lg modal-dialog-centered',
                 ignoreBackdropClick: true,
