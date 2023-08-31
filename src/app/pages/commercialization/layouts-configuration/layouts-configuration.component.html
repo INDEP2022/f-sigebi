@@ -138,6 +138,9 @@
                   </div>
                   <div
                     class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
+                    <app-columns-select
+                      [leftList]="true"
+                      [(settings)]="settings5"></app-columns-select>
                     <div>
                       <button
                         type="button"
@@ -148,9 +151,6 @@
                         Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
                       </button>
                     </div>
-                    <app-columns-select
-                      [leftList]="true"
-                      [(settings)]="settings5"></app-columns-select>
                   </div>
                   <div
                     class="col-sm-12 col-12 col-md-12 table-responsive p-5"
@@ -180,11 +180,14 @@
             <div class="card">
               <div class="card-body">
                 <div class="row">
-                  <div class="col-12 col-sm-12 col-md-8">
+                  <div class="col-12 col-sm-12 col-md-6">
                     <h6>Estructura del Dise&#241;o</h6>
                   </div>
                   <div
-                    class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
+                    class="col-12 col-sm-12 col-md-6 text-end d-flex flex-row-reverse">
+                    <app-columns-select
+                      [leftList]="true"
+                      [(settings)]="settings6"></app-columns-select>
                     <div>
                       <button
                         type="button"
@@ -195,9 +198,16 @@
                         Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
                       </button>
                     </div>
-                    <app-columns-select
-                      [leftList]="true"
-                      [(settings)]="settings6"></app-columns-select>
+                    <!-- <div>
+                      <button
+                        type="button"
+                        class="btn btn-sm active btn-primary m-2">
+                        <strong>Total de Columna Longitud: </strong>&nbsp;<span
+                          class="badge badge-light"
+                          >&nbsp;{{ lengthTotal }}</span
+                        >
+                      </button>
+                    </div> -->
                   </div>
                   <div
                     class="col-sm-12 col-12 col-md-12 table-responsive p-5"
@@ -216,6 +226,15 @@
                     <app-pagination
                       [params]="dataTableParamsLayoutsStructure"
                       [totalItems]="totalLayoutsStructure"></app-pagination>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item">
+                        <strong>Sumatoria Total de la Columna Longitud</strong>
+                        <div
+                          class="badge badge-pill bg-info text-wrap ml-2 mr-2">
+                          &nbsp;{{ lengthTotal }}
+                        </div>
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </div>

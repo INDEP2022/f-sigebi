@@ -78,6 +78,7 @@ export class EventGoodsLotsListActionsComponent
   @Input() viewRejectedGoods: boolean;
   @Output() viewRejectedGoodsChange = new EventEmitter<boolean>();
   @Output() fillStadistics = new EventEmitter<void>();
+  @Input() totalItems = 0;
   constructor(
     private router: Router,
     private eventPreparationService: EventPreparationService,
@@ -193,6 +194,10 @@ export class EventGoodsLotsListActionsComponent
   // ? ------------------------ EXPORTAR A EXCEL
 
   async onExportExcel() {
+    if (!this.totalItems) {
+      this.alert('warning', 'No hay datos para exportar', '');
+      return;
+    }
     const forThirdQuestion = await this.alertQuestion(
       'question',
       '¿Archivo para Tercero?',
@@ -307,13 +312,43 @@ export class EventGoodsLotsListActionsComponent
       this.goodsLotifyControl.reset();
       return;
     }
-    this.lotifyGoods();
+    this.lotifyGoods(event);
   }
 
   /**PUP_IMP_EXCEL_LOTES */
-  lotifyGoods() {
-    // TODO: IMPLEMENTAR CUANDO SE TENGA
-    console.warn('PUP_IMP_EXCEL_LOTES');
+  lotifyGoods(event: Event) {
+    const file = this.getFileFromEvent(event);
+    const { id, eventTpId, statusVtaId } = this.controls;
+    const eventType = eventTpId.value;
+    const validGood = 'S';
+    const clean = 'S';
+    const statusVta = statusVtaId.value;
+    const address = this.parameters.pDirection;
+    const user = this.loggedUser.preferred_username;
+    this.loader.load = true;
+    this.lotService
+      .impLotExcel({
+        file,
+        event: `${id.value}`,
+        eventType: eventType as string,
+        validGood,
+        clean,
+        statusVta,
+        address,
+        user,
+      })
+      .subscribe({
+        next: res => {
+          this.loader.load = false;
+          this.goodsLotifyControl.reset();
+          console.log(res);
+        },
+        error: error => {
+          this.loader.load = false;
+          this.goodsLotifyControl.reset();
+          console.log(error);
+        },
+      });
   }
 
   // ? ------------------------------ CREAR ACTA, EVENTO PÚBLICO
@@ -324,17 +359,17 @@ export class EventGoodsLotsListActionsComponent
       return;
     }
 
+    if (![1, 4].includes(Number(eventTpId.value))) {
+      this.alert('error', 'Error', 'Tipo de Evento no Apto para Publicarse');
+      return;
+    }
+
     if (!failureDate.value) {
       this.alert(
         'error',
         'Error',
         'Debe especificar la Fecha Fallo del Evento'
       );
-      return;
-    }
-
-    if (![1, 4].includes(Number(eventTpId.value))) {
-      this.alert('error', 'Error', 'Tipo de Evento no Apto para Publicarse');
       return;
     }
 
