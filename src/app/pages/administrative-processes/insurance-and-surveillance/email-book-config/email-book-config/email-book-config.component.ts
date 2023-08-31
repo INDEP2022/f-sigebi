@@ -1,5 +1,10 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, skip } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -7,7 +12,9 @@ import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IVigMailBook } from 'src/app/core/models/ms-email/email-model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
+import { BinnacleService } from 'src/app/core/services/ms-survillance/Binnacle-survillance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { CreateOrEditEmailBookDialogComponent } from '../components/create-or-edit-email-book-dialog/create-or-edit-email-book-dialog.component';
 import { BOOK_EMAIL_COLUMNS } from './book-email-columns';
 
@@ -30,9 +37,14 @@ export class EmailBookConfigComponent
   columnFilters: any = [];
   columnsD: IDelegation[] = [];
   parameterData: any[] = [];
+  path: string = '';
+  delegations = new DefaultSelect();
+  form: FormGroup;
   constructor(
     private emailService: EmailService,
-    private delegationService: DelegationService
+    private delegationService: DelegationService,
+    private binnacleService: BinnacleService,
+    private fb: FormBuilder
   ) {
     super();
     this.settings.columns = BOOK_EMAIL_COLUMNS;
@@ -40,11 +52,15 @@ export class EmailBookConfigComponent
   }
   ngOnInit(): void {
     this.params.pipe(skip(1)).subscribe(params => {
-      if (this.formControlRegionalDelegation.invalid) {
+      if (this.form.get('delegation').value) {
+        console.log(this.formControlRegionalDelegation);
         return;
       }
       this.getVigMailBook(params);
     });
+    this.path = 'survillance/api/v1/views/v-vig-delegations';
+    this.prepareForm();
+    this.getDelegation(new ListParams());
   }
 
   override ngAfterViewInit(): void {
@@ -64,10 +80,7 @@ export class EmailBookConfigComponent
           : 'Se ha editado el libro de correos correctamente',
         ''
       );
-      if (
-        res.newData.delegationNumber !==
-        this.formControlRegionalDelegation.value
-      ) {
+      if (res.newData.delegationNumber !== this.form.get('delegation').value) {
         return;
       }
       if (res.action === 'create') {
@@ -79,30 +92,45 @@ export class EmailBookConfigComponent
     });
   }
 
+  prepareForm() {
+    this.form = this.fb.group({
+      delegation: [null, [Validators.required]],
+    });
+
+    setTimeout(() => {}, 1000);
+  }
+
   createEmailBook(): void {
     this.createOrEditEmailBookDialog.openDialog();
   }
 
   editEmailBook(event: { data: IVigMailBook }): void {
+    this.delegationRegional = `${event.data.delegationNumber} - ${event.data.delegationDetails.description}`;
     this.createOrEditEmailBookDialog.openDialogEdit(
       event.data,
       this.delegationRegional
     );
+    console.log(event.data);
+    console.log(this.delegationRegional);
+
+    console.log(this.delegationRegional);
   }
 
   delegationRegional: any = null;
   onDelegationRegionalChange(event: any): void {
+    console.log(event);
     this.delegationRegional = event;
   }
   getVigMailBook(listParams = new ListParams()): void {
-    if (this.formControlRegionalDelegation.invalid) {
+    if (!this.form.get('delegation').value) {
       this.alert('error', 'Debe Seleccionar una Delegación Regional', '');
       this.emailsBook.load([]);
       return;
     }
+    console.log(this.form.get('delegation').value);
+
     this.loading = true;
-    listParams['filter.delegationNumber'] =
-      this.formControlRegionalDelegation.value;
+    listParams['filter.delegationNumber'] = this.form.get('delegation').value;
     this.emailService.getVigMailBook(listParams).subscribe({
       next: res => {
         this.parameterData = res.data;
@@ -154,8 +182,24 @@ export class EmailBookConfigComponent
   }
 
   changeTable(event: any): void {
+    console.log(event);
+
     if (event.id) {
       this.emailsBook.update(event.id, event);
     }
+  }
+
+  getDelegation(params: ListParams) {
+    this.binnacleService.getDelegations(params).subscribe({
+      next: resp => {
+        console.log(resp);
+
+        this.delegations = new DefaultSelect(resp.data, resp.count);
+        console.log(this.delegations);
+      },
+      error: () => {
+        this.delegations = new DefaultSelect();
+      },
+    });
   }
 }

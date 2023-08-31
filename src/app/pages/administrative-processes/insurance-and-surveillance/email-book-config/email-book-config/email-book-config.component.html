@@ -10,23 +10,26 @@
     <form class="form-material">
       <div class="row mt-4">
         <div class="col-md-6">
-          <form-field
-            class="form-group"
-            [control]="formControlRegionalDelegation"
-            label="Delegación Regional">
-            <ng-custom-select
-              class="form-control"
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [data]="delegations"
+              [form]="form"
               value="delegationNumber"
-              path="survillance/api/v1/views/v-vig-delegations"
-              paramSearch="search"
-              [formControl]="formControlRegionalDelegation"
-              (valueChange)="
-                getVigMailBook(); onDelegationRegionalChange($event)
-              ">
-              <ng-template let-item>
+              bindLabel="description"
+              label="Delegación"
+              control="delegation"
+              (fetchItems)="getDelegation($event)"
+              (change)="getVigMailBook(); onDelegationRegionalChange($event)"
+              [labelTemplate]="delg"
+              [optionTemplate]="delgd"></ngx-select>
+            <ng-template #delg let-item="item">
+              {{ item.delegationNumber }} - {{ item.description }}
+            </ng-template>
+            <ng-template #delgd let-item="item">
+              <div [title]="item.delegationNumber + '-' + item.description">
                 {{ item.delegationNumber }} - {{ item.description }}
-              </ng-template>
-            </ng-custom-select>
+              </div>
+            </ng-template>
           </form-field>
         </div>
       </div>

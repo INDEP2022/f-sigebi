@@ -229,8 +229,40 @@
       </form-field>
     </div>
   </div>
+  <ng-template #employeeLabel let-item="item">
+    {{ item.ClkDet }} - {{ item.MeNomEmp }} {{ item.MeNomAP }}
+    {{ item.MeNomAM }}
+  </ng-template>
+  <ng-template #employeeOption let-item="item">
+    <div
+      [title]="
+        item.ClkDet +
+        '-' +
+        item.MeNomEmp +
+        ' ' +
+        item.MeNomAP +
+        ' ' +
+        item.MeNomAM
+      ">
+      {{ item.ClkDet }} - {{ item.MeNomEmp }} {{ item.MeNomAP }}
+      {{ item.MeNomAM }}
+    </div>
+  </ng-template>
   <div class="row mt-4 pl-0">
-    <div class="col-md-4">
+    <ng-custom-select-loading
+      [form]="form"
+      [updateValues]="true"
+      formControlName="capturedUser"
+      label="Captura"
+      [path]="pathEmpleados"
+      value="ClkDet"
+      bindLabel="MeNomEmp"
+      paramSearch="search"
+      [labelTemplate]="employeeLabel"
+      [optionTemplate]="employeeOption">
+    </ng-custom-select-loading>
+
+    <!-- <div class="col-md-4">
       <form-field [control]="capturedUser" label="Captura">
         <input
           type="text"
@@ -247,10 +279,22 @@
           formControlName="nomEmplcapture"
           maxlength="120" />
       </form-field>
-    </div>
+    </div> -->
   </div>
   <div class="row mt-4 pl-0">
-    <div class="col-md-4">
+    <ng-custom-select-loading
+      [form]="form"
+      [updateValues]="true"
+      formControlName="authorizedUser"
+      label="Autoriza"
+      [path]="pathEmpleados"
+      value="ClkDet"
+      bindLabel="MeNomEmp"
+      paramSearch="search"
+      [labelTemplate]="employeeLabel"
+      [optionTemplate]="employeeOption">
+    </ng-custom-select-loading>
+    <!-- <div class="col-md-4">
       <form-field [control]="authorizedUser" label="Autoriza">
         <input
           type="text"
@@ -267,10 +311,22 @@
           formControlName="nomEmplAuthorizes"
           maxlength="120" />
       </form-field>
-    </div>
+    </div> -->
   </div>
   <div class="row mt-4 pl-0">
-    <div class="col-md-4">
+    <ng-custom-select-loading
+      [form]="form"
+      [updateValues]="true"
+      formControlName="requestedUser"
+      label="Solicita"
+      [path]="pathEmpleados"
+      value="ClkDet"
+      bindLabel="MeNomEmp"
+      paramSearch="search"
+      [labelTemplate]="employeeLabel"
+      [optionTemplate]="employeeOption">
+    </ng-custom-select-loading>
+    <!-- <div class="col-md-4">
       <form-field [control]="requestedUser" label="Solicita">
         <input
           type="text"
@@ -287,6 +343,6 @@
           formControlName="nomEmplRequest"
           maxlength="120" />
       </form-field>
-    </div>
+    </div> -->
   </div>
 </ng-container>

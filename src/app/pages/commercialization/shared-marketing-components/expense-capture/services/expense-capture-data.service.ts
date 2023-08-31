@@ -13,6 +13,7 @@ import {
   NUMBERS_DASH_PATTERN,
   NUM_POSITIVE,
 } from 'src/app/core/shared/patterns';
+import { ExpenseGoodProcessService } from './expense-good-process.service';
 import { ExpenseLotService } from './expense-lot.service';
 import { ExpenseModalService } from './expense-modal.service';
 
@@ -62,6 +63,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     private comerEventService: ComerEventosService,
     private expenseModalService: ExpenseModalService,
     private lotService: ExpenseLotService,
+    private expenseGoodProcessService: ExpenseGoodProcessService,
     private comerDetService: ComerDetexpensesService
   ) {
     super();
@@ -376,7 +378,24 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   private processPay() {
     // ENVIA_SIRSAE_CHATARRA_OI
     // ENVIA_SIRSAE_CHATARRA_SP
-    // PROCESA_EVENTO_CHATARRA(:COMER_GASTOS.ID_EVENTO, NVL(:COMER_GASTOS.ISR_RETENIDO,0)+ NVL(:COMER_GASTOS.IVA_RETENIDO,0));
+    this.expenseGoodProcessService
+      .PROCESA_EVENTO_CHATARRA(
+        this.conceptNumber.value,
+        this.eventNumber.value,
+        this.isrWithholding ?? 0 + this.vatWithholding ?? 0
+      )
+      .subscribe({
+        next: response => {
+          this.alert('success', 'Pago procesado correctamente', '');
+        },
+        error: err => {
+          this.alert(
+            'error',
+            'No se puede procesar la solicitud',
+            err.error.message
+          );
+        },
+      });
   }
 
   private processPayChatarraPM() {
