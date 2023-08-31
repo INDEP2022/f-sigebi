@@ -162,6 +162,10 @@ export class managementCaptureLinesComponent
     });
   }
   getAdminCaptureLine(params: ListParams) {
+    if (params.text != null && params.text != '') {
+      delete params['search'];
+      params['filter.id_evento'] = `$eq:${params.text}`;
+    }
     this.capturelineService.getAllAdminCaptureLine(params).subscribe({
       next: response => {
         this.eventList = new DefaultSelect(response.data, response.count);
