@@ -78,6 +78,8 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   totalLayoutsStructure: number = 0;
   testDataLayoutsStructure: any[] = [];
   columnFiltersLayoutsStructure: any = [];
+  // Cantidades de sumatorias
+  lengthTotal: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -529,24 +531,25 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       ...this.columnFiltersLayoutsStructure,
     };
     console.log('PARAMS ', params);
-    this.layoutsConfigService.getAllLayouts(params).subscribe({
+    this.layoutsConfigService.getAllLayouts_TotalT(params).subscribe({
       next: res => {
         console.log('DATA LayoutsStructure', res);
         this.testDataLayoutsStructure = res.data;
         this.dataTableLayoutsStructure.load(this.testDataLayoutsStructure);
         this.totalLayoutsStructure = res.count;
         this.loadingLayoutsStructure = false;
+        this.lengthTotal = res.totalLength;
       },
       error: error => {
         console.log(error);
         this.testDataLayoutsStructure = [];
         this.dataTableLayoutsStructure.load([]);
         this.totalLayoutsStructure = 0;
+        this.lengthTotal = 0;
         this.loadingLayoutsStructure = false;
       },
     });
   }
-
   /**
    * FIN FILTROS DE TABLAS Y FUNCIONES PARA CARGAR DATA
    */

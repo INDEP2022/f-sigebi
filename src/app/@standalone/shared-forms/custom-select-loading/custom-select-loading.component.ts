@@ -64,10 +64,10 @@ export class CustomSelectWidthLoading
   @Input() value: string = 'id';
   @Input() bindLabel: string = '';
   @Input() paramSearch: string = 'search';
-  @Input() paramExternalSearch: string = 'search';
   @Input() placeholder: string = '';
   @Input() prefixSearch: string = '';
-  @Input() seconParamSearch: string = '';
+  @Input() secondPrefixSearch = '$eq';
+  @Input() secondParamSearch: string = '';
   @Input() paramPageName: string = 'page';
   @Input() paramLimitName: string = 'limit';
   @Input() limit: number = 10;
@@ -79,7 +79,6 @@ export class CustomSelectWidthLoading
   @Input() termMaxLength: string = null;
   @Input() readonly: boolean = false;
   @Input() updateValues: boolean = false;
-  @Input() externalSearch: string;
   @Output()
   valueChange = new EventEmitter<any>();
   @Output() getObject = new EventEmitter<any>();
@@ -112,7 +111,9 @@ export class CustomSelectWidthLoading
     }
     if (this.form) {
       this.form.get(this.formControlName).valueChanges.subscribe(x => {
-        // console.log(x);
+        console.log(x);
+        // console.log(this.labelTemplate);
+        // console.log(this.ngSelect.labelTemplate);
         if (x && this.updateValues) {
           this.input$.next(x);
         }
@@ -130,19 +131,26 @@ export class CustomSelectWidthLoading
     }
   }
 
+  // updateTitle() {
+  //   if (
+  //     typeof this.form.get(this.formControlName).value == 'object' &&
+  //     this.form.get(this.formControlName).value != null
+  //   ) {
+  //     if (this.form.get(this.formControlName).value[this.bindLabel])
+  //       this.title = this.form.get(this.formControlName).value[this.bindLabel];
+  //   } else {
+  //     if (this.form.get(this.formControlName).value != null)
+  //       this.title = this.form.get(this.formControlName).value;
+  //   }
+  // }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
-    if (changes['externalSearch'] && changes['externalSearch'].currentValue) {
-      // this.input$.next(changes['externalSearch'].currentValue);
-      this.loadData(changes['externalSearch'].currentValue, false);
-    }
     if (changes['path'] && changes['path'].currentValue) {
-      console.log('Entro a recargar');
       this.page = 1;
       this.isLoading = true;
       this.loadData('');
@@ -167,7 +175,7 @@ export class CustomSelectWidthLoading
   }
 
   onSelectChange(event: any) {
-    // console.log(event);
+    console.log(event);
     if (!event) {
       this.input$.next('');
       this.valueChange.emit(null);
@@ -186,7 +194,6 @@ export class CustomSelectWidthLoading
   }
 
   clear(event: any) {
-    console.log(event);
     this.input$.next('');
   }
 
@@ -194,31 +201,35 @@ export class CustomSelectWidthLoading
     prefixSearch: string,
     paramSearch: string,
     params: any,
-    text: string = '',
-    normalSearch = true
+    text: string = ''
   ) {
-    if (normalSearch) {
-      if (prefixSearch) {
-        text = `${prefixSearch}:${text}`;
-      }
-      params[paramSearch] = text;
-    } else {
-      if (prefixSearch) {
-        text = `$eq:${text}`;
-      }
-      params[this.paramPageName] = 1;
-      params[this.paramExternalSearch] = text;
+    if (prefixSearch) {
+      text = `${prefixSearch}:${text}`;
     }
+    params[paramSearch] = text;
+
+    //  if (normalSearch) {
+    //    if (prefixSearch) {
+    //      text = `${prefixSearch}:${text}`;
+    //    }
+    //    params[paramSearch] = text;
+    //  } else {
+    //    if (prefixSearch) {
+    //      text = `$eq:${text}`;
+    //    }
+    //    params[this.paramPageName] = 1;
+    //    params[this.paramExternalSearch] = text;
+    //  }
     return params;
   }
 
-  private fillParams(text: string = '', normalSearch = true) {
+  private fillParams(text: string = '') {
     let params: any = {
       [this.paramPageName]: this.page,
       [this.paramLimitName]: this.limit || 10,
     };
     if (text) {
-      if (this.seconParamSearch) {
+      if (this.secondParamSearch) {
         if (isNaN(+text)) {
           return this.fillParams2(
             this.prefixSearch,
@@ -228,11 +239,10 @@ export class CustomSelectWidthLoading
           );
         } else {
           return this.fillParams2(
-            '$eq',
-            this.seconParamSearch,
+            this.secondPrefixSearch,
+            this.secondParamSearch,
             params,
-            text,
-            normalSearch
+            text
           );
         }
       } else {
@@ -240,16 +250,15 @@ export class CustomSelectWidthLoading
           this.prefixSearch,
           this.paramSearch,
           params,
-          text,
-          normalSearch
+          text
         );
       }
     }
     return params;
   }
 
-  getItemsObservable(text: string = '', normalSearch = true) {
-    let params: any = this.fillParams(text, normalSearch);
+  getItemsObservable(text: string = '') {
+    let params: any = this.fillParams(text);
     const mParams =
       this.moreParams.length > 0 ? '?' + this.moreParams.join('&') : '';
     // console.log(params, mParams);
@@ -313,8 +322,8 @@ export class CustomSelectWidthLoading
     }
   }
 
-  private loadData(input: string, normalSearch = true) {
-    this.getItemsObservable(input, normalSearch)
+  private loadData(input: string) {
+    this.getItemsObservable(input)
       .pipe(
         take(1),
         map((resp: any) => {
@@ -326,7 +335,6 @@ export class CustomSelectWidthLoading
       )
       .subscribe({
         next: (resp: any[]) => {
-          console.log(resp);
           this.isLoading = false;
           if (resp) {
             this.items = resp;
@@ -373,12 +381,17 @@ export class CustomSelectWidthLoading
       )
       .subscribe({
         next: (resp: any[]) => {
-          console.log(resp);
           this.isLoading = false;
           if (resp) {
-            this.items = resp;
-
+            this.items = resp.map(x => {
+              let item = x;
+              if (x[this.value]) {
+                item[this.value] = x[this.value] + '';
+              }
+              return item;
+            });
             if (resp.length === 1) {
+              // this.onSelectChange(resp[0]);
               this.getObject.emit(resp[0]);
             }
           } else {
