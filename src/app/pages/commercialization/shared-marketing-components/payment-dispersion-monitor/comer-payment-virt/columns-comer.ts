@@ -15,7 +15,7 @@ export const COLUMN_COMER = {
     title: 'Monto',
     sort: false,
   },
-  penality: {
+  amountGrief: {
     title: 'Penalización',
     sort: false,
   },

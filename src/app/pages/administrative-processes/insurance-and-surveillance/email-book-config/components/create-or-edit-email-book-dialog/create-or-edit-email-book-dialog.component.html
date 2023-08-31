@@ -9,21 +9,16 @@
     </h4>
   </div>
   <form class="modal-body form-material" [formGroup]="form">
-    <form-field
-      class="form-group"
-      [control]="form.get('delegationNumber')"
-      label="Delegación Regional">
-      <ng-custom-select
-        [initOption]="initOption"
+    <form-field [control]="form.get('delegationNumber')">
+      <ngx-select
+        [data]="delegations"
+        [form]="form"
         value="delegationNumber"
-        class="form-control"
-        path="survillance/api/v1/views/v-vig-delegations"
-        paramSearch="search"
-        formControlName="delegationNumber">
-        <ng-template let-item>
-          {{ item.delegationNumber }} - {{ item.description }}
-        </ng-template>
-      </ng-custom-select>
+        bindLabel="tipoSupbtipoDescription"
+        label="Delegación"
+        control="delegationNumber"
+        (fetchItems)="getDelegation($event)">
+      </ngx-select>
     </form-field>
     <div class="mt-4">
       <form-field [control]="form.get('bookName')" label="Nombre">
