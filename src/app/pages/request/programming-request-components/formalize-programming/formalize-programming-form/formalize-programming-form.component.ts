@@ -293,7 +293,7 @@ export class FormalizeProgrammingFormComponent
     this.formLoading = true;
     this.getProgrammingData();
     this.prepareFormProceeding();
-
+    this.getTask();
     /*this.paramsReceipts
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => ); */
@@ -432,7 +432,7 @@ export class FormalizeProgrammingFormComponent
         this.getAuthority();
         this.getTypeRelevant();
         this.getwarehouse();
-        this.getTask();
+
         //this.getUsersProgramming();
         /*this.params
           .pipe(takeUntil(this.$unSubscribe))
@@ -442,13 +442,17 @@ export class FormalizeProgrammingFormComponent
 
   getTask() {
     const task = JSON.parse(localStorage.getItem('Task'));
+
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.id'] = task.id;
+    params.getValue()['filter.id'] = `$eq:${task.id}`;
     this.taskService.getAll(params.getValue()).subscribe({
       next: response => {
+        console.log('response', response);
         this.task = response.data[0];
       },
-      error: error => {},
+      error: error => {
+        console.log('error', error);
+      },
     });
   }
 
