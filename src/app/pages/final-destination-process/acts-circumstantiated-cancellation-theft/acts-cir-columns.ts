@@ -142,6 +142,7 @@ export const COPY = {
     type: 'string',
     sort: false,
   },
+
   // cell: {
   //   class: (value: any, row: any) => {
   //     if (registrosMovidos.includes(row)) {
