@@ -27,6 +27,7 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
@@ -279,7 +280,8 @@ export class FormalizeProgrammingFormComponent
     private taskService: TaskService,
     private authService: AuthService,
     private emailService: EmailService,
-    private goodsProcessService: GoodprocessService
+    private goodsProcessService: GoodprocessService,
+    private goodsQueryService: GoodsQueryService
   ) {
     super();
     this.settings.columns = TRANSPORTABLE_GOODS_FORMALIZE;
@@ -515,12 +517,22 @@ export class FormalizeProgrammingFormComponent
 
   getwarehouse() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.organizationCode'] = this.programming.storeId;
+    this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
+      next: response => {
+        this.nameWarehouse = response.data[0].name;
+        this.ubicationWarehouse = response.data[0].address1;
+        this.formLoading = false;
+      },
+      error: error => {},
+    });
+    /*const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.idWarehouse'] = this.programming.storeId;
     this.warehouseService.getAll(params.getValue()).subscribe(data => {
       this.nameWarehouse = data.data[0].description;
       this.ubicationWarehouse = data.data[0].ubication;
       this.formLoading = false;
-    });
+    }); */
   }
   /*getUsersProgramming() {
     this.loading = true;
@@ -1438,25 +1450,28 @@ export class FormalizeProgrammingFormComponent
         body['type'] = 'SOLICITUD_PROGRAMACION';
         body['subtype'] = 'Formalizar_Entrega';
         body['ssubtype'] = 'ACCEPT';
-
-        const closeTask = await this.closeTaskExecuteRecepcion(body);
-
-        if (closeTask) {
-          const deleteGoodsReprog = await this.deleteGoodReprog();
-          if (deleteGoodsReprog) {
-            const updateProgramming = await this.updateProgrammingInfo();
-            if (updateProgramming) {
-              const sendGoodInventary = await this.sendGoodsGuardInventary();
-              if (sendGoodInventary) {
-                this.alertInfo(
-                  'success',
-                  'Acción correcta',
-                  'Se cerro la tarea formalizar entrega correctamente'
-                ).then(question => {
-                  if (question.isConfirmed) {
-                    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
-                  }
-                });
+        const closeTaskNotification = await this.closeTaskNotification();
+        if (closeTaskNotification) {
+          const closeTask = await this.closeTaskExecuteRecepcion(body);
+          if (closeTask) {
+            const deleteGoodsReprog = await this.deleteGoodReprog();
+            if (deleteGoodsReprog) {
+              const updateProgramming = await this.updateProgrammingInfo();
+              if (updateProgramming) {
+                const sendGoodInventary = await this.sendGoodsGuardInventary();
+                if (sendGoodInventary) {
+                  this.alertInfo(
+                    'success',
+                    'Acción correcta',
+                    'Se cerro la tarea formalizar entrega correctamente'
+                  ).then(question => {
+                    if (question.isConfirmed) {
+                      this.router.navigate([
+                        'pages/siab-web/sami/consult-tasks',
+                      ]);
+                    }
+                  });
+                }
               }
             }
           }
@@ -1573,6 +1588,36 @@ export class FormalizeProgrammingFormComponent
     };
   } */
 
+  closeTaskNotification() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      const _task = JSON.parse(localStorage.getItem('Task'));
+      params.getValue()['filter.id'] = `$eq:${_task.id}`;
+      this.taskService.getAll(params.getValue()).subscribe({
+        next: response => {
+          const taskInfo = response.data[0];
+          console.log('taskInfo', taskInfo);
+
+          const body: ITask = {
+            State: 'FINALIZADA',
+          };
+          this.taskService.update(taskInfo.id, body).subscribe({
+            next: response => {
+              console.log('cerro la tarea de notificación', response);
+              resolve(true);
+            },
+            error: error => {
+              resolve(true);
+            },
+          });
+        },
+        error: error => {
+          resolve(true);
+        },
+      });
+    });
+  }
+
   closeTaskExecuteRecepcion(body: any) {
     return new Promise((resolve, reject) => {
       this.taskService.createTaskWitOrderService(body).subscribe({
@@ -1633,7 +1678,6 @@ export class FormalizeProgrammingFormComponent
   }
 
   getReceiptsGuard() {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
     this.paramsReceipts.getValue()['filter.statusReceiptGuard'] = 'CERRADO';
     this.paramsReceipts.getValue()['filter.actId'] = this.actId;
     this.paramsReceipts.getValue()['filter.programmingId'] = this.programmingId;
