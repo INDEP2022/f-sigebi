@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -19,7 +20,10 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
 
   show: boolean = false;
 
-  data: any;
+  data: LocalDataSource = new LocalDataSource();
+
+  //Array
+  dataFilter: any[] = [];
 
   //ngx-select
   events = new DefaultSelect();
@@ -29,6 +33,9 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
 
   //String
   year: string = '';
+
+  //Number
+  totalItems: number = 0;
 
   //
 
@@ -62,11 +69,41 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
         this.getRrcs(this.array('rfc', response.data));
         this.getPublic(this.array('lote_publico', response.data));
         this.getDelegations(this.array('no_delegacion', response.data));
+        this.fillGridInvoces(response.data);
+        this.dataFilter = response.data;
+        this.filterInvoices();
       },
       error: () => {
         this.events = new DefaultSelect();
+        this.alert('warning', 'Advertencia', `No se encontraron registros`);
       },
     });
+  }
+
+  filterInvoices() {
+    console.log('Este es el arreglo con los datos', this.dataFilter);
+    if (this.dataFilter.length > 0) {
+      if (this.form.controls['allotment'].value != null) {
+        this.dataFilter = this.dataFilter.filter(
+          f => f.lote_publico === this.form.controls['allotment'].value
+        );
+        console.log('El arreglo filtrado: ', this.dataFilter);
+      }
+      if (this.form.controls['rfc'].value != null) {
+        this.dataFilter = this.dataFilter.filter(
+          f => f.rfc === this.form.controls['rfc'].value
+        );
+        console.log('El arreglo filtrado: ', this.dataFilter);
+      }
+      if (this.form.controls['delegation'].value != null) {
+        this.dataFilter = this.dataFilter.filter(
+          f => f.no_delegacion === this.form.controls['delegation'].value
+        );
+        console.log('El arreglo filtrado: ', this.dataFilter);
+      }
+      this.fillGridInvoces(this.dataFilter);
+      this.form.reset();
+    }
   }
 
   array(variable: any, array: any[]): any[] {
@@ -83,7 +120,6 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
     return arrayTwoLocal;
   }
 
-  // Get NGX-SELECT
   getEvents(params?: ListParams) {
     this.serviceInvoice.getInvoiceForniture(this.year, params).subscribe({
       next: data => {
@@ -93,6 +129,33 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
         this.events = new DefaultSelect();
       },
     });
+  }
+
+  delegationChangeIndex() {
+    if (this.form.controls['allotment'].value == null) {
+      this.getPublic(this.array('lote_publico', this.dataFilter));
+    }
+    if (this.form.controls['rfc'].value == null) {
+      this.getRrcs(this.array('rfc', this.dataFilter));
+    }
+  }
+
+  publicChangeIndex() {
+    if (this.form.controls['rfc'].value == null) {
+      this.getRrcs(this.array('rfc', this.dataFilter));
+    }
+    if (this.form.controls['delegation'].value == null) {
+      this.getDelegations(this.array('delegation', this.dataFilter));
+    }
+  }
+
+  rfcChangeIndex() {
+    if (this.form.controls['allotment'].value == null) {
+      this.getPublic(this.array('allotment', this.dataFilter));
+    }
+    if (this.form.controls['delegation'].value == null) {
+      this.getDelegations(this.array('delegation', this.dataFilter));
+    }
   }
 
   getDelegations(data: any) {
@@ -117,6 +180,13 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
       allotment: [null, [Validators.required]],
       rfc: [null, [Validators.required, Validators.pattern(RFC_PATTERN)]],
     });
+  }
+
+  fillGridInvoces(data: any[]) {
+    this.data.load(data);
+    this.totalItems = data.length | 0;
+    this.data.refresh();
+    this.loading = false;
   }
 
   onSubmit() {

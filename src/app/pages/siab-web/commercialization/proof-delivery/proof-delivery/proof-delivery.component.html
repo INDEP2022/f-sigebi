@@ -38,7 +38,10 @@
               <!-- <ngx-select [searchOnInit]="true" (fetchItems)="getDelegations($event)" [data]="delegations" [form]="form"
                 bindLabel="cveJob" label="Delegaci&oacute;n" control="delegation">
               </ngx-select> -->
-              <select class="form-control" formControlName="delegation">
+              <select
+                class="form-control"
+                formControlName="delegation"
+                (change)="delegationChangeIndex()">
                 <option></option>
                 <option *ngFor="let item of delegations">
                   {{ item.no_delegacion }}
@@ -54,7 +57,8 @@
                 bindLabel="cveJob" label="Lote P&uacute;blico" control="allotment">
               </ngx-select> --><select
                 class="form-control"
-                formControlName="allotment">
+                formControlName="allotment"
+                (change)="publicChangeIndex()">
                 <option></option>
                 <option *ngFor="let item of public">
                   {{ item.lote_publico }}
@@ -63,7 +67,10 @@
             </form-field>
           </div>
           <div class="col-md-3">
-            <form-field [control]="form.get('rfc')" label="RFC">
+            <form-field
+              [control]="form.get('rfc')"
+              label="RFC"
+              (change)="rfcChangeIndex()">
               <!-- <ngx-select [searchOnInit]="true" (fetchItems)="getRrcs($event)" [data]="rfcs" [form]="form"
                 bindLabel="cveJob" label="RFC" control="rfc">
               </ngx-select> --><select
