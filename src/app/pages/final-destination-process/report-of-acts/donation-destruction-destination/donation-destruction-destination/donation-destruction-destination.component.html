@@ -12,18 +12,20 @@
       class="form-material">
       <div class="row margin-input">
         <app-delegation-shared
-          (click)="loadDelegation('Recibe')"
+          [showSubdelegation]="true"
+          [form]="flatFileGoodForm"></app-delegation-shared>
+        <!-- <app-delegation-shared
           [form]="flatFileGoodForm"
           [showDelegation]="true"
           [delegationField]="'delegation'"
           labelDelegation="Delegación:"
           [subdelegationField]="'subdelegation'"
           labelSubdelegation="Sub-Delegación:"
-          [showSubdelegation]="true"></app-delegation-shared>
+          [showSubdelegation]="true"></app-delegation-shared> -->
       </div>
 
       <div class="row margin-input justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-3">
           <form-field
             [control]="flatFileGoodForm.get('expedienteI')"
             label="No. Expediente Desde el:">
@@ -34,7 +36,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-3">
           <form-field
             [control]="flatFileGoodForm.get('expedienteF')"
             label="Hasta el:">
@@ -46,7 +48,7 @@
         </div>
         <br />
 
-        <div class="col-md-6">
+        <div class="col-md-3">
           <form-field
             [control]="flatFileGoodForm.get('actaI')"
             label="No. de Acta Desde el:">
@@ -54,7 +56,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-3">
           <form-field
             [control]="flatFileGoodForm.get('actaF')"
             label="Hasta el:">
@@ -63,31 +65,40 @@
         </div>
         <br />
 
-        <div class="col-md-6">
+        <div class="col-md-3">
           <form-field
             [control]="flatFileGoodForm.get('statusActa')"
             label="Estatus Acta:">
-            <input
-              type="text"
+            <ng-select
               formControlName="statusActa"
-              placeholder=""
-              class="form-control" />
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="">TODOS</ng-option>
+              <ng-option value="ABIERTA">ABIERTA</ng-option>
+              <ng-option value="CERRADA">CERRADA</ng-option>
+            </ng-select>
           </form-field>
         </div>
         <br />
-        <div class="col-md-6">
+        <div class="col-md-3">
           <form-field
             [control]="flatFileGoodForm.get('tipoActa')"
             label="Tipo de Acta:">
-            <input
-              type="text"
+            <ng-select
               formControlName="tipoActa"
-              placeholder=""
-              class="form-control" />
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="TODOS">TODOS</ng-option>
+              <ng-option value="DONACION">DONACIÓN</ng-option>
+              <ng-option value="DESTRUCCION">DESTRUCCIÓN</ng-option>
+              <ng-option value="DESTINO">DESTINO</ng-option>
+            </ng-select>
           </form-field>
         </div>
         <br />
-        <div class="col-md-6">
+        <div class="col-md-3">
           <form-field
             [control]="flatFileGoodForm.get('initialDate')"
             label="Fecha del Evento:">
@@ -100,7 +111,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-3">
           <form-field
             [control]="flatFileGoodForm.get('finalDate')"
             label="Hasta el:">

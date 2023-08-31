@@ -13,6 +13,7 @@ import {
   NUMBERS_DASH_PATTERN,
   NUM_POSITIVE,
 } from 'src/app/core/shared/patterns';
+import { ExpenseGoodProcessService } from './expense-good-process.service';
 import { ExpenseLotService } from './expense-lot.service';
 import { ExpenseModalService } from './expense-modal.service';
 
@@ -51,12 +52,18 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   vatWithholding = 0;
   total = 0;
   totalMandatos = 0;
+  V_BIEN_REP_ROBO = 0;
+  PB_VEHICULO_REP_ROBO_DISPLAYED = true;
+  PB_VEHICULO_REP_ROBO_ENABLED = false;
+  SELECT_CAMBIA_CLASIF_DISPLAYED = true;
+  SELECT_CAMBIA_CLASIF_ENABLED = false;
   constructor(
     private fb: FormBuilder,
     private parameterService: ParametersConceptsService,
     private comerEventService: ComerEventosService,
     private expenseModalService: ExpenseModalService,
     private lotService: ExpenseLotService,
+    private expenseGoodProcessService: ExpenseGoodProcessService,
     private comerDetService: ComerDetexpensesService
   ) {
     super();
@@ -121,7 +128,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return this.parameterService.readParameters(+conceptId, this.address).pipe(
       take(1),
       catchError(x => {
-        this.alert('error', 'El concepto no está parametrizado', '');
+        // this.alert('error', 'El concepto no está parametrizado', '');
         this.resetParams();
         return of(null);
       }),
@@ -129,10 +136,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
         console.log(response);
         if (response) {
           this.fillParams(response);
+          return true;
         } else {
-          this.alert('error', 'El concepto no está parametrizado', '');
+          this.alert('warning', 'El concepto no está parametrizado', '');
+          return false;
         }
-        return null;
       })
     );
   }
@@ -370,7 +378,24 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   private processPay() {
     // ENVIA_SIRSAE_CHATARRA_OI
     // ENVIA_SIRSAE_CHATARRA_SP
-    // PROCESA_EVENTO_CHATARRA(:COMER_GASTOS.ID_EVENTO, NVL(:COMER_GASTOS.ISR_RETENIDO,0)+ NVL(:COMER_GASTOS.IVA_RETENIDO,0));
+    this.expenseGoodProcessService
+      .PROCESA_EVENTO_CHATARRA(
+        this.conceptNumber.value,
+        this.eventNumber.value,
+        this.isrWithholding ?? 0 + this.vatWithholding ?? 0
+      )
+      .subscribe({
+        next: response => {
+          this.alert('success', 'Pago procesado correctamente', '');
+        },
+        error: err => {
+          this.alert(
+            'error',
+            'No se puede procesar la solicitud',
+            err.error.message
+          );
+        },
+      });
   }
 
   private processPayChatarraPM() {

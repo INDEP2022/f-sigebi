@@ -717,6 +717,7 @@ export class MassRulingComponent
       p_no_of_dicta: Number.parseInt(this.form.get('id').value),
       p_tipo_dictaminacion: this.form.get('typeDict').value,
     };
+    console.log(body);
     // debugger;
     ////////////////////////////////////Hay que revisar por que si se le envia todo no realiza la insercion correctamente.
     // console.log(body);

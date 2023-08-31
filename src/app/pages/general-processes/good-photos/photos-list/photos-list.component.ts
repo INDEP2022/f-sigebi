@@ -41,7 +41,21 @@ import { PhotoComponent } from './photo/photo.component';
 export class PhotosListComponent extends BasePage implements OnInit {
   @Input() disabled: boolean = true;
   @Input() origin: number;
+  @Input()
+  get goodNumber() {
+    return this._goodNumber;
+  }
+  set goodNumber(value) {
+    this._goodNumber = value;
+    if (value) {
+      this.getData();
+    } else {
+      this.files = [];
+      this.errorMessage = '';
+    }
+  }
   @ViewChildren('photo') photos: QueryList<PhotoComponent>;
+  private _goodNumber: string | number;
   options = [
     { value: 1, label: 'Visualizar' },
     { value: 2, label: 'Editar' },
@@ -66,19 +80,6 @@ export class PhotosListComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       typedblClickAction: [1],
     });
-    this.service.showEvent.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: response => {
-        console.log(response);
-
-        if (response) {
-          this.getData();
-        }
-      },
-    });
-  }
-
-  get goodNumber() {
-    return this.service.selectedGood ? this.service.selectedGood.id : null;
   }
 
   get typedblClickAction() {
@@ -211,9 +212,8 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   get validFilesToDelete() {
-    return this.files.filter(
-      row =>
-        row.usuario_creacion === this.userName || row.usuario_creacion === null
+    return this.files.filter(row =>
+      row.usuario_creacion ? row.usuario_creacion === this.userName : true
     );
   }
 
@@ -270,6 +270,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
 
   async confirmDelete(all = false) {
     // if (this.disabledDeletePhotos()) return;
+    console.log(this.files, this.filesToDelete);
     if (all) {
       if (this.disabledDeleteAllPhotos()) {
         return;

@@ -79,7 +79,6 @@ export const ACTAS = {
     title: 'Id',
     type: 'number',
     sort: false,
-
   },
   keysProceedings: {
     title: 'Clave Acta',
@@ -143,6 +142,7 @@ export const COPY = {
     type: 'string',
     sort: false,
   },
+
   // cell: {
   //   class: (value: any, row: any) => {
   //     if (registrosMovidos.includes(row)) {
@@ -153,6 +153,22 @@ export const COPY = {
   // },
 };
 
+function validationCheck(checked: boolean) {
+  if (checked) {
+  }
+}
+
+export interface IDataGoodsTable {
+  goodId: number;
+  description: string;
+  quantity: number;
+  identifier: string;
+  status: string;
+  desEstatus: string;
+  seleccion: boolean;
+  improcedente: boolean;
+  disponible: boolean;
+}
 export class IGoodStatus {
   goodClassNumber: string | number;
   goodStatus: string;
@@ -171,7 +187,7 @@ export class IDetailProceedingsDeliveryReceptionNew {
 }
 export const RELATED_FOLIO_COLUMNS = {
   id: {
-    title: 'Folio',
+    title: 'Folio Universal',
     sort: false,
   },
   sheets: {

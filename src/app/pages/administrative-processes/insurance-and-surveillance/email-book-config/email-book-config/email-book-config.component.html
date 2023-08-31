@@ -18,14 +18,13 @@
               class="form-control"
               value="delegationNumber"
               path="survillance/api/v1/views/v-vig-delegations"
-              paramSearch="filter.description"
-              prefixSearch="$ilike"
+              paramSearch="search"
               [formControl]="formControlRegionalDelegation"
               (valueChange)="
                 getVigMailBook(); onDelegationRegionalChange($event)
               ">
               <ng-template let-item>
-                {{ item.description }}
+                {{ item.delegationNumber }} - {{ item.description }}
               </ng-template>
             </ng-custom-select>
           </form-field>

@@ -9,6 +9,7 @@ import { SurvillanceService } from 'src/app/core/services/ms-survillance/survill
 import { BasePage } from 'src/app/core/shared/base-page';
 import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { SharedService } from '../service/services';
 
 @Component({
   selector: 'app-delete-period',
@@ -45,7 +46,10 @@ export class DeletePeriodComponent extends BasePage {
   periods = new DefaultSelect();
 
   disabledPeriod: boolean = false;
-  constructor(private survillanceService: SurvillanceService) {
+  constructor(
+    private survillanceService: SurvillanceService,
+    private sharedService: SharedService
+  ) {
     super();
   }
 
@@ -54,13 +58,14 @@ export class DeletePeriodComponent extends BasePage {
     for (let i = 2010; i <= this.currentYear; i++) {
       this.years.push(i);
     }
+    this.sharedService.setCurrentTab(1);
     // this.prepareForm();
   }
 
   onClickDeletePeriod() {
     if (!this.delegationDefault) {
       this.form.markAsTouched();
-      this.alert('warning', 'Debe Seleccionar una Delegación', '');
+      this.alert('warning', 'Debe seleccionar una delegación', '');
     }
 
     const period = this.form.value.period;
@@ -88,8 +93,18 @@ export class DeletePeriodComponent extends BasePage {
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    params.addFilter('description', lparams.text, SearchFilter.ILIKE);
+    if (lparams?.text)
+      if (!isNaN(parseInt(lparams?.text))) {
+        console.log('SI');
+        params.addFilter('delegationNumber', lparams.text, SearchFilter.EQ);
+        // params.addFilter('no_cuenta', lparams.text);
+      } else {
+        console.log('NO');
 
+        params.addFilter('description', lparams.text, SearchFilter.ILIKE);
+        // params.addFilter('cve_banco', lparams.text);
+      }
+    params.sortBy = `delegationNumber:ASC`;
     return new Promise((resolve, reject) => {
       this.survillanceService
         .getViewVigDelegations(params.getParams())
@@ -221,6 +236,7 @@ export class DeletePeriodComponent extends BasePage {
 
   changeDelegations(event: any) {
     this.delegationDefault = event;
+    this.updateSharedVariable(event);
     if (event) {
       if (this.delegationDefault && this.anio && this.process) {
         this.disabledPeriod = true;
@@ -243,10 +259,15 @@ export class DeletePeriodComponent extends BasePage {
     this.periods = new DefaultSelect([], 0);
     this.delegationDefault = null;
     this.form.reset();
+    this.updateSharedVariable(null);
   }
 
   limpiarPeriodo() {
     this.form.get('period').setValue(null);
     this.getPeriods(new ListParams());
+  }
+
+  updateSharedVariable(value: any): void {
+    this.sharedService.setSharedVariable(value);
   }
 }

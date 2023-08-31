@@ -78,4 +78,9 @@ export class ScreenStatusService extends HttpService {
     const route = `${ScreenStatusEndpoints.getStatusV}`;
     return this.post(route, params);
   }
+
+  getStatusTA(params: any) {
+    const route = `${ScreenStatusEndpoints.GetCount}`;
+    return this.post(route, params);
+  }
 }

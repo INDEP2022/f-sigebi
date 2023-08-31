@@ -16,4 +16,5 @@ export enum LotEndpoints {
   ValidaListaNegra = 'apps/valida-lista-negra',
   GetBankReference = 'apps/get-bank-reference',
   querywinners = 'apps/query-winners-report',
+  PupCambioMasv = 'apps/pup-cambio-masiv',
 }

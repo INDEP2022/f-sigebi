@@ -299,8 +299,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         [Validators.pattern(STRING_PATTERN)], //Se quita la validación, en el forms no es requerido
       ],
       description: [
-        null,
-        [Validators.pattern(STRING_PATTERN)], //Se quita la validación, en el forms no es requerido
+        null, //Se quita la validación, en el forms no es requerido
       ],
       numberGoodSon: [
         null,
@@ -449,14 +448,16 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
 
             // this.getAttributesGood(res.data[0]['goodClassNumber']);
           } else if (conversionData.typeConv == '1') {
-            this.observation.setValue(null);
-            this.descriptionSon.setValue(null);
-            this.quantity.setValue(null);
-            this.classifier.setValue(null);
-            this.unitOfMeasure.setValue(null);
-            this.destinationLabel.setValue(null);
-            this.numberGoodSon.setValue(null);
-            this.searchStatus(null);
+            this.id.setValue(res.data[0]['id']);
+            this.observation.setValue(res.data[0]['observations']);
+            this.descriptionSon.setValue(res.data[0]['description']);
+            this.quantity.setValue(res.data[0]['quantity']);
+            this.classifier.setValue(res.data[0]['goodClassNumber']);
+            this.unitOfMeasure.setValue(res.data[0]['unit']);
+            this.destinationLabel.setValue(res.data[0]['labelNumber']);
+            this.statusCode = res.data[0]['status'];
+            this.numberGoodSon.setValue(e);
+            this.searchStatus(res.data[0]['status']);
             this.classificationOfGoods = Number(res.data[0]['goodClassNumber']);
             if (this.classificationOfGoods) {
               this.goodChange++;
@@ -554,6 +555,26 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     }
     console.log(this.numberGoodSon.value);
     if (this.numberGoodSon.value == null) {
+      this.alert('warning', `Debe llenar los campos requeridos`, ``);
+      return;
+    }
+    if (this.descriptionSon.value == null) {
+      this.alert('warning', `Debe llenar los campos requeridos`, ``);
+      return;
+    }
+    if (this.quantity.value == null) {
+      this.alert('warning', `Debe llenar los campos requeridos`, ``);
+      return;
+    }
+    if (this.classifier.value == null) {
+      this.alert('warning', `Debe llenar los campos requeridos`, ``);
+      return;
+    }
+    if (this.unitOfMeasure.value == null) {
+      this.alert('warning', `Debe llenar los campos requeridos`, ``);
+      return;
+    }
+    if (this.destinationLabel.value == null) {
       this.alert('warning', `Debe llenar los campos requeridos`, ``);
       return;
     }
@@ -703,6 +724,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       id: parseInt(idConversion),
       cveActaConv: this.form.get('actConvertion').value,
       statusConv: 2,
+      typeConv: 2,
     };
     console.log('ress conversions :', conversions);
 
@@ -964,14 +986,15 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         localStorage.setItem('conversion', JSON.stringify(this.conversionData));
       }
       let config = { ...MODAL_CONFIG, class: 'modal-xl modal-dialog-centered' };
-      console.log(this.tipo.value);
+      console.log(this.numberDossier.value);
       config.initialState = {
         proceeding: {},
         numberFoli: this.numberFoli,
         actConvertion: this.actConvertion.value,
         tipoConv: this.tipo.value,
         pGoodFatherNumber: this.numberGoodFather.value,
-        expedientNuember: this.numberDossier.value,
+        expedientNumber: this.numberDossier.value,
+        idConversion: this.form.get('idConversion').value,
         callback: (receipt: any, keyDoc: string) => {
           if (receipt && keyDoc) {
           }

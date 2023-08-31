@@ -78,6 +78,8 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   totalLayoutsStructure: number = 0;
   testDataLayoutsStructure: any[] = [];
   columnFiltersLayoutsStructure: any = [];
+  // Cantidades de sumatorias
+  lengthTotal: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -195,7 +197,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
-        this.onLoadToast('error', 'error en la búsqueda!!', '');
+        this.onLoadToast('error', 'Error en la Búsqueda', '');
         return;
       },
     });
@@ -209,7 +211,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     if (this.selectedRow == null) {
       this.alert(
         'warning',
-        'Selecciona un Registro de la Tabla "Layouts" para continuar',
+        'Selecciona un Registro de la Tabla "Diseños" para Continuar',
         ''
       );
       return;
@@ -217,8 +219,8 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     console.log('DUPLICAR ', this.selectedRow);
     this.alertQuestion(
       'warning',
-      'Duplicar Layout',
-      '¿Está seguro(a) en duplicar el Layout ' +
+      'Duplicar Diseño',
+      '¿Está Seguro(a) en Duplicar el Diseño ' +
         this.selectedRow.id +
         '.' +
         this.selectedRow.descLayout +
@@ -236,7 +238,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
           },
           error: error => {
             this.loading = false;
-            this.onLoadToast('error', 'No se puede duplicar layout!!', '');
+            this.onLoadToast('error', 'No se Puede Duplicar el Diseño', '');
             // return;
           },
         });
@@ -324,11 +326,11 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
         this.layoutsConfigService.remove(del).subscribe({
           next: data => {
             this.loading = false;
-            this.onLoadToast('success', 'Layout eliminado', '');
+            this.onLoadToast('success', 'Diseño Eliminado', '');
             this.getLayouts();
           },
           error: error => {
-            this.onLoadToast('error', 'No se puede eliminar registro', '');
+            this.onLoadToast('error', 'No se Puede Eliminar el Registro', '');
             this.loading = false;
           },
         });
@@ -432,8 +434,8 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     console.log('ELIMINAR ', event);
     this.alertQuestion(
       'warning',
-      'Eliminar Layout',
-      '¿Desea Eliminar este Layout?'
+      'Eliminar Diseño',
+      '¿Desea Eliminar este Diseño?'
     ).then(question => {
       if (question.isConfirmed) {
         this.loadingLayouts = true;
@@ -450,7 +452,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
               this.alert(
                 'error',
                 'Error al Actualizar',
-                'Ocurrió un Error al Actualizar el Layout'
+                'Ocurrió un Error al Actualizar el Diseño'
               );
             },
           });
@@ -529,24 +531,25 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       ...this.columnFiltersLayoutsStructure,
     };
     console.log('PARAMS ', params);
-    this.layoutsConfigService.getAllLayouts(params).subscribe({
+    this.layoutsConfigService.getAllLayouts_TotalT(params).subscribe({
       next: res => {
         console.log('DATA LayoutsStructure', res);
         this.testDataLayoutsStructure = res.data;
         this.dataTableLayoutsStructure.load(this.testDataLayoutsStructure);
         this.totalLayoutsStructure = res.count;
         this.loadingLayoutsStructure = false;
+        this.lengthTotal = res.totalLength;
       },
       error: error => {
         console.log(error);
         this.testDataLayoutsStructure = [];
         this.dataTableLayoutsStructure.load([]);
         this.totalLayoutsStructure = 0;
+        this.lengthTotal = 0;
         this.loadingLayoutsStructure = false;
       },
     });
   }
-
   /**
    * FIN FILTROS DE TABLAS Y FUNCIONES PARA CARGAR DATA
    */
@@ -555,7 +558,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     if (this.selectedRow == null) {
       this.alert(
         'warning',
-        'Selecciona un Registro de la Tabla "Layouts" para continuar',
+        'Selecciona un Registro de la Tabla "Diseños" para continuar',
         ''
       );
       return;

@@ -1,8 +1,20 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { catchError, firstValueFrom, of, takeUntil, tap } from 'rxjs';
+import {
+  catchError,
+  firstValueFrom,
+  map,
+  of,
+  take,
+  takeUntil,
+  tap,
+} from 'rxjs';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
+import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { BasePage } from 'src/app/core/shared';
 import { secondFormatDateToDate } from 'src/app/shared/utils/date';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
@@ -51,6 +63,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     private comerEventService: ComerEventosService,
     private screenService: ExpenseScreenService,
     private modalService: BsModalService,
+    private parameterModService: ParametersModService,
+    private sirsaeService: InterfacesirsaeService,
     private parameterService: ParametersConceptsService
   ) {
     super();
@@ -143,10 +157,18 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.form.get('comment');
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.lotNumber.valueChanges.subscribe({
+      next: response => {
+        if (response) {
+          this.nextItemLote();
+        }
+      },
+    });
+  }
 
   reloadLoteEvent(event: any) {
-    console.log(event);
+    // console.log(event);
     if (event)
       this.comerEventService
         .getMANDXEVENTO(event)
@@ -175,7 +197,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   notify() {
-    console.log('Notificar');
+    // console.log('Notificar');
     let config: ModalOptions = {
       initialState: {
         // message,
@@ -194,32 +216,110 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.modalService.show(NotifyComponent, config);
   }
 
-  fillForm(event: any) {
-    console.log(event);
+  private getParamValConcept(conceptNumber: number) {
+    const filterParams = new FilterParams();
+    filterParams.addFilter('parameter', 'VAL_CONCEPTO');
+    filterParams.addFilter('value', conceptNumber);
+    return firstValueFrom(
+      this.parameterModService.getAllFilter(filterParams.getParams()).pipe(
+        take(1),
+        catchError(x => {
+          return of(null);
+        }),
+        map(x => x && x.data && x.data.length > 0)
+      )
+    );
+  }
+
+  private URCOORDREGCHATARRA_AUTOMATICO(opcion: number) {}
+
+  private CARGA_BIENES_LOTE_XDELRES(id_evento: number, id_lote: number) {}
+
+  private CARGA_BIENES_LOTE(id_evento: number, id_lote: number) {}
+
+  get PVALIDADET() {
+    return this.dataService.PVALIDADET;
+  }
+
+  async nextItemLote() {
+    if (this.PVALIDADET === 'S') {
+      const V_EXIST = await this.getParamValConcept(this.conceptNumber.value);
+      if (V_EXIST) {
+        // console.log(V_EXIST);
+        this.URCOORDREGCHATARRA_AUTOMATICO(3);
+        this.CARGA_BIENES_LOTE_XDELRES(
+          this.eventNumber.value,
+          this.lotNumber.value
+        );
+      } else {
+        this.CARGA_BIENES_LOTE(this.eventNumber.value, this.lotNumber.value);
+      }
+      if (this.dataService.V_BIEN_REP_ROBO > 0) {
+        this.dataService.PB_VEHICULO_REP_ROBO_DISPLAYED = true;
+        this.dataService.PB_VEHICULO_REP_ROBO_ENABLED = true;
+        this.dataService.SELECT_CAMBIA_CLASIF_DISPLAYED = true;
+        this.dataService.SELECT_CAMBIA_CLASIF_ENABLED = true;
+      }
+    }
+  }
+
+  private validPayments(event: IComerExpense) {
+    return firstValueFrom(
+      this.sirsaeService
+        .validPayments({
+          pClkpv: event.clkpv,
+          pComment: event.comment,
+          pPayAfmandSae: event.comproafmandsae,
+          pNumberVoucher: event.numReceipts,
+          pDocumentationAnexa: event.attachedDocumentation,
+          pUserCapture: event.capturedUser,
+          pUserAuthorize: event.authorizedUser,
+          pUserRequest: event.requestedUser,
+          pFormPay: event.formPayment,
+          pEventId: +event.eventNumber,
+          pLotePub: +event.lotNumber,
+        })
+        .pipe(catchError(x => of({ data: false, message: x })))
+    );
+  }
+
+  async fillForm(event: IComerExpense) {
+    // console.log(event);
     this.data = event;
+    if (!event.conceptNumber) {
+      this.alert('warning', 'No cuenta con un concepto de pago', '');
+      return;
+    }
     this.conceptNumber.setValue(event.conceptNumber);
-    if (event.conceptNumber) {
-      this.getParams(event.conceptNumber).subscribe({
-        next: response => {
-          this.dataService.updateOI.next(true);
-        },
-        error: err => {
-          this.dataService.updateOI.next(true);
-        },
-      });
+    const responsePayments = await this.validPayments(event);
+    // console.log(responsePayments);
+    if (responsePayments.message[0] !== 'OK') {
+      this.alert('error', responsePayments.message[0], '');
+      return;
     }
-    if (event.eventNumber) {
-      this.eventNumber.setValue(event.eventNumber);
+    if (!event.eventNumber) {
+      this.alert('warning', 'No cuenta con un número de evento', '');
     }
-    if (event.clkpv) {
-      this.clkpv.setValue(event.clkpv);
+    this.eventNumber.setValue(event.eventNumber);
+    const responseParams = await firstValueFrom(
+      this.getParams(event.conceptNumber)
+    );
+    if (!responseParams) {
+      return;
     }
-    if (event.lotNumber) {
-      this.lotNumber.setValue(event.lotNumber);
+    if (!event.lotNumber) {
+      this.alert('warning', 'No cuenta con un número de lote', '');
     }
-    if (event.descurcoord) {
-      this.descurcoord.setValue(event.descurcoord);
+    this.lotNumber.setValue(event.lotNumber);
+    if (!event.clkpv) {
+      this.alert('warning', 'No cuenta con un proveedor', '');
     }
+    this.clkpv.setValue(event.clkpv);
+
+    if (!event.descurcoord) {
+      this.alert('warning', 'No cuenta con coordinación regional', '');
+    }
+    this.descurcoord.setValue(event.descurcoord);
     this.paymentRequestNumber.setValue(event.paymentRequestNumber);
     this.idOrdinginter.setValue(event.idOrdinginter);
     this.folioAtnCustomer.setValue(event.folioAtnCustomer);
@@ -229,6 +329,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         : null
     );
     this.comment.setValue(event.comment);
+
+    this.dataService.updateOI.next(true);
     this.dataService.updateExpenseComposition.next(true);
     this.dataService.updateFolio.next(true);
     // this.reloadConcepto = !this.reloadConcepto;
@@ -262,15 +364,15 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   get pathLote() {
     return (
-      'lot/api/v1/eat-lots?filter.idStatusVta=PAG' +
+      'lot/api/v1/eat-lots' +
       (this.eventNumber && this.eventNumber.value
-        ? '&filter.idEvent=' + this.eventNumber.value
+        ? '?filter.idEvent=' + this.eventNumber.value
         : '')
     );
   }
 
   get pathProvider() {
-    return 'interfaceesirsae/api/v1/supplier?sortBy=clkPv:ASC';
+    return 'interfaceesirsae/api/v1/supplier?filter.clkPv=$eq:45677&sortBy=clkPv:ASC';
   }
 
   get dataCompositionExpenses() {
@@ -313,19 +415,21 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
               const result = await firstValueFrom(
                 this.screenService
                   .PUP_VAL_BIEN_ROBO({
-                    goodNumber: '524', //row.goodNumber,
+                    goodNumber: row.goodNumber,
                     type: 'U',
                     screenKey: 'FCOMER084',
                     conceptNumber: this.conceptNumber.value,
                   })
                   .pipe(
                     catchError(x => of(null)),
-                    tap(x => console.log(x))
+                    tap(x => {
+                      // console.log(x)
+                    })
                   )
               );
-              console.log(result);
+              // console.log(result);
               if (!result) {
-                console.log('ERROR');
+                // console.log('ERROR');
                 errors.push(row.goodNumber);
               } else {
                 // if(result.message[0]){

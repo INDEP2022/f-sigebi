@@ -117,6 +117,8 @@ export class MaintenanceMailConfigurationComponent
           }
         },
       },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     };
     this.modalService.show(
       CreateOrEditEmailMaintenencekDialogComponent,
@@ -139,7 +141,7 @@ export class MaintenanceMailConfigurationComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.deleteEmail(Email.id);
@@ -166,7 +168,11 @@ export class MaintenanceMailConfigurationComponent
 
   handleSuccess() {
     const message: string = 'Actualizado';
-    this.alert('success', 'Registro Actualizado Correctamente', '');
+    this.alert(
+      'success',
+      'Datos Generales del Correo',
+      'Registro Actualizado Correctamente'
+    );
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
@@ -190,7 +196,7 @@ export class MaintenanceMailConfigurationComponent
         },
         error: error => {
           this.loading = false;
-          this.alert('warning', 'Error al actualizar registros', '');
+          this.alert('warning', 'Error al Actualizar Registros', '');
           this.data.refresh();
         },
       });

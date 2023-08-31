@@ -53,13 +53,21 @@
             <form-field
               [control]="searchForm.get('validity')"
               label="Válido Sistema">
-              <ng-select
+              <!-- <ng-select
                 formControlName="validity"
                 [searchable]="false"
                 class="form-control"
                 [clearable]="false">
                 <ng-option value="1">NULO</ng-option>
                 <ng-option value="2">B</ng-option>
+              </ng-select> -->
+              <ng-select class="form-control" formControlName="validity">
+                <!-- <ng-option [value]="null">Seleccione un valor</ng-option> -->
+                <ng-option
+                  *ngFor="let row of validSystem"
+                  [value]="row.valsisKey">
+                  {{ row.valsisDescription }}
+                </ng-option>
               </ng-select>
             </form-field>
           </div>
@@ -97,26 +105,36 @@
         <div class="row mb-4">
           <div class="col-md-12-col-sm12 col-xs-12 text-center">
             <button
-              class="btn btn-primary active btn-sm m-3"
+              class="btn btn-primary active btn-sm"
               (click)="search()"
               [disabled]="!searchForm.valid">
-              Ejecutar
+              Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
             <button
               class="btn btn-red btn-sm active m-3"
-              (click)="cleanSearch()"
-              [disabled]="paymentColumns.length == 0">
-              Eliminar B&uacute;squeda
+              (click)="formClean()"
+              [disabled]="!searchForm.valid">
+              Limpiar
               <i class="fa fa-trash" aria-hidden="true"></i>
             </button>
           </div>
         </div>
       </form>
     </div>
-    <br />
+
     <div class="row">
       <form class="form-material mb-0" [formGroup]="searchForm">
-        <div class="col-md-12-col-sm12">
+        <div class="col-md-12 col-sm-12 text-center">
+          <div class="col-md-3">
+            <input id="typeId" name="typeId" type="hidden" value="" />
+            <form-field [control]="searchForm.get('type')" label="Tipo">
+              <input
+                type="text"
+                formControlName="type"
+                readonly="true"
+                class="form-control" />
+            </form-field>
+          </div>
           <div class="col-md-3">
             <form-field
               [control]="searchForm.get('processType')"
@@ -148,40 +166,71 @@
               </ng-select>
             </form-field>
           </div>
-          <div class="text-end">
-            <button type="button" class="btn btn-sm btn-info active m-3">
-              <i class="bx bx-file text-light float-icon"></i>
-              Aplica
-            </button>
-            <button
-              class="btn btn-sm btn-success active m-3"
-              (click)="loadCSV.click()">
-              <i class="bi bi-file-earmark-excel-fill"></i>
-              Carga de CSV<input
-                #loadCSV
-                hidden
-                type="file"
-                accept=".csv"
-                (change)="getCsv($event)" />
-            </button>
-            <button type="button" class="btn btn-sm btn-info active m-3">
-              <i class="bx bx-file text-light float-icon"></i>
-              Cambio de Proceso
-            </button>
-          </div>
         </div>
       </form>
     </div>
-    <div class="row mt-6">
-      <div class="col-sm-12 col-md-6">
+
+    <br />
+    <div class="row">
+      <div class="col-md-12-col-sm12 text-center">
+        <button
+          type="button"
+          class="btn btn-sm btn-info active m-3"
+          (click)="aplica()">
+          <i class="bx bx-file text-light float-icon"></i>
+          Aplica
+        </button>
+        <button
+          class="btn btn-sm btn-success active m-3"
+          (click)="loadCSV.click()">
+          <i class="bi bi-file-earmark-excel-fill"></i>
+          Carga de CSV<input
+            #loadCSV
+            hidden
+            type="file"
+            accept=".csv"
+            (change)="procesa()" />
+        </button>
+        <button
+          class="btn btn-red btn-sm active m-3"
+          (click)="cleanSearch()"
+          [disabled]="!searchForm.valid">
+          Eliminar B&uacute;squeda
+          <i class="fa fa-trash" aria-hidden="true"></i>
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm btn-info active m-3"
+          (click)="changeProcess2()">
+          <i class="bx bx-file text-light float-icon"></i>
+          Cambio de Proceso
+        </button>
+
+        <button
+          class="btn btn-primary btn-sm active mr-3"
+          (click)="loadCSV2.click()">
+          <i class="fas fa-sync-alt"></i>
+          Cambiar Lotes<input
+            #loadCSV2
+            hidden
+            type="file"
+            accept=".csv"
+            (change)="onUpload($event)" />
+        </button>
+      </div>
+    </div>
+    <div class="row mt-2">
+      <!-- <div class="col-sm-3 col-md-3">
         <div class="form-material">
-          <search-bar [params]="params"></search-bar>
+          <form-field [control]="searchForm.get('type')" label="Tipo">
+            <input type="text" formControlName="type" class="form-control" />
+          </form-field>
         </div>
       </div>
-      <br />
+      <br /> -->
       <div class="row mb-4">
         <div class="col-md-12-col-sm12 col-xs-12 text-center">
-          <button
+          <!-- <button
             class="btn btn-primary btn-sm active mr-3"
             (click)="loadBatch.click()">
             <i class="fas fa-sync-alt"></i>
@@ -191,7 +240,7 @@
               type="file"
               accept=".csv"
               (change)="getCsv($event)" />
-          </button>
+          </button> -->
         </div>
       </div>
       <div class="col-sm-12 col-md-12">
@@ -203,8 +252,8 @@
           <div>
             <button
               class="btn btn-sm btn-success active me-2 font-size-14"
-              (click)="openForm()"
-              [disabled]="paymentColumns.length == 0">
+              (click)="openForm()">
+              <!-- [disabled]="!searchForm.valid" -->
               <i class="bx bx-plus text-light float-icon"></i>
               Agregar Registro
             </button>
@@ -230,6 +279,22 @@
           </div>
           <div class="table-padding"></div>
         </ng-scrollbar>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-md-12-col-sm12 col-xs-12 text-center">
+        <button
+          class="btn btn-sm btn-success active m-3"
+          (click)="systemAplicado()"
+          [disabled]="false">
+          Aplicado
+        </button>
+        <button
+          class="btn btn-sm btn-info active m-3"
+          (click)="changeCheckBox()"
+          [disabled]="!flag">
+          Selección
+        </button>
       </div>
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
