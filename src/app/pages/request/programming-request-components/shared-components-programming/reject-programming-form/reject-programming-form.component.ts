@@ -121,7 +121,7 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
       };
 
       const params = new BehaviorSubject<ListParams>(new ListParams());
-      params.getValue()['filter.id'] = task.id;
+      params.getValue()['filter.id'] = `$eq:${task.id}`;
       this.taskService.getAll(params.getValue()).subscribe({
         next: response => {
           console.log('response', response);

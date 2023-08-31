@@ -20,7 +20,7 @@ export class LayoutsConfigurationModalComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Configuración de Layouts';
+  title: string = 'Configuración de Diseños';
   provider: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;

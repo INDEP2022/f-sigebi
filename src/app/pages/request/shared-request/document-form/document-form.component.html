@@ -30,7 +30,9 @@
               [virtualScroll]="true"
               [loading]="loading"
               bindLabel="ddescription"
-              bindValue="ddocType">
+              bindValue="ddocType"
+              [(ngModel)]="selecteditem"
+              [readonly]="typeDocReadOnly">
               <ng-template ng-option-tmp let-item="item" let-index="index">
                 <div [title]="item.ddescription">
                   {{ item.ddescription }}
@@ -114,7 +116,11 @@
         </div>
         <div
           class="space col-md-6"
-          *ngIf="typeDoc === 'doc-bien' || typeDoc === 'doc-buscar'">
+          *ngIf="
+            typeDoc === 'doc-bien' ||
+            typeDoc === 'doc-buscar' ||
+            typeDoc === 'doc-constance'
+          ">
           <form-field
             [control]="documentForm.get('xidBien')"
             label="No&#46; Bien">
@@ -152,7 +158,11 @@
 
         <div
           class="space col-md-6"
-          *ngIf="typeDoc === 'doc-bien' || typeDoc === 'doc-buscar'">
+          *ngIf="
+            typeDoc === 'doc-bien' ||
+            typeDoc === 'doc-buscar' ||
+            typeDoc === 'doc-constance'
+          ">
           <form-field
             [control]="documentForm.get('xidSIAB')"
             label="No&#46; SIAB">
@@ -274,6 +284,22 @@
               class="form-control"
               formControlName="xcomments"
               maxlength="30"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="typeDoc === 'doc-constance'">
+        <div class="col-md-12"><h5>Información Adicional</h5></div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="documentForm.get('xcargoRemitente')"
+            label="Folio Acta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="xcargoRemitente" />
           </form-field>
         </div>
       </div>

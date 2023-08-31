@@ -640,11 +640,12 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         // this.goodDescription.setValue(res.numberGoodFather);
         // this.amount.setValue(res.numberGoodFather);
         this.measurementUnit.setValue(res.unit);
-        this.getCatalogClassGood({ text: res.status }, true);
+        console.log(res.status);
+        this.getCatalogGoodStatus({ text: res.status }, true);
         // this.status2.setValue(res.numberGoodFather);
 
         if (
-          ['C', 'X', 'L'].includes(
+          ['C', 'X', 'L', 'P', 'V', 'A'].includes(
             res.statuspack.toString().toLocaleUpperCase()
           )
         ) {
@@ -948,7 +949,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     const noPackage = this.noPackage.value.numberPackage;
     if (this.dataPrevisualization.length === 0) {
       this.alert(
-        'error',
+        'warning',
         titleInit + ' de paquete ' + noPackage,
         'No puede ' + messageInit + ' un paquete sin bienes'
       );
@@ -1326,7 +1327,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
               // pAsuntoInit = 'Autorización';
               this.validaButton.PB_CERRAR = false;
               pMessageStatus = 'cerrado';
-              this.form.disable({ onlySelf: true, emitEvent: false });
               break;
             default:
               break;
@@ -2009,7 +2009,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         if (res && res.data && res.data.length > 0) {
           this.noPackage.setValue(res.data[0]);
           this.loading = false;
-          this.validateButtons(this.noPackage.value.statusPaq);
+          this.validateButtons(this.noPackage.value.statuspack);
         } else {
           // this.dataPackageEnc = null;
         }

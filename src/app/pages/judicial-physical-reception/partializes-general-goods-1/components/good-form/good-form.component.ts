@@ -55,7 +55,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         // this.selectGood(response)
       },
       error: err => {
-        this.alert('error', 'No. Bien ' + this.noBien, 'No encontrado');
+        this.alert('warning', 'No. Bien ' + this.noBien, 'No encontrado');
         this.formLoading = false;
         this.resetForm();
       },
@@ -223,7 +223,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       } catch (x) {
         console.log(x);
         this.alert(
-          'error',
+          'warning',
           'Error',
           'El Bien no cuenta con un estatus y/o proceso correcto'
         );
@@ -254,7 +254,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
 
       if (!good.goodClassNumber) {
         this.alert(
-          'error',
+          'warning',
           'Parcialización',
           'Bien ' + good.goodId + ' no cuenta con clasificador'
         );
@@ -265,7 +265,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         const validacion = await this.validateGood(good);
         bandera = validacion.bandera;
         if (bandera === 0) {
-          this.alert('error', 'Parcialización', validacion.mensaje);
+          this.alert('warning', 'Parcialización', validacion.mensaje);
           return;
         }
       } else {
@@ -283,7 +283,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         const val14 = good.val14 ? +good.val14.trim() : 0;
         if (isNaN(+good.val2) || val14 <= 0 || good.appraisedValue <= 0) {
           this.alert(
-            'error',
+            'warning',
             'Parcialización',
             'Bien ' + good.goodId + ' no cuenta con importe'
           );

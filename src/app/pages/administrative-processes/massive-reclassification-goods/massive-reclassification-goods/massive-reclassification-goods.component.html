@@ -66,7 +66,7 @@
                 bindLabel="description"
                 paramSearch="filter.description"
                 prefixSearch="$ilike"
-                seconParamSearch="filter.numClasifGoods"
+                secondParamSearch="filter.numClasifGoods"
                 [labelTemplate]="clasLabel"
                 [optionTemplate]="clasOption"
                 (valueChange)="onChange($event)"></ng-custom-select-loading>
@@ -112,13 +112,27 @@
       </div>
       <div class="row mt-4" [class]="mode.value === 'I' ? '' : 'd-none'">
         <div class="col-md-full col-sm-12 col-xs-12">
-          <app-classification-of-goods-shared
+          <ng-custom-select-loading
             [form]="form"
+            [path]="pathClasification"
             label="No. de Clasificación de Bien Alterna"
-            [classificationOfGoodsField]="'classificationGoodAlterning'"
-            (descriptionClasification)="
-              onChageAlterning($event)
-            "></app-classification-of-goods-shared>
+            formControlName="classificationGoodAlterning"
+            value="numClasifGoods"
+            bindLabel="description"
+            paramSearch="filter.description"
+            prefixSearch="$ilike"
+            secondParamSearch="filter.numClasifGoods"
+            [labelTemplate]="clasLabel"
+            [optionTemplate]="clasOption"
+            (valueChange)="onChange($event)"></ng-custom-select-loading>
+          <ng-template #clasLabel let-item="item">
+            {{ item.numClasifGoods }} - {{ item.description }}
+          </ng-template>
+          <ng-template #clasOption let-item="item">
+            <div [title]="item.numClasifGoods + '-' + item.description">
+              {{ item.numClasifGoods }} - {{ item.description }}
+            </div>
+          </ng-template>
         </div>
       </div>
       <hr />
@@ -142,7 +156,7 @@
           <div class="d-flex justify-content-center">
             <div class="m-3">
               <button
-                [disabled]="!enabledReclass()"
+                [disabled]="!enabledReclass() || loading"
                 type="button"
                 class="btn btn-primary active"
                 (click)="openQuestion()">

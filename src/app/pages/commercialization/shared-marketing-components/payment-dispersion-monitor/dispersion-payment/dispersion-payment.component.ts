@@ -20,6 +20,7 @@ import {
 import { IGraceDate } from 'src/app/core/models/ms-event/event.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { ISendSirsaeLot } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae-model';
@@ -157,7 +158,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private customersService: ComerClientsService,
     private interfaceSirsaeService: InterfacesirsaeService,
-    private router: Router
+    private router: Router,
+    private depositaryService: MsDepositaryService
   ) {
     super();
   }
@@ -577,13 +579,18 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   //Data de COMER_CLIENTESXEVENTO
   getDataComerCustomer() {
     clearGoodCheckCustomer();
-    this.loading = true;
+    this.loadingCustomer = true;
     const paramsF = new FilterParams();
     paramsF.addFilter('EventId', this.event.value);
     if (this.dataCustomer['data'].length > 0) {
       paramsF.page = this.paramsCustomer.value.page;
       paramsF.limit = this.paramsCustomer.value.limit;
     }
+    //SentToSIRSAE
+    console.log(this.formCustomerEvent.get('inProcess').value);
+    this.formCustomerEvent.get('inProcess').value
+      ? paramsF.addFilter('SentToSIRSAE', 'S')
+      : '';
     this.comerTpEventsService.getTpEvent2(paramsF.getParams()).subscribe(
       async res => {
         const newData = await Promise.all(
@@ -599,19 +606,26 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         );
 
         //TODO: SUMATORIAS PARA TOTALES
-
+        console.log(newData);
         this.dataCustomer.load(newData);
         this.totalItemsCustomer = res.count;
         this.loadingCustomer = false;
       },
       err => {
         this.loadingCustomer = false;
+        this.dataCustomer.load([]);
         if (err.status == 400) {
-          this.alert(
-            'warning',
-            'No se encontrarón Clientes Participantes para el Evento',
-            ''
-          );
+          this.formCustomerEvent.get('inProcess').value
+            ? this.alert(
+                'warning',
+                'No se encontrarón Clientes Participantes para el Evento con Proceso S',
+                ''
+              )
+            : this.alert(
+                'warning',
+                'No se encontrarón Clientes Participantes para el Evento',
+                ''
+              );
         } else {
           this.alert('error', 'Se presentó un Error Inesperado', '');
         }
@@ -749,6 +763,30 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.loadingCustomerBanks = true;
     this.idClientCustomer = e.data.ClientId;
     this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
+    this.getTotalSums(e);
+  }
+
+  //TOTALES DE CLIENTES PARTICIPANTES EN EL EVENTO
+  getTotalSums(e: any) {
+    const model = {
+      clientId: e.data.ClientId,
+      eventId: e.data.EventId,
+    };
+
+    this.comerEventosService.getAmountsMtodisp(model).subscribe(
+      res => {
+        console.log(res);
+        this.formCustomerEvent.get('totalAmount').setValue(res.STOT);
+        this.formCustomerEvent.get('devAmount').setValue(res.SPD);
+        this.formCustomerEvent.get('penAmount').setValue(res.SPP);
+      },
+      err => {
+        console.log(err);
+        this.formCustomerEvent.get('totalAmount').reset();
+        this.formCustomerEvent.get('devAmount').reset();
+        this.formCustomerEvent.get('penAmount').reset();
+      }
+    );
   }
 
   //SELECCIONAR REGISTRO LOTES ASIGNADOS EN EL EVENTO
@@ -1049,19 +1087,44 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                 rfc = res['data'][0].rfc;
                 client = res['data'][0].reasonName;
                 console.log({ rfc, client });
-                resolve({
-                  rfc,
-                  client,
-                  reference,
-                  amount,
-                  idPayment,
-                  idBatch,
-                  incomeOrderId,
-                  date,
-                  dateMaxPay,
-                  eventId,
-                  customerBatch,
-                });
+                //PENALIZACIÓN
+                this.depositaryService
+                  .getComerDetLcGrief(this.dataBatch.reference)
+                  .subscribe(
+                    res => {
+                      console.log(res);
+                      resolve({
+                        rfc,
+                        client,
+                        reference,
+                        amount,
+                        idPayment,
+                        idBatch,
+                        incomeOrderId,
+                        date,
+                        dateMaxPay,
+                        eventId,
+                        customerBatch,
+                        penaltyAmount: res.data[0].mountgrief,
+                      });
+                    },
+                    err => {
+                      resolve({
+                        rfc,
+                        client,
+                        reference,
+                        amount,
+                        idPayment,
+                        idBatch,
+                        incomeOrderId,
+                        date,
+                        dateMaxPay,
+                        eventId,
+                        customerBatch,
+                        penaltyAmount: 0,
+                      });
+                    }
+                  );
               },
               err => {
                 console.log(err);

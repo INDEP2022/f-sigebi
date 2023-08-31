@@ -108,19 +108,14 @@ export class ScanningFoilComponent
       this.scanningFoli.value
     );
     if (this.good === null || this.good === undefined) {
-      this.alert(
-        'warning',
-        'Regularización Jurídica',
-        'Debe cargar un Bien',
-        ''
-      );
+      this.alert('warning', 'Atención', 'Debe cargar un Bien', '');
       return;
     }
     if (this.document !== undefined) {
       this.alert(
         'warning',
-        'Regularización Jurídica',
-        'El número de Bien para este proceso ya tiene folio de escaneo.'
+        'Atención',
+        'El número de Bien para este proceso ya tiene folio de escaneo'
       );
       return;
     }
@@ -210,20 +205,15 @@ export class ScanningFoilComponent
   }
   scan() {
     if (this.good === undefined) {
-      this.alert(
-        'warning',
-        'Regularización Jurídica',
-        'No existe folio de escaneo',
-        ''
-      );
+      this.alert('warning', 'Atención', 'No existe folio de escaneo', '');
       return;
     }
     console.log(this.form.get('scanningFoli').value);
     if (this.form.get('scanningFoli').value !== '') {
       this.alertQuestion(
         'question',
-        'Se abrirá la pantalla de escaneo para el folio de escaneo del Bien consultado',
-        '¿Deseas continuar?',
+        'Se abrirá la pantalla de escaneo para el folio del Bien consultado',
+        '¿Desea continuar?',
         'Continuar'
       ).then(q => {
         if (q.isConfirmed) {
@@ -231,12 +221,7 @@ export class ScanningFoilComponent
         }
       });
     } else {
-      this.alert(
-        'warning',
-        'Regularización Jurídica',
-        'No existe folio de escaneo',
-        ''
-      );
+      this.alert('warning', 'Atención', 'No existe folio de escaneo', '');
     }
   }
   goToScan() {
@@ -255,12 +240,7 @@ export class ScanningFoilComponent
   }
   seeImages() {
     if (this.good === undefined) {
-      this.alert(
-        'warning',
-        'Regularización Jurídica',
-        'No existe folio de escaneo',
-        ''
-      );
+      this.alert('warning', 'Atención', 'No existe folio de escaneo', '');
       return;
     }
     if (this.document !== undefined) {
@@ -280,7 +260,7 @@ export class ScanningFoilComponent
           } else {
             this.alert(
               'warning',
-              'Regularización Jurídica',
+              'Atención',
               'No existe documentación para este folio',
               ''
             );
@@ -289,8 +269,8 @@ export class ScanningFoilComponent
     } else {
       this.alert(
         'warning',
-        'Regularización Jurídica',
-        'No tiene folio de escaneo para visualizar.',
+        'Atención',
+        'No tiene folio de escaneo para visualizar',
         ''
       );
     }
@@ -298,12 +278,7 @@ export class ScanningFoilComponent
 
   printScanFile() {
     if (this.good === undefined) {
-      this.alert(
-        'warning',
-        'Regularización Jurídica',
-        'No existe folio de escaneo',
-        ''
-      );
+      this.alert('warning', 'Atención', 'No existe folio de escaneo', '');
       return;
     }
     if (this.form.get('scanningFoli').value !== '') {
@@ -312,12 +287,7 @@ export class ScanningFoilComponent
       };
       this.downloadReport(this.reportPrint, params);
     } else {
-      this.alert(
-        'warning',
-        'Regularización Jurídica',
-        'No existe folio de escaneo',
-        ''
-      );
+      this.alert('warning', 'Atención', 'No existe folio de escaneo', '');
     }
   }
 

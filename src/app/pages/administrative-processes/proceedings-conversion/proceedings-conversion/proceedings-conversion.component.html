@@ -54,13 +54,13 @@
                           <div class="card">
                             <div class="card-body">
                               <div class="row p-3">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                   <div>
                                     <label for="">No. Conversión: </label>
                                     {{ conversion || '' }}
                                   </div>
                                 </div>
-                                <div class="col-md-5">
+                                <div class="col-md-4">
                                   <div>
                                     <label for=""
                                       >No. Bien Convertido (Bien Padre):
@@ -68,8 +68,7 @@
                                     {{ goodFatherNumber || '' }}
                                   </div>
                                 </div>
-
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                   <div>
                                     <label for="">No. Expediente: </label>
                                     {{ fileNumber || '' }}
@@ -77,7 +76,13 @@
                                 </div>
                               </div>
                               <div class="row p-3">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
+                                  <div>
+                                    <label for="">No. Expediente: </label>
+                                    {{ noExpediente || '' }}
+                                  </div>
+                                </div>
+                                <div class="col-md-4">
                                   <div>
                                     <label for=""
                                       >Averiguaci&oacute;n Previa:
@@ -85,7 +90,7 @@
                                     {{ preAver || '' }}
                                   </div>
                                 </div>
-                                <div class="col-md-5">
+                                <div class="col-md-4">
                                   <div>
                                     <label for=""
                                       >No. Exp. del Transferente:
@@ -93,21 +98,21 @@
                                     {{ trasnfer || '' }}
                                   </div>
                                 </div>
-                                <div class="col-md-3">
+                                <!-- <div class="col-md-3">
                                   <div>
                                     <label for="">Hora de Creación: </label>
                                     {{ time | date : 'hh:mm' }}
                                   </div>
-                                </div>
+                                </div> -->
                               </div>
                               <div class="row p-3">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                   <div>
                                     <label for="">Causa Penal: </label>
                                     {{ criCase || '' }}
                                   </div>
                                 </div>
-                                <div class="col-md-7">
+                                <div class="col-md-4">
                                   <div>
                                     <label for="">Acta: </label>
                                     {{ cveActa || '' }}
@@ -197,7 +202,7 @@
                                       [control]="
                                         actaRecepttionForm.get('cveActa')
                                       "
-                                      label="Clave de Acta">
+                                      label="Cve. Acta">
                                       <input
                                         #inputValue
                                         type="text"
@@ -534,7 +539,8 @@
                     </div>
                     <div class="m-3">
                       <button
-                        [disabled]="!disabledBtnCerrar"
+                        [ngClass]="{ loading: loadingBtn }"
+                        [disabled]="!disabledBtnCerrar || loadingBtn"
                         type="button"
                         class="btn btn-primary active btn-sm"
                         (click)="cerrarActa(goodFatherNumber)">

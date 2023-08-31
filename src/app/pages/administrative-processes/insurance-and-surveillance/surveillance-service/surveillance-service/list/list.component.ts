@@ -58,7 +58,7 @@ export class ListComponent extends BasePage implements OnInit {
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               recordId: () => (searchFilter = SearchFilter.EQ),
-              goodNumber: () => (searchFilter = SearchFilter.EQ),
+              goodNumber: () => (searchFilter = SearchFilter.ILIKE),
               address: () => (searchFilter = SearchFilter.ILIKE),
               transferee: () => (searchFilter = SearchFilter.ILIKE),
             };

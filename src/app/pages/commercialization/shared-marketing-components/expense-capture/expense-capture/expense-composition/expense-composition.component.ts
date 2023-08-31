@@ -1,10 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import { catchError, firstValueFrom, map, of, takeUntil } from 'rxjs';
-import {
-  FilterParams,
-  ListParams,
-} from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerDetExpense } from 'src/app/core/models/ms-spent/comer-detexpense';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
@@ -159,6 +156,7 @@ export class ExpenseCompositionComponent
       .subscribe({
         next: response => {
           if (response && response.data && response.data.length > 0) {
+            console.log(response.data);
             this.data = response.data.map(row => {
               this.amount += row.amount ? +row.amount : 0;
               this.vat += row.vat ? +row.vat : 0;
@@ -191,34 +189,6 @@ export class ExpenseCompositionComponent
           this.notGetData();
         },
       });
-  }
-
-  override getPaginated(params: ListParams) {
-    const cantidad = params.page * params.limit;
-    let newData = [
-      ...this.dataTemp.slice(
-        (params.page - 1) * params.limit,
-        cantidad > this.dataTemp.length ? this.dataTemp.length : cantidad
-      ),
-    ];
-    // newData.push({
-    //   expenseDetailNumber: '',
-    //   expenseNumber: '',
-    //   amount: this.amount + '',
-    //   vat: this.vat + '',
-    //   isrWithholding: this.isrWithholding + '',
-    //   vatWithholding: this.vatWithholding + '',
-    //   transferorNumber: '',
-    //   total: this.total + '',
-    //   goodNumber: '',
-    //   cvman: '',
-    //   budgetItem: '',
-    //   comerExpenses: null,
-    //   goods: null,
-    //   goodDescription: '',
-    // });
-    this.dataPaginated.load(newData);
-    this.dataPaginated.refresh();
   }
 
   override getParams() {

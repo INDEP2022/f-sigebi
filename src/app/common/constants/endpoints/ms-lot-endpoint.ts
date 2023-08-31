@@ -17,4 +17,5 @@ export enum LotEndpoints {
   GetBankReference = 'apps/get-bank-reference',
   querywinners = 'apps/query-winners-report',
   AppsConsultPayLots = 'apps/consult-pay-lots-pag',
+  PupCambioMasv = 'apps/pup-cambio-masiv',
 }

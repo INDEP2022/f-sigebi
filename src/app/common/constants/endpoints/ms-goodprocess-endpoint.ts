@@ -26,4 +26,6 @@ export enum GoodprocessEndpoints {
   insertStatusBien = 'application/insert-status-bien',
   DeleteStatusGoodnumber = 'application/delete-status-goodnumber',
   ReceptionBpmBackup = 'application/usp-reception-bpm-backup',
+  getDataFromGood = 'application/getDataFromGood',
+  GetMinuteDetailDelivery = 'application/get-minute-detail-delivery',
 }

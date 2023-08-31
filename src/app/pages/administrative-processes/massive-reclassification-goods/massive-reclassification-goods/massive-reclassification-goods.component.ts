@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { debounceTime, forkJoin, takeUntil } from 'rxjs';
+import { catchError, debounceTime, forkJoin, of, takeUntil } from 'rxjs';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -147,12 +147,17 @@ export class MassiveReclassificationGoodsComponent
   changeClassification() {
     console.log('Se cambiaron los datos de forma masiva');
     // console.log(this.selectedGooods);
+    this.loading = true;
     let newClassNumber: any;
     if (this.mode.value === 'I') {
       newClassNumber = this.classificationGoodAlterning.value;
     } else {
       newClassNumber = this.classificationOfGoods.value;
     }
+    // setTimeout(() => {
+    //   this.loading = false;
+    // }, 1000);
+    // return;
     // console.log(this.selectedGooods);
     forkJoin(
       this.selectedGooods.map(good => {
@@ -166,6 +171,7 @@ export class MassiveReclassificationGoodsComponent
           'Reclasificación Masiva',
           'Se han reclasificado los Bienes Seleccionados.'
         );
+        this.loading = false;
         this.loadGoods();
       });
 
@@ -203,7 +209,10 @@ export class MassiveReclassificationGoodsComponent
     body.fractionId = Number(good.fractionId);
     body.addressId = Number(good.addressId);
     // console.log(body);
-    return this.goodServices.update(body).pipe(takeUntil(this.$unSubscribe));
+    return this.goodServices.update(body).pipe(
+      takeUntil(this.$unSubscribe),
+      catchError(x => of(null))
+    );
   }
 
   formEnable() {

@@ -74,12 +74,18 @@ export const ACTAS = {
     type: 'string',
     sort: false,
   },
+
+  id: {
+    title: 'Id',
+    type: 'number',
+    sort: false,
+  },
   keysProceedings: {
     title: 'Clave Acta',
     type: 'string',
     sort: false,
   },
-  idTypeProceedings: {
+  typeProceedings: {
     title: 'Tipo de Acta',
     type: 'string',
     sort: false,
@@ -98,7 +104,7 @@ export const ACTAS = {
     sort: false,
   },
   numeraryFolio: {
-    title: 'Folio Universal',
+    title: 'Folio',
     type: 'string',
     sort: false,
   },
@@ -107,7 +113,7 @@ export const ACTAS = {
     type: 'number',
     sort: false,
   },
-  dateElaborationReceipt: {
+  elaborationDate: {
     title: 'Fecha de Elaboración',
     type: 'html',
     sort: false,
@@ -136,6 +142,7 @@ export const COPY = {
     type: 'string',
     sort: false,
   },
+
   // cell: {
   //   class: (value: any, row: any) => {
   //     if (registrosMovidos.includes(row)) {
@@ -146,6 +153,22 @@ export const COPY = {
   // },
 };
 
+function validationCheck(checked: boolean) {
+  if (checked) {
+  }
+}
+
+export interface IDataGoodsTable {
+  goodId: number;
+  description: string;
+  quantity: number;
+  identifier: string;
+  status: string;
+  desEstatus: string;
+  seleccion: boolean;
+  improcedente: boolean;
+  disponible: boolean;
+}
 export class IGoodStatus {
   goodClassNumber: string | number;
   goodStatus: string;
@@ -164,7 +187,7 @@ export class IDetailProceedingsDeliveryReceptionNew {
 }
 export const RELATED_FOLIO_COLUMNS = {
   id: {
-    title: 'Folio',
+    title: 'Folio Universal',
     sort: false,
   },
   sheets: {
