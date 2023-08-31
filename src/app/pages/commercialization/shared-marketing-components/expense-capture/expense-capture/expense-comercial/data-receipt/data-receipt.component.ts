@@ -60,6 +60,10 @@ export class DataReceiptComponent implements OnInit {
   ];
   constructor(private dataService: ExpenseCaptureDataService) {}
 
+  get pathEmpleados() {
+    return 'interfacesirsae/api/v1/sirsae/obt-employees';
+  }
+
   get form() {
     return this.dataService.form;
   }
