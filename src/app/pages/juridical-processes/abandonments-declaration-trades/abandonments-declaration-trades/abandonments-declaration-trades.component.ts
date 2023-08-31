@@ -202,6 +202,7 @@ export class AbandonmentsDeclarationTradesComponent
 
   filtroPersonaExt: ICopiesJobManagementDto[] = [];
   copyOficio: any[] = [];
+  SiglasNivel2: any = '';
   constructor(
     private documentsService: DocumentsService,
     private DictationXGood1Service: DictationXGood1Service,
@@ -358,6 +359,7 @@ export class AbandonmentsDeclarationTradesComponent
       )
       .subscribe();
 
+    this.SiglasNivel2 = this.token.decodeToken().siglasnivel2;
     // OBTENEMOS DELEGACIÓN DEL USUARIO //
     const paramsSender = new ListParams();
     paramsSender.text = this.token.decodeToken().preferred_username;
@@ -1541,17 +1543,20 @@ export class AbandonmentsDeclarationTradesComponent
       // this.tipoOficio = this.declarationForm.get('officeType').value;
 
       if (this.tipoOficio == 'FGR') {
-        this.dictamen.passOfficeArmy = 'DEBM/ABANDONO/FGR' + '/?/' + anioActual;
+        this.dictamen.passOfficeArmy =
+          this.SiglasNivel2 + '/ABANDONO/FGR' + '/?/' + anioActual;
         this.declarationForm
           .get('passOfficeArmy')
           .setValue(this.dictamen.passOfficeArmy);
       } else if (this.tipoOficio == 'PJF') {
-        this.dictamen.passOfficeArmy = 'DEBM/ABANDONO/PJF' + '/?/' + anioActual;
+        this.dictamen.passOfficeArmy =
+          this.SiglasNivel2 + '/ABANDONO/PJF' + '/?/' + anioActual;
         this.declarationForm
           .get('passOfficeArmy')
           .setValue(this.dictamen.passOfficeArmy);
       } else {
-        this.dictamen.passOfficeArmy = 'DEBM/ABANDONO' + '/?/' + anioActual;
+        this.dictamen.passOfficeArmy =
+          this.SiglasNivel2 + '/ABANDONO' + '/?/' + anioActual;
         this.declarationForm
           .get('passOfficeArmy')
           .setValue(this.dictamen.passOfficeArmy);
@@ -2608,8 +2613,8 @@ export class AbandonmentsDeclarationTradesComponent
         const sysdate = new Date();
         var anio = sysdate.getFullYear();
         this.loading = false;
-        this.m_oficio_gestion.cveManagement = `DCB/DEBM/CJBM/?/${anio}`;
-        this.cveManagement = `DCB/DEBM/CJBM/?/${anio}`;
+        this.m_oficio_gestion.cveManagement = `DCB/${this.SiglasNivel2}/CJBM/?/${anio}`;
+        this.cveManagement = `DCB/${this.SiglasNivel2}/CJBM/?/${anio}`;
         this.m_oficio_gestion.statusOf = 'EN REVISION';
         this.statusOfMOficioGestion = 'EN REVISION';
         this.m_oficio_gestion.flyerNumber = this.noVolante_;
@@ -3090,8 +3095,8 @@ export class AbandonmentsDeclarationTradesComponent
     const ln_oficio_trimmed = ln_oficio_padded.trimStart();
 
     this.m_oficio_gestion.armedKeyNumber = LN_OFICIO;
-    this.cveManagement = `DCB/DEBM/CJBM/${ln_oficio_trimmed}/${anio}`;
-    this.m_oficio_gestion.cveManagement = `DCB/DEBM/CJBM/${ln_oficio_trimmed}/${anio}`;
+    this.cveManagement = `DCB/${this.SiglasNivel2}/CJBM/${ln_oficio_trimmed}/${anio}`;
+    this.m_oficio_gestion.cveManagement = `DCB/${this.SiglasNivel2}/CJBM/${ln_oficio_trimmed}/${anio}`;
     this.m_oficio_gestion.insertDate = SYSDATE;
     this.dateCapture2 = SYSDATE;
     console.log('this.m_oficio_gestion', this.m_oficio_gestion);
@@ -4161,10 +4166,9 @@ export class AbandonmentsDeclarationTradesComponent
         OFICIO = await this.dictaminacionesConsulta3(ANIONEW, 0);
         console.log('SIIII1 OFICIO', OFICIO);
         // PUP_VALEXISTS_DICT
-        let pupExisDict1: string = `DEBM/ABANDONO/PGR/${OFICIO.toString().padStart(
-          5,
-          '0'
-        )}/${ANIONEW}`;
+        let pupExisDict1: string = `${
+          this.SiglasNivel2
+        }/ABANDONO/PGR/${OFICIO.toString().padStart(5, '0')}/${ANIONEW}`;
         let obj_1 = {
           typeDict: 'ABANDONO',
           clave_oficio_armada: pupExisDict1,
@@ -4182,10 +4186,9 @@ export class AbandonmentsDeclarationTradesComponent
           );
           return;
         } else {
-          let pupExisDict2: string = `DEBM/ABANDONO/FGR/${OFICIO.toString().padStart(
-            5,
-            '0'
-          )}/${ANIONEW}`;
+          let pupExisDict2: string = `${
+            this.SiglasNivel2
+          }/ABANDONO/FGR/${OFICIO.toString().padStart(5, '0')}/${ANIONEW}`;
 
           let obj_2 = {
             typeDict: 'ABANDONO',
@@ -4206,12 +4209,14 @@ export class AbandonmentsDeclarationTradesComponent
         this.declarationForm
           .get('passOfficeArmy')
           .setValue(
-            `DEBM/ABANDONO/FGR/${OFICIO.toString().padStart(5, '0')}/${ANIONEW}`
+            `${this.SiglasNivel2}/ABANDONO/FGR/${OFICIO.toString().padStart(
+              5,
+              '0'
+            )}/${ANIONEW}`
           );
-        this.dictamen.passOfficeArmy = `DEBM/ABANDONO/FGR/${OFICIO.toString().padStart(
-          5,
-          '0'
-        )}/${ANIONEW}`;
+        this.dictamen.passOfficeArmy = `${
+          this.SiglasNivel2
+        }/ABANDONO/FGR/${OFICIO.toString().padStart(5, '0')}/${ANIONEW}`;
 
         // : DICTAMINACIONES.CLAVE_OFICIO_ARMADA :='DEBM/ABANDONO/FGR/' || LTRIM(TO_CHAR(OFICIO, '00000')) || '/' || ANIONEW;
       } else if (V_TRANS == 2) {
@@ -4219,10 +4224,9 @@ export class AbandonmentsDeclarationTradesComponent
 
         OFICIO = await this.dictaminacionesConsulta5(ANIONEW, 0);
         console.log('SIIII2 OFICIO', OFICIO);
-        let pupExisDict3: string = `DEBM/ABANDONO/PJF/${OFICIO.toString().padStart(
-          5,
-          '0'
-        )}/${ANIONEW}`;
+        let pupExisDict3: string = `${
+          this.SiglasNivel2
+        }/ABANDONO/PJF/${OFICIO.toString().padStart(5, '0')}/${ANIONEW}`;
         let obj_3 = {
           typeDict: 'ABANDONO',
           clave_oficio_armada: pupExisDict3,
@@ -4243,20 +4247,21 @@ export class AbandonmentsDeclarationTradesComponent
         this.declarationForm
           .get('passOfficeArmy')
           .setValue(
-            `DEBM/ABANDONO/PJF/${OFICIO.toString().padStart(5, '0')}/${ANIONEW}`
+            `${this.SiglasNivel2}/ABANDONO/PJF/${OFICIO.toString().padStart(
+              5,
+              '0'
+            )}/${ANIONEW}`
           );
-        this.dictamen.passOfficeArmy = `DEBM/ABANDONO/PJF/${OFICIO.toString().padStart(
-          5,
-          '0'
-        )}/${ANIONEW}`;
+        this.dictamen.passOfficeArmy = `${
+          this.SiglasNivel2
+        }/ABANDONO/PJF/${OFICIO.toString().padStart(5, '0')}/${ANIONEW}`;
       } else {
         console.log('SIIII3');
         OFICIO = await this.dictaminacionesConsulta4(ANIONEW, 0);
         console.log('SIIII3 OFICIO', OFICIO);
-        let pupExisDict3: string = `DEBM/ABANDONO/PJF/${OFICIO.toString().padStart(
-          5,
-          '0'
-        )}/${ANIONEW}`;
+        let pupExisDict3: string = `${
+          this.SiglasNivel2
+        }/ABANDONO/PJF/${OFICIO.toString().padStart(5, '0')}/${ANIONEW}`;
         let obj_3 = {
           typeDict: 'ABANDONO',
           clave_oficio_armada: pupExisDict3,
@@ -4277,12 +4282,14 @@ export class AbandonmentsDeclarationTradesComponent
         this.declarationForm
           .get('passOfficeArmy')
           .setValue(
-            `DEBM/ABANDONO/${OFICIO.toString().padStart(5, '0')}/${ANIONEW}`
+            `${this.SiglasNivel2}/ABANDONO/${OFICIO.toString().padStart(
+              5,
+              '0'
+            )}/${ANIONEW}`
           );
-        this.dictamen.passOfficeArmy = `DEBM/ABANDONO/${OFICIO.toString().padStart(
-          5,
-          '0'
-        )}/${ANIONEW}`;
+        this.dictamen.passOfficeArmy = `${
+          this.SiglasNivel2
+        }/ABANDONO/${OFICIO.toString().padStart(5, '0')}/${ANIONEW}`;
       }
       // ********************************************************** //
 

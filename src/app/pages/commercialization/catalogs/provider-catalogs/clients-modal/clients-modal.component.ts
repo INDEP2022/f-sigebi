@@ -114,7 +114,12 @@ export class ClientsModalComponent extends BasePage implements OnInit {
         cp: this.selectedRow.zipCode,
         phone: this.selectedRow.phone,
         fax: this.selectedRow.fax,
-        typePerson: this.selectedRow.personType.includes('F') ? '1' : '2',
+        typePerson:
+          this.selectedRow.personType != null
+            ? this.selectedRow.personType.includes('F')
+              ? '1'
+              : '2'
+            : null,
         webMail: this.selectedRow.mailWeb,
         customerId: this.selectedRow.id,
       },

@@ -8,7 +8,7 @@
   <div body>
     <div class="justify-content-end btn-toolbar" *ngIf="!formLoading">
       <button
-        *ngIf="!task?.State"
+        *ngIf="task?.State == 'PROCESO'"
         (click)="aprobateReception()"
         class="btn btn-primary btn-sm active">
         Terminar Ejecución <i class="fa fa-check" aria-hidden="true"></i>
@@ -273,7 +273,7 @@
       <div class="row">
         <div class="btn-toolbar pt-5">
           <button
-            *ngIf="!task?.State"
+            *ngIf="task?.State == 'PROCESO'"
             (click)="assignReceipt()"
             class="btn btn-primary btn-sm active">
             Asignar recibo
@@ -284,7 +284,7 @@
             Asignar recibo
           </button>
           <button
-            *ngIf="!task?.State"
+            *ngIf="task?.State == 'PROCESO'"
             (click)="sendGoodGuard()"
             class="btn btn-info btn-sm active">
             Resguardo
@@ -295,7 +295,7 @@
             Resguardo
           </button>
           <button
-            *ngIf="!task?.State"
+            *ngIf="task?.State == 'PROCESO'"
             (click)="sendWarehouse()"
             class="btn btn-primary btn-sm active">
             Almacén
@@ -306,7 +306,7 @@
             Almacén
           </button>
           <button
-            *ngIf="!task?.State"
+            *ngIf="task?.State == 'PROCESO'"
             (click)="rescheduling()"
             class="btn btn-info btn-sm active">
             Reprogramaci&oacute;n
@@ -317,7 +317,7 @@
             Reprogramaci&oacute;n
           </button>
           <button
-            *ngIf="!task?.State"
+            *ngIf="task?.State == 'PROCESO'"
             (click)="cancelGood()"
             class="btn btn-danger btn-sm active">
             Cancelaci&oacute;n
@@ -694,7 +694,7 @@
                 <div class="row pt-5">
                   <div class="justify-content-start">
                     <button
-                      *ngIf="!task?.State"
+                      *ngIf="task?.State == 'PROCESO'"
                       (click)="uploadPicture()"
                       class="btn btn-info btn-sm active ml-2">
                       Adjuntar fotografias <i class="fa fa-camera"></i>
@@ -707,7 +707,7 @@
                     </button>
 
                     <button
-                      *ngIf="!task?.State"
+                      *ngIf="task?.State == 'PROCESO'"
                       (click)="uploadDocuments()"
                       class="btn btn-primary btn-sm active ml-2">
                       Adjuntar documentos <i class="fa fa-file-archive"></i>
@@ -719,7 +719,7 @@
                     </button>
 
                     <button
-                      *ngIf="!task?.State"
+                      *ngIf="task?.State == 'PROCESO'"
                       (click)="deleteGoodReceipt()"
                       class="btn btn-danger btn-sm active ml-2 mr-2">
                       Eliminar selección <i class="fa fa-trash"></i>
@@ -1103,7 +1103,7 @@
               </div>
               <div class="justify-content-start pt-5">
                 <button
-                  *ngIf="!task?.State"
+                  *ngIf="task?.State == 'PROCESO'"
                   (click)="assingMinute()"
                   class="btn btn-primary btn-sm active ml-2">
                   Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
@@ -1116,7 +1116,7 @@
                 </button>
 
                 <button
-                  *ngIf="!task?.State"
+                  *ngIf="task?.State == 'PROCESO'"
                   (click)="uploadPicture()"
                   class="btn btn-info btn-sm active ml-2">
                   Adjuntar fotografias <i class="fa fa-camera"></i>
@@ -1129,7 +1129,7 @@
                 </button>
 
                 <button
-                  *ngIf="!task?.State"
+                  *ngIf="task?.State == 'PROCESO'"
                   (click)="uploadDocuments()"
                   class="btn btn-primary btn-sm active ml-2">
                   Adjuntar documentos <i class="fa fa-file-archive"></i>
@@ -1143,7 +1143,7 @@
                 </button>
 
                 <button
-                  *ngIf="!task?.State"
+                  *ngIf="task?.State == 'PROCESO'"
                   (click)="deleteGoodGuard()"
                   class="btn btn-danger btn-sm active ml-2 mr-2">
                   Eliminar selección <i class="fa fa-trash"></i>
@@ -1542,7 +1542,7 @@
               </div>
               <div class="justify-content-start pt-5">
                 <button
-                  *ngIf="!task?.State"
+                  *ngIf="task?.State == 'PROCESO'"
                   (click)="assingMinuteWarehouse()"
                   class="btn btn-primary btn-sm active ml-2">
                   Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
@@ -1555,7 +1555,7 @@
                 </button>
 
                 <button
-                  *ngIf="!task?.State"
+                  *ngIf="task?.State == 'PROCESO'"
                   (click)="uploadPicture()"
                   class="btn btn-info btn-sm active ml-2">
                   Adjuntar fotografias <i class="fa fa-camera"></i>
@@ -1568,7 +1568,7 @@
                 </button>
 
                 <button
-                  *ngIf="!task?.State"
+                  *ngIf="task?.State == 'PROCESO'"
                   (click)="uploadDocuments()"
                   class="btn btn-primary btn-sm active ml-2">
                   Adjuntar documentos <i class="fa fa-file-archive"></i>
@@ -1581,7 +1581,7 @@
                 </button>
 
                 <button
-                  *ngIf="!task?.State"
+                  *ngIf="task?.State == 'PROCESO'"
                   (click)="deleteGoodWarehouse()"
                   class="btn btn-danger btn-sm active ml-2 mr-2">
                   Eliminar selección <i class="fa fa-trash"></i>
@@ -1983,7 +1983,7 @@
                 </div>
                 <div class="justify-content-start pt-5">
                   <button
-                    *ngIf="!task?.State"
+                    *ngIf="task?.State == 'PROCESO'"
                     (click)="assingMinuteReprogramation()"
                     class="btn btn-primary btn-sm active ml-2">
                     Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
@@ -1996,7 +1996,7 @@
                   </button>
 
                   <button
-                    *ngIf="!task?.State"
+                    *ngIf="task?.State == 'PROCESO'"
                     (click)="uploadPicture()"
                     class="btn btn-info btn-sm active ml-2">
                     Adjuntar fotografias <i class="fa fa-camera"></i>
@@ -2009,7 +2009,7 @@
                   </button>
 
                   <button
-                    *ngIf="!task?.State"
+                    *ngIf="task?.State == 'PROCESO'"
                     (click)="uploadDocuments()"
                     class="btn btn-primary btn-sm active ml-2">
                     Adjuntar documentos <i class="fa fa-file-archive"></i>
@@ -2022,7 +2022,7 @@
                   </button>
 
                   <button
-                    *ngIf="!task?.State"
+                    *ngIf="task?.State == 'PROCESO'"
                     (click)="deleteGoodRep()"
                     class="btn btn-danger btn-sm active ml-2 mr-2">
                     Eliminar selección <i class="fa fa-trash"></i>
@@ -2352,7 +2352,7 @@
               </div>
               <div class="justify-content-start">
                 <button
-                  *ngIf="!task?.State"
+                  *ngIf="task?.State == 'PROCESO'"
                   (click)="assingMinuteCancelation()"
                   class="btn btn-primary btn-sm active ml-2">
                   Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
@@ -2365,7 +2365,7 @@
                 </button>
 
                 <button
-                  *ngIf="!task?.State"
+                  *ngIf="task?.State == 'PROCESO'"
                   (click)="uploadPicture()"
                   class="btn btn-info btn-sm active ml-2">
                   Adjuntar fotografias <i class="fa fa-camera"></i>
@@ -2378,7 +2378,7 @@
                 </button>
 
                 <button
-                  *ngIf="!task?.State"
+                  *ngIf="task?.State == 'PROCESO'"
                   (click)="uploadDocuments()"
                   class="btn btn-primary btn-sm active ml-2 mr-2">
                   Adjuntar documentos <i class="fa fa-file-archive"></i>

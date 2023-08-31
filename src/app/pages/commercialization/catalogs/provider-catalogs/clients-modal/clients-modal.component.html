@@ -30,14 +30,17 @@
       <div class="m-3">
         <button
           type="button"
-          class="btn btn-primary active"
+          class="btn btn-primary active btn-sm"
           (click)="confirm()"
           [disabled]="selectedRow == null">
-          Seleccionar
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
         </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
           Cancelar
         </button>
       </div>

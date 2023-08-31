@@ -33,7 +33,19 @@ input:checked[type='checkbox'] {
 }
 
 :host ::ng-deep ng2-smart-table {
+  .item {
+    min-width: 20rem !important;
+  }
   .descriptionGood {
     min-width: 50rem !important;
+  }
+  .observation {
+    min-width: 20rem !important;
+  }
+  .causeNotDelivered {
+    min-width: 12rem !important;
+  }
+  .typeRestitution {
+    min-width: 15rem !important;
   }
 }
