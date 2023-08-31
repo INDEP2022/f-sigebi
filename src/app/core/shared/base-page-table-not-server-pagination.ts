@@ -127,10 +127,10 @@ export abstract class BasePageTableNotServerPagination<
   }
 
   getPaginated(params: ListParams) {
-    const cantidad = params.page * params.limit;
+    const cantidad = params.page * params.pageSize;
     this.dataPaginated.load([
       ...this.dataTemp.slice(
-        (params.page - 1) * params.limit,
+        (params.page - 1) * params.pageSize,
         cantidad > this.dataTemp.length ? this.dataTemp.length : cantidad
       ),
     ]);
