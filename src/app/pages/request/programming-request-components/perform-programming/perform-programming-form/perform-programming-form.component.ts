@@ -2741,7 +2741,7 @@ export class PerformProgrammingFormComponent
           this.performForm.get('autorityId').setValue(this.autorityId);
         }
 
-        if (this.warehouseId)
+        if (this.warehouseId > 0)
           this.performForm.get('storeId').setValue(this.warehouseId);
 
         if (this.dataProgramming?.folio)
@@ -2941,10 +2941,6 @@ export class PerformProgrammingFormComponent
             this.performForm.get('stationId').setValue(this.stationId);
           if (this.autorityId) {
             this.performForm.get('autorityId').setValue(this.autorityId);
-          }
-
-          if (this.warehouseId > 0) {
-            this.performForm.get('storeId').setValue(this.warehouseId);
           }
           this.loading = true;
           this.formLoading = true;

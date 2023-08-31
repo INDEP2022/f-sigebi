@@ -80,6 +80,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
   loadingBtn1: boolean = false;
   loadingBtn2: boolean = false;
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
+
   constructor(
     private fb: FormBuilder,
     private delegationService: DelegationService,
@@ -178,17 +179,23 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    if (lparams?.text)
-      if (!isNaN(parseInt(lparams?.text))) {
-        console.log('SI');
-        params.addFilter('delegationNumber', lparams.text, SearchFilter.EQ);
-        // params.addFilter('no_cuenta', lparams.text);
-      } else {
-        console.log('NO');
+    params.addFilter(
+      'delegationNumber',
+      this.token.decodeToken().department,
+      SearchFilter.EQ
+    );
 
-        params.addFilter('description', lparams.text, SearchFilter.ILIKE);
-        // params.addFilter('cve_banco', lparams.text);
-      }
+    // if (lparams?.text)
+    //   if (!isNaN(parseInt(lparams?.text))) {
+    //     console.log('SI');
+    //     params.addFilter('delegationNumber', lparams.text, SearchFilter.EQ);
+    //     // params.addFilter('no_cuenta', lparams.text);
+    //   } else {
+    //     console.log('NO');
+
+    //     params.addFilter('description', lparams.text, SearchFilter.ILIKE);
+    //     // params.addFilter('cve_banco', lparams.text);
+    //   }
     params.sortBy = `delegationNumber:ASC`;
     return new Promise((resolve, reject) => {
       this.survillanceService
@@ -202,10 +209,11 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
             });
 
             Promise.all(result).then(async (resp: any) => {
-              this.delegations = new DefaultSelect(
-                response.data,
-                response.count
-              );
+              this.form
+                .get('delegation')
+                .setValue(response.data[0].numberAndDescrip);
+              this.changeDelegations(response.data[0]);
+              // this.delegations = new DefaultSelect(response.data[0],response.count);
               this.loading = false;
             });
           },
@@ -414,7 +422,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     if (lparams.text != '') {
       params.addFilter('cvePeriod', lparams.text, SearchFilter.EQ);
     }
-    params.sortBy = 'cvePeriod:ASC';
+    params.sortBy = 'cvePeriod:DESC';
     return new Promise((resolve, reject) => {
       this.survillanceService
         .getVigSupervisionMae(params.getParams())
@@ -454,15 +462,20 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
   cleanForm() {
     this.disabledProcess = false;
-    this.disabledPeriod = false;
+    // this.disabledPeriod = false;
     this.objGetSupervionDet = null;
-    this.delegationDefault = null;
+    // this.delegationDefault = null;
     this.delegationMae = null;
     this.objectDelete = null;
     this.totalItems = 0;
     this.goods.load([]);
     this.goods.refresh();
     this.form.reset();
+    this.dateMovemInicio = null;
+    this.form
+      .get('delegation')
+      .setValue(this.delegationDefault.numberAndDescrip);
+    this.changeDelegations(this.delegationDefault);
     this.formRegistro.reset();
   }
 
@@ -1273,5 +1286,37 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         block: 'start',
       });
     }
+  }
+
+  fechaInput: string = '';
+  ultimoDia: Date | null = null;
+  calcularUltimoDia(date: any) {
+    const fecha = new Date(date);
+    const year = fecha.getFullYear();
+    const month = fecha.getMonth();
+    const ultimoDia = new Date(year, month + 1, 0);
+    // let aa = this.datePipe.transform(ultimoDia, 'dd/MM/yyyy')
+    // this.formRegistro.get('fromTwo').setValue(aa+'')
+    // this.actaRecepttionForm.patchValue({
+    //   elaboradate: await this.getDate(),
+    // });
+    console.log('this.ultimoDia', ultimoDia);
+  }
+  dateMovemInicio: any;
+  dateMovementInicio(event: any) {
+    this.dateMovemInicio = event;
+    this.calcularUltimoDia(this.dateMovemInicio);
+    // this.dateMovem = event.target.value;
+  }
+
+  async getDate() {
+    // const formattedDate = moment(date).format('DD-MM-YYYY');
+
+    const fechaEscritura: any = new Date();
+    fechaEscritura.setUTCDate(fechaEscritura.getUTCDate());
+    const _fechaEscritura: any = new Date(fechaEscritura.toISOString());
+    return _fechaEscritura;
+    // { authorizeDate: formattedDate }
+    // { emitEvent: false }
   }
 }

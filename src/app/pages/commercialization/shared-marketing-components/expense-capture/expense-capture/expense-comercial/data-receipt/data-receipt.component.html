@@ -229,8 +229,31 @@
       </form-field>
     </div>
   </div>
+  <ng-template #eventLabel let-item="item">
+    {{ item.id }} - {{ item.processKey }}
+  </ng-template>
+  <ng-template #eventOption let-item="item">
+    <div [title]="item.id + '-' + item.processKey">
+      {{ item.id }} - {{ item.processKey }}
+    </div>
+  </ng-template>
   <div class="row mt-4 pl-0">
-    <div class="col-md-4">
+    <!-- <ng-custom-select-loading
+      [form]="form"
+      [updateValues]="true"
+      formControlName="eventNumber"
+      label="Evento"
+      [path]="pathEmpleados"
+      value="ClkDet"
+      bindLabel="processKey"
+      paramSearch="filter.processKey"
+      prefixSearch="$ilike"
+      secondParamSearch="filter.id"
+      [labelTemplate]="eventLabel"
+      [optionTemplate]="eventOption">
+    </ng-custom-select-loading> -->
+
+    <!-- <div class="col-md-4">
       <form-field [control]="capturedUser" label="Captura">
         <input
           type="text"
@@ -247,7 +270,7 @@
           formControlName="nomEmplcapture"
           maxlength="120" />
       </form-field>
-    </div>
+    </div> -->
   </div>
   <div class="row mt-4 pl-0">
     <div class="col-md-4">
