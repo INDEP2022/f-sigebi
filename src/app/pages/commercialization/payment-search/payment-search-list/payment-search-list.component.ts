@@ -157,7 +157,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'date':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'referenceori':
                 searchFilter = SearchFilter.ILIKE;

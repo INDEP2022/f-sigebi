@@ -17,4 +17,6 @@ export enum IGoodsinvEndpoint {
 
   //Muestreo de bienes
   getSamplingGoodView = 'views/sampling-goods-view-v2',
+
+  getStoresProgramming = 'views/cat-stores-programming-view',
 }

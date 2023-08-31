@@ -124,7 +124,8 @@ export type IGoodAndAvailable = IGood & {
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   response: boolean = false;
   form: FormGroup;
   selectedRow: IGood;
@@ -675,7 +676,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       statusGood: [null],
     });
   }
-  onSubmit() { }
+  onSubmit() {}
 
   search(event: any) {
     this.getExpedient(event);
@@ -1679,8 +1680,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     nameFile.placeholder = `${newMsg}`;
   }
 
-  btnDetail() { }
-  sendOffice() { }
+  btnDetail() {}
+  sendOffice() {}
 
   Scanner() {
     /*if (this.formScan.get('scanningFoli').value) {
@@ -1807,8 +1808,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
 
       await this.getDetailProceedingsDevollution(this.actasDefault.id);
-
-
     });
     // console.log(this.authService.decodeToken());
   }
@@ -1842,7 +1841,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   async cerrarActa() {
-    let folio = this.formScan.get('scanningFoli').value
+    let folio = this.formScan.get('scanningFoli').value;
     if (folio == null) {
       this.alert(
         'warning',
@@ -2147,9 +2146,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         'error',
         'Error',
         'Al localizar la información de Volante: ' +
-        flyerNumber +
-        ' y Expediente: ' +
-        this.fileNumber
+          flyerNumber +
+          ' y Expediente: ' +
+          this.fileNumber
       );
       return;
     }
@@ -2244,7 +2243,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => { },
+              callback: (data: any) => {},
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
@@ -2334,7 +2333,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                     urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                     type: 'pdf',
                   },
-                  callback: (data: any) => { },
+                  callback: (data: any) => {},
                 },
                 class: 'modal-lg modal-dialog-centered',
                 ignoreBackdropClick: true,

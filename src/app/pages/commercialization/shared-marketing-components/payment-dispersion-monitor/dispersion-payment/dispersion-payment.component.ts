@@ -50,6 +50,7 @@ import {
   COLUMNS_PAYMENT_LOT,
   setCheckHide,
 } from './columns';
+import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 
 @Component({
   selector: 'app-dispersion-payment',
@@ -157,7 +158,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private customersService: ComerClientsService,
     private interfaceSirsaeService: InterfacesirsaeService,
-    private router: Router
+    private router: Router,
+    private depositaryService: MsDepositaryService
   ) {
     super();
   }
@@ -1085,19 +1087,42 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                 rfc = res['data'][0].rfc;
                 client = res['data'][0].reasonName;
                 console.log({ rfc, client });
-                resolve({
-                  rfc,
-                  client,
-                  reference,
-                  amount,
-                  idPayment,
-                  idBatch,
-                  incomeOrderId,
-                  date,
-                  dateMaxPay,
-                  eventId,
-                  customerBatch,
-                });
+                //PENALIZACIÓN
+                this.depositaryService.getComerDetLcGrief(this.dataBatch.reference).subscribe(
+                  res => {
+                    console.log(res)
+                    resolve({
+                      rfc,
+                      client,
+                      reference,
+                      amount,
+                      idPayment,
+                      idBatch,
+                      incomeOrderId,
+                      date,
+                      dateMaxPay,
+                      eventId,
+                      customerBatch,
+                      penaltyAmount: res.data[0].mountgrief
+                    });
+                  },
+                  err => {
+                    resolve({
+                      rfc,
+                      client,
+                      reference,
+                      amount,
+                      idPayment,
+                      idBatch,
+                      incomeOrderId,
+                      date,
+                      dateMaxPay,
+                      eventId,
+                      customerBatch,
+                      penaltyAmount: 0
+                    });
+                  }
+                )
               },
               err => {
                 console.log(err);
