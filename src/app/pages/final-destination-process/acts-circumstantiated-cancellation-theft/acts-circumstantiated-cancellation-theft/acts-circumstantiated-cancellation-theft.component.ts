@@ -165,7 +165,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
 {
   response: boolean = false;
   form: FormGroup;
-  idGood: number;
   selectedRow: IGood;
   statusGood_: any;
   statusGoodInicial: 'CNE';
