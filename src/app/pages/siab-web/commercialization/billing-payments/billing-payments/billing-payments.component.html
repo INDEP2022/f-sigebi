@@ -5,7 +5,7 @@
     </div>
   </div>
   <div body>
-    <div class="ch-content">
+    <!--<div class="ch-content">
       <h5 class="title">B&uacute;squeda de pagos</h5>
     </div>
     <form class="form-material" [formGroup]="form">
@@ -46,9 +46,9 @@
           </div>
         </div>
       </div>
-    </form>
+    </form>-->
 
-    <div class="row pt-4">
+    <div class="row">
       <div class="ch-content">
         <h5 class="title">Detalle de facturas</h5>
       </div>
@@ -59,12 +59,6 @@
           [leftList]="true"></app-columns-select>
       </div>
     </div>
-    <!--<div class="ch-content" header>
-      <h5 class="title">Detalle de facturas</h5>
-      <div class="col-md-5 buttons">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
-      </div>
-    </div>-->
     <div class="table-responsive">
       <ng2-smart-table
         [settings]="settings"
@@ -73,7 +67,6 @@
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>
     </div>
-
     <div *ngIf="rowSelected">
       <div class="row pt-4">
         <div class="ch-content">
