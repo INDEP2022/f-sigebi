@@ -5,11 +5,14 @@
   <div body>
     <div class="row mb-4">
       <b style="padding: 0px">Archivos permitidos </b>
-      <div class="row" *ngIf="accept !== '.zip'">
+      <div class="row">
         {{ accept }}
       </div>
-      <div class="row" *ngIf="accept === '.zip'">
-        {{ accept2 }}
+      <div class="row" *ngIf="accept === '.zip' && accept2">
+        <b style="padding: 0px">Archivos permitidos dentro del zip </b>
+        <div class="row">
+          {{ accept2 }}
+        </div>
       </div>
     </div>
 
