@@ -15,6 +15,7 @@ export class TextareaFieldComponent implements OnInit {
 
   keyUp() {
     //console.log(this.value)
+    this.rowData.observation = this.value != '' ? this.value : null;
     this.input.emit({ data: this.rowData, text: this.value });
   }
 }
