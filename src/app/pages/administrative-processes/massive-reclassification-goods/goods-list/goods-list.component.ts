@@ -134,6 +134,7 @@ export class GoodsListComponent
     try {
       debugger;
       this.data.load([]);
+      this.totalItems = 0;
       this.availableToUpdate = [];
       this.idsNotExist = [];
       this.showError = false;
@@ -149,7 +150,7 @@ export class GoodsListComponent
       } else {
         // this.loadGood(this.ids);
         this.fillData(this.ids);
-        this.alert('success', 'Archivo subido', '');
+        this.alert('success', 'Se ha cargado el archivo', '');
       }
     } catch (error) {
       this.alert('error', 'Ocurrio un error al leer el archivo', '');
