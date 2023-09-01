@@ -38,8 +38,8 @@
                     type="submit"
                     class="btn btn-sm btn-success btn-block active me-2 font-size-14"
                     (click)="consultInServer()">
-                    <i class="bx bx-search text-light float-icon"></i>
                     Consultar Datos
+                    <i class="bx bx-search text-light float-icon"></i>
                   </button>
                 </div>
                 <div class="col-12">
@@ -112,26 +112,45 @@
         <div class="row mt-5 mb-0 d-block">
           <div class="row d-flex justify-content-center align-content-center">
             <div class="col-sm-6 col-md-6 mh-80">
-              <i
-                class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
-              <h5 class="font-size-14 mb-2 d-inline">Evento</h5>
-              <form-field
-                [control]="form.get('eventId')"
-                class="form-group position-relative d-flex">
-                <input
-                  type="number"
-                  class="form-control px-3"
-                  formControlName="eventId"
-                  (keyup.enter)="searchEvent()" />
-                <button
-                  class="btn-event-search mt-2"
-                  type="button"
-                  (click)="selectedEvent ? enableInputEvent() : searchEvent()">
+              <div class="row">
+                <div class="col-md-6">
                   <i
-                    [ngClass]="selectedEvent ? 'bx-x text-danger' : 'bx-search'"
-                    class="bx"></i>
-                </button>
-              </form-field>
+                    class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
+                  <h5 class="font-size-14 mb-2 d-inline">Evento</h5>
+                  <form-field
+                    [control]="form.get('eventId')"
+                    class="form-group position-relative d-flex">
+                    <input
+                      type="number"
+                      class="form-control px-3"
+                      formControlName="eventId"
+                      (keyup.enter)="searchEvent()" />
+                    <!-- <button
+                      class="mt-2"
+                      type="button"
+                      (click)="selectedEvent ? enableInputEvent() : searchEvent()">
+                      <i
+                        [ngClass]="selectedEvent ? 'bx-x text-danger' : 'bx-search'"
+                        class="bx"></i>
+                    </button> -->
+                  </form-field>
+                </div>
+                <div class="col-md-6">
+                  <button
+                    type="button"
+                    [ngClass]="selectedEvent ? 'btn-danger' : 'btn-primary'"
+                    class="btn active btn-sm mt-5"
+                    (click)="
+                      selectedEvent ? enableInputEvent() : searchEvent()
+                    ">
+                    {{ selectedEvent ? 'Limpiar' : 'Buscar' }}
+                    <i
+                      *ngIf="!selectedEvent"
+                      class="bx bx-search-alt bx-sm float-icon"></i>
+                    <i *ngIf="selectedEvent" class="fas fa-eraser"></i>
+                  </button>
+                </div>
+              </div>
             </div>
             <div
               class="col-sm-6 col-md-3"
@@ -149,7 +168,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Fecha Evento</h5>
               <p class="text-muted">
-                {{ selectedEvent.eventDate | date : 'medium' }}
+                {{ selectedEvent.eventDate | date: 'medium' }}
               </p>
             </div>
             <div
@@ -169,7 +188,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Fecha Fallo</h5>
               <p class="text-muted">
-                {{ selectedEvent.failedDate | date : 'medium' }}
+                {{ selectedEvent.failedDate | date: 'medium' }}
               </p>
             </div>
             <div
@@ -259,9 +278,9 @@
             </div>
             <div class="col-sm-4 col-md-2">
               <button
-                class="btn btn-sm btn-info active"
+                class="btn btn-danger btn-sm active mr-3"
                 (click)="resetFilter()">
-                Resetear
+                Limpiar <i class="fas fa-eraser"> </i>
               </button>
             </div>
           </div>
@@ -273,17 +292,10 @@
         <tabset #lcsTabs>
           <tab heading="Datos" id="dataTab">
             <div class="row">
-              <div class="col-sm-12 col-md-12 col-lg-6">
-                <div class="form-material">
-                  <search-bar [params]="dataParams"></search-bar>
-                </div>
-              </div>
-              <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
-                <div class="d-flex flex-row-reverse my-3">
-                  <div>
-                    <app-columns-select
-                      [(settings)]="dataSettings"></app-columns-select>
-                  </div>
+              <div class="d-flex justify-content-end my-3">
+                <div>
+                  <app-columns-select
+                    [(settings)]="dataSettings"></app-columns-select>
                 </div>
               </div>
             </div>
@@ -306,26 +318,18 @@
                 <tabset>
                   <tab heading="Visualización" id="displayTab">
                     <div class="row">
-                      <div class="col-sm-12 col-md-12 col-lg-6">
-                        <div class="form-material">
-                          <search-bar [params]="lcsParams"></search-bar>
+                      <div class="d-flex justify-content-end my-3">
+                        <div class="mr-3">
+                          <app-columns-select
+                            [(settings)]="lcsSettings"></app-columns-select>
                         </div>
-                      </div>
-                      <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
-                        <div class="d-flex flex-row-reverse my-3">
-                          <div class="mt-1">
-                            <app-columns-select
-                              [(settings)]="lcsSettings"></app-columns-select>
-                          </div>
-                          <div>
-                            <button
-                              [disabled]="isLoadingExportFile"
-                              class="btn btn-sm btn-success active me-2 font-size-14"
-                              (click)="exportFile()">
-                              <i class="fas fa-file-excel text-light me-1"></i>
-                              Exportar
-                            </button>
-                          </div>
+                        <div>
+                          <button
+                            [disabled]="isLoadingExportFile"
+                            class="btn btn-sm btn-success active me-2 font-size-14"
+                            (click)="exportFile()">
+                            Exportar <i class="bx bx-download float-icon"></i>
+                          </button>
                         </div>
                       </div>
                     </div>
