@@ -20,6 +20,7 @@ import {
 import { IGraceDate } from 'src/app/core/models/ms-event/event.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { ISendSirsaeLot } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae-model';
@@ -157,7 +158,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private customersService: ComerClientsService,
     private interfaceSirsaeService: InterfacesirsaeService,
-    private router: Router
+    private router: Router,
+    private depositaryService: MsDepositaryService
   ) {
     super();
   }
@@ -1085,19 +1087,44 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                 rfc = res['data'][0].rfc;
                 client = res['data'][0].reasonName;
                 console.log({ rfc, client });
-                resolve({
-                  rfc,
-                  client,
-                  reference,
-                  amount,
-                  idPayment,
-                  idBatch,
-                  incomeOrderId,
-                  date,
-                  dateMaxPay,
-                  eventId,
-                  customerBatch,
-                });
+                //PENALIZACIÓN
+                this.depositaryService
+                  .getComerDetLcGrief(this.dataBatch.reference)
+                  .subscribe(
+                    res => {
+                      console.log(res);
+                      resolve({
+                        rfc,
+                        client,
+                        reference,
+                        amount,
+                        idPayment,
+                        idBatch,
+                        incomeOrderId,
+                        date,
+                        dateMaxPay,
+                        eventId,
+                        customerBatch,
+                        penaltyAmount: res.data[0].mountgrief,
+                      });
+                    },
+                    err => {
+                      resolve({
+                        rfc,
+                        client,
+                        reference,
+                        amount,
+                        idPayment,
+                        idBatch,
+                        incomeOrderId,
+                        date,
+                        dateMaxPay,
+                        eventId,
+                        customerBatch,
+                        penaltyAmount: 0,
+                      });
+                    }
+                  );
               },
               err => {
                 console.log(err);

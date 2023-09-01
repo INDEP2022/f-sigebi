@@ -171,7 +171,6 @@ export class CircumstantialActsSuspensionCancellationComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
         if (params['origin']) {
-          console.error(params);
           this.queryParams.origin = params['origin'];
           this.queryParams.noExpedient = params['noExpedient'];
           this.search(this.queryParams.noExpedient);
