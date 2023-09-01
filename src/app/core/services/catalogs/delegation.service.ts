@@ -131,4 +131,9 @@ export class DelegationService
   postCatalog(model: any) {
     return this.post(DelegationsEndpoints.catalogetNoActa, model);
   }
+
+  getTran(file: number) {
+    return this.get(`${DelegationsEndpoints.tranEmi}/${file}`);
+  }
+
 }

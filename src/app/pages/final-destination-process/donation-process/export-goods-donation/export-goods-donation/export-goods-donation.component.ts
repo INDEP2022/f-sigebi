@@ -9,6 +9,8 @@ import { ExpedientSamiService } from 'src/app/core/services/ms-expedient/expedie
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DetailProceeDelRecService } from '../../../../../core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { COLUMNS_EXPORT_GOODS } from './columns-export-goods';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 
 @Component({
   selector: 'app-export-goods-donation',
@@ -21,11 +23,16 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   //data = EXAMPLE_DATA;
   data = new LocalDataSource();
   data1: any[] = [];
+  noExpediente: number;
+  cveUnica: number | null;
+
+
   constructor(
     private router: Router,
     private expedientSamiService: ExpedientSamiService,
     private delegationService: DelegationService,
-    private detailProceeDelRecService: DetailProceeDelRecService
+    private detailProceeDelRecService: DetailProceeDelRecService,
+    private globalVarsService: GlobalVarsService,
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -33,7 +40,9 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     this.settings.hideSubHeader = false;
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+
+  }
 
   settingsChange($event: any): void {
     this.settings = $event;
@@ -42,11 +51,6 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   openDefineFilter() {
     this.router.navigate([
       `/pages/parameterization/filters-of-goods-for-donation`,
-    ]);
-  }
-  openDefineFilter1() {
-    this.router.navigate([
-      `/pages/general-processes/goods-tracker`,
     ]);
   }
 
@@ -70,47 +74,52 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
         next: resp => {
           let acta = resp.data[0].coalesce;
           console.log('resp -> ', resp);
+          //Servicio
+          this.delegationService.getTran(response.data[i].no_expediente).subscribe(respo => {
+            if (respo != null && resp != undefined) {
+              console.log('Resp tranEmit', respo);
+              //servicio 2
+              this.detailProceeDelRecService.getProceding(acta).subscribe({
+                next: res => {
+                  console.log('res 2 -> ', res);
 
-          this.detailProceeDelRecService.getProceding(acta).subscribe({
-            next: res => {
-              console.log('res 2 -> ', res);
+                  let dataForm = {
+                    numberGood: response.data[i].no_bien,
+                    description: response.data[i].descripcion,
+                    quantity: response.data[i].cantidad,
+                    clasificationNumb: response.data[i].no_clasif_bien,
+                    tansfNumb: response.data[i].no_transferente,
+                    status: response.data[i].estatus,
+                    proceedingsNumb: response.data[i].no_expediente,
+                    delAdmin: res.del_administra,
+                    delDeliv: res.del_recibe,
+                    recepDate: res.fecha_recepcion,
+                  };
+                  console.log('DATA FORM ->', dataForm);
 
-              let dataForm = {
-                numberGood: response.data[i].no_bien,
-                description: response.data[i].descripcion,
-                quantity: response.data[i].cantidad,
-                clasificationNumb: response.data[i].no_clasif_bien,
-                tansfNumb: response.data[i].no_transferente,
-                status: response.data[i].estatus,
-                proceedingsNumb: response.data[i].no_expediente,
-                delAdmin: res.del_administra,
-                delDeliv: res.del_recibe,
-                recepDate: res.fecha_recepcion,
-              };
+                  this.data1.push(dataForm); // invocar todos tres servicios
+                  this.data.load(this.data1); // cuando ya pasa todo, se mapea la info
 
-              console.log('DATA FORM ->', dataForm);
+                }, error: err => {
+                  let dataForm = {
+                    numberGood: response.data[i].no_bien,
+                    description: response.data[i].descripcion,
+                    quantity: response.data[i].cantidad,
+                    clasificationNumb: response.data[i].no_clasif_bien,
+                    tansfNumb: response.data[i].no_transferente,
+                    status: response.data[i].estatus,
+                    proceedingsNumb: response.data[i].no_expediente,
+                    cveUnica: respo.data[0].no_tran_emi_aut,
+                    emisora: respo.data[0].no_emisora
+                  };
 
-              this.data1.push(dataForm); // invocar todos tres servicios
-              this.data.load(this.data1); // cuando ya pasa todo, se mapea la info
-
-            }, error: err => {
-              console.log('DATA error 2222->');
-              let dataForm = {
-                numberGood: response.data[i].no_bien,
-                description: response.data[i].descripcion,
-                quantity: response.data[i].cantidad,
-                clasificationNumb: response.data[i].no_clasif_bien,
-                tansfNumb: response.data[i].no_transferente,
-                status: response.data[i].estatus,
-                proceedingsNumb: response.data[i].no_expediente,
-              };
-
-              console.log('DATA FORM 2222->', dataForm);
-
-              this.data1.push(dataForm); // invocar todos tres servicios
-              this.data.load(this.data1);
+                  this.data1.push(dataForm); // invocar todos tres servicios
+                  this.data.load(this.data1);
+                }
+              });
             }
           });
+          //servicio
         },
       });
     }
@@ -154,7 +163,25 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       this.mapearDatos(response);
     }
   }
+  // SE LLAMA A LA PANTALLA RASTREADOR POR BIENES Y NOTIFICACIONES
   callRastreador() {
-    window.open('/pages/general-processes/goods-tracker', '_blank');
+    this.loadFromGoodsTracker();
+  }
+  async loadFromGoodsTracker() {
+    const global = await this.globalVarsService.getVars();
+    this.globalVarsService.updateSingleGlobal('REL_BIENES', 0, global);
+    this.router.navigate([GOODS_TACKER_ROUTE], {
+      queryParams: {
+        origin: 'FDONACIONES',
+      },
+    });
+  }
+
+  tranEmit(file: number) {
+    this.delegationService.getTran(file).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp tranEmit', resp);
+      }
+    });
   }
 }
