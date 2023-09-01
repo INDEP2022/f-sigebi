@@ -2690,6 +2690,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.goodService.updateStatusActasRobo(idGood, status).subscribe({
       next: data => {
         console.log(data);
+        this.dataTableGood.refresh();
       },
       error: () => (this.loading = false),
     });
