@@ -43,6 +43,11 @@ export class LotService extends HttpService {
     return this.post(route, value);
   }
 
+  getConsultPayLots(params?: ListParams) {
+    const route = `${LotEndpoints.AppsConsultPayLots}`;
+    return this.get(route, params);
+  }
+
   pubCancelPackage(value: any) {
     const route = `${LotEndpoints.pubCancelPackage}`;
     return this.post(route, value);
@@ -313,6 +318,28 @@ export class LotService extends HttpService {
   lotifyExcelCount(eventId: string | number) {
     const url = `apps/lotifica-excel-count/event/${eventId}`;
     return this.get<{ totlot: string; catlot: string; aprolot: string }>(url);
+  }
+
+  impLotExcel(body: {
+    file: File;
+    event: string;
+    eventType: string;
+    validGood: string;
+    clean: string;
+    statusVta: string;
+    address: string;
+    user: string;
+  }) {
+    const formData = new FormData();
+    formData.append('file', body.file);
+    formData.append('event', body.event);
+    formData.append('eventType', body.eventType);
+    formData.append('validGood', body.validGood);
+    formData.append('clean', body.clean);
+    formData.append('statusVta', body.statusVta);
+    formData.append('address', body.address);
+    formData.append('user', body.user);
+    return this.post('apps/pup-imp-excel-lote', formData);
   }
 
   // ------------------------

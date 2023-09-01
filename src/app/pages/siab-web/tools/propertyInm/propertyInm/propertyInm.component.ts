@@ -6,9 +6,10 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { REAL_STATE_COLUMNS } from './propertyInm-columns';
+import { REAL_STATE_COLUMNS, REPORT_COLUMNS } from './propertyInm-columns';
 
 //import { Component, OnInit } from '@angular/core';
 
@@ -19,12 +20,21 @@ import { REAL_STATE_COLUMNS } from './propertyInm-columns';
 })
 export class PropertyInmComponent extends BasePage implements OnInit {
   totalItems: number = 0;
+  totalItems1: number = 0;
+  dataGood: any = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
-
+  params1 = new BehaviorSubject<ListParams>(new ListParams());
+  settings1: any = [];
   data: LocalDataSource = new LocalDataSource();
+  good: LocalDataSource = new LocalDataSource();
+  columnFilters1: any = [];
+
   columnFilters: any = [];
   array: any = [];
-  constructor(private goodSssubtypeService: GoodSssubtypeService) {
+  constructor(
+    private goodSssubtypeService: GoodSssubtypeService,
+    private goodServices: GoodService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -41,6 +51,14 @@ export class PropertyInmComponent extends BasePage implements OnInit {
           sort: false,
           filter: false,
         },
+      },
+    };
+    this.settings1 = {
+      ...this.settings1,
+      actions: false,
+      hideSubHeader: false,
+      columns: {
+        ...REPORT_COLUMNS,
       },
     };
   }
@@ -67,6 +85,36 @@ export class PropertyInmComponent extends BasePage implements OnInit {
           this.array.push(data.row.numClasifGoods);
         }
         console.log(this.array);
+
+        this.loading = true;
+        this.dataGood = [];
+
+        let params = {
+          ...this.params1.getValue(),
+          ...this.columnFilters1,
+        };
+
+        params['filter.goodClassNumber'] = `$in:${this.array}`;
+        console.log(params);
+
+        this.totalItems = 0;
+        this.goodServices.getByExpedientAndParams__(params).subscribe({
+          next: (response: any) => {
+            this.dataGood = response.data;
+            this.totalItems1 = response.count;
+            this.good.load(response.data);
+            this.good.refresh();
+            this.loading = false;
+          },
+          error: err => {
+            console.log('error', err);
+            this.totalItems1 = 0;
+            this.good.load([]);
+            this.good.refresh();
+
+            this.loading = false;
+          },
+        });
       },
     });
   }

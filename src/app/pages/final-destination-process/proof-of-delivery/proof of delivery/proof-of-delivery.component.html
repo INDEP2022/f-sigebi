@@ -129,7 +129,7 @@
                 <button
                   class="btn btn-secondary btn-sm active"
                   (click)="loadExpedienGen()"
-                  [disabled]="!boton">
+                  [disabled]="!boton || !genConstancia">
                   Gen. Constancia
                 </button>
               </div>
@@ -148,7 +148,8 @@
                 <button
                   containerClass="tooltip-style"
                   class="btn btn-info btn-sm active ml-2 mr-2"
-                  [disabled]="!boton">
+                  [disabled]="!boton"
+                  (click)="RastreadorGood()">
                   Agregar Bienes <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
               </div>
@@ -631,13 +632,14 @@
               type="button"
               class="mx-2 btn btn-secondary btn-sm active"
               (click)="addSelectedRow()"
-              [disabled]="addSelectedRow == null">
+              [disabled]="selectedRow == null">
               <i class="fa fa-angle-down"></i>
             </button>
             <button
               type="button"
               class="mx-2 btn btn-secondary btn-sm active"
-              [disabled]="deleteRowSelect == null">
+              [disabled]="deleteSelectedRow == null"
+              (click)="deleteSelect()">
               <i class="fa fa-angle-up"></i>
             </button>
           </div>

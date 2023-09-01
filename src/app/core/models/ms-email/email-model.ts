@@ -29,6 +29,14 @@ export interface IVigMailBook {
   bookType: string;
   delegationNumber: string;
   bookStatus: string;
+  delegationDetails?: {
+    id: string;
+    etapaEdo: string;
+    stateKey: string;
+    description: string;
+    addressOffice: string;
+    // otras propiedades
+  };
 }
 
 export interface IVigMailGeneric {

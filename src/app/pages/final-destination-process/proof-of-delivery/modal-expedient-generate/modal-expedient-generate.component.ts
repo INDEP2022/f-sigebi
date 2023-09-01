@@ -99,6 +99,7 @@ export class ModalExpedientGenerateComponent
   ngOnInit(): void {
     this.getuser();
     this.filterColumnsTable1();
+    console.log('Data ', this.data);
     //this.filterColumnsTable2();
   }
 

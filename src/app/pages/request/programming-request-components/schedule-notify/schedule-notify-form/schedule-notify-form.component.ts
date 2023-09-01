@@ -29,6 +29,7 @@ import { estates, users } from './schedule-notify-data';
 
 import { takeUntil } from 'rxjs';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { USER_COLUMNS_SHOW } from '../../acept-programming/columns/users-columns';
 
 @Component({
@@ -135,7 +136,8 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
     private domicilieService: DomicileService,
     private modalService: BsModalService,
     private router: Router,
-    private stateService: StateOfRepublicService
+    private stateService: StateOfRepublicService,
+    private goodsQueryService: GoodsQueryService
   ) {
     super();
     this.idProgramming = Number(
@@ -236,15 +238,24 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
   }
 
   getStore(idStore: number) {
-    this.params.getValue()['filter.idWarehouse'] = idStore;
-    this.warehouseService.getAll(this.params.getValue()).subscribe({
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.organizationCode'] = idStore;
+    this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
+      next: response => {
+        this.warehouseName = response.data[0].name;
+        this.warehouseUbication = response.data[0].address1;
+        this.formLoading = false;
+      },
+      error: error => {},
+    });
+    /*this.warehouseService.getAll(this.params.getValue()).subscribe({
       next: response => {
         this.warehouseName = response.data[0].description;
         this.warehouseUbication = response.data[0].ubication;
         this.params = new BehaviorSubject<ListParams>(new ListParams());
       },
       error: error => {},
-    });
+    }); */
   }
 
   usersToProg() {

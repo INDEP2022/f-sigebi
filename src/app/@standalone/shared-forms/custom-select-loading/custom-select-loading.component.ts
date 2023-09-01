@@ -67,7 +67,7 @@ export class CustomSelectWidthLoading
   @Input() placeholder: string = '';
   @Input() prefixSearch: string = '';
   @Input() secondPrefixSearch = '$eq';
-  @Input() secondParamSearch: string = '';
+  @Input() secondParamSearch: string = null;
   @Input() paramPageName: string = 'page';
   @Input() paramLimitName: string = 'limit';
   @Input() limit: number = 10;
