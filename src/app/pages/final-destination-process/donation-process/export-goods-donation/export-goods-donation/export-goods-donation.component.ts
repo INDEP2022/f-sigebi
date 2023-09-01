@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodsExportPost } from 'src/app/core/models/catalogs/goods.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
@@ -11,6 +11,9 @@ import { DetailProceeDelRecService } from '../../../../../core/services/ms-proce
 import { COLUMNS_EXPORT_GOODS } from './columns-export-goods';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
+import { GoodService } from 'src/app/core/services/good/good.service';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
+import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 
 @Component({
   selector: 'app-export-goods-donation',
@@ -25,6 +28,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   data1: any[] = [];
   noExpediente: number;
   cveUnica: number | null;
+  ngGlobal: IGlobalVars = null;
 
 
   constructor(
@@ -33,6 +37,8 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     private delegationService: DelegationService,
     private detailProceeDelRecService: DetailProceeDelRecService,
     private globalVarsService: GlobalVarsService,
+    private goodService: GoodService,
+    private goodTrackerService: GoodTrackerService,
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -41,7 +47,19 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-
+    this.globalVarsService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          this.ngGlobal = global;
+          console.log('GLOBAL ', this.ngGlobal);
+          if (this.ngGlobal.REL_BIENES != null) {
+            console.log('REL_BIENES ', this.ngGlobal.REL_BIENES);
+            this.backRastreador(this.ngGlobal.REL_BIENES);
+          }
+        },
+      });
   }
 
   settingsChange($event: any): void {
@@ -176,12 +194,25 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       },
     });
   }
-
-  tranEmit(file: number) {
-    this.delegationService.getTran(file).subscribe(resp => {
-      if (resp != null && resp != undefined) {
-        console.log('Resp tranEmit', resp);
-      }
+  // SERVICIO PARA TRAER BIENES DE LA PANTALLA RASTREADOR POR BIENES Y NOTIFICACIONES
+  addGoodRastreador(good: any) {
+    this.goodService.getByGood(good).subscribe({
+      next: response => {
+        console.log(' good ', response);
+      },
+    });
+  }
+  // SERVIVO PARA RECORRER EL SERVICIO getByGood
+  backRastreador(global: any) {
+    this.goodTrackerService.PaInsGoodtmptracker(global).subscribe({
+      next: response => {
+        console.log('respuesta TMPTRAKER', response);
+        for (let i = 0; i < response.count; i++) {
+          console.log('entra ---> For');
+          this.addGoodRastreador(response.data[0].goodNumber);
+        }
+        console.log('sale del For');
+      },
     });
   }
 }
