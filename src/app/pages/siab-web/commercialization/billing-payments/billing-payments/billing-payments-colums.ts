@@ -1,9 +1,12 @@
+import { DatePipe } from '@angular/common';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const BILLING_PAYMENTS_INVOICE_COLUMNS = {
-  event: {
+  id_evento: {
     title: 'Evento',
     sort: false,
   },
-  allotment: {
+  id_lote: {
     title: 'Lote',
     sort: false,
   },
@@ -11,7 +14,7 @@ export const BILLING_PAYMENTS_INVOICE_COLUMNS = {
     title: 'Serie',
     sort: false,
   },
-  invoice: {
+  folio: {
     title: 'Folio',
     sort: false,
   },
@@ -19,7 +22,7 @@ export const BILLING_PAYMENTS_INVOICE_COLUMNS = {
     title: 'IVA',
     sort: false,
   },
-  subTotal: {
+  subtotal: {
     title: 'Sub Total',
     sort: false,
   },
@@ -27,63 +30,82 @@ export const BILLING_PAYMENTS_INVOICE_COLUMNS = {
     title: 'Total',
     sort: false,
   },
-  status: {
+  id_estatusfact: {
     title: 'Estado',
     sort: false,
   },
-  methodPayment: {
-    title: 'Método de pago',
+  formapago: {
+    title: 'Método de Pago',
     sort: false,
   },
-  paymentConditions: {
-    title: 'Condiciones de pago',
+  condicionespago: {
+    title: 'Condiciones de Pago',
     sort: false,
   },
-  idFactura: {
+  id_factura: {
     title: 'ID de Factura',
     sort: false,
   },
 };
 
 export const BILLING_PAYMENTS_COLUMNS = {
-  event: {
+  id_evento: {
     title: 'Evento',
     sort: false,
   },
-  allotment: {
+  lote_publico: {
     title: 'Lote',
     sort: false,
   },
-  reference: {
+  referencia: {
     title: 'Referencia',
     sort: false,
   },
-  amount: {
+  monto: {
     title: 'Monto',
     sort: false,
   },
-  entryOrder: {
-    title: 'Orden de ingreso',
+  idordeningreso: {
+    title: 'Orden de Ingreso',
     sort: false,
   },
-  dateOI: {
+  fechaoi: {
     title: 'Fecha OI',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
-  affectedDate: {
+  fecha_afectacion: {
     title: 'Fecha Afectación',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
-  paymentType: {
-    title: 'Tipo de pago',
+
+  id_tipo_sat: {
+    title: 'Tipo de Pago',
     sort: false,
   },
-  idPayment: {
-    title: 'ID de Pago',
+  id_pago: {
+    title: 'Id de Pago',
     sort: false,
   },
-  paymentTypes: {
+  /*paymentTypes: {
     title: 'Tipos de pago',
     sort: false,
-  },
+  },*/
 };

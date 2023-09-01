@@ -212,9 +212,8 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   get validFilesToDelete() {
-    return this.files.filter(
-      row =>
-        row.usuario_creacion === this.userName || row.usuario_creacion === null
+    return this.files.filter(row =>
+      row.usuario_creacion ? row.usuario_creacion === this.userName : true
     );
   }
 
@@ -271,6 +270,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
 
   async confirmDelete(all = false) {
     // if (this.disabledDeletePhotos()) return;
+    console.log(this.files, this.filesToDelete);
     if (all) {
       if (this.disabledDeleteAllPhotos()) {
         return;

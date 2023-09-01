@@ -74,7 +74,7 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
       requestingUserName: [null, [Validators.required]],
       requestingUserPost: [null, [Validators.required]],
       incomeOrder: [null, []],
-      reportNumber: [null, [Validators.required]],
+      //reportNumber: [null, [Validators.required]],
     });
     setTimeout(() => {
       this.getEvent(new ListParams());
