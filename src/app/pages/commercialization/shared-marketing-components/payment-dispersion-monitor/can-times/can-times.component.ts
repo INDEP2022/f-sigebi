@@ -94,7 +94,7 @@ export class CanTimesComponent extends BasePage implements OnInit {
                 i == this.times.value
                   ? (n_monto - n_sum).toFixed(2)
                   : n_mdiv.toFixed(2),
-              publicBatch: this.incomeData.publicBatch,
+              publicBatch: null,
               description: this.incomeData.description,
               typereference: n_tipo_ref,
               penalty,
