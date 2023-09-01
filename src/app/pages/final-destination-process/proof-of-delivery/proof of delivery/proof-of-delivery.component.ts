@@ -85,7 +85,7 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   totalItems2: number = 0;
   user: any;
   userDepartament: any;
-  expedient: any;
+  expedient: any = null;
   expeBool: boolean = false;
   ActiveEdon: boolean = false;
   select: boolean = false;
@@ -110,8 +110,8 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   idProceeding: any;
   seleccion: any;
   typeProceeding: any;
-  T_TIPOA: any;
-  T_PROMES: any;
+  T_TIPOA: any = 0;
+  T_PROMES: any = 0;
   noActa: any;
   statusActa: any;
   origin: any;
@@ -124,7 +124,10 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   @Input() lotSelected: IComerLot;
   @Input() onlyBase = false;
   eventForm = this.fb.group(new ComerEventForm());
-
+  genConstancia: boolean = false;
+  actDate: any;
+  dataProceeding: any;
+  clear: boolean = false;
   constructor(
     private fb: FormBuilder,
     private expedientService: ExpedientService,
@@ -148,26 +151,31 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
     private goodTrackerService: GoodTrackerService
   ) {
     super();
-    this.activatedRoute.queryParams
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(params => {
-        this.folioScan = params['folioScan']
-          ? Number(params['folioScan'])
-          : null;
-      });
-    this.globalVarsService
-      .getGlobalVars$()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: global => {
-          this.ngGlobal = global;
-          console.log('GLOBAL ', this.ngGlobal);
-          if (this.ngGlobal.REL_BIENES) {
-            console.log('GLOBAL ', this.ngGlobal.REL_BIENES);
-            this.backRastreador(this.ngGlobal.REL_BIENES);
-          }
-        },
-      });
+    // this.activatedRoute.queryParams
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(params => {
+    //     this.folioScan = params['folio']
+    //       ? Number(params['folio'])
+    //       : null;
+    //     this.idProceeding = params['acta']
+    //       ? Number(params['acta'])
+    //       : null;
+    //     this.expedient = params['expedientNumber']
+    //       ? Number(params['expedientNumber'])
+    //       : null;
+    //   });
+    this.expedient =
+      localStorage.getItem('expedient') != null
+        ? localStorage.getItem('expedient')
+        : null;
+    this.folioScan =
+      localStorage.getItem('folio') != null
+        ? localStorage.getItem('folio')
+        : null;
+    this.idProceeding =
+      localStorage.getItem('acta') != null
+        ? localStorage.getItem('acta')
+        : null;
   }
 
   settings1 = {
@@ -197,7 +205,38 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   };
 
   ngOnInit(): void {
+    console.log('folio ', this.folioScan);
+    console.log('idProceeding ', this.idProceeding);
+    console.log('expedient ', this.expedient);
     this.initForm();
+    this.globalVarsService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          this.ngGlobal = global;
+          console.log('GLOBAL ', this.ngGlobal);
+          if (this.ngGlobal.REL_BIENES != null) {
+            console.log('REL_BIENES ', this.ngGlobal.REL_BIENES);
+            this.backRastreador(this.ngGlobal.REL_BIENES);
+          }
+        },
+      });
+    if (this.folioScan != null) {
+      this.form.get('scanningFoli').patchValue(this.folioScan);
+      localStorage.removeItem('folio');
+      this.folioScanbool = true;
+    }
+    if (this.idProceeding != null) {
+      this.blockAct(this.idProceeding);
+      this.DetailDelivery(this.idProceeding);
+      localStorage.removeItem('acta');
+    }
+    if (this.expedient != null) {
+      this.formExp.get('expedient').patchValue(this.expedient);
+      this.getExpedient();
+      localStorage.removeItem('expedient');
+    }
     // Configuración para mostrar solo el año
     this.bsConfigFromYear = {
       dateInputFormat: 'YYYY',
@@ -340,6 +379,7 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
         this.boton = true;
         this.new = true;
         this.share = true;
+        this.clear = true;
       },
       error: err => {
         console.log('Hubo un error Expedient el cual es: ', err);
@@ -467,6 +507,8 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
             delivery: resp.data[0].witness2,
             witnessContr: resp.data[0].comptrollerWitness,
           };
+          this.dataProceeding = resp.data[0];
+          this.actDate = resp.data[0].datePhysicalReception;
           this.typeProceeding = resp.data[0].idTypeProceedings;
           this.idProceeding = resp.data[0].id;
           this.cveActa = resp.data[0].keysProceedings;
@@ -480,6 +522,7 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
           };
           this.formStatus.patchValue(param);
           if (resp.data[0].universalFolio != null) {
+            this.folioScan = resp.data[0].universalFolio;
             this.form.patchValue({
               scanningFoli: resp.data[0].universalFolio,
             });
@@ -676,6 +719,7 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   }
 
   deleteRowSelect(event: any) {
+    this.selectedRow = null;
     this.deleteSelectedRow = event.data;
     console.log('this.deleteSelectedRow ', this.deleteSelectedRow);
   }
@@ -713,28 +757,34 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
       next: responsestatus => {
         console.log('ResponseEstatus ', responsestatus);
         this.T_TIPOA = responsestatus.data[0].count;
+        this.detailProceeDelRecService
+          .getCount(this.selectedRow.goodNumb)
+          .subscribe({
+            next: responseProcedingCount => {
+              console.log('responseProcedingCount ', responseProcedingCount);
+              this.T_PROMES = responseProcedingCount.data[0].count;
+              this.validationTipos(finmesa);
+            },
+            error: err => {
+              this.T_PROMES = 0;
+              this.validationTipos(finmesa);
+            },
+          });
       },
       error: err => {
         this.T_TIPOA = 0;
+        this.validationTipos(finmesa);
       },
     });
-    this.detailProceeDelRecService
-      .getCount(this.selectedRow.goodNumb)
-      .subscribe({
-        next: responseProcedingCount => {
-          console.log('responseProcedingCount ', responseProcedingCount);
-          this.T_PROMES = responseProcedingCount.data[0].count;
-        },
-        error: err => {
-          this.T_PROMES = 0;
-        },
-      });
+  }
+
+  validationTipos(finmesa: any) {
     if (this.T_TIPOA == 0) {
       console.log('Es 1');
       this.alertInfo(
         'error',
         'Error',
-        'El No.Bien ' +
+        'El No. Bien ' +
           this.selectedRow.goodNumb +
           ' no Tiene el Estado para la Constancia de Entrega de ' +
           finmesa
@@ -756,7 +806,8 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
     } else {
       this.T_PROMES = 1;
     }
-    let lv_valregi = this.T_TIPOA + this.T_PROMES;
+    let lv_valregi = this.T_TIPOA + '' + this.T_PROMES;
+    console.log('lv_valregi ', lv_valregi);
     if (this.selectedRow.quantity < 0) {
       console.log('Es 3');
       this.alertInfo('error', 'Error', 'El Bien no Tiene una Cantidad Válida');
@@ -881,12 +932,13 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
       ).then(res => {
         console.log(res);
         if (res.isConfirmed) {
+          localStorage.setItem('folio', this.folioScan);
+          localStorage.setItem('expedient', this.expedient);
+          localStorage.setItem('acta', this.idProceeding);
           this.router.navigate([`/pages/general-processes/scan-documents`], {
             queryParams: {
               origin: 'FACTCONST_0001',
               folio: this.folioScan,
-              expedient: this.expedient,
-              acta: this.idProceeding,
             },
           });
         }
@@ -903,6 +955,14 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
     // if (!this.officeDictationData && !this.dictationData) {
     //   return;
     // }
+    if (this.statusActa == 'Abrir Acta') {
+      this.alert(
+        'warning',
+        'Alerta',
+        'No se Puede Replicar el Folio en un Acta Cerrada'
+      );
+      return;
+    }
     let goodId = this.data2;
     if (goodId) {
       if (this.form.get('scanningFoli').value) {
@@ -922,7 +982,7 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
           if (count == 0) {
             this.alert(
               'warning',
-              'Folio de escaneo inválido para replicar',
+              'Folio de Escaneo Inválido para Replicar',
               ''
             );
           } else {
@@ -1009,6 +1069,29 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
     ///
     //Falta Integrar el de guardar en documentos
     ///
+    let params = {
+      fileNumber: this.expedient,
+      actKey: this.cveActa,
+      lnuFlyerNumber: wheelNumber,
+      delegationNumber: this.delegation,
+      subdelegationNumber: this.subdelegation,
+      departamentNumber: this.departament,
+      universalFolio: this.folioScan,
+    };
+    this.documentsService.postDocumentsV2(params).subscribe({
+      next: response => {
+        this.alert(
+          'success',
+          'Folio Replicado',
+          'El Folio ' + this.folioScan + ' fue Replicado Correctamente'
+        );
+        console.log('respuesta replicar ', response);
+        this.form
+          .get('scanningFoli')
+          .setValue(response.data[0].folio_universal);
+        this.folioScan = response.data[0].folio_universal;
+      },
+    });
   }
 
   insertListImg() {
@@ -1160,6 +1243,8 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
           delivery: resp.witness2,
           witnessContr: resp.comptrollerWitness,
         };
+        this.dataProceeding = resp;
+        this.actDate = resp.datePhysicalReception;
         this.typeProceeding = resp.idTypeProceedings;
         this.idProceeding = resp.id;
         this.cveActa = resp.keysProceedings;
@@ -1311,6 +1396,54 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
     //   executionType: this.onlyBase ? 'base' : 'normal',
     // });
 
+    localStorage.setItem('folio', this.folioScan);
+    localStorage.setItem('expedient', this.expedient);
+    localStorage.setItem('acta', this.idProceeding);
+    localStorage.setItem('rastreador', '1');
+    this.router.navigate([GOODS_TACKER_ROUTE], {
+      queryParams: {
+        origin: 'FACTCONST_0001',
+      },
+    });
+  }
+
+  RastreadorGood() {
+    this.alertQuestion(
+      'info',
+      'Se Abrirá la Pantalla de Rastreo por Bienes y Notificación. ¿Deseas continuar?',
+      '',
+      'Aceptar',
+      'Cancelar'
+    ).then(res => {
+      console.log(res);
+      if (res.isConfirmed) {
+        // this.router.navigate([`/pages/general-processes/goods-tracker`], {
+        //   queryParams: {
+        //     origin: 'FACTCONST_0001',
+        //     PAR_MASIVO: 'S',
+        //   },
+        // });
+        this.loadFromGoods();
+      }
+    });
+  }
+
+  async loadFromGoods() {
+    const global = await this.globalVarsService.getVars();
+    this.globalVarsService.updateSingleGlobal('REL_BIENES', 0, global);
+    // const selfState = await this.eventPreparationService.getState();
+    // this.eventPreparationService.updateState({
+    //   ...selfState,
+    //   eventForm: this.eventForm,
+    //   lastLot: Number(this.lotSelected.id) ?? -1,
+    //   lastPublicLot: this.lotSelected.publicLot ?? 1,
+    //   executionType: this.onlyBase ? 'base' : 'normal',
+    // });
+
+    localStorage.setItem('folio', this.folioScan);
+    localStorage.setItem('expedient', this.expedient);
+    localStorage.setItem('acta', this.idProceeding);
+    localStorage.setItem('rastreador', '2');
     this.router.navigate([GOODS_TACKER_ROUTE], {
       queryParams: {
         origin: 'FACTCONST_0001',
@@ -1319,14 +1452,39 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
   }
 
   backRastreador(global: any) {
-    let params = {
-      pParameter: global,
-      pNumberParameter: 1,
-      pUser: this.user,
-    };
-    this.goodTrackerService.PaInsGoodParameters(params).subscribe({
-      next: response => {},
-    });
+    let i = 1;
+    console.log('Entra a backRastreador ', i++);
+    let rastreador = localStorage.getItem('rastreador');
+    if (rastreador == '1') {
+      let params = {
+        pParameter: global,
+        pNumberParameter: 1,
+        pUser: this.user,
+      };
+      this.goodTrackerService.PaInsGoodParameters(params).subscribe({
+        next: response => {
+          console.log('Respuesta, rastreador ', response);
+        },
+      });
+      this.proceedingsService.consultPaValMasive().subscribe({
+        next: response => {
+          console.log('response PaVal', response);
+        },
+      });
+      this.genConstancia = true;
+    }
+    if (rastreador == '2') {
+      this.goodTrackerService.PaInsGoodtmptracker(global).subscribe({
+        next: response => {
+          console.log('respuesta TMPTRAKER', response);
+          for (let i = 0; i < response.count; i++) {
+            console.log('entra ---> For');
+            this.addGoodRastreador(response.data[0].goodNumber);
+          }
+          console.log('sale del For');
+        },
+      });
+    }
   }
 
   loadExpedienGen() {
@@ -1340,11 +1498,12 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
           folio: this.folioScan,
           cveActa: this.cveActa,
         };
+        console.log('DATA ENVIADA ', data);
         this.openModalExpedienGen(true, data);
       } else {
         this.alert(
           'error',
-          '',
+          'Error',
           'No se Podrá Generar la Constancia Masiva, el Acta Base no Esta Cerrada'
         );
       }
@@ -1378,6 +1537,7 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
             description: response.data[i].good.description,
             quantity: response.data[i].good.quantity,
             unit: response.data[i].good.unit,
+            numberProceedings: response.data[i].numberProceedings,
           };
           this.LocalData2.push(params);
           this.data2.load(this.LocalData2);
@@ -1490,7 +1650,7 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
           this.programmingGoodReceiptService.paAbrirActas(param).subscribe({
             next: response => {
               console.log('respuesta Pa Abrir Actas ', response);
-              if ((lv_VALMOTOS = 1)) {
+              if (lv_VALMOTOS == 1) {
                 this.programmingGoodReceiptService
                   .paRegresarEstadoAnterior(params)
                   .subscribe({
@@ -1508,6 +1668,14 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
         }
       });
     } else if (this.statusActa == 'Cerrar Acta') {
+      if (this.LocalData2.length == 0) {
+        this.alert(
+          'warning',
+          'Alerta',
+          'El Acta no se Puede Cerrar sin Bienes'
+        );
+        return;
+      }
       this.alertQuestion(
         'info',
         '¿Está seguro de Cerrar la Constancia ' +
@@ -1526,6 +1694,9 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
             next: response => {
               T_VALFON = response.count;
             },
+            error: err => {
+              T_VALFON = 0;
+            },
           });
           this.documentsService
             .getDocumentsCursor2(this.folioScan, this.expedient)
@@ -1534,11 +1705,6 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
                 T_VALEXFO = resp.count;
               },
             });
-          this.proceedingSusPcancelService.suspcancel(this.user).subscribe({
-            next: resp => {
-              T_DATACT = resp.count;
-            },
-          });
           if (this.folioScan == null) {
             this.alert(
               'warning',
@@ -1562,23 +1728,49 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
             return;
           } else {
             for (let i = 0; i < this.LocalData2.length; i++) {
+              const Elaboration =
+                this.actDate != null ? new Date(this.actDate) : null;
+              const formattedfecElaboration =
+                Elaboration != null ? this.formatDate2(Elaboration) : null;
               let par = {
-                pCreationDate: this.formAct.get('actDate').value,
+                pCreationDate: formattedfecElaboration,
                 pScreen: 'FACTCONST_0001',
                 pActNum: this.idProceeding,
                 pProc: 1,
                 pAction: 'CON',
               };
-              this.proceedingsService.postConstDelivery(params).subscribe({
+              this.proceedingsService.postConstDelivery(par).subscribe({
                 next: resp => {
-                  this.alert(
-                    'success',
-                    'Realizado con Exito',
-                    'El Acta se Cerró Correctamente'
-                  );
-                  this.formStatus.get('status').patchValue('CERRADA');
-                  let noActa = this.idProceeding;
-                  this.blockAct(noActa);
+                  console.log('postConst Delivery ', resp);
+                  this.dataProceeding.statusProceedings = 'CERRADA';
+                  this.dataProceeding.universalFolio = this.folioScan;
+                  this.detailProceeDelRecService
+                    .PutProcedingbyIdAct(this.idProceeding, this.dataProceeding)
+                    .subscribe({
+                      next: respon => {
+                        console.log('respuesta Put ', respon);
+                        this.proceedingSusPcancelService
+                          .suspcancel(this.user)
+                          .subscribe({
+                            next: resp => {
+                              T_DATACT = resp.count;
+                              if (T_DATACT > 0) {
+                                this.alert(
+                                  'success',
+                                  'Realizado con Exito',
+                                  'El Acta se Cerró Correctamente'
+                                );
+                                this.formStatus
+                                  .get('status')
+                                  .patchValue('CERRADA');
+                                let noActa = this.idProceeding;
+                                this.blockAct(noActa);
+                              }
+                            },
+                            error: err => {},
+                          });
+                      },
+                    });
                 },
               });
             }
@@ -1586,6 +1778,12 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
         }
       });
     }
+  }
+  formatDate2(date: Date): string {
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear().toString();
+    return `${year}/${month}/${day}`;
   }
 
   blockAct(noAct: any) {
@@ -1640,6 +1838,8 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
           delivery: resp.data[0].witness2,
           witnessContr: resp.data[0].comptrollerWitness,
         };
+        this.dataProceeding = resp.data[0];
+        this.actDate = resp.data[0].datePhysicalReception;
         this.typeProceeding = resp.data[0].idTypeProceedings;
         this.idProceeding = resp.data[0].id;
         this.cveActa = resp.data[0].keysProceedings;
@@ -1708,13 +1908,12 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
     }
     let good = this.selectedRow;
     let params = {
-      numGoodId: this.selectedRow.goodNumb,
-      numGoodProceedingsId: this.idProceeding,
-      numDetailId: this.selectedRow.noDetail,
-      refundAmount: this.selectedRow.quantity,
-      approvalDateXAdmon: new Date(),
+      numberGood: this.selectedRow.goodNumb,
+      numberProceedings: this.idProceeding,
+      amount: this.selectedRow.quantity,
+      approvedDateXAdmon: new Date(),
       approvalUserXAdmon: this.user,
-      dateIndicateUserApproval: new Date(),
+      dateIndicatesUserApproval: new Date(),
       numberRegister: this.selectedRow.noregister,
       amountReturned: this.selectedRow.quantity,
     };
@@ -1723,10 +1922,63 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
         console.log('response Post ', response);
         this.data2.refresh();
         this.DetailDelivery(this.idProceeding);
+        this.selectedRow = null;
+      },
+      error: err => {
+        console.log('error ', err);
+        if (err.error.message == 'El registro ya existe.') {
+          this.alert('error', 'No se Puede Agregar', 'El Bien ya Existe');
+          this.selectedRow = null;
+        }
       },
     });
   }
 
+  deleteSelect() {
+    let params = {
+      numberGood: this.deleteSelectedRow.goodNumb,
+      numberProceedings: this.deleteSelectedRow.numberProceedings,
+    };
+    this.proceedingsService.deleteReception(params).subscribe({
+      next: resp => {
+        console.log('respuesta delete ', resp);
+        this.DetailDelivery(this.idProceeding);
+        this.deleteSelectedRow = null;
+      },
+    });
+  }
+
+  addGoodRastreador(good: any) {
+    this.goodService.getByGood(good).subscribe({
+      next: response => {
+        let params = {
+          numberGood: response.data[0].goodId,
+          numberProceedings: this.idProceeding,
+          amount: response.data[0].quantity,
+          approvedDateXAdmon: new Date(),
+          approvalUserXAdmon: this.user,
+          dateIndicatesUserApproval: new Date(),
+          numberRegister: response.data[0].noRegisterDelegation,
+          amountReturned: response.data[0].quantity,
+        };
+        this.proceedingsService.postConstGood(params).subscribe({
+          next: response => {
+            console.log('response Post ', response);
+            this.data2.refresh();
+            this.DetailDelivery(this.idProceeding);
+            this.selectedRow = null;
+          },
+          error: err => {
+            console.log('error ', err);
+            if (err.error.message == 'El registro ya existe.') {
+              this.alert('error', 'No se Puede Agregar', 'El Bien ya Existe');
+              this.selectedRow = null;
+            }
+          },
+        });
+      },
+    });
+  }
   clearall() {
     this.select = false;
     this.LocalData1 = [];
@@ -1737,5 +1989,22 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
     this.boton = false;
     this.new = false;
     this.share = false;
+    this.form.reset();
+    this.formStatus.reset();
+    this.formAct.reset();
+    this.formExp.reset();
+    this.idProceeding = null;
+    this.ActaNew = null;
+    this.LocalData2 = [];
+    this.data2.load(this.LocalData2);
+    this.data2.refresh();
+    this.LocalData1 = [];
+    this.data1.load(this.LocalData1);
+    this.data1.refresh();
+    this.clear = false;
+    this.newA = true;
+    this.boton = false;
+    this.campos = true;
+    this.select = true;
   }
 }
