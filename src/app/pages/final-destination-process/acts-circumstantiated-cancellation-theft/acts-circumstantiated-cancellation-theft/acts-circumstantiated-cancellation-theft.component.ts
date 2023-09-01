@@ -167,8 +167,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
   form: FormGroup;
   selectedRow: IGood;
   statusGood_: any;
-  statusGoodInicial: 'CNE';
-  statusGoodFinal: 'ADM';
   formTable1: FormGroup;
   dataGood: GooByExpediente[] = [];
   statusInicial: string = 'RFI';
@@ -1240,7 +1238,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 console.log('indexGood', indexGood);
                 if (indexGood != -1)
                   this.dataTableGood_[indexGood].di_disponible = 'N';
-                await this.updateBienDetalle(good.id, this.statusGoodFinal);
+                await this.updateBienDetalle(good.id, 'ADM');
                 await this.createDET(good);
               }
             }
@@ -1484,7 +1482,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
               );
 
               this.Exportdate = true;
-              await this.updateBienDetalle(_g.id, this.statusGoodFinal);
+              await this.updateBienDetalle(_g.id, 'ADM');
               await this.createDET(_g);
             }
           });
@@ -1535,7 +1533,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
             let index = this.dataTableGood_.findIndex(
               g => g.id === good.goodId
             );
-            await this.updateBienDetalle(good.goodId, this.statusGoodInicial);
+            await this.updateBienDetalle(good.goodId, 'CNE');
             await this.deleteDET(good);
             // this.selectedGooods = [];
           });
@@ -1579,7 +1577,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
               (goodV: any) => goodV.goodId == _g.id
             );
             this.Exportdate = true;
-            await this.updateBienDetalle(_g.id, this.statusGoodInicial);
+            await this.updateBienDetalle(_g.id, 'CNE');
             await this.deleteDET(_g);
           });
           Promise.all(result).then(async item => {
