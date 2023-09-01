@@ -8,6 +8,7 @@ export enum GOOD_TRACKER_ORIGINS {
   MassiveChangeStatus = 'FACTADBCAMBIOESTAT',
   EventPreparation = 'FCOMEREVENTOS',
   ProofDelivery = 'FACTCONST_0001',
+  CamesGood = 'FCOMERCAMESTBIEN',
 }
 
 export enum GOOD_TRACKER_ORIGINS_TITLES {
@@ -19,4 +20,5 @@ export enum GOOD_TRACKER_ORIGINS_TITLES {
   'FACTADBCAMBIOESTAT' = 'Cambio masivo de estatus bienes',
   'FCOMEREVENTOS' = 'Prepración del Evento',
   'FACTCONST_0001' = 'Constancias de Entrega',
+  'FCOMERCAMESTBIEN' = 'Entrega de Bienes',
 }

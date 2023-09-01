@@ -222,4 +222,15 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
   donwloadExcel(token: string) {
     return this.get(`${GoodEndpoints.ExportExcelGoodBad}/${token}`);
   }
+
+  filterStatusGood(params: any) {
+    return this.get(
+      `${GoodEndpoints.goodStatus}?filter.status=$ilike:VPT`,
+      params
+    );
+  }
+
+  putStatusGood(good: number, status: string) {
+    return this.put(`${GoodEndpoints.UpdateStatusGood}/${good}/${status}`);
+  }
 }
