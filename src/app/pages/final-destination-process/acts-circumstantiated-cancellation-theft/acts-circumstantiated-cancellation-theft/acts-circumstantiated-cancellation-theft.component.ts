@@ -64,9 +64,9 @@ import { ProcedureManagementService } from 'src/app/core/services/proceduremanag
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import * as XLSX from 'xlsx';
 import {
   COPY,
+  GooByExpediente,
   IDataGoodsTable,
   RELATED_FOLIO_COLUMNS,
 } from '../acts-cir-columns';
@@ -85,6 +85,23 @@ export type IGoodAndAvailable = IGood & {
   available: boolean;
   selected: boolean;
 };
+
+export type IDocumentJobManagement = {
+  cveDocument: string;
+  goodNumber: any;
+  managementNumber: string;
+  recordNumber: string;
+  rulingType: string;
+  description?: string;
+};
+export interface IGoodJobManagement {
+  managementNumber: string;
+  goodNumber: number;
+  recordNumber: string;
+  classify: string | number;
+  goods: string;
+  good: IGood;
+}
 
 @Component({
   selector: 'app-acts-circumstantiated-cancellation-theft',
@@ -119,6 +136,26 @@ export type IGoodAndAvailable = IGood & {
       .registros-movidos {
         background-color: yellow;
       }
+
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
     `,
   ],
 })
@@ -131,6 +168,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   selectedRow: IGood;
   statusGood_: any;
   formTable1: FormGroup;
+  dataGood: GooByExpediente[] = [];
   statusInicial: string = 'RFI';
   statusFinal: string = 'RFP';
   formFind: FormGroup;
@@ -305,7 +343,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onGoodSelectValid(instance),
         },
-        goodId: {
+        goodNumber: {
           title: 'No. Bien',
           type: 'number',
           sort: false,
@@ -739,25 +777,70 @@ export class ActsCircumstantiatedCancellationTheftComponent
     });
   }
 
+  // getGoodsByStatus(id: number) {
+  //   this.loadingBienes = true;
+  //   let params: any = {
+  //     ...this.paramsList.getValue(),
+  //     ...this.columnFilters,
+  //   };
+  //   this.goodService.getByExpedient_(id, params).subscribe({
+  //     next: data => {
+  //       this.loadingBienes = false;
+  //       this.loadingBienes = false;
+  //       this.bienes = data.data;
+
+  //       console.log('Bienes', this.bienes);
+
+  //       let result = data.data.map(async (item: any) => {
+  //         this.wheelNumber = item.flyerNumber;
+  //         let obj = {
+  //           vcScreen: 'FACTCIRCUNR_0001',
+  //           pNumberGood: item.id,
+  //         };
+  //         const di_dispo = await this.getStatusScreen(obj);
+  //         item['di_disponible'] = di_dispo;
+  //         // if (item.keysProceedings) {
+  //         //   item.di_disponible = 'N';
+  //         // }
+  //         item['quantity'] = item.quantity;
+  //         item['di_acta'] = item.keysProceedings;
+  //         item['id'] = item.id;
+  //       });
+
+  //       Promise.all(result).then(item => {
+  //         this.dataTableGood_ = this.bienes;
+  //         this.dataTableGood.load(this.bienes);
+  //         // this.dataTableGood.refresh();
+
+  //         this.totalItems = data.count;
+  //         this.loadingBienes = false;
+  //         this.loadingBienes = false;
+  //       });
+  //     },
+  //     error: error => {
+  //       this.loading = false;
+  //     },
+  //   });
+  // }
   getGoodsByStatus(id: number) {
-    this.loadingBienes = true;
+    this.loading = true;
+
     let params: any = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-    this.goodService.getByExpedient_(id, params).subscribe({
+    // console.log('1412212', params);
+    params['sortBy'] = `goodNumber:DESC`;
+    this.GoodprocessService_.GetMinuteDetailDelivery(id, params).subscribe({
       next: data => {
-        this.loadingBienes = false;
-        this.loadingBienes = false;
         this.bienes = data.data;
 
-        console.log('Bienes', this.bienes);
+        // console.log('Bienes', this.bienes);
 
         let result = data.data.map(async (item: any) => {
-          this.wheelNumber = item.flyerNumber;
           let obj = {
             vcScreen: 'FACTCIRCUNR_0001',
-            pNumberGood: item.goodId,
+            pNumberGood: item.goodNumber,
           };
           const di_dispo = await this.getStatusScreen(obj);
           item['di_disponible'] = di_dispo;
@@ -766,21 +849,27 @@ export class ActsCircumstantiatedCancellationTheftComponent
           }
           item['quantity'] = item.amount;
           item['di_acta'] = item.minutesKey;
-          item['id'] = item.goodId;
+          item['id'] = item.goodNumber;
+          // const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
+          // // console.log('acta', acta);
+          // item['acta_'] = acta;
         });
 
         Promise.all(result).then(item => {
           this.dataTableGood_ = this.bienes;
           this.dataTableGood.load(this.bienes);
           this.dataTableGood.refresh();
-
+          // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
           this.totalItems = data.count;
-          this.loadingBienes = false;
-          this.loadingBienes = false;
+          this.loading = false;
+          // // console.log(this.bienes);
         });
       },
       error: error => {
         this.loading = false;
+        this.dataTableGood.load([]);
+        this.dataTableGood.refresh();
+        this.totalItems = 0;
       },
     });
   }
@@ -1146,15 +1235,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 );
 
                 this.Exportdate = true;
-
                 console.log('indexGood', indexGood);
                 if (indexGood != -1)
                   this.dataTableGood_[indexGood].di_disponible = 'N';
-
+                await this.updateBienDetalle(good.id, 'ADM');
                 await this.createDET(good);
-                // this.dataTableGood_ = this.bienes;
-                // this.dataRecepcion.push(good);
-                // this.dataRecepcion = [...this.dataRecepcion];
               }
             }
           });
@@ -1195,9 +1280,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     });
   }
   isGoodSelectedValid(_good: IGood) {
-    const exists = this.selectedGooodsValid.find(
-      good => good.goodId == _good.id
-    );
+    const exists = this.selectedGooodsValid.find(good => good.id == _good.id);
     return !exists ? false : true;
   }
   goodSelectedChangeValid(good: IGood, selected?: boolean) {
@@ -1399,11 +1482,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
               );
 
               this.Exportdate = true;
-              // console.log('valid', valid);
+              await this.updateBienDetalle(_g.id, 'ADM');
               await this.createDET(_g);
-              // if (!valid) {
-              //   // this.dataRecepcion = [...this.dataRecepcion, _g];
-              // }
             }
           });
           Promise.all(result).then(async item => {
@@ -1453,10 +1533,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
             let index = this.dataTableGood_.findIndex(
               g => g.id === good.goodId
             );
-            // if (index != -1) {
-            //   this.dataTableGood_[index].di_disponible = 'S';
-            //         //   this.dataTableGood_[index].acta = null;
-            // }
+            await this.updateBienDetalle(good.goodId, 'CNE');
             await this.deleteDET(good);
             // this.selectedGooods = [];
           });
@@ -1471,105 +1548,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         }
       }
     }
-    // console.log('selectedGooodsValid--', this.selectedGooodsValid);
   }
 
   //Quitar todos
-  // removeAll() {
-  //   if (this.actasDefault == null) {
-  //     this.alert(
-  //       'warning',
-  //       'Debe Especificar/Buscar el Acta para Despues Eliminar el Bien de Esta.',
-  //       'Debe Capturar un Acta.'
-  //     );
-  //     return;
-  //   } else {
-  //     if (this.statusCanc == 'CERRADA') {
-  //       this.alert(
-  //         'warning',
-  //         'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
-  //         ''
-  //       );
-  //       return;
-  //     } else {
-  //       // console.log('DataRecepcion', this.dataRecepcion);
-
-  //       if (this.dataRecepcion.length > 0) {
-  //         this.dataRecepcion.forEach((good: any) => {
-  //           console.log('this.dataRecepcion', this.dataRecepcion);
-  //           this.dataRecepcion = this.dataRecepcion.filter(
-  //             (_good: any) => _good.id != good.id
-  //           );
-  //           // let index = this.dataTableGood_.findIndex(g => g.id === good.id);
-  //           let index = this.dataTableGood_.findIndex(
-  //             g => g.id === good.goodId
-  //           );
-  //           this.dataRecepcion = [];
-  //           this.dataRecepcionGood.load([]);
-  //           this.Exportdate = false;
-  //           if (index != -1) {
-  //             if (this.dataTableGood_[index].di_dispo) {
-  //               this.dataTableGood_[index].di_dispo = 'S';
-  //             }
-  //             // if (this.dataTableGood_[index].di_dispo) {
-  //             //   this.dataTableGood_[index].di_dispo = 'S';
-  //             // }
-  //           }
-  //         });
-  //         this.goodsValid = [];
-  //       }
-  //     }
-  //   }
-  // }
-  // removeAll() {
-  //   if (this.statusCanc == 'CERRADA') {
-  //     this.alert(
-  //       'warning',
-  //       'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
-  //       ''
-  //     );
-  //     return;
-  //   } else {
-  //     // console.log('this.actasDefault ', this.actasDefault);
-
-  //     if (this.actasDefault == null) {
-  //       this.alert(
-  //         'warning',
-  //         'Debe Especificar/Buscar el Acta para Despues Eliminar el Bien de Esta.',
-  //         ''
-  //       );
-  //       return;
-  //     } else {
-  //       if (this.selectedGooodsValid.length > 0) {
-  //         // this.goods = this.goods.concat(this.selectedGooodsValid);
-  //         let result = this.selectedGooodsValid.map(async good => {
-  //           console.log('good', good);
-  //           this.dataRecepcion = this.dataRecepcion.filter(
-  //             (_good: any) => _good.id != good.id
-  //           );
-  //           let index = this.dataTableGood_.findIndex(
-  //             g => g.id === good.goodId
-  //           );
-
-  //           await this.deleteDET(good);
-  //           // this.selectedGooods = [];
-  //         });
-
-  //         Promise.all(result).then(async item => {
-  //           this.getGoodsByStatus(Number(this.fileNumber));
-  //           await this.getDetailProceedingsDevollution(this.actasDefault.id);
-  //         });
-  //         this.Exportdate = false;
-  //         this.validateGoods = true;
-  //         this.selectedGooodsValid = [];
-  //         this.loading2 = true;
-
-  //       }
-  //     }
-  //   }
-  //   // console.log('selectedGooodsValid--', this.selectedGooodsValid);
-  // }
-
   removeAll() {
     if (this.actasDefault == null) {
       this.alert(
@@ -1595,20 +1576,17 @@ export class ActsCircumstantiatedCancellationTheftComponent
             let valid = this.dataRecepcion.some(
               (goodV: any) => goodV.goodId == _g.id
             );
-
             this.Exportdate = true;
-            // console.log('valid', valid);
-
+            await this.updateBienDetalle(_g.id, 'CNE');
             await this.deleteDET(_g);
-            // if (!valid) {
-            //   // this.dataRecepcion = [...this.dataRecepcion, _g];
-            // }
           });
           Promise.all(result).then(async item => {
             this.getGoodsByStatus(Number(this.fileNumber));
             await this.getDetailProceedingsDevollution(this.actasDefault.id);
-            //this.actasDefault = null;
           });
+          this.Exportdate = false;
+          this.validateGoods = true;
+          this.selectedGooodsValid = [];
         }
       }
     }
@@ -1665,47 +1643,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.consec = null;
     this.actaGoodForm.reset();
   }
-  cargueMasive() {
-    const workSheet = XLSX.utils.json_to_sheet(this.dataDelivery, {
-      skipHeader: true,
-    });
-    const workBook: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workBook, workSheet, 'Hoja1');
-    this.cleanPlaceholder('nameFileA', 'reporteEntrega.xlsx');
-    XLSX.writeFile(workBook, 'reporteEntrega.xlsx');
-  }
 
   cleanPlaceholder(element: string, newMsg: string) {
     const nameFile = document.getElementById(element) as HTMLInputElement;
     nameFile.placeholder = `${newMsg}`;
   }
 
-  btnDetail() {}
-  sendOffice() {}
-
-  Scanner() {
-    /*if (this.formScan.get('scanningFoli').value) {
-      this.alertQuestion(
-        'info',
-        'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Acta Abierta ¿Deseas continuar?',
-        '',
-        'Aceptar',
-        'Cancelar'
-      ).then(res => {
-        console.log(res);
-        if (res.isConfirmed) {
-          this.router.navigate([`/pages/general-processes/scan-documents`], {
-            queryParams: {
-              origin: 'FACTCIRCUNR_0001',
-              folio: this.formScan.get('scanningFoli').value,
-            },
-          });
-        }
-      });
-    } else {
-      this.alertInfo('warning', 'No Existe Folio de Escaneo a Escanear', '');
-    }*/
-  }
   agregarActa() {
     if (this.fileNumber == 0 || this.fileNumber == null) {
       this.alertInfo(
@@ -1739,10 +1682,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
         );
       }
 
-      // console.log('data modal next ', next);
       this.totalItems2 = 0;
       this.actasDefault = next;
-      // this.fCreate = this.datePipe.transform(next.dateElaborationReceipt,'dd/MM/yyyy');
       this.statusCanc = next.statusProceedings;
       if (this.statusCanc == 'CERRADA') {
         //this.disabledBtnCerrar = false;
@@ -1788,15 +1729,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
         elaboradate: formattedfecElaborate,
         fechaact: formattedfecActa,
         fechacap: formattedfecCapture,
-
-        //respConv: next.receiveBy,
-        //mes: next.dateElaborationReceipt,
-        //cveReceived: next.receiptKey,
-        //anio: new Date(next.dateElaborationReceipt),
-        // ejecuta: next.ejecuta,
-        // parrafo1: next.parrafo1,
-        // parrafo2: next.parrafo2,
-        // parrafo3: next.parrafo3,
       });
 
       this.data1 = next.statusProceedings;
@@ -1850,13 +1782,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       );
       return;
     }
-    // console.log('this.actasDefault', this.actasDefault);
-    // console.log(
-    //   'this.circumstantialRecord',
-    //   this.expedient
-    //   //this.expedient.circumstantialRecord
-    // );
-
     if (this.data1 != null) {
       if (this.data1 == null) {
         this.alert('warning', 'No Existe Acta para Cerrar', '');
@@ -1875,14 +1800,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
         return;
       }
 
-      // if (this.actasDefault.comptrollerWitness == null) {
-      //   this.alert('warning', 'Indique el Testigo de la Contraloría', '');
-      //   return;
-      // }
-
       const toolbar_user = this.authService.decodeToken().preferred_username;
       const cadena = this.cveActa ? this.cveActa.indexOf('?') : 0;
-      // console.log('cadena', cadena);
 
       if (
         cadena != 0 &&
@@ -1896,7 +1815,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
           ''
         ).then(async question => {
           if (question.isConfirmed) {
-            // await this.createDET();
             this.actasDefault.statusProceedings = 'CERRADA';
             delete this.actasDefault.numDelegation1Description;
             delete this.actasDefault.numDelegation2Description;
@@ -1907,7 +1825,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
               .subscribe({
                 next: async data => {
                   this.loading = false;
-                  // console.log(data);
+
                   let obj = {
                     pActaNumber: this.actasDefault.id,
                     pStatusActa: 'CERRADA',
@@ -2764,6 +2682,14 @@ export class ActsCircumstantiatedCancellationTheftComponent
       error: () => {
         this.loadingExpedient = false;
       },
+    });
+  }
+  async updateBienDetalle(idGood: string | number, status: string) {
+    this.goodService.updateStatusActasRobo(idGood, status).subscribe({
+      next: data => {
+        console.log(data);
+      },
+      error: () => (this.loading = false),
     });
   }
 }
