@@ -1535,7 +1535,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
             let index = this.dataTableGood_.findIndex(
               g => g.id === good.goodId
             );
-            await this.updateBienDetalle(good.goodId, this.statusInicial);
+            await this.updateBienDetalle(good.goodId, this.statusGoodFinal);
             await this.deleteDET(good);
             // this.selectedGooods = [];
           });
@@ -1579,7 +1579,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
               (goodV: any) => goodV.goodId == _g.id
             );
             this.Exportdate = true;
-            await this.updateBienDetalle(_g.id, this.statusInicial);
+            await this.updateBienDetalle(_g.id, this.statusGoodFinal);
             await this.deleteDET(_g);
           });
           Promise.all(result).then(async item => {
