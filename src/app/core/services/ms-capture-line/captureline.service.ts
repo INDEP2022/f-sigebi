@@ -67,4 +67,7 @@ export class CapturelineService extends HttpService {
       `comer-detcapturelines/filterExcel?filter.eventId=$eq:${captureLinesId}`
     );
   }
+  postSpGenIc2(body: any) {
+    return this.post<any>(CapturelineEndpoints.SpGenLc2, body);
+  }
 }

@@ -248,7 +248,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
         error: err => {
           this.goods = new DefaultSelect([], 0, true);
           this.loading = false;
-          this.alert('warning', 'Expediente sin Bienes Asociados', ``);
+          // this.alert('warning', 'Expediente sin Bienes Asociados', ``);
         },
       });
   }
