@@ -8,6 +8,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
@@ -39,7 +40,8 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
   constructor(
     private goodService: GoodService,
     private globalVarsService: GlobalVarsService,
-    private router: Router
+    private router: Router,
+    private goodTrackerService: GoodTrackerService
   ) {
     super();
     this.goodsSettings.columns = GOOD_DELIVERY_COLUMNS;
@@ -147,7 +149,7 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
           `Se Cambio el Estado de ${this.selectedRows.length} Bienes.`
         );
         this.selectedRows = [];
-        this.getData();
+        //this.getData();
         this.LocalData.refresh();
         this.getGoodStatus();
       }
@@ -208,8 +210,29 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
     localStorage.setItem('rastreador', '2');
     this.router.navigate([GOODS_TACKER_ROUTE], {
       queryParams: {
-        origin: 'FCONGENRASTREADOR',
+        origin: 'FCOMERCAMESTBIEN',
       },
     });
   }
+
+  addGoodRastreador(good: any) {
+    this.goodService.getByGood(good).subscribe({
+      next: response => {
+        console.log(' good ', response);
+      },
+    });
+  }
+
+  /*backRastreador() {
+    this.goodTrackerService.PaInsGoodtmptracker(global).subscribe({
+      next: response => {
+        console.log('respuesta TMPTRAKER', response);
+        for (let i = 0; i < response.count; i++) {
+          console.log('entra ---> For');
+          this.addGoodRastreador(response.data[0].goodNumber);
+        }
+        console.log('sale del For');
+      },
+    });
+  }*/
 }

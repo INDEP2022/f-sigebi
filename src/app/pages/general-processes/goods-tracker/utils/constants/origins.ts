@@ -8,7 +8,7 @@ export enum GOOD_TRACKER_ORIGINS {
   MassiveChangeStatus = 'FACTADBCAMBIOESTAT',
   EventPreparation = 'FCOMEREVENTOS',
   ProofDelivery = 'FACTCONST_0001',
-  CamesGood = 'FCOMERCAMESTBIEN',
+  GoodDeliveryMain = 'FCOMERCAMESTBIEN',
 }
 
 export enum GOOD_TRACKER_ORIGINS_TITLES {
