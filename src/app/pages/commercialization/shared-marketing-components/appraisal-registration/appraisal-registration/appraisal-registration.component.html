@@ -1,11 +1,12 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Evento</h5>
+      <h5 class="title">Registro de Avalúos</h5>
     </div>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <appraisal-event-form></appraisal-event-form>
+    <!-- <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-2">
           <form-field [control]="form.get('idEvento')">
@@ -91,11 +92,11 @@
             value="Generar oficio" />
         </div>
       </div>
-    </form>
+    </form> -->
   </div>
 </app-card>
 
-<app-card [header]="true">
+<!-- <app-card [header]="true">
   <div header>
     <div class="ch-content">
       <h5 class="title">BIENES</h5>
@@ -186,4 +187,4 @@
     <br />
     <ng2-smart-table [settings]="settings3" [source]="data3"></ng2-smart-table>
   </div>
-</app-card>
+</app-card> -->

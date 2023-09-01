@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { CustomSelectComponent } from 'src/app/@standalone/shared-forms/custom-select/custom-select.component';
 import { SharedModule } from '../../../../shared/shared.module';
@@ -25,6 +26,7 @@ import { EmailBookConfigComponent } from './email-book-config/email-book-config.
     BsDatepickerModule.forRoot(),
     CollapseModule.forRoot(),
     CustomSelectComponent,
+    BsDropdownModule,
   ],
 })
 export class EmailBookConfigModule {}
