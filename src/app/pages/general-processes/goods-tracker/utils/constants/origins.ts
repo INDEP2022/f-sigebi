@@ -9,7 +9,6 @@ export enum GOOD_TRACKER_ORIGINS {
   EventPreparation = 'FCOMEREVENTOS',
   ProofDelivery = 'FACTCONST_0001',
   ExportGoodsDonation = 'FDONACIONES',
-
 }
 
 export enum GOOD_TRACKER_ORIGINS_TITLES {

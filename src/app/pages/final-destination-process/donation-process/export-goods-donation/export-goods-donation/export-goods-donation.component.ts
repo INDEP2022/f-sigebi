@@ -5,15 +5,15 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodsExportPost } from 'src/app/core/models/catalogs/goods.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { ExpedientSamiService } from 'src/app/core/services/ms-expedient/expedient-sami.service';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DetailProceeDelRecService } from '../../../../../core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
-import { COLUMNS_EXPORT_GOODS } from './columns-export-goods';
+import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
-import { GoodService } from 'src/app/core/services/good/good.service';
-import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
-import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
+import { DetailProceeDelRecService } from '../../../../../core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
+import { COLUMNS_EXPORT_GOODS } from './columns-export-goods';
 
 @Component({
   selector: 'app-export-goods-donation',
@@ -30,7 +30,6 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   cveUnica: number | null;
   ngGlobal: IGlobalVars = null;
 
-
   constructor(
     private router: Router,
     private expedientSamiService: ExpedientSamiService,
@@ -38,7 +37,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     private detailProceeDelRecService: DetailProceeDelRecService,
     private globalVarsService: GlobalVarsService,
     private goodService: GoodService,
-    private goodTrackerService: GoodTrackerService,
+    private goodTrackerService: GoodTrackerService
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -93,50 +92,52 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
           let acta = resp.data[0].coalesce;
           console.log('resp -> ', resp);
           //Servicio
-          this.delegationService.getTran(response.data[i].no_expediente).subscribe(respo => {
-            if (respo != null && resp != undefined) {
-              console.log('Resp tranEmit', respo);
-              //servicio 2
-              this.detailProceeDelRecService.getProceding(acta).subscribe({
-                next: res => {
-                  console.log('res 2 -> ', res);
+          this.delegationService
+            .getTran(response.data[i].no_expediente)
+            .subscribe(respo => {
+              if (respo != null && resp != undefined) {
+                console.log('Resp tranEmit', respo);
+                //servicio 2
+                this.detailProceeDelRecService.getProceding(acta).subscribe({
+                  next: res => {
+                    console.log('res 2 -> ', res);
 
-                  let dataForm = {
-                    numberGood: response.data[i].no_bien,
-                    description: response.data[i].descripcion,
-                    quantity: response.data[i].cantidad,
-                    clasificationNumb: response.data[i].no_clasif_bien,
-                    tansfNumb: response.data[i].no_transferente,
-                    status: response.data[i].estatus,
-                    proceedingsNumb: response.data[i].no_expediente,
-                    delAdmin: res.del_administra,
-                    delDeliv: res.del_recibe,
-                    recepDate: res.fecha_recepcion,
-                  };
-                  console.log('DATA FORM ->', dataForm);
+                    let dataForm = {
+                      numberGood: response.data[i].no_bien,
+                      description: response.data[i].descripcion,
+                      quantity: response.data[i].cantidad,
+                      clasificationNumb: response.data[i].no_clasif_bien,
+                      tansfNumb: response.data[i].no_transferente,
+                      status: response.data[i].estatus,
+                      proceedingsNumb: response.data[i].no_expediente,
+                      delAdmin: res.del_administra,
+                      delDeliv: res.del_recibe,
+                      recepDate: res.fecha_recepcion,
+                    };
+                    console.log('DATA FORM ->', dataForm);
 
-                  this.data1.push(dataForm); // invocar todos tres servicios
-                  this.data.load(this.data1); // cuando ya pasa todo, se mapea la info
+                    this.data1.push(dataForm); // invocar todos tres servicios
+                    this.data.load(this.data1); // cuando ya pasa todo, se mapea la info
+                  },
+                  error: err => {
+                    let dataForm = {
+                      numberGood: response.data[i].no_bien,
+                      description: response.data[i].descripcion,
+                      quantity: response.data[i].cantidad,
+                      clasificationNumb: response.data[i].no_clasif_bien,
+                      tansfNumb: response.data[i].no_transferente,
+                      status: response.data[i].estatus,
+                      proceedingsNumb: response.data[i].no_expediente,
+                      cveUnica: respo.data[0].no_tran_emi_aut,
+                      emisora: respo.data[0].no_emisora,
+                    };
 
-                }, error: err => {
-                  let dataForm = {
-                    numberGood: response.data[i].no_bien,
-                    description: response.data[i].descripcion,
-                    quantity: response.data[i].cantidad,
-                    clasificationNumb: response.data[i].no_clasif_bien,
-                    tansfNumb: response.data[i].no_transferente,
-                    status: response.data[i].estatus,
-                    proceedingsNumb: response.data[i].no_expediente,
-                    cveUnica: respo.data[0].no_tran_emi_aut,
-                    emisora: respo.data[0].no_emisora
-                  };
-
-                  this.data1.push(dataForm); // invocar todos tres servicios
-                  this.data.load(this.data1);
-                }
-              });
-            }
-          });
+                    this.data1.push(dataForm); // invocar todos tres servicios
+                    this.data.load(this.data1);
+                  },
+                });
+              }
+            });
           //servicio
         },
       });
@@ -164,8 +165,8 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'info',
         'Se recuperarán ' +
-        response.data.length +
-        ' registros ¿Deseas continuar? ',
+          response.data.length +
+          ' registros ¿Deseas continuar? ',
         '',
         'Si',
         'No'
