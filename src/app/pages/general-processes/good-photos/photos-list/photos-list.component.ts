@@ -183,8 +183,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   private validRastrer() {
     if (localStorage.getItem('username').toUpperCase() !== 'SERA') {
       // this.userPermisions = false;
-      this.errorMessage =
-        'No tiene permisos para cambiar a histórico las fotos';
+      this.errorMessage = 'No tiene permisos de enviar a histórico las fotos';
     }
   }
 
@@ -251,7 +250,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
                     const noActa = await this.pufValidaProcesoBien();
                     if (noActa) {
                       this.errorMessage =
-                        'No tiene permisos de sustitución a histórico debido a que el bien ya fue recibido por el acta ' +
+                        'No tiene permisos de enviar a histórico debido a que el Bien ya fue recibido por el Acta ' +
                         noActa +
                         ' y esta se encuentra cerrada';
                       // console.log(this.errorMessage);
@@ -294,8 +293,8 @@ export class PhotosListComponent extends BasePage implements OnInit {
       'warning',
       'Advertencia',
       all
-        ? '¿Estás seguro que desea cambiar a histórico todas las fotos?'
-        : '¿Estás seguro que desea cambiar a histórico las fotos seleccionadas?'
+        ? '¿Está seguro que desea enviar a histórico todas las fotos?'
+        : '¿Está seguro que desea enviar a histórico las fotos seleccionadas?'
     );
     if (result.isConfirmed) {
       this.deleteSelectedFiles();

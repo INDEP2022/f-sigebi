@@ -221,7 +221,7 @@ export class MassiveReclassificationGoodsComponent
 
   onChange(event: IGoodSssubtype) {
     console.log(event);
-    this.changeDescription = event.description;
+    this.changeDescription = event ? event.description : null;
   }
   onChageAlterning(event: string) {
     this.changeDescriptionAlterning = event;

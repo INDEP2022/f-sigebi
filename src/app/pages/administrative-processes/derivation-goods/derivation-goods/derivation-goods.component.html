@@ -180,7 +180,8 @@
                 type="number"
                 class="form-control"
                 formControlName="classifier"
-                oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);" />
+                oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);"
+                [readOnly]="true" />
             </form-field>
           </div>
 
