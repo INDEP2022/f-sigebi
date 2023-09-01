@@ -1,0 +1,18 @@
+<div>
+  <form [formGroup]="form" class="form-material">
+    <form-radio label="Numerario">
+      <input
+        type="radio"
+        formControlName="typeRestitution"
+        value="NUMERICO"
+        (change)="changeForm($event)" />
+    </form-radio>
+    <form-radio label="En Especie">
+      <input
+        type="radio"
+        formControlName="typeRestitution"
+        value="EN_ESPECIE"
+        (change)="changeForm($event)" />
+    </form-radio>
+  </form>
+</div>

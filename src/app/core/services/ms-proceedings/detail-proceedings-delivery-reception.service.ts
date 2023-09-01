@@ -200,4 +200,9 @@ export class DetailProceeDelRecService extends HttpService {
     const route = `${ProceedingsEndpoints.proceedingDelivery}?filter.id=$eq:${id}`;
     return this.get(route);
   }
+
+  PutProcedingbyIdAct(id: any, params?: any) {
+    const route = `${ProceedingsEndpoints.proceedingDelivery}/${id}`;
+    return this.put(route, params);
+  }
 }

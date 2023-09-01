@@ -20,6 +20,7 @@ import {
 import { IGraceDate } from 'src/app/core/models/ms-event/event.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { ISendSirsaeLot } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae-model';
@@ -50,7 +51,6 @@ import {
   COLUMNS_PAYMENT_LOT,
   setCheckHide,
 } from './columns';
-import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 
 @Component({
   selector: 'app-dispersion-payment',
@@ -1088,41 +1088,43 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                 client = res['data'][0].reasonName;
                 console.log({ rfc, client });
                 //PENALIZACIÓN
-                this.depositaryService.getComerDetLcGrief(this.dataBatch.reference).subscribe(
-                  res => {
-                    console.log(res)
-                    resolve({
-                      rfc,
-                      client,
-                      reference,
-                      amount,
-                      idPayment,
-                      idBatch,
-                      incomeOrderId,
-                      date,
-                      dateMaxPay,
-                      eventId,
-                      customerBatch,
-                      penaltyAmount: res.data[0].mountgrief
-                    });
-                  },
-                  err => {
-                    resolve({
-                      rfc,
-                      client,
-                      reference,
-                      amount,
-                      idPayment,
-                      idBatch,
-                      incomeOrderId,
-                      date,
-                      dateMaxPay,
-                      eventId,
-                      customerBatch,
-                      penaltyAmount: 0
-                    });
-                  }
-                )
+                this.depositaryService
+                  .getComerDetLcGrief(this.dataBatch.reference)
+                  .subscribe(
+                    res => {
+                      console.log(res);
+                      resolve({
+                        rfc,
+                        client,
+                        reference,
+                        amount,
+                        idPayment,
+                        idBatch,
+                        incomeOrderId,
+                        date,
+                        dateMaxPay,
+                        eventId,
+                        customerBatch,
+                        penaltyAmount: res.data[0].mountgrief,
+                      });
+                    },
+                    err => {
+                      resolve({
+                        rfc,
+                        client,
+                        reference,
+                        amount,
+                        idPayment,
+                        idBatch,
+                        incomeOrderId,
+                        date,
+                        dateMaxPay,
+                        eventId,
+                        customerBatch,
+                        penaltyAmount: 0,
+                      });
+                    }
+                  );
               },
               err => {
                 console.log(err);

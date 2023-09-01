@@ -80,7 +80,9 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
       };
     }
 
-    this.formVirt.get('diferenceDeposit').setValue(this.dataModel.amount - this.formVirt.get('totalAmount').value)
+    this.formVirt
+      .get('diferenceDeposit')
+      .setValue(this.dataModel.amount - this.formVirt.get('totalAmount').value);
   }
 
   fillAndGetData() {
@@ -96,16 +98,15 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
     this.comerPaymentService.getComerPagoRefVirt(paramsF.getParams()).subscribe(
       async res => {
         console.log(res);
-        let amount = 0
-        let penalty = 0
-        for(let item of res.data){
-          amount += parseFloat(item.amount)
-          penalty += parseFloat(item.amountGrief)
-          console.log(amount)
-          this.formVirt.get('totalAmount').setValue(amount)
-          this.formVirt.get('totalPenalty').setValue(penalty)
-        } 
-
+        let amount = 0;
+        let penalty = 0;
+        for (let item of res.data) {
+          amount += parseFloat(item.amount);
+          penalty += parseFloat(item.amountGrief);
+          console.log(amount);
+          this.formVirt.get('totalAmount').setValue(amount);
+          this.formVirt.get('totalPenalty').setValue(penalty);
+        }
 
         const newData = await Promise.all(
           res.data.map(async (e: any) => {
@@ -184,7 +185,7 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
 
   //Open Modal Dividir
   timesToDivide() {
-    if(this.dataPaymentVirt != null){
+    if (this.dataPaymentVirt != null) {
       let incomeData = this.dataPaymentVirt;
       let modalConfig = MODAL_CONFIG;
       modalConfig = {
@@ -199,12 +200,11 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
         class: 'modal-dialog-centered',
         ignoreBackdropClick: true,
       };
-  
+
       this.modalService.show(CanTimesComponent, modalConfig);
-    }else{
-      this.alert('warning','Debe Seleccionar un Registro','')
+    } else {
+      this.alert('warning', 'Debe Seleccionar un Registro', '');
     }
-    
   }
 
   //Open Modal New

@@ -143,7 +143,7 @@
               <button
                 type="button"
                 class="btn btn-primary active btn-sm"
-                [disabled]="folioScan === null"
+                [disabled]="folioScan == null"
                 (click)="proccesReport()">
                 Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
               </button>
@@ -153,8 +153,8 @@
             <div class="justify-content-center margin-input">
               <button
                 class="btn btn-primary btn-sm active mr-3"
-                [disabled]="folioScan === null"
-                (click)="proccesReportScan()">
+                [disabled]="folioScan == null"
+                (click)="goToScan()">
                 Ver <i class="fa fa-eye" aria-hidden="true"></i>
               </button>
             </div>
