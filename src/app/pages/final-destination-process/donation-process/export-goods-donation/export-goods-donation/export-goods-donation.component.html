@@ -13,7 +13,9 @@
     </div>
     <div class="row">
       <div class="col-3">
-        <button class="btn btn-primary btn-sm active" (click)="openDefineFilter()">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="openDefineFilter()">
           Definir Filtro <i class="fa fa-filter" aria-hidden="true"></i>
         </button>
       </div>
@@ -23,7 +25,9 @@
         </button>
       </div>
       <div class="col-6">
-        <button class="btn btn-secondary btn-sm active" (click)="callRastreador()">
+        <button
+          class="btn btn-secondary btn-sm active"
+          (click)="callRastreador()">
           Por Rastreador
         </button>
       </div>
@@ -37,14 +41,21 @@
 
     <div class="d-flex justify-content-end mt-5">
       <div>
-        <app-columns-select [(settings)]="settings" class="row justify-content-end col-md-1"></app-columns-select>
+        <app-columns-select
+          [(settings)]="settings"
+          class="row justify-content-end col-md-1"></app-columns-select>
       </div>
     </div>
-    <br>
+    <br />
     <div>
-      <ng-scrollbar [track]="'all'" [ngStyle]="{ height: loading ? '0px' : '450px' }">
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{ height: loading ? '0px' : '450px' }">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data">
           </ng2-smart-table>
         </div>
       </ng-scrollbar>
