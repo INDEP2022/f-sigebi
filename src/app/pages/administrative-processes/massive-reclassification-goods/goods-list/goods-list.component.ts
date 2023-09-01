@@ -134,6 +134,7 @@ export class GoodsListComponent
     try {
       debugger;
       this.data.load([]);
+      this.totalItems = 0;
       this.availableToUpdate = [];
       this.idsNotExist = [];
       this.showError = false;
