@@ -13,4 +13,11 @@ export enum GoodsQueryEndpoints {
   getViewIndRecDoc = 'views/VIndRecDocView',
   UnitsQuery = 'application/units-query',
   indicatorsEntRecep = 'views/get-v-indicators-ent-recep',
+  OrderValReq = 'views/orderServiceExpensesGood/ValReqView',
+  OrderRecDoc = 'views/orderServiceExpensesGood/RecDocView',
+  OrderProg = 'views/orderServiceExpensesGood/ProgView',
+  OrderProgEnt = 'views/orderServiceExpensesGood/ProgEntView',
+  OrderWarehouse = 'views/orderServiceExpensesGood/AlmView',
+  OrderManual = 'views/orderServiceExpensesGood/ManualView',
+  OrderReubGood = 'views/orderServiceExpensesGood/ReubicaView',
 }

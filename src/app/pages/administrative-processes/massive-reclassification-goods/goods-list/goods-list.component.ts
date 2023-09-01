@@ -150,7 +150,7 @@ export class GoodsListComponent
       } else {
         // this.loadGood(this.ids);
         this.fillData(this.ids);
-        this.alert('success', 'Archivo subido', '');
+        this.alert('success', 'Se ha cargado el archivo', '');
       }
     } catch (error) {
       this.alert('error', 'Ocurrio un error al leer el archivo', '');
