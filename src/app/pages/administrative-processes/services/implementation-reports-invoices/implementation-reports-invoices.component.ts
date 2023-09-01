@@ -202,7 +202,7 @@ export class ImplementationReportsInvoicesComponent
         }
       },
       error: error => {
-        console.error('Error en la llamada al servicio:', error);
+        console.error('Error en la Llamada al Servicio:', error);
         this.billId = false;
       },
     });
@@ -332,7 +332,7 @@ export class ImplementationReportsInvoicesComponent
     console.log('Selected Row: ->', this.selectedRow);
     this.box = this.box;
     if (this.selectedRow == null) {
-      this.onLoadToast('error', 'Debe seleccionar un registro');
+      this.onLoadToast('error', 'Debe Seleccionar un Registro');
       return;
     } else {
       let dataForm = {
@@ -367,7 +367,7 @@ export class ImplementationReportsInvoicesComponent
   removeSelect() {
     this.box = [];
     if (this.deleteselectedRow == null) {
-      this.onLoadToast('error', 'Debe seleccionar un registro');
+      this.onLoadToast('error', 'Debe Seleccionar un Registro');
       return;
     } else {
       this.strategy.remove(this.deleteselectedRow);
@@ -430,12 +430,12 @@ export class ImplementationReportsInvoicesComponent
               },
             });
           } catch (error) {
-            console.error('Error al obtener el reporte:', error);
+            console.error('Error al Obtener el Reporte:', error);
           }
         } else {
           this.alert(
             'error',
-            'La cantidad no puede ser menor que el total el Total',
+            'La Cantidad no Puede ser Menor que el Total',
             ''
           );
           return;
@@ -453,8 +453,8 @@ export class ImplementationReportsInvoicesComponent
             tap(response => {
               this.alert(
                 'success',
-                'Generado correctamente',
-                'Generado correctamente con folio: ' + this.folioScan
+                'Generado Correctamente',
+                'Generado Correctamente con Folio: ' + this.folioScan
               );
               const blob = new Blob([response], { type: 'application/pdf' });
               const url = URL.createObjectURL(blob);
@@ -480,7 +480,7 @@ export class ImplementationReportsInvoicesComponent
       this.alert(
         'error',
         'ERROR',
-        'Debe tener el folio en pantalla para poder reimprimir'
+        'Debe Tener el Folio en Pantalla para Poder Reimprimir'
       );
     }
   }
@@ -495,8 +495,8 @@ export class ImplementationReportsInvoicesComponent
             tap(response => {
               this.alert(
                 'success',
-                'Generado correctamente',
-                'Generado correctamente con folio: ' + this.folioScan
+                'Generado Correctamente',
+                'Generado Correctamente con Folio: ' + this.folioScan
               );
               const blob = new Blob([response], { type: 'application/pdf' });
               const url = URL.createObjectURL(blob);
@@ -522,18 +522,29 @@ export class ImplementationReportsInvoicesComponent
       this.alert(
         'error',
         'ERROR',
-        'Debe tener el folio en pantalla para poder reimprimir'
+        'Debe Tener el Folio en Pantalla para Poder Reimprimir'
       );
     }
   }
 
   goToScan() {
-    localStorage.setItem('numberExpedient', this.folioScan.toString());
-    this.router.navigate([`/pages/general-processes/scan-documents`], {
-      queryParams: {
-        origin: 'FREPIMPFAC_0001',
-        folio: this.folioScan,
-      },
+    this.alertQuestion(
+      'info',
+      'Se Abrirá la Pantalla de Escaneo para Visualizar las Imagenes Asociadas al Folio. ¿Deseas continuar?',
+      '',
+      'Aceptar',
+      'Cancelar'
+    ).then(res => {
+      console.log(res);
+      if (res.isConfirmed) {
+        localStorage.setItem('numberExpedient', this.folioScan.toString());
+        this.router.navigate([`/pages/general-processes/scan-documents`], {
+          queryParams: {
+            origin: 'FREPIMPFAC_0001',
+            folio: this.folioScan,
+          },
+        });
+      }
     });
   }
 
@@ -542,7 +553,7 @@ export class ImplementationReportsInvoicesComponent
     if (this.invoiceDetailsForm.get('scanFolio').value) {
       this.alertQuestion(
         'info',
-        'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
+        'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Dictamen. ¿Deseas continuar?',
         '',
         'Aceptar',
         'Cancelar'
@@ -560,7 +571,7 @@ export class ImplementationReportsInvoicesComponent
     } else {
       this.alertInfo(
         'warning',
-        'No tiene Folio de Escaneo para continuar a la pantalla de Escaneo',
+        'No tiene Folio de Escaneo para Continuar a la Pantalla de Escaneo',
         ''
       );
     }

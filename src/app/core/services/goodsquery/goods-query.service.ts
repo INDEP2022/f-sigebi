@@ -17,6 +17,15 @@ import {
   IindicatorsEntRecep,
   IUnityByClasif,
 } from '../../models/ms-goods-query/attributes-classification-good';
+import {
+  IOrderManual,
+  IOrderProg,
+  IOrderProgEnt,
+  IOrderRecDoc,
+  IOrderReubGood,
+  IOrderValReq,
+  IOrderWarehouse,
+} from '../../models/ms-goods-query/order-service';
 import { IVJuridical } from '../../models/ms-goods-query/v-juridical.model';
 
 export class LocalListParamsTest {
@@ -232,13 +241,6 @@ export class GoodsQueryService extends HttpService {
     return this.get(`views/catMeasureUnitsView`, param);
   }
 
-  private makeParams(params: ListParams): HttpParams {
-    let httpParams: HttpParams = new HttpParams();
-    Object.keys(params).forEach(key => {
-      httpParams = httpParams.append(key, (params as any)[key]);
-    });
-    return httpParams;
-  }
   getAtribuXClasif(_params: _Params) {
     return this.get<IListResponse<IAttribClassifGoods>>(
       GoodsQueryEndpoints.AtributesClassificationGood,
@@ -285,6 +287,80 @@ export class GoodsQueryService extends HttpService {
       'application/get-all-v-cat-jur',
       params
     );
+  }
+
+  getInfoValReqView(
+    _params: ListParams
+  ): Observable<IListResponse<IOrderValReq>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderValReq>>(
+      GoodsQueryEndpoints.OrderValReq,
+      params
+    );
+  }
+
+  getInfoRecDocView(
+    _params: ListParams
+  ): Observable<IListResponse<IOrderRecDoc>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderRecDoc>>(
+      GoodsQueryEndpoints.OrderRecDoc,
+      params
+    );
+  }
+
+  getInfoProgView(_params: ListParams): Observable<IListResponse<IOrderProg>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderProg>>(
+      GoodsQueryEndpoints.OrderProg,
+      params
+    );
+  }
+
+  getInfoProgEntView(
+    _params: ListParams
+  ): Observable<IListResponse<IOrderProgEnt>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderProgEnt>>(
+      GoodsQueryEndpoints.OrderProgEnt,
+      params
+    );
+  }
+
+  getInfoWarehouseView(
+    _params: ListParams
+  ): Observable<IListResponse<IOrderWarehouse>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderWarehouse>>(
+      GoodsQueryEndpoints.OrderWarehouse,
+      params
+    );
+  }
+
+  getInfoManView(_params: ListParams): Observable<IListResponse<IOrderManual>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderManual>>(
+      GoodsQueryEndpoints.OrderManual,
+      params
+    );
+  }
+
+  getInfoReubGoodView(
+    _params: ListParams
+  ): Observable<IListResponse<IOrderReubGood>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderReubGood>>(
+      GoodsQueryEndpoints.OrderReubGood,
+      params
+    );
+  }
+
+  private makeParams(params: ListParams): HttpParams {
+    let httpParams: HttpParams = new HttpParams();
+    Object.keys(params).forEach(key => {
+      httpParams = httpParams.append(key, (params as any)[key]);
+    });
+    return httpParams;
   }
 
   //
