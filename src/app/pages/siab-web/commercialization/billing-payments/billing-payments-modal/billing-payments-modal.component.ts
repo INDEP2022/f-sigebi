@@ -50,6 +50,7 @@ export class billingPaymentsModalComponent extends BasePage implements OnInit {
       this.form.patchValue(this.billing);
       this.form.get('id_factura').setValue(this.factura);
       this.form.get('id_factura').disable();
+      this.form.get('id_evento').disable();
     }
   }
 

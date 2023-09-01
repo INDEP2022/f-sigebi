@@ -93,7 +93,7 @@ export class billingPaymentsComponent extends BasePage implements OnInit {
               case 'id_evento':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'lote_publico':
+              case 'id_lote':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'folio':
@@ -140,7 +140,7 @@ export class billingPaymentsComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'id_lote':
+              case 'lote_publico':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'id_evento':
