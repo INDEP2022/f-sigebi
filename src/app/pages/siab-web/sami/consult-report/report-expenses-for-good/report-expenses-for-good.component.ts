@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { BasePage } from 'src/app/core/shared';
 import {
@@ -115,7 +117,9 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
   constructor(
     private goodsQueryService: GoodsQueryService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
+    private regionalDelegationService: RegionalDelegationService
   ) {
     super();
 
@@ -173,74 +177,201 @@ export class ReportExpensesForGoodComponent extends BasePage implements OnInit {
   }
 
   getInfoValReq() {
+    const user: any = this.authService.decodeToken();
+    this.paramsValReq.getValue()[
+      'filter.ORD_delegacion_regional'
+    ] = `$eq:${user.department}`;
     this.goodsQueryService
       .getInfoValReqView(this.paramsValReq.getValue())
       .subscribe({
-        next: response => {
-          console.log('response', response);
+        next: async response => {
+          const infoValReq = response.data.map(async item => {
+            const showDelegation: any = await this.showDelegation(
+              item.ORD_delegacion_regional
+            );
+            if (showDelegation) item.ORD_delegacion_regional = showDelegation;
+
+            return item;
+          });
+
+          Promise.all(infoValReq).then(ValReqData => {
+            console.log('infoValReq', ValReqData);
+
+            this.infoValReq.load(ValReqData);
+            this.totalItemsValReq = ValReqData.length;
+          });
         },
         error: error => {},
       });
   }
 
+  showDelegation(delegationId: number) {
+    return new Promise((resolve, reject) => {
+      this.regionalDelegationService.getById(delegationId).subscribe({
+        next: response => {
+          resolve(response.description);
+        },
+        error: error => {},
+      });
+    });
+  }
+
   getInfoRecDoc() {
+    const user: any = this.authService.decodeToken();
+    this.paramsRecDoc.getValue()[
+      'filter.ORD_delegacion_regional'
+    ] = `$eq:${user.department}`;
     this.goodsQueryService
       .getInfoRecDocView(this.paramsRecDoc.getValue())
       .subscribe({
-        next: response => {
-          console.log('response', response);
+        next: async response => {
+          const infoRecDoc = response.data.map(async item => {
+            const showDelegation: any = await this.showDelegation(
+              item.ORD_delegacion_regional
+            );
+            if (showDelegation) item.ORD_delegacion_regional = showDelegation;
+
+            return item;
+          });
+
+          Promise.all(infoRecDoc).then(infoRecDoc => {
+            this.infoRecDoc.load(infoRecDoc);
+            this.totalItemsRecDoc = infoRecDoc.length;
+          });
         },
         error: error => {},
       });
   }
 
   getInfoProg() {
+    const user: any = this.authService.decodeToken();
+    this.paramsProg.getValue()[
+      'filter.ORD_delegacion_regional'
+    ] = `$eq:${user.department}`;
     this.goodsQueryService
       .getInfoProgView(this.paramsProg.getValue())
       .subscribe({
-        next: response => {
-          console.log('response', response);
+        next: async response => {
+          const infoProg = response.data.map(async item => {
+            const showDelegation: any = await this.showDelegation(
+              item.ORD_delegacion_regional
+            );
+            if (showDelegation) item.ORD_delegacion_regional = showDelegation;
+
+            return item;
+          });
+
+          Promise.all(infoProg).then(infoProg => {
+            this.infoProg.load(infoProg);
+            this.totalItemsProg = infoProg.length;
+          });
         },
         error: error => {},
       });
   }
 
   getInfoProgEnt() {
+    const user: any = this.authService.decodeToken();
+
     this.goodsQueryService
       .getInfoProgEntView(this.paramsProgEnt.getValue())
       .subscribe({
-        next: response => {
-          console.log('response', response);
+        next: async response => {
+          console.log('prog Entrega', response);
+          const infoProgEnt = response.data.map(async item => {
+            const showDelegation: any = await this.showDelegation(
+              item.ORD_delegacion_regional
+            );
+            if (showDelegation) item.ORD_delegacion_regional = showDelegation;
+
+            return item;
+          });
+
+          Promise.all(infoProgEnt).then(infoProgEnt => {
+            this.infoProgEnt.load(infoProgEnt);
+            this.totalItemsProgEnt = infoProgEnt.length;
+          });
         },
-        error: error => {},
+        error: error => {
+          console.log('prog Entrega', error);
+        },
       });
   }
+
   getInfoWarehouse() {
+    const user: any = this.authService.decodeToken();
+    this.paramsWarehouse.getValue()[
+      'filter.ORD_delegacion_regional'
+    ] = `$eq:${user.department}`;
     this.goodsQueryService
       .getInfoWarehouseView(this.paramsWarehouse.getValue())
       .subscribe({
-        next: response => {
-          console.log('response', response);
+        next: async response => {
+          const infoWarehouse = response.data.map(async item => {
+            const showDelegation: any = await this.showDelegation(
+              item.ORD_delegacion_regional
+            );
+            if (showDelegation) item.ORD_delegacion_regional = showDelegation;
+
+            return item;
+          });
+
+          Promise.all(infoWarehouse).then(infoWarehouse => {
+            this.infoWarehouse.load(infoWarehouse);
+            this.totalItemsWarehouse = infoWarehouse.length;
+          });
         },
         error: error => {},
       });
   }
 
   getInfoManual() {
+    const user: any = this.authService.decodeToken();
+    this.paramsMan.getValue()[
+      'filter.ORD_delegacion_regional'
+    ] = `$eq:${user.department}`;
     this.goodsQueryService.getInfoManView(this.paramsMan.getValue()).subscribe({
-      next: response => {
-        console.log('response', response);
+      next: async response => {
+        const infoManual = response.data.map(async item => {
+          const showDelegation: any = await this.showDelegation(
+            item.ORD_delegacion_regional
+          );
+          if (showDelegation) item.ORD_delegacion_regional = showDelegation;
+
+          return item;
+        });
+
+        Promise.all(infoManual).then(infoManual => {
+          this.infoManual.load(infoManual);
+          this.totalItemsMan = infoManual.length;
+        });
       },
       error: error => {},
     });
   }
 
   getInfoReubGood() {
+    const user: any = this.authService.decodeToken();
+    this.paramsReubGood.getValue()[
+      'filter.ORD_delegacion_regional'
+    ] = `$eq:${user.department}`;
     this.goodsQueryService
       .getInfoReubGoodView(this.paramsReubGood.getValue())
       .subscribe({
-        next: response => {
-          console.log('response', response);
+        next: async response => {
+          const infoReubGood = response.data.map(async item => {
+            const showDelegation: any = await this.showDelegation(
+              item.ORD_delegacion_regional
+            );
+            if (showDelegation) item.ORD_delegacion_regional = showDelegation;
+
+            return item;
+          });
+
+          Promise.all(infoReubGood).then(infoReubGood => {
+            this.infoReubGood.load(infoReubGood);
+            this.totalItemsReubGood = infoReubGood.length;
+          });
         },
         error: error => {},
       });
