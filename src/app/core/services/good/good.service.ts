@@ -122,9 +122,16 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
   update(id: string | number, model: IGood): Observable<Object> {
     return this.goodRepository.update('good/good', id, model);
   }
-  updateStatus(id: string | number, status: string): Observable<Object> {
+  updateStatus(id: string | number, status: string) {
     return this.goodRepository.update22(
       `good/good/updateGoodStatus/${id}/${status}`,
+      status
+    );
+  }
+  updateStatusActasRobo(id: string | number, status: string) {
+    const route = `good/api/v1/good/updateGoodStatus`;
+    return this.http.put(
+      `${environment.API_URL}/${route}/${id}/${status}`,
       status
     );
   }

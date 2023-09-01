@@ -165,8 +165,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
 {
   response: boolean = false;
   form: FormGroup;
+  idGood: number;
   selectedRow: IGood;
   statusGood_: any;
+  statusGoodInicial: 'CNE';
+  statusGoodFinal: 'ADM';
   formTable1: FormGroup;
   dataGood: GooByExpediente[] = [];
   statusInicial: string = 'RFI';
@@ -1235,15 +1238,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 );
 
                 this.Exportdate = true;
-
                 console.log('indexGood', indexGood);
                 if (indexGood != -1)
                   this.dataTableGood_[indexGood].di_disponible = 'N';
-
+                await this.updateBienDetalle(good.id, this.statusGoodFinal);
                 await this.createDET(good);
-                // this.dataTableGood_ = this.bienes;
-                // this.dataRecepcion.push(good);
-                // this.dataRecepcion = [...this.dataRecepcion];
               }
             }
           });
@@ -1486,11 +1485,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
               );
 
               this.Exportdate = true;
-              // console.log('valid', valid);
+              await this.updateBienDetalle(_g.id, this.statusGoodFinal);
               await this.createDET(_g);
-              // if (!valid) {
-              //   // this.dataRecepcion = [...this.dataRecepcion, _g];
-              // }
             }
           });
           Promise.all(result).then(async item => {
@@ -1540,10 +1536,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
             let index = this.dataTableGood_.findIndex(
               g => g.id === good.goodId
             );
-            // if (index != -1) {
-            //   this.dataTableGood_[index].di_disponible = 'S';
-            //         //   this.dataTableGood_[index].acta = null;
-            // }
+            await this.updateBienDetalle(good.goodId, this.statusInicial);
             await this.deleteDET(good);
             // this.selectedGooods = [];
           });
@@ -1558,105 +1551,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         }
       }
     }
-    // console.log('selectedGooodsValid--', this.selectedGooodsValid);
   }
 
   //Quitar todos
-  // removeAll() {
-  //   if (this.actasDefault == null) {
-  //     this.alert(
-  //       'warning',
-  //       'Debe Especificar/Buscar el Acta para Despues Eliminar el Bien de Esta.',
-  //       'Debe Capturar un Acta.'
-  //     );
-  //     return;
-  //   } else {
-  //     if (this.statusCanc == 'CERRADA') {
-  //       this.alert(
-  //         'warning',
-  //         'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
-  //         ''
-  //       );
-  //       return;
-  //     } else {
-  //       // console.log('DataRecepcion', this.dataRecepcion);
-
-  //       if (this.dataRecepcion.length > 0) {
-  //         this.dataRecepcion.forEach((good: any) => {
-  //           console.log('this.dataRecepcion', this.dataRecepcion);
-  //           this.dataRecepcion = this.dataRecepcion.filter(
-  //             (_good: any) => _good.id != good.id
-  //           );
-  //           // let index = this.dataTableGood_.findIndex(g => g.id === good.id);
-  //           let index = this.dataTableGood_.findIndex(
-  //             g => g.id === good.goodId
-  //           );
-  //           this.dataRecepcion = [];
-  //           this.dataRecepcionGood.load([]);
-  //           this.Exportdate = false;
-  //           if (index != -1) {
-  //             if (this.dataTableGood_[index].di_dispo) {
-  //               this.dataTableGood_[index].di_dispo = 'S';
-  //             }
-  //             // if (this.dataTableGood_[index].di_dispo) {
-  //             //   this.dataTableGood_[index].di_dispo = 'S';
-  //             // }
-  //           }
-  //         });
-  //         this.goodsValid = [];
-  //       }
-  //     }
-  //   }
-  // }
-  // removeAll() {
-  //   if (this.statusCanc == 'CERRADA') {
-  //     this.alert(
-  //       'warning',
-  //       'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
-  //       ''
-  //     );
-  //     return;
-  //   } else {
-  //     // console.log('this.actasDefault ', this.actasDefault);
-
-  //     if (this.actasDefault == null) {
-  //       this.alert(
-  //         'warning',
-  //         'Debe Especificar/Buscar el Acta para Despues Eliminar el Bien de Esta.',
-  //         ''
-  //       );
-  //       return;
-  //     } else {
-  //       if (this.selectedGooodsValid.length > 0) {
-  //         // this.goods = this.goods.concat(this.selectedGooodsValid);
-  //         let result = this.selectedGooodsValid.map(async good => {
-  //           console.log('good', good);
-  //           this.dataRecepcion = this.dataRecepcion.filter(
-  //             (_good: any) => _good.id != good.id
-  //           );
-  //           let index = this.dataTableGood_.findIndex(
-  //             g => g.id === good.goodId
-  //           );
-
-  //           await this.deleteDET(good);
-  //           // this.selectedGooods = [];
-  //         });
-
-  //         Promise.all(result).then(async item => {
-  //           this.getGoodsByStatus(Number(this.fileNumber));
-  //           await this.getDetailProceedingsDevollution(this.actasDefault.id);
-  //         });
-  //         this.Exportdate = false;
-  //         this.validateGoods = true;
-  //         this.selectedGooodsValid = [];
-  //         this.loading2 = true;
-
-  //       }
-  //     }
-  //   }
-  //   // console.log('selectedGooodsValid--', this.selectedGooodsValid);
-  // }
-
   removeAll() {
     if (this.actasDefault == null) {
       this.alert(
@@ -1683,13 +1580,16 @@ export class ActsCircumstantiatedCancellationTheftComponent
               (goodV: any) => goodV.goodId == _g.id
             );
             this.Exportdate = true;
+            await this.updateBienDetalle(_g.id, this.statusInicial);
             await this.deleteDET(_g);
           });
           Promise.all(result).then(async item => {
             this.getGoodsByStatus(Number(this.fileNumber));
             await this.getDetailProceedingsDevollution(this.actasDefault.id);
-            //this.actasDefault = null;
           });
+          this.Exportdate = false;
+          this.validateGoods = true;
+          this.selectedGooodsValid = [];
         }
       }
     }
@@ -2785,6 +2685,15 @@ export class ActsCircumstantiatedCancellationTheftComponent
       error: () => {
         this.loadingExpedient = false;
       },
+    });
+  }
+  async updateBienDetalle(idGood: string | number, status: string) {
+    this.goodService.updateStatusActasRobo(idGood, status).subscribe({
+      next: data => {
+        console.log(data);
+        this.dataTableGood.refresh();
+      },
+      error: () => (this.loading = false),
     });
   }
 }
