@@ -824,7 +824,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
   // }
   getGoodsByStatus(id: number) {
     this.loading = true;
-
+    // ACTUALIZA EL ESTADO DEL BIEN CUANDO BAJA A LA TABLA BIENES RELACIONADOS CON EL ACTA
+    this.dataTableGood_ = [];
+    this.dataTableGood.load(this.dataTableGood_);
+    this.dataTableGood.refresh();
+    console.log('CAMBIA COLOR');
     let params: any = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
@@ -1243,8 +1247,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
               }
             }
           });
-
           Promise.all(result).then(async item => {
+            //ACTUALIZA EL COLOR
+            this.dataTableGood_ = [];
+            this.dataTableGood.load(this.dataTableGood_);
+            this.dataTableGood.refresh();
             this.getGoodsByStatus(this.fileNumber);
             await this.getDetailProceedingsDevollution(this.actasDefault.id);
           });
@@ -1531,16 +1538,20 @@ export class ActsCircumstantiatedCancellationTheftComponent
               (_good: any) => _good.id != good.id
             );
             let index = this.dataTableGood_.findIndex(
-              g => g.id === good.goodId
+              g => g.id === good.numberGood
             );
-            await this.updateBienDetalle(good.goodId, 'CNE');
+            await this.updateBienDetalle(good.numberGood, 'CNE');
             await this.deleteDET(good);
             // this.selectedGooods = [];
+            //ACTUALIZA COLOR
+            this.dataTableGood_ = [];
+            this.dataTableGood.load(this.dataTableGood_);
+            this.dataTableGood.refresh();
           });
 
           Promise.all(result).then(async item => {
-            this.getGoodsByStatus(Number(this.fileNumber));
             await this.getDetailProceedingsDevollution(this.actasDefault.id);
+            this.getGoodsByStatus(Number(this.fileNumber));
           });
           this.Exportdate = false;
           this.validateGoods = true;
@@ -1574,10 +1585,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
             // console.log(_g);
             _g.di_disponible = 'S';
             let valid = this.dataRecepcion.some(
-              (goodV: any) => goodV.goodId == _g.id
+              (goodV: any) => goodV.goodId == _g.numberGood
             );
+            console.log('_g  ', _g);
             this.Exportdate = true;
-            await this.updateBienDetalle(_g.id, 'CNE');
+            await this.updateBienDetalle(_g.numberGood, 'CNE');
             await this.deleteDET(_g);
           });
           Promise.all(result).then(async item => {
@@ -2688,6 +2700,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.goodService.updateStatusActasRobo(idGood, status).subscribe({
       next: data => {
         console.log(data);
+        this.getGoodsByStatus(Number(this.fileNumber));
       },
       error: () => (this.loading = false),
     });
