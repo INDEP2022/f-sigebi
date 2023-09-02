@@ -5,7 +5,10 @@ import { GoodsCharacteristicsService } from '../../../services/goods-characteris
 @Component({
   selector: 'app-good-cell-value',
   templateUrl: './good-cell-value.component.html',
-  styleUrls: ['./good-cell-value.component.scss'],
+  styleUrls: [
+    './good-cell-value.component.scss',
+    '../../characteristics-legend/characteristics-legend.component.scss',
+  ],
 })
 export class GoodCharacteristicCellValueComponent
   extends CharacteristicEditorCell
