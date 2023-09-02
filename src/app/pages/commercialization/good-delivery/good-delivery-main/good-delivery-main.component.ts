@@ -57,7 +57,7 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
           console.log('GLOBAL ', this.ngGlobal);
           if (this.ngGlobal.REL_BIENES != null) {
             console.log('REL_BIENES ', this.ngGlobal.REL_BIENES);
-            //this.backRastreador(this.ngGlobal.REL_BIENES);
+            this.backRastreador(this.ngGlobal.REL_BIENES);
           }
         },
       });
@@ -108,6 +108,10 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
     this.totalItems = this.goodsColumns.length;*/
     //this.goodService.filterStatusGood(status, params).subscribe({});
     this.loadFromGoods();
+    if (this.ngGlobal.REL_BIENES != 0) {
+      /**Servicio trackergood */
+      for (let i = 0; i < this.ngGlobal.REL_BIENES; i++) {}
+    }
   }
 
   selectRows(rows: any[]) {
@@ -223,7 +227,7 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
     });
   }
 
-  /*backRastreador() {
+  backRastreador(global: any) {
     this.goodTrackerService.PaInsGoodtmptracker(global).subscribe({
       next: response => {
         console.log('respuesta TMPTRAKER', response);
@@ -234,5 +238,5 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
         console.log('sale del For');
       },
     });
-  }*/
+  }
 }
