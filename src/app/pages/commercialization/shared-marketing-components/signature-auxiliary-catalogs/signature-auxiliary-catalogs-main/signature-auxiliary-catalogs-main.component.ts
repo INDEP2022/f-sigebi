@@ -174,7 +174,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
 
   selectReport(event: any) {
     console.log(event);
-    if (event) {
+    if (event.isSelected) {
       this.originId = event.data.originId;
       this.addresseeData = event.data;
       this.testDataAddresee = [];
