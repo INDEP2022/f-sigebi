@@ -14,7 +14,6 @@ import { PaymentDevolutionService } from 'src/app/core/services/ms-paymentdevolu
 import { BasePage } from 'src/app/core/shared/base-page';
 import { TableCheckboxComponent } from '../../massive-conversion/components/table-checkbox/table-checkbox.component';
 import { ChangeRfcModalComponent } from './change-rfc-modal/change-rfc-modal.component';
-import { CheckValidKeyComponent } from './components/check-valid-key/check-valid-key.component';
 import { CreateControlModalComponent } from './create-control-modal/create-control-modal.component';
 import { CreationPermissionsModalComponent } from './creation-permissions-modal/creation-permissions-modal.component';
 import { KeyChangeModalComponent } from './key-change-modal/key-change-modal.component';
@@ -61,6 +60,13 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   totalRelationEvent: number = 0;
   testDataRelationEvent: any[] = [];
   columnFiltersRelationEvent: any = [];
+  // Control Bank
+  dataTableBank: LocalDataSource = new LocalDataSource();
+  dataTableParamsBank = new BehaviorSubject<ListParams>(new ListParams());
+  loadingBank: boolean = false;
+  totalBank: number = 0;
+  testDataBank: any[] = [];
+  columnFiltersBank: any = [];
   //
   controlForm: FormGroup = new FormGroup({});
   selectedAccounts: any[] = [];
@@ -95,7 +101,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   accountSettings = {
     ...TABLE_SETTINGS,
     actions: false,
-    selectMode: 'multi',
+    // selectMode: 'multi',
   };
   paymentSettings = {
     ...TABLE_SETTINGS,
@@ -269,24 +275,25 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.accountSettings.columns = this.modifyColumns(
-      this.accountSettings.columns
-    );
-    this.paymentSettings.columns = {
-      ...this.paymentSettings.columns,
-      validKey: {
-        title: 'Clave Válida',
-        type: 'custom',
-        sort: false,
-        renderComponent: CheckValidKeyComponent,
-      },
-    };
+    // this.accountSettings.columns = this.modifyColumns(
+    //   this.accountSettings.columns
+    // );
+    // this.paymentSettings.columns = {
+    //   ...this.paymentSettings.columns,
+    //   validKey: {
+    //     title: 'Clave Válida',
+    //     type: 'custom',
+    //     sort: false,
+    //     renderComponent: CheckValidKeyComponent,
+    //   },
+    // };
     this.eventsTotalQuantity = 0;
     this.eventsTotalAmount = 0;
     this.prepareForm();
     this.getData();
     this.loadingDataTableControl();
     this.loadingDataTableRelationEvent();
+    this.loadingDataTableBank();
   }
 
   private prepareForm(): void {
@@ -501,6 +508,14 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
 
   sendRequests() {}
 
+  formatTotalAmount(numberParam: number) {
+    if (numberParam) {
+      return new Intl.NumberFormat('es-MX').format(numberParam);
+    } else {
+      return '0.00';
+    }
+  }
+
   loadingDataTableControl() {
     //Filtrado por columnas
     this.dataTableControl
@@ -655,6 +670,74 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
         this.eventsTotalQuantity = 0;
         this.eventsTotalAmount = 0;
         this.loadingRelationEvent = false;
+      },
+    });
+  }
+
+  loadingDataTableBank() {
+    //Filtrado por columnas
+    this.dataTableBank
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              eventId: () => (searchFilter = SearchFilter.EQ),
+              numPayments: () => (searchFilter = SearchFilter.EQ),
+            };
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFiltersBank[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersBank[field];
+            }
+          });
+          this.dataTableParamsBank = this.pageFilter(this.dataTableParamsBank);
+          //Su respectivo metodo de busqueda de datos
+          this.getBankData();
+        }
+      });
+    //observador para el paginado
+    this.dataTableParamsBank
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getBankData());
+  }
+
+  getBankData() {
+    this.loadingBank = true;
+    let params = {
+      ...this.dataTableParamsBank.getValue(),
+      ...this.columnFiltersBank,
+    };
+    this.svPaymentDevolutionService.getEatCtlPagE(params).subscribe({
+      next: (res: any) => {
+        console.log('DATA Bank', res);
+        this.testDataBank = res.data;
+        this.dataTableBank.load(this.testDataBank);
+        this.totalBank = res.count;
+        this.eventsTotalQuantity = res.numPaymentsTotal;
+        this.eventsTotalAmount = res.paymentsAmountTotal;
+        this.loadingBank = false;
+      },
+      error: error => {
+        console.log(error);
+        this.testDataBank = [];
+        this.dataTableBank.load([]);
+        this.totalBank = 0;
+        this.eventsTotalQuantity = 0;
+        this.eventsTotalAmount = 0;
+        this.loadingBank = false;
       },
     });
   }

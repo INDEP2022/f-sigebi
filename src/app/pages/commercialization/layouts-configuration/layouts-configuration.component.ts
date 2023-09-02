@@ -262,6 +262,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     const message: string = 'Duplicado';
     this.onLoadToast('success', `${message} Correctamente`, '');
     this.loading = false;
+    this.loadingDataTableLayouts();
     this.loadingDataTableLayoutsStructure();
   }
 
@@ -396,7 +397,10 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.layoutsConfigService.getAllLayoutsH(params).subscribe({
       next: res => {
         console.log('DATA Layouts', res);
-        this.testDataLayouts = res.data;
+        this.testDataLayouts = res.data.map((i: any) => {
+          i['status_active'] = i.indActive == '1' ? true : false;
+          return i;
+        });
         this.dataTableLayouts.load(this.testDataLayouts);
         this.totalLayouts = res.count;
         this.loadingLayouts = false;
