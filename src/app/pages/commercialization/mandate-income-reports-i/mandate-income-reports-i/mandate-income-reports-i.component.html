@@ -225,8 +225,9 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active w-100"
+            [disabled]="form.invalid"
             (click)="report()">
-            Imprimir
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
           </button>
         </div>
       </div>

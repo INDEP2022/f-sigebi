@@ -303,6 +303,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   disabledBtnActas: boolean = true;
   statusGood_: any;
   loadingBtn: boolean = false;
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   constructor(
     private authService: AuthService,
     protected flyerService: FlyersService,
@@ -789,6 +790,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.actaRecepttionForm.get('testigoTwo').setValue(res.witness2);
           this.actaRecepttionForm.get('testigoTree').setValue(res.witness3);
           this.cleanActa();
+          this.sendConversion();
           subscription.unsubscribe();
         },
         error: error => {
@@ -1311,6 +1313,23 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       return this.alert('warning', 'Debe Seleccionar una Conversión', '');
     await this.updateConversion();
     // this.edit ? this.update() : this.create();
+    const detailActa = await this.getDetailActa(this.conversion);
+    if (!detailActa) {
+      this.alert(
+        'warning',
+        'Sin Detalle de Acta',
+        'Es requerido para generar el reporte'
+      );
+      setTimeout(() => {
+        this.acordionDetail = true;
+        setTimeout(() => {
+          this.performScroll();
+        }, 200);
+      }, 100);
+
+      return;
+    }
+
     let params = {
       ID_CONV: this.conversion,
       // ID_BIEN: this.goodFatherNumber,
@@ -1393,6 +1412,19 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         });
     }
   }
+
+  async getDetailActa(value: any) {
+    return new Promise((resolve, reject) => {
+      this.convertiongoodService.getConvertionActaById(value).subscribe({
+        next: async (res: any) => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
   cleanForm() {
     this.proceedingsConversionForm.reset();
     this.actaRecepttionForm.reset();
@@ -1459,6 +1491,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.actaRecepttionForm.get('testigoOIC').setValue(res.witnessOic);
     this.actaRecepttionForm.get('testigoTwo').setValue(res.witness2);
     this.actaRecepttionForm.get('testigoTree').setValue(res.witness3);
+    this.acordionDetail = false;
+    this.sendConversion();
     this.cleanActa();
   }
   getDetail() {
@@ -1467,10 +1501,15 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
   valDeta: boolean = false;
   closeDetail() {
-    this.valDeta = !this.valDeta;
-    this.acordionDetail = false;
-    if (this.valDeta)
-      this.actasConvertionCommunicationService.enviarDatos(this.conversion);
+    // this.valDeta = !this.valDeta;
+    // this.acordionDetail = this.valDeta;
+    // if (this.valDeta)
+    //   this.sendConversion()
+    // this.actasConvertionCommunicationService.enviarDatos(this.conversion);
+  }
+
+  sendConversion() {
+    this.actasConvertionCommunicationService.enviarDatos(this.conversion);
   }
 
   cargarData(binaryExcel: any) {
@@ -2312,6 +2351,15 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     // console.log('SIO');
     this.cleanActa();
     // Lógica de la función que se ejecutará sin cerrar el modal
+  }
+
+  performScroll() {
+    if (this.scrollContainer) {
+      this.scrollContainer.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
   }
 }
 

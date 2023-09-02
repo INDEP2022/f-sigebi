@@ -10,6 +10,7 @@ import {
 import { maxDate } from 'src/app/common/validations/date.validators';
 import { CapturelineService } from 'src/app/core/services/ms-capture-line/captureline.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { ComerLotService } from 'src/app/core/services/ms-prepareevent/comer-lot.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RFC_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -38,7 +39,8 @@ export class managementCaptureLinesComponent
     private fb: FormBuilder,
     private modalService: BsModalService,
     private capturelineService: CapturelineService,
-    private comerClientsService: ComerClientsService
+    private comerClientsService: ComerClientsService,
+    private comerLotService: ComerLotService
   ) {
     super();
     this.settings = {
@@ -162,6 +164,10 @@ export class managementCaptureLinesComponent
     });
   }
   getAdminCaptureLine(params: ListParams) {
+    if (params.text != null && params.text != '') {
+      delete params['search'];
+      params['filter.id_evento'] = `$eq:${params.text}`;
+    }
     this.capturelineService.getAllAdminCaptureLine(params).subscribe({
       next: response => {
         this.eventList = new DefaultSelect(response.data, response.count);
@@ -207,7 +213,7 @@ export class managementCaptureLinesComponent
       );
     }
   }
-  accept() {
+  async accept() {
     if (this.formAdm.controls['typeReference'].value == 'GSE') {
       this.alert(
         'warning',
@@ -216,6 +222,11 @@ export class managementCaptureLinesComponent
       );
       return;
     }
+    let idLot: any = await this.getLotId(
+      this.formAdm.controls['event'].value,
+      this.formAdm.controls['allotment'].value
+    );
+    this.registerLC(idLot);
   }
   async getClient(rfc: string) {
     return new Promise(async (res, rej) => {
@@ -229,6 +240,46 @@ export class managementCaptureLinesComponent
           res('0');
         },
       });
+    });
+  }
+  async getLotId(event: string, lot: string) {
+    return new Promise(async (res, rej) => {
+      let params = new ListParams();
+      params['filter.eventId'] = event;
+      params['filter.publicLot'] = lot;
+      this.comerLotService.getAllFilter(params).subscribe({
+        next: resp => {
+          res(resp[0].id);
+        },
+        error: eror => {
+          res('0');
+        },
+      });
+    });
+  }
+  registerLC(idLot: string) {
+    let data = {
+      P_ID_LOTE: idLot,
+      P_ID_CLIENTE: this.formAdm.controls['client'].value,
+      P_PARAMETRO: this.formAdm.controls['typeReference'].value,
+      P_MONTO: this.formAdm.controls['amount'].value,
+      P_IND_MOV: 'C',
+      P_FECVIGENCIA: this.formAdm.controls['dateValidity'].value,
+      P_MONTO_PENA: this.formAdm.controls['amountPenality'].value,
+    };
+    this.capturelineService.postSpGenIc2(data).subscribe({
+      next: resp => {
+        this.alert('success', 'Datos Registrados', '');
+        this.formAdm.reset();
+        this.searchLC();
+      },
+      error: eror => {
+        this.alert(
+          'warning',
+          'No se Registraron los datos volver a intentarlo',
+          ''
+        );
+      },
     });
   }
 }

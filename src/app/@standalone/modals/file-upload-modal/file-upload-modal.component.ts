@@ -31,10 +31,19 @@ export interface IServiceUpload {
   standalone: true,
   imports: [CommonModule, FileUploadModule, SharedModule],
   templateUrl: './file-upload-modal.component.html',
-  styles: [],
+  styles: [
+    `
+      :host ::ng-deep app-modal {
+        .modal-body {
+          padding: 20px 40px 20px;
+        }
+      }
+    `,
+  ],
 })
 export class FileUploadModalComponent extends BasePage implements OnInit {
   accept: string = '*';
+  accept2: string = null;
   identificator: any = null;
   uploadFiles = false;
   refresh: boolean = false;

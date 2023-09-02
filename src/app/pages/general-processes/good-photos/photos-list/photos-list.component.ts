@@ -183,7 +183,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   private validRastrer() {
     if (localStorage.getItem('username').toUpperCase() !== 'SERA') {
       // this.userPermisions = false;
-      this.errorMessage = 'No tiene permisos para eliminar las fotos';
+      this.errorMessage = 'No tiene permisos de enviar a histórico las fotos';
     }
   }
 
@@ -250,7 +250,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
                     const noActa = await this.pufValidaProcesoBien();
                     if (noActa) {
                       this.errorMessage =
-                        'No tiene permisos de eliminación debido a que el bien ya fue recibido por el acta ' +
+                        'No tiene permisos de enviar a histórico debido a que el Bien ya fue recibido por el Acta ' +
                         noActa +
                         ' y esta se encuentra cerrada';
                       // console.log(this.errorMessage);
@@ -293,8 +293,8 @@ export class PhotosListComponent extends BasePage implements OnInit {
       'warning',
       'Advertencia',
       all
-        ? '¿Estás seguro que desea eliminar todas las fotos?'
-        : '¿Estás seguro que desea eliminar las fotos seleccionadas?'
+        ? '¿Está seguro que desea enviar a histórico todas las fotos?'
+        : '¿Está seguro que desea enviar a histórico las fotos seleccionadas?'
     );
     if (result.isConfirmed) {
       this.deleteSelectedFiles();
@@ -324,13 +324,17 @@ export class PhotosListComponent extends BasePage implements OnInit {
       })
     );
     if (this.errorImages.length === this.filesToDelete.length) {
-      this.alert('error', 'ERROR', 'No se pudieron eliminar las fotos');
+      this.alert(
+        'error',
+        'ERROR',
+        'No se pudieron cambiar a histórico las fotos'
+      );
     } else {
       if (this.errorImages.length > 0) {
         this.alert(
           'warning',
-          'Fotos Eliminadas',
-          'Pero no se puedieron eliminar todas las fotos'
+          'Fotos a Histórico',
+          'Pero no se puedieron cambiar todas las fotos'
         );
       } else {
         this.alert(
@@ -424,6 +428,8 @@ export class PhotosListComponent extends BasePage implements OnInit {
       ...MODAL_CONFIG,
       initialState: {
         accept: '.zip',
+        accept2:
+          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg',
         uploadFiles: false,
         service: this.filePhotoSaveZipService,
         identificator: [this.goodNumber],
