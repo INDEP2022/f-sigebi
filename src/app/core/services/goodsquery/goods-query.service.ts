@@ -294,8 +294,7 @@ export class GoodsQueryService extends HttpService {
   ): Observable<IListResponse<IOrderValReq>> {
     const params = this.makeParams(_params);
     return this.get<IListResponse<IOrderValReq>>(
-      GoodsQueryEndpoints.OrderValReq,
-      params
+      `${GoodsQueryEndpoints.OrderValReq}?${params}`
     );
   }
 
@@ -304,16 +303,14 @@ export class GoodsQueryService extends HttpService {
   ): Observable<IListResponse<IOrderRecDoc>> {
     const params = this.makeParams(_params);
     return this.get<IListResponse<IOrderRecDoc>>(
-      GoodsQueryEndpoints.OrderRecDoc,
-      params
+      `${GoodsQueryEndpoints.OrderRecDoc}?${params}`
     );
   }
 
   getInfoProgView(_params: ListParams): Observable<IListResponse<IOrderProg>> {
     const params = this.makeParams(_params);
     return this.get<IListResponse<IOrderProg>>(
-      GoodsQueryEndpoints.OrderProg,
-      params
+      `${GoodsQueryEndpoints.OrderProg}?${params}`
     );
   }
 
@@ -322,8 +319,7 @@ export class GoodsQueryService extends HttpService {
   ): Observable<IListResponse<IOrderProgEnt>> {
     const params = this.makeParams(_params);
     return this.get<IListResponse<IOrderProgEnt>>(
-      GoodsQueryEndpoints.OrderProgEnt,
-      params
+      `${GoodsQueryEndpoints.OrderProgEnt}?${params}`
     );
   }
 
@@ -332,16 +328,14 @@ export class GoodsQueryService extends HttpService {
   ): Observable<IListResponse<IOrderWarehouse>> {
     const params = this.makeParams(_params);
     return this.get<IListResponse<IOrderWarehouse>>(
-      GoodsQueryEndpoints.OrderWarehouse,
-      params
+      `${GoodsQueryEndpoints.OrderWarehouse}?${params}`
     );
   }
 
   getInfoManView(_params: ListParams): Observable<IListResponse<IOrderManual>> {
     const params = this.makeParams(_params);
     return this.get<IListResponse<IOrderManual>>(
-      GoodsQueryEndpoints.OrderManual,
-      params
+      `${GoodsQueryEndpoints.OrderManual}?${params}`
     );
   }
 
@@ -350,8 +344,7 @@ export class GoodsQueryService extends HttpService {
   ): Observable<IListResponse<IOrderReubGood>> {
     const params = this.makeParams(_params);
     return this.get<IListResponse<IOrderReubGood>>(
-      GoodsQueryEndpoints.OrderReubGood,
-      params
+      `${GoodsQueryEndpoints.OrderReubGood}?${params}`
     );
   }
 

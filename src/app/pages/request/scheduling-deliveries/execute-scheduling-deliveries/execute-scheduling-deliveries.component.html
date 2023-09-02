@@ -362,7 +362,43 @@
     <!-- FIN -->
 
     <!-- PROG ENTREGA BIENES NO ENTREGADOS -->
-    <div>
+    <div
+      *ngIf="
+        statusProgramming == 'BIENES_NO_ENTREGADOS' ||
+        statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
+        statusProgramming == 'VERIFICACION_BIENES' ||
+        statusProgramming == 'FORMATO_RECLAMACION_TE' ||
+        statusProgramming == 'RESTITUCION_BIENES'
+      ">
+      <div class="row">
+        <div class="btn-toolbar pt-5">
+          <button class="btn btn-success btn-sm active" (click)="entryOrder()">
+            Orden de Ingreso
+          </button>
+          <button
+            class="btn btn-primary btn-sm active"
+            (click)="sendApproval()">
+            Enviar a Aprobación
+          </button>
+          <button
+            class="btn btn-danger btn-sm active"
+            (click)="claimmingForm()">
+            Formato de Reclamación
+          </button>
+          <button
+            class="btn btn-danger btn-sm active"
+            *ngIf="statusProgramming == 'RESTITUCION_BIENES'"
+            (click)="changeTypeRestitucion('NUMERARIO')">
+            Numerario
+          </button>
+          <button
+            class="btn btn-danger btn-sm active"
+            (click)="changeTypeRestitucion('EN_ESPECIE')"
+            *ngIf="statusProgramming == 'RESTITUCION_BIENES'">
+            En Especie
+          </button>
+        </div>
+      </div>
       <div class="row pt-5">
         <div class="col-md-12">
           <div class="table-responsive">
@@ -373,8 +409,7 @@
                 id="tablePegene"
                 [settings]="progDelivGoodNDSettings"
                 [source]="progDelivGoodNDArray"
-                (rowSelect)="selectGoodTypeRestRows($event)"
-                ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
+                (userRowSelect)="selectGoodNoDelivered($event)">
               </ng2-smart-table>
             </div>
           </div>
