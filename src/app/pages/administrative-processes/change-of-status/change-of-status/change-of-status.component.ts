@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams, ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IStatusCode } from 'src/app/core/models/catalogs/status-code.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -130,8 +130,25 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     this.formNew.get('description').reset();
   }
 
+  validateGood(){
+    const paramsF = new FilterParams()
+    paramsF.addFilter('status','ROP',SearchFilter.NOT)
+    paramsF.addFilter('propertyNum',this.numberGood.value)
+
+    this.historyGoodService.getAllFilter(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res)
+      },
+      err => {
+        console.log(err)
+      }
+    )
+  }
+
   loadGood() {
     this.loading = true;
+    this.validateGood()
+    
     this.dateStatus.setValue(new Date());
     this.goodServices.getById(this.numberGood.value).subscribe({
       next: (response: any) => {
