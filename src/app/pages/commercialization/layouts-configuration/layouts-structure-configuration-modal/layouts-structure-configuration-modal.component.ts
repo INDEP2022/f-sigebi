@@ -164,20 +164,20 @@ export class LayoutsStructureConfigurationModalComponent
           this.alert(
             'error',
             'Error al Crear',
-            'Ocurrió un Error al Crear la Estructura del Layout'
+            'Ocurrió un Error al Crear la Estructura del Diseño'
           );
           return;
         },
       });
     } catch {
-      console.error('Layout no existe');
+      console.error('Diseño no existe');
     }
   }
   update() {
     this.alertQuestion(
       'warning',
-      'Actualizar Estructura del Layout',
-      '¿Desea Actualizar la Estructura del Layout?'
+      'Actualizar Estructura del Diseño',
+      '¿Desea Actualizar la Estructura del Diseño?'
     ).then(question => {
       if (question.isConfirmed) {
         this.layoutsConfigService
@@ -188,7 +188,7 @@ export class LayoutsStructureConfigurationModalComponent
               this.alert(
                 'error',
                 'Error al Actualizar',
-                'Ocurrió un Error al Actualizar la Estructura del Layout'
+                'Ocurrió un Error al Actualizar la Estructura del Diseño'
               );
               this.loading = false;
             },

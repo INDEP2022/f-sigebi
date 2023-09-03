@@ -8,6 +8,7 @@ export enum ProgrammingGoodEndpoints {
   UpdateDateProgramingReception = 'programminggood/apps/update-date-programming-reception',
   UpdateDateProgramingDelivery = 'programminggood/apps/update-date-schedule-selivery',
   GetDeliveryGoods = 'programming-delivery-good',
+  UpdateAllProgGoodDeliveryByIdDeliverySchedule = 'programming-delivery-good/idDeliverySchedule',
   getapps = 'programminggood/apps/cDatVal',
   paAbrirActa = 'programminggood/apps/open-minutes-program',
   PaRegresarStatus = 'programminggood/apps/return-previous-status',
