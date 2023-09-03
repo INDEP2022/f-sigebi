@@ -13,32 +13,32 @@
       </div>
     </div>
     <hr class="mw-98 mt-n2" />
-    <div class="row mt-3">
-      <div class="col-sm-6 col-md-4 col-xl-3">
-        <button class="btn btn-sm btn-primary active" (click)="getData()">
-          Incorporar Bienes del Rastreador
-        </button>
-      </div>
-    </div>
-    <div class="row mt-4">
-      <div class="col-sm-12 col-md-12 col-lg-6">
-        <div class="form-material">
-          <search-bar [params]="params"></search-bar>
-        </div>
-      </div>
-      <div class="col-sm-12 col-md-12 col-lg-6">
-        <div class="d-flex flex-row-reverse">
-          <div class="me-2">
+
+    <div class="row mt-2">
+      <div class="col-sm-12 col-md-12">
+        <div class="d-flex flex-row-reverse my-3">
+          <div class="">
+            <app-columns-select
+              [(settings)]="goodsSettings"></app-columns-select>
+          </div>
+          <div>
             <button
               class="btn btn-sm btn-primary active me-2 font-size-13"
               (click)="changeStatus()"
-              [disabled]="this.selectedRows.length == 0">
+              [disabled]="!flag">
               Bien Entregado
+            </button>
+          </div>
+
+          <div class="col-md-12-col-sm12 col-xs-12">
+            <button class="btn btn-sm btn-primary active" (click)="getData()">
+              Incorporar Bienes del Rastreador
             </button>
           </div>
         </div>
       </div>
     </div>
+
     <ng-scrollbar
       [track]="'horizontal'"
       [autoHeightDisabled]="false"
@@ -47,7 +47,7 @@
         <ng2-smart-table
           id="goodsTable"
           [settings]="goodsSettings"
-          [source]="goodsColumns"
+          [source]="LocalData"
           (userRowSelect)="selectRows($event.selected)">
         </ng2-smart-table>
       </div>

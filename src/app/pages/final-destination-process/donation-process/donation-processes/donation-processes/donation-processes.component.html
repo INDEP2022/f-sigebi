@@ -11,7 +11,29 @@
     <div class="row mt-3">
       <div
         class="col-12 col-sm-6 col-md-3 text-center"
-        *ngFor="let img of imgs1">
+        *ngFor="let img of imgs1"
+        (click)="clickImg1()">
+        <img src="" [src]="img.url" style="height: 200px; width: 200px" />
+        <p class="pt-2">{{ img.text }}</p>
+      </div>
+      <div
+        class="col-12 col-sm-6 col-md-3 text-center"
+        *ngFor="let img of img2"
+        (click)="clickImg2()">
+        <img src="" [src]="img.url" style="height: 200px; width: 200px" />
+        <p class="pt-2">{{ img.text }}</p>
+      </div>
+      <div
+        class="col-12 col-sm-6 col-md-3 text-center"
+        *ngFor="let img of img3"
+        (click)="clickImg3()">
+        <img src="" [src]="img.url" style="height: 200px; width: 200px" />
+        <p class="pt-2">{{ img.text }}</p>
+      </div>
+      <div
+        class="col-12 col-sm-6 col-md-3 text-center"
+        *ngFor="let img of img4"
+        (click)="clickImg4()">
         <img src="" [src]="img.url" style="height: 200px; width: 200px" />
         <p class="pt-2">{{ img.text }}</p>
       </div>
@@ -21,10 +43,25 @@
       <h5 class="mt-3">Proceso de Donaciones Directas</h5>
     </div>
 
-    <div class="row mt-3">
+    <div class="row mt-3 justify-content-center">
       <div
         class="col-12 col-sm-6 col-md-3 text-center"
-        *ngFor="let img of imgs2">
+        *ngFor="let img of img5"
+        (click)="clickImg5()">
+        <img src="" [src]="img.url" style="height: 200px; width: 200px" />
+        <p class="pt-2">{{ img.text }}</p>
+      </div>
+      <div
+        class="col-12 col-sm-6 col-md-3 text-center"
+        *ngFor="let img of img6"
+        (click)="clickImg6()">
+        <img src="" [src]="img.url" style="height: 200px; width: 200px" />
+        <p class="pt-2">{{ img.text }}</p>
+      </div>
+      <div
+        class="col-12 col-sm-6 col-md-3 text-center"
+        *ngFor="let img of img7"
+        (click)="clickImg7()">
         <img src="" [src]="img.url" style="height: 200px; width: 200px" />
         <p class="pt-2">{{ img.text }}</p>
       </div>

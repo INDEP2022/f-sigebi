@@ -10,4 +10,5 @@ export enum CapturelineEndpoints {
   GetSettlementReport = 'application/getSettlementReport-pag',
   GetVarReport = 'application/paGetVarReport',
   PaConsultLc = 'application/paConsultLc',
+  SpGenLc2 = 'pk-comer-lc/sp-gen-lc2',
 }

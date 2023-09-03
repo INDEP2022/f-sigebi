@@ -181,7 +181,7 @@ export const LAYOUTS_COLUMNS5 = {
   //     return row.idLayout.registryNumber;
   //   },
   // },
-  indActive: {
+  status_active: {
     title: 'Activo',
     sort: false,
     type: 'custom',

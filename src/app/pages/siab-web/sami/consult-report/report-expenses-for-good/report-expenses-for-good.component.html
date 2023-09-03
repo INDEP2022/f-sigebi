@@ -1,0 +1,316 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reporte gatos por bien</h5>
+  </div>
+  <div body>
+    <div class="d-flex justify-content-end">
+      <div class="mt-3 btn-toolbar">
+        <button (click)="close()" class="btn btn-primary btn-sm active">
+          Regresar <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+    </div>
+    <h5 class="title pt-3">Buscar</h5>
+    <form [formGroup]="form" class="form-material">
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field [control]="form.get('idGood')" label="No. Bien">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="idGood" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('idTypeRelevant')"
+            label="Tipo Relevante">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="idTypeRelevant" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field [control]="form.get('fileNumber')" label="No. Expediente">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="fileNumber" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('descriptionGood')"
+            label="Descripción Bien">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="descriptionGood" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field [control]="form.get('quantity')" label="Cantidad">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="quantity" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="form.get('unit')" label="Unidad Medida">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="unit" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field [control]="form.get('uniqueKey')" label="Clave Unica">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="uniqueKey" />
+          </form-field>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end">
+        <div class="mt-3 btn-toolbar">
+          <button class="btn btn-primary btn-sm active mr-2">
+            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+          <button class="btn btn-danger btn-sm active">
+            Limpiar <i class="fa fa-eraser"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+    <h5 class="title pt-3">Listado de Bienes</h5>
+    <div class="row pt-4">
+      <div class="btn-toolbar pt-3">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive pt-3'"
+          [settings]="settings"
+          [source]="infoGoods">
+        </ng2-smart-table>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+
+    <h5 class="title pt-2">Listado de Órdenes</h5>
+
+    <div class="row pt-4">
+      <div class="col-md-6">
+        <form class="form-horizontal" style="margin: 0 auto">
+          <div class="form-group">
+            <label class="col-lg-4 text-right"
+              >Gasto Validación Requisitos&#58;</label
+            >
+            <span> $10</span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-4 text-right"
+              >Gasto Recepción Documental&#58;</label
+            >
+            <span> $10</span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-4 text-right">Gasto Programación&#58;</label>
+            <span>$10 </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-4 text-right"
+              >Gasto Programación Entrega&#58;</label
+            >
+            <span> $10 </span>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-6">
+        <form class="form-horizontal" style="margin: 0 auto">
+          <div class="form-group">
+            <label class="col-lg-4 text-right"
+              >Gasto Almacenaje en Patio/Almacén&#58;</label
+            >
+            <span> $10</span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-4 text-right">Gasto Manual&#58;</label>
+            <span>$10</span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-4 text-right"
+              >Gasto Reubicación de bienes&#58;</label
+            >
+            <span>$10</span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-4 text-right">Gasto Total&#58;</label>
+            <span> $70 </span>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="pt-4">
+      <div class="md-tabs">
+        <tabset>
+          <tab heading="Validación Requisitos" id="tab1">
+            <div class="row">
+              <div class="btn-toolbar pt-3">
+                <app-columns-select
+                  [(settings)]="settingsValReq"></app-columns-select>
+              </div>
+              <div [class]="loadingValReq ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive pt-3'"
+                  [settings]="settingsValReq"
+                  [source]="infoValReq">
+                </ng2-smart-table>
+                <app-pagination
+                  [params]="paramsValReq"
+                  [totalItems]="totalItemsValReq"></app-pagination>
+              </div>
+            </div>
+          </tab>
+          <tab heading="Recepción Documental">
+            <div class="row">
+              <div class="btn-toolbar pt-3">
+                <app-columns-select
+                  [(settings)]="settingsRecDoc"></app-columns-select>
+              </div>
+              <div [class]="loadingRecDoc ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive pt-3'"
+                  [settings]="settingsRecDoc"
+                  [source]="infoRecDoc">
+                </ng2-smart-table>
+                <app-pagination
+                  [params]="paramsRecDoc"
+                  [totalItems]="totalItemsRecDoc"></app-pagination>
+              </div>
+            </div>
+          </tab>
+          <tab heading="Programación">
+            <div class="row">
+              <div class="btn-toolbar pt-3">
+                <app-columns-select
+                  [(settings)]="settingsProg"></app-columns-select>
+              </div>
+              <div [class]="loadingProg ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive pt-3'"
+                  [settings]="settingsProg"
+                  [source]="infoProg">
+                </ng2-smart-table>
+                <app-pagination
+                  [params]="paramsProg"
+                  [totalItems]="totalItemsProg"></app-pagination>
+              </div>
+            </div>
+          </tab>
+          <tab heading="Programación Entrega">
+            <div class="row">
+              <div class="btn-toolbar pt-3">
+                <app-columns-select
+                  [(settings)]="settingsProgEnt"></app-columns-select>
+              </div>
+              <div [class]="loadingProgEnt ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive pt-3'"
+                  [settings]="settingsProgEnt"
+                  [source]="infoProgEnt">
+                </ng2-smart-table>
+                <app-pagination
+                  [params]="paramsProgEnt"
+                  [totalItems]="totalItemsProgEnt"></app-pagination>
+              </div>
+            </div>
+          </tab>
+          <tab heading="Almacenaje">
+            <div class="row">
+              <div class="btn-toolbar pt-3">
+                <app-columns-select
+                  [(settings)]="settingsWarehouse"></app-columns-select>
+              </div>
+              <div [class]="loadingWarehouse ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive pt-3'"
+                  [settings]="settingsWarehouse"
+                  [source]="infoWarehouse">
+                </ng2-smart-table>
+                <app-pagination
+                  [params]="paramsWarehouse"
+                  [totalItems]="totalItemsWarehouse"></app-pagination>
+              </div>
+            </div>
+          </tab>
+          <tab heading="Manual">
+            <div class="row">
+              <div class="btn-toolbar pt-3">
+                <app-columns-select
+                  [(settings)]="settingsManual"></app-columns-select>
+              </div>
+              <div [class]="loadingMan ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive pt-3'"
+                  [settings]="settingsManual"
+                  [source]="infoManual">
+                </ng2-smart-table>
+                <app-pagination
+                  [params]="paramsMan"
+                  [totalItems]="totalItemsMan"></app-pagination>
+              </div>
+            </div>
+          </tab>
+          <tab heading="Reubicación de Bienes">
+            <div class="row">
+              <div class="btn-toolbar pt-3">
+                <app-columns-select
+                  [(settings)]="settingsReubGood"></app-columns-select>
+              </div>
+              <div [class]="loadingReubGood ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive pt-3'"
+                  [settings]="settingsReubGood"
+                  [source]="infoReubGood">
+                </ng2-smart-table>
+                <app-pagination
+                  [params]="paramsReubGood"
+                  [totalItems]="totalItemsReubGood"></app-pagination>
+              </div>
+            </div>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</app-card>

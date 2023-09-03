@@ -587,12 +587,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       goodClassNumber: this.classifier.value,
       unit: this.unitOfMeasure.value,
       labelNumber: this.destinationLabel.value,
+      description: this.descriptionSon.value,
     };
     console.log(data);
     this.serviceGood.update(data).subscribe(
       res => {
         this.alert('success', 'El Bien se ha Actualizado', ``);
         this.loader.load = false;
+        this.getAllGoodChild(this.goodFatherNumber$.getValue());
       },
       err => {
         this.alert(
