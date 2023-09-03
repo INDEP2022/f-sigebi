@@ -1,10 +1,10 @@
 export const REAL_STATE_COLUMNS = {
-  numClasifGoods: {
+  clasifGoodNumber: {
     title: 'Clasificador',
     type: 'number',
     sort: false,
   },
-  description: {
+  sssubTypeDesc: {
     title: 'Descripción',
     type: 'string',
     sort: false,
@@ -38,7 +38,7 @@ export const REPORT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  UNIDAD_MEDIDA: {
+  saeMeasureUnit: {
     title: 'Unidad de Medida',
     type: 'string',
     sort: false,
@@ -48,107 +48,113 @@ export const REPORT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  CLASIF: {
+  goodCategory: {
     title: 'Clasificación',
     type: 'string',
     sort: false,
   },
   DESC_TIPO: {
-    title: 'DESC_TIPO',
+    title: 'Desc Tipo',
     type: 'string',
     sort: false,
   },
   DESC_STIPO: {
-    title: 'DESC_STIPO',
+    title: 'Desc STipo',
     type: 'string',
     sort: false,
   },
   DESC_SSTIPO: {
-    title: 'DESC_SSTIPO',
+    title: 'Desc SSTipo',
     type: 'string',
     sort: false,
   },
   DESC_SSSTIPO: {
-    title: 'DESC_SSSTIPO',
+    title: 'Desc SSSTipo',
     type: 'string',
     sort: false,
   },
   status: {
-    title: 'ESTATUS_BIEN',
+    title: 'Estatus Bien',
     type: 'string',
     sort: false,
   },
   descriptionStatus: {
-    title: 'DESCRIPCION_ESTATUS',
+    title: 'Descripción Estatus',
     type: 'string',
     sort: false,
   },
-  DESTINO: {
-    title: 'DESTINO',
+  destiny: {
+    title: 'Destino',
     type: 'string',
     sort: false,
   },
   NO_TRASFERENTE: {
-    title: 'NO_TRASFERENTE',
+    title: 'No. Transferente',
     type: 'string',
     sort: false,
   },
   DESCRIPCION_TRANSFERENTE: {
-    title: 'DESCRIPCION_TRANSFERENTE',
+    title: 'Descripción Transferente',
     type: 'string',
     sort: false,
   },
-  VOLANTE: {
-    title: 'VOLANTE',
+  flyerNumber: {
+    title: 'Volante',
     type: 'string',
     sort: false,
   },
   expedientepreliminaryInquiry: {
-    title: 'AV_PREVIA',
+    title: 'Averiguación Previa',
     type: 'string',
     sort: false,
   },
   expedientecriminalCase: {
-    title: 'CAUSA_PENAL',
+    title: 'Causa Penal',
     type: 'string',
     sort: false,
   },
   CLAVE_OFICIO_DESAHOGO: {
-    title: 'CLAVE_OFICIO_DESAHOGO',
+    title: 'Cve. Oficio Desahogo',
     type: 'string',
     sort: false,
   },
   RESPUESTA_AUTORIDAD: {
-    title: 'RESPUESTA_AUTORIDAD',
+    title: 'Respuesta Autoridad',
     type: 'string',
     sort: false,
   },
   FECHA_DESAHOGO: {
-    title: 'FECHA_DESAHOGO',
+    title: 'Fecha Desahogo',
     type: 'string',
     sort: false,
   },
-  NO_ALMACEN: {
-    title: 'NO_ALMACEN',
+  idWarehouse: {
+    title: 'No. Almacen',
     type: 'string',
     sort: false,
   },
-  DESCRIPCION_ALMACEN: {
-    title: 'DESCRIPCION_ALMACEN',
+  almacen: {
+    title: 'Descripción Almacen',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.description : '';
+    },
+  },
+  ubication: {
+    title: 'Ubicación Almacen',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.description : '';
+    },
+  },
+  origin: {
+    title: 'Cve._DICTAMEN_PROCEDENCIA',
     type: 'string',
     sort: false,
   },
-  UBICACION_ALMACEN: {
-    title: 'UBICACION_ALMACEN',
-    type: 'string',
-    sort: false,
-  },
-  CLAVE_DICTAMEN_PROCEDENCIA: {
-    title: 'CLAVE_DICTAMEN_PROCEDENCIA',
-    type: 'string',
-    sort: false,
-  },
-  FECHA_DICTAMEN_PROCEDENCIA: {
+  proficientOpinion: {
     title: 'FECHA_DICTAMEN_PROCEDENCIA',
     type: 'string',
     sort: false,
@@ -159,7 +165,7 @@ export const REPORT_COLUMNS = {
     sort: false,
   },
   CLAVE_ACTA_RECEPCION: {
-    title: 'CLAVE_ACTA_RECEPCION',
+    title: 'Cve._ACTA_RECEPCION',
     type: 'string',
     sort: false,
   },
@@ -174,7 +180,7 @@ export const REPORT_COLUMNS = {
     sort: false,
   },
   CLAVE_DESAHOGO: {
-    title: 'CLAVE_DESAHOGO',
+    title: 'Cve._DESAHOGO',
     type: 'string',
     sort: false,
   },
@@ -275,21 +281,6 @@ export const REPORT_COLUMNS = {
   },
   val20: {
     title: 'val20',
-    type: 'string',
-    sort: false,
-  },
-  NUM_FOTOS: {
-    title: 'NUM_FOTOS',
-    type: 'string',
-    sort: false,
-  },
-  OFICIOS: {
-    title: 'OFICIOS',
-    type: 'string',
-    sort: false,
-  },
-  IMAGEN: {
-    title: 'IMAGEN',
     type: 'string',
     sort: false,
   },
