@@ -273,15 +273,15 @@ export class ChangeOfGoodClassificationComponent
       });
     this.classificationOfGoods.valueChanges.subscribe({
       next: response => {
-        // console.log(response, this.good);
+        console.log(response);
         if (this.good && response + '' === this.good.goodClassNumber + '') {
           this.initValue = true;
         } else {
           this.initValue = false;
         }
-        setTimeout(() => {
-          this.goodChange2++;
-        }, 100);
+        // setTimeout(() => {
+        //   this.goodChange2++;
+        // }, 100);
       },
     });
     this.form.disable();
@@ -507,6 +507,7 @@ export class ChangeOfGoodClassificationComponent
       ) {
       }
     }
+
     this.newDescription = event.description;
     this.unitXClassif.setValue(null);
     this.destination.setValue(null);
@@ -514,6 +515,9 @@ export class ChangeOfGoodClassificationComponent
     this.getEtiqXClasif();
     this.formNew.enable();
     this.btnNewAtribut = false;
+    setTimeout(() => {
+      this.goodChange2++;
+    }, 100);
   }
 
   getUnitiXClasif() {

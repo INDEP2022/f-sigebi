@@ -130,10 +130,35 @@ export class GoodsListComponent
     this.massiveService.ids = value;
   }
 
+  get selectedGooods() {
+    return this.massiveService.selectedGooods;
+  }
+
+  set selectedGooods(value) {
+    this.massiveService.selectedGooods = value;
+  }
+
+  get form() {
+    return this.massiveService.form;
+  }
+
+  get classificationOfGoods() {
+    return this.form.get('classificationOfGoods');
+  }
+
+  get goodStatus() {
+    return this.form.get('goodStatus');
+  }
+
+  get mode() {
+    return this.form.get('mode');
+  }
+
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
       debugger;
       this.data.load([]);
+      this.totalItems = 0;
       this.availableToUpdate = [];
       this.idsNotExist = [];
       this.showError = false;
@@ -149,7 +174,7 @@ export class GoodsListComponent
       } else {
         // this.loadGood(this.ids);
         this.fillData(this.ids);
-        this.alert('success', 'Archivo subido', '');
+        this.alert('success', 'Se ha cargado el archivo', '');
       }
     } catch (error) {
       this.alert('error', 'Ocurrio un error al leer el archivo', '');
@@ -184,30 +209,6 @@ export class GoodsListComponent
         this.table.isAllSelected = allSelected;
       }
     }, 300);
-  }
-
-  get selectedGooods() {
-    return this.massiveService.selectedGooods;
-  }
-
-  set selectedGooods(value) {
-    this.massiveService.selectedGooods = value;
-  }
-
-  get form() {
-    return this.massiveService.form;
-  }
-
-  get classificationOfGoods() {
-    return this.form.get('classificationOfGoods');
-  }
-
-  get goodStatus() {
-    return this.form.get('goodStatus');
-  }
-
-  get mode() {
-    return this.form.get('mode');
   }
 
   // onGoodSelect(instance: CheckboxElementComponent) {

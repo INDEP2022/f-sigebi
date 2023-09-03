@@ -290,7 +290,7 @@ export class MsDepositaryService extends HttpService {
     );
   }
 
-  getComerDetLcGrief(reference: number | string){
-    return this.get(`application/comer-det-lc-grief/${reference}`)
+  getComerDetLcGrief(reference: number | string) {
+    return this.get(`application/comer-det-lc-grief/${reference}`);
   }
 }

@@ -161,7 +161,7 @@
               (click)="showDetailProgDestruc = true"
               *ngIf="!showDetailProgDestruc">
               <i class="fa fa-angle-right" aria-hidden="true"></i>
-              Programaci&oacute;n por Destrucci&oacute;n</a
+              Detalles Programaci&oacute;n por Destrucci&oacute;n</a
             >
           </p>
 
@@ -171,7 +171,7 @@
               (click)="showDetailProgDestruc = false"
               *ngIf="showDetailProgDestruc">
               <i class="fa fa-angle-down" aria-hidden="true"></i>
-              Programaci&oacute;n por Destrucci&oacute;n</a
+              Detalles Programaci&oacute;n por Destrucci&oacute;n</a
             >
           </p>
         </h5>
@@ -256,62 +256,19 @@
       </div>
     </div>
     <!-- FIN -->
-    <!-- EJECUCION PROGRAMACION ENTREGA BIENES TIPO REST -->
-    <div
-      *ngIf="
-        statusProgramming == 'APROBAR_NO_ENT_ESP' ||
-        statusProgramming == 'APROBAR_NO_ENT_NUM'
-      ">
-      <hr />
-      <div class="row">
-        <div class="d-flex">
-          <div class="mr-auto p-2">
-            <h5>Ejecuci&oacute;n Entrega de Bienes</h5>
-          </div>
-          <div class="p-2">
-            <button
-              type="button"
-              class="btn btn-sm btn-primary active"
-              (click)="photos()">
-              Fotografías <i class="fa fa-file" aria-hidden="true"></i>
-            </button>
-          </div>
-          <div class="p-2">
-            <button
-              type="button"
-              class="btn btn-sm btn-primary active"
-              (click)="save()">
-              Guardar <i aria-hidden="true" class="fa fa-save"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-12">
-          <div class="table-responsive">
-            <div [class]="loadingEEB ? 'table-loading' : ''">
-              <ng2-smart-table
-                [attr.class]="'table-bordered table-responsive'"
-                [settings]="progDelivGoodTypeRestSettings"
-                [source]="progDelivGoodTypeRestArray"
-                (rowSelect)="selectGoodTypeRestRows($event)"
-                ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
-              </ng2-smart-table>
-            </div>
-          </div>
-          <app-pagination
-            [params]="progDelivGoodTypeRestParams"
-            [totalItems]="progDelivGoodTypeRestTotalItems"></app-pagination>
-        </div>
-      </div>
-    </div>
-    <!-- FIN -->
     <hr />
-    <div class="row pt-3">
+    <div class="row">
       <h5 class="title">Ejecuci&oacute;n entrega de bienes</h5>
+    </div>
+    <!-- BOTONES GLOBALES -->
+    <div class="row pt-4">
       <div class="form-inline justify-content-end btn-toolbar">
         <a
-          *ngIf="programmingDetailPanel.status == 'RESTITUCION_BIENES'"
+          *ngIf="
+            statusProgramming == 'RESTITUCION_BIENES' ||
+            statusProgramming == 'APROBAR_NO_ENT_ESP' ||
+            statusProgramming == 'APROBAR_NO_ENT_NUM'
+          "
           style="cursor: pointer"
           (click)="photos()"
           class="link-primary"
@@ -334,7 +291,10 @@
           <i class="fa fa-folder-open" aria-hidden="true"></i></a
         >&nbsp;
         <a
-          *ngIf="programmingDetailPanel.typeEvent != 3"
+          *ngIf="
+            programmingDetailPanel.typeEvent != 3 &&
+            programmingDetailPanel.status == 'EJECUTAR_ENTREGA'
+          "
           (click)="certificateDelivery(2)"
           style="cursor: pointer"
           class="link-primary"
@@ -364,51 +324,149 @@
           <i class="fa fa-folder-open" aria-hidden="true"></i></a
         >&nbsp;
 
-        <!-- <button class="btn btn-primary btn-sm active">
-          Guardar <i class="fa fa-save" aria-hidden="true"></i>
-        </button> -->
-      </div>
-
-      <div class="btn-toolbar pt-5">
-        <button class="btn btn-success btn-sm active" (click)="exportCsv()">
-          <i class="fa fa-arrow-down" aria-hidden="true"></i> Descargar
-        </button>
         <button
-          class="btn btn-primary btn-sm active"
-          (click)="delivery('entragados')">
-          <i class="fa fa-check-circle" aria-hidden="true"></i> Entregados
-        </button>
-        <button
-          class="btn btn-danger btn-sm active"
-          (click)="noDelivery('noEntregados')">
-          <i class="fa fa-times-circle" aria-hidden="true"></i> No entregados
+          type="button"
+          class="btn btn-sm btn-primary active"
+          (click)="save()">
+          Guardar <i aria-hidden="true" class="fa fa-save"></i>
         </button>
       </div>
+    </div>
+    <!-- FIN BOTONES GLOBALES -->
 
+    <!-- EJECUCION PROGRAMACION ENTREGA BIENES TIPO REST -->
+    <div
+      *ngIf="
+        statusProgramming == 'APROBAR_NO_ENT_ESP' ||
+        statusProgramming == 'APROBAR_NO_ENT_NUM'
+      ">
       <div class="row pt-5">
         <div class="col-md-12">
           <div class="table-responsive">
-            <div [class]="loading ? 'table-loading' : ''">
+            <div [class]="loadingEEB ? 'table-loading' : ''">
               <ng2-smart-table
-                #table
-                id="table"
                 [attr.class]="'table-bordered table-responsive'"
-                [settings]="GoodDeliverySettings"
-                [source]="goodDeliveryArray"
-                (userRowSelect)="selectRows($event)"
+                [settings]="progDelivGoodTypeRestSettings"
+                [source]="progDelivGoodTypeRestArray"
+                (rowSelect)="selectGoodTypeRestRows($event)"
                 ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
               </ng2-smart-table>
             </div>
           </div>
           <app-pagination
-            [params]="goodParams"
-            [totalItems]="devgoodTotalItems"></app-pagination>
+            [params]="progDelivGoodTypeRestParams"
+            [totalItems]="progDelivGoodTypeRestTotalItems"></app-pagination>
+        </div>
+      </div>
+    </div>
+    <!-- FIN -->
+
+    <!-- PROG ENTREGA BIENES NO ENTREGADOS -->
+    <div
+      *ngIf="
+        statusProgramming == 'BIENES_NO_ENTREGADOS' ||
+        statusProgramming == 'FORMATO_RECLAMACION_SAE' ||
+        statusProgramming == 'VERIFICACION_BIENES' ||
+        statusProgramming == 'FORMATO_RECLAMACION_TE' ||
+        statusProgramming == 'RESTITUCION_BIENES'
+      ">
+      <div class="row">
+        <div class="btn-toolbar pt-5">
+          <button class="btn btn-success btn-sm active" (click)="entryOrder()">
+            Orden de Ingreso
+          </button>
+          <button
+            class="btn btn-primary btn-sm active"
+            (click)="sendApproval()">
+            Enviar a Aprobación
+          </button>
+          <button
+            class="btn btn-danger btn-sm active"
+            (click)="claimmingForm()">
+            Formato de Reclamación
+          </button>
+          <button
+            class="btn btn-danger btn-sm active"
+            *ngIf="statusProgramming == 'RESTITUCION_BIENES'"
+            (click)="changeTypeRestitucion('NUMERARIO')">
+            Numerario
+          </button>
+          <button
+            class="btn btn-danger btn-sm active"
+            (click)="changeTypeRestitucion('EN_ESPECIE')"
+            *ngIf="statusProgramming == 'RESTITUCION_BIENES'">
+            En Especie
+          </button>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <div class="table-responsive">
+            <div [class]="loadingPENE ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                #tablePEGNE
+                id="tablePegene"
+                [settings]="progDelivGoodNDSettings"
+                [source]="progDelivGoodNDArray"
+                (userRowSelect)="selectGoodNoDelivered($event)">
+              </ng2-smart-table>
+            </div>
+          </div>
+          <app-pagination
+            [params]="progDelivGoodNDParams"
+            [totalItems]="progDelivGoodNDTotalItems"></app-pagination>
+        </div>
+      </div>
+    </div>
+    <!-- FIN -->
+
+    <!-- EJECUCION DE BIENES ENTREGA -->
+    <div class="row pt-3">
+      <div
+        class="row"
+        *ngIf="programmingDetailPanel.status == 'EJECUTAR_ENTREGA'">
+        <div class="btn-toolbar pt-5">
+          <button class="btn btn-success btn-sm active" (click)="exportCsv()">
+            <i class="fa fa-arrow-down" aria-hidden="true"></i> Descargar
+          </button>
+          <button
+            class="btn btn-primary btn-sm active"
+            (click)="delivery('entragados')">
+            <i class="fa fa-check-circle" aria-hidden="true"></i> Entregados
+          </button>
+          <button
+            class="btn btn-danger btn-sm active"
+            (click)="noDelivery('noEntregados')">
+            <i class="fa fa-times-circle" aria-hidden="true"></i> No entregados
+          </button>
+        </div>
+
+        <div class="row pt-5">
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  #table
+                  id="table"
+                  [attr.class]="'table-bordered table-responsive'"
+                  [settings]="GoodDeliverySettings"
+                  [source]="goodDeliveryArray"
+                  (userRowSelect)="selectRows($event)"
+                  ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
+                </ng2-smart-table>
+              </div>
+            </div>
+            <app-pagination
+              [params]="goodParams"
+              [totalItems]="devgoodTotalItems"></app-pagination>
+          </div>
         </div>
       </div>
 
       <div
         class="table-responsive pt-5"
-        *ngIf="this.programmingDetailPanel.status == 'EJECUTAR_ENTREGA'">
+        *ngIf="programmingDetailPanel.status == 'EJECUTAR_ENTREGA'">
         <div class="btn-toolbar">
           <button
             (click)="editConstancy()"

@@ -3,7 +3,6 @@ export enum SurvillanceEndpoints {
   VigProcessPercentages = 'vig-process-percentages',
   VigBinnacle = 'vig-binnacle',
   View_VigDelegations = 'views/v-vig-delegations',
-
   DeletePeriod = 'surveillance/delete-period',
   RecordRandom = 'surveillance/record-random',
   ValidPeriod = 'surveillance/valid-period',

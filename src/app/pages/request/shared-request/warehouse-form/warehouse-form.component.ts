@@ -238,7 +238,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.task = JSON.parse(localStorage.getItem('Task'));
       const params = new BehaviorSubject<ListParams>(new ListParams());
-      params.getValue()['filter.id'] = this.task.id;
+      params.getValue()['filter.id'] = `$eq:${this.task.id}`;
       this.taskService.getAll(params.getValue()).subscribe({
         next: async response => {
           const updateStatusTMP = await this.updateTask(response.data[0]);

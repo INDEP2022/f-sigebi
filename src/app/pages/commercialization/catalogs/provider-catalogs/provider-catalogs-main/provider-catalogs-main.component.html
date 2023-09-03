@@ -35,22 +35,24 @@
           </div>
         </div>
       </div>
-      <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            id="providerTable"
-            [attr.class]="'table-bordered'"
-            [settings]="providerSettings"
-            [source]="data"
-            (userRowSelect)="selectProvider($event.data)"
-            (edit)="openFormProvider(true, $event.data)"
-            (delete)="delete($event.data)">
-          </ng2-smart-table>
-        </div>
-        <div class="table-padding"></div>
-      </ng-scrollbar>
-      <app-pagination [filterParams]="filterParams" [totalItems]="totalItems">
-      </app-pagination>
+    </form>
+    <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          id="providerTable"
+          [attr.class]="'table-bordered'"
+          [settings]="providerSettings"
+          [source]="data"
+          (userRowSelect)="selectProvider($event.data)"
+          (edit)="openFormProvider(true, $event.data)"
+          (delete)="delete($event.data)">
+        </ng2-smart-table>
+      </div>
+      <div class="table-padding"></div>
+    </ng-scrollbar>
+    <app-pagination [filterParams]="filterParams" [totalItems]="totalItems">
+    </app-pagination>
+    <form class="form-material mb-0" [formGroup]="providerForm">
       <div class="row mt-4">
         <div class="col-sm-6 col-md-4">
           <form-field
@@ -85,16 +87,16 @@
           </form-field>
         </div>
         <div class="col-sm-6 col-md-4">
-          <form-field [control]="providerForm.get('key')" label="Clabe">
+          <form-field [control]="providerForm.get('key')" label="Clave">
             <input type="text" class="form-control" formControlName="key" />
           </form-field>
         </div>
         <div class="col-sm-6 col-md-4" *ngIf="isSelected">
           <button
-            class="btn btn-sm btn-primary active me-2 font-size-14"
+            class="btn btn-primary btn-sm active"
             [disabled]="!providerForm.valid"
             (click)="saveBank()">
-            Guardar Datos
+            Guardar Datos <i aria-hidden="true" class="fa fa-save"></i>
           </button>
         </div>
       </div>
