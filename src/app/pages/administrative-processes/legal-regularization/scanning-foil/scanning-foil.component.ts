@@ -49,9 +49,10 @@ export class ScanningFoilComponent
   @Output() change = new EventEmitter<any>();
 
   loadingText = 'Cargando ...';
-  get scanningFoli() {
-    return this.form.get('scanningFoli');
-  }
+  // get scanningFoli() {
+  //   return this.form.get('scanningFoli');
+  // }
+  folioEscaneoNg: any = '';
   constructor(
     private fb: FormBuilder,
     private readonly documnetServices: DocumentsService,
@@ -70,7 +71,8 @@ export class ScanningFoilComponent
     console.log(this.numberFoli);
 
     this.buildForm();
-    this.scanningFoli.setValue(this.numberFoli);
+    // this.folioEscaneoNg = this.numberFoli
+    // this.scanningFoli.setValue(this.numberFoli);
     this.form.disable();
     this.getDataUser();
   }
@@ -80,7 +82,8 @@ export class ScanningFoilComponent
       console.log(this.good);
       if (this.refresh) {
         console.log('REFRESHHHH....');
-        this.scanningFoli.setValue('');
+        // this.scanningFoli.setValue('');
+        this.folioEscaneoNg = '';
         /* this.document = undefined;
         this.good = undefined; */
       }
@@ -96,21 +99,22 @@ export class ScanningFoilComponent
   private buildForm() {
     this.form = this.fb.group({
       scanningFoli: [
-        '',
+        this.folioEscaneoNg,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
     });
   }
   generateFoli() {
-    console.log(
-      this.scanningFoli.value != null,
-      this.good,
-      this.scanningFoli.value
-    );
+    // console.log(
+    //   this.scanningFoli.value != null,
+    //   this.good,
+    //   this.scanningFoli.value
+    // );
     if (this.good === null || this.good === undefined) {
       this.alert('warning', 'Atención', 'Debe cargar un Bien', '');
       return;
     }
+    console.log('this.document', this.document);
     if (this.document !== undefined) {
       this.alert(
         'warning',
@@ -139,20 +143,28 @@ export class ScanningFoilComponent
     console.log(documents);
     this.documnetServices.create(documents).subscribe({
       next: response => {
-        this.document = response;
         console.log(response);
-        this.scanningFoli.setValue(response.id);
+        this.document = response;
+        console.log('this.folioEscaneoNg', this.folioEscaneoNg);
         this.documentEmmit.emit(response);
+        setTimeout(async () => {
+          this.folioEscaneoNg = this.document.id;
+          console.log('this.folioEscaneoNg', this.folioEscaneoNg);
+          this.generateFo = false;
+          const params = {
+            pn_folio: this.folioEscaneoNg,
+          };
+          await this.downloadReport(this.reportPrint, params);
+        }, 1000);
+
+        // this.form.get('scanningFoli').setValue(response.id)
+        // this.scanningFoli.setValue(response.id);
+
         /* this.onLoadToast(
           'success',
           'Generado correctamente',
           `Se generó el Folio No ${response.id}`
         ); */
-        this.generateFo = false;
-        const params = {
-          pn_folio: this.form.get('scanningFoli').value,
-        };
-        this.downloadReport(this.reportPrint, params);
       },
       error: err => {
         console.error(err);
@@ -197,7 +209,7 @@ export class ScanningFoilComponent
           if (response.count === 0) return;
           console.log(response);
           this.document = response.data[0];
-          this.scanningFoli.setValue(this.document.id);
+          // this.scanningFoli.setValue(this.document.id);
           this.documentEmmit.emit(this.document);
         },
       });
@@ -208,8 +220,8 @@ export class ScanningFoilComponent
       this.alert('warning', 'Atención', 'No existe folio de escaneo', '');
       return;
     }
-    console.log(this.form.get('scanningFoli').value);
-    if (this.form.get('scanningFoli').value !== '') {
+    console.log(this.folioEscaneoNg);
+    if (this.folioEscaneoNg !== '') {
       this.alertQuestion(
         'question',
         'Se abrirá la pantalla de escaneo para el folio del Bien consultado',
@@ -234,7 +246,7 @@ export class ScanningFoilComponent
     this.router.navigate([`/pages/general-processes/scan-documents`], {
       queryParams: {
         origin: this.cveScreen,
-        folio: this.form.get('scanningFoli').value,
+        folio: this.folioEscaneoNg,
       },
     });
   }
@@ -247,25 +259,23 @@ export class ScanningFoilComponent
       this.change.emit('Se hizo el change');
       localStorage.setItem('documentLegal', JSON.stringify(this.document));
     }
-    if (this.form.get('scanningFoli').value !== '') {
-      this.documnetServices
-        .getByFolio(this.form.get('scanningFoli').value)
-        .subscribe(res => {
-          const data = JSON.parse(JSON.stringify(res));
-          const scanStatus = data.data[0]['scanStatus'];
-          const idMedium = data.data[0]['mediumId'];
+    if (this.folioEscaneoNg !== '') {
+      this.documnetServices.getByFolio(this.folioEscaneoNg).subscribe(res => {
+        const data = JSON.parse(JSON.stringify(res));
+        const scanStatus = data.data[0]['scanStatus'];
+        const idMedium = data.data[0]['mediumId'];
 
-          if (scanStatus === 'ESCANEADO') {
-            this.goToScan();
-          } else {
-            this.alert(
-              'warning',
-              'Atención',
-              'No existe documentación para este folio',
-              ''
-            );
-          }
-        });
+        if (scanStatus === 'ESCANEADO') {
+          this.goToScan();
+        } else {
+          this.alert(
+            'warning',
+            'Atención',
+            'No existe documentación para este folio',
+            ''
+          );
+        }
+      });
     } else {
       this.alert(
         'warning',
@@ -281,9 +291,9 @@ export class ScanningFoilComponent
       this.alert('warning', 'Atención', 'No existe folio de escaneo', '');
       return;
     }
-    if (this.form.get('scanningFoli').value !== '') {
+    if (this.folioEscaneoNg !== '') {
       const params = {
-        pn_folio: this.form.get('scanningFoli').value,
+        pn_folio: this.folioEscaneoNg,
       };
       this.downloadReport(this.reportPrint, params);
     } else {
@@ -291,7 +301,7 @@ export class ScanningFoilComponent
     }
   }
 
-  downloadReport(reportName: string, params: any) {
+  async downloadReport(reportName: string, params: any) {
     this.loadingText = 'Generando reporte ...';
     this.siabService.fetchReport(reportName, params).subscribe({
       next: response => {
@@ -312,5 +322,17 @@ export class ScanningFoilComponent
         this.modalService.show(PreviewDocumentsComponent, config);
       },
     });
+  }
+
+  cleanDocumentFolio(documentNull: any) {
+    this.document = undefined;
+  }
+
+  inserDocumentFolio(document: any) {
+    this.document = document;
+  }
+
+  setFolio(folio: any) {
+    this.folioEscaneoNg = folio;
   }
 }
