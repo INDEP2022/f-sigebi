@@ -12,6 +12,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { COLUMNS_STATUS, COLUMNS_USER } from './columns';
+import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 
 @Component({
   selector: 'app-change-of-status',
@@ -69,7 +70,8 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private readonly goodServices: GoodService,
     private token: AuthService,
-    private readonly historyGoodService: HistoryGoodService
+    private readonly historyGoodService: HistoryGoodService,
+    private screenStatusService: ScreenStatusService
   ) {
     super();
   }
@@ -131,24 +133,61 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   }
 
   validateGood(){
-    const paramsF = new FilterParams()
+    return new Promise((resolve, reject) => {
+      const paramsF = new FilterParams()
     paramsF.addFilter('status','ROP',SearchFilter.NOT)
     paramsF.addFilter('propertyNum',this.numberGood.value)
 
     this.historyGoodService.getAllFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res)
+        if(res.count > 0){
+            this.goodServices.getById(this.numberGood.value).subscribe(
+              res => {
+                console.log(res['data'][0].status)
+                const paramsF2 = new FilterParams()
+                paramsF2.addFilter('status',res['data'][0].status)
+                paramsF2.addFilter('screenKey','CAMMUEESTATUS')
+                this.screenStatusService.getAllFilterFree(paramsF2.getParams()).subscribe(
+                  res =>{
+                    resolve({message: 'Success'})
+                  },
+                  err =>{
+                    resolve({message: 'Error'})
+                  }
+                  )
+              },
+              err => {
+                resolve({message: 'Error'})
+              }
+            )
+        }else{
+          resolve({message: 'Error'})
+        }
       },
       err => {
-        console.log(err)
+        resolve({message: 'Error'})
       }
     )
+    })
+
+    
   }
 
-  loadGood() {
+  async loadGood() {
     this.loading = true;
-    this.validateGood()
-    
+    const resp = await this.validateGood()
+    console.log(resp)
+    if(JSON.parse(JSON.stringify(resp)).message == 'Error'){
+      this.alert('warning','El bien no es válido para cambio de estatus','')
+      this.loading = false;
+      this.descriptionGood.reset();
+      this.currentStatus.reset();
+      this.descriptionStatus.reset();
+      this.processesGood.reset();
+      this.endProcess = false;
+      return
+    }
     this.dateStatus.setValue(new Date());
     this.goodServices.getById(this.numberGood.value).subscribe({
       next: (response: any) => {
