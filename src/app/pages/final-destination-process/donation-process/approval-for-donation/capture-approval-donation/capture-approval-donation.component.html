@@ -178,9 +178,19 @@
                       <div
                         class="form-group row p-4 d-flex justify-content-center align-items-center">
                         <div class="col-md-3">
+                          <!-- <button class="btn btn-primary btn-sm active" (click)="
+                  openModal(
+                    'Consulta de Bienes',
+                    'check-goods',
+                    '¿Desea Continuar con el Proceso?'
+                  )
+                ">
+                            Consulta Bienes
+                            <i class="bx bx-search float-icon"></i>
+                          </button> -->
                           <button
                             class="btn btn-primary btn-sm active"
-                            (click)="exportToExcel()">
+                            (click)="ubicaGood()">
                             Consulta Bienes
                             <i class="bx bx-search float-icon"></i>
                           </button>
@@ -218,13 +228,25 @@
 
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination> -->
+
       <div class="row"></div>
       <div class="row p-3">
         <div class="col-md-3"></div>
+
         <div class="row mt-12 d-flex justify-content-center">
           <div class="col-md-12 justify-content-center">
-            <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
-
+            <div class="row">
+              <div class="d-flex justify-content-end mb-2">
+                <app-columns-select
+                  [(settings)]="settings"></app-columns-select>
+                <div>
+                  <!-- <button type="button" tooltip="Nuevo" containerClass="tooltip-style"
+                                              class="btn btn-primary btn-sm active ml-2 mr-2" (click)="goBack()" *ngIf="origin != null">
+                                              Regresar <i class="bx bx-arrow-back bx-sm float-icon"></i>
+                                            </button> -->
+                </div>
+              </div>
+            </div>
             <div class="row">
               <form-loader *ngIf="loading"></form-loader>
               <div class="col-md-12">
@@ -232,7 +254,7 @@
                 <ng-scrollbar
                   [track]="'all'"
                   [ngStyle]="{
-                    height: loading ? '0px' : '400px'
+                    height: loading ? '0px' : '600px'
                   }">
                   <ng2-smart-table
                     [attr.class]="'table-bordered table-responsive'"
@@ -257,60 +279,38 @@
                   </div>
                 </div>
               </form> -->
-              <div class="col-6 align-items-center">
+              <!-- <div class="col-6 align-items-center">
                 <div class="row">
                   <div class="col-6">
-                    <span class="text-success mr-5"
-                      ><i class="fa fa-square"></i> Disponibles</span
-                    >
+                    <span class="text-success mr-5"><i class="fa fa-square"></i> Disponibles</span>
                   </div>
                   <div class="col-6">
-                    <span class="text-black"
-                      ><i class="fa fa-square"></i> No disponibles</span
-                    >
+                    <span class="text-black"><i class="fa fa-square"></i> No disponibles</span>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
-
+          <!-- 
           <div class="row pt-2">
             <div class="col-md-12 text-center mt-4 mb-4">
-              <button
-                tooltip="Agregar Bien al Acta"
-                containerClass="tooltip-style"
-                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-                type="button"
-                (click)="addSelect()">
-                <!-- Mover uno -->
+              <button tooltip="Agregar Bien al Acta" containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="addSelect()">
                 <i class="bx bx-chevron-down bx-md"></i>
               </button>
-              <button
-                tooltip="Agregar Bienes al Acta"
-                containerClass="tooltip-style"
-                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-                type="button"
-                (click)="addAll()">
-                <!-- Mover todos -->
+              <button tooltip="Agregar Bienes al Acta" containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="addAll()">
                 <i class="bx bx-chevrons-down bx-md"></i>
               </button>
-              <button
-                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-                type="button"
-                (click)="removeAll()">
+              <button class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="removeAll()">
                 <i class="bx bx-chevrons-up bx-md"></i>
               </button>
-              <button
-                tooltip="Quitar Bien del Acta"
-                containerClass="tooltip-style"
-                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-                type="button"
-                (click)="removeSelect()">
-                <!-- Quitar uno -->
+              <button tooltip="Quitar Bien del Acta" containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="removeSelect()">
                 <i class="bx bx-chevron-up bx-md"></i>
               </button>
             </div>
-          </div>
+          </div> -->
 
           <!-- <div class="col-md-12">
             <h6>BIENES RELACIONADOS CON EL ACTA</h6>
@@ -319,13 +319,35 @@
               <div class="col-md-12">
                 <ng-scrollbar [track]="'all'" [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
                   <ng2-smart-table class="table-responsive" [attr.class]="'table-bordered table-responsive'"
-                    [settings]="settings2" (userRowSelect)="rowsSelected($event)" [source]="dataRecepcionGood">
+                    [settings]="settings2" (userRowSelect)="rowsSelected($event)" [source]="dataDetailDonationGood">
                   </ng2-smart-table>
                   <app-pagination [params]="paramsList2" [totalItems]="totalItems2"></app-pagination>
                 </ng-scrollbar>
               </div>
-            </div
-        </div>>-->
+            </div>
+          </div> -->
+        </div>
+      </div>
+      <div footer>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="
+                openModal(
+                  'Visualizaci&oacute;n de Errores',
+                  'see-error',
+                  'Los Siguientes Bienes Contienen Errores:'
+                )
+              ">
+              Ver Error
+            </button>
+          </div>
+          <div class="m-3">
+            <button class="btn btn-danger btn-sm active">
+              Elimina Bienes <i class="fa fa-trash-alt"></i>
+            </button>
+          </div>
         </div>
       </div>
       <div class="row mt-5">
@@ -362,28 +384,6 @@
                   <span class="badge rounded-pill badge-soft-success">1</span>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="row">
-            <div class="col-md-6">
-              <button
-                class="btn btn-secondary btn-sm active"
-                (click)="
-                  openModal(
-                    'Visualizaci&oacute;n de Errores',
-                    'see-error',
-                    'Los Siguientes Bienes Contienen Errores:'
-                  )
-                ">
-                Ver Error
-              </button>
-            </div>
-            <div class="col-md-6">
-              <button class="btn btn-secondary btn-sm active">
-                Elimina Bienes
-              </button>
             </div>
           </div>
         </div>

@@ -1,4 +1,3 @@
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 export const COLUMNS_APPROVAL_DONATION = {
   recordId: {
     title: 'Ref.',
@@ -110,15 +109,33 @@ export const COLUMNS_APPROVAL_DONATION = {
   //   type: 'string',
   //   sort: false,
   // },
-  select: {
-    title: 'Selec.',
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
-    },
+  // select: {
+  //   title: 'Selec.',
+  //   type: 'custom',
+  //   renderComponent: CheckboxElementComponent,
+  //   onComponentInitFunction(instance: any) {
+  //     instance.toggle.subscribe((data: any) => {
+  //       data.row.to = data.toggle;
+  //     });
+  //   },
+  //   sort: false,
+  // },
+};
+
+export const COPY = {
+  goodNumber: {
+    title: 'No. Bien',
+    type: 'number',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    type: 'string',
+    sort: false,
+  },
+  amount: {
+    title: 'Cantidad',
+    type: 'string',
     sort: false,
   },
 };

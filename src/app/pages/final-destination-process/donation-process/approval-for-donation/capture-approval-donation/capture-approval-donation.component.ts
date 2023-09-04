@@ -19,8 +19,9 @@ import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
-import { COLUMNS_APPROVAL_DONATION } from './columns-approval-donation';
+import { COPY } from './columns-approval-donation';
 @Component({
   selector: 'app-capture-approval-donation',
   templateUrl: './capture-approval-donation.component.html',
@@ -42,6 +43,11 @@ export class CaptureApprovalDonationComponent
   siabForm: FormGroup;
   foolio: number;
   dataTableGood_: any[] = [];
+  Exportdate: boolean = false;
+  loading2: boolean = false;
+  totalItems2: number = 0;
+  dataDetailDonation: any;
+  dataDetailDonationGood: LocalDataSource = new LocalDataSource();
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   paramsList2 = new BehaviorSubject<ListParams>(new ListParams());
   dataTableGood: LocalDataSource = new LocalDataSource();
@@ -57,6 +63,7 @@ export class CaptureApprovalDonationComponent
   columnFilters: any = [];
   columnFilters2: any = [];
   statusGood_: any;
+  settings2;
   // @Input() getDetailComDonation: Function;
   // @Input() idActa: number | string;
   type = 'COMPDON';
@@ -95,11 +102,178 @@ export class CaptureApprovalDonationComponent
     super();
     // this.settings = { ...this.settings, actions: false };
     // this.settings.columns = COLUMNS_APPROVAL_DONATION;
+    // this.settings = {
+    //   ...this.settings,
+    //   hideSubHeader: false,
+    //   actions: false,
+    //   columns: { ...COLUMNS_APPROVAL_DONATION },
+    //   noDataMessage: 'No se encontrarón registros',
+    // };
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
       actions: false,
-      columns: { ...COLUMNS_APPROVAL_DONATION },
+      // selectMode: 'multi',
+      selectedRowIndex: -1,
+      mode: 'external',
+      // columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
+      columns: {
+        name: {
+          filter: false,
+          sort: false,
+          title: 'Selección',
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+            this.isGoodSelectedValid(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onGoodSelectValid(instance),
+        },
+        recordId: {
+          title: 'Ref.',
+          type: 'number',
+          sort: false,
+        },
+        goodNumber: {
+          title: 'No. Bien',
+          type: 'number',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.good.goodNumber;
+          },
+        },
+        description: {
+          title: 'Descripción del Bien',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.good?.description;
+          },
+        },
+        quantity: {
+          title: 'Cantidad',
+          type: 'number',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.good?.quantity;
+          },
+        },
+        unit: {
+          title: 'Unidad',
+          type: 'string',
+          sort: false,
+        },
+        status: {
+          title: 'Estatus',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.good?.status;
+          },
+        },
+        noExpediente: {
+          title: 'No. Expediente',
+          type: 'number',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.good?.noExpediente;
+          },
+        },
+        noEtiqueta: {
+          title: 'Etiqueta Destino',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.good?.noEtiqueta;
+          },
+        },
+        idNoWorker1: {
+          title: 'No. Tranf.',
+          type: 'string',
+          sort: false,
+          // valuePrepareFunction: (cell: any, row: any) => {
+          //   return row.proceeding?.idNoWorker1;
+          // },
+        },
+        idExpWorker1: {
+          title: 'Des. Tranf.',
+          type: 'string',
+          sort: false,
+          // valuePrepareFunction: (cell: any, row: any) => {
+          //   return row.proceeding?.idExpWorker1;
+          // },
+        },
+        noClasifBien: {
+          title: 'No. Clasif.',
+          type: 'number',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.good?.noClasifBien;
+          },
+        },
+        procesoExtDom: {
+          title: 'Proceso',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.good?.procesoExtDom;
+          },
+        },
+        // warehouseNumb: {
+        //   title: 'No. Alma.',
+        //   type: 'number',
+        //   sort: false,
+        // },
+        // warehouse: {
+        //   title: 'Almacén',
+        //   type: 'string',
+        //   sort: false,
+        // },
+        // warehouseLocat: {
+        //   title: 'Ubica. Almacén ',
+        //   type: 'string',
+        //   sort: false,
+        // },
+        // coordAdmin: {
+        //   title: 'Coord. Admin.',
+        //   type: 'string',
+        //   sort: false,
+        // },
+        // select: {
+        //   title: 'Selec.',
+        //   type: 'custom',
+        //   renderComponent: CheckboxElementComponent,
+        //   onComponentInitFunction(instance: any) {
+        //     instance.toggle.subscribe((data: any) => {
+        //       data.row.to = data.toggle;
+        //     });
+        //   },
+        //   sort: false,
+        // },
+        noDataMessage: 'No se encontrarón registros',
+      },
+      // rowClassFunction: (row: any) => {
+      //   if (row.data.di_disponible == 'S') {
+      //     return 'bg-success text-white';
+      //   } else {
+      //     return 'bg-dark text-white';
+      //   }
+      // },
+    };
+    this.settings2 = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      selectMode: 'multi',
+      // selectedRowIndex: -1,
+      // mode: 'external',
+      columns: {
+        ...COPY,
+      },
+      rowClassFunction: (row: any) => {
+        return 'bg-light text-black';
+      },
       noDataMessage: 'No se encontrarón registros',
     };
   }
@@ -185,6 +359,44 @@ export class CaptureApprovalDonationComponent
       },
     });
   }
+  onGoodSelect(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChange(data.row, data.toggle),
+    });
+  }
+  isGoodSelected(_good: IGood) {
+    const exists = this.selectedGooods.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+  goodSelectedChange(good: IGood, selected: boolean) {
+    if (selected) {
+      this.selectedGooods.push(good);
+      console.log(this.selectedGooods);
+    } else {
+      this.selectedGooods = this.selectedGooods.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
+  onGoodSelectValid(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChangeValid(data.row, data.toggle),
+    });
+  }
+  isGoodSelectedValid(_good: IGood) {
+    const exists = this.selectedGooodsValid.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+  goodSelectedChangeValid(good: IGood, selected?: boolean) {
+    if (selected) {
+      this.selectedGooodsValid.push(good);
+      console.log(this.selectedGooodsValid);
+    } else {
+      this.selectedGooodsValid = this.selectedGooodsValid.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
   getDetailDonation() {
     const params = new ListParams();
     params['filter.recordId'] = this.paramsScreen.recordId;
@@ -194,6 +406,45 @@ export class CaptureApprovalDonationComponent
       },
       error: () => console.error('no hay detalle acta'),
     });
+  }
+  // async getDetailProceedingsDevollution(id: any) {
+  //   this.loading2 = true;
+
+  //   let params: any = {
+  //     ...this.paramsList2.getValue(),
+  //     ...this.columnFilters2,
+  //   };
+  //   params['filter.recordId'] = this.paramsScreen.recordId;
+  //   return new Promise((resolve, reject) => {
+  //     this.donationService
+  //       .getEventComDonationDetail(params)
+  //       .subscribe({
+  //         next: data => {
+  //           let result = data.data.map((item: any) => {
+  //             item['description'] = item.good ? item.good.description : null;
+  //           });
+
+  //           Promise.all(result).then(item => {
+  //             this.dataDetailDonation = data.data;
+  //             this.dataDetailDonationGood.load(this.dataDetailDonation);
+  //             this.dataDetailDonationGood.refresh();
+  //             this.totalItems2 = data.count;
+  //             console.log('data', data);
+  //             this.loading2 = false;
+  //             this.Exportdate = true;
+  //             //this.disabledBtnEscaneo = true;
+  //           });
+  //         },
+  //         error: error => {
+  //           this.dataDetailDonation = [];
+  //           this.dataDetailDonationGood.load([]);
+  //           this.loading2 = false;
+  //         },
+  //       });
+  //   });
+  // }
+  rowsSelected(event: any) {
+    this.selectedGooodsValid = event.selected;
   }
 
   getComerDonation() {
@@ -255,6 +506,7 @@ export class CaptureApprovalDonationComponent
     };
     // console.log('1412212', params);
     params['sortBy'] = `goodId:DESC`;
+    params['filter.recordId'] = this.paramsScreen.recordId;
     this.donationService.getEventComDonationDetail(params).subscribe({
       next: data => {
         this.goods = data.data;
@@ -315,6 +567,33 @@ export class CaptureApprovalDonationComponent
       });
     });
   }
+
+  ubicaGood() {
+    if (this.eventDonacion.estatusAct === 'CERRADA') {
+      this.alert(
+        'warning',
+        'El Evento está cerrado, no se pueden consultar bienes',
+        ''
+      );
+      return;
+    } else {
+      this.alertQuestion('warning', '', '¿Desea continuar con  proceso?').then(
+        question => {
+          if (question.isConfirmed) {
+            this.consultgoods();
+          } else {
+            // goBlock('DETALLE_EVENT_COM_DON');
+            if (this.dataDetailDonation.noBien === null) {
+              this.alert('warning', 'No hay bienes a validar.', '');
+            } else {
+              // PUP_CARGA_BIENES;
+            }
+          }
+        }
+      );
+    }
+  }
+  consultgoods() {}
 
   configDatePicker() {
     this.bsConfigToYear = Object.assign(
