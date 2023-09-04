@@ -121,6 +121,8 @@ export class MassiveReclassificationGoodsComponent
 
   clearFilter() {
     this.form.reset();
+    this.files = [];
+    this.changeDescription = null;
     this.service.ids = null;
     this.service.selectedGooods = [];
     this.service.loadGoods.next(false);

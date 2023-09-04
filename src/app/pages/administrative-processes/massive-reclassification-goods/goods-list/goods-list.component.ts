@@ -130,6 +130,30 @@ export class GoodsListComponent
     this.massiveService.ids = value;
   }
 
+  get selectedGooods() {
+    return this.massiveService.selectedGooods;
+  }
+
+  set selectedGooods(value) {
+    this.massiveService.selectedGooods = value;
+  }
+
+  get form() {
+    return this.massiveService.form;
+  }
+
+  get classificationOfGoods() {
+    return this.form.get('classificationOfGoods');
+  }
+
+  get goodStatus() {
+    return this.form.get('goodStatus');
+  }
+
+  get mode() {
+    return this.form.get('mode');
+  }
+
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
       debugger;
@@ -185,30 +209,6 @@ export class GoodsListComponent
         this.table.isAllSelected = allSelected;
       }
     }, 300);
-  }
-
-  get selectedGooods() {
-    return this.massiveService.selectedGooods;
-  }
-
-  set selectedGooods(value) {
-    this.massiveService.selectedGooods = value;
-  }
-
-  get form() {
-    return this.massiveService.form;
-  }
-
-  get classificationOfGoods() {
-    return this.form.get('classificationOfGoods');
-  }
-
-  get goodStatus() {
-    return this.form.get('goodStatus');
-  }
-
-  get mode() {
-    return this.form.get('mode');
   }
 
   // onGoodSelect(instance: CheckboxElementComponent) {
