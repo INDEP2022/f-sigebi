@@ -11,7 +11,7 @@ export interface IComerDetExpense {
   cvman: string;
   budgetItem: string;
   comerExpenses: ComerExpenses;
-  goods: any;
+  goods?: any;
   goodDescription?: string;
   changeStatus?: boolean;
   reportDelit?: boolean;

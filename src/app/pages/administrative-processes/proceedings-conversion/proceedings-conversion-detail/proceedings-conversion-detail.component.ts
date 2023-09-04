@@ -73,7 +73,7 @@ export class ProceedingsConversionDetailComponent
           this.idConversion = value;
 
           console.log('AQUII2222', value);
-          this.header.get('idConversion').setValue(value);
+          this.header.get('idConversion').setValue(this.idConversion);
 
           this.convertiongoodService.getConvertionActaById(value).subscribe({
             next: async (res: any) => {
@@ -93,6 +93,13 @@ export class ProceedingsConversionDetailComponent
             },
             error: error => {
               this.valUpdate = false;
+              this.header.reset();
+              this.closureOfMinutes.reset();
+              this.first.reset();
+              this.antecedentThree.reset();
+              this.antecedentTwo.reset();
+              this.antecedent.reset();
+              this.header.get('idConversion').setValue(this.idConversion);
               console.log(error);
             },
           });

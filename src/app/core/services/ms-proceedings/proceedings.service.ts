@@ -298,7 +298,17 @@ export class ProceedingsService extends HttpService {
   }
 
   postConstGood(params: any) {
-    const route = `${ProceedingsEndpoints.DetailProceedingsDevollution}`;
+    const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}`;
     return this.post(route, params);
+  }
+
+  deleteReception(params: any) {
+    const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}`;
+    return this.delete(route, params);
+  }
+
+  consultPaValMasive() {
+    const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}/FACTCONST_0001`;
+    return this.get(route);
   }
 }

@@ -1,0 +1,14 @@
+<div style="display: flex; align-items: center">
+  <!--  <form-field [control]="goodDomicilieForm.get('appraisalDate')" label="Fecha de Aval&uacute;o"
+        *ngIf="process != 'classify-assets'"> -->
+  <input
+    type="text"
+    class="form-control"
+    [bsValue]="value"
+    #dp="bsDatepicker"
+    bsDatepicker
+    (bsValueChange)="changeTime($event)"
+    [isDisabled]="false" />
+  <i class="fa fa-calendar pl-2" aria-hidden="true"></i>
+  <!-- </form-field> -->
+</div>

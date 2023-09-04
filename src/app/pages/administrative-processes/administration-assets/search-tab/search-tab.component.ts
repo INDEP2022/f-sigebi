@@ -352,7 +352,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
     //Provisional data
     console.log(params);
     // this.searchTabForm.controls['noBien'].disable();
-
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     this.loader.load = true;
     let data = this.params.value;
     data.page = params.page;

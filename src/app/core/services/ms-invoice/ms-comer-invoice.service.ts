@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ENDPOINT_INVOICE } from 'src/app/common/constants/endpoints/ms-invoice-endpoint';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 
@@ -14,6 +15,10 @@ export class ComerInvoiceService extends HttpService {
 
   getAll(params: _Params | string) {
     return this.get<IListResponse<any>>(ENDPOINT_INVOICE.ComerInovice, params);
+  }
+
+  getAllInvoicePag(params: ListParams) {
+    return this.get<IListResponse<any>>(ENDPOINT_INVOICE.GetInvoicePag, params);
   }
 
   create(data: any) {
@@ -53,6 +58,10 @@ export class ComerInvoiceService extends HttpService {
 
   copyInvoice(data: Object) {
     return this.post(ENDPOINT_INVOICE.CopyInvoice, data);
+  }
+
+  getBill(body: any, params: ListParams) {
+    return this.post(ENDPOINT_INVOICE.GetInvoice, body, params);
   }
 
   getValidPayments(params?: _Params) {

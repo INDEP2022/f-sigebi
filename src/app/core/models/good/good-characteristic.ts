@@ -89,7 +89,6 @@ export class CharacteristicEditorCell extends DefaultEditor {
       (!(row.dataType === 'D' || row.attribute.includes('FECHA')) &&
         (this.haveNumericError(row) ||
           this.haveFloatError(row) ||
-          this.haveCaracteresEspeciales(row) ||
           this.haveMoneyError(row).length > 0))
     );
   }

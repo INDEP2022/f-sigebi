@@ -65,11 +65,12 @@ export class PropertyComponent extends BasePage implements OnInit {
         } else {
           this.array.push(data.row.numClasifGoods);
         }
-        console.log(this.array);
-        if (validate == true) {
-          this.validator = true;
-        } else {
+        console.log(this.array.length);
+        if (this.array.length > 0) {
           this.validator = false;
+          console.log(this.array.length);
+        } else {
+          this.validator = true;
         }
       },
     });
