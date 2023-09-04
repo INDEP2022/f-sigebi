@@ -221,4 +221,9 @@ export class ProgrammingRequestService {
     const route = `programminggood/api/v1/programming-delivery-good`;
     return this.http.post(`${environment.API_URL}${route}`, goodDelivery);
   }
+
+  sendEmailProgrammingDelivery(data: Object) {
+    const route = `programminggood/api/v1/programminggood/apps/generate-send-email`;
+    return this.http.post(`${environment.API_URL}${route}`, data);
+  }
 }
