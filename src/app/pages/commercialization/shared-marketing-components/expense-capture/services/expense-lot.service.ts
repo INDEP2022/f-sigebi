@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { HttpService } from 'src/app/common/services/http.service';
 import {
+  IDivideCommandsDTO,
   ILotDTO,
   IValidStatusChangeDTO,
   IValidSubPriceDTO,
@@ -29,6 +30,9 @@ export class ExpenseLotService extends HttpService {
     return this.post('validSubTotPrice', body);
   }
 
+  DIVIDE_MANDATOS(body: IDivideCommandsDTO) {
+    return this.post('apps/divide-commands', body);
+  }
   // update(id) {
   //   this.put(this.endpoint+'/'+,);
   // }
