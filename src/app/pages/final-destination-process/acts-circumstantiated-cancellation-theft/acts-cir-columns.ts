@@ -1,5 +1,5 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
-
+import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 export const EXPEDIENT_COLUMNS = {
   id: {
     title: 'No. Expediente',
@@ -199,3 +199,27 @@ export const RELATED_FOLIO_COLUMNS = {
     sort: false,
   },
 };
+export interface IDataGoodsTable {
+  goodId: number;
+  description: string;
+  quantity: number;
+  identifier: string;
+  status: string;
+  desEstatus: string;
+  seleccion: boolean;
+  improcedente: boolean;
+  disponible: boolean;
+}
+
+export interface GooByExpediente {
+  goodId: number;
+  description: string;
+  quantity: number;
+  identifier: string;
+  status: string;
+  desEstatus: string;
+  seleccion: boolean;
+  improcedente: boolean;
+  disponible: boolean;
+  acta: IExpedient;
+}

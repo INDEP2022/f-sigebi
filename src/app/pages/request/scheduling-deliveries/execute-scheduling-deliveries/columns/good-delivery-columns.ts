@@ -2,6 +2,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { InputFieldComponent } from '../input-field/input-field.component';
 import { SelectFieldComponent } from '../select-field/select-field.component';
 import { TextareaFieldComponent } from '../textarea-field/textarea-field.component';
+import { TimeFieldComponent } from '../time-field/time-field.component';
 import { TypeRestitutionFieldComponent } from '../type-restitution-field/type-restitution-field.component';
 
 export const GOOD_DELIVERY_COLUMN = {
@@ -262,6 +263,15 @@ export const PROG_DELIVERY_GOOD_NO_DELIVERED = {
   foundInd: {
     title: 'Encontrado',
     type: 'string',
+    sort: false,
+  },
+  replacementDate: {
+    title: 'Fecha Reposición',
+    type: 'custom',
+    class: 'custom-field',
+    filter: false,
+    renderComponent: TimeFieldComponent,
+    onComponentInitFunction(instance: any) {},
     sort: false,
   },
   typeRestitution: {

@@ -1,5 +1,5 @@
 export const PROPERTY_REGISTRATION_COLUMNS = {
-  id: {
+  noGoodMenaje: {
     title: 'Menaje',
     type: 'number',
     width: '20%',

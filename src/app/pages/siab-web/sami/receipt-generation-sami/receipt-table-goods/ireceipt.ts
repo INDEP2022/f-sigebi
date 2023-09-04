@@ -179,7 +179,7 @@ export interface IprogrammingDelivery {
   statusAut?: string;
   programmingLee?: string;
   typeUser?: string;
-  delRegId?: string;
+  delRegId?: number;
   statusNotification?: string;
   auctionDate?: any;
   folio?: string;
