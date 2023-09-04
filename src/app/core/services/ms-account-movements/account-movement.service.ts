@@ -47,6 +47,10 @@ export class AccountMovementService extends HttpService {
     );
   }
 
+  getMetodoPago(params: ListParams) {
+    return this.post(AccountmvmntEndpoint.MetodoDePago, params);
+  }
+
   getDevolutionsBanks() {
     return this.get<IListResponse<IAccountMovementShort>>(
       AccountmvmntEndpoint.getDevolutionsBanks

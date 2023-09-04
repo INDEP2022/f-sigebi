@@ -52,6 +52,23 @@
           </form-field>
         </div>
       </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('id_tipo_sat')">
+            <ngx-select
+              [form]="form"
+              control="id_tipo_sat"
+              (fetchItems)="getMont($event)"
+              [data]="pago"
+              bindLabel="descripcion"
+              [searchOnInit]="true"
+              label="Metodo de Pago"
+              value="id_tipo_sat"
+              (change)="changeMont($event)"
+              [readonly]="false"></ngx-select>
+          </form-field>
+        </div>
+      </div>
     </form>
   </div>
   <div footer>

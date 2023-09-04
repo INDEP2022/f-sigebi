@@ -17,13 +17,18 @@
 }
 
 .requiredAva {
-  background-color: #dc3545;
+  background-color: #dc3545b3;
 }
 
 .required {
-  background-color: #ffc107;
+  background-color: #ffc107a6;
 }
 
 .update {
-  background-color: #17a2b8;
+  background-color: #17a2b899;
+  input.form-control {
+    &:focus {
+      background-color: #17a2b899;
+    }
+  }
 }
