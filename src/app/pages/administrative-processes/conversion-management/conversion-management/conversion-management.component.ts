@@ -192,7 +192,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     this.goodServices.getById(idGood).subscribe({
       next: (response: any) => {
         this.form.get('tipo').markAsTouched();
-        console.log(response.data[0]);
+        console.log(response);
         this.good = response.data[0];
         this.loadActER(this.good.id);
         this.loadDescriptionStatus(this.good.id);
@@ -501,5 +501,13 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
       `Id Conversión: ${this.conversion.id} , Password: ${this.conversion.pwAccess}`,
       ''
     );
+  }
+  newGenerate() {
+    this.idConversion.setValue(null);
+    this.view = false;
+    this.date.setValue(null);
+    this.tipo.setValue(null);
+    this.actaConversion.setValue(null);
+    this.saved = false;
   }
 }

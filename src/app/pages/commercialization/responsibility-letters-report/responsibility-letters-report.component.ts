@@ -345,9 +345,10 @@ export class ResponsibilityLettersReportComponent
 
   getComerLetterById(id: number) {
     this.loading = true;
+    console.log('ID COMMER LETTER', id);
     this.comerLetterService.getById(id).subscribe({
       next: data => {
-        this.clientForm.reset();
+        // this.clientForm.reset();
         // this.loading = false;
         this.letter = data;
         console.log(data, this.letter);
@@ -380,6 +381,7 @@ export class ResponsibilityLettersReportComponent
         // this.comerLibsForm
         //   .get('paragraph1')
         //   .setValue(this.comerLibsForm.value.paragraph1);
+        console.log('ID DE CARTA', this.letter.id);
         this.comerLetterService
           .getByIdResponsability(this.letter.id) // 1 EL UNO ES PARA PROBAR
           .subscribe({
@@ -658,6 +660,7 @@ export class ResponsibilityLettersReportComponent
     this.dataTableGood.refresh();
     this.totalItems = 0;
     this.respForm.reset();
+    this.clientForm.reset();
   }
   goBack() {}
 

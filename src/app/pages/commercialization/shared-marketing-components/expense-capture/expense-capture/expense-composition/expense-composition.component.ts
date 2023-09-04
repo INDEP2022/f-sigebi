@@ -20,7 +20,6 @@ export class ExpenseCompositionComponent
   implements OnInit
 {
   toggleInformation = true;
-
   @ViewChild('table') table: Ng2SmartTableComponent;
   constructor(
     private dataService: ComerDetexpensesService,
@@ -45,6 +44,16 @@ export class ExpenseCompositionComponent
           }
         },
       });
+    this.dataPaginated.onUpdated().subscribe({
+      next: response => {
+        console.log(response);
+      },
+    });
+    this.dataPaginated.onChanged().subscribe({
+      next: response => {
+        console.log(response);
+      },
+    });
   }
 
   get PCONDIVXMAND() {
@@ -180,6 +189,7 @@ export class ExpenseCompositionComponent
             this.totalItems = this.data.length;
             this.dataTemp = [...this.data];
             this.getPaginated(this.params.value);
+
             this.loading = false;
           } else {
             this.notGetData();
