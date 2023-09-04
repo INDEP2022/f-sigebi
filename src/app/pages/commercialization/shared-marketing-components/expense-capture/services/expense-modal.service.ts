@@ -21,16 +21,16 @@ export class ExpenseModalService extends OpenModalListFiltered {
 
   openModalMotives() {
     let context: any = {
-      title: 'Seleccione uno o varios Motivos',
+      title2: 'Seleccione uno o varios Motivos',
       columnsType: {
         descriptionCause: {
-          title: 'Descripción',
+          title: 'Motivo',
           type: 'string',
           sort: false,
         },
       },
       service: this.revisionReasonService,
-      settings: { ...TABLE_SETTINGS },
+      settings: { ...TABLE_SETTINGS, selectMode: 'multi' },
       dataObservableListParamsFn: this.revisionReasonService.getAllFilterSelf2,
     };
     // if (this.searchField) {
