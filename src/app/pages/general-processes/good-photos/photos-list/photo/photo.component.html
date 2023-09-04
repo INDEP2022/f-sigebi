@@ -3,6 +3,7 @@
   (dblclick)="typedblClickAction === 1 ? openDocumentsViewer() : editPhoto()">
   <div class="col-md-12 p-0">
     <div class="user" *ngIf="loggedUser !== user">{{ user }}</div>
+    <div>{{ filename }}</div>
     <img [src]="loading ? loadingGif : imgSrc" [alt]="filename" width="100%" />
   </div>
 </div>
