@@ -32,9 +32,11 @@
   &.requiredAva {
     td {
       &:nth-child(2) {
-        background-color: #dc3545;
+        background-color: #dc3545b3;
         input.form-control {
-          background-color: #dc3545 !important;
+          &:focus {
+            background-color: #dc3545b3 !important;
+          }
         }
       }
     }
@@ -43,9 +45,11 @@
   &.required {
     td {
       &:nth-child(2) {
-        background-color: #ffc107;
+        background-color: #ffc107a6;
         input.form-control {
-          background-color: #ffc107 !important;
+          &:focus {
+            background-color: #ffc107a6 !important;
+          }
         }
       }
     }
@@ -54,11 +58,13 @@
   &.update {
     td {
       &:nth-child(2) {
-        background-color: #17a2b8;
+        background-color: #17a2b899;
         color: white;
         input.form-control {
-          background-color: #17a2b8 !important;
-          color: white;
+          &:focus {
+            background-color: #17a2b899 !important;
+            color: white;
+          }
         }
         ng2-smart-table-cell {
           app-good-cell-value {

@@ -3,7 +3,10 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   catchError,
   firstValueFrom,
+  forkJoin,
   map,
+  mergeMap,
+  Observable,
   of,
   take,
   takeUntil,
@@ -23,6 +26,7 @@ import { SpentIService } from '../../services/spentI.service';
 import { SpentMService } from '../../services/spentM.service';
 import { NotifyComponent } from '../notify/notify.component';
 import { COLUMNS } from './columns';
+import { NotLoadedsModalComponent } from './not-loadeds-modal/not-loadeds-modal.component';
 
 @Component({
   selector: 'app-expense-comercial',
@@ -32,7 +36,7 @@ import { COLUMNS } from './columns';
 export class ExpenseComercialComponent extends BasePage implements OnInit {
   // params
   @Input() address: string;
-
+  errorsClasification: any[] = [];
   //
   toggleInformation = true;
   reloadLote = false;
@@ -379,6 +383,14 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.dataService.dataCompositionExpenses;
   }
 
+  get dataCompositionExpensesToUpdateClasif() {
+    return this.dataCompositionExpenses
+      ? this.dataCompositionExpenses.filter(
+          row => row.reportDelit && row.reportDelit === true && row.goodNumber
+        )
+      : [];
+  }
+
   get conceptNumberValue() {
     return this.conceptNumber ? this.conceptNumber.value : null;
   }
@@ -387,11 +399,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     await this.dataService.updateByGoods(true);
   }
 
-  updateClasif() {
-    const VALIDA_DET = this.dataCompositionExpenses.filter(
-      row => row.changeStatus && row.changeStatus === true && row.goodNumber
-    );
+  validationForkJoin(obs: Observable<any>[]) {
+    return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
+  }
 
+  async updateClasif() {
+    const VALIDA_DET = this.dataCompositionExpensesToUpdateClasif;
+    this.errorsClasification = [];
     if (VALIDA_DET.length === 0) {
       this.alert(
         'error',
@@ -405,47 +419,73 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         '¿Desea cambiar el clasificador de los bienes a Vehiculo con Reporte de Robo?'
       ).then(x => {
         if (x.isConfirmed) {
-          let errors = [];
-          this.dataCompositionExpenses.forEach(async row => {
-            if (
-              row.changeStatus &&
-              row.changeStatus === true &&
-              row.goodNumber
-            ) {
-              const result = await firstValueFrom(
-                this.screenService
-                  .PUP_VAL_BIEN_ROBO({
-                    goodNumber: row.goodNumber,
-                    type: 'U',
-                    screenKey: 'FCOMER084',
-                    conceptNumber: this.conceptNumber.value,
+          let errors: any[] = [];
+          forkJoin(
+            VALIDA_DET.map(async row => {
+              return this.screenService
+                .PUP_VAL_BIEN_ROBO({
+                  goodNumber: row.goodNumber,
+                  type: 'U',
+                  screenKey: 'FCOMER084',
+                  conceptNumber: this.conceptNumber.value,
+                })
+                .pipe(
+                  take(1),
+                  catchError(x => of(null)),
+                  tap(x => {
+                    console.log(x);
+                    if (x === null) {
+                      // console.log('ERROR');
+                      errors.push({ goodNumber: row.goodNumber });
+                    }
                   })
-                  .pipe(
-                    catchError(x => of(null)),
-                    tap(x => {
-                      // console.log(x)
-                    })
-                  )
-              );
-              // console.log(result);
-              if (!result) {
-                // console.log('ERROR');
-                errors.push(row.goodNumber);
-              } else {
-                // if(result.message[0]){
-                // }
+                );
+            })
+          )
+            .pipe(
+              takeUntil(this.$unSubscribe),
+              mergeMap(x => this.validationForkJoin(x))
+            )
+            .subscribe(x => {
+              console.log(x);
+
+              if (errors.length === 0) {
+                this.alert(
+                  'success',
+                  'Cambio de Clasificación a Vehiculo con Reporte de Robo',
+                  'Realizado correctamente'
+                );
               }
-            }
-          });
-          if (errors.length > 0) {
-            this.alert(
-              'error',
-              'Registros no encontrados por clave pantalla y número de concepto',
-              ''
-            );
-          }
+              if (errors.length === VALIDA_DET.length) {
+                this.alert(
+                  'error',
+                  'Registros no encontrados por clave pantalla y número de concepto',
+                  ''
+                );
+              } else if (errors.length > 0) {
+                this.alert(
+                  'warning',
+                  'Cambio de Clasificación a Vehiculo con Reporte de Robo',
+                  'No todos los bienes pudieron cambiar su clasificador por no encontrarse en búsqueda por clave pantalla y número de concepto'
+                );
+              }
+              this.errorsClasification = errors;
+            });
         }
       });
     }
+  }
+
+  showNotLoads() {
+    let config: ModalOptions = {
+      initialState: {
+        data: this.errorsClasification,
+        dataTemp: this.errorsClasification,
+        totalItems: this.errorsClasification.length,
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(NotLoadedsModalComponent, config);
   }
 }

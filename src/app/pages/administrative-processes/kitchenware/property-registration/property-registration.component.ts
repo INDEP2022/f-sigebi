@@ -277,11 +277,11 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
         if (data.search !== '') {
           console.log(data);
           paramsF.addFilter(
-            data.field === 'id'
+            data.field === 'noGoodMenaje'
               ? 'menajeDescription.id'
               : `menajeDescription.${data.field}`,
             data.search,
-            data.field !== 'id' ? SearchFilter.ILIKE : SearchFilter.EQ
+            data.field !== 'noGoodMenaje' ? SearchFilter.ILIKE : SearchFilter.EQ
           );
         }
       }
@@ -301,13 +301,13 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
               if (menaje.menajeDescription === null) {
                 return {
                   noGoodMenaje: menaje.noGoodMenaje,
-                  id: menaje.noGoodMenaje as number,
+                  // id: menaje.noGoodMenaje as number,
                   description: '' as string,
                 } as IGood;
               } else {
                 return {
                   noGoodMenaje: menaje.noGoodMenaje,
-                  id: menaje.menajeDescription.id as number,
+                  // id: menaje.menajeDescription.id as number,
                   description: menaje.menajeDescription.description as string,
                 } as IGood;
               }
