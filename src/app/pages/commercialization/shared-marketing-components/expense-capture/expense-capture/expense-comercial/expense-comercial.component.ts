@@ -21,6 +21,7 @@ import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae
 import { BasePage } from 'src/app/core/shared';
 import { secondFormatDateToDate } from 'src/app/shared/utils/date';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
+import { ExpenseModalService } from '../../services/expense-modal.service';
 import { ExpenseScreenService } from '../../services/expense-screen.service';
 import { SpentIService } from '../../services/spentI.service';
 import { SpentMService } from '../../services/spentM.service';
@@ -69,6 +70,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private parameterModService: ParametersModService,
     private sirsaeService: InterfacesirsaeService,
+    private expenseModalService: ExpenseModalService,
     private parameterService: ParametersConceptsService
   ) {
     super();
@@ -169,6 +171,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         }
       },
     });
+    // this.expenseModalService.selectedMotivesSubject.subscribe({
+    //   next: response => {
+    //     console.log(response);
+    //   },
+    // });
   }
 
   reloadLoteEvent(event: any) {
@@ -387,6 +394,14 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.dataCompositionExpenses
       ? this.dataCompositionExpenses.filter(
           row => row.reportDelit && row.reportDelit === true && row.goodNumber
+        )
+      : [];
+  }
+
+  get dataCompositionExpensesStatusChange() {
+    return this.dataCompositionExpenses
+      ? this.dataCompositionExpenses.filter(
+          row => row.changeStatus && row.changeStatus === true && row.goodNumber
         )
       : [];
   }
