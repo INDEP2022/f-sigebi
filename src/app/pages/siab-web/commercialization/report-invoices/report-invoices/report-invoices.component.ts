@@ -44,6 +44,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
   data: any;
   year1: number;
   inputControl = new FormControl('');
+  validateExcel: boolean = true;
 
   array: any;
   arrayData: any;
@@ -289,6 +290,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
   }
 
   consult() {
+    this.validateExcel = true;
     this.show = true;
     this.array = [];
     this.dataFormatPercentage = [];
@@ -481,6 +483,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
       console.log(body);
       this.msInvoiceService.getDetailGetGegrafica(body, param).subscribe({
         next: resp => {
+          this.validateExcel = false;
           //console.log(resp.data);
           this.data2.load(resp.data);
           this.data2.refresh();
@@ -490,6 +493,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
           this.loading = false;
         },
         error: err => {
+          this.validateExcel = true;
           this.loading = false;
           this.data.load([]);
           this.data.refresh();
