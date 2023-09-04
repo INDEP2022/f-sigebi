@@ -76,7 +76,7 @@ export class ExpenseConceptsListModalComponent
     return this.expenseConceptsService.getAddressCode(address);
   }
 
-  onEditConfirm(body: any) {
+  private onEditConfirm(body: any) {
     console.log(event);
     if (body) {
       this.conceptsService

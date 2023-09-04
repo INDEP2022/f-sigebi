@@ -74,7 +74,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     filterParams.limit = 120;
     filterParams.addFilter('classifGoodNumber', this.clasification);
     filterParams.addFilter('columnNumber', '51', SearchFilter.NOTIN);
-    filterParams.addFilter3('sortBy', 'attribute:ASC');
+    // filterParams.addFilter3('sortBy', 'attribute:ASC');
     const good = this.good as any;
     this.goodsqueryService
       .getAtribuXClasif(filterParams.getParams())
@@ -82,9 +82,11 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           this.val_atributos_inmuebles = 0;
-
           if (response.data && response.data.length > 0) {
-            const newData = response.data;
+            // const newData = response.data;
+            const newData = response.data.sort((a, b) => {
+              return a.columnNumber - b.columnNumber;
+            });
             console.log(this.data);
             if (this.loadInventary) {
               this.data = newData.map((item, index) => {

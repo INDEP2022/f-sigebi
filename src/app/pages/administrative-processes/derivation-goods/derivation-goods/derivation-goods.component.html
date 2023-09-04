@@ -180,7 +180,8 @@
                 type="number"
                 class="form-control"
                 formControlName="classifier"
-                oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);" />
+                oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);"
+                [readOnly]="true" />
             </form-field>
           </div>
 
@@ -218,11 +219,11 @@
               Cambiar Estatus
             </button>
           </div>
-          <div class="col-md-4 col-sm-6 col-xs-12">
+          <!-- <div class="col-md-4 col-sm-6 col-xs-12">
             <button class="btn btn-danger btn-sm active mr-3" (click)="clean()">
               Limpiar <i class="fas fa-eraser"> </i>
             </button>
-          </div>
+          </div> -->
           <div class="col-md-4 col-sm-6 col-xs-12">
             <button
               [disabled]="flagUpdate"

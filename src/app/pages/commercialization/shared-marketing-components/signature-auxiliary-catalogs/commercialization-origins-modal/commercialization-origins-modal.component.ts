@@ -85,11 +85,13 @@ export class CommercializationOriginsModalComponent
       this.formGroup.markAllAsTouched();
       return;
     }
+    this.loading = true;
     if (this.edit == false) {
       this.svSignatureAuxiliaryCatalogsService
         .createComerOrigins(this.formGroup.value)
         .subscribe({
           next: res => {
+            this.loading = false;
             console.log('RESPONSE', res);
             this.onConfirm.emit(this.formGroup.value);
             this.alert('success', 'Registro Creado Correctamente', '');
@@ -97,6 +99,7 @@ export class CommercializationOriginsModalComponent
             this.close();
           },
           error: error => {
+            this.loading = false;
             console.log(error);
             this.alert(
               'warning',
@@ -110,6 +113,7 @@ export class CommercializationOriginsModalComponent
         .updateComerOrigins(this.formGroup.value.originId, this.formGroup.value)
         .subscribe({
           next: res => {
+            this.loading = false;
             console.log('RESPONSE', res);
             this.onConfirm.emit(this.formGroup.value);
             this.alert('success', 'Registro Actualizado Correctamente', '');
@@ -117,6 +121,7 @@ export class CommercializationOriginsModalComponent
             this.close();
           },
           error: error => {
+            this.loading = false;
             console.log(error);
             this.alert(
               'warning',

@@ -1,9 +1,12 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-billing-payments-modal',
@@ -11,18 +14,20 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class billingPaymentsModalComponent extends BasePage implements OnInit {
-  title: string = 'Detalle de pago';
+  title: string = 'Detalle de Pago';
   edit: boolean = true;
   form: FormGroup = new FormGroup({});
   billing: any;
   factura: number;
   allotment: any;
+  pago = new DefaultSelect();
   @Output() refresh = new EventEmitter<true>();
 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private paymentService: PaymentService
+    private paymentService: PaymentService,
+    private accountMovementService: AccountMovementService
   ) {
     super();
   }
@@ -50,8 +55,27 @@ export class billingPaymentsModalComponent extends BasePage implements OnInit {
       this.form.patchValue(this.billing);
       this.form.get('id_factura').setValue(this.factura);
       this.form.get('id_factura').disable();
+      this.form.get('id_evento').disable();
+      this.form.get('lote_publico').disable();
+      this.form.get('id_pago').disable();
+      this.form.get('referencia').disable();
+      this.form.get('monto').disable();
     }
   }
+
+  getMont(params: ListParams) {
+    this.accountMovementService.getMetodoPago(params).subscribe({
+      next: data => {
+        this.pago = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.pago = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  changeMont(event: any) {}
 
   close() {
     this.modalRef.hide();
