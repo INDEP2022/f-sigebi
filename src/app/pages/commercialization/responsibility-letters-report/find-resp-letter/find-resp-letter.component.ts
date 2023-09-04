@@ -125,7 +125,7 @@ export class FindRespLetterComponent extends BasePage implements OnInit {
   }
   handleSuccess(): void {
     if (!this.selectedRow) {
-      this.alert('warning', 'Selecciona un Registro para Continuar', '');
+      this.alert('warning', 'Selecciona un registro para continuar', '');
       return;
     }
     this.loading = true;
