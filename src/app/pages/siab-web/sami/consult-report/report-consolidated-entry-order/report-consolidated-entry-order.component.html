@@ -1,0 +1,224 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REPORTE CONSOLIDADO ÓRDENES DE INGRESO</h5>
+  </div>
+  <div body>
+    <h5 class="title">Listado de Órdenes de Ingreso</h5>
+    <div class="row pt-4">
+      <div class="btn-toolbar pt-3">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive pt-3'"
+          [settings]="settings"
+          [source]="infoOrderService">
+        </ng2-smart-table>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+
+    <h5 class="title pt-3">Muestreo de Bienes</h5>
+    <div class="row pt-3">
+      <div class="btn-toolbar pt-3">
+        <app-columns-select
+          [(settings)]="settingsSampGood"></app-columns-select>
+      </div>
+      <div [class]="loadingSampGood ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive pt-3'"
+          [settings]="settingsSampGood"
+          [source]="infoSamplingGoods">
+        </ng2-smart-table>
+        <app-pagination
+          [params]="paramsSampGood"
+          [totalItems]="totalItemsSampGood"></app-pagination>
+      </div>
+    </div>
+
+    <h5 class="title pt-3">Servicios</h5>
+    <div class="row pt-3">
+      <div class="btn-toolbar pt-3">
+        <app-columns-select
+          [(settings)]="settingsServices"></app-columns-select>
+      </div>
+      <div [class]="loadingServices ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive pt-3'"
+          [settings]="settingsServices"
+          [source]="infoOrderServices">
+        </ng2-smart-table>
+        <app-pagination
+          [params]="paramsServices"
+          [totalItems]="totalItemsService"></app-pagination>
+      </div>
+    </div>
+
+    <h5 class="title pt-3">Órdenes de Pago Asociadas</h5>
+    <div class="row pt-3">
+      <div class="btn-toolbar pt-3">
+        <app-columns-select [(settings)]="settingsOrderAs"></app-columns-select>
+      </div>
+      <div [class]="loadingOrderAs ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive pt-3'"
+          [settings]="settingsOrderAs"
+          [source]="infoOrderAs">
+        </ng2-smart-table>
+        <app-pagination
+          [params]="paramsOrderAs"
+          [totalItems]="totalItemsOrderAs"></app-pagination>
+      </div>
+    </div>
+
+    <form [formGroup]="form" class="form-material">
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('dateOrdenPayment')"
+            label="Fecha Órden Pago">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="dateOrdenPayment" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('AreaSolicitante')"
+            label="Area Solicitante">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="AreaSolicitante" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('DireccionAreaSol')"
+            label="Dirección Area Solicitante">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="DireccionAreaSol" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="form.get('Benificiario')" label="Beneficiario">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="Benificiario" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('typeOperation')"
+            label="Tipo Operación">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="typeOperation" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="description" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('typeAdjudicación')"
+            label="Tipo Adjudicación">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="typeAdjudicación" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('condicionesPago')"
+            label="Condiciones Pago">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="condicionesPago" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('InsEspeciales')"
+            label="Instrucciones Especiales">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="InsEspeciales" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="form.get('nomElabora')" label="Nombre Elabora">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="nomElabora" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field [control]="form.get('numContrato')" label="No. Contrato">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="numContrato" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('totServicios')"
+            label="Total Servicios">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="totServicios" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
