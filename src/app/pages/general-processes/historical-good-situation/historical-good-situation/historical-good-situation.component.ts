@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
@@ -13,6 +14,7 @@ import {
   tap,
   throwError,
 } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -21,6 +23,7 @@ import {
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { FindInventaryComponent } from '../find-inventary/find-inventary.component';
 import { HistoricalGoodSituationForm } from '../utils/historical-good-situation-form';
 import { HISTORICAL_GOOD_SITUATION_COLUMNS } from './historical-good-situation-columns';
 
@@ -46,7 +49,7 @@ export class HistoricalGoodSituationComponent
   goodId: number = null;
   // params = new BehaviorSubject(new FilterParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
-
+  id: number = null;
   history: any[] = [];
   totalItems = 0;
   data: LocalDataSource = new LocalDataSource();
@@ -60,7 +63,8 @@ export class HistoricalGoodSituationComponent
     private activatedRoute: ActivatedRoute,
     private historyGoodServie: HistoryGoodService,
     private goodService: GoodService,
-    private location: Location
+    private location: Location,
+    protected modalService: BsModalService
   ) {
     super();
     this.activatedRoute.queryParams
@@ -236,6 +240,19 @@ export class HistoricalGoodSituationComponent
         this.params.next(params);
       })
     );
+  }
+  findInventary(provider?: any) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      provider,
+    };
+
+    let modalRef = this.modalService.show(FindInventaryComponent, modalConfig);
+    modalRef.content.onSave.subscribe((next: any) => {
+      console.log('aaaa', next);
+      this.controls.goodNumber.setValue(next.id);
+      this.form.patchValue(next);
+    });
   }
   cleanForm() {
     this.form.reset();
