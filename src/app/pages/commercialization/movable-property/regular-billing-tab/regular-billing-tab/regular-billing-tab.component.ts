@@ -12,6 +12,15 @@ export class RegularBillingTabComponent implements OnInit {
   count: number = 0;
   filter: any = {};
   form: FormGroup;
+  values: any = {
+    sum1: 0,
+    sum2: 0,
+    sum3: 0,
+    sum4: 0,
+    sum5: 0,
+    sum6: 0,
+  };
+
   constructor() {}
 
   ngOnInit(): void {}
