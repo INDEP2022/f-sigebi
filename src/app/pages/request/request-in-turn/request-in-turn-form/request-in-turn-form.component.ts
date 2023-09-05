@@ -183,21 +183,49 @@ export class RequestInTurnFormComponent extends BasePage implements OnInit {
 
   getRegionalDelegationId(params: ListParams) {
     // const id = this.authService.decodeToken().department;
-    // console.log(id);
-    //return id;
-    params['filter.description'] = `$ilike:${params.text}`;
+    const isNumber = !isNaN(Number(params.text));
+    if (params.text != '' && isNumber != true) {
+      params['filter.description'] = `$ilike:${params.text}`;
+    } else if (params.text != '' && isNumber == true) {
+      params['filter.id'] = `$eq:${Number(params.text)}`;
+    }
     params['sortBy'] = 'description:ASC';
+    delete params.text;
+    delete params['search'];
     this.regDelegationService.getAll(params).subscribe({
       next: resp => {
+        resp.data.map((item: any) => {
+          item.idDescript = item.id + ' - ' + item.description;
+        });
         this.selectRegDele = new DefaultSelect(resp.data, resp.count);
       },
       error: error => (this.selectRegDele = new DefaultSelect([], 0, true)),
     });
   }
+
+  changeRegDele(event: any) {
+    if (event == undefined) {
+      this.getRegionalDelegationId(new ListParams());
+    }
+  }
+
   getAffair(params?: ListParams) {
+    const isNumber = !isNaN(Number(params.text));
+    if (params.text != '' && isNumber != true) {
+      params['filter.description'] = params.text;
+    } else if (params.text != '' && isNumber == true) {
+      params['filter.id'] = Number(params.text);
+    }
+    delete params.text;
+    delete params['search'];
+    //params['filter.nbOrigen'] = 'SAMI'; SIAB
     params['sortBy'] = 'description:ASC';
     this.affairService.getAll(params).subscribe(
       (data: IListResponse<IAffair>) => {
+        data.data.map((item: any) => {
+          item.idDescrip = item.id + ' - ' + item.description;
+        });
+
         this.selectAffeir = new DefaultSelect(data.data, data.count);
       },
       error => {
@@ -205,6 +233,13 @@ export class RequestInTurnFormComponent extends BasePage implements OnInit {
       }
     );
   }
+
+  changeAffair(event: any) {
+    if (event == undefined) {
+      this.getAffair(new ListParams());
+    }
+  }
+
   getTransferente(params?: ListParams) {
     params['filter.transferent.nameTransferent'] = `$ilike:${params.text}`;
     params['sortBy'] = 'nameTransferent:ASC';
@@ -232,6 +267,10 @@ export class RequestInTurnFormComponent extends BasePage implements OnInit {
             return x.stateCode;
           })
           .filter((x: any) => x != undefined);
+
+        result.map((item: any) => {
+          item.idDescrip = item.id + ' - ' + item.descCondition;
+        });
 
         this.selectState = new DefaultSelect(result, result.length);
       },

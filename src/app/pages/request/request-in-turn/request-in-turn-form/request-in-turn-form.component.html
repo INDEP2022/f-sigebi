@@ -131,9 +131,10 @@
               control="regionalDelegationId"
               (fetchItems)="getRegionalDelegationId($event)"
               [data]="selectRegDele"
-              bindLabel="description"
+              bindLabel="idDescript"
               label="Delegaci&oacute;n Regional"
-              value="id"></ngx-select>
+              value="id"
+              (change)="changeRegDele($event)"></ngx-select>
           </div>
           <div class="col-md-4">
             <form-field
@@ -159,7 +160,7 @@
               control="stateOfRepublic"
               (fetchItems)="getStateOfRepublic($event)"
               [data]="selectState"
-              bindLabel="descCondition"
+              bindLabel="idDescrip"
               label="Estado"
               value="id"></ngx-select>
           </div>
@@ -169,9 +170,10 @@
               control="affair"
               (fetchItems)="getAffair($event)"
               [data]="selectAffeir"
-              bindLabel="description"
+              bindLabel="idDescrip"
               label="Asunto"
-              value="id"></ngx-select>
+              value="id"
+              (change)="changeAffair($event)"></ngx-select>
           </div>
         </div>
 

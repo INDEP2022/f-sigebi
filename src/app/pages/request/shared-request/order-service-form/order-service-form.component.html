@@ -21,38 +21,38 @@
   </h5>
 
   <form
-    [formGroup]="form"
+    [formGroup]="ordServform"
     class="form-horizontal"
     style="margin: 0 auto"
     *ngIf="showOrderservice">
     <div class="col-md-4">
       <div class="form-group">
         <label class="col-lg-6 text-right">Folio orden servicio&#58;</label>
-        <span> Metropolitana-SAT-1340-OS</span>
+        <span>{{ orderService?.serviceOrderFolio }}</span>
       </div>
 
       <div class="form-group" *ngIf="op != 1 && op != 2">
         <label class="col-lg-6 text-right"
           >Folio reporte implementación&#58;</label
         >
-        <span> Metropolitana-SAT-1333-RI </span>
+        <span> {{ orderService?.folioReportImplementation }} </span>
       </div>
 
       <div class="form-group">
         <label class="col-lg-6 text-right">Fecha de turnano&#58;</label>
-        <span> 25-nov-2022 </span>
+        <span> {{ orderService?.shiftDate | date : 'YYY/MM/dd' }} </span>
       </div>
     </div>
 
     <div class="col-md-4">
       <div class="form-group">
         <label class="col-lg-6 text-right">Usuario turnado&#58;</label>
-        <span> Usuario</span>
+        <span> {{ orderService?.shiftUser }} </span>
       </div>
 
       <div class="form-group">
         <label class="col-lg-6 text-right">No&#46; contrato&#58;</label>
-        <span> 124 </span>
+        <span> {{ orderService?.contractNumber }} </span>
       </div>
 
       <div class="form-group">
@@ -60,13 +60,13 @@
         <input
           type="text"
           class="form-control"
-          formControlName="tranportZone"
+          formControlName="contractNumber"
           style="width: 97px; height: 24px"
           *ngIf="(!showForm && op == 9) || (!showForm && op == 13)" />
         <input
           type="text"
           class="form-control"
-          formControlName="tranportZone"
+          formControlName="contractNumber"
           style="width: 97px; height: 24px"
           *ngIf="(showForm && op != 9) || (!showForm && op != 9)"
           readonly />
@@ -96,12 +96,12 @@
           <input
             id="label"
             type="checkbox"
-            formControlName="visit"
+            formControlName="eyeVisit"
             *ngIf="(!showForm && op == 9) || (!showForm && op == 13)" />
           <input
             id="label"
             type="checkbox"
-            formControlName="visit"
+            formControlName="eyeVisit"
             readonly
             *ngIf="
               (!showForm && op != 9) ||
@@ -116,13 +116,13 @@
         <input
           type="text"
           class="form-control"
-          formControlName="razonsNoRealization"
+          formControlName="reasonsNotPerform"
           style="width: 290px; height: 27px"
           *ngIf="(!showForm && op == 9) || (!showForm && op == 13)" />
         <input
           type="text"
           class="form-control"
-          formControlName="razonsNoRealization"
+          formControlName="reasonsNotPerform"
           style="width: 290px; height: 27px"
           *ngIf="(showForm && op != 9) || (!showForm && op != 9)"
           readonly />
@@ -133,12 +133,12 @@
           <input
             id="label2"
             type="checkbox"
-            formControlName="consolidate"
+            formControlName="userContainers"
             *ngIf="(!showForm && op == 9) || (!showForm && op == 13)" />
           <input
             id="label2"
             type="checkbox"
-            formControlName="consolidate"
+            formControlName="userContainers"
             *ngIf="
               (!showForm && op != 9) ||
               (!showForm && op != 13) ||
