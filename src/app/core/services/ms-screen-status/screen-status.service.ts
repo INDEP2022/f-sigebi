@@ -83,4 +83,14 @@ export class ScreenStatusService extends HttpService {
     const route = `${ScreenStatusEndpoints.GetCount}`;
     return this.post(route, params);
   }
+
+  getStatusScreen(key: any, action: any) {
+    const route = `${ScreenStatusEndpoints.StatusXScreenList}?filter.screenKey=$ilike:${key}&filter.action=$ilike:${action}`;
+    return this.get(route);
+  }
+
+  getStatusandScreen(key: any, status: any) {
+    const route = `${ScreenStatusEndpoints.StatusXScreenList}?filter.screenKey=$ilike:${key}&filter.status=$ilike:${status}`;
+    return this.get(route);
+  }
 }
