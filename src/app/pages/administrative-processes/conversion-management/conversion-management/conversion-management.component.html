@@ -99,6 +99,7 @@
             (click)="onChangeGood()">
             Buscar Bien <i class="fas fa-search"></i>
           </button>
+
           <button class="btn btn-danger btn-sm active" (click)="clean()">
             Limpiar <i class="fas fa-eraser"></i>
           </button>
@@ -169,6 +170,17 @@
                 (click)="generatePaswword()"
                 [disabled]="saved">
                 Generar Contraseña
+              </button>
+            </div>
+            <div class="m-3">
+              <button
+                type="button"
+                tooltip="Nueva"
+                containerClass="tooltip-style"
+                (click)="newGenerate()"
+                class="btn btn-info btn-sm active ml-2 mr-2"
+                [disabled]="!view">
+                Nueva Conversión <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
             </div>
           </div>

@@ -12,6 +12,7 @@ import { minDate } from 'src/app/common/validations/date.validators';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 import { IGoodInvAvailableView } from 'src/app/core/models/ms-goodsinv/goodsinv.model';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
@@ -19,7 +20,7 @@ import { NotificationService } from 'src/app/core/services/ms-notification/notif
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
-  EMAIL_PATTERN,
+  EMAIL_PATTERN2,
   NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
@@ -147,7 +148,8 @@ export class SchedulingDeliveriesFormComponent
     private router: Router,
     private modalService: BsModalService,
     private modalRef: BsModalRef,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private regionalDelegationService: RegionalDelegationService
   ) {
     super();
 
@@ -334,7 +336,7 @@ export class SchedulingDeliveriesFormComponent
         null,
         [
           Validators.required,
-          Validators.pattern(EMAIL_PATTERN),
+          Validators.pattern(EMAIL_PATTERN2),
           Validators.maxLength(255),
         ],
       ],
@@ -574,98 +576,149 @@ export class SchedulingDeliveriesFormComponent
   }
 
   saveProgDelivery() {
-    let typeEvent: any;
-    let store: any;
-    let transferent: any;
-    if (this.programmingDeliveryInfo?.typeEvent) {
-      typeEvent = this.programmingDeliveryInfo?.typeEvent;
-    } else {
-      typeEvent = this.schedulingDeliverieForm.get('typeEvent');
-    }
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea guardar la programación de entrega?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        let typeEvent: any;
+        let store: any;
+        let transferent: any;
+        if (this.programmingDeliveryInfo?.typeEvent) {
+          typeEvent = this.programmingDeliveryInfo?.typeEvent;
+        } else {
+          typeEvent = this.schedulingDeliverieForm.get('typeEvent');
+        }
 
-    if (this.programmingDeliveryInfo?.store) {
-      store = this.programmingDeliveryInfo?.store;
-    } else {
-      store = this.schedulingDeliverieForm.get('store');
-    }
+        if (this.programmingDeliveryInfo?.store) {
+          store = this.programmingDeliveryInfo?.store;
+        } else {
+          store = this.schedulingDeliverieForm.get('store');
+        }
 
-    if (this.programmingDeliveryInfo?.transferId) {
-      transferent = this.programmingDeliveryInfo?.transferId;
-    } else {
-      transferent = this.schedulingDeliverieForm.get('transferId');
-    }
+        if (this.programmingDeliveryInfo?.transferId) {
+          transferent = this.programmingDeliveryInfo?.transferId;
+        } else {
+          transferent = this.schedulingDeliverieForm.get('transferId');
+        }
 
-    this.schedulingDeliverieForm.get('id').setValue(this.programmingDelId);
+        this.schedulingDeliverieForm.get('id').setValue(this.programmingDelId);
 
-    const startDate = moment(
-      this.schedulingDeliverieForm.get('startDate').value,
-      'DD/MM/YYYY HH:mm:ssZ'
-    ).toDate();
-    const endDate = moment(
-      this.schedulingDeliverieForm.get('endDate').value,
-      'DD/MM/YYYY HH:mm:ssZ'
-    ).toDate();
+        const startDate = moment(
+          this.schedulingDeliverieForm.get('startDate').value,
+          'DD/MM/YYYY HH:mm:ssZ'
+        ).toDate();
+        const endDate = moment(
+          this.schedulingDeliverieForm.get('endDate').value,
+          'DD/MM/YYYY HH:mm:ssZ'
+        ).toDate();
 
-    console.log('startDate', startDate);
-    console.log('endDate', endDate);
+        console.log('startDate', startDate);
+        console.log('endDate', endDate);
 
-    const infoSave: IprogrammingDelivery = {
-      id: this.schedulingDeliverieForm.get('id').value,
-      typeEvent: typeEvent,
-      startDate: startDate,
-      store: store,
-      endDate: endDate,
-      transferId: transferent,
-      client: this.schedulingDeliverieForm.get('client').value,
-      email: this.schedulingDeliverieForm.get('email').value,
-      officeDestructionNumber: this.schedulingDeliverieForm.get(
-        'officeDestructionNumber'
-      ).value,
-      company: this.schedulingDeliverieForm.get('company').value,
-      addressee: this.schedulingDeliverieForm.get('addressee').value,
-      placeDestruction:
-        this.schedulingDeliverieForm.get('placeDestruction').value,
-      chargeAddressee:
-        this.schedulingDeliverieForm.get('chargeAddressee').value,
-      locationDestruction: this.schedulingDeliverieForm.get(
-        'locationDestruction'
-      ).value,
-      addressAddressee:
-        this.schedulingDeliverieForm.get('addressAddressee').value,
-      taxpayerName: this.schedulingDeliverieForm.get('taxpayerName').value,
-      metodDestruction:
-        this.schedulingDeliverieForm.get('metodDestruction').value,
-      legalRepresentativeName: this.schedulingDeliverieForm.get(
-        'legalRepresentativeName'
-      ).value,
-      term: this.schedulingDeliverieForm.get('term').value,
-      status: 'PROG_ENTREGA',
-      statusAut: 'SIN_BIENES',
-      statusInstance: 'SIN_INSTANCIA',
-      statusInstanceNumber: 'SIN_INSTANCIA',
-      typeUser: this.typeUser,
-    };
+        const infoSave: IprogrammingDelivery = {
+          id: this.schedulingDeliverieForm.get('id').value,
+          typeEvent: typeEvent,
+          startDate: startDate,
+          store: store,
+          endDate: endDate,
+          transferId: transferent,
+          client: this.schedulingDeliverieForm.get('client').value,
+          email: this.schedulingDeliverieForm.get('email').value,
+          officeDestructionNumber: this.schedulingDeliverieForm.get(
+            'officeDestructionNumber'
+          ).value,
+          company: this.schedulingDeliverieForm.get('company').value,
+          addressee: this.schedulingDeliverieForm.get('addressee').value,
+          placeDestruction:
+            this.schedulingDeliverieForm.get('placeDestruction').value,
+          chargeAddressee:
+            this.schedulingDeliverieForm.get('chargeAddressee').value,
+          locationDestruction: this.schedulingDeliverieForm.get(
+            'locationDestruction'
+          ).value,
+          addressAddressee:
+            this.schedulingDeliverieForm.get('addressAddressee').value,
+          taxpayerName: this.schedulingDeliverieForm.get('taxpayerName').value,
+          metodDestruction:
+            this.schedulingDeliverieForm.get('metodDestruction').value,
+          legalRepresentativeName: this.schedulingDeliverieForm.get(
+            'legalRepresentativeName'
+          ).value,
+          term: this.schedulingDeliverieForm.get('term').value,
+          status: 'PROG_ENTREGA',
+          statusAut: 'SIN_BIENES',
+          statusInstance: 'SIN_INSTANCIA',
+          statusInstanceNumber: 'SIN_INSTANCIA',
+          typeUser: this.typeUser,
+        };
 
-    console.log('infoSave', infoSave);
-    this.programmingRequestService
-      .updateProgrammingDelivery(this.programmingDelId, infoSave)
-      .subscribe({
+        console.log('infoSave', infoSave);
+        this.programmingRequestService
+          .updateProgrammingDelivery(this.programmingDelId, infoSave)
+          .subscribe({
+            next: async response => {
+              console.log('prog Del', response);
+              const generateFolio = await this.generateFolioProgrammingDelivery(
+                response
+              );
+
+              if (generateFolio) {
+                this.disabledTypeEvent = true;
+                this.disabledTransferent = true;
+                this.disabledWarehouse = true;
+                this.checkProgrammingDelivery();
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Programación entrega guardada correctamente'
+                );
+              }
+            },
+            error: error => {
+              console.log('Error ap actualizar', error);
+            },
+          });
+      }
+    });
+  }
+
+  generateFolioProgrammingDelivery(programmingDelivery: IprogrammingDelivery) {
+    return new Promise(async (resolve, reject) => {
+      const showNameDelegation: any = await this.showDelegationName(
+        programmingDelivery.delRegId
+      );
+
+      if (showNameDelegation) {
+        const folioProgDel = `E-${showNameDelegation}-${this.programmingDelId}`;
+        const infoProgramming: IprogrammingDelivery = {
+          id: this.programmingDelId,
+          folio: folioProgDel,
+        };
+
+        this.programmingRequestService
+          .updateProgrammingDelivery(this.programmingDelId, infoProgramming)
+          .subscribe({
+            next: response => {
+              console.log('response Actualizado', response);
+              resolve(true);
+            },
+            error: error => {},
+          });
+      }
+    });
+  }
+
+  showDelegationName(delegationId: number) {
+    return new Promise((resolve, reject) => {
+      this.regionalDelegationService.getById(delegationId).subscribe({
         next: response => {
-          console.log('prog Del', response);
-          this.disabledTypeEvent = true;
-          this.disabledTransferent = true;
-          this.disabledWarehouse = true;
-          this.checkProgrammingDelivery();
-          this.alert(
-            'success',
-            'Correcto',
-            'Programación entrega guardada correctamente'
-          );
+          resolve(response.description);
         },
-        error: error => {
-          console.log('Error ap actualizar', error);
-        },
+        error: error => {},
       });
+    });
   }
 
   startDateSelect(date: any) {
@@ -2336,5 +2389,50 @@ export class SchedulingDeliveriesFormComponent
 
   close() {
     this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+  }
+
+  sendProgramming() {
+    const startDate = this.schedulingDeliverieForm.get('startDate').value;
+    const endDate = this.schedulingDeliverieForm.get('endDate').value;
+    const email = this.schedulingDeliverieForm.get('email').value;
+
+    if (!startDate && !endDate) {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere una fecha de inicio y fin para la programación'
+      );
+    } else if (email == null) {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se debe ingresar un correo electrónico'
+      );
+    } else {
+      const typeEvent = this.schedulingDeliverieForm.get('typeEvent').value;
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        `¿Desea enviar la programación de entrega con folio ${this.programmingDeliveryInfo.folio}?`
+      ).then(question => {
+        if (question.isConfirmed) {
+          console.log('enviar correo electronico');
+          const formData = {
+            idprogramming: this.programmingDelId,
+            eventType: typeEvent,
+          };
+          this.programmingRequestService
+            .sendEmailProgrammingDelivery(formData)
+            .subscribe({
+              next: response => {
+                console.log('Correo enviado', response);
+              },
+              error: error => {
+                console.log('Correo no enviado', error);
+              },
+            });
+        }
+      });
+    }
   }
 }

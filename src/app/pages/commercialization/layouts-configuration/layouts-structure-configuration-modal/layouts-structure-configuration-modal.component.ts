@@ -164,7 +164,7 @@ export class LayoutsStructureConfigurationModalComponent
           this.alert(
             'error',
             'Error al Crear',
-            'Ocurrió un Error al Crear la Estructura del Diseño'
+            'Ocurrió un error al crear la estructura del diseño'
           );
           return;
         },
@@ -177,7 +177,7 @@ export class LayoutsStructureConfigurationModalComponent
     this.alertQuestion(
       'warning',
       'Actualizar Estructura del Diseño',
-      '¿Desea Actualizar la Estructura del Diseño?'
+      '¿Desea actualizar la estructura del diseño?'
     ).then(question => {
       if (question.isConfirmed) {
         this.layoutsConfigService
@@ -188,7 +188,7 @@ export class LayoutsStructureConfigurationModalComponent
               this.alert(
                 'error',
                 'Error al Actualizar',
-                'Ocurrió un Error al Actualizar la Estructura del Diseño'
+                'Ocurrió un error al actualizar la estructura del diseño'
               );
               this.loading = false;
             },

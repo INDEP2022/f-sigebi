@@ -124,7 +124,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           sort: false,
         },
         fechareportecabi: {
-          title: 'Fec. Rep. Cabi',
+          title: 'Fec. Rep. CAB',
           type: 'string',
           sort: false,
         },

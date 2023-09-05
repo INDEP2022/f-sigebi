@@ -263,10 +263,10 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       delete params.text;
       delete params['search'];
     }
-    console.log(params);
 
     this.typeSinisterService.getAll(params).subscribe({
       next: response => {
+        console.log(response);
         this.typeSiniester = new DefaultSelect(response.data, response.count);
       },
       error: error => {
