@@ -3,7 +3,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { SiabReportEndpoints } from 'src/app/common/constants/endpoints/siab-reports-endpoints';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -47,34 +46,6 @@ export class ReturnConfiscationPropertyComponent
       receptionDateTo: [null, Validators.required],
       movementType: [null, Validators.required],
     });
-  }
-
-  onSubmit() {
-    console.log(this.returnConfiscationForm.value);
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FGERADBDEVDECBIEN.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
-
-    const downloadLink = document.createElement('a');
-    downloadLink.href = pdfurl;
-    downloadLink.target = '_blank';
-
-    let params = { ...this.returnConfiscationForm.value };
-    for (const key in params) {
-      if (params[key] === null) delete params[key];
-    }
-
-    setTimeout(() => {
-      this.siabService
-        .getReport(SiabReportEndpoints.FGERADBDEVDECBIEN, params)
-        .subscribe({
-          next: response => {
-            console.log(response);
-            window.open(pdfurl, 'DOCUMENT');
-          },
-          error: () => {
-            window.open(pdfurl, 'DOCUMENT');
-          },
-        });
-    }, 4000);
   }
 
   seleccionarSubDelegacion(subdelegacion: any) {
