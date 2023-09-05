@@ -7,6 +7,8 @@ import { IComerDetExpense } from 'src/app/core/models/ms-spent/comer-detexpense'
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { ISirsaeScrapDTO } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae-model';
+import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { ClassWidthAlert } from 'src/app/core/shared';
 import {
@@ -64,6 +66,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     private expenseModalService: ExpenseModalService,
     private lotService: ExpenseLotService,
     private expenseGoodProcessService: ExpenseGoodProcessService,
+    private interfacesirsaeService: InterfacesirsaeService,
     private comerDetService: ComerDetexpensesService
   ) {
     super();
@@ -77,10 +80,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   private secondSendSolicitud() {
+    debugger;
     const VALIDA_DET = this.dataCompositionExpenses.filter(
       row => row.changeStatus && row.changeStatus === true
     );
-    if (VALIDA_DET.length === 0) {
+    if (VALIDA_DET.length > 0) {
       this.ENVIA_SOLICITUD();
       this.alert('success', 'Actualización Realizada', '');
     }
@@ -177,6 +181,61 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return this.form.get('expenseNumber');
   }
 
+  get coordRegional() {
+    return this.form.get('descurcoord');
+  }
+
+  get comment() {
+    return this.form.get('comment');
+  }
+
+  prepareForm() {
+    this.form = this.fb.group({
+      expenseNumber: [
+        null,
+        [Validators.required, Validators.pattern(NUM_POSITIVE)],
+      ],
+      conceptNumber: [null, [Validators.required]],
+      paymentRequestNumber: [null, [Validators.pattern(NUM_POSITIVE)]],
+      idOrdinginter: [null, [Validators.pattern(NUM_POSITIVE)]],
+      eventNumber: [null],
+      lotNumber: [null],
+      folioAtnCustomer: [null, [Validators.pattern(NUMBERS_DASH_PATTERN)]],
+      dateOfResolution: [null],
+      clkpv: [null, [Validators.required]],
+      descurcoord: [null],
+      comment: [null],
+      invoiceRecNumber: [null, [Validators.pattern(NUM_POSITIVE)]],
+      numReceipts: [null],
+      invoiceRecDate: [null],
+      payDay: [null],
+      captureDate: [null],
+      fecha_contrarecibo: [null],
+      attachedDocumentation: [null],
+      monthExpense: [null],
+      monthExpense2: [null],
+      monthExpense3: [null],
+      monthExpense4: [null],
+      monthExpense5: [null],
+      monthExpense6: [null],
+      monthExpense7: [null],
+      monthExpense8: [null],
+      monthExpense9: [null],
+      monthExpense10: [null],
+      monthExpense11: [null],
+      monthExpense12: [null],
+      exchangeRate: [null, [Validators.pattern(NUM_POSITIVE)]],
+      formPayment: [null],
+      comproafmandsae: [null],
+      capturedUser: [null],
+      nomEmplcapture: [null],
+      authorizedUser: [null],
+      nomEmplAuthorizes: [null],
+      requestedUser: [null],
+      nomEmplRequest: [null],
+    });
+  }
+
   ENVIA_MOTIVOS() {
     this.expenseModalService.openModalMotives();
   }
@@ -216,7 +275,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       this.PDEVPARCIAL !== 'S' &&
       this.PCANVTA
     ) {
-      this.VALIDA_DET(V_VALIDA_DET);
+      if (this.VALIDA_DET(V_VALIDA_DET)) {
+        this.PROCESA_SOLICITUD();
+      }
     } else if (this.PVALIDADET === 'S') {
       if (this.lotNumber && this.lotNumber.value) {
         // this.RECARGA_BIENES_LOTE();
@@ -259,6 +320,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   async updateByGoods(sendToSIRSAE: boolean) {
     console.log(this.dataCompositionExpenses);
+    // this.ENVIA_MOTIVOS();
+    // return;
     // debugger;
     if (sendToSIRSAE) {
       const VALIDA_DET = this.dataCompositionExpenses.filter(
@@ -286,7 +349,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
             if (n_COUN.data.length === 0) {
               this.ENVIA_MOTIVOS();
             } else {
-              this.secondSendSolicitud();
+              this.ENVIA_SOLICITUD();
             }
           } else {
             this.alert('error', 'Evento Equivocado', '');
@@ -375,9 +438,54 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     // return true;
   }
 
-  private processPay() {
+  private ENVIA_SIRSAE_CHATARRA_SP(body: ISirsaeScrapDTO) {
+    return firstValueFrom(
+      this.interfacesirsaeService
+        .sendSirsaeScrapSp(body)
+        .pipe(catchError(x => of({ data: null, message: x })))
+    );
+  }
+
+  private async processPay() {
     // ENVIA_SIRSAE_CHATARRA_OI
-    // ENVIA_SIRSAE_CHATARRA_SP
+    const resultSP = await this.ENVIA_SIRSAE_CHATARRA_SP({
+      spentId: this.expenseNumber.value,
+      payRequestId: this.data.paymentRequestNumber,
+      conceptId: this.conceptNumber.value,
+      urCoordRegional: this.coordRegional.value,
+      comment: this.comment.value,
+      paymentWay: this.form.get('formPayment').value,
+      monthSpent: this.form.get('monthExpense').value,
+      monthSpent2: this.form.get('monthExpense2').value,
+      monthSpent3: this.form.get('monthExpense3').value,
+      monthSpent4: this.form.get('monthExpense4').value,
+      monthSpent5: this.form.get('monthExpense5').value,
+      monthSpent6: this.form.get('monthExpens6').value,
+      monthSpent7: this.form.get('monthExpense7').value,
+      monthSpent8: this.form.get('monthExpense8').value,
+      monthSpent9: this.form.get('monthExpense9').value,
+      monthSpent10: this.form.get('monthExpense10').value,
+      monthSpent11: this.form.get('monthExpense11').value,
+      monthSpent12: this.form.get('monthExpense12').value,
+      paymentDate: this.form.get('payDay').value,
+      voucherNumber: this.form.get('numReceipts').value,
+      attachedDocumentation: this.form.get('attachedDocumentation').value,
+      billRecNumber: this.form.get('invoiceRecNumber').value,
+      billRecDate: this.form.get('invoiceRecDate').value,
+      contract: this.data.contractNumber,
+      eventId: this.form.get('eventNumber').value,
+      userRequests: this.requestedUser.value,
+      userAuthorizes: this.authorizedUser.value,
+      userCaptured: this.capturedUser.value,
+      comproafmandsae: this.form.get('comproafmandsae').value,
+      totDocument: this.data.totDocument,
+      clkpv: this.form.get('clkpv').value,
+    });
+    if (resultSP.data === null) {
+      console.log(resultSP);
+      this.alert('error', 'Envio Sirsae Chatarra SP', resultSP.message);
+      return;
+    }
     this.expenseGoodProcessService
       .PROCESA_EVENTO_CHATARRA(
         this.conceptNumber.value,
@@ -572,52 +680,5 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     } else {
       this.normalSolicitud();
     }
-  }
-
-  prepareForm() {
-    this.form = this.fb.group({
-      expenseNumber: [
-        null,
-        [Validators.required, Validators.pattern(NUM_POSITIVE)],
-      ],
-      conceptNumber: [null, [Validators.required]],
-      paymentRequestNumber: [null, [Validators.pattern(NUM_POSITIVE)]],
-      idOrdinginter: [null, [Validators.pattern(NUM_POSITIVE)]],
-      eventNumber: [null],
-      lotNumber: [null],
-      folioAtnCustomer: [null, [Validators.pattern(NUMBERS_DASH_PATTERN)]],
-      dateOfResolution: [null],
-      clkpv: [null, [Validators.required]],
-      descurcoord: [null],
-      comment: [null],
-      invoiceRecNumber: [null, [Validators.pattern(NUM_POSITIVE)]],
-      numReceipts: [null],
-      invoiceRecDate: [null],
-      payDay: [null],
-      captureDate: [null],
-      fecha_contrarecibo: [null],
-      attachedDocumentation: [null],
-      monthExpense: [null],
-      monthExpense2: [null],
-      monthExpense3: [null],
-      monthExpense4: [null],
-      monthExpense5: [null],
-      monthExpense6: [null],
-      monthExpense7: [null],
-      monthExpense8: [null],
-      monthExpense9: [null],
-      monthExpense10: [null],
-      monthExpense11: [null],
-      monthExpense12: [null],
-      exchangeRate: [null, [Validators.pattern(NUM_POSITIVE)]],
-      formPayment: [null],
-      comproafmandsae: [null],
-      capturedUser: [null],
-      nomEmplcapture: [null],
-      authorizedUser: [null],
-      nomEmplAuthorizes: [null],
-      requestedUser: [null],
-      nomEmplRequest: [null],
-    });
   }
 }

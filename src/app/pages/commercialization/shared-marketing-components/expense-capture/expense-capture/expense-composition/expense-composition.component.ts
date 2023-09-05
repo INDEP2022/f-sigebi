@@ -8,6 +8,7 @@ import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/p
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
+import { ExpenseLotService } from '../../services/expense-lot.service';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -20,13 +21,13 @@ export class ExpenseCompositionComponent
   implements OnInit
 {
   toggleInformation = true;
-
   @ViewChild('table') table: Ng2SmartTableComponent;
   constructor(
     private dataService: ComerDetexpensesService,
     private expenseCaptureDataService: ExpenseCaptureDataService,
     private parameterService: ParametersConceptsService,
-    private parametersModService: ParametersModService
+    private parametersModService: ParametersModService,
+    private lotService: ExpenseLotService
   ) {
     super();
     this.service = this.dataService;
@@ -45,6 +46,16 @@ export class ExpenseCompositionComponent
           }
         },
       });
+    this.dataPaginated.onUpdated().subscribe({
+      next: response => {
+        console.log(response);
+      },
+    });
+    this.dataPaginated.onChanged().subscribe({
+      next: response => {
+        console.log(response);
+      },
+    });
   }
 
   get PCONDIVXMAND() {
@@ -180,6 +191,7 @@ export class ExpenseCompositionComponent
             this.totalItems = this.data.length;
             this.dataTemp = [...this.data];
             this.getPaginated(this.params.value);
+
             this.loading = false;
           } else {
             this.notGetData();
@@ -206,7 +218,7 @@ export class ExpenseCompositionComponent
     if (!this.PCONDIVXMAND) {
       this.alert(
         'warning',
-        'Dispersión de Gastos',
+        'Dispersión de Gastos/Mandatos',
         'Este concepto no admite dispersión de pagos por mandato'
       );
       return;
@@ -214,11 +226,36 @@ export class ExpenseCompositionComponent
     if (!this.eventNumber) {
       this.alert(
         'warning',
-        'Dispersión de Gastos',
+        'Dispersión de Gastos/Mandatos',
         'Debe capturar el evento, para utilizar esta opción'
       );
       return;
     }
+    const row = this.data[0];
+    this.lotService
+      .DIVIDE_MANDATOS({
+        eventId: this.eventNumber,
+        amount2: row.amount,
+        iva2: row.vat,
+        withholding_vat2: row.vatWithholding,
+        withholdingIsr2: row.isrWithholding,
+        expenseId: this.expenseNumber.value,
+      })
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.alert(
+              'success',
+              'Dispersión de Gastos/Mandatos',
+              'Este concepto no admite dispersión de pagos por mandato'
+            );
+          }
+        },
+        error: err => {
+          this.alert('error', 'Dispersión de Gastos/Mandatos', err);
+        },
+      });
     // divide mandatos
   }
 

@@ -363,7 +363,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     this.dataExcel.map((item: any) => {
       item['screenkey'] = 'FRELDECOMISO';
       item['toolbar_user'] = useri;
-      item['forfeitureKey'] = clave;
+      item['clave_decom'] = clave;
       item['money'] = moneda;
     });
 

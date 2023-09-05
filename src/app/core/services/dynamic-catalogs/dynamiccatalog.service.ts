@@ -26,4 +26,12 @@ export class DynamicCatalogsService extends HttpService {
   getOtValor(params: any) {
     return this.post(DinamicCatalogEndPoints.GetOtValor, params);
   }
+
+  getPostQuery(data: {
+    noTransferee: number;
+    cveUnidSat: string;
+    cveProdservSat: string;
+  }) {
+    return this.post(DinamicCatalogEndPoints.PostQuery, data);
+  }
 }

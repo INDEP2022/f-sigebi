@@ -48,3 +48,29 @@ export function getMimeTypeFromBase64(
   }
   return 'unknown';
 }
+
+export function getMimeTypeFromImg(fileName = 'unamedfile') {
+  let ext = fileName.substring(fileName.lastIndexOf('.') + 1);
+  if (ext === undefined || ext === null || ext === '') ext = 'bin';
+  ext = ext.toLowerCase();
+  const signatures: any = {
+    jpg: 'image/jpg',
+    jpeg: 'image/jpeg',
+    png: 'image/png',
+    gif: 'image/gif',
+    tiff: 'image/tiff',
+    tif: 'image/tif',
+    raw: 'image/raw',
+    webm: 'image/webm',
+    bmp: 'image/bmp',
+    svg: 'image/svg',
+  };
+
+  for (const s in signatures) {
+    if (ext?.includes(s)) {
+      let x = signatures[s];
+      return x;
+    }
+  }
+  return 'unknown';
+}
