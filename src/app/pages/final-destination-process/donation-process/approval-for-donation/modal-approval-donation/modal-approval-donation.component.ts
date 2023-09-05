@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -25,6 +25,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
   @Output() onSave = new EventEmitter<any>();
+  @Input() dataTableGood: LocalDataSource;
   columnFilter: any = [];
   constructor(
     private readonly regionalDelegationService: RegionalDelegationService,
@@ -106,25 +107,3 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 }
-
-// const EXAMPLE_DATA1 = [
-//   {
-//     id: 1,
-//     description: 'REGIONAL TIJUANA',
-//   },
-//   {
-//     id: 2,
-//     description: 'REGIONAL HERMOSILLO',
-//   },
-// ];
-
-// const EXAMPLE_DATA2 = [
-//   {
-//     goodsNumb: 454587,
-//     goodsDescrip: 'NO CUENTA CON UN ALMACÉN',
-//   },
-//   {
-//     goodsNumb: 121454,
-//     goodsDescrip: 'NO CUENTA CON UN ALMACÉN',
-//   },
-// ];

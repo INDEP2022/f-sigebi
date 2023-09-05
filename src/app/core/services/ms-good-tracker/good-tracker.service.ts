@@ -132,4 +132,14 @@ export class GoodTrackerService extends HttpService {
       `${this.microservice}/tmptracker?filter.identificator=$eq:${ident}`
     );
   }
+
+  getGoodTrackerTmp(goodNum: number) {
+    return this.get(
+      `${this.microservice}/apps/goodtrackertmp?filter.goodNumber=$eq:${goodNum}`
+    );
+  }
+
+  deleteTrackerGood(id: number) {
+    return this.delete(`${this.microservice}/apps/deleteRegister/${id}`);
+  }
 }
