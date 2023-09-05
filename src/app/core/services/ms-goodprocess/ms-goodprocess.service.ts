@@ -252,4 +252,9 @@ export class GoodprocessService extends HttpService {
       params
     );
   }
+
+  getGoodByScreeen(good: any, cveScreem: any) {
+    const route = `${GoodprocessEndpoints.getStatusCveScreem}?filter.goodId=$eq:${good}`;
+    return this.post(route, cveScreem);
+  }
 }
