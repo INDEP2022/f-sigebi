@@ -153,4 +153,14 @@ export class ComerInvoiceService extends HttpService {
   }) {
     return this.post(ENDPOINT_INVOICE.ComerPostQuery, data);
   }
+
+  validUser2(user: string) {
+    return this.get(`${ENDPOINT_INVOICE.ComerValidUser}/${user}`);
+  }
+
+  getCountDescription(event: number, factura: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ComerCount}?eventId${event}&invoiceId=${factura}`
+    );
+  }
 }
