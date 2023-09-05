@@ -13,21 +13,17 @@
     </div>
     <div class="row">
       <div class="col-3">
-        <button
-          class="btn btn-primary btn-sm active"
-          (click)="openDefineFilter()">
+        <button class="btn btn-primary btn-sm active" (click)="openDefineFilter()">
           Definir Filtro <i class="fa fa-filter" aria-hidden="true"></i>
         </button>
       </div>
       <div class="col-3">
-        <button class="btn btn-primary btn-sm active" (click)="getall()">
+        <button class="btn btn-primary btn-sm active" (click)="getall1()">
           Bienes
         </button>
       </div>
       <div class="col-6">
-        <button
-          class="btn btn-secondary btn-sm active"
-          (click)="callRastreador()">
+        <button class="btn btn-secondary btn-sm active" (click)="callRastreador()">
           Por Rastreador
         </button>
       </div>
@@ -41,21 +37,43 @@
 
     <div class="d-flex justify-content-end mt-5">
       <div>
-        <app-columns-select
-          [(settings)]="settings"
-          class="row justify-content-end col-md-1"></app-columns-select>
+        <app-columns-select class="mx-1" [(settings)]="settings" [leftList]="true"></app-columns-select>
       </div>
     </div>
-    <br />
+    <br>
+    <!-- <div class="row m-3">
+      <div class="col-4"></div>
+      <div class="d-flex justify-content-end mt-5">
+        <span title="CDP" containerClass="tooltip-style">
+          <button type="checkbox" class="btn btn-secondary btn-sm active m-4" (change)="selectCPD($event.target)">
+          </button>
+        </span>
+        <span title="ADM" containerClass="tooltip-style">
+          <button type="checkbox" class="btn btn-secondary btn-sm active m-4" (change)="selectCPD($event)">
+          </button>
+        </span>
+        <span title="RDA" containerClass="tooltip-style">
+          <button type="checkbox" class="btn btn-secondary btn-sm active m-4" (change)="selectCPD($event)">
+          </button>
+        </span>
+      </div>
+    </div> -->
+
+    <div class="row m-3">
+      <div class="col-4"></div>
+      <!-- <div class="d-flex justify-content-end mt-5">
+        <button (click)="realizarAccionExterna()">CDP</button>
+      </div> -->
+      <div class="d-flex justify-content-end mt-5">
+        <button (click)="selectAllCPD()">CPD</button>
+        <button (click)="selectAllADM()">ADM</button>
+        <button (click)="selectAllRDA()">RDA</button>
+      </div>
+    </div>
     <div>
-      <ng-scrollbar
-        [track]="'all'"
-        [ngStyle]="{ height: loading ? '0px' : '450px' }">
+      <ng-scrollbar [track]="'all'" [ngStyle]="{ height: loading ? '0px' : '300px' }">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data">
+          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data">
           </ng2-smart-table>
         </div>
       </ng-scrollbar>
