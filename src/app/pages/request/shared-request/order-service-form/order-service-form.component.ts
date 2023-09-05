@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
@@ -17,6 +17,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class OrderServiceFormComponent implements OnInit {
   showOrderservice: boolean = true;
+  disableAllChecks: boolean = false;
   form: FormGroup = new FormGroup({});
   @Input() op: number;
   @Input() showForm: boolean;
@@ -24,6 +25,10 @@ export class OrderServiceFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('showForm', this.showForm);
   }
 
   prepareForm() {
