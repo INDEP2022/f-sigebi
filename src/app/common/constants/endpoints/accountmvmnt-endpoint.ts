@@ -10,4 +10,5 @@ export enum AccountmvmntEndpoint {
   PaymentControl = 'payment-control',
   PaymentTypeSat = 'payment-type-sat',
   MovementAccountXBankAccountExcel = 'aplication/movementAccountXBankAccount-excel',
+  MetodoDePago = 'aplication/get-MetododePago',
 }

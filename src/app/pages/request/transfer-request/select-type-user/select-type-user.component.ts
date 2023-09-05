@@ -564,6 +564,9 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       body.status = 'VERIFICAR_CUMPLIMIENTO'; //good.processStatus
       body.process = 'verify-compliance';
       body.statusGood = 'ROP'; // good.status
+      body.programChangeStatus = 'SOLICITUD_TRANSFERENCIA';
+      body.user = this.user.username;
+      console.log(body);
 
       this.goodfinderService.updateStatusProcess(body).subscribe({
         next: resp => {

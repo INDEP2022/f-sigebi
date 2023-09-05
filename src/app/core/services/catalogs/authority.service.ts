@@ -148,4 +148,9 @@ export class AuthorityService
     const route = `${AuthorityEndpoints.Authority}/id/${id}`;
     return this.delete(route, model);
   }
+
+  getDescription(id: number) {
+    const route = `${AuthorityEndpoints.Sssubtipe}?filter.numClasifGoods=$eq:${id}`;
+    return this.get(route);
+  }
 }

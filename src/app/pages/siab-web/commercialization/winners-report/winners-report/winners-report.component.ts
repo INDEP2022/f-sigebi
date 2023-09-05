@@ -137,14 +137,6 @@ export class winnersReportComponent extends BasePage implements OnInit {
     this.loser.getpaREportLoser(body, params).subscribe({
       next: resp => {
         console.log(resp);
-        if (resp.data.length === 0) {
-          this.alert(
-            'error',
-            'No existe Reporte con el Evento Seleccionado',
-            ''
-          );
-          return;
-        }
         this.loserr = resp.data;
         this.data1.load(resp.data);
         this.data1.refresh();
@@ -155,6 +147,7 @@ export class winnersReportComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
+        this.alert('error', 'No existe Reporte con el Evento Seleccionado', '');
       },
     });
   }
@@ -215,6 +208,7 @@ export class winnersReportComponent extends BasePage implements OnInit {
       console.log('jsonToCsv', jsonToCsv);
       this.jsonToCsv = arr;
       this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+      this.alert('success', 'Reporte Generado Correctamente', '');
     });
   }
 
@@ -234,46 +228,32 @@ export class winnersReportComponent extends BasePage implements OnInit {
       this.alert('warning', 'No hay Bienes en la Tabla', '');
       return;
     }
+
+    const pageSize = 10; // Cantidad de elementos por página
+    const totalItems = this.data.count(); // Total de elementos en la tabla
+    const totalPages = Math.ceil(totalItems / pageSize); // Calculamos el total de páginas
+
     const filename: string = 'Reporte Ganadores';
-    const jsonToCsv: any = await this.returnJsonToCsv1();
-    let arr: any = [];
-    let result = jsonToCsv.map((item: any) => {
-      let obj = {
-        NO_EVENTO: item.id_evento,
-        LOTE: item.lote,
-        REFERENCIA: item.referencia,
-        MONTO: item.monto,
-        FECHA_PAGO: item.fecha_pago,
-        CLAVE_BANCO: item.cve_banco,
-        CUENTA: item.cuenta,
-        ID_CLIENTE: item.id_cliente,
-        CLIENTE: item.cliente,
-        RFC: item.rfc,
-        TELEFONO: item.telefono,
-        CORREO: item.correoweb,
-        CLABE_INTERBANCARIA: item.clabe_interbancaria,
-        BANCO: item.banco,
-        SUCURSAL: item.sucursal,
-        CUENTA_CHEQUES: item.cuenta_cheques,
-      };
-      arr.push(obj);
-    });
-    Promise.all(result).then(item => {
-      console.log('jsonToCsv', jsonToCsv);
-      this.jsonToCsv = arr;
-      this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
-    });
+    const jsonToCsv: any[] = [];
+
+    // Obtener todos los datos en una sola solicitud
+    const allData = await this.returnAllData();
+
+    // Dividir los datos en páginas
+    for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
+      const startIndex = (pageNumber - 1) * pageSize;
+      const endIndex = pageNumber * pageSize;
+      const dataPage = allData.slice(startIndex, endIndex);
+      jsonToCsv.push(...dataPage);
+    }
+
+    this.excelService.export(jsonToCsv, { type: 'csv', filename });
+    this.alert('success', 'Reporte Generado Correctamente', '');
   }
 
-  async returnJsonToCsv1() {
+  async returnAllData() {
+    // Obtener todos los datos en una sola solicitud (de ser posible)
     return this.data.getAll();
-    this.data.getAll().then(resp => {
-      let arr: any = [];
-      let result = resp.map((item: any) => {
-        arr.push(item);
-      });
-      return arr;
-    });
   }
 
   clean() {

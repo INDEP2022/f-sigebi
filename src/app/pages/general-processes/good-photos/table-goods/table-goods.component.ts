@@ -214,6 +214,8 @@ export class TableGoodsComponent
       ...MODAL_CONFIG,
       initialState: {
         accept: '.zip',
+        accept2:
+          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg',
         uploadFiles: false,
         service: this.filePhotoSaveZipService,
         identificator: this.selectedGoods,
@@ -221,7 +223,14 @@ export class TableGoodsComponent
         titleFinishUpload: 'Imagenes Cargadas Correctamente',
         questionFinishUpload: '¿Desea subir más imagenes?',
         callback: (refresh: boolean) => {
-          if (refresh && this.selectedGoods.includes(this.selectedGood.id)) {
+          if (
+            refresh &&
+            this.selectedGoods &&
+            this.selectedGoods.length > 0 &&
+            this.selectedGood &&
+            this.selectedGood.id &&
+            this.selectedGoods.includes(this.selectedGood.id)
+          ) {
             this.dataService.showEvent.next(true);
           }
           // console.log(refresh);

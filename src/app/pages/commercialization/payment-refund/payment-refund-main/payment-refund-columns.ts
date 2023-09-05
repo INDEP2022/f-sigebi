@@ -116,11 +116,11 @@ export const RELATED_EVENT_COLUMNS = {
 };
 
 export const BANK_ACCOUNTS_COLUMNS = {
-  status: {
-    title: 'Estatus',
-    type: 'string',
-    sort: false,
-  },
+  // status: {
+  //   title: 'Estatus',
+  //   type: 'string',
+  //   sort: false,
+  // },
   cve: {
     title: 'Cve. Banco',
     type: 'string',

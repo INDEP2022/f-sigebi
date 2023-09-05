@@ -187,6 +187,8 @@ export class PhotosListCommercialComponent extends BasePage implements OnInit {
       ...MODAL_CONFIG,
       initialState: {
         accept: '.zip',
+        accept2:
+          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg',
         uploadFiles: false,
         service: this.filePhotoSaveZipService,
         identificator: this.goodNumber + '',

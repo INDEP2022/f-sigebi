@@ -100,10 +100,10 @@ export class GoodsTendersComponent extends BasePage implements OnInit {
     }-0${end.getDate()}`;
 
     if (end < start) {
-      this.onLoadToast(
+      this.alert(
         'warning',
-        'advertencia',
-        'fecha de final no puede ser menor a fecha inicial'
+        'Fechas Incorrectas',
+        'La fecha "Hasta" no puede ser menor a la fecha "Desde"'
       );
       return;
     }
@@ -164,7 +164,8 @@ export class GoodsTendersComponent extends BasePage implements OnInit {
       // this.form.get('subdelegation').setValue(event);
       this.getSubDelegation(new ListParams());
     } else {
-      this.form.get('subdelegation').setValue(null);
+      this.form.get('subdelegation').reset();
+      this.dataSubDelegation = new DefaultSelect();
     }
   }
 
