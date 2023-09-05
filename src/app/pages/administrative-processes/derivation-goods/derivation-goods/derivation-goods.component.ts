@@ -279,6 +279,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     this.serviceGood.getGetReferenceGoodgoodI(good).subscribe(
       response => {
         this.dataGoods2 = response.data;
+        this.loader.load = false;
       },
       err => {
         this.dataGoods2 = [];
