@@ -124,7 +124,8 @@
               "
               (click)="exportarExcel()"
               class="btn btn-success btn-sm w-100 active">
-              Exportar CSV <i class="bx bx-download float-icon"></i>
+              Exportar CSV
+              <i *ngIf="!loadingBtn3" class="bx bx-download float-icon"></i>
             </button>
           </div>
         </div>

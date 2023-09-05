@@ -135,5 +135,4 @@ export class DelegationService
   getTran(file: number) {
     return this.get(`${DelegationsEndpoints.tranEmi}/${file}`);
   }
-
 }

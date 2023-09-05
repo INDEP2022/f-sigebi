@@ -154,7 +154,7 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
 
       const textoOriginal = this.value;
       const textoConvertido = this.convertirTexto(textoOriginal);
-      this.alert('warning', `"${textoConvertido}" no es un Motivo Válido`, '');
+      this.alert('warning', `"${textoConvertido}" no es un motivo válido`, '');
       return;
     } else {
       V_PANTALLA = getCatMotivosRev_.screen;
@@ -213,7 +213,7 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
     if (this.responsable == 'REGIONALES') {
       this.alertQuestion(
         'question',
-        `El Bien es Administrado por: ${LV_DESC} , y ${LV_DESC1} como Responsable.`,
+        `El Bien es administrado por: ${LV_DESC} , y ${LV_DESC1} como responsable.`,
         '¿Desea Atender el Bien?'
       ).then(async question => {
         if (question.isConfirmed) {
@@ -229,7 +229,7 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
                 );
               }
             } else {
-              this.alert('warning', 'No se Encontró la Pantalla', '');
+              this.alert('warning', 'No se encontró la pantalla', '');
               return;
             }
           } else if (
@@ -247,7 +247,7 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
                 );
               }
             } else {
-              this.alert('warning', 'No se Encontró la Pantalla', '');
+              this.alert('warning', 'No se encontró la pantalla', '');
               return;
             }
           }
@@ -265,13 +265,13 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
           );
         }
       } else {
-        this.alert('warning', 'No se Encontró la Pantalla', '');
+        this.alert('warning', 'No se encontró la pantalla', '');
         return;
       }
     } else {
       this.alert(
         'warning',
-        `No Puede Atender este Bien, ya que Usted no Corresponde al Área Responsable: ${V_RESPONSABLE}`,
+        `No puede atender este bien, ya que usted no corresponde al área responsable: ${V_RESPONSABLE}`,
         ''
       );
       return;
@@ -395,7 +395,7 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
         }
       );
     } else {
-      this.alert('warning', 'No se Localizó la URL de la Forma', '');
+      this.alert('warning', 'No se localizó la URL de la forma', '');
       return;
     }
   }

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { map } from 'rxjs';
@@ -24,7 +24,7 @@ import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-
 })
 export class DetailServiceOrderComponent implements OnInit {
   showDatais: boolean = true;
-
+  @Input() claimRequest: boolean = false;
   idProg: number = null;
   programming: Iprogramming = null;
   parentModal: BsModalRef;
@@ -42,6 +42,7 @@ export class DetailServiceOrderComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
+    console.log('claimRequest', this.claimRequest);
     this.idProg = +this.router.snapshot.params['id'];
     if (this.idProg) {
       this.getProgramming(this.idProg);

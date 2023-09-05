@@ -51,7 +51,7 @@ export class PaymentDevolutionService extends HttpService {
 
     const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
     this.authService.setReportFlag(true);
-    const route = `${this.url}/${this.microservice}/${this.prefix}/${PaymentDevolutionEndPoints.EatCtlPagE}`;
+    const route = `${this.url}${this.microservice}/${this.prefix}${PaymentDevolutionEndPoints.EatCtlPagE}`;
     return this.http.get<any>(`${route}`, {
       headers,
       params,

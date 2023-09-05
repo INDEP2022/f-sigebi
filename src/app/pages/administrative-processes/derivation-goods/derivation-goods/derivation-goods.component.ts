@@ -276,11 +276,16 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     });
   }
   getAllGoodChild(good: string) {
-    this.serviceGood.getGetReferenceGoodgoodI(good).subscribe({
-      next: response => {
+    this.serviceGood.getGetReferenceGoodgoodI(good).subscribe(
+      response => {
         this.dataGoods2 = response.data;
+        this.loader.load = false;
       },
-    });
+      err => {
+        this.dataGoods2 = [];
+        this.loader.load = false;
+      }
+    );
   }
   private buildForm() {
     this.form = this.fb.group({
@@ -667,7 +672,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           if (result.isConfirmed) {
             this.finishConversionBeforeValidation(
               this.goodData.goodId,
-              this.goodData.id
+              this.goodData.id,
+              this.goodData.description
             );
           }
         }
@@ -678,11 +684,12 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     );
   }
 
-  finishConversionBeforeValidation(goodId: any, id: any) {
+  finishConversionBeforeValidation(goodId: any, id: any, description: string) {
     let dataBien = {
       id: id,
       goodId: goodId,
       status: 'CVD',
+      description: description + '(Bien Convertido)',
     };
     this.serviceGood.update(dataBien).subscribe(
       async res => {
@@ -841,7 +848,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         good.lotNumber =
           this.good.lotNumber != null ? this.good.lotNumber.id : null;
         good.observations = this.observation.value;
-        good.description = this.description.value;
+        good.description = this.descriptionSon.value;
         good.quantity = this.quantity.value;
         good.classifier = this.classifier.value;
         good.unit = this.unitOfMeasure.value;
@@ -918,14 +925,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           };
           this.serviceGood.removeGood(data).subscribe(
             res => {
+              this.getAllGoodChild(this.goodFatherNumber$.getValue());
               this.alert(
                 'success',
                 'Se Eliminó el Bien',
                 `El Bien con id: ${this.selectedRow.goodId}, fue Eliminado`
               );
-              this.getAllGoodChild(this.goodFatherNumber$.getValue());
               delete this.selectedRow;
-              this.loader.load = false;
+              // this.loader.load = false;
             },
             err => {
               this.alert('error', 'error ', err.message);
@@ -988,11 +995,12 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   showActasConvertion() {
     console.log(this.tipo.value);
     if (this.tipo.value == '2') {
-      if (this.goodData.status == 'CVD') {
-        localStorage.removeItem('conversion');
-      } else {
-        localStorage.setItem('conversion', JSON.stringify(this.conversionData));
-      }
+      // if (this.goodData.status == 'CVD') {
+      //   localStorage.removeItem('conversion');
+      // } else {
+      //   localStorage.setItem('conversion', JSON.stringify(this.conversionData));
+      // }
+      localStorage.setItem('conversion', JSON.stringify(this.conversionData));
       let config = { ...MODAL_CONFIG, class: 'modal-xl modal-dialog-centered' };
       console.log(this.numberDossier.value);
       config.initialState = {

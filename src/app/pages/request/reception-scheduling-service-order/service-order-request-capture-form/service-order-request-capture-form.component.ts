@@ -25,7 +25,7 @@ export class ServiceOrderRequestCaptureFormComponent
   form: FormGroup = new FormGroup({});
   ordServform: FormGroup = new FormGroup({});
   parentModal: BsModalRef;
-  op: number = 9;
+  op: number = null;
 
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);

@@ -30,20 +30,3 @@ div.goodCellContainer {
   flex-direction: column;
   justify-content: center;
 }
-
-.requiredAva {
-  background-color: #dc3545;
-}
-
-.required {
-  background-color: #ffc107;
-}
-
-.update {
-  background-color: #17a2b8;
-  input.form-control {
-    &:focus {
-      background-color: #17a2b8;
-    }
-  }
-}

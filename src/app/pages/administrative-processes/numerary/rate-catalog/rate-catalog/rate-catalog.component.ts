@@ -291,14 +291,14 @@ export class RateCatalogComponent extends BasePage implements OnInit {
       if (answ.isConfirmed) {
         this.numeraryServ.remove(data.tasintId).subscribe({
           next: () => {
-            this.alert('success', 'Tasa Interés', 'Ha sido eliminada');
+            this.alert('success', 'La tasa de interés ha sido eliminada', '');
             this.getAllNumeraryRate();
           },
           error: () => {
             this.alert(
               'error',
               'Error',
-              'Ha ocurrido un error al eliminar la tasa de interés'
+              'No se pudo eliminar la tasa de interés'
             );
           },
         });

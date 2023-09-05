@@ -78,4 +78,9 @@ export class RapproveDonationService extends HttpService {
     const route = `${RapproveDonationEndpoint.insGoodDonation}`;
     return this.post(route, params);
   }
+
+  getSum(good: any) {
+    const route = `${RapproveDonationEndpoint.sumVAntDon}/${good}`;
+    return this.get(route);
+  }
 }

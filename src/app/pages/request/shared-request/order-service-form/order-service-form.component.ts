@@ -6,7 +6,6 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-
 @Component({
   selector: 'app-order-service-form',
   templateUrl: './order-service-form.component.html',
@@ -22,6 +21,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 })
 export class OrderServiceFormComponent implements OnInit, OnChanges {
   showOrderservice: boolean = true;
+  disableAllChecks: boolean = false;
   @Input() op: number;
   @Input() showForm: boolean;
   @Input() ordServform: FormGroup = new FormGroup({});
@@ -37,5 +37,6 @@ export class OrderServiceFormComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.orderService = this.ordServform.getRawValue();
+    console.log('showForm', this.showForm);
   }
 }

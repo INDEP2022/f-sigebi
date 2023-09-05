@@ -68,6 +68,7 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
   }
 
   private async completeLoadFiles() {
+    debugger;
     this.loading = false;
     const result = await this.alertQuestion(
       'question',
@@ -75,10 +76,10 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
       '¿Desea subir más archivos?'
     );
     this.uploadFiles = false;
-    if (!result.isConfirmed) {
-      this.close();
-      return false;
-    }
+    // if (!result.isConfirmed) {
+    //   this.close();
+    //   return false;
+    // }
     if (result.isConfirmed) {
       this.totalDocs = 0;
       this.successCount = 0;
@@ -158,6 +159,8 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
             const result = await this.completeLoadFiles();
             if (result) {
               uploadEvent.fileEvents.length = 0;
+            } else {
+              this.close();
             }
           }
         },

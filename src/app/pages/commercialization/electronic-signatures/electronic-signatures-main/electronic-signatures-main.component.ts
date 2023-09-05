@@ -578,7 +578,7 @@ export class ElectronicSignaturesMainComponent
       this.alert(
         'warning',
         'Sin Registro Seleccionado',
-        'Selecciona un Registro para Continuar'
+        'Selecciona un registro para continuar'
       );
     }
   }
@@ -607,7 +607,7 @@ export class ElectronicSignaturesMainComponent
       this.alert(
         'warning',
         'Sin Registro Seleccionado',
-        'Selecciona un Registro para Continuar'
+        'Selecciona un registro para continuar'
       );
     }
     // let url =
@@ -637,7 +637,7 @@ export class ElectronicSignaturesMainComponent
             this.alert(
               'error',
               'Error',
-              'Ocurrió un Error al Validar la Firma Electrónica'
+              'Ocurrió un error al validar la firma electrónica'
             );
           }
         },
@@ -806,7 +806,7 @@ export class ElectronicSignaturesMainComponent
         this.alert(
           'error',
           'Error al Actualizar',
-          'No se pudo Actualizar el PDF en la Base de Datos'
+          'No se pudo actualizar el PDF en la base de datos'
         );
       },
     });
