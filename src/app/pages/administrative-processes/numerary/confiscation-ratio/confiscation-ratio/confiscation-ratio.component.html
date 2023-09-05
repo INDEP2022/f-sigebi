@@ -98,6 +98,39 @@
       </form>
       <br />
       <hr />
+      <form class="form-material" [formGroup]="Only">
+        <div class="row mt-4">
+          <!-- <div class="col-2 mt-4">
+            <form-field [control]="Only.get('nobien')" label="No. Bien">
+              <input type="number" class="form-control" formControlName="nobien" />
+            </form-field>
+          </div>-->
+          <div class="col-md-1 mt-4">
+            <form-radio label="M.N.">
+              <input type="radio" formControlName="radio" value="1424" />
+            </form-radio>
+          </div>
+          <div class="col-md-1 mt-4">
+            <form-radio label="U.S. DLLS.">
+              <input type="radio" formControlName="radio" value="1426" />
+            </form-radio>
+          </div>
+          <div class="col-md-1 mt-4">
+            <form-radio label="Conv Nume">
+              <input type="radio" formControlName="radio" value="1427" />
+            </form-radio>
+          </div>
+          <!--<div class="col-md-4 mt-4">
+            <button type="button" class="btn btn-primary active btn-sm m-1" (click)="only()">
+              Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+            <button class="btn btn-primary btn-sm active m-1" (click)="aproveOnly()">
+              Aprobar <i class="fa fa-check" aria-hidden="true"></i>
+            </button>
+          </div>-->
+        </div>
+      </form>
+
       <form class="form-material" [formGroup]="file">
         <div class="row container">
           <!--<div class="col-md-2">
@@ -203,6 +236,76 @@
           [params]="params"
           [totalItems]="totalItems"></app-pagination>-->
       </div>
+      <!--<div class="row mt-4" *ngIf="until">
+        <div class="col-md-12">
+          <form [formGroup]="formaplicationData" class="form-material">
+            <div body>
+              <div class="row">
+                <div class="col-md-3 col-sm-12 col-xs-12" style="display: flex">
+                  <form-field [control]="formaplicationData.get('NoBien')" label="No. Bien" style="top: -20px">
+                    <input type="number" class="form-control" formControlName="NoBien" />
+                  </form-field>
+                </div>
+              </div>
+              <br />
+              <div class="row">
+                <div class="col-md-2 col-sm-12 col-xs-12">
+                  <form-field [control]="formaplicationData.get('f_trnas')" label="Fecha Transferencia">
+                    <input type="text" class="form-control mt-2" formControlName="f_trnas" readonly />
+                  </form-field>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <form-field [control]="formaplicationData.get('f_sent')" label="Fecha Sentencia">
+                    <input type="text" class="form-control mt-2" formControlName="f_sent" readonly />
+                  </form-field>
+                </div>
+                <div class="col-md-6 col-sm-12 col-xs-12">
+                  <form-field [control]="formaplicationData.get('Inte')" label="Intereses">
+                    <input type="text" class="form-control mt-2" formControlName="Inte" maxlength="200" readonly />
+                  </form-field>
+                </div>
+              </div>
+              <br />
+              <div class="row">
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <form-field [control]="formaplicationData.get('tesofeDate')" label="Fecha Tesofe">
+                    <input type="text" class="form-control mt-2" formControlName="tesofeDate" maxlength="200"
+                      readonly />
+                  </form-field>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <form-field [control]="formaplicationData.get('tesofeFolio')" label="Oficio Tesofe">
+                    <input type="text" class="form-control mt-2" formControlName="tesofeFolio" maxlength="200"
+                      readonly />
+                  </form-field>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <form-field [control]="formaplicationData.get('appraisalCurrencyKey')" label="Moneda">
+                    <input type="text" class="form-control mt-2" formControlName="appraisalCurrencyKey" maxlength="200"
+                      readonly />
+                  </form-field>
+                </div>
+              </div>
+              <br />
+              <div class="row">
+                <div class="col-md-6 col-sm-12 col-xs-12">
+                  <form-field [control]="formaplicationData.get('aut')" label="Autoridad">
+                    <input type="text" class="form-control mt-2" formControlName="aut" readonly />
+                  </form-field>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <form-field [control]="formaplicationData.get('expedientecriminalCase')" label="Causa Penal">
+                    <input type="text" class="form-control mt-2" formControlName="expedientecriminalCase" readonly />
+                  </form-field>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
+    </div>-->
     </div>
   </div>
 </app-card>

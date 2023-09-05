@@ -7,7 +7,7 @@ import {
   IPhotoFile,
 } from 'src/app/core/services/ms-ldocuments/file-photo.service';
 import { BasePage } from 'src/app/core/shared';
-import { getMimeTypeFromBase64 } from 'src/app/utils/functions/get-mime-type';
+import { getMimeTypeFromImg } from 'src/app/utils/functions/get-mime-type';
 
 const LOADING_GIF = 'assets/images/loader-button.gif';
 export const NO_IMAGE_FOUND = 'assets/images/documents-icons/not-found.jpg';
@@ -46,7 +46,8 @@ export class PhotoClassComponent extends BasePage {
     this.imgSrc = ext.toLowerCase().includes('tif')
       ? this.getUrlTiff(base64)
       : this.getUrlDocument(base64);
-    // this.mimeType = getMimeTypeFromBase64(this.imgSrc as string, this.filename);
+    this.mimeType = getMimeTypeFromImg(this.file.name);
+    console.log(base64, this.imgSrc, this.mimeType, this.file.name);
   }
 
   protected getUrlTiff(base64: string) {
@@ -66,7 +67,7 @@ export class PhotoClassComponent extends BasePage {
 
   protected getUrlDocument(base64: string) {
     let mimeType;
-    mimeType = getMimeTypeFromBase64(base64, this.file.name);
+    mimeType = getMimeTypeFromImg(this.file.name);
     this.mimeType = mimeType;
     return this.sanitizer.bypassSecurityTrustResourceUrl(
       `data:${mimeType};base64, ${base64}`
