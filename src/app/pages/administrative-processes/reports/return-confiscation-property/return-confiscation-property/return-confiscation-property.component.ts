@@ -186,4 +186,8 @@ export class ReturnConfiscationPropertyComponent
     const year = date.getUTCFullYear().toString();
     return `${day}/${month}/${year}`;
   }
+
+  clearAll() {
+    this.returnConfiscationForm.reset();
+  }
 }

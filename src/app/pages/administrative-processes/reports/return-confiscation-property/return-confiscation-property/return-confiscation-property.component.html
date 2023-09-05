@@ -8,7 +8,7 @@
       [formGroup]="returnConfiscationForm"
       (ngSubmit)="onSubmit()"
       class="form-material">
-      <div class="row margin-input">
+      <div class="row">
         <div class="col-md-4">
           <form-field
             [control]="returnConfiscationForm.get('ofTheGood')"
@@ -50,8 +50,8 @@
           </form-field>
         </div>
       </div>
-      <div class="row margin-input">
-        <div class="col-md-4" style="margin-top: -0.7%">
+      <div class="row">
+        <div class="col-md-4" style="margin-top: -0.65%">
           <app-delegation-shared
             [form]="returnConfiscationForm"
             [subdelegationField]="'subdelegation'"
@@ -92,7 +92,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-5"></div>
+        <div class="col-md-4"></div>
         <div class="col-md-2">
           <button
             type="button"
@@ -102,7 +102,14 @@
             Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
           </button>
         </div>
-        <div class="col-md-5"></div>
+        <div class="col-md-2">
+          <button
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="clearAll()">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+        </div>
+        <div class="col-md-4"></div>
       </div>
     </form>
   </div>
