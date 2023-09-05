@@ -729,7 +729,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
     if (!this.originId) {
       this.alert(
         'warning',
-        'Selecciona un Registro de la Tabla "Comercialización Origenes" para Continuar',
+        'Selecciona un registro de la tabla "Comercialización Origenes" para continuar',
         ''
       );
       return;
@@ -831,8 +831,8 @@ export class SignatureAuxiliaryCatalogsMainComponent
             this.loadingEvent = false;
             this.alert(
               'warning',
-              'No es Posible Eliminar este Registro',
-              'Ya Existen Registros Asociados'
+              'No es posible eliminar este registro',
+              'Ya existen registros asociados'
             );
           },
           error: async error => {
@@ -841,7 +841,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
               let confirm = await this.alertQuestion(
                 'warning',
                 'Eliminar',
-                '¿Desea Eliminar este registro?'
+                '¿Desea eliminar este registro?'
               );
               if (confirm.isConfirmed) {
                 this.deleteEvent(event.data);
@@ -853,7 +853,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
               this.alert(
                 'error',
                 'Error',
-                'Ocurrió un Error al Validar si Existen Registros Relacionados'
+                'Ocurrió un error al validar si existen registros relacionados'
               );
             }
           },
@@ -874,7 +874,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
           this.alert(
             'success',
             'Eliminar Registro',
-            'El Registro se Eliminó Correctamente'
+            'El registro se eliminó correctamente'
           );
         },
         error: error => {
@@ -883,7 +883,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
           this.alert(
             'error',
             'Error',
-            'Ocurrió un Error al Eliminar Registros Relacionados'
+            'Ocurrió un error al eliminar registros relacionados'
           );
         },
       });
@@ -893,7 +893,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
     if (!this.idDocumentsXml) {
       this.alert(
         'warning',
-        'Selecciona un Registro de la Tabla "Eventos" para Continuar',
+        'Selecciona un registro de la tabla "Eventos" para continuar',
         ''
       );
       return;

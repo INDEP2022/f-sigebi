@@ -5,6 +5,7 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
@@ -14,6 +15,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { GelectronicFirmService } from 'src/app/core/services/ms-gelectronicfirm/gelectronicfirm.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
@@ -69,6 +71,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   typeFirm: string = '';
   guardReception: any;
   proceedingInfo: IProceedings;
+  userInfo: any;
   constructor(
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
@@ -81,7 +84,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     private programmingService: ProgrammingRequestService,
     private programminGoodService: ProgrammingGoodService,
     private goodService: GoodService,
-    private proceedingService: ProceedingsService
+    private proceedingService: ProceedingsService,
+    private historyGoodService: HistoryGoodService
   ) {
     super();
     this.settings = {
@@ -124,6 +128,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     if (this.signatore) {
       this.registerSign();
     }
+
+    this.getInfoUserLog();
   }
 
   showReportByTypeDoc() {
@@ -200,6 +206,12 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         //this.createPersonsSing(response.data[0]);
       },
       error: error => {},
+    });
+  }
+
+  getInfoUserLog() {
+    this.programmingService.getUserInfo().subscribe(data => {
+      this.userInfo = data;
     });
   }
 
@@ -724,16 +736,20 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     const updateGood = await this.updateGood();
 
                     if (updateGood) {
-                      this.alertInfo(
-                        'success',
-                        'Acción Correcta',
-                        'Documento adjuntado correctamente'
-                      ).then(question => {
-                        if (question.isConfirmed) {
-                          this.close();
-                          this.modalRef.content.callback(true, this.typeFirm);
-                        }
-                      });
+                      const createHistGood = await this.createHistorailGood();
+
+                      if (createHistGood) {
+                        this.alertInfo(
+                          'success',
+                          'Acción Correcta',
+                          'Documento adjuntado correctamente'
+                        ).then(question => {
+                          if (question.isConfirmed) {
+                            this.close();
+                            this.modalRef.content.callback(true, this.typeFirm);
+                          }
+                        });
+                      }
                     }
                   }
                 }
@@ -989,6 +1005,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           id: item.id,
           goodId: item.goodId,
           goodStatus: 'EN_RECEPCION',
+          status: 'ADM',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
@@ -1053,6 +1070,32 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             resolve(false);
           },
         });
+    });
+  }
+
+  createHistorailGood() {
+    return new Promise((resolve, reject) => {
+      const goodsReception = this.guardReception.value;
+      goodsReception.map((item: IGood) => {
+        const historyGood: IHistoryGood = {
+          propertyNum: item.goodId,
+          status: 'ADM',
+          changeDate: new Date(),
+          userChange: this.userInfo.name,
+          statusChangeProgram: 'TR_UPD_HISTO_BIENES',
+          reasonForChange: 'AUTOMATICO',
+        };
+
+        this.historyGoodService.create(historyGood).subscribe({
+          next: response => {
+            console.log('Historico eliminado', response);
+            resolve(true);
+          },
+          error: error => {
+            console.log('error', error);
+          },
+        });
+      });
     });
   }
 

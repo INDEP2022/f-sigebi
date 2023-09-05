@@ -497,4 +497,8 @@ export class GoodService extends HttpService {
   getGoodSolNumerary(good: number) {
     return this.get(`${GoodEndpoints.GoodNumberSol}/${good}`);
   }
+
+  getGoodByNoGood(good: number) {
+    return this.get(`${GoodEndpoints.Good}?filter.goodId=$eq:${good}`);
+  }
 }
