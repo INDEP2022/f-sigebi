@@ -103,7 +103,7 @@ export class GoodsTendersComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Fechas Incorrectas',
-        'La Fecha "Hasta" no Puede ser Menor a la Fecha "Desde"'
+        'La fecha "Hasta" no puede ser menor a la fecha "Desde"'
       );
       return;
     }
