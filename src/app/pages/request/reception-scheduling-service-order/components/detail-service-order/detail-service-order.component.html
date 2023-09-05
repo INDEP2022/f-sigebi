@@ -22,51 +22,51 @@
           <label class="col-lg-6 text-right"
             >No&#46; programaci&oacute;n&#58;</label
           >
-          <span> 516 </span>
+          <span> {{ programming?.id }} </span>
         </div>
 
         <div class="form-group">
           <label class="col-lg-6 text-right">Folio&#58;</label>
-          <span> Metropolitana SAT </span>
+          <span> {{ programming?.folio }} </span>
         </div>
 
         <div class="form-group">
           <label class="col-lg-6 text-right">Tipo relevante&#58;</label>
-          <span> Joyas, obras de arte </span>
+          <span> {{ typeRelevant }} </span>
         </div>
 
         <div class="form-group">
           <label class="col-lg-6 text-right">Fecha page&#58;</label>
-          <span> 16-nov-2022 </span>
+          <span> {{ programming?.startDate | date : 'YYY/MM/dd' }} </span>
         </div>
       </div>
       <div class="col-md-4">
         <div class="form-group">
           <label class="col-lg-7 text-right">Fecha fin&#58;</label>
-          <span> 20-nov-2022 </span>
+          <span> {{ programming?.endDate | date : 'YYY/MM/dd' }} </span>
         </div>
 
         <div class="form-group">
           <label class="col-lg-7 text-right">Usuario elabor&oacute;&#58;</label>
-          <span> test user </span>
+          <span> {{ programming?.creationUser }} </span>
         </div>
 
         <div class="form-group">
           <label class="col-lg-7 text-right">CveZona&#58;</label>
-          <span>Este</span>
+          <span> {{ stateZone }} </span>
         </div>
 
         <div class="form-group">
           <label class="col-lg-7 text-right"
             >Delegaci&oacute;n Regional&#58;</label
           >
-          <span> Metropolitana </span>
+          <span> {{ delegation }} </span>
         </div>
       </div>
       <div class="col-md-4">
         <div class="form-group">
           <label class="col-lg-5 text-right">Transferente&#58;</label>
-          <span> transferente</span>
+          <span> {{ transferent }} </span>
         </div>
 
         <div class="form-group">
