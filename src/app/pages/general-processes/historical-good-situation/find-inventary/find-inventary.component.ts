@@ -56,7 +56,7 @@ export class FindInventaryComponent extends BasePage implements OnInit {
               id: () => (searchFilter = SearchFilter.ILIKE),
               inventoryNumber: () => (searchFilter = SearchFilter.ILIKE),
               goodNumber: () => (searchFilter = SearchFilter.EQ),
-              descripcion: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.EQ),
               quantity: () => (searchFilter = SearchFilter.EQ),
             };
 
