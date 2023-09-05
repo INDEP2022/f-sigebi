@@ -168,7 +168,7 @@ export class ElectronicSignatureFirmModalComponent
           this.alertInfo(
             'success',
             'Archivo Firmado',
-            'Se Realizó el Proceso de Firmar del Dictamen Correctamente'
+            'Se realizó el proceso de firmar del dictamen correctamente'
             // data.message
           ).then(() => {
             this.fileForm.controls['signature'] = data.signature;
@@ -182,7 +182,7 @@ export class ElectronicSignatureFirmModalComponent
           // this.errorFirm.emit(true);
           this.alert(
             'error',
-            'Ocurrió un Error al Firmar el Dictamen ',
+            'Ocurrió un error al firmar el dictamen ',
             error.error.message
           ),
             console.log('Error en el Firmante', error.error);

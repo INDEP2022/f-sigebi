@@ -1,6 +1,6 @@
 export const THIRD_COLUMNS = {
   id: {
-    title: 'ID',
+    title: 'Id',
     sort: false,
     width: '20%',
   },
@@ -38,7 +38,7 @@ export const THIRD_COLUMNS = {
 
 export const TYPE_EVENT_THIRD_COLUMNS = {
   thirdPartyId: {
-    title: 'ID Tercero Comercializador',
+    title: 'Id. Tercero Comercializador',
     sort: false,
     width: '15%',
   },
@@ -59,7 +59,7 @@ export const TYPE_EVENT_THIRD_COLUMNS = {
 
 export const COMI_XTHIRC_COLUMNS = {
   idThirdParty: {
-    title: 'ID Tercero Comercializador',
+    title: 'Id. Tercero Comercializador',
     sort: false,
     width: '15%',
   },
