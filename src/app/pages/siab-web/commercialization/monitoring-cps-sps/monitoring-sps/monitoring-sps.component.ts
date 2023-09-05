@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { maxDate } from 'src/app/common/validations/date.validators';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { BsDatepickerViewMode } from 'ngx-bootstrap/datepicker';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { MONITORING_CPS_BILLS } from './monitoring-sps-columns';
 
 @Component({
   selector: 'app-monitoring-sps',
@@ -10,36 +9,51 @@ import { MONITORING_CPS_BILLS } from './monitoring-sps-columns';
   styles: [],
 })
 export class monitoringSpsComponent extends BasePage implements OnInit {
-  form: FormGroup = new FormGroup({});
+  //
 
+  override minMode: BsDatepickerViewMode = 'year'; // change for month:year
+
+  form: FormGroup;
   today: Date;
   maxDate: Date;
   minDate: Date;
 
   show: boolean = false;
 
+  // Array
+  concepts: any[] = [];
+
+  //
+
   constructor(private fb: FormBuilder) {
     super();
-
     this.today = new Date();
     this.minDate = new Date(this.today.getFullYear(), this.today.getMonth(), 2);
-
-    this.settings = {
-      ...this.settings,
-      actions: false,
-      columns: { ...MONITORING_CPS_BILLS },
-    };
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.bsConfig = Object.assign(
+      {},
+      {
+        minMode: this.minMode,
+      }
+    );
+  }
+
+  //
+
+  toggleAllConcepts(event: any) {
+    const isChecked = event.target.checked;
+    this.concepts.forEach(concept => (concept.checked = isChecked));
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      event: [null, [Validators.required]],
-      radio: [null, [Validators.required]],
-      rangeDate: [null, [Validators.required, maxDate(new Date())]],
+      from: [null],
+      to: [null],
+      year: [null],
+      event: [null],
     });
   }
 
@@ -49,6 +63,4 @@ export class monitoringSpsComponent extends BasePage implements OnInit {
     }
     console.warn('Your order has been submitted');
   }
-
-  data: any;
 }

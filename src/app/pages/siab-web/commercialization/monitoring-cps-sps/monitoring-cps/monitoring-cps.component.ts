@@ -1,11 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { maxDate } from 'src/app/common/validations/date.validators';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { BsDatepickerViewMode } from 'ngx-bootstrap/datepicker';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  MONITORING_CPS_SIAB,
-  MONITORING_CPS_SIRSAE,
-} from './monitoring-cps-columns';
 
 @Component({
   selector: 'app-monitoring-cps',
@@ -13,7 +9,11 @@ import {
   styles: [],
 })
 export class monitoringCpsComponent extends BasePage implements OnInit {
-  form: FormGroup = new FormGroup({});
+  //
+
+  override minMode: BsDatepickerViewMode = 'year'; // change for month:year
+
+  form: FormGroup;
 
   today: Date;
   maxDate: Date;
@@ -21,34 +21,34 @@ export class monitoringCpsComponent extends BasePage implements OnInit {
 
   show: boolean = false;
 
-  settings2 = {
-    ...this.settings,
-    actions: false,
-  };
+  //
 
   constructor(private fb: FormBuilder) {
     super();
     this.today = new Date();
     this.minDate = new Date(this.today.getFullYear(), this.today.getMonth(), 2);
-
-    this.settings = {
-      ...this.settings,
-      actions: false,
-      columns: { ...MONITORING_CPS_SIAB },
-    };
-
-    this.settings2.columns = MONITORING_CPS_SIRSAE;
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.bsConfig = Object.assign(
+      {},
+      {
+        minMode: this.minMode,
+      }
+    );
   }
+
+  //
 
   private prepareForm() {
     this.form = this.fb.group({
-      event: [null, [Validators.required]],
-      radio: [null, [Validators.required]],
-      rangeDate: [null, [Validators.required, maxDate(new Date())]],
+      radioOne: [null],
+      radioTwo: [null],
+      from: [null],
+      to: [null],
+      year: [null],
+      event: [null],
     });
   }
 
@@ -61,4 +61,6 @@ export class monitoringCpsComponent extends BasePage implements OnInit {
     }
     console.warn('Your order has been submitted');
   }
+
+  //
 }

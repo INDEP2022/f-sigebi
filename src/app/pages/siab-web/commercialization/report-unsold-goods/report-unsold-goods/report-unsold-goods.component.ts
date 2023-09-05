@@ -3,7 +3,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { maxDate } from 'src/app/common/validations/date.validators';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { GOODS_COLUMNS } from './columns';
+import {
+  DELEGATION_COLUMNS_REPORT,
+  GOODS_COLUMNS,
+  HISTORY_COLUMNS_REPORT,
+  HISTORY_EVENT_COLUMNS_REPORT,
+  STATUS_COLUMNS_REPORT,
+  SUBTYPE_COLUMNS_REPORT,
+} from './columns';
 
 @Component({
   selector: 'app-report-unsold-goods',
@@ -11,9 +18,33 @@ import { GOODS_COLUMNS } from './columns';
   styles: [],
 })
 export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
-  form: FormGroup = new FormGroup({});
+  //
 
-  show: boolean = false;
+  //Class Variables
+  dataSubtypesGood: any;
+  dataDelegation: any;
+  dataStatusText: any;
+  dataGoods: any;
+
+  //Form
+  form: FormGroup = new FormGroup({});
+  formTwo: FormGroup;
+
+  // Tables
+  data: any;
+  dataTwo: any;
+  dataThree: any;
+  dataFour: any;
+  dataFive: any;
+  dataSix: any;
+  // - Columns
+  settingsOne: any;
+  settingsTwo: any;
+  settingsThree: any;
+  settingsFour: any;
+  settingsFive: any;
+
+  // show: boolean = false;
 
   get filterGoods() {
     return this.form.get('filterGoods');
@@ -23,18 +54,66 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
     return this.form.get('filterText');
   }
 
+  //
+
   constructor(private fb: FormBuilder) {
     super();
     this.settings = {
       ...this.settings,
+      selectMode: 'multi',
       actions: false,
       columns: { ...GOODS_COLUMNS },
+    };
+
+    this.settingsFive = {
+      ...this.settings,
+      actions: false,
+      columns: { ...HISTORY_EVENT_COLUMNS_REPORT },
+    };
+
+    this.settingsFour = {
+      ...this.settings,
+      actions: false,
+      columns: { ...HISTORY_COLUMNS_REPORT },
+    };
+
+    this.settingsTwo = {
+      ...this.settings,
+      selectMode: 'multi',
+      actions: false,
+      columns: { ...DELEGATION_COLUMNS_REPORT },
+    };
+
+    this.settingsThree = {
+      ...this.settings,
+      selectMode: 'multi',
+      actions: false,
+      columns: { ...STATUS_COLUMNS_REPORT },
+    };
+
+    this.settingsOne = {
+      ...this.settings,
+      selectMode: 'multi',
+      actions: false,
+      columns: { ...SUBTYPE_COLUMNS_REPORT },
     };
   }
 
   ngOnInit(): void {
     this.prepareForm();
+
+    this.queryTypeGoods();
+
+    this.queryDelegation();
+
+    this.queryStatusGoods();
+
+    this.querySubtypeGoods(0);
+
+    this.queryDateMainReform();
   }
+
+  //
 
   private prepareForm() {
     this.form = this.fb.group({
@@ -52,9 +131,24 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
       filterGoods: [],
       filterText: [],
     });
+    this.formTwo = this.fb.group({
+      radioOne: [null],
+      radioTwo: [null],
+      file: [null],
+    });
   }
 
-  data: any;
-
   chargeFile(event: any) {}
+
+  queryTypeGoods() {}
+
+  queryDelegation() {}
+
+  queryStatusGoods() {}
+
+  querySubtypeGoods(type: number) {}
+
+  queryDateMainReform() {}
+
+  //
 }
