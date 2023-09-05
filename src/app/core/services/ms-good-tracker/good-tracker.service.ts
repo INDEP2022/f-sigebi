@@ -140,6 +140,6 @@ export class GoodTrackerService extends HttpService {
   }
 
   deleteTrackerGood(id: number) {
-    return this.delete(`${this.microservice}/tmptracker/${id}`);
+    return this.delete(`${this.microservice}/apps/deleteRegister/${id}`);
   }
 }

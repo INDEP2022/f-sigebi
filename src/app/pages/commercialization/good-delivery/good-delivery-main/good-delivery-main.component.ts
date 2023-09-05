@@ -269,6 +269,7 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
             this.goodsColumns.push(params);
             this.LocalData.load(this.goodsColumns);
             //this.totalItems = this.goodsColumns.length;
+            this.deleteGoodTracker(this.rel_bienes);
           }
         }
       }
