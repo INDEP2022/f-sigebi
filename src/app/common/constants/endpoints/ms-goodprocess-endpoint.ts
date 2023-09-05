@@ -16,6 +16,7 @@ export enum GoodprocessEndpoints {
   UpdateGoodStatus = 'update-good-status/updateManagementJob',
   PackageClose = 'update-good-status/packageClose',
   GetGoodType = 'v-good-type',
+  GetGoodType1 = 'goodprocess/v-good-type',
   GetGoodProceedings = 'application/get-good-proceedings',
   AppliesControl = 'update-good-status/appliesControl',
   consultationScreenGood = 'factadbsolcamnume/consultation-post-query-good',
@@ -28,4 +29,5 @@ export enum GoodprocessEndpoints {
   ReceptionBpmBackup = 'application/usp-reception-bpm-backup',
   getDataFromGood = 'application/getDataFromGood',
   GetMinuteDetailDelivery = 'application/get-minute-detail-delivery',
+  getStatusCveScreem = 'application/status-cve-screem',
 }

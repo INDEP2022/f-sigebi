@@ -13,9 +13,11 @@
           [leftList]="true"></app-columns-select>
         <div>
           <button
-            class="btn btn-primary btn-sm active mr-3"
-            (click)="generateReport()">
+            class="btn btn-sm btn-success active mr-3"
+            (click)="onExportExcel()"
+            [class]="loadingReport">
             Generar Reporte
+            <i class="bx bx-download float-icon"></i>
           </button>
         </div>
       </div>
@@ -24,12 +26,16 @@
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="data"
-              (userRowSelect)="rowsSelected($event)">
-            </ng2-smart-table>
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loading ? '0px' : '450px' }">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="data"
+                (userRowSelect)="rowsSelected($event)">
+              </ng2-smart-table>
+            </ng-scrollbar>
             <app-pagination
               [params]="params"
               [totalItems]="totalItems"></app-pagination>
@@ -51,13 +57,17 @@
     </div>
     <div class="row">
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
+        <div [class]="loading1 ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings1"
-              [source]="good">
-            </ng2-smart-table>
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loading ? '0px' : '440px' }">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings1"
+                [source]="good">
+              </ng2-smart-table>
+            </ng-scrollbar>
             <app-pagination
               [params]="params1"
               [totalItems]="totalItems1"></app-pagination>

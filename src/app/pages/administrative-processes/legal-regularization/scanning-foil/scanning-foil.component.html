@@ -30,11 +30,10 @@
             [control]="form.get('scanningFoli')"
             label="Folio de Escaneo">
             <input
+              [(ngModel)]="folioEscaneoNg"
               type="number"
               class="form-control"
-              min="1"
-              formControlName="scanningFoli"
-              maxlength="15" />
+              formControlName="scanningFoli" />
           </form-field>
         </div>
         <div class="col">
@@ -51,7 +50,7 @@
             data-toggle="tooltip"
             class="btn btn-secondary btn-sm active"
             (click)="seeImages()"
-            title="Consulta de imágenes escaneadas">
+            title="Consulta de Imágenes Escaneadas">
             <i class="bx bxs-file-find"></i>
           </button>
         </div>

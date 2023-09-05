@@ -970,14 +970,14 @@ export class DepositTokensComponent
           if (err.error.message == 'No es el excel correcto') {
             this.alert(
               'error',
-              'El Archivo no Cumple con las Condiciones de Inserción',
+              'El Archivo no cumple con las condiciones de inserción',
               ''
             );
           } else {
             this.alert(
               'error',
-              'Ha Ocurrido un Error al Intentar Cargar el Archivo',
-              err.error.message
+              'Ha Ocurrido un error al intentar cargar el archivo',
+              'Verifique el archivo e intente nuevamente'
             );
           }
         },

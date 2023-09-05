@@ -5,15 +5,15 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodsExportPost } from 'src/app/core/models/catalogs/goods.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { ExpedientSamiService } from 'src/app/core/services/ms-expedient/expedient-sami.service';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DetailProceeDelRecService } from '../../../../../core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
-import { COLUMNS_EXPORT_GOODS } from './columns-export-goods';
+import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
-import { GoodService } from 'src/app/core/services/good/good.service';
-import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
-import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
+import { DetailProceeDelRecService } from '../../../../../core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
+import { COLUMNS_EXPORT_GOODS } from './columns-export-goods';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 @Component({
@@ -34,8 +34,6 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   selectAll: boolean = false;
 
-
-
   constructor(
     private router: Router,
     private expedientSamiService: ExpedientSamiService,
@@ -49,7 +47,6 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     this.settings = { ...this.settings, actions: false };
     this.settings.columns = COLUMNS_EXPORT_GOODS;
     this.settings.hideSubHeader = false;
-
   }
 
   ngOnInit(): void {

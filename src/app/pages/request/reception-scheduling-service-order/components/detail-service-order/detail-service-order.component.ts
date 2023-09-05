@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-detail-service-order',
@@ -15,7 +15,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DetailServiceOrderComponent implements OnInit {
   showDatais: boolean = true;
+
+  @Input() claimRequest: boolean = false;
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log('claimRequest', this.claimRequest);
+  }
 }

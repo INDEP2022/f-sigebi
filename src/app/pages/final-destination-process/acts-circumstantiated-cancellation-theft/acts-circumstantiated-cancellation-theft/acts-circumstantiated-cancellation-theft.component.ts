@@ -1247,7 +1247,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
             }
           });
           Promise.all(result).then(async item => {
-
             //ACTUALIZA EL COLOR
             this.dataTableGood_ = [];
             this.dataTableGood.load(this.dataTableGood_);
@@ -1543,7 +1542,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
             await this.updateBienDetalle(good.numberGood, 'CNE');
             await this.deleteDET(good);
             // this.selectedGooods = [];
-            //ACTUALIZA COLOR 
+            //ACTUALIZA COLOR
             this.dataTableGood_ = [];
             this.dataTableGood.load(this.dataTableGood_);
             this.dataTableGood.refresh();

@@ -121,6 +121,8 @@ export class MassiveReclassificationGoodsComponent
 
   clearFilter() {
     this.form.reset();
+    this.files = [];
+    this.changeDescription = null;
     this.service.ids = null;
     this.service.selectedGooods = [];
     this.service.loadGoods.next(false);
@@ -221,7 +223,7 @@ export class MassiveReclassificationGoodsComponent
 
   onChange(event: IGoodSssubtype) {
     console.log(event);
-    this.changeDescription = event.description;
+    this.changeDescription = event ? event.description : null;
   }
   onChageAlterning(event: string) {
     this.changeDescriptionAlterning = event;

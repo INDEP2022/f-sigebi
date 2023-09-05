@@ -1,0 +1,65 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ composition ? 'Editar' : 'Nuevo' }} {{ title }}
+    </h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div *ngIf="comerDetExpense">
+        <form-field [control]="expenseDetailNumber" label="Composición">
+          <input
+            class="form-control"
+            formControlName="expenseDetailNumber"
+            readonly />
+        </form-field>
+      </div>
+      <div class="pb-2">
+        <form-field [control]="amount" label="Monto">
+          <input class="form-control" formControlName="amount" />
+        </form-field>
+      </div>
+      <div class="pb-2">
+        <form-field [control]="vat" label="IVA">
+          <input class="form-control" formControlName="vat" />
+        </form-field>
+      </div>
+      <div class="pb-2">
+        <form-field [control]="isrWithholding" label="Retención ISR">
+          <input class="form-control" formControlName="isrWithholding" />
+        </form-field>
+      </div>
+      <div class="pb-2">
+        <form-field [control]="vatWithholding" label="Retención IVA">
+          <input class="form-control" formControlName="vatWithholding" />
+        </form-field>
+      </div>
+      <div class="pb-2">
+        <form-field [control]="transferorNumber" label="Transferente">
+          <input class="form-control" formControlName="transferorNumber" />
+        </form-field>
+      </div>
+      <div class="pb-2">
+        <form-field [control]="goodNumber" label="No. Bien">
+          <input class="form-control" formControlName="goodNumber" />
+        </form-field>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form.invalid"
+          text="Aceptar"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

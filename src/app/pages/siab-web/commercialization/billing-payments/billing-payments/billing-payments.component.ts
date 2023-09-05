@@ -36,6 +36,9 @@ export class billingPaymentsComponent extends BasePage implements OnInit {
   selectedRow: any = null;
   idFactura: string | number;
 
+  eventId: number;
+  lotId: number;
+
   columns: any[] = [];
   totalItems: number = 0;
   totalItems2: number = 0;
@@ -204,11 +207,11 @@ export class billingPaymentsComponent extends BasePage implements OnInit {
     this.rowSelected = true;
     this.idFactura = row.id_factura;
     console.log(row);
-    const event = row.id_evento;
-    const lot = row.id_lote;
+    this.eventId = row.id_evento;
+    this.lotId = row.id_lote;
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getPayments(event, lot));
+      .subscribe(() => this.getPayments(this.eventId, this.lotId));
     /*this.data2.load(row.invoices); //Sub
     this.data2.refresh();
     this.rowInvoice = row.event; //primary*/
@@ -237,9 +240,9 @@ export class billingPaymentsComponent extends BasePage implements OnInit {
       factura,
       callback: (next: boolean) => {
         if (next)
-          this.params
+          this.params2
             .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.getBill());
+            .subscribe(() => this.getPayments(this.eventId, this.lotId));
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

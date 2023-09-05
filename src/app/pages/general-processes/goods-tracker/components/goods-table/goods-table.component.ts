@@ -582,7 +582,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
         }
       });
 
-      if (lst_good.length > 0) {
+      if (this.selectedGooods.length > 1) {
         lst_good = lst_good.substring(0, lst_good.length - 1);
         this.insertListPhoto(Number(lst_good));
         this.callReport(null, this.ngGlobal);
@@ -627,7 +627,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   }
 
   async callReport(lnu_good: number, lnu_identificador: number) {
-    if (!lnu_identificador) {
+    if (lnu_identificador) {
       this.jasperServ
         .fetchReport('FICHATECNICA', {
           P_NO_BIEN: lnu_good,

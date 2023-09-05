@@ -277,7 +277,7 @@ export class ResponsibilityLettersReportComponent
   }
   confirm(): void {
     if (this.letterDefault == null) {
-      this.alert('warning', 'Realiza una Consulta para Continuar', '');
+      this.alert('warning', 'Realiza una consulta para continuar', '');
       return;
     }
     this.loading = true;
@@ -345,9 +345,10 @@ export class ResponsibilityLettersReportComponent
 
   getComerLetterById(id: number) {
     this.loading = true;
+    console.log('ID COMMER LETTER', id);
     this.comerLetterService.getById(id).subscribe({
       next: data => {
-        this.clientForm.reset();
+        // this.clientForm.reset();
         // this.loading = false;
         this.letter = data;
         console.log(data, this.letter);
@@ -380,6 +381,7 @@ export class ResponsibilityLettersReportComponent
         // this.comerLibsForm
         //   .get('paragraph1')
         //   .setValue(this.comerLibsForm.value.paragraph1);
+        console.log('ID DE CARTA', this.letter.id);
         this.comerLetterService
           .getByIdResponsability(this.letter.id) // 1 EL UNO ES PARA PROBAR
           .subscribe({
@@ -438,7 +440,7 @@ export class ResponsibilityLettersReportComponent
 
   searchComer(provider?: IComerLetter) {
     if (!this.comerLibsForm.get('lote').value) {
-      this.alert('warning', 'Selecciona un Lote para Continuar', '');
+      this.alert('warning', 'Selecciona un lote para continuar', '');
       return;
     }
     const modalConfig = MODAL_CONFIG;
@@ -518,7 +520,7 @@ export class ResponsibilityLettersReportComponent
           } else {
             this.alert(
               'info',
-              'No Tiene Permiso de Lectura y/o Escritura sobre la Pantalla, por lo que no podrá Ingresar',
+              'No tiene permiso de lectura y/o escritura sobre la pantalla, por lo que no podrá ingresar',
               ''
             );
             return;
@@ -658,6 +660,7 @@ export class ResponsibilityLettersReportComponent
     this.dataTableGood.refresh();
     this.totalItems = 0;
     this.respForm.reset();
+    this.clientForm.reset();
   }
   goBack() {}
 
@@ -783,7 +786,7 @@ export class ResponsibilityLettersReportComponent
       if (paramsData['search'] != '') {
         this.alert(
           'warning',
-          'Seleccionar un Evento Primero para Búscar un Lote',
+          'Seleccionar un evento primero para búscar un lote',
           ''
         );
       }
