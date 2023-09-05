@@ -225,7 +225,8 @@
                 type="button"
                 class="btn btn-sm btn-primary mr-2 mt-2 active"
                 [disabled]="
-                  !conceptNumberValue || dataCompositionExpenses.length === 0
+                  !conceptNumberValue ||
+                  dataCompositionExpensesStatusChange.length === 0
                 "
                 (click)="sendToSIRSAE()">
                 Envíar Solicitud de pago a SIRSAE
@@ -243,10 +244,19 @@
                 type="button"
                 class="btn btn-sm btn-primary mr-2 mt-2 active"
                 [disabled]="
-                  !conceptNumberValue || dataCompositionExpenses.length === 0
+                  !conceptNumberValue ||
+                  dataCompositionExpensesToUpdateClasif.length === 0
                 "
                 (click)="updateClasif()">
                 Actualizar Clasificación
+              </button>
+              <button
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                type="button"
+                [disabled]="errorsClasification.length === 0"
+                (click)="showNotLoads()">
+                No Cambiados a Vehículo Robo
+                <i class="fa fa-info-circle"></i>
               </button>
             </td>
           </tr>

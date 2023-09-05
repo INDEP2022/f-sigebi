@@ -1,0 +1,93 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Orden de Ingreso</h5>
+  </div>
+  <div body style="margin-top: -30px">
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('institutionBanking')"
+            label="Instituci&oacute;n Bancaria">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="institutionBanking" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('concept')" label="Concepto">
+            <input type="text" class="form-control" formControlName="concept" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('shapePay')" label="Forma de Pago">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="shapePay" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('amount')" label="Importe">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="amount"
+              min="1" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('numberreference')"
+            label="Num. Referencia">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="numberreference" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('thirdesp')"
+            label="Tercero Especializado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="thirdesp" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <ngx-select
+            [form]="form"
+            control="unitadministrative"
+            [data]="selectAdminUnit"
+            bindLabel="name"
+            [searchable]="false"
+            label="Unidad Administrativa"
+            value="id"></ngx-select>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          [disabled]="form.invalid"
+          class="btn btn-primary btn-sm active mr-3"
+          (confirm)="confirm()">
+          Aceptar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

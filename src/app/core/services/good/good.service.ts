@@ -128,6 +128,13 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
       status
     );
   }
+  updateStatusActasRobo(id: string | number, status: string) {
+    const route = `good/api/v1/good/updateGoodStatus`;
+    return this.http.put(
+      `${environment.API_URL}/${route}/${id}/${status}`,
+      status
+    );
+  }
 
   updateByBody(formData: Object) {
     const route = `good/api/v1/good`;
@@ -231,5 +238,16 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
   getAllStatus(status: any) {
     const route = `${GoodEndpoints.OnlyStatus}?filter.status=$ilike:${status}`;
     return this.get(route);
+  }
+
+  filterStatusGood(params: any) {
+    return this.get(
+      `${GoodEndpoints.goodStatus}?filter.status=$ilike:VPT`,
+      params
+    );
+  }
+
+  putStatusGood(good: number, status: string) {
+    return this.put(`${GoodEndpoints.UpdateStatusGood}/${good}/${status}`);
   }
 }

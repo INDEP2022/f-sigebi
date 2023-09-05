@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { GoodprocessEndpoints } from 'src/app/common/constants/endpoints/ms-goodprocess-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Repository } from 'src/app/common/repository/repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import {
   IListResponse,
   IListResponseMessage,
 } from '../../interfaces/list-response.interface';
+import { IGoodSssubtype } from '../../models/catalogs/good-sssubtype.model';
 import {
   ICharacteristicsGoodDTO,
   ISecondIfMC,
@@ -17,7 +19,8 @@ import { IGoodDistinctTypes } from '../../models/ms-good/good-distinct-types';
   providedIn: 'root',
 })
 export class GoodprocessService extends HttpService {
-  constructor() {
+  private readonly route: string = GoodprocessEndpoints.GetGoodType1;
+  constructor(private goodSssubtypeRepository: Repository<any>) {
     super();
     this.microservice = GoodprocessEndpoints.BasePath;
   }
@@ -207,6 +210,12 @@ export class GoodprocessService extends HttpService {
       GoodprocessEndpoints.GetGoodType,
       params
     );
+  }
+
+  getGoodTypeMuebles(
+    params?: ListParams
+  ): Observable<IListResponse<IGoodSssubtype>> {
+    return this.goodSssubtypeRepository.getAllPaginated(this.route, params);
   }
 
   getDeleteStatusGoodnumber(body: any) {
