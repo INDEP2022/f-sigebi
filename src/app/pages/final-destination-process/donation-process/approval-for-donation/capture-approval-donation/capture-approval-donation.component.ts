@@ -523,7 +523,7 @@ export class CaptureApprovalDonationComponent
     // let result = this.dataRecepcion.map(async good => {
     let obj: any = {
       numberProceedings: this.eventdetailDefault.id,
-      numberGood: good.id,
+      numberGood: good.goodNumber,
       amount: good.quantity,
       received: null,
       approvedXAdmon: null,
@@ -701,8 +701,9 @@ export class CaptureApprovalDonationComponent
       ModalApprovalDonationComponent,
       modalConfig
     );
-    modalRef.content.onSave.subscribe((next: any) => {
+    modalRef.content.onSave.subscribe((next: any[]) => {
       console.log('aaaa', next);
+
       // this.dataTableGood.load(next);
       // this.dataTableGood.refresh();
       // this.eventdetailDefault = next;

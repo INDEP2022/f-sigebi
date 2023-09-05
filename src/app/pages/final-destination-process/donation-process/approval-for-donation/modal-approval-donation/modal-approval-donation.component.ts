@@ -1,4 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -21,8 +27,9 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   subTitle: string;
   op: string;
   totalItemsModal: number = 0;
+  selectedGooods: any[] = [];
   selectedRow: any | null = null;
-
+  activeGood: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   dataGoodTable: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
@@ -32,13 +39,15 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   constructor(
     private goodService: GoodService,
     private modalRef: BsModalRef,
-    private donationService: DonationService
+    private donationService: DonationService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     super();
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
       actions: false,
+      selectMode: 'multi',
       columns: {
         ...GOODS,
       },
@@ -92,10 +101,10 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    params['sortBy'] = `goodNumber:DESC`;
+    // params['sortBy'] = `goodNumber:DESC`;
     this.donationService.getTempGood(params).subscribe({
       next: data => {
-        console.log(data);
+        console.log(data.data);
         this.totalItems2 = data.count;
         this.dataGoodTable.load(data.data);
         this.dataGoodTable.refresh();
@@ -109,16 +118,26 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   }
   handleSuccess(): void {
     this.loading = false;
-    this.onSave.emit(this.selectedRow);
+    this.onSave.emit(this.selectedGooods);
     this.modalRef.hide();
   }
-  onUserRowSelect(row: any): void {
-    if (row.isSelected) {
-      this.selectedRow = row.data;
-    } else {
-      this.selectedRow = null;
-    }
+  // onUserRowSelect(row: any): void {
+  //   if (row.isSelected) {
+  //     this.selectedRow = row.data;
+  //   } else {
+  //     this.selectedRow = null;
+  //   }
 
+  //   console.log(this.selectedRow);
+  // }
+
+  onUserRowSelect(event: { data: any; selected: any }) {
+    this.selectedRow = event.data;
+    this.activeGood = true;
+    // this.fileNumber = event.data.fileNumber;
+    this.selectedGooods = event.selected;
     console.log(this.selectedRow);
+    console.log(this.selectedGooods);
+    this.changeDetectorRef.detectChanges();
   }
 }

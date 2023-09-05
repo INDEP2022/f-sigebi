@@ -22,13 +22,22 @@ export const GOODS = {
   id: {
     title: 'No. Bien',
     sort: false,
+    valuePrepareFunction(row: any) {
+      return row.id;
+    },
   },
   description: {
     title: 'Descripción',
     sort: false,
+    valuePrepareFunction(row: any) {
+      return row.description;
+    },
   },
   quantity: {
     title: 'Cantidad',
     sort: false,
+    valuePrepareFunction(row: any) {
+      return row.quantity;
+    },
   },
 };
