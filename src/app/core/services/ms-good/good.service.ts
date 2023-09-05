@@ -427,6 +427,12 @@ export class GoodService extends HttpService {
     return this.get<IListResponse<IGoodSami>>(route, params);
   }
 
+  getByExpedientAndParamsExport(id?: string | number) {
+    return this.get<{ base64File: string }>(
+      `good/get-export?filter.goodClassNumber=$in:` + id
+    );
+  }
+
   getFactaDbOficioGestrel(body: {
     no_of_gestion: string | number;
     no_bien: string | number;
@@ -490,5 +496,9 @@ export class GoodService extends HttpService {
 
   getGoodSolNumerary(good: number) {
     return this.get(`${GoodEndpoints.GoodNumberSol}/${good}`);
+  }
+
+  getGoodByNoGood(good: number) {
+    return this.get(`${GoodEndpoints.Good}?filter.goodId=$eq:${good}`);
   }
 }

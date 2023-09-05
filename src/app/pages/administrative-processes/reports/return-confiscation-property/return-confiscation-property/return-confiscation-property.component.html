@@ -11,82 +11,99 @@
       <div class="row margin-input">
         <div class="col-md-4">
           <form-field
-            [control]="returnConfiscationForm.get('delegation')"
-            label="Delegación">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="delegation" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="returnConfiscationForm.get('subDelegation')"
-            label="Sub Delegación">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="subDelegation" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
             [control]="returnConfiscationForm.get('ofTheGood')"
             label="Del Bien">
             <input
-              type="text"
+              type="number"
+              [min]="0"
+              [maxlength]="15"
               class="form-control"
               formControlName="ofTheGood" />
           </form-field>
         </div>
-      </div>
-      <div class="row margin-input">
         <div class="col-md-4">
           <form-field
             [control]="returnConfiscationForm.get('toGood')"
             label="Al Bien">
-            <input type="text" class="form-control" formControlName="toGood" />
+            <input
+              type="number"
+              [min]="returnConfiscationForm.get('ofTheGood').value + 1"
+              [maxlength]="15"
+              class="form-control"
+              [class]="
+                this.returnConfiscationForm.get('ofTheGood').value != null
+                  ? ''
+                  : 'disabled'
+              "
+              formControlName="toGood" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
             [control]="returnConfiscationForm.get('receiptDateOf')"
-            label="Fecha Recepción del">
+            label="Desde">
             <input
-              type="text"
-              formControlName="receiptDateOf"
-              placeholder="Fecha Recepción del"
+              bsDatepicker
               class="form-control"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="returnConfiscationForm.get('receptionDateTo')"
-            label="Fecha Recepción al">
-            <input
-              type="text"
-              formControlName="receptionDateTo"
-              placeholder="Fecha Recepción al"
-              class="form-control"
-              bsDatepicker />
+              [maxlength]="10"
+              formControlName="receiptDateOf" />
           </form-field>
         </div>
       </div>
       <div class="row margin-input">
+        <div class="col-md-4" style="margin-top: -0.7%">
+          <app-delegation-shared
+            [form]="returnConfiscationForm"
+            [subdelegationField]="'subdelegation'"
+            [delegationField]="'delegation'"
+            [showDelegation]="true"
+            [showSubdelegation]="true"
+            (emitSubdelegation)="seleccionarSubDelegacion($event)"
+            (emitDelegation)="seleccionarDelegation($event)">
+          </app-delegation-shared>
+        </div>
         <div class="col-md-4">
-          <form-field label="Tipo Movimiento">
+          <form-field
+            [control]="returnConfiscationForm.get('receptionDateTo')"
+            label="Hasta">
+            <input
+              bsDatepicker
+              [maxlength]="10"
+              [minDate]="returnConfiscationForm.get('receiptDateOf').value"
+              class="form-control"
+              [class]="
+                this.returnConfiscationForm.get('receiptDateOf').value != null
+                  ? ''
+                  : 'disabled'
+              "
+              formControlName="receptionDateTo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Tipo Movimiento"
+            [control]="returnConfiscationForm.get('movementType')">
             <select class="form-control" formControlName="movementType">
               <option [value]="null">Seleccione un tipo</option>
-              <option [value]="'1'">VALOR 1</option>
-              <option [value]="'2'">VALOR 2</option>
+              <option [value]="'DEVOLUCION'">DEVOLUCIÓN</option>
+              <option [value]="'DECOMISO'">DECOMISO</option>
             </select>
           </form-field>
         </div>
       </div>
-      <button class="btn btn-primary btn-sm active" type="submit">
-        Reporte
-      </button>
+      <div class="row">
+        <div class="col-md-5"></div>
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="validaGood()"
+            [disabled]="!returnConfiscationForm.valid">
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="col-md-5"></div>
+      </div>
     </form>
   </div>
 </app-card>

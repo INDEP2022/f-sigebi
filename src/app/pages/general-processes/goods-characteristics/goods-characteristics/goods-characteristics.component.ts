@@ -425,8 +425,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   get pathUnit() {
     return (
       'classifygood/api/v1/unit-x-classif?sortBy=unit:ASC' +
-      (this.delegacion
-        ? '&filter.classifyGoodNumber:$eq:' + this.delegacion
+      (this.numberClassification
+        ? '&filter.classifyGoodNumber=$eq:' + this.numberClassification.value
         : '')
     );
   }

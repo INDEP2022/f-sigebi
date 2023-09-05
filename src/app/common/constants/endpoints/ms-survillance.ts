@@ -22,4 +22,5 @@ export enum SurvillanceEndpoints {
   PolVigilancePerGood = 'pol-vig-per-good',
   GetTransNumerario = 'application/get-trans-numerario-reg',
   VigAllExcel = 'vig-supervision-det/allExcel',
+  FaEtapanexo = 'application/get-fa-etapanexo',
 }
