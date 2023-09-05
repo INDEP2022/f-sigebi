@@ -118,7 +118,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
       .subscribe({
         next: global => {
           this.ngGlobal = global;
-          console.log({longitud_tabla: this.data['data'].length})
+          console.log({ longitud_tabla: this.data['data'].length });
           if (this.ngGlobal.REL_BIENES && this.data['data'].length == 0) {
             console.log(this.ngGlobal.REL_BIENES);
             const paramsF = new FilterParams();
@@ -212,7 +212,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
         return;
       } else {
         this.loadGood(this.ids);
-        this.alert('success', 'Archivo subido', '');
+        this.alert('success', 'Se ha cargado el archivo', '');
       }
     } catch (error) {
       this.alert('error', 'Ocurrio un error al leer el archivo', '');

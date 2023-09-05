@@ -116,7 +116,7 @@ export class LayoutsConfigService extends HttpService {
     // return this.get<IListResponse<IComerLayouts>>(this.endpoint, params);
     const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
     this.authService.setReportFlag(true);
-    const route = `${this.url}/${this.microservice}/${this.prefix}/${ParameterComerEndpoints.Layouts}`;
+    const route = `${this.url}${this.microservice}/${this.prefix}${ParameterComerEndpoints.Layouts}`;
     return this.htpp.get<any>(`${route}`, {
       headers,
       params,

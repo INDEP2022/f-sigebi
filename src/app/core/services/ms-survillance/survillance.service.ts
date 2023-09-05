@@ -169,4 +169,8 @@ export class SurvillanceService extends HttpService {
   getVigSupervisionDet_(params?: _Params) {
     return this.get<IListResponse<any>>(this.route.VigSupervisionDet, params);
   }
+
+  getFaEtapaAnexo(date: { faFec: string }) {
+    return this.post(this.route.FaEtapanexo, date);
+  }
 }

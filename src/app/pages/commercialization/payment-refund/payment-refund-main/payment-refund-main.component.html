@@ -215,7 +215,7 @@
                   <h5 class="title">Eventos Relacionados</h5>
                 </div>
                 <div class="col-sm-12 col-md-6 text-end">
-                  <button
+                  <!-- <button
                     type="button"
                     class="btn btn-sm active btn-primary m-2">
                     <strong>Total de Pagos: </strong>&nbsp;<span
@@ -230,7 +230,7 @@
                       class="badge badge-light"
                       >$&nbsp;{{ eventsTotalAmount }}</span
                     >
-                  </button>
+                  </button> -->
                   <!-- <div class="d-flex flex-row-reverse">
                     <div>
                       <app-columns-select
@@ -262,10 +262,33 @@
                     </ng2-smart-table>
                   </div>
                 </div>
-                <app-pagination
-                  [params]="dataTableParamsRelationEvent"
-                  [totalItems]="totalRelationEvent">
-                </app-pagination>
+                <div class="col-md-12">
+                  <app-pagination
+                    [params]="dataTableParamsRelationEvent"
+                    [totalItems]="totalRelationEvent">
+                  </app-pagination>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                      <strong>DESCRIPCIÓN</strong>
+                      <div
+                        class="badge badge-pill bg-light text-wrap ml-2 mr-2">
+                        TOTALES
+                      </div>
+                    </li>
+                    <li class="list-group-item">
+                      <strong>Total de Pagos:</strong>
+                      <div class="badge badge-pill bg-info text-wrap ml-2 mr-2">
+                        {{ eventsTotalQuantity | number }}
+                      </div>
+                    </li>
+                    <li class="list-group-item">
+                      <strong>Monto Total:</strong>
+                      <div class="badge badge-pill bg-info text-wrap ml-2 mr-2">
+                        ${{ formatTotalAmount(eventsTotalAmount) }}
+                      </div>
+                    </li>
+                  </ul>
+                </div>
                 <!-- <div class="col-md-12 mt-4 text-center">
                   <div>
                     <p>
@@ -314,7 +337,7 @@
                   <ng2-smart-table
                     id="accountTable"
                     [settings]="accountSettings"
-                    [source]="accountColumns"
+                    [source]="dataTableBank"
                     (userRowSelect)="selectAccounts($event.selected)">
                   </ng2-smart-table>
                 </div>

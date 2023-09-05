@@ -11,4 +11,5 @@ export enum RapproveDonationEndpoint {
   donacRequest = 'donac-request-good',
   partializeGood = 'procedures/pa-partialize-good-donate',
   insGoodDonation = 'procedures/insert-good-donate',
+  sumVAntDon = 'application/sum-v-antdon',
 }

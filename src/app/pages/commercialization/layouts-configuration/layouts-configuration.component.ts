@@ -197,7 +197,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
-        this.onLoadToast('error', 'Error en la Búsqueda', '');
+        this.onLoadToast('error', 'Error en la búsqueda', '');
         return;
       },
     });
@@ -211,7 +211,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     if (this.selectedRow == null) {
       this.alert(
         'warning',
-        'Selecciona un Registro de la Tabla "Diseños" para Continuar',
+        'Selecciona un registro de la tabla "Diseños" para continuar',
         ''
       );
       return;
@@ -220,7 +220,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Duplicar Diseño',
-      '¿Está Seguro(a) en Duplicar el Diseño ' +
+      '¿Está seguro(a) en duplicar el diseño ' +
         this.selectedRow.id +
         '.' +
         this.selectedRow.descLayout +
@@ -238,7 +238,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
           },
           error: error => {
             this.loading = false;
-            this.onLoadToast('error', 'No se Puede Duplicar el Diseño', '');
+            this.onLoadToast('error', 'No se puede duplicar el diseño', '');
             // return;
           },
         });
@@ -262,6 +262,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     const message: string = 'Duplicado';
     this.onLoadToast('success', `${message} Correctamente`, '');
     this.loading = false;
+    this.loadingDataTableLayouts();
     this.loadingDataTableLayoutsStructure();
   }
 
@@ -320,7 +321,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.layoutsConfigService.remove(del).subscribe({
@@ -330,7 +331,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
             this.getLayouts();
           },
           error: error => {
-            this.onLoadToast('error', 'No se Puede Eliminar el Registro', '');
+            this.onLoadToast('error', 'No se puede eliminar el registro', '');
             this.loading = false;
           },
         });
@@ -396,7 +397,10 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.layoutsConfigService.getAllLayoutsH(params).subscribe({
       next: res => {
         console.log('DATA Layouts', res);
-        this.testDataLayouts = res.data;
+        this.testDataLayouts = res.data.map((i: any) => {
+          i['status_active'] = i.indActive == '1' ? true : false;
+          return i;
+        });
         this.dataTableLayouts.load(this.testDataLayouts);
         this.totalLayouts = res.count;
         this.loadingLayouts = false;
@@ -435,7 +439,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar Diseño',
-      '¿Desea Eliminar este Diseño?'
+      '¿Desea eliminar este diseño?'
     ).then(question => {
       if (question.isConfirmed) {
         this.loadingLayouts = true;
@@ -444,7 +448,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
           .subscribe({
             next: data => {
               this.loadingLayouts = false;
-              this.alert('success', 'Eliminado Correctamente', ``);
+              this.alert('success', 'Eliminado correctamente', ``);
               this.loadingDataTableLayouts();
             },
             error: error => {
@@ -452,7 +456,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
               this.alert(
                 'error',
                 'Error al Actualizar',
-                'Ocurrió un Error al Actualizar el Diseño'
+                'Ocurrió un error al actualizar el diseño'
               );
             },
           });
@@ -558,7 +562,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     if (this.selectedRow == null) {
       this.alert(
         'warning',
-        'Selecciona un Registro de la Tabla "Diseños" para continuar',
+        'Selecciona un registro de la tabla "Diseños" para continuar',
         ''
       );
       return;

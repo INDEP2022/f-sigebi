@@ -16,6 +16,7 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import {
   IMeasureUnit,
   IPhysicalStatus,
@@ -42,6 +43,7 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
@@ -183,6 +185,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   count: number = 0;
   delegationDes: string = '';
   keyTransferent: string = '';
+  userInfo: any;
   /*settingsTransportableGoods = {
     ...this.settings,
     ...settingTransGoodsExecute,
@@ -343,7 +346,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     private typeTransferentService: TransferenteService,
     private regionalDelegationService: RegionalDelegationService,
     private stateService: StateOfRepublicService,
-    private domicilieService: DomicileService
+    private domicilieService: DomicileService,
+    private historyGoodService: HistoryGoodService
   ) {
     super();
     this.settings = {
@@ -382,7 +386,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         });
       },
     };
-
+    this.getInfoUserLog();
     this.prepareForm();
     this.prepareSearchForm();
     this.prepareReceptionForm();
@@ -402,12 +406,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.getOpenProceeding();
   }
 
+  getInfoUserLog() {
+    this.programmingService.getUserInfo().subscribe(data => {
+      this.userInfo = data;
+    });
+  }
+
   getTask() {
     const task = JSON.parse(localStorage.getItem('Task'));
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.id'] = task.id;
+    params.getValue()['filter.id'] = `$eq:${task.id}`;
     this.taskService.getAll(params.getValue()).subscribe({
       next: response => {
+        console.log('task', response);
         this.task = response.data[0];
       },
       error: error => {},
@@ -756,12 +767,22 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   getwarehouse() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.organizationCode'] = this.programming.storeId;
+    this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
+      next: response => {
+        this.nameWarehouse = response.data[0].name;
+        this.ubicationWarehouse = response.data[0].address1;
+        this.formLoading = false;
+      },
+      error: error => {},
+    });
+    /*const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.idWarehouse'] = this.programming.storeId;
     this.warehouseService.getAll(params.getValue()).subscribe(data => {
       this.nameWarehouse = data.data[0].description;
 
       this.ubicationWarehouse = data.data[0].ubication;
-    });
+    }); */
   }
 
   /*----------Show info goods programming --------- */
@@ -782,7 +803,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   } */
 
   getInfoGoodsTransportable() {
-    /* const _data: any[] = [];
+    const _data: any[] = [];
 
     this.paramsTransportableGoods.getValue()['filter.programmingId'] =
       this.programmingId;
@@ -816,10 +837,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.totalItemsTransportableGoods = 0;
           this.selectGood = [];
         },
-      }); */
+      });
 
     this.formLoadingTrans = true;
-    const _data: any[] = [];
 
     this.paramsTransportableGoods.getValue()['filter.programmingId'] =
       this.programmingId;
@@ -2735,16 +2755,20 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 if (updateProgrammingGood) {
                   const updateGood = await this.updateGoodGuard();
                   if (updateGood) {
-                    this.goodsGuards.clear();
-                    this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
-                    this.getReceiptsGuard();
-                    this.totalItemsGuard = 0;
-                    this.paramsGuardGoods
-                      .pipe(takeUntil(this.$unSubscribe))
-                      .subscribe(() => this.getInfoGoodsGuard());
-                    this.getOpenProceeding();
-                    this.selectInfoGoodGuard = [];
-                    this.formLoadingGuard = false;
+                    const createHistoGood =
+                      await this.createHistoricalGuardGood();
+                    if (createHistoGood) {
+                      this.goodsGuards.clear();
+                      this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
+                      this.getReceiptsGuard();
+                      this.totalItemsGuard = 0;
+                      this.paramsGuardGoods
+                        .pipe(takeUntil(this.$unSubscribe))
+                        .subscribe(() => this.getInfoGoodsGuard());
+                      this.getOpenProceeding();
+                      this.selectInfoGoodGuard = [];
+                      this.formLoadingGuard = false;
+                    }
                   }
                 }
               }
@@ -2776,6 +2800,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 if (updateProgrammingGood) {
                   const updateGood = await this.updateGoodGuard();
                   if (updateGood) {
+                    const createHistoGood =
+                      await this.createHistoricalGuardGood();
                     this.goodsGuards.clear();
                     this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
                     this.getReceiptsGuard();
@@ -2812,16 +2838,22 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   await this.updateProgGoodWarehouse(response);
                 if (updateProgrammingGood) {
                   const updateGood = await this.updateGoodWarehouse();
+
                   if (updateGood) {
-                    this.goodsWarehouse.clear();
-                    this.totalItemsWarehouse = 0;
-                    this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
-                    this.selectInfoGoodWarehouse = [];
-                    this.paramsGoodsWarehouse
-                      .pipe(takeUntil(this.$unSubscribe))
-                      .subscribe(() => this.getInfoWarehouse());
-                    this.getOpenProceeding();
-                    this.getReceiptsGuard();
+                    const createHistoricalWarehouse =
+                      await this.createHistoricalWarehouseGood();
+
+                    if (createHistoricalWarehouse) {
+                      this.goodsWarehouse.clear();
+                      this.totalItemsWarehouse = 0;
+                      this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+                      this.selectInfoGoodWarehouse = [];
+                      this.paramsGoodsWarehouse
+                        .pipe(takeUntil(this.$unSubscribe))
+                        .subscribe(() => this.getInfoWarehouse());
+                      this.getOpenProceeding();
+                      this.getReceiptsGuard();
+                    }
                   }
                 }
               }
@@ -2851,14 +2883,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 if (updateProgrammingGood) {
                   const updateGood = await this.updateGoodWarehouse();
                   if (updateGood) {
-                    this.goodsWarehouse.clear();
-                    this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
-                    this.selectGood = [];
-                    this.paramsGoodsWarehouse
-                      .pipe(takeUntil(this.$unSubscribe))
-                      .subscribe(() => this.getInfoWarehouse());
+                    const _createHistoricalWarehouse =
+                      await this.createHistoricalWarehouseGood();
 
-                    this.getReceiptsGuard();
+                    if (_createHistoricalWarehouse) {
+                      this.goodsWarehouse.clear();
+                      this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+                      this.selectGood = [];
+                      this.paramsGoodsWarehouse
+                        .pipe(takeUntil(this.$unSubscribe))
+                        .subscribe(() => this.getInfoWarehouse());
+
+                      this.getReceiptsGuard();
+                    }
                   }
                 }
               }
@@ -2930,6 +2967,54 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         }); 
       } */
     }
+  }
+
+  createHistoricalGuardGood() {
+    return new Promise((resolve, reject) => {
+      this.selectInfoGoodGuard.map(good => {
+        const historyGood: IHistoryGood = {
+          propertyNum: good.goodId,
+          status: 'ADM',
+          changeDate: new Date(),
+          userChange: this.userInfo.name,
+          statusChangeProgram: 'TR_UPD_HISTO_BIENES',
+          reasonForChange: 'AUTOMATICO',
+        };
+
+        this.historyGoodService.create(historyGood).subscribe({
+          next: response => {
+            resolve(true);
+          },
+          error: error => {
+            console.log('error', error);
+          },
+        });
+      });
+    });
+  }
+
+  createHistoricalWarehouseGood() {
+    return new Promise((resolve, reject) => {
+      this.selectInfoGoodWarehouse.map(good => {
+        const historyGood: IHistoryGood = {
+          propertyNum: good.goodId,
+          status: 'ADM',
+          changeDate: new Date(),
+          userChange: this.userInfo.name,
+          statusChangeProgram: 'TR_UPD_HISTO_BIENES',
+          reasonForChange: 'AUTOMATICO',
+        };
+
+        this.historyGoodService.create(historyGood).subscribe({
+          next: response => {
+            resolve(true);
+          },
+          error: error => {
+            console.log('error', error);
+          },
+        });
+      });
+    });
   }
 
   createKeyAct(act: IProceedings) {
@@ -3183,6 +3268,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           goodId: item.goodId,
           goodStatus: 'EN_RESGUARDO',
           programmationStatus: 'EN_RESGUARDO',
+          status: 'ADM',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
@@ -3204,6 +3290,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           goodId: item.goodId,
           goodStatus: 'EN_ALMACEN',
           programmationStatus: 'EN_ALMACEN',
+          status: 'ADM',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
@@ -3595,16 +3682,25 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   sendGoodGuard() {
     if (this.selectGood.length > 0) {
+      this.goodsTransportable.clear();
       this.selectGood.map((item: any) => {
-        this.goodsTransportable.clear();
+        console.log('item', item);
         const formData: Object = {
           programmingId: this.programmingId,
           goodId: item.id,
           status: 'EN_RESGUARDO_TMP',
         };
+
         this.programmingGoodService.updateGoodProgramming(formData).subscribe({
           next: async response => {
-            await this.changeStatusGoodTran(item);
+            this.selectGood = [];
+            this.paramsTransportableGoods
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getInfoGoodsTransportable());
+
+            this.paramsGuardGoods
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getInfoGoodsGuard());
           },
           error: error => {},
         });
@@ -3629,7 +3725,14 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         };
         this.programmingGoodService.updateGoodProgramming(formData).subscribe({
           next: async response => {
-            await this.changeStatusGoodWarehouse(item);
+            this.selectGood = [];
+            this.paramsTransportableGoods
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getInfoGoodsTransportable());
+
+            this.paramsGoodsWarehouse
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getInfoWarehouse());
           },
           error: error => {},
         });
@@ -3862,7 +3965,13 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           if (next) {
             this.goodsTransportable.clear();
             this.selectGood = [];
-            this.showDataProgramming();
+            this.paramsTransportableGoods
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getInfoGoodsTransportable());
+
+            this.paramsReprogGoods
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getInfoReprog());
           }
         },
       };
@@ -4138,7 +4247,13 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           if (next) {
             this.goodsTransportable.clear();
             this.selectGood = [];
-            this.showDataProgramming();
+            this.paramsTransportableGoods
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getInfoGoodsTransportable());
+
+            this.paramsCancelGoods
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getInfoCancel());
           }
         },
       };
