@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BehaviorSubject,
@@ -27,6 +27,7 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
 
   @Input() count: number = 0;
   @Input() filter: any = null;
+  @Output() countData: EventEmitter<any> = new EventEmitter();
 
   @Input() set data(val: any[]) {
     if (val) {
@@ -52,9 +53,14 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
   }
 
   async setData(data: any[]) {
+    let sum1: number = 0,
+      sum2: number = 0,
+      sum3: number = 0,
+      sum4: number = 0,
+      sum5: number = 0,
+      sum6: number = 0;
     for (const invoice of data) {
       const data = await this.getDataInvoice(invoice);
-
       if (data) {
         invoice.usoComp = data.DESC_USO_COMP;
         invoice.unite = data.DESC_UNIDAD_SAT;
@@ -68,8 +74,33 @@ export class SatCatalogsComponent extends BasePage implements OnInit {
         invoice.precioing = data.PRECIOING;
         invoice.precioeg = data.PRECIOEG;
         invoice.regional = data.REGIONAL;
+
+        sum1 = sum1 + Number(data.TOTALEG);
+        sum2 = sum2 + Number(data.TOTALING);
+        sum3 = sum3 + Number(data.IVAEG);
+        sum4 = sum4 + Number(data.IVAING);
+        sum5 = sum5 + Number(data.PRECIOEG); //importe egresos
+        sum6 = sum6 + Number(data.PRECIOING); //importe ingresos
       }
     }
+
+    sum1 = Number(sum1.toFixed(2));
+    sum2 = Number(sum2.toFixed(2));
+    sum3 = Number(sum3.toFixed(2));
+    sum4 = Number(sum4.toFixed(2));
+    sum5 = Number(sum5.toFixed(2));
+    sum6 = Number(sum6.toFixed(2));
+
+    const values = {
+      sum1,
+      sum2,
+      sum3,
+      sum4,
+      sum5,
+      sum6,
+    };
+    this.countData.emit(values);
+
     this.loading = false;
     this.dataFilter.load(data);
     this.dataFilter.refresh();

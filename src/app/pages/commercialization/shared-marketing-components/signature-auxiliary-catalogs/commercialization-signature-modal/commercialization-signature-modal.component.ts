@@ -79,7 +79,7 @@ export class CommercializationSignatureModalComponent
   confirm() {
     console.log(this.formGroup.value);
     if (this.formGroup.invalid) {
-      this.alert('warning', 'Complete los Campos Requeridos Correctamente', '');
+      this.alert('warning', 'Complete los campos requeridos correctamente', '');
       this.formGroup.markAllAsTouched();
       return;
     }
@@ -99,7 +99,7 @@ export class CommercializationSignatureModalComponent
             if (res.count == this.countTypeSignatures) {
               this.alert(
                 'warning',
-                'No se Puede Agregar otra Firma. Total de firmas: ' + res.count,
+                'No se puede agregar otra firma. Total de firmas: ' + res.count,
                 ''
               );
             } else {
@@ -111,7 +111,7 @@ export class CommercializationSignatureModalComponent
             if (error.status == 400) {
               this.getConsecutiveNumber(this.formGroup.value.idDocumentsxml);
             } else {
-              this.alert('warning', 'Error al Validar el Total de Firmas', '');
+              this.alert('warning', 'Error al validar el total de firmas', '');
             }
           },
         });
@@ -122,7 +122,7 @@ export class CommercializationSignatureModalComponent
           next: res => {
             console.log('RESPONSE', res);
             this.onConfirm.emit(this.formGroup.value);
-            this.alert('success', 'Registro Actualizado Correctamente', '');
+            this.alert('success', 'Registro actualizado correctamente', '');
             this.formGroup.reset();
             this.close();
           },
@@ -130,7 +130,7 @@ export class CommercializationSignatureModalComponent
             console.log(error);
             this.alert(
               'warning',
-              'Ocurrió un Error al Intentar Actualizar el Registro',
+              'Ocurrió un error al intentar actualizar el registro',
               ''
             );
           },
@@ -221,7 +221,7 @@ export class CommercializationSignatureModalComponent
             next: res => {
               console.log('RESPONSE', res);
               this.onConfirm.emit(this.formGroup.value);
-              this.alert('success', 'Registro Creado Correctamente', '');
+              this.alert('success', 'Registro creado correctamente', '');
               this.formGroup.reset();
               this.close();
             },
@@ -229,7 +229,7 @@ export class CommercializationSignatureModalComponent
               console.log(error);
               this.alert(
                 'warning',
-                'Ocurrió un Error al Intentar Crear el Registro',
+                'Ocurrió un error al intentar crear el registro',
                 ''
               );
             },
@@ -239,7 +239,7 @@ export class CommercializationSignatureModalComponent
         console.log(error);
         this.alert(
           'warning',
-          'Ocurrió un Error al Intentar Crear el Registro',
+          'Ocurrió un error al intentar crear el registro',
           ''
         );
       },

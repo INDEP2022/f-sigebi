@@ -14,3 +14,12 @@ export interface IValidSubPriceDTO {
   lotId: string;
   spentId: string;
 }
+
+export interface IDivideCommandsDTO {
+  eventId: string;
+  amount2: string;
+  iva2: string;
+  withholdingIsr2: string;
+  withholding_vat2: string;
+  expenseId: string;
+}
