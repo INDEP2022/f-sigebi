@@ -2616,7 +2616,7 @@ export class PerformProgrammingFormComponent
               this.alert(
                 'success',
                 'Correcto',
-                'El Bien se elimino de la sección de transportable'
+                'El Bien se eliminó de la sección de transportable'
               );
               const deleteGood = this.goodsTranportables.count();
               this.headingTransportable = `Transportable(${deleteGood})`;
@@ -2668,7 +2668,7 @@ export class PerformProgrammingFormComponent
               this.alert(
                 'success',
                 'Correcto',
-                'El bien se elimino de la sección de resguardo'
+                'El bien se eliminó de la sección de resguardo'
               );
               const deleteGood = this.goodsGuards.count();
               this.headingGuard = `Resguardo(${deleteGood})`;
@@ -2702,7 +2702,7 @@ export class PerformProgrammingFormComponent
               this.alert(
                 'success',
                 'Correcto',
-                'El bien se elimino de la sección de almacén'
+                'El bien se eliminó de la sección de almacén'
               );
               const deleteGood = this.goodsWarehouse.count();
               this.headingWarehouse = `Almacén INDEP(${deleteGood})`;
