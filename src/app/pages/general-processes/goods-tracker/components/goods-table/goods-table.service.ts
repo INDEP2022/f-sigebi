@@ -811,7 +811,7 @@ export class GoodsTableService extends BasePage {
       sort: false,
       class: 'bg-success-soft',
     },
-    // ! Autoridad emisora
+    // ! Autoridad 'emisora'
     // emisorAuthority: {
     //   title: 'Autoridad Emisora',
     //   sort: false,
@@ -1463,7 +1463,7 @@ export class GoodsTableService extends BasePage {
     return firstValueFrom(
       this.goodProcessService.getVSteeringWhel(body).pipe(
         catchError(err => of({ data: [{ no_volante: null }] })),
-        map(res => res.data[0].no_volante),
+        map(res => res.data[0]?.no_volante),
         tap(flyer => {
           if (!flyer) {
           }
@@ -1480,7 +1480,7 @@ export class GoodsTableService extends BasePage {
     return firstValueFrom(
       this.dictationService.vGoodsTracker(body).pipe(
         catchError(err => of({ data: [{ no_volante: null }] })),
-        map(res => res.data[0].no_volante)
+        map(res => res.data[0]?.no_volante)
       )
     );
   }
@@ -1491,7 +1491,7 @@ export class GoodsTableService extends BasePage {
     return firstValueFrom(
       this.notificationService.getAllFilter(params.getParams()).pipe(
         catchError(res => of({ data: [{ wheelType: null }] })),
-        map(res => res.data[0].wheelType)
+        map(res => res.data[0]?.wheelType)
       )
     );
   }
@@ -1500,7 +1500,7 @@ export class GoodsTableService extends BasePage {
     return firstValueFrom(
       this.proceedingService.getGlobalExpedientF3(body).pipe(
         catchError(error => of({ data: [{ max: null }] })),
-        map(res => res.data[0].max)
+        map(res => res.data[0]?.max)
       )
     );
   }
@@ -1514,7 +1514,7 @@ export class GoodsTableService extends BasePage {
     return firstValueFrom(
       this.proceedingService.getGlobalExpedientF2(body).pipe(
         catchError(error => of({ data: [{ max: null }] })),
-        map(res => res.data[0].max)
+        map(res => res.data[0]?.max)
       )
     );
   }
@@ -1527,7 +1527,7 @@ export class GoodsTableService extends BasePage {
     return firstValueFrom(
       this.proceedingService.getGlobalExpedientF(body).pipe(
         catchError(error => of({ data: [{ max: null }] })),
-        map(res => res.data[0].max)
+        map(res => res.data[0]?.max)
       )
     );
   }
@@ -1540,7 +1540,7 @@ export class GoodsTableService extends BasePage {
     return firstValueFrom(
       this.lotService
         .getEventId(body)
-        .pipe(map((res: any) => res.data[0].id_evento ?? null))
+        .pipe(map((res: any) => res?.data[0]?.id_evento ?? null))
     );
   }
 
@@ -1548,7 +1548,7 @@ export class GoodsTableService extends BasePage {
     return firstValueFrom(
       this.lotService
         .getGlobalGood(goodId as number)
-        .pipe(map((res: any) => res.data[0].no_bien ?? null))
+        .pipe(map((res: any) => res?.data[0]?.no_bien ?? null))
     );
   }
 
@@ -1565,7 +1565,7 @@ export class GoodsTableService extends BasePage {
     return firstValueFrom(
       this.proceedingDeliveryReception
         .getAll(params.getParams())
-        .pipe(map(response => response.data[0]?.numFile ?? null))
+        .pipe(map(response => response?.data[0]?.numFile ?? null))
     );
   }
 }
