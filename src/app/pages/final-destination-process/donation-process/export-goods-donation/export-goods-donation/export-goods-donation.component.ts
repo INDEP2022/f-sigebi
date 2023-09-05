@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, QueryList, ViewChildren } from '@angular/core';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodsExportPost } from 'src/app/core/models/catalogs/goods.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ExpedientSamiService } from 'src/app/core/services/ms-expedient/expedient-sami.service';
@@ -14,6 +14,7 @@ import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 @Component({
   selector: 'app-export-goods-donation',
@@ -29,6 +30,10 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   noExpediente: number;
   cveUnica: number | null;
   ngGlobal: IGlobalVars = null;
+  //selectedAllCDP: boolean = false;
+  columnFilters: any = [];
+  selectAll: boolean = false;
+
 
 
   constructor(
@@ -44,6 +49,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     this.settings = { ...this.settings, actions: false };
     this.settings.columns = COLUMNS_EXPORT_GOODS;
     this.settings.hideSubHeader = false;
+
   }
 
   ngOnInit(): void {
@@ -60,6 +66,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
           }
         },
       });
+    this.data.load(this.data1);
   }
 
   settingsChange($event: any): void {
@@ -87,16 +94,16 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       (model.noBien = response.data[i].no_bien),
         (model.vNoBienPadre = padre),
         (model.vNobienreferencia = response.data[i].no_bien_referencia);
-
+      //Servicio1
       this.delegationService.postCatalog(model).subscribe({
         next: resp => {
           let acta = resp.data[0].coalesce;
           console.log('resp -> ', resp);
-          //Servicio
+          //Servicio2
           this.delegationService.getTran(response.data[i].no_expediente).subscribe(respo => {
             if (respo != null && resp != undefined) {
               console.log('Resp tranEmit', respo);
-              //servicio 2
+              //servicio 3
               this.detailProceeDelRecService.getProceding(acta).subscribe({
                 next: res => {
                   console.log('res 2 -> ', res);
@@ -118,38 +125,21 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
                   this.data1.push(dataForm); // invocar todos tres servicios
                   this.data.load(this.data1); // cuando ya pasa todo, se mapea la info
 
-                }, error: err => {
-                  let dataForm = {
-                    numberGood: response.data[i].no_bien,
-                    description: response.data[i].descripcion,
-                    quantity: response.data[i].cantidad,
-                    clasificationNumb: response.data[i].no_clasif_bien,
-                    tansfNumb: response.data[i].no_transferente,
-                    status: response.data[i].estatus,
-                    proceedingsNumb: response.data[i].no_expediente,
-                    cveUnica: respo.data[0].no_tran_emi_aut,
-                    emisora: respo.data[0].no_emisora
-                  };
-
-                  this.data1.push(dataForm); // invocar todos tres servicios
-                  this.data.load(this.data1);
-                }
+                },
               });
             }
           });
-          //servicio
         },
       });
     }
   }
 
-  getall() {
+  getall1() {
     this.expedientSamiService.getexpedient().subscribe({
       next: response => {
         console.log('Respuesta ', response);
         this.generarAlerta(response);
         this.totalItems = response.count;
-        // console.log('response.count -->', response.count);
       },
       error: err => {
         console.log('err ->', err);
@@ -158,9 +148,26 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     });
   }
 
+  /*getall() {
+    this.expedientSamiService.getexpedient().subscribe({
+      next: async response => {
+        const goods = await response.data.map(async (item: any) => {
+          item['cpd'] = this.selectedAllCDP == true ? true : false;
+          console.log('selectedAllCDP 1 - > ', this.selectedAllCDP);
+        });
+        console.log('Respuesta ', response);
+        this.generarAlerta(response);
+        this.totalItems = response.count;
+      },
+      error: err => {
+        console.log('err ->', err);
+        this.data.load(this.data1);
+      },
+    });
+  }*/
+
   generarAlerta(response: any) {
     if (response.data.length > 1000) {
-      // cambiar a 1000 se coloca para prueba
       this.alertQuestion(
         'info',
         'Se recuperarán ' +
@@ -215,4 +222,68 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       },
     });
   }
+  // SELECIONA TODO CDP
+  /*selectAllCPD() {
+    // Itera sobre los datos y selecciona todos los CPD
+    this.data1.forEach((item: any) => {
+      //// Cambia el estado a su opuesto (seleccionado/deseleccionado)
+      item.cpd = !item.cpd;
+    });
+    // Actualiza la vista de la tabla
+    this.data.load(this.data1);
+  }
+  selectAllADM() {
+    this.data1.forEach((item: any) => {
+      item.adm = !item.adm;
+    });
+    this.data.load(this.data1);
+  }
+  selectAllRDA() {
+    this.data1.forEach((item: any) => {
+      item.rda = !item.rda;
+    });
+    this.data.load(this.data1);
+  }*/
+
+  selectAllCPD() {
+    this.data1.forEach((item: any) => {
+      if (item.cpd) {
+        item.cpd = false; // Si CPD está seleccionado, deselecciónalo
+      } else {
+        item.cpd = true; // Si CPD no está seleccionado, selecciónalo
+        item.adm = false; // Deselecciona ADM
+        item.rda = false; // Deselecciona RDA
+      }
+    });
+    this.data.load(this.data1);
+  }
+
+  selectAllADM() {
+    this.data1.forEach((item: any) => {
+      if (item.adm) {
+        item.adm = false;
+      } else {
+        item.adm = true;
+        item.cpd = false;
+        item.rda = false;
+      }
+    });
+    this.data.load(this.data1);
+  }
+
+  selectAllRDA() {
+    this.data1.forEach((item: any) => {
+      if (item.rda) {
+        item.rda = false;
+      } else {
+        item.rda = true;
+        item.cpd = false;
+        item.adm = false;
+      }
+    });
+    this.data.load(this.data1);
+  }
 }
+
+
+
