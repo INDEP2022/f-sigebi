@@ -1,7 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 @Component({
   selector: 'app-order-service-form',
   templateUrl: './order-service-form.component.html',
@@ -15,24 +19,24 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
     `,
   ],
 })
-export class OrderServiceFormComponent implements OnInit {
+export class OrderServiceFormComponent implements OnInit, OnChanges {
   showOrderservice: boolean = true;
-  form: FormGroup = new FormGroup({});
+  disableAllChecks: boolean = false;
   @Input() op: number;
   @Input() showForm: boolean;
+  @Input() ordServform: FormGroup = new FormGroup({});
+  readonly: boolean = false;
+
+  orderService: any = {};
+
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.prepareForm();
+    console.log(this.op);
   }
 
-  prepareForm() {
-    this.form = this.fb.group({
-      tranportZone: [null, [Validators.pattern(STRING_PATTERN)]],
-      folioTlp: [null],
-      visit: [null],
-      razonsNoRealization: [null, [Validators.pattern(STRING_PATTERN)]],
-      consolidate: [null],
-    });
+  ngOnChanges(changes: SimpleChanges): void {
+    this.orderService = this.ordServform.getRawValue();
+    console.log('showForm', this.showForm);
   }
 }

@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-address-transferent-form',
@@ -18,17 +17,17 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 export class AddressTransferentFormComponent implements OnInit {
   claimRequest: boolean = false;
   showAddressTransferent: boolean = true;
-  form: FormGroup = new FormGroup({});
+  @Input() form: FormGroup = new FormGroup({});
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.prepareForm();
+    //this.prepareForm();
   }
 
   prepareForm() {
-    this.form = this.fb.group({
+    /*this.form = this.fb.group({
       location: [null, [Validators.pattern(STRING_PATTERN)]],
       address: [null, [Validators.pattern(STRING_PATTERN)]],
-    });
+    });*/
   }
 }

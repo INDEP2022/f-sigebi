@@ -225,7 +225,8 @@
                 type="button"
                 class="btn btn-sm btn-primary mr-2 mt-2 active"
                 [disabled]="
-                  !conceptNumberValue || dataCompositionExpenses.length === 0
+                  !conceptNumberValue ||
+                  dataCompositionExpensesStatusChange.length === 0
                 "
                 (click)="sendToSIRSAE()">
                 Envíar Solicitud de pago a SIRSAE

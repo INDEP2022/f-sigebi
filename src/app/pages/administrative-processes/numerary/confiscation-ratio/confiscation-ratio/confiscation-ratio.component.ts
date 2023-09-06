@@ -29,7 +29,10 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { EXCEL_TO_JSON } from 'src/app/pages/admin/home/constants/excel-to-json-columns';
+import {
+  DATA_BY,
+  EXCEL_TO_JSON,
+} from 'src/app/pages/admin/home/constants/excel-to-json-columns';
 import { JSON_TO_CSV_FRELDECOMISO } from 'src/app/pages/admin/home/constants/json-to-csv';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -63,11 +66,18 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   @ViewChild('modal', { static: false }) modal?: ModalDirective;
   form: FormGroup;
   file: FormGroup;
+  formaplicationData: FormGroup;
+  settings1: any = [];
+  dataOnly: any = [];
+  Only: FormGroup;
   jsonToCsv = JSON_TO_CSV_FRELDECOMISO;
   dataExcel: any = [];
   data: FormGroup[];
   totalItems: number = 0;
+  totalItems1: number = 0;
   lock: boolean = false;
+  until: boolean = false;
+  unt: boolean = false;
   binaryExcel: string | ArrayBuffer;
   currentPage = 1;
   pageSize = 10;
@@ -77,6 +87,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   filterParams = new BehaviorSubject<ListParams>(new ListParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
   source: LocalDataSource = new LocalDataSource();
+  sourceby: LocalDataSource = new LocalDataSource();
   goods: DefaultSelect<IGood>;
   columnFilters: any = [];
   dataTemplate = this.fb.group({
@@ -120,12 +131,18 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       actions: false,
       columns: EXCEL_TO_JSON,
     };
+    this.settings1 = {
+      ...this.settings1,
+      actions: false,
+      columns: DATA_BY,
+    };
   }
   token: TokenInfoModel;
   ngOnInit(): void {
     this.prepareForm();
     this.token = this.authService.decodeToken();
-
+    this.dataIdentifier();
+    this.buildFormaplicationData();
     // this.getGood(new ListParams)
     // this.filterParams.getValue().addFilter('description', '', SearchFilter.ILIKE)
     // this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe({
@@ -151,6 +168,10 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       wrong: [null],
     });
     this.data = [this.dataTemplate];
+    this.Only = this.fb.group({
+      nobien: [null],
+      radio: [''],
+    });
   }
   openPrevPdf() {
     let config: ModalOptions = {
@@ -291,25 +312,22 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
       this.dataExcel = this.excelService.getData(binaryExcel);
-
       const mappedData: any = [];
       for (let i = 0; i < this.dataExcel.length; i++) {
         mappedData.push({
-          idD: this.dataExcel[i].clave_decom,
           id: this.dataExcel[i].no_bien,
           f_trnas: this.dataExcel[i].fec_transferencia,
           f_sent: this.dataExcel[i].fec_sentencia,
           Inte: this.dataExcel[i].intereses,
           f_teso: this.dataExcel[i].fec_of_tesofe,
           o_teso: this.dataExcel[i].oficio_tesofe,
-          curr: this.dataExcel[i].money,
           aut: this.dataExcel[i].autoridad,
           causa_penal: this.dataExcel[i].causa_penal,
         });
       }
       this.source.load(mappedData);
+      this.unt = true;
       this.source.refresh();
-
       this.totalItems = this.dataExcel.length;
       this.file.get('recordRead').patchValue(this.totalItems);
     } catch (error) {
@@ -327,11 +345,26 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       this.alert('warning', 'Se debe importar el archivo excel', '');
       return;
     }
+
+    if (this.form.get('forfeitureKey').value === null) {
+      this.alert('warning', 'Se debe ingresar la Cve Decomiso', '');
+      return;
+    }
+
+    if (this.Only.get('radio').value === null) {
+      this.alert('warning', 'Se debe seleccionar un tipo de modena', '');
+      return;
+    }
+
     const user = this.authService.decodeToken();
+    const clave = this.form.get('forfeitureKey').value;
+    const moneda = this.Only.get('radio').value;
     const useri = user.username.toUpperCase();
     this.dataExcel.map((item: any) => {
       item['screenkey'] = 'FRELDECOMISO';
       item['toolbar_user'] = useri;
+      item['clave_decom'] = clave;
+      item['money'] = moneda;
     });
 
     let insertBody = {
@@ -526,6 +559,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     this.form.get('pjf').setValue(null);
     this.form.get('totalAmount').setValue(null);
     this.form.get('forfeitureKey').setValue(null);
+    this.dataIdentifier();
   }
   clean() {
     this.file.get('recordsProcessed').setValue(null);
@@ -536,5 +570,229 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     this.dataExcel = [];
 
     this.source.load(this.dataExcel);
+  }
+
+  onlyGood() {
+    console.log(this.Only.get('radio').value);
+    console.log(this.form.get('forfeitureKey').value);
+  }
+
+  only() {
+    console.log(this.Only.get('radio').value);
+    console.log(this.form.get('forfeitureKey').value);
+    console.log(this.Only.get('nobien').value);
+
+    // Obtener el valor de this.form.get('forfeitureKey').value
+    const forfeitureKeyValue = this.form.get('forfeitureKey').value;
+
+    // Actualizar el objeto DATA_BY con el nuevo valor
+    const customData = {
+      idD: forfeitureKeyValue,
+    };
+
+    let params = {
+      ...this.params.getValue(),
+    };
+
+    params['filter.goodId'] = `$eq:${this.Only.get('nobien').value}`;
+    console.log(params);
+    //this.
+    this.goodServ.getByExpedientAndParams__(params).subscribe({
+      next: (resp: any) => {
+        console.log(resp);
+        this.sourceby = resp.data;
+        this.totalItems1 = resp.count;
+        this.file.get('recordRead').patchValue(this.totalItems1);
+        this.formaplicationData
+          .get('NoBien')
+          .patchValue(this.Only.get('nobien').value);
+        this.formaplicationData.get('f_trnas').patchValue(resp.data.f_trnas);
+        this.formaplicationData.get('f_sent').patchValue(resp.data.f_sent);
+        this.formaplicationData.get('Inte').patchValue(resp.data.Inte);
+        this.formaplicationData
+          .get('tesofeDate')
+          .patchValue(resp.data[0].tesofeDate);
+        this.formaplicationData
+          .get('tesofeFolio')
+          .patchValue(resp.data[0].tesofeFolio);
+        this.formaplicationData
+          .get('appraisalCurrencyKey')
+          .patchValue(this.Only.get('radio').value);
+        this.formaplicationData
+          .get('aut')
+          .patchValue(resp.data[0].expediente.authorityNumber);
+        this.formaplicationData
+          .get('expedientecriminalCase')
+          .patchValue(resp.data[0].expediente.criminalCase);
+        this.until = true;
+      },
+      error: err => {
+        console.log(err);
+        this.alert('warning', 'No se encontraron registros', '');
+      },
+    });
+  }
+
+  dataIdentifier() {
+    let params = {
+      ...this.params.getValue(),
+    };
+    this.detRelationConfiscationService.getId(params).subscribe({
+      next: (resp: any) => {
+        console.log(resp);
+        this.form.controls['forfeitureKey'].setValue(resp.identifier);
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
+  }
+
+  async aproveOnly() {
+    if (this.form.get('forfeitureKey').value === null) {
+      this.alert('warning', 'Se debe ingresar la Cve Decomiso', '');
+      return;
+    }
+
+    if (this.Only.get('radio').value === null) {
+      this.alert('warning', 'Se debe seleccionar un tipo de modena', '');
+      return;
+    }
+
+    if (this.Only.get('nobien').value === null) {
+      this.alert('warning', 'Debe ingresar el No. Bien.', '');
+      return;
+    }
+
+    const user = this.authService.decodeToken();
+    const clave = this.form.get('forfeitureKey').value;
+    const moneda = this.Only.get('radio').value;
+    const useri = user.username.toUpperCase();
+    const no_bien = this.formaplicationData.get('NoBien').value;
+    const fec_transferencia = this.formaplicationData.get('f_trnas').value;
+    const fec_sentencia = this.formaplicationData.get('f_sent').value;
+    const intereses = this.formaplicationData.get('Inte').value;
+    const fec_of_tesofe = this.formaplicationData.get('tesofeDate').value;
+    const causa_penal = this.formaplicationData.get('aut').value;
+    const autoridad = this.formaplicationData.get(
+      'expedientecriminalCase'
+    ).value;
+    const tesofeFolio = this.formaplicationData.get('tesofeFolio').value;
+
+    let bodydat = {
+      screenkey: 'FRELDECOMISO',
+      toolbar_user: useri,
+      clave_decom: clave,
+      money: moneda,
+      no_bien: no_bien,
+      fec_transferencia: fec_transferencia,
+      fec_sentencia: fec_sentencia,
+      intereses: intereses,
+      fec_of_tesofe: fec_of_tesofe,
+      causa_penal: causa_penal,
+      autoridad: autoridad,
+      oficio_tesofe: tesofeFolio,
+    };
+    console.log(bodydat);
+
+    let insertBody = {
+      data: [bodydat],
+    };
+
+    console.log(insertBody);
+
+    const duplicateNumbers = [];
+    const mon: any = [];
+    const data1: any = [];
+    for (let i = 0; i < this.totalItems1; i++) {
+      data1.push([bodydat]);
+      const data = bodydat.no_bien;
+      // mon.push([this.dataExcel[i].money]);
+
+      let body = {
+        goodNumber: data,
+      };
+      console.log(body);
+
+      try {
+        const resp = await this.detRelationConfiscationService
+          .getById(body)
+          .toPromise();
+
+        // Verificar si el número de bien ya existe en la respuesta
+        if (resp || resp['exists']) {
+          duplicateNumbers.push(data); // Agregar el número de bien duplicado al arreglo
+        }
+      } catch (err) {}
+    }
+
+    let insertResp;
+    try {
+      insertResp = await this.detRelationConfiscationService
+        .Insert(insertBody)
+        .toPromise();
+
+      this.file.get('recordsProcessed').patchValue(insertResp['total']);
+      this.file.get('processed').patchValue(insertResp['sucess']);
+      this.file.get('wrong').patchValue(insertResp['error']);
+      if (this.file.get('processed').value > 0) {
+        this.alert('success', 'Registros Aprobados', '');
+      }
+    } catch (err) {
+      // Verificar si err es de tipo HttpErrorResponse
+      if (err instanceof HttpErrorResponse) {
+        if (
+          err.status === 500 ||
+          (err.error && err.error.includes('column "undefined" does not exist'))
+        ) {
+          this.alert(
+            'warning',
+            'Archivo sin Información',
+            'Asegúrese de Subir el Archivo Correcto'
+          );
+        } else {
+          this.alert('error', 'Error desconocido.', '');
+        }
+      } else {
+        this.alert('error', 'Error desconocido.', '');
+      }
+    }
+    if (duplicateNumbers.length > 0) {
+      this.alert(
+        'warning',
+        'El No. Bien que Intenta Ingresar ya Existe',
+        duplicateNumbers.join(', ')
+      );
+      this.file.get('wrong').patchValue(insertResp['error']);
+      this.file.get('processed').patchValue('0');
+      this.file.get('recordsProcessed').patchValue(insertResp['total']);
+      return;
+    }
+  }
+
+  async buildFormaplicationData() {
+    this.formaplicationData = this.fb.group({
+      NoBien: [null],
+      f_trnas: [null],
+      f_sent: [null],
+      Inte: [null],
+      tesofeDate: [null],
+      tesofeFolio: [null],
+      appraisalCurrencyKey: [null],
+      aut: [null],
+      expedientecriminalCase: [null],
+    });
+    // this.formaplicationData.controls['postUserRequestCamnum'].disable();
+    // this.formaplicationData.controls['delegationRequestcamnum'].disable();
+    // this.formaplicationData.controls['authorizeDelegation'].disable();
+    // this.formaplicationData.controls['authorizePostUser'].disable();
+    // this.formaplicationData.controls['authorizeDate'].disable();
+    // this.formaplicationData.controls['dateRequestChangeNumerary'].disable();
+
+    // const paramsSender = new ListParams();
+    // paramsSender.text = this.token.decodeToken().preferred_username;
+    // await this.get___Senders(paramsSender);
+
+    this.formaplicationData.controls;
   }
 }

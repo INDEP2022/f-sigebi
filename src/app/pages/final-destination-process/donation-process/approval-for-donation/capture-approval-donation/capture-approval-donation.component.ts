@@ -251,7 +251,7 @@ export class CaptureApprovalDonationComponent
         //   },
         //   sort: false,
         // },
-        noDataMessage: 'No se encontrarón registros',
+        // noDataMessage: 'No se encontrarón registros',
       },
       // rowClassFunction: (row: any) => {
       //   if (row.data.di_disponible == 'S') {
@@ -274,7 +274,7 @@ export class CaptureApprovalDonationComponent
       rowClassFunction: (row: any) => {
         return 'bg-light text-black';
       },
-      noDataMessage: 'No se encontrarón registros',
+      // noDataMessage: 'No se encontrarón registros',
     };
   }
 
@@ -305,7 +305,7 @@ export class CaptureApprovalDonationComponent
     this.getComerDonation();
     this.configDatePicker();
     this.initForm();
-    // this.openModal('Seleccione el Área a Trabajar', 'select-area');
+    this.openModal('Seleccione el Área a Trabajar', 'select-area');
     this.regisForm.get('type').setValue(this.type);
   }
 

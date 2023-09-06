@@ -29,4 +29,5 @@ export enum GoodprocessEndpoints {
   ReceptionBpmBackup = 'application/usp-reception-bpm-backup',
   getDataFromGood = 'application/getDataFromGood',
   GetMinuteDetailDelivery = 'application/get-minute-detail-delivery',
+  getStatusCveScreem = 'application/status-cve-screem',
 }

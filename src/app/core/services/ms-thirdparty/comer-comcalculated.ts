@@ -32,4 +32,17 @@ export class ComerComCalculatedService extends HttpService {
     const route = `${ThirdPartyEndpoints.ComerComCalculated}/${id}`;
     return this.put(route, model);
   }
+
+  createW(model: any) {
+    return this.post(ThirdPartyEndpoints.ComerComCalculated, model);
+  }
+  updateW(id: string | number, model: any) {
+    const route = `${ThirdPartyEndpoints.ComerComCalculated}/${id}`;
+    return this.put(route, model);
+  }
+
+  deleteW(id: string | number) {
+    const route = `${ThirdPartyEndpoints.ComerComCalculated}/${id}`;
+    return this.delete(route);
+  }
 }
