@@ -83,4 +83,7 @@ export class DonationService
     const route = `${endpoint}`;
     return this.post(route, goodDon);
   }
+  getTempGood(params: ListParams) {
+    return this.get(DonationEndPoint.TempDonationGood, params);
+  }
 }
