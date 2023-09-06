@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-service-order-request-capture-form',
@@ -20,14 +22,52 @@ export class ServiceOrderRequestCaptureFormComponent
   implements OnInit
 {
   claimRequest: boolean = false;
-
+  form: FormGroup = new FormGroup({});
+  ordServform: FormGroup = new FormGroup({});
   parentModal: BsModalRef;
+  op: number = 1;
+  showForm: boolean = true;
+
+  //private programmingService = inject(ProgrammingRequestService);
+  //private router = inject(ActivatedRoute);
+  private fb = inject(FormBuilder);
+
   constructor() {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.prepareProgForm();
+    this.prepareOrderServiceForm();
+  }
 
+  prepareProgForm() {
+    this.form = this.fb.group({
+      location: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      address: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+    });
+  }
+
+  prepareOrderServiceForm() {
+    this.ordServform = this.fb.group({
+      serviceOrderFolio: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioReportImplementation: [null, [Validators.pattern(STRING_PATTERN)]],
+      shiftDate: [null, [Validators.pattern(STRING_PATTERN)]],
+      shiftUser: [null, [Validators.pattern(STRING_PATTERN)]],
+      contractNumber: [null, [Validators.pattern(STRING_PATTERN)]],
+      transportationZone: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioTlp: [null, [Validators.pattern(STRING_PATTERN)]],
+      eyeVisit: [null, [Validators.pattern(STRING_PATTERN)]],
+      reasonsNotPerform: [null, [Validators.pattern(STRING_PATTERN)]],
+      userContainers: [null, [Validators.pattern(STRING_PATTERN)]],
+    });
+  }
   showDocument() {}
 
   sendOrderService() {
@@ -62,5 +102,11 @@ export class ServiceOrderRequestCaptureFormComponent
         );
       }
     });
+  }
+
+  setClaimRequest() {
+    this.claimRequest = true;
+    this.form.controls['location'].enable();
+    this.form.controls['address'].enable();
   }
 }
