@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ICatGeneric } from 'src/app/common/repository/interfaces/cat-generic.interface';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-create-classificate-vehicle-form',
@@ -17,12 +21,18 @@ export class CreateClassificateVehicleFormComponent
   item: any;
   title: string = 'Clasificación de vehiculos';
   edit: boolean = false;
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
+  typeVehicle = new DefaultSelect<ICatGeneric>();
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private genericService: GenericService
+  ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getTypeVehicle(new ListParams());
   }
 
   prepareForm() {
@@ -71,6 +81,18 @@ export class CreateClassificateVehicleFormComponent
       }
     });
   }
+
+  getTypeVehicle(params: ListParams) {
+    params['filter.name'] = 'Tipo Vehiculo';
+    this.genericService.getAll(params).subscribe({
+      next: response => {
+        console.log('response', response);
+        this.typeVehicle = new DefaultSelect(response.data, response.count);
+      },
+      error: error => {},
+    });
+  }
+
   close() {
     this.modalRef.hide();
   }
