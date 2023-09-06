@@ -24,55 +24,70 @@
         <div class="mb-3 ch-content">
           <h5 class="title">Consultar L&iacute;nea de captura</h5>
         </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('idEvent')" label="ID Evento">
+        <div class="col-md-2 mt-4">
+          <form-field [control]="form.get('idEvent')" label="Id Evento">
             <input type="text" class="form-control" formControlName="idEvent" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 mt-4">
           <form-field
             [control]="form.get('allotment')"
-            label="Lote p&uacute;blico">
+            label="Lote P&uacute;blico">
             <input
               type="text"
               class="form-control"
               formControlName="allotment" />
           </form-field>
         </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('idClient')" label="ID Cliente">
+        <div class="col-md-2 mt-4">
+          <form-field [control]="form.get('idClient')" label="Id Cliente">
             <input
               type="text"
               class="form-control"
               formControlName="idClient" />
           </form-field>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-2 mt-4">
           <div class="justify-content-center">
             <button
               type="button"
               class="btn btn-primary btn-sm active"
-              [disabled]="!form.valid">
-              Buscar
+              [disabled]="!form.valid"
+              (click)="searchConsult()">
+              Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
           </div>
         </div>
       </div>
     </form>
-    <div class="row">
-      <div class="mb-3 ch-content" header>
+    <!--<div class="mb-3 ch-content" header>
         <h5 class="title"></h5>
         <div class="col-md-4 buttons">
           <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
+      </div>-->
+
+    <div class="row pt-4">
+      <div class="col-md-8 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <app-columns-select
+          [(settings)]="settings"
+          [leftList]="true"></app-columns-select>
       </div>
-      <div class="table-responsive">
-        <ng2-smart-table
-          [settings]="settings"
-          [source]="data"></ng2-smart-table>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data">
+          </ng2-smart-table>
+        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>
     </div>
   </div>
 </app-card>

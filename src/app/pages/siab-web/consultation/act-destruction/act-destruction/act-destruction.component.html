@@ -10,7 +10,7 @@
         <div class="col-md-3"></div>
         <div class="col-md-3">
           <form-field
-            label="Criterio de búsqueda de actas:"
+            label="Criterio de Búsqueda de Actas:"
             [control]="actDestructionForm.get('recordsSearchCriteria')">
             <input
               class="form-control"
@@ -19,23 +19,147 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <button type="button" class="btn btn-primary active">Buscar</button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="!actDestructionForm.valid"
+            (click)="searchConsult()">
+            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+
+          <!--<button type="button" class="btn btn-primary active">Buscar</button>-->
         </div>
       </div>
     </form>
-    <div class="row margin-input">
+
+    <div class="row">
+      <div class="col-md-8 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <app-columns-select
+          [(settings)]="settings"
+          [leftList]="true"></app-columns-select>
+      </div>
+    </div>
+
+    <div class="row">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data1">
+            [source]="data">
           </ng2-smart-table>
         </div>
       </div>
       <app-pagination
         [params]="params"
         [totalItems]="totalItems"></app-pagination>
+    </div>
+
+    <div *ngIf="show">
+      <div class="ch-content">
+        <h5 class="title">Actas Destrucción Detalle</h5>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-2">
+          <label for="nombre">Expediente:</label>
+        </div>
+        <div class="col-md-3">
+          {{ proceedings }}
+        </div>
+        <div class="col-md-2">
+          <label for="nombre">Estatus: </label>
+        </div>
+        <div class="col-md-3">
+          {{ status }}
+        </div>
+      </div>
+      <div class="row margin-input pt-3">
+        <div class="col-md-3">
+          <label for="nombre">Acta: </label>
+          <br />{{ minutes }}
+        </div>
+        <div class="col-md-3">
+          <label for="nombre">Fec. Elaboración: </label>
+          <br />{{ elaborationDate }}
+        </div>
+        <div class="col-md-3">
+          <label for="nombre">Fec. Recepcion Fisica: </label>
+          <br />{{ receptionDate }}
+        </div>
+        <div class="col-md-3">
+          <label for="nombre">Fec. Captura: </label>
+          <br />{{ captureDate }}
+        </div>
+      </div>
+
+      <div class="row margin-input pt-3">
+        <div class="col-md-6">
+          <label for="nombre">Dirección: </label>
+          <br />{{ address }}
+        </div>
+        <div class="col-md-6">
+          <label for="nombre">Observaciones: </label>
+          <br />{{ observations }}
+        </div>
+      </div>
+
+      <div class="row margin-input pt-3">
+        <div class="col-md-6">
+          <label for="nombre">Entrega: </label>
+          <span style="margin-left: 10px">{{ delivery }}</span>
+        </div>
+        <div class="col-md-6">
+          <label for="nombre">Recibe: </label>
+          <span style="margin-left: 10px">{{ receives }}</span>
+        </div>
+      </div>
+
+      <div class="row margin-input pt-3">
+        <div class="col-md-6">
+          <label for="nombre">Fecha Elaboración Recibo: </label>
+          <span style="margin-left: 10px">{{ receiptElaborationDate }}</span>
+        </div>
+        <div class="col-md-6">
+          <label for="nombre">Testigo de la Contraloria: </label>
+          <span style="margin-left: 10px">{{ witness }}</span>
+        </div>
+      </div>
+
+      <div class="row margin-input pt-3">
+        <div class="col-md-6">
+          <label for="nombre">Fecha Entrega de Bienes: </label>
+          <span style="margin-left: 10px">{{ deliveryDateOfGoods }}</span>
+        </div>
+        <div class="col-md-6">
+          <label for="nombre">Folio de Escaneo: </label>
+          <span style="margin-left: 10px">{{ scanFolio }}</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <app-columns-select
+            [(settings)]="settings1"
+            [leftList]="true"></app-columns-select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings1"
+              [source]="data1">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination
+          [params]="params1"
+          [totalItems]="totalItems1"></app-pagination>
+      </div>
     </div>
   </div>
 </app-card>
