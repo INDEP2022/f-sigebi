@@ -52,16 +52,28 @@
     <div class="row mb-2">
       <div class="col-md-5 buttons">
         <button
+          [disabled]="
+            !disabledBtnCerrar || loadingBtnExcel1 || loadingBtnExcel2
+          "
+          [ngClass]="{ loading: loadingBtnExcel1 }"
           class="btn btn-sm btn-info active mr-3"
           (click)="goods()"
           type="button">
           Bienes
         </button>
         <button
+          [disabled]="
+            !disabledBtnCerrar || loadingBtnExcel1 || loadingBtnExcel2
+          "
+          [ngClass]="{ loading: loadingBtnExcel2 }"
           class="btn btn-sm btn-primary active"
           (click)="calculateCommision()"
           type="button">
           Calcular Comisi&oacute;n
+          <i
+            *ngIf="!loadingBtnExcel2"
+            class="fa fa-calculator"
+            aria-hidden="true"></i>
         </button>
       </div>
     </div>

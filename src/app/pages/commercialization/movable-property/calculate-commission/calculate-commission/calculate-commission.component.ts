@@ -14,6 +14,7 @@ import {
   IComerCommissionsPerGood,
   IThirdParty,
 } from 'src/app/core/models/ms-thirdparty/third-party.model';
+import { CommissionsProcessService } from 'src/app/core/services/ms-commisions/commissions.service';
 import { ComerComCalculatedService } from 'src/app/core/services/ms-thirdparty/comer-comcalculated';
 import { ComerCommissionsPerGoodService } from 'src/app/core/services/ms-thirdparty/comer-commissions-per-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -27,7 +28,29 @@ import {
 @Component({
   selector: 'app-calculate-commission',
   templateUrl: './calculate-commission.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class CalculateCommissionComponent extends BasePage implements OnInit {
   data: any;
@@ -57,11 +80,14 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
   comCalculate: LocalDataSource = new LocalDataSource(); // COMER_COMCALCULADA
   comCommisionXGood: LocalDataSource = new LocalDataSource(); // COMER_COMISIONESXBIEN
   totalForm: FormGroup = new FormGroup({});
+  loadingBtnExcel1: boolean = false;
+  loadingBtnExcel2: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private comerComCalculatedService: ComerComCalculatedService,
-    private comerCommissionsPerGoodService: ComerCommissionsPerGoodService
+    private comerCommissionsPerGoodService: ComerCommissionsPerGoodService,
+    private commissionsProcessService: CommissionsProcessService
   ) {
     super();
     this.settings = {
@@ -376,9 +402,67 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
     this.modalService.show(CommissionsModalComponent, config);
   }
 
-  calculateCommision() {}
+  async calculateCommision() {
+    if (!this.comerComCalculated) {
+      this.alert('warning', 'Debe seleccionar un registro', '');
+    }
+    let obj = {
+      idCom: this.comerComCalculated.comCalculatedId,
+      goodsCalc: 0,
+    };
+    this.loadingBtnExcel2 = true;
+    const commissionsProcessServiceConst: any =
+      await this.commissionsProcessServiceFunct(obj);
 
-  goods() {}
+    if (commissionsProcessServiceConst.status == 200) {
+      this.loadingBtnExcel2 = false;
+      this.rowsSelectedGetComissions(this.comerComCalculated);
+      this.alert(
+        'success',
+        'Proceso Terminado Correctamente',
+        commissionsProcessServiceConst.message
+      );
+    } else {
+      this.loadingBtnExcel2 = false;
+      this.rowsSelectedGetComissions(this.comerComCalculated);
+      this.alert(
+        'warning',
+        'Ha ocurrido un error',
+        commissionsProcessServiceConst.message
+      );
+    }
+  }
+
+  async goods() {
+    if (!this.comerComCalculated) {
+      this.alert('warning', 'Debe seleccionar un registro', '');
+    }
+    let obj = {
+      idCom: this.comerComCalculated.comCalculatedId,
+      goodsCalc: 1,
+    };
+    this.loadingBtnExcel1 = true;
+    const commissionsProcessServiceConst: any =
+      await this.commissionsProcessServiceFunct(obj);
+
+    if (commissionsProcessServiceConst.status == 200) {
+      this.loadingBtnExcel1 = false;
+      this.rowsSelectedGetComissions(this.comerComCalculated);
+      this.alert(
+        'success',
+        'Proceso Terminado Correctamente',
+        commissionsProcessServiceConst.message
+      );
+    } else {
+      this.loadingBtnExcel1 = false;
+      this.rowsSelectedGetComissions(this.comerComCalculated);
+      this.alert(
+        'warning',
+        'Ha ocurrido un error',
+        commissionsProcessServiceConst.message
+      );
+    }
+  }
 
   async questionDelete(data: any) {
     console.log(data);
@@ -422,6 +506,31 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
           },
           error: error => {
             resolve(false);
+          },
+        });
+    });
+  }
+
+  async commissionsProcessServiceFunct(body: any) {
+    return new Promise((resolve, reject) => {
+      this.commissionsProcessService
+        .comissionCentralCoordinate(body)
+        .subscribe({
+          next: response => {
+            console.log('resp', response);
+            let obj = {
+              status: 200,
+              message: response.message[0],
+            };
+            resolve(obj);
+          },
+          error: error => {
+            console.log('err', error);
+            let obj = {
+              status: error.status,
+              message: error.error.message[0],
+            };
+            resolve(obj);
           },
         });
     });
