@@ -237,7 +237,7 @@ export class AddMovementComponent
     const CATEGORY = this.form.value.category;
     const BANK = this.form.value.bank;
     console.log('BANK', BANK);
-    console.log('this.data.cveAccount', this.data.cveAccount);
+    console.log('this.data.accountnumber', this.data.accountnumber);
 
     let obj: any = {
       category: this.data.category,
@@ -247,7 +247,7 @@ export class AddMovementComponent
           ? this.convertirFecha(this.form.value.dateMovement)
           : this.returnParseDate_(this.form.value.dateMovement),
       // this.convertirFecha(this.dateMovem),
-      numberAccount: this.data.cveAccount,
+      numberAccount: this.data.accountnumber,
       numberMotion: this.data.motionnumber,
       dateCalculationInterests:
         this.form.value.dateMovement == this.dateMovemResp
