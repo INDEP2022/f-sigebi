@@ -1,5 +1,5 @@
 export const SERVICE_ORDER_COLUMNS = {
-  numberGestion: {
+  goodId: {
     title: 'Número de gestión',
     type: 'number',
     sort: false,
@@ -9,15 +9,18 @@ export const SERVICE_ORDER_COLUMNS = {
     title: 'Clave única',
     type: 'number',
     sort: false,
+    /*valuePrepareFunction: (value: any) => {
+      return value.uniqueKey;
+    }*/
   },
 
-  descriptionGoodTransferent: {
+  goodDescription: {
     title: 'Descripción bien transferente',
     type: 'string',
     sort: false,
   },
 
-  transerUnitMeasure: {
+  unitMeasure: {
     title: 'Unidad de media transferente',
     type: 'string',
     sort: false,
@@ -29,7 +32,7 @@ export const SERVICE_ORDER_COLUMNS = {
     sort: false,
   },
 
-  expedientTransferent: {
+  transferenceType: {
     title: 'Expediente transferente / PAMA',
     type: 'string',
     sort: false,
@@ -41,7 +44,7 @@ export const SERVICE_ORDER_COLUMNS = {
     sort: false,
   },
 
-  stateConservation: {
+  conservationState: {
     title: 'Estado de conservación',
     type: 'string',
     sort: false,
@@ -53,7 +56,7 @@ export const SERVICE_ORDER_COLUMNS = {
     sort: false,
   },
 
-  numberExpedient: {
+  /*   numberExpedient: {
     title: 'Número del expediente',
     type: 'number',
     sort: false,
@@ -63,5 +66,5 @@ export const SERVICE_ORDER_COLUMNS = {
     title: 'Tipo bien',
     type: 'string',
     sort: false,
-  },
+  }, */
 };

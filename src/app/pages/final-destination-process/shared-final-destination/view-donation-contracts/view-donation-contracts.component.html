@@ -12,7 +12,14 @@
     <div class="mt-5">
       <div class="row">
         <div class="col-12 text-right">
-          <button class="btn btn-secondary btn-sm active">Incorporar</button>
+          <button
+            (click)="onIncorporar()"
+            type="button"
+            tooltip="Agregar"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2">
+            Incorporar <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
       <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -32,11 +39,13 @@
           <div class="col-12 col-md-3">
             <div class="mb-3 pl-4 pr-3">
               <form-field [control]="form.get('cto')" label="Cto">
-                <select class="form-control" formControlName="cto">
+                <input type="text" class="form-control" formControlName="cto" />
+
+                <!-- <select class="form-control" formControlName="cto">
                   <option [value]="null">Seleccione un valor</option>
                   <option [value]="1">1</option>
                   <option [value]="2">2</option>
-                </select>
+                </select> -->
               </form-field>
             </div>
           </div>
@@ -54,11 +63,16 @@
           <div class="col-12 col-md-3">
             <div class="mb-3 pl-4 pr-4">
               <form-field [control]="form.get('trans')" label="Trans">
-                <select class="form-control" formControlName="trans">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="trans" />
+
+                <!-- <select class="form-control" formControlName="trans">
                   <option [value]="null">Seleccione un valor</option>
                   <option [value]="1">1</option>
                   <option [value]="2">2</option>
-                </select>
+                </select> -->
               </form-field>
             </div>
           </div>
@@ -68,33 +82,42 @@
           <div class="col-12 col-md-4">
             <div class="mb-3 pl-4 pr-4">
               <form-field [control]="form.get('don')" label="Don">
-                <select class="form-control" formControlName="don">
+                <input type="text" class="form-control" formControlName="don" />
+                <!-- <select class="form-control" formControlName="don">
                   <option [value]="null">Seleccione un valor</option>
                   <option [value]="1">1</option>
                   <option [value]="2">2</option>
-                </select>
+                </select> -->
               </form-field>
             </div>
           </div>
           <div class="col-12 col-md-4">
             <div class="mb-3 pl-4 pr-4">
               <form-field [control]="form.get('ctrlAut')" label="CtrlAut">
-                <select class="form-control" formControlName="ctrlAut">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="ctrlAut" />
+                <!-- <select class="form-control" formControlName="ctrlAut">
                   <option [value]="null">Seleccione un valor</option>
                   <option [value]="1">1</option>
                   <option [value]="2">2</option>
-                </select>
+                </select> -->
               </form-field>
             </div>
           </div>
           <div class="col-12 col-md-4">
             <div class="mb-3 pl-4 pr-4">
               <form-field [control]="form.get('folio')" label="Folio">
-                <select class="form-control" formControlName="folio">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="folio" />
+                <!-- <select class="form-control" formControlName="folio">
                   <option [value]="null">Seleccione un valor</option>
                   <option [value]="1">1</option>
                   <option [value]="2">2</option>
-                </select>
+                </select> -->
               </form-field>
             </div>
           </div>
@@ -227,8 +250,6 @@
                 <input
                   type="text"
                   class="form-control"
-                  #dp="bsDatepicker"
-                  bsDatepicker
                   formControlName="nameRepSae" />
               </form-field>
             </div>
@@ -328,12 +349,18 @@
               <form-field
                 [control]="form.get('contractStatus')"
                 label="Estatus del Contrato Convenio">
-                <input
+                <!-- <input
                   type="text"
                   class="form-control"
                   #dp="bsDatepicker"
                   bsDatepicker
-                  formControlName="contractStatus" />
+                  formControlName="contractStatus" /> -->
+
+                <select class="form-control" formControlName="contractStatus">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="1">1</option>
+                  <option [value]="2">2</option>
+                </select>
               </form-field>
             </div>
           </div>
@@ -343,15 +370,23 @@
       <div *ngIf="op == 1; else elseBlock2">
         <div class="row mt-3">
           <div class="col-12 col-md-4 text-right">
-            <button class="btn btn-secondary btn-sm active">Imprimir</button>
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="onImprimir()">
+              Imprimir
+            </button>
           </div>
           <div class="col-12 col-md-4 text-right">
-            <button class="btn btn-secondary btn-sm active">
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="onBloquearFirma()">
               Bloquear en Firma
             </button>
           </div>
           <div class="col-12 col-md-4 text-right">
-            <button class="btn btn-secondary btn-sm active">
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="onCerrarContrato()">
               Cerrar Contrato o Convenio
             </button>
           </div>
@@ -360,8 +395,11 @@
       <ng-template #elseBlock2>
         <div class="row mt-3 justify-content-center justify-content-md-end">
           <div class="col-12 col-md-4 text-center text-md-right">
-            <button class="btn btn-secondary btn-sm active">
-              Quita Bienes Seleccionados
+            <button
+              class="btn btn-red btn-sm active m-3"
+              (click)="onQuitarBienesSeleccionados()">
+              Quitar bienes eleccionados
+              <i class="fa fa-trash" aria-hidden="true"></i>
             </button>
           </div>
         </div>
@@ -390,8 +428,13 @@
       </ng-scrollbar>
       <div class="row mt-3">
         <div class="col-12 text-right">
-          <button class="btn btn-secondary btn-sm active" (click)="openModal()">
-            Insertar P&aacute;rrafos
+          <button
+            (click)="openModal()"
+            type="button"
+            tooltip="Agregar"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2">
+            Insertar P&aacute;rrafos <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
       </div>

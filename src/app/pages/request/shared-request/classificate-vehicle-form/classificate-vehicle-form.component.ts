@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -35,6 +35,8 @@ export class ClassificateVehicleFormComponent
   item: any;
   data: any[] = [];
 
+  private bsModalService = inject(BsModalRef);
+
   constructor(private modalService: BsModalService) {
     super();
 
@@ -45,17 +47,19 @@ export class ClassificateVehicleFormComponent
       selectMode: 'multi',
     };
 
-    this.data = [
+    /* this.data = [
       {
         typeVehicle: 'Particular',
         sale: '1',
         donation: '0',
         destruction: '0',
       },
-    ];
+    ]; */
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.selectItem(false);
+  }
 
   selectItem(item?: any) {
     if (item.isSelected == true) {
@@ -86,13 +90,23 @@ export class ClassificateVehicleFormComponent
       let config: ModalOptions = {
         initialState: {
           callback: (next: boolean) => {
+            console.log(next);
+
             //if (next) this.getLabelsOkey();
           },
         },
         class: 'modal-md modal-dialog-centered',
         ignoreBackdropClick: true,
       };
-      this.modalService.show(CreateClassificateVehicleFormComponent, config);
+      this.bsModalService = this.modalService.show(
+        CreateClassificateVehicleFormComponent,
+        config
+      );
+
+      this.bsModalService.content.event.subscribe((data: any) => {
+        this.data.push(data);
+        this.data = [...this.data];
+      });
     }
   }
 }
