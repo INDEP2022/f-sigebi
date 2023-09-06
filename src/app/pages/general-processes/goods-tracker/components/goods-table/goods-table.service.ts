@@ -15,6 +15,7 @@ import {
   ProceedingsService,
 } from 'src/app/core/services/ms-proceedings';
 import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
+import { BasePage } from 'src/app/core/shared';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 
 const ORIGIN = 'FCONGENRASTREADOR';
@@ -37,7 +38,7 @@ const TYPES = {
 /**
  * !IMPORTANTE: ESTE SERVICIO SOLO SE USA EN LA PANTALLA DEL RASTREADOR DE BIENES
  */
-export class GoodsTableService {
+export class GoodsTableService extends BasePage {
   columns = {
     numberPhotos: {
       title: 'No. Fotos',
@@ -203,6 +204,10 @@ export class GoodsTableService {
             pGoodNumber: trackedGood.goodNumber,
             pConstEntKey: trackedGood.programmingConstentKey as string,
           });
+          if (!expedient) {
+            this.alert('warning', 'El bien no tiene expediente', '');
+            return;
+          }
           this.stateFlag.next();
           this.router.navigate(
             ['/pages/final-destination-process/proof-of-delivery'],
@@ -239,6 +244,10 @@ export class GoodsTableService {
             pGoodNumber: trackedGood.goodNumber,
             pDelivery: 'ENTREGA',
           });
+          if (!expedient) {
+            this.alert('warning', 'El bien no tiene expediente', '');
+            return;
+          }
           this.stateFlag.next();
           this.router.navigate(
             ['/pages/judicial-physical-reception/confiscated-records'],
@@ -265,6 +274,10 @@ export class GoodsTableService {
             pRecepCan: 'RECEPCAN',
             pSuspension: 'SUSPENSION',
           });
+          if (!expedient) {
+            this.alert('warning', 'El bien no tiene expediente', '');
+            return;
+          }
           this.stateFlag.next();
           this.router.navigate(
             ['/pages/judicial-physical-reception/cancellation-recepcion'],
@@ -311,6 +324,10 @@ export class GoodsTableService {
             pCveActa: trackedGood.keyDestMinutes as string,
             pDelivery: 'DESTINO',
           });
+          if (!expedient) {
+            this.alert('warning', 'El bien no tiene expediente', '');
+            return;
+          }
           this.stateFlag.next();
           this.router.navigate(
             ['/pages/final-destination-process/destination-acts'],
@@ -336,6 +353,10 @@ export class GoodsTableService {
             trackedGood.keyDestructionMinutes as string,
             'DESTRUCCION'
           );
+          if (!expedient) {
+            this.alert('warning', 'El bien no tiene expediente', '');
+            return;
+          }
           this.stateFlag.next();
           this.router.navigate(
             ['/pages/final-destination-process/destruction-acts'],
@@ -437,6 +458,10 @@ export class GoodsTableService {
             pOrigin: TYPES.PROCEDENCIA,
             goodNumber: trackedGood.goodNumber,
           });
+          if (!flyer) {
+            this.alert('warning', 'El bien no tiene volante', '');
+            return;
+          }
           const flyerType = await this.getNotificationType(flyer);
           this.stateFlag.next();
           this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
@@ -467,7 +492,15 @@ export class GoodsTableService {
             pOrigin: TYPES.DECOMISO,
             goodNumber: trackedGood.goodNumber,
           });
+          if (!flyer) {
+            this.alert('warning', 'El bien no tiene volante', '');
+            return;
+          }
           const flyerType = await this.getNotificationType(flyer);
+          if (!flyerType) {
+            this.alert('warning', 'El bien no tiene tipo de volante', '');
+            return;
+          }
           this.stateFlag.next();
           this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
             queryParams: {
@@ -498,7 +531,15 @@ export class GoodsTableService {
             pOrigin: TYPES.DEVOLUCION,
             goodNumber: trackedGood.goodNumber,
           });
+          if (!flyer) {
+            this.alert('warning', 'El bien no tiene volante', '');
+            return;
+          }
           const flyerType = await this.getNotificationType(flyer);
+          if (!flyerType) {
+            this.alert('warning', 'El bien no tiene tipo de volante', '');
+            return;
+          }
           this.stateFlag.next();
           this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
             queryParams: {
@@ -529,7 +570,15 @@ export class GoodsTableService {
             pOrigin: TYPES.RESARCIMIENTO,
             goodNumber: trackedGood.goodNumber,
           });
+          if (!flyer) {
+            this.alert('warning', 'El bien no tiene volante', '');
+            return;
+          }
           const flyerType = await this.getNotificationType(flyer);
+          if (!flyerType) {
+            this.alert('warning', 'El bien no tiene volante', '');
+            return;
+          }
           this.stateFlag.next();
           this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
             queryParams: {
@@ -580,8 +629,16 @@ export class GoodsTableService {
             pOrigin: TYPES.DESTINO,
             goodNumber: trackedGood.goodNumber,
           });
+          if (!flyer) {
+            this.alert('warning', 'El bien no tiene volante', '');
+            return;
+          }
           const flyerType = await this.getNotificationType(flyer);
           this.stateFlag.next();
+          if (!flyerType) {
+            this.alert('warning', 'El bien no tiene tipo de volante', '');
+            return;
+          }
           this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
             queryParams: {
               origin: ORIGIN,
@@ -611,7 +668,15 @@ export class GoodsTableService {
             pOrigin: TYPES.DONACION,
             goodNumber: trackedGood.goodNumber,
           });
+          if (!flyer) {
+            this.alert('warning', 'El bien no tiene volante', '');
+            return;
+          }
           const flyerType = await this.getNotificationType(flyer);
+          if (!flyerType) {
+            this.alert('warning', 'El bien no tiene tipo de volante', '');
+            return;
+          }
           this.stateFlag.next();
           this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
             queryParams: {
@@ -643,7 +708,15 @@ export class GoodsTableService {
             pOrigin: TYPES.ABANDONO,
             goodNumber: trackedGood.goodNumber,
           });
+          if (!flyer) {
+            this.alert('warning', 'El bien no tiene volante', '');
+            return;
+          }
           const flyerType = await this.getNotificationType(flyer);
+          if (!flyerType) {
+            this.alert('warning', 'El bien no tiene volante', '');
+            return;
+          }
           this.stateFlag.next();
           this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
             queryParams: {
@@ -672,6 +745,10 @@ export class GoodsTableService {
             trackedGood.goodNumber,
             trackedGood.keyPositionRelief
           );
+          if (!flyer) {
+            this.alert('warning', 'El bien no tiene volante', '');
+            return;
+          }
           this.stateFlag.next();
           this.router.navigate(
             [
@@ -734,7 +811,7 @@ export class GoodsTableService {
       sort: false,
       class: 'bg-success-soft',
     },
-    // ! Autoridad emisora
+    // ! Autoridad 'emisora'
     // emisorAuthority: {
     //   title: 'Autoridad Emisora',
     //   sort: false,
@@ -778,6 +855,11 @@ export class GoodsTableService {
             pExpedientNumber: trackedGood.fileNumber,
             pGoodNumber: trackedGood.goodNumber,
           });
+
+          if (!no_vol) {
+            this.alert('warning', 'El bien no tiene volante', '');
+            return;
+          }
           this.docsDataService.flyersRegistrationParams = {
             pIndicadorSat: null,
             pGestOk: 1,
@@ -810,6 +892,10 @@ export class GoodsTableService {
             pExpedientNumber: trackedGood.fileNumber,
             pGoodNumber: trackedGood.goodNumber,
           });
+          if (!no_vol) {
+            this.alert('warning', 'El bien no tiene volante', '');
+            return;
+          }
           this.docsDataService.flyersRegistrationParams = {
             pIndicadorSat: null,
             pGestOk: 1,
@@ -842,6 +928,10 @@ export class GoodsTableService {
             pExpedientNumber: trackedGood.fileNumber,
             pGoodNumber: trackedGood.goodNumber,
           });
+          if (!no_vol) {
+            this.alert('warning', 'El bien no tiene volante', '');
+            return;
+          }
           this.docsDataService.flyersRegistrationParams = {
             pIndicadorSat: null,
             pGestOk: 1,
@@ -878,6 +968,10 @@ export class GoodsTableService {
             pExpedientNumber: trackedGood.fileNumber,
             pGoodNumber: trackedGood.goodNumber,
           });
+          if (!no_vol) {
+            this.alert('warning', 'El bien no tiene volante', '');
+            return;
+          }
           this.docsDataService.flyersRegistrationParams = {
             pIndicadorSat: null,
             pGestOk: 1,
@@ -910,6 +1004,10 @@ export class GoodsTableService {
             pExpedientNumber: trackedGood.fileNumber,
             pGoodNumber: trackedGood.goodNumber,
           });
+          if (!no_vol) {
+            this.alert('warning', 'El bien no tiene volante', '');
+            return;
+          }
           this.docsDataService.flyersRegistrationParams = {
             pIndicadorSat: null,
             pGestOk: 1,
@@ -950,6 +1048,10 @@ export class GoodsTableService {
             pcveEvent: trackedGood.keyEvent as string,
             pGoodNumber: trackedGood.goodNumber,
           });
+          if (!eventKey) {
+            this.alert('warning', 'El bien no tiene evento', '');
+            return;
+          }
           const goodNum = await this.getEventGlobal(trackedGood.goodNumber);
           console.log({ eventKey, goodNum });
           this.stateFlag.next();
@@ -981,6 +1083,10 @@ export class GoodsTableService {
             pcveEvent: trackedGood.keyEvent as string,
             pGoodNumber: trackedGood.goodNumber,
           });
+          if (!eventKey) {
+            this.alert('warning', 'El bien no tiene evento', '');
+            return;
+          }
           const goodNum = await this.getEventGlobal(trackedGood.goodNumber);
           console.log({ eventKey, goodNum });
           this.stateFlag.next();
@@ -1017,6 +1123,10 @@ export class GoodsTableService {
             pcveEvent: trackedGood.keyEvent as string,
             pGoodNumber: trackedGood.goodNumber,
           });
+          if (!eventKey) {
+            this.alert('warning', 'El bien no tiene evento', '');
+            return;
+          }
           const goodNum = await this.getEventGlobal(trackedGood.goodNumber);
           console.log({ eventKey, goodNum });
           this.stateFlag.next();
@@ -1048,6 +1158,10 @@ export class GoodsTableService {
             pcveEvent: trackedGood.keyEvent as string,
             pGoodNumber: trackedGood.goodNumber,
           });
+          if (!eventKey) {
+            this.alert('warning', 'El bien no tiene evento', '');
+            return;
+          }
           const goodNum = await this.getEventGlobal(trackedGood.goodNumber);
           console.log({ eventKey, goodNum });
           this.stateFlag.next();
@@ -1338,7 +1452,9 @@ export class GoodsTableService {
     private officeManagementService: OfficeManagementService,
     private docsDataService: DocumentsReceptionDataService,
     private proceedingDeliveryReception: ProceedingsDeliveryReceptionService
-  ) {}
+  ) {
+    super();
+  }
 
   getVWheel(body: {
     pExpedientNumber: string | number;
@@ -1347,7 +1463,7 @@ export class GoodsTableService {
     return firstValueFrom(
       this.goodProcessService.getVSteeringWhel(body).pipe(
         catchError(err => of({ data: [{ no_volante: null }] })),
-        map(res => res.data[0].no_volante),
+        map(res => res.data[0]?.no_volante),
         tap(flyer => {
           if (!flyer) {
           }
@@ -1364,7 +1480,7 @@ export class GoodsTableService {
     return firstValueFrom(
       this.dictationService.vGoodsTracker(body).pipe(
         catchError(err => of({ data: [{ no_volante: null }] })),
-        map(res => res.data[0].no_volante)
+        map(res => res.data[0]?.no_volante)
       )
     );
   }
@@ -1375,7 +1491,7 @@ export class GoodsTableService {
     return firstValueFrom(
       this.notificationService.getAllFilter(params.getParams()).pipe(
         catchError(res => of({ data: [{ wheelType: null }] })),
-        map(res => res.data[0].wheelType)
+        map(res => res.data[0]?.wheelType)
       )
     );
   }
@@ -1384,7 +1500,7 @@ export class GoodsTableService {
     return firstValueFrom(
       this.proceedingService.getGlobalExpedientF3(body).pipe(
         catchError(error => of({ data: [{ max: null }] })),
-        map(res => res.data[0].max)
+        map(res => res.data[0]?.max)
       )
     );
   }
@@ -1398,7 +1514,7 @@ export class GoodsTableService {
     return firstValueFrom(
       this.proceedingService.getGlobalExpedientF2(body).pipe(
         catchError(error => of({ data: [{ max: null }] })),
-        map(res => res.data[0].max)
+        map(res => res.data[0]?.max)
       )
     );
   }
@@ -1411,7 +1527,7 @@ export class GoodsTableService {
     return firstValueFrom(
       this.proceedingService.getGlobalExpedientF(body).pipe(
         catchError(error => of({ data: [{ max: null }] })),
-        map(res => res.data[0].max)
+        map(res => res.data[0]?.max)
       )
     );
   }
@@ -1424,7 +1540,7 @@ export class GoodsTableService {
     return firstValueFrom(
       this.lotService
         .getEventId(body)
-        .pipe(map((res: any) => res.data[0].id_evento ?? null))
+        .pipe(map((res: any) => res?.data[0]?.id_evento ?? null))
     );
   }
 
@@ -1432,7 +1548,7 @@ export class GoodsTableService {
     return firstValueFrom(
       this.lotService
         .getGlobalGood(goodId as number)
-        .pipe(map((res: any) => res.data[0].no_bien ?? null))
+        .pipe(map((res: any) => res?.data[0]?.no_bien ?? null))
     );
   }
 
@@ -1449,7 +1565,7 @@ export class GoodsTableService {
     return firstValueFrom(
       this.proceedingDeliveryReception
         .getAll(params.getParams())
-        .pipe(map(response => response.data[0]?.numFile ?? null))
+        .pipe(map(response => response?.data[0]?.numFile ?? null))
     );
   }
 }
