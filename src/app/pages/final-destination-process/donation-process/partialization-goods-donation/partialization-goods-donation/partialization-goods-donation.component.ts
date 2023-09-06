@@ -191,6 +191,7 @@ export class PartializationGoodsDonationComponent
   Parcializa() {
     let vfactor: any;
     let vestatus: any;
+    let vestatus1: any;
     let vaccion: any;
     let vc_pantalla: any = 'FACTGENPARCDON';
     let vn_bien_new: any;
@@ -229,7 +230,7 @@ export class PartializationGoodsDonationComponent
             .subscribe({
               next: resp => {
                 console.log('respuesta Status Service ', resp);
-                vestatus = resp.data[0].status;
+                vestatus1 = resp.data[0].status;
                 let params = {
                   propertyNum: this.NoGood,
                   status: vestatus,
@@ -298,7 +299,7 @@ export class PartializationGoodsDonationComponent
                              vfactor );*/
               this.good.goodId = consectgood;
               this.good.id = consectgood;
-              this.good.status = vestatus;
+              this.good.status = vestatus1;
               this.good.goodReferenceNumber = consectgood;
               this.good.observations = vobservaciones;
               console.log('good ---> ', this.good);
@@ -310,6 +311,17 @@ export class PartializationGoodsDonationComponent
                     'Se Parcializó Correctamente',
                     'La Aplicación se Realizó con Éxito'
                   );
+                  let params = {
+                    propertyNum: this.NoGood,
+                    status: vestatus1,
+                    changeDate: new Date(),
+                    userChange: this.user,
+                    statusChangeProgram: vc_pantalla,
+                    reasonForChange: 'Parcialización',
+                  };
+                  this.historyGoodService.PostStatus(params).subscribe({
+                    next: resp => {},
+                  });
                 },
                 error: err => {},
               });
