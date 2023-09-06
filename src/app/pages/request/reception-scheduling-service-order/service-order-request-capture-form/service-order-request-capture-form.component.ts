@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
@@ -27,10 +28,12 @@ export class ServiceOrderRequestCaptureFormComponent
   parentModal: BsModalRef;
   op: number = 1;
   showForm: boolean = true;
+  orderServiceId: number = 0;
 
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
+  private orderService = inject(orderentryService);
 
   constructor() {
     super();
@@ -39,6 +42,8 @@ export class ServiceOrderRequestCaptureFormComponent
   ngOnInit(): void {
     this.prepareProgForm();
     this.prepareOrderServiceForm();
+
+    this.getOrderService();
   }
 
   prepareProgForm() {
@@ -66,6 +71,8 @@ export class ServiceOrderRequestCaptureFormComponent
       eyeVisit: [null, [Validators.pattern(STRING_PATTERN)]],
       reasonsNotPerform: [null, [Validators.pattern(STRING_PATTERN)]],
       userContainers: [null, [Validators.pattern(STRING_PATTERN)]],
+      programmingId: [null],
+      id: [null],
     });
   }
   showDocument() {}
@@ -108,5 +115,26 @@ export class ServiceOrderRequestCaptureFormComponent
     this.claimRequest = true;
     this.form.controls['location'].enable();
     this.form.controls['address'].enable();
+  }
+
+  getOrderService() {
+    /**
+     * otener el orden de servicio por el programmingId
+     */
+    const data: any = {
+      serviceOrderFolio: 'METROPOLITANA-SAT',
+      folioReportImplementation: 'METROPOLITANA-SAT',
+      shiftDate: '2018/01/25',
+      shiftUser: 'USUARIO DE PRUEBA',
+      contractNumber: '124',
+      transportationZone: 'A',
+      folioTlp: '',
+      eyeVisit: '',
+      reasonsNotPerform: '',
+      userContainers: '',
+      id: 1,
+    };
+    this.orderServiceId = data.id;
+    this.ordServform.patchValue(data);
   }
 }

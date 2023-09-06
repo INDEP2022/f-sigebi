@@ -9,7 +9,6 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -866,7 +865,7 @@ export class ClarificationsComponent
       let body: IHistoryGood = {
         propertyNum: good,
         status: status,
-        changeDate: moment(new Date()).format('YYYY/MM/DD'),
+        changeDate: new Date(),
         userChange: user.username,
         statusChangeProgram: 'SOLICITUD_TRANSFERENCIA',
         reasonForChange: 'N/A',
