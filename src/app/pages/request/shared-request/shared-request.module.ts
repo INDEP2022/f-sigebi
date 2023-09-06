@@ -82,6 +82,7 @@ import { ViewFileButtonComponent } from './select-goods/view-file-button/view-fi
 import { ModalAssignGoodGrouperComponent } from './select-similar-goods/modal-assign-good-grouper/modal-assign-good-grouper.component';
 import { ModalModifyDatesComponent } from './select-similar-goods/modal-modify-dates/modal-modify-dates.component';
 import { SelectSimilarGoodsComponent } from './select-similar-goods/select-similar-goods.component';
+import { InputFieldComponent } from './service-transportable-goods-form/input-field/input-field.component';
 import { ServiceTransportableGoodsFormComponent } from './service-transportable-goods-form/service-transportable-goods-form.component';
 import { ShowProgrammingComponent } from './show-programming/show-programming.component';
 import { ShowSignatureProgrammingComponent } from './show-signature-programming/show-signature-programming.component';
@@ -202,6 +203,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     SeeExpedientComponent,
     MailFieldModalComponent,
     GrouperGoodFieldComponent,
+    InputFieldComponent,
   ],
   imports: [
     CommonModule,
