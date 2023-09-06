@@ -77,6 +77,8 @@ export class AddMovementComponent
       const calculationinterestsdate = new Date(
         this.data.calculationinterestsdate
       );
+      motionDate.setDate(motionDate.getDate() + 1);
+      calculationinterestsdate.setDate(calculationinterestsdate.getDate() + 1);
       this.dateMovem = this.datePipe.transform(motionDate, 'dd-MM-yyyy');
       this.dateMovem2 = this.datePipe.transform(
         calculationinterestsdate,
