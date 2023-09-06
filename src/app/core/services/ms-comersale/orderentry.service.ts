@@ -73,9 +73,16 @@ export class orderentryService extends HttpService {
     return this.delete(route);
   }
 
-  //Orden de servicio prestado
+  /* ORDENES DE SERVICIO PRESTADO */
   createServiceProvided(body: IOrderServiceProvider) {
     const route = `${OrderEntryEndpoints.ORDER_SERVICE_PROVIDER}`;
     return this.post(route, body);
+  }
+
+  getAllOrderServicesProvided(
+    params: ListParams | string
+  ): Observable<IListResponse<IOrderServiceProvider>> {
+    const route = `${OrderEntryEndpoints.ORDER_SERVICE_PROVIDER}`;
+    return this.get<IListResponse<IOrderServiceProvider>>(route, params);
   }
 }
