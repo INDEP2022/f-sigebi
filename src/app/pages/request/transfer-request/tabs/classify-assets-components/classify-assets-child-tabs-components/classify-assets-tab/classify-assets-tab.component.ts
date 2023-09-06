@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import * as moment from 'moment';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -1013,6 +1012,7 @@ export class ClassifyAssetsTabComponent
       goods.status = 'ROP';
 
       goodResult = await this.createGood(goods);
+      //crea historico de bienes
       const history = await this.createHistoricGood(
         'ROP',
         goodResult.result.id
@@ -1408,7 +1408,7 @@ export class ClassifyAssetsTabComponent
       let body: IHistoryGood = {
         propertyNum: good,
         status: status,
-        changeDate: moment(new Date()).format('YYYY/MM/DD'),
+        changeDate: new Date(),
         userChange: user.username,
         statusChangeProgram: 'SOLICITUD_TRANSFERENCIA',
         reasonForChange: 'N/A',
