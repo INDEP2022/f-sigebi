@@ -549,6 +549,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
           resolve(resp);
         },
         error: error => {
+          console.log(error);
           reject(error);
           this.onLoadToast('error', 'No se pudo crear el historico del bien');
         },

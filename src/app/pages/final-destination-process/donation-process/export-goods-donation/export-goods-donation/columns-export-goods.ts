@@ -95,4 +95,3 @@ export const COLUMNS_EXPORT_GOODS = {
     sort: false,
   },
 };
-
