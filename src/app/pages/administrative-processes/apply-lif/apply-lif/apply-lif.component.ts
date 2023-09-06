@@ -297,6 +297,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
     let GAST: number;
     try {
       GAST = this.formGood1.value.val13;
+      console.log(GAST);
       let params = new ListParams();
       params['filter.id'] = this.formGood1.value.id;
       const { status } = await this.getGoodParams(params, true);
@@ -313,6 +314,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         params['filter.parameter'] = 'LIF';
         const { value } = await this.getComerParameterMod(params);
         VLIF = Number(value);
+        console.log(GAST);
         this.formGood1
           .get('val15')
           .setValue(
