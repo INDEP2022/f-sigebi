@@ -44,3 +44,26 @@ function formatDate(dateString: string): string {
   const day = String(date.getDate()).padStart(2, '0');
   return `${day}/${month}/${year}`;
 }
+
+export const GOODS = {
+  inventoryNumber: {
+    title: 'No. Inventario',
+    sort: false,
+  },
+  id: {
+    title: 'No. Gestión',
+    sort: false,
+  },
+  goodId: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+  quantity: {
+    title: 'Cantidad',
+    sort: false,
+  },
+};

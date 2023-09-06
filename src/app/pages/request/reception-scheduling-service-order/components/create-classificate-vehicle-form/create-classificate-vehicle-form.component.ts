@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ICatGeneric } from 'src/app/common/repository/interfaces/cat-generic.interface';
@@ -22,6 +22,7 @@ export class CreateClassificateVehicleFormComponent
   title: string = 'Clasificación de vehiculos';
   edit: boolean = false;
   typeVehicle = new DefaultSelect<ICatGeneric>();
+  event: EventEmitter<any> = new EventEmitter();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -37,7 +38,7 @@ export class CreateClassificateVehicleFormComponent
 
   prepareForm() {
     this.form = this.fb.group({
-      typeVehicle: [null],
+      typeVehicle: [null, [Validators.required]],
       sale: [null, [Validators.pattern(STRING_PATTERN)]],
       donation: [null, [Validators.pattern(STRING_PATTERN)]],
       destruction: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -76,7 +77,8 @@ export class CreateClassificateVehicleFormComponent
       if (question.isConfirmed) {
         //Ejecutar servicio
         this.onLoadToast('success', 'Clasificación creada correctamente', '');
-        this.modalRef.content.callback(this.form.value);
+        //this.modalRef.content.callback(this.form.value);
+        this.event.emit(this.form.value);
         this.close();
       }
     });
