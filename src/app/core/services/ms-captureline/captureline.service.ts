@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CapturelineEndpoints } from 'src/app/common/constants/endpoints/ms-captureline';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { ITmpLcComer } from '../../models/ms-captureline/captureline';
@@ -16,6 +17,10 @@ export class CapturelineService extends HttpService {
 
   getTmpLcComer(params?: _Params) {
     return this.get<IListResponse<ITmpLcComer>>(this.route.TmpLcComer, params);
+  }
+
+  getPaConsult(body: any, params: ListParams) {
+    return this.post<any>(CapturelineEndpoints.PaConsultLc, body, params);
   }
 
   postTmpLcComer(data: ITmpLcComer) {

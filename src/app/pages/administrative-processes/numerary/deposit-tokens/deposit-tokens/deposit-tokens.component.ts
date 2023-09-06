@@ -161,6 +161,7 @@ export class DepositTokensComponent
           filter: {
             type: 'custom',
             component: CustomDateFilterComponent,
+            // component: CustomDateFilterComponent,
           },
         },
         calculationInterestsDate_: {
@@ -578,7 +579,7 @@ export class DepositTokensComponent
       ...this.columnFilters,
     };
 
-    console.log('params1', params);
+    console.log('params1', params['filter.motionDate_']);
     if (params['filter.motionDate_']) {
       var fecha = new Date(params['filter.motionDate_']);
 
@@ -1004,21 +1005,6 @@ export class DepositTokensComponent
 
       let arr: any = [];
       let result = jsonToCsv.map(async (item: any) => {
-        // if (!this.validExcel) {
-        //   let obj1 = {
-        //     TI_BANCO: item.bank,
-        //     DI_CUENTA: item.accountkey,
-        //     NO_CUENTA: item.accountnumber,
-        //     DI_MONEDA: item.currency,
-        //     FEC_MOVIMIENTO: item.motiondate,
-        //     FOLIO_FICHA: item.isfiledeposit,
-        //     FEC_CALCULO_INTERESES: item.calculationinterestsdate,
-        //     DEPOSITO: item.deposit,
-        //     no_bien: item.goodnumber,
-        //     di_expediente2: item.proceedingsnumber,
-        //   };
-        //   arr.push(obj1);
-        // } else {
         let obj2 = {
           BANCO: item.TI_BANCO,
           CUENTA: item.DI_CUENTA,
@@ -1027,16 +1013,15 @@ export class DepositTokensComponent
           FECHA_DEPOSITO: item.FEC_MOVIMIENTO,
           FOLIO: item.FOLIO_FICHA,
           FECHA_TESOFE: item.FEC_CALCULO_INTERESES,
-          DEPOSITO: item.DEPOSITO,
+          CANTIDAD: item.DEPOSITO,
           BIEN: item.no_bien,
           EXPEDIENTE: item.di_expediente2,
           DESCRIPCION: await this.getDetailsGoodForExcel(item.no_bien),
           CATEGORIA: '',
-          PARCIAL: 'N',
+          PARCIAL: '',
         };
 
         arr.push(obj2);
-        // }
       });
 
       Promise.all(result).then(i => {
