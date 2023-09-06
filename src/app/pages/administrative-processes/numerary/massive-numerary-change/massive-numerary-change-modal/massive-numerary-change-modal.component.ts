@@ -254,6 +254,7 @@ export class MassiveNumeraryChangeModalComponent
       let rowsExcel: any[] = [];
       if (this.dataTableGoods.length > 0) {
         const promiseAll = this.dataTableGoods.map(async good => {
+          console.log(good);
           if (good.indNume == 3) {
             try {
               const goodSearch = await this.getGood(good.npNUm);
@@ -296,7 +297,7 @@ export class MassiveNumeraryChangeModalComponent
         });
         await Promise.all(promiseAll);
       }
-
+      console.log(rowsExcel.length);
       if (rowsExcel.length > 0) {
         this.excelService.export(rowsExcel, {
           type: 'csv',
