@@ -8,6 +8,7 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IClarification } from 'src/app/core/models/catalogs/clarification.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
@@ -17,6 +18,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
@@ -50,6 +52,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   statusTask: any = '';
   typeClarification: number = 0;
   goodresdevId: number = 0;
+  user: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -60,7 +63,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     private readonly goodService: GoodService,
     private readonly goodResDevService: GetGoodResVeService,
     private chatService: ChatClarificationsService,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private historyGoodService: HistoryGoodService
   ) {
     super();
   }
@@ -167,9 +171,9 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     }
     //Crea la notificacion
     this.loader.load = true;
-    const user: any = this.authService.decodeToken();
+    this.user = this.authService.decodeToken();
     let clarification = this.clarificationForm.getRawValue();
-    clarification.creationUser = user.username;
+    clarification.creationUser = this.user.username;
     clarification.rejectionDate = new Date().toISOString();
     clarification['answered'] = 'NUEVA';
     console.log(this.goodTransfer);
@@ -365,9 +369,9 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       body.processStatus = 'SOLICITAR_ACLARACION'; //typeClarify;
       body.goodStatus = 'SOLICITUD DE ACLARACION';
       body.status = status;
-      // debugger;
       this.goodService.update(body).subscribe({
-        next: resp => {
+        next: async (resp: any) => {
+          const history = await this.createHistoricGood(status, good.id);
           console.log('good updated', resp);
           this.triggerEvent('UPDATE-GOOD');
           resolve(true);
@@ -419,6 +423,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     };
 
     console.log('data', modelChatClarifications);
+    debugger;
     //Servicio para crear registro de ChatClariffications
     this.chatService.create(modelChatClarifications).subscribe({
       next: async data => {
@@ -452,7 +457,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       clarificationStatus: 'IMPROCEDENCIA',
       clarificationTypeId: 2,
     };
-
+    debugger;
     //Servicio para crear registro de ChatClariffications
     this.chatService.create(modelChatClarifications).subscribe({
       next: async data => {
@@ -525,6 +530,29 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
           error: error => {},
         });
       }
+    });
+  }
+
+  createHistoricGood(status: string, good: number) {
+    return new Promise((resolve, reject) => {
+      let body: IHistoryGood = {
+        propertyNum: good,
+        status: status,
+        changeDate: new Date(),
+        userChange: this.user.username,
+        statusChangeProgram: 'SOLICITUD_TRANSFERENCIA',
+        reasonForChange: 'N/A',
+      };
+      this.historyGoodService.create(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          console.log(error);
+          reject(error);
+          this.onLoadToast('error', 'No se pudo crear el historico del bien');
+        },
+      });
     });
   }
 }

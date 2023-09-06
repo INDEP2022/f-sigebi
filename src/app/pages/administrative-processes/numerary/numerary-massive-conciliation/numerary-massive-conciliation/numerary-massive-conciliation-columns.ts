@@ -122,7 +122,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
     },
   },
   'RSPTAQUERY.val5': {
-    title: 'Fec. Depósito',
+    title: 'Fecha Depósito',
     type: 'string',
     sort: false,
     filter: false,
@@ -136,7 +136,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
     },
   },
   BFEC_TESOFE: {
-    title: 'Fec. Tesofe',
+    title: 'Fecha Tesofe',
     type: 'string',
     sort: false,
     filter: false,
@@ -167,19 +167,20 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         if (data.toggle) {
-          console.log(goodCheck);
+          console.log(goodCheck2);
           goodCheck2.push(data.row);
         } else {
-          console.log(data.row.RSPTAQUERY);
-          goodCheck = goodCheck2.filter(
-            valor => valor.RSPTAQUERY.no_bien != data.row.RSPTAQUERY.no_bien
+          console.log(data.row.goodNumber);
+          console.log(goodCheck2);
+          goodCheck2 = goodCheck2.filter(
+            valor => valor.goodNumber != data.row.goodNumber
           );
         }
       });
     },
   },
   goodNumber: {
-    title: 'Bien',
+    title: 'No. Bien',
     type: 'number',
     sort: false,
   },
@@ -204,7 +205,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
     sort: false,
   },
   motionDate: {
-    title: 'Fec. Depósito',
+    title: 'Fecha Depósito',
     type: 'string',
     sort: false,
     filter: false,
@@ -215,7 +216,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
     },
   },
   interestCalculationDate: {
-    title: 'Fec. Depósito',
+    title: 'Fecha Depósito',
     type: 'string',
     sort: false,
     filter: false,

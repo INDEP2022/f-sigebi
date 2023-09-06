@@ -28,5 +28,7 @@ export interface IGoodDelivery {
   eventType?: string;
   inventoryItemId?: string;
   tranferId?: number;
-  foundInd: string;
+  typeGood?: number;
+  foundInd?: string;
+  typeGoodName?: string;
 }

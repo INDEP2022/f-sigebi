@@ -8,14 +8,21 @@
     <div class="row">
       <form [formGroup]="form" class="form-material">
         <div>
-          <form-field
-            [control]="form.get('typeVehicle')"
-            label="Tipo de veh&iacute;culo">
-            <select class="form-control" formControlName="typeVehicle">
+          <form-field [control]="form.get('typeVehicle')">
+            <ngx-select
+              [form]="form"
+              control="typeVehicle"
+              [data]="typeVehicle"
+              [loading]="loading"
+              value="keyId"
+              bindLabel="description"
+              label="Tipo de veh&iacute;culo"
+              (fetchItems)="getTypeVehicle($event)"></ngx-select>
+            <!--<select class="form-control" formControlName="typeVehicle">
               <option [value]="null">Seleccione un valor</option>
               <option [value]="'Particular'">Automovil</option>
               <option [value]="'camioneta'">Camioneta</option>
-            </select>
+            </select> -->
           </form-field>
         </div>
         <div class="pt-3">
@@ -34,7 +41,7 @@
         </div>
 
         <div class="pt-3">
-          <form-field [control]="form.get('destruction')" label="Input Label">
+          <form-field [control]="form.get('destruction')" label="Destrucción">
             <input
               type="text"
               class="form-control"
