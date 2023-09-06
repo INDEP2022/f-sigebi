@@ -152,8 +152,8 @@ export class EmailComponent extends BasePage implements OnInit {
 
         // const body: any = {
         //   header: 'Test Email',
-        //   destination: ['sshenrygiovanni@gmail.com'],
-        //   copy: ['henry_portador@outlook.com'],
+        //   destination: [''],
+        //   copy: [],
         //   subject: ASUNTO,
         //   message: `${resp.message}`,
         // };
@@ -168,7 +168,7 @@ export class EmailComponent extends BasePage implements OnInit {
                 : FECHA_ENV;
 
             const body = {
-              id: REPORTE,
+              reportNumber: REPORTE,
               addressee: PARA ? PARA.join(',') : '',
               sender: user.toUpperCase(),
               cc: CC ? CC.join(',') : '',
@@ -180,7 +180,7 @@ export class EmailComponent extends BasePage implements OnInit {
 
             // const body: any = {
             //   reportNumber: REPORTE,
-            //   addressee: 'pruebasqaindep@gmail.com',
+            //   addressee: '',
             //   sender: user.toUpperCase(),
             //   cc: '',
             //   message: `${resp.message}`,
