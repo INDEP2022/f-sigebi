@@ -167,12 +167,13 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         if (data.toggle) {
-          console.log(goodCheck);
+          console.log(goodCheck2);
           goodCheck2.push(data.row);
         } else {
-          console.log(data.row.RSPTAQUERY);
-          goodCheck = goodCheck2.filter(
-            valor => valor.RSPTAQUERY.no_bien != data.row.RSPTAQUERY.no_bien
+          console.log(data.row.goodNumber);
+          console.log(goodCheck2);
+          goodCheck2 = goodCheck2.filter(
+            valor => valor.goodNumber != data.row.goodNumber
           );
         }
       });
