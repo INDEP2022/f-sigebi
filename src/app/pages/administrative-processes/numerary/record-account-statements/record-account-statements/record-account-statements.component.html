@@ -30,24 +30,23 @@
           </div>
 
           <div class="col-6">
-            <!-- <form-field [control]="form.get('account')">
-              <ngx-select [data]="bankAccountSelect" [form]="form" bindLabel="cveAccount" label="Seleccione una Cuenta"
-                [control]="'account'" (change)="onBankAccountSelectChange($event)"
-                (fetchItems)="getBanksAccounts($event)" (input)="onSearchAccount($event.target)"></ngx-select>
-            </form-field> -->
             <form-field [control]="form.get('account')">
               <ngx-select
-                [form]="form"
                 [data]="bankAccountSelect"
-                (fetchItems)="getBanksAccounts($event)"
-                bindLabel="accountAndNumber"
-                control="account"
+                [form]="form"
+                bindLabel="cveAccount"
                 label="Cuenta"
-                [searchOnInit]="true"
-                [showTooltip]="true"
+                [control]="'account'"
+                (change)="onBankAccountSelectChange($event)"
+                (fetchItems)="getBanksAccounts($event)"
+                (input)="onSearchAccount($event.target)"></ngx-select>
+            </form-field>
+            <!-- <form-field [control]="form.get('account')">
+              <ngx-select [form]="form" [data]="bankAccountSelect" (fetchItems)="getBanksAccounts($event)"
+                bindLabel="accountAndNumber" control="account" label="Cuenta" [searchOnInit]="true" [showTooltip]="true"
                 termMaxLength="30">
               </ngx-select>
-            </form-field>
+            </form-field> -->
           </div>
         </div>
 
