@@ -47,12 +47,12 @@ export class GeneralAccountMovementsComponent implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       good: [null, Validators.required],
-      fileFrom: [null, Validators.required],
-      currency: [null, Validators.required],
-      deposito: [null, Validators.required],
-      bank: [null, Validators.required],
-      from: [null, Validators.required],
-      to: [null, Validators.required],
+      fileFrom: [null],
+      currency: [null],
+      deposito: [null],
+      bank: [null],
+      from: [null],
+      to: [null],
     });
   }
 
@@ -69,16 +69,39 @@ export class GeneralAccountMovementsComponent implements OnInit {
       'dd/MM/yyyy'
     );
 
-    let params = {
-      PN_BIEN: this.form.controls['good'].value,
-      PN_EXPE: this.form.controls['fileFrom'].value,
-      PC_MONEDA: this.form.controls['currency'].value,
-      PC_BANCO: this.form.controls['bank'].value,
-      PN_MOVIMI: this.form.controls['deposito'].value,
-      PC_FEC_INI: this.fromF,
-      PC_FEC_FIN: this.toT,
-    };
+    let params: any = {};
 
+    if (this.form.controls['good'].value) {
+      params.PN_BIEN = this.form.controls['good'].value;
+    }
+    if (this.form.controls['fileFrom'].value) {
+      params.PN_EXPE = this.form.controls['fileFrom'].value;
+    }
+    if (this.form.controls['currency'].value) {
+      params.PC_MONEDA = this.form.controls['currency'].value;
+    }
+    if (this.form.controls['bank'].value) {
+      params.PC_BANCO = this.form.controls['bank'].value;
+    }
+    if (this.form.controls['deposito'].value) {
+      params.PN_MOVIMI = this.form.controls['deposito'].value;
+    }
+    if (this.fromF) {
+      params.PC_FEC_INI = this.fromF;
+    }
+    if (this.toT) {
+      params.PC_FEC_FIN = this.toT;
+    }
+
+    // let params = {
+    //   PN_BIEN: this.form.controls['good'].value,
+    //   PN_EXPE: this.form.controls['fileFrom'].value,
+    //   PC_MONEDA: this.form.controls['currency'].value,
+    //   PC_BANCO: this.form.controls['bank'].value,
+    //   PN_MOVIMI: this.form.controls['deposito'].value,
+    //   PC_FEC_INI: this.fromF,
+    //   PC_FEC_FIN: this.toT,
+    // };
     console.log('params', params);
     this.siabService
       .fetchReport('RGERADBMOVCUEGEN', params)
