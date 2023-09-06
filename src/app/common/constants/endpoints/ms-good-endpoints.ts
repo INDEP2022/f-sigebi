@@ -41,6 +41,7 @@ export enum GoodEndpoints {
   GoodNumberSol = 'good/get-data-good-typegood',
   ExportExcelGoodBad = 'attrib-good-bad/get-all-export',
   UpdateStatusGood = 'good/updateGoodStatus',
+  goodSec = 'good/seq-goods',
 }
 
 export enum GoodProcessPoints {

@@ -48,8 +48,10 @@
 
     <app-address-origin-form></app-address-origin-form>
 
-    <app-comments-form></app-comments-form>
+    <app-comments-form [op]="op" [showForm]="showForm"></app-comments-form>
 
-    <app-service-transportable-goods-form></app-service-transportable-goods-form>
+    <app-service-transportable-goods-form
+      [op]="op"
+      [showForm]="showForm"></app-service-transportable-goods-form>
   </div>
 </app-card>
