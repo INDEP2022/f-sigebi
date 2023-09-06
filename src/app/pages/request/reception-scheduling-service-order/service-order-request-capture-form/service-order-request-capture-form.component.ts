@@ -1,6 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { catchError, of } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -29,17 +33,22 @@ export class ServiceOrderRequestCaptureFormComponent
   op: number = 1;
   showForm: boolean = true;
   orderServiceId: number = 0;
+  lsProgramming: string = null;
+  programmingId: number = null;
 
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
   private orderService = inject(orderentryService);
+  private authService = inject(AuthService);
+  private activeRouter = inject(ActivatedRoute);
 
   constructor() {
     super();
   }
 
   ngOnInit(): void {
+    this.programmingId = +this.activeRouter.snapshot.params['id'];
     this.prepareProgForm();
     this.prepareOrderServiceForm();
 
@@ -77,7 +86,16 @@ export class ServiceOrderRequestCaptureFormComponent
   }
   showDocument() {}
 
-  sendOrderService() {
+  async sendOrderService() {
+    const orderServProvi: any = await this.getOrderServiceProvided();
+    if (orderServProvi.count) {
+      this.onLoadToast(
+        'info',
+        'Es necesario agregar servicios a la programación'
+      );
+      return;
+    }
+
     this.alertQuestion(
       'warning',
       'Confirmación',
@@ -85,6 +103,7 @@ export class ServiceOrderRequestCaptureFormComponent
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.processSendOrderService();
         this.onLoadToast(
           'success',
           'Orden de servicio enviada correctamente',
@@ -92,6 +111,45 @@ export class ServiceOrderRequestCaptureFormComponent
         );
       }
     });
+  }
+
+  processSendOrderService() {
+    const user = this.authService.decodeToken();
+    let totalServ = ''; // TotalServTrans
+    totalServ = totalServ + 0; //TotalServResg
+    const status = this.lsProgramming;
+
+    let lsUsuariosTLP = null;
+
+    if (status == 'ReporteImplementacion') {
+      const body = {
+        endTmpDate: new Date(),
+      };
+      //actualizar
+    } else if (status == 'Rechazado') {
+      console.log('Es rechazado');
+      this.lsProgramming = 'AprobarContrapropuesta';
+      const body = {
+        //tiOrdServicio: this.orderServiceId,
+        rejectionJustInd: 'Y', //tsIndRechazo
+      };
+      //actualizar orden servicio
+    } else if (status == 'ReporteImplementacion') {
+      console.log('Es enviado por primera vez');
+      this.lsProgramming = 'AprobacionReporte';
+      lsUsuariosTLP = user.username;
+    } else if (status == 'RechazoReporte') {
+      this.lsProgramming = 'AprobarContraReporte';
+      const body = {
+        //tiOrdServicio: this.orderServiceId,
+        rejectionJustInd: 'AMBOS', //tsIndRechazo
+      };
+      //actualizar orden servicio
+    } else {
+      this.lsProgramming = 'ReporteImplementacion';
+    }
+
+    const lsTituloInstancia = this.ordServform.get('serviceOrderFolio').value;
   }
 
   saveService() {
@@ -136,5 +194,39 @@ export class ServiceOrderRequestCaptureFormComponent
     };
     this.orderServiceId = data.id;
     this.ordServform.patchValue(data);
+  }
+
+  getOrderServiceProvided() {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.orderServiceId'] = `$eq:${this.orderServiceId}`;
+      this.orderService
+        .getAllOrderServicesProvided(params)
+        .pipe(
+          catchError((e: any) => {
+            if (e.status == 400) return of({ data: [], count: 0 });
+            throw e;
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+        });
+    });
+  }
+
+  generateOrdSerReport() {
+    /*const config = MODAL_CONFIG;
+    config.initialState = {
+      idProgramming: this.programmingId,
+      callback: (signatore: ISignatories) => {
+        if (signatore) {
+          //this.openReport(signatore);
+        }
+      },
+    };
+
+    this.modalService.show(ConfirmProgrammingComponent, config);*/
   }
 }

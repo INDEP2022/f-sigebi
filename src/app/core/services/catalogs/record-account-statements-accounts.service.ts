@@ -91,4 +91,9 @@ export class RecordAccountStatementsAccountsService
     const route = `${this.route2}`;
     return this.delete(route, model);
   }
+
+  getAccounts(params?: ListParams) {
+    const route = `${this.route2}`;
+    return this.get(route, params);
+  }
 }
