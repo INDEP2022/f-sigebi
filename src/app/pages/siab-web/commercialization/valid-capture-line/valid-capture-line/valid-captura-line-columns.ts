@@ -1,42 +1,54 @@
 export const VALID_CAPTURE_LINE_COLUMNS = {
-  id: {
-    title: 'ID',
+  lc: {
+    title: 'Id',
     sort: false,
   },
-  allotment: {
-    title: 'LP',
+  lote_publico: {
+    title: 'Lote Publico',
     sort: false,
   },
-  amount: {
+  importe: {
     title: 'Monto',
     sort: false,
   },
-  status: {
+  estatus: {
     title: 'Estatus',
     sort: false,
   },
-  type: {
+  tipo: {
     title: 'Tipo',
     sort: false,
   },
-  reference: {
+  referencia: {
     title: 'Referencia',
     sort: false,
   },
-  date: {
+  fec_vigencia: {
     title: 'Fecha Vigencia',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      const parts = cell.split('-');
+      const year = parts[0];
+      const month = parts[1];
+      const day = parts[2];
+      const formattedDate = `${day}/${month}/${year}`;
+      return formattedDate;
+    },
   },
   rfc: {
     title: 'RFC',
     sort: false,
   },
-  idClient: {
-    title: 'ID Client',
+  id_cliente: {
+    title: 'Id Cliente',
     sort: false,
   },
-  client: {
+  cliente: {
     title: 'Cliente',
+    sort: false,
+  },
+  tipo_ref: {
+    title: 'Tipo Ref',
     sort: false,
   },
 };

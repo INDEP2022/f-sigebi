@@ -46,4 +46,6 @@ export enum ProceedingsEndpoints {
   suspCancel = 'tmp-val-goodconst',
   proceedingsuspcancel = 'proceedingsuspcancel',
   constDelivery = 'aplication/pa-const-delivery',
+  AplicationGetTypeActa = 'aplication/getTypeActa',
+  AplicationGetTypeActaDetail = 'aplication/getDetalleActaByNoActaPag',
 }
