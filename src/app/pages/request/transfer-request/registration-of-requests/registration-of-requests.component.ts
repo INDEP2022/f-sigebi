@@ -1590,6 +1590,7 @@ export class RegistrationOfRequestsComponent
     body.status = newProcessStatus; //good.processStatus
     body.process = this.process;
     body.statusGood = status; // good.status
+
     if (
       this.process === 'process-approval' &&
       newProcessStatus === 'APROBADO'
