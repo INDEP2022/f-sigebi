@@ -60,7 +60,26 @@
             style="width: 97px; height: 24px" />
         </div>
         <div>
-          <div class="table-responsive text-nowrap">
+          <div class="row">
+            <div class="col-md-12">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  #table
+                  id="table"
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings"
+                  [source]="data"
+                  ><!-- (edit)="showDocument()" -->
+                </ng2-smart-table>
+              </div>
+
+              <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
+            </div>
+          </div>
+
+          <!-- <div class="table-responsive text-nowrap">
             <table class="table table-bordered">
               <thead>
                 <tr>
@@ -128,6 +147,7 @@
                       type="text"
                       class="form-control" />
                   </td>
+                  
                   <td
                     *ngIf="op == 4 || op == 5 || op == 14"
                     scope="row"
@@ -168,7 +188,7 @@
                 </tr>
               </tbody>
             </table>
-          </div>
+          </div> -->
         </div>
       </tab>
     </tabset>

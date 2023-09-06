@@ -9,19 +9,23 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import * as moment from 'moment';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IPostGoodResDev } from 'src/app/core/models/ms-rejectedgood/get-good-goodresdev';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodDataAsetService } from 'src/app/core/services/ms-good/good-data-aset.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   NUMBERS_PATTERN,
@@ -89,7 +93,9 @@ export class ClassifyAssetsTabComponent
     private requestHelperService: RequestHelperService,
     private showHideErrorInterceptorService: showHideErrorInterceptorService,
     private goodFinderService: GoodFinderService,
-    private goodDataAsetService: GoodDataAsetService
+    private goodDataAsetService: GoodDataAsetService,
+    private authService: AuthService,
+    private historyGoodService: HistoryGoodService
   ) {
     super();
   }
@@ -1004,8 +1010,13 @@ export class ClassifyAssetsTabComponent
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
+      goods.status = 'ROP';
 
       goodResult = await this.createGood(goods);
+      const history = await this.createHistoricGood(
+        'ROP',
+        goodResult.result.id
+      );
       this.updateGoodFindRecord(goodResult.result);
       //manda a guardar los campos de los bienes, domicilio, inmueble
       this.childSaveAction = true;
@@ -1389,6 +1400,29 @@ export class ClassifyAssetsTabComponent
     } else {
       this.classiGoodsForm.controls['ligieUnit'].setValue(null);
     }
+  }
+
+  createHistoricGood(status: string, good: number) {
+    return new Promise((resolve, reject) => {
+      const user: any = this.authService.decodeToken();
+      let body: IHistoryGood = {
+        propertyNum: good,
+        status: status,
+        changeDate: moment(new Date()).format('YYYY/MM/DD'),
+        userChange: user.username,
+        statusChangeProgram: 'SOLICITUD_TRANSFERENCIA',
+        reasonForChange: 'N/A',
+      };
+      this.historyGoodService.create(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(error);
+          this.onLoadToast('error', 'No se pudo crear el historico del bien');
+        },
+      });
+    });
   }
   //obtenien la unidad de medida
   /*getUnidMeasure(value: string) {
