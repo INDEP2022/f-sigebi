@@ -580,6 +580,30 @@ export class DepositTokensComponent
     };
 
     console.log('params1', params['filter.motionDate_']);
+    // CON RANGE //
+    // if (params['filter.motionDate_']) {
+    //   const fechas = params['filter.motionDate_'].split(',')
+    //   console.log("fechas", fechas)
+    //   var fecha1 = new Date(fechas[0]);
+    //   var fecha2 = new Date(fechas[1]);
+
+    //   // Obtener los componentes de la fecha (año, mes y día)
+    //   var ano1 = fecha1.getFullYear();
+    //   var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+    //   var dia1 = ('0' + fecha1.getDate()).slice(-2);
+
+    //   // Obtener los componentes de la fecha (año, mes y día)
+    //   var ano2 = fecha2.getFullYear();
+    //   var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+    //   var dia2 = ('0' + fecha2.getDate()).slice(-2);
+
+    //   // Crear la cadena de fecha en el formato yyyy-mm-dd
+    //   var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+    //   var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
+    //   params['motionDate'] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
+    //   delete params['filter.motionDate_'];
+    // }
+    // SIN RANGE //
     if (params['filter.motionDate_']) {
       var fecha = new Date(params['filter.motionDate_']);
 
