@@ -122,7 +122,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
     },
   },
   'RSPTAQUERY.val5': {
-    title: 'Fec. Depósito',
+    title: 'Fecha Depósito',
     type: 'string',
     sort: false,
     filter: false,
@@ -136,7 +136,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
     },
   },
   BFEC_TESOFE: {
-    title: 'Fec. Tesofe',
+    title: 'Fecha Tesofe',
     type: 'string',
     sort: false,
     filter: false,
@@ -180,7 +180,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
     },
   },
   goodNumber: {
-    title: 'Bien',
+    title: 'No. Bien',
     type: 'number',
     sort: false,
   },
@@ -205,7 +205,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
     sort: false,
   },
   motionDate: {
-    title: 'Fec. Depósito',
+    title: 'Fecha Depósito',
     type: 'string',
     sort: false,
     filter: false,
@@ -216,7 +216,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
     },
   },
   interestCalculationDate: {
-    title: 'Fec. Depósito',
+    title: 'Fecha Depósito',
     type: 'string',
     sort: false,
     filter: false,
