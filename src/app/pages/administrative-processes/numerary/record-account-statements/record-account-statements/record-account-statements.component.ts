@@ -642,10 +642,10 @@ export class RecordAccountStatementsComponent
       .getById2(this.itemSelected, params__)
       .subscribe({
         next: data => {
-          data.data.map(data => {
-            data.accountType = `${data.account}- ${data.cveAccount}`;
-            return data;
-          });
+          // data.data.map(data => {
+          //   data.accountType = `${data.account}- ${data.cveAccount}`;
+          //   return data;
+          // });
           this.bankAccountSelect = new DefaultSelect(data.data, data.count);
         },
         error: () => {
