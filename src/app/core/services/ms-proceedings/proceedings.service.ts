@@ -41,6 +41,22 @@ export class ProceedingsService extends HttpService {
   // getAll(params?: ListParams): Observable<IListResponse<IProceedings>> {
   //   return this.get<IListResponse<IProceedings>>(this.endpoint);
   // }
+  getTypeActa(body: any, params: ListParams) {
+    return this.post<IResponse>(
+      ProceedingsEndpoints.AplicationGetTypeActa,
+      body,
+      params
+    );
+  }
+
+  getTypeActaDetail(body: any, params: ListParams) {
+    return this.post(
+      ProceedingsEndpoints.AplicationGetTypeActaDetail,
+      body,
+      params
+    );
+  }
+
   updateVaultByProceedingNumber(model: IUpdateVault) {
     return this.post<IResponse>(
       `${this.route}/${ProceedingsEndpoints.UpdateVaultByProceedingNumber}`,

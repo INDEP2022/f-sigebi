@@ -104,13 +104,15 @@ export class DepositTokensComponent
       actions: {
         columnTitle: 'Acciones',
         delete: true,
-        edit: false,
+        edit: true,
         add: false,
       },
       delete: {
-        deleteButtonContent:
-          '<i class="pl-4 fa fa-trash text-danger mx-2"></i>',
+        deleteButtonContent: '<i class="fa fa-trash text-danger mx-2"></i>',
         confirmDelete: true,
+      },
+      edit: {
+        editButtonContent: '<i class="fa fa-pencil-alt text-black mx-2"></i>',
       },
       hideSubHeader: false,
       columns: {
@@ -159,10 +161,11 @@ export class DepositTokensComponent
           filter: {
             type: 'custom',
             component: CustomDateFilterComponent,
+            // component: CustomDateFilterComponent,
           },
         },
         calculationInterestsDate_: {
-          title: 'Fecha Transferencia',
+          title: 'Fecha TESOFE',
           // type: 'string',
           sort: false,
           // width: '13%',
@@ -204,7 +207,7 @@ export class DepositTokensComponent
           },
         },
         deposit: {
-          title: 'Depósito',
+          title: 'Cantidad',
           type: 'custom',
           sort: false,
           renderComponent: CustomdbclickdepositComponent,
@@ -259,6 +262,7 @@ export class DepositTokensComponent
         },
       },
       rowClassFunction: (row: any) => {
+        // console.log("ROWWWW", row)
         if (row.data.goodnumber != null) {
           return 'bg-warning text-black';
         } else {
@@ -349,7 +353,7 @@ export class DepositTokensComponent
           sort: false,
         },
         FEC_CALCULO_INTERESES: {
-          title: 'Fecha Transferencia',
+          title: 'Fecha TESOFE',
           // type: 'string',
           sort: false,
           // width: '13%',
@@ -403,7 +407,7 @@ export class DepositTokensComponent
           },
         },
         DEPOSITO: {
-          title: 'Depósito',
+          title: 'Cantidad',
           type: 'string',
           sort: false,
           // renderComponent: CustomdbclickdepositComponent,
@@ -479,7 +483,7 @@ export class DepositTokensComponent
               proceedingsnumber: () => (searchFilter = SearchFilter.EQ),
               goodnumber: () => (searchFilter = SearchFilter.EQ),
               category: () => (searchFilter = SearchFilter.ILIKE),
-              ispartialization: () => (searchFilter = SearchFilter.EQ),
+              ispartialization: () => (searchFilter = SearchFilter.ILIKE),
             };
 
             search[filter.field]();
@@ -575,7 +579,7 @@ export class DepositTokensComponent
       ...this.columnFilters,
     };
 
-    console.log('params1', params);
+    console.log('params1', params['filter.motionDate_']);
     if (params['filter.motionDate_']) {
       var fecha = new Date(params['filter.motionDate_']);
 
@@ -664,6 +668,13 @@ export class DepositTokensComponent
             // ? this.returnParseDate_(item.calculationinterestsdate)
             //   : null;
             item['bancoDetails'] = detailsBank ? detailsBank : null;
+            item['bankAndNumber'] = detailsBank
+              ? detailsBank.cveAccount +
+                ' - ' +
+                detailsBank.cveBank +
+                ' - ' +
+                detailsBank.banco.name
+              : null;
           });
 
           Promise.all(result).then((resp: any) => {
@@ -805,7 +816,7 @@ export class DepositTokensComponent
         if (this.dataMovements.goodnumber == null) {
           this.alert(
             'warning',
-            'No Existe un Bien Asociado a este Depósito.',
+            'No existe un Bien asociado a este depósito.',
             ''
           );
         } else {
@@ -820,13 +831,13 @@ export class DepositTokensComponent
               this.getAccount();
               this.alert(
                 'success',
-                `El Bien ${this.dataMovements.goodnumber} ha sido Desconciliado`,
+                `El Bien ${this.dataMovements.goodnumber} ha sido desconciliado`,
                 ''
               );
               this.form.get('descriptionGood').setValue('');
             },
             error: err => {
-              this.alert('error', `Error al Desconciliar`, err.error.message);
+              this.alert('error', `Error al desconciliar`, err.error.message);
               // this.loading = false;
             },
           });
@@ -970,14 +981,14 @@ export class DepositTokensComponent
           if (err.error.message == 'No es el excel correcto') {
             this.alert(
               'error',
-              'El Archivo no Cumple con las Condiciones de Inserción',
+              'El archivo no cumple con las condiciones de inserción',
               ''
             );
           } else {
             this.alert(
               'error',
-              'Ha Ocurrido un Error al Intentar Cargar el Archivo',
-              err.error.message
+              'Ha ocurrido un error al intentar cargar el archivo',
+              'Verifique el archivo e intente nuevamente'
             );
           }
         },
@@ -994,21 +1005,6 @@ export class DepositTokensComponent
 
       let arr: any = [];
       let result = jsonToCsv.map(async (item: any) => {
-        // if (!this.validExcel) {
-        //   let obj1 = {
-        //     TI_BANCO: item.bank,
-        //     DI_CUENTA: item.accountkey,
-        //     NO_CUENTA: item.accountnumber,
-        //     DI_MONEDA: item.currency,
-        //     FEC_MOVIMIENTO: item.motiondate,
-        //     FOLIO_FICHA: item.isfiledeposit,
-        //     FEC_CALCULO_INTERESES: item.calculationinterestsdate,
-        //     DEPOSITO: item.deposit,
-        //     no_bien: item.goodnumber,
-        //     di_expediente2: item.proceedingsnumber,
-        //   };
-        //   arr.push(obj1);
-        // } else {
         let obj2 = {
           BANCO: item.TI_BANCO,
           CUENTA: item.DI_CUENTA,
@@ -1016,17 +1012,16 @@ export class DepositTokensComponent
           MONEDA: item.DI_MONEDA,
           FECHA_DEPOSITO: item.FEC_MOVIMIENTO,
           FOLIO: item.FOLIO_FICHA,
-          FECHA_TRANSF: item.FEC_CALCULO_INTERESES,
-          DEPOSITO: item.DEPOSITO,
+          FECHA_TESOFE: item.FEC_CALCULO_INTERESES,
+          CANTIDAD: item.DEPOSITO,
           BIEN: item.no_bien,
           EXPEDIENTE: item.di_expediente2,
           DESCRIPCION: await this.getDetailsGoodForExcel(item.no_bien),
           CATEGORIA: '',
-          PARCIAL: 'N',
+          PARCIAL: '',
         };
 
         arr.push(obj2);
-        // }
       });
 
       Promise.all(result).then(i => {
@@ -1231,14 +1226,20 @@ export class DepositTokensComponent
   }
 
   addMovement() {
-    let data = 1;
-    this.openFormAdd(data);
+    let data = null;
+    this.openFormAdd(data, false);
   }
 
-  openFormAdd(data?: any) {
+  editMovement(event: any) {
+    let data = event;
+    this.openFormAdd(data, true);
+  }
+
+  openFormAdd(data?: any, valEdit?: boolean) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       data,
+      valEdit,
       callback: (next: boolean) => {
         this.getAccount();
         console.log('AQUI', next);
@@ -1254,7 +1255,7 @@ export class DepositTokensComponent
     if (data.goodnumber != null) {
       this.alert(
         'warning',
-        'No Puede Eliminar un Movimiento que ya está Asociado a un Expediente',
+        'No puede eliminar un movimiento que ya está asociado a un expediente',
         ''
       );
     } else {
@@ -1265,7 +1266,7 @@ export class DepositTokensComponent
       if (vb_hay_hijos) {
         this.alert(
           'warning',
-          'No se Puede Eliminar una Ficha Mientras Tenga Devoluciones Registradas',
+          'No se puede eliminar una ficha mientras tenga devoluciones registradas',
           ''
         );
       } else {
