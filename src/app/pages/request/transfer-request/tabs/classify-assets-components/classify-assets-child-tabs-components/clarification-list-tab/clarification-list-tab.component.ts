@@ -8,6 +8,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -16,10 +17,13 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IRejectGood } from 'src/app/core/models/good-reject/good-reject.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -54,7 +58,9 @@ export class ClarificationListTabComponent
     private clarificationService: ClarificationService,
     private goodResDevService: GetGoodResVeService,
     private goodServices: GoodService,
-    private chatClarificationService: ChatClarificationsService
+    private chatClarificationService: ChatClarificationsService,
+    private authService: AuthService,
+    private historyGoodService: HistoryGoodService
   ) {
     super();
   }
@@ -235,6 +241,7 @@ export class ClarificationListTabComponent
                 body.status = null;
                 await this.updateGoods(body);
               }
+              const history = await this.createHistoricGood('ROP', body.id);
               this.updateGoodTable.emit({
                 processStatus: body.processStatus,
                 goodStatus: body.goodStatus,
@@ -328,6 +335,29 @@ export class ClarificationListTabComponent
             'Error al eliminar',
             'No se pudo eliminar el registro de la tabla Chat Aclaraciones'
           );
+        },
+      });
+    });
+  }
+
+  createHistoricGood(status: string, good: number) {
+    return new Promise((resolve, reject) => {
+      const user: any = this.authService.decodeToken();
+      let body: IHistoryGood = {
+        propertyNum: good,
+        status: status,
+        changeDate: moment(new Date()).format('YYYY/MM/DD'),
+        userChange: user.username,
+        statusChangeProgram: 'SOLICITUD_TRANSFERENCIA',
+        reasonForChange: 'N/A',
+      };
+      this.historyGoodService.create(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(error);
+          this.onLoadToast('error', 'No se pudo crear el historico del bien');
         },
       });
     });
