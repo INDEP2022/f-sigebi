@@ -1186,7 +1186,7 @@ export class VerifyComplianceTabComponent
       let body: IHistoryGood = {
         propertyNum: good,
         status: status,
-        changeDate: moment(new Date()).format('YYYY/MM/DD'),
+        changeDate: new Date(),
         userChange: user.username,
         statusChangeProgram: 'SOLICITUD_TRANSFERENCIA',
         reasonForChange: 'N/A',
