@@ -50,6 +50,7 @@ export class PartializationGoodsDonationComponent
 
   ngOnInit(): void {
     this.initForm();
+    this.getuser();
   }
 
   initForm() {
@@ -71,6 +72,7 @@ export class PartializationGoodsDonationComponent
 
   settingsChange(event: any) {
     this.settings = event;
+    this.getuser();
   }
 
   onSubmit() {}
@@ -189,6 +191,7 @@ export class PartializationGoodsDonationComponent
   Parcializa() {
     let vfactor: any;
     let vestatus: any;
+    let vestatus1: any;
     let vaccion: any;
     let vc_pantalla: any = 'FACTGENPARCDON';
     let vn_bien_new: any;
@@ -227,7 +230,7 @@ export class PartializationGoodsDonationComponent
             .subscribe({
               next: resp => {
                 console.log('respuesta Status Service ', resp);
-                vestatus = resp.data[0].status;
+                vestatus1 = resp.data[0].status;
                 let params = {
                   propertyNum: this.NoGood,
                   status: vestatus,
@@ -250,53 +253,79 @@ export class PartializationGoodsDonationComponent
           let valorappaised = this.form.get('amountToSplit').value;
           let cantidad = this.form.get('quantity').value;
           let valoravaluo = this.form.get('appraisedValue').value;
+          let consectgood: any;
+          let amount = this.form.get('amount').value;
           vfactor = valorappaised / cantidad;
           let avalue: any;
-          if (valoravaluo != null) {
+          if (valoravaluo == null) {
             avalue = valoravaluo * vfactor;
           } else {
             avalue = valoravaluo;
           }
-          let params = {
-            id: 1,
-            goodNumb: 'secuencial',
-            description:
-              'Parcializado del bien: ' +
-              this.NoGood +
-              ', ' +
-              this.form.get('description').value +
-              ', ' +
-              ',1,1250',
-            appraisedValue: avalue,
-            quantity: valorappaised,
-            amount: valoravaluo,
-          };
-          this.LocalData.push(params);
-          this.data.load(this.LocalData);
-          this.totalItems = 1;
-          vobserv_padre =
-            'Bien(es) parcializado(s): ' +
-            'secuencial' +
-            ' por: ' +
-            this.form.get('amountToSplit').value +
-            ', ' +
-            ',1,600';
-          vobservaciones = 'Parcializado del bien: ' + this.NoGood;
-          /*PUP_INSERTA_BIEN ( vn_bien_new,
-                         vestatus,
-                         :BIENES.VAL2,
-                         vobservaciones,
-                         vfactor,
-                         vfactor );*/
-          this.good.goodId = 'secuencial';
-          this.good.status = vestatus;
-          this.good.goodReferenceNumber = 'secuencial';
-          this.good.observations = vobservaciones;
-          this.goodService.create(this.good).subscribe({
-            next: respon => {
-              console.log('repuesta insert good', respon);
+          this.goodService.getGoodCount().subscribe({
+            next: response => {
+              consectgood = response.data[0].nextval;
+              console.log('respuesta consecutivo good', response);
+              let params = {
+                id: 1,
+                goodNumb: consectgood,
+                description:
+                  'Parcializado del bien: ' +
+                  this.NoGood +
+                  ', ' +
+                  this.form.get('description').value +
+                  ', ' +
+                  ',1,1250',
+                appraisedValue: avalue,
+                quantity: cantidad,
+                amount: amount,
+              };
+              this.LocalData.push(params);
+              this.data.load(this.LocalData);
+              this.totalItems = 1;
+              vobserv_padre =
+                'Bien(es) parcializado(s): ' +
+                consectgood +
+                ' por: ' +
+                this.form.get('amountToSplit').value +
+                ', ' +
+                ',1,600';
+              vobservaciones = 'Parcializado del bien: ' + this.NoGood;
+              /*PUP_INSERTA_BIEN ( vn_bien_new,
+                             vestatus,
+                             :BIENES.VAL2,
+                             vobservaciones,
+                             vfactor,
+                             vfactor );*/
+              this.good.goodId = consectgood;
+              this.good.id = consectgood;
+              this.good.status = vestatus1;
+              this.good.goodReferenceNumber = consectgood;
+              this.good.observations = vobservaciones;
+              console.log('good ---> ', this.good);
+              this.goodService.create(this.good).subscribe({
+                next: respon => {
+                  console.log('repuesta insert good', respon);
+                  this.alert(
+                    'success',
+                    'Se Parcializó Correctamente',
+                    'La Aplicación se Realizó con Éxito'
+                  );
+                  let params = {
+                    propertyNum: this.NoGood,
+                    status: vestatus1,
+                    changeDate: new Date(),
+                    userChange: this.user,
+                    statusChangeProgram: vc_pantalla,
+                    reasonForChange: 'Parcialización',
+                  };
+                  this.historyGoodService.PostStatus(params).subscribe({
+                    next: resp => {},
+                  });
+                },
+                error: err => {},
+              });
             },
-            error: err => {},
           });
         }
       });

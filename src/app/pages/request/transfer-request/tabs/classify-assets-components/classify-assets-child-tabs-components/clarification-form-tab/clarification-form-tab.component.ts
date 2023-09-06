@@ -1,6 +1,5 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import * as moment from 'moment';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ClarificationTypes } from 'src/app/common/constants/clarification-type';
@@ -539,7 +538,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       let body: IHistoryGood = {
         propertyNum: good,
         status: status,
-        changeDate: moment(new Date()).format('YYYY/MM/DD'),
+        changeDate: new Date(),
         userChange: this.user.username,
         statusChangeProgram: 'SOLICITUD_TRANSFERENCIA',
         reasonForChange: 'N/A',
@@ -549,6 +548,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
           resolve(resp);
         },
         error: error => {
+          console.log(error);
           reject(error);
           this.onLoadToast('error', 'No se pudo crear el historico del bien');
         },

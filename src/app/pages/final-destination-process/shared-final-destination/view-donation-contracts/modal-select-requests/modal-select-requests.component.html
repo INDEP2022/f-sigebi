@@ -9,10 +9,19 @@
     <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="row mt-5 justify-content-start justify-content-sm-end">
         <div class="col-12 col-md-3">
-          <button class="btn btn-secondary btn-sm active">Consultar</button>
+          <button class="btn btn-primary btn-sm active m-3">
+            Consultar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
         </div>
         <div class="col-12 col-md-3">
-          <button class="btn btn-secondary btn-sm active">Incorporar</button>
+          <button
+            type="button"
+            tooltip="Agregar"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2">
+            Incorporar <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
         </div>
         <ng-container *ngIf="op === 1">
           <div class="col-12 col-md-2">

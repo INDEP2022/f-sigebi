@@ -1,0 +1,34 @@
+export interface IOrderServiceProvider {
+  orderServiceId?: number;
+  serviceId?: number;
+  description?: string;
+  executionDate?: string;
+  durationTime?: number;
+  resourcesNumber?: number;
+  methodcount?: string;
+  typeUnitTransport?: string;
+  priceUnitary?: number;
+  visitOcular?: string;
+  amount?: number;
+  userCreation?: string;
+  userModification?: string;
+  creationDate?: string;
+  modificationDate?: string;
+  version?: number;
+  typeService?: string;
+  resourcesReal?: string;
+  descriptionDifference?: string;
+  content?: number;
+  disputed?: number;
+  andmidserv?: string;
+  classificationService?: string;
+  commentService?: string;
+  resultAssessment?: string;
+  descriptionbreaches?: string;
+  observationsbreaches?: string;
+  porcbreaches?: number;
+  deductivebreaches?: number;
+  amountNumbercomplies?: number;
+  id?: number;
+  locator?: string;
+}
