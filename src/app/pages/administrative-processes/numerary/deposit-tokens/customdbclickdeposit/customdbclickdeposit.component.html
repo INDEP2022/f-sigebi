@@ -4,12 +4,8 @@
     (click)="onCellClick($event)"
     (contextmenu)="onContextMenu($event)"
     class=""
-    style="width: auto; height: 20px">
-    {{ value }}
+    style="width: auto; height: 20px; text-align: end">
+    {{ value | number : '1.2-2' }}
+    <!-- {{ value }} -->
   </div>
-  <!-- <div *ngIf="!value" tooltip="Doble Click para Conciliar" containerClass="tooltip-style" (click)="onCellClick($event)"
-        (contextmenu)="onContextMenu($event)" class="text-center bg-info hoverBg"
-        style="width: auto; height: 25px; color: white; border-radius: 5px">
-        Agregar
-    </div> -->
 </div>
