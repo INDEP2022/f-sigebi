@@ -25,7 +25,7 @@ export class OrderServiceFormComponent implements OnInit, OnChanges {
   disableAllChecks: boolean = false;
   @Input() op: number;
   @Input() showForm: boolean;
-  @Input() ordServform: FormGroup = new FormGroup({});
+  @Input() ordServform?: FormGroup = new FormGroup({});
   readonly: boolean = false;
 
   orderService: any = {};
@@ -34,21 +34,9 @@ export class OrderServiceFormComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     //this.prepareForm();
-    console.log(this.op);
   }
 
-  /*prepareForm() {
-    this.ordServform = this.fb.group({
-      reasonsNotPerform: [null],
-      transportationZone: [null],
-      userContainers: [null],
-      folioTlp: [null],
-      eyeVisit: [null],
-    });
-  }*/
-
   ngOnChanges(changes: SimpleChanges): void {
-    debugger;
     this.orderService = this.ordServform.getRawValue();
     console.log('showForm', this.showForm);
   }

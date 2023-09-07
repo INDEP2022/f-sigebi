@@ -38,7 +38,7 @@ export class ServiceOrderRequestCaptureFormComponent
   parentModal: BsModalRef;
   op: number = 1;
   showForm: boolean = true;
-  orderServiceId: number = 0;
+  orderServiceId: number = null;
   lsProgramming: string = null;
   programmingId: number = null;
   programming: any = null;
@@ -198,9 +198,10 @@ export class ServiceOrderRequestCaptureFormComponent
       )
       .subscribe({
         next: (resp: any) => {
-          this.orderServiceId = resp.data[0].id;
+          // setTimeout(() => {
           this.ordServform.patchValue(resp.data[0]);
-          console.log(this.ordServform.value);
+          this.orderServiceId = resp.data[0].id;
+          // }, 100);
         },
       });
   }
