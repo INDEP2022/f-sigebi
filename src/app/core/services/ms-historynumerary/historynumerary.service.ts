@@ -6,6 +6,7 @@ import { HttpService } from 'src/app/common/services/http.service';
   providedIn: 'root',
 })
 export class HistoryNumeraryService extends HttpService {
+  private readonly route = HistoryNumeraryEndpoints.HistoryNumeraryALL;
   constructor() {
     super();
     this.microservice = HistoryNumeraryEndpoints.BasePath;
@@ -13,5 +14,9 @@ export class HistoryNumeraryService extends HttpService {
 
   getAll(params?: ListParams) {
     return this.get(HistoryNumeraryEndpoints.HistoryNumeraryALL, params);
+  }
+  getByGoodRef(id: string) {
+    const route = `${this.route}/${id}`;
+    return this.get(route);
   }
 }

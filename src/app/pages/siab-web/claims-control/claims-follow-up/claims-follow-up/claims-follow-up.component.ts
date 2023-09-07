@@ -44,7 +44,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       },
       columns: {
         officeMail: {
-          title: 'Ver Oficio Correo',
+          title: 'Oficio Correo',
           width: '5%',
           type: 'custom',
           sort: false,
@@ -57,7 +57,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           },
         },
         seeClaimLetter: {
-          title: 'Ver Carta Reclamación',
+          title: 'Carta Reclamación',
           width: '5%',
           type: 'custom',
           sort: false,
@@ -70,7 +70,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           },
         },
         officialConclusion: {
-          title: 'Ver Oficio Conclusión',
+          title: 'Oficio Conclusión',
           width: '5%',
           type: 'custom',
           sort: false,
@@ -119,12 +119,12 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           sort: false,
         },
         fechareporteaseguradora: {
-          title: 'Fec. Rep. Aseguradora',
+          title: 'Fecha de Reporte de Aseguradora',
           type: 'string',
           sort: false,
         },
         fechareportecabi: {
-          title: 'Fec. Rep. CAB',
+          title: 'Fecha de Reporte a la CAB',
           type: 'string',
           sort: false,
         },
@@ -336,11 +336,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       };
       this.vewReport(res);
     } else {
-      this.alert(
-        'warning',
-        'Siniestros Seguimiento',
-        'No se encontró documento oficio conclusión.'
-      );
+      this.alert('warning', 'Oficio Conclusión', 'No se encontró documento');
     }
   }
   seeOfficeMail(data: any) {
@@ -359,11 +355,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       };
       this.vewReport(res);
     } else {
-      this.alert(
-        'warning',
-        'Siniestros Seguimiento',
-        'No se encontró documento oficio correo.'
-      );
+      this.alert('warning', 'Oficio Correo', 'No se encontró documento.');
     }
   }
   seeClaimLetter(data: any) {
@@ -383,11 +375,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       };
       this.vewReport(res);
     } else {
-      this.alert(
-        'warning',
-        'Siniestros Seguimiento',
-        'No se encontró documento oficio reclamación.'
-      );
+      this.alert('warning', 'Oficio Reclamación', 'No se encontró documento');
     }
   }
   vewReport(res: any) {

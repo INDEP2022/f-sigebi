@@ -27,6 +27,11 @@ export class DetRelationConfiscationService extends HttpService {
     );
   }
 
+  getByGood(id?: any): Observable<IListResponse<any>> {
+    const route = ConfiscationEndpoints.getData;
+    return this.get<IListResponse<any>>(route + id);
+  }
+
   Insert(model?: any): Observable<IListResponse<any>> {
     return this.post<IListResponse<any>>(
       ConfiscationEndpoints.filterInsert,
