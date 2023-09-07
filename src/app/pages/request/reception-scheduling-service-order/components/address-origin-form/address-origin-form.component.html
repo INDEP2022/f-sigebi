@@ -21,31 +21,43 @@
     </p>
   </h5>
   <div class="row" *ngIf="showaddressOrigin">
-    <form [formGroup]="addressOriginForm" class="form-material">
+    <form [formGroup]="ordServform" class="form-material">
       <div class="pt-4">
         <form-field
-          [control]="addressOriginForm.get('warehouse')"
+          [control]="ordServform.get('sourceStore')"
           label="Almac&eacute;n">
-          <input type="text" class="form-control" formControlName="warehouse" />
+          <input
+            type="text"
+            class="form-control"
+            formControlName="sourceStore" />
         </form-field>
       </div>
       <div class="pt-3">
-        <form-field [control]="addressOriginForm.get('street')" label="Calle">
-          <input type="text" class="form-control" formControlName="street" />
+        <form-field [control]="ordServform.get('originStreet')" label="Calle">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="originStreet" />
         </form-field>
       </div>
 
       <div class="pt-3">
         <form-field
-          [control]="addressOriginForm.get('cp')"
+          [control]="ordServform.get('originPostalCode')"
           label="C&oacute;digo postal">
-          <input type="text" class="form-control" formControlName="cp" />
+          <input
+            type="text"
+            class="form-control"
+            formControlName="originPostalCode" />
         </form-field>
       </div>
 
       <div class="pt-3">
-        <form-field [control]="addressOriginForm.get('colony')" label="Colonia">
-          <input type="text" class="form-control" formControlName="colony" />
+        <form-field [control]="ordServform.get('colonyOrigin')" label="Colonia">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="colonyOrigin" />
         </form-field>
       </div>
     </form>
