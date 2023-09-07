@@ -23,12 +23,38 @@ interface IExcelToJson {
 @Component({
   selector: 'app-report-sales-attempts',
   templateUrl: './report-sales-attempts.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   data: IExcelToJson[] = [];
   tiposData = new DefaultSelect();
+  loadingBtn: boolean = false;
+  loadingBtn2: boolean = false;
+  loadingBtn3 = false;
+  loadingBtn4 = false;
   tiposstatus = new DefaultSelect();
   dataExcel: any = [];
   Tbienes: any = [];
@@ -149,8 +175,10 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   }
 
   consultarBienExcel() {
+    this.loadingBtn4 = true;
     if (!this.commaSeparatedString) {
       this.alert('warning', 'Debe importar el Archivo Excel', '');
+      this.loadingBtn4 = false;
       return;
     }
 
@@ -181,7 +209,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
             countMap[noBienValue] = 1;
           }
         });
-
+        this.loadingBtn4 = false;
         console.log('Conteo de ocurrencias de cada bien:', countMap);
         const newData = Object.keys(countMap).map(bien => ({
           bien,
@@ -210,8 +238,10 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   }
 
   consultarOnlyOne() {
+    this.loadingBtn = true;
     if (!this.form.get('onlyOne').value) {
       this.alert('warning', 'Es Necesario Contar con el No. Bien', '');
+      this.loadingBtn = false;
       return;
     }
     let params = {};
@@ -243,6 +273,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
           });
 
           console.log('Conteo de ocurrencias de cada bien:', countMap);
+          this.loadingBtn = false;
           const newData = Object.keys(countMap).map(bien => ({
             bien,
             conteo_ocurrencias: countMap[bien],
@@ -375,6 +406,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   }
 
   consultarBien() {
+    this.loadingBtn3 = true;
     console.log(this.form.get('typeGood').value);
     console.log(this.tiposData);
     const selectedTypeNumber = this.form.get('typeGood').value;
@@ -389,6 +421,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
 
     if (!selectedTypeStatus) {
       this.alert('warning', 'Debe Seleccionar los Filtros', '');
+      this.loadingBtn3 = false;
       return;
     }
 
@@ -410,7 +443,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
         // Contar la cantidad de veces que aparece "no_bien" en la respuesta
         // Crear un objeto para almacenar las ocurrencias de cada valor en no_bien
         const countMap: { [key: string]: number } = {}; // Anotación de tipo para countMap
-
+        this.loadingBtn3 = false;
         // Recorrer los registros y contar las ocurrencias
         resp.data.forEach((item: any) => {
           const noBienValue: string = item.no_bien;

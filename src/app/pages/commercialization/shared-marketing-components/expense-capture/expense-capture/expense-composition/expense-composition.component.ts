@@ -1,14 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
-import { catchError, firstValueFrom, map, of, takeUntil } from 'rxjs';
+import { catchError, firstValueFrom, map, of, take, takeUntil } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerDetExpense } from 'src/app/core/models/ms-spent/comer-detexpense';
+import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
 import { ExpenseLotService } from '../../services/expense-lot.service';
+import { ExpenseParametercomerService } from '../../services/expense-parametercomer.service';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -21,13 +23,16 @@ export class ExpenseCompositionComponent
   implements OnInit
 {
   toggleInformation = true;
+  selectedRow: IComerDetExpense;
   @ViewChild('table') table: Ng2SmartTableComponent;
   constructor(
     private dataService: ComerDetexpensesService,
     private expenseCaptureDataService: ExpenseCaptureDataService,
     private parameterService: ParametersConceptsService,
     private parametersModService: ParametersModService,
-    private lotService: ExpenseLotService
+    private lotService: ExpenseLotService,
+    private accountMovementService: AccountMovementService,
+    private parametercomerService: ExpenseParametercomerService
   ) {
     super();
     this.service = this.dataService;
@@ -214,6 +219,10 @@ export class ExpenseCompositionComponent
     };
   }
 
+  selectRow(row: IComerDetExpense) {
+    this.selectedRow = row;
+  }
+
   disperGasto() {
     if (!this.PCONDIVXMAND) {
       this.alert(
@@ -231,7 +240,7 @@ export class ExpenseCompositionComponent
       );
       return;
     }
-    const row = this.data[0];
+    const row = this.selectedRow;
     this.lotService
       .DIVIDE_MANDATOS({
         eventId: this.eventNumber,
@@ -404,9 +413,104 @@ export class ExpenseCompositionComponent
     this.getPaginated(this.params.value);
   }
 
-  contabilityMand() {}
+  async contabilityMand() {
+    if (this.expenseCaptureDataService.VALIDACIONES_SOLICITUD()) {
+      const result = await firstValueFrom(
+        this.accountMovementService.getDepuraContmand(this.expenseNumber.value)
+      );
+      const row = this.data[0];
+      if (row.goodNumber || row.cvman) {
+        this.ESCOJE_MANDCONTA();
+      } else {
+        this.alert('warning', 'Debe capturar datos de mandatos o bienes', '');
+      }
+    }
+  }
+
+  private ESCOJE_MANDCONTA() {
+    if (this.expenseCaptureDataService.P_MANDCONTIPO === 'N') {
+      this.MAND_CONTA();
+    } else {
+      this.MANDA_CONTA_TPBIEN();
+    }
+  }
+
+  private MANDA_CONTA_TPBIEN() {
+    this.dataService
+      .mandContaTpBien({
+        idGastos: this.expenseNumber.value,
+        pnoenviasirsae: this.expenseCaptureDataService.PNOENVIASIRSAE,
+      })
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.expenseCaptureDataService.P_CAMBIO = 0;
+            //show view mandatos
+          }
+        },
+        error: err => {
+          this.alert('error', 'Contablidad Mandatorio', err);
+        },
+      });
+  }
+
+  private MAND_CONTA() {
+    this.dataService
+      .mandConta({
+        idGastos: this.expenseNumber.value,
+        pnoenviasirsae: this.expenseCaptureDataService.PNOENVIASIRSAE,
+      })
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.expenseCaptureDataService.P_CAMBIO = 0;
+            //show view mandatos
+          }
+        },
+        error: err => {
+          this.alert('error', 'Contablidad Mandatorio', err);
+        },
+      });
+  }
 
   reload() {}
 
-  validates() {}
+  validates() {
+    if (this.eventNumber === null) {
+      this.alert('warning', 'Es necesario tener número de evento', '');
+      return;
+    }
+    if (this.lotNumber === null || this.lotNumber.value === null) {
+      this.alert('warning', 'Es necesario tener número de lote', '');
+      return;
+    }
+    if (this.conceptNumber === null || this.conceptNumber.value === null) {
+      this.alert(
+        'warning',
+        'Es necesario tener número de concepto de pago',
+        ''
+      );
+      return;
+    }
+    this.parametercomerService
+      .getValidGoods({
+        v_id_evento: this.eventNumber,
+        v_id_lote: this.lotNumber.value,
+        id_concepto: this.conceptNumber.value,
+      })
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response) {
+            console.log(response);
+          }
+        },
+        error: err => {
+          console.log(err);
+          this.alert('error', 'Validación de Bienes', err);
+        },
+      });
+  }
 }

@@ -568,8 +568,18 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     this.file.get('recordRead').setValue(null);
     this.source.reset();
     this.dataExcel = [];
-
+    this.unt = false;
     this.source.load(this.dataExcel);
+  }
+
+  cleanOnly() {
+    this.Only.get('radio').setValue(null);
+    this.Only.get('nobien').setValue(null);
+    this.until = false;
+    this.file.get('recordsProcessed').setValue(null);
+    this.file.get('processed').setValue(null);
+    this.file.get('wrong').setValue(null);
+    this.file.get('recordRead').setValue(null);
   }
 
   onlyGood() {
@@ -585,6 +595,15 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     // Obtener el valor de this.form.get('forfeitureKey').value
     const forfeitureKeyValue = this.form.get('forfeitureKey').value;
 
+    if (this.Only.get('radio').value === null) {
+      this.alert('warning', 'Se debe seleccionar un tipo de modena', '');
+      return;
+    }
+
+    if (this.Only.get('nobien').value === null) {
+      this.alert('warning', 'Debe ingresar el No. Bien.', '');
+      return;
+    }
     // Actualizar el objeto DATA_BY con el nuevo valor
     const customData = {
       idD: forfeitureKeyValue,
@@ -597,40 +616,42 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     params['filter.goodId'] = `$eq:${this.Only.get('nobien').value}`;
     console.log(params);
     //this.
-    this.goodServ.getByExpedientAndParams__(params).subscribe({
-      next: (resp: any) => {
-        console.log(resp);
-        this.sourceby = resp.data;
-        this.totalItems1 = resp.count;
-        this.file.get('recordRead').patchValue(this.totalItems1);
-        this.formaplicationData
-          .get('NoBien')
-          .patchValue(this.Only.get('nobien').value);
-        this.formaplicationData.get('f_trnas').patchValue(resp.data.f_trnas);
-        this.formaplicationData.get('f_sent').patchValue(resp.data.f_sent);
-        this.formaplicationData.get('Inte').patchValue(resp.data.Inte);
-        this.formaplicationData
-          .get('tesofeDate')
-          .patchValue(resp.data[0].tesofeDate);
-        this.formaplicationData
-          .get('tesofeFolio')
-          .patchValue(resp.data[0].tesofeFolio);
-        this.formaplicationData
-          .get('appraisalCurrencyKey')
-          .patchValue(this.Only.get('radio').value);
-        this.formaplicationData
-          .get('aut')
-          .patchValue(resp.data[0].expediente.authorityNumber);
-        this.formaplicationData
-          .get('expedientecriminalCase')
-          .patchValue(resp.data[0].expediente.criminalCase);
-        this.until = true;
-      },
-      error: err => {
-        console.log(err);
-        this.alert('warning', 'No se encontraron registros', '');
-      },
-    });
+    this.detRelationConfiscationService
+      .getByGood(this.Only.get('nobien').value)
+      .subscribe({
+        next: (resp: any) => {
+          console.log(resp);
+          const fechaOriginal = resp.fec_transferencia;
+          const fechaFormateada = new Date(fechaOriginal).toLocaleDateString();
+          console.log(fechaFormateada);
+
+          this.sourceby = resp.data;
+          this.totalItems1 = 1;
+          console.log(this.totalItems);
+
+          this.file.get('recordRead').patchValue(this.totalItems1);
+          this.formaplicationData
+            .get('NoBien')
+            .patchValue(this.Only.get('nobien').value);
+          this.formaplicationData.get('f_trnas').patchValue(fechaFormateada);
+          this.formaplicationData.get('f_sent').patchValue(null);
+          this.formaplicationData.get('Inte').patchValue(null);
+          this.formaplicationData.get('tesofeDate').patchValue(null);
+          this.formaplicationData.get('tesofeFolio').patchValue(null);
+          this.formaplicationData
+            .get('appraisalCurrencyKey')
+            .patchValue(this.Only.get('radio').value);
+          this.formaplicationData.get('aut').patchValue(resp.autoridad);
+          this.formaplicationData
+            .get('expedientecriminalCase')
+            .patchValue(resp.causa_penal);
+          this.until = true;
+        },
+        error: err => {
+          console.log(err);
+          this.alert('warning', 'No se encontraron registros', '');
+        },
+      });
   }
 
   dataIdentifier() {
@@ -673,10 +694,10 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     const fec_sentencia = this.formaplicationData.get('f_sent').value;
     const intereses = this.formaplicationData.get('Inte').value;
     const fec_of_tesofe = this.formaplicationData.get('tesofeDate').value;
-    const causa_penal = this.formaplicationData.get('aut').value;
-    const autoridad = this.formaplicationData.get(
+    const causa_penal = this.formaplicationData.get(
       'expedientecriminalCase'
     ).value;
+    const autoridad = this.formaplicationData.get('aut').value;
     const tesofeFolio = this.formaplicationData.get('tesofeFolio').value;
 
     let bodydat = {
@@ -704,55 +725,43 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     const duplicateNumbers = [];
     const mon: any = [];
     const data1: any = [];
-    for (let i = 0; i < this.totalItems1; i++) {
-      data1.push([bodydat]);
-      const data = bodydat.no_bien;
-      // mon.push([this.dataExcel[i].money]);
 
-      let body = {
-        goodNumber: data,
-      };
-      console.log(body);
+    data1.push([bodydat]);
+    const data = bodydat.no_bien;
+    // mon.push([this.dataExcel[i].money]);
 
-      try {
-        const resp = await this.detRelationConfiscationService
-          .getById(body)
-          .toPromise();
+    let body = {
+      goodNumber: data,
+    };
+    console.log(body);
 
-        // Verificar si el número de bien ya existe en la respuesta
-        if (resp || resp['exists']) {
-          duplicateNumbers.push(data); // Agregar el número de bien duplicado al arreglo
-        }
-      } catch (err) {}
-    }
+    try {
+      const resp = await this.detRelationConfiscationService
+        .getById(body)
+        .toPromise();
+      console.log(resp);
+
+      // Verificar si el número de bien ya existe en la respuesta
+      if (resp || resp['exists']) {
+        duplicateNumbers.push(data); // Agregar el número de bien duplicado al arreglo
+        console.log(duplicateNumbers);
+      }
+    } catch (err) {}
 
     let insertResp;
     try {
       insertResp = await this.detRelationConfiscationService
         .Insert(insertBody)
         .toPromise();
-
       this.file.get('recordsProcessed').patchValue(insertResp['total']);
       this.file.get('processed').patchValue(insertResp['sucess']);
       this.file.get('wrong').patchValue(insertResp['error']);
       if (this.file.get('processed').value > 0) {
-        this.alert('success', 'Registros Aprobados', '');
+        this.alert('success', 'Registro Aprobado', '');
       }
     } catch (err) {
       // Verificar si err es de tipo HttpErrorResponse
       if (err instanceof HttpErrorResponse) {
-        if (
-          err.status === 500 ||
-          (err.error && err.error.includes('column "undefined" does not exist'))
-        ) {
-          this.alert(
-            'warning',
-            'Archivo sin Información',
-            'Asegúrese de Subir el Archivo Correcto'
-          );
-        } else {
-          this.alert('error', 'Error desconocido.', '');
-        }
       } else {
         this.alert('error', 'Error desconocido.', '');
       }

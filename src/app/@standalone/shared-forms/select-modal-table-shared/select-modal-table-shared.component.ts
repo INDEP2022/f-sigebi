@@ -45,6 +45,7 @@ export class SelectModalTableSharedComponent
   @Input() form: FormGroup;
   @Input() disabled: boolean;
   @Input() maxlengthInput = 10;
+  @Input() functionFilterName: string = 'getAllFilterSelf';
   @Input() override haveSelectColumns: boolean = false;
   @Input() override haveColumnFilters: boolean = false;
   @Input() override ilikeFilters: string[] = ['description'];
@@ -56,7 +57,7 @@ export class SelectModalTableSharedComponent
   @Input() formFieldName: string;
   @Input() id: string;
   @Input() description: string;
-  @Input() service: IServiceWidthFilter;
+  @Input() service: any;
   @Input() title: string;
   @Input() operator: SearchFilter = SearchFilter.LIKE;
   @Input() searchField: string; // Debe pertenecer a una de las columnas
@@ -81,7 +82,7 @@ export class SelectModalTableSharedComponent
       columnsType: this.columnsType,
       service: this.service,
       settings: { ...TABLE_SETTINGS },
-      dataObservableListParamsFn: this.service.getAllFilterSelf,
+      dataObservableListParamsFn: this.service[this.functionFilterName],
     };
     if (this.searchField) {
       context = {
