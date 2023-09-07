@@ -30,7 +30,10 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {}
-
+  formatValue(value: number): string {
+    const formattedValue = value.toFixed(2); // Formatear a dos decimales
+    return formattedValue.replace(/(\.00|(\.(\d*[1-9]))?0*$)/, ''); // Eliminar ceros innecesarios
+  }
   onCellClick(event: any) {
     console.log('AQUI', event);
     console.log('rpw', this.rowData);

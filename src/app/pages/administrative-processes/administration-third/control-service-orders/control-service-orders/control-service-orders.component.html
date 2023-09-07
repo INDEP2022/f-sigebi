@@ -8,19 +8,16 @@
   <div body>
     <form [formGroup]="serviceOrdersForm" class="form-material">
       <div class="row margin-input">
-        <div class="col-md-2">
-          <form-field
-            [control]="serviceOrdersForm.get('regionalDelegation')"
-            label="Delegación Regional">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="regionalDelegation"
-              min="1"
-              pattern="^[0-9]+" />
-          </form-field>
+        <div class="col-md-3" style="margin-top: -0.7%">
+          <app-delegation-shared
+            [form]="serviceOrdersForm"
+            [delegationField]="'delegation'"
+            [showDelegation]="true"
+            [showSubdelegation]="false"
+            (emitDelegation)="seleccionarDelegation($event)">
+          </app-delegation-shared>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field
             [control]="serviceOrdersForm.get('process')"
             label="Proceso">
@@ -32,46 +29,58 @@
               pattern="^[0-9]+" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <form-field
             [control]="serviceOrdersForm.get('dateInitial')"
             label="Fecha Inicial">
             <input
               type="text"
               formControlName="dateInitial"
-              placeholder="Fecha Inicial"
               class="form-control"
-              bsDatepicker />
+              bsDatepicker
+              [maxDate]="serviceOrdersForm.get('datefinal').value || maxDate" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <form-field
             [control]="serviceOrdersForm.get('datefinal')"
             label="Fecha Final">
             <input
               type="text"
               formControlName="datefinal"
-              placeholder="Fecha Final"
               class="form-control"
-              bsDatepicker />
+              bsDatepicker
+              [maxDate]="maxDate"
+              [minDate]="serviceOrdersForm.get('dateInitial').value" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 justify-content-center">
           <div class="justify-content-center">
-            <button type="submit" class="btn btn-primary btn-sm active">
+            <!-- <button type="submit" class="btn btn-primary btn-sm active">
+              
+            </button> -->
+            <button type="button" class="btn btn-primary active btn-sm">
               Refrescar
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
           </div>
         </div>
       </div>
     </form>
+    <div class="mt-5">
+      <div class="d-flex justify-content-between">
+        <div>
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
+      </div>
+    </div>
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data1">
+            [source]="tableSource">
           </ng2-smart-table>
         </div>
       </div>
