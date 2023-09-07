@@ -13,4 +13,5 @@ export enum AccountmvmntEndpoint {
   MovementAccountXBankAccountExcel = 'aplication/movementAccountXBankAccount-excel',
   MetodoDePago = 'aplication/get-MetododePago',
   DepuraContmand = 'aplication/depuraContmand',
+  AccountMovements = 'account-movements',
 }

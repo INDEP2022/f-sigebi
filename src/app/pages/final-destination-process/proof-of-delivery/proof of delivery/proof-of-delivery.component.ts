@@ -208,6 +208,7 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
     console.log('folio ', this.folioScan);
     console.log('idProceeding ', this.idProceeding);
     console.log('expedient ', this.expedient);
+    let i = 0;
     this.initForm();
     this.globalVarsService
       .getGlobalVars$()
@@ -217,8 +218,11 @@ export class ProofOfDeliveryComponent extends BasePage implements OnInit {
           this.ngGlobal = global;
           console.log('GLOBAL ', this.ngGlobal);
           if (this.ngGlobal.REL_BIENES != null) {
-            console.log('REL_BIENES ', this.ngGlobal.REL_BIENES);
-            this.backRastreador(this.ngGlobal.REL_BIENES);
+            if (i == 0) {
+              i++;
+              console.log('REL_BIENES ', this.ngGlobal.REL_BIENES);
+              this.backRastreador(this.ngGlobal.REL_BIENES);
+            }
           }
         },
       });

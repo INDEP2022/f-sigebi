@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -45,7 +45,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   form: FormGroup = new FormGroup({});
   formDetalle: FormGroup = new FormGroup({});
-  formFactura: FormGroup = new FormGroup({});
+  formFactura: FormGroup;
   dataFilter: LocalDataSource = new LocalDataSource();
   dataFilter2: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
@@ -65,6 +65,25 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   @Output() comer: EventEmitter<any> = new EventEmitter(null);
   @Output() formG: EventEmitter<FormGroup> = new EventEmitter();
+  @Input() set sum(values: any) {
+    if (values) {
+      const time = setTimeout(() => {
+        this.formFactura.get('importE').patchValue(values.sum5);
+        this.formFactura.get('ivaE').patchValue(values.sum3);
+        this.formFactura.get('totalE').patchValue(values.sum1);
+        this.formFactura.get('importI').patchValue(values.sum6);
+        this.formFactura.get('ivaI').patchValue(values.sum4);
+        this.formFactura.get('totalI').patchValue(values.sum2);
+        clearTimeout(time);
+      }, 0);
+    }
+  }
+
+  val: any;
+
+  get sum() {
+    return this.val;
+  }
 
   get idAllotment() {
     return this.form.get('idAllotment');
@@ -161,7 +180,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           sort: false,
           valuePrepareFunction: (val: number) => {
             const values = [
-              { id: 1, desc: 'Vehiculo' },
+              { id: 1, desc: 'Vehículo' },
               { id: 2, desc: 'Diversos c/Anexo' },
               { id: 3, desc: 'Diversos s/Anexo' },
               { id: 4, desc: 'Aeronaves' },
@@ -224,9 +243,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
               customer: () => (searchFilter = SearchFilter.ILIKE),
               delegationNumber: () => (searchFilter = SearchFilter.EQ),
               Type: () => (searchFilter = SearchFilter.EQ),
+              document: () => (searchFilter = SearchFilter.ILIKE),
               series: () => (searchFilter = SearchFilter.ILIKE),
               folioinvoiceId: () => (searchFilter = SearchFilter.EQ),
-              factstatusId: () => (searchFilter = SearchFilter.EQ),
+              factstatusId: () => (searchFilter = SearchFilter.ILIKE),
               vouchertype: () => (searchFilter = SearchFilter.ILIKE),
               impressionDate: () => (searchFilter = SearchFilter.EQ),
               price: () => (searchFilter = SearchFilter.ILIKE),
@@ -318,7 +338,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     this.comerDetInvoice.getAll(params).subscribe({
       next: async resp => {
         this.loading2 = false;
-
+        let sum1: number = 0,
+          sum2: number = 0,
+          sum3: number = 0,
+          sum4: number = 0;
         for (let data of resp.data) {
           const value = await this.postQueryDet({
             cveProdservSat: data.prodservSatKey,
@@ -332,8 +355,23 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
             data.desc_unidad_det = value.desc_unidad_det;
             data.desc_producto_det = value.desc_producto_det;
           }
+
+          sum1 = sum1 + Number(data.price);
+          sum2 = sum2 + Number(data.vat);
+          sum3 = sum3 + Number(data.total);
+          sum4 = sum4 + Number(data.amount);
         }
 
+        sum1 = Number(sum1.toFixed(2));
+        sum2 = Number(sum2.toFixed(2));
+        sum3 = Number(sum3.toFixed(2));
+        sum4 = Number(sum4.toFixed(2));
+
+        this.formDetalle.get('count').patchValue(resp.data.length);
+        this.formDetalle.get('totalI').patchValue(sum1);
+        this.formDetalle.get('totalIva').patchValue(sum2);
+        this.formDetalle.get('total').patchValue(sum3);
+        this.formDetalle.get('countTotal').patchValue(sum4);
         this.totalItems2 = resp.count;
         this.dataFilter2.load(resp.data);
         this.dataFilter2.refresh();
@@ -343,6 +381,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         this.totalItems2 = 0;
         this.dataFilter2.load([]);
         this.dataFilter2.refresh();
+        this.formDetalle.reset();
       },
     });
   }
@@ -374,13 +413,15 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           'filter.billId'
         ] = `${SearchFilter.EQ}:${resp.data[0].billId}`;
         this.getComerDetInovice();
+        this.formFactura.get('count').patchValue(resp.data.length);
       },
       error: () => {
         this.loading = false;
         this.totalItems = 0;
         this.dataFilter.load([]);
         this.dataFilter.refresh();
-
+        this.formFactura.reset();
+        this.formDetalle.reset();
         this.totalItems2 = 0;
         this.dataFilter2.load([]);
         this.dataFilter2.refresh();
