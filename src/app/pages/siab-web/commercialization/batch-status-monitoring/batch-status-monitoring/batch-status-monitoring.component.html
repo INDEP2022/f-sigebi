@@ -46,21 +46,18 @@
         <div class="col-md-1">
           <div class="justify-content-center">
             <button
-              type="button"
               class="btn btn-primary btn-sm active"
               [disabled]="!form.valid"
               (click)="show = !show">
               Consultar
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
           </div>
         </div>
         <div class="col-md-1">
           <div class="justify-content-center">
-            <button
-              type="submit"
-              class="btn btn-secondary btn-sm active"
-              [disabled]="!form.valid">
-              Limpiar filtros
+            <button class="btn btn-danger btn-sm active">
+              Limpiar <i class="fas fa-eraser"> </i>
             </button>
           </div>
         </div>

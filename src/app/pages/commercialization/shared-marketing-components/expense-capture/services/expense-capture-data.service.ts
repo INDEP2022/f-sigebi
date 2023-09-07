@@ -36,6 +36,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   PCAMBIAESTATUS: string;
   PCONDIVXMAND: string;
   PCANVTA: string;
+  P_CAMBIO: number;
   P_MANDCONTIPO: string;
   PDEVPARCIAL: string;
   PCHATMORSINFLUJOPM: string;
@@ -80,7 +81,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   }
 
   private secondSendSolicitud() {
-    debugger;
+    // debugger;
     const VALIDA_DET = this.dataCompositionExpenses.filter(
       row => row.changeStatus && row.changeStatus === true
     );
@@ -539,7 +540,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       this.alert('error', 'Debe tener el Usuario que Captura', '');
       return false;
     }
-    if (!this.data.comproafmandsae) {
+    if (!this.form.get('comproafmandsae')) {
       this.alert(
         'error',
         'Falta especificar si el comprobante fiscal afecta al SAE o al mandato',
@@ -547,13 +548,22 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       );
       return false;
     }
-    if (!this.data.clkpv) {
+    if (!this.form.get('clkpv')) {
       this.alert('error', 'Debe seleccionar un beneficiario', '');
       return false;
     }
     if (!this.payDay.value) {
       this.alert('error', 'Debe tener una fecha de pago', '');
       return false;
+    }
+    if (this.PVALIDADET === 'S') {
+      const VALIDA_DET = this.dataCompositionExpenses.filter(
+        row => row.changeStatus && row.changeStatus === true
+      );
+      if (VALIDA_DET.length === 0) {
+        this.alert('warning', 'Hay un problema en su detalle Verifique', '');
+        return false;
+      }
     }
     return true;
   }
