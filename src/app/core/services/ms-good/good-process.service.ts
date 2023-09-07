@@ -282,4 +282,9 @@ export class GoodProcessService extends HttpService {
       `${GoodProcessPoints.GetDataCustom}?tCurrency=${currency}&noGood=${good}`
     );
   }
+
+  getVGoodTpye(params: ListParams) {
+    const route = `${GoodProcessPoints.VGoodType}`;
+    return this.get<any>(route, params);
+  }
 }

@@ -5,35 +5,79 @@
     </div>
   </div>
   <div body>
-    <div class="row">
-      <div class="col-md-8 mb-3"></div>
-      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
-        <app-columns-select
-          [(settings)]="settings"
-          [leftList]="true"></app-columns-select>
-        <div>
-          <button
-            class="btn btn-primary btn-sm active mr-3"
-            (click)="generateReport()"
-            [disabled]="validator">
-            Generar Reporte
-          </button>
+    <div *ngIf="showInm">
+      <div class="row">
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <app-columns-select
+            [(settings)]="settings"
+            [leftList]="true"></app-columns-select>
+          <div>
+            <button
+              class="btn btn-primary btn-sm active mr-3"
+              (click)="generateReport()"
+              [disabled]="validator">
+              Generar Reporte
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <div class="table-responsive">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="data"
-              (userRowSelect)="rowsSelected($event)">
-            </ng2-smart-table>
+      <div class="row">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <div class="table-responsive">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="data"
+                (userRowSelect)="rowsSelected($event)">
+              </ng2-smart-table>
+            </div>
             <app-pagination
               [params]="params"
               [totalItems]="totalItems"></app-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="show">
+      <div class="row pt-5">
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <app-columns-select
+            [(settings)]="settings1"
+            [leftList]="true"></app-columns-select>
+          <div>
+            <button
+              class="btn btn-sm btn-primary active mr-3"
+              (click)="goBack()">
+              Regresar
+              <i class="fas fa-arrow-circle-left"></i>
+            </button>
+            <button
+              class="btn btn-sm btn-success active mr-3"
+              (click)="onExportExcel()"
+              [class]="loadingReport">
+              Exportar
+              <i class="bx bx-download float-icon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <div class="table-responsive">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings1"
+                [source]="data1">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="params1"
+                [totalItems]="totalItems1"></app-pagination>
+            </div>
           </div>
         </div>
       </div>
