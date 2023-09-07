@@ -17,7 +17,5 @@ export class CaptureServiceOrderFormComponent
     this.numberTask = Number(this.activatedRoute.snapshot.paramMap.get('id'));
   }
 
-  ngOnInit(): void {
-    console.log('numero de tarea', this.numberTask);
-  }
+  ngOnInit(): void {}
 }

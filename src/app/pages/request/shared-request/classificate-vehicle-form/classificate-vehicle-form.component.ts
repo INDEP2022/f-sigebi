@@ -3,6 +3,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CLASSIFICATION_VEHICLE_COLUMS } from '../../reception-scheduling-service-order/columns/classification-vehicle-columns';
@@ -41,7 +42,8 @@ export class ClassificateVehicleFormComponent
 
   constructor(
     private modalService: BsModalService,
-    private orderServiceService: OrderServiceService
+    private orderServiceService: OrderServiceService,
+    private genericService: GenericService
   ) {
     super();
 
@@ -72,11 +74,36 @@ export class ClassificateVehicleFormComponent
       .getServiceVehicle(this.params.getValue())
       .subscribe({
         next: response => {
-          this.data.load(response.data);
-          this.totalItems = response.count;
+          const infoVehicle = response.data.map(async (info: any) => {
+            const nameTypeVehicle: any = await this.nameVehicle(info.id);
+            if (nameTypeVehicle) {
+              info.nameTypeVehicle = nameTypeVehicle;
+              return info;
+            }
+          });
+
+          Promise.all(infoVehicle).then(response => {
+            this.data.load(response);
+            this.totalItems = response.length;
+          });
         },
         error: error => {},
       });
+  }
+
+  nameVehicle(idVehicle: number) {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.name'] = 'Tipo Vehiculo';
+      params.getValue()['filter.keyId'] = idVehicle;
+      this.genericService.getAll(params.getValue()).subscribe({
+        next: response => {
+          resolve(response.data[0].description);
+          //this.typeVehicle = new DefaultSelect(response.data, response.count);
+        },
+        error: error => {},
+      });
+    });
   }
 
   selectItem(item?: any) {
@@ -108,8 +135,6 @@ export class ClassificateVehicleFormComponent
       let config: ModalOptions = {
         initialState: {
           callback: (next: boolean) => {
-            console.log(next);
-
             //if (next) this.getLabelsOkey();
           },
         },
