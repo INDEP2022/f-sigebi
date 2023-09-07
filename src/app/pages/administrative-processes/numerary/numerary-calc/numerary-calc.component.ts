@@ -544,7 +544,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Cálculo de Numerario',
-          'Fue eliminado el cálculo solicitado correctamente'
+          'El cálculo solicitado fue eliminado'
         );
       } else {
         this.alert(
