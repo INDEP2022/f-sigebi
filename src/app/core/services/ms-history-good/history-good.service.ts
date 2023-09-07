@@ -147,4 +147,9 @@ export class HistoryGoodService extends HttpService {
       body
     );
   }
+
+  PostStatus(params: any) {
+    const route = `${HistoryGoodEndpoints.HistoryStatusGood}`;
+    return this.post(route, params);
+  }
 }

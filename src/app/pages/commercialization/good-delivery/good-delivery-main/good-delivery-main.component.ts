@@ -30,6 +30,10 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   flag: boolean = false;
 
+  rel_bienes: any;
+
+  total: any;
+
   goodsSettings = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -48,19 +52,26 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.rel_bienes = null;
     this.globalVarsService
       .getGlobalVars$()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: global => {
           this.ngGlobal = global;
-          console.log('GLOBAL ', this.ngGlobal);
+          //console.log('GLOBAL ', this.ngGlobal);
           if (this.ngGlobal.REL_BIENES != null) {
-            console.log('REL_BIENES ', this.ngGlobal.REL_BIENES);
-            this.backRastreador(this.ngGlobal.REL_BIENES);
+            this.rel_bienes = this.ngGlobal.REL_BIENES;
+            //console.log('REL_BIENES ', this.rel_bienes);
+            //this.backRastreador(this.ngGlobal.REL_BIENES);
+            //console.log('BackRastreador-> ', this.ngGlobal.REL_BIENES);
           }
         },
       });
+    if (this.rel_bienes != null) {
+      console.log('REL_BIENES 2', this.rel_bienes);
+      this.backRastreador(this.rel_bienes);
+    }
     this.LocalData.onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
@@ -108,10 +119,6 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
     this.totalItems = this.goodsColumns.length;*/
     //this.goodService.filterStatusGood(status, params).subscribe({});
     this.loadFromGoods();
-    if (this.ngGlobal.REL_BIENES != 0) {
-      /**Servicio trackergood */
-      for (let i = 0; i < this.ngGlobal.REL_BIENES; i++) {}
-    }
   }
 
   selectRows(rows: any[]) {
@@ -180,12 +187,22 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
                   : null,
               goodId: resp.data[i].goodId,
               description: resp.data[i].description,
-              status: resp.data[i].status,
+              status: resp.data[i].statusDetails.descriptionStatus,
             };
             this.goodsColumns.push(params);
             this.LocalData.load(this.goodsColumns);
-            this.totalItems = resp.count;
           }
+        }
+
+        this.totalItems = resp.count;
+
+        console.log(' this.totalItems ', this.totalItems);
+        console.log(' resp.count ', resp.count);
+        console.log(' this.goodsColumns.length ', this.goodsColumns.length);
+        console.log('this.total ', this.total);
+
+        if (this.rel_bienes != null) {
+          this.totalItems = this.total + resp.count;
         }
       }
     });
@@ -219,24 +236,51 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
     });
   }
 
-  addGoodRastreador(good: any) {
-    this.goodService.getByGood(good).subscribe({
+  backRastreador(global: any) {
+    this.goodTrackerService.PaInsGoodtmptracker(global).subscribe({
       next: response => {
-        console.log(' good ', response);
+        //console.log('respuesta TMPTRAKER', response);
+        this.total = response.count;
+        console.log('total resp backRastreador ', response.count);
+        //this.totalItems = this.totalItems + response.count;
+        //console.log('count items -> ', this.totalItems);
+        for (let i = 0; i < response.count; i++) {
+          console.log('response bk', response.data[i].goodNumber);
+          this.goodtrackertmp(response.data[i].goodNumber);
+        }
       },
     });
   }
 
-  backRastreador(global: any) {
-    this.goodTrackerService.PaInsGoodtmptracker(global).subscribe({
-      next: response => {
-        console.log('respuesta TMPTRAKER', response);
-        for (let i = 0; i < response.count; i++) {
-          console.log('entra ---> For');
-          this.addGoodRastreador(response.data[0].goodNumber);
+  goodtrackertmp(goodNum: number) {
+    this.goodTrackerService.getGoodTrackerTmp(goodNum).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('goodtrackertmp-> ', resp);
+
+        for (let i = 0; i < resp.count; i++) {
+          if (resp.data[i] != null && resp.data[i] != undefined) {
+            let params = {
+              file: resp.data[i].fileNumber,
+              goodId: resp.data[i].goodNumber,
+              description: resp.data[i].goodDescription,
+              status: resp.data[i].statusDescription,
+            };
+            console.log('Params-> ', params);
+            this.goodsColumns.push(params);
+            this.LocalData.load(this.goodsColumns);
+            //this.totalItems = this.goodsColumns.length;
+            this.deleteGoodTracker(this.rel_bienes);
+          }
         }
-        console.log('sale del For');
-      },
+      }
+    });
+  }
+
+  deleteGoodTracker(id: number) {
+    this.goodTrackerService.deleteTrackerGood(id).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp deleteGoodTracker-> ', resp);
+      }
     });
   }
 }

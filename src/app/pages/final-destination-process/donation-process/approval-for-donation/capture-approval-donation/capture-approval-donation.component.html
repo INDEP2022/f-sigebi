@@ -16,10 +16,11 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-12 text-md-right">
+            <div class="col-12 text-md-start">
               <span class="badge rounded-pill badge-soft-success">
                 Estatus
               </span>
+              <div>{{ estatus || '' }}</div>
             </div>
           </div>
           <div class="row mt-5">
@@ -117,7 +118,7 @@
               <h5>Par&aacute;metros para Traer Informaci&oacute;n de SIAB</h5>
             </div>
           </div>
-          <div class="row mt-5">
+          <!-- <div class="row mt-5">
             <div class="col-md-6 text-md-right">
               <button
                 class="btn btn-secondary btn-sm active"
@@ -136,8 +137,8 @@
                 Valida Bienes
               </button>
             </div>
-          </div>
-          <div class="row mt-3">
+          </div> -->
+          <!-- <div class="row mt-3">
             <div class="col-md-6 text-md-right">
               <button class="btn btn-success btn-sm active">
                 Exp. a Excel
@@ -148,39 +149,222 @@
                 Rastreador
               </button>
             </div>
+          </div> -->
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="card">
+                    <div class="card-body mt-4 mb-4">
+                      <div
+                        class="form-group row p-4 d-flex justify-content-center align-items-center">
+                        <div class="col-md-3">
+                          <button
+                            class="btn btn-secondary btn-sm active"
+                            (click)="ValidGoods()">
+                            Valida Bienes <i class="bx bx-check float-icon"></i>
+                          </button>
+                        </div>
+                        <div class="col-md-3">
+                          <button
+                            class="btn btn-success btn-sm active"
+                            type="button"
+                            (click)="exportToExcel()">
+                            Exportar a Excel
+                            <i class="bx bx-download float-icon"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div
+                        class="form-group row p-4 d-flex justify-content-center align-items-center">
+                        <div class="col-md-3">
+                          <button
+                            class="btn btn-primary btn-sm active"
+                            (click)="ubicaGood()">
+                            Consulta Bienes
+                            <i class="bx bx-search float-icon"></i>
+                          </button>
+                          <!-- <button
+                            class="btn btn-primary btn-sm active"
+                            (click)="ubicaGood()">
+                            Consulta Bienes
+                            <i class="bx bx-search float-icon"></i>
+                          </button> -->
+                        </div>
+
+                        <div class="col-md-3">
+                          <button
+                            class="btn btn-info active btn-sm active"
+                            (click)="exportToExcel()">
+                            Rastreador de Bienes&nbsp;
+                            <i class="fas fa-map-marker bx-sm float-icon"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <app-divider></app-divider>
 
-      <div class="row mt-5">
-        <div class="col-md-3 text-center">
-          <div [ngStyle]="{ 'background-color': info[0].color }">
-            {{ info[0].title }}
-          </div>
-        </div>
-      </div>
-
-      <div class="d-flex justify-content-end mt-5">
-        <app-columns-select
-          [(settings)]="settings"
-          class="row justify-content-end">
+      <!-- <div class="d-flex justify-content-end mt-5">
+        <app-columns-select [(settings)]="settings" class="row justify-content-end">
         </app-columns-select>
       </div>
 
       <div class="row mt-3 pt-2 scroll-table">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          class="col-md-12"
-          [settings]="settings"
-          [source]="data">
+        <ng2-smart-table [attr.class]="'table-bordered'" class="col-md-12" [settings]="settings" [source]="data">
         </ng2-smart-table>
       </div>
 
       <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>
+      </app-pagination> -->
 
+      <div class="row"></div>
+      <div class="row p-3">
+        <div class="col-md-3"></div>
+
+        <div class="row mt-12 d-flex justify-content-center">
+          <div class="col-md-12 justify-content-center">
+            <div class="row">
+              <div class="d-flex justify-content-end mb-2">
+                <app-columns-select
+                  [(settings)]="settings"></app-columns-select>
+                <div>
+                  <!-- <button type="button" tooltip="Nuevo" containerClass="tooltip-style"
+                                              class="btn btn-primary btn-sm active ml-2 mr-2" (click)="goBack()" *ngIf="origin != null">
+                                              Regresar <i class="bx bx-arrow-back bx-sm float-icon"></i>
+                                            </button> -->
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <form-loader *ngIf="loading"></form-loader>
+              <div class="col-md-12">
+                <ng-scrollbar
+                  [track]="'all'"
+                  [ngStyle]="{
+                    height: loading ? '0px' : '600px'
+                  }">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered table-responsive'"
+                    [settings]="settings"
+                    [source]="dataTableGood"
+                    (userRowSelect)="selectData($event)">
+                  </ng2-smart-table>
+                </ng-scrollbar>
+                <app-pagination
+                  [params]="paramsList"
+                  [totalItems]="totalItems"></app-pagination>
+              </div>
+
+              <!--   <form [formGroup]="actaGoodForm" class="form-material">
+                <div class="row">
+                 <div class="col-6 mt-4">
+                    <form-field [control]="actaGoodForm.get('statusGood')" label="Estatus Bien">
+                      <input [(ngModel)]="statusGood_" type="text" class="form-control" formControlName="statusGood"
+                        readonly />
+                    </form-field>
+                  </div> 
+                </div>
+              </form>-->
+              <div class="col-6 align-items-center">
+                <div class="row">
+                  <div class="col-6">
+                    <span class="text-success mr-5"
+                      ><i class="fa fa-square"></i> Disponibles</span
+                    >
+                  </div>
+                  <div class="col-6">
+                    <span class="text-black"
+                      ><i class="fa fa-square"></i> No disponibles</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row pt-2">
+            <div class="col-md-12 text-center mt-4 mb-4">
+              <button
+                tooltip="Agregar Bien al Acta"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="addSelect()">
+                <i class="bx bx-chevron-down bx-md"></i>
+              </button>
+              <button
+                tooltip="Agregar Bienes al Acta"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="addAll()">
+                <i class="bx bx-chevrons-down bx-md"></i>
+              </button>
+              <button
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="removeAll()">
+                <i class="bx bx-chevrons-up bx-md"></i>
+              </button>
+              <button
+                tooltip="Quitar Bien del Acta"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="removeSelect()">
+                <i class="bx bx-chevron-up bx-md"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <h6>BIENES RELACIONADOS CON EL ACTA</h6>
+            <div class="row">
+              <form-loader *ngIf="loading2"></form-loader>
+              <div class="col-md-12">
+                <ng-scrollbar
+                  [track]="'all'"
+                  [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
+                  <ng2-smart-table
+                    class="table-responsive"
+                    [attr.class]="'table-bordered table-responsive'"
+                    [settings]="settings2"
+                    (userRowSelect)="rowsSelected($event)"
+                    [source]="dataDetailDonationGood">
+                  </ng2-smart-table>
+                  <app-pagination
+                    [params]="paramsList2"
+                    [totalItems]="totalItems2"></app-pagination>
+                </ng-scrollbar>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div footer>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="ubicaGood()">
+              Ver Error
+            </button>
+          </div>
+          <div class="m-3">
+            <button class="btn btn-danger btn-sm active">
+              Elimina Bienes <i class="fa fa-trash-alt"></i>
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="row mt-5">
         <div class="col-md-6">
           <div class="row">
@@ -215,28 +399,6 @@
                   <span class="badge rounded-pill badge-soft-success">1</span>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="row">
-            <div class="col-md-6">
-              <button
-                class="btn btn-secondary btn-sm active"
-                (click)="
-                  openModal(
-                    'Visualizaci&oacute;n de Errores',
-                    'see-error',
-                    'Los Siguientes Bienes Contienen Errores:'
-                  )
-                ">
-                Ver Error
-              </button>
-            </div>
-            <div class="col-md-6">
-              <button class="btn btn-secondary btn-sm active">
-                Elimina Bienes
-              </button>
             </div>
           </div>
         </div>

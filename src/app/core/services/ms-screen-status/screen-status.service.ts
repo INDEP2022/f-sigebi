@@ -54,6 +54,10 @@ export class ScreenStatusService extends HttpService {
     );
   }
 
+  getAllFilterFree(params: string) {
+    return this.get<IListResponse<IStatusXScreen>>(`status-x-screen`, params);
+  }
+
   getStatusCheck(data: any) {
     return this.post('application/check-status-good', data);
   }
@@ -82,5 +86,15 @@ export class ScreenStatusService extends HttpService {
   getStatusTA(params: any) {
     const route = `${ScreenStatusEndpoints.GetCount}`;
     return this.post(route, params);
+  }
+
+  getStatusScreen(key: any, action: any) {
+    const route = `${ScreenStatusEndpoints.StatusXScreenList}?filter.screenKey=$ilike:${key}&filter.action=$ilike:${action}`;
+    return this.get(route);
+  }
+
+  getStatusandScreen(key: any, status: any) {
+    const route = `${ScreenStatusEndpoints.StatusXScreenList}?filter.screenKey=$ilike:${key}&filter.status=$ilike:${status}`;
+    return this.get(route);
   }
 }

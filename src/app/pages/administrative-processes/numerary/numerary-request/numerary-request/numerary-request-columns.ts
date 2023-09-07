@@ -14,6 +14,15 @@ export const REQUEST_NUMERARY_COLUMNS = {
     title: 'Monto',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (val: string) => {
+      const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+      });
+
+      return formatter.format(Number(val));
+    },
   },
   bankDate: {
     title: 'Fecha Banco',

@@ -44,7 +44,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       },
       columns: {
         officeMail: {
-          title: 'Ver Oficio Correo',
+          title: 'Oficio Correo',
           width: '5%',
           type: 'custom',
           sort: false,
@@ -57,7 +57,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           },
         },
         seeClaimLetter: {
-          title: 'Ver Carta Reclamación',
+          title: 'Carta Reclamación',
           width: '5%',
           type: 'custom',
           sort: false,
@@ -70,7 +70,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           },
         },
         officialConclusion: {
-          title: 'Ver Oficio Conclusión',
+          title: 'Oficio Conclusión',
           width: '5%',
           type: 'custom',
           sort: false,
@@ -124,7 +124,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           sort: false,
         },
         fechareportecabi: {
-          title: 'Fec. Rep. Cabi',
+          title: 'Fec. Rep. CAB',
           type: 'string',
           sort: false,
         },

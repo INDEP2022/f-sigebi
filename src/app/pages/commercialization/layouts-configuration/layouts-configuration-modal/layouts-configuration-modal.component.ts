@@ -138,7 +138,7 @@ export class LayoutsConfigurationModalComponent
           this.alert(
             'error',
             'Error al Crear',
-            'Ocurrió un Error al Crear el Diseño'
+            'Ocurrió un error al crear el diseño'
           );
           return;
         },
@@ -151,7 +151,7 @@ export class LayoutsConfigurationModalComponent
     this.alertQuestion(
       'warning',
       'Actualizar Diseño',
-      '¿Desea Actualizar este Diseño?'
+      '¿Desea actualizar este diseño?'
     ).then(question => {
       if (question.isConfirmed) {
         // let params: IComerLayoutsW = {
@@ -178,7 +178,7 @@ export class LayoutsConfigurationModalComponent
               this.alert(
                 'error',
                 'Error al Actualizar',
-                'Ocurrió un Error al Actualizar el Diseño'
+                'Ocurrió un error al actualizar el diseño'
               );
               this.loading = false;
             },

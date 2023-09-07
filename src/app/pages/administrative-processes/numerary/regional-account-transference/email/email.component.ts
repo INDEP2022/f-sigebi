@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
@@ -36,7 +37,8 @@ export class EmailComponent extends BasePage implements OnInit {
     private segUserService: SegAcessXAreasService,
     private receptionService: DocReceptionRegisterService,
     private transferGoodService: TranfergoodService,
-    private emailService: DataEmailService
+    private emailService: DataEmailService,
+    private datePipe: DatePipe
   ) {
     super();
   }
@@ -64,17 +66,21 @@ export class EmailComponent extends BasePage implements OnInit {
 
     this.form.get('PARA').patchValue(this.email.PARA);
 
-    this.form
-      .get('FECHA_ENV')
-      .patchValue(
-        this.email.FECHA_ENV
-          ? this.email.FECHA_ENV.split('T')[0].split('-').reverse().join('/')
-          : ''
-      );
+    // this.form
+    //   .get('FECHA_ENV')
+    //   .patchValue(
+    //     this.email.FECHA_ENV
+    //       ? this.email.FECHA_ENV.split('T')[0].split('-').reverse().join('/')
+    //       : ''
+    //   );
 
     const user = this.user.decodeToken();
 
     this.form.get('REMITENTE').patchValue(user.username.toUpperCase());
+
+    console.log(this.form.value);
+
+    console.log(this.report);
   }
 
   close() {
@@ -125,10 +131,15 @@ export class EmailComponent extends BasePage implements OnInit {
       (del: any) => del.id == delegation
     )[0].description;
 
+    const fecha =
+      typeof transactionDate == 'object'
+        ? this.datePipe.transform(transactionDate, 'dd/MM/yyyy')
+        : transactionDate;
+
     const body = {
       to: PARA ? PARA.join(',') : '', // ['pruebasqaindep@gmail.com'], ,
       subject: ASUNTO,
-      fecTrans: transactionDate,
+      fecTrans: fecha,
       cveDescription: del ?? this.description,
       cveCurrency: cveCurrency,
       nameUser: user.toUpperCase(),
@@ -152,8 +163,8 @@ export class EmailComponent extends BasePage implements OnInit {
 
         // const body: any = {
         //   header: 'Test Email',
-        //   destination: ['sshenrygiovanni@gmail.com'],
-        //   copy: ['henry_portador@outlook.com'],
+        //   destination: [''],
+        //   copy: [],
         //   subject: ASUNTO,
         //   message: `${resp.message}`,
         // };
@@ -168,7 +179,7 @@ export class EmailComponent extends BasePage implements OnInit {
                 : FECHA_ENV;
 
             const body = {
-              id: REPORTE,
+              reportNumber: REPORTE,
               addressee: PARA ? PARA.join(',') : '',
               sender: user.toUpperCase(),
               cc: CC ? CC.join(',') : '',
@@ -180,7 +191,7 @@ export class EmailComponent extends BasePage implements OnInit {
 
             // const body: any = {
             //   reportNumber: REPORTE,
-            //   addressee: 'pruebasqaindep@gmail.com',
+            //   addressee: '',
             //   sender: user.toUpperCase(),
             //   cc: '',
             //   message: `${resp.message}`,

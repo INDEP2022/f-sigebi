@@ -80,6 +80,7 @@
             <ng2-smart-table
               id="fichas"
               (delete)="showDeleteAlert($event.data)"
+              (edit)="editMovement($event.data)"
               (userRowSelect)="onCustomAction($event)"
               [attr.class]="'table-bordered'"
               [settings]="settings"
