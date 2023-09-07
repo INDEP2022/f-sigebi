@@ -222,6 +222,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     this.registers = null;
     this.files.nativeElement.value = '';
     this.isActions = true;
+    this.formGood.reset();
   }
 
   getNumEnc() {
@@ -320,6 +321,8 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     if (data.solnumId) {
       V_TMONEDA = await this.getCurrency(data.solnumId);
 
+      console.log(V_TMONEDA);
+
       const values: any = {
         P: () => 'MN',
         D: () => 'USD',
@@ -329,7 +332,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
         X: () => 'X',
       };
 
-      if (values[V_TMONEDA.trim()]() != 'X') {
+      if (V_TMONEDA && values[V_TMONEDA.trim()]() != 'X') {
         this.form.get('currency').patchValue(values[V_TMONEDA.trim()]());
       } else {
         this.form.get('currency').patchValue(null);
@@ -469,6 +472,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     this.registers = null;
     this.files.nativeElement.value = '';
     this.isActions = true;
+    this.formGood.reset();
     this.form.get('solnumType').patchValue('D');
   }
 
@@ -512,9 +516,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
           .get('solnumDate')
           .patchValue(this.parseDateNoOffset(new Date()));
         this.form.get('solnumStatus').patchValue('S');
-        this.form
-          .get('delegationNumber')
-          .patchValue(detailsUser.delegationNumber);
+        this.form.get('delegationNumber').patchValue(user.department);
         this.form.get('user').patchValue(userCreate);
         this.form
           .get('desc_del')
@@ -562,19 +564,31 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
   searchGood() {
     const { good } = this.formGood.value;
     const { currency, solnumId } = this.form.value;
-
     const exist = this.data1.findIndex(goodSol => goodSol.goodNumber == good);
 
-    console.log(exist);
+    if (!currency) {
+      this.alert('warning', 'Atención', 'Debe seleccionar un tipo de moneda ');
+      return;
+    }
 
     if (exist != -1) {
-      this.alert('warning', `El Bien ${good} ya existe`, '');
+      this.alert('warning', 'Atención', `El Bien ${good} ya existe`, '');
       return;
     }
 
     if (!good) return;
-    this.goodService.getGoodSolNumerary(Number(good)).subscribe({
+    this.goodProceesServ.getGoodCustom(currency, Number(good)).subscribe({
       next: resp => {
+        if (resp.mensajeBien) {
+          this.alert('warning', 'Atención', resp.mensajeBien);
+          return;
+        }
+
+        if (resp.mensajeEbien) {
+          this.alert('warning', 'Atención', resp.mensajeEbien);
+          return;
+        }
+
         this.formGood.reset();
         let det: NumDetGoodsDetail = {
           allInterest: null,
@@ -589,7 +603,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
           recordNumber: null,
           solnumId: Number(solnumId),
           valid: 'S',
-          bankDate: resp.fec_movimiento,
+          bankDate: resp.fec_insercion_banco,
           description: resp.descripcion,
         };
         if (currency) {
@@ -630,7 +644,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
       await this.removeAll(body.solnumId);
     }
 
-    this.data1.map(async good => {
+    for (let good of this.data1) {
       if (good.valid) {
         good.solnumId = body.solnumId;
         if (typeof good.dateCalculationInterests == 'object') {
@@ -639,13 +653,6 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
             : good.dateCalculationInterests;
         }
         await this.createGoodDet(good);
-        this.filterParams2.getValue().removeAllFilters();
-        this.filterParams2.getValue().page = 1;
-        this.filterParams2
-          .getValue()
-          .addFilter('solnumId', body.solnumId, SearchFilter.EQ);
-
-        await this.getNumDet();
       } else {
         if (typeof good.dateCalculationInterests == 'object') {
           good.dateCalculationInterests = good.dateCalculationInterests
@@ -654,9 +661,37 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
         }
         delete good.description;
         delete good.bankDate;
+        delete good.good;
         await this.updateGoodDet(good);
       }
-    });
+    }
+    // this.data1.map(async good => {
+    //   if (good.valid) {
+    //     good.solnumId = body.solnumId;
+    //     if (typeof good.dateCalculationInterests == 'object') {
+    //       good.dateCalculationInterests = good.dateCalculationInterests
+    //         ? this.parseDateNoOffset(good.dateCalculationInterests)
+    //         : good.dateCalculationInterests;
+    //     }
+    //     await this.createGoodDet(good);
+    //     this.filterParams2.getValue().removeAllFilters();
+    //     this.filterParams2.getValue().page = 1;
+    //     this.filterParams2
+    //       .getValue()
+    //       .addFilter('solnumId', body.solnumId, SearchFilter.EQ);
+
+    //     await this.getNumDet();
+    //   } else {
+    //     if (typeof good.dateCalculationInterests == 'object') {
+    //       good.dateCalculationInterests = good.dateCalculationInterests
+    //         ? this.parseDateNoOffset(good.dateCalculationInterests)
+    //         : good.dateCalculationInterests;
+    //     }
+    //     delete good.description;
+    //     delete good.bankDate;
+    //     await this.updateGoodDet(good);
+    //   }
+    // });
 
     this.numEncServ.update(body).subscribe({
       next: async resp => {
@@ -670,6 +705,14 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
         );
       },
     });
+
+    this.filterParams2.getValue().removeAllFilters();
+    this.filterParams2.getValue().page = 1;
+    this.filterParams2
+      .getValue()
+      .addFilter('solnumId', body.solnumId, SearchFilter.EQ);
+
+    await this.getNumDet();
   }
 
   async removeAll(id: number) {
@@ -738,19 +781,34 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
 
         this.alert('success', 'Solicitud', 'Ha sido creada correctamente');
 
-        this.data1.map(async good => {
+        for (let good of this.data1) {
           good.solnumId = solnumId;
           good.dateCalculationInterests = good.dateCalculationInterests
             ? this.parseDateNoOffset(good.dateCalculationInterests)
             : good.dateCalculationInterests;
           await this.createGoodDet(good);
-          this.filterParams2.getValue().removeAllFilters();
-          this.filterParams2.getValue().page = 1;
-          this.filterParams2
-            .getValue()
-            .addFilter('solnumId', solnumId, SearchFilter.EQ);
-          await this.getNumDet();
-        });
+        }
+
+        this.filterParams2.getValue().removeAllFilters();
+        this.filterParams2.getValue().page = 1;
+        this.filterParams2
+          .getValue()
+          .addFilter('solnumId', solnumId, SearchFilter.EQ);
+        await this.getNumDet();
+
+        // this.data1.map(async good => {
+        //   good.solnumId = solnumId;
+        //   good.dateCalculationInterests = good.dateCalculationInterests
+        //     ? this.parseDateNoOffset(good.dateCalculationInterests)
+        //     : good.dateCalculationInterests;
+        //   await this.createGoodDet(good);
+        //   this.filterParams2.getValue().removeAllFilters();
+        //   this.filterParams2.getValue().page = 1;
+        //   this.filterParams2
+        //     .getValue()
+        //     .addFilter('solnumId', solnumId, SearchFilter.EQ);
+        //   await this.getNumDet();
+        // });
 
         this.isNew = false;
       },

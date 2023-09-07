@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">MOVIMIENTOS CUENTAS GENERALES</h5>
+    <h5 class="title">Aplica Importe LIF</h5>
   </div>
 
   <div body class="position-relative">
@@ -9,7 +9,7 @@
       <div class="row">
         <ng-container [formGroup]="formGood">
           <div class="col-md-5 d-flex form-group gap-4 align-items-center">
-            <form-field [control]="formGood.get('id')" label="Número Bien">
+            <form-field [control]="formGood.get('id')" label="No. Bien">
               <input
                 type="number"
                 class="form-control"
@@ -182,7 +182,7 @@
 
         <ng-container [formGroup]="formGood1">
           <div class="row mt-4">
-            <div class="col-md-5"></div>
+            <div class="col-md-4"></div>
             <div class="form-group col-md-3 d-flex justify-content-end">
               <form-field [control]="formGood1.get('val2')" label="Precio">
                 <input
@@ -195,7 +195,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-5"></div>
+            <div class="col-md-4"></div>
             <div class="form-group col-md-3 d-flex justify-content-end">
               <form-field [control]="formGood1.get('val13')" label="Gasto">
                 <input
@@ -208,7 +208,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-5"></div>
+            <div class="col-md-4"></div>
             <div class="form-group col-md-3 d-flex justify-content-end">
               <form-field [control]="formGood1.get('val10')" label="Total IVA">
                 <input
@@ -221,7 +221,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-5"></div>
+            <div class="col-md-4"></div>
             <!-- *ngIf="isVisibleVal15" -->
             <div class="form-group col-md-3 d-flex justify-content-end">
               <form-field [control]="formGood1.get('val15')" label="LIF">
@@ -236,7 +236,7 @@
           </div>
         </ng-container>
         <div [formGroup]="formBlkControl" class="row">
-          <div class="col-md-5"></div>
+          <div class="col-md-4"></div>
           <div class="form-group col-md-3 d-flex justify-content-end">
             <form-field [control]="formBlkControl.get('tTotal')" label="Total">
               <input

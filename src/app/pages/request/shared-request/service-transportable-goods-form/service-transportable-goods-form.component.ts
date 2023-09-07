@@ -1,8 +1,17 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, catchError, of, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SERVICE_TRANSPORTABLE_COLUMNS } from '../../reception-scheduling-service-order/columns/service-transportable-columns';
 import { CreateManualServiceFormComponent } from '../../reception-scheduling-service-order/components/create-manual-service-form/create-manual-service-form.component';
@@ -28,20 +37,25 @@ const testData = [
 })
 export class ServiceTransportableGoodsFormComponent
   extends BasePage
-  implements OnInit
+  implements OnInit, OnChanges
 {
   @ViewChild('table', { static: false }) table: any;
   @Input() op: number;
   @Input() showForm: boolean;
   @Input() rejected: boolean;
+  @Input() orderServiceId: number;
   title: string = '';
   showButtonServiceManual: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   ordersSelected: any = [];
   columns = SERVICE_TRANSPORTABLE_COLUMNS;
+  listforUpdate: any = [];
 
   data: any[] = [];
+
+  private orderEntryService = inject(orderentryService);
+
   constructor(private modalService: BsModalService) {
     super();
     this.settings = {
@@ -106,8 +120,38 @@ export class ServiceTransportableGoodsFormComponent
       },
     };
 
-    this.data = testData;
-    this.setTableColumnsRows();
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      //verificar si existe el order service id
+      if (this.orderServiceId != null) {
+        this.getOrderServiceProvided();
+      }
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {}
+
+  getOrderServiceProvided() {
+    /**
+     * Obtener la data por el orderServiceId
+     */
+    const params = new ListParams();
+    params['filter.orderServiceId'] = `$eq:${this.orderServiceId}`;
+    this.orderEntryService
+      .getAllOrderServicesProvided(params)
+      .pipe(
+        catchError((e: any) => {
+          if (e.status == 400) return of({ data: [], count: 0 });
+          throw e;
+        })
+      )
+      .subscribe({
+        next: resp => {
+          this.data = testData;
+          //this.data = resp.data;
+          this.totalItems = resp.count;
+          this.setTableColumnsRows();
+        },
+      });
   }
 
   setTableColumnsRows() {
@@ -229,6 +273,15 @@ export class ServiceTransportableGoodsFormComponent
     if (data.text != null) {
       const index = this.data.indexOf(data.row);
       this.data[index].commentService = data.text != '' ? data.text : null;
+
+      //aniadir a la lista de actualizaciones
+      const index2 = this.listforUpdate.indexOf(data.row);
+      if (index2 == -1) {
+        this.listforUpdate.push(data.row);
+      } else {
+        this.listforUpdate[index].commentService =
+          data.text != '' ? data.text : null;
+      }
     }
   }
 
@@ -236,6 +289,15 @@ export class ServiceTransportableGoodsFormComponent
     if (data.text != null) {
       const index = this.data.indexOf(data.row);
       this.data[index].durationTime = data.text != '' ? data.text : null;
+
+      //aniadir a la lista de actualizaciones
+      const index2 = this.listforUpdate.indexOf(data.row);
+      if (index2 == -1) {
+        this.listforUpdate.push(data.row);
+      } else {
+        this.listforUpdate[index].durationTime =
+          data.text != '' ? data.text : null;
+      }
     }
   }
 
@@ -243,6 +305,15 @@ export class ServiceTransportableGoodsFormComponent
     if (data.text != null) {
       const index = this.data.indexOf(data.row);
       this.data[index].resourcesNumber = data.text != '' ? data.text : null;
+
+      //aniadir a la lista de actualizaciones
+      const index2 = this.listforUpdate.indexOf(data.row);
+      if (index2 == -1) {
+        this.listforUpdate.push(data.row);
+      } else {
+        this.listforUpdate[index].resourcesNumber =
+          data.text != '' ? data.text : null;
+      }
     }
   }
 
@@ -250,6 +321,15 @@ export class ServiceTransportableGoodsFormComponent
     if (data.text != null) {
       const index = this.data.indexOf(data.row);
       this.data[index].resourcesReal = data.text != '' ? data.text : null;
+
+      //aniadir a la lista de actualizaciones
+      const index2 = this.listforUpdate.indexOf(data.row);
+      if (index2 == -1) {
+        this.listforUpdate.push(data.row);
+      } else {
+        this.listforUpdate[index].resourcesReal =
+          data.text != '' ? data.text : null;
+      }
     }
   }
 
@@ -258,6 +338,15 @@ export class ServiceTransportableGoodsFormComponent
       const index = this.data.indexOf(data.row);
       this.data[index].descriptionDifference =
         data.text != '' ? data.text : null;
+
+      //aniadir a la lista de actualizaciones
+      const index2 = this.listforUpdate.indexOf(data.row);
+      if (index2 == -1) {
+        this.listforUpdate.push(data.row);
+      } else {
+        this.listforUpdate[index].descriptionDifference =
+          data.text != '' ? data.text : null;
+      }
     }
   }
 }
