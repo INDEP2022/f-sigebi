@@ -19,12 +19,27 @@
       <button *ngIf="claimRequest" class="btn btn-info btn-sm active">
         Liberar <i class="fa fa-reply" aria-hidden="true"></i>
       </button>
+
+      <button
+        *ngIf="claimRequest"
+        type="button"
+        class="btn btn-primary active btn-sm"
+        (click)="generateOrdSerReport()">
+        Generar reporte de orden de servicio
+        <i class="bx bx-edit-alt"></i>
+      </button>
+
       <button
         (click)="sendOrderService()"
         *ngIf="claimRequest"
         class="btn btn-success btn-sm active">
         Enviar <i class="fa fa-paper-plane" aria-hidden="true"></i>
       </button>
+
+      <button *ngIf="claimRequest" class="btn btn-success btn-sm active">
+        Rechazar <i class="fa fa-times-circle" aria-hidden="true"></i>
+      </button>
+
       <button
         (click)="saveService()"
         *ngIf="claimRequest"
@@ -52,6 +67,7 @@
 
     <app-service-transportable-goods-form
       [op]="op"
-      [showForm]="showForm"></app-service-transportable-goods-form>
+      [showForm]="showForm"
+      [orderServiceId]="orderServiceId"></app-service-transportable-goods-form>
   </div>
 </app-card>

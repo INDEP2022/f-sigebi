@@ -1,6 +1,6 @@
 export const SCHEDULING_DELIVERIES_COLUMNS = {
   goodId: {
-    title: 'No. de gestión',
+    title: 'No. de Gestión',
     type: 'number',
     sort: false,
   },
@@ -12,13 +12,13 @@ export const SCHEDULING_DELIVERIES_COLUMNS = {
   },
 
   inventoryNumber: {
-    title: 'Número inventario',
+    title: 'No. Inventario',
     type: 'number',
     sort: false,
   },
 
   descriptionGood: {
-    title: 'Descripción bien',
+    title: 'Descripción Bien',
     type: 'string',
     sort: false,
   },
@@ -30,19 +30,19 @@ export const SCHEDULING_DELIVERIES_COLUMNS = {
   },
 
   amountGood: {
-    title: 'Cantidad de bienes',
+    title: 'Cantidad de Bienes',
     type: 'string',
     sort: false,
   },
 
   typeGoodName: {
-    title: 'Tipo bien',
+    title: 'Tipo Bien',
     type: 'string',
     sort: false,
   },
 
   unit: {
-    title: 'Unidad de medida',
+    title: 'Unidad de Medida',
     type: 'string',
     sort: false,
   },

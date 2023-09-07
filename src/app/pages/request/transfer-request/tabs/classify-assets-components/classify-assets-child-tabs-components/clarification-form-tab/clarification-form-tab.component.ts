@@ -1,6 +1,5 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import * as moment from 'moment';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ClarificationTypes } from 'src/app/common/constants/clarification-type';
@@ -210,7 +209,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
           if (val.clarificationType == 'SOLICITAR_ACLARACION') {
             //Si la notificación es de tipo aclaración el estatus de chat será NULO
             console.log('Tipo de notificación', val.clarificationType);
-            this.createChatClarificationsType1(val, good);
+            //this.createChatClarificationsType1(val, good); comentado por que daba error de password (por solucionar)
             if (this.goodTransfer.length == index) {
               this.onLoadToast(
                 'success',
@@ -221,7 +220,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
           } else {
             //Si la notificación es de tipo improcedencia el estatus de chat será improcedencia
             console.log('Tipo de notificación', val.clarificationType);
-            this.createChatClarificationsType2(val, good);
+            //this.createChatClarificationsType2(val, good); comentado por que daba error de password (por solucionar)
             if (this.goodTransfer.length == index) {
               this.onLoadToast(
                 'success',
@@ -372,7 +371,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       body.status = status;
       this.goodService.update(body).subscribe({
         next: async (resp: any) => {
-          const history = await this.createHistoricGood(status, good.id);
+          //CREA HISTORICO DEL ESTATUS DEL BIEN
+          //const history = await this.createHistoricGood(status, good.id);
           console.log('good updated', resp);
           this.triggerEvent('UPDATE-GOOD');
           resolve(true);
@@ -539,10 +539,10 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       let body: IHistoryGood = {
         propertyNum: good,
         status: status,
-        changeDate: moment(new Date()).format('YYYY/MM/DD'),
+        changeDate: new Date(),
         userChange: this.user.username,
         statusChangeProgram: 'SOLICITUD_TRANSFERENCIA',
-        reasonForChange: 'N/A',
+        reasonForChange: 'AUTOMATICO',
       };
       this.historyGoodService.create(body).subscribe({
         next: resp => {

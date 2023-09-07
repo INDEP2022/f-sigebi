@@ -77,6 +77,8 @@ export class AddMovementComponent
       const calculationinterestsdate = new Date(
         this.data.calculationinterestsdate
       );
+      motionDate.setDate(motionDate.getDate() + 1);
+      calculationinterestsdate.setDate(calculationinterestsdate.getDate() + 1);
       this.dateMovem = this.datePipe.transform(motionDate, 'dd-MM-yyyy');
       this.dateMovem2 = this.datePipe.transform(
         calculationinterestsdate,
@@ -237,7 +239,7 @@ export class AddMovementComponent
     const CATEGORY = this.form.value.category;
     const BANK = this.form.value.bank;
     console.log('BANK', BANK);
-    console.log('this.data.cveAccount', this.data.cveAccount);
+    console.log('this.data.accountnumber', this.data.accountnumber);
 
     let obj: any = {
       category: this.data.category,
@@ -247,7 +249,7 @@ export class AddMovementComponent
           ? this.convertirFecha(this.form.value.dateMovement)
           : this.returnParseDate_(this.form.value.dateMovement),
       // this.convertirFecha(this.dateMovem),
-      numberAccount: this.data.cveAccount,
+      numberAccount: this.data.accountnumber,
       numberMotion: this.data.motionnumber,
       dateCalculationInterests:
         this.form.value.dateMovement == this.dateMovemResp

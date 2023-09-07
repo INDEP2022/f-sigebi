@@ -565,7 +565,8 @@ export class NotificationAssetsTabComponent
                         'VERIFICAR_CUMPLIMIENTO',
                         bien.goodid,
                         bien.goodresdev,
-                        bien.typeorigin
+                        bien.typeorigin,
+                        'ROP'
                       );
                       if (updateStatusGood === true) {
                         resolve(true);
@@ -580,7 +581,8 @@ export class NotificationAssetsTabComponent
                         'IMPROCEDENTE',
                         bien.goodid,
                         bien.goodresdev,
-                        bien.typeorigin
+                        bien.typeorigin,
+                        'STI'
                       );
                       if (updateStatusGood === true) {
                         resolve(true);
@@ -591,7 +593,8 @@ export class NotificationAssetsTabComponent
                         'VERIFICAR_CUMPLIMIENTO',
                         bien.goodid,
                         bien.goodresdev,
-                        bien.typeorigin
+                        bien.typeorigin,
+                        'ROP'
                       );
                       if (updateStatusGood === true) {
                         resolve(true);
@@ -1604,7 +1607,8 @@ export class NotificationAssetsTabComponent
     statusProcess?: string,
     idGood?: number,
     idGoodResDev?: number,
-    typeOrigin?: string
+    typeOrigin?: string,
+    status?: string
   ) {
     return new Promise((resolve, reject) => {
       if (typeOrigin == 'SOL_TRANSFERENCIA') {
@@ -1614,6 +1618,7 @@ export class NotificationAssetsTabComponent
             goodId: idGood,
             goodStatus: statusGood,
             processStatus: statusProcess,
+            status: status,
           };
           this.goodService.update(good).subscribe({
             next: data => {

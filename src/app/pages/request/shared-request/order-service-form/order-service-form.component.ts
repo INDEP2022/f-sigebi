@@ -6,6 +6,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+
 @Component({
   selector: 'app-order-service-form',
   templateUrl: './order-service-form.component.html',
@@ -32,8 +33,19 @@ export class OrderServiceFormComponent implements OnInit, OnChanges {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
+    //this.prepareForm();
     console.log(this.op);
   }
+
+  /*prepareForm() {
+    this.ordServform = this.fb.group({
+      reasonsNotPerform: [null],
+      transportationZone: [null],
+      userContainers: [null],
+      folioTlp: [null],
+      eyeVisit: [null],
+    });
+  }*/
 
   ngOnChanges(changes: SimpleChanges): void {
     this.orderService = this.ordServform.getRawValue();
