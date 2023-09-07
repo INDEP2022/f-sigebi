@@ -1,7 +1,9 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CLASSIFICATION_VEHICLE_COLUMS } from '../../reception-scheduling-service-order/columns/classification-vehicle-columns';
 import { CreateClassificateVehicleFormComponent } from '../../reception-scheduling-service-order/components/create-classificate-vehicle-form/create-classificate-vehicle-form.component';
@@ -33,11 +35,14 @@ export class ClassificateVehicleFormComponent
   dataItem: boolean = false;
   totalItems: number = 0;
   item: any;
-  data: any[] = [];
+  data = new LocalDataSource();
 
   private bsModalService = inject(BsModalRef);
 
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private orderServiceService: OrderServiceService
+  ) {
     super();
 
     this.settings = {
@@ -59,6 +64,19 @@ export class ClassificateVehicleFormComponent
 
   ngOnInit(): void {
     this.selectItem(false);
+    this.getServiceVehicle();
+  }
+
+  getServiceVehicle() {
+    this.orderServiceService
+      .getServiceVehicle(this.params.getValue())
+      .subscribe({
+        next: response => {
+          this.data.load(response.data);
+          this.totalItems = response.count;
+        },
+        error: error => {},
+      });
   }
 
   selectItem(item?: any) {
@@ -103,10 +121,10 @@ export class ClassificateVehicleFormComponent
         config
       );
 
-      this.bsModalService.content.event.subscribe((data: any) => {
+      /*this.bsModalService.content.event.subscribe((data: any) => {
         this.data.push(data);
         this.data = [...this.data];
-      });
+      }); */
     }
   }
 }
