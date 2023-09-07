@@ -1012,11 +1012,8 @@ export class ClassifyAssetsTabComponent
       goods.status = 'ROP';
 
       goodResult = await this.createGood(goods);
-      //crea historico de bienes
-      const history = await this.createHistoricGood(
-        'ROP',
-        goodResult.result.id
-      );
+      //CREA HISTORICO DEL STATUS DEL BIEN
+      //const history = await this.createHistoricGood('ROP', goodResult.result.id);
       this.updateGoodFindRecord(goodResult.result);
       //manda a guardar los campos de los bienes, domicilio, inmueble
       this.childSaveAction = true;

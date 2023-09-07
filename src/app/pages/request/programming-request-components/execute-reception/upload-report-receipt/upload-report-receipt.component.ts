@@ -587,12 +587,9 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
 
         this.historyGoodService.create(historyGood).subscribe({
           next: response => {
-            console.log('Historico eliminado', response);
             resolve(true);
           },
-          error: error => {
-            console.log('error', error);
-          },
+          error: error => {},
         });
       });
     });

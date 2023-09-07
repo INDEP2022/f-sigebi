@@ -20,27 +20,21 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-1">
-          <div class="justify-content-center">
-            <button
-              type="button"
-              class="btn btn-primary active btn-sm"
-              [disabled]="!form.valid"
-              (click)="lineaCaptura()">
-              Buscar
-              <i class="bx bx-search-alt bx-sm float-icon"></i>
-            </button>
-          </div>
-        </div>
-        <div class="col-md-2">
-          <div class="justify-content-center">
-            <button
-              class="btn btn-sm btn-success active"
-              (click)="exportXlsx()">
-              Exportar a Excel
-              <i class="bx bx-download float-icon"></i>
-            </button>
-          </div>
+        <div class="col-md-4">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm m-2"
+            [disabled]="!form.valid"
+            (click)="lineaCaptura()">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+          <button
+            class="btn btn-sm btn-success active m-2"
+            (click)="exportXlsx()">
+            Exportar a Excel
+            <i class="bx bx-download float-icon"></i>
+          </button>
         </div>
       </div>
     </form>

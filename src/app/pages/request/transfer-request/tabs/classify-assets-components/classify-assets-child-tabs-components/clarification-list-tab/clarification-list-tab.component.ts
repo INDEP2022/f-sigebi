@@ -226,7 +226,7 @@ export class ClarificationListTabComponent
                 body['goodId'] = this.good[0].goodId;
                 body.processStatus = 'CLASIFICAR_BIEN';
                 body.goodStatus = 'CLASIFICAR_BIEN';
-                body.status = null;
+                body.status = 'ROP';
                 await this.updateGoods(body);
               } else {
                 //si existe mas de una aclaracion
@@ -237,10 +237,10 @@ export class ClarificationListTabComponent
                     ? 'ACLARADO'
                     : 'CLASIFICAR_BIEN';
                 body.processStatus = 'CLASIFICAR_BIEN';
-                body.status = null;
+                body.status = 'ROP';
                 await this.updateGoods(body);
               }
-              const history = await this.createHistoricGood('ROP', body.id);
+              //const history = await this.createHistoricGood('ROP', body.id);
               this.updateGoodTable.emit({
                 processStatus: body.processStatus,
                 goodStatus: body.goodStatus,
