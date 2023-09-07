@@ -122,7 +122,6 @@ export class ServiceTransportableGoodsFormComponent
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       //verificar si existe el order service id
-      debugger;
       if (this.orderServiceId != null) {
         this.getOrderServiceProvided();
       }

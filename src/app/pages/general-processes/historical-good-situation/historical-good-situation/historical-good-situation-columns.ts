@@ -50,11 +50,11 @@ export const GOODS = {
     title: 'No. Inventario',
     sort: false,
   },
-  id: {
+  goodId: {
     title: 'No. Gestión',
     sort: false,
   },
-  goodId: {
+  id: {
     title: 'No. Bien',
     sort: false,
   },
