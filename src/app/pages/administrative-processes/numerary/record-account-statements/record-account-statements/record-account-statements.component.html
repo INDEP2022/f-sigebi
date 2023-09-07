@@ -49,7 +49,9 @@
                 label="Cuenta"
                 [control]="'account'"
                 (change)="onBankAccountSelectChange($event)"
-                (fetchItems)="searchBankAccount(bankCode, paramsSubject)"
+                (fetchItems)="
+                  searchBankAccount(this.codeBanco, this.paramsSubject)
+                "
                 (input)="onSearchAccount($event.target)"></ngx-select>
             </form-field>
           </div>

@@ -46,7 +46,7 @@ export class RecordAccountStatementsComponent
   itemSelected: any;
   banks = new DefaultSelect();
   bankAccountSelect = new DefaultSelect();
-
+  codeBanco: string = '';
   dataAccount: LocalDataSource = new LocalDataSource();
   // dataAccountPaginated: number;
   dataAccountPaginated: string;
@@ -172,9 +172,6 @@ export class RecordAccountStatementsComponent
       }
     });
   }
-  ngOnChanges() {
-    this.bankAccountSelect = new DefaultSelect();
-  }
 
   formatDate(dateString: string): string {
     if (dateString === '') {
@@ -240,6 +237,7 @@ export class RecordAccountStatementsComponent
     console.log(value);
     if (value && value.cve_banco) {
       const bankCode = value.cve_banco;
+      this.codeBanco = bankCode;
       console.log(bankCode);
       this.searchBankAccount(bankCode, this.paramsSubject);
       // this.getEvent();
@@ -247,7 +245,7 @@ export class RecordAccountStatementsComponent
     } else {
       this.cleandInfoAll();
       this.loading = false;
-      this.bankAccountSelect = new DefaultSelect();
+      this.getEvent();
     }
   }
 
@@ -257,8 +255,9 @@ export class RecordAccountStatementsComponent
   ) {
     this.bankCode = bankCode;
     const params = paramsSubject.getValue();
+
     this.recordAccountStatementsAccountsService
-      .getById(bankCode, params)
+      .getById(this.codeBanco, params)
       .subscribe({
         next: response => {
           response.data.map(item => {
@@ -315,7 +314,7 @@ export class RecordAccountStatementsComponent
     this.form.get('currency').reset();
     this.form.get('description').reset();
     this.totalItems = 0;
-    this.cleandInfoDate();
+    // this.cleandInfoDate();
     const cveAccount = value.cveAccount;
     this.accountDate = value.accountDate;
     this.searchDataAccount(cveAccount);
@@ -426,7 +425,6 @@ export class RecordAccountStatementsComponent
       .subscribe({
         next: (response: any) => {
           this.factasStatusCta = response;
-          console.log(this.factasStatusCta);
           this.loading = false;
         },
         error: (err: any) => {
@@ -553,17 +551,19 @@ export class RecordAccountStatementsComponent
 
   cleandInfoAll() {
     this.form.reset();
-    this.dataAccount = new LocalDataSource();
+    this.dataAccount.load([]);
     this.totalItems = 0;
     this.searchBanks(new ListParams());
     this.balance = null;
   }
 
   cleandInfo() {
-    this.dataAccount = new LocalDataSource();
+    this.dataAccount.load([]);
     this.totalItems = 0;
     this.form.reset();
     this.searchBanks(new ListParams());
+    this.bankAccountSelect = new DefaultSelect();
+    this.banks = new DefaultSelect();
   }
 
   cleandInfoDate() {
@@ -596,8 +596,7 @@ export class RecordAccountStatementsComponent
       this.accountMovementService.getDataBank(params__).subscribe({
         next: response => {
           let result = response.data.map(item => {
-            item['bankAndNumber'] =
-              item.cve_cuenta + ' - ' + item.cve_banco + ' - ' + item.nombre;
+            item['bankAndNumber'] = item.cve_banco + ' - ' + item.nombre;
             this.itemSelected = item.cve_banco;
             this.accouncveAccount = item.cve_cuenta;
           });
@@ -614,61 +613,85 @@ export class RecordAccountStatementsComponent
       });
     });
   }
-  getBanksAccounts() {
+  getBanksAccounts(params: ListParams) {
     // lparams['filter.accountNumber.cveBank'] = `$ilike:${this.itemSelected}`;
     // this.hideError();
     return new Promise((resolve, reject) => {
-      this.recordAccountStatementsAccountsService.getAccounts().subscribe({
-        next: response => {
-          // response.data.map((a: any) => {
-          //   a.accountNumber.cveAccount = a.accountNumber.accountNumber + ' - ' + a.accountNumber.cveAccount
-          // })
-          // console.log('account', response);
-          this.bankAccountSelect = new DefaultSelect(
-            response.data,
-            response.count
-          );
+      this.recordAccountStatementsAccountsService
+        .getAccounts(params)
+        .subscribe({
+          next: response => {
+            // response.data.map((a: any) => {
+            //   a.accountNumber.cveAccount = a.accountNumber.accountNumber + ' - ' + a.accountNumber.cveAccount
+            // })
+            // console.log('account', response);
+            this.bankAccountSelect = new DefaultSelect(
+              response.data,
+              response.count
+            );
 
-          this.loading = false;
-        },
-        error: err => {
-          this.bankAccountSelect = new DefaultSelect();
-          console.log(err);
-        },
-      });
+            this.loading = false;
+          },
+          error: err => {
+            this.bankAccountSelect = new DefaultSelect();
+            console.log(err);
+          },
+        });
     });
   }
+  // getEvent(lparams?: ListParams) {
+  //   // lparams['filter.accountNumber.cveAccount'] = `$ilike:${this.cveAccount}`
+  //   this.recordAccountStatementsAccountsService
+  //     .getAccounts(lparams)
+  //     .subscribe({
+  //       next: data => {
+  //         data.data.map((item: any) => {
+  //           item['accountAndNumber'] = item.cveAccount;
+  //         });
+  //         console.log(data.data);
+  //         this.bankAccountSelect = new DefaultSelect(data.data, data.count);
+  //       },
+  //       error: () => {
+  //         this.bankAccountSelect = new DefaultSelect();
+  //       },
+  //     });
+  // }
   getEvent(lparams?: ListParams) {
+    // lparams['filter.accountNumber.cveAccount'] = `$ilike:${this.cveAccount}`
     const params = new FilterParams();
 
     // params.page = lparams.page;
     // params.limit = lparams.limit;
 
     let params__ = '';
-    if (lparams?.text != null)
+    if (lparams?.text.length > 0)
       if (!isNaN(parseInt(lparams?.text))) {
         console.log('SI');
-        params__ = `?filter.accountNumber.cveBank=$ilike:${this.itemSelected}`;
+        // params__ = `filter.accountNumber.cveAccount=${lparams.text}`;
         // params.addFilter('no_cuenta', lparams.text);
       } else {
         console.log('NO');
-        params__ = `?filter.accountNumber.cve_cuenta=${lparams.text}`;
+
+        params__ = `?filter.accountNumber.cveAccount=${lparams.text}`;
         // params.addFilter('cve_banco', lparams.text);
       }
 
-    this.recordAccountStatementsAccountsService
-      .getDataBankAccount(params__)
-      .subscribe({
-        next: data => {
-          let result = data.data.map(item => {
-            item['accountAndNumber'] = item.account + ' - ' + item.cveAccount;
-          });
-          console.log(data.data);
-          this.bankAccountSelect = new DefaultSelect(result, data.count);
-        },
-        error: () => {
-          this.bankAccountSelect = new DefaultSelect();
-        },
-      });
+    // this.hideError();
+    return new Promise((resolve, reject) => {
+      this.recordAccountStatementsAccountsService
+        .getDataBankAccount(lparams)
+        .subscribe({
+          next: data => {
+            data.data.map((item: any) => {
+              item['accountAndNumber'] = item.cveAccount;
+            });
+            console.log(data.data);
+            this.bankAccountSelect = new DefaultSelect(data.data, data.count);
+          },
+          error: () => {
+            this.bankAccountSelect = new DefaultSelect();
+          },
+        });
+    });
   }
 }
