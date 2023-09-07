@@ -1,13 +1,17 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { catchError, of } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
+import { ConfirmProgrammingComponent } from '../../shared-request/confirm-programming/confirm-programming.component';
 
 @Component({
   selector: 'app-service-order-request-capture-form',
@@ -42,6 +46,7 @@ export class ServiceOrderRequestCaptureFormComponent
   private orderService = inject(orderentryService);
   private authService = inject(AuthService);
   private activeRouter = inject(ActivatedRoute);
+  private modalService = inject(BsModalService);
 
   constructor() {
     super();
@@ -217,16 +222,40 @@ export class ServiceOrderRequestCaptureFormComponent
   }
 
   generateOrdSerReport() {
-    /*const config = MODAL_CONFIG;
+    const config = MODAL_CONFIG;
     config.initialState = {
       idProgramming: this.programmingId,
-      callback: (signatore: ISignatories) => {
-        if (signatore) {
-          //this.openReport(signatore);
+      type: 'order-service',
+      callback: (signatore: any) => {
+        //ISignatories
+        if (signatore.data) {
+          this.openReport(signatore.data, signatore.sign);
         }
       },
     };
 
-    this.modalService.show(ConfirmProgrammingComponent, config);*/
+    this.modalService.show(ConfirmProgrammingComponent, config);
+  }
+
+  openReport(signatore: ISignatories, signature: boolean) {
+    const idProg = this.programmingId;
+    const idTypeDoc = 221;
+    let config: ModalOptions = {
+      initialState: {
+        idProg,
+        idTypeDoc,
+        signatore,
+        typeFirm: signature == true ? 'electronica' : 'autografa',
+        programming: null, //this.programming,
+        callback: (next: boolean) => {
+          if (next) {
+            //this.getProgrammingId();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowReportComponentComponent, config);
   }
 }
