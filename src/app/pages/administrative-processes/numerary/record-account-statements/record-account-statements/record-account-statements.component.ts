@@ -172,6 +172,9 @@ export class RecordAccountStatementsComponent
       }
     });
   }
+  ngOnChanges() {
+    this.bankAccountSelect = new DefaultSelect();
+  }
 
   formatDate(dateString: string): string {
     if (dateString === '') {
@@ -233,41 +236,56 @@ export class RecordAccountStatementsComponent
     this.cleandInfoDate();
     this.bankAccountSelect = new DefaultSelect();
     this.loading = false;
-    const bankCode = value.bankCode;
-    this.getEvent(this.params.getValue());
-    // if (value && value.bankCode) {
 
-    //   this.loading = false;
-    // } else {
-    //   this.cleandInfoAll();
-    //   this.loading = false;
-    // }
+    console.log(value);
+    if (value && value.cve_banco) {
+      const bankCode = value.cve_banco;
+      console.log(bankCode);
+      this.searchBankAccount(bankCode, this.paramsSubject);
+      // this.getEvent();
+      this.loading = false;
+    } else {
+      this.cleandInfoAll();
+      this.loading = false;
+      this.bankAccountSelect = new DefaultSelect();
+    }
   }
 
-  // Toma el banco seleccionado y busca todas las cuentas pertenecientes a ese banco
-
-  searchBankAccount(params: ListParams) {
-    params[''];
-    this.recordAccountStatementsAccountsService.getAccounts(params).subscribe({
-      next: response => {
-        this.bankAccountSelect = new DefaultSelect(
-          response.data,
-          response.count
-        );
-        this.loading = false;
-      },
-      // this.data.load(this.documents);
-      error: (err: any) => {
-        this.loading = false;
-        this.bankAccountSelect = new DefaultSelect();
-      },
-    });
+  searchBankAccount(
+    bankCode: string,
+    paramsSubject: BehaviorSubject<ListParams>
+  ) {
+    this.bankCode = bankCode;
+    const params = paramsSubject.getValue();
+    this.recordAccountStatementsAccountsService
+      .getById(bankCode, params)
+      .subscribe({
+        next: response => {
+          // this.bankAccountSelect = new DefaultSelect(
+          //   response.data,
+          //   response.count
+          // );
+          response.data.map(item => {
+            item['accountAndNumber'] = item.cveAccount;
+          });
+          console.log(response.data);
+          this.bankAccountSelect = new DefaultSelect(
+            response.data,
+            response.count
+          );
+          this.loading = false;
+        },
+        // this.data.load(this.documents);
+        error: (err: any) => {
+          this.loading = false;
+          this.bankAccountSelect = new DefaultSelect();
+        },
+      });
   }
 
-  // onClearSelection() {
-  //   const params = paramsSubject.getValue();
-  //   this.searchBankAccount(this.bankCode);
-  // }
+  onClearSelection() {
+    this.searchBankAccount(this.bankCode, this.paramsSubject);
+  }
 
   onSearchAccount(inputElement: any) {
     const account = inputElement.value;
@@ -302,8 +320,8 @@ export class RecordAccountStatementsComponent
     this.form.get('description').reset();
     this.totalItems = 0;
     this.cleandInfoDate();
-    const cveAccount = value.cveAccount;
-    this.accountDate = value.cveAccount;
+    const cveAccount = value.cveBank;
+    this.accountDate = value.accountDate;
     this.searchDataAccount(cveAccount);
 
     // Obtener los valores correspondientes de la cuenta seleccionada
@@ -417,7 +435,6 @@ export class RecordAccountStatementsComponent
         },
         error: (err: any) => {
           this.loading = false;
-          this.alert('error', 'No Existen Bancos', ``);
         },
       });
   }
@@ -553,6 +570,7 @@ export class RecordAccountStatementsComponent
     this.form.get('balanceOf').reset();
     this.form.get('balanceAt').reset();
     this.balance = null;
+    this.itemSelected = '';
   }
   getBanks(lparams: ListParams) {
     const params = new FilterParams();
@@ -577,11 +595,11 @@ export class RecordAccountStatementsComponent
     return new Promise((resolve, reject) => {
       this.accountMovementService.getDataBank(params__).subscribe({
         next: response => {
-          console.log('ress1', response);
           let result = response.data.map(item => {
             item['bankAndNumber'] =
               item.cve_cuenta + ' - ' + item.cve_banco + ' - ' + item.nombre;
             this.itemSelected = item.cve_banco;
+            this.accouncveAccount = item.cve_cuenta;
           });
 
           Promise.all(result).then((resp: any) => {
@@ -596,57 +614,57 @@ export class RecordAccountStatementsComponent
       });
     });
   }
-  getBanksAccounts(lparams: ListParams) {
-    lparams['cveBank'] = `${this.itemSelected}`;
+  getBanksAccounts() {
+    // lparams['filter.accountNumber.cveBank'] = `$ilike:${this.itemSelected}`;
     // this.hideError();
     return new Promise((resolve, reject) => {
-      this.recordAccountStatementsAccountsService
-        .getAccounts(lparams)
-        .subscribe({
-          next: response => {
-            console.log('account', response);
-            this.bankAccountSelect = new DefaultSelect(
-              response.data,
-              response.count
-            );
+      this.recordAccountStatementsAccountsService.getAccounts().subscribe({
+        next: response => {
+          // response.data.map((a: any) => {
+          //   a.accountNumber.cveAccount = a.accountNumber.accountNumber + ' - ' + a.accountNumber.cveAccount
+          // })
+          // console.log('account', response);
+          this.bankAccountSelect = new DefaultSelect(
+            response.data,
+            response.count
+          );
 
-            this.loading = false;
-          },
-          error: err => {
-            this.bankAccountSelect = new DefaultSelect();
-            console.log(err);
-          },
-        });
+          this.loading = false;
+        },
+        error: err => {
+          this.bankAccountSelect = new DefaultSelect();
+          console.log(err);
+        },
+      });
     });
   }
   getEvent(lparams?: ListParams) {
     const params = new FilterParams();
 
-    params.page = lparams.page;
-    params.limit = lparams.limit;
+    // params.page = lparams.page;
+    // params.limit = lparams.limit;
 
     let params__ = '';
-    if (lparams?.text.length > 0)
+    if (lparams?.text != null)
       if (!isNaN(parseInt(lparams?.text))) {
         console.log('SI');
-        params__ = `?filter.cve_cuenta=${lparams.text}`;
+        params__ = `?filter.accountNumber.cveBank=$ilike:${this.itemSelected}`;
         // params.addFilter('no_cuenta', lparams.text);
       } else {
         console.log('NO');
-
-        params__ = `?filter.cve_banco=${lparams.text}`;
+        params__ = `?filter.accountNumber.cve_cuenta=${lparams.text}`;
         // params.addFilter('cve_banco', lparams.text);
       }
 
     this.recordAccountStatementsAccountsService
-      .getById2(this.itemSelected, params__)
+      .getDataBankAccount(params__)
       .subscribe({
         next: data => {
-          // data.data.map(data => {
-          //   data.accountType = `${data.account}- ${data.cveAccount}`;
-          //   return data;
-          // });
-          this.bankAccountSelect = new DefaultSelect(data.data, data.count);
+          let result = data.data.map(item => {
+            item['accountAndNumber'] = item.account + ' - ' + item.cveAccount;
+          });
+          console.log(data.data);
+          this.bankAccountSelect = new DefaultSelect(result, data.count);
         },
         error: () => {
           this.bankAccountSelect = new DefaultSelect();
