@@ -24,6 +24,7 @@ export class EntryOrdersComponent
     this.haveInitialCharge = false;
     this.settings = {
       ...this.settings,
+      actions: false,
       columns: COLUMNS,
     };
     this.expenseCaptureDataService.updateOI

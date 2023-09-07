@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { AccountmvmntEndpoint } from 'src/app/common/constants/endpoints/accountmvmnt-endpoint';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IAccountDetailInd } from '../../models/ms-account-movements/account-detail-ind';
+import {
+  IAccountDetailInd,
+  IAccountDetailIndNotCheck,
+} from '../../models/ms-account-movements/account-detail-ind';
 
 @Injectable({
   providedIn: 'root',
@@ -14,16 +17,24 @@ export class DetailsIndMovementService extends HttpService {
   }
   getAll(params: _Params) {
     return this.get<IListResponse<IAccountDetailInd>>(
-      AccountmvmntEndpoint.getDetailsInd,
-      // + '?filter.accountnumberorigindeposit=$not:$null'
+      AccountmvmntEndpoint.getDetailsInd +
+        '?filter.accountnumberorigindeposit=$not:$null',
       params
     );
   }
 
   getAllFilterSelf(self?: DetailsIndMovementService, params?: _Params) {
     return self.get<IListResponse<IAccountDetailInd>>(
-      AccountmvmntEndpoint.getDetailsInd +
-        '?filter.accountnumberorigindeposit=$not:$null',
+      AccountmvmntEndpoint.getDetailsInd,
+      //  + '?filter.accountnumberorigindeposit=$not:$null'
+      params
+    );
+  }
+
+  getAllFilterSelfAccounts(self?: DetailsIndMovementService, params?: _Params) {
+    return self.get<IListResponse<IAccountDetailIndNotCheck>>(
+      AccountmvmntEndpoint.getDetailsIndNotChecks,
+      //  + '?filter.accountnumberorigindeposit=$not:$null'
       params
     );
   }
