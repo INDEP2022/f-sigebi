@@ -1,4 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -6,11 +12,11 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
-import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
+import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { AREA_COLUMNS } from './area-columns';
-import { ERROR_COLUMNS } from './error-columns';
+import { GOODS } from './area-columns';
+
 @Component({
   selector: 'app-modal-approval-donation',
   templateUrl: './modal-approval-donation.component.html',
@@ -21,110 +27,117 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   subTitle: string;
   op: string;
   totalItemsModal: number = 0;
-  detalleDon: IRegionalDelegation[] = [];
+  selectedGooods: any[] = [];
+  selectedRow: any | null = null;
+  activeGood: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  data: LocalDataSource = new LocalDataSource();
+  dataGoodTable: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+  provider: any;
   @Output() onSave = new EventEmitter<any>();
-  columnFilter: any = [];
+  totalItems2: number = 0;
   constructor(
-    private readonly regionalDelegationService: RegionalDelegationService,
-    private modalRef: BsModalRef
+    private goodService: GoodService,
+    private modalRef: BsModalRef,
+    private donationService: DonationService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     super();
-    this.settings = { ...this.settings, actions: false };
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      selectMode: 'multi',
+      columns: {
+        ...GOODS,
+      },
+    };
   }
 
   ngOnInit(): void {
-    this.data
+    this.dataGoodTable
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
+        console.log('SI');
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = '';
+            //Default busqueda SearchFilter.ILIKE
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            /*SPECIFIC CASES*/
-            switch (filter.field) {
-              case 'id':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'description':
-                searchFilter = SearchFilter.EQ;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              proposalKey: () => (searchFilter = SearchFilter.ILIKE),
+              goodNumber: () => (searchFilter = SearchFilter.ILIKE),
+              id: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.EQ),
+              quantity: () => (searchFilter = SearchFilter.EQ),
+            };
+
+            search[filter.field]();
 
             if (filter.search !== '') {
-              this.columnFilter[field] = `${searchFilter}:${filter.search}`;
-              //this.params.value.page = 1;
+              // this.columnFilters[field] = `${filter.search}`;
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
-              delete this.columnFilter[field];
+              delete this.columnFilters[field];
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getCatalogReg(this.params.getValue());
+          this.getTempDona();
         }
       });
+
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getCatalogReg(this.params.getValue()));
+      .subscribe(() => this.getTempDona());
   }
-  getCatalogReg(params: ListParams) {
-    this.regionalDelegationService.getAll(params).subscribe({
-      next: (data: any) => {
-        if (this.op == 'select-area') {
-          this.settings.columns = AREA_COLUMNS;
-          this.detalleDon = data.data;
-          this.data.load(this.detalleDon);
-          this.data.refresh();
-          console.log(this.detalleDon);
-        } else {
-          if (this.op === 'see-error') {
-            this.settings.columns = ERROR_COLUMNS;
-            this.detalleDon = data.data;
-            this.data.load(this.detalleDon);
-            this.data.refresh();
-            console.log(this.detalleDon);
-          }
-        }
+
+  getTempDona() {
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    // params['sortBy'] = `goodNumber:DESC`;
+    this.donationService.getTempGood(params).subscribe({
+      next: data => {
+        console.log(data.data);
+        this.totalItems2 = data.count;
+        this.dataGoodTable.load(data.data);
+        this.dataGoodTable.refresh();
       },
-      error: () => {
-        console.log(console.log('error'));
-      },
+      error: () => console.log('no hay bienes'),
     });
   }
+
   return() {
     this.modalRef.hide();
   }
   handleSuccess(): void {
-    this.onSave.emit(this.detalleDon);
-    console.log(this.detalleDon);
+    this.loading = false;
+    this.onSave.emit(this.selectedGooods);
     this.modalRef.hide();
   }
+  // onUserRowSelect(row: any): void {
+  //   if (row.isSelected) {
+  //     this.selectedRow = row.data;
+  //   } else {
+  //     this.selectedRow = null;
+  //   }
+
+  //   console.log(this.selectedRow);
+  // }
+
+  onUserRowSelect(event: { data: any; selected: any }) {
+    this.selectedRow = event.data;
+    this.activeGood = true;
+    // this.fileNumber = event.data.fileNumber;
+    this.selectedGooods = event.selected;
+    console.log(this.selectedRow);
+    console.log(this.selectedGooods);
+    this.changeDetectorRef.detectChanges();
+  }
 }
-
-// const EXAMPLE_DATA1 = [
-//   {
-//     id: 1,
-//     description: 'REGIONAL TIJUANA',
-//   },
-//   {
-//     id: 2,
-//     description: 'REGIONAL HERMOSILLO',
-//   },
-// ];
-
-// const EXAMPLE_DATA2 = [
-//   {
-//     goodsNumb: 454587,
-//     goodsDescrip: 'NO CUENTA CON UN ALMACÉN',
-//   },
-//   {
-//     goodsNumb: 121454,
-//     goodsDescrip: 'NO CUENTA CON UN ALMACÉN',
-//   },
-// ];

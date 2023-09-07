@@ -1584,16 +1584,20 @@ export class RegistrationOfRequestsComponent
   }
 
   async updateGoodStatus(newProcessStatus: string, status: string = null) {
+    const user = this.authService.decodeToken();
     let body: any = { request: 0, status: '', process: '' };
     body.request = Number(this.requestData.id);
     body.status = newProcessStatus; //good.processStatus
     body.process = this.process;
     body.statusGood = status; // good.status
+
     if (
       this.process === 'process-approval' &&
       newProcessStatus === 'APROBADO'
     ) {
       body.process = 'process-approval';
+      body.programChangeStatus = 'SOLICITUD_TRANSFERENCIA';
+      body.user = user.username;
     }
     const resultado = await this.updateProcessStatus(body);
   }

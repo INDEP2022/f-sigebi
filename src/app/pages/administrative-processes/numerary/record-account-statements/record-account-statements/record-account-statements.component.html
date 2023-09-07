@@ -8,16 +8,24 @@
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-6">
+            <!-- <form-field [control]="form.get('bankSelect')">
+              <ngx-select [data]="banks" [form]="form" bindLabel="name" label="Seleccione un Banco"
+                [control]="'bankSelect'" (change)="onBankSelectChange($event)" (fetchItems)="searchBanks($event)"
+                (input)="onSearchName($event.target)"></ngx-select>
+            </form-field> -->
             <form-field [control]="form.get('bankSelect')">
               <ngx-select
-                [data]="banks"
                 [form]="form"
-                bindLabel="name"
-                label="Seleccione un Banco"
-                [control]="'bankSelect'"
-                (change)="onBankSelectChange($event)"
-                (fetchItems)="searchBanks($event)"
-                (input)="onSearchName($event.target)"></ngx-select>
+                [data]="banks"
+                (fetchItems)="getBanks($event)"
+                bindLabel="bankAndNumber"
+                control="bankSelect"
+                label="Banco"
+                [searchOnInit]="true"
+                [showTooltip]="true"
+                termMaxLength="30"
+                (change)="onBankSelectChange($event)">
+              </ngx-select>
             </form-field>
           </div>
 
@@ -27,13 +35,18 @@
                 [data]="bankAccountSelect"
                 [form]="form"
                 bindLabel="cveAccount"
-                label="Seleccione una Cuenta"
+                label="Cuenta"
                 [control]="'account'"
                 (change)="onBankAccountSelectChange($event)"
-                (fetchItems)="searchBankAccount(bankCode, paramsSubject)"
-                (input)="onSearchAccount($event.target)"
-                (clear)="onClearSelection()"></ngx-select>
+                (fetchItems)="getBanksAccounts($event)"
+                (input)="onSearchAccount($event.target)"></ngx-select>
             </form-field>
+            <!-- <form-field [control]="form.get('account')">
+              <ngx-select [form]="form" [data]="bankAccountSelect" (fetchItems)="getBanksAccounts($event)"
+                bindLabel="accountAndNumber" control="account" label="Cuenta" [searchOnInit]="true" [showTooltip]="true"
+                termMaxLength="30">
+              </ngx-select>
+            </form-field> -->
           </div>
         </div>
 
