@@ -875,7 +875,8 @@ export class DepositTokensComponent
 
   async actualizarFunc() {
     this.showPagination = true;
-    await this.clearSubheaderFields();
+    // await this.clearSubheaderFields();
+
     this.paramsList.getValue().limit = 10;
     this.paramsList.getValue().page = 1;
     this.paramsList2.getValue().limit = 10;
