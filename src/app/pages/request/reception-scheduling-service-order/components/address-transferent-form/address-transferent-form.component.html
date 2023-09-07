@@ -22,29 +22,7 @@
   </h5>
 
   <div class="row" *ngIf="showAddressTransferent">
-    <div class="col-md-12" *ngIf="!claimRequest">
-      <form [formGroup]="form" class="form-material">
-        <div class="pt-3">
-          <form-field [control]="form.get('location')" label="Localidad">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="location"
-              readonly />
-          </form-field>
-        </div>
-        <div class="pt-3">
-          <form-field [control]="form.get('address')" label="Direcci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="address"
-              readonly />
-          </form-field>
-        </div>
-      </form>
-    </div>
-    <div class="col-md-12" *ngIf="claimRequest">
+    <div class="col-md-6" *ngIf="!claimRequest">
       <form [formGroup]="form" class="form-material">
         <div class="pt-3">
           <form-field [control]="form.get('location')" label="Localidad">
@@ -61,5 +39,22 @@
         </div>
       </form>
     </div>
+    <!-- <div class="col-md-6" *ngIf="claimRequest">
+      <form [formGroup]="form" class="form-material">
+        <div class="pt-3">
+          <form-field [control]="form.get('location')" label="Localidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="location" />
+          </form-field>
+        </div>
+        <div class="pt-3">
+          <form-field [control]="form.get('address')" label="Direcci&oacute;n">
+            <input type="text" class="form-control" formControlName="address" />
+          </form-field>
+        </div>
+      </form>
+    </div> -->
   </div>
 </div>

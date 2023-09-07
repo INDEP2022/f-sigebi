@@ -25,6 +25,7 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   showSearchForm: boolean = true;
+
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
     this.settings = {
@@ -35,7 +36,11 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.form = this.fb.group({
+      description: [null],
+    });
+  }
 
   confirm() {
     this.alertQuestion(
@@ -52,6 +57,15 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
     });
   }
 
+  search() {
+    const form = this.form.getRawValue();
+    console.log(form);
+  }
+
+  clean() {
+    this.form.reset();
+    this.data = [];
+  }
   close() {
     this.modalRef.hide();
   }

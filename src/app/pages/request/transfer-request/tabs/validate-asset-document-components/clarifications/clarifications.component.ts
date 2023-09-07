@@ -19,13 +19,16 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -88,7 +91,9 @@ export class ClarificationsComponent
     private readonly genericService: GenericService,
     private readonly goodResDevService: GetGoodResVeService,
     private readonly chatClarificationService: ChatClarificationsService,
-    private readonly goodFinderService: GoodFinderService
+    private readonly goodFinderService: GoodFinderService,
+    private readonly authService: AuthService,
+    private readonly historyGoodService: HistoryGoodService
   ) {
     super();
   }
@@ -616,7 +621,7 @@ export class ClarificationsComponent
               body['goodId'] = this.good[0].goodId;
               body.processStatus = 'DESTINO_DOCUMENTAL';
               body.goodStatus = 'DESTINO_DOCUMENTAL';
-              body.status = null;
+              body.status = 'ROP';
               await this.updateGood(body);
             } else {
               body['id'] = this.good[0].id;
@@ -626,9 +631,10 @@ export class ClarificationsComponent
                   ? 'ACLARADO'
                   : 'DESTINO_DOCUMENTAL';
               body.processStatus = 'DESTINO_DOCUMENTAL';
-              body.status = null;
+              body.status = 'ROP';
               await this.updateGood(body);
             }
+            //const update = await this.createHistoricGood('ROP', body.id);
             this.updateStatusTable(body);
           },
           complete: () => {
@@ -850,6 +856,29 @@ export class ClarificationsComponent
         this.goodSaeModified = [];
         this.onLoadToast('success', 'Bienes Actualizados');
       }
+    });
+  }
+
+  createHistoricGood(status: string, good: number) {
+    return new Promise((resolve, reject) => {
+      const user: any = this.authService.decodeToken();
+      let body: IHistoryGood = {
+        propertyNum: good,
+        status: status,
+        changeDate: new Date(),
+        userChange: user.username,
+        statusChangeProgram: 'SOLICITUD_TRANSFERENCIA',
+        reasonForChange: 'N/A',
+      };
+      this.historyGoodService.create(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(error);
+          this.onLoadToast('error', 'No se pudo crear el historico del bien');
+        },
+      });
     });
   }
 }

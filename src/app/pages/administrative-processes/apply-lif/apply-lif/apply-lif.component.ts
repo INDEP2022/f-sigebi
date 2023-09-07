@@ -134,7 +134,6 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         },
         error: error => {
           this.loading = false;
-          console.log(error);
         },
       });
   }
@@ -198,7 +197,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         );
         this.formBlkControl.get('dateChange').setValue(new Date(dateChange));
       } catch (error) {
-        console.log(error);
+        this.loading = false;
         try {
           const params = new ListParams();
           params['filter.originalGood'] = this.formGood.value.id;
@@ -207,7 +206,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
           this.formBlkControl.get('dateChange').setValue(new Date(dateChange));
         } catch (error) {
           this.formBlkControl.get('dateChange').setValue(null);
-          console.log(error);
+          this.loading = false;
         }
       }
 
@@ -220,7 +219,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         this.isVisibleMotive = true;
       } catch (error) {
         this.isVisibleMotive = false;
-        console.log(error);
+        this.loading = false;
       }
 
       this.formGood1.get('contConv').setValue(TOT);
@@ -245,7 +244,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         this.isEnableBtnRvlif = true;
       }
     } catch (error) {
-      this.alert('error', 'Error', '');
+      this.loading = false;
       console.log(error);
     }
   }
@@ -298,6 +297,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
     let GAST: number;
     try {
       GAST = this.formGood1.value.val13;
+      console.log(GAST);
       let params = new ListParams();
       params['filter.id'] = this.formGood1.value.id;
       const { status } = await this.getGoodParams(params, true);
@@ -314,6 +314,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         params['filter.parameter'] = 'LIF';
         const { value } = await this.getComerParameterMod(params);
         VLIF = Number(value);
+        console.log(GAST);
         this.formGood1
           .get('val15')
           .setValue(
@@ -367,7 +368,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
       // GO_BLOCK('BIENES1');
       // EXECUTE_QUERY;
     } catch (error) {
-      console.log(error);
+      this.loading = false;
     }
   }
 
@@ -382,8 +383,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         this.postQueryGood1();
       },
       error: error => {
-        this.alert('error', 'Error al Actualizar Bien', '');
-        console.log(error);
+        this.loading = false;
       },
     });
   }

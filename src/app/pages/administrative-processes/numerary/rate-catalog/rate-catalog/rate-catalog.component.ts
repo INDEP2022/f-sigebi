@@ -83,6 +83,8 @@ export class RateCatalogComponent extends BasePage implements OnInit {
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
 
   ngOnInit(): void {
+    this.paramsList.getValue()['sortBy'] = 'year,month:DESC';
+
     this.prepareForm();
     this.data
       .onChanged()
