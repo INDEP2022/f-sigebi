@@ -9,6 +9,7 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
+import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
@@ -89,6 +90,7 @@ export class DepositTokensComponent
   settings2 = { ...this.settings };
   loadingBtn2: boolean = false;
   value: number = 0;
+  @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -125,27 +127,26 @@ export class DepositTokensComponent
         },
         accountkey: {
           title: 'Cuenta',
-          // type: 'string',
           filter: {
             type: 'custom',
             component: CustomMultiSelectFilterComponent,
             config: {
-              options: this.getUniqueValues('cveAccount'),
+              options: this.getUniqueValues('accountkey'),
             },
           },
           valuePrepareFunction: (value: any) => {
+            console.log('value', value);
             return value != null ? value : '';
           },
           filterFunction(cell?: any, search?: string): boolean {
             let column = cell;
-            if (
-              column?.toUpperCase() >= search.toUpperCase() ||
-              search === ''
-            ) {
-              return true;
-            } else {
-              return false;
-            }
+            console.log(column, '==', search);
+            // if (column?.toUpperCase() >= search.toUpperCase() || search === ''
+            // ) {
+            return true;
+            // } else {
+            //   return false;
+            // }
           },
           sort: false,
         },
@@ -154,7 +155,7 @@ export class DepositTokensComponent
           // type: 'string',
           sort: false,
           // width: '13%',
-          type: 'html',
+          // type: 'html',
           valuePrepareFunction: (text: string) => {
             return `${
               text ? text.split('T')[0].split('-').reverse().join('/') : ''
@@ -165,6 +166,16 @@ export class DepositTokensComponent
             component: CustomDateFilterComponent_,
             // component: CustomDateFilterComponent,
           },
+          filterFunction(cell?: any, search?: string): boolean {
+            let column = cell;
+            console.log(column, '==', search);
+            // if (column?.toUpperCase() >= search.toUpperCase() || search === ''
+            // ) {
+            return true;
+            // } else {
+            //   return false;
+            // }
+          },
         },
         calculationInterestsDate_: {
           title: 'Fecha TESOFE',
@@ -173,7 +184,7 @@ export class DepositTokensComponent
           // width: '13%',
           type: 'html',
           valuePrepareFunction: (text: string) => {
-            console.log('text', text);
+            // console.log('text', text);
             return `${
               text ? text.split('T')[0].split('-').reverse().join('/') : ''
             }`;
@@ -699,7 +710,7 @@ export class DepositTokensComponent
             this.data1.refresh();
 
             this.totalItems = response.count;
-            // console.log('AQUI', response);
+            console.log('AQUI', response);
             // console.log('this.data1 ', this.data1);
             this.validExcel = false;
             this.loading = false;
@@ -864,6 +875,7 @@ export class DepositTokensComponent
 
   async actualizarFunc() {
     this.showPagination = true;
+    await this.clearSubheaderFields();
     this.paramsList.getValue().limit = 10;
     this.paramsList.getValue().page = 1;
     this.paramsList2.getValue().limit = 10;
@@ -881,6 +893,12 @@ export class DepositTokensComponent
     }
   }
 
+  async clearSubheaderFields() {
+    const subheaderFields: any = this.table.grid.source;
+    const filterConf = subheaderFields.filterConf;
+    filterConf.filters = [];
+    this.columnFilters = [];
+  }
   async importar() {}
 
   onFileChange(event: Event) {
@@ -1100,8 +1118,13 @@ export class DepositTokensComponent
       delete params['filter.bank'];
     }
 
+    // if (params['filter.accountkey']) {
+    //   params['accountkey'] = params['filter.accountkey'];
+    //   delete params['filter.accountkey'];
+    // }
+
     if (params['filter.accountkey']) {
-      params['accountkey'] = params['filter.accountkey'];
+      params['accountkey'] = `$in:${params['filter.accountkey']}`;
       delete params['filter.accountkey'];
     }
 

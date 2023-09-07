@@ -78,6 +78,7 @@
             [track]="'all'"
             [ngStyle]="{ height: loading ? '0px' : '500px' }">
             <ng2-smart-table
+              #myTable
               id="fichas"
               (delete)="showDeleteAlert($event.data)"
               (edit)="editMovement($event.data)"
