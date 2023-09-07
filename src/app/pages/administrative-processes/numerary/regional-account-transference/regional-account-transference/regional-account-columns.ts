@@ -25,6 +25,15 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
     title: 'Importe',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (val: string) => {
+      const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+      });
+
+      return formatter.format(Number(val));
+    },
   },
   allInterest: {
     title: 'Interés',
@@ -33,8 +42,6 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
     showAlways: true,
     renderComponent: InputCellComponent<any>,
     onComponentInitFunction: (instance: InputCellComponent) => {
-      console.log(instance);
-
       instance.inputType = 'number';
       //instance.value = instance.rowData.allInterest ?? 0
       instance.inputChange.subscribe({
@@ -53,6 +60,15 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
     title: 'Total',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (val: string) => {
+      const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+      });
+
+      return formatter.format(Number(val));
+    },
   },
   val1: {
     title: 'Moneda',

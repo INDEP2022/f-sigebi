@@ -10,6 +10,12 @@
           <div class="col text-right">
             <div class="btn-group">
               <button
+                type="button"
+                class="btn btn-danger active btn-sm"
+                (click)="clean()">
+                Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+              </button>
+              <button
                 class="btn btn-primary btn-sm active mx-1"
                 [disabled]="!validDetail"
                 (click)="detailCalculation()">
@@ -90,7 +96,7 @@
               label="Devolución"
               formField="devolutionnumber"
               [service]="detailsIndMovementService"
-              [columnsType]="columnsType"
+              [columnsType]="columnsDevolution"
               searchField="description"
               id="devolutionnumber"
               title="Devolución"
@@ -153,11 +159,12 @@
               [haveColumnFilters]="true"
               [ilikeFilters]="ilikeAccountFilters"
               label="Cuenta"
-              formField="accountnumberpayreturn"
-              [service]="bankAccountService"
-              [columnsType]="columnsAccountType"
+              formField="accountKey"
+              [service]="detailsIndMovementService"
+              [columnsType]="columnsAccounts"
+              functionFilterName="getAllFilterSelfAccounts"
               searchField="description"
-              id="cveAccount"
+              id="accountkey"
               title="Cuenta"
               (selectRow)="
                 changeAccount($event)
@@ -397,7 +404,7 @@
           </div>
           <div class="col-md-3">
             <form-field
-              [control]="form.get('interestCredited')"
+              [control]="interestCredited"
               label="Inter&eacute;s Acreditado">
               <input
                 type="number"
@@ -464,9 +471,9 @@
     <h5 class="title">Datos para el cheque</h5>
     <div class="d-flex mt-4">
       <div
-        *ngIf="userChecks && userChecks.accounttras"
+        *ngIf="accountTras && accountTras.value"
         class="accounttras text-primary">
-        {{ userChecks.accounttras }}
+        {{ accountTras.value }}
       </div>
       <div class="col text-right">
         <button
@@ -481,11 +488,9 @@
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-md-3">
-            <form-field
-              [control]="form.get('checkType')"
-              label="Tipo de Cheque">
+            <form-field [control]="checkType" label="Tipo de Cheque">
               <ng-select
-                formControlName="userRole"
+                formControlName="checkType"
                 class="form-control"
                 [readonly]="disabled"
                 [clearable]="false">
@@ -493,31 +498,6 @@
                 <ng-option value="INTERES">Interés</ng-option>
               </ng-select>
             </form-field>
-          </div>
-          <div class="col-md-3">
-            <ng-custom-select-loading
-              [isLoadInOnInit]="false"
-              [form]="form"
-              [readonly]="disabled"
-              formControlName="bankAccount"
-              label="Cuenta Bancaria"
-              [path]="pathBankAccount"
-              value="cveAccount"
-              bindLabel="cveAccount"
-              paramSearch="filter.cveAccount"
-              prefixSearch="$eq"
-              (valueChange)="changeCveCuenta($event)">
-            </ng-custom-select-loading>
-            <!-- <form-field
-              [control]="form.get('bankAccount')"
-              label="Cuenta Bancaria">
-              <input
-                class="form-control"
-                formControlName="bankAccount"
-                min="1"
-                pattern="^[0-9]+"
-                [readonly]="disabled" />
-            </form-field> -->
           </div>
           <div class="col-md-3">
             <form-field [control]="form.get('check')" label="Cheque">
@@ -530,14 +510,31 @@
                 [readonly]="readonly && disabled" />
             </form-field>
           </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('bankCheck')" label="Banco">
-              <input
-                type="text"
-                class="form-control"
-                readonly
-                formControlName="bankCheck" />
-            </form-field>
+          <div class="col-md-6">
+            <ng-custom-select-loading
+              [isLoadInOnInit]="false"
+              [form]="form"
+              [readonly]="disabled"
+              [path]="pathBankAccount"
+              formControlName="bankAccount"
+              label="Cuenta Bancaria"
+              value="cveAccount"
+              bindLabel="cveAccount"
+              paramSearch="filter.cveBank"
+              prefixSearch="$ilike"
+              secondParamSearch="filter.cveAccount"
+              [labelTemplate]="bankLabel"
+              [optionTemplate]="bankOption"
+              (valueChange)="changeCveCuenta($event)">
+            </ng-custom-select-loading>
+            <ng-template #bankLabel let-item="item">
+              {{ item.cveAccount }} - {{ item.cveBank }}
+            </ng-template>
+            <ng-template #bankOption let-item="item">
+              <div [title]="item.cveAccount + '-' + item.cveBank">
+                {{ item.cveAccount }} - {{ item.cveBank }}
+              </div>
+            </ng-template>
           </div>
         </div>
         <div class="row mt-4">
