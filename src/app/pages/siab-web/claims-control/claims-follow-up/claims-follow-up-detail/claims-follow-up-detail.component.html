@@ -23,7 +23,9 @@
             label="Descripción"
             [control]="claimsFollowUpDetailForm.get('description')">
             <textarea
-              class="form-control pt-4"
+              class="form-control"
+              rows="2"
+              type="text"
               formControlName="description"
               readonly></textarea>
           </form-field>
@@ -152,8 +154,10 @@
             label="Detalle del Bien o las Partes Afectadas"
             [control]="claimsFollowUpDetailForm.get('detGoodoAffectedIn')">
             <textarea
-              class="form-control pt-4"
-              formControlName="detGoodoAffectedIn"></textarea>
+              class="form-control"
+              pt-5s="2"
+              formControlName="detGoodoAffectedIn"
+              style="margin-top: 2%"></textarea>
           </form-field>
         </div>
         <div class="col-md-4 pt-4">
@@ -238,7 +242,7 @@
             </span>
           </form-field>
         </div>
-        <div class="col-md-5 pt-4">
+        <div class="col-md-5 margin-input">
           <form-field
             [control]="claimsFollowUpDetailForm.get('letterClaimIn')"
             label="Fecha Carta Reclamación">
