@@ -16,6 +16,7 @@ import {
 } from 'src/app/core/services/ms-proceedings';
 import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
 import { BasePage } from 'src/app/core/shared';
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 
 const ORIGIN = 'FCONGENRASTREADOR';
@@ -55,6 +56,13 @@ export class GoodsTableService extends BasePage {
       title: 'No. Bien',
       sort: false,
       class: '',
+    },
+    goodDescription: {
+      title: 'Descripción del Bien',
+      sort: false,
+      type: 'custom',
+      renderComponent: SeeMoreComponent,
+      class: 'bg-primary',
     },
     socialCabite: {
       title: 'Gabinete Social',
@@ -137,11 +145,7 @@ export class GoodsTableService extends BasePage {
       sort: false,
       class: 'bg-primary',
     },
-    goodDescription: {
-      title: 'Descripción del Bien',
-      sort: false,
-      class: 'bg-primary',
-    },
+
     destiny: {
       title: 'Identificador de Destino',
       sort: false,
