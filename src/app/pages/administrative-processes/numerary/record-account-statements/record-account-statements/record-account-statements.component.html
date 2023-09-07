@@ -22,7 +22,6 @@
                 control="bankSelect"
                 label="Banco"
                 [searchOnInit]="true"
-                [showTooltip]="true"
                 termMaxLength="30"
                 (change)="onBankSelectChange($event)"
                 (input)="onSearchName($event.target)">
@@ -51,8 +50,7 @@
                 [control]="'account'"
                 (change)="onBankAccountSelectChange($event)"
                 (fetchItems)="searchBankAccount(bankCode, paramsSubject)"
-                (input)="onSearchAccount($event.target)"
-                (clear)="onClearSelection()"></ngx-select>
+                (input)="onSearchAccount($event.target)"></ngx-select>
             </form-field>
           </div>
         </div>

@@ -218,7 +218,7 @@ export class RecordAccountStatementsComponent
           },
           error: (err: any) => {
             this.loading = false;
-            this.alert('warning', 'No Existen Bancos con esa Descripción', ``);
+            // this.alert('warning', 'No Existen Bancos con esa Descripción', ``);
           },
         });
     }, 3000);
@@ -261,14 +261,10 @@ export class RecordAccountStatementsComponent
       .getById(bankCode, params)
       .subscribe({
         next: response => {
-          // this.bankAccountSelect = new DefaultSelect(
-          //   response.data,
-          //   response.count
-          // );
           response.data.map(item => {
             item['accountAndNumber'] = item.cveAccount;
           });
-          console.log(response.data);
+
           this.bankAccountSelect = new DefaultSelect(
             response.data,
             response.count
