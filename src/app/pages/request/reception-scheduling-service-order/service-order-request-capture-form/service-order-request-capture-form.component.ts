@@ -8,6 +8,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
@@ -39,6 +40,7 @@ export class ServiceOrderRequestCaptureFormComponent
   orderServiceId: number = 0;
   lsProgramming: string = null;
   programmingId: number = null;
+  programming: any = null;
 
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);
@@ -47,6 +49,7 @@ export class ServiceOrderRequestCaptureFormComponent
   private authService = inject(AuthService);
   private activeRouter = inject(ActivatedRoute);
   private modalService = inject(BsModalService);
+  private programmingService = inject(ProgrammingRequestService);
 
   constructor() {
     super();
@@ -56,7 +59,7 @@ export class ServiceOrderRequestCaptureFormComponent
     this.programmingId = +this.activeRouter.snapshot.params['id'];
     this.prepareProgForm();
     this.prepareOrderServiceForm();
-
+    this.getProgramming();
     this.getOrderService();
   }
 
@@ -246,7 +249,7 @@ export class ServiceOrderRequestCaptureFormComponent
         idTypeDoc,
         signatore,
         typeFirm: signature == true ? 'electronica' : 'autografa',
-        programming: null, //this.programming,
+        programming: this.programming,
         callback: (next: boolean) => {
           if (next) {
             //this.getProgrammingId();
@@ -257,5 +260,13 @@ export class ServiceOrderRequestCaptureFormComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(ShowReportComponentComponent, config);
+  }
+
+  getProgramming() {
+    this.programmingService.getProgrammingId(this.programmingId).subscribe({
+      next: resp => {
+        this.programming = resp;
+      },
+    });
   }
 }
