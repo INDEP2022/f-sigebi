@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
@@ -17,6 +17,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class AddressOriginFormComponent implements OnInit {
   showaddressOrigin: boolean = true;
+  @Input() ordServform: FormGroup = new FormGroup({});
   addressOriginForm: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder) {}
