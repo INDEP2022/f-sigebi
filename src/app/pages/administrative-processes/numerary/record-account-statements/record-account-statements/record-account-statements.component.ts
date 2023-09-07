@@ -257,7 +257,7 @@ export class RecordAccountStatementsComponent
     const params = paramsSubject.getValue();
 
     this.recordAccountStatementsAccountsService
-      .getById(this.codeBanco, params)
+      .getById(this.bankCode, params)
       .subscribe({
         next: response => {
           response.data.map(item => {
@@ -596,7 +596,8 @@ export class RecordAccountStatementsComponent
       this.accountMovementService.getDataBank(params__).subscribe({
         next: response => {
           let result = response.data.map(item => {
-            item['bankAndNumber'] = item.cve_banco + ' - ' + item.nombre;
+            item['bankAndNumber'] =
+              item.cve_cuenta + ' - ' + item.cve_banco + ' - ' + item.nombre;
             this.itemSelected = item.cve_banco;
             this.accouncveAccount = item.cve_cuenta;
           });
