@@ -1874,8 +1874,7 @@ export class PerformProgrammingFormComponent
             status: 'EN_TRANSPORTABLE',
           };
 
-          console.log('formData', formData);
-          /*this.massiveGoodService.createProgGoodMassive(formData).subscribe({
+          this.massiveGoodService.createProgGoodMassive(formData).subscribe({
             next: response => {
               this.params
                 .pipe(takeUntil(this.$unSubscribe))
@@ -1891,7 +1890,7 @@ export class PerformProgrammingFormComponent
               );
             },
             error: error => {},
-          }); */
+          });
         }
       });
     }
@@ -1962,9 +1961,7 @@ export class PerformProgrammingFormComponent
           next: response => {
             resolve(true);
           },
-          error: error => {
-            console.log('error', error);
-          },
+          error: error => {},
         });
       });
     });
@@ -2637,9 +2634,8 @@ export class PerformProgrammingFormComponent
         this.goodsTranportables.remove(item);
         const backInfoGood = await this.removeStatusGood(item);
         if (backInfoGood) {
-          console.log('backInfoGood', backInfoGood);
           const info = await this.createHistGoodRemove(item);
-          console.log('createHistGoodRemove', info);
+
           if (info) {
             const formData: Object = {
               programmingId: this.idProgramming,
@@ -2678,12 +2674,9 @@ export class PerformProgrammingFormComponent
 
       this.historyGoodService.create(historyGood).subscribe({
         next: response => {
-          console.log('Historico eliminado', response);
           resolve(true);
         },
-        error: error => {
-          console.log('error', error);
-        },
+        error: error => {},
       });
     });
   }
@@ -3774,6 +3767,7 @@ export class PerformProgrammingFormComponent
         const data = {
           schedulesId: this.idProgramming,
           status: 'EN_TRANSPORTABLE',
+          user: this.userInfo.name,
         };
 
         this.programmingService.deleteGoodsMassive(data).subscribe({

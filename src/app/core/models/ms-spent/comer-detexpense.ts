@@ -17,6 +17,11 @@ export interface IComerDetExpense {
   reportDelit?: boolean;
 }
 
+export interface IMandContaDTO {
+  idGastos: number;
+  pnoenviasirsae: string;
+}
+
 interface ComerExpenses {
   expenseNumber: string;
   conceptNumber: string;
