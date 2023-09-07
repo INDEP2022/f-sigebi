@@ -316,10 +316,9 @@ export class RecordAccountStatementsComponent
     this.form.get('description').reset();
     this.totalItems = 0;
     this.cleandInfoDate();
-    const cveAccount = value.cveBank;
+    const cveAccount = value.cveAccount;
     this.accountDate = value.accountDate;
     this.searchDataAccount(cveAccount);
-
     // Obtener los valores correspondientes de la cuenta seleccionada
     const square = value?.square;
     const branch = value?.branch;
@@ -427,6 +426,7 @@ export class RecordAccountStatementsComponent
       .subscribe({
         next: (response: any) => {
           this.factasStatusCta = response;
+          console.log(this.factasStatusCta);
           this.loading = false;
         },
         error: (err: any) => {
@@ -438,10 +438,14 @@ export class RecordAccountStatementsComponent
   // Abre el modal de transferencia de saldos
   openModal(movimentAccount: IRecordAccountStatements) {
     console.log(movimentAccount);
+    const nombre = this.itemSelected;
+    const cveCta = this.accouncveAccount;
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       ignoreBackdropClick: false,
       movimentAccount: {
+        nombre,
+        cveCta,
         ...movimentAccount,
         factasStatusCta: this.factasStatusCta,
       },
