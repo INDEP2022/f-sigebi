@@ -793,6 +793,7 @@ export class RegistrationOfRequestsComponent
 
   //metodo que guarda la captura de solivitud
   public async confirmMethod() {
+    this.loader.load = true;
     const task1: any = await this.getOldTask();
     //
     console.log('public async confirmMethod()');
@@ -812,6 +813,7 @@ export class RegistrationOfRequestsComponent
           request.recordId
         );
         if (expUpdated) {
+          this.loader.load = false;
           /* abre modal del elegir usuario */
           this.cambiarTipoUsuario(this.requestData, task1);
         }
