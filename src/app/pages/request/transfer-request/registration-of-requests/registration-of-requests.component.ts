@@ -1408,6 +1408,7 @@ export class RegistrationOfRequestsComponent
         if (typeCommit === 'captura-solicitud') {
           console.log('captura-solicitud'); //DE CAPTURA DE SOLICITUD A VERIFICAR CUMPLIMIENTO
           this.confirmMethod();
+          await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO', 'ROP');
         }
         if (typeCommit === 'verificar-cumplimiento') {
           this.loader.load = true;
