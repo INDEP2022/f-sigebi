@@ -292,6 +292,14 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         text: 'Bien generado por pago parcial por siniestro',
         value: 'BBB',
       },
+      {
+        text: 'Bien cambiado a numerario por responsabilidad',
+        value: 'CNR',
+      },
+      {
+        text: 'Bien cambiado a numerario por enajenación de valores y divisas.',
+        value: 'CNE',
+      },
     ]);
     this.formGood.get('importSell').valueChanges.subscribe({
       next: value => {

@@ -419,7 +419,7 @@ export class RegionalAccountTransferenceComponent
   async getDataMail() {
     const { transferenceReport, delegation } = this.form.value;
     const data = {
-      pAffair: 'Déposito de Recursos para Devoluciones',
+      pAffair: 'Depósito de Recursos para Devoluciones',
       pMessage: '',
       pFor: '',
       pCc: '',
@@ -429,7 +429,7 @@ export class RegionalAccountTransferenceComponent
     return firstValueFrom(
       this.securityService.getIniEmail(data).pipe(
         catchError(error => {
-          this.alert('error', 'Error', error.error.message);
+          this.alert('warning', 'Atención', error.error.message);
           return of(null);
         }),
         map(resp => resp)
@@ -756,7 +756,7 @@ export class RegionalAccountTransferenceComponent
         this.form.get('cveCurrency').patchValue(data.cveCurrency);
       },
       error: err => {
-        this.alert('error', 'Error', err.error.message);
+        this.alert('warning', 'Atención', err.error.message);
       },
     });
   }
@@ -783,8 +783,8 @@ export class RegionalAccountTransferenceComponent
         if (err.status == 400) {
           this.alert(
             'warning',
-            'Este bien no se encuentra en una solicitud de numerario',
-            ''
+            'Atención',
+            'Este bien no se encuentra en una solicitud de numerario'
           );
         } else {
           this.alert('error', 'Error', err.error.message);

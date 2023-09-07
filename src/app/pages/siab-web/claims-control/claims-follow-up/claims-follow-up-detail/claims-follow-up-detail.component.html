@@ -23,7 +23,9 @@
             label="Descripción"
             [control]="claimsFollowUpDetailForm.get('description')">
             <textarea
-              class="form-control pt-4"
+              class="form-control"
+              rows="2"
+              type="text"
               formControlName="description"
               readonly></textarea>
           </form-field>
@@ -104,7 +106,17 @@
               type="file"
               accept="application/pdf"
               formControlName="docOfficeMailIn"
-              (change)="chargeFileDocOfficeMailIn($event)" />
+              (change)="chargeFileDocOfficeMailIn($event)"
+              id="botonFileReal"
+              style="display: none" />
+            <input
+              type="button"
+              class="file"
+              value="Seleccionar archivo"
+              onclick="document.getElementById('botonFileReal').click();" />
+            <span id="filePlaceholder" class="ellipsis">
+              <span>Sin archivo seleccionado</span>
+            </span>
           </form-field>
         </div>
         <div class="col-md-5 margin-input">
@@ -142,8 +154,10 @@
             label="Detalle del Bien o las Partes Afectadas"
             [control]="claimsFollowUpDetailForm.get('detGoodoAffectedIn')">
             <textarea
-              class="form-control pt-4"
-              formControlName="detGoodoAffectedIn"></textarea>
+              class="form-control"
+              pt-5s="2"
+              formControlName="detGoodoAffectedIn"
+              style="margin-top: 2%"></textarea>
           </form-field>
         </div>
         <div class="col-md-4 pt-4">
@@ -215,10 +229,32 @@
               type="file"
               accept="application/pdf"
               formControlName="docLetterRelcamationIn"
-              (change)="chargeFileLetterClaimIn($event)" />
+              (change)="chargeFileLetterClaimIn($event)"
+              id="botonFileReal"
+              style="display: none" />
+            <input
+              type="button"
+              class="file"
+              value="Seleccionar archivo"
+              onclick="document.getElementById('botonFileReal').click();" />
+            <span id="filePlaceholder1" class="ellipsis">
+              <span>Sin archivo seleccionado</span>
+            </span>
           </form-field>
         </div>
-        <div class="col-md-5 pt-4">
+        <div class="col-md-5 margin-input">
+          <form-field
+            [control]="claimsFollowUpDetailForm.get('letterClaimIn')"
+            label="Fecha Carta Reclamación">
+            <input
+              type="text"
+              formControlName="letterClaimIn"
+              class="form-control"
+              bsDatepicker
+              [bsConfig]="{ adaptivePosition: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-5 margin-input">
           <form-field
             label="Monto Indemnizado"
             [control]="claimsFollowUpDetailForm.get('amountIndemnizedIn')">
@@ -243,7 +279,17 @@
               type="file"
               accept="application/pdf"
               formControlName="docOfficeMinConcluIn"
-              (change)="chargeFileDocOfficeMinConcluIn($event)" />
+              (change)="chargeFileDocOfficeMinConcluIn($event)"
+              id="botonFileReal"
+              style="display: none" />
+            <input
+              type="button"
+              class="file"
+              value="Seleccionar archivo"
+              onclick="document.getElementById('botonFileReal').click();" />
+            <span id="filePlaceholder2" class="ellipsis">
+              <span>Sin archivo seleccionado</span>
+            </span>
           </form-field>
         </div>
         <div class="col-md-5 margin-input">
@@ -327,18 +373,6 @@
                 [bsConfig]="{ adaptivePosition: true }" />
             </form-field>
           </div>
-        </div>
-        <div class="col-md-6">
-          <form-field
-            [control]="claimsFollowUpDetailForm.get('letterClaimIn')"
-            label="Fecha Carta Reclamación">
-            <input
-              type="text"
-              formControlName="letterClaimIn"
-              class="form-control"
-              bsDatepicker
-              [bsConfig]="{ adaptivePosition: true }" />
-          </form-field>
         </div>
       </div>
       <div class="row"></div>

@@ -9,6 +9,7 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
+import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
@@ -31,6 +32,7 @@ import { CustomdbclickComponent } from '../customdbclick/customdbclick.component
 import { CustomdbclickdepositComponent } from '../customdbclickdeposit/customdbclickdeposit.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
 import { CustomMultiSelectFilterComponent } from './filterAccount';
+import { CustomDateFilterComponent_ } from './searchDate';
 
 @Component({
   selector: 'app-deposit-tokens',
@@ -87,6 +89,8 @@ export class DepositTokensComponent
   validExcel: boolean = true;
   settings2 = { ...this.settings };
   loadingBtn2: boolean = false;
+  value: number = 0;
+  @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -123,27 +127,26 @@ export class DepositTokensComponent
         },
         accountkey: {
           title: 'Cuenta',
-          // type: 'string',
           filter: {
             type: 'custom',
             component: CustomMultiSelectFilterComponent,
             config: {
-              options: this.getUniqueValues('cveAccount'),
+              options: this.getUniqueValues('accountkey'),
             },
           },
           valuePrepareFunction: (value: any) => {
+            console.log('value', value);
             return value != null ? value : '';
           },
           filterFunction(cell?: any, search?: string): boolean {
             let column = cell;
-            if (
-              column?.toUpperCase() >= search.toUpperCase() ||
-              search === ''
-            ) {
-              return true;
-            } else {
-              return false;
-            }
+            console.log(column, '==', search);
+            // if (column?.toUpperCase() >= search.toUpperCase() || search === ''
+            // ) {
+            return true;
+            // } else {
+            //   return false;
+            // }
           },
           sort: false,
         },
@@ -152,7 +155,7 @@ export class DepositTokensComponent
           // type: 'string',
           sort: false,
           // width: '13%',
-          type: 'html',
+          // type: 'html',
           valuePrepareFunction: (text: string) => {
             return `${
               text ? text.split('T')[0].split('-').reverse().join('/') : ''
@@ -160,8 +163,18 @@ export class DepositTokensComponent
           },
           filter: {
             type: 'custom',
-            component: CustomDateFilterComponent,
+            component: CustomDateFilterComponent_,
             // component: CustomDateFilterComponent,
+          },
+          filterFunction(cell?: any, search?: string): boolean {
+            let column = cell;
+            console.log(column, '==', search);
+            // if (column?.toUpperCase() >= search.toUpperCase() || search === ''
+            // ) {
+            return true;
+            // } else {
+            //   return false;
+            // }
           },
         },
         calculationInterestsDate_: {
@@ -171,27 +184,10 @@ export class DepositTokensComponent
           // width: '13%',
           type: 'html',
           valuePrepareFunction: (text: string) => {
-            console.log('text', text);
+            // console.log('text', text);
             return `${
               text ? text.split('T')[0].split('-').reverse().join('/') : ''
             }`;
-
-            // let date = new Date((Number(text) - 25569) * 86400 * 1000);
-            // let fechaString = date.toString();
-
-            // let fecha = new Date(fechaString);
-
-            // let dia = fecha.getDate();
-            // let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
-            // let año = fecha.getFullYear();
-
-            // // Asegurarse de que el día y el mes tengan dos dígitos
-            // let diaString = dia < 10 ? '0' + dia : dia;
-            // let mesString = mes < 10 ? '0' + mes : mes;
-
-            // let fechaFormateada = `${diaString}/${mesString}/${año}`;
-
-            // return `${fechaFormateada}`;
           },
           filter: {
             type: 'custom',
@@ -221,7 +217,7 @@ export class DepositTokensComponent
           },
         },
         goodnumber: {
-          title: 'Bien',
+          title: 'No. Bien',
           type: 'custom',
           sort: false,
           renderComponent: CustomdbclickComponent,
@@ -423,7 +419,7 @@ export class DepositTokensComponent
           sort: false,
         },
         no_bien: {
-          title: 'Bien',
+          title: 'No. Bien',
           type: 'string',
           sort: false,
           // renderComponent: CustomdbclickComponent,
@@ -574,6 +570,11 @@ export class DepositTokensComponent
 
   getAccount() {
     this.loading = true;
+
+    this.data1.load([]);
+    this.data1.refresh();
+    this.totalItems = 0;
+
     let params: any = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
@@ -581,42 +582,42 @@ export class DepositTokensComponent
 
     console.log('params1', params['filter.motionDate_']);
     // CON RANGE //
-    // if (params['filter.motionDate_']) {
-    //   const fechas = params['filter.motionDate_'].split(',')
-    //   console.log("fechas", fechas)
-    //   var fecha1 = new Date(fechas[0]);
-    //   var fecha2 = new Date(fechas[1]);
-
-    //   // Obtener los componentes de la fecha (año, mes y día)
-    //   var ano1 = fecha1.getFullYear();
-    //   var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
-    //   var dia1 = ('0' + fecha1.getDate()).slice(-2);
-
-    //   // Obtener los componentes de la fecha (año, mes y día)
-    //   var ano2 = fecha2.getFullYear();
-    //   var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
-    //   var dia2 = ('0' + fecha2.getDate()).slice(-2);
-
-    //   // Crear la cadena de fecha en el formato yyyy-mm-dd
-    //   var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
-    //   var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
-    //   params['motionDate'] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
-    //   delete params['filter.motionDate_'];
-    // }
-    // SIN RANGE //
     if (params['filter.motionDate_']) {
-      var fecha = new Date(params['filter.motionDate_']);
+      const fechas = params['filter.motionDate_'].split(',');
+      console.log('fechas', fechas);
+      var fecha1 = new Date(fechas[0]);
+      var fecha2 = new Date(fechas[1]);
 
       // Obtener los componentes de la fecha (año, mes y día)
-      var año = fecha.getFullYear();
-      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
-      var día = ('0' + fecha.getDate()).slice(-2);
+      var ano1 = fecha1.getFullYear();
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var ano2 = fecha2.getFullYear();
+      var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia2 = ('0' + fecha2.getDate()).slice(-2);
 
       // Crear la cadena de fecha en el formato yyyy-mm-dd
-      var fechaFormateada = año + '-' + mes + '-' + día;
-      params['motionDate'] = fechaFormateada;
+      var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+      var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
+      params['motiondate'] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
       delete params['filter.motionDate_'];
     }
+    // SIN RANGE //
+    // if (params['filter.motionDate_']) {
+    //   var fecha = new Date(params['filter.motionDate_']);
+
+    //   // Obtener los componentes de la fecha (año, mes y día)
+    //   var año = fecha.getFullYear();
+    //   var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+    //   var día = ('0' + fecha.getDate()).slice(-2);
+
+    //   // Crear la cadena de fecha en el formato yyyy-mm-dd
+    //   var fechaFormateada = año + '-' + mes + '-' + día;
+    //   params['motionDate'] = fechaFormateada;
+    //   delete params['filter.motionDate_'];
+    // }
     if (params['filter.deposit']) {
       params['deposit'] = params['filter.deposit'];
       delete params['filter.deposit'];
@@ -700,14 +701,17 @@ export class DepositTokensComponent
                 detailsBank.banco.name
               : null;
           });
-
+          console.log('Nop');
           Promise.all(result).then((resp: any) => {
+            console.log('Sip');
             this.showPagination = true;
-            this.totalItems = response.count;
+
             this.data1.load(response.data);
             this.data1.refresh();
+
+            this.totalItems = response.count;
             console.log('AQUI', response);
-            console.log('this.data1 ', this.data1);
+            // console.log('this.data1 ', this.data1);
             this.validExcel = false;
             this.loading = false;
           });
@@ -871,6 +875,8 @@ export class DepositTokensComponent
 
   async actualizarFunc() {
     this.showPagination = true;
+    // await this.clearSubheaderFields();
+
     this.paramsList.getValue().limit = 10;
     this.paramsList.getValue().page = 1;
     this.paramsList2.getValue().limit = 10;
@@ -888,6 +894,12 @@ export class DepositTokensComponent
     }
   }
 
+  async clearSubheaderFields() {
+    const subheaderFields: any = this.table.grid.source;
+    const filterConf = subheaderFields.filterConf;
+    filterConf.filters = [];
+    this.columnFilters = [];
+  }
   async importar() {}
 
   onFileChange(event: Event) {
@@ -1107,8 +1119,13 @@ export class DepositTokensComponent
       delete params['filter.bank'];
     }
 
+    // if (params['filter.accountkey']) {
+    //   params['accountkey'] = params['filter.accountkey'];
+    //   delete params['filter.accountkey'];
+    // }
+
     if (params['filter.accountkey']) {
-      params['accountkey'] = params['filter.accountkey'];
+      params['accountkey'] = `$in:${params['filter.accountkey']}`;
       delete params['filter.accountkey'];
     }
 
@@ -1116,20 +1133,41 @@ export class DepositTokensComponent
       params['numberMotion'] = params['filter.motionnumber'];
       delete params['filter.motionnumber'];
     }
-
     if (params['filter.motionDate_']) {
-      var fecha = new Date(params['filter.motionDate_']);
+      const fechas = params['filter.motionDate_'].split(',');
+      console.log('fechas', fechas);
+      var fecha1 = new Date(fechas[0]);
+      var fecha2 = new Date(fechas[1]);
 
       // Obtener los componentes de la fecha (año, mes y día)
-      var año = fecha.getFullYear();
-      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
-      var día = ('0' + fecha.getDate()).slice(-2);
+      var ano1 = fecha1.getFullYear();
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var ano2 = fecha2.getFullYear();
+      var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia2 = ('0' + fecha2.getDate()).slice(-2);
 
       // Crear la cadena de fecha en el formato yyyy-mm-dd
-      var fechaFormateada = año + '-' + mes + '-' + día;
-      params['motionDate'] = fechaFormateada;
+      var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+      var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
+      params['motiondate'] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
       delete params['filter.motionDate_'];
     }
+    // if (params['filter.motionDate_']) {
+    //   var fecha = new Date(params['filter.motionDate_']);
+
+    //   // Obtener los componentes de la fecha (año, mes y día)
+    //   var año = fecha.getFullYear();
+    //   var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+    //   var día = ('0' + fecha.getDate()).slice(-2);
+
+    //   // Crear la cadena de fecha en el formato yyyy-mm-dd
+    //   var fechaFormateada = año + '-' + mes + '-' + día;
+    //   params['motionDate'] = fechaFormateada;
+    //   delete params['filter.motionDate_'];
+    // }
     if (params['filter.deposit']) {
       params['deposit'] = params['filter.deposit'];
       delete params['filter.deposit'];

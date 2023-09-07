@@ -16,7 +16,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './claims-follow-up-detail.component.html',
   styles: [
     `
-      input[type='file']::file-selector-button {
+      .file {
         margin-right: 20px;
         border: none;
         background: #9d2449;
@@ -26,7 +26,22 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
         cursor: pointer;
         /* transition: background.2s ease-in-out; */
       }
+      .ellipsis {
+        display: inline-block;
+        width: 200px; /* Ancho máximo del contenedor */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-top: 3%;
+      }
 
+      .ellipsis span {
+        display: inline-block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
       /* input[type = file]::file-selector-button:hover {
         background: #9D2449;
       } */
@@ -138,6 +153,20 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
         this.claimsFollowUpDetailForm.controls['sinisterIn'].setValue(
           this.siniester.siniestro
         );
+      }
+      const span = document.getElementById('filePlaceholder');
+      const spans = document.getElementById('filePlaceholder1');
+      const spanss = document.getElementById('filePlaceholder2');
+
+      if (this.siniester.docoficiocorreo) {
+        // Si se selecciona un archivo, muestra el nombre del archivo
+        span.textContent = 'Remplazar archivo';
+      }
+      if (this.siniester.doccartareclamacion) {
+        spans.textContent = 'Remplazar archivo';
+      }
+      if (this.siniester.docoficiominutaconclusion) {
+        spanss.textContent = 'Remplazar archivo';
       }
       // this.claimsFollowUpDetailForm.controls['docOfficeMailIn'].setValue(this.siniester.docoficiocorreo);
       if (this.siniester.polizaafectada) {
@@ -650,15 +679,45 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
   }
   chargeFileLetterClaimIn(event: any) {
     console.log(event.target.files[0]);
+    const input = event.target;
     this.fileLetterClaimIn = event.target.files[0];
+    const span = document.getElementById('filePlaceholder1');
+
+    if (input.files.length > 0) {
+      // Si se selecciona un archivo, muestra el nombre del archivo
+      span.textContent = input.files[0].name;
+    } else {
+      // Si no se selecciona ningún archivo, muestra "No hay archivos"
+      span.textContent = 'Seleccionar archivo';
+    }
   }
   chargeFileDocOfficeMinConcluIn(event: any) {
     console.log(event.target.files[0]);
+    const input = event.target;
     this.fileDocOfficeMinConcluIn = event.target.files[0];
+    const span = document.getElementById('filePlaceholder2');
+
+    if (input.files.length > 0) {
+      // Si se selecciona un archivo, muestra el nombre del archivo
+      span.textContent = input.files[0].name;
+    } else {
+      // Si no se selecciona ningún archivo, muestra "No hay archivos"
+      span.textContent = 'Seleccionar archivo';
+    }
   }
   chargeFileDocOfficeMailIn(event: any) {
     console.log(event.target.files[0]);
+    const input = event.target;
     this.fileDocOfficeMailIn = event.target.files[0];
+    const span = document.getElementById('filePlaceholder');
+
+    if (input.files.length > 0) {
+      // Si se selecciona un archivo, muestra el nombre del archivo
+      span.textContent = input.files[0].name;
+    } else {
+      // Si no se selecciona ningún archivo, muestra "No hay archivos"
+      span.textContent = 'Seleccionar archivo';
+    }
   }
   chargeFileDocAmountIndemnizedIn(event: any) {
     console.log(event.target.files[0]);

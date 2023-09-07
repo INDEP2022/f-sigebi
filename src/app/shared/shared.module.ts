@@ -36,6 +36,7 @@ import { MaxLengthDirective } from './directives/maxlength.directive';
 import { NumbersFilterDirective } from './directives/numbers-filter.directive';
 import { PermissionsDirective } from './directives/permissions.directive';
 /*Redux NgRX Global Vars Store*/
+import { NgxCurrencyModule } from 'ngx-currency';
 import { CustomSelectWidthLoading } from '../@standalone/shared-forms/custom-select-loading/custom-select-loading.component';
 import { CustomDateFilterComponent } from '../@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { CustomDateDayFilterComponent } from '../@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
@@ -46,6 +47,17 @@ import { DatePickerDirective } from './directives/date-picker.directive';
 import { UppercaseDirective } from './directives/uppercase.directive';
 import { GlobalVarsModule } from './global-vars/global-vars.module';
 
+export const customCurrencyMaskConfig = {
+  align: 'right',
+  allowNegative: true,
+  allowZero: false,
+  decimal: '.',
+  precision: 2,
+  prefix: '',
+  suffix: '',
+  thousands: ',',
+  nullable: true,
+};
 @NgModule({
   declarations: [
     ColumnsSelectComponent,
@@ -90,6 +102,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     BsDatepickerModule.forRoot(),
     NgScrollbarModule,
     GlobalVarsModule,
+    NgxCurrencyModule.forRoot(customCurrencyMaskConfig),
   ],
   exports: [
     ColumnsSelectComponent,
@@ -130,6 +143,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     CustomDateDayFilterComponent,
     ButtonColumnComponent,
     CustomFilterComponent,
+    NgxCurrencyModule,
   ],
   providers: [{ provide: BsDatepickerConfig, useFactory: getDatepickerConfig }],
 })

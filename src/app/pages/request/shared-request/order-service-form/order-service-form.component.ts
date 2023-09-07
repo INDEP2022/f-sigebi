@@ -33,11 +33,11 @@ export class OrderServiceFormComponent implements OnInit, OnChanges {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.prepareForm();
+    //this.prepareForm();
     console.log(this.op);
   }
 
-  prepareForm() {
+  /*prepareForm() {
     this.ordServform = this.fb.group({
       reasonsNotPerform: [null],
       transportationZone: [null],
@@ -45,7 +45,7 @@ export class OrderServiceFormComponent implements OnInit, OnChanges {
       folioTlp: [null],
       eyeVisit: [null],
     });
-  }
+  }*/
 
   ngOnChanges(changes: SimpleChanges): void {
     this.orderService = this.ordServform.getRawValue();
