@@ -32,7 +32,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
     },
   },
   'RSPTAQUERY.no_bien': {
-    title: 'Bien',
+    title: 'No. Bien',
     type: 'number',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
