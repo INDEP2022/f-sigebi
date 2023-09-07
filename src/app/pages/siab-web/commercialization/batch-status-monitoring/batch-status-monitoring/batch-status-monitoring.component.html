@@ -8,7 +8,7 @@
     <div class="ch-content">
       <h5 class="title">Filtros de b&uacute;squeda</h5>
     </div>
-    <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form class="form-material" [formGroup]="form">
       <div class="row pt-3">
         <div class="col-md-2">
           <form-field [control]="form.get('typeGood')" label="Tipo Bien">
@@ -43,19 +43,15 @@
               formControlName="allotment" />
           </form-field>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-4">
           <div class="justify-content-center">
             <button
-              class="btn btn-primary btn-sm active"
+              class="btn btn-primary btn-sm active m-2"
               [disabled]="!form.valid"
               (click)="show = !show">
               Consultar
               <i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
-          </div>
-        </div>
-        <div class="col-md-1">
-          <div class="justify-content-center">
             <button class="btn btn-danger btn-sm active">
               Limpiar <i class="fas fa-eraser"> </i>
             </button>
@@ -74,22 +70,78 @@
           </form-radio>
         </div>
         <div class="col-md-2">
-          <form-radio label="Con archivo de texto">
+          <form-radio label="Con archivo de Excel">
             <input type="radio" formControlName="radio" value="2" />
           </form-radio>
         </div>
-        <div class="col-md-3">
-          <input type="file" (change)="chargeFile($event.target)" />
+        <div class="row" *ngIf="form2.controls['radio'].value === '2'">
+          <div class="ch-content">
+            <h5 class="title">B&uacute;squeda por Excel</h5>
+          </div>
+          <div class="row pt-3">
+            <div class="col-md-12">
+              <div class="justify-content-center">
+                <button
+                  class="btn btn-success btn-sm ml-2"
+                  type="button"
+                  (click)="file.click()">
+                  Abrir archivo Excel / CSV
+                </button>
+                <input
+                  type="file"
+                  name="file"
+                  #file
+                  class="d-none"
+                  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+                <button
+                  tooltip="Formato de Ejemplo"
+                  containerClass="tooltip-style"
+                  type="button"
+                  class="btn btn-info btn-sm active m-2 pointer">
+                  <i class="bi bi-question-circle"></i>
+                </button>
+                <button type="button" class="btn btn-primary active btn-sm m-2">
+                  Buscar Bienes
+                  <i class="bx bx-search-alt bx-sm float-icon"></i>
+                </button>
+                <button
+                  class="btn btn-danger btn-sm active m-2"
+                  [disabled]="!form.valid">
+                  Limpiar <i class="fas fa-eraser"> </i>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col-md-1">
-          <div class="justify-content-center">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              [disabled]="!form2.valid"
-              (click)="show2 = !show2">
-              Consultar
-            </button>
+        <div>
+          <div class="row" *ngIf="form2.controls['radio'].value === '1'">
+            <div class="ch-content">
+              <h5 class="title">B&uacute;squeda por bien&#58;</h5>
+            </div>
+            <div class="row pt-4">
+              <div class="col-md-2">
+                <form-field [control]="form2.get('onlyOne')" label="No. Bien">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="onlyOne" />
+                </form-field>
+              </div>
+              <div class="col-md-4">
+                <button
+                  type="button"
+                  class="btn btn-primary active btn-sm"
+                  [disabled]="!form.valid">
+                  Buscar
+                  <i class="bx bx-search-alt bx-sm float-icon"></i>
+                </button>
+                <button
+                  class="btn btn-danger btn-sm active m-2"
+                  [disabled]="!form.valid">
+                  Limpiar <i class="fas fa-eraser"> </i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
