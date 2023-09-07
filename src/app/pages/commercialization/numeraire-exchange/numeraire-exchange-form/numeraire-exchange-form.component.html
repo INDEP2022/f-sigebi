@@ -443,24 +443,37 @@
           <hr class="mw-98" />
           <div [formGroup]="formBlkControl" class="row mb-0 d-block">
             <div class="row d-flex justify-content-center align-content-center">
-              <div class="col-sm-12 col-md-6 mh-80">
+              <div class="col-sm-12 col-md-12 mh-80">
                 <!-- <i
                   class="bx bx-list-ul text-success me-2 d-inline float-icon"></i> -->
                 <h5 class="font-size-14 mb-2 d-inline">Banco</h5>
                 <div class="form-group">
-                  <ng-custom-select
-                    placeholder="Buscador de bancos"
-                    class="form-control"
+                  <ng-custom-select-loading
+                    [form]="formBlkControl"
+                    [updateValues]="true"
                     paramSearch="filter.nombre"
                     formControlName="tiNewBank"
-                    value="cve_cuenta"
+                    secondParamSearch="filter.no_cuenta"
+                    value="cve_banco"
+                    bindLabel="nombre"
+                    prefixSearch="$ilike"
                     path="accountmvmnt/api/v1/aplication/get-data-bank"
+                    [labelTemplate]="conceptLabel"
+                    [optionTemplate]="conceptOption"
                     (valueChange)="selectAccount($event)">
-                    <ng-template let-item
-                      >#CTA:{{ item.no_cuenta }} -- CVE BAN:
-                      {{ item.cve_banco }} - {{ item.nombre }}
-                    </ng-template>
-                  </ng-custom-select>
+                    <!-- <ng-template let-item>#CTA:{{ item.no_cuenta }} -- {{ item.nombre }}
+                    </ng-template> -->
+                  </ng-custom-select-loading>
+                  <ng-template #conceptLabel let-item="item">
+                    <div [title]="item.no_cuenta + '-' + item.nombre">
+                      #CTA:{{ item.no_cuenta }} - {{ item.nombre }}
+                    </div>
+                  </ng-template>
+                  <ng-template #conceptOption let-item="item">
+                    <div [title]="item.no_cuenta + '-' + item.nombre">
+                      #CTA:{{ item.no_cuenta }} - {{ item.nombre }}
+                    </div>
+                  </ng-template>
                 </div>
               </div>
               <ng-container>
@@ -472,7 +485,7 @@
                     {{ formBlkControl.value.diNewBank }}
                   </p>
                 </div>
-                <div class="col-sm-6 col-md-6">
+                <div class="col-sm-6 col-md-3">
                   <!-- <i
                     class="bx bx-detail text-success me-2 d-inline float-icon"></i> -->
                   <h5 class="font-size-14 mb-2 d-inline">Cuenta</h5>
@@ -480,7 +493,7 @@
                     {{ formBlkControl.value.diNewAccount }}
                   </p>
                 </div>
-                <div class="col-sm-6 col-md-6">
+                <div class="col-sm-6 col-md-3">
                   <!-- <i
                     class="bx bx-detail text-success me-2 d-inline float-icon"></i> -->
                   <h5 class="font-size-14 mb-2 d-inline">Moneda</h5>
