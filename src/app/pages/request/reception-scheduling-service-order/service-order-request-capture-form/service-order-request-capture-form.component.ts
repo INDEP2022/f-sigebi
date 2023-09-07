@@ -8,6 +8,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
+import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -45,11 +46,12 @@ export class ServiceOrderRequestCaptureFormComponent
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
-  private orderService = inject(orderentryService);
+  private orderEntryService = inject(orderentryService);
   private authService = inject(AuthService);
   private activeRouter = inject(ActivatedRoute);
   private modalService = inject(BsModalService);
   private programmingService = inject(ProgrammingRequestService);
+  private orderService = inject(OrderServiceService);
 
   constructor() {
     super();
@@ -184,31 +186,30 @@ export class ServiceOrderRequestCaptureFormComponent
   }
 
   getOrderService() {
-    /**
-     * otener el orden de servicio por el programmingId
-     */
-    const data: any = {
-      serviceOrderFolio: 'METROPOLITANA-SAT',
-      folioReportImplementation: 'METROPOLITANA-SAT',
-      shiftDate: '2018/01/25',
-      shiftUser: 'USUARIO DE PRUEBA',
-      contractNumber: '124',
-      transportationZone: 'A',
-      folioTlp: '',
-      eyeVisit: '',
-      reasonsNotPerform: '',
-      userContainers: '',
-      id: 1,
-    };
-    this.orderServiceId = data.id;
-    this.ordServform.patchValue(data);
+    const params = new ListParams();
+    params['filter.programmingId'] = `$eq:${this.programmingId}`;
+    this.orderService
+      .getAllOrderService(params)
+      .pipe(
+        catchError((e: any) => {
+          if (e.status == 400) return of({ data: [], count: 0 });
+          throw e;
+        })
+      )
+      .subscribe({
+        next: (resp: any) => {
+          this.orderServiceId = resp.data[0].id;
+          this.ordServform.patchValue(resp.data[0]);
+          console.log(this.ordServform.value);
+        },
+      });
   }
 
   getOrderServiceProvided() {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
       params['filter.orderServiceId'] = `$eq:${this.orderServiceId}`;
-      this.orderService
+      this.orderEntryService
         .getAllOrderServicesProvided(params)
         .pipe(
           catchError((e: any) => {

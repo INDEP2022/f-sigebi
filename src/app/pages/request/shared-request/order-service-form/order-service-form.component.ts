@@ -48,6 +48,7 @@ export class OrderServiceFormComponent implements OnInit, OnChanges {
   }*/
 
   ngOnChanges(changes: SimpleChanges): void {
+    debugger;
     this.orderService = this.ordServform.getRawValue();
     console.log('showForm', this.showForm);
   }

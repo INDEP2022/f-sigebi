@@ -233,7 +233,7 @@ export class RegistrationOfRequestsComponent
       ], //cargo remitente
       phoneOfOwner: [
         null,
-        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(13)],
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(10)],
       ], //telefono remitente
       emailOfOwner: [
         null,
@@ -819,6 +819,7 @@ export class RegistrationOfRequestsComponent
         }
       }
     }
+    this.loader.load = false;
   }
 
   cambiarTipoUsuario(request: any, task1: any) {
