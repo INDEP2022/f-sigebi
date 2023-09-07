@@ -1730,7 +1730,7 @@ export class ResquestNumberingChangeComponent
       return;
     }
   }
-
+  disabledSave: boolean = true;
   guardarSolicitud() {
     // this.loading = true;
     // Obtener la fecha actual
@@ -1768,9 +1768,26 @@ export class ResquestNumberingChangeComponent
             .get('applicationChangeCashNumber')
             .setValue(response.applicationChangeNumeraryNumber);
           this.successAlert();
+          const readonlyFields = [
+            'dateRequestChangeNumerary',
+            'applicationChangeCashNumber',
+            'userRequestChangeNumber',
+            'postUserRequestCamnum',
+            'delegationRequestcamnum',
+            'procedureProposal',
+            'authorizeUser',
+            'authorizePostUser',
+            'authorizeDelegation',
+            'authorizeDate',
+          ];
+          readonlyFields.forEach(fieldName => {
+            this.formaplicationData.get(fieldName).disable();
+          });
           this.loading = false;
+          this.disabledSave = false;
         },
         error: err => {
+          this.disabledSave = true;
           this.loading = false;
         },
       });
@@ -1847,6 +1864,7 @@ export class ResquestNumberingChangeComponent
     this.idSolicitud = null;
     this.data1.load([]);
     this.data1.refresh();
+    this.disabledSave = true;
   }
   //data3
   cleanFilter() {

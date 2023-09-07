@@ -939,7 +939,7 @@ export class VerifyComplianceTabComponent
               body['goodId'] = this.goodsSelected[0].goodId;
               body.processStatus = 'VERIFICAR_CUMPLIMIENTO';
               body.goodStatus = 'VERIFICAR_CUMPLIMIENTO';
-              body.status = null;
+              body.status = 'ROP';
               await this.updateGoods(body);
             } else {
               body['id'] = this.goodsSelected[0].id;
@@ -949,11 +949,11 @@ export class VerifyComplianceTabComponent
                   ? 'ACLARADO'
                   : 'VERIFICAR_CUMPLIMIENTO';
               body.processStatus = 'VERIFICAR_CUMPLIMIENTO';
-              body.status = null;
+              body.status = 'ROP';
               await this.updateGoods(body);
             }
             //crea un historico del status del bien actualizado
-            const history = await this.createHistoricGood('ROP', body.goodId);
+            //const history = await this.createHistoricGood('ROP', body.goodId);
 
             this.updateTable(body.goodStatus, body.processStatus);
           },

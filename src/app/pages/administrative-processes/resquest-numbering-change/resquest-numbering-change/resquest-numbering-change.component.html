@@ -331,8 +331,9 @@
                 class="btn btn-primary btn-sm active"
                 (click)="guardarSolicitud()"
                 [disabled]="
-                  !formaplicationData.valid &&
-                  formaplicationData.get('applicationChangeCashNumber')
+                  (!formaplicationData.valid &&
+                    formaplicationData.get('applicationChangeCashNumber')) ||
+                  !disabledSave
                 "
                 style="margin: 1vh">
                 Guardar
