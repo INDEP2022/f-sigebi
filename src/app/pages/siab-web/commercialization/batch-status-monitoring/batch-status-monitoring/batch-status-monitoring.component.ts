@@ -55,6 +55,7 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
   private prepareForm2() {
     this.form2 = this.fb.group({
       radio: [null, [Validators.required]],
+      onlyOne: [null, [Validators.required]],
     });
   }
 
