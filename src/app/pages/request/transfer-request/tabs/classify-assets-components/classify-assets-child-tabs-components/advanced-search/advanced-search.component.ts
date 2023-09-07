@@ -126,7 +126,7 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
       error: error => {
         console.log(error);
         this.onLoadToast(
-          'info',
+          'warning',
           'Búsqueda Avanzada',
           'No se encontraron registros'
         );
