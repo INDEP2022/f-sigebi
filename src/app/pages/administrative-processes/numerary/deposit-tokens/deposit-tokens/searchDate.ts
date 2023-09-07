@@ -6,15 +6,21 @@ import { DefaultFilter } from 'ng2-smart-table';
     <div class="input-group" style="margin-bottom: 0px;">
       <input
         type="text"
-        [placeholder]="placeholderValue"
         class="form-control"
-        bsDatepicker
         [ngModel]="query"
-        [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY' }"
+        bsDaterangepicker
+        [bsConfig]="{
+          dateInputFormat: 'DD-MM-YYYY',
+          displayOneMonthRange: true
+        }"
         (ngModelChange)="onChange($event)"
+        [placeholder]="column.title"
         style="border-radius: 5px;padding: 8px;border: 1px solid #ccc;" />
       <span class="input-group-addon" *ngIf="this.query">
-        <i class="fa fa-broom" (click)="clearDate($event)"></i>
+        <i
+          class="fa fa-trash red-icon"
+          (click)="clearDate($event)"
+          style="color: #9D2449"></i>
       </span>
     </div>
   `,
@@ -23,8 +29,7 @@ export class CustomDateFilterComponent_
   extends DefaultFilter
   implements OnChanges
 {
-  @Input() stringPlaceholder: string;
-  placeholderValue: string = 'Fecha...';
+  @Input() someInput: any;
   onChange(event: any): void {
     this.query = event;
     this.setFilter();

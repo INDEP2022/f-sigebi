@@ -53,26 +53,6 @@ export const REPORT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  DESC_TIPO: {
-    title: 'Desc Tipo',
-    type: 'string',
-    sort: false,
-  },
-  DESC_STIPO: {
-    title: 'Desc STipo',
-    type: 'string',
-    sort: false,
-  },
-  DESC_SSTIPO: {
-    title: 'Desc SSTipo',
-    type: 'string',
-    sort: false,
-  },
-  DESC_SSSTIPO: {
-    title: 'Desc SSSTipo',
-    type: 'string',
-    sort: false,
-  },
   status: {
     title: 'Estatus Bien',
     type: 'string',

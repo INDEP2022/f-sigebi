@@ -213,7 +213,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
       this.good.status = this.good.status === 'REJ' ? 'ADM' : 'REJ';
       const good: IGood = {
         id: Number(this.good.id),
-        goodId: Number(this.good.id),
+        goodId: Number(this.good.goodId),
         status: this.good.status,
       };
       this.goodServices.update(good).subscribe({
