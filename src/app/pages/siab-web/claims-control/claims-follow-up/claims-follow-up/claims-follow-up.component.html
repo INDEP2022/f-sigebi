@@ -15,36 +15,48 @@
   <div body>
     <form [formGroup]="claimsFollowUpForm" class="form-material">
       <div class="row margin-input">
-        <div class="col-md-3">
-          <form-field
-            label="No. Bien"
-            [control]="claimsFollowUpForm.get('numberGood')">
-            <input
-              class="form-control"
-              formControlName="numberGood"
-              type="number" />
-          </form-field>
+        <!-- <div class="col-md-3"> -->
+        <div style="display: flex; align-items: center">
+          <div class="col-md-3">
+            <form-field
+              label="No. Bien"
+              [control]="claimsFollowUpForm.get('numberGood')">
+              <input
+                class="form-control"
+                formControlName="numberGood"
+                type="number" />
+            </form-field>
+          </div>
+          <div class="col-md-6" style="display: flex">
+            <button
+              class="btn btn-primary btn-sm active m-3"
+              (click)="validGood()">
+              Buscar
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+            <div>
+              <button
+                class="btn btn-danger btn-sm active m-3"
+                (click)="clean()">
+                Limpiar
+                <i class="fas fa-eraser"> </i>
+              </button>
+            </div>
+          </div>
+          <div class="col-md-3" *ngIf="lawyers.length > 0">
+            <button
+              class="btn btn-success btn-sm active m-3"
+              (click)="export()">
+              Exportar a Excel
+              <i class="bx bx-download bx-sm float-icon"></i>
+            </button>
+          </div>
         </div>
-        <div class="col-md-3">
-          <button
-            class="btn btn-primary btn-sm active m-3"
-            (click)="validGood()">
-            Buscar
-            <i class="bx bx-search-alt bx-sm float-icon"></i>
-          </button>
-        </div>
-        <div class="col-md-3">
-          <button class="btn btn-danger btn-sm active m-3" (click)="clean()">
-            Limpiar
-            <i class="fas fa-eraser"> </i>
-          </button>
-        </div>
-        <div class="col-md-3" *ngIf="lawyers.length > 0">
-          <button class="btn btn-success btn-sm active m-3" (click)="export()">
-            Exportar a Excel
-            <i class="bx bx-download bx-sm float-icon"></i>
-          </button>
-        </div>
+
+        <!-- </div> -->
+        <!-- <div class="col-md-3">
+          
+        </div> -->
       </div>
       <div class="row margin-input">
         <div class="col-md-12">

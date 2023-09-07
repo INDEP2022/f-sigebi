@@ -321,6 +321,8 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     if (data.solnumId) {
       V_TMONEDA = await this.getCurrency(data.solnumId);
 
+      console.log(V_TMONEDA);
+
       const values: any = {
         P: () => 'MN',
         D: () => 'USD',
@@ -330,7 +332,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
         X: () => 'X',
       };
 
-      if (values[V_TMONEDA.trim()]() != 'X') {
+      if (V_TMONEDA && values[V_TMONEDA.trim()]() != 'X') {
         this.form.get('currency').patchValue(values[V_TMONEDA.trim()]());
       } else {
         this.form.get('currency').patchValue(null);
@@ -564,6 +566,11 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     const { currency, solnumId } = this.form.value;
     const exist = this.data1.findIndex(goodSol => goodSol.goodNumber == good);
 
+    if (!currency) {
+      this.alert('warning', 'Atención', 'Debe seleccionar un tipo de moneda ');
+      return;
+    }
+
     if (exist != -1) {
       this.alert('warning', 'Atención', `El Bien ${good} ya existe`, '');
       return;
@@ -582,7 +589,6 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
           return;
         }
 
-        console.log(resp);
         this.formGood.reset();
         let det: NumDetGoodsDetail = {
           allInterest: null,
