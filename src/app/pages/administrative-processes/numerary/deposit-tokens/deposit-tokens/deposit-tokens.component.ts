@@ -31,6 +31,7 @@ import { CustomdbclickComponent } from '../customdbclick/customdbclick.component
 import { CustomdbclickdepositComponent } from '../customdbclickdeposit/customdbclickdeposit.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
 import { CustomMultiSelectFilterComponent } from './filterAccount';
+import { CustomDateFilterComponent_ } from './searchDate';
 
 @Component({
   selector: 'app-deposit-tokens',
@@ -87,6 +88,7 @@ export class DepositTokensComponent
   validExcel: boolean = true;
   settings2 = { ...this.settings };
   loadingBtn2: boolean = false;
+  value: number = 0;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -160,7 +162,7 @@ export class DepositTokensComponent
           },
           filter: {
             type: 'custom',
-            component: CustomDateFilterComponent,
+            component: CustomDateFilterComponent_,
             // component: CustomDateFilterComponent,
           },
         },
@@ -175,23 +177,6 @@ export class DepositTokensComponent
             return `${
               text ? text.split('T')[0].split('-').reverse().join('/') : ''
             }`;
-
-            // let date = new Date((Number(text) - 25569) * 86400 * 1000);
-            // let fechaString = date.toString();
-
-            // let fecha = new Date(fechaString);
-
-            // let dia = fecha.getDate();
-            // let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
-            // let año = fecha.getFullYear();
-
-            // // Asegurarse de que el día y el mes tengan dos dígitos
-            // let diaString = dia < 10 ? '0' + dia : dia;
-            // let mesString = mes < 10 ? '0' + mes : mes;
-
-            // let fechaFormateada = `${diaString}/${mesString}/${año}`;
-
-            // return `${fechaFormateada}`;
           },
           filter: {
             type: 'custom',
@@ -221,7 +206,7 @@ export class DepositTokensComponent
           },
         },
         goodnumber: {
-          title: 'Bien',
+          title: 'No. Bien',
           type: 'custom',
           sort: false,
           renderComponent: CustomdbclickComponent,
@@ -423,7 +408,7 @@ export class DepositTokensComponent
           sort: false,
         },
         no_bien: {
-          title: 'Bien',
+          title: 'No. Bien',
           type: 'string',
           sort: false,
           // renderComponent: CustomdbclickComponent,
@@ -574,6 +559,11 @@ export class DepositTokensComponent
 
   getAccount() {
     this.loading = true;
+
+    this.data1.load([]);
+    this.data1.refresh();
+    this.totalItems = 0;
+
     let params: any = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
@@ -581,42 +571,42 @@ export class DepositTokensComponent
 
     console.log('params1', params['filter.motionDate_']);
     // CON RANGE //
-    // if (params['filter.motionDate_']) {
-    //   const fechas = params['filter.motionDate_'].split(',')
-    //   console.log("fechas", fechas)
-    //   var fecha1 = new Date(fechas[0]);
-    //   var fecha2 = new Date(fechas[1]);
-
-    //   // Obtener los componentes de la fecha (año, mes y día)
-    //   var ano1 = fecha1.getFullYear();
-    //   var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
-    //   var dia1 = ('0' + fecha1.getDate()).slice(-2);
-
-    //   // Obtener los componentes de la fecha (año, mes y día)
-    //   var ano2 = fecha2.getFullYear();
-    //   var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
-    //   var dia2 = ('0' + fecha2.getDate()).slice(-2);
-
-    //   // Crear la cadena de fecha en el formato yyyy-mm-dd
-    //   var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
-    //   var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
-    //   params['motionDate'] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
-    //   delete params['filter.motionDate_'];
-    // }
-    // SIN RANGE //
     if (params['filter.motionDate_']) {
-      var fecha = new Date(params['filter.motionDate_']);
+      const fechas = params['filter.motionDate_'].split(',');
+      console.log('fechas', fechas);
+      var fecha1 = new Date(fechas[0]);
+      var fecha2 = new Date(fechas[1]);
 
       // Obtener los componentes de la fecha (año, mes y día)
-      var año = fecha.getFullYear();
-      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
-      var día = ('0' + fecha.getDate()).slice(-2);
+      var ano1 = fecha1.getFullYear();
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var ano2 = fecha2.getFullYear();
+      var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia2 = ('0' + fecha2.getDate()).slice(-2);
 
       // Crear la cadena de fecha en el formato yyyy-mm-dd
-      var fechaFormateada = año + '-' + mes + '-' + día;
-      params['motionDate'] = fechaFormateada;
+      var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+      var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
+      params['motiondate'] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
       delete params['filter.motionDate_'];
     }
+    // SIN RANGE //
+    // if (params['filter.motionDate_']) {
+    //   var fecha = new Date(params['filter.motionDate_']);
+
+    //   // Obtener los componentes de la fecha (año, mes y día)
+    //   var año = fecha.getFullYear();
+    //   var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+    //   var día = ('0' + fecha.getDate()).slice(-2);
+
+    //   // Crear la cadena de fecha en el formato yyyy-mm-dd
+    //   var fechaFormateada = año + '-' + mes + '-' + día;
+    //   params['motionDate'] = fechaFormateada;
+    //   delete params['filter.motionDate_'];
+    // }
     if (params['filter.deposit']) {
       params['deposit'] = params['filter.deposit'];
       delete params['filter.deposit'];
@@ -700,14 +690,17 @@ export class DepositTokensComponent
                 detailsBank.banco.name
               : null;
           });
-
+          console.log('Nop');
           Promise.all(result).then((resp: any) => {
+            console.log('Sip');
             this.showPagination = true;
-            this.totalItems = response.count;
+
             this.data1.load(response.data);
             this.data1.refresh();
-            console.log('AQUI', response);
-            console.log('this.data1 ', this.data1);
+
+            this.totalItems = response.count;
+            // console.log('AQUI', response);
+            // console.log('this.data1 ', this.data1);
             this.validExcel = false;
             this.loading = false;
           });
@@ -1116,20 +1109,41 @@ export class DepositTokensComponent
       params['numberMotion'] = params['filter.motionnumber'];
       delete params['filter.motionnumber'];
     }
-
     if (params['filter.motionDate_']) {
-      var fecha = new Date(params['filter.motionDate_']);
+      const fechas = params['filter.motionDate_'].split(',');
+      console.log('fechas', fechas);
+      var fecha1 = new Date(fechas[0]);
+      var fecha2 = new Date(fechas[1]);
 
       // Obtener los componentes de la fecha (año, mes y día)
-      var año = fecha.getFullYear();
-      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
-      var día = ('0' + fecha.getDate()).slice(-2);
+      var ano1 = fecha1.getFullYear();
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var ano2 = fecha2.getFullYear();
+      var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia2 = ('0' + fecha2.getDate()).slice(-2);
 
       // Crear la cadena de fecha en el formato yyyy-mm-dd
-      var fechaFormateada = año + '-' + mes + '-' + día;
-      params['motionDate'] = fechaFormateada;
+      var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+      var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
+      params['motiondate'] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
       delete params['filter.motionDate_'];
     }
+    // if (params['filter.motionDate_']) {
+    //   var fecha = new Date(params['filter.motionDate_']);
+
+    //   // Obtener los componentes de la fecha (año, mes y día)
+    //   var año = fecha.getFullYear();
+    //   var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+    //   var día = ('0' + fecha.getDate()).slice(-2);
+
+    //   // Crear la cadena de fecha en el formato yyyy-mm-dd
+    //   var fechaFormateada = año + '-' + mes + '-' + día;
+    //   params['motionDate'] = fechaFormateada;
+    //   delete params['filter.motionDate_'];
+    // }
     if (params['filter.deposit']) {
       params['deposit'] = params['filter.deposit'];
       delete params['filter.deposit'];
