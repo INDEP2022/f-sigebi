@@ -90,10 +90,38 @@ export class ServiceOrderRequestCaptureFormComponent
       eyeVisit: [null, [Validators.pattern(STRING_PATTERN)]],
       reasonsNotPerform: [null, [Validators.pattern(STRING_PATTERN)]],
       userContainers: [null, [Validators.pattern(STRING_PATTERN)]],
+      //
+      transferLocation: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      transferAddress: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      //
+      sourceStore: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      originStreet: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      originPostalCode: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      colonyOrigin: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+
       programmingId: [null],
       id: [null],
     });
   }
+
   showDocument() {}
 
   async sendOrderService() {
@@ -181,8 +209,12 @@ export class ServiceOrderRequestCaptureFormComponent
 
   setClaimRequest() {
     this.claimRequest = true;
-    this.form.controls['location'].enable();
-    this.form.controls['address'].enable();
+    this.ordServform.controls['transferLocation'].enable();
+    this.ordServform.controls['transferAddress'].enable();
+    this.ordServform.controls['sourceStore'].enable();
+    this.ordServform.controls['originStreet'].enable();
+    this.ordServform.controls['originPostalCode'].enable();
+    this.ordServform.controls['colonyOrigin'].enable();
   }
 
   getOrderService() {
