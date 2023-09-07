@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { NgxCurrencyModule } from 'ngx-currency';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from '../../../../shared/shared.module';
 import { AddMovementComponent } from './add-movement/add-movement.component';
@@ -18,6 +19,19 @@ import { DepositTokensComponent } from './deposit-tokens/deposit-tokens.componen
 import { CustomMultiSelectFilterComponent } from './deposit-tokens/filterAccount';
 import { CustomDateFilterComponent_ } from './deposit-tokens/searchDate';
 import { ListGoodsComponent } from './list-goods/list-goods.component';
+
+export const customCurrencyMaskConfig = {
+  align: 'right',
+  allowNegative: false,
+  allowZero: true,
+  decimal: '.',
+  precision: 2,
+  prefix: '',
+  suffix: '',
+  thousands: ',',
+  nullable: false,
+};
+
 @NgModule({
   declarations: [
     DepositTokensComponent,
@@ -40,6 +54,7 @@ import { ListGoodsComponent } from './list-goods/list-goods.component';
     FormLoaderComponent,
     TooltipModule.forRoot(),
     NgSelectModule,
+    NgxCurrencyModule.forRoot(customCurrencyMaskConfig),
   ],
 })
 export class DepositTokensModule {}
