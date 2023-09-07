@@ -118,6 +118,7 @@ export class reportBatchesPendingComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
+        this.alert('warning', 'No se encontraron registros', '');
       },
     });
   }

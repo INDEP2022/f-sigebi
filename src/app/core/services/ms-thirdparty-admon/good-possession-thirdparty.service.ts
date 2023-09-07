@@ -74,4 +74,23 @@ export class GoodPosessionThirdpartyService extends HttpService {
   }) {
     return this.delete<any>(`detail-good-possession-thirdparty`, params);
   }
+
+  getByMonthYearIndicator(
+    month: number,
+    year: number,
+    delegation: number,
+    params: any
+  ) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyReports}?filter.monthNumber=$eq:${month}&filter.yearNumber=$eq:${year}&filter.delegation1Number=$eq:${delegation}`;
+    return this.get(route, params);
+  }
+
+  getByMonthYearIndicatorNumber(
+    month: number,
+    year: number,
+    delegation: number
+  ) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyReports}?filter.monthNumber=$eq:${month}&filter.yearNumber=$eq:${year}&filter.delegation1Number=$eq:${delegation}&filter.delegation1Number=$eq:1`;
+    return this.get(route);
+  }
 }
