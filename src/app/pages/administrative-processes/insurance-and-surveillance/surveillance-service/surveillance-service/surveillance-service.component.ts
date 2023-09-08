@@ -617,7 +617,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
       if (createVIG_SUPERVISION_TMP_) {
         this.loadingBtn = false;
-        this.alert('success', 'Archivo Cargado Correctamente', '');
+        this.alert('success', 'Archivo cargado correctamente', '');
         this.clearInput();
       } else {
         this.loadingBtn = false;
@@ -660,7 +660,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     if (cveProcessTwo != 1 && cveProcessTwo != 2) {
       LV_VALPROCESO = 0;
       this.formRegistro.get('processTwo').markAsTouched();
-      this.alert('warning', 'El proceso es enformación requerida', '');
+      this.alert('warning', 'El proceso es información requerida', '');
       return;
     }
 
@@ -1204,7 +1204,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     link.click();
     link.remove();
     this.loadingBtn2 = false;
-    this.alert('success', 'Archivo Descargado Correctamente', '');
+    this.alert('success', 'Archivo descargado correctamente', '');
   }
 
   async revisarCarga() {
