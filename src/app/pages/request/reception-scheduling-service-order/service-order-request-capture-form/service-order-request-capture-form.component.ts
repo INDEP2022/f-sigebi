@@ -43,6 +43,7 @@ export class ServiceOrderRequestCaptureFormComponent
   lsProgramming: string = null;
   programmingId: number = null;
   programming: any = null;
+  isUpdate: boolean = false;
 
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);
@@ -194,16 +195,16 @@ export class ServiceOrderRequestCaptureFormComponent
   }
 
   saveService() {
+    const folio = this.ordServform.controls['serviceOrderFolio'].value;
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Desea guardar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+      `¿Desea guardar la orden de servicio con folio ${folio}?`
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
         console.log(this.ordServform.getRawValue());
 
-        return;
         let ordServiceForm = this.ordServform.getRawValue();
         this.updateOrderService(ordServiceForm);
         this.onLoadToast(
@@ -272,6 +273,15 @@ export class ServiceOrderRequestCaptureFormComponent
     this.orderService.updateOrderService(body).subscribe({
       next: resp => {
         console.log(resp);
+        this.onLoadToast(
+          'success',
+          'Orden de servicio guardada correctamente',
+          ''
+        );
+      },
+      error: error => {
+        console.log(error);
+        this.onLoadToast('error', 'No se pudo actualizar la orden de servicio');
       },
     });
   }

@@ -107,95 +107,108 @@
     </form>
   </div>
 </app-card>
-<app-card *ngIf="cargado2">
+<app-card *ngIf="cargado2" [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">PAGOS REFERENCIADOS CARGADOS</h5>
+  </div>
   <div body>
-    <accordion [isAnimated]="true">
+    <!-- <accordion [isAnimated]="true">
       <accordion-group [isOpen]="cargado">
         <div accordion-heading class="d-flex justify-content-between">
           <h5>PAGOS REFERENCIADOS CARGADOS</h5>
+        </div> -->
+    <div class="row text-end justify-content-end">
+      <div
+        *ngIf="cargado"
+        class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+        <app-columns-select
+          [defaultColumns]="7"
+          [(settings)]="settings2"
+          [leftList]="true"></app-columns-select>
+        <div>
+          <button
+            (click)="saveCarga()"
+            type="button"
+            class="btn btn-primary btn-sm active mb-3 mr-3">
+            Guardar <span><i aria-hidden="true" class="fa fa-save"></i></span>
+          </button>
         </div>
-        <div class="row">
-          <div *ngIf="cargado" class="col-md-8 d-flex mt-3 mb-3">
-            <div style="padding-top: 6px" class="mr-2">
-              <span>
-                <i
-                  tooltip=""
-                  containerClass="tooltip-style"
-                  class="fas fa-info-circle text-warning mr-1">
-                </i>
-              </span>
-              <span>
-                <label
-                  for=""
-                  style="font-size: 10px; font-weight: 600; color: #74788d"
-                  >La siguiente tabla es de sólo visualización.</label
-                >
-              </span>
-            </div>
-          </div>
-          <div
-            *ngIf="cargado"
-            class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
-            <app-columns-select
-              [defaultColumns]="7"
-              [(settings)]="settings2"
-              [leftList]="true"></app-columns-select>
-          </div>
+      </div>
+    </div>
+    <ng-scrollbar
+      *ngIf="cargado"
+      [track]="'all'"
+      [ngStyle]="{ height: loading2 ? '0px' : '300px' }">
+      <ng2-smart-table
+        [attr.class]="'table-bordered table-responsive'"
+        class="table-responsive"
+        [settings]="settings2"
+        [source]="dataCargada"
+        (edit)="editCargado($event.data)"
+        (userRowSelect)="rowsSelectedCargado($event)">
+      </ng2-smart-table>
+    </ng-scrollbar>
+    <!-- <div *ngIf="cargado" class="col-6 mt-3"> -->
+    <form [formGroup]="form2">
+      <div class="row mt-2 justify-content-center text-center">
+        <div class="col-md-2 text-center">
+          <form-field [control]="form2.get('BLK_CTRL_CUANTOS')">
+            <label for="">Registros Cargados</label>
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="BLK_CTRL_CUANTOS" />
+          </form-field>
         </div>
-        <ng-scrollbar
-          *ngIf="cargado"
-          [track]="'all'"
-          [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
-          <ng2-smart-table
-            [attr.class]="'table-bordered table-responsive'"
-            class="table-responsive"
-            [settings]="settings2"
-            [source]="dataCargada">
-          </ng2-smart-table>
-        </ng-scrollbar>
-        <!-- <div *ngIf="cargado" class="col-6 mt-3"> -->
-        <form [formGroup]="form2">
-          <div class="row mt-2 justify-content-center text-center">
-            <div class="col-md-2 text-center">
-              <form-field [control]="form2.get('BLK_CTRL_CUANTOS')">
-                <label for="">Registros Cargados</label>
-                <input
-                  readonly
-                  type="text"
-                  class="form-control"
-                  formControlName="BLK_CTRL_CUANTOS" />
-              </form-field>
-            </div>
-            <div class="col-md-2 text-center">
-              <form-field [control]="form2.get('BLK_CTRL_MONTO')">
-                <label for="">Monto Cargado</label>
-                <input
-                  readonly
-                  type="text"
-                  class="form-control"
-                  formControlName="BLK_CTRL_MONTO" />
-              </form-field>
-            </div>
-
-            <!-- <div class="col-2">
-              <form-field [control]="form2.get('BLK_CTRL_CUANTOS')" label="Registros Cargados">
-                <input readonly type="text" class="form-control" formControlName="BLK_CTRL_CUANTOS" />
-              </form-field>
-            </div> -->
-            <!-- <div class="col-2">
-              <form-field [control]="form2.get('BLK_CTRL_MONTO')" label="Monto Cargado">
-                <input readonly type="text" class="form-control" formControlName="BLK_CTRL_MONTO" />
-              </form-field>
-            </div> -->
-          </div>
-        </form>
-        <!-- </div> -->
-      </accordion-group>
-    </accordion>
+        <div class="col-md-2 text-center">
+          <form-field [control]="form2.get('BLK_CTRL_MONTO')">
+            <label for="">Monto Cargado</label>
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="BLK_CTRL_MONTO" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row justify-content-center mt-5">
+      <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+        <button
+          [disabled]="!valAccCargado"
+          (click)="referenciaCargado()"
+          class="btn btn-sm btn-block btn-info active">
+          Referencia
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+        <button
+          [disabled]="!valAccCargado"
+          (click)="ratificarCargado()"
+          class="btn btn-sm btn-block btn-primary active">
+          Ratificar
+          <i class="bx bx-edit-alt"></i>
+        </button>
+      </div>
+      <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+        <button
+          [disabled]="!valAccCargado"
+          (click)="pagoCargado()"
+          class="btn btn-sm btn-block btn-danger active">
+          Pago
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
+    <!-- </div> -->
+    <!-- </accordion-group>
+    </accordion> -->
   </div>
 </app-card>
 
-<app-card [header]="true">
+<app-card *ngIf="!cargado2" [header]="true">
   <div class="ch-content" header>
     <h5 class="title">{{ title }}</h5>
   </div>
@@ -205,6 +218,7 @@
         <div class="row">
           <div class="col-md-12 text-end d-flex flex-row-reverse mt-3 mb-3">
             <app-columns-select
+              [defaultColumns]="7"
               [(settings)]="settings"
               [leftList]="true"></app-columns-select>
             <div>
