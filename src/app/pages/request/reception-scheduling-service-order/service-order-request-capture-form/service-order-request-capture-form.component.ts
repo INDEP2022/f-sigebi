@@ -43,6 +43,7 @@ export class ServiceOrderRequestCaptureFormComponent
   lsProgramming: string = null;
   programmingId: number = null;
   programming: any = null;
+  isUpdate: boolean = false;
 
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);
@@ -194,10 +195,11 @@ export class ServiceOrderRequestCaptureFormComponent
   }
 
   saveService() {
+    const folio = this.ordServform.controls['serviceOrderFolio'].value;
     this.alertQuestion(
       'warning',
       'Confirmación',
-      `¿Desea guardar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?`
+      `¿Desea guardar la orden de servicio con folio ${folio}?`
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -205,6 +207,7 @@ export class ServiceOrderRequestCaptureFormComponent
 
         let ordServiceForm = this.ordServform.getRawValue();
         this.updateOrderService(ordServiceForm);
+        this.isUpdate = true;
       }
     });
   }
