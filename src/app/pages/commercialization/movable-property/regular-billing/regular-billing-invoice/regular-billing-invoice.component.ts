@@ -21,16 +21,19 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { InvoiceFolioSeparate } from 'src/app/core/models/ms-invoicefolio/invoicefolio.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { ComerDetailInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-dinvocie.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
+import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { ParameterInvoiceService } from 'src/app/core/services/ms-parameterinvoice/parameterinvoice.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { SeparateFoliosModalComponent } from '../../mass-bill-base-sales/separate-folios-modal/separate-folios-modal.component';
+import { FolioModalComponent } from '../../../penalty-billing/folio-modal/folio-modal.component';
 import { REGULAR_GOODS_COLUMN } from './regular-billing-invoice-goods-columns';
 
 @Component({
@@ -101,7 +104,9 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     private datePipe: DatePipe,
     private siabService: SiabService,
     private survillanceService: SurvillanceService,
-    private dynamicService: DynamicCatalogsService
+    private dynamicService: DynamicCatalogsService,
+    private parameterModService: ParameterModService,
+    private goodProccess: GoodprocessService
   ) {
     super();
 
@@ -249,9 +254,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
               factstatusId: () => (searchFilter = SearchFilter.ILIKE),
               vouchertype: () => (searchFilter = SearchFilter.ILIKE),
               impressionDate: () => (searchFilter = SearchFilter.EQ),
-              price: () => (searchFilter = SearchFilter.ILIKE),
-              vat: () => (searchFilter = SearchFilter.ILIKE),
-              total: () => (searchFilter = SearchFilter.ILIKE),
             };
 
             search[filter.field]();
@@ -350,10 +352,14 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
           });
 
           if (value) {
-            data.tuitionMod = data.tuition;
+            // data.tuitionMod = data.tuition;
             data.downloadcvman = value.mandato;
             data.desc_unidad_det = value.desc_unidad_det;
             data.desc_producto_det = value.desc_producto_det;
+
+            if (value.mandato == 'SIN MANDATO') {
+              data.modmandato = data.tuition;
+            }
           }
 
           sum1 = sum1 + Number(data.price);
@@ -551,11 +557,19 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     });
   }
 
-  openModal(): void {
-    const modalRef = this.modalService.show(SeparateFoliosModalComponent, {
+  openFolioModal() {
+    let config: ModalOptions = {
+      initialState: {
+        callback: (next: boolean, data: InvoiceFolioSeparate) => {
+          if (next) {
+            console.log(data);
+          }
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
+    };
+    this.modalService.show(FolioModalComponent, config);
   }
 
   track() {
@@ -887,7 +901,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     }
   }
 
-  actMatricula() {
+  async actMatricula() {
     if (this.isSelect.length == 0) {
       this.alert('warning', 'Atención', 'Favor de seleccionar una factura');
       return;
@@ -896,6 +910,43 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     const data = this.isSelect[0];
 
     if (data.factstatusId == 'PREF') {
+      const data = await this.dataFilter2.getAll();
+
+      if (data[0].modmandato ?? false) {
+        const exist = await this.exist();
+
+        if (exist > 0) {
+          const count = await this.countGood(data[0].goodNot);
+
+          if (count > 0) {
+            this.goodProccess
+              .updateVal5({ val5: data[0].modmandato }, data[0].goodNot)
+              .subscribe({
+                next: () => {
+                  this.alert('success', 'Matriícula ha sido actualizada', '');
+                  this.getComerDetInovice();
+                },
+                error: err => {
+                  this.alert('error', 'Error', err.error.message);
+                },
+              });
+          } else {
+            this.alert(
+              'warning',
+              'Atención',
+              'Bien no válido para realizar el cambio'
+            );
+          }
+        } else {
+          this.alert(
+            'warning',
+            'Atención',
+            'Usuario inválido para realizar el cambio'
+          );
+        }
+      } else {
+        this.alert('warning', 'Atención', 'Debe ingresar la Matrícula');
+      }
     } else {
       this.alert(
         'warning',
@@ -903,6 +954,28 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         'Estatus de la Factura inválida para realizar el cambio'
       );
     }
+  }
+
+  async exist() {
+    const filter = new ListParams();
+    const user = this.authService.decodeToken().preferred_username;
+    filter['filter.value'] = `${SearchFilter.EQ}:${'LGONZALEZG' ?? user}`;
+    filter['filter.parameter'] = `${SearchFilter.EQ}:SUPUSUFACT`;
+    return firstValueFrom(
+      this.parameterModService.getAll(filter).pipe(
+        map(resp => resp.count),
+        catchError(() => of(0))
+      )
+    );
+  }
+
+  async countGood(good: number) {
+    return firstValueFrom(
+      this.goodProccess.getCount(good).pipe(
+        map(resp => resp.n_cont),
+        catchError(() => of(0))
+      )
+    );
   }
 
   async postQueryDet(data: {
@@ -917,4 +990,6 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       )
     );
   }
+
+  sendPackage() {}
 }
