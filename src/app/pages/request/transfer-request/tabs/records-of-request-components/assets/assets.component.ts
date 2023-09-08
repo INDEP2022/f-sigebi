@@ -302,6 +302,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           this.closeCreateGoodWIndows();
         },
         error: error => {
+          console.log(error);
+
           this.loaderProgress.load = false;
           this.message(
             'error',

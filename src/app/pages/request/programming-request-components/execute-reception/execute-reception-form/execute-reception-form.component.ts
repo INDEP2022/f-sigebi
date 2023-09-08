@@ -418,7 +418,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.id'] = `$eq:${task.id}`;
     this.taskService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('task', response);
         this.task = response.data[0];
       },
       error: error => {},
@@ -805,40 +804,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   getInfoGoodsTransportable() {
     const _data: any[] = [];
 
-    this.paramsTransportableGoods.getValue()['filter.programmingId'] =
-      this.programmingId;
-    this.paramsTransportableGoods.getValue()['filter.status'] =
-      'EN_TRANSPORTABLE';
-    this.paramsTransportableGoods.getValue()['sortBy'] = 'goodId:ASC';
-    this.programmingService
-      .getGoodsProgramming(this.paramsTransportableGoods.getValue())
-      .subscribe({
-        next: async data => {
-          this.totalItemsTransportableGoods = data.count;
-          data.data.map((item: IGoodProgramming) => {
-            this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
-            this.paramsShowTransportable.getValue()['sortBy'] = 'id:ASC';
-            this.goodService
-              .getAll(this.paramsShowTransportable.getValue())
-              .subscribe({
-                next: async data => {
-                  console.log('bienes transportable', data);
-                  _data.push(data.data[0]);
-                  this.goodsInfoTransportable.load(_data);
-                },
-                error: error => {
-                  this.formLoadingTrans = false;
-                },
-              });
-          });
-        },
-        error: error => {
-          this.formLoadingTrans = false;
-          this.totalItemsTransportableGoods = 0;
-          this.selectGood = [];
-        },
-      });
-
     this.formLoadingTrans = true;
 
     this.paramsTransportableGoods.getValue()['filter.programmingId'] =
@@ -851,6 +816,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .subscribe({
         next: async data => {
           this.totalItemsTransportableGoods = data.count;
+          this.goodsTransportable.clear();
           data.data.map((item: IGoodProgramming) => {
             this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
             this.paramsShowTransportable.getValue()['sortBy'] = 'id:ASC';
@@ -2985,9 +2951,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {
-            console.log('error', error);
-          },
+          error: error => {},
         });
       });
     });
@@ -3009,9 +2973,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {
-            console.log('error', error);
-          },
+          error: error => {},
         });
       });
     });
@@ -3684,7 +3646,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     if (this.selectGood.length > 0) {
       this.goodsTransportable.clear();
       this.selectGood.map((item: any) => {
-        console.log('item', item);
         const formData: Object = {
           programmingId: this.programmingId,
           goodId: item.id,
@@ -4088,7 +4049,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       };
       this.receptionGoodService.getReceiptGoodByIds(data).subscribe({
         next: response => {
-          console.log('data a eliminar', response);
           const deleteObject = {
             receiptId: response.receiptId,
             goodId: response.goodId,
@@ -4097,12 +4057,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           };
 
           this.receptionGoodService.deleteReceiptGood(deleteObject).subscribe({
-            next: response => {
-              console.log('eliminado el bien de recibo', response);
-            },
-            error: error => {
-              console.log('error', error);
-            },
+            next: response => {},
+            error: error => {},
           });
         },
       });

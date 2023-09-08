@@ -12,11 +12,12 @@
           </div>
           <form action="" [formGroup]="form" class="form-material">
             <div class="row mt-4">
-              <div class="col-12 mt-3">
+              <div class="col-12 mt-3" style="margin-top: -5px">
                 <form-field
                   [control]="form.get('delegation')"
                   label="Delegación">
                   <input
+                    style="margin-top: 5px"
                     readonly
                     type="text"
                     formControlName="delegation"
@@ -29,10 +30,11 @@
                 </form-field> -->
               </div>
             </div>
-            <div class="row mt-4">
+            <div class="row mt-4" style="margin-top: -1px">
               <div class="col-md-6 mt-3">
                 <form-field [control]="form.get('process')" label="Proceso">
                   <ng-select
+                    style="margin-top: 1px"
                     [readonly]="!disabledProcess"
                     (change)="cleanPeriod($event)"
                     class="form-control"
@@ -43,7 +45,7 @@
                   </ng-select>
                 </form-field>
               </div>
-              <div class="col-md-6 mt-3">
+              <div class="col-md-6 mt-3" style="padding-top: 1px">
                 <form-field [control]="form.get('period')">
                   <ngx-select
                     (change)="addDate($event)"
@@ -124,6 +126,7 @@
                       [control]="formRegistro.get('processTwo')"
                       label="Proceso">
                       <ng-select
+                        style="margin-top: 2px"
                         class="form-control"
                         formControlName="processTwo">
                         <!-- <ng-option [value]="null"

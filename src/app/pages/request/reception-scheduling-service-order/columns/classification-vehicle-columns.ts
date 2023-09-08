@@ -1,23 +1,23 @@
 export const CLASSIFICATION_VEHICLE_COLUMS = {
-  typeVehicle: {
+  nameTypeVehicle: {
     title: 'Tipo de Vehículo',
     type: 'string',
     sort: false,
   },
 
-  sale: {
+  amountSale: {
     title: 'Venta',
     type: 'string',
     sort: false,
   },
 
-  donation: {
+  amountDonation: {
     title: 'Donación',
     type: 'string',
     sort: false,
   },
 
-  destruction: {
+  amountDestruction: {
     title: 'Destrucción',
     type: 'string',
     sort: false,

@@ -132,6 +132,7 @@
           <form-field [control]="form.get('amount')" label="Monto">
             <input
               [readonly]="valScroll"
+              currencyMask
               maxlength="17"
               type="text"
               class="form-control"
@@ -201,19 +202,12 @@
         </div>
         <div class="col-12">
           <div class="row">
-            <div class="col-md-12 mt-2">
-              <form-field
-                [control]="form.get('description')"
-                label="Descripción">
-                <textarea
-                  [readonly]="valScroll"
-                  maxlength="200"
-                  class="form-control"
-                  cols="5"
-                  rows="5"
+            <!-- <div class="col-md-12 mt-2">
+              <form-field [control]="form.get('description')" label="Descripción">
+                <textarea [readonly]="valScroll" maxlength="200" class="form-control" cols="5" rows="5"
                   formControlName="description"></textarea>
               </form-field>
-            </div>
+            </div> -->
             <!-- <div class="col-md-6 mt-2">
               <form-field [control]="form.get('result')" label="Resultado">
                 <textarea maxlength="200" type="text" cols="5" rows="5" class="form-control"
