@@ -263,6 +263,7 @@ export interface IGood {
   indAclaration: string;
   msgSatSae?: any;
   color?: any;
+  unitMeasureName: string | null;
   numClow?: any;
   destinyCompensation?: any;
   val1: string;
