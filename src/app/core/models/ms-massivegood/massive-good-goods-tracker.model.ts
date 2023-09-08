@@ -33,4 +33,9 @@ export interface IPupValidMassive {
   precio_venta: number;
   proceso_ext_dom: string;
   valor_avaluo: string;
+  no_delegacion: number;
+  no_subdelegacion: number;
+  no_expediente: number;
+  no_volante: number;
+  no_exp_asociado: number;
 }
