@@ -138,8 +138,8 @@ export class GoodDeliveryMainComponent extends BasePage implements OnInit {
     // Llamar servicio para cambiar estado
     this.alertQuestion(
       'warning',
-      'Cambio de Estatus a Bien Vendido y Entregado',
-      '¿ Estas Seguro de Modificar el ESTATUS de los Bienes Seleccionados ?'
+      '',
+      '¿ Estas Seguro de Modificar el ESTATUS de Vendido y Entregado a los Bienes Seleccionados ?'
     ).then(question => {
       if (question.isConfirmed) {
         if (this.selectedRows != null && this.selectedRows != undefined) {

@@ -13,10 +13,11 @@ import { ReturnsConficationsRoutingModule } from './returns-confications-routing
 import { RecordsSharedComponent } from 'src/app/@standalone/shared-forms/records-shared/records-shared.component';
 import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shared/user-shared.component';
 //Components
+import { EditModalConfComponent } from './edit-modal-conf/edit-modal-conf.component';
 import { ReturnsConficationsListComponent } from './returns-confications-list/returns-confications-list.component';
 
 @NgModule({
-  declarations: [ReturnsConficationsListComponent],
+  declarations: [ReturnsConficationsListComponent, EditModalConfComponent],
   imports: [
     CommonModule,
     ReturnsConficationsRoutingModule,

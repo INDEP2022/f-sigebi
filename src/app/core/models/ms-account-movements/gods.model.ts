@@ -207,6 +207,7 @@ export interface IGoodsNumber {
   indClarification: string | null;
   msgSatSae: string | null;
   color: string | null;
+  unitMeasureName: any;
   doorsNumber: number | null;
   destinationRedress: number | null;
   val1: string | null;
