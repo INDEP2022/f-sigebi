@@ -1874,8 +1874,7 @@ export class PerformProgrammingFormComponent
             status: 'EN_TRANSPORTABLE',
           };
 
-          console.log('formData', formData);
-          /*this.massiveGoodService.createProgGoodMassive(formData).subscribe({
+          this.massiveGoodService.createProgGoodMassive(formData).subscribe({
             next: response => {
               this.params
                 .pipe(takeUntil(this.$unSubscribe))
@@ -1891,7 +1890,7 @@ export class PerformProgrammingFormComponent
               );
             },
             error: error => {},
-          }); */
+          });
         }
       });
     }
@@ -1962,9 +1961,7 @@ export class PerformProgrammingFormComponent
           next: response => {
             resolve(true);
           },
-          error: error => {
-            console.log('error', error);
-          },
+          error: error => {},
         });
       });
     });
@@ -2637,9 +2634,8 @@ export class PerformProgrammingFormComponent
         this.goodsTranportables.remove(item);
         const backInfoGood = await this.removeStatusGood(item);
         if (backInfoGood) {
-          console.log('backInfoGood', backInfoGood);
           const info = await this.createHistGoodRemove(item);
-          console.log('createHistGoodRemove', info);
+
           if (info) {
             const formData: Object = {
               programmingId: this.idProgramming,
@@ -2678,12 +2674,9 @@ export class PerformProgrammingFormComponent
 
       this.historyGoodService.create(historyGood).subscribe({
         next: response => {
-          console.log('Historico eliminado', response);
           resolve(true);
         },
-        error: error => {
-          console.log('error', error);
-        },
+        error: error => {},
       });
     });
   }
@@ -3027,6 +3020,7 @@ export class PerformProgrammingFormComponent
               city: this.performForm.get('city').value,
               observation: this.performForm.get('observation').value,
               regionalDelegationNumber: this.delegationId,
+              delregAttentionId: this.delegationId,
               stateKey: this.performForm.get('stateKey').value,
               tranferId: this.performForm.get('tranferId').value,
               startDate: _startDate,
@@ -3035,6 +3029,7 @@ export class PerformProgrammingFormComponent
               autorityId: this.performForm.get('autorityId').value,
               typeRelevantId: this.performForm.get('typeRelevantId').value,
               storeId: this.performForm.get('storeId').value,
+              folio: folio,
             };
 
             this.programmingGoodService
@@ -3774,6 +3769,7 @@ export class PerformProgrammingFormComponent
         const data = {
           schedulesId: this.idProgramming,
           status: 'EN_TRANSPORTABLE',
+          user: this.userInfo.name,
         };
 
         this.programmingService.deleteGoodsMassive(data).subscribe({

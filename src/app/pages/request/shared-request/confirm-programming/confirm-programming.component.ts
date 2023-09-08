@@ -14,6 +14,9 @@ import { ElectronicSignatureListComponent } from '../electronic-signature-list/e
 export class ConfirmProgrammingComponent extends BasePage implements OnInit {
   confirmForm: FormGroup = new FormGroup({});
   idProgramming: number = 0;
+  type?: string = null;
+  electronicSignature: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -41,11 +44,24 @@ export class ConfirmProgrammingComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    /*this.modalRef.content.callback({
+      data: this.confirmForm.value,
+      sign: this.electronicSignature,
+    });
+    this.modalRef.hide(); */
+
     this.programmingService
       .updateProgramming(this.idProgramming, this.confirmForm.value)
       .subscribe({
         next: () => {
-          this.modalRef.content.callback(this.confirmForm.value);
+          if (this.type == 'order-service') {
+            this.modalRef.content.callback({
+              data: this.confirmForm.value,
+              sign: this.electronicSignature,
+            });
+          } else {
+            this.modalRef.content.callback(this.confirmForm.value);
+          }
           this.modalRef.hide();
         },
         error: error => {},

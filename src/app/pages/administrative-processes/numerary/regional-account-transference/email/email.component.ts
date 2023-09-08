@@ -154,7 +154,7 @@ export class EmailComponent extends BasePage implements OnInit {
         this.form.get('MENSAJE').patchValue(resp.message);
 
         const body: any = {
-          header: 'infosaedwh@sae.gob.mx',
+          header: `OFICINA DE ATENCIÓN REGIONAL ${del ?? this.description}`,
           destination: PARA ?? [],
           copy: CC ?? [],
           subject: ASUNTO ?? '',
