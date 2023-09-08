@@ -15,15 +15,7 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <!-- <form-field
-            [control]="inventoryDataForm.get('responsable')"
-            label="Responsable">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="responsable" />
-          </form-field> -->
-          <form-field [control]="form.get('promoter')">
+          <!-- <form-field [control]="form.get('promoter')">
             <ngx-select
               [form]="form"
               [data]="user1"
@@ -31,9 +23,24 @@
               bindLabel="name"
               label="Promovente"
               (fetchItems)="getAllSegUser1($event)"
+              (change)="changeUser1($event)"
               control="promoter">
             </ngx-select>
-          </form-field>
+          </form-field> -->
+          <!-- <form-field [control]="form.get('promoter')" label="Promovente">
+            <select class="form-control" formControlName="promoter">
+              <option [value]="item.user" *ngFor="let item of userName">
+                {{ item.name }}
+              </option>
+            </select>
+          </form-field> -->
+          <app-user-shared
+            class="col-md-12"
+            [form]="form"
+            [userField]="'promoter'"
+            [label]="'Usuario'"
+            [id]="true"
+            (change)="onChangeUser($event)"></app-user-shared>
         </div>
       </div>
     </form>

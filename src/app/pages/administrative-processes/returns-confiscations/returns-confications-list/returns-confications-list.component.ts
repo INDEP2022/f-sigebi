@@ -15,9 +15,11 @@ import { COLUMNS } from './columns';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EditModalConfComponent } from '../edit-modal-conf/edit-modal-conf.component';
+
 //Provisional Data
 //import { goodsData } from './data';
 
@@ -46,7 +48,7 @@ export class ReturnsConficationsListComponent
   //Columns
   columns = COLUMNS;
 
-  localdata: LocalDataSource = new LocalDataSource();
+  //localdata: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
 
   user1 = new DefaultSelect();
@@ -58,7 +60,8 @@ export class ReturnsConficationsListComponent
     private expedientService: ExpedientService,
     private fb: FormBuilder,
     private usersService: UsersService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private screenStatusService: ScreenStatusService
   ) {
     super();
     this.settings = {
@@ -71,6 +74,14 @@ export class ReturnsConficationsListComponent
         delete: false,
         position: 'right',
       },
+      /*rowClassFunction: (row: any) => {
+        console.log('rowClassFunction ', row);
+        if (row.data.estatus.active === '1') {
+          return 'text-success';
+        } else {
+          return 'text-danger';
+        }
+      },*/
       /*edit: {
         ...this.settings.edit,
         saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
@@ -88,6 +99,7 @@ export class ReturnsConficationsListComponent
       },*/
       columns: COLUMNS,
     };
+    this.filterParamsGoods();
   }
 
   ngOnInit(): void {
@@ -105,6 +117,31 @@ export class ReturnsConficationsListComponent
         });
       }
     }*/
+  }
+
+  private prepareForm(): void {
+    //Form
+    this.form = this.fb.group({
+      idExpedient: [null, [Validators.required]],
+      preliminaryInquiry: [
+        { value: null, disabled: true },
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      criminalCase: [
+        { value: null, disabled: true },
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      identifies: [{ value: null, disabled: true }],
+      noCourt: [{ value: null, disabled: true }],
+    });
+    //Massive Application Form
+    this.formMA = this.fb.group({
+      dateConfiscation: [null, Validators.required],
+      promoter: [null, [Validators.required]],
+    });
+  }
+
+  filterParamsGoods() {
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -167,29 +204,12 @@ export class ReturnsConficationsListComponent
     console.log('entra2 ', i++);
   }
 
-  private prepareForm(): void {
-    //Form
-    this.form = this.fb.group({
-      idExpedient: [null, [Validators.required]],
-      preliminaryInquiry: [
-        { value: null, disabled: true },
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      criminalCase: [
-        { value: null, disabled: true },
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      identifies: [{ value: null, disabled: true }],
-      noCourt: [{ value: null, disabled: true }],
-    });
-    //Massive Application Form
-    this.formMA = this.fb.group({
-      dateConfiscation: [null, Validators.required],
-      promoter: [null, [Validators.required]],
-    });
-  }
-
   getExpedientById(): void {
+    this.formMA.reset();
+    this.goods = [];
+    console.log('Lenght Goods', this.goods.length);
+    this.data.load(this.goods);
+    this.data.refresh();
     let _id = this.form.controls['idExpedient'].value;
     this.loading = true;
     this.expedientService.getById(_id).subscribe(
@@ -199,27 +219,17 @@ export class ReturnsConficationsListComponent
         if (response !== null) {
           this.form.patchValue(response);
           this.form.updateValueAndValidity();
-          this.getGoodsByExpedient(response.id);
+          this.getGoods(response.id);
         } else {
           //TODO: CHECK MESSAGE
           this.alert('info', 'No se encontrarón registros', '');
         }
-
-        this.loading = false;
       },
       error => (this.loading = false)
     );
   }
 
-  getGoodsByExpedient(id: string | number): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoods(id));
-  }
-
   getGoods(id: string | number): void {
-    let i = 0;
-    console.log('entraGoods-> ', i++);
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -227,24 +237,19 @@ export class ReturnsConficationsListComponent
     console.log('Params Filter-> ', params);
 
     this.goods = [];
-    this.data.load(this.goods);
-    //this.data.load(this.goods);
-    this.data.refresh();
-    this.goodService.getByExpedient(id, params).subscribe(
-      response => {
-        this.goods = [];
-        this.data.load(this.goods);
-        this.data.refresh;
-        console.log('response getGoogByExp ', response);
-
+    this.goodService.getByExpedient(id, params).subscribe({
+      next: response => {
+        console.log('response getGoogByExp ', response.data);
         for (let i = 0; i < response.data.length; i++) {
           if (response.data[i] != null && response.data[i] != undefined) {
             this.usersService
               .getAllSegUsersbykey(response.data[i].promoterUserDecoDevo)
               .subscribe({
                 next: resp => {
-                  console.log('respuesta:Response => ', response.data);
-                  console.log('Respuesta:Resp => ', resp.data);
+                  console.log(
+                    'response getAllSegUsersbykey ',
+                    resp.data.length
+                  );
                   let dataB = {
                     id: response.data[i].goodId,
                     description: response.data[i].description,
@@ -263,7 +268,6 @@ export class ReturnsConficationsListComponent
                   this.data.load(this.goods);
                   this.data.refresh();
                   this.totalItems = response.count;
-                  this.loading = false;
                 },
                 error: err => {
                   let dataB = {
@@ -287,10 +291,14 @@ export class ReturnsConficationsListComponent
                   this.loading = false;
                 },
               });
+            this.loading = false;
           }
         }
-
-        /*let data = response.data.map((item: IGood) => {
+      },
+      error: err => {
+        this.loading = false;
+      },
+      /*let data = response.data.map((item: IGood) => {
           //console.log(item);
           item.promoter = item.promoterUserDecoDevo;
 
@@ -306,10 +314,8 @@ export class ReturnsConficationsListComponent
           return item;
         });*/
 
-        //console.log('getGoods-> ', response);
-      },
-      error => (this.loading = false)
-    );
+      //console.log('getGoods-> ', response);
+    });
   }
 
   settingsChange($event: any): void {

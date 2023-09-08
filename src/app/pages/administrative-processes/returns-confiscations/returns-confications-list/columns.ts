@@ -19,7 +19,6 @@ export const COLUMNS = {
   dateRenderDecoDev: {
     title: 'Fecha Decomiso',
     valuePrepareFunction: (text: string) => {
-      console.log('text col ', text);
       return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     editor: {
@@ -52,7 +51,6 @@ export const COLUMNS = {
     sort: false,
     editable: false,
     valuePrepareFunction: (text: string) => {
-      console.log('text col ', text);
       return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
   },
@@ -66,7 +64,6 @@ export const COLUMNS = {
     sort: false,
     editable: false,
     valuePrepareFunction: (text: string) => {
-      console.log('text col ', text);
       return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
   },

@@ -6,6 +6,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared';
+import { inputSelect } from 'src/app/pages/final-destination-process/delivery-schedule/schedule-of-events/interfaces/input-select';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -19,9 +20,13 @@ export class EditModalConfComponent extends BasePage implements OnInit {
   user1 = new DefaultSelect();
   edit: boolean = false;
 
+  userName: any[];
+
   @Output() refresh = new EventEmitter<any>();
   @Output() onAdd = new EventEmitter<any>();
   @Output() onEdit = new EventEmitter<any>();
+
+  eventTypeOptions: inputSelect[] = [];
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -33,13 +38,9 @@ export class EditModalConfComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getAllSegUser1(null);
     if (this.data) {
-      console.log('this.data -> ', this.data);
       console.log(' his.data.dateRenderDecoDev ', this.data.dateRenderDecoDev);
-      console.log(
-        'this.data.promoterUserDecoDevo ',
-        this.data.promoterUserDecoDevo
-      );
       console.log(
         'Fecha Formateada ',
         this.formatDate(this.data.dateRenderDecoDev)
@@ -52,9 +53,17 @@ export class EditModalConfComponent extends BasePage implements OnInit {
             : null,
       });
 
-      if (this.data.promoterUserDecoDevo != null) {
+      /*if (this.data.promoterUserDecoDevo != null) {
         //this.params(this.data.promoterUserDecoDevo);
-      }
+        console.log(
+          'this.data.promoterUserDecoDevo -> ',
+          this.data.promoterUserDecoDevo
+        );
+        this.form.get('promoter').setValue(this.data.promoterUserDecoDevo);
+        this.user1 = new DefaultSelect([1, 'user1', 'user1@example.com']);
+
+        // this.user1.data.push(this.data.promoterUserDecoDevo);
+      } */
     }
   }
 
@@ -63,6 +72,8 @@ export class EditModalConfComponent extends BasePage implements OnInit {
       fecha: [null, [Validators.required]],
       promoter: [null, [Validators.required]],
     });
+    this.form.controls['promoter'].setValue('SUPERUSUARIO');
+    this.form.get('promoter').setValue('SUPERUSUARIO');
   }
 
   close() {
@@ -78,12 +89,13 @@ export class EditModalConfComponent extends BasePage implements OnInit {
       dateInventory: this.form.get('fechaInventario').value,
       responsible: this.form.get('responsable').value,
     };*/
-
+    console.log('Update-> ', this.data.dateRenderDecoDev);
     let item = {
       id: this.data.id,
       goodId: this.data.goodId,
       scheduledDateDecoDev:
-        this.formatDate2(this.form.get('fecha').value) == null
+        this.formatDate2(this.form.get('fecha').value) == undefined ||
+        'NaN-NaN-NaN'
           ? this.data.dateRenderDecoDev
           : this.formatDate2(this.form.get('fecha').value),
       promoterUserDecoDevo: this.form.get('promoter').value,
@@ -112,7 +124,7 @@ export class EditModalConfComponent extends BasePage implements OnInit {
     this.getAllSegUserFind(params);
   }
 
-  getAllSegUser1(params: ListParams) {
+  getAllSegUser1(params?: ListParams) {
     console.log('params: ', params);
     this.usersService.getAllSegUsers2(params).subscribe({
       next: resp => {
@@ -158,5 +170,16 @@ export class EditModalConfComponent extends BasePage implements OnInit {
     const año = fecha_original.getUTCFullYear();
     // Formatear la fecha en el nuevo formato DD/MM/YYYY
     return `${año}-${mes}-${dia}`;
+  }
+
+  changeUser1(event: any) {
+    //name otvalor
+    console.log(event);
+    // this.form.get('promoter').setValue(event.otvalor);
+  }
+
+  onChangeUser(event: any) {
+    console.log(event);
+    this.form.get('promoter').patchValue(event.id);
   }
 }
