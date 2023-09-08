@@ -1,3 +1,5 @@
+import { InputCellComponent } from 'src/app/@standalone/smart-table/input-cell/input-cell.component';
+
 export const REGULAR_GOODS_COLUMN = {
   goodNot: {
     title: 'No. Bien',
@@ -43,15 +45,24 @@ export const REGULAR_GOODS_COLUMN = {
     title: 'Mandato',
     sort: false,
   },
-  tuition: {
+  modmandato: {
     title: 'Matrícula',
     sort: false,
+    type: 'custom',
+    renderComponent: InputCellComponent,
+    onComponentInitFunction: (instance: any) => {
+      instance.inputChange.subscribe({
+        next: (resp: any) => {
+          resp.row.modmandato = resp.value;
+        },
+      });
+    },
   },
-  unit: {
+  desc_unidad_det: {
     title: 'Unidad',
     sort: false,
   },
-  prod: {
+  desc_producto_det: {
     title: 'Prod./Serv.',
     sort: false,
   },
