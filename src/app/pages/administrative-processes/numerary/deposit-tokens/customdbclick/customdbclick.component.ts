@@ -85,7 +85,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
       // Lógica a ejecutar en caso de doble clic en una celda con valor
       this.alert(
         'warning',
-        'No puede Realizar una Conciliación Debido a que ya tiene Especificado un Bien',
+        'No puede realizar una conciliación debido a que ya tiene especificado un Bien',
         ''
       );
       console.log('Celda seleccionada:', this.value);
@@ -177,7 +177,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
       if (!vb_encontrado) {
         this.alert(
           'warning',
-          'No se Encontró Algún Bien que Cumpla con el Criterio de Conciliación',
+          'No se encontró algún Bien que cumpla con el criterio de conciliación',
           ''
         );
       }
@@ -186,7 +186,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
       this.ejecutarloadingConciliar();
       this.alert(
         'warning',
-        'No se Encontró Algún Bien que Cumpla con el Criterio de Conciliación',
+        'No se encontró algún Bien que cumpla con el criterio de conciliación',
         ''
       );
     }
@@ -251,7 +251,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.accountMovementService.update(data).subscribe({
         next: async (response: any) => {
-          this.alert('success', `Datos Actualizados Correctamente`, '');
+          this.alert('success', `Movimiento Actualizado Correctamente`, '');
 
           // this.modalRef.content.callback(true);
           // this.close();
@@ -260,7 +260,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
           resolve(true);
         },
         error: err => {
-          this.alert('error', `Error al Actualizar los Datos`, '');
+          this.alert('error', `Error al Actualizar el Movimiento`, '');
           // this.loading = false;
           resolve(false);
         },
