@@ -131,7 +131,7 @@ export const RATE_CATALOG_COLUMNS = {
   },
   pesos: {
     title: 'Tasa Pesos',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
   dollars: {

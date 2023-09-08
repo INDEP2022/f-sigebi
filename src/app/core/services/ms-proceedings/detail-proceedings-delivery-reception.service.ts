@@ -140,4 +140,69 @@ export class DetailProceeDelRecService extends HttpService {
     const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}/${id}`;
     return this.put(route, params);
   }
+
+  getProcedingbyKey(numFile: number, key: any, id: any) {
+    const route = `${ProceedingsEndpoints.proceedingDelivery}?filter.typeProceedings=$eq:CONSENTR&filter.numFile=$eq:${numFile}&filter.keysProceedings=$ilike:${key}&filter.id=$eq:${id}`;
+    return this.get(route);
+  }
+
+  getProcedingByType(id: number, params?: any) {
+    const route = `${ProceedingsEndpoints.proceedingDelivery}?filter.typeProceedings=$eq:CONSENTR&filter.numFile=$eq:${id}`;
+    return this.get(route, params);
+  }
+
+  postProceeding(params: any) {
+    const route = `${ProceedingsEndpoints.proceedingDelivery}`;
+    return this.post(route, params);
+  }
+
+  getMconsmassive(user: any, params?: any) {
+    const route = `${ProceedingsEndpoints.SearchMcons}?filter.user=$ilike:${user}`;
+    return this.get(route, params);
+  }
+
+  getDconsmassive(expedient: any, user: any) {
+    const route = `${ProceedingsEndpoints.SearchDcons}?filter.user=$ilike:${user}&filter.fileNumber.filesId=$eq:${expedient}`;
+    return this.get(route);
+  }
+
+  getDetailProceeding(Acta: any) {
+    const route = `${ProceedingsEndpoints.detailProceeding}?filter.numberProceedings=$eq:${Acta}`;
+    return this.get(route);
+  }
+
+  getMconsmassiveConstancia(user: any, params?: any) {
+    const route = `${ProceedingsEndpoints.SearchMcons}?filter.fileValue=$ilike:S&filter.user=$ilike:${user}`;
+    return this.get(route, params);
+  }
+
+  pupArmaClave(params: any) {
+    const route = `${ProceedingsEndpoints.pupArmaClave}`;
+    return this.post(route, params);
+  }
+
+  getValidaFolio(cve: any) {
+    const route = `${ProceedingsEndpoints.proceedingDelivery}?filter.typeProceedings=$ilike:CONSENTR&filter.keysProceedings=$ilike:${cve}`;
+    return this.get(route);
+  }
+
+  getCount(id: number) {
+    const route = `${ProceedingsEndpoints.getCount}/${id}`;
+    return this.get(route);
+  }
+
+  getGoodStatus(params: any) {
+    const route = `${ProceedingsEndpoints.getProceedings}`;
+    return this.post(route, params);
+  }
+
+  getProcedingbyIdAct(id: any) {
+    const route = `${ProceedingsEndpoints.proceedingDelivery}?filter.id=$eq:${id}`;
+    return this.get(route);
+  }
+
+  PutProcedingbyIdAct(id: any, params?: any) {
+    const route = `${ProceedingsEndpoints.proceedingDelivery}/${id}`;
+    return this.put(route, params);
+  }
 }

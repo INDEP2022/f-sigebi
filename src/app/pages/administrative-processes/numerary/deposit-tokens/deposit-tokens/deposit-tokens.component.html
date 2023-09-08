@@ -16,7 +16,7 @@
           <div class="col-12">
             <i class="fa fa-square" style="color: #686868"></i
             ><span style="font-weight: 500">
-              Doble Clic en la Columna de Depósito para Conciliar &nbsp;&nbsp;
+              Doble Clic en la Columna de Cantidad para Conciliar &nbsp;&nbsp;
             </span>
           </div>
         </div>
@@ -78,8 +78,10 @@
             [track]="'all'"
             [ngStyle]="{ height: loading ? '0px' : '500px' }">
             <ng2-smart-table
+              #myTable
               id="fichas"
               (delete)="showDeleteAlert($event.data)"
+              (edit)="editMovement($event.data)"
               (userRowSelect)="onCustomAction($event)"
               [attr.class]="'table-bordered'"
               [settings]="settings"
@@ -321,6 +323,7 @@
               <div class="col-md-4 mt-3">
                 <form-field [control]="form.get('di_saldo')" label="Saldo">
                   <input
+                    currencyMask
                     readonly
                     type="text"
                     class="form-control"

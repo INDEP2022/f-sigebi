@@ -7,6 +7,9 @@ export enum GOOD_TRACKER_ORIGINS {
   EventosCapture = 'FINDICA_0035_1',
   MassiveChangeStatus = 'FACTADBCAMBIOESTAT',
   EventPreparation = 'FCOMEREVENTOS',
+  ProofDelivery = 'FACTCONST_0001',
+  GoodDeliveryMain = 'FCOMERCAMESTBIEN',
+  ExportGoodsDonation = 'FDONACIONES',
 }
 
 export enum GOOD_TRACKER_ORIGINS_TITLES {
@@ -17,4 +20,7 @@ export enum GOOD_TRACKER_ORIGINS_TITLES {
   'FINDICA_0035_1' = 'Capura de Eventos',
   'FACTADBCAMBIOESTAT' = 'Cambio masivo de estatus bienes',
   'FCOMEREVENTOS' = 'Prepración del Evento',
+  'FACTCONST_0001' = 'Constancias de Entrega',
+  'FCOMERCAMESTBIEN' = 'Entrega de Bienes',
+  'FDONACIONES' = 'Exp.Bienes para Donación Excel',
 }

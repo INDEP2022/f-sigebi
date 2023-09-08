@@ -63,8 +63,16 @@ export const COMMERCIALIZATION_SW_ROUTES = [
         link: '/pages/siab-web/commercialization/report-unsold-goods',
       },
       {
+        label: 'Carga avaluos',
+        link: '/pages/siab-web/commercialization/form-load-appraisals',
+      },
+      {
         label: 'Oficios externos',
         link: '/pages/siab-web/tools/outside-trades',
+      },
+      {
+        label: 'Oficios internos',
+        link: '/pages/siab-web/tools/inside-trades',
       },
       {
         label: 'Carga de pagos',

@@ -465,6 +465,7 @@ export class NumeraryMassiveConciliationComponent
     };
 
     const paramsF = new FilterParams();
+    // paramsF.addFilter('')
     paramsF.page = this.params2.value.page;
     paramsF.limit = this.params2.value.limit;
 
@@ -521,6 +522,8 @@ export class NumeraryMassiveConciliationComponent
     };
 
     const paramsF = new FilterParams();
+    paramsF.addFilter('goodNumber', 'null', SearchFilter.NOT);
+    paramsF.sortBy = 'goodNumber:DESC';
     paramsF.page = 1;
     paramsF.limit = 10;
     this.params.value.page = 1;
@@ -1067,9 +1070,10 @@ export class NumeraryMassiveConciliationComponent
           return e.deposit;
         });
 
-        let sum: number;
+        let sum: number = 0;
         depositArray.forEach((e: any) => {
-          sum = sum + e;
+          console.log(e);
+          sum = sum + (e == undefined ? 0 : parseFloat(e));
           console.log(e);
         });
 

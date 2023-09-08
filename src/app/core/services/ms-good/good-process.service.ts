@@ -16,6 +16,7 @@ import {
   ILvlPrograma,
   IValNumeOtro,
 } from '../../models/ms-good/good';
+import { IGoodsResDev } from '../../models/ms-rejectedgood/goods-res-dev-model';
 
 @Injectable({
   providedIn: 'root',
@@ -267,5 +268,23 @@ export class GoodProcessService extends HttpService {
 
   getData(params: ListParams) {
     return this.get<IListResponse<any>>('update-good-status/getData', params);
+  }
+
+  goodResDevInv(_params: ListParams) {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IGoodsResDev>>(
+      `${GoodProcessPoints.GetGoodsResDevInv}?${params}`
+    );
+  }
+
+  getGoodCustom(currency: string, good: number) {
+    return this.get(
+      `${GoodProcessPoints.GetDataCustom}?tCurrency=${currency}&noGood=${good}`
+    );
+  }
+
+  getVGoodTpye(params: ListParams) {
+    const route = `${GoodProcessPoints.VGoodType}`;
+    return this.get<any>(route, params);
   }
 }

@@ -1,7 +1,7 @@
 <app-card [header]="true" [footer]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Siniestros Seguimiento</h5>
+      <h5 class="title">Siniestros</h5>
       <div class="col-md-5 buttons">
         <!-- <app-columns-select [(settings)]="settings"></app-columns-select>
         <div *ngIf="newSiniester">
@@ -15,36 +15,51 @@
   <div body>
     <form [formGroup]="claimsFollowUpForm" class="form-material">
       <div class="row margin-input">
-        <div class="col-md-3">
-          <form-field
-            label="No. Bien"
-            [control]="claimsFollowUpForm.get('numberGood')">
-            <input
-              class="form-control"
-              formControlName="numberGood"
-              type="number" />
-          </form-field>
+        <!-- <div class="col-md-3"> -->
+        <div style="display: flex">
+          <div class="col-md-3" style="padding: 0%">
+            <form-field
+              label="No. Bien"
+              [control]="claimsFollowUpForm.get('numberGood')">
+              <input
+                class="form-control"
+                formControlName="numberGood"
+                type="number" />
+            </form-field>
+          </div>
+          <div class="col-md-6" style="display: flex">
+            <button
+              class="btn btn-primary btn-sm active m-3"
+              (click)="validGood()">
+              Buscar
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+            <div>
+              <button
+                class="btn btn-danger btn-sm active m-3"
+                (click)="clean()">
+                Limpiar
+                <i class="fas fa-eraser"> </i>
+              </button>
+            </div>
+          </div>
+          <div
+            class="col-md-3"
+            *ngIf="lawyers.length > 0"
+            style="padding: 0%; margin-left: 7%">
+            <button
+              class="btn btn-success btn-sm active m-3"
+              (click)="export()">
+              Exportar a Excel
+              <i class="bx bx-download bx-sm float-icon"></i>
+            </button>
+          </div>
         </div>
-        <div class="col-md-3">
-          <button
-            class="btn btn-primary btn-sm active m-3"
-            (click)="validGood()">
-            Buscar
-            <i class="bx bx-search-alt bx-sm float-icon"></i>
-          </button>
-        </div>
-        <div class="col-md-3">
-          <button class="btn btn-danger btn-sm active m-3" (click)="clean()">
-            Limpiar
-            <i class="fas fa-eraser"> </i>
-          </button>
-        </div>
-        <div class="col-md-3" *ngIf="lawyers.length > 0">
-          <button class="btn btn-success btn-sm active m-3" (click)="export()">
-            Exportar a Excel
-            <i class="bx bx-download bx-sm float-icon"></i>
-          </button>
-        </div>
+
+        <!-- </div> -->
+        <!-- <div class="col-md-3">
+          
+        </div> -->
       </div>
       <div class="row margin-input">
         <div class="col-md-12">
@@ -59,31 +74,7 @@
         </div>
       </div>
     </form>
-    <div class="row mt-4">
-      <form action="" class="form-material" [formGroup]="dateDelAlForm">
-        <div class="col-md-8">
-          <app-date-initial-finish
-            *ngIf="dateDelAlForm"
-            [form]="dateDelAlForm"
-            [form2]="dateDelAlForm"
-            formInitial="del"
-            formFin="al"
-            labelInicioName="Fecha del"
-            labelFinName="al"
-            (formEmit)="(dateDelAlForm)">
-          </app-date-initial-finish>
-        </div>
-        <div class="col-md-4">
-          <button
-            class="btn btn-sm btn-success active"
-            [disabled]="!dateDelAlForm.valid"
-            (click)="exportDelAl()">
-            Exportar a Excel por Fecha
-            <i class="bx bx-download float-icon"></i>
-          </button>
-        </div>
-      </form>
-    </div>
+
     <br />
     <div class="row pt-4" *ngIf="newSiniester">
       <div class="ch-content">
@@ -116,6 +107,32 @@
       <app-pagination
         [params]="params"
         [totalItems]="totalItems"></app-pagination>
+    </div>
+    <hr />
+    <div class="row mt-4">
+      <form action="" class="form-material" [formGroup]="dateDelAlForm">
+        <div class="col-md-8">
+          <app-date-initial-finish
+            *ngIf="dateDelAlForm"
+            [form]="dateDelAlForm"
+            [form2]="dateDelAlForm"
+            formInitial="del"
+            formFin="al"
+            labelInicioName="Fecha del"
+            labelFinName="al"
+            (formEmit)="(dateDelAlForm)">
+          </app-date-initial-finish>
+        </div>
+        <div class="col-md-4">
+          <button
+            class="btn btn-sm btn-success active"
+            [disabled]="!dateDelAlForm.valid"
+            (click)="exportDelAl()">
+            Exportar a Excel por Fecha
+            <i class="bx bx-download float-icon"></i>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </app-card>

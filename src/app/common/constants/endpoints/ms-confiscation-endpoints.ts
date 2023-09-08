@@ -5,4 +5,6 @@ export enum ConfiscationEndpoints {
   MoreRelationConfiscation = 'more-relation-confiscation',
   Application = 'application/getMaxNoRelDec',
   filterInsert = 'application/filter-insert',
+  identifier = 'application/identifierFurtherRelationshipForfeiture',
+  getData = 'application/get-data-custom-query-bygood/',
 }

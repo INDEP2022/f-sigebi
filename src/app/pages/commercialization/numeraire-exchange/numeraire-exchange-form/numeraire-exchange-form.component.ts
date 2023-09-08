@@ -292,6 +292,14 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         text: 'Bien generado por pago parcial por siniestro',
         value: 'BBB',
       },
+      {
+        text: 'Bien cambiado a numerario por responsabilidad',
+        value: 'CNR',
+      },
+      {
+        text: 'Bien cambiado a numerario por enajenación de valores y divisas.',
+        value: 'CNE',
+      },
     ]);
     this.formGood.get('importSell').valueChanges.subscribe({
       next: value => {
@@ -625,9 +633,10 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     });
     if (messages.length > 0) {
       this.alert(
-        'error',
-        'Error',
-        `El Archivo no Contiene las Columnas ${messages.join(', ')}`
+        'warning',
+        'El Archivo es inválido',
+        // `El Archivo no Contiene las Columnas ${messages.join(', ')}`
+        ''
       );
       return false;
     }
@@ -844,6 +853,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         if (!questionResponse1.isConfirmed) {
           return;
         }
+        this.loader.load = false;
         const questionResponse2 = await this.alertQuestion(
           'question',
           'Advertencia',
@@ -854,6 +864,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
           await this.pupCreateGood();
         }
       } else {
+        this.loader.load = false;
         const questionResponse = await this.alertQuestion(
           'question',
           'Advertencia',
@@ -915,9 +926,14 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
           this.loader.load = false;
         }),
         catchError(err => {
+          this.loader.load = false;
           console.log('error', err);
           const message = err.error.message;
-          this.alert('error', 'Error', message);
+          this.alert(
+            'warning',
+            'Atención',
+            'El  No. Bien introducido es inválido'
+          );
           throw err;
         })
       )
@@ -1044,6 +1060,19 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
             ivacom: item.ivacom,
             commission: item.comision,
             user: this.infoToken.preferred_username.toUpperCase(),
+            fileNumber: item.no_expediente,
+            spentId: '',
+            delegationNumber: item.no_delegacion,
+            subDelegationNumber: item.no_subdelegacion,
+            flyerNumber: item.no_volante,
+            associatedExpNumber: item.no_exp_asociado,
+            moneyNew:
+              this.formBlkControl.value.diNewCurrency?.replaceAll("'", '') ||
+              '',
+            identificator: item.identificador,
+            accountNew: this.formBlkControl.value.diNewAccount || '',
+            bankNew: this.formBlkControl.value.tiNewBank || '',
+            token: this.formBlkControl.value.tiNewFile || '',
           };
         }),
         token: this.formBlkControl.value.tiNewFile || '',
@@ -1059,7 +1088,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       await firstValueFrom(
         this.goodService.pupValidMasiv(body).pipe(
           map(res => {
-            console.log(res.data);
+            console.log(res);
             if (res.data) {
               const goodFather = res.data.map((item: any) => {
                 return {
@@ -1095,6 +1124,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         )
       );
     } catch (error) {
+      this.loader.load = false;
       console.log('error', error);
       this.alert('error', 'Error', 'Ocurrió un Error al Validar el Masivo');
     }

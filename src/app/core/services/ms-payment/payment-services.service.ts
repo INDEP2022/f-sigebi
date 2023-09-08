@@ -59,6 +59,10 @@ export class PaymentService extends HttpService {
     return this.put(`${PaymentEndPoints.ComerPaymentRef}/${id}`, params);
   }
 
+  updatePayments(body: any) {
+    return this.put(PaymentEndPoints.UpdatePayments, body);
+  }
+
   sendReadSirsaeFcomer113(params: any) {
     return this.post(PaymentEndPoints.SendReadSirsaeFcomer113, params);
   }
@@ -121,17 +125,58 @@ export class PaymentService extends HttpService {
   PUP_PROC_NUEVO(evento: string) {
     return this.get(`application/fcomer111-pup-proc-new/${evento}`);
   }
-  getBusquedaPag(params?: string) {
-    return this.get(PaymentEndPoints.BusquedaPagosDet, params);
+  getBusquedaPag(params?: any) {
+    return this.get(
+      `${PaymentEndPoints.BusquedaPagosDet}?filter.tsearchId=$eq:${5}`,
+      params
+    );
   }
   // postComerPagoRefVirt(body: IComerPaymentsRefVir) {
   //   return this.post('comer-payments-ref-virt', body);
   // }
 
-  getBusquedaMae(params: string) {
+  getBusquedaMae(params: number | string) {
     return this.get(
       PaymentEndPoints.BusquedaPagosMae,
       `&filter.tsearchId=$eq:${params}`
     );
+  }
+
+  getSearchId(id: number | string) {
+    return this.get(
+      `${PaymentEndPoints.BusquedaPagosDet}?filter.tsearchId=$eq:${id}`
+    );
+  }
+
+  deleteId(id: number | string) {
+    return this.delete(`${PaymentEndPoints.Delete}/${id}`);
+  }
+
+  UpdateRecord(params: any) {
+    return this.put(PaymentEndPoints.BusquedaPagosDet, params);
+  }
+
+  getValidSystem(filter?: string) {
+    if (filter != null) {
+      return this.get(
+        `${PaymentEndPoints.validSystem}?filter.valsisKey=$eq:${filter}`
+      );
+    } else {
+      return this.get(`${PaymentEndPoints.validSystem}`);
+    }
+  }
+
+  getValidSystemDesc(filter?: string) {
+    if (filter != null) {
+      return this.get(
+        `${PaymentEndPoints.validSystem}?filter.valsisDescription=$eq:${filter}`
+      );
+    } else {
+      return this.get(`${PaymentEndPoints.validSystem}`);
+    }
+  }
+
+  postCreateRecord(params: any) {
+    return this.post(PaymentEndPoints.BusquedaPagosDet, params);
   }
 }

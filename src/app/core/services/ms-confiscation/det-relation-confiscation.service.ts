@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ConfiscationEndpoints } from 'src/app/common/constants/endpoints/ms-confiscation-endpoints';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDetRelationConfiscation } from '../../models/ms-confiscation/det-relation-confiscation';
@@ -28,14 +27,19 @@ export class DetRelationConfiscationService extends HttpService {
     );
   }
 
-  Insert(model?: ListParams): Observable<IListResponse<any>> {
+  getByGood(id?: any): Observable<IListResponse<any>> {
+    const route = ConfiscationEndpoints.getData;
+    return this.get<IListResponse<any>>(route + id);
+  }
+
+  Insert(model?: any): Observable<IListResponse<any>> {
     return this.post<IListResponse<any>>(
       ConfiscationEndpoints.filterInsert,
       model
     );
   }
 
-  getById(id?: ListParams): Observable<IListResponse<any>> {
+  getById(id?: any): Observable<IListResponse<any>> {
     return this.post<IListResponse<any>>(
       ConfiscationEndpoints.DetRelationConfiscationById,
       id
@@ -47,6 +51,13 @@ export class DetRelationConfiscationService extends HttpService {
   ): Observable<IListResponse<IMoreRelationConfiscation>> {
     return this.get<IListResponse<IMoreRelationConfiscation>>(
       ConfiscationEndpoints.MoreRelationConfiscation,
+      params
+    );
+  }
+
+  getId(params?: _Params): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      ConfiscationEndpoints.identifier,
       params
     );
   }

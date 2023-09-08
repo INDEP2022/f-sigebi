@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { REAL_STATE_COLUMNS } from './propertyInm-columns';
+import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
+import { REAL_STATE_COLUMNS, REPORT_COLUMNS } from './propertyInm-columns';
 
 //import { Component, OnInit } from '@angular/core';
 
@@ -19,12 +22,24 @@ import { REAL_STATE_COLUMNS } from './propertyInm-columns';
 })
 export class PropertyInmComponent extends BasePage implements OnInit {
   totalItems: number = 0;
+  totalItems1: number = 0;
+  loadingReport: boolean = false;
+  excelLoading = false;
+  dataGood: any = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
-
+  params1 = new BehaviorSubject<ListParams>(new ListParams());
+  settings1: any = [];
   data: LocalDataSource = new LocalDataSource();
+  good: LocalDataSource = new LocalDataSource();
+  columnFilters1: any = [];
+  loading1 = false;
   columnFilters: any = [];
   array: any = [];
-  constructor(private goodSssubtypeService: GoodSssubtypeService) {
+  constructor(
+    private goodSssubtypeService: GoodSssubtypeService,
+    private goodServices: GoodService,
+    private goodprocessService: GoodprocessService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -43,30 +58,75 @@ export class PropertyInmComponent extends BasePage implements OnInit {
         },
       },
     };
+    this.settings1 = {
+      ...this.settings1,
+      actions: false,
+      hideSubHeader: false,
+      columns: {
+        ...REPORT_COLUMNS,
+      },
+    };
   }
+
+  private tempArray: any[] = [];
 
   onSelectDelegation(instance: CheckboxElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: data => {
-        //this.selectDelegation(data.row, data.toggle),
-        console.log(data.toggle, data.row.numClasifGoods);
-        if (data.toggle == true) {
-        }
-
-        const existe = this.array.some(
-          (objeto: any) => objeto.id === data.row.numClasifGoods
-        );
-        console.log(existe);
-        if (existe) {
-          const index = this.array.findIndex(
-            (objeto: any) => objeto.id === data.row.id
-          );
-          console.log(index);
-          this.array.splice(index, 1);
+        // Haz una copia del array antes de la acción de selección o deselección
+        this.tempArray = [...this.array];
+        console.log(data.toggle, data.row.clasifGoodNumber);
+        if (data.toggle) {
+          // Si el checkbox se selecciona, agregar el elemento al array
+          if (!this.array.includes(data.row.clasifGoodNumber)) {
+            this.array.push(data.row.clasifGoodNumber);
+          }
         } else {
-          this.array.push(data.row.numClasifGoods);
+          // Si el checkbox se deselecciona, eliminar el elemento del array
+          const index = this.array.indexOf(data.row.clasifGoodNumber);
+          if (index !== -1) {
+            this.array.splice(index, 1);
+          }
         }
         console.log(this.array);
+
+        // Ahora puedes realizar la consulta, teniendo en cuenta los cambios en this.array
+        this.performQuery();
+      },
+    });
+  }
+
+  // Esta función realiza la consulta
+  performQuery() {
+    this.loading1 = true;
+    this.dataGood = [];
+
+    let params = {
+      ...this.params1.getValue(),
+      ...this.columnFilters1,
+    };
+
+    params['filter.goodClassNumber'] = `$in:${this.array}`;
+    console.log(params);
+
+    this.goodServices.getByExpedientAndParams__(params).subscribe({
+      next: (response: any) => {
+        this.dataGood = response.data;
+        this.totalItems1 = response.count;
+        this.good.load(response.data);
+        this.good.refresh();
+        this.loading1 = false;
+      },
+      error: err => {
+        console.log('error', err);
+        this.totalItems1 = 0;
+        this.good.load([]);
+        this.good.refresh();
+
+        // En caso de error, restaura this.array a su estado anterior
+        this.array = [...this.tempArray];
+
+        this.loading1 = false;
       },
     });
   }
@@ -84,7 +144,7 @@ export class PropertyInmComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
-              case 'numClasifGoods':
+              case 'clasifGoodNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -104,6 +164,10 @@ export class PropertyInmComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDataAll());
+
+    this.params1
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.performQuery());
   }
 
   getDataAll() {
@@ -111,14 +175,16 @@ export class PropertyInmComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.goodSssubtypeService.getAll(param).subscribe({
-      next: resp => {
+    param['filter.typeNumber'] = `$eq:5`;
+    console.log(param);
+    this.goodprocessService.getGoodTypeMuebles(param).subscribe({
+      next: (resp: any) => {
         this.data.load(resp.data);
         this.data.refresh();
         this.totalItems = resp.count;
         this.loading = false;
       },
-      error: err => {
+      error: (err: any) => {
         this.loading = false;
         this.data.load([]);
         this.data.refresh();
@@ -131,20 +197,38 @@ export class PropertyInmComponent extends BasePage implements OnInit {
     //console.log(event.isSelected);
   }
 
-  generateReport() {}
-
-  /*data: any = [
-    {
-      clasific: 'test',
-      description: 'test123123'
-    },
-    {
-      clasific: 'test1',
-      description: 'test123123'
-    },
-    {
-      clasific: 'test2',
-      description: 'test123123'
+  onExportExcel() {
+    if (this.array.length === 0 || this.totalItems1 === 0) {
+      this.alert('warning', 'Debe seleccionar un valor', '');
+      return;
     }
-  ]*/
+    this.loadingReport = true;
+    this.generateReport().subscribe();
+    this.loadingReport = false;
+  }
+
+  generateReport() {
+    console.log(this.array);
+
+    const array = this.array;
+    console.log(array);
+
+    this.excelLoading = true;
+
+    return this.goodServices.getByExpedientAndParamsExport(this.array).pipe(
+      catchError(error => {
+        this.excelLoading = false;
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.excelLoading = false;
+        this._downloadExcelFromBase64(
+          response.base64File,
+          `lfiarchivo-${this.array}`
+        );
+        console.log(response);
+      })
+    );
+  }
 }

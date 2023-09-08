@@ -20,8 +20,7 @@ export class RequestHelperService {
   private turnarVerifiCumpli = new BehaviorSubject<any>(undefined);
   currentTurnarVerificacion = this.turnarVerifiCumpli.asObservable();
 
-  /*private expedientTab = new BehaviorSubject<any>(undefined);
-  currentExpedientTab = this.expedientTab.asObservable();*/
+  /* SCHEDUCLING DELIVERIES */
 
   constructor() {}
 

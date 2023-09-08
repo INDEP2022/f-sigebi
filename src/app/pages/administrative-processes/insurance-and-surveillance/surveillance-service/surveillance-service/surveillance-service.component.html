@@ -8,28 +8,33 @@
       <div class="row">
         <div class="col-5">
           <div class="ch-content">
-            <h5 class="title">PERÍODOS DE SUPERVISIÓN Y VALIDACIÓN</h5>
+            <h5 class="title">PERIODOS DE SUPERVISIÓN Y VALIDACIÓN</h5>
           </div>
           <form action="" [formGroup]="form" class="form-material">
             <div class="row mt-4">
-              <div class="col-12 mt-3">
-                <form-field [control]="form.get('delegation')">
-                  <ngx-select
-                    [form]="form"
-                    [data]="delegations"
-                    (change)="changeDelegations($event)"
-                    bindLabel="numberAndDescrip"
-                    label="Delegación"
-                    value="delegationNumber"
-                    (fetchItems)="getDelegation($event)"
-                    control="delegation"></ngx-select>
+              <div class="col-12 mt-3" style="margin-top: -5px">
+                <form-field
+                  [control]="form.get('delegation')"
+                  label="Delegación">
+                  <input
+                    style="margin-top: 5px"
+                    readonly
+                    type="text"
+                    formControlName="delegation"
+                    class="form-control" />
                 </form-field>
+                <!-- <form-field [control]="form.get('delegation')">
+                  <ngx-select [form]="form" [data]="delegations" (change)="changeDelegations($event)"
+                    bindLabel="numberAndDescrip" label="Delegación" value="delegationNumber"
+                    (fetchItems)="getDelegation($event)" control="delegation"></ngx-select>
+                </form-field> -->
               </div>
             </div>
-            <div class="row mt-4">
+            <div class="row mt-4" style="margin-top: -1px">
               <div class="col-md-6 mt-3">
                 <form-field [control]="form.get('process')" label="Proceso">
                   <ng-select
+                    style="margin-top: 1px"
                     [readonly]="!disabledProcess"
                     (change)="cleanPeriod($event)"
                     class="form-control"
@@ -40,7 +45,7 @@
                   </ng-select>
                 </form-field>
               </div>
-              <div class="col-md-6 mt-3">
+              <div class="col-md-6 mt-3" style="padding-top: 1px">
                 <form-field [control]="form.get('period')">
                   <ngx-select
                     (change)="addDate($event)"
@@ -48,7 +53,7 @@
                     [form]="form"
                     [data]="periods"
                     bindLabel="cvePeriod"
-                    label="Período"
+                    label="Clave Periodo"
                     value="cvePeriod"
                     (fetchItems)="getPeriods($event)"
                     control="period"></ngx-select>
@@ -58,7 +63,7 @@
             </div>
             <div class="row mt-4">
               <div class="col-md-4 mt-3">
-                <form-field [control]="form.get('from')" label="Período del">
+                <form-field [control]="form.get('from')" label="Periodo del">
                   <input
                     readonly
                     type="text"
@@ -121,6 +126,7 @@
                       [control]="formRegistro.get('processTwo')"
                       label="Proceso">
                       <ng-select
+                        style="margin-top: 2px"
                         class="form-control"
                         formControlName="processTwo">
                         <!-- <ng-option [value]="null"
@@ -136,12 +142,15 @@
                     style="margin-top: 23px !important">
                     <form-field
                       [control]="formRegistro.get('fromTwo')"
-                      label="Período del">
+                      label="Periodo del">
                       <input
                         type="text"
+                        [(ngModel)]="dateMovemInicio"
+                        (ngModelChange)="dateMovementInicio($event)"
                         formControlName="fromTwo"
                         class="form-control"
-                        bsDatepicker />
+                        bsDatepicker
+                        [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
                     </form-field>
                   </div>
                   <div
@@ -151,10 +160,12 @@
                       [control]="formRegistro.get('toTwo')"
                       label="al">
                       <input
+                        [(ngModel)]="dateMovemFin"
                         type="text"
                         formControlName="toTwo"
                         class="form-control"
-                        bsDatepicker />
+                        bsDatepicker
+                        [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
                     </form-field>
                   </div>
                 </div>
@@ -197,10 +208,20 @@
                       class="btn btn-info btn-sm active mt-4 w-100">
                       Generar Aleatorios
                     </button>
-
+                    <button
+                      type="button"
+                      (click)="generarReport()"
+                      class="btn btn-primary btn-sm active mt-4 w-100">
+                      Crear Reporte
+                      <i class="bx bx-printer bx-sm float-icon"></i>
+                    </button>
+                  </div>
+                  <div class="col-1"></div>
+                  <div class="col-3"></div>
+                  <div class="col-6 text-center">
                     <button
                       [ngClass]="{ loading: loadingBtn2 }"
-                      style="font-size: 14px"
+                      style="font-size: 14px; width: 80%"
                       (click)="exportar()"
                       type="button"
                       class="btn btn-success active btn-sm mt-4 w-100">
@@ -208,18 +229,6 @@
                       <i
                         *ngIf="!loadingBtn2"
                         class="bx bx-upload float-icon"></i>
-                    </button>
-                  </div>
-                  <div class="col-1"></div>
-                  <div class="col-3"></div>
-                  <div class="col-6 text-center">
-                    <button
-                      [disabled]="!delegationMae"
-                      type="button"
-                      (click)="generarReport()"
-                      style="width: 80%"
-                      class="btn btn-primary btn-sm active mt-4">
-                      Crear Reporte
                     </button>
                   </div>
                   <div class="col-3"></div>

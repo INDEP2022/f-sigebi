@@ -14,6 +14,7 @@ import {
 import { ListParams } from './../../../../common/repository/interfaces/list-params';
 import { CheckboxElementComponent } from './../../../../shared/components/checkbox-element-smarttable/checkbox-element';
 import { COLUMNS } from './columns';
+import { DonationProcessService } from './donation-process.service';
 import { ModalSelectRequestsComponent } from './modal-select-requests/modal-select-requests.component';
 
 @Component({
@@ -35,7 +36,11 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
   minModeFromMonth: BsDatepickerViewMode = 'month';
   minModeFromYear: BsDatepickerViewMode = 'year';
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private donationService: DonationProcessService
+  ) {
     super();
   }
 
@@ -43,6 +48,9 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
     this.initForm();
     this.configInputsDate();
     this.assignTableColumns();
+    console.log(this.op);
+
+    this.donationService.getAllContracts();
   }
 
   newColumn = {
@@ -74,13 +82,13 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
 
   initForm() {
     this.form = this.fb.group({
-      idContract: [null, [Validators.required]],
-      cto: [null, [Validators.required]],
+      idContract: [null, [Validators.required, Validators.maxLength(10)]],
+      cto: [null, [Validators.required, Validators.maxLength(5)]],
       status: [null, [Validators.required]],
-      trans: [null, [Validators.required]],
-      don: [null, [Validators.required]],
-      ctrlAut: [null, [Validators.required]],
-      folio: [null, [Validators.required]],
+      trans: [null, [Validators.required, Validators.maxLength(50)]],
+      don: [null, [Validators.required, Validators.maxLength(30)]],
+      ctrlAut: [null, [Validators.required, Validators.maxLength(30)]],
+      folio: [null, [Validators.required, Validators.maxLength(4)]],
       year: [this.bsValueFromYear, [Validators.required]],
       month: [this.bsValueFromMonth, [Validators.required]],
       key: [
@@ -89,48 +97,109 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
       ],
       cve: [
         null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(KEYGENERATION_PATTERN),
+          Validators.maxLength(4),
+        ],
       ],
-      donee: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      donee: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(10),
+        ],
+      ],
       reasonSocial: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(255),
+        ],
       ],
       subscribeDate: [null, [Validators.required]],
       domicilie: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(250),
+        ],
       ],
       nameRepDon: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       positionRepDon: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
-      nameRepSae: [null, [Validators.required]],
+      nameRepSae: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
       nameFunSae: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       positionFunSae: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       witness1: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
-      witness2: [null, [Validators.required]],
+      witness2: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
       observations: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1250),
+        ],
       ],
       deliveryDate: [null, [Validators.required]],
       folioScan: [
         null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(KEYGENERATION_PATTERN),
+          Validators.maxLength(15),
+        ],
       ],
       contractStatus: [null, [Validators.required]],
     });
@@ -142,6 +211,17 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
     this.settings = event;
   }
 
+  onIncorporar() {
+    this.alert('success', 'El contrato ha sido incorporado', '');
+  }
+
+  onQuitarBienesSeleccionados() {
+    this.alert(
+      'success',
+      'El bien o los bienes seleccionados han sido retirados',
+      ''
+    );
+  }
   configInputsDate() {
     this.bsConfigFromYear = Object.assign(
       {},
@@ -171,5 +251,17 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
     );
     this.bsModalRef.content.closeBtnName = 'Close';
     this.bsModalRef.setClass('modal-lg');
+  }
+
+  onImprimir() {
+    this.alert('success', 'Test', 'Impresión exitosa');
+  }
+
+  onBloquearFirma() {
+    this.alert('success', 'Test', 'Se ha bloqueado en firma');
+  }
+
+  onCerrarContrato() {
+    this.alert('success', 'Test', 'Se ha cerrado el contrato');
   }
 }

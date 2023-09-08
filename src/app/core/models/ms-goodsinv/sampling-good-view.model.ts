@@ -1,0 +1,36 @@
+export interface ISamplingGoodView {
+  organizationCode?: number;
+  organizationId?: number;
+  inventoryNumber?: string;
+  transactionQuantity?: number;
+  uomCode?: string;
+  description?: string;
+  reserved?: number;
+  goodSiabNumber?: number;
+  managementNumber?: number;
+  delRegionalId?: number;
+  initialPeriod?: string;
+  finalPeriod?: string;
+  transactionId?: number;
+  descriptiveValue?: string;
+  available?: number;
+  entTransferentId?: number;
+  subinventoryCode?: string;
+  inventoryItemId?: number;
+  locatorId?: number;
+  fileType?: string;
+  type?: number;
+  subType?: number;
+  ssubType?: number;
+  sssubType?: number;
+  transferRequest?: number;
+  requestDate?: string;
+  fileDate?: string;
+  fileNumber?: number;
+  jobNumber?: string;
+  authorityId?: number;
+  stationId?: number;
+  transferFile?: string;
+  satUniqueKey?: number;
+  startChapter?: number;
+}

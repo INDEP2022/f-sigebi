@@ -23,7 +23,9 @@
             label="Descripción"
             [control]="claimsFollowUpDetailForm.get('description')">
             <textarea
-              class="form-control pt-4"
+              class="form-control"
+              rows="2"
+              type="text"
               formControlName="description"
               readonly></textarea>
           </form-field>
@@ -54,7 +56,7 @@
         </div>
       </div>
       <div class="row pt-4">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field
             [control]="claimsFollowUpDetailForm.get('fecSinisterIn')"
             label="Fecha de Siniestro">
@@ -65,7 +67,7 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-5">
           <form-field
             [control]="claimsFollowUpDetailForm.get('typeSinisterIn')">
             <ngx-select
@@ -104,17 +106,29 @@
               type="file"
               accept="application/pdf"
               formControlName="docOfficeMailIn"
-              (change)="chargeFileDocOfficeMailIn($event)" />
+              (change)="chargeFileDocOfficeMailIn($event)"
+              id="botonFileReal"
+              style="display: none" />
+            <input
+              type="button"
+              class="file"
+              value="Seleccionar archivo"
+              onclick="document.getElementById('botonFileReal').click();" />
+            <span id="filePlaceholder" class="ellipsis">
+              <span>Sin archivo seleccionado</span>
+            </span>
           </form-field>
         </div>
         <div class="col-md-5 margin-input">
           <form-field
-            label="P&oacute;liza Afectada"
-            [control]="claimsFollowUpDetailForm.get('policyAffectedIn')">
+            label="Fecha Oficio/Correo"
+            [control]="claimsFollowUpDetailForm.get('dateOfficeMailIn')">
             <input
+              type="text"
+              formControlName="dateOfficeMailIn"
               class="form-control"
-              formControlName="policyAffectedIn"
-              type="text" />
+              bsDatepicker
+              [bsConfig]="{ adaptivePosition: true }" />
           </form-field>
         </div>
       </div>
@@ -135,18 +149,30 @@
         </div>
       </div>
       <div class="row pt-4">
-        <div class="col-md-12">
+        <div class="col-md-8">
           <form-field
             label="Detalle del Bien o las Partes Afectadas"
             [control]="claimsFollowUpDetailForm.get('detGoodoAffectedIn')">
             <textarea
-              class="form-control pt-4"
-              formControlName="detGoodoAffectedIn"></textarea>
+              class="form-control"
+              pt-5s="2"
+              formControlName="detGoodoAffectedIn"
+              style="margin-top: 2%"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-4 pt-4">
+          <form-field
+            label="P&oacute;liza Afectada"
+            [control]="claimsFollowUpDetailForm.get('policyAffectedIn')">
+            <input
+              class="form-control"
+              formControlName="policyAffectedIn"
+              type="text" />
           </form-field>
         </div>
       </div>
-      <hr />
-      <div class="row pt-4">
+
+      <div class="row pt-4" style="margin-top: 8%">
         <div class="col-md-6">
           <form-field
             label="Monto Reclamo Segun Carta de Reclamación"
@@ -203,10 +229,32 @@
               type="file"
               accept="application/pdf"
               formControlName="docLetterRelcamationIn"
-              (change)="chargeFileLetterClaimIn($event)" />
+              (change)="chargeFileLetterClaimIn($event)"
+              id="botonFileReal"
+              style="display: none" />
+            <input
+              type="button"
+              class="file"
+              value="Seleccionar archivo"
+              onclick="document.getElementById('botonFileReal').click();" />
+            <span id="filePlaceholder1" class="ellipsis">
+              <span>Sin archivo seleccionado</span>
+            </span>
           </form-field>
         </div>
-        <div class="col-md-5 pt-4">
+        <div class="col-md-5 margin-input">
+          <form-field
+            [control]="claimsFollowUpDetailForm.get('letterClaimIn')"
+            label="Fecha Carta Reclamación">
+            <input
+              type="text"
+              formControlName="letterClaimIn"
+              class="form-control"
+              bsDatepicker
+              [bsConfig]="{ adaptivePosition: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-5 margin-input">
           <form-field
             label="Monto Indemnizado"
             [control]="claimsFollowUpDetailForm.get('amountIndemnizedIn')">
@@ -217,7 +265,8 @@
           </form-field>
         </div>
       </div>
-      <div class="row">
+
+      <div class="row" style="margin-top: 8%">
         <div class="col-md-7">
           <label
             for=""
@@ -230,10 +279,35 @@
               type="file"
               accept="application/pdf"
               formControlName="docOfficeMinConcluIn"
-              (change)="chargeFileDocOfficeMinConcluIn($event)" />
+              (change)="chargeFileDocOfficeMinConcluIn($event)"
+              id="botonFileReal"
+              style="display: none" />
+            <input
+              type="button"
+              class="file"
+              value="Seleccionar archivo"
+              onclick="document.getElementById('botonFileReal').click();" />
+            <span id="filePlaceholder2" class="ellipsis">
+              <span>Sin archivo seleccionado</span>
+            </span>
           </form-field>
         </div>
-        <div class="col-md-5 pt-4">
+        <div class="col-md-5 margin-input">
+          <form-field
+            label="Fecha Oficio de Conclusión/Minuta"
+            [control]="claimsFollowUpDetailForm.get('dateOfficeMinConcluIn')">
+            <input
+              type="text"
+              formControlName="dateOfficeMinConcluIn"
+              class="form-control"
+              bsDatepicker
+              [bsConfig]="{ adaptivePosition: true }" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
           <form-field
             label="Orden de Ingreso"
             [control]="claimsFollowUpDetailForm.get('orderOfEntryIn')">
@@ -243,10 +317,7 @@
               type="text" />
           </form-field>
         </div>
-      </div>
-
-      <div class="row pt-4">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field [control]="claimsFollowUpDetailForm.get('statusIn')">
             <ngx-select
               (fetchItems)="getStatusSinister($event)"
@@ -258,7 +329,9 @@
               control="statusIn"></ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4">
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
           <form-field
             [control]="claimsFollowUpDetailForm.get('firstSecondLaterIn')">
             <ngx-select
@@ -271,7 +344,7 @@
               control="firstSecondLaterIn"></ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field
             [control]="claimsFollowUpDetailForm.get('shapeConclusionIn')">
             <ngx-select
@@ -300,18 +373,6 @@
                 [bsConfig]="{ adaptivePosition: true }" />
             </form-field>
           </div>
-        </div>
-        <div class="col-md-6">
-          <form-field
-            [control]="claimsFollowUpDetailForm.get('letterClaimIn')"
-            label="Fecha Carta Reclamación">
-            <input
-              type="text"
-              formControlName="letterClaimIn"
-              class="form-control"
-              bsDatepicker
-              [bsConfig]="{ adaptivePosition: true }" />
-          </form-field>
         </div>
       </div>
       <div class="row"></div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
@@ -10,6 +10,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { ScanningFoilComponent } from '../scanning-foil/scanning-foil.component';
 
 @Component({
   selector: 'app-legal-regularization',
@@ -65,7 +66,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
   get justifier() {
     return this.form.get('justifier');
   }
-
+  @ViewChild('hijoRef', { static: false }) hijoRef: ScanningFoilComponent;
   constructor(
     private fb: FormBuilder,
     private readonly goodServices: GoodService,
@@ -88,8 +89,13 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
       const change: any = JSON.parse(savedForm);
       this.form.patchValue(change);
       this.document = JSON.parse(objetoString);
-      this.redicrectScan = true;
       this.numberFoli = parseInt(JSON.parse(numberFoli), 10);
+      setTimeout(() => {
+        this.insertDocument(this.document);
+        this.insertFolio(this.numberFoli);
+      }, 1500);
+      this.redicrectScan = true;
+
       this.loadGood();
     }
     // this.justifier.valueChanges.subscribe(data => {
@@ -157,7 +163,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
             this.alert(
               'warning',
               'Atención',
-              `El expediente ${response.data[0].fileNumber} que esta asociado a este Bien no existe.`
+              `El expediente ${response.data[0].fileNumber} que está asociado a este Bien no existe.`
             );
           }
         } else {
@@ -165,7 +171,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
             this.alert(
               'warning',
               'Atención',
-              `El estatus del Bien ${this.numberGood.value} es incorrecto. Los estatus validos son  ADM o REJ.`
+              `El estatus del Bien ${this.numberGood.value} es incorrecto. Los estatus válidos son ADM o REJ.`
             );
           }
         }
@@ -196,7 +202,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Atención',
-        `No puede cambiar el estatus al Bien ${this.good.id} por que aún no se ha generado un folio`
+        `No puede cambiar el estatus al Bien ${this.good.id} porque aún no se ha generado un folio`
       );
       return;
     }
@@ -207,7 +213,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
       this.good.status = this.good.status === 'REJ' ? 'ADM' : 'REJ';
       const good: IGood = {
         id: Number(this.good.id),
-        goodId: Number(this.good.id),
+        goodId: Number(this.good.goodId),
         status: this.good.status,
       };
       this.goodServices.update(good).subscribe({
@@ -223,8 +229,9 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
     }
   }
   changeFoli(event: any) {
-    console.log(event);
+    console.log('aaa', event);
     this.document = event;
+    console.log(event.id);
     this.numberFoli = event.id;
   }
   validDocument() {
@@ -290,6 +297,9 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
     this.justifier.updateValueAndValidity();
     this.form.reset();
     this.numberFoli = null;
+    this.document = undefined;
+    this.cambiarValor();
+    this.insertFolio('');
     localStorage.removeItem('savedForm');
     localStorage.removeItem('documentLegal');
     localStorage.removeItem('numberFoli');
@@ -322,5 +332,53 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
         error: err => res(false),
       });
     });
+  }
+
+  cleanDocument() {
+    const nullDocument: any = {
+      id: null,
+      natureDocument: null,
+      descriptionDocument: null,
+      significantDate: null,
+      scanStatus: null,
+      fileStatus: null,
+      userRequestsScan: null,
+      scanRequestDate: null,
+      userRegistersScan: null,
+      dateRegistrationScan: null,
+      userReceivesFile: null,
+      dateReceivesFile: null,
+      keyTypeDocument: null,
+      keySeparator: null,
+      numberProceedings: null,
+      sheets: null,
+      numberDelegationRequested: null,
+      numberSubdelegationRequests: null,
+      numberDepartmentRequest: null,
+      registrationNumber: null,
+      flyerNumber: null,
+      userSend: null,
+      areaSends: null,
+      sendDate: null,
+      sendFilekey: null,
+      userResponsibleFile: null,
+      mediumId: null,
+      associateUniversalFolio: null,
+      dateRegistrationScanningHc: null,
+      dateRequestScanningHc: null,
+      goodNumber: null,
+    };
+    return nullDocument;
+  }
+
+  cambiarValor() {
+    this.hijoRef.cleanDocumentFolio(this.cleanDocument());
+  }
+
+  insertDocument(documentFolio: any) {
+    this.hijoRef.inserDocumentFolio(documentFolio);
+  }
+  insertFolio(folio: any) {
+    this.hijoRef.setFolio(folio);
   }
 }

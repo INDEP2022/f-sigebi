@@ -78,6 +78,8 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   totalLayoutsStructure: number = 0;
   testDataLayoutsStructure: any[] = [];
   columnFiltersLayoutsStructure: any = [];
+  // Cantidades de sumatorias
+  lengthTotal: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -195,7 +197,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
-        this.onLoadToast('error', 'error en la búsqueda!!', '');
+        this.onLoadToast('error', 'Error en la búsqueda', '');
         return;
       },
     });
@@ -209,7 +211,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     if (this.selectedRow == null) {
       this.alert(
         'warning',
-        'Selecciona un Registro de la Tabla "Layouts" para continuar',
+        'Selecciona un registro de la tabla "Diseños" para continuar',
         ''
       );
       return;
@@ -217,8 +219,8 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     console.log('DUPLICAR ', this.selectedRow);
     this.alertQuestion(
       'warning',
-      'Duplicar Layout',
-      '¿Está seguro(a) en duplicar el Layout ' +
+      'Duplicar Diseño',
+      '¿Está seguro(a) en duplicar el diseño ' +
         this.selectedRow.id +
         '.' +
         this.selectedRow.descLayout +
@@ -236,7 +238,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
           },
           error: error => {
             this.loading = false;
-            this.onLoadToast('error', 'No se puede duplicar layout!!', '');
+            this.onLoadToast('error', 'No se puede duplicar el diseño', '');
             // return;
           },
         });
@@ -260,6 +262,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     const message: string = 'Duplicado';
     this.onLoadToast('success', `${message} Correctamente`, '');
     this.loading = false;
+    this.loadingDataTableLayouts();
     this.loadingDataTableLayoutsStructure();
   }
 
@@ -318,17 +321,17 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.layoutsConfigService.remove(del).subscribe({
           next: data => {
             this.loading = false;
-            this.onLoadToast('success', 'Layout eliminado', '');
+            this.onLoadToast('success', 'Diseño Eliminado', '');
             this.getLayouts();
           },
           error: error => {
-            this.onLoadToast('error', 'No se puede eliminar registro', '');
+            this.onLoadToast('error', 'No se puede eliminar el registro', '');
             this.loading = false;
           },
         });
@@ -394,7 +397,10 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.layoutsConfigService.getAllLayoutsH(params).subscribe({
       next: res => {
         console.log('DATA Layouts', res);
-        this.testDataLayouts = res.data;
+        this.testDataLayouts = res.data.map((i: any) => {
+          i['status_active'] = i.indActive == '1' ? true : false;
+          return i;
+        });
         this.dataTableLayouts.load(this.testDataLayouts);
         this.totalLayouts = res.count;
         this.loadingLayouts = false;
@@ -432,8 +438,8 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     console.log('ELIMINAR ', event);
     this.alertQuestion(
       'warning',
-      'Eliminar Layout',
-      '¿Desea Eliminar este Layout?'
+      'Eliminar Diseño',
+      '¿Desea eliminar este diseño?'
     ).then(question => {
       if (question.isConfirmed) {
         this.loadingLayouts = true;
@@ -442,7 +448,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
           .subscribe({
             next: data => {
               this.loadingLayouts = false;
-              this.alert('success', 'Eliminado Correctamente', ``);
+              this.alert('success', 'Eliminado correctamente', ``);
               this.loadingDataTableLayouts();
             },
             error: error => {
@@ -450,7 +456,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
               this.alert(
                 'error',
                 'Error al Actualizar',
-                'Ocurrió un Error al Actualizar el Layout'
+                'Ocurrió un error al actualizar el diseño'
               );
             },
           });
@@ -529,24 +535,25 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       ...this.columnFiltersLayoutsStructure,
     };
     console.log('PARAMS ', params);
-    this.layoutsConfigService.getAllLayouts(params).subscribe({
+    this.layoutsConfigService.getAllLayouts_TotalT(params).subscribe({
       next: res => {
         console.log('DATA LayoutsStructure', res);
         this.testDataLayoutsStructure = res.data;
         this.dataTableLayoutsStructure.load(this.testDataLayoutsStructure);
         this.totalLayoutsStructure = res.count;
         this.loadingLayoutsStructure = false;
+        this.lengthTotal = res.totalLength;
       },
       error: error => {
         console.log(error);
         this.testDataLayoutsStructure = [];
         this.dataTableLayoutsStructure.load([]);
         this.totalLayoutsStructure = 0;
+        this.lengthTotal = 0;
         this.loadingLayoutsStructure = false;
       },
     });
   }
-
   /**
    * FIN FILTROS DE TABLAS Y FUNCIONES PARA CARGAR DATA
    */
@@ -555,7 +562,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     if (this.selectedRow == null) {
       this.alert(
         'warning',
-        'Selecciona un Registro de la Tabla "Layouts" para continuar',
+        'Selecciona un registro de la tabla "Diseños" para continuar',
         ''
       );
       return;

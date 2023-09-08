@@ -20,7 +20,7 @@ export class LayoutsConfigurationModalComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Configuración de Layouts';
+  title: string = 'Configuración de Diseños';
   provider: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -104,7 +104,9 @@ export class LayoutsConfigurationModalComponent
     if (this.provider != undefined) {
       this.edit = true;
       this.providerForm.patchValue(this.provider);
-      // this.providerForm.get('criterion').setValue(this.provider.criterion);
+      this.providerForm
+        .get('indActive')
+        .setValue(this.provider.indActive == '1' ? true : 0);
       this.providerForm.markAllAsTouched();
       console.log(this.providerForm.value);
     } else {
@@ -136,20 +138,20 @@ export class LayoutsConfigurationModalComponent
           this.alert(
             'error',
             'Error al Crear',
-            'Ocurrió un Error al Crear el Layout'
+            'Ocurrió un error al crear el diseño'
           );
           return;
         },
       });
     } catch {
-      console.error('Layout no existe');
+      console.error('Diseño no existe');
     }
   }
   update() {
     this.alertQuestion(
       'warning',
-      'Actualizar Layout',
-      '¿Desea Actualizar este layout?'
+      'Actualizar Diseño',
+      '¿Desea actualizar este diseño?'
     ).then(question => {
       if (question.isConfirmed) {
         // let params: IComerLayoutsW = {
@@ -166,6 +168,8 @@ export class LayoutsConfigurationModalComponent
         //   registryNumber: this.provider.registryNumber,
         //   type: this.provider.type,
         // };
+        this.providerForm.value.indActive =
+          this.providerForm.value.indActive == true ? 1 : 0;
         this.layoutsConfigService
           .updatelayoutSH(this.provider.id, this.providerForm.value)
           .subscribe({
@@ -174,7 +178,7 @@ export class LayoutsConfigurationModalComponent
               this.alert(
                 'error',
                 'Error al Actualizar',
-                'Ocurrió un Error al Actualizar el Layout'
+                'Ocurrió un error al actualizar el diseño'
               );
               this.loading = false;
             },

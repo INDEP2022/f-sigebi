@@ -5,18 +5,23 @@
   <div body>
     <div class="justify-content-end btn-toolbar">
       <button
+        (click)="sendProgramming()"
         type="button"
-        [routerLink]="['execute-schelude-delivery']"
-        class="btn btn-primary btn-sm active">
+        class="btn btn-primary btn-sm active mr-2">
         Enviar programaci&oacute;n <i class="bx bx-send"></i>
       </button>
 
-      <button
-        (click)="saveProgDelivery()"
+      <confirm-button
+        [disabled]="!schedulingDeliverieForm.valid"
+        [loading]="loading"
+        [btnSmall]="true"
+        (click)="saveProgDelivery()"></confirm-button>
+      <!--<button
+       
         type="button"
         class="btn btn btn-primary btn-sm active">
         Guardar <i aria-hidden="true" class="fa fa-save"></i>
-      </button>
+      </button> -->
 
       <button (click)="close()" class="btn btn-primary btn-sm active">
         Regresar <i class="fas fa-arrow-circle-left"></i>
@@ -48,12 +53,23 @@
     <form [formGroup]="schedulingDeliverieForm" class="form-material">
       <div class="row pt-3" *ngIf="!showDetailProgramming">
         <div class="col-md-6">
-          <div class="pt-3">
+          <div class="pt-3" *ngIf="disabledTypeEvent == false">
             <ngx-select
               [form]="schedulingDeliverieForm"
               control="typeEvent"
               [data]="TypeEventOptions"
               value="id"
+              (change)="typeEventSelect($event, 'typeEvent')"
+              bindLabel="nameEvent"
+              label="Tipo de Evento"></ngx-select>
+          </div>
+          <div class="pt-3" *ngIf="disabledTypeEvent == true">
+            <ngx-select
+              [form]="schedulingDeliverieForm"
+              control="typeEventInfo"
+              [data]="TypeEventOptions"
+              value="nameEvent"
+              [readonly]="true"
               (change)="typeEventSelect($event, 'typeEvent')"
               bindLabel="nameEvent"
               label="Tipo de Evento"></ngx-select>
@@ -79,7 +95,7 @@
             </form-field>
           </div>
 
-          <div class="pt-3">
+          <div class="pt-3" *ngIf="disableTransfer == false">
             <form-field [control]="schedulingDeliverieForm.get('transferId')">
               <ngx-select
                 [form]="schedulingDeliverieForm"
@@ -93,10 +109,26 @@
                 (fetchItems)="getTransferentSelect($event)"></ngx-select>
             </form-field>
           </div>
+
+          <div class="pt-3" *ngIf="disableTransfer == true">
+            <form-field [control]="schedulingDeliverieForm.get('transferName')">
+              <ngx-select
+                [form]="schedulingDeliverieForm"
+                control="transferName"
+                [showTooltip]="true"
+                [readonly]="true"
+                [data]="transferences"
+                value="nameAndId"
+                bindLabel="nameAndId"
+                label="Transferente"
+                (change)="typeEventSelect($event, 'transferent')"
+                (fetchItems)="getTransferentSelect($event)"></ngx-select>
+            </form-field>
+          </div>
         </div>
 
         <div class="col-md-6">
-          <div class="pt-3">
+          <div class="pt-3" *ngIf="disableStore == false">
             <ngx-select
               [form]="schedulingDeliverieForm"
               control="store"
@@ -108,13 +140,24 @@
               (fetchItems)="getWarehouseSelect($event)"></ngx-select>
           </div>
 
+          <div class="pt-3" *ngIf="disableStore == true">
+            <ngx-select
+              [form]="schedulingDeliverieForm"
+              control="storeName"
+              [data]="warehouse"
+              value="name"
+              bindLabel="name"
+              [readonly]="true"
+              label="Almac&eacute;n"
+              (fetchItems)="getWarehouseSelect($event)"></ngx-select>
+          </div>
+
           <div class="pt-3">
             <form-field
               [control]="schedulingDeliverieForm.get('endDate')"
               label="Fecha Final de Entrega">
               <input
                 class="form-control"
-                [minDate]="startDate"
                 [daysDisabled]="[6, 0]"
                 [bsConfig]="{
                   withTimepicker: true,
@@ -186,13 +229,27 @@
         class="row pt-3"
         *ngIf="idTypeEvent == 5 && showDetailProgrammingDes">
         <div class="justify-content-end btn-toolbar">
-          <button class="btn btn-primary btn-sm active">
+          <button
+            *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
+            (click)="generateConDestruccion()"
+            class="btn btn-primary btn-sm active">
             Generar constancias de destrucción <i class="fa fa-file"></i>
           </button>
-          <button class="btn btn-success btn-sm active">
+
+          <button
+            *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+            class="btn btn-primary btn-sm active">
+            Expediente <i class="fa fa-file"></i>
+          </button>
+
+          <button
+            (click)="notificationDestruccion()"
+            class="btn btn-success btn-sm active">
             Notificación para destrucción <i class="fa fa-file"></i>
           </button>
-          <button class="btn btn-primary btn-sm active">
+          <button
+            (click)="notificationDestruccionFond()"
+            class="btn btn-primary btn-sm active">
             Notificación destrucción fondos <i class="fa fa-file"></i>
           </button>
         </div>
@@ -202,6 +259,7 @@
         <div class="row pt-5">
           <div class="col-md-6">
             <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
               [control]="schedulingDeliverieForm.get('officeDestructionNumber')"
               label="No. de Oficio">
               <input
@@ -209,15 +267,36 @@
                 maxlength="100"
                 formControlName="officeDestructionNumber" />
             </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('officeDestructionNumber')"
+              label="No. de Oficio">
+              <input
+                class="form-control"
+                maxlength="100"
+                [readOnly]="true"
+                formControlName="officeDestructionNumber" />
+            </form-field>
           </div>
 
           <div class="col-md-6">
             <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
               [control]="schedulingDeliverieForm.get('company')"
               label="Empresa">
               <input
                 class="form-control"
                 maxlength="250"
+                formControlName="company" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('company')"
+              label="Empresa">
+              <input
+                class="form-control"
+                maxlength="250"
+                [readOnly]="true"
                 formControlName="company" />
             </form-field>
           </div>
@@ -226,6 +305,7 @@
         <div class="row pt-4">
           <div class="col-md-6">
             <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
               [control]="schedulingDeliverieForm.get('addressee')"
               label="Nombre Destinatario">
               <input
@@ -233,15 +313,36 @@
                 maxlength="100"
                 formControlName="addressee" />
             </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('addressee')"
+              label="Nombre Destinatario">
+              <input
+                class="form-control"
+                maxlength="100"
+                [readOnly]="true"
+                formControlName="addressee" />
+            </form-field>
           </div>
 
           <div class="col-md-6">
             <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
               [control]="schedulingDeliverieForm.get('placeDestruction')"
               label="Lugar Destrucción">
               <input
                 class="form-control"
                 maxlength="250"
+                formControlName="placeDestruction" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('placeDestruction')"
+              label="Lugar Destrucción">
+              <input
+                class="form-control"
+                maxlength="250"
+                [readOnly]="true"
                 formControlName="placeDestruction" />
             </form-field>
           </div>
@@ -250,6 +351,7 @@
         <div class="row pt-4">
           <div class="col-md-6">
             <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
               [control]="schedulingDeliverieForm.get('chargeAddressee')"
               label="Cargo Destinatario">
               <input
@@ -257,14 +359,35 @@
                 maxlength="150"
                 formControlName="chargeAddressee" />
             </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('chargeAddressee')"
+              label="Cargo Destinatario">
+              <input
+                class="form-control"
+                [readOnly]="true"
+                maxlength="150"
+                formControlName="chargeAddressee" />
+            </form-field>
           </div>
 
           <div class="col-md-6">
             <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
               [control]="schedulingDeliverieForm.get('locationDestruction')"
               label="Ubicación Destrucción">
               <input
                 class="form-control"
+                maxlength="250"
+                formControlName="locationDestruction" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('locationDestruction')"
+              label="Ubicación Destrucción">
+              <input
+                class="form-control"
+                [readOnly]="true"
                 maxlength="250"
                 formControlName="locationDestruction" />
             </form-field>
@@ -274,6 +397,7 @@
         <div class="row pt-4">
           <div class="col-md-6">
             <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
               [control]="schedulingDeliverieForm.get('addressAddressee')"
               label="Dirección Destinatario">
               <input
@@ -281,15 +405,36 @@
                 maxlength="250"
                 formControlName="addressAddressee" />
             </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('addressAddressee')"
+              label="Dirección Destinatario">
+              <input
+                class="form-control"
+                [readOnly]="true"
+                maxlength="250"
+                formControlName="addressAddressee" />
+            </form-field>
           </div>
 
           <div class="col-md-6">
             <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
               [control]="schedulingDeliverieForm.get('taxpayerName')"
               label="Nombre Contribuyente">
               <input
                 class="form-control"
                 maxlength="150"
+                formControlName="taxpayerName" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('taxpayerName')"
+              label="Nombre Contribuyente">
+              <input
+                class="form-control"
+                maxlength="150"
+                [readOnly]="true"
                 formControlName="taxpayerName" />
             </form-field>
           </div>
@@ -298,6 +443,7 @@
         <div class="row pt-4">
           <div class="col-md-6">
             <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
               [control]="schedulingDeliverieForm.get('metodDestruction')"
               label="Método Destrucción">
               <input
@@ -305,14 +451,35 @@
                 maxlength="150"
                 formControlName="metodDestruction" />
             </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('metodDestruction')"
+              label="Método Destrucción">
+              <input
+                class="form-control"
+                maxlength="150"
+                [readOnly]="true"
+                formControlName="metodDestruction" />
+            </form-field>
           </div>
 
           <div class="col-md-6">
             <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
               [control]="schedulingDeliverieForm.get('legalRepresentativeName')"
               label="Nombre Representante Legal">
               <input
                 class="form-control"
+                maxlength="150"
+                formControlName="legalRepresentativeName" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('legalRepresentativeName')"
+              label="Nombre Representante Legal">
+              <input
+                class="form-control"
+                [readOnly]="true"
                 maxlength="150"
                 formControlName="legalRepresentativeName" />
             </form-field>
@@ -322,11 +489,22 @@
         <div class="row pt-4">
           <div class="col-md-6">
             <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
               [control]="schedulingDeliverieForm.get('term')"
               label="Plazo (días)">
               <input
                 class="form-control"
                 maxlength="20"
+                formControlName="term" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('term')"
+              label="Plazo (días)">
+              <input
+                class="form-control"
+                maxlength="20"
+                [readOnly]="true"
                 formControlName="term" />
             </form-field>
           </div>

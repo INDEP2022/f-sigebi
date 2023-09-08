@@ -166,80 +166,27 @@
 
 <form class="form-material" [formGroup]="form">
   <div class="row pt-5">
-    <div class="col-md-12 mb-5 d-inline-flex info pb-1" style="overflow: auto">
-      <button
-        type="button"
-        class="btn btn-primary btn-sm active mr-2"
-        (click)="generatePreFacture()">
-        Genera Prefacturas <i class="bx bxs-file"></i>
-      </button>
-      <button
-        type="button"
-        class="btn btn-primary btn-sm active mr-2"
-        (click)="updateData()">
-        Actualiza Datos <i class="fas fa-sync-alt"> </i>
-      </button>
-      <button
-        type="button"
-        class="btn btn-primary btn-sm active mr-2"
-        (click)="generateInvoice()">
-        Genera Folios <i class="bx bxs-file"></i>
-      </button>
-      <button
-        type="button"
-        class="btn btn-red btn-sm active mr-2"
-        (click)="removeInvoice()">
-        Eliminar Folios <i class="fa fa-trash" aria-hidden="true"></i>
-      </button>
-      <button
-        type="button"
-        class="btn btn-primary btn-sm active mr-2"
-        (click)="openModal()">
-        Asig. Manual Folios <i class="bx bx-plus bx-sm float-icon"></i>
-      </button>
-      <button
-        type="button"
-        class="btn btn-danger btn-sm active mr-2"
-        (click)="exportAsXLSX()">
-        Cancelar Factura
-      </button>
-      <button type="button" class="btn btn-primary btn-sm active mr-2">
-        Visualiza Prefactura <i class="fa fa-eye" aria-hidden="true"></i>
-      </button>
-      <button type="button" class="btn btn-primary active btn-sm mr-2">
-        Imprime Factura <i class="bx bx-printer bx-sm float-icon"></i>
-      </button>
-      <button type="button" class="btn btn-sm btn-success active mr-2">
-        Exportar a Excel
-        <i class="bx bx-download float-icon"></i>
-      </button>
-      <button
-        type="submit"
-        class="btn btn-primary btn-sm active mr-2"
-        tooltip="Enviar"
-        containerClass="tooltip-style">
-        Enviar Paquete <i class="bx bx-send"></i>
-      </button>
-    </div>
-    <div class="col-md-2">
+    <div class="col-12 col-md-2">
       <form-field [control]="form.get('event')" label="Evento">
         <input
           type="number"
           class="form-control"
           formControlName="event"
-          oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+          oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)"
+          (blur)="formG.emit(form)" />
       </form-field>
     </div>
-    <div class="col-md-2">
+    <div class="col-12 col-md-2">
       <form-field [control]="form.get('idAllotment')" label="Lote">
         <input
           type="number"
           class="form-control"
           formControlName="idAllotment"
-          oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+          oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)"
+          (blur)="formG.emit(form)" />
       </form-field>
     </div>
-    <div class="col-md-2">
+    <div class="col-12 col-md-2">
       <form-field [control]="form.get('date')" label="Fecha">
         <input
           type="text"
@@ -249,7 +196,7 @@
           ControlName="date" />
       </form-field>
     </div>
-    <div class="col-auto">
+    <div class="col-12 col-md-auto">
       <button
         type="button"
         class="btn btn-primary btn-sm active mr-2"
@@ -257,7 +204,7 @@
         Selec. Todos <i class="fas fa-edit bx-sm float-icon"></i>
       </button>
     </div>
-    <div class="col-2">
+    <div class="col-12 col-md-2">
       <form-field [control]="form.get('causerebillId')">
         <ngx-select
           (fetchItems)="getRebillData($event)"
@@ -284,12 +231,166 @@
         </ng-template>
       </form-field>
     </div>
-    <div class="col-auto">
+    <div class="col-12 col-md-auto">
       <button
         type="button"
         class="btn btn-primary btn-sm active mr-2"
         (click)="exportAsXLSX()">
         Anular
+      </button>
+    </div>
+    <div class="col-12 col-md-auto">
+      <form-check label="Solo Fact." for="label">
+        <input
+          id="label"
+          type="checkbox"
+          formControlName="check"
+          (change)="disabledButtons()" />
+      </form-check>
+    </div>
+    <div class="col-md-12">
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="generatePreFacture()">
+        Genera Prefacturas <i class="bx bxs-file"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="updateData()">
+        Actualiza Datos <i class="fas fa-sync-alt"> </i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="generateInvoice()">
+        Genera Folios <i class="bx bxs-file"></i>
+      </button>
+      <button
+        [disabled]="buttons"
+        type="button"
+        class="btn btn-red btn-sm active mr-2 mb-2"
+        (click)="removeInvoice()">
+        Eliminar Folios <i class="fa fa-trash" aria-hidden="true"></i>
+      </button>
+      <button
+        [disabled]="buttons"
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="generatePreFacture()">
+        Visualizar Factura <i class="bx bxs-file"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="generatePreFacture()">
+        Visualiza Anexo <i class="bx bxs-file"></i>
+      </button>
+      <button
+        [disabled]="buttons"
+        type="button"
+        class="btn btn-danger btn-sm active mr-2 mb-2"
+        (click)="exportAsXLSX()">
+        Cancelar Factura
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="generatePreFacture()">
+        Atención a Clientes <i class="bx bxs-file"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="generatePreFacture()">
+        Generar CDFI <i class="bx bxs-file"></i>
+      </button>
+      <button
+        [disabled]="buttons"
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="generatePreFacture()">
+        Obt. Imagen <i class="bx bxs-file"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="generatePreFacture()">
+        Imprime Factura <i class="bx bxs-file"></i>
+      </button>
+      <button
+        [disabled]="buttons"
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="generatePreFacture()">
+        Imprime Anexo <i class="bx bxs-file"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="generatePreFacture()">
+        Visualiza Anexo <i class="bx bxs-file"></i>
+      </button>
+      <button
+        [disabled]="buttons"
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="openFolioModal()">
+        Asig. Manual Folios <i class="bx bx-plus bx-sm float-icon"></i>
+      </button>
+      <button
+        [disabled]="buttons"
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="sendPackage()">
+        Enviar Paquete <i class="bx bxs-file"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="actMatricula()">
+        Act. Matricula <i class="bx bxs-file"></i>
+      </button>
+      <!--Revisar con Carlos-->
+      <button type="button" class="btn btn-primary active btn-sm mr-2 mb-2">
+        Imprime Masivo .pdf <i class="bx bx-printer bx-sm float-icon"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="generatePreFacture()">
+        Visualiza CR <i class="bx bxs-file"></i>
+      </button>
+      <button
+        [disabled]="buttons"
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="impresionCR()">
+        Imprime CR <i class="bx bxs-file"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="visualizarCE()">
+        Visualiza CE <i class="bx bxs-file"></i>
+      </button>
+      <button
+        [disabled]="buttons"
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="impresionCE()">
+        Imprime CE <i class="bx bxs-file"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active mr-2 mb-2"
+        (click)="track()">
+        Tracto S/P <i class="bx bxs-file"></i>
+      </button>
+      <button type="button" class="btn btn-sm btn-success active mr-2 mb-2">
+        Exportar a Excel
+        <i class="bx bx-download float-icon"></i>
       </button>
     </div>
   </div>
@@ -311,7 +412,8 @@
         [ngStyle]="{ height: loading ? '0px' : 'auto' }"
         [attr.class]="'table-bordered table-responsive mb-4'"
         [settings]="settings"
-        [source]="dataFilter">
+        [source]="dataFilter"
+        (rowSelect)="getComerDetInvocie($event.data)">
       </ng2-smart-table>
     </div>
     <app-pagination [params]="paramsList" [totalItems]="totalItems">
@@ -328,7 +430,7 @@
             type="number"
             class="form-control"
             formControlName="importE"
-            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+            oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
         </form-field>
       </div>
       <div class="col-md-2">
@@ -337,7 +439,7 @@
             type="number"
             class="form-control"
             formControlName="ivaE"
-            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+            oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
         </form-field>
       </div>
       <div class="col-md-2">
@@ -346,16 +448,16 @@
             type="number"
             class="form-control"
             formControlName="totalE"
-            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+            oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
         </form-field>
       </div>
       <div class="col-md-2">
-        <form-field [control]="formFactura.get('count')" label="Número Factura">
+        <form-field [control]="formFactura.get('count')" label="No. Factura">
           <input
             type="number"
             class="form-control"
             formControlName="count"
-            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+            oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
         </form-field>
       </div>
       <div class="col-md-2">
@@ -366,7 +468,7 @@
             type="number"
             class="form-control"
             formControlName="importI"
-            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+            oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
         </form-field>
       </div>
       <div class="col-md-2">
@@ -375,7 +477,7 @@
             type="number"
             class="form-control"
             formControlName="ivaI"
-            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+            oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
         </form-field>
       </div>
       <div class="col-md-2">
@@ -386,9 +488,80 @@
             type="number"
             class="form-control"
             formControlName="totalI"
+            oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+        </form-field>
+      </div>
+    </div>
+  </form>
+
+  <form class="form-material" [formGroup]="formDetalle">
+    <div class="row pt-5">
+      <div class="col-md-2">
+        <form-field [control]="formFactura.get('count')" label="No. Registros">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="count"
+            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field [control]="formDetalle.get('totalI')" label="Total Importe">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="totalI"
+            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field [control]="formDetalle.get('totalIva')" label="Total Iva">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="totalIva"
+            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field [control]="formDetalle.get('total')" label="Total">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="total"
+            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field
+          [control]="formDetalle.get('countTotal')"
+          label="Cantidad Total Bienes">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="countTotal"
             oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
         </form-field>
       </div>
     </div>
   </form>
+
+  <div class="row pt-3">
+    <div class="col-12 d-flex justify-content-end pb-3">
+      <app-columns-select
+        [(settings)]="settings2"
+        [leftList]="true"></app-columns-select>
+    </div>
+    <form-loader *ngIf="loading2"></form-loader>
+    <div>
+      <ng2-smart-table
+        [ngStyle]="{ height: loading2 ? '0px' : 'auto' }"
+        [attr.class]="'table-bordered table-responsive mb-4'"
+        [settings]="settings2"
+        [source]="dataFilter2">
+      </ng2-smart-table>
+    </div>
+    <app-pagination [params]="paramsList2" [totalItems]="totalItems2">
+    </app-pagination>
+  </div>
 </div>

@@ -5,6 +5,7 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
@@ -14,6 +15,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { GelectronicFirmService } from 'src/app/core/services/ms-gelectronicfirm/gelectronicfirm.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
@@ -33,6 +35,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   private pdf: PDFDocumentProxy;
   idTypeDoc: number = 0;
   idProg: number = 0;
+  idprogDel: number = 0;
+  typeNotification: number = 0;
   receiptId: number = 0;
   idReportAclara: any; //ID de los reportes
   isPdfLoaded = false;
@@ -67,6 +71,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   typeFirm: string = '';
   guardReception: any;
   proceedingInfo: IProceedings;
+  userInfo: any;
   constructor(
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
@@ -79,7 +84,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     private programmingService: ProgrammingRequestService,
     private programminGoodService: ProgrammingGoodService,
     private goodService: GoodService,
-    private proceedingService: ProceedingsService
+    private proceedingService: ProceedingsService,
+    private historyGoodService: HistoryGoodService
   ) {
     super();
     this.settings = {
@@ -100,8 +106,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('this.typeFirm', this.typeFirm);
-    console.log('this.typeFirm', this.idTypeDoc);
     if (this.showTDR) {
       this.title = 'ETIQUETA';
     } else {
@@ -113,14 +117,19 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     }
     this.formLoading = true;
     this.showReportByTypeDoc();
-    this.getReceipt();
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getSignatories());
+
+    if (this.idProg) {
+      this.getReceipt();
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getSignatories());
+    }
 
     if (this.signatore) {
       this.registerSign();
     }
+
+    this.getInfoUserLog();
   }
 
   showReportByTypeDoc() {
@@ -154,21 +163,38 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
     if (this.showTDR) {
       if (this.goodId) {
-        let linkDoc: string = `${this.urlBaseReport}Etiqueta_TDR.jasper&idSolicitud=${this.programming.id}&CID_BIEN=${this.goodId}`;
+        let linkDoc: string = `${this.urlBaseReport}Etiqueta_TDR.jasper&idSolicitud=${this.programming?.id}&CID_BIEN=${this.goodId}`;
         this.src = linkDoc;
         this.formLoading = false;
       } else {
-        let linkDoc: string = `${this.urlBaseReport}Etiqueta_TDR.jasper&idSolicitud=${this.programming.id}`;
+        let linkDoc: string = `${this.urlBaseReport}Etiqueta_TDR.jasper&idSolicitud=${this.programming?.id}`;
 
         this.src = linkDoc;
         this.formLoading = false;
       }
 
       if (this.goodsId) {
-        let linkDoc: string = `${this.urlBaseReport}Etiqueta_TDR.jasper&idSolicitud=${this.programming.id}&CID_BIEN=${this.goodsId}`;
+        let linkDoc: string = `${this.urlBaseReport}Etiqueta_TDR.jasper&idSolicitud=${this.programming?.id}&CID_BIEN=${this.goodsId}`;
         this.src = linkDoc;
         this.formLoading = false;
       }
+    }
+    if (this.idprogDel && this.typeNotification == 1) {
+      console.log('this.idprogDel', this.idprogDel);
+      console.log('this.typeNotification', this.typeNotification);
+      let linkDoc: string = `${this.urlBaseReport}NotificacionParaDestruccion.jasper&ID_PROG_ENTREGA=${this.idprogDel}`;
+      this.src = linkDoc;
+      console.log('this.src', this.src);
+      this.formLoading = false;
+    }
+
+    if (this.idprogDel && this.typeNotification == 2) {
+      console.log('this.idprogDel', this.idprogDel);
+      console.log('this.typeNotification', this.typeNotification);
+      let linkDoc: string = `${this.urlBaseReport}NotificacionDestruccionFondos.jasper&ID_PROG_ENTREGA=${this.idprogDel}`;
+      this.src = linkDoc;
+      console.log('this.src', this.src);
+      this.formLoading = false;
     }
   }
 
@@ -183,9 +209,15 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     });
   }
 
+  getInfoUserLog() {
+    this.programmingService.getUserInfo().subscribe(data => {
+      this.userInfo = data;
+    });
+  }
+
   getSignatories() {
     const learnedType = this.idTypeDoc;
-    const learnedId = this.programming.id;
+    const learnedId = this.programming?.id;
     this.loading = true;
 
     this.signatoriesService
@@ -376,7 +408,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           this.loadingButton = true;
           if (this.idTypeDoc == 221) {
             this.gelectronicFirmService
-              .firmDocument(this.programming.id, 'ProgramacionRecibo', {})
+              .firmDocument(this.programming?.id, 'ProgramacionRecibo', {})
               .subscribe({
                 next: response => {
                   this.loadingButton = false;
@@ -431,7 +463,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           }
 
           if (this.idTypeDoc == 210) {
-            const idKeyDoc = this.programming.id + '-' + this.actId;
+            const idKeyDoc = this.programming?.id + '-' + this.actId;
 
             this.gelectronicFirmService
               .firmDocument(idKeyDoc, 'actaSat', {})
@@ -459,7 +491,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           }
 
           if (this.idTypeDoc == 106) {
-            const idKeyDoc = this.programming.id + '-' + this.actId;
+            const idKeyDoc = this.programming?.id + '-' + this.actId;
 
             this.gelectronicFirmService
               .firmDocument(idKeyDoc, 'actaAsegurados', {})
@@ -486,7 +518,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           }
 
           if (this.idTypeDoc == 107) {
-            const idKeyDoc = this.programming.id + '-' + this.actId;
+            const idKeyDoc = this.programming?.id + '-' + this.actId;
 
             this.gelectronicFirmService
               .firmDocument(idKeyDoc, 'actasVoluntarias', {})
@@ -607,8 +639,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       const contentType: string = '.pdf';
 
       const formData = {
-        keyDoc: this.programming.id,
-        xDelegacionRegional: this.programming.regionalDelegationNumber,
+        keyDoc: this.programming?.id,
+        xDelegacionRegional: this.programming?.regionalDelegationNumber,
         dDocTitle: nombreDoc,
         xNombreProceso: 'Aceptar Solicitud Programación',
         xTipoDocumento: 221,
@@ -616,7 +648,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         dDocType: contentType,
         dDocAuthor: token.name,
         dInDate: new Date(),
-        xidProgramacion: this.programming.id,
+        xidProgramacion: this.programming?.id,
       };
 
       this.pdf.getData().then(u8 => {
@@ -652,7 +684,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       });
     } else {
       if (this.idTypeDoc == 103 && this.typeFirm == 'electronica') {
-        const idProg = this.programming.id;
+        const idProg = this.programming?.id;
         //const idReceipt = this.
         const formData = {
           keyDoc:
@@ -662,15 +694,15 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             '-' +
             this.receipt.id,
           xNivelRegistroNSBDB: 'Bien',
-          xNoProgramacion: this.programming.id,
+          xNoProgramacion: this.programming?.id,
           xNombreProceso: 'Ejecutar Recepción',
-          xDelegacionRegional: this.programming.regionalDelegationNumber,
-          xFolioProgramacion: this.programming.folio,
+          xDelegacionRegional: this.programming?.regionalDelegationNumber,
+          xFolioProgramacion: this.programming?.folio,
           xFolioRecibo: this.receipt.folioReceipt,
           dDocTitle: this.receipt.folioReceipt,
           dSecurityGroup: 'Public',
           xidBien: this.goodId,
-          xidTransferente: this.programming.tranferId,
+          xidTransferente: this.programming?.tranferId,
           xTipoDocumento: 103,
         };
 
@@ -704,16 +736,20 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     const updateGood = await this.updateGood();
 
                     if (updateGood) {
-                      this.alertInfo(
-                        'success',
-                        'Acción Correcta',
-                        'Documento adjuntado correctamente'
-                      ).then(question => {
-                        if (question.isConfirmed) {
-                          this.close();
-                          this.modalRef.content.callback(true, this.typeFirm);
-                        }
-                      });
+                      const createHistGood = await this.createHistorailGood();
+
+                      if (createHistGood) {
+                        this.alertInfo(
+                          'success',
+                          'Acción Correcta',
+                          'Documento adjuntado correctamente'
+                        ).then(question => {
+                          if (question.isConfirmed) {
+                            this.close();
+                            this.modalRef.content.callback(true, this.typeFirm);
+                          }
+                        });
+                      }
                     }
                   }
                 }
@@ -722,22 +758,22 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             });
         });
       } else if (this.idTypeDoc == 107 && this.typeFirm == 'electronica') {
-        const idProg = this.programming.id;
+        const idProg = this.programming?.id;
 
         //const idReceipt = this.
         const formData = {
           keyDoc:
-            this.programming.id + '-' + this.proceedingInfo.folioProceedings,
+            this.programming?.id + '-' + this.proceedingInfo.folioProceedings,
           xNivelRegistroNSBDB: 'Bien',
           xfolioActa: this.proceedingInfo.folioProceedings,
-          xNoProgramacion: this.programming.id,
+          xNoProgramacion: this.programming?.id,
           xNombreProceso: 'Formalizar Recepción',
-          xDelegacionRegional: this.programming.regionalDelegationNumber,
-          xFolioProgramacion: this.programming.folio,
+          xDelegacionRegional: this.programming?.regionalDelegationNumber,
+          xFolioProgramacion: this.programming?.folio,
           dDocTitle: this.proceedingInfo.folioProceedings,
           dSecurityGroup: 'Public',
           xidBien: this.goodId,
-          xidTransferente: this.programming.tranferId,
+          xidTransferente: this.programming?.tranferId,
           xTipoDocumento: 107,
         };
 
@@ -778,7 +814,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             });
         });
       } else if (this.idTypeDoc == 210 && this.typeFirm == 'electronica') {
-        const idProg = this.programming.id;
+        const idProg = this.programming?.id;
 
         //const idReceipt = this.
         const formData = {
@@ -786,14 +822,14 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             this.programming.id + '-' + this.proceedingInfo.folioProceedings,
           xNivelRegistroNSBDB: 'Bien',
           xfolioActa: this.proceedingInfo.folioProceedings,
-          xNoProgramacion: this.programming.id,
+          xNoProgramacion: this.programming?.id,
           xNombreProceso: 'Formalizar Recepción',
-          xDelegacionRegional: this.programming.regionalDelegationNumber,
-          xFolioProgramacion: this.programming.folio,
+          xDelegacionRegional: this.programming?.regionalDelegationNumber,
+          xFolioProgramacion: this.programming?.folio,
           dDocTitle: this.proceedingInfo.folioProceedings,
           dSecurityGroup: 'Public',
           xidBien: this.goodId,
-          xidTransferente: this.programming.tranferId,
+          xidTransferente: this.programming?.tranferId,
           xTipoDocumento: 210,
         };
 
@@ -834,22 +870,22 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             });
         });
       } else if (this.idTypeDoc == 106 && this.typeFirm == 'electronica') {
-        const idProg = this.programming.id;
+        const idProg = this.programming?.id;
 
         //const idReceipt = this.
         const formData = {
           keyDoc:
-            this.programming.id + '-' + this.proceedingInfo.folioProceedings,
+            this.programming?.id + '-' + this.proceedingInfo.folioProceedings,
           xNivelRegistroNSBDB: 'Bien',
           xfolioActa: this.proceedingInfo.folioProceedings,
-          xNoProgramacion: this.programming.id,
+          xNoProgramacion: this.programming?.id,
           xNombreProceso: 'Formalizar Recepción',
-          xDelegacionRegional: this.programming.regionalDelegationNumber,
-          xFolioProgramacion: this.programming.folio,
+          xDelegacionRegional: this.programming?.regionalDelegationNumber,
+          xFolioProgramacion: this.programming?.folio,
           dDocTitle: this.proceedingInfo.folioProceedings,
           dSecurityGroup: 'Public',
           xidBien: this.goodId,
-          xidTransferente: this.programming.tranferId,
+          xidTransferente: this.programming?.tranferId,
           xTipoDocumento: 106,
         };
 
@@ -947,7 +983,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       const formData: any = {
         id: this.proceedingInfo.id,
-        idPrograming: this.programming.id,
+        idPrograming: this.programming?.id,
         statusProceeedings: 'CERRADO',
         id_content: docName,
       };
@@ -969,6 +1005,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           id: item.id,
           goodId: item.goodId,
           goodStatus: 'EN_RECEPCION',
+          status: 'ADM',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
@@ -985,7 +1022,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       const formData: any = {
         id: this.receipt.id,
         actId: this.receipt.actId,
-        programmingId: this.programming.id,
+        programmingId: this.programming?.id,
         statusReceipt: 'CERRADO',
         contentId: docName,
       };
@@ -1003,7 +1040,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       const goodsReception = this.guardReception.value;
       goodsReception.map((item: IGood) => {
         const formData: Object = {
-          programmingId: this.programming.id,
+          programmingId: this.programming?.id,
           goodId: item.id,
           status: 'EN_RECEPCION',
         };
@@ -1024,7 +1061,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       };
 
       this.programmingService
-        .updateProgramming(this.programming.id, formData)
+        .updateProgramming(this.programming?.id, formData)
         .subscribe({
           next: () => {
             resolve(true);
@@ -1033,6 +1070,32 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             resolve(false);
           },
         });
+    });
+  }
+
+  createHistorailGood() {
+    return new Promise((resolve, reject) => {
+      const goodsReception = this.guardReception.value;
+      goodsReception.map((item: IGood) => {
+        const historyGood: IHistoryGood = {
+          propertyNum: item.goodId,
+          status: 'ADM',
+          changeDate: new Date(),
+          userChange: this.userInfo.name,
+          statusChangeProgram: 'TR_UPD_HISTO_BIENES',
+          reasonForChange: 'AUTOMATICO',
+        };
+
+        this.historyGoodService.create(historyGood).subscribe({
+          next: response => {
+            console.log('Historico eliminado', response);
+            resolve(true);
+          },
+          error: error => {
+            console.log('error', error);
+          },
+        });
+      });
     });
   }
 

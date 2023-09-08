@@ -1,0 +1,34 @@
+export interface IGoodDelivery {
+  id?: number;
+  quantity?: number;
+  programmingDeliveryId?: number;
+  client?: string;
+  delReg?: number;
+  descriptionGood?: string;
+  dictumCompensation?: string;
+  entTransfereeId?: number;
+  commercialEvent?: string;
+  invoice?: string;
+  commercialEventDate?: string;
+  compensationOpinion?: string;
+  item?: string;
+  amountGood?: number;
+  locatorId?: String;
+  commercialLot?: string;
+  siabGoodNumber?: number;
+  goodId?: string;
+  inventoryNumber?: string;
+  origen?: string;
+  resolutionSat?: string;
+  typeProgrammingId?: number;
+  typeRelevantId?: number;
+  transactionId?: string;
+  unit?: string;
+  inventoryKey?: string;
+  eventType?: string;
+  inventoryItemId?: string;
+  tranferId?: number;
+  typeGood?: number;
+  foundInd?: string;
+  typeGoodName?: string;
+}

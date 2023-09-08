@@ -22,7 +22,7 @@ export class RevisionReason2Service extends HttpService {
 
   getAllFilterSelf2(self?: RevisionReason2Service, params?: _Params) {
     return self.get<IListResponseMessage<IRevisionReason>>(
-      ENDPOINT_LINKS.RevisionReasonAll +
+      ENDPOINT_LINKS.RevisionReasonAll2 +
         '?filter.initialStatus=$eq:CAN&filter.goodType=$eq:M',
       params
     );

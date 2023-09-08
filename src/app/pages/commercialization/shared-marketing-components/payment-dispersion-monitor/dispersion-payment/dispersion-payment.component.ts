@@ -20,6 +20,7 @@ import {
 import { IGraceDate } from 'src/app/core/models/ms-event/event.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { ISendSirsaeLot } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae-model';
@@ -54,7 +55,7 @@ import {
 @Component({
   selector: 'app-dispersion-payment',
   templateUrl: './dispersion-payment.component.html',
-  styles: [],
+  styleUrls: ['dispersion-payment.css'],
 })
 export class DispersionPaymentComponent extends BasePage implements OnInit {
   //Preparar los setting de las tablas
@@ -157,7 +158,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private customersService: ComerClientsService,
     private interfaceSirsaeService: InterfacesirsaeService,
-    private router: Router
+    private router: Router,
+    private depositaryService: MsDepositaryService
   ) {
     super();
   }
@@ -220,6 +222,22 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
     this.settingsCustomerBanks = {
       ...TABLE_SETTINGS,
+      rowClassFunction: (row: any) => {
+        if(['1','3'].includes(row.data.id_tipo_disp)){
+          if (row.data.available) {
+            return 'idDisp';
+          } else {
+            return 'notAS idDisp';
+          }
+        }else{
+          if (row.data.available) {
+            return '';
+          } else {
+            return 'notAS';
+          }
+        }
+        
+      },
       actions: false,
       columns: COLUMNS_CUSTOMER_BANKS,
     };
@@ -800,6 +818,13 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR CLIENTE
   getPaymentByCustomer(clientId: string, eventId: string) {
+    console.log(this.id_tipo_disp);
+    if (['1', '3'].includes(this.id_tipo_disp.toString())) {
+      console.log('Entra');
+    } else {
+      console.log('No entra');
+    }
+
     this.loadingValidAmount = true;
     this.loadingTotal = true;
 
@@ -809,7 +834,14 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.comerLotsService.getLotComerPayRef(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
-        this.dataCustomerBanks.load(res.data);
+        const newData = res.data.map((e: any) => {
+          return {
+            ...e,
+            available: ['A', 'S'].includes(e.System_Valid) ? true : false,
+            id_tipo_disp: this.id_tipo_disp,
+          };
+        });
+        this.dataCustomerBanks.load(newData);
         this.totalItemsCustomerBanks = res.count;
         this.loadingCustomerBanks = false;
       },
@@ -858,6 +890,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       }
     );
   }
+
+  //POSQUERY PAGOS RECIBIDOS EN EL BANCO POR CLIENTE
+  postqueryPaymentByCustomer() {}
 
   //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR LOTE
   getLotsBanks(idLote: string) {
@@ -1085,19 +1120,44 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                 rfc = res['data'][0].rfc;
                 client = res['data'][0].reasonName;
                 console.log({ rfc, client });
-                resolve({
-                  rfc,
-                  client,
-                  reference,
-                  amount,
-                  idPayment,
-                  idBatch,
-                  incomeOrderId,
-                  date,
-                  dateMaxPay,
-                  eventId,
-                  customerBatch,
-                });
+                //PENALIZACIÓN
+                this.depositaryService
+                  .getComerDetLcGrief(this.dataBatch.reference)
+                  .subscribe(
+                    res => {
+                      console.log(res);
+                      resolve({
+                        rfc,
+                        client,
+                        reference,
+                        amount,
+                        idPayment,
+                        idBatch,
+                        incomeOrderId,
+                        date,
+                        dateMaxPay,
+                        eventId,
+                        customerBatch,
+                        penaltyAmount: res.data[0].mountgrief,
+                      });
+                    },
+                    err => {
+                      resolve({
+                        rfc,
+                        client,
+                        reference,
+                        amount,
+                        idPayment,
+                        idBatch,
+                        incomeOrderId,
+                        date,
+                        dateMaxPay,
+                        eventId,
+                        customerBatch,
+                        penaltyAmount: 0,
+                      });
+                    }
+                  );
               },
               err => {
                 console.log(err);
@@ -1116,6 +1176,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       modalConfig = {
         initialState: {
           dataModel,
+          dateWarrantyLiq: this.form.get('dateMaxPayment').value,
           callback: (e: any) => {
             console.log(e);
           },

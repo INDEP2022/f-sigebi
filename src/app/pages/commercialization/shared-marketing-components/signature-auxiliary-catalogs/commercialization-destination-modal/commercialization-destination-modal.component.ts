@@ -69,7 +69,7 @@ export class CommercializationDestinationModalComponent
   confirm() {
     console.log(this.formGroup.value);
     if (this.formGroup.invalid) {
-      this.alert('warning', 'Complete los Campos Requeridos Correctamente', '');
+      this.alert('warning', 'Complete los campos requeridos correctamente', '');
       this.formGroup.markAllAsTouched();
       return;
     }
@@ -93,7 +93,7 @@ export class CommercializationDestinationModalComponent
           next: res => {
             console.log('RESPONSE', res);
             this.onConfirm.emit(this.formGroup.value);
-            this.alert('success', 'Registro Creado Correctamente', '');
+            this.alert('success', 'Registro creado correctamente', '');
             this.formGroup.reset();
             this.close();
           },
@@ -101,7 +101,7 @@ export class CommercializationDestinationModalComponent
             console.log(error);
             this.alert(
               'warning',
-              'Ocurrió un Error al Intentar Crear el Registro',
+              'Ocurrió un error al intentar crear el registro',
               ''
             );
           },
@@ -113,7 +113,7 @@ export class CommercializationDestinationModalComponent
           next: res => {
             console.log('RESPONSE', res);
             this.onConfirm.emit(this.formGroup.value);
-            this.alert('success', 'Registro Actualizado Correctamente', '');
+            this.alert('success', 'Registro actualizado correctamente', '');
             this.formGroup.reset();
             this.close();
           },
@@ -121,7 +121,7 @@ export class CommercializationDestinationModalComponent
             console.log(error);
             this.alert(
               'warning',
-              'Ocurrió un Error al Intentar Actualizar el Registro',
+              'Ocurrió un error al intentar actualizar el registro',
               ''
             );
           },

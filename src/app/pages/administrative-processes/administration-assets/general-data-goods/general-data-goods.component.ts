@@ -115,7 +115,7 @@ export class GeneralDataGoodsComponent
       }
     });
     if (required) {
-      this.alert('warning', 'Debe llenar los Atributos Requeridos.', '');
+      this.alert('warning', 'Debe Registrar los Atributos Requeridos.', '');
       return;
     }
     const patron: RegExp =

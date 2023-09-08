@@ -20,8 +20,7 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            (click)="searchExpedient()"
-            *ngIf="origin == null">
+            (click)="searchExpedient()">
             <i class="bx bx-list-plus bx-sm float-icon"></i>
           </button>
         </div>
@@ -397,11 +396,12 @@
                   (userRowSelect)="selectData($event)">
                 </ng2-smart-table>
               </ng-scrollbar>
+              <app-pagination
+                [params]="paramsList"
+                [totalItems]="totalItems"></app-pagination>
               <!-- </div> -->
             </div>
-            <app-pagination
-              [params]="paramsList"
-              [totalItems]="totalItems"></app-pagination>
+
             <form [formGroup]="actaGoodForm" class="form-material">
               <div class="row">
                 <div class="col-6 mt-4">
@@ -434,6 +434,7 @@
             </div>
           </div>
         </div>
+
         <div class="row pt-2">
           <div class="col-md-12 text-center mt-4 mb-4">
             <button
@@ -458,8 +459,6 @@
               class="btn btn-secondary btn-sm active m-3 p-1 pointer"
               type="button"
               (click)="removeAll()">
-              <!-- Quitar todos -->
-
               <i class="bx bx-chevrons-up bx-md"></i>
             </button>
             <button
@@ -490,12 +489,12 @@
                   (userRowSelect)="rowsSelected($event)"
                   [source]="dataRecepcionGood">
                 </ng2-smart-table>
+                <app-pagination
+                  [params]="paramsList2"
+                  [totalItems]="totalItems2"></app-pagination>
               </ng-scrollbar>
               <!-- </div> -->
             </div>
-            <app-pagination
-              [params]="paramsList2"
-              [totalItems]="totalItems2"></app-pagination>
           </div>
         </div>
       </div>

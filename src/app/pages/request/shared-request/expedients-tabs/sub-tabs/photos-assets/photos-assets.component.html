@@ -88,21 +88,26 @@
         <div [class]="loading ? 'table-loading' : ''">
           <div class="row pt-4">
             <div class="d-flex">
-              <app-columns-select
-                class="float-right"
-                [(settings)]="settings"></app-columns-select>
-              <div class="ml-auto p-2">
+              <div class="mr-auto p-2"></div>
+              <div class="p-2">
                 <button
                   [disabled]="statusTask == 'FINALIZADA'"
                   class="btn btn-primary btn-sm active"
                   (click)="filter()">
                   Recargar <i class="fas fa-sync-alt"> </i>
                 </button>
+
                 <!--<button
               class="btn btn-info btn-sm active ml-2"
               (click)="updateData()">
               Actualizar
             </button> -->
+              </div>
+              <div class="p-2">
+                <app-columns-select
+                  [leftList]="true"
+                  class="float-right"
+                  [(settings)]="settings"></app-columns-select>
               </div>
             </div>
           </div>
