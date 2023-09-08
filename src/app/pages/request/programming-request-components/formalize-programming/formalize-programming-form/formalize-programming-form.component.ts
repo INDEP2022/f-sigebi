@@ -1429,6 +1429,7 @@ export class FormalizeProgrammingFormComponent
   }
 
   async confirm() {
+    //const sendGoodInventary = await this.sendGoodsGuardInventary();
     this.alertQuestion(
       'question',
       'Confirmación',
@@ -1503,6 +1504,7 @@ export class FormalizeProgrammingFormComponent
               .AddReceptionBpm(Number(item.id), Number(item.goodId))
               .subscribe({
                 next: response => {
+                  console.log('response', response);
                   resolve(true);
                 },
                 error: error => {
