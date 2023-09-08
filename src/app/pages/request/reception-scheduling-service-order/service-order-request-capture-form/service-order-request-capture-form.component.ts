@@ -6,6 +6,7 @@ import { catchError, of } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
+import { IOrderServiceDTO } from 'src/app/core/models/ms-order-service/order-service.mode';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
@@ -116,7 +117,9 @@ export class ServiceOrderRequestCaptureFormComponent
         { value: null, disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ],
-
+      //
+      notes: [null, [Validators.pattern(STRING_PATTERN)]],
+      observation: [null, [Validators.pattern(STRING_PATTERN)]],
       programmingId: [null],
       id: [null],
     });
@@ -198,6 +201,11 @@ export class ServiceOrderRequestCaptureFormComponent
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        console.log(this.ordServform.getRawValue());
+
+        return;
+        let ordServiceForm = this.ordServform.getRawValue();
+        this.updateOrderService(ordServiceForm);
         this.onLoadToast(
           'success',
           'Orden de servicio guardada correctamente',
@@ -215,6 +223,8 @@ export class ServiceOrderRequestCaptureFormComponent
     this.ordServform.controls['originStreet'].enable();
     this.ordServform.controls['originPostalCode'].enable();
     this.ordServform.controls['colonyOrigin'].enable();
+    //this.ordServform.controls['notes'].enable();
+    //this.ordServform.controls['observation'].enable();
   }
 
   getOrderService() {
@@ -255,6 +265,14 @@ export class ServiceOrderRequestCaptureFormComponent
             resolve(resp);
           },
         });
+    });
+  }
+
+  updateOrderService(body: IOrderServiceDTO) {
+    this.orderService.updateOrderService(body).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
     });
   }
 

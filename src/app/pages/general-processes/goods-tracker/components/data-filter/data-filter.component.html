@@ -260,6 +260,20 @@
         <i class="bx bx-list-plus bx-sm float-icon"></i>
       </button>
     </div>
+    <form-field
+      [control]="form.get('request')"
+      class="col-md-3"
+      label="No. Solicitud">
+      <ng-select
+        addTagText="Agregar Elemento"
+        class="form-control scroll-line"
+        formControlName="request"
+        [items]="[]"
+        [addTag]="true"
+        [multiple]="true">
+      </ng-select>
+      <!-- <input type="text" formControlName="goodNum" class="form-control" /> -->
+    </form-field>
     <form-check label="Gabinete Social" for="gabinete" class="col-md-4">
       <input
         type="checkbox"

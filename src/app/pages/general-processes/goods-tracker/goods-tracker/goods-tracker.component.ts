@@ -190,9 +190,11 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
       goodState,
       gabinete,
       inventario,
+      request,
     } = form;
     this.filters.gabinete = gabinete ?? null;
     this.filters.inventario = inventario?.length ? inventario : null;
+    this.filters.request = request?.length ? request : null;
     if (warehouse.length) {
       this.filters.global.gstSelecStore = 'S';
       this.filters.global.cstStoreNumber = warehouse;
