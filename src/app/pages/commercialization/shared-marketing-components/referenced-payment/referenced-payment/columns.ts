@@ -34,7 +34,7 @@ export const COLUMNS = {
     sort: false,
   },
   referenceOri: {
-    title: 'Referencia OI',
+    title: 'Referencia Orden Ingreso',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -134,7 +134,7 @@ export const COLUMNS = {
     sort: false,
   },
   entryOrderId: {
-    title: 'OI',
+    title: 'Orden Ingreso',
     // width: '15%',
     type: 'string',
     sort: false,
