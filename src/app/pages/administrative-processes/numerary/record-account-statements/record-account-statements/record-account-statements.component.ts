@@ -237,31 +237,29 @@ export class RecordAccountStatementsComponent
     console.log(value);
     // this.bankAccountSelect = new DefaultSelect();
     this.loading = false;
-    // console.log(value);
-    // if (value && value.cve_banco) {
-    //   const bankCode = value.cve_cuenta;
-    //   this.codeBanco = bankCode;
-    //   console.log(bankCode);
-    //   this.searchBankAccount(bankCode, this.paramsSubject);
-    //   // this.getEvent();
-    //   this.loading = false;
-    // } else {
-    //   this.cleandInfoAll();
-    //   this.loading = false;
-    //   this.getEvent();
-
-    // }
-    // this.getEvent();
-    this.searchBankAccount(value?.cveAccount, this.paramsSubject);
-    this.form.get('account').setValue(value?.cveAccount);
-    let currency = value?.cveCurrency;
-    this.current = currency;
-    this.searchCurrent(currency);
-    currency = currency.replace(/'/g, '');
-    this.form.get('square').setValue(value?.square);
-    this.form.get('branch').setValue(value?.branch);
-    this.form.get('accountType').setValue(value?.accountType);
-    this.form.get('currency').setValue(currency);
+    console.log(value);
+    if (value && value.cve_banco) {
+      const bankCode = value.cve_cuenta;
+      console.log(bankCode);
+      // this.searchBankAccount(bankCode, this.paramsSubject);
+      let paramsB = new ListParams();
+      paramsB['filter.accountNumber.cveAccount'] = value.cve_cuenta;
+      this.getEvent(paramsB);
+      this.form.get('account').setValue(value?.cveAccount);
+      let currency = value?.cveCurrency;
+      this.current = currency;
+      this.searchCurrent(currency);
+      currency = currency.replace(/'/g, '');
+      this.form.get('square').setValue(value?.square);
+      this.form.get('branch').setValue(value?.branch);
+      this.form.get('accountType').setValue(value?.accountType);
+      this.form.get('currency').setValue(currency);
+      // this.getEvent();
+      this.loading = false;
+    } else {
+      this.cleandInfoAll();
+      this.loading = false;
+    }
   }
 
   searchBankAccount(
