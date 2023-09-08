@@ -207,11 +207,10 @@ export class RecordAccountStatementsComponent
 
   // Permite buscar los bancos por nombre
   onSearchName(inputElement: any) {
-    const name = inputElement.value;
-
+    const name = inputElement.value.accountNumber.cveBank;
     setTimeout(() => {
-      this.accountMovementService
-        .getDataBank(this.params.getValue())
+      this.recordAccountStatementsService
+        .getAllDinamicName(name, this.params.getValue())
         .subscribe({
           next: (response: { data: any[]; count: number }) => {
             this.banks = new DefaultSelect(response.data, response.count);
@@ -235,22 +234,34 @@ export class RecordAccountStatementsComponent
     this.form.get('description').reset();
     this.totalItems = 0;
     this.cleandInfoDate();
-    this.bankAccountSelect = new DefaultSelect();
-    this.loading = false;
-
     console.log(value);
-    if (value && value.cve_banco) {
-      const bankCode = value.cve_banco;
-      this.codeBanco = bankCode;
-      console.log(bankCode);
-      this.searchBankAccount(bankCode, this.paramsSubject);
-      // this.getEvent();
-      this.loading = false;
-    } else {
-      this.cleandInfoAll();
-      this.loading = false;
-      this.getEvent();
-    }
+    // this.bankAccountSelect = new DefaultSelect();
+    this.loading = false;
+    // console.log(value);
+    // if (value && value.cve_banco) {
+    //   const bankCode = value.cve_cuenta;
+    //   this.codeBanco = bankCode;
+    //   console.log(bankCode);
+    //   this.searchBankAccount(bankCode, this.paramsSubject);
+    //   // this.getEvent();
+    //   this.loading = false;
+    // } else {
+    //   this.cleandInfoAll();
+    //   this.loading = false;
+    //   this.getEvent();
+
+    // }
+    // this.getEvent();
+    this.searchBankAccount(value?.cveAccount, this.paramsSubject);
+    this.form.get('account').setValue(value?.cveAccount);
+    let currency = value?.cveCurrency;
+    this.current = currency;
+    this.searchCurrent(currency);
+    currency = currency.replace(/'/g, '');
+    this.form.get('square').setValue(value?.square);
+    this.form.get('branch').setValue(value?.branch);
+    this.form.get('accountType').setValue(value?.accountType);
+    this.form.get('currency').setValue(currency);
   }
 
   searchBankAccount(
@@ -265,13 +276,10 @@ export class RecordAccountStatementsComponent
       .subscribe({
         next: response => {
           response.data.map(item => {
-            item['accountAndNumber'] = item.cveAccount;
+            item['accountAndNumber'] = item.cve_cuenta;
           });
 
-          this.bankAccountSelect = new DefaultSelect(
-            response.data,
-            response.count
-          );
+          this.form.get('account').patchValue(response.data[0]);
           this.loading = false;
         },
         // this.data.load(this.documents);
@@ -283,7 +291,7 @@ export class RecordAccountStatementsComponent
   }
 
   onClearSelection() {
-    // this.searchBankAccount(this.bankCode, this.paramsSubject);
+    this.searchBankAccount(this.bankCode, this.paramsSubject);
     this.getEvent();
   }
 
@@ -326,9 +334,8 @@ export class RecordAccountStatementsComponent
     const square = value?.accountNumber.square;
     const branch = value?.accountNumber.branch;
     const accountType = value?.accountNumber.accountType;
-    let paramsBank = new ListParams();
-    paramsBank['accountNumber.cveAccount'] = value?.accountNumber.cveAccount;
-    this.getBanks(paramsBank);
+    let paramsB = new ListParams();
+    this.form.get('bankSelect').setValue(value?.accountNumber.cveBank);
     let currency = value.accountNumber.cveCurrency;
     this.current = currency;
     this.searchCurrent(currency);
