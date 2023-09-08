@@ -1290,6 +1290,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
   fechaInput: string = '';
   ultimoDia: Date | null = null;
+  dateMovemFin: any;
   calcularUltimoDia(date: any) {
     const fecha = new Date(date);
     const year = fecha.getFullYear();
@@ -1300,15 +1301,22 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     // this.actaRecepttionForm.patchValue({
     //   elaboradate: await this.getDate(),
     // });
+
+    this.ultimoDia = ultimoDia;
+    this.dateMovemFin = this.datePipe.transform(ultimoDia, 'dd-MM-yyyy');
+    if (this.ultimoDia)
+      this.formRegistro.patchValue({
+        toTwo: this.ultimoDia,
+      });
     console.log('this.ultimoDia', ultimoDia);
   }
   dateMovemInicio: any;
   dateMovementInicio(event: any) {
     this.dateMovemInicio = event;
-    this.calcularUltimoDia(this.dateMovemInicio);
+    if (event) this.calcularUltimoDia(this.dateMovemInicio);
     // this.dateMovem = event.target.value;
   }
-
+  dateMovementFin(event: any) {}
   async getDate() {
     // const formattedDate = moment(date).format('DD-MM-YYYY');
 
