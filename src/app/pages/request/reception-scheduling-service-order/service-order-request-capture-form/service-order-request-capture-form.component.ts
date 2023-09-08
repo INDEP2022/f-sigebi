@@ -197,20 +197,14 @@ export class ServiceOrderRequestCaptureFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Desea guardar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+      `¿Desea guardar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?`
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
         console.log(this.ordServform.getRawValue());
 
-        return;
         let ordServiceForm = this.ordServform.getRawValue();
         this.updateOrderService(ordServiceForm);
-        this.onLoadToast(
-          'success',
-          'Orden de servicio guardada correctamente',
-          ''
-        );
       }
     });
   }
@@ -272,6 +266,14 @@ export class ServiceOrderRequestCaptureFormComponent
     this.orderService.updateOrderService(body).subscribe({
       next: resp => {
         console.log(resp);
+        this.onLoadToast(
+          'success',
+          'Orden de servicio guardada correctamente',
+          ''
+        );
+      },
+      error: error => {
+        this.onLoadToast('error', 'No se pudo actualizar la orden de servicio');
       },
     });
   }
