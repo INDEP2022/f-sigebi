@@ -32,6 +32,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        padding-top: 3%;
       }
 
       .ellipsis span {

@@ -173,7 +173,7 @@ export class reportOiComponent extends BasePage implements OnInit {
       !this.form.get('idEvent').value ||
       !this.form.get('typeAuction').value
     ) {
-      this.alert('error', 'Datos no Disponibles', '');
+      this.alert('warning', 'No existen datos para exportar', '');
       return;
     }
     // Hacer una copia de this.params1 si es necesario

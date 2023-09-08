@@ -58,4 +58,7 @@ export class ComerLotService extends HttpService {
     const route = `${this.clientComer}/${id}`;
     return this.get(route);
   }
+  getEatLotAll(params?: ListParams): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(this.endComer, params);
+  }
 }
