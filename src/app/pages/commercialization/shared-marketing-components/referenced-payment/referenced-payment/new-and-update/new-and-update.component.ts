@@ -78,7 +78,10 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         [Validators.pattern(NUMBERS_PATTERN), Validators.required],
       ],
       date: [null, Validators.required],
-      amount: [null, [Validators.pattern(NUMBERS_POINT_PATTERN)]],
+      amount: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
+      ],
       bankKey: [null, Validators.required],
       code: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       lotId: [null],

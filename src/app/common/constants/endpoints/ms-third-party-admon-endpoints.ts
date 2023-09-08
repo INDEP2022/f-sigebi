@@ -3,4 +3,5 @@ export enum ThirdPartyAdmonEndpoints {
   GoodPossessionThirdParty = 'good-possession-thirdparty',
   DetailGoodPossessionThirdParty = 'detail-good-possession-thirdparty',
   StatusHistory = 'strategy-log',
+  StrategyReports = 'strategy-ind-reports',
 }

@@ -353,8 +353,12 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             link: '/pages/administrative-processes/implementation-report',
           },
           {
-            label: 'Indicador de Desempeño',
+            label: 'Estrategias de Administración',
             link: '/pages/administrative-processes/performance-indicator',
+          },
+          {
+            label: 'Indicador de Desempeño',
+            link: '/pages/administrative-processes/performance-indicator-detail',
           },
           {
             label: 'Reportes de la O.DE S.',

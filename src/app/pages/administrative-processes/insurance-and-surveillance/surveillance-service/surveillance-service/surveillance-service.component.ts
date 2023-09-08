@@ -617,7 +617,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
       if (createVIG_SUPERVISION_TMP_) {
         this.loadingBtn = false;
-        this.alert('success', 'Archivo Cargado Correctamente', '');
+        this.alert('success', 'Archivo cargado correctamente', '');
         this.clearInput();
       } else {
         this.loadingBtn = false;
@@ -660,7 +660,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     if (cveProcessTwo != 1 && cveProcessTwo != 2) {
       LV_VALPROCESO = 0;
       this.formRegistro.get('processTwo').markAsTouched();
-      this.alert('warning', 'El proceso es enformación requerida', '');
+      this.alert('warning', 'El proceso es información requerida', '');
       return;
     }
 
@@ -1204,7 +1204,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     link.click();
     link.remove();
     this.loadingBtn2 = false;
-    this.alert('success', 'Archivo Descargado Correctamente', '');
+    this.alert('success', 'Archivo descargado correctamente', '');
   }
 
   async revisarCarga() {
@@ -1290,6 +1290,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
   fechaInput: string = '';
   ultimoDia: Date | null = null;
+  dateMovemFin: any;
   calcularUltimoDia(date: any) {
     const fecha = new Date(date);
     const year = fecha.getFullYear();
@@ -1300,15 +1301,22 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     // this.actaRecepttionForm.patchValue({
     //   elaboradate: await this.getDate(),
     // });
+
+    this.ultimoDia = ultimoDia;
+    this.dateMovemFin = this.datePipe.transform(ultimoDia, 'dd-MM-yyyy');
+    if (this.ultimoDia)
+      this.formRegistro.patchValue({
+        toTwo: this.ultimoDia,
+      });
     console.log('this.ultimoDia', ultimoDia);
   }
   dateMovemInicio: any;
   dateMovementInicio(event: any) {
     this.dateMovemInicio = event;
-    this.calcularUltimoDia(this.dateMovemInicio);
+    if (event) this.calcularUltimoDia(this.dateMovemInicio);
     // this.dateMovem = event.target.value;
   }
-
+  dateMovementFin(event: any) {}
   async getDate() {
     // const formattedDate = moment(date).format('DD-MM-YYYY');
 
