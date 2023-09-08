@@ -207,7 +207,11 @@ export class ServiceOrderRequestCaptureFormComponent
 
         let ordServiceForm = this.ordServform.getRawValue();
         this.updateOrderService(ordServiceForm);
-        this.isUpdate = true;
+        this.onLoadToast(
+          'success',
+          'Orden de servicio guardada correctamente',
+          ''
+        );
       }
     });
   }
@@ -276,6 +280,7 @@ export class ServiceOrderRequestCaptureFormComponent
         );
       },
       error: error => {
+        console.log(error);
         this.onLoadToast('error', 'No se pudo actualizar la orden de servicio');
       },
     });
