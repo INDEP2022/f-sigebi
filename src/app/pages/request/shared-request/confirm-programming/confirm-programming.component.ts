@@ -44,26 +44,28 @@ export class ConfirmProgrammingComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.modalRef.content.callback({
+    /*this.modalRef.content.callback({
       data: this.confirmForm.value,
       sign: this.electronicSignature,
     });
-    this.modalRef.hide();
-    /*
+    this.modalRef.hide(); */
+
     this.programmingService
       .updateProgramming(this.idProgramming, this.confirmForm.value)
       .subscribe({
         next: () => {
-          if(this.type == 'order-service'){
-            this.modalRef.content.callback({data:this.confirmForm.value, sign:this.electronicSignature});
-          }else {
+          if (this.type == 'order-service') {
+            this.modalRef.content.callback({
+              data: this.confirmForm.value,
+              sign: this.electronicSignature,
+            });
+          } else {
             this.modalRef.content.callback(this.confirmForm.value);
           }
           this.modalRef.hide();
-          
         },
         error: error => {},
-      });*/
+      });
   }
 
   electronicSig() {
