@@ -165,4 +165,5 @@ export class GoodTrackerMap {
   };
   gabinete?: boolean;
   inventario?: any;
+  request?: any;
 }
