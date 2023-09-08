@@ -55,7 +55,7 @@ import {
 @Component({
   selector: 'app-dispersion-payment',
   templateUrl: './dispersion-payment.component.html',
-  styles: [],
+  styleUrls: ['dispersion-payment.css'],
 })
 export class DispersionPaymentComponent extends BasePage implements OnInit {
   //Preparar los setting de las tablas
@@ -222,6 +222,21 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
     this.settingsCustomerBanks = {
       ...TABLE_SETTINGS,
+      rowClassFunction: (row: any) => {
+        if (['1', '3'].includes(row.data.id_tipo_disp)) {
+          if (row.data.available) {
+            return 'idDisp';
+          } else {
+            return 'notAS idDisp';
+          }
+        } else {
+          if (row.data.available) {
+            return '';
+          } else {
+            return 'notAS';
+          }
+        }
+      },
       actions: false,
       columns: COLUMNS_CUSTOMER_BANKS,
     };
@@ -802,6 +817,13 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR CLIENTE
   getPaymentByCustomer(clientId: string, eventId: string) {
+    console.log(this.id_tipo_disp);
+    if (['1', '3'].includes(this.id_tipo_disp.toString())) {
+      console.log('Entra');
+    } else {
+      console.log('No entra');
+    }
+
     this.loadingValidAmount = true;
     this.loadingTotal = true;
 
@@ -811,7 +833,14 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.comerLotsService.getLotComerPayRef(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
-        this.dataCustomerBanks.load(res.data);
+        const newData = res.data.map((e: any) => {
+          return {
+            ...e,
+            available: ['A', 'S'].includes(e.System_Valid) ? true : false,
+            id_tipo_disp: this.id_tipo_disp,
+          };
+        });
+        this.dataCustomerBanks.load(newData);
         this.totalItemsCustomerBanks = res.count;
         this.loadingCustomerBanks = false;
       },
@@ -860,6 +889,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       }
     );
   }
+
+  //POSQUERY PAGOS RECIBIDOS EN EL BANCO POR CLIENTE
+  postqueryPaymentByCustomer() {}
 
   //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR LOTE
   getLotsBanks(idLote: string) {
@@ -1143,6 +1175,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       modalConfig = {
         initialState: {
           dataModel,
+          dateWarrantyLiq: this.form.get('dateMaxPayment').value,
           callback: (e: any) => {
             console.log(e);
           },

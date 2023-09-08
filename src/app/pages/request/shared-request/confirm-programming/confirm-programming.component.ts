@@ -48,8 +48,7 @@ export class ConfirmProgrammingComponent extends BasePage implements OnInit {
       data: this.confirmForm.value,
       sign: this.electronicSignature,
     });
-    this.modalRef.hide(); */
-
+    this.modalRef.hide();*/
     this.programmingService
       .updateProgramming(this.idProgramming, this.confirmForm.value)
       .subscribe({
