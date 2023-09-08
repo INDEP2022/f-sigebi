@@ -50,20 +50,29 @@
 
     <app-detail-service-order></app-detail-service-order>
 
-    <app-address-transferent-form [form]="form"></app-address-transferent-form>
+    <app-address-transferent-form
+      *ngIf="orderServiceId != null"
+      [ordServform]="ordServform"></app-address-transferent-form>
 
     <app-tranportable-goods-form></app-tranportable-goods-form>
 
     <app-order-service-form
+      *ngIf="orderServiceId != null"
       [ordServform]="ordServform"
       [op]="op"
       [showForm]="showForm"></app-order-service-form>
 
     <app-classificate-vehicle-form [op]="op"></app-classificate-vehicle-form>
 
-    <app-address-origin-form></app-address-origin-form>
+    <app-address-origin-form
+      *ngIf="orderServiceId != null"
+      [ordServform]="ordServform"></app-address-origin-form>
 
-    <app-comments-form [op]="op" [showForm]="showForm"></app-comments-form>
+    <app-comments-form
+      *ngIf="orderServiceId != null"
+      [ordServform]="ordServform"
+      [op]="op"
+      [showForm]="showForm"></app-comments-form>
 
     <app-service-transportable-goods-form
       [op]="op"
