@@ -518,7 +518,7 @@ export class ServiceTransportableGoodsFormComponent
     });
   }
   /**
-   * consultar el campo serviceCost no deveria mostrarse en ordservice provi
+   * consultar el campo serviceCost no deveria mostrarse en ordservice provi porque no guarda
    * No carga automativamente los datos en el selector cuando se guardan
    */
 
