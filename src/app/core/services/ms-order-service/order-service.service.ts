@@ -55,6 +55,15 @@ export class OrderServiceService extends HttpService {
     return this.post(OrderServiceEndpoint.ServiceVehicle, formVehicle);
   }
 
+  updateServiceVehicle(
+    idTypeVehicle: number,
+    orderServiceId: number,
+    formVehicle: IServiceVehicle
+  ) {
+    const route = `${OrderServiceEndpoint.ServiceVehicle}/${idTypeVehicle}/${orderServiceId}`;
+    return this.put(route, formVehicle);
+  }
+
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {
