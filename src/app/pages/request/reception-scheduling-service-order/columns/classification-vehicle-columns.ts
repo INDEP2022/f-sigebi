@@ -1,5 +1,5 @@
 export const CLASSIFICATION_VEHICLE_COLUMS = {
-  id: {
+  nameTypeVehicle: {
     title: 'Tipo de Vehículo',
     type: 'string',
     sort: false,
