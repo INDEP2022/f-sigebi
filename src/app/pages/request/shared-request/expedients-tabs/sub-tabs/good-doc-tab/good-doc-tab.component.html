@@ -92,15 +92,18 @@
   <div>
     <div class="row pt-4">
       <div class="d-flex">
-        <div class="pt-2">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
-        </div>
+        <div class="mr-auto p-2"></div>
         <div class="p-2">
           <button
             class="btn btn-primary btn-sm active"
             (click)="showDocuments()">
             Ver Documento <i class="fa fa-eye" aria-hidden="true"></i>
           </button>
+        </div>
+        <div class="p-2">
+          <app-columns-select
+            [leftList]="true"
+            [(settings)]="settings"></app-columns-select>
         </div>
       </div>
     </div>
