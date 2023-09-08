@@ -27,6 +27,7 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
   data = new LocalDataSource();
 
   dataModel: any;
+  dateWarrantyLiq: any;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -55,6 +56,7 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     console.log(this.dataModel);
+    console.log(this.dateWarrantyLiq)
     this.fillAndGetData();
 
     if (
@@ -66,7 +68,7 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
       this.settings1 = {
         ...TABLE_SETTINGS,
         columns: COLUMN_COMER,
-        actions: false,
+        actions: true,
         noDataMessage: 'No se Encontraron Registros',
       };
     } else {
@@ -75,7 +77,7 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
       this.settings1 = {
         ...TABLE_SETTINGS,
         columns: COLUMN_COMER,
-        actions: true,
+        actions: false,
         noDataMessage: 'No se Encontraron Registros',
       };
     }
@@ -193,8 +195,20 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
           incomeData,
           callback: (data: any) => {
             console.log(data);
-            const newData = this.data['data'].concat(data);
-            this.data.load(newData);
+            const newData = this.data['data'].map((e:any) => {
+              console.log(e.batchId)
+              console.log(data.id)
+              if(e.batchId == data.id){
+                return {
+                  ...e,
+                  amount: data.n_mdiv.toFixed(2),
+                  amountGrief: data.n_pdiv.toFixed(2)
+                }
+              }else{
+                return e
+              }
+            });
+            this.data.load(newData.concat(data.data));
           },
         },
         class: 'modal-dialog-centered',
