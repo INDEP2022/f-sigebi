@@ -1,3 +1,4 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -11,8 +12,10 @@ import {
   IGoodPhoto,
 } from 'src/app/core/models/ms-parametercomer/parameter';
 
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerLotService } from 'src/app/core/services/ms-parametercomer/comer-lot.service';
 import { PublicationPhotographsService } from 'src/app/core/services/ms-parametercomer/publication-photographs.service';
+import { ComerClientService } from 'src/app/core/services/ms-prepareevent/comer-clients.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
@@ -34,6 +37,15 @@ import {
       }
     `,
   ],
+  animations: [
+    trigger('OnEventSelected', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('500ms', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [animate('500ms', style({ opacity: 0 }))]),
+    ]),
+  ],
 })
 export class PublicationPhotographsComponent
   extends BasePage
@@ -44,8 +56,6 @@ export class PublicationPhotographsComponent
   transform: number;
   selectedIndex = 0;
   lot: IComerLotEvent;
-  // eventList = new DefaultSelect<IEvent>();
-  // events: any;
   eventList: IComerLotEvent[] = [];
   see: boolean;
   lotList: IComerLotEvent[] = [];
@@ -55,10 +65,11 @@ export class PublicationPhotographsComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   batchList: any;
   selectedCve: any = null;
-  selectedLot: any[] = [];
+  selectedLot: any = null;
   cveItems = new DefaultSelect();
   totalItems: number = 0;
-  totalItemsL: number = 0;
+  totalItems1: number = 0;
+  totalItems2: number = 0;
   data1: LocalDataSource = new LocalDataSource();
   // dataAllotment = DATA;
   idLot: number = 0;
@@ -66,8 +77,16 @@ export class PublicationPhotographsComponent
   rowSelected: boolean = false;
   rowAllotment: string = null;
   selectedRow: any = null;
-
+  title: string = 'Publicación de fotografías';
+  selectedEvent: any = null;
+  dataParams2 = new BehaviorSubject<ListParams>(new ListParams());
+  dataParams1 = new BehaviorSubject<ListParams>(new ListParams());
+  loading2: boolean = this.loading;
   rowSelectedGood: boolean = false;
+  selectedGood: any;
+  disabled: boolean = false;
+  goodNumber: number = 0;
+  disableButton: boolean = true;
 
   settings1;
   settings2;
@@ -82,11 +101,14 @@ export class PublicationPhotographsComponent
     private fb: FormBuilder,
     private modalService: BsModalService,
     private comerLotService: ComerLotService,
-    private publicationPhotographsService: PublicationPhotographsService
+    private comerEventService: ComerEventosService,
+    private publicationPhotographsService: PublicationPhotographsService,
+    private prepareeventServices: ComerClientService
   ) {
     super();
     this.settings1 = {
       ...this.settings,
+      hideSubHeader: false,
       actions: false,
       columns: { ...PUBLICATION_PHOTO1 },
     };
@@ -94,6 +116,7 @@ export class PublicationPhotographsComponent
     this.settings2 = {
       ...this.settings,
       actions: false,
+      hideSubHeader: false,
       columns: { ...PUBLICATION_PHOTO2 },
     };
 
@@ -113,17 +136,13 @@ export class PublicationPhotographsComponent
   }
 
   ngOnInit(): void {
-    // this.findEvent({ page: 1, text: '' });
-    // this.data1.load(this.lotList);
     this.prepareForm();
-    // this.see = true;
-    // this.getAllLot();
-    // this.getAllPhotoGood();
   }
 
   prepareForm() {
     this.form = this.fb.group({
       noBien: [null, [Validators.required]],
+      eventId: [null],
       tpeventoId: [null],
       statusvtaId: [null],
       // place: [null],
@@ -131,15 +150,6 @@ export class PublicationPhotographsComponent
     });
   }
 
-  // getCve(params: ListParams) {
-  //   if (params.text == '') {
-  //     this.cveItems = new DefaultSelect(this.events, this.totalItems);
-  //   } else {
-  //     const id = parseInt(params.text);
-  //     const item = [this.events.filter((i: any) => i.id == id)];
-  //     this.cveItems = new DefaultSelect(item[0], 1);
-  //   }
-  // }
   loadEvent(search: any) {
     this.comerLotService.findEvent(search).subscribe({
       next(data) {
@@ -151,201 +161,115 @@ export class PublicationPhotographsComponent
         console.log(err);
       },
     });
-    // if (params.text == '') {
-    //   this.cveItems = new DefaultSelect(this.events, this.totalItems);
-    // } else {
-    //   const id = parseInt(params.text);
-    //   const item = [this.events.filter((i: any) => i.id == id)];
-    //   this.cveItems = new DefaultSelect(item[0], 1);
-    // }
   }
 
-  // findLot(search: any) {
-  //   // this.form.value.price = this.form.controls['price'].value;
-  //   if (this.form.value.noBien !== null) {
-  //     this.comerLotService.findEvent(search).subscribe({
-  //       next: data => {
-  //         this.rowSelectedGood = true;
-  //         this.selectedCve = data;
-  //         console.log(this.selectedCve.id);
-  //         // this.form.controls['noBien'].setValue(noBien);
-  //         // this.form.controls['tpeventoId'].setValue(noBien);
-  //         // this.form.controls['statusvtaId'].setValue(noBien);
-  //         this.loading = false;
-  //       },
-  //       error: error => console.error,
-  //     });
-  //   }
-  // }
+  searchEvent(): void {
+    const eventId = this.form.controls['eventId'].value;
+    if (!eventId) {
+      this.alert('warning', this.title, 'Debe ingresar un evento');
+      return;
+    }
+    //this.enabledOrDisabledControl('eventId', false);
+    this.comerEventService.getComerEventById(eventId).subscribe({
+      next: (event: any) => {
+        // this.enabledOrDisabledControl('eventId', true);
+        console.log({ event });
+        this.selectedEvent = event || null;
+        this.getLot();
+        //this.getcomerGoodxLot();
+      },
+      error: () => {
+        //this.enabledOrDisabledControl('eventId', true);
+        this.alert('warning', this.title, 'No se encontró el evento');
+      },
+    });
+  }
 
-  // selectCve(event: any) {
-  //   this.selectedCve = event;
-  // }
+  getLot() {
+    this.loading = true;
+    this.dataParams1.getValue()[
+      'filter.idEvent'
+    ] = `$eq:${this.selectedEvent.id}`;
+    this.comerLotService.getEatLotAll(this.dataParams1.getValue()).subscribe({
+      next: data => {
+        console.log(data);
+        this.loading = false;
+        this.data1.load(data.data);
+        this.data1.refresh();
+        this.totalItems1 = data.count;
+      },
+      error: error => {
+        this.loading = false;
+        this.data1.load([]);
+        this.data1.refresh();
+      },
+    });
+  }
 
-  // selectRow(row: any) {
-  //   this.data2.load(row.goodNumber); //Sub
-  //   this.data2.refresh();
-  //   this.rowAllotment = row.goodNumber; //primary
-  //   this.rowSelected = true;
-  // }
+  getcomerGoodxLot(idLot: number | string) {
+    this.loading2 = true;
+    this.dataParams2.getValue()['filter.lotId'] = `$eq:${idLot}`;
+    this.prepareeventServices
+      .getcomerGoodxLot(this.dataParams2.getValue())
+      .subscribe({
+        next: data => {
+          this.loading2 = false;
+          const dataRep = data.data.map((item: any) => {
+            return {
+              ...item,
+              status: item.good.status,
+              description: item.good.description,
+            };
+          });
+          this.data2.load(dataRep);
+          this.data2.refresh();
+          this.totalItems2 = data.count;
+        },
+        error: error => {
+          this.loading2 = false;
+        },
+      });
+  }
 
-  // selectRowGood() {
-  //   this.rowSelectedGood = true;
-  // }
+  selectRowGood(event: any) {
+    this.rowSelectedGood = true;
+    this.selectedLot = event;
+    this.getcomerGoodxLot(this.selectedLot.idLot);
+    this.rowAllotment = this.selectedLot.idLot;
+  }
 
-  // getAllLotEvent() {
-  //   this.comerLotService.getAll().subscribe({
-  //     next: data => {
-  //       this.lotList = data.data;
-  //       // this.lotList.forEach(resp => (this.events = resp.event));
-  //       this.totalItems = data.count;
-  //       console.log(this.lotList);
-  //       this.loading = false;
-  //       this.see = false;
-  //     },
-  //     error: error => (this.loading = false),
-  //   });
-  // }
-  // getAllPhotoGood() {
-  //   this.publicationPhotographsService.getAll().subscribe({
-  //     next: data => {
-  //       this.photographyList = data.data;
-  //       this.totalItems = data.count;
-  //       // console.log(this.photographyList);
-  //       this.loading = false;
-  //     },
-  //     error: error => (this.see = false),
-  //   });
-  // }
+  selectRow(event: any) {
+    console.log(event);
+    this.selectedGood = null;
+    this.selectedGood = event;
+    this.goodNumber = event.goodNumber;
+  }
 
-  // getById() {
-  //   this.comerLotService.getById(this.idLot).subscribe({
-  //     next: data => {
-  //       this.lot = data.data;
-  //       // console.log(this.lot);
-  //       this.loading = false;
-  //     },
-  //     error: error => (this.loading = false),
-  //   });
-  // }
   userRowSelect(event: any) {
     this.lot = event.data.id;
-    // console.log(this.lot);
-    // this.comerLotService.getById(this.lot).subscribe({
-    //   next: data => {
-    //     this.lotList = data.data;
-    //     this.totalItems = data.count;
-    //     console.log(this.lotList);
-    //     this.loading = false;
-    //   },
-    //   error: error => (this.loading = false),
-    // });
   }
 
-  // getAllGoodPhoto() {
-  //   this.comerLotService.getById(this.lot).subscribe({
-  //     next: data => {
-  //       this.lotList = data.data;
-  //       this.totalItems = data.count;
-  //       console.log(this.lotList);
-  //       this.loading = false;
-  //     },
-  //     error: error => (this.loading = false),
-  //   });
-  // }
+  enableInputEvent(): void {
+    this.selectedEvent = null;
+    this.enabledOrDisabledControl('eventId', true);
+    //this.clearTables();
+  }
 
-  // openForm(provider?: IPhotographMedia) {
-  //   const modalConfig = MODAL_CONFIG;
-  //   modalConfig.initialState = {
-  //     provider,
-  //     callback: (next: boolean) => {
-  //       if (next) this.getBatch();
-  //     },
-  //   };
-  //   this.modalService.show(PublicationPhotographsModalComponent, modalConfig);
-  // }
+  public() {
+    this.alert('success', this.title, 'Publicación realizada');
+  }
 
-  // openModal(context?: Partial<PublicationPhotographsModalComponent>) {
-  //   const modalRef = this.modalService.show(
-  //     PublicationPhotographsModalComponent,
-  //     {
-  //       initialState: { ...context },
-  //       class: 'modal-lg modal-dialog-centered',
-  //       ignoreBackdropClick: true,
-  //     }
-  //   );
-  // }
+  fileEmiter(event: any[]) {
+    if (event.length > 0) {
+      this.disableButton = false;
+    }
+  }
 
-  // showDeleteAlert(id: number) {
-  //   this.alertQuestion(
-  //     'warning',
-  //     'Eliminar',
-  //     'Desea eliminar este registro?'
-  //   ).then(question => {
-  //     if (question.isConfirmed) {
-  //       this.photographMediaService.remove(id).subscribe({
-  //         next: data => {
-  //           this.loading = false;
-  //           this.onLoadToast('success', 'Layout eliminado', '');
-  //           this.getBatch();
-  //         },
-  //         error: error => {
-  //           this.onLoadToast('error', 'No se puede eliminar registro', '');
-  //           this.loading = false;
-  //         },
-  //       });
-  //     }
-  //   });
-  // }
-  data: any[] = [
-    {
-      id: '9423',
-      description: 'DESTRU/COMDD/10-03/02',
-      type: 'REMESA',
-      status: 'EN PREPARACIÓN',
-    },
-    {
-      id: '7897',
-      description: 'CRCUL/COMDD/08-10/15',
-      type: 'SUBASTA',
-      status: 'EN SUBASTA',
-    },
-    {
-      id: '3242',
-      description: 'COMER/COMDD/09-21/74',
-      type: 'TIPO 03',
-      status: 'DONACIÓN',
-    },
-  ];
-
-  //Carrusel de fotografías
-  itemsPerSlide = 5;
-  singleSlideOffset = true;
-
-  slides = [
-    {
-      image:
-        'https://i.pinimg.com/originals/b5/32/5b/b5325b470c543806ab38376946d194c0.jpg',
-    },
-    {
-      image:
-        'https://i.pinimg.com/originals/55/da/25/55da25dd5c6763f54f72e525c4462c18.jpg',
-    },
-    {
-      image:
-        'https://i.pinimg.com/originals/25/19/12/251912a9122dce982d4f9a4c4f7a3360.jpg',
-    },
-    {
-      image:
-        'https://i.pinimg.com/originals/8a/88/81/8a88817c9c7702d4cecf14f84e601158.jpg',
-    },
-    {
-      image:
-        'https://cdn.dealeraccelerate.com/premier/19/5096/92829/1920x1440/1984-chevrolet-silverado-k10-4x4-pickup',
-    },
-    {
-      image:
-        'https://bringatrailer.com/wp-content/uploads/2022/01/1984_chevrolet_k10_20210909_180334-Copy-100030.jpg?fit=940%2C626',
-    },
-  ];
+  enabledOrDisabledControl(control: string, enabled: boolean) {
+    if (enabled) {
+      this.form.get(control).enable();
+    } else {
+      this.form.get(control).disable();
+    }
+  }
 }

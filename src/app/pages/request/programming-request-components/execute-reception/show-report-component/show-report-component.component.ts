@@ -268,6 +268,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   signDocument() {
+    debugger;
     if (this.idTypeDoc == 107 && this.typeFirm == 'autografa') {
       this.modalRef.content.callback(true, this.typeFirm);
       this.modalRef.hide();

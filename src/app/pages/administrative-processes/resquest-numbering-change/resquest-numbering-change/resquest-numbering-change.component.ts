@@ -620,7 +620,7 @@ export class ResquestNumberingChangeComponent
           types.data[0].otvalor
         );
         this.formaplicationData.controls['delegationRequestcamnum'].setValue(
-          types.data[0].no_delegacion
+          this.token.decodeToken().department
         );
       },
       error: err => {

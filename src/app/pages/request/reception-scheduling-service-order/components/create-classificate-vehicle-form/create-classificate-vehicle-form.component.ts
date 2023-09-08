@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ICatGeneric } from 'src/app/common/repository/interfaces/cat-generic.interface';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -26,7 +27,8 @@ export class CreateClassificateVehicleFormComponent
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private genericService: GenericService
+    private genericService: GenericService,
+    private orderService: OrderServiceService
   ) {
     super();
   }
@@ -38,10 +40,10 @@ export class CreateClassificateVehicleFormComponent
 
   prepareForm() {
     this.form = this.fb.group({
-      typeVehicle: [null, [Validators.required]],
-      sale: [null, [Validators.pattern(STRING_PATTERN)]],
-      donation: [null, [Validators.pattern(STRING_PATTERN)]],
-      destruction: [null, [Validators.pattern(STRING_PATTERN)]],
+      id: [null, [Validators.required]],
+      amountSale: [null, [Validators.pattern(STRING_PATTERN)]],
+      amountDonation: [null, [Validators.pattern(STRING_PATTERN)]],
+      amountDestruction: [null, [Validators.pattern(STRING_PATTERN)]],
     });
 
     if (this.item != null) {
@@ -76,10 +78,18 @@ export class CreateClassificateVehicleFormComponent
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar servicio
-        this.onLoadToast('success', 'Clasificación creada correctamente', '');
+        this.orderService.postServiceVehicle(this.form.value).subscribe({
+          next: response => {
+            console.log('response', response);
+          },
+          error: error => {
+            console.log('error', error);
+          },
+        });
+        //this.onLoadToast('success', 'Clasificación creada correctamente', '');
         //this.modalRef.content.callback(this.form.value);
-        this.event.emit(this.form.value);
-        this.close();
+        //this.event.emit(this.form.value);
+        //this.close();
       }
     });
   }

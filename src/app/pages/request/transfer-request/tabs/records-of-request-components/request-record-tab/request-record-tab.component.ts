@@ -188,7 +188,7 @@ export class RequestRecordTabComponent
       ], //cargo remitente
       phoneOfOwner: [
         null,
-        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(13)],
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(103)],
       ], //telefono remitente
       emailOfOwner: [
         null,
