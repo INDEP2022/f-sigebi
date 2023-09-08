@@ -68,10 +68,6 @@ export class AccountMovementService extends HttpService {
     return this.put('user-checks/' + id, body);
   }
 
-  getNextReturnNumber() {
-    return this.post('user-checks/maxReturnNumber', {});
-  }
-
   createUserChecks(body: IUserChecks) {
     return this.post('user-checks', body);
   }
@@ -226,11 +222,14 @@ export class AccountMovementService extends HttpService {
       params
     );
   }
-
   getDepuraContmand(id_gasto: string) {
     return this.get<IListResponseMessage<any>>(
       AccountmvmntEndpoint.DepuraContmand + '/' + id_gasto
     );
+  }
+
+  getNextReturnNumber() {
+    return this.post('user-checks/maxReturnNumber', {});
   }
 }
 

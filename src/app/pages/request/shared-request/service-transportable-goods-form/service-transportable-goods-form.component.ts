@@ -128,7 +128,9 @@ export class ServiceTransportableGoodsFormComponent
     });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {}
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.orderServiceId) this.getOrderServiceProvided();
+  }
 
   getOrderServiceProvided() {
     /**
@@ -146,8 +148,12 @@ export class ServiceTransportableGoodsFormComponent
       )
       .subscribe({
         next: resp => {
-          this.data = testData;
-          //this.data = resp.data;
+          //this.data = testData;
+          resp.data.map((item: any) => {
+            item['total'] =
+              Number(item.priceUnitary) * Number(item.resourcesReal);
+          });
+          this.data = resp.data;
           this.totalItems = resp.count;
           this.setTableColumnsRows();
         },

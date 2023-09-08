@@ -22,4 +22,9 @@ export class ComerClientService extends HttpService {
     const route = `${PrepareEventEndpoints.ComerEvent}`;
     return this.get(route, _params);
   }
+
+  getcomerGoodxLot(_params: ListParams) {
+    const route = `comer-good-xlot`;
+    return this.get(route, _params);
+  }
 }
