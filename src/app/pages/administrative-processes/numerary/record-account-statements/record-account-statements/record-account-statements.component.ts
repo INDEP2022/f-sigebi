@@ -318,7 +318,7 @@ export class RecordAccountStatementsComponent
     this.form.get('description').reset();
     this.totalItems = 0;
     this.cleandInfoDate();
-    const cveAccount = value.bankCode;
+    const cveAccount = value.cveAccount;
     this.accountDate = value.accountDate;
     this.searchDataAccount(cveAccount);
     const square = value?.square;
