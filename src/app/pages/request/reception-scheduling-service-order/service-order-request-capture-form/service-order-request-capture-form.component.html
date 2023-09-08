@@ -68,7 +68,11 @@
       *ngIf="orderServiceId != null"
       [ordServform]="ordServform"></app-address-origin-form>
 
-    <app-comments-form [op]="op" [showForm]="showForm"></app-comments-form>
+    <app-comments-form
+      *ngIf="orderServiceId != null"
+      [ordServform]="ordServform"
+      [op]="op"
+      [showForm]="showForm"></app-comments-form>
 
     <app-service-transportable-goods-form
       [op]="op"
