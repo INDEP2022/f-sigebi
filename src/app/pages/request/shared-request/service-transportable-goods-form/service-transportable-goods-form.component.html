@@ -2,49 +2,60 @@
   <div class="md-tabs">
     <tabset>
       <tab heading="{{ title }}">
-        <div class="btn-toolbar">
-          <button
-            *ngIf="
-              (showForm && op == 1) ||
-              (!showForm && op == 4) ||
-              (!showForm && op == 9) ||
-              (!showForm && op == 10 && rejected) ||
-              (!showForm && op == 13) ||
-              (!showForm && op == 14)
-            "
-            (click)="newService()"
-            class="btn btn-primary btn-sm active">
-            <i class="fa fa-plus-circle" aria-hidden="true"></i> Nuevo servico
-          </button>
-          <button
-            *ngIf="
-              (showButtonServiceManual && showForm && op == 1) ||
-              (!showForm && op == 4) ||
-              (!showForm && op == 9) ||
-              (showButtonServiceManual && showForm && op == 10) ||
-              (!showForm && op == 13) ||
-              (showButtonServiceManual && !showForm && op == 14)
-            "
-            (click)="newServiceManual()"
-            class="btn btn-info btn-sm active">
-            <i class="fa fa-plus-circle" aria-hidden="true"></i> Nuevo servico
-            manual
-          </button>
-          <button
-            *ngIf="
-              (showForm && op == 1) ||
-              (!showForm && op == 4) ||
-              (!showForm && op == 9) ||
-              (!showForm && op == 10 && rejected) ||
-              (!showForm && op == 13) ||
-              (!showForm && op == 14)
-            "
-            (click)="deleteService()"
-            class="btn btn-danger btn-sm active">
-            <i class="fa fa-trash" aria-hidden="true"></i> Eliminar servicio
-          </button>
-          <button class="btn btn-primary btn-sm active">Detach</button>
-
+        <div class="d-flex">
+          <!-- btn-toolbar -->
+          <div class="mr-auto p-2"></div>
+          <div class="p-2">
+            <button
+              *ngIf="
+                (showForm && op == 1) ||
+                (!showForm && op == 4) ||
+                (!showForm && op == 9) ||
+                (!showForm && op == 10 && rejected) ||
+                (!showForm && op == 13) ||
+                (!showForm && op == 14)
+              "
+              (click)="newService()"
+              class="btn btn-primary btn-sm active">
+              <i class="fa fa-plus-circle" aria-hidden="true"></i> Nuevo servico
+            </button>
+          </div>
+          <div class="p-2">
+            <button
+              *ngIf="
+                (showButtonServiceManual && showForm && op == 1) ||
+                (!showForm && op == 4) ||
+                (!showForm && op == 9) ||
+                (showButtonServiceManual && showForm && op == 10) ||
+                (!showForm && op == 13) ||
+                (showButtonServiceManual && !showForm && op == 14)
+              "
+              (click)="newServiceManual()"
+              class="btn btn-info btn-sm active">
+              <i class="fa fa-plus-circle" aria-hidden="true"></i> Nuevo servico
+              manual
+            </button>
+          </div>
+          <div class="p-2">
+            <button
+              *ngIf="
+                (showForm && op == 1) ||
+                (!showForm && op == 4) ||
+                (!showForm && op == 9) ||
+                (!showForm && op == 10 && rejected) ||
+                (!showForm && op == 13) ||
+                (!showForm && op == 14)
+              "
+              (click)="deleteService()"
+              class="btn btn-danger btn-sm active">
+              <i class="fa fa-trash" aria-hidden="true"></i> Eliminar servicio
+            </button>
+          </div>
+          <div class="p-2">
+            <button class="btn btn-primary btn-sm active">Detach</button>
+          </div>
+        </div>
+        <div class="pt-2" *ngIf="op == 5">
           <label *ngIf="op == 5" class="col-sm-3 text-right"
             >Resultado evaluaci&oacute;n&#58;</label
           >
@@ -60,13 +71,13 @@
             style="width: 97px; height: 24px" />
         </div>
         <div>
-          <div class="row">
+          <div class="row pt-4">
             <div class="col-md-12">
               <div [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   #table
                   id="table"
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-bordered table-responsive'"
                   [settings]="settings"
                   [source]="data"
                   ><!-- (edit)="showDocument()" -->
@@ -78,7 +89,6 @@
                 [totalItems]="totalItems"></app-pagination>
             </div>
           </div>
-
           <!-- <div class="table-responsive text-nowrap">
             <table class="table table-bordered">
               <thead>

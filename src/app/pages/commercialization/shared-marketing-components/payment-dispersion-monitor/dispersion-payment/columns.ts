@@ -110,6 +110,11 @@ export const COLUMNS_DESERT_LOTS = {
   },
 };
 
+function correctDate(date: string) {
+  const dateUtc = new Date(date);
+  return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
+}
+
 export const COLUMNS_CUSTOMER_BANKS = {
   movementNumber: {
     title: 'No. Movimiento',
@@ -120,6 +125,14 @@ export const COLUMNS_CUSTOMER_BANKS = {
     title: 'Lote',
     type: 'number',
     sort: false,
+  },
+  date: {
+    title: 'Fecha',
+    type: 'text',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return format(correctDate(cell), 'dd/MM/yyyy');
+    },
   },
   bankCode: {
     title: 'Banco',
