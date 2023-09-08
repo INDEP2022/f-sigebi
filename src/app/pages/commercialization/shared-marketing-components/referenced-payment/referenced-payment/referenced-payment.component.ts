@@ -117,7 +117,13 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     this.settings2 = {
       ...this.settings,
       hideSubHeader: true,
-      actions: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        add: false,
+        delete: false,
+        position: 'right',
+      },
       columns: { ...COLUMNS_CARGADOS },
     };
   }
@@ -527,19 +533,22 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         ''
       );
 
-    if (!this.bankSelected) {
-      return this.alert(
-        'warning',
-        'Necesita Indicar de qué Banco va a Cargar Datos',
-        ''
-      );
-    }
-    const respEvent: any = await this.getSelectFase(this.eventSelected.id);
+    const respEvent: any = 1;
+    // await this.getSelectFase(this.eventSelected.id);
 
     if (!respEvent) {
       return this.alert('warning', 'El Evento no se Encuentra en una fase', '');
     } else {
-      if (respEvent.phase == 1) {
+      // respEvent.phase
+      if (respEvent == 1) {
+        if (!this.bankSelected) {
+          return this.alert(
+            'warning',
+            'Necesita Indicar de qué Banco va a Cargar Datos',
+            ''
+          );
+        }
+
         this.alertQuestion(
           'question',
           'Carga de Pagos Fase: 1',
@@ -633,6 +642,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
           this.form2.get('BLK_CTRL_MONTO').setValue(data.BLK_CTRL_MONTO);
 
           let arr: any = [];
+          let rowId_: number = 0;
           let result = data.COMER_PAGOREF.map((item: any) => {
             let obj: any = {
               movementNumber: item.COMER_PAGOREF_NO_MOVIMIENTO,
@@ -681,6 +691,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             // this.title = 'PAGOS REFERENCIADOS CARGADOS DESDE EL CSV'
             this.dataCargada.load(arr);
             this.dataCargada.refresh();
+            console.log(this.dataCargada);
             this.getPayments('no');
             this.cargado2 = true;
             setTimeout(() => {
@@ -1007,7 +1018,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   async refresh() {
     await this.clearSubheaderFields();
     this.searchWithEvent = false;
-    this.form2.reset();
+    // this.form2.reset();
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getPayments('no'));
@@ -1023,5 +1034,167 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     const filterConf = subheaderFields.filterConf;
     filterConf.filters = [];
     this.columnFilters = [];
+  }
+
+  async saveCarga() {}
+
+  editCargado(event: any) {
+    console.log('aaa', event);
+    if (event == this.valAcc) {
+      this.valAcc = null;
+    } else {
+      this.valAcc = event;
+    }
+    this.openForm(event, true, false);
+  }
+
+  addCargado() {
+    this.openForm(null, false, false);
+  }
+
+  openFormCargado(
+    data: any,
+    editVal: boolean,
+    valScroll: boolean,
+    cargado: boolean
+  ) {
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        edit: editVal,
+        valScroll,
+        callback: (next: boolean) => {
+          if (next) {
+            this.getPayments('no');
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(NewAndUpdateComponent, config);
+  }
+
+  valAccCargado: any = null;
+  rowsSelectedCargado(event: any) {
+    console.log('event.data', event.data);
+    if (event.data == this.valAccCargado) {
+      this.valAccCargado = null;
+    } else {
+      this.valAccCargado = event.data;
+    }
+  }
+  referenciaCargado() {
+    console.log(this.valAcc);
+    this.openFormList3(this.valAcc, this.valAcc.reference, true);
+  }
+  async ratificarCargado() {
+    console.log(this.valAccCargado);
+    if (!this.valAccCargado) {
+      this.alert('warning', 'Debe Seleccionar un Pago', '');
+      return;
+    }
+
+    let L_LOTE: any = 0;
+    let L_PUBLICO: any = 0;
+    let L_IMPORTE: any = null;
+    if (!this.valAccCargado.entryOrderId) {
+      const LLL: any = await this.getPaymentControl(
+        this.valAccCargado.bankKey,
+        this.valAccCargado.code
+      );
+      if (LLL.reject == 'N') {
+        const comerLotes: any = await this.getFcomerC3(
+          this.valAccCargado.reference
+        );
+        if (comerLotes.count == 0) {
+          L_LOTE = 0;
+          const requestBody: any = {
+            paymentId: this.valAccCargado.paymentId,
+            lotId: null,
+            validSistem: 'R',
+            result: 'Referencia Invalida',
+          };
+          await this.updatePagoCargado(this.valAccCargado.rowId, requestBody);
+          this.alert('warning', 'El Movimiento sigue por Ratificarse', '');
+        } else {
+          // if (comerLotes.length > 1) {
+          this.alert(
+            'warning',
+            'Referencia: ' +
+              this.valAccCargado.reference +
+              ', Repetida en otro Evento ',
+            ''
+          );
+
+          const comerLotesAndEvent: any = await this.getFcomerC4(
+            this.valAccCargado.reference
+          );
+
+          L_LOTE = comerLotesAndEvent.maxidlote;
+          L_PUBLICO = comerLotesAndEvent.maxlotpub;
+        }
+
+        if (L_LOTE > 0 && L_PUBLICO != 0) {
+          const requestBody: any = {
+            paymentId: this.valAccCargado.rowId,
+            lotId: L_LOTE,
+            validSistem: 'A',
+            result: 'Referencia Valida',
+          };
+          await this.updatePagoCargado(this.valAccCargado.rowId, requestBody);
+        } else if (L_LOTE > 0 && L_PUBLICO == 0) {
+          const requestBody: any = {
+            paymentId: this.valAccCargado.paymentId,
+            lotId: L_LOTE,
+            validSistem: 'B',
+            result: 'Referencia Pago Bases',
+          };
+
+          await this.updatePagoCargado(this.valAccCargado.rowId, requestBody);
+        }
+      } else if (LLL.reject == 'S') {
+        // GO_BLOCK('BLK_DEVO');
+        L_IMPORTE = this.valAccCargado.amount;
+        this.openFormList(this.valAccCargado, L_IMPORTE);
+      } else {
+        // GO_BLOCK('BLK_AUXREF');
+        this.openFormList2(
+          this.valAccCargado,
+          this.valAccCargado.reference,
+          false
+        );
+      }
+      console.log('LLL', LLL);
+    } else {
+      this.alert(
+        'warning',
+        'El movimiento ya no puede modificarse, ya fue asignado',
+        ''
+      );
+      return;
+    }
+  }
+  pagoCargado() {}
+
+  async updatePagoCargado(rowId: any, requestBody: any) {}
+
+  // GO_BLOCK('BLK_AUXREF');
+  openFormList3Cargado(dataParams: any, REFERENCIA: any, valRef: boolean) {
+    let config: ModalOptions = {
+      initialState: {
+        dataParams,
+        REFERENCIA,
+        valRef,
+        callback: (next: boolean) => {
+          if (next) {
+            this.getPayments('no');
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(AuxList2Component, config);
   }
 }
