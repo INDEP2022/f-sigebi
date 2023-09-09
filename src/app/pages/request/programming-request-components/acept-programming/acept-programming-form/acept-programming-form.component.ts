@@ -638,6 +638,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   }
 
   aprobateProgramming() {
+    this.sendEmailUsers();
     if (this.programming.contentId) {
       this.alertQuestion(
         'question',
@@ -671,13 +672,13 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     });
 
     const showTransportableData = await this.showTransportableEmail();
-
+    console.log('showTransportableData', showTransportableData);
     if (showTransportableData) {
       const showGuardData = await this.showGuardEmail();
-
+      console.log('showGuardData', showGuardData);
       if (showGuardData) {
         const showWarehouseData = await this.showWarehouseEmail();
-
+        console.log('showWarehouseData', showWarehouseData);
         if (showWarehouseData) {
           const dataEmail = {
             folio: this.programming.folio,
@@ -695,7 +696,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           };
           setTimeout(() => {
             this.emailService.createEmailProgramming(dataEmail).subscribe({
-              next: response => {},
+              next: response => {
+                console.log('se envio el correo', response);
+              },
               error: error => {},
             });
 

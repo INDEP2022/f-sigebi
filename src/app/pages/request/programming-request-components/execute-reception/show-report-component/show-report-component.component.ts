@@ -5,7 +5,6 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
@@ -736,20 +735,18 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                     const updateGood = await this.updateGood();
 
                     if (updateGood) {
-                      const createHistGood = await this.createHistorailGood();
+                      //const createHistGood = await this.createHistorailGood();
 
-                      if (createHistGood) {
-                        this.alertInfo(
-                          'success',
-                          'Acción Correcta',
-                          'Documento adjuntado correctamente'
-                        ).then(question => {
-                          if (question.isConfirmed) {
-                            this.close();
-                            this.modalRef.content.callback(true, this.typeFirm);
-                          }
-                        });
-                      }
+                      this.alertInfo(
+                        'success',
+                        'Acción Correcta',
+                        'Documento adjuntado correctamente'
+                      ).then(question => {
+                        if (question.isConfirmed) {
+                          this.close();
+                          this.modalRef.content.callback(true, this.typeFirm);
+                        }
+                      });
                     }
                   }
                 }
@@ -1073,7 +1070,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     });
   }
 
-  createHistorailGood() {
+  /* createHistorailGood() {
     return new Promise((resolve, reject) => {
       const goodsReception = this.guardReception.value;
       goodsReception.map((item: IGood) => {
@@ -1097,7 +1094,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         });
       });
     });
-  }
+  } */
 
   backStep() {
     this.listSigns = false;
