@@ -24,6 +24,7 @@ export class AuxList2Component extends BasePage implements OnInit {
   REFERENCIA: any;
   valRef: boolean;
   columnFilters: any = [];
+  valCargado: boolean;
   constructor(
     private modalRef: BsModalRef,
     private paymentService: PaymentService,
@@ -156,6 +157,15 @@ export class AuxList2Component extends BasePage implements OnInit {
     });
   }
   async seleccionar() {
+    if (this.valCargado) {
+      this.dataParams.reference = this.dataSelected.cve_banco;
+      this.handleSuccess();
+    } else {
+      this.saveNoCargado();
+    }
+  }
+
+  saveNoCargado() {
     const requestBody: any = {
       paymentId: this.dataParams.paymentId,
       reference: this.dataSelected.cve_banco,
@@ -178,7 +188,7 @@ export class AuxList2Component extends BasePage implements OnInit {
     const message: string = 'Actualizado';
     this.alert('success', `Referencia del Pago ${message} Correctamente`, '');
     this.loading = false;
-    this.modalRef.content.callback(true);
+    this.modalRef.content.callback(true, this.dataParams);
     this.modalRef.hide();
   }
 
@@ -191,22 +201,4 @@ export class AuxList2Component extends BasePage implements OnInit {
     );
     this.loading = false;
   }
-
-  // :PARAMETER.PAR_IDPAGO:= :BLK_DEVO.ID_PAGO;
-  // :PARAMETER.PAR_IDLOTE:= :BLK_DEVO.ID_LOTE;
-
-  //   HIDE_VIEW('CANVAS_DEVO');
-  //   GO_BLOCK('COMER_PAGOREF');
-  // --GO_RECORD(: PARAMETER.PAR_RECORD);
-  // IF: PARAMETER.PAR_IDPAGO IS NOT NULL THEN
-  //     UPDATE	COMER_PAGOREF REF
-  //       SET			REF.VALIDO_SISTEMA = 'D'
-  //     WHERE		REF.ID_PAGO = : PARAMETER.PAR_IDPAGO;
-
-  //     : COMER_PAGOREF.VAL    := 'D';
-  //     : COMER_PAGOREF.ID_LOTE:= : PARAMETER.PAR_IDLOTE;
-  //     : PARAMETER.PAR_IDPAGO := NULL;
-  //     : PARAMETER.PAR_RECORD := NULL;
-  //     : PARAMETER.PAR_IDLOTE := NULL;
-  // END IF;
 }

@@ -1596,7 +1596,9 @@ export class PerformProgrammingFormComponent
               });
             }
           },
-          error: error => (this.loadingGoods = false),
+          error: error => {
+            this.loadingGoods = false;
+          },
         });
     }
 
@@ -2273,6 +2275,7 @@ export class PerformProgrammingFormComponent
           storeId: warehouse,
           status: 'VXP',
         };
+        console.log('formData', formData);
         this.goodService.updateByBody(formData).subscribe({
           next: () => {
             resolve(true);
@@ -3020,6 +3023,7 @@ export class PerformProgrammingFormComponent
               city: this.performForm.get('city').value,
               observation: this.performForm.get('observation').value,
               regionalDelegationNumber: this.delegationId,
+              delregAttentionId: this.delegationId,
               stateKey: this.performForm.get('stateKey').value,
               tranferId: this.performForm.get('tranferId').value,
               startDate: _startDate,
@@ -3028,6 +3032,7 @@ export class PerformProgrammingFormComponent
               autorityId: this.performForm.get('autorityId').value,
               typeRelevantId: this.performForm.get('typeRelevantId').value,
               storeId: this.performForm.get('storeId').value,
+              folio: folio,
             };
 
             this.programmingGoodService

@@ -15,6 +15,7 @@
               class="form-control"
               formControlName="numberInGood"
               type="number"
+              style="margin-top: 8%"
               readonly />
           </form-field>
         </div>
@@ -23,8 +24,11 @@
             label="Descripción"
             [control]="claimsFollowUpDetailForm.get('description')">
             <textarea
-              class="form-control pt-4"
+              class="form-control"
+              rows="2"
+              type="text"
               formControlName="description"
+              style="margin-top: 2%"
               readonly></textarea>
           </form-field>
         </div>
@@ -117,7 +121,7 @@
             </span>
           </form-field>
         </div>
-        <div class="col-md-5 margin-input">
+        <div class="col-md-5" style="margin: 20px 0 !important">
           <form-field
             label="Fecha Oficio/Correo"
             [control]="claimsFollowUpDetailForm.get('dateOfficeMailIn')">
@@ -152,8 +156,10 @@
             label="Detalle del Bien o las Partes Afectadas"
             [control]="claimsFollowUpDetailForm.get('detGoodoAffectedIn')">
             <textarea
-              class="form-control pt-4"
-              formControlName="detGoodoAffectedIn"></textarea>
+              class="form-control"
+              pt-5s="2"
+              formControlName="detGoodoAffectedIn"
+              style="margin-top: 2%"></textarea>
           </form-field>
         </div>
         <div class="col-md-4 pt-4">
@@ -174,9 +180,10 @@
             label="Monto Reclamo Segun Carta de Reclamación"
             [control]="claimsFollowUpDetailForm.get('claimedAmountIn')">
             <input
+              currencyMask
               class="form-control"
               formControlName="claimedAmountIn"
-              type="number" />
+              type="text" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -184,9 +191,10 @@
             label="Monto Ajustado"
             [control]="claimsFollowUpDetailForm.get('adjustedAmountIn')">
             <input
+              currencyMask
               class="form-control"
               formControlName="adjustedAmountIn"
-              type="number" />
+              type="text" />
           </form-field>
         </div>
       </div>
@@ -198,7 +206,7 @@
             <input
               class="form-control"
               formControlName="deductibleIn"
-              type="number" />
+              type="text" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -238,7 +246,7 @@
             </span>
           </form-field>
         </div>
-        <div class="col-md-5 pt-4">
+        <div class="col-md-5 margin-input">
           <form-field
             [control]="claimsFollowUpDetailForm.get('letterClaimIn')"
             label="Fecha Carta Reclamación">
@@ -256,8 +264,9 @@
             [control]="claimsFollowUpDetailForm.get('amountIndemnizedIn')">
             <input
               class="form-control"
+              currencyMask
               formControlName="amountIndemnizedIn"
-              type="number" />
+              type="text" />
           </form-field>
         </div>
       </div>
