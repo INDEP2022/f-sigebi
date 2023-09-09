@@ -456,7 +456,9 @@ export class AddMovementComponent
                 .setValue(response.data[0].categoryAndDesc);
             });
           },
-          error: err => {},
+          error: err => {
+            // this.form.get('category').setValue('');
+          },
         });
     });
   }
