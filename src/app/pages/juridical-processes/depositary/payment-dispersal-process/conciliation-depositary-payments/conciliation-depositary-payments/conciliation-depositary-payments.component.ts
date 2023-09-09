@@ -67,6 +67,7 @@ export class ConciliationDepositaryPaymentsComponent
   actualDate: any = null;
   origin: string = null;
   noBienParams: number = null;
+  selectDataGood: IGood;
 
   public rutaValidacionPagos: string =
     baseMenu +
@@ -96,6 +97,7 @@ export class ConciliationDepositaryPaymentsComponent
         console.log(params);
       });
     this.loading = true;
+    this.selectDataGood = null;
     this.prepareForm();
     const id = this.activatedRoute.snapshot.paramMap.get('id');
     if (id) {
@@ -105,7 +107,7 @@ export class ConciliationDepositaryPaymentsComponent
         this.btnSearchGood(Number(id));
       } else {
         this.loading = false;
-        this.alert('warning', 'Número de Bien', ERROR_GOOD_PARAM);
+        this.alert('warning', 'Número de bien', ERROR_GOOD_PARAM);
       }
     } else {
       this.loading = false;
@@ -114,7 +116,7 @@ export class ConciliationDepositaryPaymentsComponent
   private prepareForm() {
     this.form = this.fb.group({
       noBien: [
-        { value: '', disabled: false },
+        { value: null, disabled: false },
         [
           Validators.required,
           Validators.maxLength(11),
@@ -169,21 +171,21 @@ export class ConciliationDepositaryPaymentsComponent
         } else {
           this.alert(
             'warning',
-            'Número de Nombramiento',
+            'Número de nombramiento',
             ERROR_APOINTMENT_NUMBER_NULL
           );
         }
       } else {
         this.alert(
           'warning',
-          'Número de Nombramiento',
+          'Número de nombramiento',
           ERROR_APOINTMENT_NUMBER_NULL
         );
       }
     } else {
       this.alert(
         'warning',
-        'Número de Bien',
+        'Número de bien',
         ERROR_GOOD_NULL + ' y da clic en búscar para continuar'
       );
     }
@@ -257,8 +259,8 @@ export class ConciliationDepositaryPaymentsComponent
       if (!this.depositaryAppointment.appointmentNum) {
         this.alert(
           'warning',
-          'Número de Nombramiento',
-          'Se requiere un Número de Nombramiento para continuar, Búsque otro Bien e intente nuevamente'
+          'Número de nombramiento',
+          'Se requiere un número de nombramiento para continuar, búsque otro bien e intente nuevamente'
         );
         return;
       }
@@ -267,7 +269,7 @@ export class ConciliationDepositaryPaymentsComponent
     } else {
       this.alert(
         'warning',
-        'Número de Bien',
+        'Número de bien',
         ERROR_GOOD_NULL + ' y da clic en búscar para continuar'
       );
     }
@@ -311,7 +313,7 @@ export class ConciliationDepositaryPaymentsComponent
             this.alertInfo(
               'error',
               'Sin resultados',
-              'No se encontraró otro Depositario'
+              'No se encontraró otro depositario'
             );
           }
         },
@@ -320,7 +322,7 @@ export class ConciliationDepositaryPaymentsComponent
           console.log(err);
           this.alertInfo(
             'error',
-            'Ocurrió un error al recargar el Depositario',
+            'Ocurrió un error al recargar el depositario',
             err.error.message
           );
         },
@@ -342,7 +344,7 @@ export class ConciliationDepositaryPaymentsComponent
           console.log(err);
           this.alertInfo(
             'error',
-            'Ocurrió un error al recargar el Depositario',
+            'Ocurrió un error al recargar el depositario',
             err.error.message
           );
         },
@@ -366,7 +368,7 @@ export class ConciliationDepositaryPaymentsComponent
     } else {
       this.alert(
         'warning',
-        'Número de Bien',
+        'Número de bien',
         ERROR_GOOD_NULL + ' y da clic en búscar para continuar'
       );
     }
@@ -380,6 +382,17 @@ export class ConciliationDepositaryPaymentsComponent
     this.dataPersonsDepositary = null;
     this.dataPagosRecibidos = null;
     this.formDepositario.reset();
+    this.selectDataGood = null;
+  }
+
+  selectedGood(dataGood: IGood) {
+    console.log(dataGood);
+    this.selectDataGood = dataGood;
+    if (dataGood) {
+      this.btnSearchGood(dataGood.goodId);
+    } else {
+      this.clearData(null);
+    }
   }
 
   async btnSearchGood(goodNumber: number) {
@@ -428,27 +441,36 @@ export class ConciliationDepositaryPaymentsComponent
             }
             this.actualDate = this.datePipe.transform(new Date(), 'dd/MM/yyyy');
             this.form.get('fecha').setValue(this.actualDate);
-            if (this.depositaryAppointment.goodNum) {
-              const params = new FilterParams();
-              params.removeAllFilters();
-              params.addFilter('goodId', this.noBienReadOnly);
-              this.svConciliationDepositaryPaymentsService
-                .getGoodDataByFilter(params.getParams())
-                .subscribe({
-                  next: res => {
-                    this.depositaryAppointment.good = res.data[0]; // Set data good
-                    this.form
-                      .get('noBien')
-                      .setValue(this.depositaryAppointment.good.goodId);
-                    this.form
-                      .get('descripcion')
-                      .setValue(this.depositaryAppointment.good.description);
-                  },
-                  error: err => {
-                    console.log(err);
-                  },
-                });
+            this.depositaryAppointment.good = this.selectDataGood;
+            // this.form
+            //   .get('noBien')
+            //   .setValue(this.depositaryAppointment.good.goodId);
+            if (this.depositaryAppointment.good) {
+              this.form
+                .get('descripcion')
+                .setValue(this.depositaryAppointment.good.description);
             }
+            // if (this.depositaryAppointment.goodNum) {
+            //   const params = new FilterParams();
+            //   params.removeAllFilters();
+            //   params.addFilter('goodId', this.noBienReadOnly);
+            //   this.svConciliationDepositaryPaymentsService
+            //     .getGoodDataByFilter(params.getParams())
+            //     .subscribe({
+            //       next: res => {
+            //         this.depositaryAppointment.good = res.data[0]; // Set data good
+            //         this.form
+            //           .get('noBien')
+            //           .setValue(this.depositaryAppointment.good.goodId);
+            //         this.form
+            //           .get('descripcion')
+            //           .setValue(this.depositaryAppointment.good.description);
+            //       },
+            //       error: err => {
+            //         console.log(err);
+            //       },
+            //     });
+            // }
             this.getDataPaymentsDispersion();
             this.getPersonsModDepositary();
           },
@@ -457,13 +479,13 @@ export class ConciliationDepositaryPaymentsComponent
             this.loading = false;
             this.alert(
               'warning',
-              'Número de Bien',
+              'Número de bien',
               NOT_FOUND_GOOD_APPOINTMENT(err.error.message)
             );
           },
         });
     } else {
-      this.alert('warning', 'Número de Bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'Número de bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -493,7 +515,7 @@ export class ConciliationDepositaryPaymentsComponent
           this.loading = false;
           // this.alert(
           //   'warning',
-          //   'Número de Bien',
+          //   'Número de bien',
           //   NOT_FOUND_PERSONS_DEPOSITARY(err.error.message)
           // );
         },
@@ -545,7 +567,7 @@ export class ConciliationDepositaryPaymentsComponent
             this.loading = false;
             this.alertInfo(
               'warning',
-              'Número de Nombramiento',
+              'Número de nombramiento',
               NOT_FOUND_GET_PARAMSDEP_PAYMENTS(
                 res.message[0],
                 Number(this.depositaryAppointment.appointmentNum)
@@ -558,7 +580,7 @@ export class ConciliationDepositaryPaymentsComponent
           console.log(err);
           this.alertInfo(
             'warning',
-            'Número de Nombramiento',
+            'Número de nombramiento',
             NOT_FOUND_GET_PARAMSDEP_PAYMENTS(
               err.error.message,
               Number(this.depositaryAppointment.appointmentNum)
@@ -579,7 +601,7 @@ export class ConciliationDepositaryPaymentsComponent
             this.loading = false;
             this.alertInfo(
               'warning',
-              'Número de Nombramiento',
+              'Número de nombramiento',
               NOT_FOUND_GET_VALID_STATUS(
                 res.message[0] + '',
                 Number(this.depositaryAppointment.appointmentNum)
@@ -595,7 +617,7 @@ export class ConciliationDepositaryPaymentsComponent
           console.log(err);
           this.alertInfo(
             'warning',
-            'Número de Nombramiento',
+            'Número de nombramiento',
             NOT_FOUND_GET_VALID_STATUS(
               err.error.message,
               Number(this.depositaryAppointment.appointmentNum)
@@ -621,7 +643,7 @@ export class ConciliationDepositaryPaymentsComponent
             this.loading = false;
             this.alertInfo(
               'warning',
-              'Número de Nombramiento',
+              'Número de nombramiento',
               NOT_FOUND_GET_VALID_BLACKLIST(
                 res.message[0],
                 Number(this.depositaryAppointment.appointmentNum)
@@ -634,7 +656,7 @@ export class ConciliationDepositaryPaymentsComponent
           console.log(err);
           this.alertInfo(
             'warning',
-            'Número de Nombramiento',
+            'Número de nombramiento',
             NOT_FOUND_GET_VALID_BLACKLIST(
               err.error.message,
               Number(this.depositaryAppointment.appointmentNum)
@@ -650,7 +672,7 @@ export class ConciliationDepositaryPaymentsComponent
       this.alertInfo(
         'warning',
         'Fecha',
-        'Se requiere una Fecha para continuar'
+        'Se requiere una fecha para continuar'
       );
       return;
     }
@@ -673,7 +695,7 @@ export class ConciliationDepositaryPaymentsComponent
           console.log(err);
           this.alertInfo(
             'warning',
-            'Número de Nombramiento',
+            'Número de nombramiento',
             NOT_FOUND_GET_VALIDADEP_PAYMENTS(
               err.error.message,
               Number(this.depositaryAppointment.appointmentNum)
@@ -728,7 +750,7 @@ export class ConciliationDepositaryPaymentsComponent
           console.log(err);
           this.alertInfo(
             'warning',
-            'Número de Nombramiento',
+            'Número de nombramiento',
             NOT_FOUND_GET_VALIDADEP_PAYMENTS(
               err.error.message,
               Number(this.depositaryAppointment.appointmentNum)
