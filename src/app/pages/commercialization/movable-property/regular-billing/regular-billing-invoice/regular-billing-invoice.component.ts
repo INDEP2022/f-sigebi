@@ -17,6 +17,7 @@ import {
 } from 'rxjs';
 import { CustomFilterComponent } from 'src/app/@standalone/shared-forms/input-number/input-number';
 import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
@@ -27,6 +28,7 @@ import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/d
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { ComerDetailInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-dinvocie.service';
+import { ComerElecBillService } from 'src/app/core/services/ms-invoice/ms-comer-elec-bill.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { ParameterInvoiceService } from 'src/app/core/services/ms-parameterinvoice/parameterinvoice.service';
@@ -64,6 +66,11 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   settings2 = {
     ...this.settings,
     actions: false,
+  };
+  parameter = {
+    copias: 1,
+    numfactimp: 1,
+    numfactele: 1,
   };
 
   @Output() comer: EventEmitter<any> = new EventEmitter(null);
@@ -106,7 +113,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     private survillanceService: SurvillanceService,
     private dynamicService: DynamicCatalogsService,
     private parameterModService: ParameterModService,
-    private goodProccess: GoodprocessService
+    private goodProccess: GoodprocessService,
+    private comerEleBillService: ComerElecBillService
   ) {
     super();
 
@@ -125,7 +133,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       columns: {
         select: {
-          title: '',
+          title: 'Selección',
           sort: false,
           filter: false,
           type: 'custom',
@@ -560,9 +568,16 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   openFolioModal() {
     let config: ModalOptions = {
       initialState: {
-        callback: (next: boolean, data: InvoiceFolioSeparate) => {
+        callback: async (next: boolean, data: InvoiceFolioSeparate) => {
           if (next) {
-            console.log(data);
+            const invoice: any[] = await this.dataFilter.getAll();
+            const index = invoice.findIndex(inv => inv == this.isSelect[0]);
+            invoice[index].series = data.series;
+            invoice[index].folioinvoiceId = data.folioinvoiceId;
+            invoice[index].Invoice = data.invoice;
+            invoice[index].factstatusId = 'FOL';
+            this.dataFilter.load(invoice);
+            this.dataFilter.refresh();
           }
         },
       },
@@ -649,7 +664,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.callReport(
         12,
         1,
-        invoice.Type,
+        Number(invoice.Type),
         1,
         invoice.eventId,
         invoice.billId,
@@ -891,7 +906,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       this.callReport(
         11,
         1,
-        invoice.Type,
+        Number(invoice.Type),
         1,
         invoice.eventId,
         invoice.billId,
@@ -992,4 +1007,180 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   }
 
   sendPackage() {}
+
+  openURL() {
+    if (this.selectInovice() == 1) {
+      window.open('http://facturacionelec.sae.gob.mx/Log.aspx', '_blank');
+    } else {
+      this.alert('warning', 'Atención', 'Debe seleccionar un evento');
+    }
+  }
+
+  async impresionAnex() {
+    const num = this.selectInovice();
+    const { delegation } = this.form.value;
+    if (num == 0 && !delegation) {
+      await this.markAll();
+      this.impresionAnexReport(1);
+    } else if (num == 1 && !delegation) {
+      this.impresionAnexReport(0);
+    } else if (num == 0 && delegation) {
+      await this.markAll();
+      this.impresionAnexReport(1);
+    }
+  }
+
+  impresionAnexReport(option: number) {
+    for (let invoice of this.isSelect) {
+      //revisar con procedimiento pup_rep_facturas_mas
+
+      this.callReport(
+        10,
+        1,
+        null,
+        1,
+        invoice.eventId,
+        invoice.billId,
+        invoice.impressionDate
+      );
+      break;
+    }
+  }
+
+  async imprimeInvoice() {
+    if (this.selectInovice() == 0) {
+      this.alert('warning', 'Atención', 'Debes seleccionar algún evento');
+      return;
+    }
+
+    if (!this.isSelect[0].Invoice) {
+      this.alert(
+        'warning',
+        'Atención',
+        'No ha capturado el folio de la factura'
+      );
+      return;
+    }
+
+    await this.readParameter();
+
+    this.impresionInvoice();
+  }
+
+  async impresionInvoice() {
+    for (let invoice of this.isSelect) {
+      //revisar con procedimiento pup_rep_facturas_mas
+      this.callReport(
+        Number(invoice.Type),
+        1,
+        null,
+        1,
+        invoice.eventId,
+        invoice.billId,
+        invoice.impressionDate
+      );
+      const current: any[] = await this.dataFilter.getAll();
+      const index = current.findIndex(inv => inv == this.isSelect[0]);
+      current[index].factstatusId = 'IMP';
+      this.dataFilter.load(current);
+      this.dataFilter.refresh();
+      break;
+    }
+  }
+
+  async readParameter() {
+    this.parameter.numfactimp = await this.numFac();
+    this.parameter.numfactele = await this.numFacTele();
+    this.parameter.copias = await this.copias();
+  }
+
+  async numFac() {
+    const filter = new ListParams();
+    filter['filter.parameter'] = `${SearchFilter.EQ}:NUMFACTIMP`;
+    filter['filter.addres'] = `${SearchFilter.EQ}:M`;
+    return firstValueFrom(
+      this.parameterModService.getAll(filter).pipe(
+        map(resp => Number(resp.data[0].value)),
+        catchError(() => of(1))
+      )
+    );
+  }
+
+  async numFacTele() {
+    const filter = new ListParams();
+    filter['filter.parameter'] = `${SearchFilter.EQ}:NUMFACTELEC`;
+    filter['filter.addres'] = `${SearchFilter.EQ}:M`;
+    return firstValueFrom(
+      this.parameterModService.getAll(filter).pipe(
+        map(resp => Number(resp.data[0].value)),
+        catchError(() => of(1))
+      )
+    );
+  }
+  async copias() {
+    const filter = new ListParams();
+    filter['filter.parameter'] = `${SearchFilter.EQ}:NOCOPIASFACT`;
+    filter['filter.addres'] = `${SearchFilter.EQ}:M`;
+    return firstValueFrom(
+      this.parameterModService.getAll(filter).pipe(
+        map(resp => Number(resp.data[0].value)),
+        catchError(() => of(1))
+      )
+    );
+  }
+
+  clientSend() {
+    this.alertQuestion(
+      'question',
+      'Se enviara el nuevo CDFI para Atención de Clientes',
+      '¿Desea continuar?'
+    ).then(answer => {
+      if (answer.isConfirmed) {
+        this.impresioPackage();
+      }
+    });
+  }
+
+  async impresioPackage() {
+    let v_uuid;
+    for (const invoice of this.isSelect) {
+      if (
+        [2, 5].includes(Number(invoice.Type)) &&
+        (invoice.exhibit ?? 'S') == 'S'
+      ) {
+        v_uuid = 0;
+
+        v_uuid = await this.getBill(invoice);
+
+        if (['CDFI', 'IMP'].includes(invoice.factstatusId) && v_uuid == 1) {
+          this.alert(
+            'warning',
+            'Atención',
+            `
+            El lote ${invoice.batchId} no tiene estatus IMP o CFDI no se podrá imprimir el paquete`
+          );
+        }
+      }
+
+      break;
+    }
+
+    this.alert('success', 'El CDFI nuevo fue enviado', '');
+  }
+
+  async getBill(invoice: any) {
+    const filter = new FilterParams();
+
+    filter.addFilter('billId', invoice.billId, SearchFilter.EQ);
+    filter.addFilter('eventId', invoice.eventId, SearchFilter.EQ);
+    filter.addFilter('batchId', invoice.batchId, SearchFilter.EQ);
+    filter.addFilter('uuid', 'null', SearchFilter.NOT);
+
+    return firstValueFrom(
+      this.comerEleBillService.getAll(filter.getParams()).pipe(
+        map(() => of(1)),
+        catchError(() => of(0))
+      )
+    );
+  }
 }
