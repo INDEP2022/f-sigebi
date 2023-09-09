@@ -223,20 +223,19 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.settingsCustomerBanks = {
       ...TABLE_SETTINGS,
       rowClassFunction: (row: any) => {
-        if(['1','3'].includes(row.data.id_tipo_disp)){
+        if (['1', '3'].includes(row.data.id_tipo_disp)) {
           if (row.data.available) {
             return 'idDisp';
           } else {
             return 'notAS idDisp';
           }
-        }else{
+        } else {
           if (row.data.available) {
             return '';
           } else {
             return 'notAS';
           }
         }
-        
       },
       actions: false,
       columns: COLUMNS_CUSTOMER_BANKS,
