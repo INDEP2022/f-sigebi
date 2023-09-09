@@ -160,10 +160,12 @@
                       [control]="formRegistro.get('toTwo')"
                       label="al">
                       <input
+                        [(ngModel)]="dateMovemFin"
                         type="text"
                         formControlName="toTwo"
                         class="form-control"
-                        bsDatepicker />
+                        bsDatepicker
+                        [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
                     </form-field>
                   </div>
                 </div>

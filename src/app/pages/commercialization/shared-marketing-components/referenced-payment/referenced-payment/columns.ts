@@ -33,6 +33,12 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
+  reference: {
+    title: 'Referencia',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+  },
   referenceOri: {
     title: 'Referencia Orden Ingreso',
     // width: '15%',
@@ -115,12 +121,7 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  reference: {
-    title: 'Referencia',
-    // width: '15%',
-    type: 'string',
-    sort: false,
-  },
+
   lotPub: {
     title: 'Lote Pub.',
     // width: '15%',
@@ -212,12 +213,12 @@ export const COLUMNS = {
 };
 
 export const COLUMNS_CARGADOS = {
-  paymentId: {
-    title: 'ID Pago',
-    // width: '15%',
-    type: 'string',
-    sort: false,
-  },
+  // paymentId: {
+  //   title: 'ID Pago',
+  //   // width: '15%',
+  //   type: 'string',
+  //   sort: false,
+  // },
   movementNumber: {
     title: 'No. Movimiento',
     // width: '15%',

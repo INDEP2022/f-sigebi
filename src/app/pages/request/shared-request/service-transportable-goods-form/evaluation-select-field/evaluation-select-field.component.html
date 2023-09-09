@@ -1,0 +1,14 @@
+<div>
+  <form [formGroup]="form" class="form-material">
+    <ngx-select
+      [form]="form"
+      control="evaluation"
+      [data]="list"
+      bindLabel="description"
+      [searchable]="false"
+      label=""
+      value="id"
+      (change)="selectChange($event)"
+      [readonly]="readonly"></ngx-select>
+  </form>
+</div>

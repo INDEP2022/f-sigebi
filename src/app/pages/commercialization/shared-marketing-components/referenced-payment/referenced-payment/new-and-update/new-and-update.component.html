@@ -49,21 +49,13 @@
               formControlName="movementNumber" />
           </form-field>
         </div>
-        <div class="col-md-6 mt-2">
+        <!-- <div class="col-md-6 mt-2">
           <form-field [control]="form.get('lotId')">
-            <ngx-select
-              [readonly]="valScroll"
-              [searchOnInit]="true"
-              [form]="form"
-              control="lotId"
-              [data]="lotes"
-              value="idLot"
-              bindLabel="idLot"
-              label="Lote"
-              (fetchItems)="getLotes($event)">
+            <ngx-select [readonly]="valScroll" [searchOnInit]="true" [form]="form" control="lotId" [data]="lotes"
+              value="idLot" bindLabel="idLot" label="Lote" (fetchItems)="getLotes($event)">
             </ngx-select>
           </form-field>
-        </div>
+        </div> -->
 
         <div class="col-md-6 mt-2">
           <form-field [control]="form.get('reference')" label="Referencia">

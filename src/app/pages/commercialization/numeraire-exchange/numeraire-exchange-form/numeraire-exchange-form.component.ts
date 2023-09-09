@@ -1060,6 +1060,19 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
             ivacom: item.ivacom,
             commission: item.comision,
             user: this.infoToken.preferred_username.toUpperCase(),
+            fileNumber: item.no_expediente,
+            spentId: '',
+            delegationNumber: item.no_delegacion,
+            subDelegationNumber: item.no_subdelegacion,
+            flyerNumber: item.no_volante,
+            associatedExpNumber: item.no_exp_asociado,
+            moneyNew:
+              this.formBlkControl.value.diNewCurrency?.replaceAll("'", '') ||
+              '',
+            identificator: item.identificador,
+            accountNew: this.formBlkControl.value.diNewAccount || '',
+            bankNew: this.formBlkControl.value.tiNewBank || '',
+            token: this.formBlkControl.value.tiNewFile || '',
           };
         }),
         token: this.formBlkControl.value.tiNewFile || '',
