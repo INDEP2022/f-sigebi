@@ -83,6 +83,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   loading2: boolean = false;
   @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   titleCarga: string = 'PAGOS REFERENCIADOS CARGADOS DESDE EL CSV';
+
   constructor(
     private fb: FormBuilder,
     private paymentService: PaymentService,
@@ -222,21 +223,32 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     } else {
       this.valAcc = event;
     }
-    this.openForm(event, true, false);
+    this.openForm(event, true, false, false);
   }
   add() {
-    this.openForm(null, false, false);
+    this.openForm(null, false, false, false);
   }
 
-  openForm(data: any, editVal: boolean, valScroll: boolean) {
+  openForm(
+    data: any,
+    editVal: boolean,
+    valScroll: boolean,
+    valCargado: boolean
+  ) {
     let config: ModalOptions = {
       initialState: {
         data,
         edit: editVal,
         valScroll,
-        callback: (next: boolean) => {
+        valCargado,
+        callback: async (next: boolean, dataUpdate: any) => {
           if (next) {
-            this.getPayments('no');
+            if (this.cargado2) {
+              await this.updatePagoCargado(null, dataUpdate);
+              this.valAccCargado = null;
+            } else {
+              this.getPayments('no');
+            }
           }
         },
       },
@@ -622,7 +634,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       if (cargaPagosCSV.status == 200) {
         const data = cargaPagosCSV.data;
         if (data.COMER_PAGOREF.length == 0) {
-          this.alert('warning', 'No se procesó ningún pago', 'Archivo Cargado');
+          this.alert('warning', 'No se procesó ningún pago', '');
           this.form2.get('BLK_CTRL_CUANTOS').setValue(data.BLK_CTRL_CUANTOS);
           this.form2.get('BLK_CTRL_MONTO').setValue(data.BLK_CTRL_MONTO);
           this.dataCargada.load([]);
@@ -642,8 +654,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
           this.form2.get('BLK_CTRL_MONTO').setValue(data.BLK_CTRL_MONTO);
 
           let arr: any = [];
-          let rowId_: number = 0;
-          let result = data.COMER_PAGOREF.map((item: any) => {
+          let result = data.COMER_PAGOREF.map(async (item: any) => {
             let obj: any = {
               movementNumber: item.COMER_PAGOREF_NO_MOVIMIENTO,
               date: item.COMER_PAGOREF_FECHA,
@@ -660,7 +671,6 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
               lotPub: null,
               event: null,
               entryOrderId: null,
-              descriptionSAT: null,
               typeSatId: item.COMER_PAGOREF_ID_TIPO_SAT,
               code: item.COMER_PAGOREF_CODIGO,
               lotId: item.COMER_PAGOREF_ID_LOTE,
@@ -684,6 +694,10 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
                 ' - ' +
                 item.COMER_PAGOREF_CVE_BANCO,
             };
+            const desc = await this.gettypeSatIdUpdate(
+              item.COMER_PAGOREF_ID_TIPO_SAT
+            );
+            obj['descriptionSAT'] = !desc ? null : desc;
             arr.push(obj);
           });
 
@@ -694,9 +708,13 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             console.log(this.dataCargada);
             this.getPayments('no');
             this.cargado2 = true;
+            this.cargado = true;
             setTimeout(() => {
-              this.cargado = true;
-            }, 1000);
+              this.performScroll();
+            }, 500);
+            // setTimeout(() => {
+
+            // }, 1000);
             this.loadingBtn = false;
           });
         }
@@ -741,7 +759,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             error.error.message ==
             'duplicate key value violates unique constraint "unique_pago"'
           ) {
-            message = 'Ha Ocurrido un Error, Se han Detectado Pagos Duplicados';
+            message = 'Ha Ocurrido un error, se han detectado pagos duplicados';
           }
           let obj: any = {
             status: error.status,
@@ -825,7 +843,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             result: 'Referencia Invalida',
           };
           await this.updatePago(this.valAcc.paymentId, requestBody);
-          this.alert('warning', 'El Movimiento sigue por Ratificarse', '');
+          this.alert('warning', 'El Movimiento sigue por ratificarse', '');
         } else {
           // if (comerLotes.length > 1) {
           this.alert(
@@ -890,6 +908,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       },
     });
   }
+
   async getPaymentControl(bankKey: any, idCode: any) {
     const params = new ListParams();
     params['filter.cveBank'] = `$eq:${bankKey}`;
@@ -906,6 +925,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       });
     });
   }
+
   async getFcomerC3(params: any) {
     return new Promise((resolve, reject) => {
       this.paymentService.getFcomerC3(params).subscribe({
@@ -970,19 +990,30 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
   referencia() {
     console.log(this.valAcc);
-    this.openFormList3(this.valAcc, this.valAcc.reference, true);
+    this.openFormList3(this.valAcc, this.valAcc.reference, true, false);
   }
 
   // GO_BLOCK('BLK_AUXREF');
-  openFormList3(dataParams: any, REFERENCIA: any, valRef: boolean) {
+  openFormList3(
+    dataParams: any,
+    REFERENCIA: any,
+    valRef: boolean,
+    valCargado: boolean
+  ) {
     let config: ModalOptions = {
       initialState: {
         dataParams,
         REFERENCIA,
         valRef,
-        callback: (next: boolean) => {
+        valCargado,
+        callback: async (next: boolean, dataUpdate?: any) => {
           if (next) {
-            this.getPayments('no');
+            if (this.cargado2) {
+              await this.updatePagoCargado(null, dataUpdate);
+              this.valAccCargado = null;
+            } else {
+              this.getPayments('no');
+            }
           }
         },
       },
@@ -993,13 +1024,14 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   }
 
   pago() {
-    this.openForm(this.valAcc, true, true);
+    this.openForm(this.valAcc, true, true, false);
   }
 
   eventSelected: any = null;
   setValuesFormEvent(event?: any) {
     this.eventSelected = event;
   }
+
   bankSelected: any = null;
   setValuesFormBank(event: any) {
     console.log('event', event);
@@ -1023,6 +1055,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getPayments('no'));
   }
+
   goBack() {
     this.router.navigateByUrl(
       '/pages/commercialization/payment-dispersion-monitor'
@@ -1036,43 +1069,62 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     this.columnFilters = [];
   }
 
-  async saveCarga() {}
+  async saveCarga() {
+    this.alertQuestion(
+      'question',
+      'Se guardarán los Pagos Referenciados cargados',
+      '¿Desea Continuar?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        const data: any = await this.dataGet();
+        let result = data.map(async (item: any) => {
+          console.log('item', item);
+          // item.recordDate = new Date();
+          delete item.descriptionSAT;
+          delete item.bankAndNumber;
+          await this.saveRegister(item);
+        });
 
+        Promise.all(result).then(resp => {
+          this.alert('success', 'Registros Guardados Correctamente', '');
+          this.form2.reset();
+          this.dataCargada.load([]);
+          this.dataCargada.refresh();
+          this.getPayments('no');
+          this.cargado2 = false;
+          this.cargado = false;
+        });
+      }
+    });
+  }
+
+  dataGet() {
+    return this.dataCargada.getAll();
+  }
+  async saveRegister(requestBody: any) {
+    return new Promise((resolve, reject) => {
+      this.paymentService.create(requestBody).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
   editCargado(event: any) {
     console.log('aaa', event);
-    if (event == this.valAcc) {
-      this.valAcc = null;
-    } else {
-      this.valAcc = event;
-    }
-    this.openForm(event, true, false);
+    // if (event == this.valAccCargado) {
+    //   this.valAccCargado = null;
+    // } else {
+    this.valAccCargado = event;
+    // }
+    this.openForm(event, true, false, true);
   }
 
   addCargado() {
-    this.openForm(null, false, false);
-  }
-
-  openFormCargado(
-    data: any,
-    editVal: boolean,
-    valScroll: boolean,
-    cargado: boolean
-  ) {
-    let config: ModalOptions = {
-      initialState: {
-        data,
-        edit: editVal,
-        valScroll,
-        callback: (next: boolean) => {
-          if (next) {
-            this.getPayments('no');
-          }
-        },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(NewAndUpdateComponent, config);
+    this.openForm(null, false, false, true);
   }
 
   valAccCargado: any = null;
@@ -1084,10 +1136,17 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       this.valAccCargado = event.data;
     }
   }
+
   referenciaCargado() {
-    console.log(this.valAcc);
-    this.openFormList3(this.valAcc, this.valAcc.reference, true);
+    console.log(this.valAccCargado);
+    this.openFormList3(
+      this.valAccCargado,
+      this.valAccCargado.reference,
+      true,
+      true
+    );
   }
+
   async ratificarCargado() {
     console.log(this.valAccCargado);
     if (!this.valAccCargado) {
@@ -1109,14 +1168,20 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         );
         if (comerLotes.count == 0) {
           L_LOTE = 0;
-          const requestBody: any = {
-            paymentId: this.valAccCargado.paymentId,
-            lotId: null,
-            validSistem: 'R',
-            result: 'Referencia Invalida',
-          };
-          await this.updatePagoCargado(this.valAccCargado.rowId, requestBody);
-          this.alert('warning', 'El Movimiento sigue por Ratificarse', '');
+          this.valAccCargado.lotId = null;
+          this.valAccCargado.validSistem = 'R';
+          this.valAccCargado.result = 'Referencia Invalida';
+          // const requestBody: any = {
+          //   paymentId: this.valAccCargado.paymentId,
+          //   lotId: null,
+          //   validSistem: 'R',
+          //   result: 'Referencia Invalida',
+          // };
+          await this.updatePagoCargado(
+            this.valAccCargado.paymentId,
+            this.valAccCargado
+          );
+          this.alert('warning', 'El Movimiento sigue por ratificarse', '');
         } else {
           // if (comerLotes.length > 1) {
           this.alert(
@@ -1136,22 +1201,28 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         }
 
         if (L_LOTE > 0 && L_PUBLICO != 0) {
-          const requestBody: any = {
-            paymentId: this.valAccCargado.rowId,
-            lotId: L_LOTE,
-            validSistem: 'A',
-            result: 'Referencia Valida',
-          };
-          await this.updatePagoCargado(this.valAccCargado.rowId, requestBody);
+          this.valAccCargado.lotId = L_LOTE;
+          this.valAccCargado.validSistem = 'A';
+          this.valAccCargado.result = 'Referencia Valida';
+          // const requestBody: any = {
+          //   paymentId: this.valAccCargado.paymentId,
+          //   lotId: L_LOTE,
+          //   validSistem: 'A',
+          //   result: 'Referencia Valida',
+          // };
+          await this.updatePagoCargado(
+            this.valAccCargado.paymentId,
+            this.valAccCargado
+          );
         } else if (L_LOTE > 0 && L_PUBLICO == 0) {
-          const requestBody: any = {
-            paymentId: this.valAccCargado.paymentId,
-            lotId: L_LOTE,
-            validSistem: 'B',
-            result: 'Referencia Pago Bases',
-          };
+          this.valAccCargado.lotId = L_LOTE;
+          this.valAccCargado.validSistem = 'B';
+          this.valAccCargado.result = 'Referencia Pago Bases';
 
-          await this.updatePagoCargado(this.valAccCargado.rowId, requestBody);
+          await this.updatePagoCargado(
+            this.valAccCargado.paymentId,
+            this.valAccCargado
+          );
         }
       } else if (LLL.reject == 'S') {
         // GO_BLOCK('BLK_DEVO');
@@ -1175,26 +1246,41 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       return;
     }
   }
-  pagoCargado() {}
 
-  async updatePagoCargado(rowId: any, requestBody: any) {}
+  pagoCargado() {
+    this.openForm(this.valAccCargado, true, true, true);
+  }
 
-  // GO_BLOCK('BLK_AUXREF');
-  openFormList3Cargado(dataParams: any, REFERENCIA: any, valRef: boolean) {
-    let config: ModalOptions = {
-      initialState: {
-        dataParams,
-        REFERENCIA,
-        valRef,
-        callback: (next: boolean) => {
-          if (next) {
-            this.getPayments('no');
-          }
-        },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(AuxList2Component, config);
+  async updatePagoCargado(paymentId: any, requestBody: any) {
+    const selectedRow = requestBody;
+    this.dataCargada.update(this.valAccCargado, selectedRow).then(() => {
+      console.log('Registro actualizado:', selectedRow);
+    });
+    this.dataCargada.refresh();
+  }
+
+  async gettypeSatIdUpdate(id: any) {
+    if (!id) return null;
+    const params = new FilterParams();
+
+    params.addFilter('idType', id, SearchFilter.EQ);
+
+    return new Promise((resolve, reject) => {
+      this.accountMovementService
+        .getPaymentTypeSat(params.getParams())
+        .subscribe({
+          next: response => {
+            // let result = response.data.map(item => {
+            //   item['descriptionSAT'] = item.description;
+            // });
+            // Promise.all(result).then(item => {
+            resolve(response.data[0].description);
+            // })
+          },
+          error: err => {
+            resolve(null);
+          },
+        });
+    });
   }
 }

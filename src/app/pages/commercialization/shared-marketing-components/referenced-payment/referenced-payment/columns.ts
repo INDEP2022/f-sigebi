@@ -252,6 +252,12 @@ export const COLUMNS_CARGADOS = {
     type: 'string',
     sort: false,
   },
+  referenceOri: {
+    title: 'Referencia Orden Ingreso',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+  },
   bankKey: {
     title: 'Banco',
     // width: '15%',
@@ -263,6 +269,20 @@ export const COLUMNS_CARGADOS = {
     // width: '15%',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        return numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      } else {
+        return amount;
+      }
+    },
   },
   bill: {
     title: 'Cuenta',
@@ -276,12 +296,7 @@ export const COLUMNS_CARGADOS = {
     type: 'string',
     sort: false,
   },
-  referenceOri: {
-    title: 'Referencia OI',
-    // width: '15%',
-    type: 'string',
-    sort: false,
-  },
+
   result: {
     title: 'Resultado',
     // width: '15%',
@@ -348,7 +363,7 @@ export const COLUMNS_CARGADOS = {
     sort: false,
   },
   entryOrderId: {
-    title: 'OI',
+    title: 'Orden Ingreso',
     // width: '15%',
     type: 'string',
     sort: false,
