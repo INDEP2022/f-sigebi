@@ -92,9 +92,9 @@ export class RecordAccountStatementsAccountsService
     return this.delete(route, model);
   }
 
-  getAccounts(params: ListParams) {
+  getAccounts(params: _Params) {
     const route = `${this.route2}`;
-    return this.get(route, params);
+    return this.get<IListResponse<any>>(`account-movements${params}`);
   }
   getDataBankAccount(params: _Params) {
     return this.get(this.route2, params);
