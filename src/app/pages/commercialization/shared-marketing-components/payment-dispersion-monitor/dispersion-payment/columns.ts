@@ -126,7 +126,7 @@ export const COLUMNS_CUSTOMER_BANKS = {
     type: 'number',
     sort: false,
   },
-  date:{
+  date: {
     title: 'Fecha',
     type: 'text',
     sort: false,
@@ -138,7 +138,7 @@ export const COLUMNS_CUSTOMER_BANKS = {
     title: 'Banco',
     type: 'text',
     sort: false,
-  }, 
+  },
   reference: {
     title: 'Referencia',
     type: 'text',
