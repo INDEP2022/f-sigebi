@@ -308,19 +308,18 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
                 const updateGood = await this.updateGood();
 
                 if (updateGood) {
-                  const createHistGood = await this.createHistorailGood();
-                  if (createHistGood) {
-                    this.alertInfo(
-                      'success',
-                      'Acción Correcta',
-                      'Documento adjuntado correctamente'
-                    ).then(question => {
-                      if (question.isConfirmed) {
-                        this.close();
-                        this.modalRef.content.callback(true);
-                      }
-                    });
-                  }
+                  //const createHistGood = await this.createHistorailGood();
+
+                  this.alertInfo(
+                    'success',
+                    'Acción Correcta',
+                    'Documento adjuntado correctamente'
+                  ).then(question => {
+                    if (question.isConfirmed) {
+                      this.close();
+                      this.modalRef.content.callback(true);
+                    }
+                  });
                 }
               }
             }
