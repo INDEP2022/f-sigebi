@@ -886,7 +886,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       // clasifGoodNumber: null,
       // spentPlus: null,
       // amounten: null,
-      description: this.form.value.description,
+      description: this.formGood.value.description,
       amountevta: this.formGood.value.importSell || 1,
       typeConv: this.formBlkControl.value.typeConversion,
       spentId: spent?.spentId || [],
@@ -903,6 +903,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       delegationNumber: this.formGood.value.delegationNumber.id,
       subDelegationNumber: this.formGood.value.subDelegationNumber.id,
       fileNumber: this.formGood.value.fileNumber,
+      flier: this.formGood.value.flyerNumber,
       user: this.infoToken.preferred_username.toUpperCase(),
       bankNew: this.formBlkControl.value.tiNewBank,
       moneyNew: this.formBlkControl.value.diNewCurrency?.replaceAll("'", ''),
@@ -914,15 +915,34 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     };
     await firstValueFrom(
       this.goodService.changeGoodToNumerary(body).pipe(
-        map((resp: { message: []; data: null }) => {
-          const message =
-            // resp.message.length > 0
-            //   ? resp.message.join('.\n')
-            //   :
-            'Proceso Terminado correctamente';
+        map((resp: any) => {
+          console.log(resp);
+          if (resp.data) {
+            const goodFather = resp.data.map((item: any) => {
+              return {
+                goodNumberF: item.goodNumberF,
+                goodStatusF: item.goodStatusF,
+              };
+            });
+            const goodGenerate = resp.data.map((item: any) => {
+              return {
+                goodNumberS: item.goodNumberS,
+                goodStatusS: item.goodStatusS,
+              };
+            });
+            this.openDialogGoodStatus(goodFather, goodGenerate);
+            this.clear();
+          } else {
+            this.alert('warning', 'Bienes no encontrados', '');
+          }
+          // const message =
+          //   // resp.message.length > 0
+          //   //   ? resp.message.join('.\n')
+          //   //   :
+          //   'Proceso Terminado correctamente';
 
-          this.alert('success', message, '');
-          this.clear();
+          // this.alert('success', message, '');
+          // this.clear();
           this.loader.load = false;
         }),
         catchError(err => {
@@ -1089,21 +1109,34 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         this.goodService.pupValidMasiv(body).pipe(
           map(res => {
             console.log(res);
-            if (res.data) {
-              const goodFather = res.data.map((item: any) => {
-                return {
-                  goodNumberF: item.goodNumberF,
-                  goodStatusF: item.goodStatusF,
-                };
-              });
-              const goodGenerate = res.data.map((item: any) => {
-                return {
-                  goodNumberS: item.goodNumberS,
-                  goodStatusS: item.goodStatusS,
-                };
-              });
-              this.openDialogGoodStatus(goodFather, goodGenerate);
-              this.clear();
+            if (res.dataCreateMassiveGood) {
+              if (res.dataCreateMassiveGood[0] == 'Registros no encontrados.') {
+                this.alert(
+                  'warning',
+                  'Advertencia',
+                  'Verificar que el status de los Bienes sea Administración'
+                );
+                this.clear();
+              } else {
+                const goodFather = res.dataCreateMassiveGood.map(
+                  (item: any) => {
+                    return {
+                      goodNumberF: item.goodNumberF,
+                      goodStatusF: item.goodStatusF,
+                    };
+                  }
+                );
+                const goodGenerate = res.dataCreateMassiveGood.map(
+                  (item: any) => {
+                    return {
+                      goodNumberS: item.goodNumberS,
+                      goodStatusS: item.goodStatusS,
+                    };
+                  }
+                );
+                this.openDialogGoodStatus(goodFather, goodGenerate);
+                this.clear();
+              }
             } else {
               this.alert('warning', 'Bienes no encontrados', '');
             }
