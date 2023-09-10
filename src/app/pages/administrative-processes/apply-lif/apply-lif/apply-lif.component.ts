@@ -56,6 +56,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
   isContConvVisible = false;
   isVisibleVal15 = true;
   isEnableBtnLif = false;
+  lif: number = 0;
   isEnableBtnRvlif = false;
   formGood = new FormGroup({
     id: new FormControl(''),
@@ -223,21 +224,25 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
       }
 
       this.formGood1.get('contConv').setValue(TOT);
-      const tTotal = good1.val2 - good1.val13 - (good1.val10 || 0);
-      this.formBlkControl.get('tTotal').setValue(tTotal);
       if (TOT == 0) {
         this.isContConvVisible = false;
       } else {
         this.isContConvVisible = true;
       }
-
       const val15 = good1.val15 || 0;
       if (val15 == 0) {
+        const tTotal = good1.val2 - good1.val13 - (good1.val10 || 0);
+        this.formBlkControl.get('tTotal').setValue(tTotal);
         this.isVisibleVal15 = false;
         this.formGood1.get('val15').disable();
         this.isEnableBtnLif = true;
         this.isEnableBtnRvlif = false;
       } else {
+        const tTotal =
+          Number(good1.val2) -
+          (Number(good1.val13) + Number(good1.val15)) -
+          (Number(good1.val10) || 0);
+        this.formBlkControl.get('tTotal').setValue(tTotal);
         this.isVisibleVal15 = true;
         this.formGood1.get('val15').enable();
         this.isEnableBtnLif = false;
@@ -295,9 +300,11 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
     let VLIF: number;
     let VEST: string;
     let GAST: number;
+    let LIF: number;
+    const good1 = this.formGood1.getRawValue();
     try {
       GAST = this.formGood1.value.val13;
-      console.log(GAST);
+      LIF = good1.val15;
       let params = new ListParams();
       params['filter.id'] = this.formGood1.value.id;
       const { status } = await this.getGoodParams(params, true);
@@ -314,19 +321,19 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         params['filter.parameter'] = 'LIF';
         const { value } = await this.getComerParameterMod(params);
         VLIF = Number(value);
+        this.lif = (good1.val2 - good1.val10) * VLIF;
+        good1.val15 = this.lif;
+        this.formGood1.get('val15').setValue(this.lif.toFixed(2));
+        console.log(this.lif);
+        GAST = Number(this.formGood1.value.val13) + Number(this.lif);
         console.log(GAST);
-        this.formGood1
-          .get('val15')
-          .setValue(
-            (
-              (this.formGood1.value.val2 - this.formGood1.value.val10) *
-              VLIF
-            ).toFixed(2)
-          );
-        GAST = GAST + this.formGood1.value.val15;
         this.formBlkControl
           .get('tTotal')
-          .setValue(this.formGood1.value.val2 - (GAST || 0));
+          .setValue(
+            Number(this.formGood1.value.val2) -
+              (Number(GAST) || 0) -
+              Number(this.formGood1.value.val10)
+          );
         this.commit();
       }
     } catch (error) {
@@ -357,7 +364,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         params['filter.parameter'] = 'LIF';
         const { value } = await this.getComerParameterMod(params);
         VLIF = Number(value);
-        this.formGood1.get('val13').setValue(good1.val13 - good1.val15);
+        this.formGood1.get('val13').setValue(good1.val13);
         this.formGood1.get('val15').setValue(0);
         this.formBlkControl
           .get('tTotal')
@@ -368,14 +375,14 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
       // GO_BLOCK('BIENES1');
       // EXECUTE_QUERY;
     } catch (error) {
-      this.loading = false;
+      console.log(error);
     }
   }
 
   commit() {
     const auxBody = { ...this.formGood1.getRawValue() };
     delete auxBody.contConv;
-    auxBody.val15 = String(auxBody?.val15) || null;
+    // auxBody.val15 = String(auxBody.val15) || null;
 
     this.goodService.update(auxBody).subscribe({
       next: () => {
