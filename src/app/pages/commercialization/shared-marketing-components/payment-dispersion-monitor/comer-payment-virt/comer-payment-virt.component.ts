@@ -56,7 +56,7 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     console.log(this.dataModel);
-    console.log(this.dateWarrantyLiq)
+    console.log(this.dateWarrantyLiq);
     this.fillAndGetData();
 
     if (
@@ -195,17 +195,17 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
           incomeData,
           callback: (data: any) => {
             console.log(data);
-            const newData = this.data['data'].map((e:any) => {
-              console.log(e.batchId)
-              console.log(data.id)
-              if(e.batchId == data.id){
+            const newData = this.data['data'].map((e: any) => {
+              console.log(e.batchId);
+              console.log(data.id);
+              if (e.batchId == data.id) {
                 return {
                   ...e,
                   amount: data.n_mdiv.toFixed(2),
-                  amountGrief: data.n_pdiv.toFixed(2)
-                }
-              }else{
-                return e
+                  amountGrief: data.n_pdiv.toFixed(2),
+                };
+              } else {
+                return e;
               }
             });
             this.data.load(newData.concat(data.data));
