@@ -223,10 +223,61 @@ export class RecordAccountStatementsComponent
         });
     }, 3000);
   }
+  onSearchNameAccount(inputElement: any) {
+    console.log(inputElement);
+    const name = inputElement.value.cveBank;
+    setTimeout(() => {
+      this.recordAccountStatementsService
+        .getAllDinamicName(name, this.params.getValue())
+        .subscribe({
+          next: (response: { data: any[]; count: number }) => {
+            this.banks = new DefaultSelect(response.data, response.count);
+            this.loading = false;
+          },
+          error: (err: any) => {
+            this.loading = false;
+            // this.alert('warning', 'No Existen Bancos con esa Descripción', ``);
+          },
+        });
+    }, 3000);
+  }
 
   // Asigna el valor del banco seleccionado a la función "searchBankAccount"
   onBankSelectChange(value: any) {
-    this.form.get('account').reset();
+    // this.form.get('account').reset();
+    // this.form.get('accountType').reset();
+    // this.form.get('square').reset();
+    // this.form.get('branch').reset();
+    // this.form.get('currency').reset();
+    // this.form.get('description').reset();
+    // this.totalItems = 0;
+    // this.cleandInfoDate();
+    // console.log(value);
+    // // this.bankAccountSelect = new DefaultSelect();
+    // this.loading = false;
+    // console.log(value);
+    // if (value && value.cve_banco) {
+    //   const bankCode = value.cve_cuenta;
+    //   console.log(bankCode);
+    //   // this.searchBankAccount(bankCode, this.paramsSubject);
+    //   // let paramsB = new ListParams();
+    //   // paramsB['filter.accountNumber.cveAccount'] = value.cve_cuenta;
+    //   // this.getEvent(paramsB);
+    //   this.form.get('account').setValue(value?.cveAccount);
+    //   let currency = value?.cveCurrency;
+    //   this.current = currency;
+    //   this.searchCurrent(currency);
+    //   currency = currency.replace(/'/g, '');
+    //   this.form.get('square').setValue(value?.square);
+    //   this.form.get('branch').setValue(value?.branch);
+    //   this.form.get('accountType').setValue(value?.accountType);
+    //   this.form.get('currency').setValue(currency);
+    //   // this.getEvent();
+    //   this.loading = false;
+    // } else {
+    //   this.cleandInfoAll();
+    //   this.loading = false;
+    // }
     this.form.get('accountType').reset();
     this.form.get('square').reset();
     this.form.get('branch').reset();
@@ -234,32 +285,22 @@ export class RecordAccountStatementsComponent
     this.form.get('description').reset();
     this.totalItems = 0;
     this.cleandInfoDate();
+    const cveAccount = value.cveAccount;
+    // this.accountDate = value.dateInsertion;
     console.log(value);
-    // this.bankAccountSelect = new DefaultSelect();
-    this.loading = false;
-    console.log(value);
-    if (value && value.cve_banco) {
-      const bankCode = value.cve_cuenta;
-      console.log(bankCode);
-      // this.searchBankAccount(bankCode, this.paramsSubject);
-      let paramsB = new ListParams();
-      paramsB['filter.accountNumber.cveAccount'] = value.cve_cuenta;
-      this.getEvent(paramsB);
-      this.form.get('account').setValue(value?.cveAccount);
-      let currency = value?.cveCurrency;
-      this.current = currency;
-      this.searchCurrent(currency);
-      currency = currency.replace(/'/g, '');
-      this.form.get('square').setValue(value?.square);
-      this.form.get('branch').setValue(value?.branch);
-      this.form.get('accountType').setValue(value?.accountType);
-      this.form.get('currency').setValue(currency);
-      // this.getEvent();
-      this.loading = false;
-    } else {
-      this.cleandInfoAll();
-      this.loading = false;
-    }
+    this.searchDataAccount(cveAccount);
+    const square = value?.square;
+    const branch = value?.branch;
+    const accountType = value?.accountType;
+    this.form.get('account').setValue(value?.accountNumber);
+    let currency = value.cveCurrency;
+    this.current = currency;
+    this.searchCurrent(currency);
+    currency = currency.replace(/'/g, '');
+    this.form.get('square').setValue(square);
+    this.form.get('branch').setValue(branch);
+    this.form.get('accountType').setValue(accountType);
+    this.form.get('currency').setValue(currency);
   }
 
   searchBankAccount(
@@ -382,7 +423,7 @@ export class RecordAccountStatementsComponent
     }
 
     const model: IDateAccountBalance = {
-      noAccount: this.accountDate,
+      noAccount: Number(this.cveAccount),
       tiDateCalc: balanceOf,
       tiDateCalcEnd: balanceAt,
     };
@@ -441,7 +482,6 @@ export class RecordAccountStatementsComponent
 
   // Abre el modal de transferencia de saldos
   openModal(movimentAccount: IRecordAccountStatements) {
-    console.log(movimentAccount);
     const nombre = this.itemSelected;
     const cveCta = this.accouncveAccount;
     const modalConfig = MODAL_CONFIG;
