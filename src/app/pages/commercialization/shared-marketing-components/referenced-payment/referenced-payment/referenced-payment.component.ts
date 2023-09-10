@@ -545,14 +545,13 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         ''
       );
 
-    const respEvent: any = 1;
-    // await this.getSelectFase(this.eventSelected.id);
+    const respEvent: any = await this.getSelectFase(this.eventSelected.id);
 
     if (!respEvent) {
       return this.alert('warning', 'El Evento no se Encuentra en una fase', '');
     } else {
       // respEvent.phase
-      if (respEvent == 1) {
+      if (respEvent.phase == 1) {
         if (!this.bankSelected) {
           return this.alert(
             'warning',
@@ -580,26 +579,93 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         ).then(async question => {
           if (question.isConfirmed) {
             // PUP_PROC_NUEVO;
-            this.titleCarga = 'PAGOS REFERENCIADOS CARGADOS';
             const pupNew: any = await this.PUP_PROC_NUEVO(
               this.eventSelected.id
             );
             if (pupNew.data == null) {
-              this.alert('error', 'Error al Realizar la Carga', '');
+              this.alert('error', 'Error al realizar la carga de pagos', '');
             } else {
               if (pupNew.data.length == 0) {
                 this.alert(
                   'warning',
-                  `No hay Pagos Pendientes del Evento: ${this.eventSelected.id}`,
+                  `No hay pagos pendientes del evento: ${this.eventSelected.id}`,
                   ''
                 );
               } else {
-                this.getPayments('no');
-                this.alert(
-                  'success',
-                  'Proceso Terminado, Referencias Cargadas Correctamente',
-                  ''
-                );
+                // this.getPayments('no');
+                // this.alert('success', 'Archivo Cargado Correctamente', '');
+                this.form2
+                  .get('BLK_CTRL_CUANTOS')
+                  .setValue(pupNew.BLK_CTRL_CUANTOS);
+                this.form2
+                  .get('BLK_CTRL_MONTO')
+                  .setValue(pupNew.BLK_CTRL_MONTO);
+
+                let arr: any = [];
+                let result = pupNew.COMER_PAGOREF.map(async (item: any) => {
+                  let obj: any = {
+                    movementNumber: item.COMER_PAGOREF_NO_MOVIMIENTO,
+                    date: item.COMER_PAGOREF_FECHA,
+                    move: item.COMER_PAGOREF_DESCPAGO,
+                    bill: null,
+                    referenceOri: item.COMER_PAGOREF_REFERENCIAORI,
+                    bankKey: item.COMER_PAGOREF_CVE_BANCO,
+                    branchOffice: item.COMER_PAGOREF_SUCURSAL,
+                    amount: item.COMER_PAGOREF_MONTO,
+                    result: item.COMER_PAGOREF_RESULTADO,
+                    validSistem: item.COMER_PAGOREF_VAL,
+                    paymentId: item.COMER_PAGOREF_ID,
+                    reference: item.COMER_PAGOREF_REFERENCIA,
+                    lotPub: null,
+                    event: null,
+                    entryOrderId: null,
+                    typeSatId: item.COMER_PAGOREF_ID_TIPO_SAT,
+                    code: item.COMER_PAGOREF_CODIGO,
+                    lotId: item.COMER_PAGOREF_ID_LOTE,
+                    inTimeNumber: null,
+                    type: null,
+                    paymentReturnsId: null,
+                    recordDate: item.COMER_PAGOREF_FECHA_REGISTRO,
+                    dateOi: null,
+                    appliedTo: null,
+                    clientId: null,
+                    folioOi: null,
+                    indicator: null,
+                    codeEdoCta: null,
+                    affectationDate: null,
+                    recordNumber: null,
+                    spentId: null,
+                    paymentRequestId: null,
+                    customers: null,
+                    bankAndNumber:
+                      item.COMER_PAGOREF_CODIGO +
+                      ' - ' +
+                      item.COMER_PAGOREF_CVE_BANCO,
+                  };
+                  const desc = await this.gettypeSatIdUpdate(
+                    item.COMER_PAGOREF_ID_TIPO_SAT
+                  );
+                  obj['descriptionSAT'] = !desc ? null : desc;
+                  arr.push(obj);
+                });
+
+                Promise.all(result).then(resp => {
+                  this.dataCargada.load(arr);
+                  this.dataCargada.refresh();
+                  console.log(this.dataCargada);
+                  // this.getPayments('no');
+                  this.cargado2 = true;
+                  this.cargado = true;
+                  setTimeout(() => {
+                    this.performScroll();
+                  }, 500);
+                  this.loadingBtn = false;
+                  this.alert(
+                    'success',
+                    'Proceso Terminado',
+                    'Referencias Cargadas Correctamente'
+                  );
+                });
               }
             }
           }
@@ -702,7 +768,6 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
           });
 
           Promise.all(result).then(resp => {
-            // this.title = 'PAGOS REFERENCIADOS CARGADOS DESDE EL CSV'
             this.dataCargada.load(arr);
             this.dataCargada.refresh();
             console.log(this.dataCargada);
@@ -712,9 +777,6 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             setTimeout(() => {
               this.performScroll();
             }, 500);
-            // setTimeout(() => {
-
-            // }, 1000);
             this.loadingBtn = false;
           });
         }
@@ -882,10 +944,10 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       } else if (LLL.reject == 'S') {
         // GO_BLOCK('BLK_DEVO');
         L_IMPORTE = this.valAcc.amount;
-        this.openFormList(this.valAcc, L_IMPORTE);
+        this.openFormList(this.valAcc, L_IMPORTE, false);
       } else {
         // GO_BLOCK('BLK_AUXREF');
-        this.openFormList2(this.valAcc, this.valAcc.reference, false);
+        this.openFormList2(this.valAcc, this.valAcc.reference, false, false);
       }
       console.log('LLL', LLL);
     } else {
@@ -952,14 +1014,20 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   }
 
   // GO_BLOCK('BLK_DEVO');
-  openFormList(dataParams: any, L_IMPORTE: any) {
+  openFormList(dataParams: any, L_IMPORTE: any, valCargado: boolean) {
     let config: ModalOptions = {
       initialState: {
         dataParams,
         L_IMPORTE,
-        callback: (next: boolean) => {
+        valCargado,
+        callback: async (next: boolean, dataUpdate?: any) => {
           if (next) {
-            this.getPayments('no');
+            if (this.cargado2) {
+              await this.updatePagoCargado(null, dataUpdate);
+              this.valAccCargado = null;
+            } else {
+              this.getPayments('no');
+            }
           }
         },
       },
@@ -970,15 +1038,26 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   }
 
   // GO_BLOCK('BLK_AUXREF');
-  openFormList2(dataParams: any, REFERENCIA: any, valRef: boolean) {
+  openFormList2(
+    dataParams: any,
+    REFERENCIA: any,
+    valRef: boolean,
+    valCargado: boolean
+  ) {
     let config: ModalOptions = {
       initialState: {
         dataParams,
         REFERENCIA,
         valRef,
-        callback: (next: boolean) => {
+        valCargado,
+        callback: async (next: boolean, dataUpdate?: any) => {
           if (next) {
-            this.getPayments('no');
+            if (this.cargado2) {
+              await this.updatePagoCargado(null, dataUpdate);
+              this.valAccCargado = null;
+            } else {
+              this.getPayments('no');
+            }
           }
         },
       },
@@ -1227,13 +1306,14 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       } else if (LLL.reject == 'S') {
         // GO_BLOCK('BLK_DEVO');
         L_IMPORTE = this.valAccCargado.amount;
-        this.openFormList(this.valAccCargado, L_IMPORTE);
+        this.openFormList(this.valAccCargado, L_IMPORTE, true);
       } else {
         // GO_BLOCK('BLK_AUXREF');
         this.openFormList2(
           this.valAccCargado,
           this.valAccCargado.reference,
-          false
+          false,
+          true
         );
       }
       console.log('LLL', LLL);

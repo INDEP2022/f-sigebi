@@ -118,7 +118,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         referenceOri: this.data.referenceOri,
         entryOrderId: this.data.entryOrderId,
         validSistem: this.data.validSistem,
-        branchOffice: this.data.branchOffice,
+        // branchOffice: this.data.branchOffice,
         appliedTo: this.data.appliedTo,
         typeSatId: this.data.typeSatId,
         affectationDate: this.data.affectationDate,
@@ -186,7 +186,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       this.data.referenceOri = this.form.value.referenceOri;
       this.data.validSistem =
         this.form.value.validSistem == '' ? null : this.form.value.validSistem;
-      this.data.branchOffice = this.form.value.branchOffice;
+      // this.data.branchOffice = this.form.value.branchOffice;
       this.data.appliedTo = this.form.value.appliedTo;
       this.data.typeSatId = typeSatId.idType
         ? typeSatId.idType
@@ -221,7 +221,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
           this.form.value.validSistem == ''
             ? null
             : this.form.value.validSistem,
-        branchOffice: this.form.value.branchOffice,
+        // branchOffice: this.form.value.branchOffice,
         appliedTo: this.form.value.appliedTo,
         typeSatId: typeSatId ? typeSatId.idType : null,
       };
@@ -283,7 +283,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       referenceOri: this.form.value.reference,
       validSistem:
         this.form.value.validSistem == '' ? null : this.form.value.validSistem,
-      branchOffice: this.form.value.branchOffice,
+      // branchOffice: this.form.value.branchOffice,
       appliedTo: this.form.value.appliedTo,
       typeSatId: typeSatId ? typeSatId.idType : null,
     };
