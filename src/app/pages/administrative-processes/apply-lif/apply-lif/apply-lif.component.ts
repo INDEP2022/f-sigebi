@@ -6,18 +6,23 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { map } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { HasMoreResultsComponent } from 'src/app/@standalone/has-more-results/has-more-results.component';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryNumeraryService } from 'src/app/core/services/ms-historynumerary/historynumerary.service';
 import { MassiveNumeraryService } from 'src/app/core/services/ms-massivenumerary/massivenumerary.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ApplyLifRequest } from './apply-lif-requests';
-
 @Component({
   selector: 'app-apply-lif',
   templateUrl: './apply-lif.component.html',
@@ -43,20 +48,28 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
   constructor(
     private fb: FormBuilder,
     private datePipe: DatePipe,
+    private authService: AuthService,
+    private securityService: SecurityService,
     protected goodService: GoodService,
     protected massiveNumeraryService: MassiveNumeraryService,
     protected historyNumeraryService: HistoryNumeraryService,
     protected parameterModService: ParameterModService,
-    protected modal: BsModalService
+    protected modal: BsModalService,
+    private router: Router
   ) {
     super();
   }
-
+  edit = false;
+  userName: string = '';
   isVisibleMotive = true;
   isContConvVisible = false;
   isVisibleVal15 = true;
   isEnableBtnLif = false;
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   lif: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  validPermisos: boolean = true;
+  dataUserLoggedTokenData: any;
   isEnableBtnRvlif = false;
   formGood = new FormGroup({
     id: new FormControl(''),
@@ -86,9 +99,11 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
   });
 
   ngOnInit(): void {
+    this.userName = this.authService.decodeToken().username;
     this.handleForm();
-    console.log(this.formGood.value.id);
-    console.log(this.formGood1.value.id);
+    // console.log(this.formGood.value.id);
+    // console.log(this.formGood1.value.id);
+    this.userTracker();
   }
 
   public handleForm(): void {
@@ -116,6 +131,57 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
       totalIva: [null],
       total: [null],
     });
+  }
+  userTracker() {
+    this.securityService
+      .getScreenUser('FMCOMDONAC_1', this.userName)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data.data);
+          data.data.map((filter: any) => {
+            switch (true) {
+              case filter.readingPermission == 'S' &&
+                filter.writingPermission == 'S':
+                this.edit = true;
+                console.log('readYes and writeYes');
+                this.validPermisos = true;
+                break;
+              case filter.readingPermission == 'S' &&
+                filter.writingPermission == 'N':
+                this.edit = false;
+                this.validPermisos = false;
+                console.log('readYes and writeNO');
+                break;
+              case filter.readingPermission == 'N' &&
+                filter.writingPermission == 'S':
+                this.edit = true;
+                this.validPermisos = true;
+                console.log('readNo and writeYes');
+                break;
+              default:
+                this.alert(
+                  'info',
+                  'No tiene permiso de Lectura y/o Escritura sobre la Pantalla, por lo que no podrá ingresar',
+                  ''
+                );
+                // return;
+                this.edit = false;
+                this.validPermisos = false;
+                console.log('sin permisos');
+            }
+          });
+        },
+        error: (error: any) => {
+          this.edit = false;
+          this.validPermisos = false;
+          console.log('sin permisos');
+          this.alert(
+            'info',
+            'No tiene permiso de Lectura y/o Escritura sobre la Pantalla',
+            ''
+          );
+        },
+      });
   }
 
   getGood() {

@@ -138,7 +138,9 @@
               <button
                 (click)="openSelectorGood()"
                 type="button"
-                [disabled]="!this.formGood1.value.contConv"
+                [disabled]="
+                  !this.formGood1.value.contConv || !this.validPermisos
+                "
                 class="btn btn-primary btn-sm active ml-3 w-auto mr-2">
                 <i class="bx bx-list-plus bx-sm float-icon"></i>
               </button>
@@ -257,7 +259,10 @@
             (click)="onClickApplyLif()"
             class="btn btn-primary active w-auto btn-sm"
             [disabled]="
-              !isEnableBtnLif || !formGood.value.id || !formGood1.value.id
+              !isEnableBtnLif ||
+              !formGood.value.id ||
+              !formGood1.value.id ||
+              !this.validPermisos
             ">
             Aplica Lif
           </button>
@@ -265,7 +270,10 @@
             class="btn btn-primary active w-auto btn-sm"
             (click)="onClickApplyRvlif()"
             [disabled]="
-              !isEnableBtnRvlif || !formGood.value.id || !formGood1.value.id
+              !isEnableBtnRvlif ||
+              !formGood.value.id ||
+              !formGood1.value.id ||
+              !this.validPermisos
             ">
             <!-- [disabled]="
               !isEnableBtnLif || !formGood.value.id || !formGood1.value.id
