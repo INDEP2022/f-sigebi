@@ -12,6 +12,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
@@ -67,6 +68,7 @@ export class CaptureApprovalDonationComponent
   columnFilters2: any = [];
   statusGood_: any;
   settings2;
+  userName: string = '';
   // @Input() getDetailComDonation: Function;
   // @Input() idActa: number | string;
   type = 'COMPDON';
@@ -100,6 +102,7 @@ export class CaptureApprovalDonationComponent
     private changeDetectorRef: ChangeDetectorRef,
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
+    private authService: AuthService,
     private donationService: DonationService
   ) {
     super();

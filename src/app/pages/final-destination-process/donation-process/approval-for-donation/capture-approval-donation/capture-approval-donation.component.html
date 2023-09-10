@@ -26,11 +26,6 @@
           <div class="row mt-5">
             <div class="col-md-6">
               <div class="mb-3 pl-4 pr-4">
-                <!-- <form-field [control]="regisForm.get('type')" label="Tipo">
-                  <select class="form-control" formControlName="type">
-                    <option>Tipo Evento</option>
-                  </select>
-                </form-field> -->
                 <form-field [control]="regisForm.get('type')" label="Tipo">
                   <ng-select formControlName="type" class="form-control pt-1">
                     <ng-option value="COMPDON">COMPDON</ng-option>
@@ -118,38 +113,6 @@
               <h5>Par&aacute;metros para Traer Informaci&oacute;n de SIAB</h5>
             </div>
           </div>
-          <!-- <div class="row mt-5">
-            <div class="col-md-6 text-md-right">
-              <button
-                class="btn btn-secondary btn-sm active"
-                (click)="
-                  openModal(
-                    'Consulta de Bienes',
-                    'check-goods',
-                    '¿Desea Continuar con el Proceso?'
-                  )
-                ">
-                Consulta Bienes
-              </button>
-            </div>
-            <div class="col-md-6 text-md-right">
-              <button class="btn btn-secondary btn-sm active">
-                Valida Bienes
-              </button>
-            </div>
-          </div> -->
-          <!-- <div class="row mt-3">
-            <div class="col-md-6 text-md-right">
-              <button class="btn btn-success btn-sm active">
-                Exp. a Excel
-              </button>
-            </div>
-            <div class="col-md-6 text-md-right">
-              <button class="btn btn-secondary btn-sm active">
-                Rastreador
-              </button>
-            </div>
-          </div> -->
           <div class="row">
             <div class="col-md-12">
               <div class="row">
@@ -184,12 +147,6 @@
                             Consulta Bienes
                             <i class="bx bx-search float-icon"></i>
                           </button>
-                          <!-- <button
-                            class="btn btn-primary btn-sm active"
-                            (click)="ubicaGood()">
-                            Consulta Bienes
-                            <i class="bx bx-search float-icon"></i>
-                          </button> -->
                         </div>
 
                         <div class="col-md-3">
