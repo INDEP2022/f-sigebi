@@ -18,7 +18,7 @@
                 oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
             </form-field>
             <button
-              [disabled]="loading"
+              [disabled]="!this.validPermisos"
               class="active align-items-center btn btn-primary btn-sm w-auto"
               (click)="getGood()">
               Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>

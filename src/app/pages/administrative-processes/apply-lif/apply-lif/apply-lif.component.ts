@@ -161,7 +161,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
               default:
                 this.alert(
                   'info',
-                  'No tiene permiso de Lectura y/o Escritura sobre la Pantalla, por lo que no podrá ingresar',
+                  'No tiene permiso de Lectura y/o Escritura sobre la Pantalla',
                   ''
                 );
                 // return;
