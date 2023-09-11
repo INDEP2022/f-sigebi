@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
@@ -49,6 +50,10 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   idPayment: string = '';
   valScroll: boolean;
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
+  valCargado: boolean;
+  dataNew: any;
+  dataTable: LocalDataSource;
+  nextPaymentId: any;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -60,6 +65,42 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
     private datePipe: DatePipe
   ) {
     super();
+    this.dataNew = {
+      movementNumber: null,
+      date: null,
+      move: null,
+      bill: null,
+      referenceOri: null,
+      bankKey: null,
+      branchOffice: null,
+      amount: null,
+      result: null,
+      validSistem: null,
+      paymentId: null,
+      reference: null,
+      lotPub: null,
+      event: null,
+      entryOrderId: null,
+      typeSatId: null,
+      code: null,
+      lotId: null,
+      inTimeNumber: null,
+      type: null,
+      paymentReturnsId: null,
+      recordDate: null,
+      dateOi: null,
+      appliedTo: null,
+      clientId: null,
+      folioOi: null,
+      indicator: null,
+      codeEdoCta: null,
+      affectationDate: null,
+      recordNumber: null,
+      spentId: null,
+      paymentRequestId: null,
+      customers: null,
+      bankAndNumber: null,
+    };
   }
 
   async ngOnInit() {
@@ -78,7 +119,10 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         [Validators.pattern(NUMBERS_PATTERN), Validators.required],
       ],
       date: [null, Validators.required],
-      amount: [null, [Validators.pattern(NUMBERS_POINT_PATTERN)]],
+      amount: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
+      ],
       bankKey: [null, Validators.required],
       code: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       lotId: [null],
@@ -110,31 +154,20 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         amount: this.data.amount,
         bankKey: this.data.bankKey,
         code: this.data.code,
-        type: this.data.type,
         result: this.data.result,
-        // recordDate: secondFormatDateToDate2(
-        //   this.returnParseDate_(this.data.recordDate)
-        // ),
         referenceOri: this.data.referenceOri,
-        // dateOi: secondFormatDateToDate2(
-        //   this.returnParseDate_(this.data.dateOi)
-        // ),
         entryOrderId: this.data.entryOrderId,
         validSistem: this.data.validSistem,
-        description: this.data.description,
-        branchOffice: this.data.branchOffice,
-        // reconciled: this.data.reconciled,
+        // branchOffice: this.data.branchOffice,
         appliedTo: this.data.appliedTo,
-        // clientId: this.data.idAndName,
-        lotId: this.data.lotId,
         typeSatId: this.data.typeSatId,
         affectationDate: this.data.affectationDate,
       });
 
-      this.form.get('clientId').setValue(this.data.idAndName);
       this.form.get('bankKey').setValue(this.data.bankAndNumber);
-      this.form.get('typeSatId').setValue(this.data.descTypeSatId);
+      // this.form.get('typeSatId').setValue(this.data.descTypeSatId);
       console.log('this.data', this.data);
+      if (this.valCargado) this.gettypeSatIdUpdate(this.data.typeSatId);
 
       // if (this.data.clientId) {
       //   const params = new ListParams()
@@ -145,23 +178,24 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       this.valInitClient = true;
     }
 
-    // const control = this.form.get('typeSatId');
-
-    // control.valueChanges.subscribe((edad: number) => {
-    //   if (this.valScroll) {
-    //     control.setValidators([Validators.required]);
-    //   } else {
-    //     control.setValidators([]);
-    //   }
-
-    //   control.updateValueAndValidity();
-    // });
-
     if (this.valScroll) {
       this.form.get('typeSatId').markAsTouched();
       setTimeout(() => {
         this.performScroll();
       }, 500);
+    }
+    if (this.valCargado) {
+      this.dataTable.getElements().then(item => {
+        // OBTENER EL SIGUIENTE PAYMENT ID //
+        console.log('item', item);
+        const maxId = item.reduce(
+          (max: any, item: any) =>
+            item.paymentId > max ? item.paymentId : max,
+          0
+        );
+        this.nextPaymentId = maxId + 1;
+        console.log('maxId', this.nextPaymentId);
+      });
     }
   }
 
@@ -190,124 +224,187 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   update() {
     const bank = this.form.value.bankKey;
     const typeSatId = this.form.value.typeSatId;
-    const client = this.form.value.clientId;
-    const requestBody: any = {
-      paymentId: this.data.paymentId,
-      reference: this.form.value.reference,
-      movementNumber: this.form.value.movementNumber,
-      date: this.form.value.date,
-      amount: Number(this.form.value.amount),
-      bankKey: bank.cveBank,
-      code: bank.idCode,
-      lotId: this.form.value.lotId,
-      type: this.form.value.type,
-      // result: this.form.value.result,
-      // recordDate: this.form.value.recordDate,
-      referenceOri: this.form.value.referenceOri,
-      // dateOi: this.form.value.dateOi,
-      entryOrderId: this.form.value.entryOrderId,
-      validSistem:
-        this.form.value.validSistem == '' ? null : this.form.value.validSistem,
-      description: this.form.value.description,
-      branchOffice: this.form.value.branchOffice,
-      // reconciled: this.form.value.reconciled,
-      appliedTo: this.form.value.appliedTo,
-      clientId: client ? client.id : null,
-      typeSatId: typeSatId ? typeSatId.idType : null,
-    };
 
-    this.paymentService.update(this.data.paymentId, requestBody).subscribe({
-      next: response => {
-        if (this.valScroll) {
-          this.alert(
-            'success',
-            'Descripción Pago Sat Actualizada Correctamente',
-            ''
-          );
-          this.loading = false;
-          this.modalRef.content.callback(true);
-          this.modalRef.hide();
-        } else {
-          this.handleSuccess();
-        }
-      },
-      error: error => {
-        if (this.valScroll) {
-          this.alert(
-            'error',
-            'Error al Intentar Actualizar la Descripción Pago Sat',
-            ''
-          );
-        } else {
-          if (
-            error.error.message ==
-            'duplicate key value violates unique constraint "unique_pago"'
-          ) {
+    if (this.valCargado) {
+      this.data.reference = this.form.value.reference;
+      this.data.movementNumber = this.form.value.movementNumber;
+      this.data.date = this.datePipe.transform(
+        this.form.value.date,
+        'yyyy-MM-dd'
+      );
+      this.data.amount = Number(this.form.value.amount);
+      this.data.bankKey = bank.cveBank ? bank.cveBank : this.data.bankKey;
+      this.data.code = bank.idCode ? bank.idCode : this.data.code;
+      // result: this.form.value.result,
+      this.data.referenceOri = this.form.value.referenceOri;
+      this.data.validSistem =
+        this.form.value.validSistem == '' ? null : this.form.value.validSistem;
+      // this.data.branchOffice = this.form.value.branchOffice;
+      this.data.appliedTo = this.form.value.appliedTo;
+      this.data.typeSatId = typeSatId.idType
+        ? typeSatId.idType
+        : this.data.typeSatId;
+      this.data.descriptionSAT = typeSatId.description
+        ? typeSatId.description
+        : this.data.descriptionSAT;
+      if (this.valScroll) {
+        this.alert(
+          'success',
+          'Descripción Pago Sat Actualizada Correctamente',
+          ''
+        );
+        this.loading = false;
+        this.modalRef.content.callback(true, this.data);
+        this.modalRef.hide();
+      } else {
+        this.handleSuccess();
+      }
+    } else {
+      const requestBody: any = {
+        paymentId: this.data.paymentId,
+        reference: this.form.value.reference,
+        movementNumber: this.form.value.movementNumber,
+        date: this.form.value.date,
+        amount: Number(this.form.value.amount),
+        bankKey: bank.cveBank,
+        code: bank.idCode,
+        // result: this.form.value.result,
+        referenceOri: this.form.value.referenceOri,
+        validSistem:
+          this.form.value.validSistem == ''
+            ? null
+            : this.form.value.validSistem,
+        // branchOffice: this.form.value.branchOffice,
+        appliedTo: this.form.value.appliedTo,
+        typeSatId: typeSatId ? typeSatId.idType : null,
+      };
+
+      this.paymentService.update(this.data.paymentId, requestBody).subscribe({
+        next: response => {
+          if (this.valScroll) {
+            this.alert(
+              'success',
+              'Descripción Pago Sat Actualizada Correctamente',
+              ''
+            );
+            this.loading = false;
+            this.modalRef.content.callback(true);
+            this.modalRef.hide();
+          } else {
+            this.handleSuccess();
+          }
+        },
+        error: error => {
+          if (this.valScroll) {
             this.alert(
               'error',
-              'Se ha Encontrado un Registro con estos Datos',
-              'Verifique y Actualice Nuevamente'
+              'Error al Intentar Actualizar la Descripción Pago Sat',
+              ''
             );
           } else {
-            this.handleError();
+            if (
+              error.error.message ==
+              'duplicate key value violates unique constraint "unique_pago"'
+            ) {
+              this.alert(
+                'error',
+                'Se ha Encontrado un Registro con estos Datos',
+                'Verifique y Actualice Nuevamente'
+              );
+            } else {
+              this.handleError();
+            }
           }
-        }
-      },
-    });
+        },
+      });
+    }
   }
 
   create() {
     const bank = this.form.value.bankKey;
     const typeSatId = this.form.value.typeSatId;
-    const client = this.form.value.clientId;
-    const requestBody: any = {
-      reference: this.form.value.reference,
-      movementNumber: this.form.value.movementNumber,
-      date: this.form.value.date,
-      amount: Number(this.form.value.amount),
-      bankKey: bank ? bank.cveBank : null,
-      code: bank ? bank.idCode : null,
-      lotId: this.form.value.lotId,
-      type: this.form.value.type,
-      // result: this.form.value.result,
-      recordDate: new Date(),
-      referenceOri: this.form.value.reference,
-      // dateOi: this.form.value.dateOi,
-      entryOrderId: this.form.value.entryOrderId,
-      validSistem:
-        this.form.value.validSistem == '' ? null : this.form.value.validSistem,
-      description: this.form.value.description,
-      branchOffice: this.form.value.branchOffice,
-      // reconciled: this.form.value.reconciled,
-      appliedTo: this.form.value.appliedTo,
-      clientId: client ? client.id : null,
-      typeSatId: typeSatId ? typeSatId.idType : null,
-    };
 
-    this.paymentService.create(requestBody).subscribe({
-      next: response => {
-        this.handleSuccess();
-        // this.alert('success', 'El Registro se Eliminó Correctamente', '');
-      },
-      error: error => {
-        // if (error.error.message == "La clave del banco no ha sido previamente registrada"){
-        this.alert(
-          'error',
-          'Ocurrió un Error al Guardar el Registro',
-          error.error.message
-        );
-        // }
-        // this.handleError();
-        // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
-      },
-    });
+    if (this.valCargado) {
+      this.dataNew.reference = this.form.value.reference;
+      this.dataNew.movementNumber = this.form.value.movementNumber;
+      this.dataNew.date = this.datePipe.transform(
+        this.form.value.date,
+        'yyyy-MM-dd'
+      );
+      this.dataNew.amount = Number(this.form.value.amount);
+      this.dataNew.bankKey = bank ? bank.cveBank : null;
+      this.dataNew.code = bank ? bank.idCode : null;
+      this.dataNew.recordDate = new Date();
+      this.dataNew.referenceOri = this.form.value.reference;
+      this.dataNew.validSistem =
+        this.form.value.validSistem == '' ? null : this.form.value.validSistem;
+      this.dataNew.appliedTo = this.form.value.appliedTo;
+      this.dataNew.typeSatId = typeSatId ? typeSatId.idType : null;
+      this.dataNew.paymentId = this.nextPaymentId;
+      this.dataNew.descriptionSAT = typeSatId.description
+        ? typeSatId.description
+        : this.data.descriptionSAT;
+      this.dataNew.move = bank ? bank.description : null;
+      this.dataNew.bankAndNumber = bank
+        ? bank.idCode + ' - ' + bank.cveBank
+        : null;
+      const message: string = this.edit ? 'Actualizado' : 'Guardado';
+      this.alert('success', `Pago Referenciado ${message} Correctamente`, '');
+      this.loading = false;
+      this.modalRef.content.callback(true, this.dataNew);
+      this.modalRef.hide();
+    } else {
+      const requestBody: any = {
+        reference: this.form.value.reference,
+        movementNumber: this.form.value.movementNumber,
+        date: this.form.value.date,
+        amount: Number(this.form.value.amount),
+        bankKey: bank ? bank.cveBank : null,
+        code: bank ? bank.idCode : null,
+        // result: this.form.value.result,
+        recordDate: new Date(),
+        referenceOri: this.form.value.reference,
+        validSistem:
+          this.form.value.validSistem == ''
+            ? null
+            : this.form.value.validSistem,
+        // branchOffice: this.form.value.branchOffice,
+        appliedTo: this.form.value.appliedTo,
+        typeSatId: typeSatId ? typeSatId.idType : null,
+      };
+
+      this.paymentService.create(requestBody).subscribe({
+        next: response => {
+          this.handleSuccess();
+          // this.alert('success', 'El Registro se Eliminó Correctamente', '');
+        },
+        error: error => {
+          // if (error.error.message == "La clave del banco no ha sido previamente registrada"){
+          this.alert(
+            'error',
+            'Ocurrió un Error al Guardar el Registro',
+            error.error.message
+          );
+          // }
+          // this.handleError();
+          // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
+        },
+      });
+    }
+  }
+
+  async obtenerMaximo(array: any) {
+    return array.reduce(
+      (max: any, obj: any) => (obj.paymentId > max.paymentId ? obj : max),
+      array[0]
+    );
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.alert('success', `Pago Referenciado ${message} Correctamente`, '');
     this.loading = false;
-    this.modalRef.content.callback(true);
+    this.modalRef.content.callback(true, this.data);
     this.modalRef.hide();
   }
 
@@ -493,6 +590,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         });
     });
   }
+
   returnParseDate_(data: Date) {
     this.datePipe.transform(data, 'dd/MM/yyyy');
     console.log('DATEEEE', data);
@@ -532,5 +630,32 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         block: 'center',
       });
     }
+  }
+
+  gettypeSatIdUpdate(id: any) {
+    const params = new FilterParams();
+
+    params.addFilter('idType', id, SearchFilter.EQ);
+
+    return new Promise((resolve, reject) => {
+      this.accountMovementService
+        .getPaymentTypeSat(params.getParams())
+        .subscribe({
+          next: response => {
+            console.log('ress122', response);
+            let result = response.data.map(item => {
+              item['descTypeSatId'] = item.idType + ' - ' + item.description;
+            });
+
+            Promise.all(result).then((resp: any) => {
+              this.form
+                .get('typeSatId')
+                .setValue(response.data[0].descTypeSatId);
+              // this.sats = new DefaultSelect(response.data, response.count);
+            });
+          },
+          error: err => {},
+        });
+    });
   }
 }

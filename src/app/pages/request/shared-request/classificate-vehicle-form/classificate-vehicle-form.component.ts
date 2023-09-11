@@ -1,8 +1,10 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IServiceVehicle } from 'src/app/core/models/ms-order-service/order-service-vehicle.model';
+import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CLASSIFICATION_VEHICLE_COLUMS } from '../../reception-scheduling-service-order/columns/classification-vehicle-columns';
@@ -36,12 +38,13 @@ export class ClassificateVehicleFormComponent
   totalItems: number = 0;
   item: any;
   data = new LocalDataSource();
-
+  vehicleSelect: IServiceVehicle[];
   private bsModalService = inject(BsModalRef);
 
   constructor(
     private modalService: BsModalService,
-    private orderServiceService: OrderServiceService
+    private orderServiceService: OrderServiceService,
+    private genericService: GenericService
   ) {
     super();
 
@@ -49,55 +52,87 @@ export class ClassificateVehicleFormComponent
       ...this.settings,
       actions: false,
       columns: CLASSIFICATION_VEHICLE_COLUMS,
-      selectMode: 'multi',
     };
-
-    /* this.data = [
-      {
-        typeVehicle: 'Particular',
-        sale: '1',
-        donation: '0',
-        destruction: '0',
-      },
-    ]; */
   }
 
   ngOnInit(): void {
     this.selectItem(false);
-    this.getServiceVehicle();
+
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getServiceVehicle());
   }
 
   getServiceVehicle() {
+    this.params.getValue()['filter.orderServiceId'] = 516;
     this.orderServiceService
       .getServiceVehicle(this.params.getValue())
       .subscribe({
         next: response => {
-          this.data.load(response.data);
-          this.totalItems = response.count;
+          const infoVehicle = response.data.map(async (info: any) => {
+            const nameTypeVehicle: any = await this.nameVehicle(info.id);
+            if (nameTypeVehicle) {
+              info.nameTypeVehicle = nameTypeVehicle;
+              return info;
+            }
+          });
+
+          Promise.all(infoVehicle).then(response => {
+            this.data.load(response);
+            this.totalItems = response.length;
+          });
         },
         error: error => {},
       });
   }
 
-  selectItem(item?: any) {
-    if (item.isSelected == true) {
-      this.dataItem = true;
-      this.createVehicle = false;
-      this.item = item;
-    } else {
-      this.dataItem = false;
-      this.createVehicle = true;
-      this.item = null;
-    }
+  nameVehicle(idVehicle: number) {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.name'] = 'Tipo Vehiculo';
+      params.getValue()['filter.keyId'] = idVehicle;
+      this.genericService.getAll(params.getValue()).subscribe({
+        next: response => {
+          resolve(response.data[0].description);
+          //this.typeVehicle = new DefaultSelect(response.data, response.count);
+        },
+        error: error => {},
+      });
+    });
   }
 
-  formClassificateVehicle(item = this.item?.data) {
-    if (item) {
+  selectItem(item?: any) {
+    this.vehicleSelect = item.selected;
+  }
+
+  formClassificateVehicle() {
+    let config: ModalOptions = {
+      initialState: {
+        orderServiceId: 516,
+        callback: (next: boolean) => {
+          if (next)
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getServiceVehicle());
+        },
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(CreateClassificateVehicleFormComponent, config);
+  }
+
+  editClassificateVehicle() {
+    if (this.vehicleSelect) {
       let config: ModalOptions = {
         initialState: {
-          item,
+          orderServiceId: 516,
+          serviceVehicleData: this.vehicleSelect[0],
           callback: (next: boolean) => {
-            //if (next) this.getLabelsOkey();
+            if (next)
+              this.params
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getServiceVehicle());
           },
         },
         class: 'modal-md modal-dialog-centered',
@@ -105,26 +140,11 @@ export class ClassificateVehicleFormComponent
       };
       this.modalService.show(CreateClassificateVehicleFormComponent, config);
     } else {
-      let config: ModalOptions = {
-        initialState: {
-          callback: (next: boolean) => {
-            console.log(next);
-
-            //if (next) this.getLabelsOkey();
-          },
-        },
-        class: 'modal-md modal-dialog-centered',
-        ignoreBackdropClick: true,
-      };
-      this.bsModalService = this.modalService.show(
-        CreateClassificateVehicleFormComponent,
-        config
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar una clasificación para editarla'
       );
-
-      /*this.bsModalService.content.event.subscribe((data: any) => {
-        this.data.push(data);
-        this.data = [...this.data];
-      }); */
     }
   }
 }

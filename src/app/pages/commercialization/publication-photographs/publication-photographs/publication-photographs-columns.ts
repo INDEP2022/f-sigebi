@@ -1,7 +1,7 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const PUBLICATION_PHOTO1 = {
-  allotment: {
+  idLot: {
     title: 'lote',
     sort: false,
   },
@@ -9,18 +9,18 @@ export const PUBLICATION_PHOTO1 = {
     title: 'Descripción',
     sort: false,
   },
-  status: {
+  idStatusVta: {
     title: 'Estado',
     sort: false,
   },
-  customer: {
+  idClient: {
     title: 'Cliente',
     sort: false,
   },
 };
 
 export const PUBLICATION_PHOTO2 = {
-  noGood: {
+  goodNumber: {
     title: 'No. Bien',
     sort: false,
   },

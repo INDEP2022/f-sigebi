@@ -266,11 +266,16 @@
 </div>
 
 <div class="row">
-  <div class="btn-toolbar pt-5">
-    <app-columns-select [(settings)]="settings"></app-columns-select>
-    <button (click)="newDocument()" class="btn btn-primary btn-sm active">
-      Nuevo Documento <i class="fa fa-file"></i>
-    </button>
+  <div class="d-flex btn-toolbar pt-5">
+    <div class="mr-auto p-2"></div>
+    <div class="p-2">
+      <button (click)="newDocument()" class="btn btn-primary btn-sm active">
+        Nuevo Documento <i class="fa fa-file"></i>
+      </button>
+    </div>
+    <div class="p-2">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
   </div>
 
   <div class="row pt-4">
