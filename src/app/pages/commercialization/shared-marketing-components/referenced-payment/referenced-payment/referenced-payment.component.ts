@@ -5,7 +5,7 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -24,6 +24,7 @@ import { AccountMovementService } from 'src/app/core/services/ms-account-movemen
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { MsMassivecapturelineService } from 'src/app/core/services/ms-massivecaptureline/ms-massivecaptureline.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
@@ -99,7 +100,8 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     private msMassivecapturelineService: MsMassivecapturelineService,
     private elementRef: ElementRef,
     private renderer: Renderer2,
-    private router: Router
+    private router: Router,
+    private lotService: LotService
   ) {
     super();
     this.settings = {
@@ -112,6 +114,11 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         delete: false,
         position: 'right',
       },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-4"></i>',
+      },
+      //
       columns: { ...COLUMNS },
     };
 
@@ -122,8 +129,12 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         columnTitle: 'Acciones',
         edit: true,
         add: false,
-        delete: false,
+        delete: true,
         position: 'right',
+      },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-2" ></i>',
       },
       columns: { ...COLUMNS_CARGADOS },
     };
@@ -204,9 +215,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      event: [null],
+      event: [null, Validators.required],
       event_: [null],
-      bank: [null],
+      bank: [null, Validators.required],
       from: [null],
     });
 
@@ -233,7 +244,8 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     data: any,
     editVal: boolean,
     valScroll: boolean,
-    valCargado: boolean
+    valCargado: boolean,
+    dataTable?: any
   ) {
     let config: ModalOptions = {
       initialState: {
@@ -241,11 +253,20 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         edit: editVal,
         valScroll,
         valCargado,
+        dataTable,
         callback: async (next: boolean, dataUpdate: any) => {
           if (next) {
             if (this.cargado2) {
-              await this.updatePagoCargado(null, dataUpdate);
-              this.valAccCargado = null;
+              if (editVal) {
+                await this.updatePagoCargado(null, dataUpdate);
+                this.valAccCargado = null;
+              } else {
+                this.dataCargada.add(dataUpdate);
+                this.dataCargada.setSort([
+                  { field: 'paymentId', direction: 'asc' },
+                ]);
+                this.dataCargada.refresh();
+              }
             } else {
               this.getPayments('no');
             }
@@ -429,7 +450,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.totalItems = 0;
         if (filter == 'si') {
-          this.alert('warning', 'No se Encontraron Resultados', '');
+          this.alert('warning', 'No se encontraron resultados', '');
         }
         this.loading = false;
         this.valAcc = null;
@@ -449,7 +470,8 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         params.addFilter('id', lparams.text, SearchFilter.EQ);
       } else {
         console.log('NO');
-        params.addFilter('processKey', lparams.text, SearchFilter.ILIKE);
+        params.addFilter('id', lparams.text, SearchFilter.ILIKE);
+        // params.addFilter('processKey', lparams.text, SearchFilter.ILIKE);
       }
 
     params.addFilter('address', this.layout, SearchFilter.EQ);
@@ -476,8 +498,10 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    if (lparams?.text.length > 0)
+    if (lparams?.text.length > 0) {
       params.addFilter('bankCode', lparams.text, SearchFilter.ILIKE);
+      // params.addFilter('name', lparams.text, SearchFilter.OR);
+    }
     // if (!isNaN(parseInt(lparams?.text))) {
     //   console.log('SI');
     //   params.addFilter('code', lparams.text, SearchFilter.EQ);
@@ -651,6 +675,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
                 Promise.all(result).then(resp => {
                   this.dataCargada.load(arr);
+                  this.dataCargada.setSort([
+                    { field: 'paymentId', direction: 'asc' },
+                  ]);
                   this.dataCargada.refresh();
                   console.log(this.dataCargada);
                   // this.getPayments('no');
@@ -705,17 +732,11 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
           this.form2.get('BLK_CTRL_MONTO').setValue(data.BLK_CTRL_MONTO);
           this.dataCargada.load([]);
           this.dataCargada.refresh();
-          this.getPayments('no');
+          // this.getPayments('no');
           this.cargado2 = true;
-          setTimeout(() => {
-            this.cargado = true;
-          }, 1000);
-
+          this.cargado = true;
           this.loadingBtn = false;
-          // BLK_CTRL_CUANTOS
-          // BLK_CTRL_MONTO
         } else {
-          this.alert('success', 'Archivo Cargado Correctamente', '');
           this.form2.get('BLK_CTRL_CUANTOS').setValue(data.BLK_CTRL_CUANTOS);
           this.form2.get('BLK_CTRL_MONTO').setValue(data.BLK_CTRL_MONTO);
 
@@ -760,24 +781,41 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
                 ' - ' +
                 item.COMER_PAGOREF_CVE_BANCO,
             };
+            // DESCRIPCIÓN DEL PAGO SAT //
             const desc = await this.gettypeSatIdUpdate(
               item.COMER_PAGOREF_ID_TIPO_SAT
             );
             obj['descriptionSAT'] = !desc ? null : desc;
+
+            // SETEANDO LOS VALORES DE LOTE PÚBLICO Y EVENTO AL PAGO // (SÓLO PARA MOSTRAR EN LA TABLA)
+            const eventAndLotePublic: any = await this.getEventsAndLotePublic(
+              obj.lotId
+            );
+            if (eventAndLotePublic) {
+              obj.lotPub = eventAndLotePublic.lotPub;
+              obj.event = eventAndLotePublic.eventId;
+            } else {
+              obj.lotPub = null;
+              obj.event = null;
+            }
+
             arr.push(obj);
           });
 
           Promise.all(result).then(resp => {
             this.dataCargada.load(arr);
+            this.dataCargada.setSort([
+              { field: 'paymentId', direction: 'asc' },
+            ]);
             this.dataCargada.refresh();
             console.log(this.dataCargada);
-            this.getPayments('no');
             this.cargado2 = true;
             this.cargado = true;
             setTimeout(() => {
               this.performScroll();
             }, 500);
             this.loadingBtn = false;
+            this.alert('success', 'Archivo Cargado Correctamente', '');
           });
         }
         this.clearInput();
@@ -786,6 +824,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         this.dataCargada.load([]);
         this.dataCargada.refresh();
         this.clearInput();
+        this.cargado2 = false;
         this.loadingBtn = false;
       }
 
@@ -1023,6 +1062,18 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         callback: async (next: boolean, dataUpdate?: any) => {
           if (next) {
             if (this.cargado2) {
+              // SETEANDO LOS VALORES DE LOTE PÚBLICO Y EVENTO AL PAGO // (SÓLO PARA MOSTRAR EN LA TABLA)
+              const eventAndLotePublic: any = await this.getEventsAndLotePublic(
+                dataUpdate.lotId
+              );
+              if (eventAndLotePublic) {
+                dataUpdate.lotPub = eventAndLotePublic.lotPub;
+                dataUpdate.event = eventAndLotePublic.eventId;
+              } else {
+                dataUpdate.lotPub = null;
+                dataUpdate.event = null;
+              }
+
               await this.updatePagoCargado(null, dataUpdate);
               this.valAccCargado = null;
             } else {
@@ -1168,6 +1219,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
           this.alert('success', 'Registros Guardados Correctamente', '');
           this.form2.reset();
           this.dataCargada.load([]);
+          this.dataCargada.setSort([{ field: 'paymentId', direction: 'asc' }]);
           this.dataCargada.refresh();
           this.getPayments('no');
           this.cargado2 = false;
@@ -1203,7 +1255,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   }
 
   addCargado() {
-    this.openForm(null, false, false, true);
+    this.openForm(null, false, false, true, this.dataCargada);
   }
 
   valAccCargado: any = null;
@@ -1256,6 +1308,16 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
           //   validSistem: 'R',
           //   result: 'Referencia Invalida',
           // };
+          const eventAndLotePublic: any = await this.getEventsAndLotePublic(
+            this.valAccCargado.lotId
+          );
+          if (eventAndLotePublic) {
+            this.valAccCargado.lotPub = eventAndLotePublic.lotPub;
+            this.valAccCargado.event = eventAndLotePublic.eventId;
+          } else {
+            this.valAccCargado.lotPub = null;
+            this.valAccCargado.event = null;
+          }
           await this.updatePagoCargado(
             this.valAccCargado.paymentId,
             this.valAccCargado
@@ -1289,6 +1351,16 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
           //   validSistem: 'A',
           //   result: 'Referencia Valida',
           // };
+          const eventAndLotePublic: any = await this.getEventsAndLotePublic(
+            this.valAccCargado.lotId
+          );
+          if (eventAndLotePublic) {
+            this.valAccCargado.lotPub = eventAndLotePublic.lotPub;
+            this.valAccCargado.event = eventAndLotePublic.eventId;
+          } else {
+            this.valAccCargado.lotPub = null;
+            this.valAccCargado.event = null;
+          }
           await this.updatePagoCargado(
             this.valAccCargado.paymentId,
             this.valAccCargado
@@ -1297,6 +1369,17 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
           this.valAccCargado.lotId = L_LOTE;
           this.valAccCargado.validSistem = 'B';
           this.valAccCargado.result = 'Referencia Pago Bases';
+
+          const eventAndLotePublic: any = await this.getEventsAndLotePublic(
+            this.valAccCargado.lotId
+          );
+          if (eventAndLotePublic) {
+            this.valAccCargado.lotPub = eventAndLotePublic.lotPub;
+            this.valAccCargado.event = eventAndLotePublic.eventId;
+          } else {
+            this.valAccCargado.lotPub = null;
+            this.valAccCargado.event = null;
+          }
 
           await this.updatePagoCargado(
             this.valAccCargado.paymentId,
@@ -1336,6 +1419,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     this.dataCargada.update(this.valAccCargado, selectedRow).then(() => {
       console.log('Registro actualizado:', selectedRow);
     });
+    this.dataCargada.setSort([{ field: 'paymentId', direction: 'asc' }]);
     this.dataCargada.refresh();
   }
 
@@ -1361,6 +1445,37 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             resolve(null);
           },
         });
+    });
+  }
+  questionDeleteCargada(data: any) {
+    console.log(data);
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.dataCargada.remove(data);
+        this.dataCargada.refresh();
+        this.alert('success', 'El registro se eliminó correctamente', '');
+      }
+    });
+  }
+
+  async getEventsAndLotePublic(lot: any) {
+    if (!lot) return null;
+    const params = new FilterParams();
+    params.addFilter('idLot', lot, SearchFilter.EQ);
+    return new Promise((resolve, reject) => {
+      this.lotService.getLotbyEvent_(params.getParams()).subscribe({
+        next: data => {
+          resolve(data.data[0]);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
     });
   }
 }
