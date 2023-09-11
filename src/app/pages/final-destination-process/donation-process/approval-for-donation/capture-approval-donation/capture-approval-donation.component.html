@@ -27,10 +27,18 @@
             <div class="col-md-6">
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('type')" label="Tipo">
-                  <ng-select formControlName="type" class="form-control pt-1">
+                  <input
+                    #inputValue
+                    type="text"
+                    class="form-control"
+                    formControlName="type"
+                    readonly />
+                </form-field>
+                <!-- <form-field [control]="regisForm.get('type')" label="Tipo">
+                  <ng-select formControlName="type" class="form-control pt-1" readonly>
                     <ng-option value="COMPDON">COMPDON</ng-option>
                   </ng-select>
-                </form-field>
+                </form-field> -->
               </div>
             </div>
 
@@ -42,7 +50,8 @@
                   <input
                     type="text"
                     class="form-control"
-                    formControlName="area" />
+                    formControlName="area"
+                    readonly />
                 </form-field>
               </div>
             </div>
@@ -51,15 +60,18 @@
           <div class="row mt-3">
             <div class="col-md-2">
               <div class="mb-3 pl-4 pr-4">
+                <!-- <form-field [control]="regisForm.get('year')" label="Año">
+                  <input type="text" class="form-control" [bsConfig]="bsConfigToYear" #dp="bsDatepicker"
+                    formControlName="year" bsDatepicker [(bsValue)]="bsValueToYear" />
+                </form-field> -->
                 <form-field [control]="regisForm.get('year')" label="Año">
                   <input
+                    #inputValue
                     type="text"
                     class="form-control"
-                    [bsConfig]="bsConfigToYear"
-                    #dp="bsDatepicker"
                     formControlName="year"
-                    bsDatepicker
-                    [(bsValue)]="bsValueToYear" />
+                    class="form-control"
+                    readonly />
                 </form-field>
               </div>
             </div>
@@ -67,10 +79,12 @@
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('folio')" label="Folio">
                   <input
+                    #inputValue
                     type="text"
                     class="form-control"
                     formControlName="folio"
-                    maxlength="4" />
+                    class="form-control"
+                    readonly />
                 </form-field>
               </div>
             </div>
@@ -82,28 +96,64 @@
                   <input
                     type="text"
                     class="form-control"
-                    bsDatepicker
-                    formControlName="captureDate" />
+                    formControlName="captureDate"
+                    readonly />
                 </form-field>
               </div>
             </div>
           </div>
           <div class="row mt-3">
-            <div class="col-md-6">
+            <div class="col-md-12">
               <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="regisForm.get('keyEvent')">
+                <form-field
+                  [control]="regisForm.get('keyEvent')"
+                  label="CVE. Acta">
                   <input
+                    #inputValue
                     type="text"
                     class="form-control"
-                    formControlName="keyEvent"
-                    readonly />
+                    readonly
+                    formControlName="keyEvent" />
                 </form-field>
               </div>
             </div>
-            <div class="col-md-6 text-md-right">
+            <!-- <div class="col-md-6 text-md-right">
               <button class="btn btn-primary btn-sm active">
                 Cerrar Evento
               </button>
+            </div> -->
+            <div class="row m-3">
+              <div class="col-4"></div>
+              <div class="col-md-3 text-end">
+                <button
+                  (click)="agregarCaptura()"
+                  type="button"
+                  class="btn btn-info active btn-sm mr-3">
+                  Nueva Captura
+                  <i class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary active btn-sm mr-3"
+                  (click)="searchEventos()">
+                  Estatus Actas
+                  <i class="bx bx-search bx-sm float-icon"></i>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary active btn-sm mr-3"
+                  (click)="cerrarEvento()">
+                  Cerrar Evento
+                  <i class="fas fa-close bx-sm float-icon"></i>
+                </button>
+                <button
+                  (click)="clean()"
+                  type="button"
+                  class="btn btn-danger active btn-sm mr-3">
+                  Limpiar
+                  <i class="fa fa-eraser" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -200,96 +250,36 @@
                 </div>
               </div>
             </div>
-            <div class="row">
-              <form-loader *ngIf="loading"></form-loader>
-              <div class="col-md-12">
-                <ng-scrollbar
-                  [track]="'all'"
-                  [ngStyle]="{
-                    height: loading ? '0px' : '600px'
-                  }">
-                  <ng2-smart-table
-                    [attr.class]="'table-bordered table-responsive'"
-                    [settings]="settings"
-                    [source]="dataTableGood"
-                    (userRowSelect)="selectData($event)">
-                  </ng2-smart-table>
-                </ng-scrollbar>
-                <app-pagination
-                  [params]="paramsList"
-                  [totalItems]="totalItems"></app-pagination>
-              </div>
-
-              <!--   <form [formGroup]="actaGoodForm" class="form-material">
-                <div class="row">
-                 <div class="col-6 mt-4">
-                    <form-field [control]="actaGoodForm.get('statusGood')" label="Estatus Bien">
-                      <input [(ngModel)]="statusGood_" type="text" class="form-control" formControlName="statusGood"
-                        readonly />
-                    </form-field>
-                  </div> 
-                </div>
-              </form>-->
-              <div class="col-6 align-items-center">
-                <div class="row">
-                  <div class="col-6">
-                    <span class="text-success mr-5"
-                      ><i class="fa fa-square"></i> Disponibles</span
-                    >
-                  </div>
-                  <div class="col-6">
-                    <span class="text-black"
-                      ><i class="fa fa-square"></i> No disponibles</span
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
 
-          <div class="row pt-2">
+          <!-- <div class="row pt-2">
             <div class="col-md-12 text-center mt-4 mb-4">
-              <button
-                tooltip="Agregar Bien al Acta"
-                containerClass="tooltip-style"
-                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-                type="button"
-                (click)="addSelect()">
+              <button tooltip="Agregar Bien al Acta" containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="addSelect()">
                 <i class="bx bx-chevron-down bx-md"></i>
               </button>
-              <button
-                tooltip="Agregar Bienes al Acta"
-                containerClass="tooltip-style"
-                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-                type="button"
-                (click)="addAll()">
+              <button tooltip="Agregar Bienes al Acta" containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="addAll()">
                 <i class="bx bx-chevrons-down bx-md"></i>
               </button>
-              <button
-                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-                type="button"
-                (click)="removeAll()">
+              <button class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="removeAll()">
                 <i class="bx bx-chevrons-up bx-md"></i>
               </button>
-              <button
-                tooltip="Quitar Bien del Acta"
-                containerClass="tooltip-style"
-                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-                type="button"
-                (click)="removeSelect()">
+              <button tooltip="Quitar Bien del Acta" containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="removeSelect()">
                 <i class="bx bx-chevron-up bx-md"></i>
               </button>
             </div>
-          </div>
+          </div> -->
 
           <div class="col-md-12">
             <h6>BIENES RELACIONADOS CON EL ACTA</h6>
             <div class="row">
-              <form-loader *ngIf="loading2"></form-loader>
+              <form-loader *ngIf="loading3"></form-loader>
               <div class="col-md-12">
                 <ng-scrollbar
                   [track]="'all'"
-                  [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
+                  [ngStyle]="{ height: loading3 ? '0px' : '400px' }">
                   <ng2-smart-table
                     class="table-responsive"
                     [attr.class]="'table-bordered table-responsive'"
