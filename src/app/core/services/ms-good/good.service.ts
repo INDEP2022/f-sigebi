@@ -501,4 +501,8 @@ export class GoodService extends HttpService {
   getGoodByNoGood(good: number) {
     return this.get(`${GoodEndpoints.Good}?filter.goodId=$eq:${good}`);
   }
+
+  updateGood(params?: any): Observable<IListResponse<any>> {
+    return this.put(GoodEndpoints.Good, params);
+  }
 }

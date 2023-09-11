@@ -1596,7 +1596,9 @@ export class PerformProgrammingFormComponent
               });
             }
           },
-          error: error => (this.loadingGoods = false),
+          error: error => {
+            this.loadingGoods = false;
+          },
         });
     }
 
@@ -2273,6 +2275,7 @@ export class PerformProgrammingFormComponent
           storeId: warehouse,
           status: 'VXP',
         };
+        console.log('formData', formData);
         this.goodService.updateByBody(formData).subscribe({
           next: () => {
             resolve(true);
