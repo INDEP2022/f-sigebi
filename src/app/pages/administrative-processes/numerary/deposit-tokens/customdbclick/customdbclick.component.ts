@@ -251,7 +251,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.accountMovementService.update(data).subscribe({
         next: async (response: any) => {
-          this.alert('success', `Movimiento Actualizado Correctamente`, '');
+          this.alert('success', `Movimiento actualizado correctamente`, '');
 
           // this.modalRef.content.callback(true);
           // this.close();
@@ -260,7 +260,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
           resolve(true);
         },
         error: err => {
-          this.alert('error', `Error al Actualizar el Movimiento`, '');
+          this.alert('error', `Error al actualizar el movimiento`, '');
           // this.loading = false;
           resolve(false);
         },

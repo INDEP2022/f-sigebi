@@ -696,7 +696,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           } else {
             this.alert(
               'info',
-              'No Tiene Permiso de Lectura y/o Escritura sobre la Pantalla, por lo que no podrá Ingresar',
+              'No tiene permiso de lectura y/o escritura sobre la pantalla, por lo que no podrá ingresar',
               ''
             );
             return;
@@ -706,7 +706,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       error: (error: any) => {
         this.alert(
           'info',
-          'No Tiene Permiso de Lectura y/o Escritura sobre la Pantalla, por lo que no podrá Ingresar',
+          'No tiene permiso de lectura y/o escritura sobre la pantalla, por lo que no podrá ingresar',
           ''
         );
         this.router.navigate(['/pages/general-processes/goods-tracker']);
@@ -1138,14 +1138,14 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     // console.log('this.conversion', this.conversion);
     if (this.actasDefault != null) {
       if (this.actasDefault.keysProceedings == null) {
-        this.alert('warning', 'No Existe Acta para Cerrar', '');
+        this.alert('warning', 'No existe acta para cerrar', '');
         return;
       }
 
       if (this.dataRecepcionGood.count() == 0) {
         this.alertInfo(
           'warning',
-          'El Acta no tiene ningún Bien asignado, no se puede Cerrar.',
+          'El Acta no tiene ningún Bien asignado, no se puede cerrar.',
           ''
         );
         return;
@@ -1164,7 +1164,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         null;
       } else {
         if (this.delete == true) {
-          this.alertQuestion('question', '¿Desea Cerrar el Acta?', '').then(
+          this.alertQuestion('question', '¿Desea cerrar el Acta?', '').then(
             async question => {
               if (question.isConfirmed) {
                 // await this.createDET();
@@ -1207,7 +1207,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
                       this.alertInfo(
                         'success',
-                        'Se Cerró el Acta Correctamente',
+                        'Se cerró el Acta correctamente',
                         ''
                       );
                       // this.alert('success', 'Acta cerrada', '');
@@ -1224,7 +1224,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                       this.loadingBtn = false;
                       this.alert(
                         'error',
-                        'Ocurrió un Error al Cerrar el Acta',
+                        'Ocurrió un error al cerrar el Acta',
                         ''
                       );
                       // this.loading = false
@@ -1237,7 +1237,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           if (this.delete == false) {
             this.alert(
               'warning',
-              'El Usuario no está Autorizado para Cerrar Acta',
+              'El usuario no está autorizado para cerrar Acta',
               // 'El Usuario no está autorizado para cerrar acta',
               ''
             );
@@ -1245,7 +1245,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           if (this.delete == null) {
             this.alert(
               'warning',
-              'El Usuario no está Autorizado para Cerrar Acta',
+              'El usuario no está autorizado para cerrar Acta',
               // 'El Usuario no está autorizado para cerrar acta',
               ''
             );
@@ -1255,7 +1255,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'No Existe Ningún Acta a Cerrar.',
+        'No existe ningún Acta a cerrar.',
         // 'El Usuario no está autorizado para cerrar acta',
         ''
       );
@@ -1310,14 +1310,14 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     // this.createConversion();
     // this.createConversion();
     if (!this.conversion)
-      return this.alert('warning', 'Debe Seleccionar una Conversión', '');
+      return this.alert('warning', 'Debe seleccionar una conversión', '');
     await this.updateConversion();
     // this.edit ? this.update() : this.create();
     const detailActa = await this.getDetailActa(this.conversion);
     if (!detailActa) {
       this.alert(
         'warning',
-        'Sin Detalle de Acta',
+        'Sin detalle de Acta',
         'Es requerido para generar el reporte'
       );
       setTimeout(() => {
@@ -1521,7 +1521,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       next: (data: any) => {
         this.alert(
           'success',
-          'Carga Masiva Completada',
+          'Carga masiva completada',
           // `Expediente : ${this.fileNumber}`
           ``
         );
@@ -1543,7 +1543,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       .subscribe({
         next: data => {
           if ((data.data.statusProceedings = 'CERRADA')) {
-            this.alert('info', 'Acta Está Cerrada', '');
+            this.alert('info', 'Acta está cerrada', '');
             return;
           }
           // this.loading = false;
@@ -1684,7 +1684,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       if (next) {
         this.alert(
           'success',
-          'Se Cargó la Información del Acta',
+          'Se cargó la información del Acta',
           next.keysProceedings
         );
       }
@@ -1775,7 +1775,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   savActa() {
     // this.loading = false;
     // this.changeStatus();
-    this.alert('success', 'Acta Actualizada Correctamente', '');
+    this.alert('success', 'Acta actualizada correctamente', '');
   }
   moverRegistro(registro: any, origen: any[], destino: any[]) {
     const index = origen.indexOf(registro);
@@ -1814,7 +1814,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       if (this.actasDefault == null) {
         this.alert(
           'warning',
-          'No Existe un Acta en la cual Asignar el Bien.',
+          'No existe un Acta en la cual asignar el Bien.',
           'Debe capturar un acta.'
         );
         return;
@@ -1822,7 +1822,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         if (this.statusConv == 'CERRADA') {
           this.alert(
             'warning',
-            'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+            'El Acta ya está cerrada, no puede realizar modificaciones a esta',
             ''
           );
           return;
@@ -1834,7 +1834,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
               this.alert(
                 'warning',
                 `Ese Bien ya se encuentra en el Acta ${good.di_acta}`,
-                'Debe Capturar un Acta.'
+                'Debe capturar un Acta.'
               );
             } else if (good.di_disponible == 'N') {
               this.onLoadToast(
@@ -1869,7 +1869,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         }
       }
     } else {
-      this.alert('warning', 'Seleccione Primero el Bien a Asignar.', '');
+      this.alert('warning', 'Seleccione primero el Bien a asignar.', '');
     }
   }
 
@@ -1914,7 +1914,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     if (this.actasDefault == null) {
       this.alert(
         'warning',
-        'No existe un Acta en la cual Asignar el Bien.',
+        'No existe un Acta en la cual asignar el Bien.',
         'Debe capturar un acta.'
       );
       return;
@@ -1922,7 +1922,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       if (this.statusConv == 'CERRADA') {
         this.alert(
           'warning',
-          'El Acta ya esta Cerrada, no puede Realizar Modificaciones a esta',
+          'El Acta ya esta cerrada, no puede realizar modificaciones a esta',
           ''
         );
         return;
@@ -1966,7 +1966,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     if (this.statusConv == 'CERRADA') {
       this.alert(
         'warning',
-        'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+        'El Acta ya está cerrada, no puede realizar modificaciones a esta',
         ''
       );
       return;
@@ -1974,15 +1974,15 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       if (this.actasDefault == null) {
         this.alert(
           'warning',
-          'No Existe un Acta en la cual Asignar el Bien.',
-          'Debe Capturar un Acta.'
+          'No existe un Acta en la cual asignar el Bien.',
+          'Debe capturar un Acta.'
         );
         return;
       } else if (this.selectedGooodsValid.length == 0) {
         this.alert(
           'warning',
-          'Debe Seleccionar un Bien que Forme Parte del Acta Primero',
-          'Debe Capturar un Acta.'
+          'Debe seleccionar un Bien que forme parte del Acta primero',
+          'Debe capturar un Acta.'
         );
         return;
       } else {
@@ -2019,7 +2019,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     if (this.actasDefault == null) {
       this.alert(
         'warning',
-        'No Existe un Acta en la cual Asignar el Bien.',
+        'No existe un Acta en la cual asignar el Bien.',
         'Debe Capturar un Acta.'
       );
       return;
@@ -2027,7 +2027,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       if (this.statusConv == 'CERRADA') {
         this.alert(
           'warning',
-          'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+          'El Acta ya está cerrada, no puede realizar modificaciones a esta',
           ''
         );
         return;
@@ -2243,7 +2243,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       if (next) {
         this.alert(
           'success',
-          'Se Cargó la Información del Acta',
+          'Se cargó la información del Acta',
           next.keysProceedings
         );
       }
@@ -2323,11 +2323,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   actualizarActa() {
     if (!this.actasDefault) {
-      this.alertInfo('warning', 'Debe Seleccionar un Acta', '');
+      this.alertInfo('warning', 'Debe seleccionar un Acta', '');
       return;
     }
     if (this.actasDefault.statusProceedings == 'CERRADA') {
-      this.alertInfo('warning', 'No puede Actualizar un Acta Cerrada', '');
+      this.alertInfo('warning', 'No puede actualizar un Acta cerrada', '');
       return;
     }
     this.actasDefault.address = this.actaRecepttionForm.get('direccion').value;
@@ -2338,10 +2338,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       .editProceeding(this.actasDefault.id, this.actasDefault)
       .subscribe({
         next: async data => {
-          this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
+          this.alertInfo('success', 'Se actualizó el Acta correctamente', '');
         },
         error: error => {
-          this.alert('error', 'Ocurrió un Error al Actualizar el Acta', '');
+          this.alert('error', 'Ocurrió un error al actualizar el Acta', '');
           // this.loading = false
         },
       });

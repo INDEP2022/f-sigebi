@@ -161,21 +161,21 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   question() {
     console.log('this.folioEscaneoNg', this.folioEscaneoNg);
     if (this.folioEscaneoNg != '') {
-      this.alert('warning', 'El Folio de Escaneo ya ha sido Generado.', '');
+      this.alert('warning', 'El Folio de Escaneo ya ha sido generado.', '');
       return;
     }
     if (this.goods.length === 0) {
-      this.alert('warning', 'Debe Cargar al Menos un Bien', '');
+      this.alert('warning', 'Debe cargar al menos un Bien', '');
       return;
     }
 
     if (this.good == null) {
-      this.alert('warning', 'Debe Cargar al Menos un Bien Válido', '');
+      this.alert('warning', 'Debe cargar al menos un Bien válido', '');
       return;
     }
     this.alertQuestion(
       'question',
-      'Se Generará un Folio de Escaneo para los Bienes',
+      'Se generará un Folio de Escaneo para los bienes',
       '¿Desea Continuar?'
     ).then(question => {
       if (question.isConfirmed) {
@@ -215,7 +215,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         this.document = response;
         this.alert(
           'success',
-          `Folio de Escaneo Generado Correctamente`,
+          `Folio de Escaneo generado correctamente`,
           `No. ${response.id}`
         );
         this.generateFo = false;
@@ -231,7 +231,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
 
   toNextForm() {
     if (!this.folioEscaneoNg) {
-      this.alert('warning', 'Debe Generar el Folio de Escaneo', '');
+      this.alert('warning', 'Debe generar el Folio de Escaneo', '');
       return;
     }
     this.goNextForm();
@@ -249,12 +249,12 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   imprimirFolioEscaneo() {
     // if (this.dictamen) {
     if (!this.folioEscaneoNg) {
-      this.alert('warning', 'Debe Generar el Folio de Escaneo', '');
+      this.alert('warning', 'Debe generar el Folio de Escaneo', '');
       return;
     }
 
     if (this.folioEscaneoNg.folioUniversal == '') {
-      this.alert('warning', 'No Tiene Folio de Escaneo para Imprimir.', '');
+      this.alert('warning', 'No tiene Folio de Escaneo para imprimir.', '');
       return;
     } else {
       let params = {
@@ -277,7 +277,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
             };
-            this.alert('success', 'Reporte Generado Correctamente', '');
+            this.alert('success', 'Reporte generado correctamente', '');
             this.modalService.show(PreviewDocumentsComponent, config);
           }
         });
@@ -286,11 +286,11 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
 
   visualizacionFolioEscaneo() {
     if (!this.folioEscaneoNg) {
-      this.alert('warning', 'Debe Generar el Folio de Escaneo', '');
+      this.alert('warning', 'Debe generar el Folio de Escaneo', '');
       return;
     }
     if (this.folioEscaneoNg == '') {
-      this.alert('warning', 'No Tiene Folio de Escaneo para Visualizar.', '');
+      this.alert('warning', 'No tiene Folio de Escaneo para visualizar.', '');
       return;
     } else {
       this.goNextForm();
