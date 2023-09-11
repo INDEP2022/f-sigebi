@@ -800,6 +800,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               .getAll(this.paramsShowTransportable.getValue())
               .subscribe({
                 next: async data => {
+                  console.log('data', data);
                   _data.push(data.data[0]);
                   this.goodsTransportable.clear();
                   _data.forEach(async item => {
@@ -842,7 +843,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       item.unitMeasureName = 'KILOGRAMOS';
                     } else if (item.unitMeasure == 'MT') {
                       item.unitMeasureName = 'METRO';
-                    } else if (item.unitMeasure == 'PZ') {
+                    } else if (
+                      item.unitMeasure == 'PZ' ||
+                      item.unitMeasure == 'PIEZA'
+                    ) {
                       item.unitMeasureName = 'PIEZA';
                     } else if (item.unitMeasure == 'CZA') {
                       item.unitMeasureName = 'CABEZA';
@@ -3986,13 +3990,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   saveInfoGoodReception() {
-    this.count = 0;
+    console.log('this.goodsReception', this.goodsReception);
+    /*this.count = 0;
     this.goodsReception.value.map(async (good: IGood) => {
-      /*console.log('good', good);
-      const checkUnit = await this.checkInfoUnit(
-        good.unitMeasure,
-        good.saeMeasureUnit
-      ); */
+    
       this.count = this.count + 1;
       if (Number(good.quantity) < Number(good.quantitySae)) {
         if (this.count == 1) {
@@ -4069,28 +4070,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           );
         }
       }
-    });
-  }
-
-  checkInfoUnit(unitMesure: string, saeUnitMesure: string) {
-    console.log('unitMesure', unitMesure);
-    console.log('saeUnitMesure', saeUnitMesure);
-
-    if (unitMesure) {
-    }
+    }); */
   }
 
   saveInfoGoodTransportable() {
-    /*const measureUnit: any = this.goodsTransportable.value.map(
-      async (good: any) => {
-        const infoGood: any = await this.checkInfoUnitMeasure(good);
-        if (infoGood) return infoGood;
-        //if (Number(good.quantity) < Number(good.quantitySae)) return good.goodId;
-      }
-    ); */
-
-    //onsole.log('validación', measureUnit);
-
+    console.log('goodsTransportable', this.goodsTransportable);
+    /*
     this.count == 0;
     this.goodId = '';
     let saePhysical: boolean = false;
@@ -4243,7 +4228,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           'No se encontraron bienes para actualizar'
         );
       }
-    }
+    } */
   }
 
   checkInfoUnitMeasure(good: any) {
