@@ -1,4 +1,4 @@
-import { HttpHeaders } from '@angular/common/http';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { StrategyEndpoints } from 'src/app/common/constants/endpoints/ms-strategy-endpoint';
@@ -6,6 +6,7 @@ import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.i
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IUnitsMedConv } from '../../models/administrative-processes/siab-sami-interaction/measurement-units';
 import { IMeasurementUnits } from '../../models/catalogs/measurement-units.model';
 import {
   IStrategyService,
@@ -130,8 +131,20 @@ export class StrategyServiceService extends HttpService {
     return this.delete(route);
   }
 
-  getUnitMedXConv(params: ListParams | string) {
-    const route = StrategyEndpoints.GetUnitMedXConv;
-    return this.get(route, params);
+  getUnitsMedXConv(
+    _params?: ListParams | string
+  ): Observable<IListResponse<IUnitsMedConv>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IUnitsMedConv>>(
+      `${StrategyEndpoints.UnitsMedConv}?${params}`
+    );
+  }
+
+  private makeParams(params: ListParams | string): HttpParams {
+    let httpParams: HttpParams = new HttpParams();
+    Object.keys(params).forEach(key => {
+      httpParams = httpParams.append(key, (params as any)[key]);
+    });
+    return httpParams;
   }
 }

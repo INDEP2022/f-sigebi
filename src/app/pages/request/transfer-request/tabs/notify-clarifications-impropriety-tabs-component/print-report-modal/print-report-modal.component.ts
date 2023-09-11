@@ -51,7 +51,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   totalItems: number = 0;
 
   title: string = 'Imprimir Reporte';
-  btnTitle: string = 'Firma Reporte';
+  btnTitle: string = 'Firmar Reporte';
   btnSubTitle: string = 'Vista Previa Reporte';
   printReport: boolean = true;
   listSigns: boolean = false;

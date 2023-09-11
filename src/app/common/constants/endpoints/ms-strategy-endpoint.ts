@@ -16,5 +16,5 @@ export enum StrategyEndpoints {
   strategyInd = 'strategy-ind-strategy',
   strategyIndReports = 'strategy-ind-reports',
   PaEstGood = 'aplication/pa-est-goods-incor',
-  GetUnitMedXConv = 'aplication/get-units-med-x-conv',
+  UnitsMedConv = 'aplication/get-units-med-x-conv',
 }
