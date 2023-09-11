@@ -1,17 +1,17 @@
-const ERROR_GOOD_PARAM = `El número de Bien ingresado como parámetro no es un número`;
-const ERROR_GOOD_NULL = `Ingresa un número de Bien`;
+const ERROR_GOOD_PARAM = `El número de bien ingresado como parámetro no es un número`;
+const ERROR_GOOD_NULL = `Ingresa un número de bien`;
 const NOT_FOUND_GOOD_APPOINTMENT = (error: string) =>
-  `El número de Bien no existe. ${error}`;
+  `El número de bien no existe. ${error}`;
 const NOT_FOUND_GOOD = (error: string) =>
-  `Error al cargar la información del Bien. ${error}`;
+  `Error al cargar la información del bien. ${error}`;
 const NOT_FOUND_GOOD_DESCRIPTION = (error: string) =>
-  `Error al consultar la descripción del Bien. ${error}`;
+  `Error al consultar la descripción del bien. ${error}`;
 const NOT_FOUND_PAYMENTS_BANK = (error: string) =>
-  `Error al consultar los Pagos Recibidos en el Banco. ${error}`;
+  `Error al consultar los pagos recibidos en el banco. ${error}`;
 const NOT_FOUND_PAYMENTS_BANK_TOTALS = (error: string) =>
-  `Error al consultar la suma Total de los Depósitos. ${error}`;
+  `Error al consultar la suma total de los depósitos. ${error}`;
 const NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS = (error: string) =>
-  `Error al consultar la Composición de Pagos Recibidos. ${error}`;
+  `Error al consultar la composición de pagos recibidos. ${error}`;
 const NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS_TOTALS = (error: string) =>
   `Error al consultar la suma de los totales. ${error}`;
 
