@@ -93,4 +93,14 @@ export class GoodPosessionThirdpartyService extends HttpService {
     const route = `${ThirdPartyAdmonEndpoints.StrategyReports}?filter.monthNumber=$eq:${month}&filter.yearNumber=$eq:${year}&filter.delegation1Number=$eq:${delegation}&filter.delegation1Number=$eq:1`;
     return this.get(route);
   }
+
+  getAllStrategyFormat(params?: any) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyFormat}`;
+    return this.get(route, params);
+  }
+
+  getAllStrategyFormatById(id: any) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyFormat}?filter.id=$eq:${id}`;
+    return this.get(route);
+  }
 }

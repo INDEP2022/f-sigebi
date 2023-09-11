@@ -10,7 +10,7 @@ export const SERVICEORDERSFORMATHISTORIC_COLUMNS = {
     sort: false,
   },
   status: {
-    title: 'Estatus',
+    title: 'Estado',
     width: '10%',
     sort: false,
   },
