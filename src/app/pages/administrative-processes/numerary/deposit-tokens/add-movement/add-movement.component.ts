@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { format, parse } from 'date-fns';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
@@ -14,6 +16,7 @@ import { AccountMovementService } from 'src/app/core/services/ms-account-movemen
 import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_POINT_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -21,8 +24,11 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './add-movement.component.html',
   styles: [],
 })
-export class AddMovementComponent extends BasePage implements OnInit {
-  title: string = 'Agregar Movimiento de Cuenta';
+export class AddMovementComponent
+  extends BasePage
+  implements OnInit, AfterViewInit
+{
+  title: string = 'Movimiento de Cuenta';
   data1: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -35,14 +41,18 @@ export class AddMovementComponent extends BasePage implements OnInit {
   banks = new DefaultSelect<any>();
   categories = new DefaultSelect<any>();
   maxDate = new Date();
-  dateMovem: Date;
+  dateMovem: string;
+  data: any;
+  valEdit: boolean;
+  minDate: Date = new Date();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private accountMovementService: AccountMovementService,
     private numeraryService: NumeraryService,
     private token: AuthService,
-    private parametersService: ParametersService
+    private parametersService: ParametersService,
+    private datePipe: DatePipe
   ) {
     super();
   }
@@ -52,20 +62,59 @@ export class AddMovementComponent extends BasePage implements OnInit {
     this.getCategory(new ListParams());
     this.getBanks(new ListParams());
   }
+  dateMovemResp: any;
+  dateMovem2Resp: any;
 
   prepareForm() {
     this.form = this.fb.group({
       bank: [null, [Validators.required]],
-      // account: [null, Validators.nullValidator],
-      // accountType: [null, Validators.nullValidator],
-      deposit: [null, [Validators.required]],
-      // square: [null, Validators.nullValidator],
-      dateCalculationInterests: [null],
-      dateMovement: [null, [Validators.required]],
-      category: [null, [Validators.required]],
-      // balanceOf: [null, Validators.nullValidator],
-      // balanceAt: [null, Validators.nullValidator],
+      deposit: [
+        null,
+        [
+          Validators.required,
+          Validators.max(999999999999999),
+          Validators.pattern(NUMBERS_POINT_PATTERN),
+        ],
+      ],
+      dateCalculationInterests: [''],
+      dateMovement: ['', [Validators.required]],
+      category: [null],
     });
+    console.log('this.data', this.data);
+    if (this.data) {
+      this.minDate = this.data.motiondate;
+      // const date1: string = this.datePipe.transform(this.data.calculationinterestsdate, 'yyyy-MM-dd');
+      const motionDate = new Date(this.data.motiondate);
+      const calculationinterestsdate = new Date(
+        this.data.calculationinterestsdate
+      );
+      motionDate.setDate(motionDate.getDate() + 1);
+      calculationinterestsdate.setDate(calculationinterestsdate.getDate() + 1);
+      this.dateMovem = this.datePipe.transform(motionDate, 'dd-MM-yyyy');
+
+      if (this.data.calculationinterestsdate) {
+        this.dateMovem2 = this.datePipe.transform(
+          calculationinterestsdate,
+          'dd-MM-yyyy'
+        );
+      } else {
+        this.dateMovem2 = null;
+      }
+
+      this.dateMovemResp = this.dateMovem;
+      this.dateMovem2Resp = this.dateMovem2;
+      this.form.patchValue({
+        bank: this.data.cveAccount,
+        deposit: this.data.deposit,
+        dateCalculationInterests: new Date(this.data.calculationinterestsdate),
+        dateMovement: new Date(this.data.motiondate),
+        category: this.data.category,
+      });
+
+      this.form.controls['bank'].setValue(this.data.bankAndNumber);
+
+      this.getCategoryUpdate(this.data.category);
+    }
   }
 
   getDataMovements() {
@@ -98,15 +147,45 @@ export class AddMovementComponent extends BasePage implements OnInit {
 
   dateMovement(event: any) {
     console.log('ev', event);
+
     console.log('dateMovem', this.dateMovem);
-    this.form.get('dateCalculationInterests').setValue('');
+    // this.form.get('dateCalculationInterests').setValue('');
+    // if () {
+
+    // }
+    // this.dateMovem2 = null;1
     // this.dateMovem = event.target.value;
   }
+
   close() {
     this.modalRef.hide();
   }
 
+  save() {
+    if (this.valEdit) {
+      this.updateRegister();
+    } else {
+      this.saveRegister();
+    }
+  }
+
   saveRegister() {
+    console.log(
+      Date.parse(this.form.value.dateCalculationInterests),
+      'aaa',
+      Date.parse(this.form.value.dateMovement)
+    );
+    if (
+      Date.parse(this.form.value.dateCalculationInterests) <
+      Date.parse(this.form.value.dateMovement)
+    ) {
+      this.alert(
+        'warning',
+        'La Fecha TESOFE no puede ser menor a la Fecha Depósito',
+        ''
+      );
+      return;
+    }
     console.log('VALUE', this.form.value);
     const SYSDATE = new Date();
     const USER = this.token.decodeToken().preferred_username;
@@ -158,6 +237,83 @@ export class AddMovementComponent extends BasePage implements OnInit {
         );
       },
     });
+  }
+
+  async updateRegister() {
+    if (
+      !(await this.compararFechas(
+        this.form.value.dateCalculationInterests,
+        this.form.value.dateMovement
+      ))
+    ) {
+      this.alert(
+        'warning',
+        'La Fecha TESOFE no puede ser menor a la Fecha Depósito',
+        ''
+      );
+      return;
+    }
+    // console.log('VALUE', this.form.value);
+    const SYSDATE = new Date();
+    const USER = this.token.decodeToken().preferred_username;
+    const CATEGORY = this.form.value.category;
+    const BANK = this.form.value.bank;
+    console.log(this.form.value.dateMovement, '=======', this.dateMovemResp);
+    let obj: any = {
+      category: this.data.category,
+      deposit: this.form.value.deposit,
+      dateMotion:
+        this.form.value.dateMovement == this.dateMovemResp
+          ? this.convertirFecha(this.form.value.dateMovement)
+          : this.returnParseDate_(this.form.value.dateMovement),
+      // this.convertirFecha(this.dateMovem),
+      numberAccount: this.data.accountnumber,
+      numberMotion: this.data.motionnumber,
+      dateCalculationInterests:
+        this.form.value.dateCalculationInterests == this.dateMovem2Resp
+          ? this.convertirFecha(this.form.value.dateCalculationInterests)
+          : this.returnParseDate_(this.form.value.dateCalculationInterests),
+      // this.convertirFecha(this.dateMovem2),
+    };
+    console.log('EN', obj);
+
+    this.accountMovementService.update(obj).subscribe({
+      next: response => {
+        console.log('response', response);
+        this.modalRef.content.callback(true);
+        this.close();
+        this.alert('success', 'Movimiento Actualizado Correctamente', '');
+      },
+      error: err => {
+        this.alert(
+          'error',
+          'Error al Actualizar el Movimiento',
+          err.error.message
+        );
+      },
+    });
+  }
+
+  async compararFechas(fecha1: any, fecha2: any) {
+    console.log(fecha1, 'eeeee', fecha2);
+    const fecha11 =
+      fecha1 == this.dateMovem2Resp
+        ? this.datePipe.transform(fecha1, 'yyyy-dd-MM')
+        : this.datePipe.transform(fecha1, 'yyyy-MM-dd');
+    const fecha22 =
+      fecha2 == this.dateMovemResp
+        ? this.datePipe.transform(fecha2, 'yyyy-dd-MM')
+        : this.datePipe.transform(fecha2, 'yyyy-MM-dd');
+    console.log(fecha11, 'iiii', fecha22);
+    const fecha1_ = Date.parse(fecha11);
+    const fecha2_ = Date.parse(fecha22);
+    console.log(fecha1_, 'ooooo', fecha2_);
+
+    if (fecha1_ < fecha2_) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   getBanks(lparams: ListParams) {
@@ -242,5 +398,68 @@ export class AddMovementComponent extends BasePage implements OnInit {
     console.log('DATEEEE', data);
     const formattedDate = moment(data).format('YYYY-MM-DD');
     return data ? formattedDate : null;
+  }
+
+  convertirFecha_(fecha: any) {
+    // Parsea la fecha en su formato actual
+    const fechaParseada = parse(fecha, 'dd-MM-yyyy', new Date());
+
+    // Formatea la fecha al formato deseado (yyyy-MM-dd)
+    return format(fechaParseada, 'yyyy-MM-dd');
+  }
+
+  returnParseDateUpdate(data: string) {
+    console.log('DATEEEE', data);
+
+    const formattedDate = this.datePipe.transform(data, 'yyyy-MM-dd');
+    return data ? formattedDate : null;
+  }
+  convertirFecha(fecha: any) {
+    // Divide la fecha en sus componentes
+    console.log('fecha', fecha);
+    if (fecha) {
+      var partes = fecha.split('-');
+
+      // Reorganiza los componentes en el formato deseado
+      var fechaFormateada = partes[2] + '-' + partes[1] + '-' + partes[0];
+
+      return fechaFormateada;
+    } else {
+      return null;
+    }
+  }
+  dateMovem2: string;
+  dateMovement2(event: any) {
+    console.log('event22', event);
+  }
+
+  getCategoryUpdate(cat: any) {
+    const params = new FilterParams();
+
+    params.addFilter('category', cat, SearchFilter.EQ);
+    params.addFilter('certificateType', 'DEPOSITO', SearchFilter.ILIKE);
+
+    return new Promise((resolve, reject) => {
+      this.parametersService
+        .getCategorzacionAutomNumerario(params.getParams())
+        .subscribe({
+          next: (response: any) => {
+            console.log('response', response);
+            let result = response.data.map(async (item: any) => {
+              item['categoryAndDesc'] =
+                item.initialCategory + ' - ' + item.certificateType;
+            });
+
+            Promise.all(result).then((resp: any) => {
+              this.form
+                .get('category')
+                .setValue(response.data[0].categoryAndDesc);
+            });
+          },
+          error: err => {
+            // this.form.get('category').setValue('');
+          },
+        });
+    });
   }
 }

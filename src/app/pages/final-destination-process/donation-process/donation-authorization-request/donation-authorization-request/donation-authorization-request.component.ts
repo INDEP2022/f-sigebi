@@ -46,9 +46,19 @@ export class DonationAuthorizationRequestComponent
 
   initForm() {
     this.form = this.fb.group({
-      proposal: [null, [Validators.pattern(STRING_PATTERN)]],
+      proposal: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(20),
+        ],
+      ],
       classifNumbGood: [null, []],
-      descripClassif: [null, [Validators.pattern(STRING_PATTERN)]],
+      descripClassif: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(10)],
+      ],
     });
 
     this.formTable1 = this.fb.group({

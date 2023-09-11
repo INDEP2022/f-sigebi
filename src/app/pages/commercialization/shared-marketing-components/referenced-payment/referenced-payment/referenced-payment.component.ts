@@ -83,6 +83,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   loading2: boolean = false;
   @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   titleCarga: string = 'PAGOS REFERENCIADOS CARGADOS DESDE EL CSV';
+
   constructor(
     private fb: FormBuilder,
     private paymentService: PaymentService,
@@ -117,7 +118,13 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     this.settings2 = {
       ...this.settings,
       hideSubHeader: true,
-      actions: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        add: false,
+        delete: false,
+        position: 'right',
+      },
       columns: { ...COLUMNS_CARGADOS },
     };
   }
@@ -216,21 +223,32 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     } else {
       this.valAcc = event;
     }
-    this.openForm(event, true, false);
+    this.openForm(event, true, false, false);
   }
   add() {
-    this.openForm(null, false, false);
+    this.openForm(null, false, false, false);
   }
 
-  openForm(data: any, editVal: boolean, valScroll: boolean) {
+  openForm(
+    data: any,
+    editVal: boolean,
+    valScroll: boolean,
+    valCargado: boolean
+  ) {
     let config: ModalOptions = {
       initialState: {
         data,
         edit: editVal,
         valScroll,
-        callback: (next: boolean) => {
+        valCargado,
+        callback: async (next: boolean, dataUpdate: any) => {
           if (next) {
-            this.getPayments('no');
+            if (this.cargado2) {
+              await this.updatePagoCargado(null, dataUpdate);
+              this.valAccCargado = null;
+            } else {
+              this.getPayments('no');
+            }
           }
         },
       },
@@ -527,19 +545,21 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         ''
       );
 
-    if (!this.bankSelected) {
-      return this.alert(
-        'warning',
-        'Necesita Indicar de qué Banco va a Cargar Datos',
-        ''
-      );
-    }
     const respEvent: any = await this.getSelectFase(this.eventSelected.id);
 
     if (!respEvent) {
       return this.alert('warning', 'El Evento no se Encuentra en una fase', '');
     } else {
+      // respEvent.phase
       if (respEvent.phase == 1) {
+        if (!this.bankSelected) {
+          return this.alert(
+            'warning',
+            'Necesita Indicar de qué Banco va a Cargar Datos',
+            ''
+          );
+        }
+
         this.alertQuestion(
           'question',
           'Carga de Pagos Fase: 1',
@@ -559,26 +579,93 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         ).then(async question => {
           if (question.isConfirmed) {
             // PUP_PROC_NUEVO;
-            this.titleCarga = 'PAGOS REFERENCIADOS CARGADOS';
             const pupNew: any = await this.PUP_PROC_NUEVO(
               this.eventSelected.id
             );
             if (pupNew.data == null) {
-              this.alert('error', 'Error al Realizar la Carga', '');
+              this.alert('error', 'Error al realizar la carga de pagos', '');
             } else {
               if (pupNew.data.length == 0) {
                 this.alert(
                   'warning',
-                  `No hay Pagos Pendientes del Evento: ${this.eventSelected.id}`,
+                  `No hay pagos pendientes del evento: ${this.eventSelected.id}`,
                   ''
                 );
               } else {
-                this.getPayments('no');
-                this.alert(
-                  'success',
-                  'Proceso Terminado, Referencias Cargadas Correctamente',
-                  ''
-                );
+                // this.getPayments('no');
+                // this.alert('success', 'Archivo Cargado Correctamente', '');
+                this.form2
+                  .get('BLK_CTRL_CUANTOS')
+                  .setValue(pupNew.BLK_CTRL_CUANTOS);
+                this.form2
+                  .get('BLK_CTRL_MONTO')
+                  .setValue(pupNew.BLK_CTRL_MONTO);
+
+                let arr: any = [];
+                let result = pupNew.COMER_PAGOREF.map(async (item: any) => {
+                  let obj: any = {
+                    movementNumber: item.COMER_PAGOREF_NO_MOVIMIENTO,
+                    date: item.COMER_PAGOREF_FECHA,
+                    move: item.COMER_PAGOREF_DESCPAGO,
+                    bill: null,
+                    referenceOri: item.COMER_PAGOREF_REFERENCIAORI,
+                    bankKey: item.COMER_PAGOREF_CVE_BANCO,
+                    branchOffice: item.COMER_PAGOREF_SUCURSAL,
+                    amount: item.COMER_PAGOREF_MONTO,
+                    result: item.COMER_PAGOREF_RESULTADO,
+                    validSistem: item.COMER_PAGOREF_VAL,
+                    paymentId: item.COMER_PAGOREF_ID,
+                    reference: item.COMER_PAGOREF_REFERENCIA,
+                    lotPub: null,
+                    event: null,
+                    entryOrderId: null,
+                    typeSatId: item.COMER_PAGOREF_ID_TIPO_SAT,
+                    code: item.COMER_PAGOREF_CODIGO,
+                    lotId: item.COMER_PAGOREF_ID_LOTE,
+                    inTimeNumber: null,
+                    type: null,
+                    paymentReturnsId: null,
+                    recordDate: item.COMER_PAGOREF_FECHA_REGISTRO,
+                    dateOi: null,
+                    appliedTo: null,
+                    clientId: null,
+                    folioOi: null,
+                    indicator: null,
+                    codeEdoCta: null,
+                    affectationDate: null,
+                    recordNumber: null,
+                    spentId: null,
+                    paymentRequestId: null,
+                    customers: null,
+                    bankAndNumber:
+                      item.COMER_PAGOREF_CODIGO +
+                      ' - ' +
+                      item.COMER_PAGOREF_CVE_BANCO,
+                  };
+                  const desc = await this.gettypeSatIdUpdate(
+                    item.COMER_PAGOREF_ID_TIPO_SAT
+                  );
+                  obj['descriptionSAT'] = !desc ? null : desc;
+                  arr.push(obj);
+                });
+
+                Promise.all(result).then(resp => {
+                  this.dataCargada.load(arr);
+                  this.dataCargada.refresh();
+                  console.log(this.dataCargada);
+                  // this.getPayments('no');
+                  this.cargado2 = true;
+                  this.cargado = true;
+                  setTimeout(() => {
+                    this.performScroll();
+                  }, 500);
+                  this.loadingBtn = false;
+                  this.alert(
+                    'success',
+                    'Proceso Terminado',
+                    'Referencias Cargadas Correctamente'
+                  );
+                });
               }
             }
           }
@@ -613,7 +700,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       if (cargaPagosCSV.status == 200) {
         const data = cargaPagosCSV.data;
         if (data.COMER_PAGOREF.length == 0) {
-          this.alert('warning', 'No se procesó ningún pago', 'Archivo Cargado');
+          this.alert('warning', 'No se procesó ningún pago', '');
           this.form2.get('BLK_CTRL_CUANTOS').setValue(data.BLK_CTRL_CUANTOS);
           this.form2.get('BLK_CTRL_MONTO').setValue(data.BLK_CTRL_MONTO);
           this.dataCargada.load([]);
@@ -633,7 +720,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
           this.form2.get('BLK_CTRL_MONTO').setValue(data.BLK_CTRL_MONTO);
 
           let arr: any = [];
-          let result = data.COMER_PAGOREF.map((item: any) => {
+          let result = data.COMER_PAGOREF.map(async (item: any) => {
             let obj: any = {
               movementNumber: item.COMER_PAGOREF_NO_MOVIMIENTO,
               date: item.COMER_PAGOREF_FECHA,
@@ -650,7 +737,6 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
               lotPub: null,
               event: null,
               entryOrderId: null,
-              descriptionSAT: null,
               typeSatId: item.COMER_PAGOREF_ID_TIPO_SAT,
               code: item.COMER_PAGOREF_CODIGO,
               lotId: item.COMER_PAGOREF_ID_LOTE,
@@ -674,18 +760,23 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
                 ' - ' +
                 item.COMER_PAGOREF_CVE_BANCO,
             };
+            const desc = await this.gettypeSatIdUpdate(
+              item.COMER_PAGOREF_ID_TIPO_SAT
+            );
+            obj['descriptionSAT'] = !desc ? null : desc;
             arr.push(obj);
           });
 
           Promise.all(result).then(resp => {
-            // this.title = 'PAGOS REFERENCIADOS CARGADOS DESDE EL CSV'
             this.dataCargada.load(arr);
             this.dataCargada.refresh();
+            console.log(this.dataCargada);
             this.getPayments('no');
             this.cargado2 = true;
+            this.cargado = true;
             setTimeout(() => {
-              this.cargado = true;
-            }, 1000);
+              this.performScroll();
+            }, 500);
             this.loadingBtn = false;
           });
         }
@@ -730,7 +821,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             error.error.message ==
             'duplicate key value violates unique constraint "unique_pago"'
           ) {
-            message = 'Ha Ocurrido un Error, Se han Detectado Pagos Duplicados';
+            message = 'Ha Ocurrido un error, se han detectado pagos duplicados';
           }
           let obj: any = {
             status: error.status,
@@ -814,7 +905,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             result: 'Referencia Invalida',
           };
           await this.updatePago(this.valAcc.paymentId, requestBody);
-          this.alert('warning', 'El Movimiento sigue por Ratificarse', '');
+          this.alert('warning', 'El Movimiento sigue por ratificarse', '');
         } else {
           // if (comerLotes.length > 1) {
           this.alert(
@@ -853,10 +944,10 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       } else if (LLL.reject == 'S') {
         // GO_BLOCK('BLK_DEVO');
         L_IMPORTE = this.valAcc.amount;
-        this.openFormList(this.valAcc, L_IMPORTE);
+        this.openFormList(this.valAcc, L_IMPORTE, false);
       } else {
         // GO_BLOCK('BLK_AUXREF');
-        this.openFormList2(this.valAcc, this.valAcc.reference, false);
+        this.openFormList2(this.valAcc, this.valAcc.reference, false, false);
       }
       console.log('LLL', LLL);
     } else {
@@ -879,6 +970,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       },
     });
   }
+
   async getPaymentControl(bankKey: any, idCode: any) {
     const params = new ListParams();
     params['filter.cveBank'] = `$eq:${bankKey}`;
@@ -895,6 +987,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       });
     });
   }
+
   async getFcomerC3(params: any) {
     return new Promise((resolve, reject) => {
       this.paymentService.getFcomerC3(params).subscribe({
@@ -921,14 +1014,20 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   }
 
   // GO_BLOCK('BLK_DEVO');
-  openFormList(dataParams: any, L_IMPORTE: any) {
+  openFormList(dataParams: any, L_IMPORTE: any, valCargado: boolean) {
     let config: ModalOptions = {
       initialState: {
         dataParams,
         L_IMPORTE,
-        callback: (next: boolean) => {
+        valCargado,
+        callback: async (next: boolean, dataUpdate?: any) => {
           if (next) {
-            this.getPayments('no');
+            if (this.cargado2) {
+              await this.updatePagoCargado(null, dataUpdate);
+              this.valAccCargado = null;
+            } else {
+              this.getPayments('no');
+            }
           }
         },
       },
@@ -939,15 +1038,26 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   }
 
   // GO_BLOCK('BLK_AUXREF');
-  openFormList2(dataParams: any, REFERENCIA: any, valRef: boolean) {
+  openFormList2(
+    dataParams: any,
+    REFERENCIA: any,
+    valRef: boolean,
+    valCargado: boolean
+  ) {
     let config: ModalOptions = {
       initialState: {
         dataParams,
         REFERENCIA,
         valRef,
-        callback: (next: boolean) => {
+        valCargado,
+        callback: async (next: boolean, dataUpdate?: any) => {
           if (next) {
-            this.getPayments('no');
+            if (this.cargado2) {
+              await this.updatePagoCargado(null, dataUpdate);
+              this.valAccCargado = null;
+            } else {
+              this.getPayments('no');
+            }
           }
         },
       },
@@ -959,19 +1069,30 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
   referencia() {
     console.log(this.valAcc);
-    this.openFormList3(this.valAcc, this.valAcc.reference, true);
+    this.openFormList3(this.valAcc, this.valAcc.reference, true, false);
   }
 
   // GO_BLOCK('BLK_AUXREF');
-  openFormList3(dataParams: any, REFERENCIA: any, valRef: boolean) {
+  openFormList3(
+    dataParams: any,
+    REFERENCIA: any,
+    valRef: boolean,
+    valCargado: boolean
+  ) {
     let config: ModalOptions = {
       initialState: {
         dataParams,
         REFERENCIA,
         valRef,
-        callback: (next: boolean) => {
+        valCargado,
+        callback: async (next: boolean, dataUpdate?: any) => {
           if (next) {
-            this.getPayments('no');
+            if (this.cargado2) {
+              await this.updatePagoCargado(null, dataUpdate);
+              this.valAccCargado = null;
+            } else {
+              this.getPayments('no');
+            }
           }
         },
       },
@@ -982,13 +1103,14 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   }
 
   pago() {
-    this.openForm(this.valAcc, true, true);
+    this.openForm(this.valAcc, true, true, false);
   }
 
   eventSelected: any = null;
   setValuesFormEvent(event?: any) {
     this.eventSelected = event;
   }
+
   bankSelected: any = null;
   setValuesFormBank(event: any) {
     console.log('event', event);
@@ -1007,11 +1129,12 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   async refresh() {
     await this.clearSubheaderFields();
     this.searchWithEvent = false;
-    this.form2.reset();
+    // this.form2.reset();
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getPayments('no'));
   }
+
   goBack() {
     this.router.navigateByUrl(
       '/pages/commercialization/payment-dispersion-monitor'
@@ -1023,5 +1146,221 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     const filterConf = subheaderFields.filterConf;
     filterConf.filters = [];
     this.columnFilters = [];
+  }
+
+  async saveCarga() {
+    this.alertQuestion(
+      'question',
+      'Se guardarán los Pagos Referenciados cargados',
+      '¿Desea Continuar?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        const data: any = await this.dataGet();
+        let result = data.map(async (item: any) => {
+          console.log('item', item);
+          // item.recordDate = new Date();
+          delete item.descriptionSAT;
+          delete item.bankAndNumber;
+          await this.saveRegister(item);
+        });
+
+        Promise.all(result).then(resp => {
+          this.alert('success', 'Registros Guardados Correctamente', '');
+          this.form2.reset();
+          this.dataCargada.load([]);
+          this.dataCargada.refresh();
+          this.getPayments('no');
+          this.cargado2 = false;
+          this.cargado = false;
+        });
+      }
+    });
+  }
+
+  dataGet() {
+    return this.dataCargada.getAll();
+  }
+  async saveRegister(requestBody: any) {
+    return new Promise((resolve, reject) => {
+      this.paymentService.create(requestBody).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+  editCargado(event: any) {
+    console.log('aaa', event);
+    // if (event == this.valAccCargado) {
+    //   this.valAccCargado = null;
+    // } else {
+    this.valAccCargado = event;
+    // }
+    this.openForm(event, true, false, true);
+  }
+
+  addCargado() {
+    this.openForm(null, false, false, true);
+  }
+
+  valAccCargado: any = null;
+  rowsSelectedCargado(event: any) {
+    console.log('event.data', event.data);
+    if (event.data == this.valAccCargado) {
+      this.valAccCargado = null;
+    } else {
+      this.valAccCargado = event.data;
+    }
+  }
+
+  referenciaCargado() {
+    console.log(this.valAccCargado);
+    this.openFormList3(
+      this.valAccCargado,
+      this.valAccCargado.reference,
+      true,
+      true
+    );
+  }
+
+  async ratificarCargado() {
+    console.log(this.valAccCargado);
+    if (!this.valAccCargado) {
+      this.alert('warning', 'Debe Seleccionar un Pago', '');
+      return;
+    }
+
+    let L_LOTE: any = 0;
+    let L_PUBLICO: any = 0;
+    let L_IMPORTE: any = null;
+    if (!this.valAccCargado.entryOrderId) {
+      const LLL: any = await this.getPaymentControl(
+        this.valAccCargado.bankKey,
+        this.valAccCargado.code
+      );
+      if (LLL.reject == 'N') {
+        const comerLotes: any = await this.getFcomerC3(
+          this.valAccCargado.reference
+        );
+        if (comerLotes.count == 0) {
+          L_LOTE = 0;
+          this.valAccCargado.lotId = null;
+          this.valAccCargado.validSistem = 'R';
+          this.valAccCargado.result = 'Referencia Invalida';
+          // const requestBody: any = {
+          //   paymentId: this.valAccCargado.paymentId,
+          //   lotId: null,
+          //   validSistem: 'R',
+          //   result: 'Referencia Invalida',
+          // };
+          await this.updatePagoCargado(
+            this.valAccCargado.paymentId,
+            this.valAccCargado
+          );
+          this.alert('warning', 'El Movimiento sigue por ratificarse', '');
+        } else {
+          // if (comerLotes.length > 1) {
+          this.alert(
+            'warning',
+            'Referencia: ' +
+              this.valAccCargado.reference +
+              ', Repetida en otro Evento ',
+            ''
+          );
+
+          const comerLotesAndEvent: any = await this.getFcomerC4(
+            this.valAccCargado.reference
+          );
+
+          L_LOTE = comerLotesAndEvent.maxidlote;
+          L_PUBLICO = comerLotesAndEvent.maxlotpub;
+        }
+
+        if (L_LOTE > 0 && L_PUBLICO != 0) {
+          this.valAccCargado.lotId = L_LOTE;
+          this.valAccCargado.validSistem = 'A';
+          this.valAccCargado.result = 'Referencia Valida';
+          // const requestBody: any = {
+          //   paymentId: this.valAccCargado.paymentId,
+          //   lotId: L_LOTE,
+          //   validSistem: 'A',
+          //   result: 'Referencia Valida',
+          // };
+          await this.updatePagoCargado(
+            this.valAccCargado.paymentId,
+            this.valAccCargado
+          );
+        } else if (L_LOTE > 0 && L_PUBLICO == 0) {
+          this.valAccCargado.lotId = L_LOTE;
+          this.valAccCargado.validSistem = 'B';
+          this.valAccCargado.result = 'Referencia Pago Bases';
+
+          await this.updatePagoCargado(
+            this.valAccCargado.paymentId,
+            this.valAccCargado
+          );
+        }
+      } else if (LLL.reject == 'S') {
+        // GO_BLOCK('BLK_DEVO');
+        L_IMPORTE = this.valAccCargado.amount;
+        this.openFormList(this.valAccCargado, L_IMPORTE, true);
+      } else {
+        // GO_BLOCK('BLK_AUXREF');
+        this.openFormList2(
+          this.valAccCargado,
+          this.valAccCargado.reference,
+          false,
+          true
+        );
+      }
+      console.log('LLL', LLL);
+    } else {
+      this.alert(
+        'warning',
+        'El movimiento ya no puede modificarse, ya fue asignado',
+        ''
+      );
+      return;
+    }
+  }
+
+  pagoCargado() {
+    this.openForm(this.valAccCargado, true, true, true);
+  }
+
+  async updatePagoCargado(paymentId: any, requestBody: any) {
+    const selectedRow = requestBody;
+    this.dataCargada.update(this.valAccCargado, selectedRow).then(() => {
+      console.log('Registro actualizado:', selectedRow);
+    });
+    this.dataCargada.refresh();
+  }
+
+  async gettypeSatIdUpdate(id: any) {
+    if (!id) return null;
+    const params = new FilterParams();
+
+    params.addFilter('idType', id, SearchFilter.EQ);
+
+    return new Promise((resolve, reject) => {
+      this.accountMovementService
+        .getPaymentTypeSat(params.getParams())
+        .subscribe({
+          next: response => {
+            // let result = response.data.map(item => {
+            //   item['descriptionSAT'] = item.description;
+            // });
+            // Promise.all(result).then(item => {
+            resolve(response.data[0].description);
+            // })
+          },
+          error: err => {
+            resolve(null);
+          },
+        });
+    });
   }
 }

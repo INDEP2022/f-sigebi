@@ -1,6 +1,11 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-order-service-form',
@@ -15,29 +20,45 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
     `,
   ],
 })
-export class OrderServiceFormComponent implements OnInit {
+export class OrderServiceFormComponent implements OnInit, OnChanges {
   showOrderservice: boolean = true;
   disableAllChecks: boolean = false;
-  form: FormGroup = new FormGroup({});
   @Input() op: number;
   @Input() showForm: boolean;
+  @Input() ordServform?: FormGroup = new FormGroup({});
+  readonly: boolean = false;
+  visitEye: boolean = false;
+  consolideContainer: boolean = false;
+
+  orderService: any = {};
+
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.prepareForm();
+    //this.prepareForm();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.orderService = this.ordServform.getRawValue();
     console.log('showForm', this.showForm);
+    this.visitEye = this.orderService.eyeVisit == 'Y' ? true : false;
+    this.consolideContainer =
+      this.orderService.userContainers == 'Y' ? true : false;
   }
 
-  prepareForm() {
-    this.form = this.fb.group({
-      tranportZone: [null, [Validators.pattern(STRING_PATTERN)]],
-      folioTlp: [null],
-      visit: [null],
-      razonsNoRealization: [null, [Validators.pattern(STRING_PATTERN)]],
-      consolidate: [null],
-    });
+  changeVisitEye(event: any) {
+    if (event.target.checked == true) {
+      this.ordServform.controls['eyeVisit'].setValue('Y');
+    } else {
+      this.ordServform.controls['eyeVisit'].setValue('N');
+    }
+  }
+
+  changeConsolidate(event: any) {
+    if (event.target.checked == true) {
+      this.ordServform.controls['userContainers'].setValue('Y');
+    } else {
+      this.ordServform.controls['userContainers'].setValue('N');
+    }
   }
 }

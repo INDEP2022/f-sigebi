@@ -22,7 +22,7 @@
 </div>
 
 <form
-  [formGroup]="form"
+  [formGroup]="ordServform"
   class="form-horizontal form-material"
   style="margin: 0 auto"
   *ngIf="showOrderservice">
@@ -30,24 +30,24 @@
     <div class="col-md-4">
       <div class="form-group">
         <label class="col-lg-6 text-right">Folio Órden Servicio&#58;</label>
-        <span> Metropolitana-SAT-1340-OS</span>
+        <span> {{ orderService?.serviceOrderFolio }} </span>
       </div>
     </div>
 
     <div class="col-md-4">
       <div class="form-group">
         <label class="mr-2">No&#46; Contrato&#58;</label>
-        <span> 124 </span>
+        <span> {{ orderService?.contractNumber }} </span>
       </div>
     </div>
 
     <div class="col-md-4">
       <form-field
-        [control]="form.get('razonsNoRealization')"
+        [control]="ordServform.get('reasonsNotPerform')"
         label="Razones no Realizaci&oacute;n">
         <input
           class="form-control"
-          formControlName="razonsNoRealization"
+          formControlName="reasonsNotPerform"
           *ngIf="
             (!showForm && op == 9) ||
             (!showForm && op == 13) ||
@@ -56,7 +56,7 @@
 
         <input
           class="form-control"
-          formControlName="razonsNoRealization"
+          formControlName="reasonsNotPerform"
           *ngIf="!showForm && op != 9"
           readonly />
       </form-field>
@@ -74,16 +74,18 @@
     <div class="col-md-4">
       <div class="form-group">
         <label class="col-lg-6 text-right">Fecha de Turnano&#58;</label>
-        <span> 25-nov-2022 </span>
+        <span> {{ orderService?.shiftDate | date : 'YYYY/MM/DD' }} </span>
       </div>
     </div>
 
     <div class="col-md-4">
-      <form-field [control]="form.get('tranportZone')" label="Transporte Zona">
+      <form-field
+        [control]="ordServform.get('transportationZone')"
+        label="Transporte Zona">
         <input
           type="text"
           class="form-control"
-          formControlName="tranportZone"
+          formControlName="transportationZone"
           *ngIf="
             (showForm && op == 9) ||
             (!showForm && op == 13) ||
@@ -92,7 +94,7 @@
         <input
           type="text"
           class="form-control"
-          formControlName="tranportZone"
+          formControlName="transportationZone"
           *ngIf="(!showForm && op != 9) || (!showForm && op != 9)"
           readonly />
       </form-field>
@@ -112,7 +114,12 @@
         (showForm && op != 9)
       ">
       <form-check label="Consolidado con Contenedores" for="checkGood">
-        <input id="checkGood" type="checkbox" formControlName="consolidate" />
+        <input
+          id="checkGood"
+          type="checkbox"
+          [(ngModel)]="consolideContainer"
+          [ngModelOptions]="{ standalone: true }"
+          (change)="changeConsolidate($event)" />
       </form-check>
     </div>
 
@@ -127,7 +134,9 @@
         <input
           id="checkGood"
           type="checkbox"
-          formControlName="consolidate"
+          [(ngModel)]="consolideContainer"
+          [ngModelOptions]="{ standalone: true }"
+          (change)="changeConsolidate($event)"
           [readOnly]="true" />
       </form-check>
     </div>
@@ -153,11 +162,11 @@
     <div class="col-md-4">
       <div class="form-group">
         <label class="col-lg-6 text-right">Usuario Turnado&#58;</label>
-        <span> Usuario</span>
+        <span> {{ orderService?.shiftUser }} </span>
       </div>
     </div>
     <div class="col-md-4">
-      <form-field [control]="form.get('folioTlp')" label="Folio TLP">
+      <form-field [control]="ordServform.get('folioTlp')" label="Folio TLP">
         <input
           type="text"
           class="form-control"
@@ -190,7 +199,12 @@
         (showForm && op != 9)
       ">
       <form-check label="Visita Ocular" for="checkGoodVisit">
-        <input id="checkGoodVisit" type="checkbox" formControlName="visit" />
+        <input
+          id="checkGoodVisit"
+          type="checkbox"
+          [(ngModel)]="visitEye"
+          [ngModelOptions]="{ standalone: true }"
+          (change)="changeVisitEye($event)" />
       </form-check>
     </div>
 
@@ -205,7 +219,8 @@
         <input
           id="checkGood"
           type="checkbox"
-          formControlName="visit"
+          [(ngModel)]="visitEye"
+          [ngModelOptions]="{ standalone: true }"
           [readOnly]="true" />
       </form-check>
     </div>

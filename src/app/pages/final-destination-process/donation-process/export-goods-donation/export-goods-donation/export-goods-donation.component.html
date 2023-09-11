@@ -57,34 +57,50 @@
     </div>
     <div>
       <ng-scrollbar [track]="'all'" [ngStyle]="{ height: loading ? '0px' : '300px' }">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data"
-            (userRowSelect)="selectDataBien($event.data)">
-          </ng2-smart-table>
+        <div class="d-flex justify-content-end mt-5">
+          <div>
+            <app-columns-select class="mx-1" [(settings)]="settings" [leftList]="true"></app-columns-select>
+          </div>
         </div>
-      </ng-scrollbar>
+        <br />
+        <div class="row m-3">
+          <div class="col-4"></div>
+          <div class="d-flex justify-content-end mt-5">
+            <button (click)="selectAllCPD()">CPD</button>
+            <button (click)="selectAllADM()">ADM</button>
+            <button (click)="selectAllRDA()">RDA</button>
+          </div>
+        </div>
+        <div>
+          <ng-scrollbar [track]="'all'" [ngStyle]="{ height: loading ? '0px' : '300px' }">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data"
+                (userRowSelect)="selectDataBien($event.data)">
+              </ng2-smart-table>
+            </div>
+          </ng-scrollbar>
+        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+        <form class="form-material form-horizontal" [formGroup]="form">
+          <div class="row mt-5 justify-content-end">
+            <div class="col-md-4 text-center text-md-right">
+              <button class="btn btn-success btn-sm active" [disabled]="!isSelect" (click)="exportToExcelX()">
+                Exportar a Excel <i class="bx bx-download float-icon"></i>
+              </button>
+            </div>
+            <div class="col-md-4">
+              <form-field [control]="form.get('description')">
+                <textarea rows="2" class="form-control" formControlName="description" maxlength="450"
+                  placeholder="Descripci&oacute;n" required></textarea>
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <button class="btn btn-success btn-sm active" (click)="ExportAndChange()">
+                Exportar a Excel y Cambiar Estatus
+              </button>
+            </div>
+          </div>
+        </form>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
-    <form class="form-material form-horizontal" [formGroup]="form">
-      <div class="row mt-5 justify-content-end">
-        <div class="col-md-4 text-center text-md-right">
-          <button class="btn btn-success btn-sm active" [disabled]="!isSelect" (click)="exportToExcelX()">
-            Exportar a Excel <i class="bx bx-download float-icon"></i>
-          </button>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('description')">
-            <textarea rows="2" class="form-control" formControlName="description" maxlength="450"
-              placeholder="Descripci&oacute;n" required></textarea>
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <button class="btn btn-success btn-sm active" (click)="ExportAndChange()">
-            Exportar a Excel y Cambiar Estatus
-          </button>
-        </div>
-      </div>
-    </form>
-  </div>
 </app-card>

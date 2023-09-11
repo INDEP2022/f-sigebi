@@ -86,6 +86,17 @@ export const COLUMNS_EXPORT_GOODS = {
     },
     sort: false,
   },
+  /*cpd: {
+    title: 'CPD',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    valuePrepareFunction: (cell: any, row: any) => {
+      // Usar el valor de "row.cpd" para determinar el estado del checkbox
+      return row.cpd ? '<input type="checkbox" checked>' : '<input type="checkbox">';
+    },
+    filter: false,
+    sort: false,
+  },*/
   adm: {
     title: 'ADM',
     type: 'custom',

@@ -64,10 +64,9 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   selectedItem: string | null = null;
   user: any;
   total: any;
-
   selectedA: any = false;
-
   rel_bienes: any;
+
 
   constructor(
     private router: Router,
@@ -87,63 +86,10 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     this.settings = { ...this.settings, actions: false, selectMode: 'multi' };
     this.settings.columns = {
       ...COLUMNS_EXPORT_GOODS,
-      // cpd: {
-      //   title: 'CPD',
-      //   type: 'custom',
-      //   renderComponent: CheckboxElementComponent,
-      //   onComponentInitFunction(instance: any) {
-      //     instance.toggle.subscribe((data: any) => {
-      //       console.log('Estado del checkbox cambiado CPD:', data.toggle);
-      //       data.row.to = data.toggle;
-      //     });
-      //   },
-      //   sort: false,
-      // },
-      // adm: {
-      //   title: 'ADM',
-      //   type: 'custom',
-      //   renderComponent: CheckboxElementComponent,
-      //   onComponentInitFunction(instance: any) {
-      //     instance.toggle.subscribe((data: any) => {
-      //       console.log('Estado del checkbox cambiado ADM:', data.toggle);
-      //       data.row.to = data.toggle;
-      //     });
-      //   },
-      //   sort: false,
-      // },
-      // rda: {
-      //   title: 'RDA',
-      //   type: 'custom',
-      //   renderComponent: CheckboxElementComponent,
-      //   onComponentInitFunction(instance: any) {
-      //     instance.toggle.subscribe((data: any) => {
-      //       console.log('Estado del checkbox cambiado RDA:', data.toggle);
-      //       data.row.to = data.toggle;
-      //     });
-      //   },
-      //   sort: false,
-      // },
     };
     this.settings.hideSubHeader = false;
   }
 
-
-
-  /*  isSelected(sele: any) {
-      console.log("isSelected: ", sele)
-    }
-    onSelect(instance: CheckboxElementComponent, value: number) {
-      console.log("onSelect: ", value)
-      if (value == 1) {
-  
-      }
-      instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
-        next: data => {
-          console.log('PASA A DATA', data, ' -> ', value);
-          this.cpdall = data.toggle
-        },
-      });
-    }*/
   ngOnInit(): void {
     this.getuser();
     this.checked = this.value;
@@ -600,29 +546,6 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
         }
       }
     }
-    // let item: any = {
-    //   numberGood: this.selectedData.numberGood,
-    //   description: this.selectedData.description,
-    //   quantity: this.selectedData.quantity,
-    //   clasificationNumb: this.selectedData.clasificationNumb,
-    //   tansfNumb: this.selectedData.tansfNumb,
-    //   proceso_ext_dom: this.selectedData.proceso_ext_dom,
-    //   id_almacen: this.selectedData.id_almacen,
-    //   fecha_liberacion: this.selectedData.fecha_liberacion,
-    //   status: this.selectedData.status,
-    //   unidad: this.selectedData.unidad,
-    //   proceedingsNumb: this.selectedData.proceedingsNumb,
-    //   delAdmin: this.selectedData.delAdmin,
-    //   delDeliv: this.selectedData.delDeliv,
-    //   recepDate: this.selectedData.recepDate,
-    //   no_emisora: this.selectedData.no_emisora,
-    //   no_tran_emi_aut: this.selectedData.no_tran_emi_aut
-    // };
-    // this.dataExport.push(item);
-    // this.listaDeArreglos.push(item);
-    // let item2 = {
-    //   data: this.listaDeArreglos,
-    // }
     console.log("Data a enviar -> ", arregloPrincipal);
     let array = {
       data: arregloPrincipal

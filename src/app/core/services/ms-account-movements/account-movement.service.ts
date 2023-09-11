@@ -7,7 +7,10 @@ import {
   ICuentaDelete,
   ICuentaInsert,
 } from 'src/app/core/models/catalogs/bank-modelo-type-cuentas';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IListResponseMessage,
+} from '../../interfaces/list-response.interface';
 import { IAccountBank } from '../../models/catalogs/bank-account.model';
 import {
   IAccountMovement,
@@ -218,6 +221,15 @@ export class AccountMovementService extends HttpService {
       AccountmvmntEndpoint.MovementAccountXBankAccountExcel,
       params
     );
+  }
+  getDepuraContmand(id_gasto: string) {
+    return this.get<IListResponseMessage<any>>(
+      AccountmvmntEndpoint.DepuraContmand + '/' + id_gasto
+    );
+  }
+
+  getNextReturnNumber() {
+    return this.post('user-checks/maxReturnNumber', {});
   }
 }
 

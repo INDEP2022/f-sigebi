@@ -23,32 +23,6 @@ export class PaymentDevolutionService extends HttpService {
   }
 
   getEatCtlPagE(params: ListParams) {
-    // return this.get(`${PaymentDevolutionEndPoints.EatCtlPagE}`, params);
-
-    // const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
-    // this.authService.setReportFlag(true);
-    // return this.http.get<any>(
-    //   `${this.url}${this.microservice}/${this.prefix}/${PaymentDevolutionEndPoints.EatCtlPagE}`,
-    //   // {
-    //   //   params,
-    //   // },
-    //   {
-    //     headers,
-    //     params,
-    //     responseType: 'arraybuffer' as 'json',
-    //   }
-    // );
-
-    // const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
-    // const route = `${this.url}`;
-    // return this.http.get<any>(
-    //   `${PaymentDevolutionEndPoints.EatCtlPagE}/${params}`,
-    //   {
-    //     headers,
-    //     responseType: 'arraybuffer' as 'json',
-    //   }
-    // );
-
     const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
     this.authService.setReportFlag(true);
     const route = `${this.url}${this.microservice}/${this.prefix}${PaymentDevolutionEndPoints.EatCtlPagE}`;
@@ -57,5 +31,11 @@ export class PaymentDevolutionService extends HttpService {
       params,
       // responseType: 'arraybuffer' as 'json',
     });
+  }
+  getCtlDevPagP(params: _Params) {
+    return this.get(`${PaymentDevolutionEndPoints.ComerCtldevpagP}`, params);
+  }
+  getEatCtlCreate(user: string) {
+    return this.get(`${PaymentDevolutionEndPoints.EatCtlCreate}/${user}`);
   }
 }

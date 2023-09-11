@@ -544,7 +544,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Cálculo de Numerario',
-          'Fue eliminado el cálculo solicitado correctamente'
+          'El cálculo solicitado fue eliminado'
         );
       } else {
         this.alert(
@@ -779,7 +779,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       if (this.requestNumeDet.solnumId != null) {
         const response = await this.alertQuestion(
           'question',
-          '¿Se Ejecuta el Cálculo?',
+          '¿Desea Ejecutar el Cálculo?',
           ''
         );
 
@@ -792,7 +792,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           if (vResul === 'Error') {
             this.alert('error', 'Ha Ocurrido un Error', '');
           } else {
-            this.alert('success', 'Se realizó el Cálculo de Numerario', '');
+            this.alert('success', 'Se Realizó el Cálculo de Numerario', '');
             this.searchProcess();
           }
         }

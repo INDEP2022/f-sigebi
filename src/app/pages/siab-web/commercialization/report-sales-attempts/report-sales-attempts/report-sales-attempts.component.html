@@ -21,6 +21,8 @@
           </div>
           <div class="col-md-4">
             <button
+              [ngClass]="{ loading: loadingBtn }"
+              [disabled]="loading || loadingBtn2"
               type="button"
               class="btn btn-primary active btn-sm"
               [disabled]="!form.valid"
@@ -78,6 +80,8 @@
                   <button
                     type="button"
                     class="btn btn-primary active btn-sm m-2"
+                    [ngClass]="{ loading: loadingBtn4 }"
+                    [disabled]="loading || loadingBtn2"
                     (click)="consultarBienExcel()">
                     Buscar Bienes
                     <i class="bx bx-search-alt bx-sm float-icon"></i>
@@ -128,6 +132,8 @@
           <div class="col-md-4">
             <div class="justify-content-center">
               <button
+                [ngClass]="{ loading: loadingBtn3 }"
+                [disabled]="loading || loadingBtn2"
                 type="button"
                 class="btn btn-primary active btn-sm"
                 [disabled]="!form.valid"

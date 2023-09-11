@@ -14,7 +14,7 @@
             <div class="mb-3 pl-4 pr-4">
               <form-field [control]="form.get('goodNumb')" label="No. Bien">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="goodNumb" />
               </form-field>
@@ -71,7 +71,7 @@
           </div>
           <div class="col-12 col-md-4 mt-3 mt-md-0">
             <div class="mb-3 pl-4 pr-4">
-              <form-field [control]="form.get('status')" label="Estatus">
+              <form-field [control]="form.get('status')" label="Estado">
                 <input
                   type="text"
                   class="form-control"
@@ -84,7 +84,7 @@
             <div class="mb-3 pl-4 pr-4">
               <form-field
                 [control]="form.get('statusDescrip')"
-                label="Descrip. Estatus">
+                label="Descripión Estado">
                 <input
                   type="text"
                   class="form-control"
@@ -177,8 +177,10 @@
       </form>
 
       <div class="row mt-3">
-        <div class="col-12 tetx-center text-md-right">
-          <button class="btn btn-secondary btn-sm active">Parcializa</button>
+        <div class="col-12 tetx-center text-md-right" (click)="Parcializa()">
+          <button type="button" class="btn btn-primary active btn-sm">
+            Parcializa
+          </button>
         </div>
       </div>
 

@@ -8,37 +8,51 @@
     <div class="row">
       <form [formGroup]="form" class="form-material">
         <div>
-          <form-field
-            [control]="form.get('typeVehicle')"
-            label="Tipo de veh&iacute;culo">
-            <select class="form-control" formControlName="typeVehicle">
+          <form-field [control]="form.get('id')">
+            <ngx-select
+              [form]="form"
+              control="id"
+              [data]="typeVehicle"
+              [loading]="loading"
+              value="keyId"
+              bindLabel="description"
+              label="Tipo de veh&iacute;culo"
+              (fetchItems)="getTypeVehicle($event)"></ngx-select>
+            <!--<select class="form-control" formControlName="typeVehicle">
               <option [value]="null">Seleccione un valor</option>
               <option [value]="'Particular'">Automovil</option>
               <option [value]="'camioneta'">Camioneta</option>
-            </select>
+            </select> -->
           </form-field>
         </div>
         <div class="pt-3">
-          <form-field [control]="form.get('sale')" label="Venta">
-            <input type="text" class="form-control" formControlName="sale" />
+          <form-field [control]="form.get('amountSale')" label="Venta">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="amountSale" />
           </form-field>
         </div>
 
         <div class="pt-3">
-          <form-field [control]="form.get('donation')" label="Donaci&oacute;n">
+          <form-field
+            [control]="form.get('amountDonation')"
+            label="Donaci&oacute;n">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="donation" />
+              formControlName="amountDonation" />
           </form-field>
         </div>
 
         <div class="pt-3">
-          <form-field [control]="form.get('destruction')" label="Input Label">
+          <form-field
+            [control]="form.get('amountDestruction')"
+            label="Destrucción">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="destruction" />
+              formControlName="amountDestruction" />
           </form-field>
         </div>
       </form>

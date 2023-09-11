@@ -495,8 +495,8 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
         error: err => {
           this.validateExcel = true;
           this.loading = false;
-          this.data.load([]);
-          this.data.refresh();
+          this.data2.load([]);
+          this.data2.refresh();
           this.totalItems2 = 0;
         },
       });

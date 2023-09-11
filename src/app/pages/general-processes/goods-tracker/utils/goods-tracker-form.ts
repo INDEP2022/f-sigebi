@@ -178,4 +178,5 @@ export class GoodTrackerForm {
   goodState = new FormControl<string[]>([]);
   gabinete = new FormControl<boolean>(false);
   inventario = new FormControl<string[]>([]);
+  request = new FormControl<string[]>([]);
 }

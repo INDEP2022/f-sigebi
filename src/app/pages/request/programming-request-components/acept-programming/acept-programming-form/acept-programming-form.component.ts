@@ -638,6 +638,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   }
 
   aprobateProgramming() {
+    this.sendEmailUsers();
     if (this.programming.contentId) {
       this.alertQuestion(
         'question',
@@ -649,7 +650,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           const createTaskNotification: any =
             await this.createTaskNotification();
 
-          console.log('createTaskNotification', createTaskNotification);
           if (createTaskNotification) {
             this.createTaskExecuteProgramming();
             this.createTaskFormalize(createTaskNotification);
@@ -672,13 +672,13 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     });
 
     const showTransportableData = await this.showTransportableEmail();
-
+    console.log('showTransportableData', showTransportableData);
     if (showTransportableData) {
       const showGuardData = await this.showGuardEmail();
-
+      console.log('showGuardData', showGuardData);
       if (showGuardData) {
         const showWarehouseData = await this.showWarehouseEmail();
-
+        console.log('showWarehouseData', showWarehouseData);
         if (showWarehouseData) {
           const dataEmail = {
             folio: this.programming.folio,
@@ -696,7 +696,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           };
           setTimeout(() => {
             this.emailService.createEmailProgramming(dataEmail).subscribe({
-              next: response => {},
+              next: response => {
+                console.log('se envio el correo', response);
+              },
               error: error => {},
             });
 
@@ -933,7 +935,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     task['identificationKey'] = createTaskNotification.task.id;
     task['nbTransferee'] = this.programming.transferentName;
     body['task'] = task;
-    console.log('body formalizar', body);
+
     const taskResult: any = await this.createTaskOrderService(body);
     this.loading = false;
     if (taskResult || taskResult == false) {
@@ -950,7 +952,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(resp);
-          console.log('tarea formalizar', resp);
         },
         error: error => {
           reject(false);
