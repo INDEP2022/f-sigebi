@@ -32,4 +32,6 @@ export enum GoodprocessEndpoints {
   getStatusCveScreem = 'application/status-cve-screem',
   GetCount = 'application/get-count-ncont',
   UpdateGoodStatusVal5 = 'update-good-status/update-val',
+  //Classification View
+  GetVsigLigie = 'application/vsigLigie',
 }

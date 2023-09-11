@@ -268,4 +268,10 @@ export class GoodprocessService extends HttpService {
       data
     );
   }
+
+  getVsigLigie(params: ListParams | string): Observable<IListResponse<any>> {
+    const route = GoodprocessEndpoints.GetVsigLigie;
+    debugger;
+    return this.get<IListResponse<any>>(route, params);
+  }
 }

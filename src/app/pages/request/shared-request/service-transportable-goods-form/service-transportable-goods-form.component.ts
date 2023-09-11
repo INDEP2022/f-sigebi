@@ -181,7 +181,8 @@ export class ServiceTransportableGoodsFormComponent
       )
       .subscribe({
         next: resp => {
-          //this.data = testData;
+          console.log(resp.data);
+
           let ttotal = 0;
           resp.data.map((item: any) => {
             item['total'] =
@@ -320,8 +321,8 @@ export class ServiceTransportableGoodsFormComponent
 
   newServiceManual() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-content-centered' };
-
     config.initialState = {
+      orderServiceId: this.orderServiceId,
       callback: (data: any) => {
         if (data) {
           console.log(data);
@@ -493,7 +494,6 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   saveForm() {
-    debugger;
     if (this.listforUpdate.length == 0) return;
 
     this.listforUpdate.map(async (item: any, _i: number) => {

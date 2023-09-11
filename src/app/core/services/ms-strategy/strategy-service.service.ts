@@ -129,4 +129,9 @@ export class StrategyServiceService extends HttpService {
     const route = `${StrategyEndpoints.StrategyServiceType}/${id}`;
     return this.delete(route);
   }
+
+  getUnitMedXConv(params: ListParams | string) {
+    const route = StrategyEndpoints.GetUnitMedXConv;
+    return this.get(route, params);
+  }
 }
