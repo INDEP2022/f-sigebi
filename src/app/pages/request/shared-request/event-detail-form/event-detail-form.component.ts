@@ -67,7 +67,6 @@ export class EventDetailFormComponent extends BasePage implements OnInit {
       .getProgrammingDelivery(params.getValue())
       .subscribe({
         next: response => {
-          console.log('Programaciones de entrega', response);
           if (response.data[0].startDate)
             response.data[0].startDate = moment(
               response.data[0].startDate
@@ -96,7 +95,6 @@ export class EventDetailFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.keyId'] = typeEvent;
     this.genericService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('tipo evento', response);
         this.nameTypeEvent = response.data[0].description;
       },
       error: error => {},
@@ -108,7 +106,6 @@ export class EventDetailFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.organizationCode'] = store;
     this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
       next: response => {
-        console.log('almacenes', response);
         this.nameStore = response.data[0].name;
       },
       error: error => {},

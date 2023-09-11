@@ -256,9 +256,7 @@
       </div>
       <div class="row pt-4">
         <div class="d-flex">
-          <div class="mr-auto p-2">
-            <app-columns-select [(settings)]="settings"></app-columns-select>
-          </div>
+          <div class="mr-auto p-2"></div>
           <div class="p-2">
             <button
               [disabled]="statusTask == 'FINALIZADA'"
@@ -277,6 +275,11 @@
               (click)="getRequestData()">
               Recargar <i class="fas fa-sync-alt"> </i>
             </button>
+          </div>
+          <div class="p-2">
+            <app-columns-select
+              [leftList]="true"
+              [(settings)]="settings"></app-columns-select>
           </div>
         </div>
       </div>
