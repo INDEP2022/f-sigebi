@@ -9,8 +9,11 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { _Params } from 'src/app/common/services/http.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -48,17 +51,22 @@ export class RegistrationInventoriesDonationComponent
   selectedRows: any[] = [];
   flag: boolean = false;
 
+  V_PANTALLA = 'FDONAC_DIRECT';
+  V_ESTATUS_FINAL: string;
+
   //butons y campos enabled
   PB_CONFIRMAR: boolean = true;
   PB_REGISTRAR: boolean = false;
   constructor(
     private fb: FormBuilder,
-    private goodServ: GoodService,
+    private goodService: GoodService,
     private goodprocessService: GoodprocessService,
     private datePipe: DatePipe,
     private modalService: BsModalService,
     private globalVarsService: GlobalVarsService,
-    private router: Router
+    private router: Router,
+    private statusXScreenService: StatusXScreenService,
+    private historyGoodService: HistoryGoodService
   ) {
     super();
     this.settings = {
@@ -80,6 +88,8 @@ export class RegistrationInventoriesDonationComponent
   ngOnInit(): void {
     this.initForm();
     this.filterTable();
+    //let number = 0;
+    //this.statusXPantalla();
   }
 
   filterTable() {
@@ -179,7 +189,7 @@ export class RegistrationInventoriesDonationComponent
 
     this.form.get('authorizeCve').disable();
     this.form.get('authorizeDate').disable();
-    this.form.get('authorizeType').disable();
+    //this.form.get('authorizeType').disable();
 
     this.form.get('authorizeDate').valueChanges.subscribe({
       next: () => this.validateDateAuthorize(),
@@ -269,7 +279,7 @@ export class RegistrationInventoriesDonationComponent
   }
 
   authorize() {
-    const { authorizeCve, authorizeDate, authorizeType } = this.form.value;
+    /*const { authorizeCve, authorizeDate, authorizeType } = this.form.value;
     const type = ['D', 'A'];
     if (!type.includes(authorizeType)) {
       this.onLoadToast('warning', 'Se Debe Especificar el Tipo de Trámite', '');
@@ -282,9 +292,17 @@ export class RegistrationInventoriesDonationComponent
         ''
       );
       return;
-    }
+    }*/
 
-    this.form.get('sunStatus').patchValue('ADA');
+    //this.form.get('sunStatus').patchValue('ADA');
+    const _params: any = this.params;
+    _params._value[`filter.screenKey`] = `$eq:FDONAC_DIRECT`;
+    _params._value[`filter.status`] = `$eq:${this.selectedRows[0].estatus}`;
+    //_params._value[`filter.status`] = `$eq:${this.selectedRows[0].estatus}`;
+    console.log('Params Const-> ', _params);
+    console.log('Params Const-> ', _params._value);
+    console.log('thisParams-selectedRows->', this.selectedRows);
+    this.statusXPantalla(_params._value);
   }
 
   getBienes() {
@@ -298,6 +316,7 @@ export class RegistrationInventoriesDonationComponent
   }
 
   listGoods() {
+    this.goods = [];
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -440,4 +459,54 @@ export class RegistrationInventoriesDonationComponent
   }
 
   ActualizacionInventario() {}
+
+  statusXPantalla(params?: _Params) {
+    this.statusXScreenService.getList(params).subscribe(
+      resp => {
+        if (resp != null && resp != undefined) {
+          console.log('Resp statusXPantalla-> ', resp);
+          if (resp.data[0] != undefined) {
+            this.V_ESTATUS_FINAL = resp.data[0].statusNewGood;
+            console.log('V_ESTATUS_FINAL-> ', this.V_ESTATUS_FINAL);
+            this.updateGoods(this.V_ESTATUS_FINAL);
+          }
+        }
+      },
+      error => {
+        this.V_ESTATUS_FINAL = null;
+        console.log('Error', error);
+        this.alert('error', '', error.error.message);
+        this.updateGoods(this.V_ESTATUS_FINAL);
+      }
+    );
+  }
+
+  updateGoods(status: string) {
+    if (status == null || status == '') {
+      this.V_ESTATUS_FINAL = 'ADA';
+    }
+
+    this.putStatusGoods(this.selectedRows[0].noBien, this.V_ESTATUS_FINAL);
+  }
+
+  putStatusGoods(good: number, status: string) {
+    this.goodService.putStatusGood(good, status).subscribe({
+      next: resp => {
+        if (resp != null && resp != undefined) {
+          console.log('putStatusGoods-> ', resp);
+        }
+        let parmas = {};
+        this.historyGoodService.PostStatus(parmas).subscribe(resp => {});
+      },
+      error: err => {},
+    });
+  }
+
+  goodsSave(params: any) {
+    this.historyGoodService.PostStatus(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('goodsSave-> ', resp);
+      }
+    });
+  }
 }
