@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IComerEvent2 } from 'src/app/core/models/ms-event/event.model';
@@ -7,6 +7,10 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { IComerCommissionsPerGood } from 'src/app/core/models/ms-thirdparty/third-party.model';
 import { ComerCommissionsPerGoodService } from 'src/app/core/services/ms-thirdparty/comer-commissions-per-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  NUMBERS_DASH_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-commissions-modal',
@@ -23,6 +27,7 @@ export class CommissionsModalComponent extends BasePage implements OnInit {
   idEvent: IComerEvent2;
   idGood: IGood;
 
+  comerComCalculated: any;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -37,15 +42,24 @@ export class CommissionsModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.commissionsForm = this.fb.group({
-      comCalculatedId: [null, []],
-      eventId: [null, []],
-      goodNumber: [null, []],
-      amountCommission: [null, []],
-      batch: [null, []],
-      cvman: [null, []],
-      sale: [null, []],
-      comments: [null, []],
-      processIt: [null, []],
+      comCalculatedId: [this.comerComCalculated.comCalculatedId],
+      eventId: [
+        null,
+        [Validators.pattern(NUMBERS_DASH_PATTERN), Validators.max(99999999999)],
+      ],
+      goodNumber: [
+        null,
+        [
+          Validators.pattern(NUMBERS_DASH_PATTERN),
+          Validators.maxLength(99999999999),
+        ],
+      ],
+      amountCommission: [null, [Validators.max(9999999.99)]],
+      batch: [null, [Validators.max(99999999999)]],
+      cvman: [null, [Validators.pattern(STRING_PATTERN)]],
+      sale: [null, [Validators.max(9999999.99)]],
+      comments: [null, [Validators.pattern(STRING_PATTERN)]],
+      processIt: [null, [Validators.pattern(STRING_PATTERN)]],
       saleTc: [null, []],
     });
     if (this.commissions != null) {
