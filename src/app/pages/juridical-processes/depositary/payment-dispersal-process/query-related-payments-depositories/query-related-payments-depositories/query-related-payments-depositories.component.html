@@ -64,6 +64,8 @@
                         bindLabel="description"
                         label="Bien"
                         control="noBien"
+                        [showTooltip]="true"
+                        termMaxLength="400"
                         (change)="onChangeGood($event)"
                         [labelTemplate]="userLabel"
                         [optionTemplate]="userOption">
@@ -378,11 +380,12 @@
         </button>
       </div>
       <!-- Pagos Recibidos en el Banco -->
-      <div class="col-12 col-sm-12 col-md-12">
+      <div class="col-12 col-sm-12 col-md-8">
         <h6>Pagos Recibidos en el Banco</h6>
       </div>
-      <div class="col-12 col-sm-12 col-md-12">
+      <div class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
         <app-columns-select
+          [leftList]="true"
           [(settings)]="tableSettingsPagosBanco"></app-columns-select>
       </div>
       <div
@@ -396,7 +399,7 @@
             (userRowSelect)="selectRow($event, $event.data)"></ng2-smart-table>
         </div>
       </div>
-      <div class="col-12">
+      <div class="col-12 mb-5">
         <app-pagination
           [params]="paramsPayBanks"
           [totalItems]="totalItemsPayBanks"></app-pagination>
@@ -417,11 +420,12 @@
       </div>
       <!-- Pagos Recibidos en el Banco -->
       <!-- Composicion de Pagos Recibidos -->
-      <div class="col-12 col-sm-12 col-md-12 mt-5">
+      <div class="col-12 col-sm-12 col-md-8">
         <h6>Composición de Pagos Recibidos</h6>
       </div>
-      <div class="col-12 col-sm-12 col-md-12">
+      <div class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
         <app-columns-select
+          [leftList]="true"
           [(settings)]="tableSettingsPagosRecibidos"></app-columns-select>
       </div>
       <div
