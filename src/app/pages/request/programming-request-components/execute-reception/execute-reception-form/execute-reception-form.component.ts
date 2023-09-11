@@ -2552,7 +2552,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.selectInfoGoodGuard.map(good => {
         const historyGood: IHistoryGood = {
           propertyNum: good.goodId,
-          status: 'ADM',
           changeDate: new Date(),
           userChange: this.userInfo.name,
           statusChangeProgram: 'TR_UPD_HISTO_BIENES',
@@ -2574,7 +2573,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.selectInfoGoodWarehouse.map(good => {
         const historyGood: IHistoryGood = {
           propertyNum: good.goodId,
-          status: 'ADM',
           changeDate: new Date(),
           userChange: this.userInfo.name,
           statusChangeProgram: 'TR_UPD_HISTO_BIENES',
@@ -2842,7 +2840,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           goodId: item.goodId,
           goodStatus: 'EN_RESGUARDO',
           programmationStatus: 'EN_RESGUARDO',
-          status: 'ADM',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
@@ -2864,7 +2861,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           goodId: item.goodId,
           goodStatus: 'EN_ALMACEN',
           programmationStatus: 'EN_ALMACEN',
-          status: 'ADM',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
