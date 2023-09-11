@@ -4,12 +4,6 @@
       <h5 class="modal-title">
         Lista de Nombramientos Relacionados al Bien "{{ noBien }}"
       </h5>
-      <div class="buttons">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
-        <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
-          Cerrar
-        </button>
-      </div>
     </div>
   </div>
 
@@ -18,10 +12,19 @@
       Selecciona un registro para cargar el nombramiento o bien dar clic en
       cerrar para cargar sólo la información del Bien
     </div>
-    <div class="row pt-4" style="max-height: 400px; overflow-y: scroll">
-      <div class="col-md-12">
+    <div class="row pt-4">
+      <div class="col-md-8">
+        <h6>Nombramientos</h6>
+      </div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse">
+        <app-columns-select
+          [leftList]="true"
+          [(settings)]="settings"></app-columns-select>
+      </div>
+      <div
+        class="col-sm-12 col-12 col-md-12 table-responsive p-1"
+        style="max-height: 500px; overflow-y: scroll">
         <div [class]="loading ? 'table-loading' : ''">
-          <!-- <form-loader *ngIf="loading"></form-loader> -->
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
             class="table-responsive"
@@ -34,5 +37,12 @@
     </div>
     <app-pagination [params]="paramsList" [totalItems]="totalItems">
     </app-pagination>
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <button class="btn btn-primary active btn-sm" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
   </div>
 </app-modal>

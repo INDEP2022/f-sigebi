@@ -51,12 +51,12 @@ export class PersonFormComponentAppointment extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.optionsTipoP = [
-      { value: null, label: 'Seleccione un Tipo persona' },
+      { value: '', label: 'Seleccione un Tipo persona' },
       { value: 'F', label: 'FÍSICA' },
       { value: 'M', label: 'MORAL' },
     ];
     this.optionsTipoR = [
-      { value: null, label: 'Seleccione un Tipo responsable' },
+      { value: '', label: 'Seleccione un Tipo responsable' },
       { value: 'A', label: 'Administrador' },
       { value: 'D', label: 'Depositario' },
       { value: 'I', label: 'Interventor' },
@@ -120,11 +120,11 @@ export class PersonFormComponentAppointment extends BasePage implements OnInit {
         [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
       ],
       typePerson: [
-        null,
+        '',
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       typeResponsible: [
-        null,
+        '',
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       manager: [

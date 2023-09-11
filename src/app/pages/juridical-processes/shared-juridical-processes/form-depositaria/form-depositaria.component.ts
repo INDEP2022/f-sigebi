@@ -43,9 +43,11 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.deleteDateOption = false;
     console.log('FORM ', this.form.value);
-    let param = new ListParams();
-    param.text = this.form.value.noBien;
-    this.getGoodsSheard(param, true);
+    if (this.form.value.noBien) {
+      let param = new ListParams();
+      param.text = this.form.value.noBien;
+      this.getGoodsSheard(param, true);
+    }
   }
 
   btnEjecutar() {

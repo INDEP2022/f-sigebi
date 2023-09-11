@@ -100,6 +100,10 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
         add: false,
         position: 'right',
       },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-2"></i>',
+      },
       columns: { ...COMCALCULATED_COLUMS },
     };
 
@@ -112,6 +116,10 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
         delete: true,
         add: false,
         position: 'right',
+      },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-3"></i>',
       },
       columns: { ...COMISIONESXBIEN_COLUMNS },
     };
@@ -313,11 +321,19 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           console.log(response);
+          let totalVenta = 0;
+          let totalMonto = 0;
           let result = response.data.map((item: any) => {
             item['good'] = item.goodNumber ? item.goodNumber.id : null;
             item['event'] = item.eventId ? item.eventId.eventId : null;
+            const a = item.sale ? Number(item.sale) : 0;
+            const b = item.amountCommission ? Number(item.amountCommission) : 0;
+            totalVenta = totalVenta + a;
+            totalMonto = totalMonto + b;
           });
           Promise.all(result).then(resp => {
+            this.totalForm.get('totalVenta').setValue(totalVenta);
+            this.totalForm.get('totalMonto').setValue(totalMonto);
             this.comCommisionXGood.load(response.data);
             this.comCommisionXGood.refresh();
             this.totalItems2 = response.count;
@@ -389,11 +405,13 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
   openForm2(commissions?: IComerCommissionsPerGood) {
     const idEvent = { ...this.event };
     const idGood = { ...this.good };
+    const comerComCalculated = this.comerComCalculated;
     let config: ModalOptions = {
       initialState: {
         commissions,
         idEvent,
         idGood,
+        comerComCalculated,
         callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
@@ -478,14 +496,14 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
 
     this.alertQuestion(
       'question',
-      'Se Eliminará el Registro',
+      'Se eliminará el registro',
       '¿Desea Continuar?'
     ).then(async question => {
       if (question.isConfirmed) {
         this.comerComCalculatedService.deleteW(data.comCalculatedId).subscribe({
           next: response => {
             this.getComCalculated();
-            this.alert('success', 'Registro Eliminado Correctamente', '');
+            this.alert('success', 'Registro eliminado correctamente', '');
             console.log('res', response);
           },
           error: err => {

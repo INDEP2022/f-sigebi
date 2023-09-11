@@ -109,18 +109,38 @@ export const COMISIONESXBIEN_COLUMNS = {
     title: 'Venta',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (text: string) => {
-      console.log('text', text);
-      return text ? Number(text).toString() : null;
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        return numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      } else {
+        return amount;
+      }
     },
   },
   amountCommission: {
     title: 'Monto Comisión',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (text: string) => {
-      console.log('text', text);
-      return text ? Number(text).toString() : null;
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        return numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      } else {
+        return amount;
+      }
     },
   },
   processIt: {

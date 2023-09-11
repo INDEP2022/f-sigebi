@@ -14,6 +14,7 @@ export enum ENDPOINT_LINKS {
   Battery = 'catalog/battery',
   City = 'catalog/city-sera',
   CityAll = 'city-sera',
+  outsideTrades = 'apps/obtener_cuerpobasicooficio',
   calendar = 'catalog/calendar',
   calendarId = 'catalog/api/v1/calendar',
   ClaimConclusion = 'catalog/claim-conclusion',
