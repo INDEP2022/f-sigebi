@@ -29,6 +29,11 @@ export class AffairService
     return this.affairRepository.getAllPaginated(route1, params);
   }
 
+  getObtnGood(params?: ListParams) {
+    const route1 = 'apps/obtn-good-pag';
+    return this.get(route1, params);
+  }
+
   getCveTransfer(body: any, params?: ListParams) {
     const route1 = 'catalog/apps/getTransferKey';
     return this.affairRepository.create3(route1, body, params);

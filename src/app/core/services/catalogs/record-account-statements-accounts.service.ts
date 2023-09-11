@@ -57,7 +57,7 @@ export class RecordAccountStatementsAccountsService
     cveAccount: string,
     params?: ListParams
   ): Observable<IListResponse<IRecordAccountStatements>> {
-    const route = `${this.route2}?filter.cveAccount=$eq:${cveAccount}`;
+    const route = `${this.route2}?filter.accountNumber.cveAccount=$ilike:${cveAccount}`;
     return this.get(route, params);
   }
 
