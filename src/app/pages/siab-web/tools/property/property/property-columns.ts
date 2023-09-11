@@ -1,3 +1,5 @@
+import { DatePipe } from '@angular/common';
+
 export const REAL_STATE_COLUMNS = {
   clasifGoodNumber: {
     title: 'Clasificador',
@@ -23,152 +25,174 @@ export const REAL_STATE_COLUMNS = {
 };
 
 export const REPORT_COLUMNS = {
-  goodId: {
+  bien: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
   },
-  fileNumber: {
+  expediente: {
     title: 'Expediente',
     type: 'string',
     sort: false,
   },
-  quantity: {
+  cantidad: {
     title: 'Cantidad',
     type: 'string',
     sort: false,
   },
-  unitMeasure: {
+  unidad_medida: {
     title: 'Unidad de Medida',
     type: 'string',
     sort: false,
   },
-  goodDescription: {
+  descripcion_bien: {
     title: 'Descripción Bien',
     type: 'string',
     sort: false,
   },
-  goodClassNumber: {
+  clasif: {
     title: 'Clasificación',
     type: 'string',
     sort: false,
   },
-  goodStatus: {
+  tipo_bien: {
+    title: 'Tipo Bien',
+    type: 'string',
+    sort: false,
+  },
+  s_tipo_bien: {
+    title: 'SubTipo Bien',
+    type: 'string',
+    sort: false,
+  },
+  ss_tipo_bien: {
+    title: 'SsuTipo Bien',
+    type: 'string',
+    sort: false,
+  },
+  sss_tipo_bien: {
+    title: 'SssubTipo Bien',
+    type: 'string',
+    sort: false,
+  },
+  estatus_bien: {
     title: 'Estatus Bien',
     type: 'string',
     sort: false,
   },
-  statusDetails: {
+  descripcion_estatus: {
     title: 'Descripción Estatus',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value != null ? value.descriptionStatus : '';
-    },
   },
-  destiny: {
+  destino: {
     title: 'Destino',
     type: 'string',
     sort: false,
   },
-  expediente: {
+  no_trasferente: {
     title: 'No. Transferente',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value != null
-        ? `${value.transferNumber} - ${value.expTransferNumber}`
-        : '';
-    },
   },
-  /*DESCRIPCION_TRANSFERENTE: {
+  descripcion_transferente: {
     title: 'Descripción Transferente',
     type: 'string',
     sort: false,
-  },*/
-  flyerNumber: {
+  },
+  volante: {
     title: 'Volante',
     type: 'string',
     sort: false,
   },
-  preliminaryInquiry: {
+  av_previa: {
     title: 'Averiguación Previa',
     type: 'string',
     sort: false,
   },
-  criminalCase: {
+  causa_penal: {
     title: 'Causa Penal',
     type: 'string',
     sort: false,
   },
-  CLAVE_OFICIO_DESAHOGO: {
+
+  clave_oficio_desahogo: {
     title: 'Cve. Oficio Desahogo',
     type: 'string',
     sort: false,
   },
-  RESPUESTA_AUTORIDAD: {
+  respuesta: {
     title: 'Respuesta Autoridad',
     type: 'string',
     sort: false,
   },
-  FECHA_DESAHOGO: {
+  fecha_desahogo: {
     title: 'Fecha Desahogo',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
   },
-  storeNumber: {
+  no_almacen: {
     title: 'No. Almacen',
     type: 'string',
     sort: false,
   },
-  almacen: {
+  descripcion_almacen: {
     title: 'Descripción Almacen',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value != null ? value.description : '';
-    },
   },
-  ubication: {
+  ubicacion_almacen: {
     title: 'Ubicación Almacen',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value != null ? value.description : '';
+  },
+  clave_dictamen_procedencia: {
+    title: 'Cve. Dictamen Procedencia',
+    type: 'string',
+    sort: false,
+  },
+  fecha_dictamen_procedencia: {
+    title: 'Fec. Dictamen Procedencia',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
     },
   },
-  origin: {
-    title: 'Cve._DICTAMEN_PROCEDENCIA',
+  fecha_captura_acta_recepcion: {
+    title: 'Fec. Captura Acta Recepción',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
+  },
+  clave_acta_recepcion: {
+    title: 'Cve. Acta Recepción',
     type: 'string',
     sort: false,
   },
-  proficientOpinion: {
-    title: 'FECHA_DICTAMEN_PROCEDENCIA',
+  coord_admin: {
+    title: 'Coor Admin',
     type: 'string',
     sort: false,
   },
-  FECHA_CAPTURA_ACTA_RECEPCION: {
-    title: 'FECHA_CAPTURA_ACTA_RECEPCION',
+  oficio_externo: {
+    title: 'Oficio Externo',
     type: 'string',
     sort: false,
   },
-  CLAVE_ACTA_RECEPCION: {
-    title: 'Cve._ACTA_RECEPCION',
-    type: 'string',
-    sort: false,
-  },
-  COORD_ADMIN: {
-    title: 'COORD_ADMIN',
-    type: 'string',
-    sort: false,
-  },
-  OFICIO_EXTERNO: {
-    title: 'OFICIO_EXTERNO',
-    type: 'string',
-    sort: false,
-  },
-  CLAVE_DESAHOGO: {
-    title: 'Cve._DESAHOGO',
+  clave_desahogo: {
+    title: 'Cve. Desahogo',
     type: 'string',
     sort: false,
   },
@@ -269,6 +293,16 @@ export const REPORT_COLUMNS = {
   },
   val20: {
     title: 'val20',
+    type: 'string',
+    sort: false,
+  },
+  num_fotos: {
+    title: 'No. Fotos',
+    type: 'string',
+    sort: false,
+  },
+  no_of_gestion: {
+    title: 'No. Oficio Gestion',
     type: 'string',
     sort: false,
   },

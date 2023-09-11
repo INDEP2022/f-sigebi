@@ -14,17 +14,21 @@
               [form]="serviceOrdersForm"
               value="serviceOrderKey"
               bindLabel="description"
-              label="Proceso"
+              label="Clave de Orden de Servicio"
               control="serviceOrderKey">
             </ngx-select>
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field [control]="serviceOrdersForm.get('type')" label="Tipo">
-            <select class="form-control" formControlName="type">
-              <option [value]="null">Seleccione un tipo</option>
-              <option value="normal">normal</option>
-            </select>
+            <ng-select
+              formControlName="type"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="N">NORMAL</ng-option>
+              <ng-option value="E">ESPECIAL</ng-option>
+            </ng-select>
           </form-field>
         </div>
         <div class="col-md-3">
