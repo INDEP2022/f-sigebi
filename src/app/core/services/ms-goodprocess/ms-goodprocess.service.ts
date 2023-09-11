@@ -258,6 +258,10 @@ export class GoodprocessService extends HttpService {
     return this.post(route, cveScreem);
   }
 
+  getAvailableGoods(params: any) {
+    return this.get(GoodprocessEndpoints.GoodsDetActaRecep, params);
+  }
+
   getCount(good: number) {
     return this.get(`${GoodprocessEndpoints.GetCount}?noGood=${good}`);
   }

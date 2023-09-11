@@ -345,7 +345,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea Eliminar este Registro?'
+      'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

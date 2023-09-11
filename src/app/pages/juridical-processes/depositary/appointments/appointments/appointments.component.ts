@@ -170,7 +170,7 @@ export class AppointmentsComponent
     } else {
       this.alertInfo(
         'warning',
-        'Error al Obtener los Datos del Usuario de la Sesión Actual',
+        'Error al obtener los datos del usuario de la sesión actual',
         ''
       );
     }
@@ -212,8 +212,8 @@ export class AppointmentsComponent
       } else {
         this.alert(
           'warning',
-          'Número de Bien',
-          'El Número de Bien Ingresado como Parámetro NO es un Número'
+          'Número de bien',
+          'El número de bien ingresado como parámetro no es un número'
         );
       }
     }
@@ -451,7 +451,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se Requiere de una Búsqueda de Bien Primero para Poder Continuar con esta Acción',
+        'Se requiere de una búsqueda de bien primero para poder continuar con esta acción',
         ''
       );
       return;
@@ -491,7 +491,7 @@ export class AppointmentsComponent
       ) {
         this.alertInfo(
           'warning',
-          'No Cambiara el Estatus del Bien, Hasta que se Tenga el Folio Acta Depositaría y el Folio de Remoción',
+          'No cambiara el estatus del bien, hasta que se tenga el folio acta depositaría y el folio de remoción',
           ''
         );
       } else if (
@@ -500,7 +500,7 @@ export class AppointmentsComponent
       ) {
         this.alertInfo(
           'warning',
-          'No Cambiara el Estatus del Bien, Hasta que se Tenga el Folio Acta Depositaría',
+          'No cambiara el estatus del bien, hasta que se tenga el folio acta depositaría',
           ''
         );
       } else if (
@@ -509,7 +509,7 @@ export class AppointmentsComponent
       ) {
         this.alertInfo(
           'warning',
-          'No cambiara el Estatus del Bien, Hasta que se Tenga el Folio de Remoción',
+          'No cambiara el estatus del bien, hasta que se tenga el folio de remoción',
           ''
         );
       }
@@ -530,7 +530,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se Requiere de una Búsqueda de Bien Primero para Poder Realizar esta Acción',
+        'Se requiere de una búsqueda de bien primero para poder realizar esta acción',
         ''
       );
       return;
@@ -542,7 +542,7 @@ export class AppointmentsComponent
       } else {
         // AGREGAR MS FALTANTE QUE ESTA EN REVISION
         console.log('NO ESTA LISTO');
-        this.alert('warning', 'No se Encontró Bien Disponible', '');
+        this.alert('warning', 'No se encontró bien disponible', '');
       }
     } else {
       this.openModalGoods();
@@ -624,10 +624,10 @@ export class AppointmentsComponent
         } else {
           this.alert(
             'warning',
-            'Verificar el Número de Bien',
-            'El No. de Bien ' +
+            'Verificar el número de bien',
+            'El No. de bien ' +
               this.noBien +
-              ' no Existe ó el Estatus para Depositarias no es el Adecuado.'
+              ' no existe ó el estatus para depositarias no es el adecuado.'
           );
         }
       },
@@ -635,10 +635,10 @@ export class AppointmentsComponent
         console.log(err);
         this.alert(
           'warning',
-          'Verificar el Número de Bien',
-          'El No. de Bien ' +
+          'Verificar el número de bien',
+          'El No. de bien ' +
             this.noBien +
-            ' no Existe ó el Estatus para Depositarias no es el Adecuado.'
+            ' no existe ó el estatus para depositarias no es el adecuado.'
         );
       },
     });
@@ -681,7 +681,7 @@ export class AppointmentsComponent
         console.log(error);
         this.alertInfo(
           'warning',
-          'Error al Obtener los Datos del Usuario de la Sesión Actual',
+          'Error al obtener los datos del usuario de la sesión actual',
           error.error.message
         );
       },
@@ -693,17 +693,17 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se Requiere de una Búsqueda de Bien Primero para Poder ver está Opción',
+        'Se requiere de una búsqueda de bien primero para poder ver está opción',
         ''
       );
       return;
     }
     if (this._saveDataDepositary) {
-      this.alert('warning', 'Guardar el Registro para Continuar', '');
+      this.alert('warning', 'Guardar el registro para continuar', '');
       return;
     }
     if (!this.depositaryAppointment.numberAppointment) {
-      this.alert('warning', 'Es Necesario un Número de Nombramiento', '');
+      this.alert('warning', 'Es necesario un número de nombramiento', '');
       return;
     }
     this.openModalPaysDetails({
@@ -727,17 +727,17 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se Requiere de una Búsqueda de Bien Primero para Poder ver está Opción',
+        'Se requiere de una búsqueda de bien primero para poder ver está opción',
         ''
       );
       return;
     }
     if (this._saveDataDepositary) {
-      this.alert('warning', 'Guardar el Registro para Continuar', '');
+      this.alert('warning', 'Guardar el registro para continuar', '');
       return;
     }
     if (!this.depositaryAppointment.numberAppointment) {
-      this.alert('warning', 'Es Necesario un Número de Nombramiento', '');
+      this.alert('warning', 'Es necesario un número de nombramiento', '');
       return;
     }
     this.openModalJuridicalReport({
@@ -763,7 +763,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se Requiere de una Búsqueda de Bien Primero para Poder ver está Opción',
+        'Se requiere de una búsqueda de bien primero para poder ver está opción',
         ''
       );
       return;
@@ -791,17 +791,17 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se Requiere de una Búsqueda de Bien Primero para Poder ver está Opción',
+        'Se requiere de una búsqueda de bien primero para poder ver está opción',
         ''
       );
       return;
     }
     if (this._saveDataDepositary) {
-      this.alert('warning', 'Guardar el Nombramiento para Continuar', '');
+      this.alert('warning', 'Guardar el nombramiento para continuar', '');
       return;
     }
     if (!this.depositaryAppointment.numberAppointment) {
-      this.alert('warning', 'Es Necesario un Número de Nombramiento', '');
+      this.alert('warning', 'Es necesario un número de nombramiento', '');
       return;
     }
     // Llama pantalla FMASINSPAGDEPOSITARIAS
@@ -822,17 +822,17 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se Requiere de una Búsqueda de Bien Primero para Poder ver está Opción',
+        'Se requiere de una búsqueda de bien primero para poder ver está opción',
         ''
       );
       return;
     }
     if (this._saveDataDepositary) {
-      this.alert('warning', 'Guardar el Nombramiento para Continuar', '');
+      this.alert('warning', 'Guardar el nombramiento para continuar', '');
       return;
     }
     if (!this.depositaryAppointment.numberAppointment) {
-      this.alert('warning', 'Es Necesario un Número de Nombramiento', '');
+      this.alert('warning', 'Es necesario un número de nombramiento', '');
       return;
     }
     // Llama pantalla FCATCATCONCEPPAGO
@@ -850,17 +850,17 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se Requiere de una Búsqueda de Bien Primero para Poder ver está Opción',
+        'Se requiere de una búsqueda de bien primero para poder ver está opción',
         ''
       );
       return;
     }
     if (this._saveDataDepositary) {
-      this.alert('warning', 'Guardar el Nombramiento para Continuar', '');
+      this.alert('warning', 'Guardar el nombramiento para continuar', '');
       return;
     }
     if (!this.depositaryAppointment.numberAppointment) {
-      this.alert('warning', 'Es Necesario un Número de Nombramiento', '');
+      this.alert('warning', 'Es necesario un número de nombramiento', '');
       return;
     }
     // Llama pantalla FCATCATMTOPERSONA
@@ -938,10 +938,10 @@ export class AppointmentsComponent
           } else {
             this.alert(
               'warning',
-              'Verificar el Número de Bien',
-              'El No. de Bien ' +
+              'Verificar el número de bien',
+              'El No. de bien ' +
                 this.noBien +
-                ' NO Existe ó el Estatus para Depositarias no es el Adecuado.'
+                ' no existe ó el estatus para depositarias no es el adecuado.'
             );
           }
         },
@@ -949,15 +949,15 @@ export class AppointmentsComponent
           console.log(err);
           this.alert(
             'warning',
-            'Verificar el Número de Bien',
-            'El No. de Bien ' +
+            'Verificar el número de bien',
+            'El No. de bien ' +
               this.noBien +
-              ' NO Existe ó el Estatus para Depositarias no es el Adecuado.'
+              ' no existe ó el estatus para depositarias no es el adecuado.'
           );
         },
       });
     } else {
-      this.alert('warning', 'Número de Bien', 'Ingresa un Número de Bien.');
+      this.alert('warning', 'Número de bien', 'Ingresa un número de bien.');
     }
   }
 
@@ -974,8 +974,8 @@ export class AppointmentsComponent
           console.log(err);
           this.alert(
             'warning',
-            'Estatus del Bien',
-            'El Estatus no se Obtuvo Correctamente para el Bien ' + noGood + '.'
+            'Estatus del bien',
+            'El estatus no se obtuvo correctamente para el bien ' + noGood + '.'
           );
         },
       });
@@ -998,8 +998,8 @@ export class AppointmentsComponent
           console.log(err);
           this.alert(
             'warning',
-            'Número de Expediente',
-            'El Número de Expediente ' + noExpedient + ' NO Existe.'
+            'Número de expediente',
+            'El número de expediente ' + noExpedient + ' no existe.'
           );
         },
       });
@@ -1068,14 +1068,14 @@ export class AppointmentsComponent
             } else {
               this.alert(
                 'warning',
-                'Número de Bien',
-                'El Número de Bien no Existe en Registro de Depositaría.'
+                'Número de bien',
+                'El número de bien no existe en registro de depositaría.'
               );
             }
           },
         });
     } else {
-      this.alert('warning', 'Número de Bien', 'Ingresa un Número de Bien.');
+      this.alert('warning', 'Número de bien', 'Ingresa un número de bien.');
     }
   }
 
@@ -1608,9 +1608,9 @@ export class AppointmentsComponent
                   console.log(err);
                   this.alert(
                     'warning',
-                    'El No. de Expediente ' +
+                    'El No. de expediente ' +
                       this.noBien +
-                      ' NO Existe, Verifique',
+                      ' no existe, verifique',
                     ''
                   );
                 },
@@ -1624,13 +1624,13 @@ export class AppointmentsComponent
           if (onlyGood == false) {
             this.alert(
               'warning',
-              'Número de Bien ' + this.noBien,
-              'El Número de Bien NO Existe, Verifique'
+              'Número de bien ' + this.noBien,
+              'El número de bien no existe, verifique'
             );
           } else {
             // this.alert(
             //   'warning',
-            //   'El No. de Bien ' +
+            //   'El No. de bien ' +
             //     this.noBien +
             //     ' no existe ó el estatus para depositarias no es el adecuado, verifique',
             //   ''
@@ -1663,8 +1663,8 @@ export class AppointmentsComponent
           console.log(err);
           this.alert(
             'warning',
-            'Descripción del Bien',
-            'Error al Consultar la Descripción del Bien.'
+            'Descripción del bien',
+            'Error al consultar la descripción del bien.'
           );
           // this.validFielddGoodNumber();
         },
@@ -2046,7 +2046,7 @@ export class AppointmentsComponent
     if (this._saveDataDepositary == true) {
       this.alert(
         'warning',
-        'Se Requiere Guardar el Registro para Poder ver está Opción',
+        'Se requiere guardar el registro para poder ver está opción',
         ''
       );
       return;
@@ -2054,7 +2054,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se Requiere de una Búsqueda de Bien Primero para Poder ver está Opción',
+        'Se requiere de una búsqueda de bien primero para poder ver está opción',
         ''
       );
       return;
@@ -2069,7 +2069,7 @@ export class AppointmentsComponent
       } else {
         this.alertInfo(
           'warning',
-          'No Tiene Folio de Escaneo para Visualizar',
+          'No tiene folio de escaneo para visualizar',
           ''
         );
       }
@@ -2082,7 +2082,7 @@ export class AppointmentsComponent
       } else {
         this.alertInfo(
           'warning',
-          'No Tiene Folio de Escaneo para Visualizar',
+          'No tiene folio de escaneo para visualizar',
           ''
         );
       }
@@ -2113,7 +2113,7 @@ export class AppointmentsComponent
           };
           this.modalService.show(PreviewDocumentsComponent, config);
         } else {
-          this.alert('warning', 'Reporte NO Disponible por el Momento', '');
+          this.alert('warning', 'Reporte no disponible por el momento', '');
         }
       });
   }
@@ -2122,7 +2122,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se Requiere de una Búsqueda de Bien Primero para Poder ver está Opción',
+        'Se requiere de una búsqueda de bien primero para poder ver está opción',
         ''
       );
       return;
@@ -2130,7 +2130,7 @@ export class AppointmentsComponent
     if (this._saveDataDepositary == true) {
       this.alert(
         'warning',
-        'Se Requiere Guardar el Registro para Poder ver está Opción',
+        'Se requiere guardar el registro para poder ver está opción',
         ''
       );
       return;
@@ -2148,7 +2148,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se Requiere de una Búsqueda de Bien Primero para Poder ver está Opción',
+        'Se requiere de una búsqueda de bien primero para poder ver está opción',
         ''
       );
       return;
@@ -2156,7 +2156,7 @@ export class AppointmentsComponent
     if (this._saveDataDepositary == true) {
       this.alert(
         'warning',
-        'Se Requiere Guardar el Registro para Poder ver está Opción',
+        'Se requiere guardar el registro para poder ver está opción',
         ''
       );
       return;
@@ -2194,7 +2194,7 @@ export class AppointmentsComponent
                 const response = await this.alertQuestion(
                   'question',
                   'Aviso',
-                  '¿Quiere Generar el Folio de Acta Depositaria, Aunque no Cambiará el Estatus?'
+                  '¿Quiere generar el folio de acta depositaria, aunque no cambiará el estatus?'
                 );
 
                 if (!response.isConfirmed) {
@@ -2208,7 +2208,7 @@ export class AppointmentsComponent
                 const response = await this.alertQuestion(
                   'question',
                   'Aviso',
-                  'Se Generará un Nuevo Folio de Escaneo para la Depositaría. ¿Deseas Continuar?'
+                  'Se generará un nuevo folio de escaneo para la depositaría. ¿Deseas continuar?'
                 );
 
                 if (!response.isConfirmed) {
@@ -2225,7 +2225,7 @@ export class AppointmentsComponent
               this.loadingRadioSelect = false;
               this.onLoadToast(
                 'error',
-                'Error al Validar el Folio Universal',
+                'Error al validar el folio universal',
                 ''
               );
             },
@@ -2246,7 +2246,7 @@ export class AppointmentsComponent
               if (data.count == 0) {
                 this.alertInfo(
                   'warning',
-                  'No se Puede Generar el Folio de Escaneo por Remoción, Porque no Tiene el Estatus Adecuado',
+                  'No se puede generar el folio de escaneo por remoción, porque no tiene el estatus adecuado',
                   ''
                 );
                 this.loadingRadioSelect = false;
@@ -2255,12 +2255,12 @@ export class AppointmentsComponent
                 const response = await this.alertQuestion(
                   'question',
                   'Aviso',
-                  'Se Generará un Nuevo Folio de Escaneo para la Remoción. ¿Deseas Continuar?'
+                  'Se generará un nuevo folio de escaneo para la remoción. ¿Deseas continuar?'
                 );
 
                 if (response.isConfirmed) {
                   if (this.form.get('remocion').value == 'N') {
-                    this.alertInfo('warning', 'No Tiene Datos de Remoción', '');
+                    this.alertInfo('warning', 'No tiene datos de remoción', '');
                     this.loadingRadioSelect = false;
                     this.showScanRadio = false;
                   } else {
@@ -2288,7 +2288,7 @@ export class AppointmentsComponent
       if (!this.noBienReadOnly) {
         this.alert(
           'warning',
-          'No se Puede Replicar el Folio de Escaneo si no Existe un Bien',
+          'No se puede replicar el folio de escaneo si no existe un bien',
           ''
         );
         return;
@@ -2302,7 +2302,7 @@ export class AppointmentsComponent
         } else {
           this.alert(
             'warning',
-            'No se Puede Escanear Imagenes, Folio de Acta Depositaria es Nulo.',
+            'No se puede escanear imagenes, folio de acta depositaria es nulo.',
             ''
           );
           this.showScanRadio = false;
@@ -2314,7 +2314,7 @@ export class AppointmentsComponent
         } else {
           this.alert(
             'warning',
-            'No se Puede Escanear Imagenes, Folio de Remoción es Nulo.',
+            'No se puede escanear imagenes, folio de remoción es nulo.',
             ''
           );
           this.showScanRadio = false;
@@ -2338,7 +2338,7 @@ export class AppointmentsComponent
       this.loadingRadioSelect = false;
       this.alert(
         'warning',
-        'No se Puede Generar el Folio de Escaneo si no Existe un Bien',
+        'No se puede generar el folio de escaneo si no existe un bien',
         ''
       );
       return;
@@ -2346,7 +2346,7 @@ export class AppointmentsComponent
     console.log('APPOINTMENT DATA ', this.depositaryAppointment);
     if (this.depositaryAppointment.numberAppointment == null) {
       this.loadingRadioSelect = false;
-      this.alert('warning', 'Se Requiere Guardar para Continuar', '');
+      this.alert('warning', 'Se requiere guardar para continuar', '');
       return;
     }
     this.appointmentsService.getCFlyer(this.good.fileNumber).subscribe({
@@ -2393,7 +2393,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se Requiere de una Búsqueda de Bien Primero para Poder ver está Opción',
+        'Se requiere de una búsqueda de bien primero para poder ver está opción',
         ''
       );
       return;
@@ -2401,7 +2401,7 @@ export class AppointmentsComponent
     if (this._saveDataDepositary == true) {
       this.alert(
         'warning',
-        'Se Requiere Guardar el Registro para Poder ver está Opción',
+        'Se requiere guardar el registro para poder ver está opción',
         ''
       );
       return;
@@ -2417,7 +2417,7 @@ export class AppointmentsComponent
       } else {
         this.alertInfo(
           'warning',
-          'No Tiene Folio de Escaneo para Visualizar',
+          'No tiene folio de escaneo para visualizar',
           ''
         );
       }
@@ -2431,7 +2431,7 @@ export class AppointmentsComponent
       } else {
         this.alertInfo(
           'warning',
-          'No Tiene Folio de Escaneo para Visualizar',
+          'No tiene folio de escaneo para visualizar',
           ''
         );
       }
@@ -2696,7 +2696,7 @@ export class AppointmentsComponent
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
-        'Se Requiere de una Búsqueda de Bien Primero para Poder Continuar con esta Acción',
+        'Se requiere de una búsqueda de bien primero para poder continuar con esta acción',
         ''
       );
       return;
@@ -2705,7 +2705,7 @@ export class AppointmentsComponent
       this.form.markAllAsTouched();
       this.alertInfo(
         'warning',
-        'Complete Correctamente los Campos Requeridos',
+        'Complete correctamente los campos requeridos',
         ''
       );
       return;
@@ -2723,7 +2723,7 @@ export class AppointmentsComponent
       validMessage = true;
       this.alertInfo(
         'warning',
-        'No Cambiara el Estatus del Bien, Hasta que se Tenga el Folio Acta Depositaría y el Folio de Remoción',
+        'No cambiara el estatus del bien, hasta que se tenga el folio acta depositaría y el folio de remoción',
         ''
       ).then(() => {
         this._saveInfoData();
@@ -2735,7 +2735,7 @@ export class AppointmentsComponent
       validMessage = true;
       this.alertInfo(
         'warning',
-        'No Cambiara el Estatus del Bien, Hasta que se Tenga el Folio Acta Depositaría',
+        'No cambiara el estatus del bien, hasta que se tenga el folio acta depositaría',
         ''
       ).then(() => {
         this._saveInfoData();
@@ -2747,7 +2747,7 @@ export class AppointmentsComponent
       validMessage = true;
       this.alertInfo(
         'warning',
-        'No cambiara el Estatus del Bien, Hasta que se Tenga el Folio de Remoción',
+        'No cambiara el estatus del bien, hasta que se tenga el folio de remoción',
         ''
       ).then(() => {
         this._saveInfoData();
@@ -2763,7 +2763,7 @@ export class AppointmentsComponent
       if (!this.depositaryAppointment.personNumber) {
         this.alertInfo(
           'warning',
-          'Selecciona una Persona o Crea una Nueva Persona para Continuar',
+          'Selecciona una persona o crea una nueva persona para continuar',
           ''
         );
         return;
@@ -2838,7 +2838,7 @@ export class AppointmentsComponent
         next: (data: any) => {
           this._saveDataDepositary = false;
           console.log(data);
-          this.alertInfo('success', 'Registro Guardado Correctamente', '');
+          this.alertInfo('success', 'Registro guardado correctamente', '');
           if (data.data) {
             this.validGoodNumberInDepositaryAppointment(
               true,
@@ -2856,7 +2856,7 @@ export class AppointmentsComponent
           console.log(error);
           this.alertInfo(
             'error',
-            'Ocurrió un Error al Guardar el Registro',
+            'Ocurrió un error al guardar el registro',
             error.error.message
           );
         },
@@ -2919,7 +2919,7 @@ export class AppointmentsComponent
                 true,
                 body.appointmentNum
               );
-              this.alertInfo('success', 'Registro Guardado Correctamente', '');
+              this.alertInfo('success', 'Registro guardado correctamente', '');
               this.getPersonXNom();
             } else {
               let _saveFolioDepositary = localStorage.getItem(
@@ -2944,7 +2944,7 @@ export class AppointmentsComponent
                 true,
                 body.appointmentNum
               );
-              this.alertInfo('success', 'Registro Guardado Correctamente', '');
+              this.alertInfo('success', 'Registro guardado correctamente', '');
               this.getPersonXNom();
             }
           });
@@ -2953,7 +2953,7 @@ export class AppointmentsComponent
           console.log(error);
           this.alertInfo(
             'error',
-            'Ocurrió un Error al Guardar el Registro',
+            'Ocurrió un error al guardar el registro',
             error.error.message
           );
         },
@@ -2984,7 +2984,7 @@ export class AppointmentsComponent
       },
       error: error => {
         console.log('ERROR UPDATE STATUS', error);
-        this.alert('error', 'Error al Actualizar el Estatus del Bien', '');
+        this.alert('error', 'Error al actualizar el estatus del bien', '');
       },
     });
   }
