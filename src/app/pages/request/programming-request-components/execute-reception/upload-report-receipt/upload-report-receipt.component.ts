@@ -559,7 +559,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           id: item.id,
           goodId: item.goodId,
           goodStatus: 'EN_RECEPCION',
-          status: 'ADM',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
@@ -577,7 +576,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       goodsReception.map((item: IGood) => {
         const historyGood: IHistoryGood = {
           propertyNum: item.goodId,
-          status: 'ADM',
           changeDate: new Date(),
           userChange: this.userInfo.name,
           statusChangeProgram: 'TR_UPD_HISTO_BIENES',

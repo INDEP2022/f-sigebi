@@ -204,7 +204,7 @@
               readonly />
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('userRequestChangeNumber')">
             <ngx-select
@@ -221,7 +221,7 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="col-md-5 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('postUserRequestCamnum')"
             label="Cargo">
@@ -232,10 +232,7 @@
               maxlength="200" />
           </form-field>
         </div>
-      </div>
-      <br />
-      <div class="row">
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('delegationRequestcamnum')"
             label="No. Delegacion Solicitante">
@@ -247,7 +244,10 @@
               readonly />
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-md-5 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('procedureProposal')"
             label="Procedimiento Propuesto">
@@ -267,7 +267,23 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('authorizeDate')"
+            label="Fecha Autoriza">
+            <input
+              type="text"
+              class="form-control mt-2"
+              formControlName="authorizeDate"
+              bsDatepicker
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field [control]="formaplicationData.get('authorizeUser')">
             <ngx-select
               [form]="formaplicationData"
@@ -283,10 +299,7 @@
             </ngx-select>
           </form-field>
         </div>
-      </div>
-      <br />
-      <div class="row">
-        <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="col-md-5 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('authorizePostUser')"
             label="Cargo">
@@ -297,7 +310,7 @@
               readonly />
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('authorizeDelegation')"
             label="No. Delegacion Autoriza">
@@ -305,19 +318,6 @@
               type="text"
               class="form-control mt-2"
               formControlName="authorizeDelegation"
-              readonly />
-          </form-field>
-        </div>
-        <div class="col-md-2 col-sm-12 col-xs-12">
-          <form-field
-            [control]="formaplicationData.get('authorizeDate')"
-            label="Fecha Autoriza">
-            <input
-              type="text"
-              class="form-control mt-2"
-              formControlName="authorizeDate"
-              bsDatepicker
-              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
               readonly />
           </form-field>
         </div>
