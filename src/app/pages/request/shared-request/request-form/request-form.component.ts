@@ -486,8 +486,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
           if (this.requestForm.controls['targetUser'].value === null) {
             this.alert(
               'warning',
-              'Información',
-              `Seleccione un usuario para poder turnar la solicitud!`
+              'Atención',
+              `Seleccione un usuario para poder turnar la solicitud`
             );
             return;
           } else {
