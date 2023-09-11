@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   ListParams,
   SearchFilter,
@@ -12,6 +11,8 @@ import {
 import { CapturelineService } from 'src/app/core/services/ms-capture-line/captureline.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { GuarantyService } from 'src/app/core/services/ms-guaranty/guaranty.service';
+import { MsMassivecapturelineService } from 'src/app/core/services/ms-massivecaptureline/ms-massivecaptureline.service';
+import { MassiveDepositaryService } from 'src/app/core/services/ms-massivedepositary/massivedepositary.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -42,9 +43,13 @@ export class auctionReportComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   params1 = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
+  params3 = new BehaviorSubject<ListParams>(new ListParams());
+  params4 = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters: any = [];
   columnFilters1: any = [];
   columnFilters2: any = [];
+  columnFilters3: any = [];
+  columnFilters4: any = [];
   idEvent: number;
   filter: boolean = false;
   buttonFilter: boolean = true;
@@ -73,7 +78,9 @@ export class auctionReportComponent extends BasePage implements OnInit {
     private comerEventService: ComerEventService,
     private guarantyService: GuarantyService,
     private capturelineService: CapturelineService,
-    private comerEventosService: ComerEventosService
+    private comerEventosService: ComerEventosService,
+    private msMassivecapturelineService: MsMassivecapturelineService,
+    private massiveDepositaryService: MassiveDepositaryService
   ) {
     super();
     this.settings = {
@@ -374,21 +381,6 @@ export class auctionReportComponent extends BasePage implements OnInit {
     }
   }
 
-  openPrevPdf() {
-    let config: ModalOptions = {
-      initialState: {
-        documento: {
-          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(this.pdfurl),
-          type: 'pdf',
-        },
-        callback: (data: any) => {},
-      }, //pasar datos por aca
-      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-      ignoreBackdropClick: true, //ignora el click fuera del modal
-    };
-    this.modalService.show(PreviewDocumentsComponent, config);
-  }
-
   getEvent(params: ListParams) {
     console.log(params.text);
     if (params.text) {
@@ -490,6 +482,7 @@ export class auctionReportComponent extends BasePage implements OnInit {
     this.data2.refresh();
     this.totalItems2 = 0;
     this.showFilter = false;
+    this.formReport.get('nameReport').setValue('');
 
     this.formFilter.get('lot').setValue(null);
     this.getLotPublic(new ListParams(), -1);
@@ -517,6 +510,7 @@ export class auctionReportComponent extends BasePage implements OnInit {
     this.showGarantia = true;
     this.showLiquidacion = false;
     this.filter = true;
+    this.formReport.get('nameReport').setValue('');
 
     this.data1.load([]);
     this.data1.refresh();
@@ -628,5 +622,135 @@ export class auctionReportComponent extends BasePage implements OnInit {
         this.totalItems2 = 0;
       },
     });
+  }
+
+  openPrevPdf() {
+    /*let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(this.pdfurl),
+          type: 'pdf',
+        },
+        callback: (data: any) => { },
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);*/
+
+    if (this.validateFilter == 'settlement') {
+      if (this.idEvent) {
+        this.params3.getValue()['filter.id_evento'] = `$eq:${this.idEvent}`;
+      }
+      if (
+        this.publicLotBody &&
+        this.customerBody &&
+        this.statusBody &&
+        this.viewBody
+      ) {
+        //this.params.getValue()['filter.id_evento'] = `$eq:${idEvent}`;
+        this.params3.getValue()[
+          'filter.lote_publico'
+        ] = `$eq:${this.publicLotBody}`;
+        this.params3.getValue()[
+          'filter.cliente'
+        ] = `$ilike:${this.customerBody}`;
+        this.params3.getValue()['filter.estatus'] = `$ilike:${this.statusBody}`;
+        this.params3.getValue()[
+          'filter.desc_vista'
+        ] = `$ilike:${this.viewBody}`;
+      }
+      let param = {
+        ...this.params3.getValue(),
+        ...this.columnFilters3,
+      };
+      const name = this.formReport.get('nameReport').value;
+      this.msMassivecapturelineService.getSettlementExcel(param).subscribe({
+        next: resp => {
+          this.downloadDocument(`${name}`, 'excel', resp.base64File);
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
+    } else if (this.validateFilter == 'warranty') {
+      if (this.idEvent) {
+        this.params3.getValue()['filter.id_evento'] = `$eq:${this.idEvent}`;
+      }
+      if (
+        this.publicLotBody &&
+        this.customerBody &&
+        this.statusBody &&
+        this.viewBody
+      ) {
+        //this.params.getValue()['filter.id_evento'] = `$eq:${idEvent}`;
+        this.params3.getValue()[
+          'filter.lote_publico'
+        ] = `$eq:${this.publicLotBody}`;
+        this.params3.getValue()[
+          'filter.cliente'
+        ] = `$ilike:${this.customerBody}`;
+        this.params3.getValue()['filter.estatus'] = `$ilike:${this.statusBody}`;
+        this.params3.getValue()[
+          'filter.desc_vista'
+        ] = `$ilike:${this.viewBody}`;
+      }
+      let param = {
+        ...this.params3.getValue(),
+        ...this.columnFilters3,
+      };
+      const name = this.formReport.get('nameReport').value;
+      this.massiveDepositaryService.getGuaranteExcel(param).subscribe({
+        next: resp => {
+          this.downloadDocument(`${name}`, 'excel', resp.base64File);
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
+    }
+  }
+
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.loading = false;
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
   }
 }

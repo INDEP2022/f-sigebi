@@ -1,7 +1,16 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IPaymentsGensDepositary } from 'src/app/core/models/ms-depositarypayment/ms-depositarypayment.interface';
+import { IGood } from 'src/app/core/models/ms-good/good';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'ngx-form-depositaria',
@@ -20,15 +29,25 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
   @Output() formDepositariaValues = new EventEmitter<any>();
   @Output() formValuesValidacion = new EventEmitter<any>();
   @Output() searchGoodNumber = new EventEmitter<number>();
+  @Output() searchGoodData = new EventEmitter<any>();
   @Output() cleanData = new EventEmitter<boolean>();
 
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  goods = new DefaultSelect<IGood>();
+  goodSelect: IGood;
   @Output() eliminarDispersionPagos = new EventEmitter<any>();
-  constructor() {
+  constructor(private service: GoodFinderService) {
     super();
   }
 
   ngOnInit(): void {
     this.deleteDateOption = false;
+    console.log('FORM ', this.form.value);
+    if (this.form.value.noBien) {
+      let param = new ListParams();
+      param.text = this.form.value.noBien;
+      this.getGoodsSheard(param, true);
+    }
   }
 
   btnEjecutar() {
@@ -64,10 +83,11 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
 
   btnSearchGood() {
     console.log(this.form.get('noBien').value, this.form.value);
-    this.searchGoodNumber.emit(this.form.get('noBien').value);
+    // this.searchGoodNumber.emit(this.form.get('noBien').value);
   }
 
   cleanScreenFields() {
+    this.goods = new DefaultSelect([], 0, true);
     this.cleanData.emit(true);
   }
 
@@ -89,5 +109,47 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
     } else {
       return '0.00';
     }
+  }
+
+  getGoodsSheard(params: ListParams, getByValue: boolean = false) {
+    //Provisional data
+    console.log(params);
+    // this.searchTabForm.controls['noBien'].disable();
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    this.loading = true;
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+    if (!isNaN(parseFloat(params.text)) && isFinite(+params.text)) {
+      if (params.text != undefined && params.text != '') {
+        data.addFilter('id', params.text, SearchFilter.EQ);
+      }
+    } else {
+      if (params.text != undefined && params.text != '') {
+        data.addFilter('description', params.text, SearchFilter.ILIKE);
+      }
+    }
+    this.service.getAll2(data.getParams()).subscribe({
+      next: data => {
+        this.goods = new DefaultSelect(data.data, data.count);
+        this.loading = false;
+        console.log('DATA GOOD ', this.goods);
+        if (getByValue == true) {
+          // this.onChangeGood(this.goods.data[0]);
+          this.form.get('noBien').setValue(this.goods.data[0].id);
+          this.searchGoodData.emit(this.goods.data[0]);
+        }
+      },
+      error: err => {
+        this.goods = new DefaultSelect([], 0, true);
+        this.loading = false;
+      },
+    });
+  }
+  onChangeGood(event: IGood) {
+    console.log(event);
+    this.goodSelect = event;
+    this.goods = new DefaultSelect([event], 1, true);
+    this.searchGoodData.emit(event);
   }
 }

@@ -23,6 +23,7 @@ export class ListReferenceComponent extends BasePage implements OnInit {
   dataParams: any;
   L_IMPORTE: any;
   columnFilters: any = [];
+  valCargado: boolean;
   constructor(
     private modalRef: BsModalRef,
     private paymentService: PaymentService
@@ -165,24 +166,29 @@ export class ListReferenceComponent extends BasePage implements OnInit {
       return;
     }
 
-    const requestBody: any = {
-      paymentId: this.dataParams.paymentId,
-      lotId: this.dataSelected.lotId,
-    };
+    if (this.valCargado) {
+      this.dataParams.lotId = this.dataSelected.lotId;
+      this.handleSuccess();
+    } else {
+      const requestBody: any = {
+        paymentId: this.dataParams.paymentId,
+        lotId: this.dataSelected.lotId,
+      };
 
-    const aaa = await this.updatePayment2(this.dataSelected);
+      const aaa = await this.updatePayment2(this.dataSelected);
 
-    this.paymentService
-      .update(this.dataParams.paymentId, requestBody)
-      .subscribe({
-        next: response => {
-          this.handleSuccess();
-        },
-        error: error => {
-          this.handleError();
-          // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
-        },
-      });
+      this.paymentService
+        .update(this.dataParams.paymentId, requestBody)
+        .subscribe({
+          next: response => {
+            this.handleSuccess();
+          },
+          error: error => {
+            this.handleError();
+            // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
+          },
+        });
+    }
   }
 
   async updatePayment2(payment: any) {
@@ -201,7 +207,7 @@ export class ListReferenceComponent extends BasePage implements OnInit {
     const message: string = 'Actualizado';
     this.alert('success', `Registro ${message} Correctamente`, '');
     this.loading = false;
-    this.modalRef.content.callback(true);
+    this.modalRef.content.callback(true, this.dataParams);
     this.modalRef.hide();
   }
 
