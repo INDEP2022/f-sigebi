@@ -23,7 +23,8 @@
                 label="Banco"
                 [searchOnInit]="true"
                 termMaxLength="30"
-                (change)="onBankSelectChange($event)">
+                (change)="onBankSelectChange($event)"
+                (input)="onSearchNameAccount($event.target)">
               </ngx-select>
             </form-field>
           </div>
