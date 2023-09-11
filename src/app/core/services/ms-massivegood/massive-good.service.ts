@@ -49,6 +49,11 @@ export class MassiveGoodService extends HttpService {
     return this.get(route);
   }
 
+  getObtnGoodExcel(id: string | number) {
+    const route = `${this.route.ObtnGoodPag}?filter.clasif=$in:${id}`;
+    return this.get(route);
+  }
+
   create(body: IMassiveGood) {
     return this.post(this.route.MassiveChargeGoods, body);
   }
