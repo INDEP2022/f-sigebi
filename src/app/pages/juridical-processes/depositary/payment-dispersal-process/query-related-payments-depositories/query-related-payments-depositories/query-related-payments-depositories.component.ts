@@ -250,7 +250,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
         this.alert(
           'warning',
           'Número de bien',
-          'Carga la Información del Bien primero para Continuar'
+          'Carga la información del bien primero para continuar'
         );
         return;
       }
@@ -272,7 +272,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
               'warning',
               'Número de bien',
               NOT_FOUND_GOOD(
-                err.error.message ? err.error.message : 'Error en el Servidor'
+                err.error.message ? err.error.message : 'Error en el servidor'
               )
             );
           },
@@ -325,7 +325,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
         this.alert(
           'warning',
           'Número de bien',
-          'Carga la Información del Bien primero para Continuar'
+          'Carga la información del bien primero para continuar'
         );
         return;
       }
@@ -411,7 +411,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
               'warning',
               'Número de bien',
               NOT_FOUND_GOOD_APPOINTMENT(
-                err.error.message ? err.error.message : 'Error en el Servidor'
+                err.error.message ? err.error.message : 'Error en el servidor'
               )
             );
           },
@@ -445,7 +445,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
             'warning',
             'Número de bien',
             NOT_FOUND_GOOD(
-              err.error.message ? err.error.message : 'Error en el Servidor'
+              err.error.message ? err.error.message : 'Error en el servidor'
             )
           );
         },
@@ -514,7 +514,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
             'warning',
             'Descripción del bien',
             NOT_FOUND_GOOD_DESCRIPTION(
-              err.error.message ? err.error.message : 'Error en el Servidor'
+              err.error.message ? err.error.message : 'Error en el servidor'
             )
           );
         },
@@ -587,7 +587,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
             'warning',
             'Pagos recibidos en el banco',
             NOT_FOUND_PAYMENTS_BANK(
-              err.error.message ? err.error.message : 'Error en el Servidor'
+              err.error.message ? err.error.message : 'Error en el servidor'
             )
           );
         },
@@ -769,7 +769,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
             'Se mostrará un excel con detalles de los errores por cada registro procesado'
           );
         } else {
-          this.alert('success', 'Proceso Terminado ', '');
+          this.alert('success', 'Proceso terminado ', '');
         }
       }
     }

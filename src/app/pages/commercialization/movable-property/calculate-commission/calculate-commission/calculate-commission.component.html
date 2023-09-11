@@ -125,6 +125,7 @@
                 <form-field [control]="totalForm.get('totalVenta')">
                   <label for="">Total Venta</label>
                   <input
+                    currencyMask
                     readonly
                     type="text"
                     class="form-control"
@@ -135,6 +136,7 @@
                 <form-field [control]="totalForm.get('totalMonto')">
                   <label for="">Total Monto</label>
                   <input
+                    currencyMask
                     readonly
                     type="text"
                     class="form-control"
