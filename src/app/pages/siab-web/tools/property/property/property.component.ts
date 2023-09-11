@@ -168,7 +168,7 @@ export class PropertyComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getDataAll();
+          this.getDataGood();
         }
       });
   }

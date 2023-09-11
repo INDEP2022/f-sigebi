@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MassivedepositaryEndpoints } from 'src/app/common/constants/endpoints/ms-massivedepositary-endpoints';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IMassiveDepositary } from '../../models/ms-massivedepositary/massivedepositary-model';
 
@@ -32,5 +33,9 @@ export class MassiveDepositaryService extends HttpService {
   //Preguntar que parámetros recibe
   PreviewDataCSV(model?: IMassiveDepositary) {
     return this.post(MassivedepositaryEndpoints.PupPreviewDataCSV, model);
+  }
+
+  getGuaranteExcel(params: ListParams) {
+    return this.get(MassivedepositaryEndpoints.GetGuaranteExcel, params);
   }
 }

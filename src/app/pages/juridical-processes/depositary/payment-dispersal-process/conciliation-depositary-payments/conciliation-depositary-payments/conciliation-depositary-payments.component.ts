@@ -209,7 +209,7 @@ export class ConciliationDepositaryPaymentsComponent
         }
       });
     } else {
-      this.alert('warning', 'Fecha Requerida', ERROR_DATE_DISPERSAL_NULL);
+      this.alert('warning', 'Fecha requerida', ERROR_DATE_DISPERSAL_NULL);
     }
   }
 
