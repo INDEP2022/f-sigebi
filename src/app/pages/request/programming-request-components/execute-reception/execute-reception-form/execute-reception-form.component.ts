@@ -2338,20 +2338,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 if (updateProgrammingGood) {
                   const updateGood = await this.updateGoodGuard();
                   if (updateGood) {
-                    const createHistoGood =
-                      await this.createHistoricalGuardGood();
-                    if (createHistoGood) {
-                      this.goodsGuards.clear();
-                      this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
-                      this.getReceiptsGuard();
-                      this.totalItemsGuard = 0;
-                      this.paramsGuardGoods
-                        .pipe(takeUntil(this.$unSubscribe))
-                        .subscribe(() => this.getInfoGoodsGuard());
-                      this.getOpenProceeding();
-                      this.selectInfoGoodGuard = [];
-                      this.formLoadingGuard = false;
-                    }
+                    /*const createHistoGood =
+                      await this.createHistoricalGuardGood(); */
+
+                    this.goodsGuards.clear();
+                    this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
+                    this.getReceiptsGuard();
+                    this.totalItemsGuard = 0;
+                    this.paramsGuardGoods
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoGoodsGuard());
+                    this.getOpenProceeding();
+                    this.selectInfoGoodGuard = [];
+                    this.formLoadingGuard = false;
                   }
                 }
               }
@@ -2383,8 +2382,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 if (updateProgrammingGood) {
                   const updateGood = await this.updateGoodGuard();
                   if (updateGood) {
-                    const createHistoGood =
-                      await this.createHistoricalGuardGood();
+                    /*const createHistoGood =
+                      await this.createHistoricalGuardGood(); */
                     this.goodsGuards.clear();
                     this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
                     this.getReceiptsGuard();
@@ -2423,20 +2422,18 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   const updateGood = await this.updateGoodWarehouse();
 
                   if (updateGood) {
-                    const createHistoricalWarehouse =
-                      await this.createHistoricalWarehouseGood();
+                    /*const createHistoricalWarehouse =
+                      await this.createHistoricalWarehouseGood(); */
 
-                    if (createHistoricalWarehouse) {
-                      this.goodsWarehouse.clear();
-                      this.totalItemsWarehouse = 0;
-                      this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
-                      this.selectInfoGoodWarehouse = [];
-                      this.paramsGoodsWarehouse
-                        .pipe(takeUntil(this.$unSubscribe))
-                        .subscribe(() => this.getInfoWarehouse());
-                      this.getOpenProceeding();
-                      this.getReceiptsGuard();
-                    }
+                    this.goodsWarehouse.clear();
+                    this.totalItemsWarehouse = 0;
+                    this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+                    this.selectInfoGoodWarehouse = [];
+                    this.paramsGoodsWarehouse
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoWarehouse());
+                    this.getOpenProceeding();
+                    this.getReceiptsGuard();
                   }
                 }
               }
@@ -2466,19 +2463,17 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 if (updateProgrammingGood) {
                   const updateGood = await this.updateGoodWarehouse();
                   if (updateGood) {
-                    const _createHistoricalWarehouse =
-                      await this.createHistoricalWarehouseGood();
+                    /*const _createHistoricalWarehouse =
+                      await this.createHistoricalWarehouseGood(); */
 
-                    if (_createHistoricalWarehouse) {
-                      this.goodsWarehouse.clear();
-                      this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
-                      this.selectGood = [];
-                      this.paramsGoodsWarehouse
-                        .pipe(takeUntil(this.$unSubscribe))
-                        .subscribe(() => this.getInfoWarehouse());
+                    this.goodsWarehouse.clear();
+                    this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+                    this.selectGood = [];
+                    this.paramsGoodsWarehouse
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoWarehouse());
 
-                      this.getReceiptsGuard();
-                    }
+                    this.getReceiptsGuard();
                   }
                 }
               }
@@ -2557,7 +2552,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.selectInfoGoodGuard.map(good => {
         const historyGood: IHistoryGood = {
           propertyNum: good.goodId,
-          status: 'ADM',
           changeDate: new Date(),
           userChange: this.userInfo.name,
           statusChangeProgram: 'TR_UPD_HISTO_BIENES',
@@ -2579,7 +2573,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.selectInfoGoodWarehouse.map(good => {
         const historyGood: IHistoryGood = {
           propertyNum: good.goodId,
-          status: 'ADM',
           changeDate: new Date(),
           userChange: this.userInfo.name,
           statusChangeProgram: 'TR_UPD_HISTO_BIENES',
@@ -2847,7 +2840,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           goodId: item.goodId,
           goodStatus: 'EN_RESGUARDO',
           programmationStatus: 'EN_RESGUARDO',
-          status: 'ADM',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
@@ -2869,7 +2861,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           goodId: item.goodId,
           goodStatus: 'EN_ALMACEN',
           programmationStatus: 'EN_ALMACEN',
-          status: 'ADM',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
