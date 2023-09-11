@@ -86,17 +86,6 @@ export const COLUMNS_EXPORT_GOODS = {
     },
     sort: false,
   },
-  /*cpd: {
-    title: 'CPD',
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    valuePrepareFunction: (cell: any, row: any) => {
-      // Usar el valor de "row.cpd" para determinar el estado del checkbox
-      return row.cpd ? '<input type="checkbox" checked>' : '<input type="checkbox">';
-    },
-    filter: false,
-    sort: false,
-  },*/
   adm: {
     title: 'ADM',
     type: 'custom',
@@ -143,88 +132,5 @@ export const COLUMNS_EXPORT_GOODS = {
     },
     sort: false,
   },
-  // cpd: {
-  //   title: 'CPD',
-  //   type: 'custom',
-  //   renderComponent: CheckboxElementComponent,
-  //   onComponentInitFunction(instance: any) {
-  //     // Establecer el estado del checkbox en true al inicializar
-  //     instance.setValue(true);
-
-  //     instance.toggle.subscribe((event: { row: any; toggle: boolean }) => {
-  //       // Manejar el evento del checkbox CPD aquí
-  //       const rowData = event.row;
-  //       const isChecked = event.toggle;
-  //       console.log('Evento del checkbox CPD. Fila:', rowData, 'Estado:', isChecked);
-  //     });
-  //   },
-  //   sort: false,
-  // },
-
-  /*cpd: {
-    title: 'CPD',
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        console.log('Estado del checkbox cambiado CPD:', data.toggle);
-        data.row.to = data.toggle;
-        if (data.toggle) {
-          // Si el checkbox se marca, agrega el elemento al mapa usando su ID como clave
-          goodCheck2[data.row.numberGood] = 1;
-          console.log("goodCheck1 ", goodCheck2);
-        } else {
-          // Si el checkbox se desmarca, elimina el elemento del mapa usando su ID como clave
-          delete goodCheck2[data.row.numberGood];
-          console.log("goodCheck1 ", goodCheck2);
-        }
-      });
-    },
-    sort: false,
-  },*/
-
-
-  // adm: {
-  //   title: 'ADM',
-  //   type: 'custom',
-  //   renderComponent: CheckboxElementComponent,
-  //   onComponentInitFunction(instance: any) {
-  //     instance.toggle.subscribe((data: any) => {
-  //       console.log('Estado del checkbox cambiado ADM:', data.toggle);
-  //       data.row.to = data.toggle;
-  //       if (data.toggle) {
-  //         // Si el checkbox se marca, agrega el elemento al mapa usando su ID como clave
-  //         goodCheck2[data.row.numberGood] = 2;
-  //         console.log("goodCheck2 ", goodCheck2);
-  //       } else {
-  //         // Si el checkbox se desmarca, elimina el elemento del mapa usando su ID como clave
-  //         delete goodCheck2[data.row.numberGood];
-  //         console.log("goodCheck2 ", goodCheck2);
-  //       }
-  //     });
-  //   },
-  //   sort: false,
-  // },
-  // rda: {
-  //   title: 'RDA',
-  //   type: 'custom',
-  //   renderComponent: CheckboxElementComponent,
-  //   onComponentInitFunction(instance: any) {
-  //     instance.toggle.subscribe((data: any) => {
-  //       console.log('Estado del checkbox cambiado RDA:', data.toggle);
-  //       data.row.to = data.toggle;
-  //       if (data.toggle) {
-  //         // Si el checkbox se marca, agrega el elemento al mapa usando su ID como clave
-  //         goodCheck2[data.row.numberGood] = 3;
-  //         console.log("goodCheck3 ", goodCheck2);
-  //       } else {
-  //         // Si el checkbox se desmarca, elimina el elemento del mapa usando su ID como clave
-  //         delete goodCheck2[data.row.numberGood];
-  //         console.log("goodCheck3 ", goodCheck2);
-  //       }
-  //     });
-  //   },
-  //   sort: false,
-  // },
 };
 

@@ -41,6 +41,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   selectAll: boolean = false;
   isSelect: boolean = false;
+  isExcel: boolean = false;
   isCPDChecked = false;
   isADMChecked = false;
   isRDAChecked = false;
@@ -66,7 +67,6 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   total: any;
   selectedA: any = false;
   rel_bienes: any;
-
 
   constructor(
     private router: Router,
@@ -308,6 +308,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   // SE LLAMA A LA PANTALLA RASTREADOR POR BIENES Y NOTIFICACIONES
   callRastreador() {
     this.loadFromGoodsTracker();
+
   }
   async loadFromGoodsTracker() {
     const global = await this.globalVarsService.getVars();
@@ -371,10 +372,8 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
                       goodTotal: response.data[0]
                     };
                     console.log('DATA FORM ->', dataForm);
-
                     this.data1.push(dataForm); // invocar todos tres servicios
                     this.data.load(this.data1); // cuando ya pasa todo, se mapea la info
-
                   },
                 });
               }
@@ -386,7 +385,6 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   }
   // SERVIVO PARA RECORRER EL SERVICIO getByGood
   backRastreador(global: any) {
-
     this.goodTrackerService.PaInsGoodtmptracker(global).subscribe({
       next: response => {
         this.total = response.count;
@@ -397,6 +395,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
           this.totalItems = response.count;
         }
         console.log('sale del For');
+        window.scrollTo(0, 80);
       },
     });
   }
@@ -441,29 +440,30 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     });
     this.data.load(this.data1);
   }
-  // EXPORTAR A EXCEL
+
   selectDataBien(data: any) {
     console.log('selectDataBien', data);
     this.selectedData = [];
     this.selectedData = data;
     this.isSelect = true;
+    this.isExcel = true;
   }
-
+  // EXPORTAR A EXCEL
   ExportAndChange() {
     this.exportandChangeStatus();
-    this.exportToExcelX();
-  }
-  exportandChangeStatus() {
     let descripcion = this.form.get('description').value
     console.log('PASA DESCRIPCION ->', descripcion); // Se obtiene el valor de description del form y se almacena en la variable descripción
     if (descripcion == null) {
       this.alert(
-        'warning',
+        'error',
+        'Error',
         'Digite la Descripción',
-        ''
       );
       return;
     }
+    this.exportToExcelX();
+  }
+  exportandChangeStatus() {
     for (let i = 0; i < this.data1.length; i++) {
       if (this.data1[i].cpd == true || this.data1[i].adm == true || this.data1[i].rda == true) {
         let cve = 'FDONACIONES';
@@ -541,7 +541,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
         n++;
         console.log("this ", this.data1[i], '', n);
         if (n == this.data1.length) {
-          this.alert('error', 'Error', 'Seleccione un estado de los bienes que quiere exportar')
+          this.alert('error', 'Error', 'Seleccione un Estado de los Bienes que Quiere Exportar')
           return;
         }
       }
