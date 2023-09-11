@@ -18,14 +18,7 @@
               control="cveActa"
               (change)="onEventChange($event)">
             </ngx-select>
-            <!--<input
-                type="text"
-                formControlName="cveAct"
-                class="form-control" />-->
           </form-field>
-          <!--<div class="mb-3 pl-4 pr-4">
-            
-          </div>-->
         </div>
 
         <div class="col-md-3">
@@ -40,35 +33,28 @@
               <ng-option value="ABIERTA">ABIERTA </ng-option>
               <ng-option value="CERRADA">CERRADA </ng-option>
             </ng-select>
-            <!--<select class="form-control" formControlName="estatusAct">
-              <option value="todos" selected>Todos</option>
-              <option value="ABIERTA">Abierta</option>
-              <option value="CERRADA">Cerrada</option>
-            </select>-->
           </form-field>
-          <!--<div class="mb-3 pl-4 pr-4">
-          </div>-->
         </div>
         <div class="col-md-3">
-          <form-field
-            [control]="form.get('noDelegation1')"
-            label="Coord. Regional">
-            <input
+          <div class="title">{{ delegation || '' }}</div>
+          <!-- <label for="" class="col-form-label">Coord. Regional</label>
+          <div>{{ delegation || '' }}</div> -->
+          <!--  <form-field [control]="form.get('noDelegation1')" label="Coord. Regional">
+           <input
               type="text"
               class="form-control"
-              formControlName="noDelegation1" />
-          </form-field>
-          <!--<div class="mb-3 pl-4 pr-4">
-          </div>-->
+              formControlName="noDelegation1" /> 
+
+          </form-field>-->
         </div>
         <div class="col-md-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field label="Usuario" [control]="form.get('elaborated')">
-              <input
+          <div class="title">{{ user || '' }}</div>
+          <!--  <form-field label="Usuario" [control]="form.get('elaborated')">
+           <input
                 type="text"
                 class="form-control"
                 formControlName="elaborated" />
-              <!--<ngx-select
+              <ngx-select
                 (fetchItems)="getEventComDonation($event)"
                 [data]="users"
                 [form]="form"
@@ -77,19 +63,15 @@
                 label="Usuarios"
                 control="elaborated"
                 (change)="onUsersChange($event)">
-              </ngx-select>-->
-            </form-field>
-          </div>
+              </ngx-select>
+          </form-field>-->
         </div>
       </div>
 
-      <!--<div class="row pt-4">
+      <!-- <div class="row pt-4">
         <div class="d-flex justify-content-center">
           <div class="col offset-md-3">
-            <button
-              class="btn btn-sm btn-primary active mr-3"
-              [disabled]="!form.valid"
-              (click)="filterButton()">
+            <button class="btn btn-sm btn-primary active mr-3" [disabled]="!form.valid" (click)="filterButton()">
               Buscar
             </button>
             <button class="btn btn-danger btn-sm active" (click)="clean()">
@@ -97,7 +79,7 @@
             </button>
           </div>
         </div>
-      </div>-->
+      </div> -->
 
       <div class="row pt-4">
         <div class="col-md-12 d-flex justify-content-center">
@@ -195,6 +177,7 @@
               tooltip="Nuevo"
               containerClass="tooltip-style"
               class="btn btn-primary btn-sm active ml-2 mr-2"
+              [disabled]="!selectRow"
               (click)="goDetailDonation()">
               Captura de Evento <i class="bx bx-edit bx-sm float-icon"></i>
             </button>

@@ -257,7 +257,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
     if (this.goodSelect.length == 0 || this.goodSelect.length >= 2) {
       this.onLoadToast(
         'warning',
-        'Debes de tener minimo un bien seleccionado',
+        'Debes de tener mínimo un Bien seleccionado',
         ''
       );
     } else {

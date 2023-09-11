@@ -16,4 +16,6 @@ export enum MassiveGoodEndpoints {
   GoodsShedules = 'application/get-goods-schedules-csv',
   GetAllGoodsMotivesRevExcel = 'application/getAllGoodsMotivesRevExcel',
   PorGoodReasonRev = 'application/por-good-reason-rev',
+  UdateInventory = 'application/update-inventory',
+  ObtnGoodPag = 'application/obtn-good-pag',
 }
