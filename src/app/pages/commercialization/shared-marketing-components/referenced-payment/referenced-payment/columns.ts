@@ -163,7 +163,7 @@ export const COLUMNS = {
     },
   },
   paymentId: {
-    title: 'ID Pago',
+    title: 'Id. Pago',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -279,12 +279,6 @@ export const COLUMNS = {
 };
 
 export const COLUMNS_CARGADOS = {
-  // paymentId: {
-  //   title: 'ID Pago',
-  //   // width: '15%',
-  //   type: 'string',
-  //   sort: false,
-  // },
   movementNumber: {
     title: 'No. Movimiento',
     // width: '15%',
@@ -433,7 +427,12 @@ export const COLUMNS_CARGADOS = {
       }
     },
   },
-
+  paymentId: {
+    title: 'Id. Pago',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+  },
   lotPub: {
     title: 'Lote Pub.',
     // width: '15%',

@@ -5,7 +5,7 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -112,6 +112,11 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         delete: false,
         position: 'right',
       },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-4"></i>',
+      },
+      //
       columns: { ...COLUMNS },
     };
 
@@ -122,8 +127,12 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         columnTitle: 'Acciones',
         edit: true,
         add: false,
-        delete: false,
+        delete: true,
         position: 'right',
+      },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-2" ></i>',
       },
       columns: { ...COLUMNS_CARGADOS },
     };
@@ -204,9 +213,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      event: [null],
+      event: [null, Validators.required],
       event_: [null],
-      bank: [null],
+      bank: [null, Validators.required],
       from: [null],
     });
 
@@ -233,7 +242,8 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     data: any,
     editVal: boolean,
     valScroll: boolean,
-    valCargado: boolean
+    valCargado: boolean,
+    dataTable?: any
   ) {
     let config: ModalOptions = {
       initialState: {
@@ -241,11 +251,20 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         edit: editVal,
         valScroll,
         valCargado,
+        dataTable,
         callback: async (next: boolean, dataUpdate: any) => {
           if (next) {
             if (this.cargado2) {
-              await this.updatePagoCargado(null, dataUpdate);
-              this.valAccCargado = null;
+              if (editVal) {
+                await this.updatePagoCargado(null, dataUpdate);
+                this.valAccCargado = null;
+              } else {
+                this.dataCargada.add(dataUpdate);
+                this.dataCargada.setSort([
+                  { field: 'paymentId', direction: 'asc' },
+                ]);
+                this.dataCargada.refresh();
+              }
             } else {
               this.getPayments('no');
             }
@@ -429,7 +448,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.totalItems = 0;
         if (filter == 'si') {
-          this.alert('warning', 'No se Encontraron Resultados', '');
+          this.alert('warning', 'No se encontraron resultados', '');
         }
         this.loading = false;
         this.valAcc = null;
@@ -449,7 +468,8 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         params.addFilter('id', lparams.text, SearchFilter.EQ);
       } else {
         console.log('NO');
-        params.addFilter('processKey', lparams.text, SearchFilter.ILIKE);
+        params.addFilter('id', lparams.text, SearchFilter.ILIKE);
+        // params.addFilter('processKey', lparams.text, SearchFilter.ILIKE);
       }
 
     params.addFilter('address', this.layout, SearchFilter.EQ);
@@ -476,8 +496,10 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    if (lparams?.text.length > 0)
+    if (lparams?.text.length > 0) {
       params.addFilter('bankCode', lparams.text, SearchFilter.ILIKE);
+      // params.addFilter('name', lparams.text, SearchFilter.OR);
+    }
     // if (!isNaN(parseInt(lparams?.text))) {
     //   console.log('SI');
     //   params.addFilter('code', lparams.text, SearchFilter.EQ);
@@ -1203,7 +1225,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   }
 
   addCargado() {
-    this.openForm(null, false, false, true);
+    this.openForm(null, false, false, true, this.dataCargada);
   }
 
   valAccCargado: any = null;
@@ -1361,6 +1383,21 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             resolve(null);
           },
         });
+    });
+  }
+  questionDeleteCargada(data: any) {
+    console.log(data);
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.dataCargada.remove(data);
+        this.dataCargada.refresh();
+        this.alert('success', 'El registro se eliminó correctamente', '');
+      }
     });
   }
 }

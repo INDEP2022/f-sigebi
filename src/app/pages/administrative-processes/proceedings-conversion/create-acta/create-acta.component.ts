@@ -330,11 +330,11 @@ export class CreateActaComponent extends BasePage implements OnInit {
       this.proceedingsDeliveryReceptionService.getByFilter_(params).subscribe({
         next: (data: any) => {
           if (data.data.length == 1) {
-            this.alert('warning', 'Esa Acta ya se tiene Registrada', '');
+            this.alert('warning', 'Esa Acta ya se tiene registrada', '');
           } else {
             this.alert(
               'warning',
-              'Actas Duplicadas en ACTAS_ENTREGA_RECEPCION',
+              'Actas duplicadas en ACTAS_ENTREGA_RECEPCION',
               ''
             );
           }
@@ -398,7 +398,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
         next: (data: any) => {
           console.log('DATA', data);
           this.newRegister = data;
-          this.alert('success', 'El Acta se ha Creado Correctamente', '');
+          this.alert('success', 'El Acta se ha creado correctamente', '');
           this.handleSuccess();
         },
         error: error => {
