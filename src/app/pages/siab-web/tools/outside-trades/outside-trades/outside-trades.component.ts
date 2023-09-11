@@ -238,7 +238,6 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
   }
   async getNameOTValue(id: number) {
     return new Promise((resolve, reject) => {
-      ////////////////////////////////////////////////////
       this.outsideTradesService.getNameOTValue(1538).subscribe({
         next: data => {
           console.log(data.data[0]);
