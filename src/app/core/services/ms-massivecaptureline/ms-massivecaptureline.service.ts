@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MassiveCaptureLineEndPoints } from 'src/app/common/constants/endpoints/ms-massivecaptureline-endpoint';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 
@@ -24,5 +25,9 @@ export class MsMassivecapturelineService extends HttpService {
       `${MassiveCaptureLineEndPoints.PUP_PROC_ANT}`,
       params
     );
+  }
+
+  getSettlementExcel(params: ListParams) {
+    return this.get(MassiveCaptureLineEndPoints.GetSettlementReport, params);
   }
 }
