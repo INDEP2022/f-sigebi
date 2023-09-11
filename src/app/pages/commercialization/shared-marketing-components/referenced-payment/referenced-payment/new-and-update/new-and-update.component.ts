@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
@@ -50,6 +51,9 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   valScroll: boolean;
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   valCargado: boolean;
+  dataNew: any;
+  dataTable: LocalDataSource;
+  nextPaymentId: any;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -61,6 +65,42 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
     private datePipe: DatePipe
   ) {
     super();
+    this.dataNew = {
+      movementNumber: null,
+      date: null,
+      move: null,
+      bill: null,
+      referenceOri: null,
+      bankKey: null,
+      branchOffice: null,
+      amount: null,
+      result: null,
+      validSistem: null,
+      paymentId: null,
+      reference: null,
+      lotPub: null,
+      event: null,
+      entryOrderId: null,
+      typeSatId: null,
+      code: null,
+      lotId: null,
+      inTimeNumber: null,
+      type: null,
+      paymentReturnsId: null,
+      recordDate: null,
+      dateOi: null,
+      appliedTo: null,
+      clientId: null,
+      folioOi: null,
+      indicator: null,
+      codeEdoCta: null,
+      affectationDate: null,
+      recordNumber: null,
+      spentId: null,
+      paymentRequestId: null,
+      customers: null,
+      bankAndNumber: null,
+    };
   }
 
   async ngOnInit() {
@@ -143,6 +183,19 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       setTimeout(() => {
         this.performScroll();
       }, 500);
+    }
+    if (this.valCargado) {
+      this.dataTable.getElements().then(item => {
+        // OBTENER EL SIGUIENTE PAYMENT ID //
+        console.log('item', item);
+        const maxId = item.reduce(
+          (max: any, item: any) =>
+            item.paymentId > max ? item.paymentId : max,
+          0
+        );
+        this.nextPaymentId = maxId + 1;
+        console.log('maxId', this.nextPaymentId);
+      });
     }
   }
 
@@ -270,41 +323,81 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   create() {
     const bank = this.form.value.bankKey;
     const typeSatId = this.form.value.typeSatId;
-    const client = this.form.value.clientId;
-    const requestBody: any = {
-      reference: this.form.value.reference,
-      movementNumber: this.form.value.movementNumber,
-      date: this.form.value.date,
-      amount: Number(this.form.value.amount),
-      bankKey: bank ? bank.cveBank : null,
-      code: bank ? bank.idCode : null,
-      // result: this.form.value.result,
-      recordDate: new Date(),
-      referenceOri: this.form.value.reference,
-      validSistem:
-        this.form.value.validSistem == '' ? null : this.form.value.validSistem,
-      // branchOffice: this.form.value.branchOffice,
-      appliedTo: this.form.value.appliedTo,
-      typeSatId: typeSatId ? typeSatId.idType : null,
-    };
 
-    this.paymentService.create(requestBody).subscribe({
-      next: response => {
-        this.handleSuccess();
-        // this.alert('success', 'El Registro se Eliminó Correctamente', '');
-      },
-      error: error => {
-        // if (error.error.message == "La clave del banco no ha sido previamente registrada"){
-        this.alert(
-          'error',
-          'Ocurrió un Error al Guardar el Registro',
-          error.error.message
-        );
-        // }
-        // this.handleError();
-        // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
-      },
-    });
+    if (this.valCargado) {
+      this.dataNew.reference = this.form.value.reference;
+      this.dataNew.movementNumber = this.form.value.movementNumber;
+      this.dataNew.date = this.datePipe.transform(
+        this.form.value.date,
+        'yyyy-MM-dd'
+      );
+      this.dataNew.amount = Number(this.form.value.amount);
+      this.dataNew.bankKey = bank ? bank.cveBank : null;
+      this.dataNew.code = bank ? bank.idCode : null;
+      this.dataNew.recordDate = new Date();
+      this.dataNew.referenceOri = this.form.value.reference;
+      this.dataNew.validSistem =
+        this.form.value.validSistem == '' ? null : this.form.value.validSistem;
+      this.dataNew.appliedTo = this.form.value.appliedTo;
+      this.dataNew.typeSatId = typeSatId ? typeSatId.idType : null;
+      this.dataNew.paymentId = this.nextPaymentId;
+      this.dataNew.descriptionSAT = typeSatId.description
+        ? typeSatId.description
+        : this.data.descriptionSAT;
+      this.dataNew.move = bank ? bank.description : null;
+      this.dataNew.bankAndNumber = bank
+        ? bank.idCode + ' - ' + bank.cveBank
+        : null;
+      const message: string = this.edit ? 'Actualizado' : 'Guardado';
+      this.alert('success', `Pago Referenciado ${message} Correctamente`, '');
+      this.loading = false;
+      this.modalRef.content.callback(true, this.dataNew);
+      this.modalRef.hide();
+    } else {
+      const requestBody: any = {
+        reference: this.form.value.reference,
+        movementNumber: this.form.value.movementNumber,
+        date: this.form.value.date,
+        amount: Number(this.form.value.amount),
+        bankKey: bank ? bank.cveBank : null,
+        code: bank ? bank.idCode : null,
+        // result: this.form.value.result,
+        recordDate: new Date(),
+        referenceOri: this.form.value.reference,
+        validSistem:
+          this.form.value.validSistem == ''
+            ? null
+            : this.form.value.validSistem,
+        // branchOffice: this.form.value.branchOffice,
+        appliedTo: this.form.value.appliedTo,
+        typeSatId: typeSatId ? typeSatId.idType : null,
+      };
+
+      this.paymentService.create(requestBody).subscribe({
+        next: response => {
+          this.handleSuccess();
+          // this.alert('success', 'El Registro se Eliminó Correctamente', '');
+        },
+        error: error => {
+          // if (error.error.message == "La clave del banco no ha sido previamente registrada"){
+          this.alert(
+            'error',
+            'Ocurrió un Error al Guardar el Registro',
+            error.error.message
+          );
+          // }
+          // this.handleError();
+          // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
+        },
+      });
+    }
+  }
+
+  async obtenerMaximo(array: any) {
+    return array.reduce(
+      (max: any, obj: any) => (obj.paymentId > max.paymentId ? obj : max),
+      array[0]
+    );
   }
 
   handleSuccess() {
@@ -497,6 +590,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         });
     });
   }
+
   returnParseDate_(data: Date) {
     this.datePipe.transform(data, 'dd/MM/yyyy');
     console.log('DATEEEE', data);

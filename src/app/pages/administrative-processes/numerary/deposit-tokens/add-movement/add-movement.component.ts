@@ -62,8 +62,8 @@ export class AddMovementComponent
     this.getCategory(new ListParams());
     this.getBanks(new ListParams());
   }
-  dateMovemResp: any;
-  dateMovem2Resp: any;
+  dateMovemRespDeposito: any;
+  dateMovemRespTesofe: any;
 
   prepareForm() {
     this.form = this.fb.group({
@@ -101,8 +101,8 @@ export class AddMovementComponent
         this.dateMovem2 = null;
       }
 
-      this.dateMovemResp = this.dateMovem;
-      this.dateMovem2Resp = this.dateMovem2;
+      this.dateMovemRespDeposito = this.dateMovem;
+      this.dateMovemRespTesofe = this.dateMovem2;
       this.form.patchValue({
         bank: this.data.cveAccount,
         deposit: this.data.deposit,
@@ -227,12 +227,12 @@ export class AddMovementComponent
         console.log('response', response);
         this.modalRef.content.callback(true);
         this.close();
-        this.alert('success', 'Movimiento Creado Correctamente', '');
+        this.alert('success', 'Movimiento creado correctamente', '');
       },
       error: err => {
         this.alert(
           'error',
-          'Error al Crear un Nuevo Movimiento',
+          'Error al crear un nuevo movimiento',
           err.error.message
         );
       },
@@ -258,19 +258,23 @@ export class AddMovementComponent
     const USER = this.token.decodeToken().preferred_username;
     const CATEGORY = this.form.value.category;
     const BANK = this.form.value.bank;
-    console.log(this.form.value.dateMovement, '=======', this.dateMovemResp);
+    console.log(
+      this.form.value.dateMovement,
+      '=======',
+      this.dateMovemRespDeposito
+    );
     let obj: any = {
       category: this.data.category,
       deposit: this.form.value.deposit,
       dateMotion:
-        this.form.value.dateMovement == this.dateMovemResp
+        this.form.value.dateMovement == this.dateMovemRespDeposito
           ? this.convertirFecha(this.form.value.dateMovement)
           : this.returnParseDate_(this.form.value.dateMovement),
       // this.convertirFecha(this.dateMovem),
       numberAccount: this.data.accountnumber,
       numberMotion: this.data.motionnumber,
       dateCalculationInterests:
-        this.form.value.dateCalculationInterests == this.dateMovem2Resp
+        this.form.value.dateCalculationInterests == this.dateMovemRespTesofe
           ? this.convertirFecha(this.form.value.dateCalculationInterests)
           : this.returnParseDate_(this.form.value.dateCalculationInterests),
       // this.convertirFecha(this.dateMovem2),
@@ -282,12 +286,12 @@ export class AddMovementComponent
         console.log('response', response);
         this.modalRef.content.callback(true);
         this.close();
-        this.alert('success', 'Movimiento Actualizado Correctamente', '');
+        this.alert('success', 'Movimiento actualizado correctamente', '');
       },
       error: err => {
         this.alert(
           'error',
-          'Error al Actualizar el Movimiento',
+          'Error al actualizar el movimiento',
           err.error.message
         );
       },
@@ -296,18 +300,22 @@ export class AddMovementComponent
 
   async compararFechas(fecha1: any, fecha2: any) {
     console.log(fecha1, 'eeeee', fecha2);
-    const fecha11 =
-      fecha1 == this.dateMovem2Resp
-        ? this.datePipe.transform(fecha1, 'yyyy-dd-MM')
-        : this.datePipe.transform(fecha1, 'yyyy-MM-dd');
-    const fecha22 =
-      fecha2 == this.dateMovemResp
-        ? this.datePipe.transform(fecha2, 'yyyy-dd-MM')
-        : this.datePipe.transform(fecha2, 'yyyy-MM-dd');
-    console.log(fecha11, 'iiii', fecha22);
+    let fecha11 = null;
+    let fecha22 = null;
+
+    if (fecha1)
+      // FECHA TESOFE //
+      fecha11 =
+        fecha1 == this.dateMovemRespTesofe
+          ? this.datePipe.transform(fecha1, 'yyyy-dd-MM')
+          : this.datePipe.transform(fecha1, 'yyyy-MM-dd');
+    console.log('fecha11', fecha11);
+    // if (fecha2) // FECHA DEL DEPOSITO //
+    //   fecha22 = (fecha2 == this.dateMovemRespDeposito) ? this.datePipe.transform(new Date(fecha2), 'yyyy-dd-MM') : this.datePipe.transform(fecha2, 'yyyy-MM-dd');
+    // console.log(fecha11, 'iiii', fecha22);
     const fecha1_ = Date.parse(fecha11);
-    const fecha2_ = Date.parse(fecha22);
-    console.log(fecha1_, 'ooooo', fecha2_);
+    const fecha2_ = Date.parse(fecha2);
+    // console.log(fecha1_, 'ooooo', fecha2_);
 
     if (fecha1_ < fecha2_) {
       return false;
