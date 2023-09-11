@@ -1002,7 +1002,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           id: item.id,
           goodId: item.goodId,
           goodStatus: 'EN_RECEPCION',
-          status: 'ADM',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
