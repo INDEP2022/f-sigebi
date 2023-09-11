@@ -5,19 +5,42 @@
       <div class="col-12 col-sm-12 col-md-8">
         <h5 class="title">Situación histórica del bien</h5>
       </div>
-      <div
-        class="col-12 col-sm-12 col-md-4 text-end"
-        *ngIf="_params.goodNumber > 0">
+      <!-- <div class="col-12 col-sm-12 col-md-4 text-end" *ngIf="_params.goodNumber > 0">
         <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
           Regresar
           <i class="fas fa-arrow-circle-left"></i>
         </button>
-      </div>
+      </div> -->
     </div>
   </div>
-
   <div body>
     <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-4"></div>
+        <div class="col-md-8 text-end">
+          <button
+            (click)="goBack()"
+            type="button"
+            class="btn btn-info active btn-sm mr-3"
+            *ngIf="_params.goodNumber > 0">
+            Regresar
+            <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm mr-3"
+            (click)="findInventary()">
+            Buscar Bienes
+            <i class="bx bx-search bx-sm float-icon"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm"
+            (click)="cleanForm()">
+            Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
       <div class="row">
         <form-field
           [control]="form.get('goodNumber')"
@@ -41,18 +64,15 @@
             maxlength="600" />
         </form-field>
       </div>
-      <div footer>
+      <!-- <div footer>
         <div class="d-flex justify-content-center">
           <div class="m-3">
-            <button
-              type="button"
-              class="btn btn-danger active btn-sm"
-              (click)="cleanForm()">
+            <button type="button" class="btn btn-danger active btn-sm" (click)="cleanForm()">
               Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
             </button>
           </div>
         </div>
-      </div>
+      </div> -->
     </form>
     <div class="row pt-4">
       <div class="col-md-12">

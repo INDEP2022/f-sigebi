@@ -9,19 +9,23 @@
       <tabset>
         <tab heading="Facturas" id="tab1">
           <app-regular-billing-invoice
-            (comer)="getEvent($event)"></app-regular-billing-invoice>
+            [sum]="values"
+            (comer)="getEvent($event)"
+            (formG)="form = $event"></app-regular-billing-invoice>
         </tab>
         <tab heading="Catálogos SAT">
           <app-sat-catalogs
             [data]="invoices"
             [count]="count"
-            [filter]="filter"></app-sat-catalogs>
+            [filter]="filter"
+            (countData)="values = $event"></app-sat-catalogs>
         </tab>
         <tab heading="Errores y datos nulos">
           <app-errors-null-data [eventID]="event"></app-errors-null-data>
         </tab>
         <tab heading="No liquidados / Tipo penalizados y devueltos">
-          <app-regular-billing-unsettled></app-regular-billing-unsettled>
+          <app-regular-billing-unsettled
+            [form]="form"></app-regular-billing-unsettled>
         </tab>
         <tab heading="Inconsistencias">
           <app-regular-billing-inconsistencies></app-regular-billing-inconsistencies>

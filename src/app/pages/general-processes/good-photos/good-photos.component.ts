@@ -57,10 +57,12 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
         if (param['origin']) {
           this.origin = param['origin'];
         }
-        if (param['numberGood']) {
-          this.selectedGoodsByQueryParams = [param['numberGood']];
-          this.showTable = false;
-          this.searchGood();
+        if (this.selectedGoodsByQueryParams.length === 0) {
+          if (param['numberGood']) {
+            this.selectedGoodsByQueryParams = [param['numberGood']];
+            this.showTable = false;
+            this.searchGood();
+          }
         }
       },
     });
@@ -86,6 +88,7 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
     this.$unSubscribe.next();
     this.$unSubscribe.complete();
     this.selectedGoodsByQueryParams = [];
+    localStorage.removeItem('selectedGoodsForPhotos');
   }
 
   private searchGood() {

@@ -4,7 +4,7 @@ import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
-import { HttpService } from '../../../common/services/http.service';
+import { HttpService, _Params } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDateAccountBalance,
@@ -90,5 +90,13 @@ export class RecordAccountStatementsAccountsService
   remove(model: any) {
     const route = `${this.route2}`;
     return this.delete(route, model);
+  }
+
+  getAccounts(params: _Params) {
+    const route = `${this.route2}`;
+    return this.get<IListResponse<any>>(`account-movements${params}`);
+  }
+  getDataBankAccount(params: _Params) {
+    return this.get(this.route2, params);
   }
 }

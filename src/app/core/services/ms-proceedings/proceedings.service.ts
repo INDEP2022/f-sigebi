@@ -41,6 +41,22 @@ export class ProceedingsService extends HttpService {
   // getAll(params?: ListParams): Observable<IListResponse<IProceedings>> {
   //   return this.get<IListResponse<IProceedings>>(this.endpoint);
   // }
+  getTypeActa(body: any, params: ListParams) {
+    return this.post<IResponse>(
+      ProceedingsEndpoints.AplicationGetTypeActa,
+      body,
+      params
+    );
+  }
+
+  getTypeActaDetail(body: any, params: ListParams) {
+    return this.post(
+      ProceedingsEndpoints.AplicationGetTypeActaDetail,
+      body,
+      params
+    );
+  }
+
   updateVaultByProceedingNumber(model: IUpdateVault) {
     return this.post<IResponse>(
       `${this.route}/${ProceedingsEndpoints.UpdateVaultByProceedingNumber}`,
@@ -285,5 +301,30 @@ export class ProceedingsService extends HttpService {
       'aplication/getMinutesDeliveryReception',
       { minutes }
     );
+  }
+
+  deleteProceedingById(id: any) {
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}/${id}`;
+    return this.delete(route);
+  }
+
+  postConstDelivery(params: any) {
+    const route = `${ProceedingsEndpoints.constDelivery}`;
+    return this.post(route, params);
+  }
+
+  postConstGood(params: any) {
+    const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}`;
+    return this.post(route, params);
+  }
+
+  deleteReception(params: any) {
+    const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}`;
+    return this.delete(route, params);
+  }
+
+  consultPaValMasive() {
+    const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}/FACTCONST_0001`;
+    return this.get(route);
   }
 }

@@ -1,0 +1,9 @@
+:host ::ng-deep ng2-smart-table tr.notAS{
+    background-color: red;
+    color: white
+}
+
+:host ::ng-deep ng2-smart-table tr.idDisp td:first-child{
+    background-color: yellow;
+    color: black
+}

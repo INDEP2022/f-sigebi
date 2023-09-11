@@ -1,16 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
-import { catchError, firstValueFrom, map, of, takeUntil } from 'rxjs';
-import {
-  FilterParams,
-  ListParams,
-} from 'src/app/common/repository/interfaces/list-params';
+import { catchError, firstValueFrom, map, of, take, takeUntil } from 'rxjs';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerDetExpense } from 'src/app/core/models/ms-spent/comer-detexpense';
+import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
+import { ExpenseLotService } from '../../services/expense-lot.service';
+import { ExpenseParametercomerService } from '../../services/expense-parametercomer.service';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -23,13 +23,16 @@ export class ExpenseCompositionComponent
   implements OnInit
 {
   toggleInformation = true;
-
+  selectedRow: IComerDetExpense;
   @ViewChild('table') table: Ng2SmartTableComponent;
   constructor(
     private dataService: ComerDetexpensesService,
     private expenseCaptureDataService: ExpenseCaptureDataService,
     private parameterService: ParametersConceptsService,
-    private parametersModService: ParametersModService
+    private parametersModService: ParametersModService,
+    private lotService: ExpenseLotService,
+    private accountMovementService: AccountMovementService,
+    private parametercomerService: ExpenseParametercomerService
   ) {
     super();
     this.service = this.dataService;
@@ -48,6 +51,16 @@ export class ExpenseCompositionComponent
           }
         },
       });
+    this.dataPaginated.onUpdated().subscribe({
+      next: response => {
+        console.log(response);
+      },
+    });
+    this.dataPaginated.onChanged().subscribe({
+      next: response => {
+        console.log(response);
+      },
+    });
   }
 
   get PCONDIVXMAND() {
@@ -159,6 +172,7 @@ export class ExpenseCompositionComponent
       .subscribe({
         next: response => {
           if (response && response.data && response.data.length > 0) {
+            console.log(response.data);
             this.data = response.data.map(row => {
               this.amount += row.amount ? +row.amount : 0;
               this.vat += row.vat ? +row.vat : 0;
@@ -182,6 +196,7 @@ export class ExpenseCompositionComponent
             this.totalItems = this.data.length;
             this.dataTemp = [...this.data];
             this.getPaginated(this.params.value);
+
             this.loading = false;
           } else {
             this.notGetData();
@@ -191,34 +206,6 @@ export class ExpenseCompositionComponent
           this.notGetData();
         },
       });
-  }
-
-  override getPaginated(params: ListParams) {
-    const cantidad = params.page * params.limit;
-    let newData = [
-      ...this.dataTemp.slice(
-        (params.page - 1) * params.limit,
-        cantidad > this.dataTemp.length ? this.dataTemp.length : cantidad
-      ),
-    ];
-    // newData.push({
-    //   expenseDetailNumber: '',
-    //   expenseNumber: '',
-    //   amount: this.amount + '',
-    //   vat: this.vat + '',
-    //   isrWithholding: this.isrWithholding + '',
-    //   vatWithholding: this.vatWithholding + '',
-    //   transferorNumber: '',
-    //   total: this.total + '',
-    //   goodNumber: '',
-    //   cvman: '',
-    //   budgetItem: '',
-    //   comerExpenses: null,
-    //   goods: null,
-    //   goodDescription: '',
-    // });
-    this.dataPaginated.load(newData);
-    this.dataPaginated.refresh();
   }
 
   override getParams() {
@@ -232,11 +219,15 @@ export class ExpenseCompositionComponent
     };
   }
 
+  selectRow(row: IComerDetExpense) {
+    this.selectedRow = row;
+  }
+
   disperGasto() {
     if (!this.PCONDIVXMAND) {
       this.alert(
         'warning',
-        'Dispersión de Gastos',
+        'Dispersión de Gastos/Mandatos',
         'Este concepto no admite dispersión de pagos por mandato'
       );
       return;
@@ -244,11 +235,36 @@ export class ExpenseCompositionComponent
     if (!this.eventNumber) {
       this.alert(
         'warning',
-        'Dispersión de Gastos',
+        'Dispersión de Gastos/Mandatos',
         'Debe capturar el evento, para utilizar esta opción'
       );
       return;
     }
+    const row = this.selectedRow;
+    this.lotService
+      .DIVIDE_MANDATOS({
+        eventId: this.eventNumber,
+        amount2: row.amount,
+        iva2: row.vat,
+        withholding_vat2: row.vatWithholding,
+        withholdingIsr2: row.isrWithholding,
+        expenseId: this.expenseNumber.value,
+      })
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.alert(
+              'success',
+              'Dispersión de Gastos/Mandatos',
+              'Este concepto no admite dispersión de pagos por mandato'
+            );
+          }
+        },
+        error: err => {
+          this.alert('error', 'Dispersión de Gastos/Mandatos', err);
+        },
+      });
     // divide mandatos
   }
 
@@ -397,9 +413,104 @@ export class ExpenseCompositionComponent
     this.getPaginated(this.params.value);
   }
 
-  contabilityMand() {}
+  async contabilityMand() {
+    if (this.expenseCaptureDataService.VALIDACIONES_SOLICITUD()) {
+      const result = await firstValueFrom(
+        this.accountMovementService.getDepuraContmand(this.expenseNumber.value)
+      );
+      const row = this.data[0];
+      if (row.goodNumber || row.cvman) {
+        this.ESCOJE_MANDCONTA();
+      } else {
+        this.alert('warning', 'Debe capturar datos de mandatos o bienes', '');
+      }
+    }
+  }
+
+  private ESCOJE_MANDCONTA() {
+    if (this.expenseCaptureDataService.P_MANDCONTIPO === 'N') {
+      this.MAND_CONTA();
+    } else {
+      this.MANDA_CONTA_TPBIEN();
+    }
+  }
+
+  private MANDA_CONTA_TPBIEN() {
+    this.dataService
+      .mandContaTpBien({
+        idGastos: this.expenseNumber.value,
+        pnoenviasirsae: this.expenseCaptureDataService.PNOENVIASIRSAE,
+      })
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.expenseCaptureDataService.P_CAMBIO = 0;
+            //show view mandatos
+          }
+        },
+        error: err => {
+          this.alert('error', 'Contablidad Mandatorio', err);
+        },
+      });
+  }
+
+  private MAND_CONTA() {
+    this.dataService
+      .mandConta({
+        idGastos: this.expenseNumber.value,
+        pnoenviasirsae: this.expenseCaptureDataService.PNOENVIASIRSAE,
+      })
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.expenseCaptureDataService.P_CAMBIO = 0;
+            //show view mandatos
+          }
+        },
+        error: err => {
+          this.alert('error', 'Contablidad Mandatorio', err);
+        },
+      });
+  }
 
   reload() {}
 
-  validates() {}
+  validates() {
+    if (this.eventNumber === null) {
+      this.alert('warning', 'Es necesario tener número de evento', '');
+      return;
+    }
+    if (this.lotNumber === null || this.lotNumber.value === null) {
+      this.alert('warning', 'Es necesario tener número de lote', '');
+      return;
+    }
+    if (this.conceptNumber === null || this.conceptNumber.value === null) {
+      this.alert(
+        'warning',
+        'Es necesario tener número de concepto de pago',
+        ''
+      );
+      return;
+    }
+    this.parametercomerService
+      .getValidGoods({
+        v_id_evento: this.eventNumber,
+        v_id_lote: this.lotNumber.value,
+        id_concepto: this.conceptNumber.value,
+      })
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response) {
+            console.log(response);
+          }
+        },
+        error: err => {
+          console.log(err);
+          this.alert('error', 'Validación de Bienes', err);
+        },
+      });
+  }
 }

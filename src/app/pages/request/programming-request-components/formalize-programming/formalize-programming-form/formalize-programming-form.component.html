@@ -12,7 +12,7 @@
     <div *ngIf="!formLoading">
       <div class="justify-content-end btn-toolbar">
         <confirm-button
-          *ngIf="!task?.State"
+          *ngIf="task?.State == 'PROCESO'"
           [loading]="loading"
           [text]="'Formalizar'"
           [loadingText]="'Formalizando'"
@@ -27,6 +27,7 @@
           [loadingText]="'Formalizando'"
           [btnSmall]="true"
           [icon]="'fa fa-check'"
+          [disabled]="true"
           [className]="'btn-primary'"></confirm-button>
 
         <button
@@ -156,7 +157,7 @@
       <h5 class="title">Actas</h5>
       <div class="btn-toolbar">
         <button
-          *ngIf="!task?.State"
+          *ngIf="task?.State == 'PROCESO'"
           (click)="saveInfoProceeding()"
           class="btn btn-primary btn-sm active">
           Guardar <i class="fa fa-save"></i>
@@ -169,7 +170,7 @@
         </button>
 
         <button
-          *ngIf="!task?.State"
+          *ngIf="task?.State == 'PROCESO'"
           (click)="documents()"
           class="btn btn-success btn-sm active">
           Adjuntar documentos <i class="fa fa-file-archive"></i>
@@ -182,7 +183,7 @@
         </button>
 
         <button
-          *ngIf="!task?.State"
+          *ngIf="task?.State == 'PROCESO'"
           (click)="getProccedings()"
           class="btn btn-primary btn-sm active">
           Actualizar <i class="fas fa-sync-alt"> </i>

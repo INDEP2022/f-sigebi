@@ -25,7 +25,7 @@
           (confirm)="reportGoodsProgramming()"></confirm-button>
 
         <button
-          *ngIf="infoTask?.State == null"
+          *ngIf="infoTask?.State == 'PROCESO'"
           (click)="newWarehouse()"
           type="button"
           tooltip="Agregar"
@@ -47,7 +47,7 @@
 
         <button
           (click)="sendProgramation()"
-          *ngIf="infoTask?.State == null"
+          *ngIf="infoTask?.State == 'PROCESO'"
           type="submit"
           class="btn btn-primary btn-sm active"
           tooltip="Enviar"
@@ -327,7 +327,7 @@
                   formControlName="city" />
               </form-field>
             </div>
-            <!--Realizar npm i-->
+
             <div class="col-md-4">
               <form-field
                 [control]="performForm.get('startDate')"
@@ -426,7 +426,7 @@
 
           <div class="justify-content-end btn-toolbar">
             <confirm-button
-              *ngIf="infoTask?.State == null"
+              *ngIf="infoTask?.State == 'PROCESO'"
               [disabled]="!performForm.valid"
               [loading]="loading"
               [btnSmall]="true"
@@ -449,8 +449,8 @@
                   [form]="performForm"
                   control="storeId"
                   [data]="warehouse"
-                  value="description"
-                  bindLabel="description"
+                  value="name"
+                  bindLabel="name"
                   (change)="showWarehouse($event)"
                   (fetchItems)="getWarehouseSelect($event)"></ngx-select>
               </form-field>
@@ -462,8 +462,8 @@
                   control="storeId"
                   [data]="warehouse"
                   [searchable]="showWarehouseInfo"
-                  value="idWarehouse"
-                  bindLabel="description"></ngx-select>
+                  value="organizationId"
+                  bindLabel="name"></ngx-select>
               </form-field>
             </div>
           </div>
@@ -493,7 +493,7 @@
           <button
             (click)="listUsers()"
             class="btn btn-primary btn-sm active"
-            *ngIf="infoTask?.State == null">
+            *ngIf="infoTask?.State == 'PROCESO'">
             Usuarios <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
 
@@ -507,12 +507,12 @@
           <button
             (click)="openForm()"
             class="btn btn-info btn-sm active"
-            *ngIf="infoTask?.State == null">
+            *ngIf="infoTask?.State == 'PROCESO'">
             Nuevo usuario <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
         <ng2-smart-table
-          *ngIf="!infoTask?.State"
+          *ngIf="infoTask?.State == 'PROCESO'"
           [attr.class]="'table-bordered table-responsive pt-3'"
           [settings]="settingUser"
           [source]="usersToProgramming"
@@ -636,7 +636,7 @@
           <app-columns-select [(settings)]="settings"></app-columns-select>
           <button
             class="btn btn-primary btn-sm active"
-            *ngIf="idTypeRelevant != 1 && infoTask?.State == null"
+            *ngIf="idTypeRelevant != 1 && infoTask?.State == 'PROCESO'"
             (click)="sendTransportable()">
             Transportable <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
@@ -648,7 +648,7 @@
           <button
             class="btn btn-primary btn-sm active"
             (click)="sendGuard()"
-            *ngIf="infoTask?.State == null">
+            *ngIf="infoTask?.State == 'PROCESO'">
             Resguardo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
           <button
@@ -659,7 +659,7 @@
           <button
             class="btn btn-primary btn-sm active"
             (click)="sendWarehouse()"
-            *ngIf="infoTask?.State == null">
+            *ngIf="infoTask?.State == 'PROCESO'">
             Almac&eacute;n <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
 
@@ -719,7 +719,7 @@
 
                 <div *ngIf="!formLoadingTransportable">
                   <ng2-smart-table
-                    *ngIf="!infoTask?.State"
+                    *ngIf="infoTask?.State == 'PROCESO'"
                     [attr.class]="'table-bordered table-responsive pt-3'"
                     [settings]="settingsTransportableGoods"
                     [source]="goodsTranportables"
@@ -760,7 +760,7 @@
 
                 <div *ngIf="!formLoadingGuard">
                   <ng2-smart-table
-                    *ngIf="!infoTask?.State"
+                    *ngIf="infoTask?.State == 'PROCESO'"
                     [attr.class]="'table-bordered table-responsive pt-3'"
                     [settings]="settingGuardGoods"
                     [source]="goodsGuards"
@@ -799,7 +799,7 @@
                 </div>
                 <div *ngIf="!formLoadingWarehouse">
                   <ng2-smart-table
-                    *ngIf="!infoTask?.State"
+                    *ngIf="infoTask?.State == 'PROCESO'"
                     [attr.class]="'table-bordered table-responsive pt-3'"
                     [settings]="settingWarehouseGoods"
                     [source]="goodsWarehouse"

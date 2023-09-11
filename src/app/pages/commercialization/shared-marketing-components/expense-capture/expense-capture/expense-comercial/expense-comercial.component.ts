@@ -3,7 +3,10 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   catchError,
   firstValueFrom,
+  forkJoin,
   map,
+  mergeMap,
+  Observable,
   of,
   take,
   takeUntil,
@@ -18,11 +21,14 @@ import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae
 import { BasePage } from 'src/app/core/shared';
 import { secondFormatDateToDate } from 'src/app/shared/utils/date';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
+import { ExpenseModalService } from '../../services/expense-modal.service';
 import { ExpenseScreenService } from '../../services/expense-screen.service';
 import { SpentIService } from '../../services/spentI.service';
 import { SpentMService } from '../../services/spentM.service';
 import { NotifyComponent } from '../notify/notify.component';
 import { COLUMNS } from './columns';
+import { NotLoadedsModalComponent } from './not-loadeds-modal/not-loadeds-modal.component';
+
 @Component({
   selector: 'app-expense-comercial',
   templateUrl: './expense-comercial.component.html',
@@ -31,7 +37,7 @@ import { COLUMNS } from './columns';
 export class ExpenseComercialComponent extends BasePage implements OnInit {
   // params
   @Input() address: string;
-
+  errorsClasification: any[] = [];
   //
   toggleInformation = true;
   reloadLote = false;
@@ -64,6 +70,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private parameterModService: ParametersModService,
     private sirsaeService: InterfacesirsaeService,
+    private expenseModalService: ExpenseModalService,
     private parameterService: ParametersConceptsService
   ) {
     super();
@@ -164,10 +171,15 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         }
       },
     });
+    // this.expenseModalService.selectedMotivesSubject.subscribe({
+    //   next: response => {
+    //     console.log(response);
+    //   },
+    // });
   }
 
   reloadLoteEvent(event: any) {
-    console.log(event);
+    // console.log(event);
     if (event)
       this.comerEventService
         .getMANDXEVENTO(event)
@@ -196,7 +208,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   notify() {
-    console.log('Notificar');
+    // console.log('Notificar');
     let config: ModalOptions = {
       initialState: {
         // message,
@@ -244,7 +256,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     if (this.PVALIDADET === 'S') {
       const V_EXIST = await this.getParamValConcept(this.conceptNumber.value);
       if (V_EXIST) {
-        console.log(V_EXIST);
+        // console.log(V_EXIST);
         this.URCOORDREGCHATARRA_AUTOMATICO(3);
         this.CARGA_BIENES_LOTE_XDELRES(
           this.eventNumber.value,
@@ -283,7 +295,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   async fillForm(event: IComerExpense) {
-    console.log(event);
+    // console.log(event);
     this.data = event;
     if (!event.conceptNumber) {
       this.alert('warning', 'No cuenta con un concepto de pago', '');
@@ -291,9 +303,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     }
     this.conceptNumber.setValue(event.conceptNumber);
     const responsePayments = await this.validPayments(event);
-    console.log(responsePayments);
-    if (!responsePayments.data) {
-      this.alert('error', responsePayments.message, '');
+    // console.log(responsePayments);
+    if (responsePayments.message[0] !== 'OK') {
+      this.alert('error', responsePayments.message[0], '');
       return;
     }
     if (!event.eventNumber) {
@@ -371,11 +383,27 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   get pathProvider() {
-    return 'interfaceesirsae/api/v1/supplier?sortBy=clkPv:ASC';
+    return 'interfaceesirsae/api/v1/supplier?filter.clkPv=$eq:45677&sortBy=clkPv:ASC';
   }
 
   get dataCompositionExpenses() {
     return this.dataService.dataCompositionExpenses;
+  }
+
+  get dataCompositionExpensesToUpdateClasif() {
+    return this.dataCompositionExpenses
+      ? this.dataCompositionExpenses.filter(
+          row => row.reportDelit && row.reportDelit === true && row.goodNumber
+        )
+      : [];
+  }
+
+  get dataCompositionExpensesStatusChange() {
+    return this.dataCompositionExpenses
+      ? this.dataCompositionExpenses.filter(
+          row => row.changeStatus && row.changeStatus === true && row.goodNumber
+        )
+      : [];
   }
 
   get conceptNumberValue() {
@@ -386,11 +414,13 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     await this.dataService.updateByGoods(true);
   }
 
-  updateClasif() {
-    const VALIDA_DET = this.dataCompositionExpenses.filter(
-      row => row.changeStatus && row.changeStatus === true && row.goodNumber
-    );
+  validationForkJoin(obs: Observable<any>[]) {
+    return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
+  }
 
+  async updateClasif() {
+    const VALIDA_DET = this.dataCompositionExpensesToUpdateClasif;
+    this.errorsClasification = [];
     if (VALIDA_DET.length === 0) {
       this.alert(
         'error',
@@ -404,45 +434,73 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         '¿Desea cambiar el clasificador de los bienes a Vehiculo con Reporte de Robo?'
       ).then(x => {
         if (x.isConfirmed) {
-          let errors = [];
-          this.dataCompositionExpenses.forEach(async row => {
-            if (
-              row.changeStatus &&
-              row.changeStatus === true &&
-              row.goodNumber
-            ) {
-              const result = await firstValueFrom(
-                this.screenService
-                  .PUP_VAL_BIEN_ROBO({
-                    goodNumber: '524', //row.goodNumber,
-                    type: 'U',
-                    screenKey: 'FCOMER084',
-                    conceptNumber: this.conceptNumber.value,
+          let errors: any[] = [];
+          forkJoin(
+            VALIDA_DET.map(async row => {
+              return this.screenService
+                .PUP_VAL_BIEN_ROBO({
+                  goodNumber: row.goodNumber,
+                  type: 'U',
+                  screenKey: 'FCOMER084',
+                  conceptNumber: this.conceptNumber.value,
+                })
+                .pipe(
+                  take(1),
+                  catchError(x => of(null)),
+                  tap(x => {
+                    console.log(x);
+                    if (x === null) {
+                      // console.log('ERROR');
+                      errors.push({ goodNumber: row.goodNumber });
+                    }
                   })
-                  .pipe(
-                    catchError(x => of(null)),
-                    tap(x => console.log(x))
-                  )
-              );
-              console.log(result);
-              if (!result) {
-                console.log('ERROR');
-                errors.push(row.goodNumber);
-              } else {
-                // if(result.message[0]){
-                // }
+                );
+            })
+          )
+            .pipe(
+              takeUntil(this.$unSubscribe),
+              mergeMap(x => this.validationForkJoin(x))
+            )
+            .subscribe(x => {
+              console.log(x);
+
+              if (errors.length === 0) {
+                this.alert(
+                  'success',
+                  'Cambio de Clasificación a Vehiculo con Reporte de Robo',
+                  'Realizado correctamente'
+                );
               }
-            }
-          });
-          if (errors.length > 0) {
-            this.alert(
-              'error',
-              'Registros no encontrados por clave pantalla y número de concepto',
-              ''
-            );
-          }
+              if (errors.length === VALIDA_DET.length) {
+                this.alert(
+                  'error',
+                  'Registros no encontrados por clave pantalla y número de concepto',
+                  ''
+                );
+              } else if (errors.length > 0) {
+                this.alert(
+                  'warning',
+                  'Cambio de Clasificación a Vehiculo con Reporte de Robo',
+                  'No todos los bienes pudieron cambiar su clasificador por no encontrarse en búsqueda por clave pantalla y número de concepto'
+                );
+              }
+              this.errorsClasification = errors;
+            });
         }
       });
     }
+  }
+
+  showNotLoads() {
+    let config: ModalOptions = {
+      initialState: {
+        data: this.errorsClasification,
+        dataTemp: this.errorsClasification,
+        totalItems: this.errorsClasification.length,
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(NotLoadedsModalComponent, config);
   }
 }

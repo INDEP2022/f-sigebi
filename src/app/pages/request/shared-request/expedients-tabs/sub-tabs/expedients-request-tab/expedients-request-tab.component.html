@@ -11,18 +11,20 @@
   <div class="row pt-4">
     <div class="col-md-12">
       <div class="d-flex">
-        <div class="mr-auto p-2">
+        <div class="mr-auto p-2"></div>
+        <div class="p-2">
+          <button
+            [disabled]="statusTask == 'FINALIZADA'"
+            class="btn btn-primary btn-sm active mr-2 float-right">
+            Recargar <i class="fas fa-sync-alt"> </i>
+          </button>
+        </div>
+        <div class="p-2">
           <app-columns-select
+            [leftList]="true"
             class="float-right"
             [(settings)]="settings"></app-columns-select>
         </div>
-      </div>
-      <div class="p-2">
-        <button
-          [disabled]="statusTask == 'FINALIZADA'"
-          class="btn btn-primary btn-sm active mr-2 float-right">
-          Recargar <i class="fas fa-sync-alt"> </i>
-        </button>
       </div>
     </div>
   </div>

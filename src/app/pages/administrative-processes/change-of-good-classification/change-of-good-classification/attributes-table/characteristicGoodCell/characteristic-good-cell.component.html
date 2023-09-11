@@ -1,0 +1,46 @@
+<div *ngIf="row.tableCd" style="padding: 0 10px">
+  {{ row.value }}
+</div>
+<div
+  class="goodCellContainer"
+  *ngIf="!row.tableCd"
+  [class]="haveError(row) ? 'error' : ''">
+  <input
+    *ngIf="row.dataType !== 'D' && !row.attribute.includes('FECHA')"
+    type="text"
+    class="form-control"
+    style="height: 35px"
+    [maxlength]="row.dataType === 'F' ? 42 : row.length"
+    [attr.required]="row.required"
+    [(ngModel)]="row.value"
+    (ngModelChange)="updateCell($event)" />
+  <input
+    *ngIf="row.dataType === 'D' || row.attribute.includes('FECHA')"
+    bsDatepicker
+    readonly
+    class="form-control"
+    [maxDate]="today"
+    [attr.required]="row.required"
+    [(ngModel)]="row.value"
+    (ngModelChange)="updateDate($event)" />
+  <div class="errorMessage" *ngIf="haveErrorRequired(row)">
+    El campo es obligatorio
+  </div>
+  <ng-container
+    *ngIf="
+      row.value && !(row.dataType === 'D' || row.attribute.includes('FECHA'))
+    ">
+    <div class="errorMessage" *ngIf="haveCaracteresEspeciales(row)">
+      El campo es inválido
+    </div>
+    <div class="errorMessage" *ngIf="haveNumericError(row)">
+      El campo debe ser númerico
+    </div>
+    <div class="errorMessage" *ngIf="haveFloatError(row)">
+      El campo debe ser flotante (38,4)
+    </div>
+    <div class="errorMessage" *ngIf="haveMoneyError(row).length > 1">
+      {{ haveMoneyError(row) }}
+    </div>
+  </ng-container>
+</div>

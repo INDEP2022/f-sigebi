@@ -19,6 +19,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -30,6 +31,7 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestDocumentationService } from 'src/app/core/services/requests/request-documentation.service';
@@ -121,7 +123,8 @@ export class VerifyComplianceTabComponent
     private goodResDevService: GetGoodResVeService,
     private goodsQueryService: GoodsQueryService,
     private chatClarificationService: ChatClarificationsService,
-    private goodFinderService: GoodFinderService
+    private goodFinderService: GoodFinderService,
+    private historyGoodService: HistoryGoodService
   ) {
     super();
   }
@@ -910,6 +913,8 @@ export class VerifyComplianceTabComponent
       if (result.isConfirmed) {
         this.loader.load = true;
         //eliminar el chat clarification
+        console.log(this.clarifyRowSelected[0]);
+
         const idChatClarification =
           this.clarifyRowSelected[0].chatClarification.idClarification;
         const result = await this.removeChatClarification(idChatClarification);
@@ -934,7 +939,7 @@ export class VerifyComplianceTabComponent
               body['goodId'] = this.goodsSelected[0].goodId;
               body.processStatus = 'VERIFICAR_CUMPLIMIENTO';
               body.goodStatus = 'VERIFICAR_CUMPLIMIENTO';
-              body.status = null;
+              body.status = 'ROP';
               await this.updateGoods(body);
             } else {
               body['id'] = this.goodsSelected[0].id;
@@ -944,9 +949,12 @@ export class VerifyComplianceTabComponent
                   ? 'ACLARADO'
                   : 'VERIFICAR_CUMPLIMIENTO';
               body.processStatus = 'VERIFICAR_CUMPLIMIENTO';
-              body.status = null;
+              body.status = 'ROP';
               await this.updateGoods(body);
             }
+            //crea un historico del status del bien actualizado
+            //const history = await this.createHistoricGood('ROP', body.goodId);
+
             this.updateTable(body.goodStatus, body.processStatus);
           },
           error: error => {
@@ -1063,7 +1071,7 @@ export class VerifyComplianceTabComponent
   updateGoods(body: any) {
     return new Promise((resolve, reject) => {
       this.goodServices.update(body).subscribe({
-        next: resp => {
+        next: async resp => {
           resolve(true);
         },
         error: error => {
@@ -1169,6 +1177,29 @@ export class VerifyComplianceTabComponent
       if (question.isConfirmed) {
         //Ejecutar el servicio
       }
+    });
+  }
+
+  createHistoricGood(status: string, good: number) {
+    return new Promise((resolve, reject) => {
+      const user: any = this.authService.decodeToken();
+      let body: IHistoryGood = {
+        propertyNum: good,
+        status: status,
+        changeDate: new Date(),
+        userChange: user.username,
+        statusChangeProgram: 'SOLICITUD_TRANSFERENCIA',
+        reasonForChange: 'N/A',
+      };
+      this.historyGoodService.create(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(error);
+          this.onLoadToast('error', 'No se pudo crear el historico del bien');
+        },
+      });
     });
   }
 }

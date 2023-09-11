@@ -11,6 +11,7 @@ import { ReferencedPaymentComponent } from './referenced-payment/referenced-paym
 //@Standalone Components
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { NgxCurrencyModule } from 'ngx-currency';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { BanksSharedComponent } from 'src/app/@standalone/shared-forms/banks-shared/banks-shared.component';
 import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-shared/events-shared.component';
@@ -18,6 +19,17 @@ import { AuxListComponent } from './referenced-payment/aux-list/aux-list.compone
 import { AuxList2Component } from './referenced-payment/aux-list2/aux-list2.component';
 import { ListReferenceComponent } from './referenced-payment/list-reference/list-reference.component';
 import { NewAndUpdateComponent } from './referenced-payment/new-and-update/new-and-update.component';
+export const customCurrencyMaskConfig = {
+  align: 'right',
+  allowNegative: false,
+  allowZero: true,
+  decimal: '.',
+  precision: 2,
+  prefix: '',
+  suffix: '',
+  thousands: ',',
+  nullable: false,
+};
 
 @NgModule({
   declarations: [
@@ -38,6 +50,7 @@ import { NewAndUpdateComponent } from './referenced-payment/new-and-update/new-a
     FormLoaderComponent,
     TooltipModule,
     AccordionModule,
+    NgxCurrencyModule.forRoot(customCurrencyMaskConfig),
   ],
 })
 export class ReferencedPaymentModule {}

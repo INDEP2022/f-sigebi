@@ -459,7 +459,20 @@ export const routes: Routes = [
         data: {
           screen: 'FESTSERVICIOS_0001',
           title: 'Servicios para precios unitarios',
-        }, //FESTSERVICIOS_0001 - FESTTIPOSERVICIO_0001
+        }, //FESTSERVICIOS_0001
+      },
+      {
+        path: 'services-type-unit-prices',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/services-type-unit-prices/services-type-unit-prices.module'
+            )
+          ).ServicesTypeUnitPricesModule,
+        data: {
+          screen: 'FESTTIPOSERVICIO_0001',
+          title: 'Servicios de tipo para precios unitarios',
+        }, //FESTTIPOSERVICIO_0001
       },
       {
         path: 'specs',
@@ -652,6 +665,16 @@ export const routes: Routes = [
             )
           ).PerformanceIndicatorModule,
         data: { screen: 'FESTREPIMPLE', title: 'Indicador de desempeño' },
+      },
+      {
+        path: 'performance-indicator-detail',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/performance-indicator-detail/performance-indicator-detail.module'
+            )
+          ).PerformanceIndicatorDetailModule,
+        data: { screen: 'FESTREPIMPLE_0001', title: 'Indicador de desempeño' },
       },
       {
         path: 'implementation-report',

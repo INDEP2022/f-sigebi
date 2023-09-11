@@ -295,6 +295,24 @@ export class DocumentsService extends HttpService {
     return this.get(DocumentsEndpoints.ComerceDocumentsXmlT, params);
   }
 
+  postPupGenerateFolio(params: any) {
+    const route = `${DocumentsEndpoints.pupGenerateUniversalFolio}`;
+    return this.post(route, params);
+  }
+
+  postDocuments(params: any) {
+    const route = `${DocumentsEndpoints.postDocuments}`;
+    return this.post(route, params);
+  }
+
+  getDocumentsCursor(folio: any) {
+    const route = `${DocumentsEndpoints.document}?filter.scanStatus=$ilike:ESCANEADO&filter.file.universalFolio=$eq:${folio}`;
+    return this.get(route);
+  }
+  getDocumentsCursor2(folio: any, expedient: any) {
+    const route = `${DocumentsEndpoints.document}?filter.numberProceedings=$eq:${expedient}&filter.file.universalFolio=$eq:${folio}`;
+    return this.get(route);
+  }
   // getExcel(exporta: ICaptureDigFilter) {
   //   // return this.get<any>(DocumentsEndpoints.ExportExcelcaptura);
   //   return this.get(`${DocumentsEndpoints.ExportExcelcaptura}`),
@@ -305,5 +323,10 @@ export class DocumentsService extends HttpService {
   }
   donwloadExcel(token: string) {
     return this.get(`${DocumentsEndpoints.ExportExcelcaptura}/${token}`);
+  }
+
+  postDocumentsV2(params: any) {
+    const route = `${DocumentsEndpoints.postDocumentsV2}`;
+    return this.post(route, params);
   }
 }

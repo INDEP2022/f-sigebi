@@ -41,7 +41,21 @@ import { PhotoComponent } from './photo/photo.component';
 export class PhotosListComponent extends BasePage implements OnInit {
   @Input() disabled: boolean = true;
   @Input() origin: number;
+  @Input()
+  get goodNumber() {
+    return this._goodNumber;
+  }
+  set goodNumber(value) {
+    this._goodNumber = value;
+    if (value) {
+      this.getData();
+    } else {
+      this.files = [];
+      this.errorMessage = '';
+    }
+  }
   @ViewChildren('photo') photos: QueryList<PhotoComponent>;
+  private _goodNumber: string | number;
   options = [
     { value: 1, label: 'Visualizar' },
     { value: 2, label: 'Editar' },
@@ -66,19 +80,6 @@ export class PhotosListComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       typedblClickAction: [1],
     });
-    this.service.showEvent.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: response => {
-        console.log(response);
-
-        if (response) {
-          this.getData();
-        }
-      },
-    });
-  }
-
-  get goodNumber() {
-    return this.service.selectedGood ? this.service.selectedGood.id : null;
   }
 
   get typedblClickAction() {
@@ -182,7 +183,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   private validRastrer() {
     if (localStorage.getItem('username').toUpperCase() !== 'SERA') {
       // this.userPermisions = false;
-      this.errorMessage = 'No tiene permisos para eliminar las fotos';
+      this.errorMessage = 'No tiene permisos de enviar a histórico las fotos';
     }
   }
 
@@ -211,9 +212,8 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   get validFilesToDelete() {
-    return this.files.filter(
-      row =>
-        row.usuario_creacion === this.userName || row.usuario_creacion === null
+    return this.files.filter(row =>
+      row.usuario_creacion ? row.usuario_creacion === this.userName : true
     );
   }
 
@@ -250,7 +250,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
                     const noActa = await this.pufValidaProcesoBien();
                     if (noActa) {
                       this.errorMessage =
-                        'No tiene permisos de eliminación debido a que el bien ya fue recibido por el acta ' +
+                        'No tiene permisos de enviar a histórico debido a que el Bien ya fue recibido por el Acta ' +
                         noActa +
                         ' y esta se encuentra cerrada';
                       // console.log(this.errorMessage);
@@ -270,6 +270,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
 
   async confirmDelete(all = false) {
     // if (this.disabledDeletePhotos()) return;
+    console.log(this.files, this.filesToDelete);
     if (all) {
       if (this.disabledDeleteAllPhotos()) {
         return;
@@ -292,8 +293,8 @@ export class PhotosListComponent extends BasePage implements OnInit {
       'warning',
       'Advertencia',
       all
-        ? '¿Estás seguro que desea eliminar todas las fotos?'
-        : '¿Estás seguro que desea eliminar las fotos seleccionadas?'
+        ? '¿Está seguro que desea enviar a histórico todas las fotos?'
+        : '¿Está seguro que desea enviar a histórico las fotos seleccionadas?'
     );
     if (result.isConfirmed) {
       this.deleteSelectedFiles();
@@ -323,13 +324,17 @@ export class PhotosListComponent extends BasePage implements OnInit {
       })
     );
     if (this.errorImages.length === this.filesToDelete.length) {
-      this.alert('error', 'ERROR', 'No se pudieron eliminar las fotos');
+      this.alert(
+        'error',
+        'ERROR',
+        'No se pudieron cambiar a histórico las fotos'
+      );
     } else {
       if (this.errorImages.length > 0) {
         this.alert(
           'warning',
-          'Fotos Eliminadas',
-          'Pero no se puedieron eliminar todas las fotos'
+          'Fotos a Histórico',
+          'Pero no se puedieron cambiar todas las fotos'
         );
       } else {
         this.alert(
@@ -423,6 +428,8 @@ export class PhotosListComponent extends BasePage implements OnInit {
       ...MODAL_CONFIG,
       initialState: {
         accept: '.zip',
+        accept2:
+          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg',
         uploadFiles: false,
         service: this.filePhotoSaveZipService,
         identificator: [this.goodNumber],

@@ -4,6 +4,7 @@ import * as moment from 'moment';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
@@ -12,6 +13,7 @@ import {
   IRecepitGuard,
 } from 'src/app/core/models/receipt/receipt.model';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
@@ -37,6 +39,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   guardReception: any;
   actId: number;
   folioPro: string = '';
+  userInfo: any;
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -47,7 +50,8 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     private receptionGoodService: ReceptionGoodService,
     private proceedingService: ProceedingsService,
     private programminGoodService: ProgrammingGoodService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private historyGoodService: HistoryGoodService
   ) {
     super();
   }
@@ -68,11 +72,18 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       this.getProceedingById();
     }
     this.getProgramming();
+    this.getInfoUserLog();
   }
 
   prepareForm() {
     this.form = this.fb.group({
       file: [null],
+    });
+  }
+
+  getInfoUserLog() {
+    this.programmingService.getUserInfo().subscribe(data => {
+      this.userInfo = data;
     });
   }
 
@@ -297,6 +308,8 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
                 const updateGood = await this.updateGood();
 
                 if (updateGood) {
+                  //const createHistGood = await this.createHistorailGood();
+
                   this.alertInfo(
                     'success',
                     'Acción Correcta',
@@ -546,8 +559,32 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           id: item.id,
           goodId: item.goodId,
           goodStatus: 'EN_RECEPCION',
+          status: 'ADM',
         };
         this.goodService.updateByBody(formData).subscribe({
+          next: response => {
+            resolve(true);
+          },
+          error: error => {},
+        });
+      });
+    });
+  }
+
+  createHistorailGood() {
+    return new Promise((resolve, reject) => {
+      const goodsReception = this.guardReception.value;
+      goodsReception.map((item: IGood) => {
+        const historyGood: IHistoryGood = {
+          propertyNum: item.goodId,
+          status: 'ADM',
+          changeDate: new Date(),
+          userChange: this.userInfo.name,
+          statusChangeProgram: 'TR_UPD_HISTO_BIENES',
+          reasonForChange: 'AUTOMATICO',
+        };
+
+        this.historyGoodService.create(historyGood).subscribe({
           next: response => {
             resolve(true);
           },

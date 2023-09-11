@@ -75,4 +75,19 @@ export class ProgrammingGoodReceiptService extends HttpService {
     const route = `${environment.API_URL}catalog/api/v1/apps/getProgrammingGoodsIn`;
     return this.httpClient.post<IListResponse<any>>(route, data, { params });
   }
+
+  getcDatVal(params: any) {
+    const route = `${ProgrammingGoodEndpoints.getapps}`;
+    return this.post(route, params);
+  }
+
+  paAbrirActas(params: any) {
+    const route = `${ProgrammingGoodEndpoints.paAbrirActa}`;
+    return this.post(route, params);
+  }
+
+  paRegresarEstadoAnterior(params: any) {
+    const route = `${ProgrammingGoodEndpoints.PaRegresarStatus}`;
+    return this.post(route, params);
+  }
 }

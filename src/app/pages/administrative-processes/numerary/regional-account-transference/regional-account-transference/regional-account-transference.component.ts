@@ -194,7 +194,7 @@ export class RegionalAccountTransferenceComponent
             //this.totalItems = resp.data.length;
           },
           error: err => {
-            this.alert('error', 'Error', err.error.message);
+            this.alert('warning', 'Atención', err.error.message);
             this.loading = false;
             this.dataTable = [];
           },
@@ -419,7 +419,7 @@ export class RegionalAccountTransferenceComponent
   async getDataMail() {
     const { transferenceReport, delegation } = this.form.value;
     const data = {
-      pAffair: 'Déposito de Recursos para Devoluciones',
+      pAffair: 'Depósito de Recursos para Devoluciones',
       pMessage: '',
       pFor: '',
       pCc: '',
@@ -429,7 +429,7 @@ export class RegionalAccountTransferenceComponent
     return firstValueFrom(
       this.securityService.getIniEmail(data).pipe(
         catchError(error => {
-          this.alert('error', 'Error', error.error.message);
+          this.alert('warning', 'Atención', error.error.message);
           return of(null);
         }),
         map(resp => resp)
@@ -523,6 +523,11 @@ export class RegionalAccountTransferenceComponent
           resolve(true);
         },
         error: () => {
+          this.alert(
+            'error',
+            'Error',
+            `No se pudo actualizar el estutas del bien ${good}`
+          );
           resolve(true);
         },
       });
@@ -562,7 +567,7 @@ export class RegionalAccountTransferenceComponent
     return new Date(newDate).valueOf();
   }
 
-  pubInteres() {
+  async pubInteres() {
     const { currencyType, total, monto2, delegation } = this.form.value;
 
     const good: any = this.dataTable.length > 0 ? this.dataTable[0] : null;
@@ -638,12 +643,16 @@ export class RegionalAccountTransferenceComponent
       return;
     }
 
-    this.dataTable.map(async good => {
-      const ban = await this.pupRegAdm(
-        Number(good.goodNumber),
-        Number(delegation)
-      );
-    });
+    for (let good of this.dataTable) {
+      await this.pupRegAdm(Number(good.goodNumber), Number(delegation));
+    }
+
+    // this.dataTable.map(async good => {
+    //   const ban = await this.pupRegAdm(
+    //     Number(good.goodNumber),
+    //     Number(delegation)
+    //   );
+    // });
 
     this.createTransferRegional();
   }
@@ -665,7 +674,7 @@ export class RegionalAccountTransferenceComponent
     );
   }
 
-  createTransferRegional() {
+  async createTransferRegional() {
     const {
       currencyType,
       transactionDate,
@@ -693,19 +702,31 @@ export class RegionalAccountTransferenceComponent
         this.form.get('transferenceReport').patchValue(resp.reportNumber);
         this.alert('success', 'Reporte', 'Creado correctamente');
 
-        this.dataTable.map(async (good, index) => {
+        for (let good of this.dataTable) {
           await this.procedure(Number(good.goodNumber));
           await this.createTransNumDet(good);
+        }
 
-          if (index == this.dataTable.length - 1) {
-            this.filterParams.getValue().removeAllFilters();
-            this.filterParams.getValue().page = 1;
-            this.filterParams
-              .getValue()
-              .addFilter('numberReport', resp.reportNumber, SearchFilter.EQ);
-            this.getTransDetail();
-          }
-        });
+        this.filterParams.getValue().removeAllFilters();
+        this.filterParams.getValue().page = 1;
+        this.filterParams
+          .getValue()
+          .addFilter('numberReport', resp.reportNumber, SearchFilter.EQ);
+        this.getTransDetail();
+
+        // this.dataTable.map(async (good, index) => {
+        //   await this.procedure(Number(good.goodNumber));
+        //   await this.createTransNumDet(good);
+
+        //   if (index == this.dataTable.length - 1) {
+        //     this.filterParams.getValue().removeAllFilters();
+        //     this.filterParams.getValue().page = 1;
+        //     this.filterParams
+        //       .getValue()
+        //       .addFilter('numberReport', resp.reportNumber, SearchFilter.EQ);
+        //     this.getTransDetail();
+        //   }
+        // });
       },
       error: err => {
         this.alert('error', 'Error', err.error.message);
@@ -735,7 +756,7 @@ export class RegionalAccountTransferenceComponent
         this.form.get('cveCurrency').patchValue(data.cveCurrency);
       },
       error: err => {
-        this.alert('error', 'Error', err.error.message);
+        this.alert('warning', 'Atención', err.error.message);
       },
     });
   }
@@ -762,8 +783,8 @@ export class RegionalAccountTransferenceComponent
         if (err.status == 400) {
           this.alert(
             'warning',
-            'Este bien no se encuentra en una solicitud de numerario',
-            ''
+            'Atención',
+            'Este bien no se encuentra en una solicitud de numerario'
           );
         } else {
           this.alert('error', 'Error', err.error.message);

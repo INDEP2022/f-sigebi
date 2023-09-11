@@ -27,6 +27,7 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
@@ -279,7 +280,8 @@ export class FormalizeProgrammingFormComponent
     private taskService: TaskService,
     private authService: AuthService,
     private emailService: EmailService,
-    private goodsProcessService: GoodprocessService
+    private goodsProcessService: GoodprocessService,
+    private goodsQueryService: GoodsQueryService
   ) {
     super();
     this.settings.columns = TRANSPORTABLE_GOODS_FORMALIZE;
@@ -293,7 +295,7 @@ export class FormalizeProgrammingFormComponent
     this.formLoading = true;
     this.getProgrammingData();
     this.prepareFormProceeding();
-
+    this.getTask();
     /*this.paramsReceipts
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => ); */
@@ -432,7 +434,7 @@ export class FormalizeProgrammingFormComponent
         this.getAuthority();
         this.getTypeRelevant();
         this.getwarehouse();
-        this.getTask();
+
         //this.getUsersProgramming();
         /*this.params
           .pipe(takeUntil(this.$unSubscribe))
@@ -442,8 +444,9 @@ export class FormalizeProgrammingFormComponent
 
   getTask() {
     const task = JSON.parse(localStorage.getItem('Task'));
+
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.id'] = task.id;
+    params.getValue()['filter.id'] = `$eq:${task.id}`;
     this.taskService.getAll(params.getValue()).subscribe({
       next: response => {
         this.task = response.data[0];
@@ -511,12 +514,22 @@ export class FormalizeProgrammingFormComponent
 
   getwarehouse() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.organizationCode'] = this.programming.storeId;
+    this.goodsQueryService.getCatStoresView(params.getValue()).subscribe({
+      next: response => {
+        this.nameWarehouse = response.data[0].name;
+        this.ubicationWarehouse = response.data[0].address1;
+        this.formLoading = false;
+      },
+      error: error => {},
+    });
+    /*const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.idWarehouse'] = this.programming.storeId;
     this.warehouseService.getAll(params.getValue()).subscribe(data => {
       this.nameWarehouse = data.data[0].description;
       this.ubicationWarehouse = data.data[0].ubication;
       this.formLoading = false;
-    });
+    }); */
   }
   /*getUsersProgramming() {
     this.loading = true;
@@ -805,7 +818,6 @@ export class FormalizeProgrammingFormComponent
         'Se requiere cerrar todos los recibos de almacén'
       );
     } else if (!receiptCheck && !receiptGuardCheck && !receiptWarehouseCheck) {
-      console.log('LISTE PARA CERRAR');
       if (
         this.receiptData?.statusReceipt == 'CERRADO' ||
         this.receiptGuardData?.statusReceiptGuard == 'CERRADO' ||
@@ -898,7 +910,6 @@ export class FormalizeProgrammingFormComponent
       params.getValue()['filter.typeReceipt'] = 'RESGUARDO';
       this.receptionGoodService.getReceptions(params.getValue()).subscribe({
         next: response => {
-          console.log('RECIBO RESGUARDO ABIERTO');
           resolve(true);
         },
         error: error => {
@@ -917,7 +928,6 @@ export class FormalizeProgrammingFormComponent
       params.getValue()['filter.typeReceipt'] = 'ALMACEN';
       this.receptionGoodService.getReceptions(params.getValue()).subscribe({
         next: response => {
-          console.log('RECIBO almacén ABIERTO');
           resolve(true);
         },
         error: error => {
@@ -1419,6 +1429,7 @@ export class FormalizeProgrammingFormComponent
   }
 
   async confirm() {
+    //const sendGoodInventary = await this.sendGoodsGuardInventary();
     this.alertQuestion(
       'question',
       'Confirmación',
@@ -1434,25 +1445,28 @@ export class FormalizeProgrammingFormComponent
         body['type'] = 'SOLICITUD_PROGRAMACION';
         body['subtype'] = 'Formalizar_Entrega';
         body['ssubtype'] = 'ACCEPT';
-
-        const closeTask = await this.closeTaskExecuteRecepcion(body);
-
-        if (closeTask) {
-          const deleteGoodsReprog = await this.deleteGoodReprog();
-          if (deleteGoodsReprog) {
-            const updateProgramming = await this.updateProgrammingInfo();
-            if (updateProgramming) {
-              const sendGoodInventary = await this.sendGoodsGuardInventary();
-              if (sendGoodInventary) {
-                this.alertInfo(
-                  'success',
-                  'Acción correcta',
-                  'Se cerro la tarea formalizar entrega correctamente'
-                ).then(question => {
-                  if (question.isConfirmed) {
-                    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
-                  }
-                });
+        const closeTaskNotification = await this.closeTaskNotification();
+        if (closeTaskNotification) {
+          const closeTask = await this.closeTaskExecuteRecepcion(body);
+          if (closeTask) {
+            const deleteGoodsReprog = await this.deleteGoodReprog();
+            if (deleteGoodsReprog) {
+              const updateProgramming = await this.updateProgrammingInfo();
+              if (updateProgramming) {
+                const sendGoodInventary = await this.sendGoodsGuardInventary();
+                if (sendGoodInventary) {
+                  this.alertInfo(
+                    'success',
+                    'Acción correcta',
+                    'Se cerro la tarea formalizar entrega correctamente'
+                  ).then(question => {
+                    if (question.isConfirmed) {
+                      this.router.navigate([
+                        'pages/siab-web/sami/consult-tasks',
+                      ]);
+                    }
+                  });
+                }
               }
             }
           }
@@ -1490,7 +1504,7 @@ export class FormalizeProgrammingFormComponent
               .AddReceptionBpm(Number(item.id), Number(item.goodId))
               .subscribe({
                 next: response => {
-                  console.log('se envio', response);
+                  console.log('response', response);
                   resolve(true);
                 },
                 error: error => {
@@ -1542,32 +1556,48 @@ export class FormalizeProgrammingFormComponent
     });
   }
 
-  /*sendEmail() {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    //params.getValue()['filter.idPrograming'] = this.programmingId;
-    //params.getValue()['filter.statusProceeedings'] = 'ABIERTO';
-    this.proceedingService.getProceedings(params.getValue()).subscribe({
-      next: response => {
-        console.log('acta', response);
-      },
-      error: error => {},
+  closeTaskNotification() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      const _task = JSON.parse(localStorage.getItem('Task'));
+      params.getValue()['filter.id'] = `$eq:${_task.id}`;
+      this.taskService.getAll(params.getValue()).subscribe({
+        next: async response => {
+          const taskInfo = response.data[0];
+
+          const user: any = this.authService.decodeToken();
+          let body: any = {};
+          body['idTask'] = taskInfo.identificationKey;
+          body['userProcess'] = user.username;
+          body['type'] = 'SOLICITUD_PROGRAMACION';
+          body['subtype'] = 'Aceptar_Programacion';
+          body['ssubtype'] = 'APPROVE';
+
+          const closeTask = await this.closeTaskExecuteRecepcion(body);
+          if (closeTask) {
+            resolve(true);
+          } else {
+            resolve(true);
+          }
+          /*const body: ITask = {
+            State: 'FINALIZADA',
+          };
+          this.taskService.update(taskInfo.id, body).subscribe({
+            next: response => {
+              console.log('cerro la tarea de notificación', response);
+              resolve(true);
+            },
+            error: error => {
+              resolve(true);
+            }, 
+          }); */
+        },
+        error: error => {
+          resolve(true);
+        },
+      });
     });
-    const data = {
-      recipients: 'correopruebas@gmail.com',
-      message:
-        'Le informamos que el acta con folio: OCCIDENTE-SAT-8341-A1-22-08, terminó satisfactoriamente.',
-      userCreation: 'arosales',
-      dateCreation: '2022-08-05',
-      userModification: 'arosales',
-      dateModification: '2022-08-05',
-      version: '2',
-      subject: 'Notificación de cierre de acta de entrega recepción',
-      nameAtt: 'OCCIDENTE-SAT-8341-A1-22-08',
-      typeAtt: 'application/pdf;',
-      //"urlAtt": "https://seguimiento.agoraparticipa.org/docs/PDF_TEXT-CA4Bn.pdf", //si cuentas con una url usas esto en ves del base64
-      process: 'FORMALIZAR',
-    };
-  } */
+  }
 
   closeTaskExecuteRecepcion(body: any) {
     return new Promise((resolve, reject) => {
@@ -1629,7 +1659,6 @@ export class FormalizeProgrammingFormComponent
   }
 
   getReceiptsGuard() {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
     this.paramsReceipts.getValue()['filter.statusReceiptGuard'] = 'CERRADO';
     this.paramsReceipts.getValue()['filter.actId'] = this.actId;
     this.paramsReceipts.getValue()['filter.programmingId'] = this.programmingId;

@@ -34,7 +34,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
   @Input() override settings: any;
   @Input() service: ICharacteristicsWidthData;
   @Input() initValue = true;
-  @Input() inventary: any;
+  @Input() inventary: any[];
   @Input() loadInventary: boolean = false;
   @Input() set goodChange(value: number) {
     this._goodChange = value;
@@ -74,7 +74,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     filterParams.limit = 120;
     filterParams.addFilter('classifGoodNumber', this.clasification);
     filterParams.addFilter('columnNumber', '51', SearchFilter.NOTIN);
-    filterParams.addFilter3('sortBy', 'attribute:ASC');
+    // filterParams.addFilter3('sortBy', 'attribute:ASC');
     const good = this.good as any;
     this.goodsqueryService
       .getAtribuXClasif(filterParams.getParams())
@@ -82,9 +82,11 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           this.val_atributos_inmuebles = 0;
-
           if (response.data && response.data.length > 0) {
-            const newData = response.data;
+            // const newData = response.data;
+            const newData = response.data.sort((a, b) => {
+              return a.columnNumber - b.columnNumber;
+            });
             console.log(this.data);
             if (this.loadInventary) {
               this.data = newData.map((item, index) => {
@@ -111,15 +113,18 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
                 }
 
                 if (this.inventary) {
+                  const inventaryRow = this.inventary.find(
+                    row => row.typeInventoryNumber === item.columnNumber
+                  );
                   return {
                     column,
                     attribute: item.attribute,
                     value:
                       this.initValue === true
-                        ? this.inventary[index]
+                        ? inventaryRow
                           ? this.getValueInventary(
                               fecha,
-                              this.inventary[index].valueAttributeInventory
+                              inventaryRow.valueAttributeInventory
                             )
                           : null
                         : null,

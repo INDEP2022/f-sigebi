@@ -24,6 +24,15 @@
             formControlName="chargeSignatore" />
         </form-field>
       </div>
+      <div class="row pt-4" *ngIf="type == 'order-service'">
+        <form-check label="Firma electrónica" for="firma">
+          <input
+            id="firma"
+            type="checkbox"
+            [(ngModel)]="electronicSignature"
+            [ngModelOptions]="{ standalone: true }" />
+        </form-check>
+      </div>
     </form>
   </div>
   <div footer>

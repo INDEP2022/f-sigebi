@@ -1,24 +1,24 @@
 export const SCHEDULING_DELIVERIES_COLUMNS = {
-  numberGestion: {
-    title: 'Número de gestión',
+  goodId: {
+    title: 'No. de Gestión',
     type: 'number',
     sort: false,
   },
 
-  numberSae: {
-    title: 'Número INDEP',
+  siabGoodNumber: {
+    title: 'No. INDEP',
     type: 'string',
     sort: false,
   },
 
-  numberInventory: {
-    title: 'Número inventario',
+  inventoryNumber: {
+    title: 'No. Inventario',
     type: 'number',
     sort: false,
   },
 
-  goodDescription: {
-    title: 'Descripción bien',
+  descriptionGood: {
+    title: 'Descripción Bien',
     type: 'string',
     sort: false,
   },
@@ -29,25 +29,25 @@ export const SCHEDULING_DELIVERIES_COLUMNS = {
     sort: false,
   },
 
-  quantityGoods: {
-    title: 'Cantidad de bienes',
+  amountGood: {
+    title: 'Cantidad de Bienes',
     type: 'string',
     sort: false,
   },
 
-  typeGood: {
-    title: 'Tipo bien',
+  typeGoodName: {
+    title: 'Tipo Bien',
     type: 'string',
     sort: false,
   },
 
-  unitOfMeasurement: {
-    title: 'Unidad de medida',
+  unit: {
+    title: 'Unidad de Medida',
     type: 'string',
     sort: false,
   },
 
-  origin: {
+  origen: {
     title: 'Origen',
     type: 'string',
     sort: false,

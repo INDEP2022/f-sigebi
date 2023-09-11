@@ -128,6 +128,13 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
       status
     );
   }
+  updateStatusActasRobo(id: string | number, status: string) {
+    const route = `good/api/v1/good/updateGoodStatus`;
+    return this.http.put(
+      `${environment.API_URL}/${route}/${id}/${status}`,
+      status
+    );
+  }
 
   updateByBody(formData: Object) {
     const route = `good/api/v1/good`;
@@ -205,10 +212,47 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
       `${GoodEndpoints.Good}?filter.requestId=$eq:${Norequest}`
     );
   }
+
+  getByExpedientFilter(expedient: any) {
+    const route = `${GoodEndpoints.goodStatus}?filter.fileNumber=$eq:${expedient}`;
+    return this.get(route);
+  }
+
+  getByGood(good: any) {
+    const route = `${GoodEndpoints.GetAllGoodQuery}?filter.goodId=$eq:${good}`;
+    return this.get(route);
+  }
+
   getExcel() {
     return this.get<any>(GoodEndpoints.ExportExcelGoodBad);
   }
   donwloadExcel(token: string) {
     return this.get(`${GoodEndpoints.ExportExcelGoodBad}/${token}`);
+  }
+
+  getAllGood(good: any) {
+    const route = `${GoodEndpoints.GetAllGoodQuery}?filter.goodId=$eq:${good}`;
+    return this.get(route);
+  }
+
+  getAllStatus(status: any) {
+    const route = `${GoodEndpoints.OnlyStatus}?filter.status=$ilike:${status}`;
+    return this.get(route);
+  }
+
+  filterStatusGood(params: any) {
+    return this.get(
+      `${GoodEndpoints.goodStatus}?filter.status=$ilike:VPT`,
+      params
+    );
+  }
+
+  putStatusGood(good: number, status: string) {
+    return this.put(`${GoodEndpoints.UpdateStatusGood}/${good}/${status}`);
+  }
+
+  getGoodCount() {
+    const route = `${GoodEndpoints.goodSec}`;
+    return this.get(route);
   }
 }

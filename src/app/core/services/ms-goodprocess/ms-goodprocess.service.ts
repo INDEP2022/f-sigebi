@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { GoodprocessEndpoints } from 'src/app/common/constants/endpoints/ms-goodprocess-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Repository } from 'src/app/common/repository/repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import {
   IListResponse,
   IListResponseMessage,
 } from '../../interfaces/list-response.interface';
+import { IGoodSssubtype } from '../../models/catalogs/good-sssubtype.model';
 import {
   ICharacteristicsGoodDTO,
   ISecondIfMC,
@@ -17,7 +19,8 @@ import { IGoodDistinctTypes } from '../../models/ms-good/good-distinct-types';
   providedIn: 'root',
 })
 export class GoodprocessService extends HttpService {
-  constructor() {
+  private readonly route: string = GoodprocessEndpoints.GetGoodType1;
+  constructor(private goodSssubtypeRepository: Repository<any>) {
     super();
     this.microservice = GoodprocessEndpoints.BasePath;
   }
@@ -209,6 +212,12 @@ export class GoodprocessService extends HttpService {
     );
   }
 
+  getGoodTypeMuebles(
+    params?: ListParams
+  ): Observable<IListResponse<IGoodSssubtype>> {
+    return this.goodSssubtypeRepository.getAllPaginated(this.route, params);
+  }
+
   getDeleteStatusGoodnumber(body: any) {
     return this.post(GoodprocessEndpoints.DeleteStatusGoodnumber, body);
   }
@@ -232,10 +241,35 @@ export class GoodprocessService extends HttpService {
     );
   }
 
+  getDataFromGood(id: any) {
+    const route = `${GoodprocessEndpoints.getDataFromGood}/${id}`;
+    return this.get(route);
+  }
+
   GetMinuteDetailDelivery(expedient: any, params: _Params) {
     return this.get(
       `${GoodprocessEndpoints.GetMinuteDetailDelivery}/${expedient}`,
       params
+    );
+  }
+
+  getGoodByScreeen(good: any, cveScreem: any) {
+    const route = `${GoodprocessEndpoints.getStatusCveScreem}?filter.goodId=$eq:${good}`;
+    return this.post(route, cveScreem);
+  }
+
+  getAvailableGoods(params: any) {
+    return this.get(GoodprocessEndpoints.GoodsDetActaRecep, params);
+  }
+
+  getCount(good: number) {
+    return this.get(`${GoodprocessEndpoints.GetCount}?noGood=${good}`);
+  }
+
+  updateVal5(data: { val5: string }, good: number) {
+    return this.put(
+      `${GoodprocessEndpoints.UpdateGoodStatusVal5}/${good}`,
+      data
     );
   }
 }

@@ -233,7 +233,7 @@ export class RegistrationOfRequestsComponent
       ], //cargo remitente
       phoneOfOwner: [
         null,
-        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(13)],
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(10)],
       ], //telefono remitente
       emailOfOwner: [
         null,
@@ -793,6 +793,7 @@ export class RegistrationOfRequestsComponent
 
   //metodo que guarda la captura de solivitud
   public async confirmMethod() {
+    this.loader.load = true;
     const task1: any = await this.getOldTask();
     //
     console.log('public async confirmMethod()');
@@ -812,11 +813,13 @@ export class RegistrationOfRequestsComponent
           request.recordId
         );
         if (expUpdated) {
+          this.loader.load = false;
           /* abre modal del elegir usuario */
           this.cambiarTipoUsuario(this.requestData, task1);
         }
       }
     }
+    this.loader.load = false;
   }
 
   cambiarTipoUsuario(request: any, task1: any) {
@@ -1406,6 +1409,7 @@ export class RegistrationOfRequestsComponent
         if (typeCommit === 'captura-solicitud') {
           console.log('captura-solicitud'); //DE CAPTURA DE SOLICITUD A VERIFICAR CUMPLIMIENTO
           this.confirmMethod();
+          await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO', 'ROP');
         }
         if (typeCommit === 'verificar-cumplimiento') {
           this.loader.load = true;
@@ -1584,16 +1588,20 @@ export class RegistrationOfRequestsComponent
   }
 
   async updateGoodStatus(newProcessStatus: string, status: string = null) {
+    const user = this.authService.decodeToken();
     let body: any = { request: 0, status: '', process: '' };
     body.request = Number(this.requestData.id);
     body.status = newProcessStatus; //good.processStatus
     body.process = this.process;
     body.statusGood = status; // good.status
+
     if (
       this.process === 'process-approval' &&
       newProcessStatus === 'APROBADO'
     ) {
       body.process = 'process-approval';
+      body.programChangeStatus = 'SOLICITUD_TRANSFERENCIA';
+      body.user = user.username;
     }
     const resultado = await this.updateProcessStatus(body);
   }

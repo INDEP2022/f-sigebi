@@ -37,7 +37,9 @@ export class CapturelineService extends HttpService {
   getSettlementReportBody(body: any, params?: ListParams) {
     return this.post<any>(CapturelineEndpoints.GetVarReport, body, params);
   }
-
+  getPaConsultLc(body: any, params?: ListParams) {
+    return this.post<any>(CapturelineEndpoints.PaConsultLc, body, params);
+  }
   getAllAdminCaptureLine1(params: ListParams): Observable<IListResponse<any>> {
     return this.binnacle.getAllPaginated(this.route3, params);
   }
@@ -64,5 +66,8 @@ export class CapturelineService extends HttpService {
     return this.get<any>(
       `comer-detcapturelines/filterExcel?filter.eventId=$eq:${captureLinesId}`
     );
+  }
+  postSpGenIc2(body: any) {
+    return this.post<any>(CapturelineEndpoints.SpGenLc2, body);
   }
 }

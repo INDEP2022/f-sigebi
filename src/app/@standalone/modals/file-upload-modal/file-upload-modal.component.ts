@@ -31,10 +31,19 @@ export interface IServiceUpload {
   standalone: true,
   imports: [CommonModule, FileUploadModule, SharedModule],
   templateUrl: './file-upload-modal.component.html',
-  styles: [],
+  styles: [
+    `
+      :host ::ng-deep app-modal {
+        .modal-body {
+          padding: 20px 40px 20px;
+        }
+      }
+    `,
+  ],
 })
 export class FileUploadModalComponent extends BasePage implements OnInit {
   accept: string = '*';
+  accept2: string = null;
   identificator: any = null;
   uploadFiles = false;
   refresh: boolean = false;
@@ -59,6 +68,7 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
   }
 
   private async completeLoadFiles() {
+    debugger;
     this.loading = false;
     const result = await this.alertQuestion(
       'question',
@@ -66,10 +76,10 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
       '¿Desea subir más archivos?'
     );
     this.uploadFiles = false;
-    if (!result.isConfirmed) {
-      this.close();
-      return false;
-    }
+    // if (!result.isConfirmed) {
+    //   this.close();
+    //   return false;
+    // }
     if (result.isConfirmed) {
       this.totalDocs = 0;
       this.successCount = 0;
@@ -149,6 +159,8 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
             const result = await this.completeLoadFiles();
             if (result) {
               uploadEvent.fileEvents.length = 0;
+            } else {
+              this.close();
             }
           }
         },

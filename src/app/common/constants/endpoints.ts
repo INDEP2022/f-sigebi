@@ -100,6 +100,7 @@ export enum ENDPOINT_LINKS {
   Response = 'catalog/response',
   RevisionReason = 'catalog/revision-reason',
   RevisionReasonAll = 'catalog/revision-reason/get-all',
+  RevisionReasonAll2 = 'revision-reason/get-all',
   Safe = 'catalog/safe',
   SATClasification = 'catalog/sat-classification',
   SATSubclasification = 'catalog/sat-subclassification',

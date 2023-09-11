@@ -20,7 +20,7 @@ export class LayoutsStructureConfigurationModalComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Estructura del Layout';
+  title: string = 'Estructura del Diseño';
   provider: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -164,20 +164,20 @@ export class LayoutsStructureConfigurationModalComponent
           this.alert(
             'error',
             'Error al Crear',
-            'Ocurrió un Error al Crear la Estructura del Layout'
+            'Ocurrió un error al crear la estructura del diseño'
           );
           return;
         },
       });
     } catch {
-      console.error('Layout no existe');
+      console.error('Diseño no existe');
     }
   }
   update() {
     this.alertQuestion(
       'warning',
-      'Actualizar Estructura del Layout',
-      '¿Desea Actualizar la Estructura del Layout?'
+      'Actualizar Estructura del Diseño',
+      '¿Desea actualizar la estructura del diseño?'
     ).then(question => {
       if (question.isConfirmed) {
         this.layoutsConfigService
@@ -188,7 +188,7 @@ export class LayoutsStructureConfigurationModalComponent
               this.alert(
                 'error',
                 'Error al Actualizar',
-                'Ocurrió un Error al Actualizar la Estructura del Layout'
+                'Ocurrió un error al actualizar la estructura del diseño'
               );
               this.loading = false;
             },

@@ -1,7 +1,11 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PaymentEndPoints } from 'src/app/common/constants/endpoints/ms-payment';
+import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.interceptor';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponseMessage } from '../../interfaces/list-response.interface';
+import { AuthService } from '../authentication/auth.service';
 import {
   IComerPaymentsRefVir,
   IComerReldisDisp,
@@ -14,7 +18,7 @@ import {
 })
 export class PaymentService extends HttpService {
   private readonly endpoint: string = PaymentEndPoints.BasePath;
-  constructor() {
+  constructor(private http: HttpClient, private authService: AuthService) {
     super();
     this.microservice = PaymentEndPoints.BasePath;
   }
@@ -57,6 +61,10 @@ export class PaymentService extends HttpService {
 
   update(id: any, params: any) {
     return this.put(`${PaymentEndPoints.ComerPaymentRef}/${id}`, params);
+  }
+
+  updatePayments(body: any) {
+    return this.put(PaymentEndPoints.UpdatePayments, body);
   }
 
   sendReadSirsaeFcomer113(params: any) {
@@ -121,17 +129,77 @@ export class PaymentService extends HttpService {
   PUP_PROC_NUEVO(evento: string) {
     return this.get(`application/fcomer111-pup-proc-new/${evento}`);
   }
-  getBusquedaPag(params?: string) {
-    return this.get(PaymentEndPoints.BusquedaPagosDet, params);
+  getBusquedaPag(params?: any) {
+    return this.get(
+      `${PaymentEndPoints.BusquedaPagosDet}?filter.tsearchId=$eq:${5}`,
+      params
+    );
   }
   // postComerPagoRefVirt(body: IComerPaymentsRefVir) {
   //   return this.post('comer-payments-ref-virt', body);
   // }
 
-  getBusquedaMae(params: string) {
+  getBusquedaMae(params: number | string) {
     return this.get(
       PaymentEndPoints.BusquedaPagosMae,
       `&filter.tsearchId=$eq:${params}`
     );
+  }
+
+  getSearchId(id: number | string) {
+    return this.get(
+      `${PaymentEndPoints.BusquedaPagosDet}?filter.tsearchId=$eq:${id}`
+    );
+  }
+
+  deleteId(id: number | string) {
+    return this.delete(`${PaymentEndPoints.Delete}/${id}`);
+  }
+
+  UpdateRecord(params: any) {
+    return this.put(PaymentEndPoints.BusquedaPagosDet, params);
+  }
+
+  getValidSystem(filter?: string) {
+    if (filter != null) {
+      return this.get(
+        `${PaymentEndPoints.validSystem}?filter.valsisKey=$eq:${filter}`
+      );
+    } else {
+      return this.get(`${PaymentEndPoints.validSystem}`);
+    }
+  }
+
+  getValidSystemDesc(filter?: string) {
+    if (filter != null) {
+      return this.get(
+        `${PaymentEndPoints.validSystem}?filter.valsisDescription=$eq:${filter}`
+      );
+    } else {
+      return this.get(`${PaymentEndPoints.validSystem}`);
+    }
+  }
+
+  postCreateRecord(params: any) {
+    return this.post(PaymentEndPoints.BusquedaPagosDet, params);
+  }
+
+  getCtlDevPagB(params: _Params) {
+    return this.get(`${PaymentEndPoints.ComerCtldevpagB}`, params);
+  }
+
+  getCtlDevPagBfindAllRegistersV2(params: ListParams) {
+    // return this.get(
+    //   `${PaymentEndPoints.ComerCtldevpagBfindAllRegistersV2}`,
+    //   params
+    // );
+    const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    this.authService.setReportFlag(true);
+    const route = `${this.url}${this.microservice}/${this.prefix}${PaymentEndPoints.ComerCtldevpagBfindAllRegistersV2}`;
+    return this.http.get<any>(`${route}`, {
+      headers,
+      params,
+      // responseType: 'arraybuffer' as 'json',
+    });
   }
 }
