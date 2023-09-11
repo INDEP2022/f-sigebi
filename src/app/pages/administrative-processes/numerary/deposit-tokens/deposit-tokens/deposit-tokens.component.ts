@@ -110,13 +110,15 @@ export class DepositTokensComponent
         delete: true,
         edit: true,
         add: false,
+        position: 'right',
       },
       delete: {
         deleteButtonContent: '<i class="fa fa-trash text-danger mx-2"></i>',
         confirmDelete: true,
       },
       edit: {
-        editButtonContent: '<i class="fa fa-pencil-alt text-black mx-2"></i>',
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-black mx-2 pl-3"></i>',
       },
       hideSubHeader: false,
       columns: {
@@ -930,7 +932,7 @@ export class DepositTokensComponent
       }
       this.clearInput();
     } catch (error) {
-      this.alert('warning', 'Ocurrió un Error al Leer el Archivo', '');
+      this.alert('warning', 'Ocurrió un error al leer el archivo', '');
       this.clearInput();
     }
   }
@@ -1064,7 +1066,7 @@ export class DepositTokensComponent
         console.log('jsonToCsv', arr);
         this.jsonToCsv = arr;
         this.excelService.export(this.jsonToCsv, { type: 'xlsx', filename });
-        this.alert('success', 'Archivo Descargado Correctamente', '');
+        this.alert('success', 'Archivo descargado correctamente', '');
         this.loadingBtn2 = false;
       });
     }
@@ -1211,7 +1213,7 @@ export class DepositTokensComponent
               ''
             );
           } else {
-            this.alert('error', 'Error al Descargar el Archivo', '');
+            this.alert('error', 'Error al descargar el archivo', '');
           }
 
           this.loadingBtn2 = false;
@@ -1228,7 +1230,7 @@ export class DepositTokensComponent
     link.download = 'CARINSFICHDEPO.xlsx';
     link.click();
     link.remove();
-    this.alert('success', 'Archivo Descargado Correctamente', '');
+    this.alert('success', 'Archivo descargado correctamente', '');
     this.loadingBtn2 = false;
   }
 
@@ -1334,7 +1336,7 @@ export class DepositTokensComponent
       } else {
         this.alertQuestion(
           'question',
-          'Se Eliminará el Movimiento',
+          'Se eliminará el Movimiento',
           '¿Desea Continuar?'
         ).then(async question => {
           if (question.isConfirmed) {
@@ -1346,11 +1348,11 @@ export class DepositTokensComponent
               next: response => {
                 this.getAccount();
                 this.form.reset();
-                this.alert('success', 'Movimiento Eliminado Correctamente', '');
+                this.alert('success', 'Movimiento eliminado correctamente', '');
                 console.log('res', response);
               },
               error: err => {
-                this.alert('error', 'Error al Eliminar el Movimiento', '');
+                this.alert('error', 'Error al eliminar el movimiento', '');
               },
             });
           }
