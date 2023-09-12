@@ -85,7 +85,7 @@ export class NotifyAssetsImproprietyFormComponent
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
     console.log('Información de la solicitud', this.infoRequest);
-    console.log('Bien seleccionado: ', this.dataClarifications2.goodId);
+
     //Actualiza Bien, de prueba
     //this.changeSimulateGood()
     this.modalService.onHide.subscribe(key => {});
@@ -850,6 +850,7 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
     const idTypeDoc = Number(data.documentTypeId);
     const requestInfo = this.infoRequest;
     const idSolicitud = this.idSolicitud;
+    const noBien = this.dataClarifications2.goodId;
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
@@ -859,13 +860,13 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
         idReportAclara,
         idSolicitud,
         notificationValidate,
+        noBien,
         callback: (next: boolean, xml?: string) => {
           if (next) {
             const typeTransference = this.infoRequest.typeOfTransfer;
-            if (typeTransference == 'SAT_SAE') {
-              this.changeStatusAnswered(xml);
-              this.changeSimulateGood;
-            }
+
+            this.changeStatusAnswered(xml);
+            this.changeSimulateGood;
           } else {
           }
         },
