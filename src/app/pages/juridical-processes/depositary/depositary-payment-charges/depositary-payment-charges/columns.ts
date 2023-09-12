@@ -2,7 +2,7 @@
 
 export const COLUMNS = {
   movementNumber: {
-    title: 'No Movimiento',
+    title: 'No. Movimiento',
     sort: false,
   },
   registrationDate: {
@@ -46,11 +46,11 @@ export const COLUMNS = {
     sort: false,
   },
   noGood: {
-    title: 'No Bien',
+    title: 'No. Bien',
     sort: false,
   },
   appointmentNum: {
-    title: 'No contrato',
+    title: 'No. contrato',
     sort: false,
   },
   entryorderid: {

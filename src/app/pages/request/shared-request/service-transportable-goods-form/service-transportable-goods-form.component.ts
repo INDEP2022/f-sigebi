@@ -181,11 +181,15 @@ export class ServiceTransportableGoodsFormComponent
       )
       .subscribe({
         next: resp => {
-          //this.data = testData;
+          console.log(resp.data);
+
           let ttotal = 0;
           resp.data.map((item: any) => {
-            item['total'] =
-              Number(item.priceUnitary) * Number(item.resourcesReal);
+            const resource =
+              Number(item.resourcesReal) != null
+                ? Number(item.resourcesReal)
+                : 0;
+            item['total'] = Number(item.priceUnitary) * resource;
             ttotal = ttotal + item['total'];
           });
           const bodyTotal: any = { total: ttotal };
@@ -320,13 +324,12 @@ export class ServiceTransportableGoodsFormComponent
 
   newServiceManual() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-content-centered' };
-
     config.initialState = {
+      orderServiceId: this.orderServiceId,
       callback: (data: any) => {
         if (data) {
           console.log(data);
-          this.data.push(data);
-          this.data = [...this.data];
+          this.getOrderServiceProvided();
         }
       },
     };
@@ -337,6 +340,11 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   deleteService() {
+    console.log(this.ordersSelected);
+    if (this.ordersSelected.length == 0 || this.ordersSelected.length > 1) {
+      this.onLoadToast('info', 'Seleccione un bien');
+      return;
+    }
     this.alertQuestion(
       'warning',
       'Confirmación',
@@ -344,7 +352,7 @@ export class ServiceTransportableGoodsFormComponent
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.onLoadToast('success', 'Servicio eliminado correctamente', '');
+        this.deleteOrderServiceProvided(this.ordersSelected[0].id);
       }
     });
   }
@@ -493,7 +501,6 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   saveForm() {
-    debugger;
     if (this.listforUpdate.length == 0) return;
 
     this.listforUpdate.map(async (item: any, _i: number) => {
@@ -537,6 +544,15 @@ export class ServiceTransportableGoodsFormComponent
           );
         },
       });
+    });
+  }
+
+  deleteOrderServiceProvided(id: number) {
+    this.orderEntryService.deleteOrderServiceProvided(id).subscribe({
+      next: resp => {
+        this.onLoadToast('success', 'Servicio eliminado correctamente', '');
+        this.getOrderServiceProvided();
+      },
     });
   }
 }

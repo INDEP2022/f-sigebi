@@ -74,6 +74,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   idRegionalDelegation: any;
   notificationValidate: any; //Parámetro que identifica si es notificación Y= si lo es
 
+  noBien: any;
   constructor(
     public modalService: BsModalService,
     public modalRef: BsModalRef,
@@ -116,6 +117,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
     console.log('ID de solicitud', this.requestInfo);
     console.log('DOC', this.idTypeDoc);
+    console.log('id Bien seleccioando: ', this.noBien);
 
     //Borrar firmantes existentes
     this.verificateFirm();
@@ -517,7 +519,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         dInDate: new Date(), //Fecha de creación del documento
         xidSolicitud: this.idSolicitud,
         xtipoDocumento: this.idTypeDoc,
+        xidBien: this.noBien,
       };
+      console.log('Data a guardar: ', formData);
       this.attachDoc(formData);
     }
   }

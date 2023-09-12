@@ -82,6 +82,7 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
   totalForm: FormGroup = new FormGroup({});
   loadingBtnExcel1: boolean = false;
   loadingBtnExcel2: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -210,7 +211,7 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
           });
           this.params2 = this.pageFilter(this.params2);
           //Su respectivo metodo de busqueda de datos
-          this.getComPerGood(this.comerComCalculated);
+          this.getComPerGood(this.comerComCalculated, 'no');
         }
       });
 
@@ -218,7 +219,7 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
       .pipe(
         skip(1),
         tap(() => {
-          this.getComPerGood(this.comerComCalculated);
+          this.getComPerGood(this.comerComCalculated, 'no');
         }),
         takeUntil(this.$unSubscribe)
       )
@@ -226,6 +227,7 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
 
     this.prepareForm();
   }
+
   prepareForm() {
     this.totalForm = this.fb.group({
       totalVenta: [''],
@@ -297,7 +299,7 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
     });
   }
 
-  getComPerGood(comerComCalculated: any): void {
+  getComPerGood(comerComCalculated: any, filter: any): void {
     this.loading2 = true;
     this.comCommisionXGood.load([]);
     this.totalItems2 = 0;
@@ -342,8 +344,12 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
           });
         },
         error: error => {
+          if (filter == 'si')
+            this.alert('warning', 'No se encontraron comisiones', '');
           this.comCommisionXGood.load([]);
           this.comCommisionXGood.refresh();
+          this.totalForm.get('totalVenta').setValue('');
+          this.totalForm.get('totalMonto').setValue('');
           this.totalItems2 = 0;
           this.loading2 = false;
         },
@@ -371,7 +377,7 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
     this.totalItems2 = 0;
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getComPerGood(event));
+      .subscribe(() => this.getComPerGood(event, 'si'));
   }
 
   openForm1(calculated?: any) {
@@ -412,7 +418,11 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
         idEvent,
         idGood,
         comerComCalculated,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => {
+          if (next) {
+            this.getComPerGood(this.comerComCalculated, 'no');
+          }
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -468,7 +478,7 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
       this.rowsSelectedGetComissions(this.comerComCalculated);
       this.alert(
         'success',
-        'Proceso Terminado Correctamente',
+        'Proceso terminado correctamente',
         commissionsProcessServiceConst.message
       );
     } else {
@@ -508,6 +518,37 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
           },
           error: err => {
             this.alert('error', 'Error al eliminar el registro', '');
+          },
+        });
+      }
+    });
+  }
+
+  async questionDelete2(data: any) {
+    console.log(data);
+
+    this.alertQuestion(
+      'question',
+      'Se eliminará la comisión',
+      '¿Desea Continuar?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        delete data.good;
+        delete data.event;
+        data.eventId = data.eventId.eventId;
+        data.goodNumber = data.goodNumber.id;
+
+        this.comerCommissionsPerGoodService.remove(data).subscribe({
+          next: data =>
+            this.alert('success', 'Comisión eliminada correctamente', ''),
+          error: error => {
+            this.alert(
+              'error',
+              'Error al eliminar la comisión',
+              error.error.message
+            );
+
+            this.loading = false;
           },
         });
       }

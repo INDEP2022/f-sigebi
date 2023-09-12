@@ -209,8 +209,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
             if (this.goodTransfer.length == index) {
               this.onLoadToast(
                 'success',
-                `Aclaración guardada`,
-                `Se guardó la aclaración correctamente`
+                `Aclaración Guardada`,
+                `Se ha creado una aclaración`
               );
             }
           } else {
@@ -220,8 +220,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
             if (this.goodTransfer.length == index) {
               this.onLoadToast(
                 'success',
-                `Aclaración guardada`,
-                `Se guardó la aclaración correctamente`
+                `Improcedencia Guardada`,
+                `Se ha creado una improcedencia`
               );
             }
           }

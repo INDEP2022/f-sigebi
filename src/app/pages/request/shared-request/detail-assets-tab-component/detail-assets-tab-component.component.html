@@ -205,9 +205,10 @@
                 [data]="selectTansferUnitMeasure"
                 label="Unid&#46; Medida Transferente"
                 [searchable]="true"
-                bindLabel="measureTlUnit"
-                value="uomCode"
-                [readonly]="isGoodInfReadOnly"></ngx-select>
+                bindLabel="idUnitDestine"
+                value="nbCode"
+                [readonly]="isGoodInfReadOnly"
+                (change)="unitChange($event)"></ngx-select>
             </div>
           </div>
           <div class="row pt-4">
