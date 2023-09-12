@@ -82,6 +82,8 @@ export enum GoodProcessPoints {
   GetGoodsResDevInv = 'application/goods-res-dev-inv-view',
   GetDataCustom = 'application/get-data-custom-by-currency-nogood',
   VGoodType = 'v-good-type',
+  //Classification View
+  GetVsigLigie = 'application/vsigLigie',
 }
 
 export enum GoodFinderEndpoint {
