@@ -791,9 +791,9 @@ export class RegistrationOfRequestsComponent
       console.log('No Soy destino documental');
       this.msgSaveModal(
         'Aceptar',
-        '',
         'Asegúrese de haber guardado la información antes de turnar la solicitud',
-        'question',
+        'Atención',
+        'warning',
         this.typeDocument
       );
     }
@@ -1391,7 +1391,7 @@ export class RegistrationOfRequestsComponent
       title: title,
       text: message,
       icon: typeMsg,
-      width: 450,
+      //width: 450,
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#b38e5d',
