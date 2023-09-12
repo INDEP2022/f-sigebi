@@ -130,7 +130,13 @@ export class DepositaryPaymentChargesComponent
     this.buildForm();
     this.form.controls['numberGood'].setValue(id);
     this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      if (this.form.get('numberGood').value) this.loadTablaDispersiones();
+      if (this.form.get('numberGood').value) {
+        this.filterParams.value.addFilter(
+          'noGood',
+          this.form.get('numberGood').value
+        );
+        this.loadTablaDispersiones();
+      }
     });
   }
   isSelectedValid(_row: any) {
@@ -181,9 +187,8 @@ export class DepositaryPaymentChargesComponent
     this.loading = true;
     const good = this.form.get('numberGood').value;
     const appointment: any = await this.getAppointmentByGoodId(good);
-    this.Service.getRefPayDepositories(
-      this.filterParams.getValue().getParams()
-    ).subscribe({
+    const filter = this.filterParams.getValue().getParams();
+    this.Service.getRefPayDepositories(filter).subscribe({
       next: (resp: any) => {
         console.log('refpayDepositaries', this.data);
         resp.data.map((item: any) => {

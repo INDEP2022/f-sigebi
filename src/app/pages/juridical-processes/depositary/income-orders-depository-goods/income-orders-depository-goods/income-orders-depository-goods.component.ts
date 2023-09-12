@@ -195,10 +195,10 @@ export class IncomeOrdersDepositoryGoodsComponent
       P_FECHA: fecha,
     };
     /* let params = {
-      P_NOMBRA: 3709,
-      P_NO_BIEN: 2192691,
-      P_PFIRMA: 'AABREGOHI',
-      P_FECHA: '30-06-2023',
+      P_NOMBRA: 383,
+      P_NO_BIEN: 40488,
+      P_PFIRMA: 'AAAGUILAB',
+      P_FECHA: '2022-05-19',
     }; */
 
     this.siabService
