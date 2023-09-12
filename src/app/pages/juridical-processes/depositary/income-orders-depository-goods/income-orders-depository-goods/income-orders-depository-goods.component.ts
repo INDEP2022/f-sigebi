@@ -187,19 +187,19 @@ export class IncomeOrdersDepositoryGoodsComponent
     }
 
     const fecha = moment(this.form.get('date').value).format('YYYY-MM-DD');
-    /*let params = {
+    let params = {
       //P_VALORES: this.form.value,
       P_NOMBRA: this.depoAppointments.appointmentNum,
       P_NO_BIEN: this.form.get('numberGood').value,
       P_PFIRMA: this.form.get('userId').value.id,
       P_FECHA: fecha,
-    };*/
-    let params = {
+    };
+    /* let params = {
       P_NOMBRA: 383,
       P_NO_BIEN: 40488,
       P_PFIRMA: 'AAAGUILAB',
       P_FECHA: '2022-05-19',
-    };
+    }; */
 
     this.siabService
       .fetchReport('RDEPINGXBIEN.', params)
