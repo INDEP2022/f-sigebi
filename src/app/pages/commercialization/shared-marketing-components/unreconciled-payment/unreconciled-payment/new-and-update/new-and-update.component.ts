@@ -67,7 +67,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      paymentId: [null],
+      paymentId: [null, Validators.required],
       reference: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -78,10 +78,13 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
       date: [null, Validators.required],
-      amount: [null, [Validators.pattern(NUMBERS_POINT_PATTERN)]],
+      amount: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
+      ],
       bankKey: [null, [Validators.required]],
       code: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      lotId: [null, Validators.required],
+      lotId: [null],
       type: [null, Validators.pattern(STRING_PATTERN)],
       result: [null, Validators.pattern(STRING_PATTERN)],
       recordDate: [null],
