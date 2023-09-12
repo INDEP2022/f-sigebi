@@ -768,13 +768,10 @@ export class ConciliationDepositaryPaymentsComponent
     //       this.noBienParams,
     //   ]);
     // } else
-    debugger;
     if (this.origin == 'FCONDEPOCARGAPAG') {
+      const value = this.noBienParams ? this.noBienParams : this.noBienReadOnly;
       this.router.navigate([
-        '/pages/juridical/depositary/depositary-payment-charges/' +
-        this.noBienParams
-          ? this.noBienParams
-          : this.noBienReadOnly,
+        '/pages/juridical/depositary/depositary-payment-charges/' + value,
       ]);
     }
   }
