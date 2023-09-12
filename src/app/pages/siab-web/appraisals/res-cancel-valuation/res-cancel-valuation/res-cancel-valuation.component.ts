@@ -8,9 +8,15 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { AppraiseService } from 'src/app/core/services/ms-appraise/appraise.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
+import { GenerateCveService } from 'src/app/core/services/ms-security/application-generate-clave';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { OfficesSend } from '../../valuation-request/valuation-request/valuation-request.component';
+import {
+  MyBody,
+  OfficesSend,
+  SendObtainGoodValued,
+  ValidationResponseFile,
+} from './res-cancel-valuation-class/class-service';
 import {
   MOT_CAN,
   VALUATION_REQUEST_COLUMNS,
@@ -18,12 +24,6 @@ import {
   VALUATION_REQUEST_COLUMNS_VALIDATED,
   VALUATION_REQUEST_COLUMNS_VALIDATED_TWO,
 } from './res-cancel-valuation-columns';
-
-export class SendObtainGoodValued {
-  idEventIn: any;
-  tpJobIn: any;
-  idJobIn: any;
-}
 
 @Component({
   selector: 'app-res-cancel-valuation',
@@ -42,8 +42,13 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   formTwo: FormGroup;
   formThree: FormGroup;
 
+  // Select
   offices = new DefaultSelect();
   cityList = new DefaultSelect();
+  sender = new DefaultSelect();
+  usersList = new DefaultSelect();
+  lsbConCopiaList: any[] = [];
+
   columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -69,6 +74,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   lbltipOficio: any = '-';
   lblDireccion: any = '-';
   lblCvlOfocio: any = '-';
+  idOffice: number;
 
   //Var Validation
   radioValueOne: boolean = false;
@@ -80,6 +86,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   btnModificar: boolean = true;
   btnGuardar: boolean = true;
   btnMotCan: boolean = true;
+  byUser: boolean = false;
 
   // Modal #1
   formDialogOne: FormGroup;
@@ -97,7 +104,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     private serviceJobs: JobsService,
     private cityService: CityService,
     private datePipe: DatePipe,
-    private serviceAppraise: AppraiseService
+    private serviceAppraise: AppraiseService,
+    private generateCveService: GenerateCveService
   ) {
     super();
     this.settings = {
@@ -124,6 +132,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   ngOnInit() {
+    this.byUser = true;
     this.prepareForm();
     this.updateHour();
     this.intervalId = setInterval(() => {
@@ -132,6 +141,29 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   //
+
+  getAddUser() {
+    if (this.form.controls['user'].value) {
+      let usuariocopia: string = '';
+      let verificauser: boolean = false;
+      if (this.lsbConCopiaList.length > 0) {
+        for (const value of this.lsbConCopiaList) {
+          usuariocopia = value.splint('-').toString();
+          if (usuariocopia == this.form.controls['user'].value) {
+            verificauser = true;
+          }
+        }
+        if (verificauser != true) {
+          this.lsbConCopiaList.push(this.form.controls['user'].value);
+        }
+      }
+    } else {
+      this.alert('warning', 'Debe Seleccionar un Usuario', '');
+    }
+  }
+
+  getUsersDesList(event: any) {}
+
   onRadioChange() {
     this.radioValueOne = true;
     if (this.event != '' && this.event != null) {
@@ -232,28 +264,27 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     });
   }
 
-  findOfficeService(data: any) {
+  getOfficeResponseTwo(body: OfficesSend): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.serviceJobs.postByFilters(body).subscribe({
+        next: response => {
+          resolve(response.data);
+        },
+        error: error => {
+          reject(error);
+        },
+      });
+    });
+  }
+
+  async findOfficeService(data: any) {
     let valorObjeto: any;
     valorObjeto = data;
     let body: OfficesSend = new OfficesSend();
     body.eventId = valorObjeto?.eventId;
     body.officeType = valorObjeto?.jobType;
-    this.serviceJobs.postByFilters(body).subscribe({
-      next: response => {
-        this.arrayResponseOffice = response.data;
-        this.findOffice(this.arrayResponseOffice);
-      },
-      error: error => {
-        this.alert('error', 'Error', 'Ha Ocurrido un Error');
-      },
-    });
-    // this.serviceJobs.postByFiltersResponse(body).subscribe({
-    //   next: response => {
-    //     this.arrayResponseOfficeTwo = response.data;
-    //     this.findPostData(this.arrayResponseOfficeTwo);
-    //   },
-    //   error: error => { },
-    // });
+    this.arrayResponseOffice = await this.getOfficeResponseTwo(body);
+    this.findOffice(this.arrayResponseOffice);
   }
 
   loadOffice(event: number, num: number, arrayLength: number) {
@@ -263,74 +294,178 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.getOfficeResponse(body, num, arrayLength);
   }
 
-  getOfficeResponse(body: any, type: number, arrayLength: number) {
-    this.serviceJobs.postByFiltersResponse(body).subscribe({
-      next: response => {
-        this.array = response.data;
-        for (const i of this.array) {
-          this.lblTipoAccOficio = String(i?.des_tipo_oficio).toUpperCase();
-          if (i?.tipo == 'VALOR') {
-            this.lbltipOficio = ' DE REFERENCIA DE ' + i?.tipo;
-          } else if (i?.tipo == 'AVALUO') {
-            this.lbltipOficio = ' DE AVALUO ';
-          }
-          if (i?.direccion == 'I') {
-            this.lblDireccion = ' INMUEBLES ';
-          } else if (i?.direccion == 'M') {
-            this.lblDireccion = ' MUEBLES ';
-          } else if (i?.direccion == 'A') {
-            this.lblDireccion = ' ACTIVOS FINANCIEROS ';
-          }
-          this.lblCvlOfocio = i?.cve_oficio;
-          this.event = i?.id_evento;
+  async viewOffice() {
+    try {
+      let dataOffice: any[] = [];
+      let type: ValidationResponseFile = new ValidationResponseFile();
+      let body: OfficesSend = new OfficesSend();
+      let myBody: MyBody = new MyBody();
+      let tituloOficio: any;
 
-          this.form.controls['dateRec'].setValue(
-            this.dateFormat(i?.fecha_envia)
-          );
-          this.form.controls['dateEla'].setValue(
-            this.dateFormat(i?.fecha_insert)
-          );
-          this.form.controls['ref'].setValue(
-            this.form.controls['ref'].value +
-              '\n' +
-              i?.referen +
-              ' ' +
-              this.lblDireccion
-          );
-          this.form.controls['aten'].setValue(
-            this.form.controls['aten'].value +
-              '\n' +
-              i?.atencion +
-              ' ' +
-              this.lblCvlOfocio
-          );
-          this.form.controls['fol'].setValue(i?.fol);
-          if (type == 2) {
-            this.obtainsValuedAssets(2, 0);
-            this.radioValueOne = true;
-            this.btnMotCan = false;
-          } else if (type == 3) {
-            this.obtainsValuedAssets(3, 0);
-            this.redioValueTwo = true;
-            this.btnMotCan = true;
-          }
+      body.eventId = this.event;
+      body.officeType = this.returnOfOffice();
+      dataOffice = await this.getOfficeRequest(body);
+      for (const x of dataOffice) {
+        type.description = x.direccion;
+        type.descriptionTypeOffice = x.des_tipo_oficio;
+        type.typeOffice = x.id_tpsolaval;
+        type.address = x.direccion;
+      }
+
+      if (type.typeOffice == 2) {
+        if (this.returnOfOffice() == 2) {
+          tituloOficio = this.getDescriptionParameters('OFI_RES_V');
+          myBody = await this.getDataByOffice();
+          myBody.subject = tituloOficio;
+          this.generateReport(myBody, type.address);
+        } else if (this.returnOfOffice() == 3) {
+          tituloOficio = this.getDescriptionParameters('OFI_CAN_V');
+          myBody = await this.getDataByOffice();
+          myBody.subject = tituloOficio;
+          this.generateReport(myBody, type.address);
         }
-      },
-      error: error => {
-        if (error.status == 400) {
-          this.varCount++;
-          if (this.varCount == arrayLength) {
-            this.alert(
-              'warning',
-              'Advertencia',
-              'No Existe Ninguna Solicitud de Oficio Para Este Evento. Verifique que se Haya Realizado la Solicitud Para Poder Continuar'
-            );
-          }
-        } else {
-          this.alert('error', 'Error', 'Ha Ocurrido un Error');
+      } else if (type.typeOffice == 3) {
+        if (this.returnOfOffice() == 2) {
+          tituloOficio = this.getDescriptionParameters('OFI_RES_A');
+          myBody = await this.getDataByOffice();
+          myBody.subject = tituloOficio;
+          this.generateReport(myBody, type.address);
+        } else if (this.returnOfOffice() == 3) {
+          tituloOficio = this.getDescriptionParameters('OFI_CAN_A');
+          myBody = await this.getDataByOffice();
+          myBody.subject = tituloOficio;
+          this.generateReport(myBody, type.address);
         }
-      },
+      }
+    } catch (e: any) {
+      this.alert('warning', 'Advertencia', 'Problema Para Visualizar Oficio');
+    }
+  }
+
+  //No esta en la documentacion
+  getDescriptionParameters(nameOffice: string) {}
+
+  async getDataByOffice(): Promise<MyBody> {
+    let myBody: MyBody = new MyBody();
+    let arrayDataOffice: any[] = [];
+    let body: OfficesSend = new OfficesSend();
+    let listGoods: string = '';
+
+    body.eventId = this.event;
+    body.officeType = this.returnOfOffice();
+    arrayDataOffice = await this.getOfficeResponseTwo(body);
+
+    for (const x of arrayDataOffice) {
+      myBody.level1 = x.nivel1;
+      myBody.level2 = x.nivel2;
+      myBody.level3 = x.nivel3;
+      myBody.officeCode = x.cve_oficio;
+      myBody.recipient = x.nom_destinatario;
+      myBody.recipientPosition = x.cargo_destina;
+      myBody.sendDate = this.datePipe.transform(x.fecha_insert, 'dd/MM/yyyy');
+      myBody.cityName = x.nom_ciudad;
+      myBody.text1 = x.texto1;
+      myBody.text2 = x.texto2;
+      myBody.text3 = x.texto3;
+      myBody.sender = x.nom_remitente;
+      myBody.senderPosition = x.cargo_rem;
+    }
+
+    let noGood: any[] = [];
+    noGood = this.getGoodsWithOffice(this.returnIdOffice());
+    for (const x of noGood) {
+      listGoods = listGoods + x.no_bien + ', ';
+    }
+
+    myBody.goodsList = listGoods;
+
+    return myBody;
+  }
+
+  //No hay servicio en la documentacion
+  getGoodsWithOffice(idOffice: number) {
+    let arrayNumGoods: [] = [];
+
+    return arrayNumGoods;
+  }
+
+  generateReport(myBody: MyBody, address: any) {}
+
+  returnIdOffice(): number {
+    let num: number = 0;
+    num = Number(this.form.controls['office'].value?.jobId);
+    return num;
+  }
+
+  getOfficeRequest(body: any): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.serviceJobs.postByFiltersResponse(body).subscribe({
+        next: response => {
+          resolve(response.data);
+        },
+        error: error => {
+          reject(error);
+        },
+      });
     });
+  }
+
+  async getOfficeResponse(body: any, type: number, arrayLength: number) {
+    this.array = await this.getOfficeRequest(body);
+    if (this.array.length > 0) {
+      for (const i of this.array) {
+        this.lblTipoAccOficio = String(i?.des_tipo_oficio).toUpperCase();
+        if (i?.tipo == 'VALOR') {
+          this.lbltipOficio = ' DE REFERENCIA DE ' + i?.tipo;
+        } else if (i?.tipo == 'AVALUO') {
+          this.lbltipOficio = ' DE AVALUO ';
+        }
+        if (i?.direccion == 'I') {
+          this.lblDireccion = ' INMUEBLES ';
+        } else if (i?.direccion == 'M') {
+          this.lblDireccion = ' MUEBLES ';
+        } else if (i?.direccion == 'A') {
+          this.lblDireccion = ' ACTIVOS FINANCIEROS ';
+        }
+        this.lblCvlOfocio = i?.cve_oficio;
+        this.event = i?.id_evento;
+
+        this.form.controls['dateRec'].setValue(this.dateFormat(i?.fecha_envia));
+        this.form.controls['dateEla'].setValue(
+          this.dateFormat(i?.fecha_insert)
+        );
+        this.form.controls['ref'].setValue(
+          this.form.controls['ref'].value +
+            '\n' +
+            i?.referen +
+            ' ' +
+            this.lblDireccion
+        );
+        this.form.controls['aten'].setValue(
+          this.form.controls['aten'].value +
+            '\n' +
+            i?.atencion +
+            ' ' +
+            this.lblCvlOfocio
+        );
+        this.form.controls['fol'].setValue(i?.fol);
+        if (type == 2) {
+          this.obtainsValuedAssets(2, 0);
+          this.radioValueOne = true;
+          this.btnMotCan = false;
+        } else if (type == 3) {
+          this.obtainsValuedAssets(3, 0);
+          this.redioValueTwo = true;
+          this.btnMotCan = true;
+        }
+      }
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'No Existe Ninguna Solicitud de Oficio Para Este Evento. Verifique que se Haya Realizado la Solicitud Para Poder Continuar'
+      );
+    }
   }
 
   async findOffice(array: any[]) {
@@ -351,6 +486,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
               this.returnOfOffice(),
               array.length
             );
+            console.log('Este es el usuario de remitente.', i?.remitente);
             this.form.patchValue({
               dest: i?.destinatario,
               key: i?.cve_oficio,
@@ -425,13 +561,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       }
     }
     this.idOficio = this.form.controls['office'].value?.jobId;
-    // if (this.returnOfOffice() == 2) {
-    if (false) {
+    if (this.returnOfOffice() == 2) {
       this.obtainsValuedAssets(4, this.idOficio);
     } else if (this.returnOfOffice() == 3) {
-      this.obtainsCancelAssets(5, this.idOficio);
-    }
-    if (true) {
       this.obtainsCancelAssets(5, this.idOficio);
     }
   }
@@ -500,6 +632,23 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       .valueChanges.subscribe(value => {
         this.findOfficeService(value);
       });
+  }
+
+  getUsersList(params: ListParams) {
+    let data = {
+      flagIn: 1,
+    };
+    console.log(data);
+    this.generateCveService.postSpUserAppraisal(data, params).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.sender = new DefaultSelect(resp.data, resp.count);
+      },
+      error: eror => {
+        this.loader.load = false;
+        this.sender = new DefaultSelect([], 0, true);
+      },
+    });
   }
 
   obtainsValuedAssets(numOne: number, numTwo: number) {
@@ -671,7 +820,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.selectedRowsCancel.forEach(row => {
       console.log('Si entro aqui de verdad.');
       if (row.motivos == ' ') {
-        row.motivos = motivos;
+        row.motivos += motivos;
       }
     });
 
@@ -683,6 +832,117 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   reasonsForChange() {
     this.getReasonsChange();
   }
+
+  updateOffice() {}
+
+  countGoodsSelected() {
+    let typeOffice: number = this.returnOfOffice();
+    if (typeOffice == 2) {
+      if (this.selectedRowsCancel.length == 0) {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Para Continuar es Necesario Seleccionar Bienes'
+        );
+      }
+    } else if (typeOffice == 3) {
+      this.addReasons();
+      if (this.selectedRowsCancel.length == 0) {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Para Continuar es Necesario Seleccionar Bienes'
+        );
+      }
+      let countOne: number = 0;
+      let countTwo: number = 0;
+      for (const x of this.selectedRowsCancel) {
+        countOne++;
+        if (x.motivos != ' ') {
+          countTwo++;
+        }
+      }
+      if (countOne != countTwo) {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Para Continuar es Necesario que Seleccione los Motivos por los Cuales se va a Enviar a REV el Bien'
+        );
+      }
+    }
+  }
+
+  addReasons() {
+    this.validatedReasons();
+    let arrayChange: any[] = [];
+    for (const x of this.selectedRowsCancel) {
+      this.changeChar(x.motivos);
+      arrayChange = x;
+    }
+    this.selectedRowsCancel = arrayChange;
+  }
+
+  validatedReasons() {
+    if (this.returnOfOffice() == 3) {
+      if (this.selectedRowsCancel.length == 0) {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Para Continuar es Necesario que Seleccione los Motivos por los Cuales se va a Enviar a REV el Bien'
+        );
+      }
+    }
+  }
+
+  changeChar(chain: string): string {
+    let replacements = [
+      { from: '&nbsp;', to: '' },
+      { from: 'nbsp;', to: '' },
+      { from: 'amp;NBSP;', to: '' },
+      { from: '&amp;nbsp;', to: '' },
+      { from: '&amp;amp;nbsp;', to: '' },
+      { from: '&AMP;AMP;NBSP;', to: '' },
+      { from: '&amp;', to: '' },
+      { from: '&AMP;', to: '' },
+      { from: '&#193;', to: 'Á' },
+      { from: '#193;', to: 'Á' },
+      { from: '&#225;', to: 'á' },
+      { from: '#225;', to: 'á' },
+      { from: '&#201;', to: 'É' },
+      { from: '#201;', to: 'É' },
+      { from: '&#233;', to: 'é' },
+      { from: '#233;', to: 'é' },
+      { from: '&#205;', to: 'Í' },
+      { from: '&#237;', to: 'í' },
+      { from: '&#211;', to: 'Ó' },
+      { from: '#211;', to: 'Ó' },
+      { from: '&#243;', to: 'ó' },
+      { from: '#243;', to: 'ó' },
+      { from: '&#218;', to: 'Ú' },
+      { from: '#218;', to: 'Ú' },
+      { from: '&#250;', to: 'ú' },
+      { from: '#250;', to: 'ú' },
+      { from: '&amp;amp;#225;', to: 'á' },
+      { from: '&amp;amp;#233;', to: 'é' },
+      { from: '&amp;amp;#237;', to: 'í' },
+      { from: '&amp;amp;#243;', to: 'ó' },
+      { from: '&amp;amp;#250;', to: 'ú' },
+      { from: '&#241;', to: 'ñ' },
+      { from: '&#209;', to: 'Ñ' },
+      { from: '&amp;#209;', to: 'Ñ' },
+      { from: '&#220;', to: 'Ü' },
+      { from: '&#252;', to: 'ü' },
+      { from: '&quot;', to: '' },
+      { from: "'", to: '' },
+    ];
+
+    for (let replacement of replacements) {
+      chain = chain.split(replacement.from).join(replacement.to);
+    }
+
+    return chain;
+  }
+
   //
 
   override ngOnDestroy(): void {

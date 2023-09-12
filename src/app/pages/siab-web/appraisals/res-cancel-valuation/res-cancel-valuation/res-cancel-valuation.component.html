@@ -183,7 +183,7 @@
         </div>
         <div body>
           <form class="form-material" [formGroup]="formThree">
-            <div>
+            <!-- <div>
               <div>
                 <form-radio label="Por Delegación">
                   <input type="radio" [value]="true" formControlName="byDel" />
@@ -193,23 +193,13 @@
             <div>
               <div class="row mt-3">
                 <div class="col-md-6">
-                  <form-field
-                    [control]="formThree.get('user')"
-                    label="Usuario y Nombre">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="user" />
+                  <form-field [control]="formThree.get('user')" label="Usuario y Nombre">
+                    <input type="text" class="form-control" formControlName="user" />
                   </form-field>
                 </div>
                 <div class="col-md-6">
-                  <form-field
-                    [control]="formThree.get('del')"
-                    label="Delegación">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="del" />
+                  <form-field [control]="formThree.get('del')" label="Delegación">
+                    <input type="text" class="form-control" formControlName="del" />
                   </form-field>
                 </div>
               </div>
@@ -217,12 +207,12 @@
             <div class="row">
               <div class="col-md-5"></div>
               <div class="col-md-3">
-                <button id="btnAgregar" class="btn btn-default btn-block">
+                <button id="btnAgregar" type="button" class="btn btn-primary btn-sm active">
                   Agregar Usuario
                 </button>
               </div>
               <div class="col-md-3">
-                <button id="Button2" class="btn btn-danger btn-block">
+                <button id="Button2" type="button" class="btn btn-primary btn-sm active">
                   Quitar Usuario
                 </button>
               </div>
@@ -234,7 +224,74 @@
                 <select multiple class="form-control" id="lsbConCopia"></select>
               </div>
               <div class="col-md-1"></div>
+            </div> -->
+            <!--  -->
+            <!--  -->
+            <!--  -->
+            <div class="row pt-5">
+              <div class="col-md-4">
+                <form-field [control]="formThree.get('user')">
+                  <ngx-select
+                    (fetchItems)="getUsersDesList($event)"
+                    [data]="usersList"
+                    [form]="formThree"
+                    value="usuario"
+                    label="Usuario y Nombre"
+                    bindLabel="nombre"
+                    control="user"
+                    [labelTemplate]="userLabel"
+                    [optionTemplate]="userOption">
+                  </ngx-select>
+                  <ng-template #userLabel let-item="item"
+                    >{{ item.usuario }} - {{ item.nombre }}</ng-template
+                  >
+                  <ng-template #userOption let-item="item"
+                    >{{ item.usuario }} - {{ item.nombre }}</ng-template
+                  >
+                </form-field>
+              </div>
+              <!-- <div class="col-md-4">
+                        <form-field [control]="form.get('txtUserCCP')" label="Texto con copia">
+                          <textarea class="form-control" type="text" formControlName="txtUserCCP"></textarea>
+                        </form-field>
+                      </div> -->
+              <div class="col-md-2">
+                <div class="justify-content-center">
+                  <button
+                    type="button"
+                    tooltip="Agregar"
+                    containerClass="tooltip-style"
+                    class="btn btn-info btn-sm active"
+                    (click)="getAddUser()">
+                    Agregar <i class="bx bx-plus bx-sm float-icon"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="justify-content-center">
+                  <button type="button" class="btn btn-red btn-sm active">
+                    Quitar Usuario
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <form-field
+                  [control]="formThree.get('del')"
+                  label="Usuario Con Copia">
+                  <select class="form-control" formControlName="del">
+                    <option
+                      *ngFor="let option of lsbConCopiaList"
+                      [value]="option">
+                      {{ option }}
+                    </option>
+                  </select>
+                </form-field>
+              </div>
             </div>
+            <!--  -->
+            <!--  -->
+            <!--  -->
           </form>
         </div>
       </app-card>
@@ -257,7 +314,8 @@
       <div>
         <ng2-smart-table
           [settings]="settingsTwo"
-          [source]="dataTwo"></ng2-smart-table>
+          [source]="dataTwo"
+          (userRowSelect)="onUserRowSelectCancel($event)"></ng2-smart-table>
       </div>
       <div>
         <app-pagination [params]="paramsTwo" [totalItems]="totalItemsTwo">
@@ -269,8 +327,7 @@
       <div>
         <form class="form-material" [formGroup]="formTwo">
           <!--  -->
-          <!-- <div class="row" *ngIf="pnlControles2"> -->
-          <div class="row" *ngIf="true">
+          <div class="row" *ngIf="pnlControles2">
             <div class="col-md-4">
               <form-field
                 [control]="formTwo.get('allGood')"
@@ -295,8 +352,7 @@
                 </ng-select>
               </form-field>
             </div>
-            <!-- <div class="col-md-3" *ngIf="btnMotCan"> -->
-            <div class="col-md-3" *ngIf="true">
+            <div class="col-md-3" *ngIf="btnMotCan">
               <button
                 class="btn btn-primary btn-sm active mr-3"
                 (click)="reasonsForChange()">
@@ -349,25 +405,21 @@
             <div class="m-3" *ngIf="btnModificar">
               <button type="button" class="btn btn-primary btn-sm active">
                 Modificar Oficio
-                <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
             <div class="m-3" *ngIf="btnVerOficio">
               <button type="button" class="btn btn-primary btn-sm active">
                 Visualizar Oficio
-                <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
             <div class="m-3" *ngIf="btnGuardar">
               <button type="button" class="btn btn-primary btn-sm active">
                 Guardar Oficio
-                <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
             <div class="m-3" *ngIf="btnEnviar">
               <button type="button" class="btn btn-primary btn-sm active">
                 Enviar Oficio
-                <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
           </div>
@@ -375,23 +427,18 @@
 
           <!--  -->
           <!-- Modal #1 -->
-          <div
-            style="border: 1px solid black; padding: 10px; border-radius: 20px">
+          <!-- <div style="border: 1px solid black; padding: 10px; border-radius: 20px">
             <p>Este es el modal #1</p>
             <div>
               <form class="form-material" [formGroup]="formDialogOne">
                 <div class="row mt-5">
                   <div class="col-md-12">
-                    <form-field
-                      [control]="formDialogOne.get('noti')"
-                      label="Notificaciones">
-                      <textarea
-                        class="form-control"
-                        formControlName="noti"></textarea>
+                    <form-field [control]="formDialogOne.get('noti')" label="Notificaciones">
+                      <textarea class="form-control" formControlName="noti"></textarea>
                     </form-field>
                   </div>
                 </div>
-                <!--  -->
+                
               </form>
               <div class="d-flex justify-content-center">
                 <div class="m-3">
@@ -408,17 +455,16 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
           <!--  -->
           <!-- Modal #2 -->
-          <div
-            style="border: 1px solid black; padding: 10px; border-radius: 20px"
-            class="mt-5">
-            <p>Este es el modal #2</p>
+          <!-- <div style="border: 1px solid black; padding: 10px; border-radius: 20px" class="mt-5"> -->
+          <div>
+            <!-- <p>Este es el modal #2</p> -->
             <div>
               <div class="row mt-5">
                 <div class="col-md-12">
-                  <p>Notificaciones</p>
+                  <!-- <p>Notificaciones</p> -->
                 </div>
               </div>
               <!--  -->
@@ -449,11 +495,11 @@
                     Aceptar
                   </button>
                 </div>
-                <div class="m-3">
+                <!-- <div class="m-3">
                   <button type="button" class="btn btn-primary btn-sm active">
                     Cerrar
                   </button>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
