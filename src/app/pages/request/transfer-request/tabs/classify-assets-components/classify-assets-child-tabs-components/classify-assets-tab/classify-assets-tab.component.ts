@@ -1006,6 +1006,7 @@ export class ClassifyAssetsTabComponent
     }
 
     let goodResult: any = null;
+
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
