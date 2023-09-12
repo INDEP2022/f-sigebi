@@ -507,6 +507,10 @@ export class CaptureApprovalDonationComponent
     this.donationService.getEventComDonationDetail(params).subscribe({
       next: data => {
         console.log(data);
+        this.dataDetailDonation = data.data;
+        this.dataDetailDonationGood.load(this.dataDetailDonation);
+        this.dataDetailDonationGood.refresh();
+        this.totalItems2 = data.count;
       },
       error: () => console.error('no hay detalle acta'),
     });
