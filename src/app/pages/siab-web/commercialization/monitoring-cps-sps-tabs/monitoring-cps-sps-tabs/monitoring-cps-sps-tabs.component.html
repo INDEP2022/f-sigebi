@@ -7,12 +7,18 @@
   <div body>
     <div class="md-tabs">
       <tabset>
+        <!-- Actualmente trabajando en este componente -->
         <tab heading="Inconsistencias CPs" id="tab1">
-          <app-monitoring-cps></app-monitoring-cps>
+          <app-monitoring-cps
+            (dataSiabParamsFilter)="
+              fullDataTableSiab($event)
+            "></app-monitoring-cps>
         </tab>
+        <!--  -->
         <tab heading="Afectaciones SPs">
           <app-monitoring-sps></app-monitoring-sps>
         </tab>
+        <!--  -->
       </tabset>
     </div>
     <div class="mt-3">
@@ -25,7 +31,11 @@
       <div class="table-responsive">
         <ng2-smart-table
           [settings]="settings"
-          [source]="data"></ng2-smart-table>
+          [source]="dataSiab"></ng2-smart-table>
+        <!--  -->
+        <app-pagination
+          [filterParams]="paramsSiab"
+          [totalItems]="totalItemsSiab"></app-pagination>
       </div>
     </div>
     <div class="mt-3">

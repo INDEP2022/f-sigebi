@@ -12,12 +12,20 @@
           <div class="row">
             <div class="col-md-6">
               <form-radio label="Inconsistencias desde SIAB">
-                <input type="radio" [value]="true" formControlName="radioOne" />
+                <input
+                  type="radio"
+                  [value]="true"
+                  formControlName="radioOne"
+                  (change)="siabCheckedChanged()" />
               </form-radio>
             </div>
             <div class="col-md-6">
               <form-radio label="Inconsistencia desde SIRSAE">
-                <input type="radio" formControlName="radioTwo" [value]="true" />
+                <input
+                  type="radio"
+                  formControlName="radioTwo"
+                  [value]="true"
+                  (change)="sirsaeCheckedChanged()" />
               </form-radio>
             </div>
           </div>
@@ -38,11 +46,17 @@
                 </form-field>
               </div>
               <div class="col-md-6">
-                <form-field [control]="form.get('event')" label="Evento">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="year" />
+                <form-field [control]="form.get('event')">
+                  <ngx-select
+                    (fetchItems)="fullComercialEvents($event)"
+                    [searchOnInit]="true"
+                    label="Evento"
+                    [data]="fullEvents"
+                    [form]="form"
+                    bindLabel="eventprocces"
+                    control="event">
+                  </ngx-select>
+                  <!--  -->
                 </form-field>
               </div>
             </div>
@@ -79,7 +93,7 @@
               Limpiar <i class="fas fa-eraser"> </i>
             </button>
             <!--  -->
-            <button class="btn btn-primary btn-sm active">
+            <button class="btn btn-primary btn-sm active" (click)="fullSiab()">
               Consultar
               <i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>

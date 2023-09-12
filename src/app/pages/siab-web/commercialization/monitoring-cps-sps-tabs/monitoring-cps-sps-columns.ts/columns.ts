@@ -1,95 +1,95 @@
 export const INCONSINTENCIES_COLUMNS_MONITORING = {
-  idPago: {
+  paymentid: {
     title: 'Id. Pago',
     sort: false,
     type: 'custom',
   },
-  fecha: {
+  date: {
     title: 'Fecha Pago',
     sort: false,
     type: 'custom',
   },
-  referenciaori: {
+  referenceori: {
     title: 'Referencia Origen',
     sort: false,
     type: 'custom',
   },
-  referencia: {
+  reference: {
     title: 'Referencia',
     sort: false,
     type: 'custom',
   },
-  montoPago: {
+  amount: {
     title: 'Monto Pago',
     sort: false,
     type: 'custom',
   },
-  claveBanco: {
+  bankkey: {
     title: 'Cvc Banco',
     sort: false,
     type: 'custom',
   },
-  codigo: {
+  code: {
     title: 'Codigo',
     sort: false,
     type: 'custom',
   },
-  lotePublico: {
+  publiclot: {
     title: 'Lote Publico',
     sort: false,
     type: 'custom',
   },
-  idEvento: {
+  eventid: {
     title: 'Id. Evento',
     sort: false,
     type: 'custom',
   },
-  idLote: {
+  lotid: {
     title: 'Id. Lote',
     sort: false,
     type: 'custom',
   },
-  validoSistema: {
+  validsistem: {
     title: 'Valido Sistema',
     sort: false,
     type: 'custom',
   },
-  folioOi: {
+  folioio: {
     title: 'Orden de Ingreso',
     sort: false,
     type: 'custom',
   },
-  descTipoPago: {
+  descriptiontypepayment: {
     title: 'Tipo Pago',
     sort: false,
     type: 'custom',
   },
-  montoLc: {
+  amountlc: {
     title: 'Monto LC',
     sort: false,
     type: 'custom',
   },
-  fecVigenciaLc: {
+  datevigencelc: {
     title: 'Fecha Vigencia LC',
     sort: false,
     type: 'custom',
   },
-  incidenciaMonto: {
+  incidenceamount: {
     title: 'Incidencia Monto',
     sort: false,
     type: 'custom',
   },
-  inconsistenciaFecha: {
+  inconsistencydate: {
     title: 'Inconsistencia Fecha',
     sort: false,
     type: 'custom',
   },
-  inconsistenciaTipoPago: {
+  inconsistencytypepayment: {
     title: 'Inconsistencia Tipo Pago',
     sort: false,
     type: 'custom',
   },
-  inconsistenciaDuplicado: {
+  inconsistencyduplicated: {
     title: 'Inconsistencia Duplicado',
     sort: false,
     type: 'custom',

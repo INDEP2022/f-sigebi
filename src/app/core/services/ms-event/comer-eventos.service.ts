@@ -20,6 +20,14 @@ export class ComerEventosService extends HttpService {
     return this.get<IListResponse<IComerEvent>>(EventEndpoints.ComerE, params);
   }
 
+  getEvents(params: any) {
+    return this.get(EventEndpoints.GetAllEvent, params);
+  }
+
+  getEventsExpenses(params: any) {
+    return this.get(EventEndpoints.GetEventsExpenses, params);
+  }
+
   getAll(params?: _Params): Observable<IListResponse<IComerEvent>> {
     return this.get<IListResponse<IComerEvent>>(this.endpoint, params);
   }

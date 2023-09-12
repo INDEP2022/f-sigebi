@@ -27,11 +27,19 @@
                     </form-field>
                   </div>
                   <div class="col-md-6">
-                    <form-field [control]="form.get('event')" label="Evento">
-                      <input
-                        type="text"
-                        class="form-control"
-                        formControlName="year" />
+                    <form-field [control]="form.get('event')">
+                      <!--  -->
+                      <ngx-select
+                        (fetchItems)="fullEventsExpenses($event)"
+                        [searchOnInit]="true"
+                        [searchable]="true"
+                        label="Evento"
+                        [multiple]="true"
+                        [data]="eventsExpenses"
+                        [form]="form"
+                        control="event"
+                        bindLabel="eventprocces">
+                      </ngx-select>
                     </form-field>
                   </div>
                 </div>
@@ -59,6 +67,56 @@
                 </div>
               </div>
             </form>
+          </div>
+          <div>
+            <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseOne"
+                    aria-expanded="true"
+                    aria-controls="collapseOne">
+                    Conceptos
+                  </button>
+                </h2>
+                <div
+                  id="collapseOne"
+                  class="accordion-collapse collapse show"
+                  data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <!-- <ul class="list-group"> -->
+                    <!-- <li class="list-group-item" *ngFor="let item of concepts">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="firstCheckbox">
+                        <label class="form-check-label" for="firstCheckbox"
+                          style="margin-left: 25px; margin-bottom: -20px;">{{item.description}}</label> -->
+                    <form class="form-material" [formGroup]="formTwo">
+                      <div class="row mt-4">
+                        <div class="col-md-12">
+                          <form-field [control]="formTwo.get('concepts')">
+                            <ngx-select
+                              (fetchItems)="fullConcepts($event)"
+                              [searchOnInit]="true"
+                              [searchable]="true"
+                              label="Todos los Conceptos"
+                              [multiple]="true"
+                              [data]="concepts"
+                              [form]="formTwo"
+                              value="usuario"
+                              control="concepts"
+                              bindLabel="description">
+                            </ngx-select>
+                          </form-field>
+                        </div>
+                      </div>
+                    </form>
+                    <!--  -->
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <!--  -->
           <!--  -->
