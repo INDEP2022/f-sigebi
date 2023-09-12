@@ -901,13 +901,13 @@ export class VerifyComplianceTabComponent
     }
     const clarifycationLength = this.clarificationData.length;
     Swal.fire({
-      title: '¿Eliminar Aclaración?',
-      text: '¿Desea eliminar la aclaración?',
+      title: '¿Desea Eliminar la Aclaración?',
+      text: '',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#B38E5D',
-      confirmButtonText: 'Eliminar',
+      confirmButtonText: 'Aceptar',
       allowOutsideClick: false,
     }).then(async result => {
       if (result.isConfirmed) {

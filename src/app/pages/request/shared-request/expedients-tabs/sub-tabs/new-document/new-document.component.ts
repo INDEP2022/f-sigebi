@@ -316,8 +316,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.loading = false;
             this.alertInfo(
               'success',
-              'Correcto',
-              `Documento agregado exitosamente con el ID: ${resp.dDocName}`
+              'El Documento ha sido Agregado',
+              `ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
                 this.modalRef.content.callback(true);
@@ -400,8 +400,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           next: resp => {
             this.alertInfo(
               'success',
-              'Correcto',
-              `Documento agregado exitosamente con el ID: ${resp.dDocName}`
+              'El Documento ha sido Agregado',
+              `ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
                 this.modalRef.content.callback(true);
@@ -485,8 +485,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.loading = false;
             this.alertInfo(
               'success',
-              'Correcto',
-              `Documento agregado exitosamente con el ID: ${resp.dDocName}`
+              'El Documento ha sido Agregado',
+              `ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
                 this.modalRef.content.callback(true);
@@ -567,8 +567,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.loading = false;
             this.alertInfo(
               'success',
-              'Correcto',
-              `Documento agregado exitosamente con el ID: ${resp.dDocName}`
+              'El Documento ha sido Agregado',
+              `DID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
                 this.modalRef.content.callback(true);
