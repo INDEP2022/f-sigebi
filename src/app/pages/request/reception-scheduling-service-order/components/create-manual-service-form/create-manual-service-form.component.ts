@@ -16,6 +16,7 @@ export class CreateManualServiceFormComponent
   implements OnInit
 {
   form: FormGroup = new FormGroup({});
+  orderServiceId: number = null;
 
   private orderEntryService = inject(orderentryService);
 
@@ -44,6 +45,7 @@ export class CreateManualServiceFormComponent
     });
   }
   confirm() {
+    window.alert('El tipo de servcio esta enduro');
     this.alertQuestion(
       'warning',
       'Confirmación',
@@ -53,10 +55,10 @@ export class CreateManualServiceFormComponent
         //Ejecutar el servicio
         const form = this.form.getRawValue();
         form.classificationService = 'Manual';
+        form.orderServiceId = +this.orderServiceId;
+        form.typeService = 'ORDEN_SERVICIO_PRESTAMO_MANUAL';
 
-        this.modalRef.content.callback(this.form.value);
-        this.close();
-        //this.createOrderServicePrestado(form);
+        this.createOrderServiceProvided(form);
       }
     });
   }
@@ -65,11 +67,12 @@ export class CreateManualServiceFormComponent
     this.modalRef.hide();
   }
 
-  createOrderServicePrestado(body: IOrderServiceProvider) {
+  createOrderServiceProvided(body: IOrderServiceProvider) {
+    debugger;
     this.orderEntryService.createServiceProvided(body).subscribe({
       next: resp => {
         this.onLoadToast('success', 'Servicio manual creado correctamente');
-        this.modalRef.content.callback(this.form.value);
+        this.modalRef.content.callback(body);
         this.close();
       },
       error: error => {

@@ -4129,8 +4129,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   saveInfoGoodTransportable() {
-    console.log('goodsTransportable', this.goodsTransportable);
-
+    //console.log('goodsTransportable', this.goodsTransportable);
     this.count == 0;
     this.goodId = '';
     let saePhysical: boolean = false;

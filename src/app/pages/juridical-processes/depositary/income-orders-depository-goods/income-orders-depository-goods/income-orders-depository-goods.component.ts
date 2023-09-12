@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as moment from 'moment';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -185,24 +186,24 @@ export class IncomeOrdersDepositoryGoodsComponent
       return;
     }
 
-    /*const fecha = moment(this.form.get('date').value).format('DD-MM-YYYY');
+    const fecha = moment(this.form.get('date').value).format('YYYY-MM-DD');
     let params = {
       //P_VALORES: this.form.value,
       P_NOMBRA: this.depoAppointments.appointmentNum,
       P_NO_BIEN: this.form.get('numberGood').value,
       P_PFIRMA: this.form.get('userId').value.id,
       P_FECHA: fecha,
-    };*/
-    let params = {
-      P_NOMBRA: 3709,
-      P_NO_BIEN: 2192691,
-      P_PFIRMA: 'AABREGOHI',
-      P_FECHA: '30-06-2023',
     };
+    /* let params = {
+      P_NOMBRA: 383,
+      P_NO_BIEN: 40488,
+      P_PFIRMA: 'AAAGUILAB',
+      P_FECHA: '2022-05-19',
+    }; */
 
     this.siabService
-      //.fetchReport('RDEPINGXBIEN.', params)
-      .fetchReport('blank', params)
+      .fetchReport('RDEPINGXBIEN.', params)
+      //.fetchReport('blank', params)
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
