@@ -1072,7 +1072,7 @@ export class DetailAssetsTabComponentComponent
 
   getTransferentUnit(params: ListParams, unit?: string) {
     params['filter.unit'] = `$eq:${unit}`;
-    this.strategyService.getUnitMedXConv(params).subscribe({
+    this.strategyService.getUnitsMedXConv(params).subscribe({
       next: async resp => {
         const result = resp.data.map(async (item: any) => {
           const ligieunit: any = await this.getAsyncMedUnid(item.idUnitDestine);
@@ -1093,27 +1093,6 @@ export class DetailAssetsTabComponentComponent
         });
       },
     });
-    /*params['filter.measureTlUnit'] = `$ilike:${params.text}`;
-    params.limit = 20;
-    this.goodsQueryService
-      .getCatMeasureUnitView(params)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: resp => {
-          this.selectTansferUnitMeasure = new DefaultSelect(
-            resp.data,
-            resp.count
-          );
-
-          console.log('VALOR DESTINO LIGIE, ', resp);
-
-          if (this.detailAssets.controls['unitMeasure'].value) {
-            this.detailAssets.controls['unitMeasure'].setValue(
-              this.detailAssets.controls['unitMeasure'].value
-            );
-          }
-        },
-      });*/
   }
 
   async unitChange(event: any) {
@@ -1121,7 +1100,6 @@ export class DetailAssetsTabComponentComponent
       this.selectTansferUnitMeasure = new DefaultSelect();
       this.getTransferentUnit(new ListParams(), this.unit);
     } else {
-      console.log(event);
       this.selectTansferUnitMeasure = new DefaultSelect();
       this.getTransferentUnit(new ListParams(), event.idUnitDestine);
       const medUnid: any = await this.getAsyncMedUnid(event.idUnitDestine);
@@ -1159,16 +1137,6 @@ export class DetailAssetsTabComponentComponent
         this.setQuantityTypeInput(resp.data[0]);
       },
     });
-    /*this.goodsQueryService
-      .getCatMeasureUnitView(params)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: resp => {
-          //const result = resp.data.filter((x: any) => x.uomCode === id);
-          this.ligieUnit = resp.data[0].measureTlUnit;
-          this.setQuantityTypeInput(this.ligieUnit);
-        },
-      });*/
   }
 
   async setQuantityTypeInput(unity: any) {
