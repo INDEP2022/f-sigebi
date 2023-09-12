@@ -11,8 +11,21 @@ import { PaymentDispersionValidationComponent } from './payment-dispersion-valid
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { NgxCurrencyModule } from 'ngx-currency';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-shared/events-shared.component';
+
+export const customCurrencyMaskConfig = {
+  align: 'right',
+  allowNegative: false,
+  allowZero: true,
+  decimal: '.',
+  precision: 2,
+  prefix: '',
+  suffix: '',
+  thousands: ',',
+  nullable: false,
+};
 @NgModule({
   declarations: [PaymentDispersionValidationComponent],
   imports: [
@@ -24,6 +37,7 @@ import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-s
     AccordionModule,
     FormLoaderComponent,
     TabsModule,
+    NgxCurrencyModule.forRoot(customCurrencyMaskConfig),
   ],
   providers: [ExcelService],
 })

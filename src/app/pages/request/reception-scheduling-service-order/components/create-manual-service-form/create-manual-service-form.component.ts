@@ -71,8 +71,8 @@ export class CreateManualServiceFormComponent
     debugger;
     this.orderEntryService.createServiceProvided(body).subscribe({
       next: resp => {
-        this.modalRef.content.callback(body);
         this.onLoadToast('success', 'Servicio manual creado correctamente');
+        this.modalRef.content.callback(body);
         this.close();
       },
       error: error => {

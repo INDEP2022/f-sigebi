@@ -27,7 +27,7 @@ import { PersonFormComponentAppointment } from './person-form/person-form-appoin
 import { ScanningFoilAppointmentComponent } from './scanning-foil/scanning-foil.component';
 
 export const customCurrencyMaskConfig = {
-  align: 'right',
+  align: 'left',
   allowNegative: false,
   allowZero: true,
   decimal: '.',
