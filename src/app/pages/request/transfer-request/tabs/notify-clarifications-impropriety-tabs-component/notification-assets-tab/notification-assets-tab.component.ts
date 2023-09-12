@@ -972,8 +972,8 @@ export class NotificationAssetsTabComponent
         if (aclaracion) {
           this.alertQuestion(
             'question',
-            'Finalizar',
-            '¿Desea Finalizar la Aclaración?'
+            '¿Desea Finalizar la Aclaración?',
+            ''
           ).then(question => {
             if (question.isConfirmed) {
               this.endAclaration();
@@ -982,8 +982,8 @@ export class NotificationAssetsTabComponent
         } else if (improcedencia) {
           this.alertQuestion(
             'question',
-            'Finalizar',
-            '¿Desea Finalizar la Improcedencia?'
+            '¿Desea Finalizar la Improcedencia?',
+            ''
           ).then(question => {
             if (question.isConfirmed) {
               this.endImpinappropriateness();
