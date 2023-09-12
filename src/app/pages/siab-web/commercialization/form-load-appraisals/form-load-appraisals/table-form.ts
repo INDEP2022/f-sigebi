@@ -1,20 +1,20 @@
 export const APPRAISALS_COLUMNS = {
-  soladjinstgobId: {
+  id_avaluo: {
     title: 'ID',
     type: 'number',
     sort: false,
   },
-  typeentgobId: {
+  cve_avaluo: {
     title: 'Cve Avalúo',
     type: 'string',
     sort: false,
   },
-  applicant: {
+  cve_oficio: {
     title: 'Cve Oficio',
     type: 'string',
     sort: false,
   },
-  position: {
+  fecha_insert: {
     title: 'Fecha Inscrito',
     type: 'string',
     sort: false,
@@ -60,38 +60,88 @@ export const GOODS_COLUMNS = {
   },
 };
 export const DETAIL_APPRAISALS_COLUMNS = {
-  estateNumber: {
+  no_bien: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
   },
-  worthappraisal: {
-    title: 'Status',
-    type: 'number',
-    sort: false,
-  },
-  appraisalDate: {
-    title: 'Valor Avalúo',
-    type: 'string',
-    sort: false,
-  },
-  sessionNumber: {
+  descripcion: {
     title: 'Descripción',
     type: 'number',
     sort: false,
   },
-  ranksEstate: {
-    title: 'Situación Juridica',
+  estatus_bien: {
+    title: 'Estatus',
     type: 'string',
     sort: false,
   },
-  description: {
-    title: 'Incidencias',
+  clasificacion_bien: {
+    title: 'Clasificación',
+    type: 'number',
+    sort: false,
+  },
+  desc_sssubtipo: {
+    title: 'Sub Sub Sub Tipo',
     type: 'string',
     sort: false,
   },
-  delegation: {
-    title: 'Avalúo',
+  desc_ssubtipo: {
+    title: 'Sub Sub Tipo',
+    type: 'string',
+    sort: false,
+  },
+  desc_subtipo: {
+    title: 'Sub Tipo',
+    type: 'string',
+    sort: false,
+  },
+  desc_tipo: {
+    title: 'Tipo',
+    type: 'string',
+    sort: false,
+  },
+  fecha_avaluo: {
+    title: 'Fecha Avaluo',
+    type: 'string',
+    sort: false,
+  },
+  fecha_vig_avaluo: {
+    title: 'echa Avaluo',
+    type: 'string',
+    sort: false,
+  },
+  nombre_valuador: {
+    title: 'Nombre Valuador',
+    type: 'string',
+    sort: false,
+  },
+  no_bien_referencia: {
+    title: 'Referencia',
+    type: 'string',
+    sort: false,
+  },
+  apto: {
+    title: 'APTO',
+    type: 'string',
+    sort: false,
+  },
+  iva: {
+    title: 'IVA',
+    type: 'string',
+    sort: false,
+  },
+  ref_avaluo: {
+    title: 'Valor de Referencia Inmediata',
+    type: 'string',
+    sort: false,
+  },
+  dictamen: {
+    title: 'Dictamen',
+    type: 'string',
+    sort: false,
+  },
+  fec_dictamen: {
+    title: 'Fecha Dictamen',
     type: 'string',
     sort: false,
   },

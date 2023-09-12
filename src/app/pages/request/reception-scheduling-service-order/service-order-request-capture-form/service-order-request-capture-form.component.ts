@@ -203,15 +203,16 @@ export class ServiceOrderRequestCaptureFormComponent
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        console.log(this.ordServform.getRawValue());
 
+        console.log(this.ordServform.getRawValue());
         let ordServiceForm = this.ordServform.getRawValue();
+        this.isUpdate = true;
         this.updateOrderService(ordServiceForm);
-        this.onLoadToast(
+        /*this.onLoadToast(
           'success',
           'Orden de servicio guardada correctamente',
           ''
-        );
+        );*/
       }
     });
   }
@@ -272,10 +273,9 @@ export class ServiceOrderRequestCaptureFormComponent
   updateOrderService(body: IOrderServiceDTO) {
     this.orderService.updateOrderService(body).subscribe({
       next: resp => {
-        console.log(resp);
         this.onLoadToast(
           'success',
-          'Orden de servicio guardada correctamente',
+          'La orden de servicio se guardada correctamente',
           ''
         );
       },

@@ -72,8 +72,8 @@ export class EditModalConfComponent extends BasePage implements OnInit {
       fecha: [null, [Validators.required]],
       promoter: [null, [Validators.required]],
     });
-    this.form.controls['promoter'].setValue('SUPERUSUARIO');
-    this.form.get('promoter').setValue('SUPERUSUARIO');
+    //this.form.controls['promoter'].setValue('SUPERUSUARIO');
+    //this.form.get('promoter').setValue('SUPERUSUARIO');
   }
 
   close() {
@@ -105,7 +105,7 @@ export class EditModalConfComponent extends BasePage implements OnInit {
       resp => {
         if (resp != null && resp != undefined) {
           console.log('Resp UpdateGood-> ', resp);
-          this.alert('success', '', 'Registros Actualizados Correctamente');
+          this.alert('success', '', 'Registro Actualizado Correctamente');
           this.close();
         }
       },
