@@ -951,7 +951,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             'warning',
             'Referencia: ' +
               this.valAcc.reference +
-              ', Repetida en otro Evento ',
+              ', repetida en otro evento ',
             ''
           );
 
