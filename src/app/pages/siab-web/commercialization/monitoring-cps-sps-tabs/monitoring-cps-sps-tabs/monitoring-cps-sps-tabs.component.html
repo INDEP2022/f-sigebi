@@ -7,13 +7,62 @@
   <div body>
     <div class="md-tabs">
       <tabset>
+        <!-- Actualmente trabajando en este componente -->
         <tab heading="Inconsistencias CPs" id="tab1">
-          <app-monitoring-cps></app-monitoring-cps>
+          <app-monitoring-cps
+            (dataSiabParamsFilter)="
+              fullDataTableSiab($event)
+            "></app-monitoring-cps>
         </tab>
+        <!--  -->
         <tab heading="Afectaciones SPs">
           <app-monitoring-sps></app-monitoring-sps>
         </tab>
+        <!--  -->
       </tabset>
+    </div>
+    <div class="mt-3">
+      <div>
+        <div class="ml-auto mb-3">
+          <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
+          <!--  -->
+        </div>
+      </div>
+      <div>
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="dataSiab"></ng2-smart-table>
+        <!--  -->
+        <app-pagination
+          [params]="paramsSiab"
+          [totalItems]="totalItemsSiab"></app-pagination>
+      </div>
+    </div>
+    <div class="mt-3">
+      <div>
+        <div class="ml-auto mb-3">
+          <app-columns-select [(settings)]="settingsOne"></app-columns-select>
+          <!--  -->
+        </div>
+      </div>
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settingsOne"
+          [source]="dataOne"></ng2-smart-table>
+      </div>
+    </div>
+    <div class="mt-3">
+      <div>
+        <div class="ml-auto mb-3">
+          <app-columns-select [(settings)]="settingsTwo"></app-columns-select>
+          <!--  -->
+        </div>
+      </div>
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settingsTwo"
+          [source]="dataTwo"></ng2-smart-table>
+      </div>
     </div>
   </div>
 </app-card>

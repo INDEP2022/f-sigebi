@@ -202,4 +202,8 @@ export class PaymentService extends HttpService {
       // responseType: 'arraybuffer' as 'json',
     });
   }
+
+  postIdentifiesPaymentsInconsistency(params: any) {
+    return this.post(PaymentEndPoints.postIndentifiesPayments, params);
+  }
 }
