@@ -121,6 +121,7 @@ export class RecordAccountStatementsComponent
   ngOnInit(): void {
     this.prepareForm();
     this.searchBanks(new ListParams());
+    this.searchBankAccount(new ListParams());
     this.getEvent();
     this.searchCheck();
     this.dataAccount
@@ -261,7 +262,7 @@ export class RecordAccountStatementsComponent
     if (value && value.cve_banco) {
       const bankCode = value.cve_banco;
       console.log(bankCode);
-      this.searchBankAccount(bankCode, this.paramsSubject);
+      this.searchBankAccount(bankCode);
       this.loading = false;
     } else {
       this.getEventNew(this.params.getValue());
@@ -270,35 +271,29 @@ export class RecordAccountStatementsComponent
     }
   }
 
-  searchBankAccount(
-    bankCode: string,
-    paramsSubject: BehaviorSubject<ListParams>
-  ) {
-    this.bankCode = bankCode;
-    const params = paramsSubject.getValue();
+  searchBankAccount(params?: ListParams) {
+    // const params = paramsSubject.getValue();
     // if (this.bankCode != null) {
-    this.recordAccountStatementsAccountsService
-      .getById(bankCode, params)
-      .subscribe({
-        next: response => {
-          if (response.count > 0) {
-            console.log('banco', response);
-            response.data.map(item => {
-              item['accountAndNumber'] = item.cveAccount;
-            });
-            this.bankAccountSelect = new DefaultSelect(
-              response.data,
-              response.count
-            );
-            this.loading = false;
-          }
-        },
-        // this.data.load(this.documents);
-        error: (err: any) => {
+    this.recordAccountStatementsAccountsService.getAccounts1(params).subscribe({
+      next: response => {
+        if (response.count > 0) {
+          console.log('banco', response);
+          response.data.map((item: any) => {
+            item['accountAndNumber'] = item.accountNumber.cveAccount;
+          });
+          this.bankAccountSelect = new DefaultSelect(
+            response.data,
+            response.count
+          );
           this.loading = false;
-          this.bankAccountSelect = new DefaultSelect();
-        },
-      });
+        }
+      },
+      // this.data.load(this.documents);
+      error: (err: any) => {
+        this.loading = false;
+        this.bankAccountSelect = new DefaultSelect();
+      },
+    });
     // } else {
     //   this.recordAccountStatementsAccountsService
     //     .getAccounts1(this.params.getValue())
@@ -324,6 +319,7 @@ export class RecordAccountStatementsComponent
 
   onSearchAccount(inputElement: any) {
     const account = inputElement.value;
+    console.log(account);
     setTimeout(() => {
       this.recordAccountStatementsAccountsService
         .getById2(this.bankCode, account, this.params.getValue())
@@ -355,17 +351,17 @@ export class RecordAccountStatementsComponent
     this.totalItems = 0;
     this.cleandInfoDate();
     console.log('selectdecuenta', value);
-    const cveAccount = value.accountNumber;
-    this.accountDate = value.dateInsertion;
+    const cveAccount = value.accountNumber.cveAccount;
+    this.accountDate = value.accountNumber.dateInsertion;
     this.banks = new DefaultSelect();
     this.searchDataAccount(cveAccount);
-    const square = value?.square;
-    const branch = value?.branch;
-    const accountType = value?.accountType;
+    const square = value?.accountNumber.square;
+    const branch = value?.accountNumber.branch;
+    const accountType = value?.accountNumber.accountType;
     let paramsB = new ListParams();
-    paramsB['filter.cveAccount'];
+    paramsB['filter.cve_banco'] = value.accountNumber.cveBank;
     this.getBanks(paramsB);
-    let currency = value.cveCurrency;
+    let currency = value.accountNumber.cveCurrency;
     this.current = currency;
     this.searchCurrent(currency);
     currency = currency.replace(/'/g, '');
@@ -654,7 +650,7 @@ export class RecordAccountStatementsComponent
 
   getEventNew($params: ListParams) {
     if ($params.text != null) {
-      this.searchBankAccount(this.bankCode, this.paramsSubject);
+      this.searchBankAccount(new ListParams());
     }
     this.getEvent($params);
   }
