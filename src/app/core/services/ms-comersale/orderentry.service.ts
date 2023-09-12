@@ -90,4 +90,9 @@ export class orderentryService extends HttpService {
     const route = `${OrderEntryEndpoints.ORDER_SERVICE_PROVIDER}/${body.id}`;
     return this.put(route, body);
   }
+
+  deleteOrderServiceProvided(id: number) {
+    const route = `${OrderEntryEndpoints.ORDER_SERVICE_PROVIDER}/${id}`;
+    return this.delete(route);
+  }
 }

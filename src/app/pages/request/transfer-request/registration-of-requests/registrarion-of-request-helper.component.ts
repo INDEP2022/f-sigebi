@@ -166,7 +166,7 @@ export class RegistrationHelper extends BasePage {
       console.log('No tiene Sol. Trans');
       this.message(
         'warning',
-        'Falta Documento: Solicitud de Transferencia',
+        'Falta Documento: Solicitud de Transferencia', //Validar documento SAT y PGR
         'Se requiere subir el documento'
       );
       //validoOk = false;
@@ -450,7 +450,8 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Tipo de Inmueble" en el Bien Inmueble esta vacio.'
               );
               break;
-            } else if (realEstate.pffDate) {
+            } else if (realEstate.pffDate == null) {
+              console.log('pffDate; ', realEstate.pffDate);
               if (
                 idTrandference == 120 ||
                 idTrandference == 752 ||

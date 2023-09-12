@@ -209,7 +209,7 @@ export class ConciliationDepositaryPaymentsComponent
         }
       });
     } else {
-      this.alert('warning', 'Fecha Requerida', ERROR_DATE_DISPERSAL_NULL);
+      this.alert('warning', 'Fecha requerida', ERROR_DATE_DISPERSAL_NULL);
     }
   }
 
@@ -769,11 +769,9 @@ export class ConciliationDepositaryPaymentsComponent
     //   ]);
     // } else
     if (this.origin == 'FCONDEPOCARGAPAG') {
+      const value = this.noBienParams ? this.noBienParams : this.noBienReadOnly;
       this.router.navigate([
-        '/pages/juridical/depositary/depositary-payment-charges/' +
-        this.noBienParams
-          ? this.noBienParams
-          : this.noBienReadOnly,
+        '/pages/juridical/depositary/depositary-payment-charges/' + value,
       ]);
     }
   }
