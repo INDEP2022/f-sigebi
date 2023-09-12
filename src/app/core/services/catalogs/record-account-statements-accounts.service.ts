@@ -99,4 +99,8 @@ export class RecordAccountStatementsAccountsService
   getDataBankAccount(params: _Params) {
     return this.get(this.route2, params);
   }
+  getAccounts1(params?: ListParams) {
+    const route = `${this.route2}`;
+    return this.delete(route, params);
+  }
 }
