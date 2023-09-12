@@ -5,7 +5,7 @@ export const GOOD_DELIVERY_COLUMNS = {
     sort: false,
   },
   goodId: {
-    title: 'N° Bien',
+    title: 'No. Bien',
     type: 'number',
     sort: false,
   },

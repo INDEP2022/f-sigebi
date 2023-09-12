@@ -17,7 +17,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class AddressTransferentFormComponent implements OnInit {
   claimRequest: boolean = false;
   showAddressTransferent: boolean = true;
-  @Input() form: FormGroup = new FormGroup({});
+  @Input() ordServform: FormGroup = new FormGroup({});
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {

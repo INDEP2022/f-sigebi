@@ -149,4 +149,12 @@ export class ComerEventosService extends HttpService {
   getAmountsMtodisp(body: { clientId: number; eventId: number }) {
     return this.post('application/get-amounts', body);
   }
+
+  getLoteExport(id?: any, params?: ListParams): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      'application/pa-look-lots-change-status',
+      id,
+      params
+    );
+  }
 }

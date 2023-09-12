@@ -308,19 +308,18 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
                 const updateGood = await this.updateGood();
 
                 if (updateGood) {
-                  const createHistGood = await this.createHistorailGood();
-                  if (createHistGood) {
-                    this.alertInfo(
-                      'success',
-                      'Acción Correcta',
-                      'Documento adjuntado correctamente'
-                    ).then(question => {
-                      if (question.isConfirmed) {
-                        this.close();
-                        this.modalRef.content.callback(true);
-                      }
-                    });
-                  }
+                  //const createHistGood = await this.createHistorailGood();
+
+                  this.alertInfo(
+                    'success',
+                    'Acción Correcta',
+                    'Documento adjuntado correctamente'
+                  ).then(question => {
+                    if (question.isConfirmed) {
+                      this.close();
+                      this.modalRef.content.callback(true);
+                    }
+                  });
                 }
               }
             }
@@ -560,7 +559,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           id: item.id,
           goodId: item.goodId,
           goodStatus: 'EN_RECEPCION',
-          status: 'ADM',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
@@ -578,7 +576,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       goodsReception.map((item: IGood) => {
         const historyGood: IHistoryGood = {
           propertyNum: item.goodId,
-          status: 'ADM',
           changeDate: new Date(),
           userChange: this.userInfo.name,
           statusChangeProgram: 'TR_UPD_HISTO_BIENES',

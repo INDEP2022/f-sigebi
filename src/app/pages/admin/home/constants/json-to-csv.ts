@@ -41,3 +41,9 @@ export const JSON_TO = [
     no_bien: '',
   },
 ];
+
+export const JSON_TO_MAYUS = [
+  {
+    NO_BIEN: '',
+  },
+];

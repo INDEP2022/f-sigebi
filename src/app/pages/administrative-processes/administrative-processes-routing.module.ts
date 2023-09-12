@@ -667,6 +667,16 @@ export const routes: Routes = [
         data: { screen: 'FESTREPIMPLE', title: 'Indicador de desempeño' },
       },
       {
+        path: 'performance-indicator-detail',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/performance-indicator-detail/performance-indicator-detail.module'
+            )
+          ).PerformanceIndicatorDetailModule,
+        data: { screen: 'FESTREPIMPLE_0001', title: 'Indicador de desempeño' },
+      },
+      {
         path: 'implementation-report',
         loadChildren: async () =>
           (

@@ -47,4 +47,19 @@ export class StrategyProcessService extends HttpService {
     const route = `${StrategyEndpoints.StrategySum}/${id}`;
     return this.get(route);
   }
+
+  getByMonthYear(month: number, year: number, delegation: number, params: any) {
+    const route = `${StrategyEndpoints.strategyInd}?filter.monthNumber=$eq:${month}&filter.yearNumber=$eq:${year}&filter.delegation1Number=$eq:${delegation}`;
+    return this.get(route, params);
+  }
+
+  getByMonthYearTotal(month: number, year: number, delegation: number) {
+    const route = `${StrategyEndpoints.strategyInd}?filter.monthNumber=$eq:${month}&filter.yearNumber=$eq:${year}&filter.delegation1Number=$eq:${delegation}&filter.estTime=$eq:1`;
+    return this.get(route);
+  }
+
+  ByFormatNumber(params: any) {
+    const route = `${StrategyEndpoints.PaEstGood}`;
+    return this.post(route, params);
+  }
 }

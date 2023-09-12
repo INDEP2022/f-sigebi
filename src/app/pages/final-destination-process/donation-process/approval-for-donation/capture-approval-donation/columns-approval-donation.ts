@@ -123,19 +123,23 @@ export const COLUMNS_APPROVAL_DONATION = {
 };
 
 export const COPY = {
-  goodNumber: {
+  recordId: {
+    title: 'No. Ref',
+    sort: false,
+  },
+  goodId: {
     title: 'No. Bien',
-    type: 'number',
     sort: false,
   },
   description: {
     title: 'Descripción',
-    type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.good?.description;
+    },
   },
   amount: {
     title: 'Cantidad',
-    type: 'string',
     sort: false,
   },
 };

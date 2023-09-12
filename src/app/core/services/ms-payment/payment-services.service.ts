@@ -1,7 +1,11 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PaymentEndPoints } from 'src/app/common/constants/endpoints/ms-payment';
+import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.interceptor';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponseMessage } from '../../interfaces/list-response.interface';
+import { AuthService } from '../authentication/auth.service';
 import {
   IComerPaymentsRefVir,
   IComerReldisDisp,
@@ -14,7 +18,7 @@ import {
 })
 export class PaymentService extends HttpService {
   private readonly endpoint: string = PaymentEndPoints.BasePath;
-  constructor() {
+  constructor(private http: HttpClient, private authService: AuthService) {
     super();
     this.microservice = PaymentEndPoints.BasePath;
   }
@@ -179,8 +183,26 @@ export class PaymentService extends HttpService {
   postCreateRecord(params: any) {
     return this.post(PaymentEndPoints.BusquedaPagosDet, params);
   }
-
   postIdentifiesPaymentsInconsistency(params: any) {
     return this.post(PaymentEndPoints.postIndentifiesPayments, params);
+  }
+
+  getCtlDevPagB(params: _Params) {
+    return this.get(`${PaymentEndPoints.ComerCtldevpagB}`, params);
+  }
+
+  getCtlDevPagBfindAllRegistersV2(params: ListParams) {
+    // return this.get(
+    //   `${PaymentEndPoints.ComerCtldevpagBfindAllRegistersV2}`,
+    //   params
+    // );
+    const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    this.authService.setReportFlag(true);
+    const route = `${this.url}${this.microservice}/${this.prefix}${PaymentEndPoints.ComerCtldevpagBfindAllRegistersV2}`;
+    return this.http.get<any>(`${route}`, {
+      headers,
+      params,
+      // responseType: 'arraybuffer' as 'json',
+    });
   }
 }
