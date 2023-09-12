@@ -20,7 +20,7 @@ import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
-
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
 import { COPY } from './columns-approval-donation';
 @Component({
@@ -43,21 +43,21 @@ export class CaptureApprovalDonationComponent
   regisForm: FormGroup;
   siabForm: FormGroup;
   foolio: number;
+  totalItems: number = 0;
   loading3: boolean = false;
   Exportdate: boolean = false;
   status: string = '';
-  selectedGooodsValid: any[] = [];
   totalItems2: number = 0;
   dataDetailDonation: any;
   dataDetailDonationGood: LocalDataSource = new LocalDataSource();
-
+  excelLoading: boolean = false;
   paramsList2 = new BehaviorSubject<ListParams>(new ListParams());
 
   bsValueToYear: Date = new Date();
 
   minModeToYear: BsDatepickerViewMode = 'year'; // change for month:year
   bsConfigToYear: Partial<BsDatepickerConfig>;
-
+  dataTableGood: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   bsModalRef?: BsModalRef;
   estatus: string;
@@ -65,7 +65,6 @@ export class CaptureApprovalDonationComponent
   fileNumber: number = 0;
   columnFilters: any = [];
   columnFilters2: any = [];
-
   settings2;
   userName: string = '';
   // @Input() getDetailComDonation: Function;
@@ -111,6 +110,158 @@ export class CaptureApprovalDonationComponent
     //   columns: { ...COLUMNS_APPROVAL_DONATION },
     //   noDataMessage: 'No se encontrarón registros',
     // };
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      // selectMode: 'multi',
+      selectedRowIndex: -1,
+      mode: 'external',
+      // columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
+      columns: {
+        name: {
+          filter: false,
+          sort: false,
+          title: 'Selección',
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+            this.isGoodSelectedValid(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onGoodSelectValid(instance),
+        },
+        proposalKey: {
+          title: 'Ref.',
+          type: 'number',
+          sort: false,
+        },
+        goodNumber: {
+          title: 'No. Bien',
+          type: 'number',
+          sort: false,
+        },
+        description: {
+          title: 'Descripción del Bien',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.goodEntity?.description;
+          },
+        },
+        quantity: {
+          title: 'Cantidad',
+          type: 'number',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.goodEntity?.quantity;
+          },
+        },
+        unit: {
+          title: 'Unidad',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.goodEntity?.unit;
+          },
+        },
+        status: {
+          title: 'Estatus',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.goodEntity?.status;
+          },
+        },
+        noExpediente: {
+          title: 'No. Expediente',
+          type: 'number',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.goodEntity?.noExpediente;
+          },
+        },
+        noEtiqueta: {
+          title: 'Etiqueta Destino',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.goodEntity?.noEtiqueta;
+          },
+        },
+        idNoWorker1: {
+          title: 'No. Tranf.',
+          type: 'string',
+          sort: false,
+          // valuePrepareFunction: (cell: any, row: any) => {
+          //   return row.goodEntity?.idNoWorker1;
+          // },
+        },
+        idExpWorker1: {
+          title: 'Des. Tranf.',
+          type: 'string',
+          sort: false,
+          // valuePrepareFunction: (cell: any, row: any) => {
+          //   return row.goodEntity?.idExpWorker1;
+          // },
+        },
+        noClasifBien: {
+          title: 'No. Clasif.',
+          type: 'number',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.good?.goodClassification;
+          },
+        },
+        procesoExtDom: {
+          title: 'Proceso',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (cell: any, row: any) => {
+            return row.good?.procesoExtDom;
+          },
+        },
+        // warehouseNumb: {
+        //   title: 'No. Alma.',
+        //   type: 'number',
+        //   sort: false,
+        // },
+        // warehouse: {
+        //   title: 'Almacén',
+        //   type: 'string',
+        //   sort: false,
+        // },
+        // warehouseLocat: {
+        //   title: 'Ubica. Almacén ',
+        //   type: 'string',
+        //   sort: false,
+        // },
+        // coordAdmin: {
+        //   title: 'Coord. Admin.',
+        //   type: 'string',
+        //   sort: false,
+        // },
+        // select: {
+        //   title: 'Selec.',
+        //   type: 'custom',
+        //   renderComponent: CheckboxElementComponent,
+        //   onComponentInitFunction(instance: any) {
+        //     instance.toggle.subscribe((data: any) => {
+        //       data.row.to = data.toggle;
+        //     });
+        //   },
+        //   sort: false,
+        // },
+        // noDataMessage: 'No se encontrarón registros',
+      },
+      rowClassFunction: (row: any) => {
+        if (row.data.di_disponible == 'S') {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+      },
+    };
 
     this.settings2 = {
       ...this.settings,
@@ -263,12 +414,12 @@ export class CaptureApprovalDonationComponent
       ModalApprovalDonationComponent,
       modalConfig
     );
-    modalRef.content.onSave.subscribe((next: any[]) => {
+    modalRef.content.onSave.subscribe((next: any[] = []) => {
       console.log('aaaa', next);
 
-      // this.dataTableGood.load(next);
-      // this.dataTableGood.refresh();
-      this.eventdetailDefault = next;
+      this.dataTableGood.load(next);
+      this.dataTableGood.refresh();
+      // this.eventdetailDefault = next;
       // this.status = next.statusAct;
     });
   }
@@ -356,6 +507,10 @@ export class CaptureApprovalDonationComponent
     this.donationService.getEventComDonationDetail(params).subscribe({
       next: data => {
         console.log(data);
+        this.dataDetailDonation = data.data;
+        this.dataDetailDonationGood.load(this.dataDetailDonation);
+        this.dataDetailDonationGood.refresh();
+        this.totalItems2 = data.count;
       },
       error: () => console.error('no hay detalle acta'),
     });
@@ -397,7 +552,126 @@ export class CaptureApprovalDonationComponent
   rowsSelected(event: any) {
     this.selectedGooodsValid = event.selected;
   }
-  exportToExcel() {}
+
+  exportToExcel(): void {
+    this.excelLoading = true;
+    if (this.dataDetailDonationGood != null) {
+      this.donationService.getExcel().subscribe({
+        next: data => {
+          this.excelLoading = false;
+          this.alert(
+            'warning',
+            'El archivo se esta generando, favor de esperar la descarga',
+            ''
+          );
+          // this.fullService.generatingFileFlag.next({
+          //   progress: 99,
+          //   showText: true,
+          // });
+          // console.log(response.data)
+          this.downloadDocument('-Detalle-Donacion', 'excel', data.base64File);
+          // this.modalRef.hide();
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
+    } else {
+      this.excelLoading = false;
+      this.alert('warning', 'No hay Datos para Exportar', '');
+    }
+  }
+
+  //Descargar Excel
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.excelLoading = true;
+    this.alert('success', 'El Reporte se ha Descargado', '');
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    // this.fullService.generatingFileFlag.next({
+    //   progress: 100,
+    //   showText: false,
+    // });
+
+    return bytes.buffer;
+  }
+  onGoodSelect(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChange(data.row, data.toggle),
+    });
+  }
+  isGoodSelected(_good: IGood) {
+    const exists = this.selectedGooods.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+  goodSelectedChange(good: IGood, selected: boolean) {
+    if (selected) {
+      this.selectedGooods.push(good);
+      console.log(this.selectedGooods);
+    } else {
+      this.selectedGooods = this.selectedGooods.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
+  onGoodSelectValid(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChangeValid(data.row, data.toggle),
+    });
+  }
+  isGoodSelectedValid(_good: IGood) {
+    const exists = this.selectedGooodsValid.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+  goodSelectedChangeValid(good: IGood, selected?: boolean) {
+    if (selected) {
+      this.selectedGooodsValid.push(good);
+      console.log(this.selectedGooodsValid);
+    } else {
+      this.selectedGooodsValid = this.selectedGooodsValid.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
+  selectedGooodsValid: any[] = [];
+  selectedGooods: any[] = [];
+  goodsValid: any;
+
   agregarCaptura() {}
   searchEventos() {}
   cerrarEvento() {}
