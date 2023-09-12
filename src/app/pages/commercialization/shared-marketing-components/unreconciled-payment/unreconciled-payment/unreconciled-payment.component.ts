@@ -308,12 +308,12 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
   async enviarSIRSAE() {
     if (!this.valAcc) return this.alert('warning', 'Seleccione un Pago', '');
 
-    if (!this.valAcc.event)
-      return this.alert(
-        'warning',
-        'Este Pago no está Asociado a un Evento',
-        ''
-      );
+    // if (!this.valAcc.event)
+    //   return this.alert(
+    //     'warning',
+    //     'Este Pago no está Asociado a un Evento',
+    //     ''
+    //   );
 
     this.loadingBtn = true;
     // CREA_CABECERA;

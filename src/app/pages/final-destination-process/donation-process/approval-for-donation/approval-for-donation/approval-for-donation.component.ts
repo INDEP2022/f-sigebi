@@ -378,7 +378,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     let params = {
       ...this.params2.getValue(),
     };
-    this.donationService.getExcel(params).subscribe({
+    this.donationService.getExcel().subscribe({
       next: response => {
         this.downloadDocument(
           'Aprobación para Donación',

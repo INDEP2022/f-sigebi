@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
@@ -35,7 +36,8 @@ export class ComcalculatedModalComponent extends BasePage implements OnInit {
     private comerComCalculatedService: ComerComCalculatedService,
     private thirdPartyService: ThirdPartyService,
     private comerEventService: ComerEventService,
-    private token: AuthService
+    private token: AuthService,
+    private datePipe: DatePipe
   ) {
     super();
   }
@@ -43,7 +45,8 @@ export class ComcalculatedModalComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
   }
-
+  fecha1: any;
+  fecha2: any;
   private prepareForm() {
     this.calculatedForm = this.fb.group({
       comCalculatedId: [null],
@@ -53,8 +56,9 @@ export class ComcalculatedModalComponent extends BasePage implements OnInit {
       startDate: [null],
       endDate: [null],
       eventId: [null],
-      changeType: [null],
+      changeType: [null, Validators.max(9999999999999)],
     });
+
     if (this.calculated != null) {
       this.edit = true;
       // this.idT = this.calculated.thirdComerId as unknown as IThirdParty2;
@@ -63,11 +67,16 @@ export class ComcalculatedModalComponent extends BasePage implements OnInit {
         thirdComerId: this.calculated.thirdComerId,
         userBelieve: this.calculated.userBelieve,
         believeDate: this.calculated.believeDate,
-        startDate: this.calculated.startDate,
-        endDate: this.calculated.endDate,
+        startDate: this.datePipe.transform(
+          this.calculated.startDate,
+          'dd-MM-yyyy'
+        ),
+        endDate: this.datePipe.transform(this.calculated.endDate, 'dd-MM-yyyy'),
         eventId: this.calculated.comerEvents,
         changeType: this.calculated.changeType,
       });
+      this.fecha1 = this.calculatedForm.value.startDate;
+      this.fecha2 = this.calculatedForm.value.endDate;
       this.calculatedForm.controls['thirdComerId'].setValue(
         this.calculated.IdAndNameReason
       );
@@ -108,12 +117,14 @@ export class ComcalculatedModalComponent extends BasePage implements OnInit {
     this.loading = true;
     const thirdComerId = this.calculatedForm.value.thirdComerId;
     const eventId = this.calculatedForm.value.eventId;
+    // const fecha1 = this.datePipe.transform(this.calculatedForm.value.startDate, 'yyyy-MM-dd')
+    // const fecha2 = this.datePipe.transform(this.calculatedForm.value.endDate, 'yyyy-MM-dd')
     let obj = {
       thirdComerId: thirdComerId ? thirdComerId.id : null,
       userBelieve: this.calculated.userBelieve,
       believeDate: this.calculated.believeDate,
-      startDate: this.calculatedForm.value.startDate,
-      endDate: this.calculatedForm.value.endDate,
+      startDate: this.convertirFecha1(this.calculatedForm.value.startDate),
+      endDate: this.convertirFecha2(this.calculatedForm.value.endDate),
       eventId: eventId ? eventId.id : null,
       changeType: this.calculatedForm.value.changeType,
     };
@@ -125,9 +136,61 @@ export class ComcalculatedModalComponent extends BasePage implements OnInit {
       });
   }
 
+  convertirFecha1(fecha: any) {
+    // Divide la fecha en sus componentes
+    console.log('fecha', fecha);
+    if (fecha) {
+      if (this.fecha1 == fecha) {
+        var partes = fecha.split('-');
+
+        // Reorganiza los componentes en el formato deseado
+        var fechaFormateada = partes[2] + '-' + partes[1] + '-' + partes[0];
+
+        return fechaFormateada;
+      } else {
+        fecha = this.datePipe.transform(fecha, 'dd-MM-yyyy');
+
+        var partes = fecha.split('-');
+
+        // Reorganiza los componentes en el formato deseado
+        var fechaFormateada = partes[2] + '-' + partes[1] + '-' + partes[0];
+
+        return fechaFormateada;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  convertirFecha2(fecha: any) {
+    // Divide la fecha en sus componentes
+    console.log('fecha', fecha);
+    if (fecha) {
+      if (this.fecha2 == fecha) {
+        var partes = fecha.split('-');
+
+        // Reorganiza los componentes en el formato deseado
+        var fechaFormateada = partes[2] + '-' + partes[1] + '-' + partes[0];
+
+        return fechaFormateada;
+      } else {
+        fecha = this.datePipe.transform(fecha, 'dd-MM-yyyy');
+
+        var partes = fecha.split('-');
+
+        // Reorganiza los componentes en el formato deseado
+        var fechaFormateada = partes[2] + '-' + partes[1] + '-' + partes[0];
+
+        return fechaFormateada;
+      }
+    } else {
+      return null;
+    }
+  }
+
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', `Registro ${message} Correctamente`, '');
+    const message: string = this.edit ? 'actualizado' : 'guardado';
+    this.onLoadToast('success', `Registro ${message} correctamente`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

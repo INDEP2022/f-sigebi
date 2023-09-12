@@ -7,84 +7,98 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-2">
+        <!-- <div class="col-md-2">
           <form-field [control]="form.get('id')" label="ID">
             <input type="text" class="form-control" formControlName="id" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-2">
-          <form-field [control]="form.get('allotment')" label="LP">
+          <form-field [control]="form.get('lote_publico')" label="Lote Público">
             <input
               type="text"
               class="form-control"
-              formControlName="allotment" />
+              formControlName="lote_publico" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('amount')" label="Importe">
-            <input type="text" class="form-control" formControlName="amount" />
+          <form-field [control]="form.get('importe')" label="Importe">
+            <input type="text" class="form-control" formControlName="importe" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('status')" label="Estatus">
-            <input type="text" class="form-control" formControlName="status" />
+        <div class="col-md-6">
+          <form-field [control]="form.get('estatus')" label="Estatus">
+            <ng-select
+              formControlName="estatus"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="CAS">Cancelado por usuario</ng-option>
+              <ng-option value="CAN">Cancelado</ng-option>
+              <ng-option value="VAL">VALIDO</ng-option>
+              <ng-option value="GEN">Generado</ng-option>
+              <ng-option value="EFE">Pago en efectivo</ng-option>
+              <ng-option value="CAE">Cancelado por pago en efectivo</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
-        <div class="col-md-3">
-          <form-field [control]="form.get('type')" label="Tipo">
-            <input type="text" class="form-control" formControlName="type" />
+        <div class="col-md-6">
+          <form-field [control]="form.get('tipo')" label="Tipo">
+            <input type="text" class="form-control" formControlName="tipo" />
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('reference')" label="Referencia">
+          <form-field [control]="form.get('referencia')" label="Referencia">
             <input
               type="text"
               class="form-control"
-              formControlName="reference" />
+              formControlName="referencia" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
-            [control]="form.get('dateValidity')"
+            [control]="form.get('fec_vigencia')"
             label="Fecha Vigencia">
             <input
               type="text"
               class="form-control"
-              formControlName="dateValidity" />
+              formControlName="fec_vigencia" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-5">
         <div class="col-md-3">
           <form-field [control]="form.get('rfc')" label="RFC">
             <input type="text" class="form-control" formControlName="rfc" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-3">
+        <!-- <div class="col-md-3">
           <form-field [control]="form.get('idClient')" label="ID Cliente">
             <input
               type="text"
               class="form-control"
               formControlName="idClient" />
           </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('client')" label="Cliente">
-            <input type="text" class="form-control" formControlName="client" />
+        </div> -->
+        <div class="col-md-6">
+          <form-field [control]="form.get('cliente')" label="Cliente">
+            <input type="text" class="form-control" formControlName="cliente" />
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('penalty')" label="Pena">
-            <input type="text" class="form-control" formControlName="penalty" />
+          <form-field [control]="form.get('monto_pena')" label="Pena">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="monto_pena" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <!-- <div class="col-md-3">
           <form-field [control]="form.get('note')" label="Nota">
             <input type="text" class="form-control" formControlName="note" />
           </form-field>
-        </div>
+        </div> -->
       </div>
     </form>
   </div>

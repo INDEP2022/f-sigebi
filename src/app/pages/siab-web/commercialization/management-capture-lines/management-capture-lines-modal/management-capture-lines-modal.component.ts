@@ -24,20 +24,26 @@ export class managementCaptureLinesModalComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      id: [null, [Validators.required]],
-      allotment: [null, [Validators.required]],
-      amount: [null, [Validators.required]],
-      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      type: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      reference: [
+      lc: [null, [Validators.required]],
+      lote_publico: [null, [Validators.required]],
+      importe: [null, [Validators.required]],
+      estatus: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      dateValidity: [null, [Validators.required]],
+      tipo: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      referencia: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      fec_vigencia: [null, [Validators.required]],
       rfc: [null, [Validators.required, Validators.pattern(RFC_PATTERN)]],
       idClient: [null, [Validators.required]],
-      client: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      penalty: [
+      cliente: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      monto_pena: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],

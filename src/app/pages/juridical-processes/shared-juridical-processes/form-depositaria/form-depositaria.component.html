@@ -27,7 +27,7 @@
                     [form]="form"
                     value="id"
                     bindLabel="description"
-                    label="Bien"
+                    label="No&#46; Bien"
                     control="noBien"
                     [showTooltip]="true"
                     termMaxLength="400"
@@ -159,7 +159,7 @@
                       }}&nbsp;---&nbsp;{{
                         'MONTO:$ ' + formatTotalAmount(optionDate.payId)
                       }}&nbsp;---&nbsp;FECHA:{{
-                        optionDate.processDate | date: 'dd/MM/yyyy'
+                        optionDate.processDate | date : 'dd/MM/yyyy'
                       }}
                     </option>
                   </ng-container>

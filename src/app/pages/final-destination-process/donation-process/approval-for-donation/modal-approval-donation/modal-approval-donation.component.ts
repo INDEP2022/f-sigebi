@@ -296,7 +296,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   }
   handleSuccess(): void {
     this.loading = false;
-    this.onSave.emit(this.selectedGooods);
+    this.onSave.emit(this.selectedGooodsValid);
     this.modalRef.hide();
   }
   // onUserRowSelect(row: any): void {
@@ -491,8 +491,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-    // console.log('1412212', params);
-    params['sortBy'] = `goodId:DESC`;
+    console.log('1412212', params);
+    params['sortBy'] = `goodNumber:DESC`;
     params['filter.recordId'] = this.paramsScreen.recordId;
     this.donationService.getTempGood(params).subscribe({
       next: data => {
@@ -503,7 +503,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
         let result = data.data.map(async (item: any) => {
           let obj = {
             vcScreen: 'FMCOMDONAC_1',
-            pNumberGood: item.goodId,
+            pNumberGood: item.goodNumber,
           };
           const di_dispo = await this.getStatusScreen(obj);
           item['di_disponible'] = di_dispo;
@@ -512,7 +512,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           }
           item['quantity'] = item.amount;
           item['di_acta'] = item.recordId;
-          item['id'] = item.goodId;
+          item['id'] = item.goodNumber;
           // const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
           // // console.log('acta', acta);
           // item['acta_'] = acta;
