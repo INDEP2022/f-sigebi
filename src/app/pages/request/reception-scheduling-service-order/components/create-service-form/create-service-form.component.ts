@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IOrderServiceProvider } from 'src/app/core/models/ms-order-entry/order-service-provider.model';
+import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SERVICE_COLUMNS } from './service-columns';
 
@@ -25,6 +27,8 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   showSearchForm: boolean = true;
+
+  private orderEntryService = inject(orderentryService);
 
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
@@ -50,16 +54,13 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.onLoadToast('success', 'Servicio creado correctamente', '');
-        this.modalRef.content.callback(this.form.value);
-        this.close();
+        //this.createOrderServiceProvided()
       }
     });
   }
 
   search() {
     const form = this.form.getRawValue();
-    console.log(form);
   }
 
   clean() {
@@ -68,5 +69,15 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
   }
   close() {
     this.modalRef.hide();
+  }
+
+  createOrderServiceProvided(body: IOrderServiceProvider) {
+    this.orderEntryService.createServiceProvided(body).subscribe({
+      next: resp => {
+        this.modalRef.content.callback(this.form.value);
+        this.onLoadToast('success', 'Servicio creado correctamente', '');
+        this.close();
+      },
+    });
   }
 }

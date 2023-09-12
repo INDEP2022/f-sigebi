@@ -4,7 +4,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
-import { map } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -377,13 +377,21 @@ export class RegistrationOfRequestsComponent
     const params = new ListParams();
     params['filter.processStatus'] = `$eq:SOLICITAR_ACLARACION`;
     params['filter.requestId'] = `$eq:${id}`;
-    this.goodService.getAll(params).subscribe({
-      next: resp => {
-        if (resp.count > 0) {
-          this.hideExpedient = true;
-        }
-      },
-    });
+    this.goodService
+      .getAll(params)
+      .pipe(
+        catchError((e: any) => {
+          if (e.status == 400) return of({ data: [], count: 0 });
+          throw e;
+        })
+      )
+      .subscribe({
+        next: resp => {
+          if (resp.count > 0) {
+            this.hideExpedient = true;
+          }
+        },
+      });
   }
   verifyTransDelegaStatiAuthoExist(data: any) {
     if (
@@ -782,10 +790,10 @@ export class RegistrationOfRequestsComponent
     } else {
       console.log('No Soy destino documental');
       this.msgSaveModal(
-        'Aceptar',
-        '',
+        'Continuar',
         'Asegúrese de haber guardado la información antes de turnar la solicitud',
-        'question',
+        'Atención',
+        'warning',
         this.typeDocument
       );
     }
@@ -1383,7 +1391,7 @@ export class RegistrationOfRequestsComponent
       title: title,
       text: message,
       icon: typeMsg,
-      width: 450,
+      //width: 450,
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#b38e5d',
