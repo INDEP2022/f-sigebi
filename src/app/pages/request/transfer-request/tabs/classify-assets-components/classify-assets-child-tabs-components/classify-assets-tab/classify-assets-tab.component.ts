@@ -1074,7 +1074,7 @@ export class ClassifyAssetsTabComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: data => {
-            this.message('success', 'El Domicilio se ha Actualizado', ``);
+            this.message('success', 'El Bien se ha Actualizado', ``);
             this.classiGoodsForm.controls['id'].setValue(data.id);
 
             resolve({ saved: true, result: data });

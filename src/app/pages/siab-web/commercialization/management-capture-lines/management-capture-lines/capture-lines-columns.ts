@@ -31,11 +31,11 @@ export const CAPTURA_LINES_COLUMNS = {
     title: 'RFC',
     sort: false,
   },
-  idClient: {
+  id_cliente: {
     title: 'ID Cliente',
     sort: false,
   },
-  clientcliente: {
+  cliente: {
     title: 'Cliente',
     sort: false,
   },
