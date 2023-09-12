@@ -546,11 +546,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
-            this.alert(
-              'success',
-              'Documento Guardado',
-              'El documento se guardó correctamente'
-            );
+            this.alert('success', 'El Documento ha sido Guardado', '');
             this.modalRef.content.callback(true);
             this.close();
           },

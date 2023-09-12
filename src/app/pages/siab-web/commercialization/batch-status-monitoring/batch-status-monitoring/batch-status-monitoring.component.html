@@ -214,6 +214,8 @@
                   [source]="data2">
                 </ng2-smart-table>
               </ng-scrollbar>
+              <app-pagination [params]="params2" [totalItems]="totalItems2">
+              </app-pagination>
             </div>
           </div>
         </div>
@@ -232,6 +234,8 @@
                 [source]="data1">
               </ng2-smart-table>
             </ng-scrollbar>
+            <app-pagination [params]="params1" [totalItems]="totalItems1">
+            </app-pagination>
           </div>
         </div>
       </div>
@@ -265,6 +269,8 @@
                   (edit)="showReceipt($event.data)">
                 </ng2-smart-table>
               </ng-scrollbar>
+              <app-pagination [params]="params" [totalItems]="totalItems">
+              </app-pagination>
             </div>
           </div>
         </div>
@@ -299,6 +305,8 @@
                 </ng2-smart-table>
               </div>
             </ng-scrollbar>
+            <app-pagination [params]="params3" [totalItems]="totalItems3">
+            </app-pagination>
           </div>
         </div>
       </div>
