@@ -166,7 +166,7 @@ export class RegistrationHelper extends BasePage {
       console.log('No tiene Sol. Trans');
       this.message(
         'warning',
-        'Falta Documento: Solicitud de Transferencia',
+        'Falta Documento: Solicitud de Transferencia', //Validar documento SAT y PGR
         'Se requiere subir el documento'
       );
       //validoOk = false;
