@@ -1,8 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import {
+  IStrategyLovSer,
+  IStrategyProcess,
+  IStrategyType,
+} from 'src/app/core/models/ms-strategy-service/strategy-service.model';
+import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -11,7 +20,6 @@ import {
   IMPLEMENTATIONREPORT_COLUMNS,
   IMPLEMENTATION_COLUMNS,
 } from './implementation-report-columns';
-
 @Component({
   selector: 'app-implementation-report',
   templateUrl: './implementation-report.component.html',
@@ -19,19 +27,25 @@ import {
 })
 export class ImplementationReportComponent extends BasePage implements OnInit {
   serviceOrdersForm: FormGroup;
+  filterType: IStrategyType;
+  filterLovSer: IStrategyLovSer;
 
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   settings2 = { ...this.settings, actions: false };
-
+  types = new DefaultSelect();
   public serviceOrderKey = new DefaultSelect();
-  public process = new DefaultSelect();
+  public process = new DefaultSelect<IStrategyProcess>();
   public regionalCoordination = new DefaultSelect();
   public reportKey = new DefaultSelect();
   public status = new DefaultSelect();
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private strategyServiceService: StrategyServiceService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -43,6 +57,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getProcess(new ListParams());
   }
   private prepareForm() {
     this.serviceOrdersForm = this.fb.group({
@@ -62,11 +77,6 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     });
   }
   public getServiceOrderKey(event: any) {
-    // this.bankService.getAll(params).subscribe(data => {
-    //   this.peritos = new DefaultSelect(data.data, data.count);
-    // });
-  }
-  public getProcess(event: any) {
     // this.bankService.getAll(params).subscribe(data => {
     //   this.peritos = new DefaultSelect(data.data, data.count);
     // });
@@ -96,5 +106,68 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(ImplementationReportHistoricComponent, config);
+  }
+  getTypes() {
+    this.filterType = {
+      pProcessNumber: Number(
+        this.serviceOrdersForm.get('serviceOrderKey').value
+      ),
+      pServiceNumber: this.serviceOrdersForm.get('process').value,
+    };
+    this.strategyServiceService.getServiceType(this.filterType).subscribe({
+      next: data => {
+        data.data.filter((item: any) => {
+          item['typeAndName'] = item.no_tiposervicio + '-' + item.descripcion;
+        });
+        this.types = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.loading = false;
+        this.types = new DefaultSelect();
+      },
+    });
+  }
+  getServices() {
+    this.filterLovSer = {
+      pProcessNumber: Number(this.serviceOrdersForm.get('process').value),
+    };
+    this.strategyServiceService.getServiceLov(this.filterLovSer).subscribe({
+      next: data => {
+        data.data.filter((item: any) => {
+          item['serAndName'] = item.no_servicio + '-' + item.descripcion;
+        });
+        this.serviceOrderKey = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.loading = false;
+        this.serviceOrderKey = new DefaultSelect();
+      },
+    });
+  }
+
+  getProcess($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllProcess(params).subscribe();
+  }
+
+  getAllProcess(params: FilterParams) {
+    return this.strategyServiceService.getProcess(params.getParams()).pipe(
+      catchError(error => {
+        this.process = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        if (response.count > 0) {
+          response.data.filter((item: any) => {
+            item['proAndName'] = item.processNumber + '-' + item.description;
+          });
+          this.serviceOrdersForm.get('process').patchValue(response[0]);
+        }
+        this.process = new DefaultSelect(response.data, response.count);
+      })
+    );
   }
 }
