@@ -81,7 +81,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   update() {
     this.form.value.executionDate = this.dateMovemInicio;
     if (!this.form.get('executionDate').value) {
-      this.alert('warning', 'Debe Especificar la Fecha de Ejecución', '');
+      this.alert('warning', 'Debe especificar la Fecha de Ejecución', '');
       this.form.get('executionDate').markAsTouched();
       return;
     }
@@ -92,7 +92,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       },
       error: err => {
         if (err.error.message == 'ID previamente registrado') {
-          this.alert('warning', 'Ya Existe un Registro con estos Datos', '');
+          this.alert('warning', 'Ya existe un registro con estos datos', '');
         } else {
           this.handleError();
         }
@@ -102,7 +102,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   create() {
     if (!this.form.get('executionDate').value) {
-      this.alert('warning', 'Debe Especificar la Fecha de Ejecución', '');
+      this.alert('warning', 'Debe especificar la Fecha de Ejecución', '');
       this.form.get('executionDate').markAsTouched();
       return;
     }
@@ -113,7 +113,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       },
       error: err => {
         if (err.error.message == 'ID previamente registrado') {
-          this.alert('warning', 'Ya Existe un Registro con estos Datos', '');
+          this.alert('warning', 'Ya existe un registro con estos datos', '');
         } else {
           this.handleError();
         }
@@ -122,15 +122,15 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `Cliente ${message} Correctamente`, '');
+    const message: string = this.edit ? 'actualizado' : 'guardado';
+    this.alert('success', `Cliente ${message} correctamente`, '');
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 
   handleError() {
-    const message: string = this.edit ? 'Actualizar' : 'Guardar';
-    this.alert('error', `Error al Intentar ${message} el Cliente`, '');
+    const message: string = this.edit ? 'actualizar' : 'guardar';
+    this.alert('error', `Error al intentar ${message} el cliente`, '');
   }
 
   getClients(lparams: ListParams) {

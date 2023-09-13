@@ -22,7 +22,7 @@ export class CommissionsModalComponent extends BasePage implements OnInit {
   edit: boolean = false;
 
   commissionsForm: ModelForm<IComerCommissionsPerGood>;
-  commissions: IComerCommissionsPerGood;
+  commissions: any;
 
   idEvent: IComerEvent2;
   idGood: IGood;
@@ -77,9 +77,20 @@ export class CommissionsModalComponent extends BasePage implements OnInit {
       this.edit = true;
       this.idEvent = this.commissions.eventId as IComerEvent2;
       this.idGood = this.commissions.goodNumber as IGood;
-      this.commissionsForm.patchValue(this.commissions);
-      this.commissionsForm.controls['eventId'].setValue(this.idEvent.eventId);
-      this.commissionsForm.controls['goodNumber'].setValue(this.idGood.goodId);
+      this.commissionsForm.patchValue({
+        comCalculatedId: this.commissions.comCalculatedId,
+        eventId: this.commissions.event,
+        goodNumber: this.commissions.good,
+        amountCommission: this.commissions.amountCommission,
+        batch: this.commissions.batch,
+        cvman: this.commissions.cvman,
+        sale: this.commissions.sale,
+        comments: this.commissions.comments,
+        processIt: this.commissions.processIt,
+        saleTc: this.commissions.saleTc,
+      });
+      // this.commissionsForm.controls['eventId'].setValue(this.idEvent.eventId);
+      // this.commissionsForm.controls['goodNumber'].setValue(this.idGood.goodId);
     }
   }
 
