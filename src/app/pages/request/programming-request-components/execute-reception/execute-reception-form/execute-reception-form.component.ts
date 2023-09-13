@@ -853,7 +853,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               .getAll(this.paramsShowTransportable.getValue())
               .subscribe({
                 next: async data => {
-                  console.log('data', data);
                   _data.push(data.data[0]);
                   this.goodsTransportable.clear();
                   _data.forEach(async item => {
@@ -1743,7 +1742,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.nbCode'] = `$eq:${unit}`;
     this.strategyService.getUnitsMedXConv(params.getValue()).subscribe({
       next: response => {
-        console.log('unit', response);
         this.measureUnits = response.data;
       },
       error: error => {},
