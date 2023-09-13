@@ -46,7 +46,7 @@ export class PaqDestinoDetComponent extends BasePage {
       hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
-        position: 'left',
+        position: 'right',
         add: false,
         edit: true,
         delete: true,
