@@ -89,17 +89,31 @@
         <div class="col-md-3">
           <form-field [control]="serviceOrdersForm.get('regionalCoordination')">
             <ngx-select
-              (fetchItems)="getRegionalCoordination($event)"
-              [data]="regionalCoordination"
+              label="Coordinación Regional"
               [form]="serviceOrdersForm"
-              value="regionalCoordination"
-              bindLabel="description"
-              label="Cordinación Regional"
-              control="regionalCoordination">
+              [data]="delegation"
+              (fetchItems)="initForm()"
+              bindLabel="initAndName"
+              control="regionalCoordination"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              termMaxLength="50"
+              value="delegacion"
+              [labelTemplate]="initLabel"
+              [optionTemplate]="initOption">
             </ngx-select>
+            <ng-template #initLabel let-item="item">
+              {{ item.delegacion }}
+            </ng-template>
+            <ng-template #initOption let-item="item">
+              <div [title]="item.delegacion">
+                {{ item.delegacion }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
       </div>
+
       <div class="row margin-input">
         <div class="col-md-4">
           <form-field [control]="serviceOrdersForm.get('reportKey')">

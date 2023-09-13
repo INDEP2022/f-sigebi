@@ -11,6 +11,8 @@ import {
   IStrategyProcess,
   IStrategyType,
 } from 'src/app/core/models/ms-strategy-service/strategy-service.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { IndicatorsParametersService } from 'src/app/core/services/ms-parametergood/indicators-parameter.service';
 import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -29,10 +31,12 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   serviceOrdersForm: FormGroup;
   filterType: IStrategyType;
   filterLovSer: IStrategyLovSer;
-
+  area: number = 0;
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  delegationUser: any;
+  delegation = new DefaultSelect();
   settings2 = { ...this.settings, actions: false };
   types = new DefaultSelect();
   public serviceOrderKey = new DefaultSelect();
@@ -44,7 +48,9 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private strategyServiceService: StrategyServiceService
+    private strategyServiceService: StrategyServiceService,
+    private authService: AuthService,
+    private indicatorsParametersService: IndicatorsParametersService
   ) {
     super();
     this.settings = {
@@ -57,6 +63,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.initForm();
     this.getProcess(new ListParams());
   }
   private prepareForm() {
@@ -167,5 +174,22 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
         this.process = new DefaultSelect(response.data, response.count);
       })
     );
+  }
+
+  initForm() {
+    this.delegationUser = this.authService.decodeToken().delegacionreg;
+    this.area = Number(this.authService.decodeToken().department);
+    if (this.area == 0) {
+      this.getProcess(new ListParams());
+    } else {
+      this.indicatorsParametersService.getRNomencla(this.area).subscribe({
+        next: data => {
+          this.delegation = new DefaultSelect(data.data);
+        },
+        error: () => {
+          this.delegation = new DefaultSelect();
+        },
+      });
+    }
   }
 }
