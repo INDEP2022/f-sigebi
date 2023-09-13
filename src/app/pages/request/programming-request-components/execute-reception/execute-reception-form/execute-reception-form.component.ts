@@ -79,7 +79,6 @@ import {
   RECEIPT_GUARD_COLUMNS,
 } from './columns/minute-columns';
 import { tranGoods } from './execute-reception-data';
-import { SelectInputComponent } from './select-input/select-input.component';
 
 @Component({
   selector: 'app-execute-reception-form',
@@ -168,6 +167,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   showTransportable: boolean = false;
   showGuard: boolean = false;
   showWarehouse: boolean = false;
+  loadingTransportable: boolean = false;
   showReprog: boolean = false;
   showCancel: boolean = false;
   checkSeleccionado: boolean = false;
@@ -193,7 +193,16 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   settingsTransGood = {
     ...TABLE_SETTINGS,
-    actions: false,
+    selectMode: 'multi',
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'right',
+      delete: true,
+    },
+
+    delete: {
+      deleteButtonContent: '<i class="fa fa-eye"></i>',
+    },
   };
   columns = TRANS_GOODS_EXECUTE_EDITABLE;
 
@@ -313,6 +322,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   guardGoods: LocalDataSource = new LocalDataSource();
   tranGoods = tranGoods;
   receipts: LocalDataSource = new LocalDataSource();
+  infoGoodsTran: LocalDataSource = new LocalDataSource();
   search: FormControl = new FormControl({});
   programming: Iprogramming;
   proceedingOpen: IProceedings[] = [];
@@ -365,7 +375,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.settingsTransGood.columns = TRANS_GOODS_EXECUTE_EDITABLE;
 
     const self = this;
-    this.settingsTransGood.columns = {
+    /*this.settingsTransGood.columns = {
       saeMeasureUnit: {
         title: 'Unidad de Medida INDEP',
         type: 'custom',
@@ -385,7 +395,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           //this.setDescriptionGoodSae(data);
         });
       },
-    };
+    }; */
     this.getInfoUserLog();
     this.prepareForm();
     this.prepareSearchForm();
@@ -778,6 +788,45 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   getInfoGoodsTransportable() {
+    /*const _data: any[] = [];
+    this.formLoadingTrans = true;
+
+    this.paramsTransportableGoods.getValue()['filter.programmingId'] =
+      this.programmingId;
+    this.paramsTransportableGoods.getValue()['filter.status'] =
+      'EN_TRANSPORTABLE';
+    this.paramsTransportableGoods.getValue()['sortBy'] = 'goodId:ASC';
+    this.programmingService
+      .getGoodsProgramming(this.paramsTransportableGoods.getValue())
+      .subscribe({
+        next: async data => {
+          this.totalItemsTransportableGoods = data.count;
+          this.goodsTransportable.clear();
+          data.data.map((item: IGoodProgramming) => {
+            this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
+            this.paramsShowTransportable.getValue()['sortBy'] = 'id:ASC';
+            this.goodService
+              .getAll(this.paramsShowTransportable.getValue())
+              .subscribe({
+                next: async data => {
+                  _data.push(data.data[0]);
+                  console.log('data', _data);
+                  this.infoGoodsTran.load(_data);
+                  this.formLoadingTrans = false;
+                },
+                error: error => {
+                  this.formLoadingTrans = false;
+                },
+              });
+          });
+        },
+        error: error => {
+          this.formLoadingTrans = false;
+          this.totalItemsTransportableGoods = 0;
+          this.selectGood = [];
+        },
+      }); */
+
     const _data: any[] = [];
 
     this.formLoadingTrans = true;
@@ -1514,6 +1563,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
+          console.log('de aqui', resp);
           this.measureUnits = resp.data;
         },
         error: error => {},
@@ -1661,12 +1711,18 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   editGood(good: IGood) {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modalSizeXL modal-dialog-centered',
+    };
     config.initialState = {
       good,
       tranType: this.tranType,
       callback: (next: boolean) => {
-        if (next) this.getInfoGoodsTransportable();
+        if (next)
+          this.paramsTransportableGoods
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getInfoGoodsTransportable());
       },
     };
 
@@ -2882,7 +2938,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   showGoodsReceiptGuard(receipt: IReceipt) {
     let config = {
       ...MODAL_CONFIG,
-      class: 'modalSizeXL modal-dialog-centered',
+      class: 'modal-lg modal-dialog-centered',
     };
     config.initialState = {
       receipt,
@@ -2896,7 +2952,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   showGoodsReceiptWarehouse(receipt: IReceipt) {
     let config = {
       ...MODAL_CONFIG,
-      class: 'modalSizeXL modal-dialog-centered',
+      class: 'modal-lg modal-dialog-centered',
     };
     config.initialState = {
       receipt,
@@ -3570,7 +3626,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           }
         },
       },
-      class: 'modal-xl modal-dialog-centered',
+      class: 'modalSizeXL modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(ShowReportComponentComponent, config);
@@ -3990,10 +4046,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   saveInfoGoodReception() {
-    console.log('this.goodsReception', this.goodsReception);
-    /*this.count = 0;
+    //console.log('this.goodsReception', this.goodsReception);
+    this.count = 0;
     this.goodsReception.value.map(async (good: IGood) => {
-    
       this.count = this.count + 1;
       if (Number(good.quantity) < Number(good.quantitySae)) {
         if (this.count == 1) {
@@ -4070,12 +4125,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           );
         }
       }
-    }); */
+    });
   }
 
   saveInfoGoodTransportable() {
-    console.log('goodsTransportable', this.goodsTransportable);
-    /*
+    //console.log('goodsTransportable', this.goodsTransportable);
     this.count == 0;
     this.goodId = '';
     let saePhysical: boolean = false;
@@ -4228,7 +4282,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           'No se encontraron bienes para actualizar'
         );
       }
-    } */
+    }
   }
 
   checkInfoUnitMeasure(good: any) {

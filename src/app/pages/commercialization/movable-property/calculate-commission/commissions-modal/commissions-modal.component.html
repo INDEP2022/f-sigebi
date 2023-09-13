@@ -1,31 +1,19 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar' : 'Agregar' }} {{ title }} del Cálculo No.
+      {{ comerComCalculated.comCalculatedId }}
+    </h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="commissionsForm">
       <div class="row">
-        <div class="col-md-2">
-          <form-field
-            label="Id. Calculada"
-            [control]="commissionsForm.get('comCalculatedId')">
-            <input
-              readonly
-              type="text"
-              class="form-control"
-              formControlName="comCalculatedId" />
+        <!-- <div class="col-md-2">
+          <form-field label="Id. Calculada" [control]="commissionsForm.get('comCalculatedId')">
+            <input readonly type="text" class="form-control" formControlName="comCalculatedId" />
           </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field label="Cvman" [control]="commissionsForm.get('cvman')">
-            <input
-              maxlength="8"
-              type="text"
-              class="form-control"
-              formControlName="cvman" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
+        </div> -->
+        <div class="col-md-3">
           <form-field label="Lote" [control]="commissionsForm.get('batch')">
             <input type="number" class="form-control" formControlName="batch" />
           </form-field>
@@ -48,6 +36,15 @@
               type="number"
               class="form-control"
               formControlName="goodNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Cvman" [control]="commissionsForm.get('cvman')">
+            <input
+              maxlength="8"
+              type="text"
+              class="form-control"
+              formControlName="cvman" />
           </form-field>
         </div>
       </div>

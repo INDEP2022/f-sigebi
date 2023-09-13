@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { ModalDirective } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
@@ -32,6 +32,9 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
   dataFormat: any[] = [];
   jsonToCsv = JSON_TO_MAYUS;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params1 = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  params3 = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
   data1: LocalDataSource = new LocalDataSource();
   data2: LocalDataSource = new LocalDataSource();
@@ -47,8 +50,13 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
   loading3 = false;
   loading4 = false;
   totInvoices: number = 0;
+  totalItems: number = 0;
+  totalItems1: number = 0;
+  totalItems2: number = 0;
+  totalItems3: number = 0;
   dataFormatPercentage: any[] = [];
   array: any;
+  private isFirstLoad = true;
   arrayData: any;
   settings2 = {
     ...this.settings,
@@ -116,6 +124,18 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.prepareForm2();
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (!this.isFirstLoad) {
+        this.source();
+      }
+    });
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (!this.isFirstLoad) {
+        this.searchGoodExcel();
+      }
+    });
+    this.isFirstLoad = false;
   }
 
   private prepareForm() {
@@ -251,6 +271,7 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
     this.comerEventosService.getLoteExport(body, params).subscribe({
       next: resp => {
         this.data.load(resp.data);
+        this.totalItems = resp.count;
         this.loading1 = false;
         this.consult();
         this.show2 = true;
@@ -305,7 +326,7 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
       };
 
       let params = {
-        ...this.params.getValue(),
+        ...this.params1.getValue(),
       };
 
       this.comerEventosService.getLoteExport(body, params).subscribe({
@@ -456,7 +477,7 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
     if (this.dataFormatPercentage) {
       this.data1.load(this.dataFormatPercentage);
       this.data1.refresh();
-      //this.totalItems = this.dataFormatPercentage.length;
+      this.totalItems1 = this.dataFormatPercentage.length;
       this.loading2 = false;
       this.show = true;
     }
@@ -479,7 +500,7 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
     };
 
     let params = {
-      ...this.params.getValue(),
+      ...this.params2.getValue(),
     };
 
     this.comerEventosService.getLoteExport(body, params).subscribe({
@@ -487,6 +508,7 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
         console.log(resp);
         this.data2.load(resp.data);
         this.show3 = true;
+        this.totalItems2 = resp.count;
         this.loading3 = false;
       },
       error: err => {
@@ -562,10 +584,11 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
     let body = {
       pOption: 8, //Cambio de status - 3, historial
       pEvent: this.commaSeparatedString,
+      ...this.params2.getValue(),
     };
 
     let params = {
-      ...this.params.getValue(),
+      ...this.params2.getValue(),
     };
 
     this.comerEventosService.getLoteExport(body, params).subscribe({
@@ -573,6 +596,7 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
         console.log(resp);
         this.data2.load(resp.data);
         this.show3 = true;
+        this.totalItems2 = resp.count;
       },
       error: err => {
         console.log(err);
@@ -602,13 +626,14 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
     };
 
     let params = {
-      ...this.params.getValue(),
+      ...this.params3.getValue(),
     };
 
     this.comerEventosService.getLoteExport(body, params).subscribe({
       next: resp => {
         console.log(resp);
         this.data3.load(resp.data);
+        this.totalItems3 = resp.count;
       },
       error: err => {
         console.log(err);
