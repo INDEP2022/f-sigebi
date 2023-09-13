@@ -31,6 +31,10 @@ export class PaymentService extends HttpService {
     return this.get(PaymentEndPoints.ComerPaymentRef, params);
   }
 
+  getPaymentsxConfirm(params: _Params) {
+    return this.get(PaymentEndPoints.PaymentsxConfirm, params);
+  }
+
   remove(id: any) {
     return this.delete(`${PaymentEndPoints.ComerPaymentRef}/${id}`);
   }
