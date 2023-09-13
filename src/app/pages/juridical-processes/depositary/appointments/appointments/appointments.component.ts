@@ -3039,9 +3039,11 @@ export class AppointmentsComponent
           'Por este Conducto se le Informa que el Bien: ' +
           this.noBienReadOnly +
           ' con Descripción: ' +
-          this.good.description +
-          '. Está en la Depositaría: ' +
-          this.depositaryAppointment.personNumber.personName,
+          this.good
+            ? this.good.description
+            : '' +
+              '. Está en la Depositaría: ' +
+              this.depositaryAppointment.personNumber.personName,
         asunto: 'Bien: ' + this.noBienReadOnly + ' en Depositaría',
       },
     };
@@ -3147,6 +3149,7 @@ export class AppointmentsComponent
     } else {
       this.goods = new DefaultSelect([], 0, true);
       this.cleanScreenFields();
+      this.appointmentNumberParams = null;
     }
   }
 }
