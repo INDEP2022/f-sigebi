@@ -141,6 +141,7 @@
                 <button
                   class="btn btn-secondary btn-sm active"
                   (click)="authorize()"
+                  [disabled]="!flagConf"
                   [ngClass]="{ disabled: !PB_CONFIRMAR }">
                   Autorizar
                 </button>
@@ -151,6 +152,7 @@
                   <div class="col-auto">
                     <button
                       class="btn btn-secondary btn-sm active mb-2"
+                      [disabled]="!flagFilter"
                       (click)="callFilterDonation()">
                       Definir Filtro
                     </button>
@@ -159,7 +161,7 @@
                     <confirm-button
                       [btnSmall]="true"
                       loadingText="Bienes"
-                      [disabled]="false"
+                      [disabled]="!flagGoods"
                       [loading]="loadingGood"
                       text="Bienes"
                       (confirm)="listGoods()">
@@ -168,6 +170,7 @@
                   <div class="col-auto">
                     <button
                       class="btn btn-secondary btn-sm active mb-2"
+                      [disabled]="!flagTracker"
                       (click)="callRastreador()">
                       Por Rastreador
                     </button>
@@ -235,13 +238,13 @@
               <button
                 class="btn btn-secondary btn-sm active"
                 (click)="generateRequest()"
-                [disabled]="!flag">
+                [disabled]="!flagGenera">
                 Generar/Modifica Solicitud
               </button>
             </div>
             <button
               class="btn btn-secondary btn-sm active"
-              [ngClass]="{ disabled: !PB_REGISTRAR }">
+              (click)="register()">
               Registrar
             </button>
           </div>

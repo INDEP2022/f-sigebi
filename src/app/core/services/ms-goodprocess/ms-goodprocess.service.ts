@@ -272,4 +272,8 @@ export class GoodprocessService extends HttpService {
       data
     );
   }
+
+  getBlkCtrlGood(cve: string, good: number) {
+    return this.get(`${GoodprocessEndpoints.GetBlkCtrlGood}/${cve}/${good}`);
+  }
 }
