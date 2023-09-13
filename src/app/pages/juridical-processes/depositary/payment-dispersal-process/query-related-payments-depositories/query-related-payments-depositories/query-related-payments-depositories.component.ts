@@ -148,7 +148,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
         param.text = this.form.value.noBien;
         this.getGoodsSheard(param, true);
       } else {
-        this.alert('warning', 'Número de bien', ERROR_GOOD_PARAM);
+        this.alert('warning', 'No. de bien', ERROR_GOOD_PARAM);
       }
     }
     // Pagos Bancos
@@ -249,7 +249,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
       if (!this.noBienReadOnly) {
         this.alert(
           'warning',
-          'Número de bien',
+          'No. de bien',
           'Carga la información del bien primero para continuar'
         );
         return;
@@ -270,7 +270,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
             this.loadingGoodAccount = false;
             this.alert(
               'warning',
-              'Número de bien',
+              'No. de bien',
               NOT_FOUND_GOOD(
                 // err.error.message ? err.error.message :
                 'Error en el servidor'
@@ -279,7 +279,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
           },
         });
     } else {
-      this.alert('warning', 'Número de bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -319,13 +319,13 @@ export class QueryRelatedPaymentsDepositoriesComponent
   btnImprimir(): any {
     console.log('Imprimir');
     // LLAMAR PANTALLA FCONDEPOREPINGXBIEN - ordenes de ingreso x bien en depositaria
-    // PASAR SOLO EL NÚMERO DE bIEN
+    // PASAR SOLO EL NO. DE bIEN
     // this.alert('info', 'LLAMAR PANTALLA FCONDEPOREPINGXBIEN', '');
     if (this.form.get('noBien').valid) {
       if (!this.noBienReadOnly) {
         this.alert(
           'warning',
-          'Número de bien',
+          'No. de bien',
           'Carga la información del bien primero para continuar'
         );
         return;
@@ -348,7 +348,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
         }
       );
     } else {
-      this.alert('warning', 'Número de bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -410,7 +410,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
             this.loadingAppointment = false;
             this.alert(
               'warning',
-              'Número de bien',
+              'No. de bien',
               NOT_FOUND_GOOD_APPOINTMENT(
                 // err.error.message ? err.error.message :
                 'Error en el servidor'
@@ -419,7 +419,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
           },
         });
     } else {
-      this.alert('warning', 'Número de bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -445,7 +445,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.loadingGood = false;
           this.alert(
             'warning',
-            'Número de bien',
+            'No. de bien',
             NOT_FOUND_GOOD(
               // err.error.message ? err.error.message :
               'Error en el servidor'

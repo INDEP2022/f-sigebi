@@ -527,6 +527,7 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
         indicator: null,
         incomeid: null,
       };
+
       const result: any = await this.saveRefPayDepositaryData(body);
 
       let haveReference: any = await this.getAppointmentByGoodId(item.NO_BIEN);
