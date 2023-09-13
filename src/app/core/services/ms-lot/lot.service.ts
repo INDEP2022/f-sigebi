@@ -21,6 +21,10 @@ export class LotService extends HttpService {
     this.microservice = LotEndpoints.BasePath;
   }
 
+  getAll(params: _Params) {
+    return this.get('eat-lots', params);
+  }
+
   getAllComerLotsFilter(params?: string) {
     return this.get('eat-lots', params);
   }

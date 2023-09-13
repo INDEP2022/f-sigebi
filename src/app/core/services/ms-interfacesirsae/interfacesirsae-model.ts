@@ -58,3 +58,14 @@ export interface ISirsaeScrapDTO {
   totDocument: string;
   clkpv: string;
 }
+export interface ISendSirsaeOIScrapDTO {
+  pEventId: string;
+  pCoordRegionalUR: string;
+  pConcept: string;
+  pEvent: string;
+  pDateBillRec: string;
+  pAmount: string;
+  pSpent: string;
+  pMandato2: string;
+  pAmountTOT: string;
+}
