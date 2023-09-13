@@ -1,6 +1,3 @@
-import { QuantitySaeInputComponent } from '../../../transfer-request/tabs/compliance-verification-components/verify-compliance-tab/quantity-sae-input/quantity-sae-input.component';
-import { SaeInputComponent } from '../../../transfer-request/tabs/compliance-verification-components/verify-compliance-tab/sae-input/sae-input.component';
-
 export const ESTATE_COLUMNS = {
   googId: {
     title: 'No. Gestión',
@@ -466,6 +463,11 @@ export const TRANS_GOODS_EXECUTE_EDITABLE = {
   },
 
   descriptionGoodSae: {
+    title: 'Descripción INDEP',
+    sort: false,
+  },
+
+  /*descriptionGoodSae: {
     title: 'Descripción Bien INDEP',
     type: 'custom',
     class: 'custom-field',
@@ -473,7 +475,7 @@ export const TRANS_GOODS_EXECUTE_EDITABLE = {
     renderComponent: SaeInputComponent,
     onComponentInitFunction(instance?: any) {},
     sort: false,
-  },
+  }, */
 
   quantity: {
     title: 'Cantidad Transferente',
@@ -483,16 +485,28 @@ export const TRANS_GOODS_EXECUTE_EDITABLE = {
 
   quantitySae: {
     title: 'Cantidad INDEP',
+    type: 'string',
+    sort: false,
+  },
+
+  /*quantitySae: {
+    title: 'Cantidad INDEP',
     type: 'custom',
     class: 'custom-field',
     filter: false,
     renderComponent: QuantitySaeInputComponent,
     onComponentInitFunction(instance?: any) {},
     sort: false,
-  },
+  }, */
 
   unitMeasure: {
     title: 'Unidad Medida Transferente',
+    type: 'string',
+    sort: false,
+  },
+
+  saeMeasureUnit: {
+    title: 'Unidad Medida INDEP',
     type: 'string',
     sort: false,
   },

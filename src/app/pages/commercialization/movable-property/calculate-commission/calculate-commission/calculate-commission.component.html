@@ -111,7 +111,8 @@
                 [attr.class]="'table-bordered'"
                 [settings]="settings2"
                 [source]="comCommisionXGood"
-                (edit)="openForm2($event.data)">
+                (edit)="openForm2($event.data)"
+                (delete)="questionDelete2($event.data)">
               </ng2-smart-table>
             </ng-scrollbar>
             <app-pagination [params]="params2" [totalItems]="totalItems2">

@@ -22,7 +22,7 @@ export class CommissionsModalComponent extends BasePage implements OnInit {
   edit: boolean = false;
 
   commissionsForm: ModelForm<IComerCommissionsPerGood>;
-  commissions: IComerCommissionsPerGood;
+  commissions: any;
 
   idEvent: IComerEvent2;
   idGood: IGood;
@@ -45,19 +45,30 @@ export class CommissionsModalComponent extends BasePage implements OnInit {
       comCalculatedId: [this.comerComCalculated.comCalculatedId],
       eventId: [
         null,
-        [Validators.pattern(NUMBERS_DASH_PATTERN), Validators.max(99999999999)],
+        [
+          Validators.pattern(NUMBERS_DASH_PATTERN),
+          Validators.max(99999999999),
+          Validators.required,
+        ],
       ],
       goodNumber: [
         null,
         [
           Validators.pattern(NUMBERS_DASH_PATTERN),
           Validators.maxLength(99999999999),
+          Validators.required,
         ],
       ],
-      amountCommission: [null, [Validators.max(9999999.99)]],
-      batch: [null, [Validators.max(99999999999)]],
-      cvman: [null, [Validators.pattern(STRING_PATTERN)]],
-      sale: [null, [Validators.max(9999999.99)]],
+      amountCommission: [
+        null,
+        [Validators.max(999999999999999999999999999), Validators.required],
+      ],
+      batch: [null, [Validators.max(99999999999), Validators.required]],
+      cvman: [null, [Validators.pattern(STRING_PATTERN), Validators.required]],
+      sale: [
+        null,
+        [Validators.max(999999999999999999999), Validators.required],
+      ],
       comments: [null, [Validators.pattern(STRING_PATTERN)]],
       processIt: [null, [Validators.pattern(STRING_PATTERN)]],
       saleTc: [null, []],
@@ -66,9 +77,20 @@ export class CommissionsModalComponent extends BasePage implements OnInit {
       this.edit = true;
       this.idEvent = this.commissions.eventId as IComerEvent2;
       this.idGood = this.commissions.goodNumber as IGood;
-      this.commissionsForm.patchValue(this.commissions);
-      this.commissionsForm.controls['eventId'].setValue(this.idEvent.eventId);
-      this.commissionsForm.controls['goodNumber'].setValue(this.idGood.goodId);
+      this.commissionsForm.patchValue({
+        comCalculatedId: this.commissions.comCalculatedId,
+        eventId: this.commissions.event,
+        goodNumber: this.commissions.good,
+        amountCommission: this.commissions.amountCommission,
+        batch: this.commissions.batch,
+        cvman: this.commissions.cvman,
+        sale: this.commissions.sale,
+        comments: this.commissions.comments,
+        processIt: this.commissions.processIt,
+        saleTc: this.commissions.saleTc,
+      });
+      // this.commissionsForm.controls['eventId'].setValue(this.idEvent.eventId);
+      // this.commissionsForm.controls['goodNumber'].setValue(this.idGood.goodId);
     }
   }
 
@@ -82,29 +104,65 @@ export class CommissionsModalComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.comerCommissionsPerGoodService
-      .create(this.commissionsForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    const body: IComerCommissionsPerGood = {
+      comCalculatedId: this.comerComCalculated.comCalculatedId,
+      eventId: this.commissionsForm.value.eventId,
+      goodNumber: this.commissionsForm.value.goodNumber,
+      amountCommission: this.commissionsForm.value.amountCommission,
+      batch: this.commissionsForm.value.batch,
+      cvman: this.commissionsForm.value.cvman,
+      sale: this.commissionsForm.value.sale,
+      comments: this.commissionsForm.value.comments,
+      processIt: this.commissionsForm.value.processIt,
+      saleTc: null,
+    };
+
+    this.comerCommissionsPerGoodService.create(body).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => {
+        this.alert(
+          'error',
+          'Ocurrió un error al guardar el registro',
+          error.error.message
+        );
+        this.loading = false;
+      },
+    });
   }
 
   update() {
     this.loading = true;
-    this.comerCommissionsPerGoodService
-      .update(this.commissionsForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    const body: IComerCommissionsPerGood = {
+      comCalculatedId: this.comerComCalculated.comCalculatedId,
+      eventId: this.commissionsForm.value.eventId,
+      goodNumber: this.commissionsForm.value.goodNumber,
+      amountCommission: this.commissionsForm.value.amountCommission,
+      batch: this.commissionsForm.value.batch,
+      cvman: this.commissionsForm.value.cvman,
+      sale: this.commissionsForm.value.sale,
+      comments: this.commissionsForm.value.comments,
+      processIt: this.commissionsForm.value.processIt,
+      saleTc: this.commissions.saleTc,
+    };
+    this.comerCommissionsPerGoodService.update(body).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => {
+        this.alert(
+          'error',
+          'Ocurrió un error al actualizar el registro',
+          error.error.message
+        );
+        this.loading = false;
+      },
+    });
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    const message: string = this.edit ? 'actualizada' : 'guardada';
+    this.onLoadToast('success', `Comisión ${message} correctamente`, '');
+    // this.title
     this.loading = false;
-
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 }
