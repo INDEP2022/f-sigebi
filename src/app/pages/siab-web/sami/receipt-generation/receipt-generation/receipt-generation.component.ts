@@ -8,8 +8,13 @@ import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { ProgrammingGoodReceiptService } from 'src/app/core/services/ms-programming-good/programming-good-receipt.service';
+import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  DOUBLE_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   IReceiptExceltem,
@@ -95,7 +100,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     private genericService: GenericService,
     private excelService: ExcelService,
     private receptionGoodService: ReceptionGoodService,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    private strategyServiceService: StrategyServiceService
   ) {
     super();
     this.settings = {
@@ -169,7 +175,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     this.programmingForm.controls['managementId'].disable();
     this.getGenericC(new ListParams());
     this.getGenericR(new ListParams());
-    this.unitsQuery(new ListParams());
+    // this.unitsQuery(new ListParams());
     this.getGenericE(new ListParams());
   }
   chargeFile(event: any) {
@@ -270,7 +276,6 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
   }
   searchManagement(data: IReceiptItem) {
     if (data.guardado == '0') {
-      this.unitsQuery(new ListParams());
       this.getGenericD(new ListParams());
       this.getGenericE(new ListParams());
       this.getGenericEC(new ListParams());
@@ -290,6 +295,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.destinationLetter = this.recepiptGood.destino_letra;
       this.destinoTransferenteLetra =
         this.recepiptGood.destino_transferente_letra;
+      this.unitsQuery(new ListParams());
     } else {
       this.alert(
         'warning',
@@ -299,7 +305,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     }
   }
   unitsQuery(params: ListParams) {
-    this.applicationGoodsQueryService.getAllUnitsQ(params).subscribe({
+    params['filter.unit'] = `$eq:${this.recepiptGood.unidad_medida_letra}`;
+    this.strategyServiceService.getUnitsMedXConv(params).subscribe({
       next: resp => {
         console.log(resp);
         this.unitsList = new DefaultSelect(resp.data, resp.count);
@@ -308,6 +315,25 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         this.unitsList = new DefaultSelect([], 0, true);
       },
     });
+  }
+  onChangeUnits(medUnid: any) {
+    console.log(medUnid);
+    if (medUnid.decimals == 'N') {
+      this.indepForm.controls['cantidad_sae'].setValidators([
+        Validators.pattern(POSITVE_NUMBERS_PATTERN),
+      ]);
+    } else {
+      this.indepForm.controls['cantidad_sae'].setValidators([
+        Validators.pattern(DOUBLE_PATTERN),
+      ]);
+    }
+    if (medUnid.tpUnitGreater == 'N') {
+      console.log(Number(this.quantity));
+      this.indepForm.controls['cantidad_sae'].setValidators([
+        Validators.max(Number(this.quantity)),
+      ]);
+    }
+    this.indepForm.updateValueAndValidity();
   }
   getGenericD(params: ListParams) {
     params['filter.name'] = 'Destino';

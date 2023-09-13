@@ -40,7 +40,7 @@
                 label="Cuenta"
                 [form]="form"
                 [data]="bankAccountSelect"
-                (fetchItems)="searchBankAccount(bankCode, paramsSubject)"
+                (fetchItems)="searchBankAccount($event)"
                 bindLabel="accountAndNumber"
                 control="account"
                 [searchOnInit]="true"
@@ -53,11 +53,11 @@
                 (clear)="onClearSelection()">
               </ngx-select>
               <ng-template #bankLabel let-item="item">
-                {{ item.cveAccount }}
+                {{ item.accountNumber.cveAccount }}
               </ng-template>
               <ng-template #bankOption let-item="item">
-                <div [title]="item.cveAccount">
-                  {{ item.cveAccount }}
+                <div [title]="item.accountNumber.cveAccount">
+                  {{ item.accountNumber.cveAccount }}
                 </div>
               </ng-template>
             </form-field>
