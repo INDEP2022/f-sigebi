@@ -28,6 +28,8 @@ import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import {
   IPupProcDisp,
+  IPupProcEnvSirsae,
+  IPupProcReproc,
   IPupProcSeldisp,
   IPupValidateMandatoNfac,
 } from 'src/app/core/services/ms-lot/models-lots';
@@ -37,14 +39,13 @@ import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-e
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { BasePage } from 'src/app/core/shared';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { CanLcsWarrantyComponent } from '../can-lcs-warranty/can-lcs-warranty.component';
 import { CanPagosCabComponent } from '../can-pagos-cab/can-pago-cab.component';
 import { CanRelusuComponent } from '../can-relusu/can-relusu.component';
-import { CanUsuSirsaeComponent } from '../can-usu-sirsae/can-usu-sirsae.component';
 import { ComerPaymentVirtComponent } from '../comer-payment-virt/comer-payment-virt.component';
 import { clearGoodCheckCustomer } from '../dispersion-payment-details/customers/columns';
 import {
+  batchEventCheck,
   COLUMNSCUSTOMER,
   COLUMNS_CUSTOMER_BANKS,
   COLUMNS_DESERT_LOTS,
@@ -52,7 +53,7 @@ import {
   COLUMNS_LOT_EVENT_FALSE,
   COLUMNS_LOT_EVENT_TRUE,
   COLUMNS_PAYMENT_LOT,
-  batchEventCheck,
+  goodCheckCustomer,
   setCheckHide,
 } from './columns';
 
@@ -129,6 +130,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   statusVtaId: any = null;
   idClientCustomer: any = null;
+  rfcClientCustomer: any = null;
+  eventTpId: any = null;
 
   isAvailableByType: boolean = true;
 
@@ -138,6 +141,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   amountBatch: any = null;
   idPaymentBatch: any = null;
   idOrderBatch: any = null;
+  lotId: any = null;
 
   dataBatch: any = null;
 
@@ -150,7 +154,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   private id_tipo_disp: number = null;
 
   //Arrays
-  batchEventSelect: any[]
+  batchEventSelect: any[];
 
   constructor(
     private fb: FormBuilder,
@@ -460,6 +464,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
           resp.notificationDate
         );
         this.statusVtaId = resp.statusVtaId;
+        this.eventTpId = resp.eventTpId;
         this.eventManagement = resp.address == 'M' ? 'MUEBLES' : 'INMUEBLES';
         this.getDataComerCustomer();
         this.getDataLotes(resp.id);
@@ -621,6 +626,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       : '';
     this.comerTpEventsService.getTpEvent2(paramsF.getParams()).subscribe(
       async res => {
+        console.log(res);
         const newData = await Promise.all(
           res.data.map(async (e: any) => {
             let disponible: boolean;
@@ -695,17 +701,27 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
           console.log(res);
           this.comerLotsService.comerLotsClientsPayrefSum(eventId).subscribe(
             res => {
-              console.log(res)
-              this.formLotEvent.get('totalTableWarranty').setValue(res.data[0].sumPriceWarranty)
-              this.formLotEvent.get('totalTableAdvance').setValue(res.data[0].sumAnticipate)
-              this.formLotEvent.get('totalFinalPrice').setValue(res.data[0].sumPriceEnd)
-              this.formLotEvent.get('totalWarranty').setValue(res.data[0].sumWarrantyAssig)
-              this.formLotEvent.get('totalLiquidateAmount').setValue(res.data[0].sumAmountLiq)
+              console.log(res);
+              this.formLotEvent
+                .get('totalTableWarranty')
+                .setValue(res.data[0].sumPriceWarranty);
+              this.formLotEvent
+                .get('totalTableAdvance')
+                .setValue(res.data[0].sumAnticipate);
+              this.formLotEvent
+                .get('totalFinalPrice')
+                .setValue(res.data[0].sumPriceEnd);
+              this.formLotEvent
+                .get('totalWarranty')
+                .setValue(res.data[0].sumWarrantyAssig);
+              this.formLotEvent
+                .get('totalLiquidateAmount')
+                .setValue(res.data[0].sumAmountLiq);
             },
             err => {
-              console.log(err)
+              console.log(err);
             }
-          )
+          );
 
           const newData = await Promise.all(
             res.data.map(async (e: any) => {
@@ -734,7 +750,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       );
   }
 
-  //POSQUERY LOTES  
+  //POSQUERY LOTES
   postQueryLots(e: any) {
     return new Promise((resolve, reject) => {
       if (this.id_tipo_disp == 2) {
@@ -784,7 +800,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                   ? 'bg-success text-white'
                   : 'bg-dark text-white',
               actions: false,
-              columns: COLUMNS_LOT_EVENT_TRUE
+              columns: COLUMNS_LOT_EVENT_TRUE,
             };
             resolve({ available: true });
           }
@@ -796,20 +812,18 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                 ? 'bg-success text-white'
                 : 'bg-dark text-white',
             actions: false,
-            columns: COLUMNS_LOT_EVENT_TRUE
+            columns: COLUMNS_LOT_EVENT_TRUE,
           };
           resolve({ available: true });
         }
       } else {
         this.settingsLotEvent = {
-              ...TABLE_SETTINGS,
-              rowClassFunction: (row: { data: { available: any } }) =>
-                row.data.available
-                  ? 'bg-success text-white'
-                  : 'bg-dark text-white',
-              actions: false,
-              columns: COLUMNS_LOT_EVENT_TRUE
-            };
+          ...TABLE_SETTINGS,
+          rowClassFunction: (row: { data: { available: any } }) =>
+            row.data.available ? 'bg-success text-white' : 'bg-dark text-white',
+          actions: false,
+          columns: COLUMNS_LOT_EVENT_TRUE,
+        };
         resolve({ available: true });
       }
     });
@@ -842,6 +856,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     console.log(e.data);
     this.loadingCustomerBanks = true;
     this.idClientCustomer = e.data.ClientId;
+    this.rfcClientCustomer = e.data.RFC;
     this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
     this.getTotalSums(e);
   }
@@ -876,6 +891,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.formLotEvent.get('warranty').setValue(e.data.guaranteePrice);
     this.formLotEvent.get('liquidateAmount').setValue(e.data.liquidationAmount);
     this.formLotEvent.get('txtCancel').setValue(e.data.txtCan);
+    this.lotId = e.data.lotId;
     this.getLotsBanks(e.data.lotId);
     this.getPaymentLots(e.data.lotId);
   }
@@ -1264,7 +1280,34 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //Enviar a SIRSAE
   sendToSirsae() {
-    if (this.txt_usu_valido != null) {
+    this.alertQuestion(
+      'question',
+      '¿Desea Ejecutar el Proceso de Envío a SIRSAE?',
+      '',
+      'Continuar'
+    ).then(q => {
+      if (q.isConfirmed) {
+        //TODO: PUP_PROC_ENV_SIRSAE
+        const model: IPupProcEnvSirsae = {
+          typeProcess: this.formRbButton.get('definitive').value,
+          lotId: this.lotId,
+          clientId: this.idClientCustomer,
+          typeDispId: this.id_tipo_disp,
+          rfc: this.rfcClientCustomer,
+          saleStatusId: '',
+          address: this.eventManagement == 'MUEBLES' ? 'M' : 'I',
+          comerLotsEventId: '',
+          publicLot: '',
+          comerEventsEventId: this.event.value,
+          rgTotalLots: this.formRbButton.get('allBatch').value,
+          typeEventId: this.eventTpId,
+        };
+
+        console.log(model);
+      }
+    });
+
+    /* if (this.txt_usu_valido != null) {
       this.alertQuestion(
         'question',
         '¿Desea Ejecutar el Proceso de Envío a SIRSAE?',
@@ -1273,6 +1316,22 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       ).then(q => {
         if (q.isConfirmed) {
           //TODO: PUP_PROC_ENV_SIRSAE
+          const model: IPupProcEnvSirsae = {
+            typeProcess: this.formRbButton.get('definitive').value,
+            lotId: this.lotId,
+            clientId: this.idClientCustomer,
+            typeDispId: this.id_tipo_disp,
+            rfc: this.rfcClientCustomer,
+            saleStatusId: '',
+            address: this.eventManagement == 'MUEBLES' ? 'M' : 'I',
+            comerLotsEventId: '',
+            publicLot: '',
+            comerEventsEventId: this.event.value,
+            rgTotalLots: this.formRbButton.get('allBatch').value,
+            typeEventId: this.eventTpId,
+          };
+
+          console.log(model)
         }
       });
     } else {
@@ -1291,8 +1350,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         ignoreBackdropClick: true,
       };
 
-      this.modalService.show(CanUsuSirsaeComponent, modalConfig);
-    }
+      this.modalService.show(CanUsuSirsaeComponent, modalConfig); 
+    }*/
   }
 
   //Ejecutar dispersión
@@ -1316,10 +1375,10 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         console.log(model);
         this.comerLotsService.pupProcDisp(model).subscribe(
           res => {
-            console.log(res)
+            console.log(res);
           },
           err => {
-            console.log(err)
+            console.log(err);
           }
         );
       }
@@ -1329,13 +1388,33 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   //Reprocesar Dispersión
   reprocessScattering() {
     if (this.id_tipo_disp != null) {
-      let c_message = [1, 3].includes(this.id_tipo_disp)
+      let c_message = ["1", "3"].includes(this.id_tipo_disp.toString())
         ? '¿Desea Ejecutar el Reproceso de Clientes?'
         : '¿Desea Ejecutar el Reproceso de Lotes?';
 
       this.alertQuestion('question', c_message, '', 'Ejecutar').then(q => {
         if (q.isConfirmed) {
           //TODO: PUP_PROC_REPROC
+          const model: IPupProcReproc = {
+            typeDispId: this.id_tipo_disp,
+            comerEventsEventId: this.event.value,
+            PROCESAR: ["1", "3"].includes(this.id_tipo_disp.toString())
+              ? goodCheckCustomer.map((e: any) => {
+                  return e.ClientId;
+                })
+              : batchEventCheck,
+            rgTypeProcess: this.formRbButton.get('definitive').value,
+          };
+          console.log(model);
+           this.comerLotsService.pupProcReproc(model).subscribe(
+            res => {
+              console.log(res)
+            },
+            err => {
+              console.log(err)
+              this.alert('error','Se presentó un Error inesperado','')
+            }
+          )
         }
       });
     } else {

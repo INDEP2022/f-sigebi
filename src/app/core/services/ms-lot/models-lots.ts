@@ -20,3 +20,25 @@ export interface IPupProcDisp{
     PROCESAR: any[];
     typeProcess: string;
 }
+
+export interface IPupProcEnvSirsae{
+  typeProcess:string | number,
+  lotId:string,
+  clientId:string,
+  typeDispId:string | number,
+  rfc:string ,
+  saleStatusId:string,
+  address:string,
+  comerLotsEventId:string,
+  publicLot:string,
+  comerEventsEventId:string,
+  rgTotalLots:string,
+  typeEventId:string
+}
+
+export interface IPupProcReproc{
+  typeDispId: string | number,
+  comerEventsEventId: string,
+  PROCESAR: any[],
+  rgTypeProcess: string
+}
