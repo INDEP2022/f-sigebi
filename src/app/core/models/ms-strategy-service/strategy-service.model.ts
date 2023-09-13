@@ -11,3 +11,7 @@ export interface IStrategyTypeService {
   registryNumber?: number;
   nbOrigin?: string;
 }
+export interface IStrategyType {
+  pProcessNumber?: number;
+  pServiceNumber: string;
+}

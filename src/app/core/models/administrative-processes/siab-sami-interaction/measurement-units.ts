@@ -10,4 +10,5 @@ export interface IUnitsMedConv {
   decimals: string;
   idUnitDestine: string;
   tpUnitGreater: string;
+  nbCode: string;
 }
