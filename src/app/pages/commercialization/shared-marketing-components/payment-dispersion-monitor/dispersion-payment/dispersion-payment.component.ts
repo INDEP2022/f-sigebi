@@ -1668,4 +1668,17 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       );
     }
   }
+
+  userWithoutBill(){
+    const paramsF = new FilterParams()
+    // paramsF.addFilter()
+    this.paymentService.getComerRelUsuCanc().subscribe(
+      res => {
+        console.log(res)
+      },
+      err => {
+        console.log(err)
+      }
+    )
+  }
 }
