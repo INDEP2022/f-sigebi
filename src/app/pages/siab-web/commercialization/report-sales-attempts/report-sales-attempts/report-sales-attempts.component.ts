@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, map, merge, takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -62,13 +62,20 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   status: any = [];
   source: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  params3 = new BehaviorSubject<ListParams>(new ListParams());
   fileReader = new FileReader();
   jsonToCsv = JSON_TO;
   until = false;
+  until2 = false;
+  until3 = false;
   propertyValues: string[] = [];
   commaSeparatedString: string = '';
   totalItems: number = 0;
+  totalItems2: number = 0;
+  totalItems3: number = 0;
   private isFirstLoad = true;
+  private isSecondLoad = true;
 
   get filterGoods() {
     return this.form.get('filterGoods');
@@ -98,19 +105,23 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
     this.getTodos(new ListParams());
     this.getStatus(new ListParams());
 
-    const observable1 = this.params.pipe(map(() => this.consultarBienExcel()));
-    const observable2 = this.params.pipe(map(() => this.consultarBien()));
-    const observable3 = this.params.pipe(map(() => this.consultarOnlyOne()));
-
-    const combinedObservable = merge(observable1, observable2, observable3);
-
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (!this.isFirstLoad) {
-        this.consultarBienExcel();
         this.consultarBien();
+      }
+
+      if (!this.isSecondLoad) {
+        this.consultarBienExcel();
       }
     });
     this.isFirstLoad = false;
+
+    this.params3.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (!this.isSecondLoad) {
+        this.consultarBienExcel();
+      }
+    });
+    this.isSecondLoad = false;
   }
 
   private prepareForm2() {
@@ -183,14 +194,14 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
     }
 
     let params = {
-      ...this.params.getValue(),
+      ...this.params3.getValue(),
     };
     let body = {
       pGoodNumber: this.commaSeparatedString,
       pType: 0,
       pSubtypes: '',
       pStatus: '',
-      ...this.params.getValue(),
+      ...this.params3.getValue(),
     };
     console.log(body);
     this.getparEportAttemptsVta.getpaREportAttemptsVta(body, params).subscribe({
@@ -226,9 +237,9 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
         //   // ... otras columnas ...
         // };
         this.source.load(resp.data);
-        this.until = true;
+        this.until3 = true;
         this.source.refresh();
-        this.totalItems = resp.count;
+        this.totalItems3 = resp.count;
       },
       error: err => {
         console.log(err);
@@ -406,6 +417,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   }
 
   consultarBien() {
+    this.isFirstLoad = true;
     this.loadingBtn3 = true;
     console.log(this.form.get('typeGood').value);
     console.log(this.tiposData);
@@ -428,13 +440,13 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
     console.log(selectedTypeNumber);
 
     let params = {
-      ...this.params.getValue(),
+      ...this.params2.getValue(),
     };
     let body = {
       pType: resultArray[0].typeNumber,
       pSubtypes: resultArray[0].subTypeNumber,
       pStatus: resultStatus[0].status,
-      ...this.params.getValue(),
+      ...this.params2.getValue(),
     };
     console.log(params);
     this.getparEportAttemptsVta.getpaREportAttemptsVta(body, params).subscribe({
@@ -471,9 +483,9 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
         // };
 
         this.source.load(resp.data);
-        this.until = true;
+        this.until2 = true;
         this.source.refresh();
-        this.totalItems = resp.count;
+        this.totalItems2 = resp.count;
       },
       error: err => {
         console.log(err);

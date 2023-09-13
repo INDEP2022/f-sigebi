@@ -1119,16 +1119,22 @@ export class DetailAssetsTabComponentComponent
 
   getLigieUnit(params: ListParams, id?: string) {
     const detail = this.detailAssets.value;
-    const fraction =
-      detail.ligieLevel4 ||
-      detail.ligieLevel3 ||
-      detail.ligieLevel2 ||
-      detail.ligieLevel1 ||
-      detail.ligieChapter ||
-      detail.ligieSection;
+    let fraction = null;
+    if (detail.ligieLevel4 != '0' && detail.ligieLevel4 != null) {
+      fraction = detail.ligieLevel4;
+    } else if (detail.ligieLevel3 != '0' && detail.ligieLevel3 != null) {
+      fraction = detail.ligieLevel3;
+    } else if (detail.ligieLevel2 != '0' && detail.ligieLevel2 != null) {
+      fraction = detail.ligieLevel2;
+    } else if (detail.ligieLevel1 != '0' && detail.ligieLevel1 != null) {
+      fraction = detail.ligieLevel1;
+    } else if (detail.ligieChapter != '0' && detail.ligieChapter != null) {
+      fraction = detail.ligieChapter;
+    } else if (detail.ligieSection != '0' && detail.ligieSection != null) {
+      fraction = detail.ligieSection;
+    }
     params['filter.nbCode'] = `$eq:${id}`;
     params['filter.fractionId'] = `$eq:${+fraction}`;
-    //params.limit = 20;
     this.goodProcessService.getVsigLigie(params).subscribe({
       next: resp => {
         this.ligieUnit = resp.data[0].unitDescription;
