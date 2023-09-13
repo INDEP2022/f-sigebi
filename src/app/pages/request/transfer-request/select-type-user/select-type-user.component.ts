@@ -501,7 +501,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             this.message(
               'error',
               'Error al guardar',
-              'No se pudo bajar el documento'
+              'No se pudo generar el reporte de volante'
             );
             reject('false');
           },

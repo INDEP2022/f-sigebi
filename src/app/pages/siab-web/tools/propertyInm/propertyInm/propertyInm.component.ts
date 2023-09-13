@@ -1,16 +1,18 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
 import { REAL_STATE_COLUMNS, REPORT_COLUMNS } from './propertyInm-columns';
 
 //import { Component, OnInit } from '@angular/core';
@@ -38,7 +40,9 @@ export class PropertyInmComponent extends BasePage implements OnInit {
   constructor(
     private goodSssubtypeService: GoodSssubtypeService,
     private goodServices: GoodService,
-    private goodprocessService: GoodprocessService
+    private goodprocessService: GoodprocessService,
+    private affairService: AffairService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.settings = {
@@ -106,10 +110,10 @@ export class PropertyInmComponent extends BasePage implements OnInit {
       ...this.columnFilters1,
     };
 
-    params['filter.goodClassNumber'] = `$in:${this.array}`;
+    params['filter.clasif'] = `$in:${this.array}`;
     console.log(params);
 
-    this.goodServices.getByExpedientAndParams__(params).subscribe({
+    this.affairService.getObtnGood(params).subscribe({
       next: (response: any) => {
         this.dataGood = response.data;
         this.totalItems1 = response.count;
@@ -203,7 +207,7 @@ export class PropertyInmComponent extends BasePage implements OnInit {
       return;
     }
     this.loadingReport = true;
-    this.generateReport().subscribe();
+    this.generateReport();
     this.loadingReport = false;
   }
 
@@ -215,7 +219,7 @@ export class PropertyInmComponent extends BasePage implements OnInit {
 
     this.excelLoading = true;
 
-    return this.goodServices.getByExpedientAndParamsExport(this.array).pipe(
+    /*return this.massiveGoodService.getObtnGoodExcel(this.array).pipe(
       catchError(error => {
         this.excelLoading = false;
         this.alert('error', 'Error', UNEXPECTED_ERROR);
@@ -229,6 +233,69 @@ export class PropertyInmComponent extends BasePage implements OnInit {
         );
         console.log(response);
       })
+    );*/
+
+    this.massiveGoodService.getObtnGoodExcel(this.array).subscribe({
+      next: resp => {
+        console.log(resp.nameFile);
+        const date = new Date(Date());
+        var formatted = new DatePipe('en-EN').transform(
+          date,
+          'dd/MM/yyyy',
+          'UTC'
+        );
+        this.downloadDocument(
+          `Informacion del Bien - ${formatted}`,
+          'excel',
+          resp.base64File
+        );
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
+  }
+
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.loading = false;
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
   }
 }

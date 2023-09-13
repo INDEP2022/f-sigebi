@@ -182,8 +182,8 @@ export class RequestInTurnFormComponent extends BasePage implements OnInit {
   }
 
   getRegionalDelegationId(params: ListParams) {
-    // const id = this.authService.decodeToken().department;
-    const isNumber = !isNaN(Number(params.text));
+    params['filter.id'] = `$eq:${this.deleRegionalId}`;
+    /*const isNumber = !isNaN(Number(params.text));
     if (params.text != '' && isNumber != true) {
       params['filter.description'] = `$ilike:${params.text}`;
     } else if (params.text != '' && isNumber == true) {
@@ -191,13 +191,16 @@ export class RequestInTurnFormComponent extends BasePage implements OnInit {
     }
     params['sortBy'] = 'description:ASC';
     delete params.text;
-    delete params['search'];
+    delete params['search'];*/
     this.regDelegationService.getAll(params).subscribe({
       next: resp => {
         resp.data.map((item: any) => {
           item.idDescript = item.id + ' - ' + item.description;
         });
         this.selectRegDele = new DefaultSelect(resp.data, resp.count);
+        this.searchForm.controls['regionalDelegationId'].setValue(
+          this.deleRegionalId.toString()
+        );
       },
       error: error => (this.selectRegDele = new DefaultSelect([], 0, true)),
     });
