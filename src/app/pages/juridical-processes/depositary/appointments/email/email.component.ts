@@ -201,22 +201,24 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
       subject: ASUNTO, // asunto
       message: MENSAJE, // mensaje
     };
-    this.transferGoodService.sendEmail(bodyMail).subscribe({
-      next: resp => {
-        console.log(resp);
-        this.modalRef.hide();
-        // this.form.get('MENSAJE').patchValue(resp.message);
-        this.alert('success', 'Correo Enviado Correctamente', '');
-      },
-      error: err => {
-        console.log(err);
-        this.alert(
-          'warning',
-          'Error al Enviar',
-          'Ocurrió un Error al Enviar el Correo, Intente Nuevamente'
-        );
-      },
-    });
+    console.log(bodyMail);
+
+    // this.transferGoodService.sendEmail(bodyMail).subscribe({
+    //   next: resp => {
+    //     console.log(resp);
+    //     this.modalRef.hide();
+    //     // this.form.get('MENSAJE').patchValue(resp.message);
+    //     this.alert('success', 'Correo Enviado Correctamente', '');
+    //   },
+    //   error: err => {
+    //     console.log(err);
+    //     this.alert(
+    //       'warning',
+    //       'Error al Enviar',
+    //       'Ocurrió un Error al Enviar el Correo, Intente Nuevamente'
+    //     );
+    //   },
+    // });
   }
 
   changeName(user: { name: string; email: string }) {
