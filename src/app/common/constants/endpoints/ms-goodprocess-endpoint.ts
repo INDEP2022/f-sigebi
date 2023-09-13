@@ -35,4 +35,5 @@ export enum GoodprocessEndpoints {
   UpdateGoodStatusVal5 = 'update-good-status/update-val',
   //Classification View
   GetVsigLigie = 'application/vsigLigie',
+  GetTypesGoods = 'application/spobtn-typesubtypegoods',
 }

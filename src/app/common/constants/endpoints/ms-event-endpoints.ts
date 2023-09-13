@@ -26,6 +26,4 @@ export enum EventEndpoints {
   GetAllEvent = 'application/getEventId',
   GetEventsExpenses = 'application/getEventIdComer',
   palook = 'application/pa-look-lots-change-status',
-  GetAllEvent = 'application/getEventId',
-  GetEventsExpenses = 'application/getEventIdComer',
 }

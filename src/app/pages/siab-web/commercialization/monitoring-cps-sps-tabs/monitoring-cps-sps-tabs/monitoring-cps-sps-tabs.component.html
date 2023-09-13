@@ -24,12 +24,13 @@
     <div class="mt-3">
       <div>
         <div class="ml-auto mb-3">
-          <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
+          <app-columns-select [(settings)]="settings"></app-columns-select>
           <!--  -->
         </div>
       </div>
       <div>
         <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
           [settings]="settings"
           [source]="dataSiab"></ng2-smart-table>
         <!--  -->

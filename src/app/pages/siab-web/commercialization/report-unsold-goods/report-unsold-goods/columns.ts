@@ -95,38 +95,38 @@ export const SUBTYPE_COLUMNS_REPORT = {
   noSubtype: {
     title: 'No. Subtipo',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
   description: {
     title: 'Descripción',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
 };
 
 export const DELEGATION_COLUMNS_REPORT = {
-  delegation: {
+  id: {
     title: 'No. Delegación',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
   description: {
     title: 'Descripción',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
 };
 
 export const STATUS_COLUMNS_REPORT = {
-  status: {
+  id: {
     title: 'Estatus',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
   description: {
     title: 'Descripción',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
 };
 
@@ -134,47 +134,47 @@ export const HISTORY_COLUMNS_REPORT = {
   situation: {
     title: 'Situación',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
   noGood: {
     title: 'No. Bien',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
   status: {
     title: 'Estatus',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
   dateChange: {
     title: 'Fecha del Cambio',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
   userhange: {
     title: 'Usuario Cambio',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
   chanelChange: {
     title: 'Programa Cambio Estatus',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
   reasonChange: {
     title: 'Motivo del Cambio',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
   noRegister: {
     title: 'No. Registro',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
   process: {
     title: 'Proceso Ext. Dom.',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
 };
 
@@ -182,26 +182,26 @@ export const HISTORY_EVENT_COLUMNS_REPORT = {
   noGood: {
     title: 'No. Bien',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
   typeEvent: {
     title: 'Tipo Evento',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
   keyEvent: {
     title: 'Clave Evento',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
   dateEvent: {
     title: 'Fecha Evento',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
   dateFail: {
     title: 'Fecha Fallo',
     sort: false,
-    type: 'custom',
+    type: 'string',
   },
 };

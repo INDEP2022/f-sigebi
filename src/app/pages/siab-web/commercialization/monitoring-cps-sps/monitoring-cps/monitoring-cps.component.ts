@@ -36,7 +36,7 @@ export class monitoringCpsComponent extends BasePage implements OnInit {
   @Output() fullOutputEvents = new EventEmitter<any>();
 
   // Data Table
-  @Output() dataSiabParamsFilter = new EventEmitter<HttpParams>();
+  @Output() dataSiabParamsFilter = new EventEmitter<any>();
 
   //
 
@@ -75,7 +75,7 @@ export class monitoringCpsComponent extends BasePage implements OnInit {
     }
     this.serviceEvents.getEvents(paramsLocal).subscribe({
       next: response => {
-        this.fullEvents = new DefaultSelect(response.data, response.count | 0);
+        this.fullEvents = new DefaultSelect(response.data, response.count || 0);
       },
       error: data => {
         this.fullEvents = new DefaultSelect([], 0);

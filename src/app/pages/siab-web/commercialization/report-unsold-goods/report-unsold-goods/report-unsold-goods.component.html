@@ -42,15 +42,16 @@
         <!--  -->
         <div class="row">
           <div class="col-md-12">
-            <form-field [control]="form.get('typeGood')" label="Tipo de Bien">
-              <ng-select
-                formControlName="typeGood"
-                [searchable]="false"
-                class="form-control"
-                [clearable]="false">
-                <ng-option value="M">Bienes Muebles</ng-option>
-                <ng-option value="I">Bienes Inmuebles</ng-option>
-              </ng-select>
+            <form-field [control]="form.get('typeGood')">
+              <ngx-select
+                (fetchItems)="queryTypeGoods($event)"
+                [searchOnInit]="true"
+                label="Tipo de Bien"
+                [data]="fullGoods"
+                [form]="form"
+                bindLabel="nombre_tipo_bien"
+                control="typeGood">
+              </ngx-select>
             </form-field>
           </div>
         </div>

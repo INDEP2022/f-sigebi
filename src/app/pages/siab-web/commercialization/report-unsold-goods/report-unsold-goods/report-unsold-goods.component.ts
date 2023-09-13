@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { maxDate } from 'src/app/common/validations/date.validators';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   DELEGATION_COLUMNS_REPORT,
   GOODS_COLUMNS,
@@ -33,8 +36,8 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
   // Tables
   data: any;
   dataTwo: any;
-  dataThree: any;
-  dataFour: any;
+  dataThree: LocalDataSource = new LocalDataSource();
+  dataFour: LocalDataSource = new LocalDataSource();
   dataFive: any;
   dataSix: any;
   // - Columns
@@ -43,6 +46,16 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
   settingsThree: any;
   settingsFour: any;
   settingsFive: any;
+
+  // Any
+  fullGoods: any;
+  fullDelegations: any;
+
+  // Number
+  totalDelegations: number;
+
+  //Array
+  columnsThree: any[] = [];
 
   // show: boolean = false;
 
@@ -56,7 +69,11 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
 
   //
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private serviceGoods: GoodprocessService,
+    private serviceDelegations: DelegationService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -117,17 +134,11 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      typeGood: [null, [Validators.required]],
-      subtype: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      delegation: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      startDate: [null, [Validators.required, maxDate(new Date())]],
+      typeGood: [null],
+      subtype: [null],
+      delegation: [null],
+      status: [null],
+      startDate: [null],
       filterGoods: [],
       filterText: [],
     });
@@ -140,9 +151,31 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
 
   chargeFile(event: any) {}
 
-  queryTypeGoods() {}
+  queryTypeGoods(params?: ListParams) {
+    this.serviceGoods.getTypesGoods().subscribe({
+      next: response => {
+        this.fullGoods = new DefaultSelect(response.data, response.count || 0);
+      },
+      error: data => {
+        this.fullGoods = new DefaultSelect([], 0);
+      },
+    });
+  }
 
-  queryDelegation() {}
+  queryDelegation() {
+    console.log('Si quiera esta pasando por aqui?');
+    this.serviceDelegations.getAllTwo().subscribe({
+      next: response => {
+        console.log('Esta es la respuesta con la data: ', response.data);
+        if (Array.isArray(response.data)) {
+          this.dataThree.load(response.data);
+          this.totalDelegations = response.count || 0;
+          this.dataThree.refresh();
+        }
+      },
+      error: error => (this.loading = false),
+    });
+  }
 
   queryStatusGoods() {}
 

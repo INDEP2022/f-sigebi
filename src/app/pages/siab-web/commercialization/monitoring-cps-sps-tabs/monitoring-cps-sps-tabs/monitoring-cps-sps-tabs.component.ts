@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
@@ -44,6 +44,7 @@ export class MonitoringCpsSpsTabsComponent extends BasePage implements OnInit {
   columnsSiab: any[] = [];
 
   // Paginador
+  paramsFilter: any;
   paramsSiab = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsSiab: number = 0;
 
@@ -64,20 +65,22 @@ export class MonitoringCpsSpsTabsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.fullYear();
+    this.paramsSiab
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.fullDataTableSiab(this.paramsFilter));
   }
 
   //
 
   fullYear() {}
 
-  fullDataTableSiab(event: any) {
-    console.log('Esto es lo que se recibe desde abajo: ', event);
+  fullDataTableSiab(event: ListParams) {
+    this.paramsFilter = event;
     this.servicePayment.postIdentifiesPaymentsInconsistency(event).subscribe({
       next: response => {
-        console.log('Esta es la data del sevricio: ', response.data);
         this.columnsSiab = response.data;
         this.totalItemsSiab = response.count || 0;
-        // this.dataSiab.load(this.columnsSiab);
+        this.dataSiab.load(this.columnsSiab);
         this.dataSiab.refresh();
       },
       error: response => {

@@ -20,5 +20,4 @@ export enum PaymentEndPoints {
   postIndentifiesPayments = 'payment/identifies-payments-inconsistency',
   ComerCtldevpagB = `comer-ctldevpag-b`,
   ComerCtldevpagBfindAllRegistersV2 = `comer-ctldevpag-b/findAllRegistersV2`,
-  postIndentifiesPayments = 'payment/identifies-payments-inconsistency',
 }
