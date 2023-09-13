@@ -10,6 +10,7 @@ import { IUnitsMedConv } from '../../models/administrative-processes/siab-sami-i
 import { IMeasurementUnits } from '../../models/catalogs/measurement-units.model';
 import {
   IStrategyService,
+  IStrategyType,
   IStrategyTypeService,
 } from '../../models/ms-strategy-service/strategy-service.model';
 
@@ -146,5 +147,8 @@ export class StrategyServiceService extends HttpService {
       httpParams = httpParams.append(key, (params as any)[key]);
     });
     return httpParams;
+  }
+  getServiceType(model: IStrategyType) {
+    return this.post(StrategyEndpoints.StrategyService, model);
   }
 }
