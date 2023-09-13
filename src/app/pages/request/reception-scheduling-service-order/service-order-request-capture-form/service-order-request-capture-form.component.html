@@ -36,7 +36,10 @@
         Enviar <i class="fa fa-paper-plane" aria-hidden="true"></i>
       </button>
 
-      <button *ngIf="claimRequest" class="btn btn-success btn-sm active">
+      <button
+        (click)="rejectOrder()"
+        *ngIf="claimRequest"
+        class="btn btn-success btn-sm active">
         Rechazar <i class="fa fa-times-circle" aria-hidden="true"></i>
       </button>
 
