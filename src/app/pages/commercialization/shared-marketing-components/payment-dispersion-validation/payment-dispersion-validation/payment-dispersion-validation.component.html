@@ -191,6 +191,7 @@
               <form-field [control]="amountForm.get('tot_precio_final')">
                 <label for="">Total Precio Final</label>
                 <input
+                  currencyMask
                   readonly
                   type="text"
                   class="form-control"
@@ -221,6 +222,7 @@
                 [control]="form2.get('montoDevolucion')"
                 label="Monto Devolución">
                 <input
+                  currencyMask
                   readonly
                   type="text"
                   class="form-control"
@@ -232,6 +234,7 @@
                 [control]="form2.get('montoPenalizacion')"
                 label="Monto Penalización">
                 <input
+                  currencyMask
                   readonly
                   type="text"
                   class="form-control"
@@ -274,6 +277,7 @@
                 [control]="form2.get('montoDevolucion')"
                 label="Monto Devolución">
                 <input
+                  currencyMask
                   readonly
                   type="text"
                   class="form-control"
@@ -285,6 +289,7 @@
                 [control]="form2.get('montoPenalizacion')"
                 label="Monto Penalización">
                 <input
+                  currencyMask
                   readonly
                   type="text"
                   class="form-control"
@@ -355,6 +360,7 @@
               <form-field [control]="amountForm2.get('tot_precio_final')">
                 <label for="">Total Precio</label>
                 <input
+                  currencyMask
                   readonly
                   type="text"
                   class="form-control"
@@ -365,6 +371,7 @@
               <form-field [control]="amountForm2.get('tot_iva_final')">
                 <label for="">Total IVA</label>
                 <input
+                  currencyMask
                   readonly
                   type="text"
                   class="form-control"
@@ -415,6 +422,7 @@
               <form-field [control]="amountForm3.get('tot_deposit')">
                 <label for="">Total Depósito</label>
                 <input
+                  currencyMask
                   readonly
                   type="text"
                   class="form-control"
@@ -465,6 +473,7 @@
               <form-field [control]="amountForm4.get('tot_monto_con_iva')">
                 <label for="">Total Monto</label>
                 <input
+                  currencyMask
                   readonly
                   type="text"
                   class="form-control"
@@ -475,6 +484,7 @@
               <form-field [control]="amountForm4.get('tot_iva')">
                 <label for="">Total IVA</label>
                 <input
+                  currencyMask
                   readonly
                   type="text"
                   class="form-control"
@@ -485,6 +495,7 @@
               <form-field [control]="amountForm4.get('tot_monto_sin_iva')">
                 <label for="">Total Monto Sin IVA</label>
                 <input
+                  currencyMask
                   readonly
                   type="text"
                   class="form-control"
@@ -495,6 +506,7 @@
               <form-field [control]="amountForm4.get('suma_totales')">
                 <label for="">Suma Totales</label>
                 <input
+                  currencyMask
                   readonly
                   type="text"
                   class="form-control"

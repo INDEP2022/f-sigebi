@@ -13,7 +13,7 @@ export class PrintReportRestitutionModalComponent
 {
   @ViewChild('FileInput', { static: false }) inputFile: ElementRef = null;
   title: string = 'Imprimir Reporte';
-  btnTitle: string = 'Firma Reporte';
+  btnTitle: string = 'Firmar Reporte';
   printReport: boolean = true;
   isUploadingDoc: boolean = false;
   fileToUpload: File | null = null;
@@ -48,7 +48,7 @@ export class PrintReportRestitutionModalComponent
     this.printReport = true;
     this.isUploadingDoc = false;
     this.inputFile.nativeElement.value = '';
-    this.title = 'Firma Reporte';
+    this.title = 'Firmar Reporte';
   }
 
   attachDoc(): void {

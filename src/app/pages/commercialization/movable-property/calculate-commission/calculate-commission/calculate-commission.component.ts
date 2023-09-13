@@ -82,6 +82,7 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
   totalForm: FormGroup = new FormGroup({});
   loadingBtnExcel1: boolean = false;
   loadingBtnExcel2: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -90,6 +91,7 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
     private commissionsProcessService: CommissionsProcessService
   ) {
     super();
+
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
@@ -210,7 +212,7 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
           });
           this.params2 = this.pageFilter(this.params2);
           //Su respectivo metodo de busqueda de datos
-          this.getComPerGood(this.comerComCalculated);
+          this.getComPerGood(this.comerComCalculated, 'no');
         }
       });
 
@@ -218,7 +220,7 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
       .pipe(
         skip(1),
         tap(() => {
-          this.getComPerGood(this.comerComCalculated);
+          this.getComPerGood(this.comerComCalculated, 'no');
         }),
         takeUntil(this.$unSubscribe)
       )
@@ -226,6 +228,7 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
 
     this.prepareForm();
   }
+
   prepareForm() {
     this.totalForm = this.fb.group({
       totalVenta: [''],
@@ -297,7 +300,7 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
     });
   }
 
-  getComPerGood(comerComCalculated: any): void {
+  getComPerGood(comerComCalculated: any, filter: string): void {
     this.loading2 = true;
     this.comCommisionXGood.load([]);
     this.totalItems2 = 0;
@@ -342,8 +345,13 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
           });
         },
         error: error => {
+          if (filter == 'si') {
+            this.alert('warning', 'No se encontraron comisiones', '');
+          }
           this.comCommisionXGood.load([]);
           this.comCommisionXGood.refresh();
+          this.totalForm.get('totalVenta').setValue('');
+          this.totalForm.get('totalMonto').setValue('');
           this.totalItems2 = 0;
           this.loading2 = false;
         },
@@ -364,14 +372,14 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
     this.totalItems2 = 0;
     this.comerCommissionsList = [];
     this.comerComCalculated = event;
-    this.rowsSelectedGetComissions(this.comerComCalculated);
+    this.rowsSelectedGetComissions(this.comerComCalculated, 'si');
   }
 
-  rowsSelectedGetComissions(event: any) {
+  rowsSelectedGetComissions(event: any, filter: any) {
     this.totalItems2 = 0;
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getComPerGood(event));
+      .subscribe(() => this.getComPerGood(event, filter));
   }
 
   openForm1(calculated?: any) {
@@ -412,7 +420,11 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
         idEvent,
         idGood,
         comerComCalculated,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => {
+          if (next) {
+            this.getComPerGood(this.comerComCalculated, 'no');
+          }
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -434,15 +446,15 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
 
     if (commissionsProcessServiceConst.status == 200) {
       this.loadingBtnExcel2 = false;
-      this.rowsSelectedGetComissions(this.comerComCalculated);
+      this.rowsSelectedGetComissions(this.comerComCalculated, 'no');
       this.alert(
         'success',
-        'Proceso Terminado Correctamente',
+        'Proceso terminado correctamente',
         commissionsProcessServiceConst.message
       );
     } else {
       this.loadingBtnExcel2 = false;
-      this.rowsSelectedGetComissions(this.comerComCalculated);
+      this.rowsSelectedGetComissions(this.comerComCalculated, 'no');
       this.alert(
         'warning',
         'Ha ocurrido un error',
@@ -465,15 +477,15 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
 
     if (commissionsProcessServiceConst.status == 200) {
       this.loadingBtnExcel1 = false;
-      this.rowsSelectedGetComissions(this.comerComCalculated);
+      this.rowsSelectedGetComissions(this.comerComCalculated, 'no');
       this.alert(
         'success',
-        'Proceso Terminado Correctamente',
+        'Proceso terminado correctamente',
         commissionsProcessServiceConst.message
       );
     } else {
       this.loadingBtnExcel1 = false;
-      this.rowsSelectedGetComissions(this.comerComCalculated);
+      this.rowsSelectedGetComissions(this.comerComCalculated, 'no');
       this.alert(
         'warning',
         'Ha ocurrido un error',
@@ -514,6 +526,39 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
     });
   }
 
+  async questionDelete2(data: any) {
+    console.log(data);
+
+    this.alertQuestion(
+      'question',
+      'Se eliminará la comisión',
+      '¿Desea Continuar?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        let obj = {
+          comCalculatedId: data.comCalculatedId,
+          eventId: data.eventId.eventId,
+          goodNumber: data.goodNumber.id,
+        };
+        this.comerCommissionsPerGoodService.remove(obj).subscribe({
+          next: data => {
+            this.alert('success', 'Comisión eliminada correctamente', '');
+            this.getComPerGood(this.comerComCalculated, 'no');
+          },
+          error: error => {
+            this.alert(
+              'error',
+              'Error al eliminar la comisión',
+              error.error.message
+            );
+
+            this.loading = false;
+          },
+        });
+      }
+    });
+  }
+
   async returnCommisionXGood(comerComCalculated: any) {
     return new Promise((resolve, reject) => {
       this.comerCommissionsPerGoodService
@@ -546,7 +591,7 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
             console.log('err', error);
             let obj = {
               status: error.status,
-              message: error.error.message[0],
+              message: error.error.message,
             };
             resolve(obj);
           },
