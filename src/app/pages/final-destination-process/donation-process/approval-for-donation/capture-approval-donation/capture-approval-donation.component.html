@@ -219,18 +219,24 @@
 
       <app-divider></app-divider>
 
-      <!-- <div class="d-flex justify-content-end mt-5">
-        <app-columns-select [(settings)]="settings" class="row justify-content-end">
+      <div class="d-flex justify-content-end mt-5">
+        <app-columns-select
+          [(settings)]="settings"
+          class="row justify-content-end">
         </app-columns-select>
       </div>
 
       <div class="row mt-3 pt-2 scroll-table">
-        <ng2-smart-table [attr.class]="'table-bordered'" class="col-md-12" [settings]="settings" [source]="data">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          class="col-md-12"
+          [settings]="settings"
+          [source]="dataTableGood">
         </ng2-smart-table>
       </div>
 
       <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination> -->
+      </app-pagination>
 
       <div class="row"></div>
       <div class="row p-3">
@@ -273,7 +279,7 @@
           </div> -->
 
           <div class="col-md-12">
-            <h6>BIENES RELACIONADOS CON EL ACTA</h6>
+            <h6>BIENES RELACIONADOS CON EL EVENTO</h6>
             <div class="row">
               <form-loader *ngIf="loading3"></form-loader>
               <div class="col-md-12">

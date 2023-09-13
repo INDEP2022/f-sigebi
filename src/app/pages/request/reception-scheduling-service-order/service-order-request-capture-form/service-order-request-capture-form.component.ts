@@ -15,6 +15,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
 import { ConfirmProgrammingComponent } from '../../shared-request/confirm-programming/confirm-programming.component';
+import { AnnexWFormComponent } from '../components/annex-w-form/annex-w-form.component';
 
 @Component({
   selector: 'app-service-order-request-capture-form',
@@ -44,6 +45,8 @@ export class ServiceOrderRequestCaptureFormComponent
   programmingId: number = null;
   programming: any = null;
   isUpdate: boolean = false;
+
+  total: string = null;
 
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);
@@ -119,8 +122,14 @@ export class ServiceOrderRequestCaptureFormComponent
         [Validators.pattern(STRING_PATTERN)],
       ],
       //
-      notes: [null, [Validators.pattern(STRING_PATTERN)]],
-      observation: [null, [Validators.pattern(STRING_PATTERN)]],
+      notes: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      observation: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
       programmingId: [null],
       id: [null],
     });
@@ -203,15 +212,16 @@ export class ServiceOrderRequestCaptureFormComponent
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        console.log(this.ordServform.getRawValue());
 
+        console.log(this.ordServform.getRawValue());
         let ordServiceForm = this.ordServform.getRawValue();
+        this.isUpdate = true;
         this.updateOrderService(ordServiceForm);
-        this.onLoadToast(
+        /*this.onLoadToast(
           'success',
           'Orden de servicio guardada correctamente',
           ''
-        );
+        );*/
       }
     });
   }
@@ -224,8 +234,8 @@ export class ServiceOrderRequestCaptureFormComponent
     this.ordServform.controls['originStreet'].enable();
     this.ordServform.controls['originPostalCode'].enable();
     this.ordServform.controls['colonyOrigin'].enable();
-    //this.ordServform.controls['notes'].enable();
-    //this.ordServform.controls['observation'].enable();
+    this.ordServform.controls['notes'].enable();
+    this.ordServform.controls['observation'].enable();
   }
 
   getOrderService() {
@@ -272,10 +282,9 @@ export class ServiceOrderRequestCaptureFormComponent
   updateOrderService(body: IOrderServiceDTO) {
     this.orderService.updateOrderService(body).subscribe({
       next: resp => {
-        console.log(resp);
         this.onLoadToast(
           'success',
-          'Orden de servicio guardada correctamente',
+          'La orden de servicio se guardada correctamente',
           ''
         );
       },
@@ -330,5 +339,24 @@ export class ServiceOrderRequestCaptureFormComponent
         this.programming = resp;
       },
     });
+  }
+
+  annexWReport() {
+    let config: ModalOptions = {
+      initialState: {
+        callback: (next: boolean) => {
+          if (next) {
+            //this.getProgrammingId();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(AnnexWFormComponent, config);
+  }
+
+  getTotal(event: string) {
+    this.total = event;
   }
 }

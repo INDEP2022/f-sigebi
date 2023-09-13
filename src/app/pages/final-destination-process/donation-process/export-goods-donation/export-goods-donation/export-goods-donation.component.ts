@@ -61,6 +61,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   cpd: boolean = false;
   adm: boolean = false;
   rda: boolean = false;
+  boolCon: boolean = false;
   goodCheck2: { [key: number]: number } = {};
   selectedItem: string | null = null;
   user: any;
@@ -91,6 +92,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.filterGetAll();
     this.getuser();
     this.checked = this.value;
     this.prepareform();
@@ -197,7 +199,15 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     }
   }
 
-  getall1() {
+  getallCondition() {
+    this.boolCon = true;
+    this.getall1(this.boolCon);
+  }
+
+  getall1(boolCon: boolean) {
+    if (boolCon != true) {
+      return;
+    }
     this.data1 = [];
     this.data.load(this.data1);
     let params = {
@@ -274,12 +284,12 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getall1();
+          this.getall1(this.boolCon);
         }
       });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getall1());
+      .subscribe(() => this.getall1(this.boolCon));
 
   }
 

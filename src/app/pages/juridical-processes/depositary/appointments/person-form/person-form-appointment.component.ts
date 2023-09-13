@@ -256,7 +256,7 @@ export class PersonFormComponentAppointment extends BasePage implements OnInit {
   }
   handleSuccess(data: IPerson) {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, ''); // `${message} Correctamente`);
+    this.alert('success', this.title, ''); // `${message} Correctamente`);
     this.loading = false;
     // this.modalRef.content.callback(true);
     this.personCreateEmitter.emit(data);

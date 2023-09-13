@@ -40,16 +40,17 @@
                 label="Cuenta"
                 [form]="form"
                 [data]="bankAccountSelect"
-                (fetchItems)="getEventNew($event)"
+                (fetchItems)="searchBankAccount($event)"
                 bindLabel="accountAndNumber"
                 control="account"
                 [searchOnInit]="true"
                 [showTooltip]="true"
                 termMaxLength="50"
-                (input)="onSearchName($event.target)"
+                (input)="onSearchAccount($event.target)"
                 [labelTemplate]="bankLabel"
                 [optionTemplate]="bankOption"
-                (change)="onBankAccountSelectChange($event)">
+                (change)="onBankAccountSelectChange($event)"
+                (clear)="onClearSelection()">
               </ngx-select>
               <ng-template #bankLabel let-item="item">
                 {{ item.accountNumber.cveAccount }}
