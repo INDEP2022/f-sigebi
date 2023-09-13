@@ -55,4 +55,7 @@ export class ConciliationDepositaryPaymentsService {
   getgetAplicationcargaCliente2(no_appointment: number) {
     return this.msDepositaryService.getAplicationcargaCliente2(no_appointment);
   }
+  insertDispersionDB(params: any) {
+    return this.msDepositaryService.insertDispersionDB(params);
+  }
 }

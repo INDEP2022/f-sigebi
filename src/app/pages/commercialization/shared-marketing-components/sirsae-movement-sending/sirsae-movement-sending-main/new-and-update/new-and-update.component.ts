@@ -17,7 +17,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class NewAndUpdateComponent extends BasePage implements OnInit {
-  title: string = 'Cliente Del Evento';
+  title: string = 'Cliente del Evento';
   edit: boolean = false;
 
   form: ModelForm<any>;
