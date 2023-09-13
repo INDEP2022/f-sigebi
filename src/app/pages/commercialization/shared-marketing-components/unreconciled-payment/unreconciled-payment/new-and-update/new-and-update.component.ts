@@ -35,7 +35,7 @@ import { secondFormatDateToDate2 } from 'src/app/shared/utils/date';
   ],
 })
 export class NewAndUpdateComponent extends BasePage implements OnInit {
-  title: string = 'Pagos No Conciliados';
+  title: string = 'Pago No Conciliado';
   edit: boolean = false;
 
   form: ModelForm<any>;
@@ -47,6 +47,8 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   disabledSend: boolean = true;
   valInitClient: boolean = false;
   layout: any;
+  layoutName: string = '';
+  valEvent: boolean;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -62,6 +64,16 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.data) {
+      this.valEvent = this.data.valEvent;
+    }
+    if (!this.valEvent)
+      if (this.data.valEventAddress == 'M') {
+        this.layoutName = 'Muebles';
+      } else if (this.data.valEventAddress == 'I') {
+        this.layoutName = 'Inmuebles';
+      }
+
     this.prepareForm();
   }
 
@@ -131,7 +143,11 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         lotId: this.data.lotId,
       });
 
+      // this.getLotes(new ListParams())
       this.form.get('clientId').setValue(this.data.idAndName);
+      // if (!this.valEvent)
+      //   if (this.data.valEventAddress == "I")
+      //     this.form.get('lotId').setValue(this.data.idAndDesc)
 
       this.form.get('bankKey').setValue(this.data.bankAndNumber);
       console.log('this.data', this.data);
@@ -142,6 +158,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       //   this.getClientsById(params)
       // }
     } else {
+      // this.getLotes(new ListParams())
       this.valInitClient = true;
     }
   }
@@ -229,7 +246,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         // if (error.error.message == "La clave del banco no ha sido previamente registrada"){
         this.alert(
           'error',
-          'Ocurrió un Error al Guardar el Registro',
+          'Ocurrió un error al guardar el pago',
           error.error.message
         );
         // }
@@ -240,16 +257,16 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `Registro ${message} Correctamente`, '');
+    const message: string = this.edit ? 'actualizado' : 'guardado';
+    this.alert('success', `Pago ${message} correctamente`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 
   handleError() {
-    const message: string = this.edit ? 'Actualizar' : 'Guardar';
-    this.alert('error', `Error al Intentar ${message} el Registro`, '');
+    const message: string = this.edit ? 'actualizar' : 'guardar';
+    this.alert('error', `Error al intentar ${message} el pago`, '');
     this.loading = false;
   }
 
@@ -327,15 +344,23 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         // params.addFilter('cve_banco', lparams.text);
       }
     params.sortBy = `idLot:ASC`;
+    if (this.valEvent) {
+      params.addFilter('eat_events.address', this.layout, SearchFilter.EQ);
+    }
+
     this.lotService.getLotbyEvent_(params.getParams()).subscribe({
       next: data => {
         console.log('EVENT', data);
+
         let result = data.data.map(async (item: any) => {
           item['idAndDesc'] = item.idLot + ' - ' + item.description;
         });
 
         Promise.all(result).then(resp => {
+          // setTimeout(() => {
+
           this.lotes = new DefaultSelect(data.data, data.count);
+          // }, 1000);
         });
       },
       error: err => {
