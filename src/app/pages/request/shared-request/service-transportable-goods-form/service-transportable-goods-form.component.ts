@@ -1,9 +1,11 @@
 import {
   Component,
+  EventEmitter,
   inject,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -54,6 +56,7 @@ export class ServiceTransportableGoodsFormComponent
   listforUpdate: any = [];
 
   data: any[] = [];
+  @Output() totEvent: EventEmitter<string> = new EventEmitter();
 
   private orderEntryService = inject(orderentryService);
 
@@ -186,13 +189,16 @@ export class ServiceTransportableGoodsFormComponent
           let ttotal = 0;
           resp.data.map((item: any) => {
             const resource =
-              Number(item.resourcesReal) != null
-                ? Number(item.resourcesReal)
+              Number(item.resourcesNumber) != null
+                ? Number(item.resourcesNumber)
                 : 0;
             item['total'] = Number(item.priceUnitary) * resource;
             ttotal = ttotal + item['total'];
           });
-          const bodyTotal: any = { total: ttotal };
+
+          const t = `$${this.formatTotalAmount(ttotal)}`;
+          this.totEvent.emit(t);
+          const bodyTotal: any = { total: t };
           resp.data.push(bodyTotal);
           this.data = resp.data;
           this.totalItems = resp.count;
@@ -297,6 +303,15 @@ export class ServiceTransportableGoodsFormComponent
           true;
     }, 300);
   }
+
+  formatTotalAmount(numberParam: number) {
+    if (numberParam) {
+      return new Intl.NumberFormat('es-MX').format(numberParam);
+    } else {
+      return '0.00';
+    }
+  }
+
   titleTab() {
     if (this.op != 0) {
       this.title = 'Servicios prestados';
