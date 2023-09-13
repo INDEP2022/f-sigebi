@@ -120,7 +120,7 @@ export class RecordAccountStatementsComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.searchBanks(new ListParams());
+    this.getBanks(new ListParams());
     this.searchBankAccount(new ListParams());
     this.getEvent();
     this.searchCheck();
@@ -256,13 +256,16 @@ export class RecordAccountStatementsComponent
     this.form.get('description').reset();
     this.totalItems = 0;
     this.cleandInfoDate();
-    this.bankAccountSelect = new DefaultSelect();
     this.loading = false;
 
     if (value && value.cve_banco) {
       this.bankCode = value.cve_banco;
       this.cveAccount = value.cve_cuenta;
-      this.searchBankAccount(this.params.getValue());
+      let params = new ListParams();
+      params['cve_cuenta'] = this.cveAccount;
+      this.searchBankAccount(params);
+      // this.searchFactasStatusCta(this.cveAccount);
+      // this.form.get('bankSelect').setValue(this.bankCode);
       this.loading = false;
     } else {
       // this.getEventNew(this.params.getValue());
@@ -272,34 +275,15 @@ export class RecordAccountStatementsComponent
   }
 
   searchBankAccount(lparams?: ListParams) {
-    // params.text = this.cveAccount;
-    // this.recordAccountStatementsAccountsService.getAccounts(params).subscribe({
-    //   next: response => {
-    //     if (response.count > 0) {
-    //       console.log('banco', response);
-    //       response.data.map((item: any) => {
-    //         item['accountAndNumber'] = item.accountNumber.cveAccount;
-    //       });
-    //       this.bankAccountSelect = new DefaultSelect(
-    //         response.data,
-    //         response.count
-    //       );
-    //       this.loading = false;
-    //     }
-    //   },
-    //   // this.data.load(this.documents);
-    //   error: (err: any) => {
-    //     this.loading = false;
-    //     this.bankAccountSelect = new DefaultSelect();
-    //   },
-    // });
     let params__ = '';
     if (lparams?.text.length > 0)
       if (!isNaN(parseInt(lparams?.text))) {
         console.log('ACCOUNT-SI');
+        params__ = `?filter.accountNumber.cve_banco=${lparams.text}`;
         params__ = `?filter.accountNumber.cveAccount=${lparams.text}`;
       } else {
         console.log('ACCOUNT-NO');
+        params__ = `?filter.accountNumber.cveAccount=${lparams.text}`;
         params__ = `?filter.accountNumber.cve_banco=${lparams.text}`;
       }
     return new Promise((resolve, reject) => {
@@ -309,9 +293,7 @@ export class RecordAccountStatementsComponent
           next: data => {
             data.data.map((item: any) => {
               item['accountAndNumber'] = item.accountNumber.cveAccount;
-              this.newBank = item.accountNumber.cveBank;
             });
-            // this.form.get('bankSelect').setValue(this.newBank);
             this.bankAccountSelect = new DefaultSelect(data.data, data.count);
           },
           error: () => {
@@ -380,14 +362,13 @@ export class RecordAccountStatementsComponent
     console.log('selectdecuenta', value);
     const cveAccount = value.accountNumber.cveAccount;
     this.accountDate = value.accountNumber.dateInsertion;
-    this.banks = new DefaultSelect();
     this.searchDataAccount(cveAccount);
     const square = value?.accountNumber.square;
     const branch = value?.accountNumber.branch;
     const accountType = value?.accountNumber.accountType;
-    let paramsB = new ListParams();
-    paramsB['filter.cve_banco'] = value.accountNumber.cveBank;
-    this.getBanks(paramsB);
+    // let paramsB = new ListParams();
+    // paramsB['filter.cve_banco'] = value.accountNumber.cveBank;
+    // this.getBanks(paramsB);
     let currency = value.accountNumber.cveCurrency;
     this.current = currency;
     this.searchCurrent(currency);
@@ -485,6 +466,7 @@ export class RecordAccountStatementsComponent
       .subscribe({
         next: (response: any) => {
           this.factasStatusCta = response;
+          this.form.get('bankSelect').setValue(this.factasStatusCta.nombre);
           this.loading = false;
         },
         error: (err: any) => {
