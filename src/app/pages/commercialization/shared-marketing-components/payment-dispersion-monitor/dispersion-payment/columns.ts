@@ -120,11 +120,9 @@ export const COLUMNS_LOT_EVENT_TRUE = {
             console.log(batchEventCheck);
             batchEventCheck.push(data.row.lotId);
           } else {
-            console.log(batchEventCheck);
-            console.log(data.lotId);
             batchEventCheck = batchEventCheck.filter(
               valor => {
-                valor != data.lotId
+                return valor != data.row.lotId
               }
             );
             console.log(batchEventCheck);

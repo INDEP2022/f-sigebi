@@ -11,3 +11,12 @@ export interface IPupValidateMandatoNfac {
   id_tipo_disp: number;
   id_evento: number;
 }
+
+export interface IPupProcDisp{
+    typeDispId: string | number;
+    comerEventsEventId: string;
+    address: string;
+    rgTotalLots: string;
+    PROCESAR: any[];
+    typeProcess: string;
+}

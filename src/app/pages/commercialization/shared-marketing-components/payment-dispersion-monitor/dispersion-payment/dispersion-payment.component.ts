@@ -27,6 +27,7 @@ import { ISendSirsaeLot } from 'src/app/core/services/ms-interfacesirsae/interfa
 import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import {
+  IPupProcDisp,
   IPupProcSeldisp,
   IPupValidateMandatoNfac,
 } from 'src/app/core/services/ms-lot/models-lots';
@@ -51,6 +52,7 @@ import {
   COLUMNS_LOT_EVENT_FALSE,
   COLUMNS_LOT_EVENT_TRUE,
   COLUMNS_PAYMENT_LOT,
+  batchEventCheck,
   setCheckHide,
 } from './columns';
 
@@ -1303,16 +1305,23 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     ).then(q => {
       if (q.isConfirmed) {
         //TODO: PUP_PROC_DISP
-        const model = {
+        const model: IPupProcDisp = {
           typeDispId: this.id_tipo_disp,
           comerEventsEventId: this.form.get('event').value,
           address: this.eventManagement == 'MUEBLES' ? 'M' : 'I',
           rgTotalLots: this.formRbButton.get('allBatch').value,
-          PROCESAR: '',
-          typeProcess: this.formRbButton.get('deinitive').value,
+          PROCESAR: batchEventCheck,
+          typeProcess: this.formRbButton.get('definitive').value,
         };
         console.log(model);
-        /* this.comerLotsService.pupProcDisp(); */
+        this.comerLotsService.pupProcDisp(model).subscribe(
+          res => {
+            console.log(res)
+          },
+          err => {
+            console.log(err)
+          }
+        );
       }
     });
   }

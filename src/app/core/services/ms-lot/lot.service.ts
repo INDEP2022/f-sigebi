@@ -6,7 +6,7 @@ import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.i
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IPupProcSeldisp, IPupValidateMandatoNfac } from './models-lots';
+import { IPupProcDisp, IPupProcSeldisp, IPupValidateMandatoNfac } from './models-lots';
 
 interface IValidateStatus {
   val: string | number;
@@ -394,14 +394,7 @@ export class LotService extends HttpService {
     return this.post(LotEndpoints.PupCambioMasv, formData);
   }
 
-  pupProcDisp(body: {
-    typeDispId: string;
-    comerEventsEventId: string;
-    address: string;
-    rgTotalLots: string;
-    PROCESAR: string;
-    typeProcess: string;
-  }) {
+  pupProcDisp(body: IPupProcDisp) {
     return this.post('apps/pup-proc-disp', body);
   }
 
