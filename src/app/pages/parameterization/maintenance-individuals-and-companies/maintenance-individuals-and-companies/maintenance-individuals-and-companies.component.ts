@@ -192,7 +192,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
   handleSuccess() {
     this.loading = false;
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', this.title, `${message} Correctamente`);
+    this.alert('success', `${message} correctamente`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

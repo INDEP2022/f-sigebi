@@ -233,7 +233,7 @@ export class DepositaryPaymentChargesComponent
   openFile() {
     this.alertQuestion(
       'warning',
-      'Asegurese que el excel sea el correcto',
+      'Asegurese que el formato del archivo seleccionado sea el correcto',
       ''
     ).then(result => {
       this.fileUpload.nativeElement.value = '';
