@@ -617,38 +617,40 @@
 
 <app-card>
   <div body>
-    <div class="row mb-3 mt-3 text-center">
-      <div class="col">
-        <div class="row">
-          <span>Definitivo</span>
+    <form [formGroup]="formRbButton" class="form-material">
+      <div class="row mb-3 mt-3 text-center">
+        <div class="col">
+          <div class="row">
+            <span>Definitivo</span>
+          </div>
+          <div class="row">
+            <div class="col d-flex justify-content-center">
+              <form-radio label="Si">
+                <input type="radio" formControlName="definitive" value="S" />
+              </form-radio>
+              <form-radio label="No">
+                <input type="radio" formControlName="definitive" value="N" />
+              </form-radio>
+            </div>
+          </div>
         </div>
-        <div class="row">
-          <div class="col d-flex justify-content-center">
-            <form-radio label="Si">
-              <input type="radio" formControlName="option" value="true" />
-            </form-radio>
-            <form-radio label="No">
-              <input type="radio" formControlName="option" value="true" />
-            </form-radio>
+        <div class="col">
+          <div class="row">
+            <span>Todos los Lotes</span>
+          </div>
+          <div class="row">
+            <div class="col d-flex justify-content-center">
+              <form-radio label="Si">
+                <input type="radio" formControlName="allBatch" value="S" />
+              </form-radio>
+              <form-radio label="No">
+                <input type="radio" formControlName="allBatch" value="N" />
+              </form-radio>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col">
-        <div class="row">
-          <span>Todos los Lotes</span>
-        </div>
-        <div class="row">
-          <div class="col d-flex justify-content-center">
-            <form-radio label="Si">
-              <input type="radio" formControlName="option" value="true" />
-            </form-radio>
-            <form-radio label="No">
-              <input type="radio" formControlName="option" value="true" />
-            </form-radio>
-          </div>
-        </div>
-      </div>
-    </div>
+    </form>
     <div class="row text-center mb-3 mt-3">
       <div class="col">
         <button

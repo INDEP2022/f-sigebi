@@ -119,5 +119,11 @@ export class NewComerPaymentVirt extends BasePage implements OnInit {
   }
 
   //Generar nuevo
-  saveNew() {}
+  saveNew() {
+    this.bsModel.content.callback({
+      data: this.data['data']
+    })
+
+    this.bsModel.hide()
+  }
 }

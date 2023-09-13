@@ -3,6 +3,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 
 //Arrays
 export let goodCheckCustomer: any[] = [];
+export let batchEventCheck: any[] = []
 
 //COLUMNAS
 export const COLUMNSCUSTOMER = {
@@ -64,7 +65,7 @@ export const COLUMNSCUSTOMER = {
   },
 };
 
-export const COLUMNS_LOT_EVENT = {
+export const COLUMNS_LOT_EVENT_FALSE = {
   publicLot: {
     title: 'Lote',
     type: 'number',
@@ -96,6 +97,45 @@ export const COLUMNS_LOT_EVENT = {
     sort: false,
   },
 };
+
+export const COLUMNS_LOT_EVENT_TRUE = {
+  ...COLUMNS_LOT_EVENT_FALSE,
+  check: {
+    title: 'Procesar',
+    type: 'custom',
+    sort: false,
+    hide: false,
+    renderComponent: CheckboxElementComponent,
+    valuePrepareFunction: (isSelected: any, row: any) => {
+      return batchEventCheck.find(
+        (e: any) => e.row.lotId == row.lotId
+      )
+        ? true
+        : false;
+    },
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        if (data.row.available) {
+          if (data.toggle) {
+            console.log(batchEventCheck);
+            batchEventCheck.push(data.row.lotId);
+          } else {
+            console.log(batchEventCheck);
+            console.log(data.lotId);
+            batchEventCheck = batchEventCheck.filter(
+              valor => {
+                valor != data.lotId
+              }
+            );
+            console.log(batchEventCheck);
+          }
+        } else {
+          data.toggle = false;
+        }
+      });
+    },
+  },
+}
 
 export const COLUMNS_DESERT_LOTS = {
   lotPublic: {

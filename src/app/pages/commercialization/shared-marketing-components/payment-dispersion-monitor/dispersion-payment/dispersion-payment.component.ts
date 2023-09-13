@@ -36,6 +36,7 @@ import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-e
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { BasePage } from 'src/app/core/shared';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { CanLcsWarrantyComponent } from '../can-lcs-warranty/can-lcs-warranty.component';
 import { CanPagosCabComponent } from '../can-pagos-cab/can-pago-cab.component';
 import { CanRelusuComponent } from '../can-relusu/can-relusu.component';
@@ -47,7 +48,8 @@ import {
   COLUMNS_CUSTOMER_BANKS,
   COLUMNS_DESERT_LOTS,
   COLUMNS_LOTS_BANKS,
-  COLUMNS_LOT_EVENT,
+  COLUMNS_LOT_EVENT_FALSE,
+  COLUMNS_LOT_EVENT_TRUE,
   COLUMNS_PAYMENT_LOT,
   setCheckHide,
 } from './columns';
@@ -86,6 +88,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   formLotsBanks: FormGroup;
   formPaymentLots: FormGroup;
   formSirsae: FormGroup;
+  formRbButton: FormGroup;
 
   statusEvent: string = null;
   eventType: string = null;
@@ -143,6 +146,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   private txt_usu_valido: string = null;
   private id_tipo_disp: number = null;
+
+  //Arrays
+  batchEventSelect: any[]
 
   constructor(
     private fb: FormBuilder,
@@ -211,7 +217,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       rowClassFunction: (row: { data: { available: any } }) =>
         row.data.available ? 'bg-success text-white' : 'bg-dark text-white',
       actions: false,
-      columns: COLUMNS_LOT_EVENT,
+      columns: COLUMNS_LOT_EVENT_TRUE,
     };
 
     this.settingsDesertedLots = {
@@ -223,20 +229,19 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.settingsCustomerBanks = {
       ...TABLE_SETTINGS,
       rowClassFunction: (row: any) => {
-        if(['1','3'].includes(row.data.id_tipo_disp)){
+        if (['1', '3'].includes(row.data.id_tipo_disp)) {
           if (row.data.available) {
             return 'idDisp';
           } else {
             return 'notAS idDisp';
           }
-        }else{
+        } else {
           if (row.data.available) {
             return '';
           } else {
             return 'notAS';
           }
         }
-        
       },
       actions: false,
       columns: COLUMNS_CUSTOMER_BANKS,
@@ -371,6 +376,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.formSirsae = this.fb.group({
       maxDateSirsae: [null],
       reference: [null],
+    });
+    //RADIO BUTTONS
+    this.formRbButton = this.fb.group({
+      definitive: ['N'],
+      allBatch: ['N'],
     });
   }
 
@@ -681,6 +691,20 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       .subscribe(
         async res => {
           console.log(res);
+          this.comerLotsService.comerLotsClientsPayrefSum(eventId).subscribe(
+            res => {
+              console.log(res)
+              this.formLotEvent.get('totalTableWarranty').setValue(res.data[0].sumPriceWarranty)
+              this.formLotEvent.get('totalTableAdvance').setValue(res.data[0].sumAnticipate)
+              this.formLotEvent.get('totalFinalPrice').setValue(res.data[0].sumPriceEnd)
+              this.formLotEvent.get('totalWarranty').setValue(res.data[0].sumWarrantyAssig)
+              this.formLotEvent.get('totalLiquidateAmount').setValue(res.data[0].sumAmountLiq)
+            },
+            err => {
+              console.log(err)
+            }
+          )
+
           const newData = await Promise.all(
             res.data.map(async (e: any) => {
               let disponible: boolean;
@@ -708,7 +732,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       );
   }
 
-  //POSQUERY LOTES
+  //POSQUERY LOTES  
   postQueryLots(e: any) {
     return new Promise((resolve, reject) => {
       if (this.id_tipo_disp == 2) {
@@ -740,13 +764,51 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
             (n_cont > 0 && n_cont == n_coni && n_sum_pag >= e.finalPrice) ||
             (e.vtaStatusId == 'CAN' && n_cont == n_coni)
           ) {
+            this.settingsLotEvent = {
+              ...TABLE_SETTINGS,
+              rowClassFunction: (row: { data: { available: any } }) =>
+                row.data.available
+                  ? 'bg-success text-white'
+                  : 'bg-dark text-white',
+              actions: false,
+              columns: COLUMNS_LOT_EVENT_FALSE,
+            };
             resolve({ available: false });
           } else {
+            this.settingsLotEvent = {
+              ...TABLE_SETTINGS,
+              rowClassFunction: (row: { data: { available: any } }) =>
+                row.data.available
+                  ? 'bg-success text-white'
+                  : 'bg-dark text-white',
+              actions: false,
+              columns: COLUMNS_LOT_EVENT_TRUE
+            };
             resolve({ available: true });
           }
+        } else {
+          this.settingsLotEvent = {
+            ...TABLE_SETTINGS,
+            rowClassFunction: (row: { data: { available: any } }) =>
+              row.data.available
+                ? 'bg-success text-white'
+                : 'bg-dark text-white',
+            actions: false,
+            columns: COLUMNS_LOT_EVENT_TRUE
+          };
+          resolve({ available: true });
         }
       } else {
-        resolve({ available: false });
+        this.settingsLotEvent = {
+              ...TABLE_SETTINGS,
+              rowClassFunction: (row: { data: { available: any } }) =>
+                row.data.available
+                  ? 'bg-success text-white'
+                  : 'bg-dark text-white',
+              actions: false,
+              columns: COLUMNS_LOT_EVENT_TRUE
+            };
+        resolve({ available: true });
       }
     });
   }
@@ -915,6 +977,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       }
     );
   }
+
+  //POSTQUERY DE PAGOS RECIBIDOS EN EL BANCO POR LOTE
+  postqueryLotBanks() {}
 
   //DATOS DE COMPOSICIÓN DE PAGOS RECIBIDOS POR LOTE
   getPaymentLots(lotId: string) {
@@ -1238,6 +1303,16 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     ).then(q => {
       if (q.isConfirmed) {
         //TODO: PUP_PROC_DISP
+        const model = {
+          typeDispId: this.id_tipo_disp,
+          comerEventsEventId: this.form.get('event').value,
+          address: this.eventManagement == 'MUEBLES' ? 'M' : 'I',
+          rgTotalLots: this.formRbButton.get('allBatch').value,
+          PROCESAR: '',
+          typeProcess: this.formRbButton.get('deinitive').value,
+        };
+        console.log(model);
+        /* this.comerLotsService.pupProcDisp(); */
       }
     });
   }

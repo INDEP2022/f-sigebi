@@ -393,4 +393,19 @@ export class LotService extends HttpService {
     formData.append('file', file, file.name);
     return this.post(LotEndpoints.PupCambioMasv, formData);
   }
+
+  pupProcDisp(body: {
+    typeDispId: string;
+    comerEventsEventId: string;
+    address: string;
+    rgTotalLots: string;
+    PROCESAR: string;
+    typeProcess: string;
+  }) {
+    return this.post('apps/pup-proc-disp', body);
+  }
+
+  comerLotsClientsPayrefSum(idEvent: string | number){
+    return this.get(`apps/get-comer-lots-clients-payref-sum/${idEvent}`)
+  }
 }
