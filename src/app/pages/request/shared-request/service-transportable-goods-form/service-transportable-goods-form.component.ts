@@ -324,10 +324,13 @@ export class ServiceTransportableGoodsFormComponent
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-content-centered' };
 
     config.initialState = {
+      orderServId: this.orderServiceId,
+      typeService: 'EN_TRANSPORTABLE',
       callback: (data: any) => {
         if (data) {
           console.log(data);
           this.showButtonServiceManual = true;
+          this.getOrderServiceProvided();
         }
       },
     };
