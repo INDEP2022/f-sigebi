@@ -37,4 +37,9 @@ export class ComerCommissionsPerGoodService extends HttpService {
     const route = `${ThirdPartyEndpoints.ComerCommissionsPerGood}`;
     return this.put(route, model);
   }
+
+  remove(model: any) {
+    const route = `${ThirdPartyEndpoints.ComerCommissionsPerGood}`;
+    return this.delete(route, model);
+  }
 }

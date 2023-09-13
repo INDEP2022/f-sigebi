@@ -105,6 +105,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   async ngOnInit() {
     await this.prepareForm();
+    this.getEvents(new ListParams());
   }
 
   async prepareForm() {
@@ -185,17 +186,18 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       }, 500);
     }
     if (this.valCargado) {
-      this.dataTable.getElements().then(item => {
-        // OBTENER EL SIGUIENTE PAYMENT ID //
-        console.log('item', item);
-        const maxId = item.reduce(
-          (max: any, item: any) =>
-            item.paymentId > max ? item.paymentId : max,
-          0
-        );
-        this.nextPaymentId = maxId + 1;
-        console.log('maxId', this.nextPaymentId);
-      });
+      if (this.dataTable)
+        this.dataTable.getElements().then(item => {
+          // OBTENER EL SIGUIENTE PAYMENT ID //
+          console.log('item', item);
+          const maxId = item.reduce(
+            (max: any, item: any) =>
+              item.paymentId > max ? item.paymentId : max,
+            0
+          );
+          this.nextPaymentId = maxId + 1;
+          console.log('maxId', this.nextPaymentId);
+        });
     }
   }
 

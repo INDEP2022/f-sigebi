@@ -209,7 +209,7 @@ export class ConciliationDepositaryPaymentsComponent
         }
       });
     } else {
-      this.alert('warning', 'Fecha Requerida', ERROR_DATE_DISPERSAL_NULL);
+      this.alert('warning', 'Fecha requerida', ERROR_DATE_DISPERSAL_NULL);
     }
   }
 
@@ -727,9 +727,40 @@ export class ConciliationDepositaryPaymentsComponent
       'De igual manera el proceso continuará al cerrar este mensaje'
     ).then(() => {
       this.getPrepOI();
+      // this.insertDispersionDB();
     });
     // this.getPrepOI();
     // FCONDEPOCONDISPAG
+  }
+
+  async insertDispersionDB() {
+    let params: any = {
+      pOne: Number(this.depositaryAppointment.appointmentNum),
+      pTwo: null,
+    };
+    // let params: any = {
+    //   pOne: Number(this.depositaryAppointment.appointmentNum),
+    //   pTwo: this.depositaryAppointment.personNumber.id,
+    //   pDate: this.form.get('fecha').value,
+    // };
+    await this.svConciliationDepositaryPaymentsService
+      .insertDispersionDB(params)
+      .subscribe({
+        next: res => {
+          this.loading = false;
+          console.log(res.data);
+          this.getPrepOI();
+        },
+        error: err => {
+          this.loading = false;
+          console.log(err);
+          this.alertInfo(
+            'warning',
+            'Dispersión de pagos',
+            'Error al procesar la dispersión de pagos'
+          );
+        },
+      });
   }
 
   async getPrepOI() {
@@ -769,11 +800,9 @@ export class ConciliationDepositaryPaymentsComponent
     //   ]);
     // } else
     if (this.origin == 'FCONDEPOCARGAPAG') {
+      const value = this.noBienParams ? this.noBienParams : this.noBienReadOnly;
       this.router.navigate([
-        '/pages/juridical/depositary/depositary-payment-charges/' +
-        this.noBienParams
-          ? this.noBienParams
-          : this.noBienReadOnly,
+        '/pages/juridical/depositary/depositary-payment-charges/' + value,
       ]);
     }
   }

@@ -1,6 +1,9 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">ejecución de la conciliación</h5>
+    <h5 *ngIf="layout == 'M'" class="title">Ejecución de la conciliación</h5>
+    <h5 *ngIf="layout == 'I'" class="title">
+      Ejecutar la conciliación de pagos recibidos
+    </h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="conciliationForm">

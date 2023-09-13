@@ -2,7 +2,7 @@ import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filt
 
 export const CONCILIATION_EXECUTION_COLUMNS = {
   customerId: {
-    title: 'ID Cliente',
+    title: 'Id. Cliente',
     type: 'number',
     sort: false,
   },
@@ -60,7 +60,7 @@ export const CONCILIATION_EXECUTION_COLUMNS = {
     },
   },
   executionDate: {
-    title: 'Fecha Ejecución',
+    title: 'Fecha de Ejecución',
     sort: false,
     type: 'html',
     valuePrepareFunction: (text: string) => {
