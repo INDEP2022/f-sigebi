@@ -109,10 +109,8 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   }
   getTypes() {
     this.filterType = {
-      pProcessNumber: Number(
-        this.serviceOrdersForm.get('serviceOrderKey').value
-      ),
-      pServiceNumber: this.serviceOrdersForm.get('process').value,
+      pProcessNumber: this.serviceOrdersForm.get('process').value,
+      pServiceNumber: this.serviceOrdersForm.get('serviceOrderKey').value,
     };
     this.strategyServiceService.getServiceType(this.filterType).subscribe({
       next: data => {

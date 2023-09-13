@@ -6,16 +6,37 @@
     <h5 class="title">Ordenes de Servicio</h5>
     <form [formGroup]="serviceOrdersForm" class="form-material">
       <div class="row margin-input">
-        <div class="col-md-4">
-          <!-- <form-field [control]="serviceOrdersForm.get('serviceOrderKey')">
-            <ngx-select (fetchItems)="getServiceOrderKey($event)" [data]="serviceOrderKey" [form]="serviceOrdersForm"
-              value="serviceOrderKey" bindLabel="description" label="Clave de Orden de Servicio"
-              control="serviceOrderKey">
-            </ngx-select>
-          </form-field> -->
-          <form-field [control]="serviceOrdersForm.get('serviceOrderKey')">
+        <div class="col-md-3">
+          <form-field [control]="serviceOrdersForm.get('process')">
             <ngx-select
               label="Proceso"
+              [form]="serviceOrdersForm"
+              [data]="process"
+              (fetchItems)="getProcess($event)"
+              bindLabel="proAndName"
+              control="process"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              termMaxLength="50"
+              value="processNumber"
+              [labelTemplate]="proLabel"
+              [optionTemplate]="proOption"
+              (change)="getServices()">
+            </ngx-select>
+            <ng-template #proLabel let-item="item">
+              {{ item.processNumber + ' - ' + item.description }}
+            </ng-template>
+            <ng-template #proOption let-item="item">
+              <div [title]="item.processNumber + '-' + item.description">
+                {{ item.processNumber + ' - ' + item.description }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="serviceOrdersForm.get('serviceOrderKey')">
+            <ngx-select
+              label="Servicio"
               [form]="serviceOrdersForm"
               [data]="serviceOrderKey"
               (fetchItems)="getServices()"
@@ -61,33 +82,6 @@
             <ng-template #typeOption let-item="item">
               <div [title]="item.no_tiposervicio + '-' + item.descripcion">
                 {{ item.no_tiposervicio + ' - ' + item.descripcion }}
-              </div>
-            </ng-template>
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="serviceOrdersForm.get('process')">
-            <ngx-select
-              label="Proceso"
-              [form]="serviceOrdersForm"
-              [data]="process"
-              (fetchItems)="getProcess($event)"
-              bindLabel="proAndName"
-              control="process"
-              [searchOnInit]="true"
-              [showTooltip]="true"
-              termMaxLength="50"
-              value="processNumber"
-              [labelTemplate]="proLabel"
-              [optionTemplate]="proOption"
-              (change)="getServices()">
-            </ngx-select>
-            <ng-template #proLabel let-item="item">
-              {{ item.processNumber + ' - ' + item.description }}
-            </ng-template>
-            <ng-template #proOption let-item="item">
-              <div [title]="item.processNumber + '-' + item.description">
-                {{ item.processNumber + ' - ' + item.description }}
               </div>
             </ng-template>
           </form-field>
