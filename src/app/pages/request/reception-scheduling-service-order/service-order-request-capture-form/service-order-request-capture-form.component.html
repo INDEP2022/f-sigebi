@@ -73,7 +73,9 @@
       [showForm]="showForm"
       [total]="total"></app-order-service-form>
 
-    <app-classificate-vehicle-form [op]="op"></app-classificate-vehicle-form>
+    <app-classificate-vehicle-form
+      [op]="op"
+      [showForm]="showForm"></app-classificate-vehicle-form>
 
     <app-address-origin-form
       *ngIf="orderServiceId != null"
