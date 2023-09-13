@@ -31,6 +31,8 @@ import {
   IPupProcEnvSirsae,
   IPupProcReproc,
   IPupProcSeldisp,
+  IPupProcSelReproceso,
+  IPupProcSelsirsae,
   IPupValidateMandatoNfac,
 } from 'src/app/core/services/ms-lot/models-lots';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
@@ -1388,17 +1390,17 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   //Reprocesar Dispersión
   reprocessScattering() {
     if (this.id_tipo_disp != null) {
-      let c_message = ["1", "3"].includes(this.id_tipo_disp.toString())
+      let c_message = ['1', '3'].includes(this.id_tipo_disp.toString())
         ? '¿Desea Ejecutar el Reproceso de Clientes?'
         : '¿Desea Ejecutar el Reproceso de Lotes?';
 
       this.alertQuestion('question', c_message, '', 'Ejecutar').then(q => {
         if (q.isConfirmed) {
-          //TODO: PUP_PROC_REPROC
+          //* PUP_PROC_REPROC
           const model: IPupProcReproc = {
             typeDispId: this.id_tipo_disp,
             comerEventsEventId: this.event.value,
-            PROCESAR: ["1", "3"].includes(this.id_tipo_disp.toString())
+            PROCESAR: ['1', '3'].includes(this.id_tipo_disp.toString())
               ? goodCheckCustomer.map((e: any) => {
                   return e.ClientId;
                 })
@@ -1406,15 +1408,16 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
             rgTypeProcess: this.formRbButton.get('definitive').value,
           };
           console.log(model);
-           this.comerLotsService.pupProcReproc(model).subscribe(
+          this.comerLotsService.pupProcReproc(model).subscribe(
             res => {
-              console.log(res)
+              console.log(res);
             },
             err => {
-              console.log(err)
-              this.alert('error','Se presentó un Error inesperado','')
+              //!Hay error en el endpoint
+              console.log(err);
+              this.alert('error', 'Se presentó un Error inesperado', '');
             }
-          )
+          );
         }
       });
     } else {
@@ -1436,14 +1439,38 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       'Ejecutar'
     ).then(q => {
       if (q.isConfirmed) {
+        //* PUP_PROC_SELDISP
         const model: IPupProcSeldisp = {
           saleStatusId: this.statusVtaId,
           typeDispId: this.id_tipo_disp,
-          totalAmount: '',
-          totalClient: '',
+          totalAmount: this.formCustomerEvent.get('totalAmount').value,
+          totalClient: this.formCustomerBanks.get('validAmount').value,
           comerClientXEventsEventId: this.event.value,
-          dateGraceLiq: '',
+          dateGraceLiq: this.form.get('dateMaxPayment').value,
+          comerLotsEventId: this.event.value,
         };
+
+        console.log(model);
+        this.comerLotsService.pupProcSeldisp(model).subscribe(
+          res => {
+            console.log(res);
+          },
+          err => {
+            console.log(err);
+            if (
+              err.error.message ==
+              'Proceso terminado!, no se realizarón acciones, verifique el estatus de la venta ingresado!'
+            ) {
+              this.alert(
+                'error',
+                'No se realizaron acciones',
+                'Verificar el Estatus de la venta ingresada'
+              );
+            } else {
+              this.alert('error', 'Se presentó un Error inesperado', '');
+            }
+          }
+        );
       }
     });
   }
@@ -1458,6 +1485,39 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     ).then(q => {
       if (q.isConfirmed) {
         //TODO: PUP_PROC_SELSIRSAE
+        const model: IPupProcSelsirsae = {
+          saleStatusId: this.statusVtaId,
+          typeDispId: this.id_tipo_disp,
+          comerClientXEventsEventId: this.event.value,
+          comerLotsEventId: this.event.value,
+          comerEventsEventId: this.event.value,
+        };
+
+        this.comerLotsService.pupProcSelsirsae(model).subscribe(
+          res => {
+            console.log(res);
+            this.alert('success', 'Se proceso la propuesta de envío', '');
+          },
+          err => {
+            console.log(err);
+            if (
+              err.error.message ==
+              'Proceso terminado!, no se realizarón acciones, verifique el estatus de la venta ingresado!'
+            ) {
+              this.alert(
+                'error',
+                'No se realizaron acciones',
+                'Verificar el Estatus de la venta ingresada'
+              );
+            } else {
+              this.alert(
+                'error',
+                'Se presentó un Error inesperado',
+                'Por favor vuelva a intentarlo'
+              );
+            }
+          }
+        );
       }
     });
   }
@@ -1472,6 +1532,39 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     ).then(q => {
       if (q.isConfirmed) {
         //TODO: PUP_PROC_SELREPROCESO
+        const model: IPupProcSelReproceso = {
+          saleStatusId: this.statusVtaId,
+          typeDispId: this.id_tipo_disp,
+          comerEventsEventId: this.event.value,
+          totalClient: this.formCustomerBanks.get('validAmount').value,
+          dateGraceLiq: this.form.get('dateMaxPayment').value,
+        };
+
+        this.comerLotsService.pupProcSelReproceso(model).subscribe(
+          res => {
+            this.alert('success', 'Se proceso la propuesta de envío', '');
+            console.log(res);
+          },
+          err => {
+            console.log(err);
+            if (
+              err.error.message ==
+              'Proceso terminado!, no se realizarón acciones, verifique el estatus de la venta ingresado!'
+            ) {
+              this.alert(
+                'error',
+                'No se realizaron acciones',
+                'Verificar el Estatus de la venta ingresada'
+              );
+            } else {
+              this.alert(
+                'error',
+                'Se presentó un Error inesperado',
+                'Por favor vuelva a intentarlo'
+              );
+            }
+          }
+        );
       }
     });
   }
@@ -1525,7 +1618,13 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       'Ejecutar'
     ).then(q => {
       if (q.isConfirmed) {
-        let body: ISendSirsaeLot = {};
+        let body: ISendSirsaeLot = {
+          PROCESAR: [],
+          PROCESO: '',
+          COMER_EVENTOS_ID_EVENTO: '',
+          ID_TPEVENTO: '',
+          ID_TIPO_DISP: ''
+        };
         //TODO
         this.interfaceSirsaeService.sendSirsaeLot(body).subscribe(
           res => {
@@ -1559,10 +1658,12 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
       this.comerLotsService.pupValidaMandatoNfac(model).subscribe(
         res => {
+          this.alert('success','Se realizó la prueba','')
           console.log(res);
         },
         err => {
           console.log(err);
+          this.alert('error','Se presentó un error inesperado','')
         }
       );
     }

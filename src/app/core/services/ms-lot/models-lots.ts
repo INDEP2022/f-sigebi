@@ -5,6 +5,7 @@ export interface IPupProcSeldisp {
   totalClient: number | string;
   comerClientXEventsEventId: number | string;
   dateGraceLiq: string;
+  comerLotsEventId: string;
 }
 
 export interface IPupValidateMandatoNfac {
@@ -41,4 +42,20 @@ export interface IPupProcReproc{
   comerEventsEventId: string,
   PROCESAR: any[],
   rgTypeProcess: string
+}
+
+export interface IPupProcSelsirsae{
+  saleStatusId: string,
+  typeDispId: string | number,
+  comerClientXEventsEventId: string,
+  comerLotsEventId: string,
+  comerEventsEventId: string
+}
+
+export interface IPupProcSelReproceso{
+  saleStatusId: string,
+  typeDispId: string | number,
+  comerEventsEventId: string,
+  totalClient: string,
+  dateGraceLiq: string
 }
