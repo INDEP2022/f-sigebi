@@ -226,8 +226,9 @@ export class PersonListComponent extends BasePage implements OnInit {
 
         this.alert(
           'success',
-          'Mantenimiento a Administrador, Depositario e Interventor',
-          'Borrado Correctamente'
+          // 'Mantenimiento a Administrador, Depositario e Interventor',
+          'Borrado correctamente',
+          ''
         );
       },
       error: error => {
