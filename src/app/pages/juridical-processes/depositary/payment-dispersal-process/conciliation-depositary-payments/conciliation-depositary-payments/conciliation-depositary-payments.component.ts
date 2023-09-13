@@ -107,7 +107,7 @@ export class ConciliationDepositaryPaymentsComponent
         this.btnSearchGood(Number(id));
       } else {
         this.loading = false;
-        this.alert('warning', 'Número de bien', ERROR_GOOD_PARAM);
+        this.alert('warning', 'No. de bien', ERROR_GOOD_PARAM);
       }
     } else {
       this.loading = false;
@@ -171,21 +171,21 @@ export class ConciliationDepositaryPaymentsComponent
         } else {
           this.alert(
             'warning',
-            'Número de nombramiento',
+            'No. de nombramiento',
             ERROR_APOINTMENT_NUMBER_NULL
           );
         }
       } else {
         this.alert(
           'warning',
-          'Número de nombramiento',
+          'No. de nombramiento',
           ERROR_APOINTMENT_NUMBER_NULL
         );
       }
     } else {
       this.alert(
         'warning',
-        'Número de bien',
+        'No. de bien',
         ERROR_GOOD_NULL + ' y da clic en búscar para continuar'
       );
     }
@@ -259,8 +259,8 @@ export class ConciliationDepositaryPaymentsComponent
       if (!this.depositaryAppointment.appointmentNum) {
         this.alert(
           'warning',
-          'Número de nombramiento',
-          'Se requiere un número de nombramiento para continuar, búsque otro bien e intente nuevamente'
+          'No. de nombramiento',
+          'Se requiere un no. de nombramiento para continuar, búsque otro bien e intente nuevamente'
         );
         return;
       }
@@ -269,7 +269,7 @@ export class ConciliationDepositaryPaymentsComponent
     } else {
       this.alert(
         'warning',
-        'Número de bien',
+        'No. de bien',
         ERROR_GOOD_NULL + ' y da clic en búscar para continuar'
       );
     }
@@ -368,7 +368,7 @@ export class ConciliationDepositaryPaymentsComponent
     } else {
       this.alert(
         'warning',
-        'Número de bien',
+        'No. de bien',
         ERROR_GOOD_NULL + ' y da clic en búscar para continuar'
       );
     }
@@ -479,13 +479,13 @@ export class ConciliationDepositaryPaymentsComponent
             this.loading = false;
             this.alert(
               'warning',
-              'Número de bien',
+              'No. de bien',
               NOT_FOUND_GOOD_APPOINTMENT(err.error.message)
             );
           },
         });
     } else {
-      this.alert('warning', 'Número de bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -515,7 +515,7 @@ export class ConciliationDepositaryPaymentsComponent
           this.loading = false;
           // this.alert(
           //   'warning',
-          //   'Número de bien',
+          //   'No. de bien',
           //   NOT_FOUND_PERSONS_DEPOSITARY(err.error.message)
           // );
         },
@@ -567,7 +567,7 @@ export class ConciliationDepositaryPaymentsComponent
             this.loading = false;
             this.alertInfo(
               'warning',
-              'Número de nombramiento',
+              'No. de nombramiento',
               NOT_FOUND_GET_PARAMSDEP_PAYMENTS(
                 res.message[0],
                 Number(this.depositaryAppointment.appointmentNum)
@@ -580,7 +580,7 @@ export class ConciliationDepositaryPaymentsComponent
           console.log(err);
           this.alertInfo(
             'warning',
-            'Número de nombramiento',
+            'No. de nombramiento',
             NOT_FOUND_GET_PARAMSDEP_PAYMENTS(
               err.error.message,
               Number(this.depositaryAppointment.appointmentNum)
@@ -601,7 +601,7 @@ export class ConciliationDepositaryPaymentsComponent
             this.loading = false;
             this.alertInfo(
               'warning',
-              'Número de nombramiento',
+              'No. de nombramiento',
               NOT_FOUND_GET_VALID_STATUS(
                 res.message[0] + '',
                 Number(this.depositaryAppointment.appointmentNum)
@@ -617,7 +617,7 @@ export class ConciliationDepositaryPaymentsComponent
           console.log(err);
           this.alertInfo(
             'warning',
-            'Número de nombramiento',
+            'No. de nombramiento',
             NOT_FOUND_GET_VALID_STATUS(
               err.error.message,
               Number(this.depositaryAppointment.appointmentNum)
@@ -643,7 +643,7 @@ export class ConciliationDepositaryPaymentsComponent
             this.loading = false;
             this.alertInfo(
               'warning',
-              'Número de nombramiento',
+              'No. de nombramiento',
               NOT_FOUND_GET_VALID_BLACKLIST(
                 res.message[0],
                 Number(this.depositaryAppointment.appointmentNum)
@@ -656,7 +656,7 @@ export class ConciliationDepositaryPaymentsComponent
           console.log(err);
           this.alertInfo(
             'warning',
-            'Número de nombramiento',
+            'No. de nombramiento',
             NOT_FOUND_GET_VALID_BLACKLIST(
               err.error.message,
               Number(this.depositaryAppointment.appointmentNum)
@@ -695,7 +695,7 @@ export class ConciliationDepositaryPaymentsComponent
           console.log(err);
           this.alertInfo(
             'warning',
-            'Número de nombramiento',
+            'No. de nombramiento',
             NOT_FOUND_GET_VALIDADEP_PAYMENTS(
               err.error.message,
               Number(this.depositaryAppointment.appointmentNum)
@@ -781,7 +781,7 @@ export class ConciliationDepositaryPaymentsComponent
           console.log(err);
           this.alertInfo(
             'warning',
-            'Número de nombramiento',
+            'No. de nombramiento',
             NOT_FOUND_GET_VALIDADEP_PAYMENTS(
               err.error.message,
               Number(this.depositaryAppointment.appointmentNum)

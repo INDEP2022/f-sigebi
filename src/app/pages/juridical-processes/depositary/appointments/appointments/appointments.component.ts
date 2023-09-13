@@ -586,7 +586,12 @@ export class AppointmentsComponent
             console.log(this.good);
             // this.setGoodData();
             this.form.get('noBien').setValue(this.good.goodId);
-            this.validGoodNumberInDepositaryAppointment();
+            // this.validGoodNumberInDepositaryAppointment();
+            if (this.form.value.noBien) {
+              let param = new ListParams();
+              param.text = this.form.value.noBien;
+              this.getGoodsSheard(param, true);
+            }
           }
         },
       },

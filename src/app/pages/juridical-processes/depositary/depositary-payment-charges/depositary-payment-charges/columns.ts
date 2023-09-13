@@ -13,7 +13,7 @@ export const COLUMNS = {
     title: 'Movimiento',
     sort: false,
   },
-  referenceori: {
+  reference: {
     title: 'Referencia',
     sort: false,
   },
