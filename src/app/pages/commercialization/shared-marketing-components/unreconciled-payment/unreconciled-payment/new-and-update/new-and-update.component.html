@@ -63,6 +63,7 @@
           <form-field [control]="form.get('lotId')">
             <ngx-select
               [searchOnInit]="true"
+              [readonly]="!valEvent"
               [form]="form"
               control="lotId"
               [data]="lotes"
@@ -72,7 +73,25 @@
               (fetchItems)="getLotes($event)">
             </ngx-select>
           </form-field>
+          <div *ngIf="!valEvent" style="margin-top: -15px; margin-bottom: 10px">
+            <span>
+              <i
+                tooltip=""
+                containerClass="tooltip-style"
+                class="fas fa-info-circle text-warning mr-1">
+              </i>
+            </span>
+            <span>
+              <label
+                for=""
+                style="font-size: 9px; font-weight: 600; color: #79797a"
+                >El lote pertenece a un evento de la sección de
+                {{ layoutName }}</label
+              >
+            </span>
+          </div>
         </div>
+
         <div class="col-md-6 mt-2">
           <form-field [control]="form.get('reference')" label="Referencia">
             <input
