@@ -149,4 +149,9 @@ export class ComerEventosService extends HttpService {
       params
     );
   }
+
+  getspObtnPhaseEvent(body: any) {
+    const route = `${EventEndpoints.SpObtnPhaseEvent}`;
+    return this.post(route, body);
+  }
 }
