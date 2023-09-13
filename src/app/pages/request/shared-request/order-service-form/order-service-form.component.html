@@ -74,7 +74,7 @@
     <div class="col-md-4">
       <div class="form-group">
         <label class="col-lg-6 text-right">Fecha de Turnano&#58;</label>
-        <span> {{ orderService?.shiftDate | date : 'YYYY/MM/DD' }} </span>
+        <span> {{ orderService?.shiftDate | date: 'YYYY/MM/DD' }} </span>
       </div>
     </div>
 
@@ -255,7 +255,9 @@
       <div class="justify-content-end">
         <div class="font-size-45">
           <label class="col-lg-8 text-right"><b>Total&#58;</b></label>
-          <span> <b>$2,973.11</b></span>
+          <span>
+            <b>{{ total }}</b></span
+          >
         </div>
       </div>
     </div>

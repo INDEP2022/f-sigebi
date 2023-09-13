@@ -191,6 +191,7 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
     } */
 
     if (this.form.get('observations').value) {
+      console.log('good', this.good);
       const formData = {
         id: this.good?.id,
         goodId: this.good?.goodId,

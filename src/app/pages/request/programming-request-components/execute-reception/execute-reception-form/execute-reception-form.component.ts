@@ -1757,6 +1757,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
+          console.log('de aqui', resp);
           this.measureUnits = resp.data;
         },
         error: error => {},
