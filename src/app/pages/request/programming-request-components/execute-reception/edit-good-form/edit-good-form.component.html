@@ -3,7 +3,137 @@
     <h5 class="modal-title">Modificar Bien</h5>
   </div>
   <div body>
+    <!--
+      <h5 class="title">Información Bien Transferente</h5>
+      <div class="row pt-2">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Descripción Transferente&#58;</label>
+            <span class="fs-4"> {{ good?.description }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Cantidad Transferente&#58;</label>
+            <span class="fs-4">{{ good?.quantity }}</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2"
+              >Unidad de Medida Transferente&#58;</label
+            >
+            <span class="fs-4">{{ good?.unitMeasure }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-2">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Estado Físico Transferente&#58;</label>
+            <span class="fs-4"> {{ physicalStatusName }}</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2"
+              >Estado de Conservación Transferente&#58;</label
+            >
+            <span class="fs-4">{{ stateConservationName }}</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Destino Transferente&#58;</label>
+            <span class="fs-4"> {{ nameDestinyTransferent }} </span>
+          </div>
+        </div>
+      </div>
+    -->
     <form [formGroup]="form" class="form-material">
+      <!--
+        <div class="row pt-5">
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('descriptionGoodSae')"
+              label="Descripción INDEP">
+              <input
+                type="text"
+                maxlength="100"
+                class="form-control"
+                formControlName="descriptionGoodSae" />
+            </form-field>
+          </div>
+  
+          <div class="col-md-6">
+            <form-field [control]="form.get('saeDestiny')">
+              <ngx-select
+                [form]="form"
+                control="saeDestiny"
+                [data]="saeDestiny"
+                [loading]="loading"
+                value="keyId"
+                bindLabel="description"
+                (fetchItems)="getDestiny($event)"
+                label="Destino INDEP"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+  
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field [control]="form.get('saePhysicalState')">
+              <ngx-select
+                [form]="form"
+                control="saePhysicalState"
+                [data]="saePhysicalStateInfo"
+                [loading]="loading"
+                value="keyId"
+                bindLabel="description"
+                label="Estado f&iacute;sico INDEP"></ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('stateConservationSae')">
+              <ngx-select
+                [form]="form"
+                control="stateConservationSae"
+                [data]="stateConservations"
+                [loading]="loading"
+                value="keyId"
+                bindLabel="description"
+                label="Estado Conservación INDEP"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+  
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field [control]="form.get('saeMeasureUnit')">
+              <ngx-select
+                [form]="form"
+                control="saeMeasureUnit"
+                [data]="unitMeasures"
+                [loading]="loading"
+                value="idUnitDestine"
+                bindLabel="idUnitDestine"
+                (change)="unitSelect($event)"
+                label="Unidad de Medida INDEP"></ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('quantitySae')"
+              label="cantidad INDEP">
+              <input
+                type="number"
+                maxlength="100"
+                class="form-control"
+                formControlName="quantitySae" />
+            </form-field>
+          </div>
+        </div>
+      -->
       <!--<div *ngIf="tranType != 'A'">
         <div class="row">
           <div class="col-md-12">

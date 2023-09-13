@@ -30,4 +30,9 @@ export enum GoodprocessEndpoints {
   getDataFromGood = 'application/getDataFromGood',
   GetMinuteDetailDelivery = 'application/get-minute-detail-delivery',
   getStatusCveScreem = 'application/status-cve-screem',
+  GoodsDetActaRecep = 'application/goods-det-acta-ent-recep',
+  GetCount = 'application/get-count-ncont',
+  UpdateGoodStatusVal5 = 'update-good-status/update-val',
+  //Classification View
+  GetVsigLigie = 'application/vsigLigie',
 }

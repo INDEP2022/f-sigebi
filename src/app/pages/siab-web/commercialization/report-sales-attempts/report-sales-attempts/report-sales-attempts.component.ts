@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, map, merge, takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -23,12 +23,38 @@ interface IExcelToJson {
 @Component({
   selector: 'app-report-sales-attempts',
   templateUrl: './report-sales-attempts.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   data: IExcelToJson[] = [];
   tiposData = new DefaultSelect();
+  loadingBtn: boolean = false;
+  loadingBtn2: boolean = false;
+  loadingBtn3 = false;
+  loadingBtn4 = false;
   tiposstatus = new DefaultSelect();
   dataExcel: any = [];
   Tbienes: any = [];
@@ -36,13 +62,20 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   status: any = [];
   source: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  params3 = new BehaviorSubject<ListParams>(new ListParams());
   fileReader = new FileReader();
   jsonToCsv = JSON_TO;
   until = false;
+  until2 = false;
+  until3 = false;
   propertyValues: string[] = [];
   commaSeparatedString: string = '';
   totalItems: number = 0;
+  totalItems2: number = 0;
+  totalItems3: number = 0;
   private isFirstLoad = true;
+  private isSecondLoad = true;
 
   get filterGoods() {
     return this.form.get('filterGoods');
@@ -72,19 +105,23 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
     this.getTodos(new ListParams());
     this.getStatus(new ListParams());
 
-    const observable1 = this.params.pipe(map(() => this.consultarBienExcel()));
-    const observable2 = this.params.pipe(map(() => this.consultarBien()));
-    const observable3 = this.params.pipe(map(() => this.consultarOnlyOne()));
-
-    const combinedObservable = merge(observable1, observable2, observable3);
-
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (!this.isFirstLoad) {
-        this.consultarBienExcel();
         this.consultarBien();
+      }
+
+      if (!this.isSecondLoad) {
+        this.consultarBienExcel();
       }
     });
     this.isFirstLoad = false;
+
+    this.params3.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (!this.isSecondLoad) {
+        this.consultarBienExcel();
+      }
+    });
+    this.isSecondLoad = false;
   }
 
   private prepareForm2() {
@@ -149,20 +186,22 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   }
 
   consultarBienExcel() {
+    this.loadingBtn4 = true;
     if (!this.commaSeparatedString) {
       this.alert('warning', 'Debe importar el Archivo Excel', '');
+      this.loadingBtn4 = false;
       return;
     }
 
     let params = {
-      ...this.params.getValue(),
+      ...this.params3.getValue(),
     };
     let body = {
       pGoodNumber: this.commaSeparatedString,
       pType: 0,
       pSubtypes: '',
       pStatus: '',
-      ...this.params.getValue(),
+      ...this.params3.getValue(),
     };
     console.log(body);
     this.getparEportAttemptsVta.getpaREportAttemptsVta(body, params).subscribe({
@@ -181,7 +220,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
             countMap[noBienValue] = 1;
           }
         });
-
+        this.loadingBtn4 = false;
         console.log('Conteo de ocurrencias de cada bien:', countMap);
         const newData = Object.keys(countMap).map(bien => ({
           bien,
@@ -198,9 +237,9 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
         //   // ... otras columnas ...
         // };
         this.source.load(resp.data);
-        this.until = true;
+        this.until3 = true;
         this.source.refresh();
-        this.totalItems = resp.count;
+        this.totalItems3 = resp.count;
       },
       error: err => {
         console.log(err);
@@ -210,8 +249,10 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   }
 
   consultarOnlyOne() {
+    this.loadingBtn = true;
     if (!this.form.get('onlyOne').value) {
       this.alert('warning', 'Es Necesario Contar con el No. Bien', '');
+      this.loadingBtn = false;
       return;
     }
     let params = {};
@@ -243,6 +284,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
           });
 
           console.log('Conteo de ocurrencias de cada bien:', countMap);
+          this.loadingBtn = false;
           const newData = Object.keys(countMap).map(bien => ({
             bien,
             conteo_ocurrencias: countMap[bien],
@@ -375,6 +417,8 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   }
 
   consultarBien() {
+    this.isFirstLoad = true;
+    this.loadingBtn3 = true;
     console.log(this.form.get('typeGood').value);
     console.log(this.tiposData);
     const selectedTypeNumber = this.form.get('typeGood').value;
@@ -389,19 +433,20 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
 
     if (!selectedTypeStatus) {
       this.alert('warning', 'Debe Seleccionar los Filtros', '');
+      this.loadingBtn3 = false;
       return;
     }
 
     console.log(selectedTypeNumber);
 
     let params = {
-      ...this.params.getValue(),
+      ...this.params2.getValue(),
     };
     let body = {
       pType: resultArray[0].typeNumber,
       pSubtypes: resultArray[0].subTypeNumber,
       pStatus: resultStatus[0].status,
-      ...this.params.getValue(),
+      ...this.params2.getValue(),
     };
     console.log(params);
     this.getparEportAttemptsVta.getpaREportAttemptsVta(body, params).subscribe({
@@ -410,7 +455,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
         // Contar la cantidad de veces que aparece "no_bien" en la respuesta
         // Crear un objeto para almacenar las ocurrencias de cada valor en no_bien
         const countMap: { [key: string]: number } = {}; // Anotación de tipo para countMap
-
+        this.loadingBtn3 = false;
         // Recorrer los registros y contar las ocurrencias
         resp.data.forEach((item: any) => {
           const noBienValue: string = item.no_bien;
@@ -438,9 +483,9 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
         // };
 
         this.source.load(resp.data);
-        this.until = true;
+        this.until2 = true;
         this.source.refresh();
-        this.totalItems = resp.count;
+        this.totalItems2 = resp.count;
       },
       error: err => {
         console.log(err);

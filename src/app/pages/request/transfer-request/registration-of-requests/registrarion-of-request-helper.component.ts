@@ -156,21 +156,31 @@ export class RegistrationHelper extends BasePage {
 
     //Revisa si tiene caráctula inai
     const solTrans: any = await this.getDocSolTrans(idRequest);
-    console.log(solTrans);
+    console.log('id tipo documento', solTrans);
+    console.log('id Transferente', request.transferenceId);
     //Todo: verificar y obtener documentos de la solicitud
     if (request.recordId === null) {
       //Verifica si hay expediente
       this.message('warning', 'La solicitud no tiene expediente asociado', ''); //Henry
       validoOk = false;
-    } else if (solTrans != 90) {
-      console.log('No tiene Sol. Trans');
-      this.message(
-        'warning',
-        'Falta Documento: Solicitud de Transferencia',
-        'Se requiere subir el documento'
-      );
-      //validoOk = false;
-    } else if (!lisDocument || lisDocument < 1) {
+    } else if (
+      request.transferenceId != 1 &&
+      request.transferenceId != 120 &&
+      request.transferenceId != 752
+    ) {
+      console.log('Soy manual');
+      if (solTrans != 90) {
+        console.log('No tiene Sol. Trans');
+        this.message(
+          'warning',
+          'Falta Documento: Solicitud de Transferencia', //Validar documento SAT y PGR
+          'Se requiere subir el documento'
+        );
+      }
+    } else {
+      validoOk = true;
+    }
+    if (!lisDocument || lisDocument < 1) {
       this.message(
         'warning',
         'Falta Documento relacionado a la solicitud',
@@ -450,7 +460,8 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Tipo de Inmueble" en el Bien Inmueble esta vacio.'
               );
               break;
-            } else if (realEstate.pffDate) {
+            } else if (realEstate.pffDate == null) {
+              console.log('pffDate; ', realEstate.pffDate);
               if (
                 idTrandference == 120 ||
                 idTrandference == 752 ||

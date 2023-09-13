@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -76,23 +76,23 @@ export class SirsaeMovementSendingMainComponent
   eventsTestData = [
     {
       id: 101,
-      description: 'DESCRIPCION DE EJEMPLO DE EVENTO 101',
+      description: 'DESCRIPCION DE EJEMPLO DE Evento 101',
     },
     {
       id: 201,
-      description: 'DESCRIPCION DE EJEMPLO DE EVENTO 201',
+      description: 'DESCRIPCION DE EJEMPLO DE Evento 201',
     },
     {
       id: 301,
-      description: 'DESCRIPCION DE EJEMPLO DE EVENTO 301',
+      description: 'DESCRIPCION DE EJEMPLO DE Evento 301',
     },
     {
       id: 401,
-      description: 'DESCRIPCION DE EJEMPLO DE EVENTO 401',
+      description: 'DESCRIPCION DE EJEMPLO DE Evento 401',
     },
     {
       id: 501,
-      description: 'DESCRIPCION DE EJEMPLO DE EVENTO 501',
+      description: 'DESCRIPCION DE EJEMPLO DE Evento 501',
     },
   ];
 
@@ -162,6 +162,7 @@ export class SirsaeMovementSendingMainComponent
   @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   lotes = new DefaultSelect();
   loadingBtnSendIn: boolean = false;
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -373,7 +374,7 @@ export class SirsaeMovementSendingMainComponent
     }
   }
 
-  // COMER_CLIENTESXEVENTO
+  // COMER_CLIENTESXEvento
   async getComerClientsXEvent(filter: any) {
     this.loading = true;
     this.totalItems = 0;
@@ -418,7 +419,7 @@ export class SirsaeMovementSendingMainComponent
         if (filter == 'si') {
           this.alert(
             'warning',
-            'No se Encontraron Clientes para este Evento',
+            'No se encontraron clientes para este Evento',
             ''
           );
         }
@@ -451,7 +452,7 @@ export class SirsaeMovementSendingMainComponent
     if (!this.eventSelected)
       return this.alert(
         'warning',
-        'Es Necesario Especificar un Evento para Consultar',
+        'Es necesario especificar un Evento para consultar',
         ''
       );
 
@@ -466,6 +467,10 @@ export class SirsaeMovementSendingMainComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getComerClientsXEvent('si'));
+
+    setTimeout(() => {
+      this.performScroll();
+    }, 500);
   }
 
   clear() {
@@ -496,12 +501,12 @@ export class SirsaeMovementSendingMainComponent
   openForm(data: any, editVal: boolean) {
     if (this.layout == 'M') {
       if (!this.eventSelected) {
-        this.alert('warning', 'Es Necesario Especificar un Evento', '');
+        this.alert('warning', 'Es necesario especificar un Evento', '');
         return;
       }
     } else if (this.layout == 'I') {
       if (!this.eventSelectedInmueble) {
-        this.alert('warning', 'Es Necesario Especificar un Evento', '');
+        this.alert('warning', 'Es necesario especificar un Evento', '');
         return;
       }
     }
@@ -593,7 +598,7 @@ export class SirsaeMovementSendingMainComponent
     }
   }
 
-  // UPDATE CLIENTES X EVENTOS //
+  // UPDATE CLIENTES X EventoS //
   async update(event: any, type: any) {
     return new Promise((resolve, reject) => {
       this.comerDetailsService.pFmcomr612ClientxEvent2(event, type).subscribe({
@@ -625,7 +630,7 @@ export class SirsaeMovementSendingMainComponent
 
   async enviarSIRSAE() {
     if (!this.eventSelected) {
-      this.alert('warning', 'Es Necesario Especificar un Evento', '');
+      this.alert('warning', 'Es necesario especificar un Evento', '');
       return;
     }
     if (this.layout == 'M') {
@@ -654,8 +659,8 @@ export class SirsaeMovementSendingMainComponent
           ) {
             this.alert(
               'error',
-              'Error de Conexión',
-              'No se pudo Conectar a la Base de Datos (SIRSAE)'
+              'Error de conexión',
+              'No se pudo conectar a la Base de Datos (SIRSAE)'
             );
             this.loadingBtn = false;
             await this.getComerClientsXEvent('no');
@@ -663,7 +668,7 @@ export class SirsaeMovementSendingMainComponent
           } else {
             this.alert(
               'error',
-              'Ha Ocurrido un Error al Intentar Enviar a SIRSAE',
+              'Ha ocurrido un error al intentar enviar a SIRSAE',
               ''
             );
             this.loadingBtn = false;
@@ -673,7 +678,7 @@ export class SirsaeMovementSendingMainComponent
         } else {
           await this.actEstEve(this.eventSelected.id);
           this.loadingBtn = false;
-          this.alert('success', 'Proceso Terminado Correctamente', '');
+          this.alert('success', 'Proceso terminado correctamente', '');
           await this.getComerClientsXEvent('no');
         }
         if (
@@ -708,7 +713,7 @@ export class SirsaeMovementSendingMainComponent
       if (valid_pago == 0) {
         this.alert(
           'warning',
-          'EL Evento o Lote Seleccionado no tiene Dispersión de Pagos, Verifique',
+          'EL Evento o Lote seleccionado no tiene dispersión de pagos, verifique',
           ''
         );
         this.loadingBtnSendIn = false;
@@ -717,7 +722,7 @@ export class SirsaeMovementSendingMainComponent
 
       const AUX_ESTATUS: any = await this.GET_AUX_ESTATUS();
       if (AUX_ESTATUS <= 0) {
-        this.alert('warning', 'Debe Ejecutar Primero el Cambio de Estatus', '');
+        this.alert('warning', 'Debe ejecutar primero el cambio de estatus', '');
         this.loadingBtnSendIn = false;
         return;
       }
@@ -730,11 +735,11 @@ export class SirsaeMovementSendingMainComponent
       };
       const sendReadSirsae: any = await this.ENVIA_LEE_SIRSAE(objSirsae);
       if (!sendReadSirsae) {
-        this.alert('error', 'Ha Ocurrido un error al Enviar', '');
+        this.alert('error', 'Ha ocurrido un error al enviar', '');
         this.loadingBtnSendIn = false;
         return;
       } else {
-        this.alert('success', 'Proceso Terminado Correctamente', '');
+        this.alert('success', 'Proceso terminado correctamente', '');
       }
       this.loadingBtnSendIn = false;
     }
@@ -835,7 +840,7 @@ export class SirsaeMovementSendingMainComponent
         if (valid1 == 0) {
           this.alert(
             'warning',
-            `El Cliente ${item.customerId} No tiene Pagos y no se Enviará a SIRSAE `,
+            `El Cliente ${item.customerId} no tiene pagos y no se enviará a SIRSAE `,
             ''
           );
         }
@@ -893,7 +898,7 @@ export class SirsaeMovementSendingMainComponent
   obtenerOI() {
     if (this.layout == 'M') {
       if (!this.eventSelected) {
-        this.alert('warning', 'Es Necesario Especificar un Evento', '');
+        this.alert('warning', 'Es necesario especificar un Evento', '');
         return;
       }
       const data: any = this.data.getAll().then(async resp => {
@@ -912,20 +917,20 @@ export class SirsaeMovementSendingMainComponent
         ) {
           this.alert(
             'error',
-            'Error de Conexión',
-            'No se pudo Conectar a la Base de Datos (SIRSAE)'
+            'Error de conexión',
+            'No se pudo conectar a la Base de Datos (SIRSAE)'
           );
           await this.getComerClientsXEvent('no');
           return;
         } else {
-          this.alert('success', 'Proceso Terminado Correctamente', '');
+          this.alert('success', 'Proceso terminado correctamente', '');
           // this.loading = false;
           await this.getComerClientsXEvent('no');
         }
       });
     } else if (this.layout == 'I') {
       if (!this.eventSelectedInmueble) {
-        this.alert('warning', 'Es Necesario Especificar un Evento', '');
+        this.alert('warning', 'Es necesario especificar un Evento', '');
         return;
       }
       this.loadingBtnOIICliente = true;
@@ -945,14 +950,14 @@ export class SirsaeMovementSendingMainComponent
         ) {
           this.alert(
             'error',
-            'Error de Conexión',
-            'No se pudo Conectar a la Base de Datos (SIRSAE)'
+            'Error de conexión',
+            'No se pudo conectar a la Base de Datos (SIRSAE)'
           );
           await this.getComerClientsXEvent('no');
           this.loadingBtnOIICliente = false;
           return;
         } else {
-          this.alert('success', 'Proceso Terminado Correctamente', '');
+          this.alert('success', 'Proceso terminado correctamente', '');
           // this.loading = false;
           await this.getComerClientsXEvent('no');
           this.loadingBtnOIICliente = false;
@@ -964,7 +969,7 @@ export class SirsaeMovementSendingMainComponent
   async obtenerOIInmueble() {
     // ENVIA_LEE_SIRSAE(2, null);
     if (!this.eventSelected) {
-      this.alert('warning', 'Es Necesario Especificar un Evento', '');
+      this.alert('warning', 'Es necesario especificar un Evento', '');
       return;
     }
     this.loadingBtnOII = true;
@@ -976,11 +981,11 @@ export class SirsaeMovementSendingMainComponent
     };
     const sendReadSirsae: any = await this.ENVIA_LEE_SIRSAE(objSirsae);
     if (!sendReadSirsae) {
-      this.alert('error', 'Ha Ocurrido un error al Enviar', '');
+      this.alert('error', 'Ha ocurrido un error al enviar', '');
       this.loadingBtnOII = false;
       return;
     } else {
-      this.alert('success', 'Proceso Terminado Correctamente', '');
+      this.alert('success', 'Proceso terminado correctamente', '');
     }
     this.loadingBtnOII = false;
   }
@@ -1022,7 +1027,7 @@ export class SirsaeMovementSendingMainComponent
       },
       error: err => {
         if (filter == 'si') {
-          this.alert('warning', 'No hay Lotes Disponibles al Evento', '');
+          this.alert('warning', 'No hay lotes disponibles en el Evento', '');
         }
         // this.conciliationForm.get('batch').setValue(null);
         this.lotes = new DefaultSelect([], 0);
@@ -1071,7 +1076,7 @@ export class SirsaeMovementSendingMainComponent
     if (!this.eventSelectedInmueble)
       return this.alert(
         'warning',
-        'Es Necesario Especificar un Evento para Consultar',
+        'Es necesario especificar un Evento para consultar',
         ''
       );
 
@@ -1100,7 +1105,7 @@ export class SirsaeMovementSendingMainComponent
 
   async enviarSIRSAExCliente() {
     if (!this.eventSelectedInmueble) {
-      this.alert('warning', 'Es Necesario Especificar un Evento', '');
+      this.alert('warning', 'Es necesario especificar un Evento', '');
       return;
     }
     const data: any = this.data.getAll().then(async resp => {
@@ -1130,7 +1135,7 @@ export class SirsaeMovementSendingMainComponent
           this.alert(
             'error',
             'Error de Conexión',
-            'No se pudo Conectar a la Base de Datos (SIRSAE)'
+            'No se pudo conectar a la Base de Datos (SIRSAE)'
           );
           this.loadingBtn = false;
           await this.getComerClientsXEvent('no');
@@ -1138,7 +1143,7 @@ export class SirsaeMovementSendingMainComponent
         } else {
           this.alert(
             'error',
-            'Ha Ocurrido un Error al Intentar Enviar a SIRSAE',
+            'Ha ocurrido un error al intentar enviar a SIRSAE',
             ''
           );
           this.loadingBtn = false;
@@ -1149,15 +1154,15 @@ export class SirsaeMovementSendingMainComponent
         // ACT_EST_EVE
         await this.ACT_EST_EVE(this.eventSelectedInmueble.id);
         this.loadingBtn = false;
-        this.alert('success', 'Proceso Terminado Correctamente', '');
+        this.alert('success', 'Proceso terminado correctamente', '');
         await this.getComerClientsXEvent('no');
       }
     });
   }
 
-  ACT_EST_EVE(evento: any) {
+  ACT_EST_EVE(Evento: any) {
     return new Promise((resolve, reject) => {
-      this.interfacesirsaeService.actEstEve(evento).subscribe({
+      this.interfacesirsaeService.actEstEve(Evento).subscribe({
         next: data => {
           resolve(data);
         },
@@ -1168,9 +1173,9 @@ export class SirsaeMovementSendingMainComponent
     });
   }
 
-  VALIDA_PAGOSXCLI(evento: any) {
+  VALIDA_PAGOSXCLI(Evento: any) {
     return new Promise((resolve, reject) => {
-      this.interfacesirsaeService.validatePaymentsXcli(evento).subscribe({
+      this.interfacesirsaeService.validatePaymentsXcli(Evento).subscribe({
         next: data => {
           resolve(data);
         },
@@ -1210,7 +1215,7 @@ export class SirsaeMovementSendingMainComponent
 
   obtenerOIxCliente() {
     if (!this.eventSelectedInmueble) {
-      this.alert('warning', 'Es Necesario Especificar un Evento', '');
+      this.alert('warning', 'Es necesario especificar un Evento', '');
       return;
     }
 
@@ -1230,16 +1235,25 @@ export class SirsaeMovementSendingMainComponent
       ) {
         this.alert(
           'error',
-          'Error de Conexión',
-          'No se pudo Conectar a la Base de Datos (SIRSAE)'
+          'Error de conexión',
+          'No se pudo conectar a la Base de Datos (SIRSAE)'
         );
         await this.getComerClientsXEvent('no');
         return;
       } else {
-        this.alert('success', 'Proceso Terminado Correctamente', '');
+        this.alert('success', 'Proceso terminado correctamente', '');
         // this.loading = false;
         await this.getComerClientsXEvent('no');
       }
     });
+  }
+
+  performScroll() {
+    if (this.scrollContainer) {
+      this.scrollContainer.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
   }
 }

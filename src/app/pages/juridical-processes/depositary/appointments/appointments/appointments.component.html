@@ -31,7 +31,7 @@
           <!-- <div class="row">
             <div class="col-sm-12 col-12 col-md-8 p-2"> -->
           <div class="row">
-            <div class="col-12 col-sm-12 col-md-4 p-2">
+            <!-- <div class="col-12 col-sm-12 col-md-4 p-2">
               <form-field [control]="form.get('noBien')" label="No&#46; Bien">
                 <input
                   type="number"
@@ -39,29 +39,54 @@
                   maxlength="11"
                   formControlName="noBien" />
               </form-field>
+            </div> -->
+
+            <div class="form-group col-sm-12 col-12 col-md-8 p-2">
+              <form-field [control]="form.get('noBien')">
+                <ngx-select
+                  (fetchItems)="getGoodsSheard($event)"
+                  [data]="goods"
+                  [form]="form"
+                  value="id"
+                  bindLabel="description"
+                  label="No&#46; Bien"
+                  control="noBien"
+                  [showTooltip]="true"
+                  termMaxLength="400"
+                  (change)="onChangeGood($event)"
+                  [labelTemplate]="userLabel"
+                  [optionTemplate]="userOption">
+                </ngx-select>
+              </form-field>
+              <ng-template #userLabel let-item="item"
+                >{{ item.id }} - {{ item.description }}</ng-template
+              >
+              <ng-template #userOption let-item="item"
+                >{{ item.id }} - {{ item.description }}</ng-template
+              >
             </div>
             <div class="col-12 col-sm-12 col-md-4 p-2">
-              <button
+              <!-- <button
                 type="submit"
-                class="btn btn-primary active btn-sm m-2"
+                class="btn btn-primary active btn-sm m-2 ml-3"
                 (click)="validGoodNumberInDepositaryAppointment()">
                 Buscar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
-              </button>
+              </button> -->
               <!-- </div>
             <div class="col-12 col-sm-4 col-md-3 p-2"> -->
               <button
                 type="button"
-                class="btn btn-danger active btn-sm m-2"
+                class="btn btn-danger active btn-sm ml-3"
                 (click)="cleanScreenFields()">
                 Limpiar
                 <i class="fa fa-eraser ml-1"></i>
               </button>
-            </div>
-            <div class="col-12 col-sm-12 col-md-4 p-2 text-end">
+              <!-- </div>
+            <div class="col-12 col-sm-12 col-md-4 p-2 text-end"> -->
               <button
                 type="button"
-                class="btn btn-primary btn-sm active"
+                class="btn btn-primary btn-sm ml-3 active"
                 (click)="saveDataForm()">
                 Guardar
                 <i aria-hidden="true" class="fa fa-save"></i></button
@@ -71,7 +96,7 @@
                 (click)="newDepositary()"
                 tooltip="Agregar"
                 containerClass="tooltip-style"
-                class="btn btn-info btn-sm active ml-2 mr-2">
+                class="btn btn-info btn-sm active ml-3 mr-3">
                 <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
               <!-- <button
@@ -109,7 +134,7 @@
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('noExpedient')"
-            label="N&uacute;mero de Expediente">
+            label="No&#46; de Expediente">
             <input
               type="number"
               [readonly]="true"
@@ -797,9 +822,9 @@
               <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 text-center">
                 <button
                   type="button"
-                  class="btn btn-danger btn-sm active m-1"
+                  class="btn btn-primary btn-sm active m-1"
                   (click)="closeRadioScan()">
-                  Cerrar opciones de Escaneo
+                  Cerrar
                 </button>
               </div>
             </div>
@@ -845,7 +870,7 @@
             tooltip="Detalle de Pagos"
             containerClass="tooltip-style"
             type="button"
-            class="btn btn-info btn-sm active m-1">
+            class="btn btn-info btn-sm active ml-3">
             <i class="bx bxs-detail"></i>
           </button>
           <button
@@ -854,7 +879,7 @@
             tooltip="Reportes Jur&iacute;dicos"
             containerClass="tooltip-style"
             type="button"
-            class="btn btn-info btn-sm active m-1">
+            class="btn btn-info btn-sm active ml-3">
             <i class="bx bxs-detail"></i>
           </button>
           <button
@@ -863,7 +888,7 @@
             tooltip="Reportes Administrativos"
             containerClass="tooltip-style"
             type="button"
-            class="btn btn-info btn-sm active m-1">
+            class="btn btn-info btn-sm active ml-3">
             <i class="bx bxs-detail"></i>
           </button>
         </div>
@@ -888,7 +913,7 @@
             tooltip="Ingreso Masivo de Pagos"
             containerClass="tooltip-style"
             type="button"
-            class="btn btn-warning btn-sm active m-1">
+            class="btn btn-warning btn-sm active ml-3">
             <i class="bx bx-window-open"></i>
           </button>
           <button
@@ -897,7 +922,7 @@
             tooltip="Cat&aacute;logo de Conceptos de Pago"
             containerClass="tooltip-style"
             type="button"
-            class="btn btn-warning btn-sm active m-1">
+            class="btn btn-warning btn-sm active ml-3">
             <i class="bx bx-window-open"></i>
           </button>
           <button
@@ -906,7 +931,7 @@
             tooltip="Cat&aacute;logo Depositar&iacute;as"
             containerClass="tooltip-style"
             type="button"
-            class="btn btn-warning btn-sm active m-1">
+            class="btn btn-warning btn-sm active ml-3">
             <i class="bx bx-window-open"></i>
           </button>
         </div>

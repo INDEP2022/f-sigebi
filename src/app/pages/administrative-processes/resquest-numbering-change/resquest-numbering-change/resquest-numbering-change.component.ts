@@ -586,7 +586,7 @@ export class ResquestNumberingChangeComponent
         this.data2.load([]);
         this.data2.refresh();
         this.totalItems2 = 0;
-        this.alert('warning', 'No se Encontraron Resultados', '');
+        this.alert('warning', 'No se encontraron resultados', '');
         this.loading = false;
       }
     );
@@ -620,7 +620,7 @@ export class ResquestNumberingChangeComponent
           types.data[0].otvalor
         );
         this.formaplicationData.controls['delegationRequestcamnum'].setValue(
-          types.data[0].no_delegacion
+          this.token.decodeToken().department
         );
       },
       error: err => {
@@ -892,7 +892,7 @@ export class ResquestNumberingChangeComponent
           console.log('error', err);
           // if (!alertShown) {
           if (filter == 'si') {
-            this.alert('warning', 'No se Encontraron Registros', '');
+            this.alert('warning', 'No se encontraron registros', '');
           }
 
           this.totalItems = 0;
@@ -985,7 +985,7 @@ export class ResquestNumberingChangeComponent
         }, 1000);
 
         if (filter == 'si') {
-          this.alert('warning', 'No se Encontraron Bienes Asociados', '');
+          this.alert('warning', 'No se encontraron bienes asociados', '');
         }
       },
     });
@@ -1165,7 +1165,7 @@ export class ResquestNumberingChangeComponent
     } else {
       this.alertInfo(
         'warning',
-        'Debe Seleccionar un Registro en la tabla Bien x Tipo',
+        'Debe seleccionar un registro en la tabla Bien x Tipo',
         ''
       ).then(question => {
         if (question.isConfirmed) {
@@ -1320,7 +1320,7 @@ export class ResquestNumberingChangeComponent
     } else {
       this.alertInfo(
         'warning',
-        'No hay Registro en la tabla Bien x Tipo',
+        'No hay registro en la tabla Bien x Tipo',
         ''
       ).then(question => {
         if (question.isConfirmed) {
@@ -1339,13 +1339,13 @@ export class ResquestNumberingChangeComponent
         next: value => {
           this.alert(
             'success',
-            'Se Agregó Correctamente el Bien: ' + payload.goodNumber,
+            'Se agregó correctamente el Bien: ' + payload.goodNumber,
             ''
           );
           resolve(true);
         },
         error: err => {
-          this.handleSuccess('No se Agregó el Bien: ' + payload.goodNumber);
+          this.handleSuccess('No se agregó el Bien: ' + payload.goodNumber);
           resolve(false);
         },
       });
@@ -1371,7 +1371,7 @@ export class ResquestNumberingChangeComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar Todos los Registros?'
+      '¿Desea eliminar todos los registros?'
     ).then(async question => {
       if (question.isConfirmed) {
         if (this.dataCamNum.length != 0) {
@@ -1405,7 +1405,7 @@ export class ResquestNumberingChangeComponent
           //   });
         } else {
           this.warningAlert(
-            'No hay Registros en la Tabla Bien Cambio Numerario'
+            'No hay registros en la tabla Bien Cambio Numerario'
           );
         }
       }
@@ -1467,7 +1467,7 @@ export class ResquestNumberingChangeComponent
           // this.loading = false;
           this.alert(
             'success',
-            'Bien: ' + body.goodNumber + ' Eliminado Correctamente ',
+            'Bien: ' + body.goodNumber + ' eliminado correctamente ',
             ''
           );
           resolve(true);
@@ -1475,7 +1475,7 @@ export class ResquestNumberingChangeComponent
         error: err => {
           this.alert(
             'error',
-            'No se pudo Eliminar el Registro' + body.goodNumber,
+            'No se pudo eliminar el registro' + body.goodNumber,
             ''
           );
           resolve(false);
@@ -1533,7 +1533,7 @@ export class ResquestNumberingChangeComponent
       error: err => {
         this.alert(
           'error',
-          'Ocurrió un Error al Intentar Eliminar el Registro',
+          'Ocurrió un error al intentar eliminar el registro',
           ''
         );
         // this.loading = false;
@@ -1550,7 +1550,7 @@ export class ResquestNumberingChangeComponent
         if (filter == 'si') {
           this.alert(
             'error',
-            'Ocurrió un Error al Intentar Crear el Registro',
+            'Ocurrió un error al intentar crear el registro',
             ''
           );
         }
@@ -1568,13 +1568,13 @@ export class ResquestNumberingChangeComponent
           this.data1.refresh();
           this.data1.load([]);
           this.totalItems1 = 0;
-          this.alert('success', 'Registros Eliminados Correctamente', '');
+          this.alert('success', 'Registros eliminados correctamente', '');
           resolve(true);
         },
         error: err => {
           this.alert(
             'error',
-            'Ocurrió un Error al Intentar Eliminar los Registros',
+            'Ocurrió un error al intentar eliminar los registros',
             ''
           );
           resolve(false);
@@ -1605,7 +1605,7 @@ export class ResquestNumberingChangeComponent
       this.alertInfo(
         'warning',
         message,
-        'Realice una Búsqueda o Agregue una Nueva Solicitud'
+        'Realice una búsqueda o agregue una nueva solicitud'
       ).then(question => {
         if (question.isConfirmed) {
           setTimeout(() => {
@@ -1730,7 +1730,7 @@ export class ResquestNumberingChangeComponent
       return;
     }
   }
-
+  disabledSave: boolean = true;
   guardarSolicitud() {
     // this.loading = true;
     // Obtener la fecha actual
@@ -1744,7 +1744,7 @@ export class ResquestNumberingChangeComponent
     // Comparar la fecha seleccionada con la fecha actual
     if (fechaSeleccionada.toDateString() !== currentDate.toDateString()) {
       // Si la fecha seleccionada no es la de hoy, mostrar un mensaje de error o realizar la acción que desees.
-      this.alert('warning', 'La Fecha Seleccionada debe ser la de Hoy.', '');
+      this.alert('warning', 'La fecha seleccionada debe ser la de hoy.', '');
       console.log('La fecha seleccionada debe ser la de hoy.');
       this.loading = false;
       return;
@@ -1768,9 +1768,26 @@ export class ResquestNumberingChangeComponent
             .get('applicationChangeCashNumber')
             .setValue(response.applicationChangeNumeraryNumber);
           this.successAlert();
+          const readonlyFields = [
+            'dateRequestChangeNumerary',
+            'applicationChangeCashNumber',
+            'userRequestChangeNumber',
+            'postUserRequestCamnum',
+            'delegationRequestcamnum',
+            'procedureProposal',
+            'authorizeUser',
+            'authorizePostUser',
+            'authorizeDelegation',
+            'authorizeDate',
+          ];
+          readonlyFields.forEach(fieldName => {
+            this.formaplicationData.get(fieldName).disable();
+          });
           this.loading = false;
+          this.disabledSave = false;
         },
         error: err => {
+          this.disabledSave = true;
           this.loading = false;
         },
       });
@@ -1820,7 +1837,7 @@ export class ResquestNumberingChangeComponent
       },
       error: err => {
         this.idSolicitud = null;
-        this.alert('warning', 'No se Encontraron Datos de la Solicitud', '');
+        this.alert('warning', 'No se encontraron datos de la solicitud', '');
         this.loading = false;
       },
     });
@@ -1841,12 +1858,20 @@ export class ResquestNumberingChangeComponent
     this.formaplicationData.get('authorizeDelegation').setValue(null);
     this.formaplicationData.get('authorizeDate').setValue(new Date());
     Object.keys(this.formaplicationData.controls).forEach(controlName => {
+      console.log(controlName);
+      if (
+        controlName == 'postUserRequestCamnum' ||
+        controlName == 'authorizeDate' ||
+        controlName == 'dateRequestChangeNumerary'
+      )
+        return;
       this.formaplicationData.get(controlName).enable();
     }),
       (this.totalItems1 = 0);
     this.idSolicitud = null;
     this.data1.load([]);
     this.data1.refresh();
+    this.disabledSave = true;
   }
   //data3
   cleanFilter() {
@@ -1914,11 +1939,11 @@ export class ResquestNumberingChangeComponent
     this.alert('warning', message, '');
   }
   successAlert() {
-    this.alert('success', 'Registro Creado Correctamente', '');
+    this.alert('success', 'Registro creado correctamente', '');
   }
 
   async deleteAlert() {
-    this.alert('success', 'Registro Eliminado', '');
+    this.alert('success', 'Registro eliminado', '');
   }
   /////////////////////
 
@@ -1990,6 +2015,8 @@ export class ResquestNumberingChangeComponent
         ],
       ],
       authorizeDate: [new Date(), [Validators.required]],
+      name1: [''],
+      name2: [''],
     });
     this.formaplicationData.controls['postUserRequestCamnum'].disable();
     this.formaplicationData.controls['delegationRequestcamnum'].disable();

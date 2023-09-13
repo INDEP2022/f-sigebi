@@ -302,6 +302,6 @@ export abstract class BasePage
     link.download = `${filename ?? 'Descarga'}.xlsx`;
     link.click();
     link.remove();
-    this.alert('success', 'Archivo Descargado Correctamente', '');
+    this.alert('success', 'Archivo descargado correctamente', '');
   }
 }

@@ -4,8 +4,14 @@
   </div>
   <div>
     <div class="row">
-      <div class="col-md-6">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
+      <div class="col-md-12">
+        <div class="d-flex">
+          <div class="ml-auto p-2">
+            <app-columns-select
+              [leftList]="true"
+              [(settings)]="settings"></app-columns-select>
+          </div>
+        </div>
       </div>
     </div>
     <div class="row pt-4">

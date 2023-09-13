@@ -21,6 +21,8 @@
           </div>
           <div class="col-md-4">
             <button
+              [ngClass]="{ loading: loadingBtn }"
+              [disabled]="loading || loadingBtn2"
               type="button"
               class="btn btn-primary active btn-sm"
               [disabled]="!form.valid"
@@ -78,6 +80,8 @@
                   <button
                     type="button"
                     class="btn btn-primary active btn-sm m-2"
+                    [ngClass]="{ loading: loadingBtn4 }"
+                    [disabled]="loading || loadingBtn2"
                     (click)="consultarBienExcel()">
                     Buscar Bienes
                     <i class="bx bx-search-alt bx-sm float-icon"></i>
@@ -128,6 +132,8 @@
           <div class="col-md-4">
             <div class="justify-content-center">
               <button
+                [ngClass]="{ loading: loadingBtn3 }"
+                [disabled]="loading || loadingBtn2"
                 type="button"
                 class="btn btn-primary active btn-sm"
                 [disabled]="!form.valid"
@@ -159,6 +165,38 @@
         </ng-scrollbar>
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+    <div class="row mt-4" *ngIf="until2">
+      <div class="col-md-12">
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="source"></ng2-smart-table>
+          </div>
+        </ng-scrollbar>
+      </div>
+      <app-pagination [params]="params2" [totalItems]="totalItems2">
+      </app-pagination>
+    </div>
+    <div class="row mt-4" *ngIf="until3">
+      <div class="col-md-12">
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="source"></ng2-smart-table>
+          </div>
+        </ng-scrollbar>
+      </div>
+      <app-pagination [params]="params3" [totalItems]="totalItems3">
       </app-pagination>
     </div>
   </div>

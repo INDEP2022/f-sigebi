@@ -1,17 +1,26 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import { IGood } from 'src/app/core/models/ms-good/good';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { _Params } from 'src/app/common/services/http.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import { ListDonationComponent } from '../list-donation/list-donation.component';
 import { COLUMNS } from './columns';
 
@@ -34,25 +43,111 @@ export class RegistrationInventoriesDonationComponent
   formTable: FormGroup;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  data: IListResponse<IGood> = {} as IListResponse<IGood>;
+  data: LocalDataSource = new LocalDataSource();
   loadingGood: boolean = false;
+  columnFilters: any = [];
+  goods: any[] = [];
+
+  selectedRows: any[] = [];
+  flag: boolean = false;
+
+  V_PANTALLA = 'FDONAC_DIRECT';
+  V_ESTATUS_FINAL: string;
 
   //butons y campos enabled
-  PB_CONFIRMAR: boolean = false;
+  PB_CONFIRMAR: boolean = true;
   PB_REGISTRAR: boolean = false;
   constructor(
     private fb: FormBuilder,
-    private goodServ: GoodService,
+    private goodService: GoodService,
+    private goodprocessService: GoodprocessService,
     private datePipe: DatePipe,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private globalVarsService: GlobalVarsService,
+    private router: Router,
+    private statusXScreenService: StatusXScreenService,
+    private historyGoodService: HistoryGoodService
   ) {
     super();
-    this.settings = { ...this.settings, actions: false };
-    this.settings.columns = COLUMNS;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      selectMode: 'multi',
+      actions: {
+        columnTitle: 'Acciones',
+        edit: false,
+        add: false,
+        delete: false,
+        position: 'right',
+      },
+      columns: COLUMNS,
+    };
+    //this.filterTable();
   }
 
   ngOnInit(): void {
     this.initForm();
+    this.filterTable();
+    //let number = 0;
+    //this.statusXPantalla();
+  }
+
+  filterTable() {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.EQ;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'goodId':
+                field = 'filter.noBien';
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'quantity':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'associatedFileNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'unit':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'sssubType':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'delAdmin':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'storeNumber':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.listGoods();
+          let i = 0;
+          console.log('entra ', i++);
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.listGoods());
   }
 
   initForm() {
@@ -94,7 +189,7 @@ export class RegistrationInventoriesDonationComponent
 
     this.form.get('authorizeCve').disable();
     this.form.get('authorizeDate').disable();
-    this.form.get('authorizeType').disable();
+    //this.form.get('authorizeType').disable();
 
     this.form.get('authorizeDate').valueChanges.subscribe({
       next: () => this.validateDateAuthorize(),
@@ -184,47 +279,107 @@ export class RegistrationInventoriesDonationComponent
   }
 
   authorize() {
-    const { authorizeCve, authorizeDate, authorizeType } = this.form.value;
+    /*const { authorizeCve, authorizeDate, authorizeType } = this.form.value;
     const type = ['D', 'A'];
     if (!type.includes(authorizeType)) {
-      this.onLoadToast('warning', 'Se debe especificar el Tipo de Trámite', '');
+      this.onLoadToast('warning', 'Se Debe Especificar el Tipo de Trámite', '');
       return;
     }
     if (!authorizeCve || !authorizeDate) {
       this.onLoadToast(
         'warning',
-        'Se debe ingresar la Clave y/o Fecha de autorización.',
+        'Se Debe Ingresar la Clave y/o Fecha de Autorización.',
         ''
       );
       return;
-    }
+    }*/
 
-    this.form.get('sunStatus').patchValue('ADA');
+    //this.form.get('sunStatus').patchValue('ADA');
+    const _params: any = this.params;
+    _params._value[`filter.screenKey`] = `$eq:FDONAC_DIRECT`;
+    _params._value[`filter.status`] = `$eq:${this.selectedRows[0].estatus}`;
+    //_params._value[`filter.status`] = `$eq:${this.selectedRows[0].estatus}`;
+    console.log('Params Const-> ', _params);
+    console.log('Params Const-> ', _params._value);
+    console.log('thisParams-selectedRows->', this.selectedRows);
+    this.statusXPantalla(_params._value);
   }
 
   getBienes() {
     this.loadingGood = true;
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: () => {
-        this.listGoods();
-      },
-    });
+    // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+    //   next: () => {
+    //     this.listGoods();
+    //   },
+    // });
+    this.listGoods();
   }
 
   listGoods() {
+    this.goods = [];
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    console.log('Params Filter-> ', params);
     this.loading = true;
-    this.goodServ.getAll(this.params.getValue()).subscribe({
-      next: resp => {
+    this.goodprocessService.getAvailableGoods(params).subscribe({
+      next: response => {
+        console.log('getAvailableGoods-> ', response);
+        for (let i = 0; i < response.data.length; i++) {
+          if (response.data != null && response.data != undefined) {
+            console.log('ingresa data -> ');
+            let dataB = {
+              noBien: response.data[i].noBien,
+              description: response.data[i].description,
+              cantidad: response.data[i].cantidad,
+              noExpediente: response.data[i].noExpediente,
+              unidad: response.data[i].unidad,
+              sssubtipo: response.data[i].sssubtipo,
+              delAdministra: response.data[i].delAdministra,
+              almacen: response.data[i].almacen,
+              estatus: response.data[i].estatus,
+            };
+            console.log('data ', dataB);
+            this.goods.push(dataB);
+            this.data.load(this.goods);
+            this.data.refresh();
+            this.totalItems = response.count;
+            this.loading = false;
+          }
+        }
+      },
+      error: err => {
         this.loading = false;
-        this.loadingGood = false;
-        this.data = resp;
-        console.log(resp);
+      },
+    });
+    /*this.goodServ.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        console.log('RespListGoods -> ', response);
+        for (let i = 0; i < response.data.length; i++) {
+          if (response.data[i] != null && response.data[i] != undefined) {
+            let dataB = {
+              goodId: response.data[i].goodId,
+              description: response.data[i].description,
+              quantity: response.data[i].quantity,
+              associatedFileNumber: response.data[i].associatedFileNumber,
+              unit: response.data[i].unit,
+              sssubType: response.data[i].subTypeId,
+              //delAdmin: ,
+              storeNumber: response.data[i].storeNumber,
+            };
+          }
+        }
+        //this.goods.push(dataB);
+        this.data.load(this.goods);
+        this.data.refresh();
+        console.log(response);
       },
       error: () => {
         this.loading = false;
         this.loadingGood = false;
       },
-    });
+    });*/
   }
 
   resetForm() {
@@ -255,5 +410,103 @@ export class RegistrationInventoriesDonationComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(ListDonationComponent, config);
+  }
+
+  async loadFromGoods() {
+    const global = await this.globalVarsService.getVars();
+    this.globalVarsService.updateSingleGlobal('REL_BIENES', 0, global);
+    // const selfState = await this.eventPreparationService.getState();
+    // this.eventPreparationService.updateState({
+    //   ...selfState,
+    //   eventForm: this.eventForm,
+    //   lastLot: Number(this.lotSelected.id) ?? -1,
+    //   lastPublicLot: this.lotSelected.publicLot ?? 1,
+    //   executionType: this.onlyBase ? 'base' : 'normal',
+    // });
+
+    localStorage.setItem('rastreador', '2');
+    this.router.navigate([GOODS_TACKER_ROUTE], {
+      queryParams: {
+        origin: 'FDONAC_DIRECT',
+      },
+    });
+  }
+
+  selectRows(rows: any[]) {
+    console.log('row ', rows);
+    if (rows.length > 0) {
+      this.selectedRows = rows;
+      console.log('Rows Selected->', this.selectedRows);
+      console.log('SelectRows', this.selectedRows[0].noBien);
+      this.flag = true;
+    } else {
+      this.flag = false;
+      this.selectedRows = [];
+    }
+  }
+
+  generateRequest() {
+    if (this.form.get('doneeId').value == null) {
+      this.alert(
+        'warning',
+        '',
+        'No se Puede Generar la Solicitud sin Bienes Seleccionados, ni Donatario Especificado.'
+      );
+    } else {
+      //Falta por integrar
+      this.ActualizacionInventario();
+    }
+  }
+
+  ActualizacionInventario() {}
+
+  statusXPantalla(params?: _Params) {
+    this.statusXScreenService.getList(params).subscribe(
+      resp => {
+        if (resp != null && resp != undefined) {
+          console.log('Resp statusXPantalla-> ', resp);
+          if (resp.data[0] != undefined) {
+            this.V_ESTATUS_FINAL = resp.data[0].statusNewGood;
+            console.log('V_ESTATUS_FINAL-> ', this.V_ESTATUS_FINAL);
+            this.updateGoods(this.V_ESTATUS_FINAL);
+          }
+        }
+      },
+      error => {
+        this.V_ESTATUS_FINAL = null;
+        console.log('Error', error);
+        this.alert('error', '', error.error.message);
+        this.updateGoods(this.V_ESTATUS_FINAL);
+      }
+    );
+  }
+
+  updateGoods(status: string) {
+    if (status == null || status == '') {
+      this.V_ESTATUS_FINAL = 'ADA';
+    }
+
+    this.putStatusGoods(this.selectedRows[0].noBien, this.V_ESTATUS_FINAL);
+  }
+
+  putStatusGoods(good: number, status: string) {
+    this.goodService.putStatusGood(good, status).subscribe({
+      next: resp => {
+        if (resp != null && resp != undefined) {
+          console.log('putStatusGoods-> ', resp);
+        }
+        let parmas = {};
+        this.historyGoodService.PostStatus(parmas).subscribe(resp => {});
+      },
+      error: err => {},
+    });
+  }
+
+  goodsSave(params: any) {
+    this.historyGoodService.PostStatus(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('goodsSave-> ', resp);
+      }
+    });
   }
 }

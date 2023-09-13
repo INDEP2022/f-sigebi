@@ -30,7 +30,10 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {}
-
+  formatValue(value: number): string {
+    const formattedValue = value.toFixed(2); // Formatear a dos decimales
+    return formattedValue.replace(/(\.00|(\.(\d*[1-9]))?0*$)/, ''); // Eliminar ceros innecesarios
+  }
   onCellClick(event: any) {
     console.log('AQUI', event);
     console.log('rpw', this.rowData);
@@ -56,7 +59,7 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
       // Lógica a ejecutar en caso de doble clic en una celda con valor
       this.alert(
         'warning',
-        'No Puede Realizar una Conciliación Debido a que ya Tiene Especificado un Bien',
+        'No puede realizar una conciliación debido a que ya tiene especificado un Bien',
         ''
       );
       console.log('Celda seleccionada:', this.value);
@@ -133,7 +136,7 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
       if (!vb_encontrado) {
         this.alert(
           'warning',
-          'No se Encontró Algún Bien que Cumpla con el Criterio de Conciliación',
+          'No se encontró algún Bien que cumpla con el criterio de conciliación',
           ''
         );
       }
@@ -142,7 +145,7 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
       this.ejecutarloadingConciliar();
       this.alert(
         'warning',
-        'No Tiene Capturados Todos los Criterios para Realizar la Conciliación',
+        'No tiene capturados todos los criterios para realizar la conciliación',
         ''
       );
     }
@@ -207,7 +210,7 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.accountMovementService.update(data).subscribe({
         next: async (response: any) => {
-          this.alert('success', `Datos Actualizados Correctamente`, '');
+          this.alert('success', `Movimiento Actualizado Correctamente`, '');
 
           // this.modalRef.content.callback(true);
           // this.close();
@@ -216,7 +219,7 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
           resolve(true);
         },
         error: err => {
-          this.alert('error', `Error al Actualizar los Datos`, '');
+          this.alert('error', `Error al actualizar el movimiento`, '');
           this.loading = false;
           resolve(false);
         },

@@ -39,7 +39,7 @@ function correctDate(date: string) {
 
 export const GOODS_COLUMNS = {
   goodNumber: {
-    title: 'Bien',
+    title: 'No. Bien',
     type: 'string',
     sort: false,
   },

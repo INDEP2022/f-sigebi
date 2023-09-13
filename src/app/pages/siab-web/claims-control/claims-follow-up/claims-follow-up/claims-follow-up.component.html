@@ -1,7 +1,7 @@
 <app-card [header]="true" [footer]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Siniestros Seguimiento</h5>
+      <h5 class="title">Siniestros</h5>
       <div class="col-md-5 buttons">
         <!-- <app-columns-select [(settings)]="settings"></app-columns-select>
         <div *ngIf="newSiniester">
@@ -16,8 +16,8 @@
     <form [formGroup]="claimsFollowUpForm" class="form-material">
       <div class="row margin-input">
         <!-- <div class="col-md-3"> -->
-        <div style="display: flex; align-items: center">
-          <div class="col-md-3">
+        <div style="display: flex; padding-left: 0px">
+          <div class="col-md-3" style="padding: 0%">
             <form-field
               label="No. Bien"
               [control]="claimsFollowUpForm.get('numberGood')">
@@ -43,7 +43,10 @@
               </button>
             </div>
           </div>
-          <div class="col-md-3" *ngIf="lawyers.length > 0">
+          <div
+            class="col-md-3 buttons"
+            *ngIf="lawyers.length > 0"
+            style="display: flex; justify-content: flex-end; padding: 0px">
             <button
               class="btn btn-success btn-sm active m-3"
               (click)="export()">
@@ -59,7 +62,7 @@
         </div> -->
       </div>
       <div class="row margin-input">
-        <div class="col-md-12">
+        <div class="col-md-12" style="padding: 0px">
           <form-field
             [control]="claimsFollowUpForm.get('description')"
             label="Descripci&oacute;n">

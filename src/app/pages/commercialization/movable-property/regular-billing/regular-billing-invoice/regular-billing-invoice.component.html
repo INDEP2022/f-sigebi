@@ -297,33 +297,33 @@
       <button
         type="button"
         class="btn btn-primary btn-sm active mr-2 mb-2"
-        (click)="generatePreFacture()">
+        (click)="clientSend()">
         Atención a Clientes <i class="bx bxs-file"></i>
       </button>
       <button
         type="button"
         class="btn btn-primary btn-sm active mr-2 mb-2"
-        (click)="generatePreFacture()">
+        (click)="openURL()">
         Generar CDFI <i class="bx bxs-file"></i>
       </button>
-      <button
+      <!-- <button
         [disabled]="buttons"
         type="button"
         class="btn btn-primary btn-sm active mr-2 mb-2"
         (click)="generatePreFacture()">
         Obt. Imagen <i class="bx bxs-file"></i>
-      </button>
+      </button> -->
       <button
         type="button"
         class="btn btn-primary btn-sm active mr-2 mb-2"
-        (click)="generatePreFacture()">
+        (click)="imprimeInvoice()">
         Imprime Factura <i class="bx bxs-file"></i>
       </button>
       <button
         [disabled]="buttons"
         type="button"
         class="btn btn-primary btn-sm active mr-2 mb-2"
-        (click)="generatePreFacture()">
+        (click)="impresionAnex()">
         Imprime Anexo <i class="bx bxs-file"></i>
       </button>
       <button
@@ -336,14 +336,14 @@
         [disabled]="buttons"
         type="button"
         class="btn btn-primary btn-sm active mr-2 mb-2"
-        (click)="openModal()">
+        (click)="openFolioModal()">
         Asig. Manual Folios <i class="bx bx-plus bx-sm float-icon"></i>
       </button>
       <button
         [disabled]="buttons"
         type="button"
         class="btn btn-primary btn-sm active mr-2 mb-2"
-        (click)="generatePreFacture()">
+        (click)="sendPackage()">
         Enviar Paquete <i class="bx bxs-file"></i>
       </button>
       <button

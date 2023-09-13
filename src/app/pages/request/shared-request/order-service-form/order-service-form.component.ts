@@ -25,8 +25,11 @@ export class OrderServiceFormComponent implements OnInit, OnChanges {
   disableAllChecks: boolean = false;
   @Input() op: number;
   @Input() showForm: boolean;
-  @Input() ordServform: FormGroup = new FormGroup({});
+  @Input() ordServform?: FormGroup = new FormGroup({});
+  @Input() total: string = null;
   readonly: boolean = false;
+  visitEye: boolean = false;
+  consolideContainer: boolean = false;
 
   orderService: any = {};
 
@@ -34,21 +37,31 @@ export class OrderServiceFormComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     //this.prepareForm();
-    console.log(this.op);
   }
 
-  /*prepareForm() {
-    this.ordServform = this.fb.group({
-      reasonsNotPerform: [null],
-      transportationZone: [null],
-      userContainers: [null],
-      folioTlp: [null],
-      eyeVisit: [null],
-    });
-  }*/
-
   ngOnChanges(changes: SimpleChanges): void {
+    console.log(this.total);
+
     this.orderService = this.ordServform.getRawValue();
     console.log('showForm', this.showForm);
+    this.visitEye = this.orderService.eyeVisit == 'Y' ? true : false;
+    this.consolideContainer =
+      this.orderService.userContainers == 'Y' ? true : false;
+  }
+
+  changeVisitEye(event: any) {
+    if (event.target.checked == true) {
+      this.ordServform.controls['eyeVisit'].setValue('Y');
+    } else {
+      this.ordServform.controls['eyeVisit'].setValue('N');
+    }
+  }
+
+  changeConsolidate(event: any) {
+    if (event.target.checked == true) {
+      this.ordServform.controls['userContainers'].setValue('Y');
+    } else {
+      this.ordServform.controls['userContainers'].setValue('N');
+    }
   }
 }

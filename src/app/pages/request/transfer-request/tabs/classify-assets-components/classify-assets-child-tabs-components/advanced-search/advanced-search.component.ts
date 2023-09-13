@@ -105,15 +105,18 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
     const code = this.searchForm.controls['code'].value;
     const description = this.searchForm.controls['description'].value;
     const typeRelevant = this.searchForm.controls['typeRelevant'].value;
+    params['sortBy'] = `id:DESC`;
 
     if (code != null) {
       params['filter.code'] = `$eq:${code}`;
     }
     if (description != null) {
       params['filter.description'] = `$ilike:${description}`;
+      //params['sortBy'] = `id:DESC`;
     }
     if (typeRelevant != null) {
       params['filter.relevantTypeId'] = `$eq:${typeRelevant}`;
+      //params['sortBy'] = `id:DESC`;
     }
 
     this.paragraphs = [];
@@ -126,7 +129,7 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
       error: error => {
         console.log(error);
         this.onLoadToast(
-          'info',
+          'warning',
           'Búsqueda Avanzada',
           'No se encontraron registros'
         );

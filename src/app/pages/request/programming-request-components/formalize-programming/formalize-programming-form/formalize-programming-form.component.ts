@@ -449,12 +449,9 @@ export class FormalizeProgrammingFormComponent
     params.getValue()['filter.id'] = `$eq:${task.id}`;
     this.taskService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('response', response);
         this.task = response.data[0];
       },
-      error: error => {
-        console.log('error', error);
-      },
+      error: error => {},
     });
   }
 
@@ -681,6 +678,7 @@ export class FormalizeProgrammingFormComponent
 
                 goodsInfoGuard.push(response);
                 this.goodsGuards.load(goodsInfoGuard);
+
                 this.totalItemsGuard = this.goodsGuards.count();
                 this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
               },
@@ -821,7 +819,6 @@ export class FormalizeProgrammingFormComponent
         'Se requiere cerrar todos los recibos de almacén'
       );
     } else if (!receiptCheck && !receiptGuardCheck && !receiptWarehouseCheck) {
-      console.log('LISTE PARA CERRAR');
       if (
         this.receiptData?.statusReceipt == 'CERRADO' ||
         this.receiptGuardData?.statusReceiptGuard == 'CERRADO' ||
@@ -914,7 +911,6 @@ export class FormalizeProgrammingFormComponent
       params.getValue()['filter.typeReceipt'] = 'RESGUARDO';
       this.receptionGoodService.getReceptions(params.getValue()).subscribe({
         next: response => {
-          console.log('RECIBO RESGUARDO ABIERTO');
           resolve(true);
         },
         error: error => {
@@ -933,7 +929,6 @@ export class FormalizeProgrammingFormComponent
       params.getValue()['filter.typeReceipt'] = 'ALMACEN';
       this.receptionGoodService.getReceptions(params.getValue()).subscribe({
         next: response => {
-          console.log('RECIBO almacén ABIERTO');
           resolve(true);
         },
         error: error => {
@@ -1346,18 +1341,133 @@ export class FormalizeProgrammingFormComponent
       typeDoc: typeDoc,
       actId: actId,
       programming: this.programming,
-      callback: (data: boolean, typeFirm: string) => {
+      callback: async (data: boolean, typeFirm: string) => {
         if (data) {
           this.getProccedings();
           this.proceeding.clear();
           this.totalItemsProceedings = 0;
           this.sendEmail();
+          const updateGoodReceiptStatus = await this.updateReceiptStatus();
+          if (updateGoodReceiptStatus) {
+            const updateGoodGuardStatus = await this.updateGuardStatus();
+            if (updateGoodGuardStatus) {
+              const updateGoodWarehouseStatus =
+                await this.updateWarehouseStatus();
+              if (updateGoodWarehouseStatus) {
+                const updateGoodReprogStatus = await this.updateReprogStatus();
+              }
+            }
+          }
           this.formLoading = false;
         }
       },
     };
 
     this.modalService.show(UploadReportReceiptComponent, config);
+  }
+
+  updateReceiptStatus() {
+    return new Promise((resolve, reject) => {
+      if (this.goodsRecepcion.count() > 0) {
+        this.goodsRecepcion.getElements().then((data: any) => {
+          data.map((item: any) => {
+            const formData: Object = {
+              id: item.id,
+              goodId: item.goodId,
+              status: 'ADM',
+            };
+            this.goodService.updateByBody(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {
+                resolve(true);
+              },
+            });
+          });
+        });
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
+  updateGuardStatus() {
+    return new Promise((resolve, reject) => {
+      if (this.goodsGuards.count() > 0) {
+        this.goodsGuards.getElements().then((data: any) => {
+          data.map((item: any) => {
+            const formData: Object = {
+              id: item.id,
+              goodId: item.goodId,
+              status: 'ADM',
+            };
+            this.goodService.updateByBody(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {
+                resolve(true);
+              },
+            });
+          });
+        });
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
+  updateWarehouseStatus() {
+    return new Promise((resolve, reject) => {
+      if (this.goodsWarehouse.count() > 0) {
+        this.goodsWarehouse.getElements().then((data: any) => {
+          data.map((item: any) => {
+            const formData: Object = {
+              id: item.id,
+              goodId: item.goodId,
+              status: 'ADM',
+            };
+            this.goodService.updateByBody(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {
+                resolve(true);
+              },
+            });
+          });
+        });
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
+  updateReprogStatus() {
+    return new Promise((resolve, reject) => {
+      if (this.goodsReprog.count() > 0) {
+        this.goodsReprog.getElements().then((data: any) => {
+          data.map((item: any) => {
+            const formData: Object = {
+              id: item.id,
+              goodId: item.goodId,
+              status: 'VXR',
+            };
+            this.goodService.updateByBody(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {
+                resolve(true);
+              },
+            });
+          });
+        });
+      } else {
+        resolve(true);
+      }
+    });
   }
 
   sendEmail() {
@@ -1435,6 +1545,7 @@ export class FormalizeProgrammingFormComponent
   }
 
   async confirm() {
+    //const sendGoodInventary = await this.sendGoodsGuardInventary();
     this.alertQuestion(
       'question',
       'Confirmación',
@@ -1460,7 +1571,8 @@ export class FormalizeProgrammingFormComponent
               if (updateProgramming) {
                 const sendGoodInventary = await this.sendGoodsGuardInventary();
                 if (sendGoodInventary) {
-                  this.alertInfo(
+                  const updateGoodStatus = await this.updateStatusGoodReceipt();
+                  /* this.alertInfo(
                     'success',
                     'Acción correcta',
                     'Se cerro la tarea formalizar entrega correctamente'
@@ -1470,7 +1582,7 @@ export class FormalizeProgrammingFormComponent
                         'pages/siab-web/sami/consult-tasks',
                       ]);
                     }
-                  });
+                  }); */
                 }
               }
             }
@@ -1500,6 +1612,14 @@ export class FormalizeProgrammingFormComponent
     });
   }
 
+  updateStatusGoodReceipt() {
+    if (this.goodsRecepcion.count() > 0) {
+      this.goodsRecepcion.getElements().then(data => {
+        data.map((item: any) => {});
+      });
+    }
+  }
+
   sendGoodsGuardInventary() {
     return new Promise((resolve, reject) => {
       if (this.goodsGuards.count() > 0) {
@@ -1509,7 +1629,6 @@ export class FormalizeProgrammingFormComponent
               .AddReceptionBpm(Number(item.id), Number(item.goodId))
               .subscribe({
                 next: response => {
-                  console.log('se envio', response);
                   resolve(true);
                 },
                 error: error => {
@@ -1561,55 +1680,41 @@ export class FormalizeProgrammingFormComponent
     });
   }
 
-  /*sendEmail() {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    //params.getValue()['filter.idPrograming'] = this.programmingId;
-    //params.getValue()['filter.statusProceeedings'] = 'ABIERTO';
-    this.proceedingService.getProceedings(params.getValue()).subscribe({
-      next: response => {
-        console.log('acta', response);
-      },
-      error: error => {},
-    });
-    const data = {
-      recipients: 'correopruebas@gmail.com',
-      message:
-        'Le informamos que el acta con folio: OCCIDENTE-SAT-8341-A1-22-08, terminó satisfactoriamente.',
-      userCreation: 'arosales',
-      dateCreation: '2022-08-05',
-      userModification: 'arosales',
-      dateModification: '2022-08-05',
-      version: '2',
-      subject: 'Notificación de cierre de acta de entrega recepción',
-      nameAtt: 'OCCIDENTE-SAT-8341-A1-22-08',
-      typeAtt: 'application/pdf;',
-      //"urlAtt": "https://seguimiento.agoraparticipa.org/docs/PDF_TEXT-CA4Bn.pdf", //si cuentas con una url usas esto en ves del base64
-      process: 'FORMALIZAR',
-    };
-  } */
-
   closeTaskNotification() {
     return new Promise((resolve, reject) => {
       const params = new BehaviorSubject<ListParams>(new ListParams());
       const _task = JSON.parse(localStorage.getItem('Task'));
       params.getValue()['filter.id'] = `$eq:${_task.id}`;
       this.taskService.getAll(params.getValue()).subscribe({
-        next: response => {
+        next: async response => {
           const taskInfo = response.data[0];
-          console.log('taskInfo', taskInfo);
 
-          const body: ITask = {
+          const user: any = this.authService.decodeToken();
+          let body: any = {};
+          body['idTask'] = taskInfo.identificationKey;
+          body['userProcess'] = user.username;
+          body['type'] = 'SOLICITUD_PROGRAMACION';
+          body['subtype'] = 'Aceptar_Programacion';
+          body['ssubtype'] = 'APPROVE';
+
+          const closeTask = await this.closeTaskExecuteRecepcion(body);
+          if (closeTask) {
+            resolve(true);
+          } else {
+            resolve(true);
+          }
+          /*const body: ITask = {
             State: 'FINALIZADA',
           };
           this.taskService.update(taskInfo.id, body).subscribe({
             next: response => {
-              console.log('cerro la tarea de notificación', response);
+  
               resolve(true);
             },
             error: error => {
               resolve(true);
-            },
-          });
+            }, 
+          }); */
         },
         error: error => {
           resolve(true);
@@ -1818,6 +1923,7 @@ export class FormalizeProgrammingFormComponent
 
               goodsInfoRecep.push(response);
               this.goodsRecepcion.load(goodsInfoRecep);
+
               this.totalItemsReception = this.goodsRecepcion.count();
             },
           });

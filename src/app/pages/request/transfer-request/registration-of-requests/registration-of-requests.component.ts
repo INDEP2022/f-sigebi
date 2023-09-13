@@ -4,7 +4,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
-import { map } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -233,7 +233,7 @@ export class RegistrationOfRequestsComponent
       ], //cargo remitente
       phoneOfOwner: [
         null,
-        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(13)],
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(10)],
       ], //telefono remitente
       emailOfOwner: [
         null,
@@ -377,13 +377,21 @@ export class RegistrationOfRequestsComponent
     const params = new ListParams();
     params['filter.processStatus'] = `$eq:SOLICITAR_ACLARACION`;
     params['filter.requestId'] = `$eq:${id}`;
-    this.goodService.getAll(params).subscribe({
-      next: resp => {
-        if (resp.count > 0) {
-          this.hideExpedient = true;
-        }
-      },
-    });
+    this.goodService
+      .getAll(params)
+      .pipe(
+        catchError((e: any) => {
+          if (e.status == 400) return of({ data: [], count: 0 });
+          throw e;
+        })
+      )
+      .subscribe({
+        next: resp => {
+          if (resp.count > 0) {
+            this.hideExpedient = true;
+          }
+        },
+      });
   }
   verifyTransDelegaStatiAuthoExist(data: any) {
     if (
@@ -782,10 +790,10 @@ export class RegistrationOfRequestsComponent
     } else {
       console.log('No Soy destino documental');
       this.msgSaveModal(
-        'Aceptar',
-        '',
+        'Continuar',
         'Asegúrese de haber guardado la información antes de turnar la solicitud',
-        'question',
+        'Atención',
+        'warning',
         this.typeDocument
       );
     }
@@ -793,6 +801,7 @@ export class RegistrationOfRequestsComponent
 
   //metodo que guarda la captura de solivitud
   public async confirmMethod() {
+    this.loader.load = true;
     const task1: any = await this.getOldTask();
     //
     console.log('public async confirmMethod()');
@@ -812,11 +821,13 @@ export class RegistrationOfRequestsComponent
           request.recordId
         );
         if (expUpdated) {
+          this.loader.load = false;
           /* abre modal del elegir usuario */
           this.cambiarTipoUsuario(this.requestData, task1);
         }
       }
     }
+    this.loader.load = false;
   }
 
   cambiarTipoUsuario(request: any, task1: any) {
@@ -1380,7 +1391,7 @@ export class RegistrationOfRequestsComponent
       title: title,
       text: message,
       icon: typeMsg,
-      width: 450,
+      //width: 450,
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#b38e5d',
@@ -1406,6 +1417,7 @@ export class RegistrationOfRequestsComponent
         if (typeCommit === 'captura-solicitud') {
           console.log('captura-solicitud'); //DE CAPTURA DE SOLICITUD A VERIFICAR CUMPLIMIENTO
           this.confirmMethod();
+          await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO', 'ROP');
         }
         if (typeCommit === 'verificar-cumplimiento') {
           this.loader.load = true;
