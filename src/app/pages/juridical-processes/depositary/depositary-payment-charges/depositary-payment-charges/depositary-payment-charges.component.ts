@@ -233,7 +233,7 @@ export class DepositaryPaymentChargesComponent
   openFile() {
     this.alertQuestion(
       'warning',
-      'Asegurese que el excel sea el correcto',
+      'Asegurese que el formato del archivo seleccionado sea el correcto',
       ''
     ).then(result => {
       this.fileUpload.nativeElement.value = '';
@@ -527,6 +527,7 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
         indicator: null,
         incomeid: null,
       };
+
       const result: any = await this.saveRefPayDepositaryData(body);
 
       let haveReference: any = await this.getAppointmentByGoodId(item.NO_BIEN);

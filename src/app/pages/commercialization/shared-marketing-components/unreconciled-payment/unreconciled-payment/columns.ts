@@ -97,7 +97,7 @@ export const COLUMNS = {
     sort: false,
   },
   rfc: {
-    title: 'R.F.C',
+    title: 'RFC',
     // width: '15%',
     type: 'string',
     sort: false,

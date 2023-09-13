@@ -192,17 +192,17 @@ export class IncomeOrdersDepositoryGoodsComponent
       P_NOMBRA: this.depoAppointments.appointmentNum,
       P_NO_BIEN: this.form.get('numberGood').value,
       P_PFIRMA: this.form.get('userId').value.id,
-      P_FECHA: fecha,
+      P_FECHA: fecha.toString(),
     };
     /* let params = {
-      P_NOMBRA: 383,
-      P_NO_BIEN: 40488,
-      P_PFIRMA: 'AAAGUILAB',
-      P_FECHA: '2022-05-19',
+      P_NOMBRA: 2902,
+      P_NO_BIEN: 1095696,
+      P_PFIRMA: 'AAGUILAB',
+      P_FECHA: '2016-05-31',
     }; */
 
     this.siabService
-      .fetchReport('RDEPINGXBIEN.', params)
+      .fetchReport('RDEPINGXBIEN', params)
       //.fetchReport('blank', params)
       .subscribe(response => {
         if (response !== null) {

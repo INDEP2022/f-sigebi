@@ -101,6 +101,6 @@ export class RecordAccountStatementsAccountsService
   }
   getAccounts1(params?: ListParams) {
     const route = `${this.route2}`;
-    return this.delete(route, params);
+    return this.get(route, params);
   }
 }

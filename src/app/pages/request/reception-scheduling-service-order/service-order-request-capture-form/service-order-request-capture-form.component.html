@@ -46,6 +46,13 @@
         class="btn btn-primary btn-sm active">
         Guardar <i class="fa fa-save" aria-hidden="true"></i>
       </button>
+
+      <button
+        (click)="annexWReport()"
+        *ngIf="claimRequest"
+        class="btn btn-primary btn-sm active">
+        Anexo W <i class="fa fa-file ml-3" aria-hidden="true"></i>
+      </button>
     </div>
 
     <app-detail-service-order></app-detail-service-order>
@@ -60,7 +67,8 @@
       *ngIf="orderServiceId != null"
       [ordServform]="ordServform"
       [op]="op"
-      [showForm]="showForm"></app-order-service-form>
+      [showForm]="showForm"
+      [total]="total"></app-order-service-form>
 
     <app-classificate-vehicle-form [op]="op"></app-classificate-vehicle-form>
 
@@ -78,6 +86,7 @@
       [op]="op"
       [showForm]="showForm"
       [orderServiceId]="orderServiceId"
-      [isUpdate]="isUpdate"></app-service-transportable-goods-form>
+      [isUpdate]="isUpdate"
+      (totEvent)="getTotal($event)"></app-service-transportable-goods-form>
   </div>
 </app-card>
