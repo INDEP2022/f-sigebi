@@ -51,7 +51,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   totalItems: number = 0;
 
   title: string = 'Imprimir Reporte';
-  btnTitle: string = 'Firma Reporte';
+  btnTitle: string = 'Firmar Reporte';
   btnSubTitle: string = 'Vista Previa Reporte';
   printReport: boolean = true;
   listSigns: boolean = false;
@@ -74,6 +74,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   idRegionalDelegation: any;
   notificationValidate: any; //Parámetro que identifica si es notificación Y= si lo es
 
+  noBien: any;
   constructor(
     public modalService: BsModalService,
     public modalRef: BsModalRef,
@@ -116,6 +117,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
     console.log('ID de solicitud', this.requestInfo);
     console.log('DOC', this.idTypeDoc);
+    console.log('id Bien seleccioando: ', this.noBien);
 
     //Borrar firmantes existentes
     this.verificateFirm();
@@ -517,7 +519,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         dInDate: new Date(), //Fecha de creación del documento
         xidSolicitud: this.idSolicitud,
         xtipoDocumento: this.idTypeDoc,
+        xidBien: this.noBien,
       };
+      console.log('Data a guardar: ', formData);
       this.attachDoc(formData);
     }
   }
@@ -542,11 +546,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
-            this.alert(
-              'success',
-              'Documento Guardado',
-              'El documento se guardó correctamente'
-            );
+            this.alert('success', 'El Documento ha sido Guardado', '');
             this.modalRef.content.callback(true);
             this.close();
           },

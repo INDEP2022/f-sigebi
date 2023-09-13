@@ -638,7 +638,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   }
 
   aprobateProgramming() {
-    this.sendEmailUsers();
     if (this.programming.contentId) {
       this.alertQuestion(
         'question',

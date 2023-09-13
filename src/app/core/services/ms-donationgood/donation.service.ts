@@ -68,8 +68,8 @@ export class DonationService
     );
   }
 
-  getExcel(params: ListParams) {
-    return this.get(DonationEndPoint.eventComDonationExcel, params);
+  getExcel() {
+    return this.get(DonationEndPoint.eventComDonationExcel);
   }
 
   createAdmonDonation(model: any) {

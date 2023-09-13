@@ -34,4 +34,6 @@ export enum GoodprocessEndpoints {
   GetCount = 'application/get-count-ncont',
   UpdateGoodStatusVal5 = 'update-good-status/update-val',
   GetBlkCtrlGood = 'application/get-blkctrl-good',
+  //Classification View
+  GetVsigLigie = 'application/vsigLigie',
 }
