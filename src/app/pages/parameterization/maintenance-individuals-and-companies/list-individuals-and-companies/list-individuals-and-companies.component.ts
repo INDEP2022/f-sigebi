@@ -191,7 +191,7 @@ export class ListIndividualsAndCompaniesComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar este Registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.personsSer.remove(person.id).subscribe({
@@ -199,8 +199,9 @@ export class ListIndividualsAndCompaniesComponent
             this.getPersons();
             this.alert(
               'success',
-              'Mantenimiento de Personas Físicas y Morales',
-              'Borrado Correctamente'
+              // 'Mantenimiento de Personas Físicas y Morales',
+              'Borrado correctamente',
+              ''
             );
           },
           error: err => this.onLoadToast('error', err.error.message, ''),
