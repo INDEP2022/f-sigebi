@@ -19,4 +19,5 @@ export enum PaymentEndPoints {
   validSystem = 'comer-valid-system',
   ComerCtldevpagB = `comer-ctldevpag-b`,
   ComerCtldevpagBfindAllRegistersV2 = `comer-ctldevpag-b/findAllRegistersV2`,
+  PaymentsxConfirm = 'views/v-comer-paymentsxconfirm',
 }
