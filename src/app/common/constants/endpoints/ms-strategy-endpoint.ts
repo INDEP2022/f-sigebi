@@ -17,4 +17,7 @@ export enum StrategyEndpoints {
   strategyIndReports = 'strategy-ind-reports',
   PaEstGood = 'aplication/pa-est-goods-incor',
   UnitsMedConv = 'aplication/get-units-med-x-conv',
+  StrategyType = 'aplication/get-bills-service-type',
+  StrategySer = 'aplication/get-bills-service',
+  StrategyPro = 'strategy-process',
 }
