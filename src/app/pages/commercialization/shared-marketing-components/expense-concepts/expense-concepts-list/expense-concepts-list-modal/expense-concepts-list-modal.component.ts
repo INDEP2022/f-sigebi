@@ -92,7 +92,7 @@ export class ExpenseConceptsListModalComponent
             this.alert(
               'success',
               'Edición de Concepto de Pago ' + body.id,
-              'Actualizado Correctamente'
+              'Actualizado correctamente'
             );
             this.modalRef.content.callback(true);
             this.modalRef.hide();
@@ -121,7 +121,7 @@ export class ExpenseConceptsListModalComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: response => {
-            this.alert('success', 'Concepto de Pago', 'Creado Correctamente');
+            this.alert('success', 'Concepto de Pago', 'Creado correctamente');
             this.modalRef.content.callback(true);
             this.modalRef.hide();
             // this.getData();

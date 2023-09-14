@@ -21,6 +21,7 @@ import { ExpenseCaptureDataService } from '../../services/expense-capture-data.s
 export class NotifyComponent extends BasePage implements OnInit {
   selectedParaUsers: IUsersTracking[] = [];
   selectedCCUsers: IUsersTracking[] = [];
+  asunto: string;
   listUsers: any[] = [];
   paraSelect: DefaultSelect = new DefaultSelect();
   form: FormGroup;
@@ -52,7 +53,9 @@ export class NotifyComponent extends BasePage implements OnInit {
         ],
       });
     }
-
+    if (this.asunto) {
+      this.form.get('asunto').setValue(this.asunto);
+    }
     this.searchUsersPara(new ListParams());
   }
 

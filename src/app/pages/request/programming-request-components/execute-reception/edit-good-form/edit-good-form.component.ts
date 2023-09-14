@@ -84,7 +84,6 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.keyId'] = this.good?.destiny;
     this.genericService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('sae Destino Info', response);
         this.nameDestinyTransferent = response.data[0].description;
         //this.saeDestiny = new DefaultSelect(response.data, response.count);
       },
@@ -154,8 +153,7 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
 
   confirm() {
     /*const quantitySae = this.form.get('quantitySae').value;
-    console.log('sae', quantitySae);
-    console.log('trans', this.good?.quantity);
+   
 
     if (this.unitMeasureConv) {
       if (this.unitMeasureConv.tpUnitGreater == 'N') {
@@ -166,7 +164,7 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
             'La cantidad INDEP es mayor a la cantidad transferente'
           );
         } else {
-          console.log('form', this.form);
+      
           this.goodService.updateByBody(this.form.value).subscribe({
             next: response => {
               this.modalRef.content.callback(true);
@@ -192,7 +190,6 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
     } */
 
     if (this.form.get('observations').value) {
-      console.log('good', this.good);
       const formData = {
         id: this.good?.id,
         goodId: this.good?.goodId,
@@ -240,7 +237,6 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: (data: any) => {
-          console.log('data', data);
           this.stateConservations = new DefaultSelect(data.data, data.count);
         },
         error: error => {},
@@ -251,7 +247,6 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
     params['filter.unit'] = `$eq:${this.good.unitMeasure}`;
     this.strategyService.getUnitsMedXConv(params).subscribe({
       next: response => {
-        console.log('response', response);
         this.unitMeasures = new DefaultSelect(response.data, response.count);
       },
       error: error => {},
@@ -278,7 +273,6 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: (data: any) => {
-          console.log('status', data);
           this.saePhysicalStateInfo = new DefaultSelect(data.data, data.count);
         },
       });
@@ -289,7 +283,6 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
 
     this.genericService.getAll(params).subscribe({
       next: response => {
-        console.log('sae Destino', response);
         this.saeDestiny = new DefaultSelect(response.data, response.count);
       },
       error: error => {},
@@ -297,7 +290,6 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
   }
 
   unitSelect(unitMeasureConv: IUnitsMedConv) {
-    console.log('unitMeasureConv', unitMeasureConv);
     this.unitMeasureConv = unitMeasureConv;
     if (this.unitMeasureConv.decimals == 'N') {
       this.form

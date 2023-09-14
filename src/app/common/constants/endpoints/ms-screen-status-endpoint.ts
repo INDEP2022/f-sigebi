@@ -13,5 +13,6 @@ export enum ScreenStatusEndpoints {
   statusxpant = 'application/get-status-x-pant',
   getStatusV = 'application/get-v-status',
   PUP_VAL_BIEN_ROBO = 'application/val-good-steal',
+  PUF_VAL_CONCEP_ROBO = 'val-concep-rob',
   GetCount = 'application/getCount',
 }

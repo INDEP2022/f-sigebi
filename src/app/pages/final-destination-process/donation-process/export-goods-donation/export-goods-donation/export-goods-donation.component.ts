@@ -1,35 +1,43 @@
-import { Component, EventEmitter, OnInit, Output, QueryList, ViewChildren, ViewChild, Input, ElementRef } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import * as FileSaver from 'file-saver';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IGoodsExportPost } from 'src/app/core/models/catalogs/goods.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ExpedientSamiService } from 'src/app/core/services/ms-expedient/expedient-sami.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
+import * as XLSX from 'xlsx';
+import { MassiveGoodService } from '../../../../../core/services/ms-massivegood/massive-good.service';
 import { DetailProceeDelRecService } from '../../../../../core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { COLUMNS_EXPORT_GOODS } from './columns-export-goods';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MassiveGoodService } from '../../../../../core/services/ms-massivegood/massive-good.service';
-import * as XLSX from 'xlsx';
-import * as FileSaver from 'file-saver';
-import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
 
 @Component({
   selector: 'app-export-goods-donation',
   templateUrl: './export-goods-donation.component.html',
   styles: [],
 })
-
-
 export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -51,7 +59,8 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   @ViewChild('box', { static: true }) box: ElementRef<HTMLInputElement>;
   @Input() value: boolean;
   @Input() rowData: any;
-  @Output() toggle: EventEmitter<{ row: any; toggle: boolean }> = new EventEmitter();
+  @Output() toggle: EventEmitter<{ row: any; toggle: boolean }> =
+    new EventEmitter();
   cpdall: any;
   selectedOption: string = '';
   @Output() checkboxChanged = new EventEmitter<boolean>();
@@ -81,7 +90,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     private massiveGoodService: MassiveGoodService,
     private screenStatusService: ScreenStatusService,
     private historyGoodService: HistoryGoodService,
-    private authService: AuthService,
+    private authService: AuthService
   ) {
     super();
     this.settings = { ...this.settings, actions: false, selectMode: 'multi' };
@@ -158,42 +167,43 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
           let acta = resp.data[0].coalesce;
           console.log('resp -> ', resp);
           //Servicio2
-          this.delegationService.getTran(response.data[i].no_expediente).subscribe(respo => {
-            if (respo != null && resp != undefined) {
-              console.log('Resp tranEmit', respo);
-              //servicio 3
-              this.detailProceeDelRecService.getProceding(acta).subscribe({
-                next: res => {
-                  console.log('res 2 -> ', res);
+          this.delegationService
+            .getTran(response.data[i].no_expediente)
+            .subscribe(respo => {
+              if (respo != null && resp != undefined) {
+                console.log('Resp tranEmit', respo);
+                //servicio 3
+                this.detailProceeDelRecService.getProceding(acta).subscribe({
+                  next: res => {
+                    console.log('res 2 -> ', res);
 
-                  let dataForm = {
-                    numberGood: response.data[i].no_bien,
-                    description: response.data[i].descripcion,
-                    quantity: response.data[i].cantidad,
-                    clasificationNumb: response.data[i].no_clasif_bien,
-                    tansfNumb: response.data[i].no_transferente,
-                    proceso_ext_dom: response.data[i].proceso_ext_dom,
-                    id_almacen: response.data[i].id_almacen,
-                    fecha_liberacion: response.data[i].fecha_liberacion,
-                    status: response.data[i].estatus,
-                    unidad: response.data[i].unidad,
-                    proceedingsNumb: response.data[i].no_expediente,
-                    delAdmin: res.del_administra,
-                    delDeliv: res.del_recibe,
-                    recepDate: res.fecha_recepcion,
-                    no_emisora: respo.data[0].no_emisora,
-                    no_tran_emi_aut: respo.data[0].no_tran_emi_aut,
-                    goodTotal: response.data[i]
-                  };
-                  console.log('DATA FORM ->', dataForm);
+                    let dataForm = {
+                      numberGood: response.data[i].no_bien,
+                      description: response.data[i].descripcion,
+                      quantity: response.data[i].cantidad,
+                      clasificationNumb: response.data[i].no_clasif_bien,
+                      tansfNumb: response.data[i].no_transferente,
+                      proceso_ext_dom: response.data[i].proceso_ext_dom,
+                      id_almacen: response.data[i].id_almacen,
+                      fecha_liberacion: response.data[i].fecha_liberacion,
+                      status: response.data[i].estatus,
+                      unidad: response.data[i].unidad,
+                      proceedingsNumb: response.data[i].no_expediente,
+                      delAdmin: res.del_administra,
+                      delDeliv: res.del_recibe,
+                      recepDate: res.fecha_recepcion,
+                      no_emisora: respo.data[0].no_emisora,
+                      no_tran_emi_aut: respo.data[0].no_tran_emi_aut,
+                      goodTotal: response.data[i],
+                    };
+                    console.log('DATA FORM ->', dataForm);
 
-                  this.data1.push(dataForm); // invocar todos tres servicios
-                  this.data.load(this.data1); // cuando ya pasa todo, se mapea la info
-
-                },
-              });
-            }
-          });
+                    this.data1.push(dataForm); // invocar todos tres servicios
+                    this.data.load(this.data1); // cuando ya pasa todo, se mapea la info
+                  },
+                });
+              }
+            });
         },
       });
     }
@@ -228,11 +238,11 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
         this.data.load(this.data1);
       },
     });
-
   }
 
   filterGetAll() {
-    this.data.onChanged()
+    this.data
+      .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
@@ -290,7 +300,6 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getall1(this.boolCon));
-
   }
 
   generarAlerta(response: any) {
@@ -298,8 +307,8 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'info',
         'Se recuperarán ' +
-        response.data.length +
-        ' registros ¿Deseas continuar? ',
+          response.data.length +
+          ' registros ¿Deseas continuar? ',
         '',
         'Si',
         'No'
@@ -318,7 +327,6 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   // SE LLAMA A LA PANTALLA RASTREADOR POR BIENES Y NOTIFICACIONES
   callRastreador() {
     this.loadFromGoodsTracker();
-
   }
   async loadFromGoodsTracker() {
     const global = await this.globalVarsService.getVars();
@@ -331,10 +339,10 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   }
   // SERVICIO PARA TRAER BIENES DE LA PANTALLA RASTREADOR POR BIENES Y NOTIFICACIONES
   addGoodRastreador(good: any) {
-    console.log("1");
+    console.log('1');
     this.goodService.getByGood(good).subscribe({
       next: response => {
-        console.log("1.3");
+        console.log('1.3');
         let padre =
           response.data[0].no_bien_padre_parcializacion != null
             ? response.data[0].no_bien_padre_parcializacion
@@ -345,49 +353,51 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
           (model.vNoBienPadre = padre),
           (model.vNobienreferencia = response.data[0].goodReferenceNumber);
         //Servicio1
-        console.log("1.2", model);
+        console.log('1.2', model);
 
         this.delegationService.postCatalog(model).subscribe({
           next: resp => {
-            console.log("2");
+            console.log('2');
             let acta = resp.data[0].coalesce;
             console.log('resp -> ', resp);
             //Servicio2
-            this.delegationService.getTran(response.data[0].fileNumber).subscribe(respo => {
-              console.log("3");
-              if (respo != null && resp != undefined) {
-                console.log('Resp tranEmit', respo);
-                //servicio 3
-                this.detailProceeDelRecService.getProceding(acta).subscribe({
-                  next: res => {
-                    console.log('res 2 -> ', res);
+            this.delegationService
+              .getTran(response.data[0].fileNumber)
+              .subscribe(respo => {
+                console.log('3');
+                if (respo != null && resp != undefined) {
+                  console.log('Resp tranEmit', respo);
+                  //servicio 3
+                  this.detailProceeDelRecService.getProceding(acta).subscribe({
+                    next: res => {
+                      console.log('res 2 -> ', res);
 
-                    let dataForm = {
-                      numberGood: response.data[0].goodId,
-                      description: response.data[0].description,
-                      quantity: response.data[0].quantity,
-                      clasificationNumb: response.data[0].goodClassNumber,
-                      tansfNumb: response.data[0].transferNumberFiles,
-                      proceso_ext_dom: response.data[0].extDomProcess,
-                      id_almacen: response.data[0].storeNumber,
-                      fecha_liberacion: '',
-                      status: response.data[0].goodStatus,
-                      unidad: response.data[0].unit,
-                      proceedingsNumb: response.data[0].fileNumber,
-                      delAdmin: res.del_administra,
-                      delDeliv: res.del_recibe,
-                      recepDate: res.fecha_recepcion,
-                      no_emisora: respo.data[0].no_emisora,
-                      no_tran_emi_aut: respo.data[0].no_tran_emi_aut,
-                      goodTotal: response.data[0]
-                    };
-                    console.log('DATA FORM ->', dataForm);
-                    this.data1.push(dataForm); // invocar todos tres servicios
-                    this.data.load(this.data1); // cuando ya pasa todo, se mapea la info
-                  },
-                });
-              }
-            });
+                      let dataForm = {
+                        numberGood: response.data[0].goodId,
+                        description: response.data[0].description,
+                        quantity: response.data[0].quantity,
+                        clasificationNumb: response.data[0].goodClassNumber,
+                        tansfNumb: response.data[0].transferNumberFiles,
+                        proceso_ext_dom: response.data[0].extDomProcess,
+                        id_almacen: response.data[0].storeNumber,
+                        fecha_liberacion: '',
+                        status: response.data[0].goodStatus,
+                        unidad: response.data[0].unit,
+                        proceedingsNumb: response.data[0].fileNumber,
+                        delAdmin: res.del_administra,
+                        delDeliv: res.del_recibe,
+                        recepDate: res.fecha_recepcion,
+                        no_emisora: respo.data[0].no_emisora,
+                        no_tran_emi_aut: respo.data[0].no_tran_emi_aut,
+                        goodTotal: response.data[0],
+                      };
+                      console.log('DATA FORM ->', dataForm);
+                      this.data1.push(dataForm); // invocar todos tres servicios
+                      this.data.load(this.data1); // cuando ya pasa todo, se mapea la info
+                    },
+                  });
+                }
+              });
           },
         });
       },
@@ -412,7 +422,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
 
   // SELECCIONA TODO CPD
   selectAllCPD() {
-    console.log(" selectAllCPD");
+    console.log(' selectAllCPD');
     this.data1.forEach((item: any) => {
       if (item.cpd) {
         item.cpd = false; // Si CPD está seleccionado, deselecciónalo
@@ -461,54 +471,66 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   // EXPORTAR A EXCEL
   ExportAndChange() {
     this.exportandChangeStatus();
-    let descripcion = this.form.get('description').value
+    let descripcion = this.form.get('description').value;
     console.log('PASA DESCRIPCION ->', descripcion); // Se obtiene el valor de description del form y se almacena en la variable descripción
     if (descripcion == null) {
-      this.alert(
-        'error',
-        'Error',
-        'Digite la Descripción',
-      );
+      this.alert('error', 'Error', 'Digite la Descripción');
       return;
     }
     this.exportToExcelX();
   }
   exportandChangeStatus() {
     for (let i = 0; i < this.data1.length; i++) {
-      if (this.data1[i].cpd == true || this.data1[i].adm == true || this.data1[i].rda == true) {
+      if (
+        this.data1[i].cpd == true ||
+        this.data1[i].adm == true ||
+        this.data1[i].rda == true
+      ) {
         let cve = 'FDONACIONES';
-        this.screenStatusService.getStatusEndforScreen(cve, this.data1[i].status, this.data1[i].proceso_ext_dom).subscribe({
-          next: response => {
-
-            let statusFinal = response.data[0].statusFinal
-            let descripcion = this.form.get('description').value
-            this.data1[i].goodTotal.status = statusFinal;
-            this.data1[i].goodTotal.descripcion = descripcion + ' ' + this.data1[i].goodTotal.observations
-            let params2 = {
-              propertyNum: this.data1[i].numberGood,
-              status: statusFinal,
-              changeDate: new Date(),
-              userChange: this.user,
-              statusChangeProgram: 'FDONACIONES',
-              reasonForChange: this.form.get('description').value
-            }
-            this.goodService.updateWithParams(this.data1[i].goodTotal).subscribe({
-              next: response => {
-
-                this.alert('success', 'Exitoso', 'Se Actualizó Correctamente')
-
-              }, error: err => {
-                this.alert('error', 'Error', 'Hubo un Error al Actualizar el Bien')
-              }
-            }),
-
-              this.historyGoodService.PostStatus(params2).subscribe({
-                next: response => {
-
-                }
-              })
-          }
-        })
+        this.screenStatusService
+          .getStatusEndforScreen(
+            cve,
+            this.data1[i].status,
+            this.data1[i].proceso_ext_dom
+          )
+          .subscribe({
+            next: response => {
+              let statusFinal = response.data[0].statusFinal;
+              let descripcion = this.form.get('description').value;
+              this.data1[i].goodTotal.status = statusFinal;
+              this.data1[i].goodTotal.descripcion =
+                descripcion + ' ' + this.data1[i].goodTotal.observations;
+              let params2 = {
+                propertyNum: this.data1[i].numberGood,
+                status: statusFinal,
+                changeDate: new Date(),
+                userChange: this.user,
+                statusChangeProgram: 'FDONACIONES',
+                reasonForChange: this.form.get('description').value,
+              };
+              this.goodService
+                .updateWithParams(this.data1[i].goodTotal)
+                .subscribe({
+                  next: response => {
+                    this.alert(
+                      'success',
+                      'Exitoso',
+                      'Se Actualizó Correctamente'
+                    );
+                  },
+                  error: err => {
+                    this.alert(
+                      'error',
+                      'Error',
+                      'Hubo un Error al Actualizar el Bien'
+                    );
+                  },
+                }),
+                this.historyGoodService.PostStatus(params2).subscribe({
+                  next: response => {},
+                });
+            },
+          });
       }
     }
   }
@@ -519,15 +541,19 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
   }
   // EXPORTAR A EXCEL Y CAMBIAR ESTATUS
   exportToExcelX() {
-    console.log("data select ", this.selectedData);
+    console.log('data select ', this.selectedData);
     let c = 0;
     let n = 0;
     let arregloPrincipal = [];
     for (let i = 0; i < this.data1.length; i++) {
-      console.log("this data1 ", this.data1);
-      if (this.data1[i].cpd == true || this.data1[i].adm == true || this.data1[i].rda == true) {
+      console.log('this data1 ', this.data1);
+      if (
+        this.data1[i].cpd == true ||
+        this.data1[i].adm == true ||
+        this.data1[i].rda == true
+      ) {
         c++;
-        console.log("entra ", this.data1[i]);
+        console.log('entra ', this.data1[i]);
         let item: any = {
           numberGood: this.data1[i].numberGood,
           description: this.data1[i].description,
@@ -544,21 +570,25 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
           delDeliv: this.data1[i].delDeliv,
           recepDate: this.data1[i].recepDate,
           no_emisora: this.data1[i].no_emisora,
-          no_tran_emi_aut: this.data1[i].no_tran_emi_aut
+          no_tran_emi_aut: this.data1[i].no_tran_emi_aut,
         };
         arregloPrincipal.push(item);
       } else {
         n++;
-        console.log("this ", this.data1[i], '', n);
+        console.log('this ', this.data1[i], '', n);
         if (n == this.data1.length) {
-          this.alert('error', 'Error', 'Seleccione un Estado de los Bienes que Quiere Exportar')
+          this.alert(
+            'error',
+            'Error',
+            'Seleccione un Estado de los Bienes que Quiere Exportar'
+          );
           return;
         }
       }
     }
-    console.log("Data a enviar -> ", arregloPrincipal);
+    console.log('Data a enviar -> ', arregloPrincipal);
     let array = {
-      data: arregloPrincipal
+      data: arregloPrincipal,
     };
     this.massiveGoodService.exportXlsx(array).subscribe({
       next: response => {
@@ -567,7 +597,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       },
       error: err => {
         this.alert('error', 'No se Puede Copiar el Archivo de Excel.', '');
-      }
+      },
     });
   }
 
@@ -589,6 +619,4 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     });
     FileSaver.saveAs(data, fileName);
   }
-
 }
-
