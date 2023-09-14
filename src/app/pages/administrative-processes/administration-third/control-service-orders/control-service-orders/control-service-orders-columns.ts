@@ -45,7 +45,7 @@ export const CONTROLSERVICEORDERS_COLUMNS = {
   },
   implementationReport: {
     title: 'Reporte Implementación',
-    width: '10%',
+    width: '5%',
     sort: false,
   },
 };
