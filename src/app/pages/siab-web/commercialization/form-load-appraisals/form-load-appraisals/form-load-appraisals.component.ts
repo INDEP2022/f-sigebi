@@ -1,18 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { FormLoadAppraisalsService } from 'src/app/core/services/catalogs/form-load-appraisals.service';
 import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { FlatFileNotificationsService } from 'src/app/pages/documents-reception/flat-file-notifications/flat-file-notifications.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   APPRAISALS_COLUMNS,
   DETAIL_APPRAISALS_COLUMNS,
   GOODS_COLUMNS,
 } from './table-form';
+
+interface IExcelToJson {
+  NO_BIEN: number;
+}
 
 @Component({
   selector: 'app-form-load-appraisals',
@@ -26,9 +33,14 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   requested: boolean;
   apraisalLength: number;
   estatusLotes: any;
+  propertyValues: string[] = [];
+  dataExcel: any = [];
   bottonDesible: boolean;
+  commaSeparatedString: string = '';
+
   ///
   params2 = new BehaviorSubject<ListParams>(new ListParams());
+  fileReader = new FileReader();
   selectedTipo = new DefaultSelect();
   dataApraisals: LocalDataSource = new LocalDataSource();
   dataGood: LocalDataSource = new LocalDataSource();
@@ -64,7 +76,12 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
       delete: false,
     },
   };
-  constructor(private formLoadAppraisalsService: FormLoadAppraisalsService) {
+  constructor(
+    private formLoadAppraisalsService: FormLoadAppraisalsService,
+    private router: Router,
+    private excelService: ExcelService,
+    private fileNotificationServices: FlatFileNotificationsService
+  ) {
     super();
     this.apraisalsSettings.columns = APPRAISALS_COLUMNS;
     this.goodSettings.columns = GOODS_COLUMNS;
@@ -82,13 +99,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
       this.controlBotnoes('', '');
     } else {
       this.cargarEvento(
-        await this.obtenerEvento(
-          1,
-          this.form.value.numeroEvento,
-          'A',
-          '',
-          'E  '
-        )
+        await this.obtenerEvento(1, this.form.value.numeroEvento, 'A', '', 'E')
       );
     }
   }
@@ -106,6 +117,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
   }
   async cargaDDLEvento() {
     this.estatusLotes = await this.CargaDDLDrop();
+    console.log(this.estatusLotes);
     if (this.estatusLotes.length > 0) {
       this.onLoadToast('warning', 'Advertencia', 'Selecciona oficio');
     } else {
@@ -144,7 +156,9 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     this.cargarEvento(
       await this.obtenerEvento(1, this.form.value.numeroEvento, 'I', '', 'E')
     );
-    //this.cargarBienes(await this.obtenerEvento( 2, this.form.value.numeroEvento,"A", "", "B"));
+    this.cargarBienes(
+      await this.obtenerEvento(2, this.form.value.numeroEvento, 'A', '', 'B')
+    );
     this.cargarAvaluos(await this.obtenerEvento(3, 0, ' ', '', 'A'));
     console.log('apraisalLength', this.apraisalLength);
     if (this.apraisalLength > 0) {
@@ -183,10 +197,10 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
 
   cargarBienes(evento: any) {
     console.log('bienes', evento);
-    if (evento.length > 0) {
+    /* if (evento.length > 0) {
       //mostrar data en la tabla
     } else {
-    }
+    }*/
   }
   cargarAvaluos(evento: any) {
     console.log('Avaluos', evento);
@@ -211,7 +225,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
       '',
       'Continuar',
       'Cancelar'
-    ).then(question => {
+    ).then(async question => {
       if (question.isConfirmed) {
         this.ocultaDivNoti(); /////////////////////////// inhabilitar los botones
         try {
@@ -226,19 +240,255 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
             body['pTpappraisal'] = '';
             body['pTpoofficiates'] = '';
             body['pEstevent'] = 'pIdAppraisal';
-            ////////////////////// esperar al despliegue
-            this.formLoadAppraisalsService.validarEvento(body).subscribe({
-              next: data => {},
-              error: err => {},
-            });
+            //////////////////////
+            let body2: any = {};
+            body2['option'] = 2;
+            body2['event'] = this.form.value.numeroEvento;
+            body2['idtpooficio'] = this.form.value.Tipo;
+
+            V_CAUSA_INVALIDO = JSON.stringify(await this.PC_VAL_EVENTO(body));
             if (V_CAUSA_INVALIDO == null || V_CAUSA_INVALIDO == '') {
+              V_DESC_OFICIO = JSON.stringify(await this.generarOficio(body2));
+              this.onLoadToast(
+                'warning',
+                `¿Generar el ${V_DESC_OFICIO} de ${data} del evento ${this.form.value.numeroEvento}?`
+              );
+            } else {
+              this.onLoadToast(
+                'warning',
+                `Ha ocurrido un Error con ${V_CAUSA_INVALIDO}`,
+                'verifique correctamente la información'
+              );
             }
+            this.onLoadToast('warning', `Debe Seleccionar un tipo de Oficio`);
           }
-        } catch {}
+        } catch {
+          this.onLoadToast(
+            'warning',
+            `Lo Sentimos al Parecer ha Ocurrido un Error`
+          );
+        }
       }
     });
   }
 
+  async btnContinuarOficio_Click() {
+    try {
+      let body2: any = {};
+      body2['option'] = 2;
+      body2['event'] = this.form.value.numeroEvento;
+      body2['idtpooficio'] = this.form.value.Tipo;
+      let urlOficio = JSON.stringify(await this.generarOficio(body2));
+      if (urlOficio != '') {
+        this.router.navigate([`siab-web/appraisals/res-cancel-valuation`]);
+      }
+    } catch {
+      this.onLoadToast(
+        'warning',
+        `Lo Sentimos al Parecer ha Ocurrido un Error`
+      );
+    }
+  }
+
+  ExportaExcel() {
+    let EsNumero = 0;
+    let NombreArchivo: string;
+    let NombreHoja;
+
+    NombreHoja = 'Comer_Avaluos';
+
+    /*
+    this.fileNotificationServices.getFileNotification( )
+      .subscribe({
+        next: (resp: any) => {
+          if (resp.file.base64 !== '') {
+            this.downloadExcel(resp.file.base64);
+          } else {
+            this.onLoadToast(
+              'warning',
+              'Advertencia',
+              'Sin Datos Para los Rangos de Fechas Suministrados'
+            );
+          }
+          return;
+        },
+      });*/
+  }
+
+  downloadExcel(pdf: any) {
+    const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${pdf}`;
+    const downloadLink = document.createElement('a');
+    downloadLink.download = `Comer_Avaluos_${new Date().toDateString()}.xlsx`;
+    downloadLink.href = linkSource;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+    this.onLoadToast(
+      'success',
+      'Archivo de Notificaciones',
+      'Generado Correctamente'
+    );
+  }
+
+  async leerExcel(proceso: string) {
+    let error = '';
+    try {
+      if (proceso == 'V') {
+      } else {
+        if (proceso == 'I' || proceso == 'U' || proceso == 'A') {
+          error = '';
+        }
+      }
+    } catch {}
+  }
+
+  async() {}
+
+  async lnkInsAvaluos_Click() {
+    let V_CAUSA_INVALIDO = '';
+    let body: any = {};
+    body['pProcess'] = 'I';
+    body['pEvent'] = this.form.value.numeroEvento;
+    body['pTpevent'] = this.form.value.Tipo;
+    body['pAddress'] = this.form.value.Direccio;
+    body['pTpappraisal'] = '';
+    body['pTpoofficiates'] = '';
+    body['pEstevent'] = 'pIdAppraisal';
+    try {
+      V_CAUSA_INVALIDO = JSON.stringify(await this.PC_VAL_EVENTO(body));
+
+      if (V_CAUSA_INVALIDO != '') {
+        this.onLoadToast('error', 'Error', 'No se ha Podido Insertar Avaluos');
+      } else {
+        this.onLoadToast(
+          'error',
+          'Error',
+          `${V_CAUSA_INVALIDO} ¿Ingresar Avalúos del evento ${this.form.value.numeroEvento}, referencia ${this.form.value.Referencia}?`
+        );
+      }
+    } catch {}
+  }
+  btnInsertaArchivo_Click() {
+    this.leerExcel('I');
+  }
+  async lnkUpdAvaluo_Click() {
+    let body: any = {};
+    body['pProcess'] = 'U';
+    body['pEvent'] = this.form.value.numeroEvento;
+    body['pTpevent'] = this.form.value.Tipo;
+    body['pAddress'] = this.form.value.Direccio;
+    body['pTpappraisal'] = '';
+    body['pTpoofficiates'] = '';
+    body['pEstevent'] = 'pIdAppraisal';
+    let V_CAUSA_INVALIDO = JSON.stringify(await this.PC_VAL_EVENTO(body));
+    if (V_CAUSA_INVALIDO != '') {
+      this.onLoadToast('error', `${V_CAUSA_INVALIDO}`);
+    } else {
+      this.onLoadToast(
+        'error',
+        'Error',
+        `¿Actualizar los Avalúos del evento ${this.form.value.numeroEvento}, referencia ${this.form.value.referencia}?`
+      );
+    }
+  }
+  btnUpdArchivo_Click() {
+    this.leerExcel('U');
+  }
+  async lnkAddAvaluo_Click() {
+    let V_CAUSA_INVALIDO = '';
+    let body: any = {};
+    body['pProcess'] = 'A';
+    body['pEvent'] = this.form.value.numeroEvento;
+    body['pTpevent'] = this.form.value.Tipo;
+    body['pAddress'] = this.form.value.Direccio;
+    body['pTpappraisal'] = '';
+    body['pTpoofficiates'] = '';
+    body['pEstevent'] = 'pIdAppraisal';
+    V_CAUSA_INVALIDO = JSON.stringify(await this.PC_VAL_EVENTO(body));
+    if (V_CAUSA_INVALIDO != '') {
+      this.onLoadToast('error', `${V_CAUSA_INVALIDO}`);
+    } else {
+      this.onLoadToast(
+        'error',
+        `¿Agregar bienes a los Avalúos del evento ${this.form.value.numeroEvento}, referencia ${this.form.value.referencia}?`
+      );
+    }
+  }
+  btnAgrArchivo_Click() {
+    this.leerExcel('A');
+  }
+
+  onFileChange(event: Event) {
+    try {
+      const files = (event.target as HTMLInputElement).files;
+      if (!files || files.length !== 1) {
+        throw new Error('Please select one file.');
+      }
+
+      // Limpia cualquier evento onload anterior
+      this.fileReader.onload = null;
+
+      // Asigna el evento onload para manejar la lectura del archivo
+      this.fileReader.onload = loadEvent => {
+        if (loadEvent.target && loadEvent.target.result) {
+          // Llama a la función para procesar el archivo
+          this.readExcel(loadEvent.target.result);
+
+          // Limpia el input de archivo para permitir cargar el mismo archivo nuevamente
+          (event.target as HTMLInputElement).value = '';
+        }
+        console.log(this.fileReader.onload);
+      };
+
+      // Lee el contenido binario del archivo
+      this.fileReader.readAsBinaryString(files[0]);
+    } catch (error) {
+      console.error('Error:', error);
+      // Maneja el error de acuerdo a tus necesidades
+    }
+  }
+
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      this.dataExcel = this.excelService.getData<IExcelToJson>(binaryExcel);
+      this.propertyValues = this.dataExcel.map(
+        (item: any) => item.no_bien,
+        (item2: any) => item2.another_day
+      );
+
+      // Unir las cadenas con comas para obtener una cadena separada por comas
+      this.commaSeparatedString = this.propertyValues.join('}');
+
+      console.log(this.commaSeparatedString);
+      console.log(this.dataExcel);
+    } catch (error) {
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+    }
+  }
+
+  async PC_VAL_EVENTO(body: any) {
+    return new Promise((resolve, reject) => {
+      this.formLoadAppraisalsService.validarEvento(body).subscribe({
+        next: data => {
+          resolve(data.data.vcadenaweb);
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
+    });
+  }
+  async generarOficio(body: any) {
+    return new Promise((resolve, reject) => {
+      this.formLoadAppraisalsService.generarOficio(body).subscribe({
+        next: data => {
+          resolve(data.dual);
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
+    });
+  }
   async obtenerEvento(
     pOption: number,
     pEvent: number | string,
@@ -276,6 +526,7 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
           if (type == 'B') {
             this.dataGood.load(data.data);
             this.dataGood.refresh();
+            resolve(data.data);
           }
           if (type == 'A') {
             let datos = [];
@@ -283,11 +534,11 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
             datos.push(data.data[0]);
             this.dataApraisals.load(datos);
             this.apraisalLength = datos.length;
-            resolve(datos);
             console.log(datos, datos.length, this.dataApraisals);
             this.dataApraisals.refresh();
+            resolve(datos);
           }
-          console.log(info);
+          console.log(info, pOption);
         },
         error: err => {
           console.log(err);
@@ -301,7 +552,6 @@ export class FormLoadAppraisalsComponent extends BasePage implements OnInit {
     // Invalidar los botones
     //
   }
-  ExportaExcel() {}
 
   search() {}
   controlBotnoes(tipoProceso: string, estado: string) {

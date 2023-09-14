@@ -191,6 +191,7 @@ export class ProposalInventoriesDonationComponent
     const advanceProp = this.data1.data.filter(x => x.avance_propu === 'E');
     let count: number = 0;
     if (advanceProp.length > 0) {
+      let ok: number = 0;
       advanceProp.forEach((data, i) => {
         count = i + 1;
         const updGood: IRequestDonation = {
@@ -202,17 +203,24 @@ export class ProposalInventoriesDonationComponent
         };
 
         console.log(count, advanceProp.length);
-
+        console.log('updGood del For Each-> ', updGood);
         this.donationGood.updateRequestDonation(updGood).subscribe({
           next: () => {
-            console.log(count == advanceProp.length);
-            if (count == advanceProp.length) {
+            ok++;
+            console.log(
+              Number(count) == Number(advanceProp.length),
+              'ok -->',
+              ok
+            );
+            if (Number(count) == Number(advanceProp.length) && ok == count) {
               this.onLoadToast(
                 'success',
                 'Ha sido Actualizado Correctamente el Inventario',
                 ''
               );
+              console.log('entra 1');
             }
+            console.log('updGood del servicio-> ', updGood);
           },
           error: () => {},
         });
