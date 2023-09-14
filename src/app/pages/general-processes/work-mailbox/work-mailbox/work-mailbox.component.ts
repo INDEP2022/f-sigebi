@@ -1097,8 +1097,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
       if (pgrDocs.count == 0) {
         this.alert(
-          'error',
-          'Error',
+          'warning',
+          'Atención',
           'El Oficio no tiene documentos, no se podrá Trabajar'
         );
         return;
@@ -1109,8 +1109,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
       if (tmpGestRecDoc.count == 0) {
         this.alert(
-          'error',
-          'Error',
+          'warning',
+          'Atención',
           'El Oficio tiene información incompleta, no se podrá trabajar'
         );
         return;
@@ -1873,7 +1873,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(() => {
-        this.alertInfo('success', 'El trámite se finalizo correctamente', '');
+        this.alertInfo('success', 'El trámite se finalizó correctamente', '');
         this.getData();
       })
     );
@@ -1929,7 +1929,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           if (error.status < 500) {
             this.determinatePgr(null, 'I');
           } else {
-            this.alertInfo('error', 'Error', 'Ocurrio un error inesperado');
+            this.alertInfo('error', 'Error', 'Ocurrió un error inesperado');
           }
         },
       });
@@ -1955,7 +1955,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.alertInfo(
         'error',
         'Error',
-        'Ocurrio un error al obtener el Folio Universal'
+        'Ocurrió un error al obtener el Folio Universal'
       );
     }
   }
@@ -2058,7 +2058,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           this.alertInfo(
             'error',
             'Error',
-            'Ocurrio un error al copiar los documentos'
+            'Ocurrió un error al copiar los documentos'
           );
         },
       });
@@ -2218,7 +2218,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   updateDocumentsByFolio(folioLNU: string | number, folioLST: string) {
     return this.documentsService.updateByFolio({ folioLNU, folioLST }).pipe(
       catchError(error => {
-        this.alert('error', 'Error', 'Ocurrio un error al replicar el folio');
+        this.alert('error', 'Error', 'Ocurrió un error al replicar el folio');
         return throwError(() => error);
       }),
       tap(() => {
@@ -2278,7 +2278,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             'No existe un folio universal escaneado para replicar'
           );
         } else {
-          this.alert('error', 'Error', 'Ocurrio un error al replicar el folio');
+          this.alert('error', 'Error', 'Ocurrió un error al replicar el folio');
         }
         return throwError(() => error);
       })
@@ -2298,7 +2298,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.alertInfo(
           'error',
           'Error',
-          'Ocurrio un error al replicar el folio'
+          'Ocurrió un error al replicar el folio'
         );
         return throwError(() => error);
       }),
