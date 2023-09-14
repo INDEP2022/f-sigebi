@@ -71,14 +71,13 @@ export class InsideTradesComponent extends BasePage implements OnInit {
       if (this.noGes) {
         this.val_no_ges = this.noGes;
       } else {
-        this.val_no_ges = 404562;
+        this.val_no_ges = null;
       }
 
       if (this.val_no_ges == null) {
         //
         //
-        ////  this.router.navigate([`/auth/login`]);
-        //this.router.navigate([`/pages/home`]);
+        this.router.navigate([`/pages/siab-web/tools/property`]);
         //
         //
       } else {
@@ -113,7 +112,7 @@ export class InsideTradesComponent extends BasePage implements OnInit {
     } else {
       localStorage.setItem('Violation', 'true');
 
-      // this.router.navigate([`/auth/login`]);
+      this.router.navigate([`/pages/siab-web/tools/property`]);
 
       localStorage.clear();
     }
@@ -134,7 +133,6 @@ export class InsideTradesComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.outsideTradesService.getPreliminaryInvestigation(id).subscribe({
         next: data => {
-          console.log(data.data[0].averiguacion_previa);
           resolve(data.data[0].averiguacion_previa);
         },
         error: err => {
@@ -147,7 +145,6 @@ export class InsideTradesComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.outsideTradesService.getNameOTValue(1538).subscribe({
         next: data => {
-          console.log(data.data[0]);
           resolve(data.data[0]);
         },
         error: err => {
@@ -161,7 +158,6 @@ export class InsideTradesComponent extends BasePage implements OnInit {
       this.outsideTradesService.getCPP(id).subscribe({
         next: data => {
           let message = `tipo:${data.data[0].tipo}, cpp:${data.data[0].cpp}`;
-          console.log(message);
           resolve(message);
         },
         error: err => {
