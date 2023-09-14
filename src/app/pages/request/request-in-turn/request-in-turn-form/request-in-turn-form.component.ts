@@ -348,9 +348,13 @@ export class RequestInTurnFormComponent extends BasePage implements OnInit {
     this.selectTransfer = new DefaultSelect([], 0, true);
     this.selectAuthority = this.selectTransfer = new DefaultSelect([], 0, true);
     this.selectState = this.selectTransfer = new DefaultSelect([], 0, true);
+    const idDelegation = this.searchForm.get('regionalDelegationId');
+    const idDelegationValue = idDelegation.value;
     this.searchForm.reset();
     this.resetForm.emit(true);
+    idDelegation.setValue(idDelegationValue);
     this.deleRegionalId = Number(this.authService.decodeToken().department);
+    this.search();
   }
 
   getFormChanges() {
@@ -358,7 +362,7 @@ export class RequestInTurnFormComponent extends BasePage implements OnInit {
     params.removeAllFilters();
     //filtro de la delegacion regional
 
-    if (this.searchForm.controls['paperNumber'].value == null) {
+    if (this.searchForm.controls['paperNumber'].value != null) {
       this.deleRegionalId
         ? params.addFilter(
             'regionalDelegationId',
@@ -368,14 +372,18 @@ export class RequestInTurnFormComponent extends BasePage implements OnInit {
         : null;
     } else {
       this.deleRegionalId
-        ? params.addFilter('regionalDelegationId', '', SearchFilter.LIKE2)
+        ? params.addFilter(
+            'regionalDelegationId',
+            this.deleRegionalId,
+            SearchFilter.EQ
+          )
         : null;
     }
 
-    // if (this.searchForm.controls['regionalDelegationId'].value != null) {
-    //    const regionalDelegationId = this.searchForm.controls['regionalDelegationId'].value;
-    //    params.addFilter('regionalDelegationId', regionalDelegationId, SearchFilter.EQ);
-    //  }
+    /*if (this.searchForm.controls['regionalDelegationId'].value != null) {
+        const regionalDelegationId = this.searchForm.controls['regionalDelegationId'].value;
+        params.addFilter('regionalDelegationId', regionalDelegationId, SearchFilter.EQ);
+      }*/
     //filtro estado solicitudes por tunar
     params.addFilter('requestStatus', 'POR_TURNAR', SearchFilter.EQ);
 

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
@@ -10,7 +10,10 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { StrategyProcessService } from 'src/app/core/services/ms-strategy/strategy-process.service';
 import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
+import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
 import { BasePage } from 'src/app/core/shared';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { PerformanceIndicatosDetailModalComponent } from '../performance-indicatos-detail-modal/performance-indicatos-detail-modal.component';
 import {
   PERFORMANCEINDICATOR_COLUMNS,
   REPORTPERFORMANCEINDICATOR_COLUMNS,
@@ -38,12 +41,14 @@ export class PerformanceIndicatorDetailComponent
   enabled: boolean = true;
   compliance: Number = 0;
   month: string = 'MES';
-  status: number = 0;
+  status: number;
   user1: any;
   bsValueFromYear: Date = new Date();
   bsConfigFromYear: Partial<BsDatepickerConfig>;
   columnFilters: any = [];
   selectedRow: any;
+  userSele: any;
+  resgisterdata: any;
 
   settings2 = {
     ...this.settings,
@@ -56,7 +61,9 @@ export class PerformanceIndicatorDetailComponent
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private strategyProcessService: StrategyProcessService,
-    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService
+    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService,
+    private modalService: BsModalService,
+    private indUserService: IndUserService
   ) {
     super();
     this.settings = {
@@ -71,6 +78,7 @@ export class PerformanceIndicatorDetailComponent
     this.prepareForm();
     this.prepareFormR_I();
     this.filterA();
+    this.filterR();
     this.bsConfigFromYear = {
       dateInputFormat: 'YYYY',
       showTodayButton: false,
@@ -78,10 +86,6 @@ export class PerformanceIndicatorDetailComponent
       maxDate: new Date(),
       minMode: 'year',
     };
-  }
-
-  close() {
-    this.modalRef.hide();
   }
 
   private prepareForm() {
@@ -103,7 +107,21 @@ export class PerformanceIndicatorDetailComponent
     });
   }
 
-  validateRI(event: any) {
+  public getUser(params: ListParams) {
+    params.limit = 100;
+    params.take = 100;
+    this.indUserService.getAllUser(params).subscribe({
+      next: data => {
+        this.userSele = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.userSele = new DefaultSelect();
+      },
+    });
+  }
+
+  validateRI(event?: any) {
+    this.compliance = 0;
     const strategyAdmin =
       this.FormE_I.get('strategyAdmin').value != null
         ? this.FormE_I.get('strategyAdmin').value
@@ -128,11 +146,14 @@ export class PerformanceIndicatorDetailComponent
     let lv_numera = reportImp + reportImp2;
 
     if (lv_denomi == 0) {
+      console.log('if');
       this.compliance = this.roundPercentage(0);
     } else if (lv_numera == 0) {
+      console.log('else if');
       this.compliance = this.roundPercentage(100);
     } else {
-      this.compliance = this.roundPercentage((lv_denomi / lv_numera) * 100);
+      console.log('else');
+      this.compliance = this.roundPercentage(lv_denomi / lv_numera);
     }
   }
 
@@ -262,10 +283,9 @@ export class PerformanceIndicatorDetailComponent
     console.log('Año ', year);
     let Delegation = this.Form.get('regionalCoordination').value;
     console.log('Delegacion ', Delegation);
-    var fechaCompleta = new Date(year);
-    var year1 = fechaCompleta.getFullYear();
-    this.getTable1(Month, year1, Delegation);
-    window.scrollTo(0, 0);
+    this.getTable1(Month, year, Delegation);
+    this.getTable2(Month, year, Delegation);
+    window.scrollTo(0, 5);
   }
   searchA() {
     let Month = this.Form.get('month').value;
@@ -274,10 +294,8 @@ export class PerformanceIndicatorDetailComponent
     console.log('Año ', year);
     let Delegation = this.Form.get('regionalCoordination').value;
     console.log('Delegacion ', Delegation);
-    var fechaCompleta = new Date(year);
-    var year1 = fechaCompleta.getFullYear();
     if (Month != null) {
-      this.getTable1(Month, year1, Delegation);
+      this.getTable1(Month, year, Delegation);
     }
   }
 
@@ -288,10 +306,8 @@ export class PerformanceIndicatorDetailComponent
     console.log('Año ', year);
     let Delegation = this.Form.get('regionalCoordination').value;
     console.log('Delegacion ', Delegation);
-    var fechaCompleta = new Date(year);
-    var year1 = fechaCompleta.getFullYear();
     if (Month != null) {
-      this.getTable2(Month, year1, Delegation);
+      this.getTable2(Month, year, Delegation);
     }
   }
 
@@ -307,6 +323,8 @@ export class PerformanceIndicatorDetailComponent
       .getByMonthYear(Month, Year, delegation, params)
       .subscribe({
         next: resp => {
+          this.data1 = [];
+          this.data.load(this.data1);
           let TOT_EST_EN_TIEMPO = 0;
           console.log('respues primera tabla ', resp);
           for (let i = 0; i < resp.data.length; i++) {
@@ -323,14 +341,17 @@ export class PerformanceIndicatorDetailComponent
             });
             console.log('total : > ', TOT_EST_EN_TIEMPO);
           }
+          this.validateRI();
         },
       });
   }
 
   getTable2(Month: number, Year: number, delegation: number) {
     this.totRepInTime(Month, Year, delegation);
+    this.data2 = [];
+    this.dataF.load(this.data1);
     let params = {
-      ...this.paramsA.getValue(),
+      ...this.paramsI.getValue(),
       ...this.columnFilters,
     };
     this.data2 = [];
@@ -339,7 +360,7 @@ export class PerformanceIndicatorDetailComponent
       .getByMonthYearIndicator(Month, Year, delegation, params)
       .subscribe({
         next: resp => {
-          console.log('respues primera tabla ', resp);
+          console.log('respues segunda tabla ', resp);
           for (let i = 0; i < resp.data.length; i++) {
             let params = {
               report: resp.data[i].reportKey,
@@ -347,12 +368,14 @@ export class PerformanceIndicatorDetailComponent
               reportNumber: resp.data[i].formatNumber,
             };
             this.data2.push(params);
-            this.dataF.load(this.data1);
-            this.totalItemsA = resp.count;
+            this.dataF.load(this.data2);
+            this.totalItemsI = resp.count;
             this.FormE_I.patchValue({
               reportImp: resp.count,
             });
+            console.log('entra');
           }
+          this.validateRI();
         },
       });
   }
@@ -365,6 +388,7 @@ export class PerformanceIndicatorDetailComponent
           this.FormE_I.patchValue({
             strategyAdmin2: response.count,
           });
+          this.validateRI();
         },
       });
   }
@@ -377,6 +401,7 @@ export class PerformanceIndicatorDetailComponent
           this.FormE_I.patchValue({
             reportImp2: response.count,
           });
+          this.validateRI();
         },
       });
   }
@@ -409,12 +434,12 @@ export class PerformanceIndicatorDetailComponent
             }
           });
           this.paramsA = this.pageFilter(this.paramsA);
-          this.searchR();
+          this.searchA();
         }
       });
     this.paramsA
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.searchR());
+      .subscribe(() => this.searchA());
   }
 
   filterR() {
@@ -445,12 +470,12 @@ export class PerformanceIndicatorDetailComponent
             }
           });
           this.paramsI = this.pageFilter(this.paramsI);
-          this.searchA();
+          this.searchR();
         }
       });
     this.paramsI
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.searchA());
+      .subscribe(() => this.searchR());
   }
 
   report() {
@@ -491,5 +516,103 @@ export class PerformanceIndicatorDetailComponent
   onRowSelect(event: any) {
     this.selectedRow = event.data;
     console.log('this.selectedRow ', this.selectedRow);
+  }
+
+  openSelect(data?: any) {
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        callback: (next: boolean, registerNumber?: any) => {
+          console.log('callback ', registerNumber);
+
+          if (registerNumber != null) {
+            console.log('si hay id');
+            //this.getStrategyById(formatKey, id);
+            this.getFormat(registerNumber);
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PerformanceIndicatosDetailModalComponent, config);
+  }
+
+  getFormat(registerNumber: any) {
+    this.strategyProcessService
+      .getStrategyIndicatorByRegister(registerNumber)
+      .subscribe({
+        next: response => {
+          this.resgisterdata = response.data[0];
+          this.loadUser(response.data[0].usrRegister);
+          const Fin =
+            response.data[0].captureDate != null
+              ? new Date(response.data[0].captureDate)
+              : null;
+          const formattedfecFin = Fin != null ? this.formatDate(Fin) : null;
+          this.Form.patchValue({
+            dateCapture: formattedfecFin,
+            year: response.data[0].yearNumber,
+            month: response.data[0].monthNumber,
+            regionalCoordination: response.data[0].delegationOneNumber,
+          });
+          this.validateMonth();
+          this.status = response.data[0].status;
+        },
+      });
+  }
+
+  loadUser(user: string) {
+    this.indUserService.getUser(user).subscribe({
+      next: response => {
+        this.userSele = new DefaultSelect(response.data, response.count);
+        this.Form.get('user').setValue(response.data[0].user);
+      },
+    });
+  }
+
+  formatDate(date: Date): string {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    return `${day}/${month}/${year}`;
+  }
+
+  close() {
+    if (this.status == 0) {
+      this.alertQuestion(
+        'info',
+        'Se Cerrara el Indicador. ¿Deseas continuar?',
+        '',
+        'Aceptar',
+        'Cancelar'
+      ).then(res => {
+        console.log(res);
+        if (res.isConfirmed) {
+          this.resgisterdata.status = 1;
+          this.strategyProcessService
+            .PutStrategyIndicator(this.resgisterdata)
+            .subscribe({
+              next: response => {
+                this.status = 1;
+                this.alert('success', 'Cerrado Correctamente', '');
+              },
+            });
+        }
+      });
+    } else {
+    }
+  }
+
+  clear() {
+    this.data1 = [];
+    this.data.load(this.data1);
+    this.data2 = [];
+    this.dataF.load(this.data1);
+    this.status = null;
+    this.Form.reset();
+    this.FormE_I.reset();
+    this.totalItemsA = 0;
+    this.totalItemsI = 0;
   }
 }
