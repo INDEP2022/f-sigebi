@@ -323,7 +323,12 @@ export const COLUMNS_CARGADOS = {
     type: 'string',
     sort: false,
   },
-
+  bill: {
+    title: 'Cuenta',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+  },
   reference: {
     title: 'Referencia',
     // width: '15%',
@@ -362,12 +367,7 @@ export const COLUMNS_CARGADOS = {
       }
     },
   },
-  bill: {
-    title: 'Cuenta',
-    // width: '15%',
-    type: 'string',
-    sort: false,
-  },
+
   branchOffice: {
     title: 'Sucursal',
     // width: '15%',

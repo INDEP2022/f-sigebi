@@ -1,3 +1,5 @@
+import { DatePipe } from '@angular/common';
+
 const SAT_PAPERWORK_MAILBOX_COLUMNS = {
   processNumber: {
     title: 'No. Trámite',
@@ -13,6 +15,13 @@ const SAT_PAPERWORK_MAILBOX_COLUMNS = {
     title: 'Fecha Ingreso Trámite',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      if (date != null) {
+        var raw = new Date(date);
+        var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      }
+      return formatted;
+    },
   },
   flierNumber: {
     title: 'No. Volante',
