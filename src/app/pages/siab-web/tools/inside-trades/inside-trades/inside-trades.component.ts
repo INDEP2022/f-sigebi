@@ -3,7 +3,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { OutsideTradesService } from 'src/app/core/services/catalogs/outside-trades.service';
@@ -34,8 +33,10 @@ export class InsideTradesComponent extends BasePage implements OnInit {
   maxDate = new Date();
   No_gestion: number = 0;
   noOFGestion: number;
-  val_no_ges: string;
+  val_no_ges: number;
   sessionInvalid: Boolean;
+  noGes: number;
+  valid1: boolean;
 
   ngOnInit(): void {
     this.createForm();
@@ -60,15 +61,20 @@ export class InsideTradesComponent extends BasePage implements OnInit {
   }
   async getData() {
     if (this.authService.decodeToken().azp === 'indep-auth') {
-      this.activatedRoute.queryParams
+      /*this.activatedRoute.queryParams
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(params => {
-          this.val_no_ges = params['NoGestion']
+          this.val_no_ges = Number(params['NoGestion'])
             ? String(params['NoGestion'])
             : null;
-        });
-      this.val_no_ges = '404562';
-      if (this.val_no_ges == null || this.val_no_ges == '') {
+        });*/
+      if (this.noGes) {
+        this.val_no_ges = this.noGes;
+      } else {
+        this.val_no_ges = 404562;
+      }
+
+      if (this.val_no_ges == null) {
         //
         //
         ////  this.router.navigate([`/auth/login`]);
@@ -76,9 +82,10 @@ export class InsideTradesComponent extends BasePage implements OnInit {
         //
         //
       } else {
-        this.No_gestion = JSON.parse(this.val_no_ges);
-        this.noOFGestion = JSON.parse(this.val_no_ges);
-        this.principal = await this.getBasicBody(this.noOFGestion);
+        /*this.No_gestion = JSON.parse(this.val_no_ges);
+        this.noOFGestion = JSON.parse(this.val_no_ges);*/
+
+        this.principal = await this.getBasicBody(this.val_no_ges);
 
         this.form.controls['cve_of_gestion'].setValue(
           this.principal.cve_of_gestion
