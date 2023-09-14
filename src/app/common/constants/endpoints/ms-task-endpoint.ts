@@ -6,4 +6,5 @@ export enum TaskEndpoints {
   Update = 'task',
   TaskWithOrderService = 'task/createTask',
   DownloadReport = 'task/report-arrears-excel',
+  GetBase64TaskReport = 'task/new-find-excel',
 }

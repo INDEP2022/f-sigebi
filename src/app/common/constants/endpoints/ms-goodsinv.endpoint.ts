@@ -19,4 +19,6 @@ export enum IGoodsinvEndpoint {
   getSamplingGoodView = 'views/sampling-goods-view-v2',
 
   getStoresProgramming = 'views/cat-stores-programming-view',
+
+  GetCatServiceCostWiew = 'views/cat-services-cost-view-one',
 }

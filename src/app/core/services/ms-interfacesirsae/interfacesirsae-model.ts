@@ -3,7 +3,14 @@ export interface ISendSirsae {
   eventId: number | string;
 }
 
-export interface ISendSirsaeLot {}
+export interface ISendSirsaeLot {
+  PROCESAR: any[];
+  PROCESO: string;
+  COMER_EVENTOS_ID_EVENTO: string;
+  ID_TPEVENTO: string;
+  ID_TIPO_DISP: string | number;
+}
+
 export interface IValidPaymentsDTO {
   pClkpv: string;
   pComment: string;
@@ -50,4 +57,15 @@ export interface ISirsaeScrapDTO {
   comproafmandsae: string;
   totDocument: string;
   clkpv: string;
+}
+export interface ISendSirsaeOIScrapDTO {
+  pEventId: string;
+  pCoordRegionalUR: string;
+  pConcept: string;
+  pEvent: string;
+  pDateBillRec: string;
+  pAmount: string;
+  pSpent: string;
+  pMandato2: string;
+  pAmountTOT: string;
 }

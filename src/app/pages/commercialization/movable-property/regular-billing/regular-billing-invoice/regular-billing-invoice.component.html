@@ -166,7 +166,7 @@
 
 <form class="form-material" [formGroup]="form">
   <div class="row pt-5">
-    <div class="col-12 col-md-2">
+    <div class="col-12 col-md-3">
       <form-field [control]="form.get('event')" label="Evento">
         <input
           type="number"
@@ -176,7 +176,7 @@
           (blur)="formG.emit(form)" />
       </form-field>
     </div>
-    <div class="col-12 col-md-2">
+    <div class="col-12 col-md-3">
       <form-field [control]="form.get('idAllotment')" label="Lote">
         <input
           type="number"
@@ -186,7 +186,7 @@
           (blur)="formG.emit(form)" />
       </form-field>
     </div>
-    <div class="col-12 col-md-2">
+    <div class="col-12 col-md-3">
       <form-field [control]="form.get('date')" label="Fecha">
         <input
           type="text"
@@ -204,7 +204,17 @@
         Selec. Todos <i class="fas fa-edit bx-sm float-icon"></i>
       </button>
     </div>
-    <div class="col-12 col-md-2">
+    <div class="col-12 col-md-3" *ngIf="isCancel">
+      <form-field [control]="form.get('folio')" label="Folio SP">
+        <input
+          type="number"
+          class="form-control"
+          formControlName="folio"
+          oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)"
+          (blur)="formG.emit(form)" />
+      </form-field>
+    </div>
+    <div class="col-12 col-md-3" *ngIf="isCancel">
       <form-field [control]="form.get('causerebillId')">
         <ngx-select
           (fetchItems)="getRebillData($event)"
@@ -219,6 +229,7 @@
           termMaxLength="30"
           [labelTemplate]="rebill"
           [optionTemplate]="rebillDesc"
+          (change)="setDataCause($event)"
           typeToSearchText="No hay más resultados">
         </ngx-select>
         <ng-template #rebill let-item="item">
@@ -231,7 +242,7 @@
         </ng-template>
       </form-field>
     </div>
-    <div class="col-12 col-md-auto">
+    <div class="col-12 col-md-auto" *ngIf="isCancel">
       <button
         type="button"
         class="btn btn-primary btn-sm active mr-2"
@@ -248,7 +259,7 @@
           (change)="disabledButtons()" />
       </form-check>
     </div>
-    <div class="col-md-12">
+    <div class="col-12 col-md-auto">
       <button
         type="button"
         class="btn btn-primary btn-sm active mr-2 mb-2"
@@ -291,7 +302,7 @@
         [disabled]="buttons"
         type="button"
         class="btn btn-danger btn-sm active mr-2 mb-2"
-        (click)="exportAsXLSX()">
+        (click)="cancelInvoice()">
         Cancelar Factura
       </button>
       <button
@@ -427,8 +438,9 @@
           [control]="formFactura.get('importE')"
           label="Importe Egresos">
           <input
-            type="number"
+            type="text"
             class="form-control"
+            currencyMask
             formControlName="importE"
             oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
         </form-field>
@@ -436,8 +448,9 @@
       <div class="col-md-2">
         <form-field [control]="formFactura.get('ivaE')" label="Iva Egresos">
           <input
-            type="number"
+            type="text"
             class="form-control"
+            currencyMask
             formControlName="ivaE"
             oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
         </form-field>
@@ -445,8 +458,9 @@
       <div class="col-md-2">
         <form-field [control]="formFactura.get('totalE')" label="Total Egresos">
           <input
-            type="number"
+            type="text"
             class="form-control"
+            currencyMask
             formControlName="totalE"
             oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
         </form-field>
@@ -465,8 +479,9 @@
           [control]="formFactura.get('importI')"
           label="Importe Ingresos">
           <input
-            type="number"
+            type="text"
             class="form-control"
+            currencyMask
             formControlName="importI"
             oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
         </form-field>
@@ -474,8 +489,9 @@
       <div class="col-md-2">
         <form-field [control]="formFactura.get('ivaI')" label="Iva Ingresos">
           <input
-            type="number"
+            type="text"
             class="form-control"
+            currencyMask
             formControlName="ivaI"
             oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
         </form-field>
@@ -485,8 +501,9 @@
           [control]="formFactura.get('totalI')"
           label="Total Ingresos">
           <input
-            type="number"
+            type="text"
             class="form-control"
+            currencyMask
             formControlName="totalI"
             oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
         </form-field>
@@ -508,8 +525,9 @@
       <div class="col-md-2">
         <form-field [control]="formDetalle.get('totalI')" label="Total Importe">
           <input
-            type="number"
+            type="text"
             class="form-control"
+            currencyMask
             formControlName="totalI"
             oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
         </form-field>
@@ -517,8 +535,9 @@
       <div class="col-md-2">
         <form-field [control]="formDetalle.get('totalIva')" label="Total Iva">
           <input
-            type="number"
+            type="text"
             class="form-control"
+            currencyMask
             formControlName="totalIva"
             oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
         </form-field>
@@ -526,8 +545,9 @@
       <div class="col-md-2">
         <form-field [control]="formDetalle.get('total')" label="Total">
           <input
-            type="number"
+            type="text"
             class="form-control"
+            currencyMask
             formControlName="total"
             oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
         </form-field>

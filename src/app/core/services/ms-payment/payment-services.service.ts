@@ -206,4 +206,13 @@ export class PaymentService extends HttpService {
       // responseType: 'arraybuffer' as 'json',
     });
   }
+
+  getPaymentRefById_(id: any) {
+    return this.get(`${PaymentEndPoints.ComerPaymentRef}/${id}`);
+  }
+
+  //comer-rel-usu-canc
+  getComerRelUsuCanc(params?: string) {
+    return this.get(`comer-rel-usu-canc`, params);
+  }
 }
