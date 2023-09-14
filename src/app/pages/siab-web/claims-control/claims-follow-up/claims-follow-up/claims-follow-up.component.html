@@ -16,7 +16,7 @@
     <form [formGroup]="claimsFollowUpForm" class="form-material">
       <div class="row margin-input">
         <!-- <div class="col-md-3"> -->
-        <div style="display: flex">
+        <div style="display: flex; padding-left: 0px">
           <div class="col-md-3" style="padding: 0%">
             <form-field
               label="No. Bien"
@@ -44,9 +44,9 @@
             </div>
           </div>
           <div
-            class="col-md-3"
+            class="col-md-3 buttons"
             *ngIf="lawyers.length > 0"
-            style="padding: 0%; margin-left: 7%">
+            style="display: flex; justify-content: flex-end; padding: 0px">
             <button
               class="btn btn-success btn-sm active m-3"
               (click)="export()">
@@ -62,7 +62,7 @@
         </div> -->
       </div>
       <div class="row margin-input">
-        <div class="col-md-12">
+        <div class="col-md-12" style="padding: 0px">
           <form-field
             [control]="claimsFollowUpForm.get('description')"
             label="Descripci&oacute;n">

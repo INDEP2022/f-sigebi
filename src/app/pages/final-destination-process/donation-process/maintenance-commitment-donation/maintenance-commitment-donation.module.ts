@@ -3,11 +3,16 @@ import { NgModule } from '@angular/core';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DataTableComponent } from './data-in-table/data-table.component';
+import { MaintenanceCommitmentDonationModalComponent } from './maintenance-commitment-donation-modal/maintenance-commitment-donation-modal.component';
 import { MaintenanceCommitmentDonationRoutingModule } from './maintenance-commitment-donation-routing.module';
 import { MaintenanceCommitmentDonationComponent } from './maintenance-commitment-donation/maintenance-commitment-donation.component';
 
 @NgModule({
-  declarations: [MaintenanceCommitmentDonationComponent, DataTableComponent],
+  declarations: [
+    MaintenanceCommitmentDonationComponent,
+    DataTableComponent,
+    MaintenanceCommitmentDonationModalComponent,
+  ],
   imports: [
     CommonModule,
     MaintenanceCommitmentDonationRoutingModule,

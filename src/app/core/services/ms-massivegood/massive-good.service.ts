@@ -179,4 +179,11 @@ export class MassiveGoodService extends HttpService {
   AttendedPorGoodReasonRev(formData: any) {
     return this.post(this.route.PorGoodReasonRev, formData);
   }
+  exportXlsx(params: any) {
+    return this.post(MassiveGoodEndpoints.UdateInventory, params);
+  }
+
+  postExportDataExcel(params: any) {
+    return this.post(MassiveGoodEndpoints.ExportDataExcel, params);
+  }
 }

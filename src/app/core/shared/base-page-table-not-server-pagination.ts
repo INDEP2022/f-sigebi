@@ -31,6 +31,7 @@ export abstract class BasePageTableNotServerPagination<
         delete: true,
       },
     };
+    // this.params.value.limit = 10000000;
     this.searchNotServerPagination();
     this.searchParams();
   }
@@ -57,12 +58,15 @@ export abstract class BasePageTableNotServerPagination<
     });
   }
 
+  setTotals(data: T[]) {}
+
   getData() {
     // let params = new FilterParams();
     if (!this.service) {
       return;
     }
     let params = this.getParams();
+    params.limit = 100000000;
     this.service
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -72,6 +76,7 @@ export abstract class BasePageTableNotServerPagination<
             this.data = response.data.map((row: any) => {
               return { ...row };
             });
+            this.setTotals(this.data);
             this.totalItems = this.data.length;
             this.dataTemp = [...this.data];
             this.getPaginated(this.params.value);

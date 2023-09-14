@@ -832,7 +832,7 @@ export class ClassifyAssetsTabComponent
           //if(next) this.getExample();
         },
       },
-      class: 'modalSizeXL modal-dialog-centered',
+      class: ' modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.bsModalRef = this.modalService.show(AdvancedSearchComponent, config);
@@ -1006,6 +1006,7 @@ export class ClassifyAssetsTabComponent
     }
 
     let goodResult: any = null;
+
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
@@ -1073,11 +1074,7 @@ export class ClassifyAssetsTabComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: data => {
-            this.message(
-              'success',
-              'Guardado',
-              `El registro se actualizó exitosamente`
-            );
+            this.message('success', 'El Bien se ha Actualizado', ``);
             this.classiGoodsForm.controls['id'].setValue(data.id);
 
             resolve({ saved: true, result: data });

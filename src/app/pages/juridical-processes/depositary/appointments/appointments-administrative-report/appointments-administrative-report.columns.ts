@@ -9,7 +9,7 @@ export const COLUMNS_APPOINTMENT_ADMINISTRATIVE_REPORT = {
       if (!value) {
         return '';
       }
-      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
     },
   },
   report: {

@@ -56,7 +56,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data">
+            [source]="data"
+            (userRowSelect)="selectServices($event)">
           </ng2-smart-table>
         </div>
         <app-pagination
@@ -68,12 +69,15 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button class="btn btn-primary active" (click)="confirm()">
+        <button class="btn btn-primary btn-sm active" (click)="confirm()">
           Seleccionar
         </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

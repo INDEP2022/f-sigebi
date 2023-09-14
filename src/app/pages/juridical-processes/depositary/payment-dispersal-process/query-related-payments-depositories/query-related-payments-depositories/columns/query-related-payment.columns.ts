@@ -32,6 +32,13 @@ export const PAY_BANK_COLUMNS = {
     sort: false,
     editable: false,
     class: 'bg-info text-light',
+    valuePrepareFunction: (value: any) => {
+      if (!isNaN(parseFloat(value))) {
+        return new Intl.NumberFormat('es-MX').format(value);
+      } else {
+        return '0.00';
+      }
+    },
   },
   entryorderid: {
     title: 'No. Orden Ingreso',
@@ -71,6 +78,13 @@ export const RECEIVED_PAYS_COLUMNS = {
     title: 'Monto Mensual',
     sort: false,
     editable: false,
+    valuePrepareFunction: (value: any) => {
+      if (!isNaN(parseFloat(value))) {
+        return new Intl.NumberFormat('es-MX').format(value);
+      } else {
+        return '0.00';
+      }
+    },
   },
   reference: {
     title: 'Referencia',
@@ -82,6 +96,13 @@ export const RECEIVED_PAYS_COLUMNS = {
     sort: false,
     editable: false,
     class: 'bg-info text-light',
+    valuePrepareFunction: (value: any) => {
+      if (!isNaN(parseFloat(value))) {
+        return new Intl.NumberFormat('es-MX').format(value);
+      } else {
+        return '0.00';
+      }
+    },
   },
   iva: {
     title: 'Iva',
@@ -93,6 +114,13 @@ export const RECEIVED_PAYS_COLUMNS = {
     sort: false,
     editable: false,
     class: 'bg-warning text-light',
+    valuePrepareFunction: (value: any) => {
+      if (!isNaN(parseFloat(value))) {
+        return new Intl.NumberFormat('es-MX').format(value);
+      } else {
+        return '0.00';
+      }
+    },
   },
   abonoComp: {
     title: 'Abono / Comp.',
@@ -104,6 +132,13 @@ export const RECEIVED_PAYS_COLUMNS = {
     sort: false,
     editable: false,
     class: 'bg-success text-light',
+    valuePrepareFunction: (value: any) => {
+      if (!isNaN(parseFloat(value))) {
+        return new Intl.NumberFormat('es-MX').format(value);
+      } else {
+        return '0.00';
+      }
+    },
   },
   deduxcent: {
     title: 'Rec. Gast. (%)',

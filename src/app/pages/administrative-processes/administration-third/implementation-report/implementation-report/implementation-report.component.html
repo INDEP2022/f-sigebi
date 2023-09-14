@@ -6,42 +6,84 @@
     <h5 class="title">Ordenes de Servicio</h5>
     <form [formGroup]="serviceOrdersForm" class="form-material">
       <div class="row margin-input">
-        <div class="col-md-4">
-          <form-field [control]="serviceOrdersForm.get('serviceOrderKey')">
-            <ngx-select
-              (fetchItems)="getServiceOrderKey($event)"
-              [data]="serviceOrderKey"
-              [form]="serviceOrdersForm"
-              value="serviceOrderKey"
-              bindLabel="description"
-              label="Clave de Orden de Servicio"
-              control="serviceOrderKey">
-            </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="serviceOrdersForm.get('type')" label="Tipo">
-            <ng-select
-              formControlName="type"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="N">NORMAL</ng-option>
-              <ng-option value="E">ESPECIAL</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
         <div class="col-md-3">
           <form-field [control]="serviceOrdersForm.get('process')">
             <ngx-select
-              (fetchItems)="getProcess($event)"
-              [data]="process"
-              [form]="serviceOrdersForm"
-              value="process"
-              bindLabel="description"
               label="Proceso"
-              control="process">
+              [form]="serviceOrdersForm"
+              [data]="process"
+              (fetchItems)="getProcess($event)"
+              bindLabel="proAndName"
+              control="process"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              termMaxLength="50"
+              value="processNumber"
+              [labelTemplate]="proLabel"
+              [optionTemplate]="proOption"
+              (change)="getServices()">
             </ngx-select>
+            <ng-template #proLabel let-item="item">
+              {{ item.processNumber + ' - ' + item.description }}
+            </ng-template>
+            <ng-template #proOption let-item="item">
+              <div [title]="item.processNumber + '-' + item.description">
+                {{ item.processNumber + ' - ' + item.description }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="serviceOrdersForm.get('serviceOrderKey')">
+            <ngx-select
+              label="Servicio"
+              [form]="serviceOrdersForm"
+              [data]="serviceOrderKey"
+              (fetchItems)="getServices()"
+              bindLabel="proAndName"
+              control="serviceOrderKey"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              termMaxLength="50"
+              value="no_servicio"
+              [labelTemplate]="serLabel"
+              [optionTemplate]="serOption"
+              (change)="getTypes()">
+            </ngx-select>
+            <ng-template #serLabel let-item="item">
+              {{ item.no_servicio + ' - ' + item.descripcion }}
+            </ng-template>
+            <ng-template #serOption let-item="item">
+              <div [title]="item.no_servicio + '-' + item.descripcion">
+                {{ item.no_servicio + ' - ' + item.descripcion }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="serviceOrdersForm.get('type')">
+            <ngx-select
+              label="Tipo"
+              [form]="serviceOrdersForm"
+              [data]="types"
+              (fetchItems)="getTypes()"
+              bindLabel="serAndName"
+              control="type"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              termMaxLength="50"
+              value="no_tiposervicio"
+              [labelTemplate]="typeLabel"
+              [optionTemplate]="typeOption">
+            </ngx-select>
+            <ng-template #typeLabel let-item="item">
+              {{ item.no_tiposervicio + ' - ' + item.descripcion }}
+            </ng-template>
+            <ng-template #typeOption let-item="item">
+              <div [title]="item.no_tiposervicio + '-' + item.descripcion">
+                {{ item.no_tiposervicio + ' - ' + item.descripcion }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
         <div class="col-md-3">

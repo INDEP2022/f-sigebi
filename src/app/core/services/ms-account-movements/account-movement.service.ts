@@ -37,6 +37,10 @@ export class AccountMovementService extends HttpService {
     );
   }
 
+  getCodBancDesc(body: any) {
+    return this.post(AccountmvmntEndpoint.GetCtrlPago, body);
+  }
+
   getAllFilterSelf(self?: AccountMovementService, params?: _Params) {
     return self.get<IListResponse<IAccountMovement>>(
       'account-movements',
@@ -230,6 +234,10 @@ export class AccountMovementService extends HttpService {
 
   getNextReturnNumber() {
     return this.post('user-checks/maxReturnNumber', {});
+  }
+
+  getMaxDate(body: any) {
+    return this.post(AccountmvmntEndpoint.MaxDate, body);
   }
 }
 

@@ -20,7 +20,9 @@
         </button>
       </div>
       <div class="col-3">
-        <button class="btn btn-primary btn-sm active" (click)="getall1()">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="getallCondition()">
           Bienes
         </button>
       </div>
@@ -33,50 +35,73 @@
       </div>
     </div>
     <app-divider></app-divider>
-    <div class="row mt-5">
-      <div class="col-12">
-        <h5>Bienes Disponibles</h5>
-      </div>
+    <div class="row mt-2">
+      <!-- <div class="col-12"> -->
+      <h5>Bienes Disponibles</h5>
+      <!-- </div> -->
     </div>
-
-    <div class="d-flex justify-content-end mt-5">
-      <div>
-        <app-columns-select
-          class="mx-1"
-          [(settings)]="settings"
-          [leftList]="true"></app-columns-select>
-      </div>
+    <div class="d-flex justify-content-end">
+      <app-columns-select
+        class="mx-1"
+        [(settings)]="settings"
+        [leftList]="true"></app-columns-select>
     </div>
-    <br />
-    <!-- <div class="row m-3">
-      <div class="col-4"></div>
+    <div class="d-flex justify-content-end mt-2">
+      <span title="Selecionar Todo CPD" containerClass="tooltip-style">
+        <button
+          class="btn btn-secondary btn-sm active m-3"
+          style="
+            width: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          "
+          (click)="selectAllCPD()">
+          CPD
+        </button>
+      </span>
+      <span title="Selecionar Todo ADM" containerClass="tooltip-style">
+        <button
+          class="btn btn-secondary btn-sm active m-3"
+          style="
+            width: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          "
+          (click)="selectAllADM()">
+          ADM
+        </button>
+      </span>
+      <span title="Selecionar Todo RDA" containerClass="tooltip-style">
+        <button
+          class="btn btn-secondary btn-sm active m-3"
+          style="
+            width: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          "
+          (click)="selectAllRDA()">
+          RDA
+        </button>
+      </span>
+    </div>
+    <!-- <ng-scrollbar [track]="'all'" [ngStyle]="{ height: loading ? '0px' : '300px' }">
       <div class="d-flex justify-content-end mt-5">
-        <span title="CDP" containerClass="tooltip-style">
-          <button type="checkbox" class="btn btn-secondary btn-sm active m-4" (change)="selectCPD($event.target)">
-          </button>
-        </span>
-        <span title="ADM" containerClass="tooltip-style">
-          <button type="checkbox" class="btn btn-secondary btn-sm active m-4" (change)="selectCPD($event)">
-          </button>
-        </span>
-        <span title="RDA" containerClass="tooltip-style">
-          <button type="checkbox" class="btn btn-secondary btn-sm active m-4" (change)="selectCPD($event)">
-          </button>
-        </span>
-      </div>
-    </div> -->
-
-    <div class="row m-3">
-      <div class="col-4"></div>
-      <!-- <div class="d-flex justify-content-end mt-5">
-        <button (click)="realizarAccionExterna()">CDP</button>
+        <div>
+          <app-columns-select class="mx-1" [(settings)]="settings" [leftList]="true"></app-columns-select>
+        </div>
       </div> -->
-      <div class="d-flex justify-content-end mt-5">
-        <button (click)="selectAllCPD()">CPD</button>
-        <button (click)="selectAllADM()">ADM</button>
-        <button (click)="selectAllRDA()">RDA</button>
-      </div>
-    </div>
+    <!-- <br /> -->
+    <!-- <div class="row m-3">
+        <div class="col-4"></div>
+        <div class="d-flex justify-content-end mt-5">
+          <button (click)="selectAllCPD()">CPD</button>
+          <button (click)="selectAllADM()">ADM</button>
+          <button (click)="selectAllRDA()">RDA</button>
+        </div>
+      </div> -->
     <div>
       <ng-scrollbar
         [track]="'all'"
@@ -85,25 +110,44 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data">
+            [source]="data"
+            (userRowSelect)="selectDataBien($event.data)">
           </ng2-smart-table>
         </div>
       </ng-scrollbar>
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
-
-    <div class="row mt-5 justify-content-end">
-      <div class="col-12 col-md-3 text-center text-md-right">
-        <button class="btn btn-success btn-sm active">
-          Exportar a Excel <i class="bx bx-download float-icon"></i>
-        </button>
+    <form class="form-material form-horizontal" [formGroup]="form">
+      <div class="row mt-5 justify-content-end">
+        <div class="col-md-4 text-center text-md-right">
+          <button
+            class="btn btn-success btn-sm active"
+            [disabled]="!isSelect"
+            (click)="exportToExcelX()">
+            Exportar a Excel <i class="bx bx-download float-icon"></i>
+          </button>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('description')">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="description"
+              maxlength="450"
+              placeholder="Descripci&oacute;n"
+              required></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <button
+            class="btn btn-success btn-sm active"
+            [disabled]="!isExcel"
+            (click)="ExportAndChange()">
+            Exportar a Excel y Cambiar Estatus
+          </button>
+        </div>
       </div>
-      <div class="col-12 col-md-6 text-center text-md-right mt-3 mt-md-0">
-        <button class="btn btn-success btn-sm active">
-          Exportar a Excel y Cambiar Estatus
-        </button>
-      </div>
-    </div>
+    </form>
   </div>
 </app-card>

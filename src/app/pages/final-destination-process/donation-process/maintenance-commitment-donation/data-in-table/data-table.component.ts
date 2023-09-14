@@ -1,4 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRapproveDonation } from 'src/app/core/models/ms-r-approve-donation/r-approve-donation.model';
@@ -6,6 +8,8 @@ import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.se
 import { RapproveDonationService } from 'src/app/core/services/ms-r-approve-donation/r-approve-donation.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { MODAL_CONFIG } from '../../../../../common/constants/modal-config';
+import { MaintenanceCommitmentDonationModalComponent } from '../maintenance-commitment-donation-modal/maintenance-commitment-donation-modal.component';
 import { COLUMNS_DATA_TABLE } from './columns-data-table';
 import { COLUMNS_OTHER_TRANS } from './columns-other-transf';
 import { COLUMNS_USER_PERMISSIONS } from './columns-user-permissions';
@@ -28,16 +32,32 @@ export class DataTableComponent extends BasePage implements OnInit {
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems2: number = 0;
   data: any;
+  newOrEdit: boolean = false;
+  form: FormGroup = new FormGroup({});
 
   constructor(
     private rapproveDonationService: RapproveDonationService,
     private tvalTable1Service: TvalTable1Service,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private modalService: BsModalService,
+    private fb: FormBuilder
   ) {
     super();
-    this.settings = { ...this.settings, actions: false };
+    // this.settings = { ...this.settings, actions: false };
+    // this.settings.hideSubHeader = false,
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        add: false,
+        position: 'right',
+      },
+      columns: { ...COLUMNS_DATA_TABLE },
+    };
   }
-
   ngOnInit(): void {
     if (this.type == 1 || this.type == 2) {
       //comercio exterior
@@ -58,7 +78,7 @@ export class DataTableComponent extends BasePage implements OnInit {
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getTracker());
       this.settings.columns = COLUMNS_USER_PERMISSIONS;
-      this.data = EXAMPLE_DATA2;
+      //this.data = EXAMPLE_DATA2;
     }
   }
 
@@ -69,7 +89,7 @@ export class DataTableComponent extends BasePage implements OnInit {
     this.params.getValue()['filter.labelId'] = `$eq:${this.type}`;
     this.rapproveDonationService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        console.log(response.data);
+        console.log('primer tabla -> ', response.data);
         this.data = response.data;
         for (let i = 0; i < this.data.length; i++) {
           if (this.data[i].valid == '1') {
@@ -112,7 +132,7 @@ export class DataTableComponent extends BasePage implements OnInit {
 
               if (i == response.data.length - 1) {
                 this.data = response.data;
-                console.log(this.data);
+                console.log('this DATA -->', this.data);
                 this.totalItems = response.count;
                 this.loading = false;
               }
@@ -131,6 +151,53 @@ export class DataTableComponent extends BasePage implements OnInit {
     });
   }
   getUsers(name: string) {}
+
+  loadModal(bool: boolean, data: any) {
+    if (data != null) {
+      console.log('data send -> ', data.data);
+    }
+    //console.log(" this.type antes ", this.type);
+    if (!bool) {
+      //crear
+      this.openModal(false, null, this.type);
+    } else {
+      //editar
+      this.openModal(true, data.data, this.type);
+    }
+  }
+
+  openModal(newOrEdit: boolean, data: any, type: number) {
+    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    modalConfig.initialState = {
+      newOrEdit,
+      data,
+      type,
+      callback: (next: boolean) => {
+        if (next) this.getForeignTrade();
+      },
+    };
+    this.modalService.show(
+      MaintenanceCommitmentDonationModalComponent,
+      modalConfig
+    );
+  }
+
+  prepareForm() {
+    this.form = this.fb.group({
+      labelId: ['', Validators.required],
+      status: ['', Validators.required],
+      desStatus: ['', Validators.required],
+      transfereeId: ['', Validators.required],
+      desTrans: ['', Validators.required],
+      clasifId: ['', Validators.required],
+      desClasif: ['', Validators.required],
+      unit: ['', Validators.required],
+    });
+
+    if ((this.newOrEdit = true)) {
+      //  this.form.controls['unit'].disable();
+    }
+  }
 }
 
 const EXAMPLE_DATA1 = [

@@ -19,7 +19,7 @@ export class ParametersModService extends HttpService {
 
   getAll(params?: _Params) {
     return this.get<IListResponseMessage<IParameterMod>>(
-      this.endpoint + '/get-all',
+      this.endpoint,
       params
     ).pipe(
       map(response => {
@@ -58,10 +58,7 @@ export class ParametersModService extends HttpService {
   }
 
   getAllFilter(params?: _Params) {
-    return this.get<IListResponse<IParameterMod>>(
-      this.endpoint + '/get-all',
-      params
-    );
+    return this.get<IListResponse<IParameterMod>>(this.endpoint, params);
   }
 
   getByParameter(parameter: string) {

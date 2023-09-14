@@ -8,8 +8,13 @@ import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { ProgrammingGoodReceiptService } from 'src/app/core/services/ms-programming-good/programming-good-receipt.service';
+import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  DOUBLE_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   IReceiptExceltem,
@@ -95,7 +100,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     private genericService: GenericService,
     private excelService: ExcelService,
     private receptionGoodService: ReceptionGoodService,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    private strategyServiceService: StrategyServiceService
   ) {
     super();
     this.settings = {
@@ -169,7 +175,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     this.programmingForm.controls['managementId'].disable();
     this.getGenericC(new ListParams());
     this.getGenericR(new ListParams());
-    this.unitsQuery(new ListParams());
+    // this.unitsQuery(new ListParams());
     this.getGenericE(new ListParams());
   }
   chargeFile(event: any) {
@@ -270,7 +276,6 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
   }
   searchManagement(data: IReceiptItem) {
     if (data.guardado == '0') {
-      this.unitsQuery(new ListParams());
       this.getGenericD(new ListParams());
       this.getGenericE(new ListParams());
       this.getGenericEC(new ListParams());
@@ -290,6 +295,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.destinationLetter = this.recepiptGood.destino_letra;
       this.destinoTransferenteLetra =
         this.recepiptGood.destino_transferente_letra;
+      this.unitsQuery(new ListParams());
     } else {
       this.alert(
         'warning',
@@ -299,7 +305,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     }
   }
   unitsQuery(params: ListParams) {
-    this.applicationGoodsQueryService.getAllUnitsQ(params).subscribe({
+    params['filter.unit'] = `$eq:${this.recepiptGood.unidad_medida_letra}`;
+    this.strategyServiceService.getUnitsMedXConv(params).subscribe({
       next: resp => {
         console.log(resp);
         this.unitsList = new DefaultSelect(resp.data, resp.count);
@@ -308,6 +315,25 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         this.unitsList = new DefaultSelect([], 0, true);
       },
     });
+  }
+  onChangeUnits(medUnid: any) {
+    console.log(medUnid);
+    if (medUnid.decimals == 'N') {
+      this.indepForm.controls['cantidad_sae'].setValidators([
+        Validators.pattern(POSITVE_NUMBERS_PATTERN),
+      ]);
+    } else {
+      this.indepForm.controls['cantidad_sae'].setValidators([
+        Validators.pattern(DOUBLE_PATTERN),
+      ]);
+    }
+    if (medUnid.tpUnitGreater == 'N') {
+      console.log(Number(this.quantity));
+      this.indepForm.controls['cantidad_sae'].setValidators([
+        Validators.max(Number(this.quantity)),
+      ]);
+    }
+    this.indepForm.updateValueAndValidity();
   }
   getGenericD(params: ListParams) {
     params['filter.name'] = 'Destino';
@@ -870,11 +896,60 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       }
       if (data.CANTIDAD_SAE) {
         try {
-          good.cantidad_sae = Number(data.CANTIDAD_SAE);
+          const unitsMedConv: any = await this.getUnitsMedConv(
+            data.UNIDAD_MEDIDA_TRASFERENTE
+          );
+
+          let unidadSae: any = '';
+          unidadSae = await this.unitMeasures(data.UNIDAD_MEDIDA_SAE);
+          const unitsView = unitsMedConv.find(
+            (val: any) => val.nbCode === unidadSae
+          );
+          if (unitsView.tpUnitGreater == 'N') {
+            if (
+              Number(data.CANTIDAD_TRASFERENTE) <= Number(data.CANTIDAD_SAE)
+            ) {
+              good.cantidad_sae = Number(data.CANTIDAD_SAE);
+            } else {
+              good.cantidad_sae = 0;
+              good.observaciones =
+                good.observaciones != null
+                  ? good.observaciones
+                  : '' +
+                    ', La cantidad INDEP debe ser menor o igual ala cantidad';
+            }
+          } else {
+            good.cantidad_sae = Number(data.CANTIDAD_SAE);
+          }
+          if (unitsView.decimals == 'N') {
+            const numero = parseInt(data.CANTIDAD_SAE, 10);
+            if (!isNaN(numero) && Number.isInteger(numero)) {
+              good.cantidad_sae = Number(data.CANTIDAD_SAE);
+            } else {
+              good.cantidad_sae = 0;
+              good.observaciones =
+                good.observaciones != null
+                  ? good.observaciones
+                  : '' + ', No se puede convertir la cantidad INDEP ';
+            }
+          } else {
+            const numero = parseFloat(data.CANTIDAD_SAE);
+            if (!isNaN(numero)) {
+              good.cantidad_sae = Number(data.CANTIDAD_SAE);
+            } else {
+              good.cantidad_sae = 0;
+              good.observaciones =
+                good.observaciones != null
+                  ? good.observaciones
+                  : '' + ', No se puede convertir la cantidad INDEP ';
+            }
+          }
         } catch (error) {
           good.cantidad_sae = 0;
           good.observaciones =
-            good.observaciones + ', No se puede convertir la cantidad INDEP';
+            good.observaciones != null
+              ? good.observaciones
+              : '' + ', No se puede convertir la cantidad INDEP ';
           console.log(good.observaciones);
         }
       } else {
@@ -888,18 +963,36 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         good.unidad_medida = '';
       }
       if (data.UNIDAD_MEDIDA_SAE) {
+        const unitsMedConv: any = await this.getUnitsMedConv(
+          data.UNIDAD_MEDIDA_TRASFERENTE
+        );
         console.log(data.UNIDAD_MEDIDA_SAE);
+
         let unidadSae: any = '';
         unidadSae = await this.unitMeasures(data.UNIDAD_MEDIDA_SAE);
+        const unitsView = unitsMedConv.find(
+          (val: any) => val.nbCode === unidadSae
+        );
+        console.log(unitsView);
         console.log(unidadSae);
         if (unidadSae == '0') {
           good.unidad_medida_sae = '';
           good.observaciones =
-            good.observaciones + ', Se necesita una Unidad de Medida INDEP';
+            good.observaciones != null
+              ? good.observaciones
+              : '' + ', Se necesita una Unidad de Medida INDEP ';
           console.log(good.observaciones);
         } else {
-          console.log(unidadSae);
-          good.unidad_medida_sae = unidadSae;
+          if (unitsView) {
+            console.log(unidadSae);
+            good.unidad_medida_sae = unidadSae;
+          } else {
+            good.unidad_medida_sae = '';
+            good.observaciones =
+              good.observaciones != null
+                ? good.observaciones
+                : '' + ', Se necesita una Unidad de Medida valida ';
+          }
         }
       } else {
         good.unidad_medida_sae = '';
@@ -946,7 +1039,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         } else {
           good.observaciones =
             good.observaciones +
-            ', No se encuentra el estado de conservación INDEP';
+            ', No se encuentra el estado de conservación INDEP ';
           good.estado_conservacion_sae = 0;
           console.log(good.observaciones);
         }
@@ -973,7 +1066,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
           good.destino_sae = destinoSae;
         } else {
           good.observaciones =
-            good.observaciones + ', No se encuentra destino INDEP';
+            good.observaciones + ', No se encuentra destino INDEP ';
           good.destino_sae = 0;
           console.log(good.observaciones);
         }
@@ -1017,7 +1110,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       let result: string = '';
       let coma: string = '';
       if (
-        data.unidad_medida_sae.toUpperCase() != 'KG' ||
+        data.unidad_medida_sae.toUpperCase() != 'KG' &&
         data.unidad_medida_sae.toUpperCase() != 'LT'
       ) {
         let cantidasae: number = 0;
@@ -1128,6 +1221,21 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.applicationGoodsQueryService.getAllUnitsQ(params).subscribe({
         next: resp => {
           res(resp.data[0].uom_code);
+        },
+        error: eror => {
+          res('0');
+          console.log(eror);
+        },
+      });
+    });
+  }
+  async getUnitsMedConv(unit: string) {
+    return new Promise((res, rej) => {
+      const params = new ListParams();
+      params['filter.unit'] = `$eq:${unit}`;
+      this.strategyServiceService.getUnitsMedXConv(params).subscribe({
+        next: resp => {
+          res(resp.data);
         },
         error: eror => {
           res('0');

@@ -1,9 +1,11 @@
 import {
   Component,
+  EventEmitter,
   inject,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -54,6 +56,7 @@ export class ServiceTransportableGoodsFormComponent
   listforUpdate: any = [];
 
   data: any[] = [];
+  @Output() totEvent: EventEmitter<string> = new EventEmitter();
 
   private orderEntryService = inject(orderentryService);
 
@@ -181,14 +184,21 @@ export class ServiceTransportableGoodsFormComponent
       )
       .subscribe({
         next: resp => {
-          //this.data = testData;
+          console.log(resp.data);
+
           let ttotal = 0;
           resp.data.map((item: any) => {
-            item['total'] =
-              Number(item.priceUnitary) * Number(item.resourcesReal);
+            const resource =
+              Number(item.resourcesNumber) != null
+                ? Number(item.resourcesNumber)
+                : 0;
+            item['total'] = Number(item.priceUnitary) * resource;
             ttotal = ttotal + item['total'];
           });
-          const bodyTotal: any = { total: ttotal };
+
+          const t = `$${this.formatTotalAmount(ttotal)}`;
+          this.totEvent.emit(t);
+          const bodyTotal: any = { total: t };
           resp.data.push(bodyTotal);
           this.data = resp.data;
           this.totalItems = resp.count;
@@ -228,18 +238,24 @@ export class ServiceTransportableGoodsFormComponent
       if (this.op == 3 || this.op == 4 || this.op == 5 || this.op == 6) {
         for (let index = 0; index < tbody.length; index++) {
           const ele: any = tbody[index];
-          ele.children[5].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
-            true;
-          ele.children[6].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
-            true;
+          //duracion hora
+          ele.children[8].querySelector('#text-input').disabled = true;
+          /* ele.children[5].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
+            true; */
+          /* ele.children[6].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
+            true; */
+          //no. recursos
+          ele.children[9].querySelector('#text-input').disabled = true;
         }
       }
       //readonly no. recursos
       if (this.op == 4 || this.op == 5 || this.op == 14) {
         for (let index = 0; index < tbody.length; index++) {
           const ele: any = tbody[index];
-          ele.children[6].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
-            true;
+          /*  ele.children[6].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
+            true; */
+          //no. recursos
+          ele.children[9].querySelector('#text-input').disabled = true;
         }
       }
     }, 300);
@@ -266,33 +282,41 @@ export class ServiceTransportableGoodsFormComponent
       const table = document.getElementById('table');
       const tbody = table.children[0].children[1].children;
       const row: any = tbody[this.data.length - 1];
-      //console.log(row.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0])
-      row.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-        true;
-
+      //select
+      row.children[0].querySelector('#checkbox-input').hidden = true;
       if (resultAssessment.hide == false)
-        row.children[1].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-          true;
+        //result evaluacion
+        row.children[1].querySelector('#select-input').hidden = true;
       if (amountNumbercomplies.hide == false)
-        row.children[2].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-          true;
+        //bi recur no cumple
+        row.children[2].querySelector('#text-input').hidden = true;
       if (porcbreaches.hide == false)
-        row.children[3].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-          true;
-      row.children[7].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-        true;
-      row.children[8].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-        true;
-      row.children[9].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-        true;
+        //incumpli %
+        row.children[3].querySelector('#text-input').hidden = true;
+      //comentario de servicio
+      row.children[7].querySelector('#text-input').hidden = true;
+      //duracion horas
+      row.children[8].querySelector('#text-input').hidden = true;
+      //no. recurso
+      row.children[9].querySelector('#text-input').hidden = true;
       if (resourcesReal.hide == false)
-        row.children[10].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-          true;
-      if (descriptionDifference.hide == false)
-        row.children[12].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-          true;
+        //recurso real
+        row.children[10].querySelector('#text-input').hidden = true;
+      if (descriptionDifference.hide == false) {
+        //descrip de diferencia
+        row.children[13].querySelector('#text-input').hidden = true;
+      }
     }, 300);
   }
+
+  formatTotalAmount(numberParam: number) {
+    if (numberParam) {
+      return new Intl.NumberFormat('es-MX').format(numberParam);
+    } else {
+      return '0.00';
+    }
+  }
+
   titleTab() {
     if (this.op != 0) {
       this.title = 'Servicios prestados';
@@ -305,10 +329,13 @@ export class ServiceTransportableGoodsFormComponent
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-content-centered' };
 
     config.initialState = {
+      orderServId: this.orderServiceId,
+      typeService: 'EN_TRANSPORTABLE',
       callback: (data: any) => {
         if (data) {
           console.log(data);
           this.showButtonServiceManual = true;
+          this.getOrderServiceProvided();
         }
       },
     };
@@ -320,13 +347,12 @@ export class ServiceTransportableGoodsFormComponent
 
   newServiceManual() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-content-centered' };
-
     config.initialState = {
+      orderServiceId: this.orderServiceId,
       callback: (data: any) => {
         if (data) {
           console.log(data);
-          this.data.push(data);
-          this.data = [...this.data];
+          this.getOrderServiceProvided();
         }
       },
     };
@@ -337,6 +363,11 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   deleteService() {
+    console.log(this.ordersSelected);
+    if (this.ordersSelected.length == 0 || this.ordersSelected.length > 1) {
+      this.onLoadToast('info', 'Seleccione un bien');
+      return;
+    }
     this.alertQuestion(
       'warning',
       'Confirmación',
@@ -344,7 +375,7 @@ export class ServiceTransportableGoodsFormComponent
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.onLoadToast('success', 'Servicio eliminado correctamente', '');
+        this.deleteOrderServiceProvided(this.ordersSelected[0].id);
       }
     });
   }
@@ -493,7 +524,6 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   saveForm() {
-    debugger;
     if (this.listforUpdate.length == 0) return;
 
     this.listforUpdate.map(async (item: any, _i: number) => {
@@ -537,6 +567,15 @@ export class ServiceTransportableGoodsFormComponent
           );
         },
       });
+    });
+  }
+
+  deleteOrderServiceProvided(id: number) {
+    this.orderEntryService.deleteOrderServiceProvided(id).subscribe({
+      next: resp => {
+        this.onLoadToast('success', 'Servicio eliminado correctamente', '');
+        this.getOrderServiceProvided();
+      },
     });
   }
 }

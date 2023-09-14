@@ -678,7 +678,7 @@ export class FormalizeProgrammingFormComponent
 
                 goodsInfoGuard.push(response);
                 this.goodsGuards.load(goodsInfoGuard);
-                console.log('goodsGuards', this.goodsGuards);
+
                 this.totalItemsGuard = this.goodsGuards.count();
                 this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
               },
@@ -1572,7 +1572,7 @@ export class FormalizeProgrammingFormComponent
                 const sendGoodInventary = await this.sendGoodsGuardInventary();
                 if (sendGoodInventary) {
                   const updateGoodStatus = await this.updateStatusGoodReceipt();
-                  /* this.alertInfo(
+                  this.alertInfo(
                     'success',
                     'Acción correcta',
                     'Se cerro la tarea formalizar entrega correctamente'
@@ -1582,7 +1582,7 @@ export class FormalizeProgrammingFormComponent
                         'pages/siab-web/sami/consult-tasks',
                       ]);
                     }
-                  }); */
+                  });
                 }
               }
             }
@@ -1629,7 +1629,6 @@ export class FormalizeProgrammingFormComponent
               .AddReceptionBpm(Number(item.id), Number(item.goodId))
               .subscribe({
                 next: response => {
-                  console.log('response', response);
                   resolve(true);
                 },
                 error: error => {
@@ -1709,7 +1708,7 @@ export class FormalizeProgrammingFormComponent
           };
           this.taskService.update(taskInfo.id, body).subscribe({
             next: response => {
-              console.log('cerro la tarea de notificación', response);
+  
               resolve(true);
             },
             error: error => {
@@ -1924,7 +1923,7 @@ export class FormalizeProgrammingFormComponent
 
               goodsInfoRecep.push(response);
               this.goodsRecepcion.load(goodsInfoRecep);
-              console.log('rffr', this.goodsRecepcion);
+
               this.totalItemsReception = this.goodsRecepcion.count();
             },
           });

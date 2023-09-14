@@ -74,14 +74,14 @@ export class ReturnsConficationsListComponent
         delete: false,
         position: 'right',
       },
-      /*rowClassFunction: (row: any) => {
+      rowClassFunction: (row: any) => {
         console.log('rowClassFunction ', row);
         if (row.data.estatus.active === '1') {
           return 'text-success';
         } else {
           return 'text-danger';
         }
-      },*/
+      },
       /*edit: {
         ...this.settings.edit,
         saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
@@ -246,10 +246,7 @@ export class ReturnsConficationsListComponent
               .getAllSegUsersbykey(response.data[i].promoterUserDecoDevo)
               .subscribe({
                 next: resp => {
-                  console.log(
-                    'response getAllSegUsersbykey ',
-                    resp.data.length
-                  );
+                  console.log('response getAllSegUsersbykey ', resp.data);
                   let dataB = {
                     id: response.data[i].goodId,
                     description: response.data[i].description,

@@ -250,43 +250,32 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
   async exportToExcel() {
     this.excelLoading = true;
-    const filename: string = this.userName + '-Tasks';
+    //const filename: string = this.userName + '-Tasks';
     // El type no es necesario ya que por defecto toma 'xlsx'
-    let filter = this.filter;
+    /*let filter = this.filter;
     filter.getValue().limit = 99999999;
-    console.log(filter.getValue());
-    const response: any = await this.getData(filter.getValue());
-    if (response) {
-      const data: any[] = response.data.map((item: any) => {
-        return {
-          'Titulo de la Tarea': item.title,
-          Salida: '',
-          'Nombre de la Actividad': item.activitydescription,
-          'Asignado a': item.assignees,
-          Aprobador: item.approvers,
-          'Nombre de la Aplicación': item.applicationdescription,
-          'Nombre del Proceso': item.processdescription,
-          'Nombre Tarea BPM': '',
-          Estatus: item.State,
-          'Porcentaje Completado': item.percentageComplete,
-          Secuencia: '',
-          'Fecha Asignación': item.assignedDate,
-          'Fecha Finalización': item.endDate,
-          'Duración tiempo (min)': '',
-          'Duración tiempo (Días)': '',
-          'No. Solicitud': item.requestId,
-          'No. Programación': item.programmingId,
-          'No. Programación Entrega': '',
-          'No. Orden Servicio': '',
-          'No. Muestreo': '',
-          'No. Muestreo Orden': '',
-          'No. Orden Ingreso': '',
-          'No. Orden Pago': '',
-          'No. Delegación Regional': item.idDelegationRegional,
-          'No. Transferente': item.idTransferee,
-        };
-      });
-      this.excelService.export(data, { filename });
+    filter.sortBy = 'id:DESC'
+    console.log(filter.getValue());*/
+
+    const user = this.authService.decodeToken() as any;
+    const idDeleReg = this.consultTasksForm.value.txtNoDelegacionRegional;
+    const filterStatus = this.consultTasksForm.get('State').value;
+    const params = new ListParams();
+    params['filter.assignees'] = `$ilike:${user.username}`;
+    params['filter.State'] = `$eq:${filterStatus}`;
+    params['filter.idDelegationRegional'] = `$eq:${idDeleReg}`;
+    params['sortBy'] = 'id:DESC';
+    const result: any = await this.getTaskRepostBase64(params);
+    const base64String = result.base64File;
+    const filename: string = result.nameFile;
+    if (base64String != '') {
+      const base64 = base64String;
+      const linkSource = 'data:application/xlsx;base64,' + base64;
+      const downloadLink = document.createElement('a');
+      const fileName = `tareas.xlsx`; //filename
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.click();
       this.excelLoading = false;
     } else {
       this.alert('warning', 'No se encontraron datos para exportar', '');
@@ -678,6 +667,16 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
             resolve(resp.nameTransferent);
           },
         });
+    });
+  }
+
+  getTaskRepostBase64(params: ListParams | string) {
+    return new Promise((resolve, reject) => {
+      this.taskService.downloadReportBase64(params).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+      });
     });
   }
 }
