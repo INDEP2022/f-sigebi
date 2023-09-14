@@ -43,7 +43,7 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
     noDataMessage: 'No se Encontraron Registros',
   };
 
-  position: any = null
+  position: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -180,12 +180,12 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
   //SELECCIONAR FILA
   selectRow(e: any) {
     console.log(e.data);
-    if(e.data.position){
+    if (e.data.position) {
       this.position = e.data.position;
       this.actionsBool = true;
-    }else{
-      this.position = null
-      this.actionsBool = false
+    } else {
+      this.position = null;
+      this.actionsBool = false;
     }
     this.dataPaymentVirt = e.data;
   }
@@ -237,7 +237,7 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
     let incomeData = {
       eventId: this.dataModel.eventId,
       clientId: this.dataModel.customerBatch,
-      position: this.position
+      position: this.position,
     };
     let modalConfig = MODAL_CONFIG;
     modalConfig = {
@@ -245,21 +245,20 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
         incomeData,
         callback: (data: any) => {
           console.log(data.data);
-          const newData = this.data['data'].map((e:any) => {
-            if(e.position && e.position == this.position){
+          const newData = this.data['data'].map((e: any) => {
+            if (e.position && e.position == this.position) {
               return {
                 ...e,
                 batchId: data.data.idLot,
                 description: data.data[0].description,
                 publicBatch: data.data[0].lotPublic,
-
-              }
-            }else{
-              return e
+              };
+            } else {
+              return e;
             }
-          })
-          
-          this.data.load(newData)
+          });
+
+          this.data.load(newData);
         },
       },
       class: 'modal-lg modal-dialog-centered',
