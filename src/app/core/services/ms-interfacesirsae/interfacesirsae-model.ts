@@ -4,11 +4,11 @@ export interface ISendSirsae {
 }
 
 export interface ISendSirsaeLot {
-  PROCESAR: any[],
-  PROCESO: string,
-  COMER_EVENTOS_ID_EVENTO: string,
-  ID_TPEVENTO: string,
-  ID_TIPO_DISP: string | number
+  PROCESAR: any[];
+  PROCESO: string;
+  COMER_EVENTOS_ID_EVENTO: string;
+  ID_TPEVENTO: string;
+  ID_TIPO_DISP: string | number;
 }
 
 export interface IValidPaymentsDTO {
