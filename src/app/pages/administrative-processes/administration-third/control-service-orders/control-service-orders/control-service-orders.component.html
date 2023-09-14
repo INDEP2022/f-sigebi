@@ -21,15 +21,10 @@
           <form-field
             [control]="serviceOrdersForm.get('process')"
             label="Proceso">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="process"
-              min="1"
-              pattern="^[0-9]+" />
+            <input type="text" class="form-control" formControlName="process" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field
             [control]="serviceOrdersForm.get('dateInitial')"
             label="Fecha Inicial">
@@ -41,7 +36,7 @@
               [maxDate]="serviceOrdersForm.get('datefinal').value || maxDate" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field
             [control]="serviceOrdersForm.get('datefinal')"
             label="Fecha Final">
@@ -54,17 +49,30 @@
               [minDate]="serviceOrdersForm.get('dateInitial').value" />
           </form-field>
         </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4 justify-content-center"></div>
         <div class="col-md-2 justify-content-center">
           <div class="justify-content-center">
-            <!-- <button type="submit" class="btn btn-primary btn-sm active">
-              
-            </button> -->
-            <button type="button" class="btn btn-primary active btn-sm">
-              Refrescar
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="search()">
+              Buscar
               <i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
           </div>
         </div>
+        <div class="col-md-2 justify-content-center">
+          <div class="justify-content-center">
+            <button
+              class="btn btn-danger btn-sm active mr-3"
+              (click)="resetFilter()">
+              Limpiar <i class="fas fa-eraser"> </i>
+            </button>
+          </div>
+        </div>
+        <div class="col-md-4 justify-content-center"></div>
       </div>
     </form>
     <div class="mt-5">
@@ -80,7 +88,9 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="tableSource">
+            [source]="tableSource"
+            (userRowSelect)="onRowSelect($event)"
+            (dblclick)="loadForm()">
           </ng2-smart-table>
         </div>
       </div>

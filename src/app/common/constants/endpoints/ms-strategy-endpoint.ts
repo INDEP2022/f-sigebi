@@ -16,4 +16,7 @@ export enum StrategyEndpoints {
   strategyInd = 'strategy-ind-strategy',
   strategyIndReports = 'strategy-ind-reports',
   PaEstGood = 'aplication/pa-est-goods-incor',
+  FEstFormat = 'aplication/fEstFormat3',
+  FestFormat2 = 'aplication/fEstFormat2',
+  strategyIndicator = 'strategy-indicator',
 }

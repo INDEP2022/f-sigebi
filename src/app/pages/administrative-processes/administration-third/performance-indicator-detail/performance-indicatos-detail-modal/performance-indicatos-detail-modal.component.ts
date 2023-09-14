@@ -6,16 +6,16 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
+import { StrategyProcessService } from 'src/app/core/services/ms-strategy/strategy-process.service';
 import { BasePage } from 'src/app/core/shared';
 import { SERVICEORDERSFORMASELECT_COLUMNS } from './service-orders-format-historic-columns';
 
 @Component({
-  selector: 'app-service-orders-select-modal',
-  templateUrl: './service-orders-select-modal.component.html',
+  selector: 'app-performance-indicatos-detail-modal',
+  templateUrl: './performance-indicatos-detail-modal.component.html',
   styles: [],
 })
-export class ServiceOrdersSelectModalComponent
+export class PerformanceIndicatosDetailModalComponent
   extends BasePage
   implements OnInit
 {
@@ -27,7 +27,7 @@ export class ServiceOrdersSelectModalComponent
   selectedRow: any;
   constructor(
     private modalRef: BsModalRef,
-    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService
+    private strategyProcessService: StrategyProcessService
   ) {
     super();
     this.settings = {
@@ -53,16 +53,22 @@ export class ServiceOrdersSelectModalComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.goodPosessionThirdpartyService.getAllStrategyFormat(params).subscribe({
+    this.strategyProcessService.getAllStrategyIndicator(params).subscribe({
       next: response => {
         console.log('respuesta modal ', response);
+        let status: any;
         for (let i = 0; i < response.data.length; i++) {
+          if (response.data[i].status == 0) {
+            status = 'ABIERT0';
+          } else {
+            status = 'CERRADO';
+          }
           let paramstable = {
-            id: response.data[i].id,
-            processNumber: response.data[i].processNumber,
-            status: response.data[i].status,
-            formatKey: response.data[i].formatKey,
-            recordNumber: response.data[i].recordNumber,
+            delegationOneNumber: response.data[i].delegationOneNumber,
+            monthNumber: response.data[i].monthNumber,
+            yearNumber: response.data[i].yearNumber,
+            registerNumber: response.data[i].registerNumber,
+            status: status,
           };
           this.data1.push(paramstable);
           this.datalocal.load(this.data1);
@@ -85,19 +91,19 @@ export class ServiceOrdersSelectModalComponent
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
-              case 'id':
+              case 'delegationOneNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'processNumber':
+              case 'monthNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'yearNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'registerNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'status':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'formatKey':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'recordNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -128,11 +134,7 @@ export class ServiceOrdersSelectModalComponent
     if (this.selectedRow == null) {
       this.alert('warning', 'Es Necesario Seleccionar un Registro', '');
     } else {
-      this.modalRef.content.callback(
-        true,
-        this.selectedRow.formatKey,
-        this.selectedRow.id
-      );
+      this.modalRef.content.callback(true, this.selectedRow.registerNumber);
       this.modalRef.hide();
     }
   }

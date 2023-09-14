@@ -4,7 +4,7 @@
   </div>
   <div body>
     <div class="row margin-input d-flex justify-content-end">
-      <div class="col-md-1">
+      <div class="col-md-2">
         <button
           type="button"
           tooltip="Nuevo"
@@ -121,13 +121,15 @@
           <div class="col-md-3">
             <form-field [control]="serviceOrdersForm.get('transference')">
               <ngx-select
+                [(ngModel)]="selectedTransference"
                 (fetchItems)="getTransference($event)"
-                [data]="transference"
+                [data]="transferenceSele"
                 [form]="serviceOrdersForm"
-                value="transference"
-                bindLabel="description"
+                value="id"
+                bindLabel="nameTransferent"
                 label="Transferente"
-                control="transference">
+                control="transference"
+                (change)="ontransferenceChange($event)">
               </ngx-select>
             </form-field>
           </div>
@@ -135,12 +137,13 @@
             <form-field [control]="serviceOrdersForm.get('station')">
               <ngx-select
                 (fetchItems)="getStation($event)"
-                [data]="station"
+                [data]="stationSele"
                 [form]="serviceOrdersForm"
-                value="station"
-                bindLabel="description"
+                value="id"
+                bindLabel="stationName"
                 label="Emisora"
-                control="station">
+                control="station"
+                disabled="!tranferencebool">
               </ngx-select>
             </form-field>
           </div>
@@ -224,11 +227,11 @@
             <div class="margin-input">
               <form-field
                 [control]="serviceOrdersForm.get('start')"
-                label="page">
+                label="Inicio">
                 <input
                   type="text"
                   formControlName="start"
-                  placeholder="page"
+                  placeholder="Inicio"
                   class="form-control"
                   bsDatepicker />
               </form-field>
@@ -242,15 +245,47 @@
                   class="form-control"
                   bsDatepicker />
               </form-field>
-              <form-field
-                [control]="serviceOrdersForm.get('hour')"
-                label="Hora">
-                <input
-                  type="text"
-                  formControlName="hour"
-                  placeholder="Hora"
-                  class="form-control" />
-              </form-field>
+              <div class="row">
+                <div class="col-md-4">
+                  <form-field
+                    [control]="serviceOrdersForm.get('hour')"
+                    label="Hora">
+                    <input
+                      type="number"
+                      formControlName="hour"
+                      placeholder="Hora"
+                      class="form-control"
+                      min="1"
+                      max="12" />
+                  </form-field>
+                </div>
+                <div class="col-md-4">
+                  <form-field
+                    [control]="serviceOrdersForm.get('minute')"
+                    label="Minuto">
+                    <input
+                      type="number"
+                      formControlName="minute"
+                      placeholder="Minuto"
+                      class="form-control"
+                      min="0"
+                      max="59" />
+                  </form-field>
+                </div>
+                <div class="col-md-4">
+                  <form-field
+                    [control]="serviceOrdersForm.get('ampm')"
+                    label="Horario">
+                    <select
+                      class="form-control"
+                      formControlName="targetIndicator"
+                      placeholder="Horario">
+                      <option value="AM">AM</option>
+                      <option value="PM">PM</option>
+                    </select>
+                  </form-field>
+                </div>
+              </div>
             </div>
           </div>
           <div class="col-md-1"></div>
@@ -262,7 +297,10 @@
                 label="Estatus">
                 <select class="form-control" formControlName="status">
                   <option [value]="null">Seleccione un estado</option>
-                  <option value="Autorizada">Autorizada</option>
+                  <option value="AUTORIZADA">Autorizada</option>
+                  <option value="CANCELADA">Cancelada</option>
+                  <option value="PROCESO">Proceso</option>
+                  <option value="RECHAZADO">Rechazado</option>
                 </select>
               </form-field>
               <button
@@ -282,13 +320,13 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data1">
+            [source]="dataLocalB">
           </ng2-smart-table>
         </div>
       </div>
       <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
+        [params]="paramsB"
+        [totalItems]="totalItemsB"></app-pagination>
     </div>
     <div class="row margin-input">
       <div class="col-md-2">
@@ -310,13 +348,13 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
-            [source]="data1">
+            [source]="dataLocalI">
           </ng2-smart-table>
         </div>
       </div>
       <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
+        [params]="paramsI"
+        [totalItems]="totalItemsI"></app-pagination>
     </div>
   </div>
 </app-card>

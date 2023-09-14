@@ -5,4 +5,8 @@ export enum ThirdPartyAdmonEndpoints {
   StatusHistory = 'strategy-log',
   StrategyReports = 'strategy-ind-reports',
   StrategyFormat = 'strategy-format',
+  StrategyImports = 'strategy-amounts',
+  StrategyGoods = 'strategy-goods',
+  StrategyLog = 'strategy-log',
+  StrategyFormatV2 = 'strategy-format/getAllV2',
 }
