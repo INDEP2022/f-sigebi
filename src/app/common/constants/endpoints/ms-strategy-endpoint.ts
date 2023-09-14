@@ -16,5 +16,12 @@ export enum StrategyEndpoints {
   strategyInd = 'strategy-ind-strategy',
   strategyIndReports = 'strategy-ind-reports',
   PaEstGood = 'aplication/pa-est-goods-incor',
+  FEstFormat = 'aplication/fEstFormat3',
+  FestFormat2 = 'aplication/fEstFormat2',
+  strategyIndicator = 'strategy-indicator',
   UnitsMedConv = 'aplication/get-units-med-x-conv',
+  StrategyType = 'aplication/get-bills-service-type',
+  StrategySer = 'aplication/get-bills-service',
+  StrategyPro = 'strategy-process',
+  StrategyRepIm = 'strategy-rep-implementation',
 }

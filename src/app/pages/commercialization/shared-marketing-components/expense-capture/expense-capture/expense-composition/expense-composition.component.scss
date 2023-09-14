@@ -28,6 +28,14 @@
         //     display: none;
         //   }
         // }
+        table tr {
+          &.disabled {
+            td {
+              &:nth-child(2) {
+              }
+            }
+          }
+        }
       }
     }
   }

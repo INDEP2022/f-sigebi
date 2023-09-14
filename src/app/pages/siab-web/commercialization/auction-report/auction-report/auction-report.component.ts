@@ -665,6 +665,7 @@ export class auctionReportComponent extends BasePage implements OnInit {
         ...this.columnFilters3,
       };
       const name = this.formReport.get('nameReport').value;
+      param['limit'] = '';
       this.msMassivecapturelineService.getSettlementExcel(param).subscribe({
         next: resp => {
           this.downloadDocument(`${name}`, 'excel', resp.base64File);
@@ -700,6 +701,7 @@ export class auctionReportComponent extends BasePage implements OnInit {
         ...this.columnFilters3,
       };
       const name = this.formReport.get('nameReport').value;
+      param['limit'] = '';
       this.massiveDepositaryService.getGuaranteExcel(param).subscribe({
         next: resp => {
           this.downloadDocument(`${name}`, 'excel', resp.base64File);

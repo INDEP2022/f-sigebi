@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -32,10 +32,12 @@ import { ComerElecBillService } from 'src/app/core/services/ms-invoice/ms-comer-
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { ParameterInvoiceService } from 'src/app/core/services/ms-parameterinvoice/parameterinvoice.service';
+import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FolioModalComponent } from '../../../penalty-billing/folio-modal/folio-modal.component';
+import { AuthorizationModalComponent } from './authorization-modal/authorization-modal.component';
 import { REGULAR_GOODS_COLUMN } from './regular-billing-invoice-goods-columns';
 
 @Component({
@@ -63,6 +65,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   dataRebill: DefaultSelect = new DefaultSelect();
   loading2: boolean = false;
   buttons: boolean = false;
+  isCancel: boolean = false;
+
   settings2 = {
     ...this.settings,
     actions: false,
@@ -114,7 +118,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     private dynamicService: DynamicCatalogsService,
     private parameterModService: ParameterModService,
     private goodProccess: GoodprocessService,
-    private comerEleBillService: ComerElecBillService
+    private comerEleBillService: ComerElecBillService,
+    private comerSpenService: SpentService
   ) {
     super();
 
@@ -467,7 +472,9 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   getRebillData(params?: ListParams) {
     params['filter.apply'] = `${SearchFilter.IN}:F,A`;
-    params['filter.id'] = `${SearchFilter.EQ}:41`;
+    params['filter.valid'] = `${SearchFilter.EQ}:S`;
+    params['sortBy'] = 'id:ASC';
+
     this.comerRebilService.getAll(params).subscribe({
       next: resp => {
         this.dataRebill = new DefaultSelect(resp.data, resp.count);
@@ -487,6 +494,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       causerebillId: [null],
       check: [null],
       delegation: [null],
+      userV: [null, Validators.required],
+      passwordV: [null, Validators.required],
+      folio: [null],
+      refactura: [null],
     });
 
     this.formFactura = this.fb.group({
@@ -501,9 +512,9 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
     this.formDetalle = this.fb.group({
       count: [null],
-      totalI: [null],
-      totalIva: [null],
-      total: [null],
+      totalI: [0],
+      totalIva: [0],
+      total: [0],
       countTotal: [null],
     });
   }
@@ -1132,7 +1143,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   clientSend() {
     this.alertQuestion(
       'question',
-      'Se enviara el nuevo CDFI para Atención de Clientes',
+      'Se enviara el nuevo CFDI para Atención de Clientes',
       '¿Desea continuar?'
     ).then(answer => {
       if (answer.isConfirmed) {
@@ -1152,7 +1163,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
         v_uuid = await this.getBill(invoice);
 
-        if (['CDFI', 'IMP'].includes(invoice.factstatusId) && v_uuid == 1) {
+        if (['CFDI', 'IMP'].includes(invoice.factstatusId) && v_uuid == 1) {
           this.alert(
             'warning',
             'Atención',
@@ -1165,7 +1176,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
       break;
     }
 
-    this.alert('success', 'El CDFI nuevo fue enviado', '');
+    this.alert('success', 'El CFDI nuevo fue enviado', '');
   }
 
   async getBill(invoice: any) {
@@ -1182,5 +1193,157 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         catchError(() => of(0))
       )
     );
+  }
+
+  cancelInvoice() {
+    this.form.get('userV').patchValue(null);
+    this.form.get('passwordV').patchValue(null);
+    let count: number = 0;
+
+    for (const invoice of this.isSelect) {
+      if (!['CFDI', 'IMP'].includes(invoice.factstatusId)) {
+        count++;
+      }
+    }
+
+    if (count == 1) {
+      this.alert(
+        'warning',
+        'Atención',
+        'La Factura no tiene un estatus válido para cancelación'
+      );
+      return;
+    } else if (count > 1) {
+      this.alert(
+        'warning',
+        'Atención',
+        `La Selección contiene ${count} Facturas que no tienen un estatus válido para cancelación`
+      );
+      return;
+    }
+
+    this.validateCancel();
+  }
+
+  async validateCancel() {
+    const { causerebillId, folio, refactura } = this.form.value;
+    if (!causerebillId) {
+      this.isVisibleField(1);
+    } else if (causerebillId) {
+      if (this.isSelect[0].factstatusId == 'CAN') {
+        this.alert(
+          'warning',
+          'Atención',
+          'No puede procesar una factura cancelada'
+        );
+        this.isVisibleField(0);
+        return;
+      }
+      if (!folio && refactura == 'P') {
+        this.alert('warning', 'Atención', 'Introduzca la solicitud de pago');
+        return;
+      } else if (folio && refactura == 'P') {
+        const puf_valid = await this.validaFolSp(this.isSelect[0].eventId);
+        if (puf_valid == 0) {
+          this.alert(
+            'warning',
+            'Atención',
+            'El Folio de la solicitud de pago no corresponden a la factura, favor de verificar'
+          );
+          return;
+        } else if (puf_valid == 1) {
+          this.alert(
+            'warning',
+            'Atención',
+            'Los montos de la solicitud de pago no corresponden a la factura, favor de verificar'
+          );
+          return;
+        } else {
+          if (this.isSelect[0].factstatusId == 'CAN') {
+            this.alert(
+              'warning',
+              'Atención',
+              'No puede procesar una factura cancelada'
+            );
+            this.isVisibleField(0);
+            return;
+          } else {
+            await this.pup_invoice();
+          }
+        }
+      }
+
+      let config: ModalOptions = {
+        initialState: {
+          form: this.form,
+          data: this.isSelect,
+          callback: (data: any) => {
+            console.log(data);
+          },
+        },
+        class: 'modal-md modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(AuthorizationModalComponent, config);
+    }
+  }
+
+  async pup_invoice() {
+    const { folio } = this.form.value;
+    const idpayment = await this.checkIdGasto(folio, this.isSelect[0].eventId);
+
+    if (idpayment) {
+      const data = await this.getData(
+        this.isSelect[0].eventId,
+        Number(idpayment)
+      );
+      //guardar datos cancelados
+      console.log(data);
+    }
+  }
+
+  async checkIdGasto(idSol: number, idEvent: number) {
+    const filter = new FilterParams();
+    filter.addFilter('paymentRequestNumber', idSol, SearchFilter.EQ);
+    filter.addFilter('eventNumber', idEvent, SearchFilter.EQ);
+    return firstValueFrom(
+      this.comerSpenService.getAll(filter.getParams()).pipe(
+        map(resp => resp.data[0].expenseNumber),
+        catchError(() => of(null))
+      )
+    );
+  }
+
+  async getData(event: number, expend: number) {
+    return firstValueFrom(
+      this.comerInvoice.getEats(event, expend).pipe(
+        map(resp => resp.data),
+        catchError(() => of([]))
+      )
+    );
+  }
+
+  isVisibleField(option: number) {
+    if (option == 1) {
+      this.isCancel = true;
+    } else if (option == 0) {
+      this.isCancel = false;
+      this.form.get('causerebillId').patchValue(null);
+      this.form.get('folio').patchValue(null);
+    }
+  }
+
+  async validaFolSp(event: number) {
+    const { folio } = this.form.value;
+    return firstValueFrom(
+      this.comerInvoice.pufValidaInvoiceSP(event, folio).pipe(
+        map(resp => resp.lv_valdida),
+        catchError(() => of(0))
+      )
+    );
+  }
+
+  setDataCause(data: any) {
+    this.form.get('refactura').patchValue(data.rebill);
   }
 }
