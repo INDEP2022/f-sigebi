@@ -123,4 +123,9 @@ export class GoodPosessionThirdpartyService extends HttpService {
     const route = `${ThirdPartyAdmonEndpoints.StrategyFormatV2}`;
     return this.get(route, params);
   }
+
+  getAllStrategyGoodsByFormat(id: any) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyGoods}?filter.formatNumber=$eq:${id}&filter.valGood=$eq:0`;
+    return this.get(route);
+  }
 }
