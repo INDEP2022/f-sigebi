@@ -212,7 +212,7 @@ export class PaymentService extends HttpService {
   }
 
   //comer-rel-usu-canc
-  getComerRelUsuCanc(params?: string){
-    return this.get(`comer-rel-usu-canc`, params)
+  getComerRelUsuCanc(params?: string) {
+    return this.get(`comer-rel-usu-canc`, params);
   }
 }

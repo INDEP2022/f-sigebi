@@ -6,9 +6,13 @@ import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shar
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PerformanceIndicatorDetailRoutingModule } from './performance-indicator-detail-routing.module';
 import { PerformanceIndicatorDetailComponent } from './performance-indicator-detail/performance-indicator-detail.component';
+import { PerformanceIndicatosDetailModalComponent } from './performance-indicatos-detail-modal/performance-indicatos-detail-modal.component';
 
 @NgModule({
-  declarations: [PerformanceIndicatorDetailComponent],
+  declarations: [
+    PerformanceIndicatorDetailComponent,
+    PerformanceIndicatosDetailModalComponent,
+  ],
   imports: [
     CommonModule,
     SharedModule,
