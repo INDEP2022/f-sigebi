@@ -7,7 +7,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { maxDate } from 'src/app/common/validations/date.validators';
+import { minDate } from 'src/app/common/validations/date.validators';
 import { CapturelineService } from 'src/app/core/services/ms-capture-line/captureline.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { ComerLotService } from 'src/app/core/services/ms-prepareevent/comer-lot.service';
@@ -105,7 +105,7 @@ export class managementCaptureLinesComponent
   private prepareFormAdm() {
     this.formAdm = this.fb.group({
       typeReference: [null, [Validators.required]],
-      dateValidity: [null, [Validators.required, maxDate(new Date())]],
+      dateValidity: [null, [Validators.required, minDate(new Date())]],
       allotment: [null, [Validators.required]],
       client: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       event: [null, [Validators.required]],
@@ -249,7 +249,8 @@ export class managementCaptureLinesComponent
       params['filter.publicLot'] = lot;
       this.comerLotService.getAllFilter(params).subscribe({
         next: resp => {
-          res(resp[0].id);
+          console.log(resp.data[0].id);
+          res(resp.data[0].id);
         },
         error: eror => {
           res('0');

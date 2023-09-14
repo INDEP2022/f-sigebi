@@ -273,8 +273,8 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
               // actualizar status del bien
               this.loader.load = false;
               Swal.fire({
-                title: 'Solicitud Turnada',
-                text: 'La solicitud se turnó correctamente',
+                title: 'La Solicitud ha sido Turnada',
+                text: 'Se ha creado una nueva tarea',
                 icon: 'success',
                 showCancelButton: false,
                 confirmButtonColor: '#9D2449',
@@ -501,7 +501,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             this.message(
               'error',
               'Error al guardar',
-              'No se pudo bajar el documento'
+              'No se pudo generar el reporte de volante'
             );
             reject('false');
           },

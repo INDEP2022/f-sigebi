@@ -15,7 +15,9 @@ import {
   ISendRequestProposal,
 } from 'src/app/core/models/ms-donation/donation-good.model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { AppraiseService } from 'src/app/core/services/ms-appraise/appraise.service';
 import { DonationRequestService } from 'src/app/core/services/ms-donationgood/donation-requets.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS_TABLE_2 } from '../columns-table-2';
@@ -51,6 +53,8 @@ export class ProposalInventoriesDonationComponent
   params2 = new BehaviorSubject(new ListParams());
   selectData: IDonationGoodRequest;
   loading2: boolean = false;
+  selectData2: IDonationPropolsal;
+  coorDesc: any;
   @ViewChild('inventor', { static: true }) inv: ElementRef<HTMLDivElement>;
 
   constructor(
@@ -59,7 +63,9 @@ export class ProposalInventoriesDonationComponent
     private donationGood: DonationRequestService,
     private actived: ActivatedRoute,
     private sanitizer: DomSanitizer,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private massiveGoodService: MassiveGoodService,
+    private appraiseService: AppraiseService
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -91,7 +97,19 @@ export class ProposalInventoriesDonationComponent
     });
   }
 
-  public exportInventory() {}
+  public exportInventory() {
+    const { warehouse, delegationNumber } = this.form.value;
+    console.log('SelectData', this.selectData2);
+    let params = {
+      requestId: this.selectData2.id_solicitud,
+      busWarehouseNumber: warehouse,
+      coordinationNumber: Number(delegationNumber),
+      donatId: this.selectData.id_donatario,
+      pDonationType: this.param,
+    };
+    console.log('This.param-> ', this.param);
+    this.exportExcel(params);
+  }
 
   public callReport() {
     const { warehouseNumb, coordination, doneeId } = this.form.value;
@@ -210,6 +228,8 @@ export class ProposalInventoriesDonationComponent
 
   public selectEvent({ data }: any) {
     this.selectData = data;
+    console.log('Select Data', data);
+    console.log('this.selectData.no_almacen-> ', this.selectData.no_almacen);
   }
 
   public inventory() {
@@ -225,12 +245,14 @@ export class ProposalInventoriesDonationComponent
         id_donatario,
         donatario,
         desc_almacen,
+        no_delegacion,
       }: any = this.selectData;
       const sendData: ISendRequestProposal = {
         donationType: this.param,
         doneeId: id_donatario,
         requestId: id_solicitud,
         storeNumber: no_almacen,
+        delegationNumber: no_delegacion,
       } as ISendRequestProposal;
       this.params2.getValue().page = 1;
 
@@ -238,6 +260,9 @@ export class ProposalInventoriesDonationComponent
       this.form.get('warehouseDesc').patchValue(desc_almacen);
       this.form.get('doneeId').patchValue(id_donatario);
       this.form.get('donee').patchValue(donatario);
+      this.form.get('delegationNumber').patchValue(no_delegacion);
+
+      this.obtenerCoordinacion(no_delegacion);
 
       this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
         this.donationGood
@@ -270,5 +295,72 @@ export class ProposalInventoriesDonationComponent
   settingsChange($event: any, op: number): void {
     if (op == 1) this.settings = $event;
     else this.settings2 = $event;
+  }
+
+  exportExcel(params: any) {
+    this.massiveGoodService.postExportDataExcel(params).subscribe(
+      resp => {
+        if (resp != null && resp != undefined) {
+          console.log('Resp exportExcel-> ', resp);
+          this.convertBase64ToExcel(resp.base64File, resp.nameFile);
+        }
+      },
+      error => {
+        console.log('Error exportExcel->', error);
+      }
+    );
+  }
+
+  convertBase64ToExcel(base64Data: string, filename: string) {
+    const binaryString = atob(base64Data);
+    const byteArray = new Uint8Array(binaryString.length);
+
+    for (let i = 0; i < binaryString.length; i++) {
+      byteArray[i] = binaryString.charCodeAt(i);
+    }
+
+    const blob = new Blob([byteArray], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+
+    if ((window.navigator as any).msSaveOrOpenBlob) {
+      (window.navigator as any).msSaveOrOpenBlob(blob, filename);
+    } else {
+      const excelUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = excelUrl;
+      link.target = '_blank';
+      link.download = filename;
+      link.click();
+      link.remove();
+      this.alert('success', 'Archivo Descargado Correctamente', '');
+    }
+  }
+
+  obtenerData(data: any) {
+    this.selectData2 = data.data;
+    console.log('data tabla 2 -> ', this.selectData2);
+  }
+
+  obtenerCoordinacion(id: number) {
+    this.coorDesc = null;
+    console.log('obtenerCoordinacion', id);
+    this.appraiseService.getDelegation(id).subscribe(
+      resp => {
+        try {
+          if (resp != null && resp != undefined) {
+            console.log('Resp obtenerCoordinacion-> ', resp);
+            this.coorDesc = resp.data[0].descripcion;
+            console.log('this.coorDesc-> ', this.coorDesc);
+            this.form.get('delegationDesc').patchValue(this.coorDesc);
+          }
+        } catch {
+          this.form.get('delegationDesc').patchValue(null);
+        }
+      },
+      error => {
+        console.log('AlertError-> ', error);
+      }
+    );
   }
 }

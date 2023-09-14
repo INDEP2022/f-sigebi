@@ -18,4 +18,5 @@ export enum NumeraryEndpoints {
   CloseNumerary = 'close-numerary',
   GetSolNumerario = 'application/get-sol-numerario',
   TransReg = 'transfer-numerary-region',
+  ComerNumeraryGoods = 'comer-numerary-x-goods',
 }

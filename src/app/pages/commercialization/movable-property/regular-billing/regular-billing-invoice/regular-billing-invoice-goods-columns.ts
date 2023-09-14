@@ -16,14 +16,38 @@ export const REGULAR_GOODS_COLUMN = {
   price: {
     title: 'Importe',
     sort: false,
+    valuePrepareFunction: (val: string) => {
+      const formatter = new Intl.NumberFormat('en-US', {
+        currency: 'USD',
+        minimumFractionDigits: 2,
+      });
+
+      return formatter.format(Number(val));
+    },
   },
   vat: {
     title: 'Iva',
     sort: false,
+    valuePrepareFunction: (val: string) => {
+      const formatter = new Intl.NumberFormat('en-US', {
+        currency: 'USD',
+        minimumFractionDigits: 2,
+      });
+
+      return formatter.format(Number(val));
+    },
   },
   total: {
     title: 'Total',
     sort: false,
+    valuePrepareFunction: (val: string) => {
+      const formatter = new Intl.NumberFormat('en-US', {
+        currency: 'USD',
+        minimumFractionDigits: 2,
+      });
+
+      return formatter.format(Number(val));
+    },
   },
   brand: {
     title: 'Marca',

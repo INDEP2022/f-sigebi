@@ -272,4 +272,14 @@ export class GoodprocessService extends HttpService {
       data
     );
   }
+
+  getBlkCtrlGood(cve: string, good: number) {
+    return this.get(`${GoodprocessEndpoints.GetBlkCtrlGood}/${cve}/${good}`);
+  }
+
+  getVsigLigie(params: ListParams | string): Observable<IListResponse<any>> {
+    const route = GoodprocessEndpoints.GetVsigLigie;
+    debugger;
+    return this.get<IListResponse<any>>(route, params);
+  }
 }

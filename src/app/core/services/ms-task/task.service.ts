@@ -60,4 +60,9 @@ export class TaskService extends HttpService {
   downloadReport(body: Object) {
     return this.post<any>(TaskEndpoints.DownloadReport, body);
   }
+
+  downloadReportBase64(params: ListParams | string) {
+    const route = TaskEndpoints.GetBase64TaskReport;
+    return this.get(route, params);
+  }
 }

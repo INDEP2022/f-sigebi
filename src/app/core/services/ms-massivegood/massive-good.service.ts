@@ -180,7 +180,10 @@ export class MassiveGoodService extends HttpService {
     return this.post(this.route.PorGoodReasonRev, formData);
   }
   exportXlsx(params: any) {
-    return this.post(MassiveGoodEndpoints.UdateInventory, params)
+    return this.post(MassiveGoodEndpoints.UdateInventory, params);
+  }
 
+  postExportDataExcel(params: any) {
+    return this.post(MassiveGoodEndpoints.ExportDataExcel, params);
   }
 }

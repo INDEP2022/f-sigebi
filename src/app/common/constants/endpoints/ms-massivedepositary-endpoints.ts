@@ -4,4 +4,5 @@ export enum MassivedepositaryEndpoints {
   PreViewDataCSV = 'application/pupPreviewDataCSV',
   PupBurdenDataCSV = 'PupBurdenDataCSV',
   PupPreviewDataCSV = 'application/PupPreviewDataCSV',
+  GetGuaranteExcel = 'application/obtain-guarantee-report-pag',
 }

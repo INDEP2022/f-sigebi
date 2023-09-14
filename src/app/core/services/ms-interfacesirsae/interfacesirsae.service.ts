@@ -6,6 +6,7 @@ import { ISirsaeStateAccountDetail } from '../../models/ms-interfacesirsae/inter
 import {
   ISendSirsae,
   ISendSirsaeLot,
+  ISendSirsaeOIScrapDTO,
   ISirsaeScrapDTO,
   IValidPaymentsDTO,
 } from './interfacesirsae-model';
@@ -72,5 +73,9 @@ export class InterfacesirsaeService extends HttpService {
 
   sendSirsaeScrapSp(body: ISirsaeScrapDTO) {
     return this.post(`sirsae/sendSirsaeScrapSp`, body);
+  }
+
+  sendSirsaeScrapOi(body: ISendSirsaeOIScrapDTO) {
+    return this.post<{ lst_order: any }>(`sirsae/send-sirsae-scrap-oi`, body);
   }
 }

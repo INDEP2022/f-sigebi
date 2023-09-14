@@ -137,6 +137,11 @@ export class GoodsInvService extends HttpService {
     );
   }
 
+  getCatServiceCost(body: Object, page?: number, limit?: number) {
+    const route = `${IGoodsinvEndpoint.GetCatServiceCostWiew}?limit=${limit}&page=${page}`;
+    return this.post(route, body);
+  }
+
   private makeParams(params: ListParams | string): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {

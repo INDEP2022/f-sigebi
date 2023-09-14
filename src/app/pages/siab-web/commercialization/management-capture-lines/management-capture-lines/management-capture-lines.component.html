@@ -71,7 +71,7 @@
   <div body>
     <form class="form-material" [formGroup]="formAdm">
       <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-6">
           <form-field
             [control]="formAdm.get('typeReference')"
             label="Tipo de referencia">
@@ -121,19 +121,19 @@
             <input type="text" class="form-control" formControlName="client" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-5">
         <div class="col-md-2">
           <form-field [control]="formAdm.get('event')" label="Evento">
             <input type="text" class="form-control" formControlName="event" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field [control]="formAdm.get('amount')" label="Monto">
             <input type="text" class="form-control" formControlName="amount" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field
             [control]="formAdm.get('amountPenality')"
             label="Monto Pena">
@@ -143,7 +143,7 @@
               formControlName="amountPenality" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
           <div class="justify-content-center">
             <button
               type="button"

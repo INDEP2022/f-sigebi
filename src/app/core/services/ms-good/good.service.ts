@@ -511,4 +511,3 @@ export class GoodService extends HttpService {
     return this.put(GoodEndpoints.Good, params);
   }
 }
-

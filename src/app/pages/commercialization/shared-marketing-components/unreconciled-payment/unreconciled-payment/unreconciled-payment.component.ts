@@ -12,6 +12,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { COLUMNS } from './columns';
 import { NewAndUpdateComponent } from './new-and-update/new-and-update.component';
@@ -57,7 +58,8 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private token: AuthService,
     private route: ActivatedRoute,
-    private comerClientsService: ComerClientsService
+    private comerClientsService: ComerClientsService,
+    private comerEventosService: ComerEventosService
   ) {
     super();
     this.settings = {
@@ -69,6 +71,10 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
         add: false,
         delete: false,
         position: 'right',
+      },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-4"></i>',
       },
       columns: { ...COLUMNS },
     };
@@ -145,7 +151,7 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
     });
   }
 
-  getPayments() {
+  async getPayments() {
     this.loading = true;
     this.totalItems = 0;
     let params = {
@@ -217,6 +223,22 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
             item['bankAndNumber'] = item.ctrl
               ? item.ctrl.code + ' - ' + item.ctrl.cveBank
               : null;
+
+            item['valEvent'] = true;
+            item['valEventAddress'] = null;
+            if (item.event) {
+              const valEventGet: any = await this.getEventById(item.event);
+
+              if (valEventGet) {
+                if (valEventGet.address != this.layout) {
+                  item.valEvent = false;
+                }
+                item.valEventAddress = valEventGet.address;
+              }
+            }
+            if (item.lots)
+              item['idAndDesc'] =
+                item.lots.idLot + ' - ' + item.lots.description;
           });
           Promise.all(result).then(resp => {
             this.data.load(response.data);
@@ -233,6 +255,23 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
         this.loading = false;
         console.log(error);
       },
+    });
+  }
+
+  getEventById(event: any) {
+    let params = new ListParams();
+    params.limit = 1;
+    params['filter.id'] = `$eq:${event}`;
+    // params['filter.address'] = this.layout;
+    return new Promise((resolve, reject) => {
+      this.comerEventosService.getComerEventById(event).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
     });
   }
 
@@ -306,14 +345,10 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
   }
 
   async enviarSIRSAE() {
-    if (!this.valAcc) return this.alert('warning', 'Seleccione un Pago', '');
+    if (!this.valAcc) return this.alert('warning', 'Seleccione un pago', '');
 
-    if (!this.valAcc.event)
-      return this.alert(
-        'warning',
-        'Este Pago no está Asociado a un Evento',
-        ''
-      );
+    if (!this.valAcc.lots)
+      return this.alert('warning', 'Este pago no está asociado a un Lote', '');
 
     this.loadingBtn = true;
     // CREA_CABECERA;
@@ -335,8 +370,8 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
       ) {
         this.alert(
           'error',
-          'Error de Conexión',
-          'No se pudo Conectar a la Base de Datos (SIRSAE)'
+          'Error de conexión',
+          'No se pudo conectar a la Base de Datos (SIRSAE)'
         );
         this.loadingBtn = false;
         this.getPayments();
@@ -344,7 +379,7 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
       } else {
         this.alert(
           'error',
-          'Ha Ocurrido un Error al Intentar Enviar a SIRSAE',
+          'Ha ocurrido un error al intentar enviar a SIRSAE',
           ''
         );
         this.loadingBtn = false;
@@ -352,15 +387,43 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
         return;
       }
     } else {
-      this.loadingBtn = false;
-      this.getPayments();
-      this.alert('success', 'Proceso Terminado Correctamente', '');
+      // VALIDAR QUE SE HAYA CONCILIADO CON EXITO //
+      const validSendSirsae = await this.getPaymentById(this.valAcc);
+      if (validSendSirsae) {
+        this.loadingBtn = false;
+        await this.getPayments();
+        this.alert(
+          'success',
+          'Proceso Terminado',
+          'Pago enviado correctamente'
+        );
+      } else {
+        this.loadingBtn = false;
+        await this.getPayments();
+        this.alert('warning', 'Proceso Terminado', 'No se pudo enviar el pago');
+      }
     }
     // else if (a && b) {
     //   this.alert('success', 'Procesos Ejecutados Correctamente', '');
     // }
   }
 
+  getPaymentById(body: any) {
+    let params = new ListParams();
+    params.limit = 1;
+    params['filter.paymentId'] = `$eq:${body.paymentId}`;
+    params['filter.entryOrderId'] = `$null`;
+    return new Promise((resolve, reject) => {
+      this.paymentService.getComerPaymentRef(params).subscribe({
+        next: response => {
+          resolve(false);
+        },
+        error: error => {
+          resolve(true);
+        },
+      });
+    });
+  }
   async creaCabecera() {
     let obj = {
       user: this.token.decodeToken().preferred_username,
