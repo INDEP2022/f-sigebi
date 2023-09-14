@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IUnits } from 'src/app/core/models/administrative-processes/siab-sami-interaction/measurement-units';
-import { IRapproveDonation } from 'src/app/core/models/ms-r-approve-donation/r-approve-donation.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
@@ -13,11 +12,12 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-maintenance-commitment-donation-modal',
   templateUrl: './maintenance-commitment-donation-modal.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class MaintenanceCommitmentDonationModalComponent extends BasePage implements OnInit {
-
+export class MaintenanceCommitmentDonationModalComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   title: string = '';
   newOrEdit: boolean = false;
@@ -25,24 +25,22 @@ export class MaintenanceCommitmentDonationModalComponent extends BasePage implem
   type: any;
   textBtn: string = 'Guardar';
 
-
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private movementService: AccountMovementService,
     private goodsQueryService: GoodsQueryService,
     private authService: AuthService,
-    private donationService: DonationService,
+    private donationService: DonationService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    console.log("flag ", this.newOrEdit);
+    console.log('flag ', this.newOrEdit);
     //console.log('NewOrEdir: ', this.newOrEdit);
     if (this.newOrEdit || !this.newOrEdit) {
-
-      console.log("type -> ", this.type);
+      console.log('type -> ', this.type);
       switch (this.type) {
         case 1:
           this.title = 'Comercio Exterior Kg';
@@ -64,7 +62,7 @@ export class MaintenanceCommitmentDonationModalComponent extends BasePage implem
           this.title = '';
           break;
       }
-      console.log("data -> ", this.data);
+      console.log('data -> ', this.data);
       if (this.data != null) {
         this.textBtn = 'Editar';
 
@@ -92,7 +90,6 @@ export class MaintenanceCommitmentDonationModalComponent extends BasePage implem
   confirm() {
     if (this.form.invalid) return;
     if (this.newOrEdit) {
-
       switch (this.type) {
         case 1:
           this.alert('success', 'Editar', 'daaa');
@@ -101,7 +98,6 @@ export class MaintenanceCommitmentDonationModalComponent extends BasePage implem
         default:
           break;
       }
-
     } else {
       switch (this.type) {
         case 1:
@@ -110,7 +106,6 @@ export class MaintenanceCommitmentDonationModalComponent extends BasePage implem
         default:
           break;
       }
-
     }
   }
   insertAprueba_donacion() {
@@ -132,7 +127,6 @@ export class MaintenanceCommitmentDonationModalComponent extends BasePage implem
       next: () => {
         this.handleSuccess();
         this.onLoadToast('success', 'Comercio Exterior Kg creado', '');
-
       },
       error: error => {
         this.onLoadToast('error', error.error.message, '');
@@ -201,10 +195,8 @@ export class MaintenanceCommitmentDonationModalComponent extends BasePage implem
     });
   }
 
-
   handleSuccess() {
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 }
-
