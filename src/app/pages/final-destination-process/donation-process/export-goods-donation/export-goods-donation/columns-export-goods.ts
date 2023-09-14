@@ -81,7 +81,12 @@ export const COLUMNS_EXPORT_GOODS = {
           // Si el checkbox se deselecciona, puedes hacer algo aquí si es necesario
         }
 
-        console.log('Evento del checkbox CPD. Fila:', rowData, 'Estado:', isChecked);
+        console.log(
+          'Evento del checkbox CPD. Fila:',
+          rowData,
+          'Estado:',
+          isChecked
+        );
       });
     },
     sort: false,
@@ -104,7 +109,12 @@ export const COLUMNS_EXPORT_GOODS = {
           // Si el checkbox se deselecciona, puedes hacer algo aquí si es necesario
         }
 
-        console.log('Evento del checkbox CPD. Fila:', rowData, 'Estado:', isChecked);
+        console.log(
+          'Evento del checkbox CPD. Fila:',
+          rowData,
+          'Estado:',
+          isChecked
+        );
       });
     },
     sort: false,
@@ -127,10 +137,14 @@ export const COLUMNS_EXPORT_GOODS = {
           // Si el checkbox se deselecciona, puedes hacer algo aquí si es necesario
         }
 
-        console.log('Evento del checkbox CPD. Fila:', rowData, 'Estado:', isChecked);
+        console.log(
+          'Evento del checkbox CPD. Fila:',
+          rowData,
+          'Estado:',
+          isChecked
+        );
       });
     },
     sort: false,
   },
 };
-
