@@ -17,8 +17,8 @@ export interface IValidSubPriceDTO {
 
 export interface IDivideCommandsDTO {
   eventId: string;
-  amount2: string;
-  iva2: string;
+  amount2: number;
+  iva2: number;
   withholdingIsr2: string;
   withholding_vat2: string;
   expenseId: string;
