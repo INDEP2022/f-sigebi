@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -24,7 +24,8 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
-    private outsideTradesService: OutsideTradesService
+    private outsideTradesService: OutsideTradesService,
+    private modalRef: BsModalRef
   ) {
     super();
   }
@@ -34,12 +35,15 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
   No_gestion: number = 0;
   val_no_ges: string;
   tipos_oficio: string;
+  tipos_oficio1: number;
   user: string;
   a: string;
   access: boolean;
   noOFGestion: number;
   sessionInvalid: Boolean;
   maxDate = new Date();
+  noGes: number;
+  valid1: boolean;
 
   ngOnInit(): void {
     this.createForm();
@@ -74,8 +78,13 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
             : null;
         });
 
-      // this.a = localStorage.getItem("VEROFICIOS"); // no se en el Token que exactamente seria el veroficios--- this.authService.decodeToken().exp
-      this.a = 'XD'; // no se en el Token que exactamente seria el veroficios--- this.authService.decodeToken().exp
+      this.a = localStorage.getItem('VEROFICIOS'); // no se en el Token que exactamente seria el veroficios--- this.authService.decodeToken().exp
+      //this.a = 'XD'; // no se en el Token que exactamente seria el veroficios--- this.authService.decodeToken().exp
+      if (this.noGes) {
+        this.tipos_oficio1 = this.noGes;
+      } else {
+        this.tipos_oficio1 = 404562;
+      }
       this.val_no_ges = '404562';
       console.log('this.a', this.a);
       try {
@@ -111,7 +120,7 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
           this.sessionInvalid = true;
           this.No_gestion = JSON.parse(this.val_no_ges);
           this.noOFGestion = JSON.parse(this.val_no_ges);
-          this.tip = await this.getTipoOficio(this.noOFGestion);
+          this.tip = await this.getTipoOficio(this.tipos_oficio1);
           this.tipos_oficio = this.tip;
           console.log(this.tipos_oficio);
 
@@ -321,6 +330,6 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
     });
   }
   goBack() {
-    window.history.back();
+    this.modalRef.hide();
   }
 }
