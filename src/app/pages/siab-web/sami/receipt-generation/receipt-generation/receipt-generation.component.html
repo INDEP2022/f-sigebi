@@ -338,10 +338,11 @@
               (fetchItems)="unitsQuery($event)"
               [data]="unitsList"
               [form]="indepForm"
-              value="uom_code"
-              bindLabel="unit_of_measure_tl"
+              value="nbCode"
+              bindLabel="idUnitDestine"
               label="Unidad Medida INDEP"
-              control="unidad_medida_sae">
+              control="unidad_medida_sae"
+              (change)="onChangeUnits($event)">
             </ngx-select>
             <!-- <input type="text" class="form-control" formControlName="unidad_medida_sae" /> -->
           </form-field>

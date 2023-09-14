@@ -10,6 +10,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class RejectionCommentFormComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
+  folio: string = null;
+
   constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }
@@ -27,7 +29,7 @@ export class RejectionCommentFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Desea rechazar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+      `¿Desea rechazar la orden de servicio con folio ${this.folio}?`
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

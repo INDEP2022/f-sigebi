@@ -371,11 +371,7 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   }
 
   successMessage() {
-    this.alert(
-      'success',
-      'Documento Guardado',
-      'El documento se guardó correctamente'
-    );
+    this.alert('success', 'El Documento ha sido Guardado', '');
 
     this.close();
   }

@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
@@ -9,6 +10,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { BankService } from 'src/app/core/services/catalogs/bank.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { LotParamsService } from 'src/app/core/services/ms-lot-parameters/lot-parameters.service';
@@ -50,6 +52,9 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   valScroll: boolean;
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   valCargado: boolean;
+  dataNew: any;
+  dataTable: LocalDataSource;
+  nextPaymentId: any;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -58,13 +63,51 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
     private comerClientsService: ComerClientsService,
     private accountMovementService: AccountMovementService,
     private paymentService: PaymentService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private bankService: BankService
   ) {
     super();
+    this.dataNew = {
+      movementNumber: null,
+      date: null,
+      move: null,
+      bill: null,
+      referenceOri: null,
+      bankKey: null,
+      branchOffice: null,
+      amount: null,
+      result: null,
+      validSistem: null,
+      paymentId: null,
+      reference: null,
+      lotPub: null,
+      event: null,
+      entryOrderId: null,
+      typeSatId: null,
+      code: null,
+      lotId: null,
+      inTimeNumber: null,
+      type: null,
+      paymentReturnsId: null,
+      recordDate: null,
+      dateOi: null,
+      appliedTo: null,
+      clientId: null,
+      folioOi: null,
+      indicator: null,
+      codeEdoCta: null,
+      affectationDate: null,
+      recordNumber: null,
+      spentId: null,
+      paymentRequestId: null,
+      customers: null,
+      bankAndNumber: null,
+    };
   }
 
   async ngOnInit() {
     await this.prepareForm();
+    this.getEvents(new ListParams());
   }
 
   async prepareForm() {
@@ -144,6 +187,20 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         this.performScroll();
       }, 500);
     }
+    if (this.valCargado) {
+      if (this.dataTable)
+        this.dataTable.getElements().then(item => {
+          // OBTENER EL SIGUIENTE PAYMENT ID //
+          console.log('item', item);
+          const maxId = item.reduce(
+            (max: any, item: any) =>
+              item.paymentId > max ? item.paymentId : max,
+            0
+          );
+          this.nextPaymentId = maxId + 1;
+          console.log('maxId', this.nextPaymentId);
+        });
+    }
   }
 
   // Función para obtener los Validators condicionales
@@ -168,10 +225,9 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
     this.edit ? this.update() : this.create();
   }
 
-  update() {
+  async update() {
     const bank = this.form.value.bankKey;
     const typeSatId = this.form.value.typeSatId;
-
     if (this.valCargado) {
       this.data.reference = this.form.value.reference;
       this.data.movementNumber = this.form.value.movementNumber;
@@ -194,6 +250,8 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       this.data.descriptionSAT = typeSatId.description
         ? typeSatId.description
         : this.data.descriptionSAT;
+      const cve_banco = bank.cveBank ? bank.cveBank : this.data.bankKey;
+      this.data.bill = await this.getBanksForCreateAndUpdate(cve_banco);
       if (this.valScroll) {
         this.alert(
           'success',
@@ -225,6 +283,11 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         appliedTo: this.form.value.appliedTo,
         typeSatId: typeSatId ? typeSatId.idType : null,
       };
+
+      const cve_banco = requestBody.bankKey
+        ? requestBody.bankKey
+        : this.data.bankKey;
+      requestBody.bill = await this.getBanksForCreateAndUpdate(cve_banco);
 
       this.paymentService.update(this.data.paymentId, requestBody).subscribe({
         next: response => {
@@ -267,59 +330,118 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
     }
   }
 
-  create() {
+  async create() {
     const bank = this.form.value.bankKey;
     const typeSatId = this.form.value.typeSatId;
-    const client = this.form.value.clientId;
-    const requestBody: any = {
-      reference: this.form.value.reference,
-      movementNumber: this.form.value.movementNumber,
-      date: this.form.value.date,
-      amount: Number(this.form.value.amount),
-      bankKey: bank ? bank.cveBank : null,
-      code: bank ? bank.idCode : null,
-      // result: this.form.value.result,
-      recordDate: new Date(),
-      referenceOri: this.form.value.reference,
-      validSistem:
-        this.form.value.validSistem == '' ? null : this.form.value.validSistem,
-      // branchOffice: this.form.value.branchOffice,
-      appliedTo: this.form.value.appliedTo,
-      typeSatId: typeSatId ? typeSatId.idType : null,
-    };
+    const cve_banco = bank ? bank.cveBank : null;
+    if (this.valCargado) {
+      this.dataNew.reference = this.form.value.reference;
+      this.dataNew.movementNumber = this.form.value.movementNumber;
+      this.dataNew.date = this.datePipe.transform(
+        this.form.value.date,
+        'yyyy-MM-dd'
+      );
+      this.dataNew.amount = Number(this.form.value.amount);
+      this.dataNew.bankKey = bank ? bank.cveBank : null;
+      this.dataNew.code = bank ? bank.idCode : null;
+      this.dataNew.recordDate = new Date();
+      this.dataNew.referenceOri = this.form.value.reference;
+      this.dataNew.validSistem =
+        this.form.value.validSistem == '' ? null : this.form.value.validSistem;
+      this.dataNew.appliedTo = this.form.value.appliedTo;
+      this.dataNew.typeSatId = typeSatId ? typeSatId.idType : null;
+      this.dataNew.paymentId = this.nextPaymentId;
+      this.dataNew.descriptionSAT = typeSatId.description
+        ? typeSatId.description
+        : this.data.descriptionSAT;
+      this.dataNew.move = bank ? bank.description : null;
+      this.dataNew.bankAndNumber = bank
+        ? bank.idCode + ' - ' + bank.cveBank
+        : null;
+      this.dataNew.bill = await this.getBanksForCreateAndUpdate(
+        this.dataNew.bankKey
+      );
+      const message: string = this.edit ? 'actualizado' : 'guardado';
+      this.alert('success', `Pago Referenciado ${message} correctamente`, '');
+      this.loading = false;
+      this.modalRef.content.callback(true, this.dataNew);
+      this.modalRef.hide();
+    } else {
+      const requestBody: any = {
+        reference: this.form.value.reference,
+        movementNumber: this.form.value.movementNumber,
+        date: this.form.value.date,
+        amount: Number(this.form.value.amount),
+        bankKey: bank ? bank.cveBank : null,
+        code: bank ? bank.idCode : null,
+        // result: this.form.value.result,
+        recordDate: new Date(),
+        referenceOri: this.form.value.reference,
+        validSistem:
+          this.form.value.validSistem == ''
+            ? null
+            : this.form.value.validSistem,
+        // branchOffice: this.form.value.branchOffice,
+        appliedTo: this.form.value.appliedTo,
+        typeSatId: typeSatId ? typeSatId.idType : null,
+      };
+      console.log('requestBody.bankKey', requestBody.bankKey);
+      requestBody.bill = await this.getBanksForCreateAndUpdate(
+        requestBody.bankKey
+      );
 
-    this.paymentService.create(requestBody).subscribe({
-      next: response => {
-        this.handleSuccess();
-        // this.alert('success', 'El Registro se Eliminó Correctamente', '');
-      },
-      error: error => {
-        // if (error.error.message == "La clave del banco no ha sido previamente registrada"){
-        this.alert(
-          'error',
-          'Ocurrió un Error al Guardar el Registro',
-          error.error.message
-        );
-        // }
-        // this.handleError();
-        // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
-      },
-    });
+      this.paymentService.create(requestBody).subscribe({
+        next: response => {
+          this.handleSuccess();
+          // this.alert('success', 'El Registro se Eliminó Correctamente', '');
+        },
+        error: error => {
+          // if (error.error.message == "La clave del banco no ha sido previamente registrada"){
+          if (
+            error.error.message ==
+            'duplicate key value violates unique constraint "unique_pago"'
+          ) {
+            this.alert(
+              'error',
+              'Se ha Encontrado un Registro con estos Datos',
+              'Verifique y Actualice Nuevamente'
+            );
+          } else {
+            this.handleError();
+          }
+          // this.alert(
+          //   'error',
+          //   'Ocurrió un Error al Guardar el Registro',
+          //   error.error.message
+          // );
+          // }
+          // this.handleError();
+          // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
+        },
+      });
+    }
+  }
+
+  async obtenerMaximo(array: any) {
+    return array.reduce(
+      (max: any, obj: any) => (obj.paymentId > max.paymentId ? obj : max),
+      array[0]
+    );
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `Pago Referenciado ${message} Correctamente`, '');
+    const message: string = this.edit ? 'actualizado' : 'guardado';
+    this.alert('success', `Pago Referenciado ${message} correctamente`, '');
     this.loading = false;
     this.modalRef.content.callback(true, this.data);
     this.modalRef.hide();
   }
 
   handleError() {
-    const message: string = this.edit ? 'Actualizar' : 'Guardar';
+    const message: string = this.edit ? 'actualizar' : 'guardar';
     this.alert(
       'error',
-      `Error al Intentar ${message} el Pago Referenciado`,
+      `Error al intentar ${message} el Pago Referenciado`,
       ''
     );
     this.loading = false;
@@ -497,6 +619,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         });
     });
   }
+
   returnParseDate_(data: Date) {
     this.datePipe.transform(data, 'dd/MM/yyyy');
     console.log('DATEEEE', data);
@@ -562,6 +685,28 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
           },
           error: err => {},
         });
+    });
+  }
+
+  async getBanksForCreateAndUpdate(bankCode: any) {
+    console.log('bankCode', bankCode);
+    if (!bankCode) return null;
+
+    const params = new FilterParams();
+    params.addFilter('bankCode', bankCode, SearchFilter.EQ);
+    return new Promise((resolve, reject) => {
+      this.bankService.getAll_(params.getParams()).subscribe({
+        next: response => {
+          if (!response.data[0].bankAccount) {
+            resolve(null);
+          } else {
+            resolve(response.data[0].bankAccount.cveAccount);
+          }
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
     });
   }
 }

@@ -360,7 +360,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
             console.log('BINARY EXCEL', response);
 
             if (filter == 'si') {
-              this.alert('success', 'Archivo Cargado Correctamente', '');
+              this.alert('success', 'Archivo cargado correctamente', '');
             }
 
             this.loading = false;
@@ -374,7 +374,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           if (filter != 'no') {
             this.alert(
               'error',
-              'Archivo Inválido',
+              'Archivo inválido',
               // 'No existen registros disponibles para el proceso de reclamación de pago en el archivo cargado',
               'Verifique e intente nuevamente'
             );
@@ -387,7 +387,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     } catch (error) {
       this.data.load([]);
       this.loading = false;
-      this.alert('error', 'Ocurrió un Error al leer el Archivo', '');
+      this.alert('error', 'Ocurrió un error al leer el archivo', '');
     }
   }
 
@@ -408,7 +408,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
   async changeStatusGood() {
     if (this.goods.length === 0) {
-      this.alert('warning', 'Debe Cargar la Lista de Bienes', '');
+      this.alert('warning', 'Debe cargar la lista de bienes', '');
       return;
     } else if (this.goods.length > 0) {
       let a = false;
@@ -419,7 +419,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       }
 
       if (a == false) {
-        this.alert('warning', 'No hay Ningún Bien Válido Cargado', '');
+        this.alert('warning', 'No hay ningún Bien válido cargado', '');
         return;
       } else {
         // BEGIN
@@ -446,7 +446,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           } else {
             this.alert(
               'warning',
-              'Uno o Algunos de los Bienes no Tiene Documentos Escaneados',
+              'Uno o algunos de los bienes no tiene documentos escaneados',
               ''
             );
             this.loadingBtn = false;
@@ -493,7 +493,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     Promise.all(result).then(resp => {
       this.alert(
         'success',
-        'Se ha Actualizado el Estatus de los Bienes',
+        'Se ha actualizado el estatus de los bienes',
         // 'Bienes Válidos Actualizados',
         ''
       );
@@ -696,7 +696,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         },
         error: err => {
           // this.question();
-          this.alert('warning', 'No se Encontró el Estatus Final', '');
+          this.alert('warning', 'No se encontró el estatus final', '');
           console.log(err);
         },
       });
@@ -709,7 +709,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   question() {
     this.alertQuestion(
       'question',
-      'No se Realizó la Actualización de Estatus, el Folio de Escaneo Generado se Eliminará',
+      'No se realizó la Actualización de Estatus, el Folio de Escaneo Generado se Eliminará',
       '¿Quiere Continuar con el Proceso?'
     ).then(question => {
       if (question.isConfirmed) {
@@ -746,8 +746,8 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         //this.document = null;
         this.alert(
           'success',
-          'Proceso Terminado Correctamente',
-          'Folio Anterior Eliminado.'
+          'Proceso terminado correctamente',
+          'Folio anterior eliminado.'
         );
       },
       error: err => {
@@ -756,11 +756,11 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           this.cambiarValor();
           //this.document = null;
           this.valDocument = false;
-          this.alert('success', 'Se ha Eliminado Correctamente el Folio', '');
+          this.alert('success', 'Se ha eliminado correctamente el folio', '');
         } else {
           this.alert(
             'error',
-            'Se ha Generado un Error al Eliminar el Folio',
+            'Se ha generado un error al eliminar el folio',
             ''
           );
         }

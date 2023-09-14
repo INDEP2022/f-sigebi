@@ -34,6 +34,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   data1: LocalDataSource = new LocalDataSource();
   origin: '';
+  selectRow: boolean = false;
   delegation: string;
   totalItems: number = 0;
   totalItems1: number = 0;
@@ -177,10 +178,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       noDelegation1: [null, [Validators.pattern(STRING_PATTERN)]],
       elaborated: [null, []],
     });
-    this.form.get('elaborated').disable();
-    this.form.get('noDelegation1').disable();
-    // this.form.get('elaborated').setValue(this.user);
-    // this.form.get('noDelegation1').setValue(this.delegation);
+    // this.form.get('elaborated').disable();
+    // this.form.get('noDelegation1').disable();
     this.getEventComDonation(new ListParams());
   }
 
@@ -276,6 +275,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   changeEvent(event: any) {
     if (event) {
+      this.selectRow = true;
       const data: any = event.data;
       this.getDetailComDonation(data.actId);
       console.log(event.data);
@@ -378,7 +378,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     let params = {
       ...this.params2.getValue(),
     };
-    this.donationService.getExcel(params).subscribe({
+    this.donationService.getExcel().subscribe({
       next: response => {
         this.downloadDocument(
           'Aprobación para Donación',

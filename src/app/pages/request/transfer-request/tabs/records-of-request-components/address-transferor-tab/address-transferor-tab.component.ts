@@ -509,11 +509,7 @@ export class AddressTransferorTabComponent
       (data: any) => {
         if (data.id != null) {
           this.domicileForm.controls['id'].setValue(data.id);
-          this.message(
-            'success',
-            'Guardado',
-            'El domicilio se guardó correctamente'
-          );
+          this.message('success', 'El Domicilio se ha Guardado', '');
 
           if (this.isNewAddress === true) {
             this.modelRef.content.callback(true);

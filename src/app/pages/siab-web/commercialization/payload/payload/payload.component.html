@@ -19,18 +19,15 @@
             <input type="text" class="form-control" formControlName="bank" />
           </form-field>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-6">
           <div class="justify-content-center">
             <button
               type="button"
-              class="btn btn-primary btn-sm active"
+              class="btn btn-primary btn-sm active mr-3"
+              (click)="loadAgo()"
               [disabled]="!form.valid">
               Cargar pagos
             </button>
-          </div>
-        </div>
-        <div class="col-md-2">
-          <div class="justify-content-center">
             <button
               type="button"
               class="btn btn-primary btn-sm active"
@@ -41,14 +38,48 @@
         </div>
       </div>
     </form>
-    <div class="ch-content" header>
+
+    <div class="row pt-4">
+      <div class="ch-content">
+        <!--<h5 class="title">Dictamen</h5>-->
+      </div>
+      <div class="col-md-8 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <!--<div>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>-->
+        <app-columns-select
+          [(settings)]="settings"
+          [leftList]="true"></app-columns-select>
+      </div>
+    </div>
+
+    <!--<div class="ch-content" header>
       <h5 class="title"></h5>
       <div class="col-md-5 buttons">
         <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>
-    </div>
-    <div class="table-responsive">
-      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+    </div>-->
+    <div class="row">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="data"
+            (rowSelect)="rowSelect($event)">
+          </ng2-smart-table>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
+        </div>
+      </div>
     </div>
   </div>
 </app-card>

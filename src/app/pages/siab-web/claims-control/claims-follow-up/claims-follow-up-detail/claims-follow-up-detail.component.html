@@ -121,7 +121,7 @@
             </span>
           </form-field>
         </div>
-        <div class="col-md-5" style="margin: 20px 0 !important">
+        <div class="col-md-5 pt-4">
           <form-field
             label="Fecha Oficio/Correo"
             [control]="claimsFollowUpDetailForm.get('dateOfficeMailIn')">
@@ -130,7 +130,8 @@
               formControlName="dateOfficeMailIn"
               class="form-control"
               bsDatepicker
-              [bsConfig]="{ adaptivePosition: true }" />
+              [bsConfig]="{ adaptivePosition: true }"
+              style="margin-top: 4%" />
           </form-field>
         </div>
       </div>
@@ -246,7 +247,7 @@
             </span>
           </form-field>
         </div>
-        <div class="col-md-5 margin-input">
+        <div class="col-md-5 pt-4">
           <form-field
             [control]="claimsFollowUpDetailForm.get('letterClaimIn')"
             label="Fecha Carta Reclamación">
@@ -255,7 +256,8 @@
               formControlName="letterClaimIn"
               class="form-control"
               bsDatepicker
-              [bsConfig]="{ adaptivePosition: true }" />
+              [bsConfig]="{ adaptivePosition: true }"
+              style="margin-top: 4%" />
           </form-field>
         </div>
         <div class="col-md-5 margin-input">
@@ -297,7 +299,7 @@
             </span>
           </form-field>
         </div>
-        <div class="col-md-5 margin-input">
+        <div class="col-md-5 pt-4">
           <form-field
             label="Fecha Oficio de Conclusión/Minuta"
             [control]="claimsFollowUpDetailForm.get('dateOfficeMinConcluIn')">
@@ -306,12 +308,13 @@
               formControlName="dateOfficeMinConcluIn"
               class="form-control"
               bsDatepicker
-              [bsConfig]="{ adaptivePosition: true }" />
+              [bsConfig]="{ adaptivePosition: true }"
+              style="margin-top: 4%" />
           </form-field>
         </div>
       </div>
 
-      <div class="row">
+      <div class="row pt-4">
         <div class="col-md-6">
           <form-field
             label="Orden de Ingreso"
