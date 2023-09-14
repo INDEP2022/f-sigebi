@@ -9,7 +9,9 @@ import {
 import {
   IStrategyLovSer,
   IStrategyProcess,
+  IStrategyTurn,
   IStrategyType,
+  IStrateyCost,
 } from 'src/app/core/models/ms-strategy-service/strategy-service.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { IndicatorsParametersService } from 'src/app/core/services/ms-parametergood/indicators-parameter.service';
@@ -31,14 +33,19 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   serviceOrdersForm: FormGroup;
   filterType: IStrategyType;
   filterLovSer: IStrategyLovSer;
+  filterTurn: IStrategyTurn;
+  filterCost: IStrateyCost;
   area: number = 0;
   data1: any[] = [];
+  desStrategy: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
+  turnos = new DefaultSelect();
   totalItems: number = 0;
   delegationUser: any;
   delegation = new DefaultSelect();
   settings2 = { ...this.settings, actions: false };
   types = new DefaultSelect();
+  turns = new DefaultSelect();
   public serviceOrderKey = new DefaultSelect();
   public process = new DefaultSelect<IStrategyProcess>();
   public regionalCoordination = new DefaultSelect();
@@ -70,6 +77,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     this.serviceOrdersForm = this.fb.group({
       serviceOrderKey: [null, Validators.required],
       type: [null, Validators.required],
+      turno: [null, Validators.required],
       process: [null, Validators.required],
       regionalCoordination: [null, Validators.required],
       reportKey: [null, Validators.required],
@@ -83,16 +91,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       ],
     });
   }
-  public getServiceOrderKey(event: any) {
-    // this.bankService.getAll(params).subscribe(data => {
-    //   this.peritos = new DefaultSelect(data.data, data.count);
-    // });
-  }
-  public getRegionalCoordination(event: any) {
-    // this.bankService.getAll(params).subscribe(data => {
-    //   this.peritos = new DefaultSelect(data.data, data.count);
-    // });
-  }
+
   public getReportKey(event: any) {
     // this.bankService.getAll(params).subscribe(data => {
     //   this.peritos = new DefaultSelect(data.data, data.count);
@@ -166,6 +165,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       }),
       tap(response => {
         if (response.count > 0) {
+          console.log(response.data);
           response.data.filter((item: any) => {
             item['proAndName'] = item.processNumber + '-' + item.description;
           });
@@ -191,5 +191,61 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
         },
       });
     }
+  }
+  getTurns() {
+    this.filterTurn = {
+      pProcessNumber: this.serviceOrdersForm.get('process').value,
+      pServiceNumber: this.serviceOrdersForm.get('serviceOrderKey').value,
+      pServiceTypeNumber: Number(this.serviceOrdersForm.get('type').value),
+    };
+    this.strategyServiceService.getTurn(this.filterTurn).subscribe({
+      next: data => {
+        data.data.filter((item: any) => {
+          item['turnAndName'] = item.no_tiposervicio + '-' + item.descripcion;
+        });
+        this.turnos = new DefaultSelect(data.data, data.count);
+        // console.log(data);
+        // this.turnos = new DefaultSelect(data.data)
+      },
+      error: () => {
+        this.loading = false;
+        this.turnos = new DefaultSelect();
+      },
+    });
+  }
+
+  getCosts() {
+    // this.strategyServiceService.getCosts()}
+    this.filterCost = {
+      pProcessNumber: this.serviceOrdersForm.get('process').value,
+      pServiceNumber: this.serviceOrdersForm.get('serviceOrderKey').value,
+      pServiceTypeNumber: Number(this.serviceOrdersForm.get('type').value),
+      pTurnNumber: this.serviceOrdersForm.get('turno').value,
+    };
+    this.strategyServiceService.getTurn(this.filterTurn).subscribe({
+      next: data => {
+        // data.data.filter((item: any) => {
+        //   item['turnAndName'] = item.no_tiposervicio + '-' + item.descripcion;
+        // });
+        // this.turns = new DefaultSelect(data.data, data.count);
+        console.log('costos', data);
+      },
+      error: () => {
+        this.loading = false;
+        this.turns = new DefaultSelect();
+      },
+    });
+  }
+  getPostQuery() {
+    // cursor T_DESPR is
+    // select DESCRIPCION
+    //   from ESTRATEGIA_PROCESO
+    //  where NO_PROCESO = : ESTRATEGIA_FORMATO.NO_PROCESO;
+    //   --Descripción de la Coordinacion Regional(2)
+    // cursor T_DELEG is
+    // select DESCRIPCION
+    //   from CAT_DELEGACIONES
+    //  where NO_DELEGACION = : ESTRATEGIA_FORMATO.NO_DELEGACION_1
+    //  and ETAPA_EDO = FA_ETAPACREDA(SYSDATE);
   }
 }

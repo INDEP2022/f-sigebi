@@ -67,6 +67,7 @@
               [form]="serviceOrdersForm"
               [data]="types"
               (fetchItems)="getTypes()"
+              (change)="getTurns()"
               bindLabel="serAndName"
               control="type"
               [searchOnInit]="true"
@@ -82,6 +83,32 @@
             <ng-template #typeOption let-item="item">
               <div [title]="item.no_tiposervicio + '-' + item.descripcion">
                 {{ item.no_tiposervicio + ' - ' + item.descripcion }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="serviceOrdersForm.get('turno')">
+            <ngx-select
+              label="Turno"
+              [form]="serviceOrdersForm"
+              [data]="turnos"
+              (fetchItems)="getTurns()"
+              bindLabel="turnAndName"
+              control="type"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              termMaxLength="50"
+              value="no_turno"
+              [labelTemplate]="turnLabel"
+              [optionTemplate]="turnOption">
+            </ngx-select>
+            <ng-template #turnLabel let-item="item">
+              {{ item.no_turno + ' - ' + item.descripcion }}
+            </ng-template>
+            <ng-template #turnOption let-item="item">
+              <div [title]="item.no_turno + '-' + item.descripcion">
+                {{ item.no_turno + ' - ' + item.descripcion }}
               </div>
             </ng-template>
           </form-field>
@@ -129,7 +156,7 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="serviceOrdersForm.get('status')">
+          <!-- <form-field [control]="serviceOrdersForm.get('status')">
             <ngx-select
               (fetchItems)="getStatus($event)"
               [data]="status"
@@ -139,6 +166,16 @@
               label="Estatus"
               control="status">
             </ngx-select>
+          </form-field> -->
+          <form-field
+            [control]="serviceOrdersForm.get('status')"
+            label="Estatus">
+            <ng-select formControlName="status" class="form-control pt-1">
+              <ng-option value="Autorizda">AUTORIZADA</ng-option>
+              <ng-option value="Cancelada">CANCELADA</ng-option>
+              <ng-option value="Proceso">PROCESO</ng-option>
+              <ng-option value="Rechazado">RECHAZADO</ng-option>
+            </ng-select>
           </form-field>
         </div>
         <div class="col-md-3">
@@ -148,7 +185,6 @@
             <input
               type="text"
               formControlName="authorizationDate"
-              placeholder="Fecha de Autorización"
               class="form-control"
               bsDatepicker />
           </form-field>
@@ -160,7 +196,6 @@
             <input
               type="text"
               formControlName="dateCapture"
-              placeholder="Fecha de Captura"
               class="form-control"
               bsDatepicker />
           </form-field>
