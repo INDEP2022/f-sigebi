@@ -87,6 +87,10 @@ export class DonationService
     return this.get(DonationEndPoint.TempDonationGood, params);
   }
 
+  createApproveDonation(data: any) {
+    return this.post(DonationEndPoint.ApproveDonation, data);
+
+  }
   getDonationRequest(requestId: number) {
     return this.get(`/donac-request-good?filter.requestId.id=$eq:${requestId}`);
   }
