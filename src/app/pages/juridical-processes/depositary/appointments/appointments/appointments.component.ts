@@ -586,7 +586,12 @@ export class AppointmentsComponent
             console.log(this.good);
             // this.setGoodData();
             this.form.get('noBien').setValue(this.good.goodId);
-            this.validGoodNumberInDepositaryAppointment();
+            // this.validGoodNumberInDepositaryAppointment();
+            if (this.form.value.noBien) {
+              let param = new ListParams();
+              param.text = this.form.value.noBien;
+              this.getGoodsSheard(param, true);
+            }
           }
         },
       },
@@ -3028,6 +3033,16 @@ export class AppointmentsComponent
   }
 
   openModalMail() {
+    let desc = '';
+    if (this.good) {
+      desc = this.good.description;
+    }
+    let person = '';
+    if (this.depositaryAppointment) {
+      if (this.depositaryAppointment.personNumber) {
+        person = this.depositaryAppointment.personNumber.personName + '';
+      }
+    }
     const config = {
       ...MODAL_CONFIG,
       initialState: {
@@ -3039,11 +3054,9 @@ export class AppointmentsComponent
           'Por este Conducto se le Informa que el Bien: ' +
           this.noBienReadOnly +
           ' con Descripción: ' +
-          this.good
-            ? this.good.description
-            : '' +
-              '. Está en la Depositaría: ' +
-              this.depositaryAppointment.personNumber.personName,
+          desc +
+          '. Está en la Depositaría: ' +
+          person,
         asunto: 'Bien: ' + this.noBienReadOnly + ' en Depositaría',
       },
     };

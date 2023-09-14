@@ -1011,7 +1011,7 @@ export class PaymentDispersionValidationComponent
 
     if (this.layout == 'I') {
       params.addFilter('address', `I`, SearchFilter.EQ);
-      params.addFilter('eventTpId', `6,7,8,9,10,11,12`, SearchFilter.NOTIN);
+      params.addFilter('eventTpId', `1,2,3,4,5`, SearchFilter.IN);
     }
     // params.addFilter('eventTpId', `6,7`, SearchFilter.NOTIN);
     // params.addFilter('statusVtaId', `CONT`, SearchFilter.NOT);

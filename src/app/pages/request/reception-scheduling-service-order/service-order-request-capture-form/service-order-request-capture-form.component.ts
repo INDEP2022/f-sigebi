@@ -16,6 +16,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
 import { ConfirmProgrammingComponent } from '../../shared-request/confirm-programming/confirm-programming.component';
 import { AnnexWFormComponent } from '../components/annex-w-form/annex-w-form.component';
+import { RejectionCommentFormComponent } from '../components/rejection-comment-form/rejection-comment-form.component';
 
 @Component({
   selector: 'app-service-order-request-capture-form',
@@ -38,7 +39,7 @@ export class ServiceOrderRequestCaptureFormComponent
   form: FormGroup = new FormGroup({});
   ordServform: FormGroup = new FormGroup({});
   parentModal: BsModalRef;
-  op: number = 1;
+  op: number = 4;
   showForm: boolean = true;
   orderServiceId: number = null;
   lsProgramming: string = null;
@@ -358,5 +359,23 @@ export class ServiceOrderRequestCaptureFormComponent
 
   getTotal(event: string) {
     this.total = event;
+  }
+
+  rejectOrder() {
+    const folio = this.ordServform.get('serviceOrderFolio').value;
+    let config: ModalOptions = {
+      initialState: {
+        folio: folio,
+        callback: (next: boolean) => {
+          if (next) {
+            //this.getProgrammingId();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    //RejectionJustifyFormComponent
+    this.modalService.show(RejectionCommentFormComponent, config);
   }
 }

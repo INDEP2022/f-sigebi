@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, forkJoin, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
@@ -223,37 +223,50 @@ export class winnersReportComponent extends BasePage implements OnInit {
     });
   }
 
-  async exportarWinner() {
+  exportarWinner() {
     if (this.data.count() == 0) {
       this.alert('warning', 'No hay Bienes en la Tabla', '');
       return;
     }
 
-    const pageSize = 10; // Cantidad de elementos por página
-    const totalItems = this.data.count(); // Total de elementos en la tabla
-    const totalPages = Math.ceil(totalItems / pageSize); // Calculamos el total de páginas
+    const filename = 'Reporte Ganadores';
 
-    const filename: string = 'Reporte Ganadores';
-    const jsonToCsv: any[] = [];
+    let params = {
+      ...this.params.getValue(),
+    };
+    this.winner.lotApp(this.form.get('event').value, params).subscribe({
+      next: resp => {
+        const allData = resp.data;
 
-    // Obtener todos los datos en una sola solicitud
-    const allData = await this.returnAllData();
+        // Si hay más páginas de datos, recuperarlas
+        const totalPages = Math.ceil(resp.count / params.pageSize);
+        const additionalRequests = [];
 
-    // Dividir los datos en páginas
-    for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
-      const startIndex = (pageNumber - 1) * pageSize;
-      const endIndex = pageNumber * pageSize;
-      const dataPage = allData.slice(startIndex, endIndex);
-      jsonToCsv.push(...dataPage);
-    }
+        for (let page = 2; page <= totalPages; page++) {
+          params.page = page;
+          additionalRequests.push(
+            this.winner.lotApp(this.form.get('event').value, params)
+          );
+        }
 
-    this.excelService.export(jsonToCsv, { type: 'csv', filename });
-    this.alert('success', 'Reporte Generado Correctamente', '');
-  }
+        // Combinar todos los registros en this.line
+        forkJoin(additionalRequests).subscribe({
+          next: additionalResponses => {
+            for (const additionalResp of additionalResponses) {
+              allData.push(...additionalResp.data);
+            }
 
-  async returnAllData() {
-    // Obtener todos los datos en una sola solicitud (de ser posible)
-    return this.data.getAll();
+            this.excelService.export(allData, { type: 'csv', filename });
+          },
+          error: err => {
+            console.log(err);
+          },
+        });
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
   }
 
   clean() {

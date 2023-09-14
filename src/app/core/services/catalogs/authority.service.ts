@@ -153,4 +153,33 @@ export class AuthorityService
     const route = `${AuthorityEndpoints.Sssubtipe}?filter.numClasifGoods=$eq:${id}`;
     return this.get(route);
   }
+
+  getTranfer(params?: ListParams | string): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.transferent}`;
+    return this.get(route, params);
+  }
+
+  getTranferId(id: number) {
+    const route = `${AuthorityEndpoints.transferent}?filter.id=$eq:${id}`;
+    return this.get(route);
+  }
+
+  getTranferIdandEmisora(
+    params?: ListParams | string
+  ): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.station}`;
+    return this.get(route, params);
+  }
+
+  getstationId(trasnfer: any, emisora: any) {
+    const route = `${AuthorityEndpoints.transferent}?filter.idTransferent=$eq:${trasnfer}&filter.id=$eq:${emisora}`;
+    return this.get(route);
+  }
+
+  getStrategyFormat(
+    params?: ListParams | string
+  ): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.getTdsau}`;
+    return this.get(route, params);
+  }
 }

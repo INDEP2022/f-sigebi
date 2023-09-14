@@ -31,6 +31,10 @@ export class PaymentService extends HttpService {
     return this.get(PaymentEndPoints.ComerPaymentRef, params);
   }
 
+  getPaymentsxConfirm(params: _Params) {
+    return this.get(PaymentEndPoints.PaymentsxConfirm, params);
+  }
+
   remove(id: any) {
     return this.delete(`${PaymentEndPoints.ComerPaymentRef}/${id}`);
   }
@@ -201,5 +205,14 @@ export class PaymentService extends HttpService {
       params,
       // responseType: 'arraybuffer' as 'json',
     });
+  }
+
+  getPaymentRefById_(id: any) {
+    return this.get(`${PaymentEndPoints.ComerPaymentRef}/${id}`);
+  }
+
+  //comer-rel-usu-canc
+  getComerRelUsuCanc(params?: string) {
+    return this.get(`comer-rel-usu-canc`, params);
   }
 }

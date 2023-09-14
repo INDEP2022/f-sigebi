@@ -172,7 +172,7 @@
           [attr.class]="'table-bordered table-responsive pt-3'"
           [settings]="settings"
           [source]="paragraphs"
-          (edit)="showDocument()">
+          (edit)="showDocuments($event.data)">
         </ng2-smart-table>
       </div>
     </div>

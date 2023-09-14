@@ -238,18 +238,24 @@ export class ServiceTransportableGoodsFormComponent
       if (this.op == 3 || this.op == 4 || this.op == 5 || this.op == 6) {
         for (let index = 0; index < tbody.length; index++) {
           const ele: any = tbody[index];
-          ele.children[5].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
-            true;
-          ele.children[6].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
-            true;
+          //duracion hora
+          ele.children[8].querySelector('#text-input').disabled = true;
+          /* ele.children[5].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
+            true; */
+          /* ele.children[6].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
+            true; */
+          //no. recursos
+          ele.children[9].querySelector('#text-input').disabled = true;
         }
       }
       //readonly no. recursos
       if (this.op == 4 || this.op == 5 || this.op == 14) {
         for (let index = 0; index < tbody.length; index++) {
           const ele: any = tbody[index];
-          ele.children[6].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
-            true;
+          /*  ele.children[6].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
+            true; */
+          //no. recursos
+          ele.children[9].querySelector('#text-input').disabled = true;
         }
       }
     }, 300);
@@ -276,31 +282,30 @@ export class ServiceTransportableGoodsFormComponent
       const table = document.getElementById('table');
       const tbody = table.children[0].children[1].children;
       const row: any = tbody[this.data.length - 1];
-      //console.log(row.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0])
-      row.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-        true;
-
+      //select
+      row.children[0].querySelector('#checkbox-input').hidden = true;
       if (resultAssessment.hide == false)
-        row.children[1].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-          true;
+        //result evaluacion
+        row.children[1].querySelector('#select-input').hidden = true;
       if (amountNumbercomplies.hide == false)
-        row.children[2].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-          true;
+        //bi recur no cumple
+        row.children[2].querySelector('#text-input').hidden = true;
       if (porcbreaches.hide == false)
-        row.children[3].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-          true;
-      row.children[7].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-        true;
-      row.children[8].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-        true;
-      row.children[9].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-        true;
+        //incumpli %
+        row.children[3].querySelector('#text-input').hidden = true;
+      //comentario de servicio
+      row.children[7].querySelector('#text-input').hidden = true;
+      //duracion horas
+      row.children[8].querySelector('#text-input').hidden = true;
+      //no. recurso
+      row.children[9].querySelector('#text-input').hidden = true;
       if (resourcesReal.hide == false)
-        row.children[10].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-          true;
-      if (descriptionDifference.hide == false)
-        row.children[12].children[0].children[0].children[0].children[0].children[0].children[0].children[0].hidden =
-          true;
+        //recurso real
+        row.children[10].querySelector('#text-input').hidden = true;
+      if (descriptionDifference.hide == false) {
+        //descrip de diferencia
+        row.children[13].querySelector('#text-input').hidden = true;
+      }
     }, 300);
   }
 
@@ -324,10 +329,13 @@ export class ServiceTransportableGoodsFormComponent
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-content-centered' };
 
     config.initialState = {
+      orderServId: this.orderServiceId,
+      typeService: 'EN_TRANSPORTABLE',
       callback: (data: any) => {
         if (data) {
           console.log(data);
           this.showButtonServiceManual = true;
+          this.getOrderServiceProvided();
         }
       },
     };

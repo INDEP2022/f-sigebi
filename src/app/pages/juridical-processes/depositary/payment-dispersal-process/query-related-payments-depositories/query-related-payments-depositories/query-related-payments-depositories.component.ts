@@ -148,7 +148,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
         param.text = this.form.value.noBien;
         this.getGoodsSheard(param, true);
       } else {
-        this.alert('warning', 'Número de bien', ERROR_GOOD_PARAM);
+        this.alert('warning', 'No. de bien', ERROR_GOOD_PARAM);
       }
     }
     // Pagos Bancos
@@ -249,7 +249,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
       if (!this.noBienReadOnly) {
         this.alert(
           'warning',
-          'Número de bien',
+          'No. de bien',
           'Carga la información del bien primero para continuar'
         );
         return;
@@ -270,16 +270,17 @@ export class QueryRelatedPaymentsDepositoriesComponent
             this.loadingGoodAccount = false;
             this.alert(
               'warning',
-              'Número de bien',
+              'No. de bien',
               NOT_FOUND_GOOD(
-                // err.error.message ? err.error.message :
-                'Error en el servidor'
+                err.error.message && err.status != 400
+                  ? err.error.message
+                  : 'Error en el servidor'
               )
             );
           },
         });
     } else {
-      this.alert('warning', 'Número de bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -307,6 +308,11 @@ export class QueryRelatedPaymentsDepositoriesComponent
     this.sendSirsaeGetPayDepositories();
   }
 
+  closeSendSirsae() {
+    this.startSirsaeValues();
+    this.loadingSirsaeProcess = false;
+  }
+
   startSirsaeValues() {
     this.errorsSirsae = [];
     this.loadingSirsaeProcess = true;
@@ -319,13 +325,13 @@ export class QueryRelatedPaymentsDepositoriesComponent
   btnImprimir(): any {
     console.log('Imprimir');
     // LLAMAR PANTALLA FCONDEPOREPINGXBIEN - ordenes de ingreso x bien en depositaria
-    // PASAR SOLO EL NÚMERO DE bIEN
+    // PASAR SOLO EL NO. DE bIEN
     // this.alert('info', 'LLAMAR PANTALLA FCONDEPOREPINGXBIEN', '');
     if (this.form.get('noBien').valid) {
       if (!this.noBienReadOnly) {
         this.alert(
           'warning',
-          'Número de bien',
+          'No. de bien',
           'Carga la información del bien primero para continuar'
         );
         return;
@@ -348,7 +354,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
         }
       );
     } else {
-      this.alert('warning', 'Número de bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -410,16 +416,17 @@ export class QueryRelatedPaymentsDepositoriesComponent
             this.loadingAppointment = false;
             this.alert(
               'warning',
-              'Número de bien',
+              'No. de bien',
               NOT_FOUND_GOOD_APPOINTMENT(
-                // err.error.message ? err.error.message :
-                'Error en el servidor'
+                err.error.message && err.status != 400
+                  ? err.error.message
+                  : 'Error en el servidor'
               )
             );
           },
         });
     } else {
-      this.alert('warning', 'Número de bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -445,10 +452,11 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.loadingGood = false;
           this.alert(
             'warning',
-            'Número de bien',
+            'No. de bien',
             NOT_FOUND_GOOD(
-              // err.error.message ? err.error.message :
-              'Error en el servidor'
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
             )
           );
         },
@@ -503,6 +511,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
       this.formBienDetalle.reset();
       this.startTablePaymentBank();
       this.startTablePaymentReceive();
+      this.closeSendSirsae();
     }
   }
 
@@ -526,8 +535,9 @@ export class QueryRelatedPaymentsDepositoriesComponent
             'warning',
             'Descripción del bien',
             NOT_FOUND_GOOD_DESCRIPTION(
-              // err.error.message ? err.error.message :
-              'Error en el servidor'
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
             )
           );
         },
@@ -600,8 +610,9 @@ export class QueryRelatedPaymentsDepositoriesComponent
             'warning',
             'Pagos recibidos en el banco',
             NOT_FOUND_PAYMENTS_BANK(
-              // err.error.message ? err.error.message :
-              'Error en el servidor'
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
             )
           );
         },
@@ -624,8 +635,9 @@ export class QueryRelatedPaymentsDepositoriesComponent
             'warning',
             'Suma del depósito de los pagos recibidos en el banco',
             NOT_FOUND_PAYMENTS_BANK_TOTALS(
-              // err.error.message ? err.error.message :
-              'Error en el servidor'
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
             )
           );
         },
@@ -683,8 +695,9 @@ export class QueryRelatedPaymentsDepositoriesComponent
             'warning',
             'Composición de pagos recibidos',
             NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS(
-              // err.error.message ? err.error.message :
-              'Error en el servidor'
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
             )
           );
         },
@@ -709,8 +722,9 @@ export class QueryRelatedPaymentsDepositoriesComponent
             'warning',
             'Sumas del monto sin iva, monto con iva y el pago actual de la composición de pagos recibidos',
             NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS_TOTALS(
-              // err.error.message ? err.error.message :
-              'Error en el servidor'
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
             )
           );
         },
@@ -833,10 +847,14 @@ export class QueryRelatedPaymentsDepositoriesComponent
           obj['lstLot'] = 'Realice el proceso nuevamente de envio SIRSAE';
         } else {
           obj['errores'] = err.error.message
-            ? err.error.message
+            ? err.error.message.includes('duplicate key')
+              ? 'Ya existe un registro en Sirsae de este pago'
+              : 'Error en el Servidor'
             : 'Error en el Servidor';
           obj['lstLot'] = err.error.message
-            ? err.error.message
+            ? err.error.message.includes('duplicate key')
+              ? 'Ya existe un registro en Sirsae de este pago'
+              : 'Error en el Servidor'
             : 'Error en el Servidor';
         }
         this.errorsSirsae.push(obj);
