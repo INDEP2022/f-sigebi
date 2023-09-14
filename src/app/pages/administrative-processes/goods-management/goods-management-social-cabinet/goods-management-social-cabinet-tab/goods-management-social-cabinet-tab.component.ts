@@ -152,7 +152,11 @@ export class GoodsManagementSocialCabinetTabComponent
         error: err => {
           this.pageLoading = false;
           // this.form.get('option').setValue(null);
-          this.alert('error', 'ERROR', 'Bienes no procesados correctamente');
+          this.alert(
+            'error',
+            'Procesamiento Gabinete Social',
+            'Bienes no procesados correctamente'
+          );
           // this.selectedGoodstxt = [...this.selectedGoodstxt];
           this.processErrors++;
         },

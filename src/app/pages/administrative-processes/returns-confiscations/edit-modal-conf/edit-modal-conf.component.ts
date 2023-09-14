@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared';
@@ -31,7 +32,8 @@ export class EditModalConfComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private usersService: UsersService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private authorityService: AuthorityService
   ) {
     super();
   }
@@ -53,17 +55,13 @@ export class EditModalConfComponent extends BasePage implements OnInit {
             : null,
       });
 
-      /*if (this.data.promoterUserDecoDevo != null) {
-        //this.params(this.data.promoterUserDecoDevo);
+      if (this.data.promoterUserDecoDevo != null) {
         console.log(
           'this.data.promoterUserDecoDevo -> ',
           this.data.promoterUserDecoDevo
         );
-        this.form.get('promoter').setValue(this.data.promoterUserDecoDevo);
-        this.user1 = new DefaultSelect([1, 'user1', 'user1@example.com']);
-
-        // this.user1.data.push(this.data.promoterUserDecoDevo);
-      } */
+        this.getAllSegUserFind(this.data.promoterUserDecoDevo, null);
+      }
     }
   }
 
@@ -136,14 +134,17 @@ export class EditModalConfComponent extends BasePage implements OnInit {
     });
   }
 
-  getAllSegUserFind(params: ListParams) {
+  getAllSegUserFind(num: any, params?: ListParams) {
     console.log('params: ', params);
-    this.usersService.getAllSegUsers2(params).subscribe({
+    console.log('num : ', num);
+
+    const _params: ListParams = params;
+    _params[`filter.name`] = `$eq:${num}`;
+    console.log('_params-> ', _params);
+    this.usersService.getAllSegUsers2(_params).subscribe({
       next: resp => {
-        console.log('resp data ', resp.data[0]);
-        //this.user1.data = resp.data[0];
-        this.form.get('promoter').setValue(resp.data[0]);
         this.user1 = new DefaultSelect(resp.data, resp.count);
+        this.form.get('promoter').setValue(resp.data[0].name);
       },
       error: err => {
         this.user1 = new DefaultSelect();

@@ -291,7 +291,7 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
             )
           );
         } else {
-          this.alert('warning', this.title, 'No se encontrarón registros.');
+          this.alert('warning', this.title, 'No se encontraron registros.');
         }
         this.getGoods();
         this.loading = false;

@@ -267,7 +267,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     private comerDetailService: ComerDetailsService,
     private attribGoodBadService: AttribGoodBadService,
     private fb: FormBuilder,
-    public router: Router
+    private router: Router
   ) {
     super();
     this.loading = true;

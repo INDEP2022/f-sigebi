@@ -153,8 +153,7 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
 
   confirm() {
     /*const quantitySae = this.form.get('quantitySae').value;
-    console.log('sae', quantitySae);
-    console.log('trans', this.good?.quantity);
+   
 
     if (this.unitMeasureConv) {
       if (this.unitMeasureConv.tpUnitGreater == 'N') {
@@ -165,7 +164,7 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
             'La cantidad INDEP es mayor a la cantidad transferente'
           );
         } else {
-          console.log('form', this.form);
+      
           this.goodService.updateByBody(this.form.value).subscribe({
             next: response => {
               this.modalRef.content.callback(true);
@@ -191,7 +190,6 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
     } */
 
     if (this.form.get('observations').value) {
-      console.log('good', this.good);
       const formData = {
         id: this.good?.id,
         goodId: this.good?.goodId,

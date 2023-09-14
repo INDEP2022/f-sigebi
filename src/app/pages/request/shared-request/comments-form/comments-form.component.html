@@ -18,7 +18,7 @@
       <form [formGroup]="ordServform" class="form-material">
         <div class="pt-3">
           <form-field
-            [control]="ordServform.get('observation')"
+            [control]="ordServform?.get('observation')"
             label="Observaciones">
             <textarea
               *ngIf="
@@ -38,12 +38,12 @@
                 (!showForm && op != 9)
               "
               class="form-control"
-              formControlName="observations"
+              formControlName="observation"
               readonly></textarea>
           </form-field>
         </div>
         <div class="pt-3">
-          <form-field [control]="ordServform.get('notes')" label="Notas">
+          <form-field [control]="ordServform?.get('notes')" label="Notas">
             <textarea
               class="form-control"
               formControlName="notes"

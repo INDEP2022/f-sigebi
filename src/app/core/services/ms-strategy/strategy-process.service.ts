@@ -62,4 +62,39 @@ export class StrategyProcessService extends HttpService {
     const route = `${StrategyEndpoints.PaEstGood}`;
     return this.post(route, params);
   }
+
+  ByFormats(params: any) {
+    const route = `${StrategyEndpoints.FEstFormat}`;
+    return this.post(route, params);
+  }
+
+  ByIdActaNoGood(proceeding: number, good: number) {
+    const route = `${StrategyEndpoints.FestFormat2}?limit=1000&page=1&filter.proceedingNumber=$eq:${proceeding}&filter.goodNumber=$eq:${good}`;
+    return this.get(route);
+  }
+
+  ByIdProces(process: number) {
+    const route = `${StrategyEndpoints.StrategyProcess}filter.processNumber=$eq:${process}`;
+    return this.get(route);
+  }
+
+  getAllStrategyIndicator(params: any) {
+    const route = `${StrategyEndpoints.strategyIndicator}`;
+    return this.get(route, params);
+  }
+
+  getStrategyIndicatorByRegister(noFormat: any) {
+    const route = `${StrategyEndpoints.strategyIndicator}?filter.registerNumber=$eq:${noFormat}`;
+    return this.get(route);
+  }
+
+  PutStrategyIndicator(params: any) {
+    const route = `${StrategyEndpoints.strategyIndicator}`;
+    return this.put(route, params);
+  }
+
+  getStrategyRepImplementation(noFormat: any) {
+    const route = `${StrategyEndpoints.StrategyRepIm}?filter.formatNumber=$eq:${noFormat}`;
+    return this.get(route);
+  }
 }
