@@ -16,4 +16,6 @@ export enum AccountmvmntEndpoint {
   AccountMovements = 'account-movements',
   MaxDate = 'aplication/get-MaxFecha',
   GetCtrlPago = 'aplication/get-CtrlPagos',
+  GetSucursalByCveBanco = 'aplication/get-sucursalByCveBanco',
+  GetCountMovimiento = 'get-CountByMovimientoFechaReferencia',
 }

@@ -20,6 +20,9 @@ export class PayloadComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   dateMax: string;
   columnFilters: any = [];
+  dataFormat: any[] = [];
+  totalrecords: number = 0;
+  loadedAmount: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -173,16 +176,103 @@ export class PayloadComponent extends BasePage implements OnInit {
             L_DESCPAGO = bancData.data[0];
           } else {
             LST_2COL1 = 'BANAMEX PS';
-            let bancDesc = await this.obtenCodDescPago(LST_2COL1, 17);
-            let bancData: any = bancDesc;
-            CODIGO_BANCO = bancData.data[0];
-            L_DESCPAGO = bancData.data[0];
+            let bancDesc1 = await this.obtenCodDescPago(LST_2COL1, 17);
+            let bancData1: any = bancDesc1;
+            CODIGO_BANCO = bancData1.data[0];
+            L_DESCPAGO = bancData1.data[0];
           }
         } else if (LST_2COL1.indexOf('BANCO SANT') !== -1) {
           V_FECHA = 2;
           LST_2COL1 = 'SANTAND PS';
+          let DESCRIPCION_MOV_TRIM = DESCRIPCION_MOV.trim();
+          const auxsan = DESCRIPCION_MOV_TRIM;
+          let bancDesc2 = await this.obtenCodDescPago(auxsan, 0);
+          let bancData2: any = bancDesc2;
+          CODIGO_BANCO = bancData2.data[0];
+          L_DESCPAGO = DESCRIPCION_MOV;
+        } else if (LST_2COL1.indexOf('HSBC') !== -1) {
+          V_FECHA = 3;
+          LST_2COL1 = 'HSBC PS';
+          let bancDesc3 = await this.obtenCodDescPago(LST_2COL1, 100);
+          let bancData3: any = bancDesc3;
+          CODIGO_BANCO = bancData3.data[0];
+          L_DESCPAGO = bancData3.data[0];
+        } else if (LST_2COL1.indexOf('BANORTE') !== -1) {
+          V_FECHA = 4;
+          LST_2COL1 = 'BANORTE PS';
+          let bancDesc4 = await this.obtenCodDescPago(LST_2COL1, 3);
+          let bancData4: any = bancDesc4;
+          CODIGO_BANCO = bancData4.data[0];
+          L_DESCPAGO = bancData4.data[0];
+        } else if (LST_2COL1.indexOf('SCOTIABANK') !== -1) {
+          V_FECHA = 5;
+          LST_2COL1 = 'SCOTIA PS';
+          let bancDesc5 = await this.obtenCodDescPago(LST_2COL1, 10);
+          let bancData5: any = bancDesc5;
+          CODIGO_BANCO = bancData5.data[0];
+          L_DESCPAGO = bancData5.data[0];
+        } else if (LST_2COL1.indexOf('BBVA BA') !== -1) {
+          V_FECHA = 5;
+          LST_2COL1 = 'BANCOM PS';
+          let bancDesc6 = await this.obtenCodDescPago(LST_2COL1, 10);
+          let bancData6: any = bancDesc6;
+          CODIGO_BANCO = bancData6.data[0];
+          L_DESCPAGO = bancData6.data[0];
+        } else {
+          V_FECHA = 0;
+        }
+        let sucursal = await this.obtenSucursal(LST_2COL1);
+        let sucursalData: any = sucursal;
+        SUCURSAL_B = sucursalData.data[0];
+        let existe = await this.consultaExiste(LST_COL2, V_FECHA, references);
+        let existeData: any = existe;
+        EXISTE = existeData.data[0];
+
+        let ValidoTexto: string = '';
+        if (AUX_VAL == 'S') ValidoTexto = 'Si';
+        else if (AUX_VAL == 'R') ValidoTexto = 'Rechazado';
+        else if (AUX_VAL == 'N') ValidoTexto = 'No Invalido';
+        else if (AUX_VAL == 'A') ValidoTexto = 'Aplicado';
+        else if (AUX_VAL == 'B') ValidoTexto = 'Pago de Bases';
+        else if (AUX_VAL == 'D') ValidoTexto = 'Devuelto';
+        else if (AUX_VAL == 'C') ValidoTexto = 'Contabilizado';
+        else if (AUX_VAL == 'P') ValidoTexto = 'Penalizado';
+        else if (AUX_VAL == 'Z') ValidoTexto = 'Devuelto al Cliente';
+
+        if (EXISTE == 0) {
+          Contador = Contador + 1;
+
+          const data: any = {
+            //NoMovimiento: dtSQL.Rows[0.ItemArray[5.ToString(),
+            FechaMov: LST_COL2,
+            Movimiento: L_DESCPAGO,
+            Cuenta: V_CTA_BANCARIA,
+            Referencia: references,
+            ReferenciaOrdenIngreso: '',
+            Banco: LST_2COL1,
+            Sucursal: '',
+            //Monto: Convert.ToDecimal(dtSQL.Rows[0.ItemArray[2.ToString()),
+            Resultado: AUX_RESULTADO,
+            Valido: AUX_VAL,
+            ValidoText: ValidoTexto,
+            idPago: secuencia,
+            LotePublico: L_PUBLICO.toString(),
+            //Evento: dtOracle.Rows[i.ItemArray[1.ToString(),
+            OrdenIngreso: '',
+            Fecha: '',
+            DescripcionSAT: '',
+            Tipo: LST_TIPO,
+            DescPago: L_DESCPAGO,
+            Contador: Contador,
+            V_Fecha: V_FECHA,
+            Codigo_Banco: CODIGO_BANCO,
+            Id_Lote: L_LOTE,
+            Id_Tipo_SAT: V_ValTPago,
+          };
+          this.dataFormat.push(data);
         }
       }
+      this.totalrecords = Contador;
     }
   }
 
@@ -262,4 +352,48 @@ export class PayloadComponent extends BasePage implements OnInit {
       });
     });
   }
+
+  async obtenSucursal(lst_2col1: string) {
+    return new Promise((resolve, reject) => {
+      let body = {
+        cveBanco: lst_2col1,
+      };
+      this.accountMovementService.getSucursal(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async consultaExiste(fecMov: string, vFec: number, ref: string) {
+    //Consultar a back
+    return new Promise((resolve, reject) => {
+      let body = {
+        //vmovimiento: ,
+        FecMovimiento: fecMov,
+        vfecha: vFec,
+        Referencia: ref,
+      };
+      this.accountMovementService.getExiste(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  searchRef() {}
+
+  changeevent() {}
+
+  relatepagosport() {}
+
+  relatePaymentsSIRSAE() {}
 }

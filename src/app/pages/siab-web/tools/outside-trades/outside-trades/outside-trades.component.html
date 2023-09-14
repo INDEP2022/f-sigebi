@@ -122,20 +122,24 @@
               maxlength="20" />
           </form-field>
         </div>
-        <div class="row justify-content-center">
-          <br />
-          <div class="col-md-1">
-            <button class="btn btn-primary active btn-sm" (click)="goBack()">
-              Regresar <i class="fas fa-arrow-circle-left"></i>
-            </button>
-          </div>
-          <div class="col-md-1">
-            <button
-              type="button"
-              class="btn btn-primary active btn-sm"
-              (click)="onClickPrintOffice()">
-              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
-            </button>
+
+        <div class="row pt-4">
+          <div class="col-md-12 d-flex justify-content-center">
+            <div>
+              <!--[disabled]="!form.valid"-->
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="goBack()">
+                Regresar <i class="fas fa-arrow-circle-left"></i>
+              </button>
+              <button
+                class="btn btn-primary btn-sm active mr-3"
+                type="button"
+                (click)="onClickPrintOffice()">
+                Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>

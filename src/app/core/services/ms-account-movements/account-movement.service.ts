@@ -58,6 +58,14 @@ export class AccountMovementService extends HttpService {
     return this.post(AccountmvmntEndpoint.MetodoDePago, params);
   }
 
+  getSucursal(body: any) {
+    return this.post(AccountmvmntEndpoint.GetSucursalByCveBanco, body);
+  }
+
+  getExiste(body: any) {
+    return this.post(AccountmvmntEndpoint.GetCountMovimiento, body);
+  }
+
   getDevolutionsBanks() {
     return this.get<IListResponse<IAccountMovementShort>>(
       AccountmvmntEndpoint.getDevolutionsBanks
