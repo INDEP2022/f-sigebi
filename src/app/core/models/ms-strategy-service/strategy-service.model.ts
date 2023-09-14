@@ -25,3 +25,16 @@ export interface IStrategyProcess {
   desShort: string;
   description: string;
 }
+
+export interface IStrategyTurn {
+  pProcessNumber: number;
+  pServiceNumber: number;
+  pServiceTypeNumber: number;
+}
+
+export interface IStrateyCost {
+  pProcessNumber: number;
+  pServiceNumber: number;
+  pServiceTypeNumber: number;
+  pTurnNumber: number;
+}

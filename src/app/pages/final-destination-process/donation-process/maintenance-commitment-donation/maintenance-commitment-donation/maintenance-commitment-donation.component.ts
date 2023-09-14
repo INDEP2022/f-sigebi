@@ -1,36 +1,26 @@
 import { Component, OnInit } from '@angular/core';
-import { COLUMNS_DATA_TABLE } from '../data-in-table/columns-data-table';
-import { BasePage } from 'src/app/core/shared';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IUnits } from 'src/app/core/models/administrative-processes/siab-sami-interaction/measurement-units';
-import { MODAL_CONFIG } from '../../../../../common/constants/modal-config';
-import { MeasuremenUnitsModalComponent } from 'src/app/pages/administrative-processes/administration-third/measurement-units/measuremen-units-modal/measuremen-units-modal.component';
-import { MaintenanceCommitmentDonationModalComponent } from '../maintenance-commitment-donation-modal/maintenance-commitment-donation-modal.component';
+import { BasePage } from 'src/app/core/shared';
 
 @Component({
   selector: 'app-maintenance-commitment-donation',
   templateUrl: './maintenance-commitment-donation.component.html',
   styles: [],
 })
-export class MaintenanceCommitmentDonationComponent extends BasePage implements OnInit {
-
+export class MaintenanceCommitmentDonationComponent
+  extends BasePage
+  implements OnInit
+{
   dataSelect: any;
   form: FormGroup = new FormGroup({});
   newOrEdit: boolean = false;
 
-
-  constructor(
-    private fb: FormBuilder,
-    private modalService: BsModalService,
-
-  ) {
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
   }
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
   /*update() {
     let bool = false;
     this.loadModal(bool);
@@ -80,4 +70,5 @@ export class MaintenanceCommitmentDonationComponent extends BasePage implements 
     let bool = true;
     this.loadModal(bool);
   }
-*/}
+*/
+}
