@@ -82,6 +82,10 @@ export class ComerEventosService extends HttpService {
     return this.get(`application/selectComerEvent/${goodType}`, params);
   }
 
+  getSelectComerEventFcomer62(params: _Params, goodType: any) {
+    return this.get(`application/get-event-address/${goodType}`, params);
+  }
+
   getPaymentLots(id: any) {
     return this.get(`application/get-lots-payments/${id}`);
   }
@@ -155,5 +159,10 @@ export class ComerEventosService extends HttpService {
       id,
       params
     );
+  }
+
+  getspObtnPhaseEvent(body: any) {
+    const route = `${EventEndpoints.SpObtnPhaseEvent}`;
+    return this.post(route, body);
   }
 }
