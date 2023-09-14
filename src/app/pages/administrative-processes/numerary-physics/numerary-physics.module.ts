@@ -3,10 +3,10 @@ import { NgModule } from '@angular/core';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
 import { SharedModule } from '../../../shared/shared.module';
 import { NumeraryPhysicsRoutingModule } from './numerary-physics-routing.module';
 import { NumeraryPhysicsComponent } from './numerary-physics/numerary-physics.component';
-
 @NgModule({
   declarations: [NumeraryPhysicsComponent],
   imports: [
@@ -14,6 +14,7 @@ import { NumeraryPhysicsComponent } from './numerary-physics/numerary-physics.co
     NumeraryPhysicsRoutingModule,
     ReactiveFormsModule,
     SharedModule,
+    DelegationSharedComponent,
     BsDatepickerModule.forRoot(),
   ],
 })

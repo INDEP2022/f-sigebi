@@ -9,7 +9,7 @@
       </div>
       <div class="mx-5" *ngIf="officeKey">
         <p>
-          CVE Oficio: <b>{{ officeKey }}</b>
+          Cve. Oficio: <b>{{ officeKey }}</b>
         </p>
       </div>
     </div>
@@ -147,7 +147,7 @@
 
             <div class="row" *ngIf="!queryMode">
               <div class="col-md-8 d-flex">
-                <form-radio label="Texto areas">
+                <form-radio label="Texto Áreas">
                   <input
                     type="radio"
                     formControlName="messageType"
@@ -178,16 +178,20 @@
         <form-field
           class="col-md-12"
           [control]="documentsForm.get('messageBody')"
-          label="Texto del mensaje">
-          <textarea formControlName="messageBody" class="form-control" rows="6">
+          label="Texto del Mensaje">
+          <br /><textarea
+            formControlName="messageBody"
+            class="form-control"
+            rows="6">
           </textarea>
         </form-field>
       </div>
 
       <div class="row">
         <ng2-smart-table
-          [attr.class]="'table-bordered'"
+          [attr.class]="'table-bordered table-responsive'"
           [settings]="settings"
+          (userRowSelect)="selectRow($event.data)"
           [source]="notifications">
         </ng2-smart-table>
       </div>
@@ -197,20 +201,23 @@
           [totalItems]="totalNotifications"></app-pagination>
       </div>
 
-      <div class="row pt-4">
+      <div class="row pt-5">
         <div class="col-md-12 text-right">
-          <button
-            class="btn btn-secondary active mx-2"
-            type="button"
-            (click)="resetScreen()">
-            Consultar / Crear Envío
-          </button>
+          <div class="col-md-1 text-right">
+            <button
+              class="btn btn-primary btn-sm active"
+              type="button"
+              (click)="resetScreen()">
+              Consultar / Crear Envío
+            </button>
+          </div>
+          <!-- <confirm-button [loading]="loading" [text]="queryMode ? 'Imprimir' : 'Guardar'" [loadingText]="queryMode ? 'Imprimiendo...' : 'Guardando...'" [btnSmall]="true"></confirm-button>-->
           <confirm-button
+            *ngIf="!queryMode"
             [loading]="loading"
-            [text]="queryMode ? 'Imprimir' : 'Guardar'"
-            [loadingText]="
-              queryMode ? 'Imprimiendo...' : 'Guardando...'
-            "></confirm-button>
+            [text]="queryMode ? '' : 'Guardar'"
+            [loadingText]="'Guardando...'"
+            [btnSmall]="true"></confirm-button>
         </div>
       </div>
     </form>

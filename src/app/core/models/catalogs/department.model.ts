@@ -4,7 +4,7 @@ import { ISubdelegation } from './subdelegation.model';
 export interface IDepartment {
   id?: number;
   numDelegation: number;
-  numSubDelegation: ISubdelegation | number;
+  numSubDelegation: ISubdelegation | any;
   dsarea: string;
   description: string;
   lastOffice: number;

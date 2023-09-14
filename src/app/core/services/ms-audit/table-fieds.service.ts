@@ -3,21 +3,21 @@ const example: Partial<IListResponse<ITableField>> = {
     {
       registerNumber: 1,
       table: 'COMER_CLIENTES',
-      column: 'ID_CLIENTE',
-      columnDescription: 'No Cliente',
+      column: 'ID_CLIENTE'.substring(0, 7), //Máximo 200,
+      columnDescription: 'No. Cliente',
       dataType: 'NUMBER',
     },
     {
       registerNumber: 2,
       table: 'COMER_CLIENTES',
-      column: 'NOM_RAZON',
+      column: 'NOM_RAZON'.substring(0, 100), //Máximo 100
       columnDescription: 'Nombre o Razón Social',
       dataType: 'VARCHAR2',
     },
     {
       registerNumber: 3,
       table: 'COMER_CLIENTES',
-      column: 'RFC',
+      column: 'RFC'.substring(0, 20), //Máximo 20
       columnDescription: 'RFC',
       dataType: 'VARCHAR2',
     },

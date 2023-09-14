@@ -20,6 +20,8 @@ export class RequestHelperService {
   private turnarVerifiCumpli = new BehaviorSubject<any>(undefined);
   currentTurnarVerificacion = this.turnarVerifiCumpli.asObservable();
 
+  /* SCHEDUCLING DELIVERIES */
+
   constructor() {}
 
   isComponentSaving(menaje: boolean) {
@@ -41,4 +43,8 @@ export class RequestHelperService {
   consultarSiCumple(consultar: boolean) {
     this.turnarVerifiCumpli.next(consultar);
   }
+
+  /*hideExpedienteTab(hide: boolean){
+    this.expedientTab.next(hide);
+  }*/
 }

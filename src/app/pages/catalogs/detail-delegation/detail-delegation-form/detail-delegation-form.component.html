@@ -1,24 +1,15 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="detailDelegationForm" class="form-material">
       <div class="row">
-        <div class="col-md-2">
-          <form-field [control]="detailDelegationForm.get('id')" label="ID">
-            <input type="text" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-
-        <div class="col-md-6 offset-md-4">
+        <div class="col-md-12">
           <form-field
-            [control]="detailDelegationForm.get('numDelegation')"
-            label="Delegaci&oacute;n">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="numDelegation" />
+            [control]="detailDelegationForm.get('name')"
+            label="Nombre">
+            <input type="string" class="form-control" formControlName="name" />
           </form-field>
         </div>
       </div>
@@ -26,10 +17,24 @@
       <div class="row pt-5">
         <div class="col-md-6">
           <form-field
-            [control]="detailDelegationForm.get('name')"
-            label="Nombre">
-            <input type="string" class="form-control" formControlName="name" />
+            [control]="detailDelegationForm.get('numberDelegation')"
+            label="Delegación">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="numberDelegation" />
           </form-field>
+
+          <!--<form-field
+            [control]="detailDelegationForm.get('numberDelegation')"
+            label="Delegaci&oacute;n">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="numberDelegation"
+              min="0"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+          </form-field>-->
         </div>
         <div class="col-md-6">
           <form-field
@@ -85,25 +90,25 @@
       <div class="row pt-5">
         <div class="col-md-4">
           <form-field
-            [control]="detailDelegationForm.get('numP1')"
+            [control]="detailDelegationForm.get('tel1')"
             label="Tel&eacute;fono 1">
-            <input type="tel" class="form-control" formControlName="numP1" />
+            <input type="tel" class="form-control" formControlName="tel1" />
           </form-field>
         </div>
 
         <div class="col-md-4">
           <form-field
-            [control]="detailDelegationForm.get('numP2')"
+            [control]="detailDelegationForm.get('tel2')"
             label="Tel&eacute;fono 2">
-            <input type="tel" class="form-control" formControlName="numP2" />
+            <input type="tel" class="form-control" formControlName="tel2" />
           </form-field>
         </div>
 
         <div class="col-md-4">
           <form-field
-            [control]="detailDelegationForm.get('numP3')"
+            [control]="detailDelegationForm.get('tel3')"
             label="Tel&eacute;fono 3">
-            <input type="tel" class="form-control" formControlName="numP3" />
+            <input type="tel" class="form-control" formControlName="tel3" />
           </form-field>
         </div>
       </div>

@@ -23,6 +23,7 @@ export class ExpedientsRequestTabComponent
   implements OnInit, OnChanges
 {
   @Input() typeDoc: string = '';
+  @Input() typeModule?: string = '';
   title: string = 'Solicitudes del Expediente';
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsRequest = new BehaviorSubject<ListParams>(new ListParams());
@@ -50,9 +51,11 @@ export class ExpedientsRequestTabComponent
 
   ngOnInit(): void {
     // DISABLED BUTTON - FINALIZED //
-    this.task = JSON.parse(localStorage.getItem('Task'));
-    this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
+    if (this.requestId == null) {
+      this.task = JSON.parse(localStorage.getItem('Task'));
+      this.statusTask = this.task.status;
+      console.log('statustask', this.statusTask);
+    }
 
     this.getIdExpediente();
   }
@@ -85,6 +88,11 @@ export class ExpedientsRequestTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (this.typeModule != '' && this.typeModule == 'doc-complementary') {
+      this.requestId = this.activatedRoute.snapshot.paramMap.get(
+        'request'
+      ) as unknown as number;
+    }
     let onChangeCurrentValue = changes['typeDoc'].currentValue;
     this.typeDoc = onChangeCurrentValue;
   }

@@ -47,6 +47,10 @@ export class CourtCityComponent extends BasePage implements OnInit {
       //delegation: [{ value: null, disabled: true }],
       //subDelegation: [{ value: null, disabled: true }],
     });
+
+    setTimeout(() => {
+      this.getCiities(new ListParams());
+    }, 1000);
   }
 
   onValuesChange(cityChange: ICity) {
@@ -71,8 +75,17 @@ export class CourtCityComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  handleSuccess() {
+  /*handleSuccess() {
     this.onLoadToast('success', 'Se ha guardado la ciudad', '');
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
+  }*/
+
+  handleSuccess() {
+    //const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    //this.onLoadToast('success', 'Registro de ciudad', `Guardado Correctamente`);
+    this.alert('success', 'Registro de Ciudad', 'Guardado Correctamente');
+    this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
@@ -80,13 +93,19 @@ export class CourtCityComponent extends BasePage implements OnInit {
   confirm() {
     this.courtCityServ.create(this.form.value).subscribe({
       next: () => this.handleSuccess(),
-      error: err => this.onLoadToast('error', err.error.message, ''),
+      error: err =>
+        this.onLoadToast('error', 'La Ciudad ya fue registrada', ''),
     });
   }
 
   getCiities(params: ListParams) {
     this.cityService.getAll(params).subscribe({
-      next: data => (this.cities = new DefaultSelect(data.data, data.count)),
+      next: data => {
+        this.cities = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.cities = new DefaultSelect();
+      },
     });
   }
 

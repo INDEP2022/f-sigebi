@@ -38,8 +38,8 @@ const routes: Routes = [
             )
           ).NumeraryMassiveConciliationModule,
         data: {
-          title: 'Conciliación masiva numerario',
           screen: 'FMASIVCONCILNUME',
+          title: 'Conciliación masiva numerario',
         },
       },
       {
@@ -51,8 +51,8 @@ const routes: Routes = [
             )
           ).CentralOfficesTransferenceModule,
         data: {
-          title: 'Transferencia de cuentas a oficinas centrales',
           scrren: 'FTRANSFCUENXREG_DEV',
+          title: 'Transferencia de cuentas a oficinas centrales',
         },
       },
       {
@@ -64,8 +64,8 @@ const routes: Routes = [
             )
           ).RegionalAccountTransferenceModule,
         data: {
-          title: 'Transferencia de cuentas Regionales',
           screen: 'FTRANSFCUENXREG',
+          title: 'Transferencia de cuentas Regionales',
         },
       },
       {
@@ -83,7 +83,10 @@ const routes: Routes = [
               './deposit-consiliation-tokens/deposit-consiliation-tokens.module'
             )
           ).DepositConsiliationTokensModule,
-        data: { title: 'Conciliacion de fichas de deposito vs expediente' },
+        data: {
+          screen: 'FACTADBFICHASBIEN',
+          title: 'Conciliacion de fichas de deposito vs expediente',
+        },
       },
       {
         path: 'effective-numerary-devolution',
@@ -94,8 +97,8 @@ const routes: Routes = [
             )
           ).EffectiveNumeraryDevolutionModule,
         data: {
-          title: 'Devolución de numerario efectivo',
           screen: 'FGERADBDEVNUMEFEC',
+          title: 'Devolución de numerario efectivo',
         },
       },
       {
@@ -107,8 +110,8 @@ const routes: Routes = [
             )
           ).AccountsInsuredByFileModule,
         data: {
-          title: 'Cuentas aseguradas por expediente',
           screen: 'FGENADBCTASASEGEX',
+          title: 'Cuentas aseguradas por expediente',
         },
       },
       {
@@ -120,8 +123,8 @@ const routes: Routes = [
             )
           ).EffectiveNumeraryReconciliationModule,
         data: {
-          title: 'Conciliación de numerario efectivo',
           screen: 'FGERADBCONCNUMEFE',
+          title: 'Conciliación de numerario efectivo',
         },
       },
       {
@@ -130,8 +133,8 @@ const routes: Routes = [
           (await import('./bank-accounts-insured/bank-accounts-insured.module'))
             .BankAccountsInsuredModule,
         data: {
-          title: 'Cuentas aseguradas por bancos',
           screen: 'FGENADBCTASASEGBA',
+          title: 'Cuentas aseguradas por bancos',
         },
       },
       {
@@ -143,8 +146,8 @@ const routes: Routes = [
             )
           ).PrintMassiveAccountsModule,
         data: {
-          title: 'Estado de cuenta por Indiciado',
           screen: 'FGERADBIMPRMASIVA',
+          title: 'Estado de cuenta por Indiciado',
         },
       },
       {
@@ -153,8 +156,8 @@ const routes: Routes = [
           (await import('./unreconciled-files/unreconciled-files.module'))
             .UnreconciledFilesModule,
         data: {
-          title: 'Expedientes sin conciliar',
           screen: 'FGERADBEXPESCONCI',
+          title: 'Expedientes sin conciliar',
         },
       },
       {
@@ -166,8 +169,8 @@ const routes: Routes = [
             )
           ).DepositUnreconciliedFilesModule,
         data: {
-          title: 'Fichas de deposito sin conciliar',
           screen: 'FGERADBFICHADEPOS',
+          title: 'Fichas de deposito sin conciliar',
         },
       },
       {
@@ -176,8 +179,8 @@ const routes: Routes = [
           (await import('./confiscation-ratio/confiscation-ratio.module'))
             .ConfiscationRatioModule,
         data: {
-          title: 'Relación de decomiso',
           screen: 'FRELDECOMISO',
+          title: 'Relación de decomiso',
         },
       },
       {
@@ -189,8 +192,8 @@ const routes: Routes = [
             )
           ).RecordAccountStatementsModule,
         data: {
-          title: 'Registro de Estados de cuenta',
           screen: 'FACTADBESTADOSCTA',
+          title: 'Registro de Estados de cuenta',
         },
       },
       {
@@ -202,8 +205,8 @@ const routes: Routes = [
             )
           ).DepositAccountStatementModule,
         data: {
-          title: 'Estado de cuenta (Deposito)',
           screen: 'FCONADBEDOCTAXIND',
+          title: 'Estado de cuenta (Deposito)',
         },
       },
       {
@@ -212,8 +215,8 @@ const routes: Routes = [
           (await import('./rate-catalog/rate-catalog.module'))
             .RateCatalogModule,
         data: {
-          title: 'Tasas para interes',
           screen: 'FPROINTERES',
+          title: 'Tasas para interes',
         },
       },
       {
@@ -225,8 +228,8 @@ const routes: Routes = [
             )
           ).MassiveNumeraryChangeModule,
         data: {
-          title: 'Cambio a numerario masivo',
           screen: 'FMASINSUNUMERARIO',
+          title: 'Cambio a numerario masivo',
         },
       },
       {
@@ -238,8 +241,8 @@ const routes: Routes = [
             )
           ).NumeraryHistoricalClosingModule,
         data: {
-          title: 'Cierre historico de numerario',
           screen: 'FACTADBACIERRENUM',
+          title: 'Cierre historico de numerario',
         },
       },
     ],

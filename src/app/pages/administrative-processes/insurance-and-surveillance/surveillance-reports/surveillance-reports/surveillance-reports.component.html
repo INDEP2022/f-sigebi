@@ -1,4 +1,4 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">REPORTES DE VIGILANCIA</h5>
   </div>
@@ -8,94 +8,106 @@
       <div class="row mt-4 float-right">
         <div class="row mt-4">
           <div class="col-md-4">
-            <form-field [control]="form.get('contract')" label="Contrato">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="contract"
-                min="1"
-                pattern="^[0-9]+" />
+            <form-field [control]="form.get('contract')">
+              <ngx-select
+                (fetchItems)="getContract($event)"
+                [data]="contracts"
+                [form]="form"
+                value="id"
+                bindLabel="id"
+                label="Contrato"
+                [control]="'contract'"
+                (change)="onChangeContract($event)">
+              </ngx-select>
             </form-field>
           </div>
           <div class="col-md-4">
-            <form-field [control]="form.get('provider')">
-              <ngx-select
-                [form]="form"
-                [data]="providers"
-                bindLabel="name"
-                label="Subtipo Final"
-                value="id"
-                (fetchItems)="getProviders($event)"
-                control="provider"></ngx-select>
+            <form-field [control]="form.get('provider')" label="Proveedor">
+              <input
+                type="text"
+                formControlName="provider"
+                class="form-control" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="form.get('providerSign')"
-              label="Firma Reporte Proovedor">
+              label="Firma Reporte Proveedor">
               <input
                 type="text"
                 formControlName="providerSign"
-                class="form-control"
-                bsDatepicker />
+                class="form-control" />
             </form-field>
           </div>
         </div>
 
-        <div class="row mt-4">
-          <div class="col-md-4">
-            <form-field [control]="form.get('reports')" label="Reportes">
-              <input
-                type="text"
-                formControlName="reports"
-                class="form-control"
-                bsDatepicker />
+        <div class="row">
+          <div class="col-md-3 mt-3">
+            <form-field [control]="form.get('reports')">
+              <ngx-select
+                [data]="dataSelect"
+                [form]="form"
+                value="value"
+                bindLabel="label"
+                label="Reportes"
+                [control]="'reports'">
+              </ngx-select>
             </form-field>
           </div>
-          <div class="col-md-4">
-            <form-field
-              [control]="form.get('reportSae')"
-              label="Firma Reporte SAE">
-              <input
-                type="text"
-                formControlName="reportSae"
-                class="form-control"
-                bsDatepicker />
+          <div class="col-md-5 mt-3">
+            <form-field [control]="form.get('reportSae')">
+              <ngx-select
+                (fetchItems)="getUsers($event)"
+                [data]="users"
+                [form]="form"
+                value="name"
+                bindLabel="name"
+                label="Firma Reporte INDEP"
+                [control]="'reportSae'"
+                (change)="onChangeUser($event)">
+              </ngx-select>
             </form-field>
           </div>
-        </div>
-
-        <div class="row mt-4">
-          <div class="col-md-2">
+          <div class="col-md-2 mt-3">
             <form-field [control]="form.get('year')" label="Año">
               <input
                 type="number"
                 class="form-control"
                 formControlName="year"
                 min="1"
+                [max-length]="4"
                 pattern="^[0-9]+" />
             </form-field>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-2 mt-3">
             <form-field [control]="form.get('month')" label="Mes">
               <input
                 type="number"
                 class="form-control"
                 formControlName="month"
                 min="1"
+                [max-length]="2"
                 pattern="^[0-9]+" />
             </form-field>
-          </div>
-        </div>
-
-        <div class="row mt-4 float-right">
-          <div class="">
-            <button type="submit" class="btn btn-primary btn-sm active mx-4">
-              REPORTE
-            </button>
           </div>
         </div>
       </div>
     </form>
   </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          [disabled]="!form.valid"
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="print()">
+          Reporte <i class="bx bx-printer bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
+  </div>
 </app-card>
+<br />
+<br />
+<br /><br />

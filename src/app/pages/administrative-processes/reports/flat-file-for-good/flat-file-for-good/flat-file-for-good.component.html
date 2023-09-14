@@ -9,39 +9,38 @@
       (ngSubmit)="onSubmit()"
       class="form-material">
       <div class="row margin-input">
-        <div class="col-md-4">
-          <form-field
-            [control]="flatFileGoodForm.get('delegationReceives')"
-            label="Delegación Recibe">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="delegationReceives" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="flatFileGoodForm.get('delegationManages')"
-            label="Delegación Administra">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="delegationManages" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
+        <app-delegation-shared
+          (click)="loadDelegation('Recibe')"
+          [form]="proceduralHistoryForm"
+          [showDelegation]="true"
+          [delegationField]="'delegation'"
+          labelDelegation="Delegación Recibe"
+          [showSubdelegation]="false"></app-delegation-shared>
+      </div>
+      <div class="row margin-input">
+        <app-delegation-shared
+          [form]="proceduralHistoryForm2"
+          (click)="loadDelegation('Administra')"
+          [showDelegation]="true"
+          [delegationField]="'delegation'"
+          labelDelegation="Delegación Administra"
+          [showSubdelegation]="false"></app-delegation-shared>
+      </div>
+
+      <div class="row margin-input justify-content-center">
+        <div class="col-md-3">
           <form-field [control]="flatFileGoodForm.get('type')" label="Tipo">
             <input type="text" class="form-control" formControlName="type" />
           </form-field>
         </div>
-      </div>
-      <div class="row margin-input">
-        <div class="col-md-4">
+
+        <div class="col-md-3">
           <form-field [control]="flatFileGoodForm.get('area')" label="Área">
             <input type="text" class="form-control" formControlName="area" />
           </form-field>
         </div>
-        <div class="col-md-4">
+
+        <div class="col-md-3">
           <form-field
             [control]="flatFileGoodForm.get('initialDate')"
             label="Fecha Inicial">
@@ -53,7 +52,8 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-md-4">
+
+        <div class="col-md-3">
           <form-field
             [control]="flatFileGoodForm.get('finalDate')"
             label="Fecha Final">
@@ -66,46 +66,98 @@
           </form-field>
         </div>
       </div>
-      <div class="row margin-input">
-        <div class="col-md-4">
+
+      <div class="row margin-input justify-content-center">
+        <div class="col-md-1"></div>
+        <div class="col-md-3">
           <button
-            class="btn btn-success btn-sm ml-2"
+            type="submit"
+            class="btn btn-primary btn-sm active"
+            [disabled]="
+              !flatFileGoodForm.valid ||
+              !proceduralHistoryForm2.valid ||
+              !proceduralHistoryForm.valid
+            ">
+            Reporte
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="row margin-input justify-content-center">
+        <div class="col-md-5">
+          <input
+            type="text"
+            class="form-control"
+            disabled="true"
+            placeholder="Nombre del Archivo Excel (Entrega)"
+            id="nameFileA" />
+        </div>
+
+        <div class="col-md-3">
+          <button
+            class="btn btn-success btn-sm ml-2 active"
+            [disabled]="!reporte_flag"
             type="button"
-            (click)="file1.click()">
-            Nombre del Archivo Excel(Entrega)
+            (click)="exportExcelEntrega()">
+            Exportar a Excel
+            <i class="bx bx-download float-icon"></i>
           </button>
           <input
             type="file"
             name="file1"
             #file1
             class="d-none"
+            formControlName="file1"
             accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-            (change)="onFileChange($event)" />
+            (change)="onFileChangeDelivery($event)" />
         </div>
-        <div class="col-md-4">
+      </div>
+      <div class="row margin-input justify-content-center">
+        <div class="col-md-5">
+          <input
+            type="text"
+            class="form-control"
+            disabled="true"
+            placeholder="Nombre del Archivo Excel (Decomiso)"
+            id="nameFileB" />
+        </div>
+
+        <div class="col-md-3">
           <button
-            class="btn btn-success btn-sm ml-2"
+            class="btn btn-success btn-sm ml-2 active"
             type="button"
-            (click)="file2.click()">
-            Nombre del Archivo Excel(Decomiso)
+            [disabled]="!reporte_flag2"
+            (click)="exportExcelDecomiso()">
+            Exportar a Excel
+            <i class="bx bx-download float-icon"></i>
           </button>
           <input
             type="file"
             name="file2"
             #file2
             class="d-none"
+            formControlName="file2"
             accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
             (change)="onFileChange($event)" />
         </div>
       </div>
       <div class="row mt-5">
+        <!--
         <div class="col-md-12 col-sm-12 col-xs-12">
           <div class="justify-content-center">
-            <button type="submit" class="btn btn-primary btn-sm active">
+            <button
+              type="submit"
+              class="btn btn-primary btn-sm active"
+              [disabled]="
+                !flatFileGoodForm.valid ||
+                !proceduralHistoryForm2.valid ||
+                !proceduralHistoryForm.valid
+              ">
               Reporte
             </button>
           </div>
-        </div>
+        </div> -->
       </div>
     </form>
   </div>

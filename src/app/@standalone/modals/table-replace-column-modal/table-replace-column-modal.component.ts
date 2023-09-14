@@ -1,16 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  TemplateRef,
+} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
-  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { environment } from 'src/environments/environment';
 import { SelectFormComponent } from '../../shared-forms/select-form/select-form.component';
 
 @Component({
@@ -18,27 +25,37 @@ import { SelectFormComponent } from '../../shared-forms/select-form/select-form.
   standalone: true,
   imports: [CommonModule, SharedModule, NgScrollbarModule, SelectFormComponent],
   templateUrl: './table-replace-column-modal.component.html',
-  styles: [],
+  styleUrls: ['./table-replace-column-modal.component.scss'],
 })
 export class TableReplaceColumnModalComponent
   extends BasePage
   implements OnInit
 {
+  url: string = environment.API_URL;
   form: FormGroup; // Input requerido al llamar el modal
   formField: string;
+  label: string;
+  path: string;
+  paramSearch: string;
   otherFormField: string;
   otherFormLabel: string;
+  prefixSearch: string = '$eq';
   titleColumnToReplace: string = ''; // nombre de la columna a reemplazar en plura
   tableData: any[] = []; // Input requerido al llamar el modal
   columnsType: any = {}; // Input requerido al llamar el modal
-  service: any; //
-  dataObservableFn: (self: any, params: string) => Observable<any>; // Input requerido al llamar el modal
+  selectFirstInput = true;
+  // service: any; //
+  // dataObservableFn: (self: any, params: string) => Observable<any>; // Input requerido al llamar el modal
   idSelect: string; // Input requerido al llamar el modal
   labelSelect: string; // Input requerido al llamar el modal
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsControl: FilterParams = new FilterParams(); // Input requerido al llamar el modal
-  paramFilter = 'search';
-  operator = SearchFilter.EQ;
+  labelTemplate: TemplateRef<any> = null;
+  optionTemplate: TemplateRef<any> = null;
+  disabled = false;
+  messageResult: { message: string; result: string } = null;
+  // paramFilter = 'search';
+  // operator = SearchFilter.EQ;
   private _data: any[];
   @Output() newValue = new EventEmitter();
   get data() {
@@ -49,15 +66,77 @@ export class TableReplaceColumnModalComponent
     return this.tableData.length;
   }
 
-  get getListObservableSelect() {
-    return this.dataObservableFn(this.service, this.paramsControl.getParams());
-  }
+  // get getListObservableSelect() {
+  //   return this.dataObservableFn(this.service, this.paramsControl.getParams());
+  // }
 
-  constructor(private modalRef: BsModalRef) {
+  constructor(private modalRef: BsModalRef, private http: HttpClient) {
     super();
   }
 
+  search() {
+    const params: any = {
+      page: 1,
+      limit: 10,
+    };
+    let text = this.form.get(this.formField)
+      ? this.form.get(this.formField).value
+      : '';
+    if (text) {
+      if (this.prefixSearch) {
+        text = `${this.prefixSearch}:${text}`;
+      }
+      params[this.paramSearch] = text;
+    }
+    // const mParams =
+    //   this.moreParams.length > 0 ? '?' + this.moreParams.join('&') : '';
+    this.http
+      .get(`${this.url}${this.path}`, {
+        params,
+      })
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.messageResult = {
+              message: `${this.form.get(this.formField).value} existe`,
+              result: 'success',
+            };
+            // this.onLoadToast(
+            //   'success',
+            //   `${this.label} ${this.form.get(this.formField).value} válido`
+            // );
+            this.disabled = false;
+          } else {
+            this.messageResult = {
+              message: `${this.form.get(this.formField).value} no existe`,
+              result: '',
+            };
+            // this.onLoadToast(
+            //   'error',
+            //   `${this.label} ${this.form.get(this.formField).value} no válido`
+            // );
+            this.disabled = true;
+          }
+        },
+        error: err => {
+          this.messageResult = {
+            message: `${this.form.get(this.formField).value} no existe`,
+            result: '',
+          };
+
+          // this.onLoadToast(
+          //   'error',
+          //   `${this.label} ${this.form.get(this.formField).value} no válido`
+          // );
+          this.disabled = true;
+        },
+      });
+  }
+
   ngOnInit(): void {
+    // console.log(this.service, this.dataObservableFn);
+
     // console.log(this.tableData, [...this.tableData].slice(0, 1));
     this.settings = {
       ...this.settings,

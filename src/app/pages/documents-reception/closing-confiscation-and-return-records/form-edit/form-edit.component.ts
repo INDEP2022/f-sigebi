@@ -20,6 +20,8 @@ export class FormEditComponent extends BasePage implements OnInit {
   dataForm: any = {};
   title: string;
   proceeding: IProceedings;
+  dataProceedingsSelected: any;
+  flagSave: boolean = true;
 
   constructor(
     private modalRef: BsModalRef,
@@ -33,6 +35,16 @@ export class FormEditComponent extends BasePage implements OnInit {
     console.log(this.proceeding);
     this.initForm();
     this.setForm(this.proceeding);
+    console.log('dataProceedingsSelected ', this.dataProceedingsSelected);
+    console.log('dataProceedingsSelected ');
+    if (
+      this.dataProceedingsSelected.dataProceedingsSelected.proceedingStatus ===
+      'CERRADA'
+    ) {
+      this.flagSave = false;
+    } else {
+      this.flagSave = true;
+    }
   }
 
   initForm() {
@@ -117,8 +129,8 @@ export class FormEditComponent extends BasePage implements OnInit {
         next: (resp: IListResponse<IProceedings>) => {
           this.onLoadToast(
             'success',
-            'Actualizada',
-            'El acta ha sido actualizado exitosamente'
+            'Acta de Decomiso Y Devolución',
+            'Actualizado Correctamente'
           );
           this.modalRef.content.callback(true);
           this.modalRef.hide();

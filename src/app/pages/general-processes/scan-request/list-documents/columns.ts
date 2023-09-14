@@ -7,13 +7,21 @@ export const COLUMNS = {
     title: 'Tipo Documento',
     sort: false,
   },
-  significantDate: {
-    title: 'Fecha Significativa',
+  numberProceedings: {
+    title: 'No. Expediente',
     sort: false,
-    valuePrepareFunction: (value: string) => {
-      return value;
-    },
   },
+  flyerNumber: {
+    title: 'No. Volante',
+    sort: false,
+  },
+  // significantDate: {
+  //   title: 'Fecha Significativa',
+  //   sort: false,
+  //   valuePrepareFunction: (value: string) => {
+  //     return value;
+  //   },
+  // },
   descriptionDocument: {
     title: 'Descripción del Documento',
     sort: false,
@@ -24,14 +32,6 @@ export const COLUMNS = {
   },
   keySeparator: {
     title: 'Clave Separador',
-    sort: false,
-  },
-  numberProceedings: {
-    title: 'No. Expediente',
-    sort: false,
-  },
-  flyerNumber: {
-    title: 'No. Volante',
     sort: false,
   },
 };

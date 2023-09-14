@@ -7,12 +7,21 @@
   <div body>
     <form class="form-material" [formGroup]="formSearch">
       <div class="row">
-        <div class="col-md-2">
-          <form-field [control]="formSearch.get('idEvent')" label="ID Evento">
-            <input type="text" class="form-control" formControlName="idEvent" />
+        <div class="col-md-6">
+          <form-field [control]="formSearch.get('idEvent')">
+            <ngx-select
+              (fetchItems)="getAdminCaptureLine($event)"
+              [data]="eventList"
+              [form]="formSearch"
+              value="id_evento"
+              bindLabel="evento"
+              label="Id Evento"
+              control="idEvent">
+            </ngx-select>
+            <!-- <input type="text" class="form-control" formControlName="idEvent" /> -->
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-6">
           <form-field
             [control]="formSearch.get('allotment')"
             label="Lote p&uacute;blico">
@@ -22,7 +31,9 @@
               formControlName="allotment" />
           </form-field>
         </div>
-        <div class="col-md-2">
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
           <form-field [control]="formSearch.get('idClient')" label="ID Cliente">
             <input
               type="text"
@@ -30,7 +41,7 @@
               formControlName="idClient" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field [control]="formSearch.get('rfc')" label="RFC">
             <input type="text" class="form-control" formControlName="rfc" />
           </form-field>
@@ -40,7 +51,8 @@
             <button
               type="button"
               class="btn btn-primary btn-sm active"
-              [disabled]="!formSearch.valid">
+              [disabled]="!formSearch.valid"
+              (click)="searchLC()">
               Buscar
             </button>
           </div>
@@ -59,7 +71,7 @@
   <div body>
     <form class="form-material" [formGroup]="formAdm">
       <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-6">
           <form-field
             [control]="formAdm.get('typeReference')"
             label="Tipo de referencia">
@@ -68,13 +80,13 @@
               [searchable]="false"
               class="form-control"
               [clearable]="false">
-              <ng-option value="1">Garant&iacute;a de seriedad</ng-option>
-              <ng-option value="2">Garant&iacute;a de cumplimiento</ng-option>
-              <ng-option value="1"
+              <ng-option value="GSE">Garant&iacute;a de seriedad</ng-option>
+              <ng-option value="GCN">Garant&iacute;a de cumplimiento</ng-option>
+              <ng-option value="GCE"
                 >Garant&iacute;a de cumplimiento Extempor&aacute;nea</ng-option
               >
-              <ng-option value="2">Liquidaci&oacute;n</ng-option>
-              <ng-option value="2"
+              <ng-option value="LIQN">Liquidaci&oacute;n</ng-option>
+              <ng-option value="LIQE"
                 >Liquidaci&oacute;n Extempor&aacute;nea</ng-option
               >
             </ng-select>
@@ -87,6 +99,7 @@
             <input
               type="text"
               placeholder=""
+              [minDate]="maxDate"
               class="form-control"
               bsDatepicker
               formControlName="dateValidity"
@@ -108,19 +121,19 @@
             <input type="text" class="form-control" formControlName="client" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-5">
         <div class="col-md-2">
           <form-field [control]="formAdm.get('event')" label="Evento">
             <input type="text" class="form-control" formControlName="event" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field [control]="formAdm.get('amount')" label="Monto">
             <input type="text" class="form-control" formControlName="amount" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field
             [control]="formAdm.get('amountPenality')"
             label="Monto Pena">
@@ -130,12 +143,13 @@
               formControlName="amountPenality" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
           <div class="justify-content-center">
             <button
               type="button"
               class="btn btn-primary btn-sm active"
-              [disabled]="!formAdm.valid">
+              [disabled]="!formAdm.valid"
+              (click)="accept()">
               Aceptar
             </button>
           </div>

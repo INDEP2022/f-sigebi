@@ -1,0 +1,65 @@
+<div body>
+  <div class="row">
+    <div class="col p-0">
+      <button
+        class="btn btn-primary btn-sm active"
+        type="button"
+        (click)="openFileUploader()">
+        Subir Fotos
+        <i class="fa fa-upload"></i>
+      </button>
+      <!-- <form-field [control]="form.get('img')" label="">
+                                        <input
+                                          class="form-control mb-3 mt-3"
+                                          type="file"
+                                          id="formFile"
+                                          accept="image/png,image/jpeg"
+                                          formControlName="img"
+                                          (change)="onFileChange($event)" />
+                                      </form-field> -->
+    </div>
+    <div class="col p-0" style="text-align: right">
+      <button
+        type="button"
+        class="btn btn-danger btn-sm active"
+        (click)="confirmDelete()">
+        Borrar fotos seleccionadas
+        <i class="fa fa-eraser"></i>
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <small class="text-info mt-3 mb-2 info-foto" *ngIf="files.length > 0"
+      >Da doble click a la foto para visualizarlo</small
+    >
+    <div class="row docs-scroll">
+      <div class="col-md-12">
+        <h6 class="text-center" *ngIf="files.length === 0">
+          No hay fotos cargadas
+        </h6>
+        <div
+          class="col-md-4 grid-square"
+          *ngFor="let image of files; let i = index">
+          <div class="w-100 m-1 img-container">
+            <div class="row">
+              <div class="col-md-12">
+                <!-- <app-good-photo [filename]="image" [goodNumber]="goodNumber + ''"></app-good-photo> -->
+              </div>
+            </div>
+            <!-- <input
+                                        type="checkbox"
+                                    class="float-check checkbox-color checkbox-primary"
+                                        id="check2" /> -->
+            <form-check for="keep-{{ i }}" class="float-check">
+              <input
+                type="checkbox"
+                id="keep-{{ i }}"
+                (change)="selectFile(image, $event)"
+                class="form-control" />
+            </form-check>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

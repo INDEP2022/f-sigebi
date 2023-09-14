@@ -1,7 +1,10 @@
 import { formatDate } from '@angular/common';
+import { firstValueFrom, map } from 'rxjs';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { environment } from 'src/environments/environment';
-import Swal, { SweetAlertResult, type SweetAlertOptions } from 'sweetalert2';
+import Swal, { type SweetAlertOptions } from 'sweetalert2';
 
+export const API_VERSION = 'api/v1';
 type SwalOptions = Partial<SweetAlertOptions> & Required<{ text: string }>;
 
 /**
@@ -29,9 +32,7 @@ export function downloadReport(
   });
 }
 
-export function showToast(
-  data: SwalOptions | string
-): Promise<SweetAlertResult<any>> {
+export function showToast(data: SwalOptions | string): Promise<any> {
   if (typeof data === 'string') data = { text: data } as SwalOptions;
 
   const toast = Swal.mixin({
@@ -52,9 +53,7 @@ export function showToast(
   return toast.fire();
 }
 
-export function showAlert<T = any>({
-  ...data
-}: SwalOptions): Promise<SweetAlertResult<T>> {
+export function showAlert<T = any>({ ...data }: SwalOptions): Promise<any> {
   return Swal.fire({ icon: 'success', position: 'center', ...data });
 }
 
@@ -66,9 +65,7 @@ type SwalQuestionType = {
   dismiss?: string;
 };
 
-export function showQuestion({
-  ...data
-}: SwalOptions): Promise<SweetAlertResult<SwalQuestionType>> {
+export function showQuestion({ ...data }: SwalOptions): Promise<any> {
   return showAlert({
     icon: 'question',
     showCancelButton: true,
@@ -124,4 +121,58 @@ export function generateUrlOrPath(
     return `${microservice}/${prefix}${route}`;
   }
   return `${url}${microservice}/${prefix}${route}`;
+}
+
+import { read, utils } from 'xlsx';
+
+export async function getDataFromExcel<T = any>(file: File): Promise<T[]> {
+  const reader = new FileReader();
+  const onLoad = () =>
+    new Promise((resolve, reject) => {
+      reader.onload = event => resolve(event.target.result);
+      reader.onerror = error => reject(error);
+    });
+  reader.readAsBinaryString(file);
+  await onLoad();
+  const result = reader.result as string;
+  const workbook = read(result, { type: 'binary' });
+  const sheetNames = workbook.SheetNames;
+  return utils.sheet_to_json<T>(workbook.Sheets[sheetNames[0]]);
+}
+
+export function goFormControlAndFocus(formControlName: string) {
+  try {
+    const formControl = document.querySelector(
+      `[formcontrolname="${formControlName}"]`
+    ) as HTMLInputElement;
+    formControl.scrollIntoView({
+      inline: 'center',
+      behavior: 'smooth',
+    });
+    console.log({ formControl });
+    formControl.focus();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+/**
+ *
+ * @param date Date
+ * @return Promise<number>
+ */
+export function getFaStageCreda(
+  parametersService: ParametersService,
+  date: Date = new Date()
+): Promise<number> {
+  const _date = formatDate(date, 'yyyy/MM/dd', 'en-US');
+  console.log(_date);
+  return firstValueFrom(
+    parametersService.getFaStageCreda(_date).pipe(
+      map(response => {
+        console.log(response);
+        return response.stagecreated;
+      })
+    )
+  );
 }

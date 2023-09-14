@@ -1,29 +1,43 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Mantto. a administrador, depositario e interventor</h5>
-    <div class="col-md-5 buttons">
-      <app-columns-select [(settings)]="settings"></app-columns-select>
-      <div>
-        <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
-          Nuevo
-        </button>
-      </div>
-    </div>
+    <h5 class="title">
+      Mantenimiento a administrador, depositario e interventor
+    </h5>
   </div>
   <div body>
     <div class="row">
-      <div class="form-material col-md-5">
-        <search-bar [params]="params"></search-bar>
+      <div class="col-md-8 mt-3 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+        <div>
+          <button
+            *ngIf="origin"
+            class="btn btn-primary active btn-sm m-2"
+            (click)="goBack()">
+            Regresar
+            <i class="fas fa-arrow-circle-left"></i>
+          </button>
+          <app-columns-select
+            [(settings)]="settings"
+            [leftList]="true"></app-columns-select>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm()">
+            Nuevo&nbsp;<i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
       </div>
     </div>
-    <div class="row pt-4">
+    <div class="row">
       <div class="col-md-12">
         <div class="table-responsive">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="person"
+              [source]="data"
               (edit)="openForm($event.data)"
               (delete)="showDeleteAlert($event.data)">
             </ng2-smart-table>

@@ -3,13 +3,13 @@ import { IDelegation } from './delegation.model';
 export interface IDetailDelegation {
   id?: number;
   name: string;
-  numDelegation: IDelegation;
+  numberDelegation: IDelegation;
   area: string;
   position: string;
   location: string;
   address: string;
   mail: string;
-  numP1: number;
-  numP2: number;
-  numP3: number;
+  tel1: number;
+  tel2: number;
+  tel3: number;
 }

@@ -7,7 +7,21 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./receipt-generation/receipt-generation.module'))
         .ReceiptGenerationModule,
-    data: { title: 'Generacion de Recibo' },
+    data: { title: 'Generación de Recibo Prog.' },
+  },
+  {
+    path: 'receipt-generation-sami',
+    loadChildren: async () =>
+      (await import('./receipt-generation-sami/receipt-generation-sami.module'))
+        .ReceiptGenerationSamiModule,
+    data: { title: 'Generación de Recibo' },
+  },
+  {
+    path: 'maintenance',
+    loadChildren: async () =>
+      (await import('./maintenance-sami/maintenance-sami.module'))
+        .MaintenanceSamiModule,
+    data: { title: 'Mantenimiento' },
   },
   {
     path: 'schedule-maintenance',
@@ -27,6 +41,13 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./consult-tasks/consult-tasks.module')).ConsultTasksModule,
     data: { title: 'Consulta de Tareas' },
+  },
+  {
+    path: 'consult-report',
+    loadChildren: async () =>
+      (await import('./consult-report/consult-report.module'))
+        .ConsultReportModule,
+    data: { title: 'Consulta Reportes' },
   },
 ];
 

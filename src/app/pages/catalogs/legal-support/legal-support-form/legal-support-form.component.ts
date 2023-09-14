@@ -31,7 +31,7 @@ export class LegalSupportFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.legalSupportForm = this.fb.group({
-      id: [null, [Validators.required, Validators.maxLength(5)]],
+      doctoTypeId: [null, []],
       support: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -40,7 +40,7 @@ export class LegalSupportFormComponent extends BasePage implements OnInit {
     if (this.legalSupport != null) {
       this.edit = true;
       this.legalSupportForm.patchValue(this.legalSupport);
-      this.legalSupportForm.get('id').disable();
+      //this.legalSupportForm.get('id').disable();
     }
   }
   close() {
@@ -64,7 +64,10 @@ export class LegalSupportFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.legalSupportService
-      .update(this.legalSupport.id, this.legalSupportForm.getRawValue())
+      .update(
+        this.legalSupport.doctoTypeId,
+        this.legalSupportForm.getRawValue()
+      )
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

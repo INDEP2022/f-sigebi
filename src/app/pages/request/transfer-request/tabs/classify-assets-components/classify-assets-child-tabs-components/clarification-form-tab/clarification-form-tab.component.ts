@@ -32,7 +32,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class ClarificationFormTabComponent extends BasePage implements OnInit {
   public event: EventEmitter<any> = new EventEmitter();
   clarificationForm: ModelForm<ClarificationGoodRejectNotification>;
-  title: string = 'Aclaración';
+  title: string = 'Aclaración/Improcedencia';
   edit: boolean = false;
   // selectTypeClarification = new DefaultSelect<any>();
   clarificationTypes = ClarificationTypes;
@@ -40,7 +40,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   //se pasa las aclaraciones del padres
   docClarification: any;
   //se pasa todo el bien
-  goodTransfer: IGood;
+  goodTransfer: IGood[];
   //clarificationId: number = 0; ya no
   //idGood: number = 0;
   request: any;
@@ -66,21 +66,27 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loading = true;
     this.task = JSON.parse(localStorage.getItem('Task'));
 
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
 
-    this.getGoodResDev(Number(this.goodTransfer.id));
+    //info de la solicitud
+    console.log('Solicitud', this.request);
+
+    //this.getGoodResDev(Number(this.goodTransfer.id));
+    this.getGoodResDev(this.goodTransfer);
+    this.loading = false;
     this.initForm();
     this.clarificationForm.get('clarificationType').valueChanges.subscribe({
       next: val => {
         let type = this.clarificationTypes.find(type => type.value == val);
         let params = new BehaviorSubject<FilterParams>(new FilterParams());
-        params.value.addFilter('type', type.id);
+        //params.value.addFilter('type', type.id);
         //params.value.addFilter('type', Number(val));
         const filter = params.getValue().getParams();
-        this.getClarification(filter);
+        this.getClarification();
       },
     });
     //this.getClarification(new ListParams());
@@ -89,9 +95,9 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   initForm(): void {
     this.clarificationForm = this.fb.group({
       rejectNotificationId: [null], //id
-      goodId: [null, [Validators.required]],
+      goodId: [null],
       clarificationType: [null, [Validators.required]],
-      clarificationId: [null, [Validators.required]],
+      clarificationId: [null, []], //El campo no es obligatorio
       reason: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(255)],
@@ -99,22 +105,22 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       creationUser: [null],
       rejectionDate: [null],
     });
-    if (this.goodTransfer) {
+    /*if (this.goodTransfer) {
       this.clarificationForm.get('goodId').patchValue(this.goodTransfer.id);
-    }
+    }*/
     if (this.docClarification != undefined) {
       this.edit = true;
       let params = new BehaviorSubject<FilterParams>(new FilterParams());
       params.value.limit = 100;
       const filter = params.getValue().getParams();
-      this.getClarification(filter);
+      this.getClarification();
 
       //bloquear tipo de claracion cuando se edite
       this.clarificationForm.patchValue({
         ...this.clarificationForm,
         rejectNotificationId: this.docClarification.rejectNotificationId,
         clarificationType: this.docClarification.clarificationType,
-        clarificationId: this.docClarification.clarificationId,
+        clarificationId: this.docClarification?.clarificationId, //Cuando es improcedencia, irá vacio este campo
         reason: this.docClarification.reason,
       });
       this.clarificationForm.controls['clarificationType'].disable();
@@ -124,7 +130,14 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
 
   getTypeClarification(event: any): void {}
 
-  getClarification(params: ListParams | string): void {
+  getClarification(params?: ListParams): void {
+    //Mostrar individualización de bienes solo para los de Comercio Exterior
+    params['sortBy'] = `clarification:ASC`;
+
+    if (this.request.typeOfTransfer != 'SAT_SAE') {
+      params['filter.id'] = `$not:19`;
+    }
+
     this.clarificationService.getAll(params).subscribe({
       next: data => {
         this.selectClarification = new DefaultSelect(data.data, data.count);
@@ -133,14 +146,22 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   }
 
   async confirm() {
+    //Si es improcedencia, no debe llevar tipo de aclaracion
+    if (
+      this.clarificationForm.controls['clarificationType'].value ==
+      'SOLICITAR_IMPROCEDENCIA'
+    ) {
+      this.clarificationForm.controls['clarificationId'].setValue(null);
+    }
+
     if (
       this.haveGoodResDevRegister == true &&
       this.updateGoodRespDevRegister == false
     ) {
       this.onLoadToast(
-        'info',
-        'Bien Sin Aclarar',
-        'El bien cuenta con una aclaración'
+        'warning',
+        'Atención',
+        'El bien cuenta con una notificación sin aclarar, no es posible agregar una nueva'
       );
       return;
     }
@@ -151,25 +172,32 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     clarification.creationUser = user.username;
     clarification.rejectionDate = new Date().toISOString();
     clarification['answered'] = 'NUEVA';
-    clarification.goodId = this.goodTransfer.id;
-    //clarification.clarificationId = this.clarificationId;
+    console.log(this.goodTransfer);
 
-    if (this.edit === true) {
-      this.update(clarification);
-    } else {
-      await this.save(clarification);
-      if (this.haveGoodResDevRegister === false) {
-        await this.createGoodResDev();
-        await this.updateGood();
+    this.goodTransfer.map(async (item, _i) => {
+      const index = _i + 1;
+      clarification.goodId = item.id;
+      if (this.edit === true) {
+        this.update(clarification);
+      } else {
+        await this.save(clarification, item, index);
+        if (this.haveGoodResDevRegister === false) {
+          await this.createGoodResDev(item);
+          await this.updateGood(item);
+        }
+        if (this.updateGoodRespDevRegister === true) {
+          this.updateGoodResDev();
+          this.updateGood(item);
+        }
       }
-      if (this.updateGoodRespDevRegister === true) {
-        this.updateGoodResDev();
-        this.updateGood();
-      }
-    }
+    });
   }
 
-  private save(clarification: ClarificationGoodRejectNotification) {
+  private save(
+    clarification: ClarificationGoodRejectNotification,
+    good: any,
+    index: number
+  ) {
     return new Promise((resolve, reject) => {
       this.rejectedGoodService.create(clarification).subscribe({
         next: val => {
@@ -177,21 +205,25 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
           if (val.clarificationType == 'SOLICITAR_ACLARACION') {
             //Si la notificación es de tipo aclaración el estatus de chat será NULO
             console.log('Tipo de notificación', val.clarificationType);
-            this.createChatClarificationsType1(val);
-            this.onLoadToast(
-              'success',
-              `Aclaración guardada`,
-              `Se guardó la aclaración correctamente`
-            );
+            this.createChatClarificationsType1(val, good);
+            if (this.goodTransfer.length == index) {
+              this.onLoadToast(
+                'success',
+                `Aclaración Guardada`,
+                `Se ha creado una aclaración`
+              );
+            }
           } else {
             //Si la notificación es de tipo improcedencia el estatus de chat será improcedencia
             console.log('Tipo de notificación', val.clarificationType);
-            this.createChatClarificationsType2(val);
-            this.onLoadToast(
-              'success',
-              `Aclaración guardada`,
-              `Se guardó la aclaración correctamente`
-            );
+            this.createChatClarificationsType2(val, good);
+            if (this.goodTransfer.length == index) {
+              this.onLoadToast(
+                'success',
+                `Improcedencia Guardada`,
+                `Se ha creado una improcedencia`
+              );
+            }
           }
         },
         complete: () => {
@@ -204,8 +236,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
           console.log(error);
           this.onLoadToast(
             'error',
-            'Error',
-            `Error al guardar la aclaracion ${error.error.message}`
+            `Error al guardar la aclaracion ${error.error.message}`,
+            ''
           );
         },
       });
@@ -240,9 +272,9 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       });
   }
 
-  createGoodResDev() {
+  createGoodResDev(good: any) {
     return new Promise((resolve, reject) => {
-      let good = this.goodTransfer;
+      //let good = this.goodTransfer;
       let goodResDev: IPostGoodResDev = {};
 
       goodResDev.goodId = Number(good.id);
@@ -313,46 +345,31 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     });
   }
 
-  getGoodResDev(goodId: number) {
-    if (goodId) {
-      let params = new FilterParams();
-      params.addFilter('goodId', goodId);
-      let filter = params.getParams();
-      this.goodResDevService.getAllGoodResDev(filter).subscribe({
-        next: (resp: any) => {
-          console.log(resp);
-          this.goodresdevId = resp.data[0].goodresdevId
-            ? resp.data[0].goodresdevId
-            : 0;
-          if (resp.data.length > 0) {
-            this.haveGoodResDevRegister = true;
-          }
-
-          if (
-            resp.data.length > 0 &&
-            resp.data[0].good.processStatus == 'VERIFICAR_CUMPLIMIENTO'
-          ) {
-            this.updateGoodRespDevRegister = true;
-          }
-        },
-        error: error => {},
-      });
-    }
+  getGoodResDev(goods: any) {
+    goods.map((item: any) => {
+      this.verifyGoodResDev(item.id);
+    });
   }
 
-  updateGood() {
+  updateGood(good: any) {
     return new Promise((resolve, reject) => {
-      let good = this.goodTransfer;
+      //let good = this.goodTransfer;
+      const typeClarify =
+        this.clarificationForm.controls['clarificationType'].value;
+      const status = typeClarify == 'SOLICITAR_ACLARACION' ? 'STA' : 'STI';
+      //const goodStatus = typeClarify == 'SOLICITAR_ACLARACION'? 'SOLICITUD DE ACLARACION' : 'IMPROCEDENCIA'
       let body: any = {};
       body.id = good.id;
       body.goodId = good.goodId;
       //body.goodResdevId = Number(id);
-      body.processStatus = 'SOLICITAR_ACLARACION';
+      body.processStatus = 'SOLICITAR_ACLARACION'; //typeClarify;
       body.goodStatus = 'SOLICITUD DE ACLARACION';
+      body.status = status;
       // debugger;
       this.goodService.update(body).subscribe({
         next: resp => {
           console.log('good updated', resp);
+          this.triggerEvent('UPDATE-GOOD');
           resolve(true);
         },
         error: error => {
@@ -373,9 +390,12 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     this.typeClarification = clarification.type;
   }
 
-  createChatClarificationsType1(val: ClarificationGoodRejectNotification) {
+  createChatClarificationsType1(
+    val: ClarificationGoodRejectNotification,
+    good: any
+  ) {
     console.log('info de request', this.request);
-    let good = this.goodTransfer;
+    //let good = this.goodTransfer;
 
     console.log('val', val);
     if (this.typeClarification == 1) {
@@ -416,9 +436,12 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     });
   }
 
-  createChatClarificationsType2(val: ClarificationGoodRejectNotification) {
+  createChatClarificationsType2(
+    val: ClarificationGoodRejectNotification,
+    good: any
+  ) {
     console.log('info de request', this.request);
-    let good = this.goodTransfer;
+    //let good = this.goodTransfer;
     //Creando objeto nuevo para ChatClarifications
     const modelChatClarifications: IChatClarifications = {
       //id: , //ID primaria
@@ -460,7 +483,48 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     });
   }
 
+  triggerEvent(item: any) {
+    this.event.emit(item);
+  }
+
   close(): void {
     this.modalRef.hide();
+  }
+
+  verifyGoodResDev(goodId: any) {
+    return new Promise((resolve, reject) => {
+      if (goodId) {
+        let params = new FilterParams();
+        params.addFilter('goodId', goodId);
+        let filter = params.getParams();
+        this.goodResDevService.getAllGoodResDev(filter).subscribe({
+          next: (resp: any) => {
+            this.goodresdevId = resp.data[0].goodresdevId
+              ? resp.data[0].goodresdevId
+              : 0;
+            if (resp.data.length > 0) {
+              this.haveGoodResDevRegister = true;
+              if (this.docClarification === undefined) {
+                reject('Existe bienes con aclaracion');
+                this.onLoadToast(
+                  'warning',
+                  'Algunos Bienes tienen o tuvieron aclaración'
+                );
+              }
+            }
+
+            if (
+              resp.data.length > 0 &&
+              (resp.data[0].good.processStatus == 'VERIFICAR_CUMPLIMIENTO' ||
+                resp.data[0].good.processStatus == 'CLASIFICAR_BIEN' ||
+                resp.data[0].good.processStatus == 'DESTINO_DOCUMENTAL')
+            ) {
+              this.updateGoodRespDevRegister = true;
+            }
+          },
+          error: error => {},
+        });
+      }
+    });
   }
 }

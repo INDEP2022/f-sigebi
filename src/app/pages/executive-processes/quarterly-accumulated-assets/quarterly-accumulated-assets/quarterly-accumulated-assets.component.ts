@@ -154,7 +154,11 @@ export class QuarterlyAccumulatedAssetsComponent
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
-          error = err.message;
+          this.onLoadToast(
+            'error',
+            'Esta delegacion no tiene subdelegaciones',
+            ''
+          );
         }
 
         this.onLoadToast('error', 'Error', error);
@@ -187,7 +191,7 @@ export class QuarterlyAccumulatedAssetsComponent
     this.siabService
       .fetchReport('RGERDIRBIACUMTRIM', {
         pf_anioini: format(fromMonth, 'yyyy-MM-dd'),
-        pf_anio_fin: format(toMonth, 'yyyy-MM-dd'),
+        pf_aniofin: format(toMonth, 'yyyy-MM-dd'),
         pn_deleg: delegation,
         pn_subdeleg: subdelegation,
       })

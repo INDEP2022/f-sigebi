@@ -2,7 +2,7 @@ export const DEPOSITARY_ROUTES_1: any[] = [
   // DEPOSITARIA
   {
     // REGISTRO DE DEPOSITARIA
-    label: 'Nombranientos',
+    label: 'Nombramientos',
     // link: 'registro-depositaria',
     link: 'depositary-record',
     menu: 'Registro de Depositaría',

@@ -6,7 +6,7 @@ export const PRORRATEO_CONCEPTS_COLUMNS = {
   },
   quantity: {
     title: 'Cantidad',
-    type: 'string',
+    type: 'text',
     sort: false,
   },
   cost: {

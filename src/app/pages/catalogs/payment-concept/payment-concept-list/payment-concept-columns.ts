@@ -9,5 +9,6 @@ export const PAYMENT_CONCEPT_COLUMNS = {
     title: 'Descripción',
     type: 'string',
     sort: false,
+    width: '80%',
   },
 };

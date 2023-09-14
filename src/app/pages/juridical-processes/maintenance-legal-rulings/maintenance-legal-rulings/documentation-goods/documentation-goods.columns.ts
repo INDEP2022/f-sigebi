@@ -1,28 +1,31 @@
 export const DOCUMENTS_DICTUM_X_STATE = {
-  officialNumber: { title: 'No. Dictaminación' },
-  typeDictum: { title: 'Tipo Dictaminación' },
+  officialNumber: { sort: false, title: 'No. Dictaminación' },
+  typeDictum: { sort: false, title: 'Tipo Dictaminación' },
   expedientNumber: {
     title: 'No. Expediente',
+    sort: false,
     valuePrepareFunction: (data: any) => {
       return data ? data.id : '';
     },
   },
   stateNumber: {
+    sort: false,
     title: 'No. Bien',
     valuePrepareFunction: (data: any) => {
       return data ? data.id : '';
     },
   },
   key: {
+    sort: false,
     title: 'Clave Documento',
     valuePrepareFunction: (data: any) => {
       return data ? data.key : '';
     },
   },
-  dateReceipt: { title: 'Fecha Recibido' },
-  userReceipt: { title: 'Usuario Recibido' },
-  insertionDate: { title: 'Fecha Inserción' },
-  userInsertion: { title: 'Usuario Inserto' },
-  notificationDate: { title: 'Fecha Notificación' },
-  secureKey: { title: 'Aseg. Dev. Clave' },
+  dateReceipt: { sort: false, title: 'Fecha Recibido' },
+  userReceipt: { sort: false, title: 'Usuario Recibido' },
+  insertionDate: { sort: false, title: 'Fecha Inserción' },
+  userInsertion: { sort: false, title: 'Usuario Inserto' },
+  notificationDate: { sort: false, title: 'Fecha Notificación' },
+  secureKey: { sort: false, title: 'Aseg. Dev. Clave' },
 };

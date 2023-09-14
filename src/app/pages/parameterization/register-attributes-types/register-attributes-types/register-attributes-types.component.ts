@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -15,9 +15,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { REGISTER_ATT_TYPES_COLUMNS } from './register-attributes-types-columns';
 //models
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
-import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
-import { IGoodsSubtype } from 'src/app/core/models/catalogs/goods-subtype.model';
 import { IAttribClassifGoods } from 'src/app/core/models/ms-goods-query/attributes-classification-good';
 //Services
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
@@ -57,11 +55,13 @@ export class RegisterAttributesTypesComponent
   subtypeField: string = 'subtype';
   ssubtypeField: string = 'ssubtype';
   sssubtypeField: string = 'sssubtype';
+  attribField: string = 'attrib';
+  idField: string = 'id';
 
-  goodTypeChange = new EventEmitter<IGoodType>();
-  goodSubtypeChange = new EventEmitter<IGoodSubType>();
-  goodSsubtypeChange = new EventEmitter<IGoodsSubtype>();
-  goodSssubtypeChange = new EventEmitter<IGoodSssubtype>();
+  // goodTypeChange = new EventEmitter<IGoodType>();
+  // goodSubtypeChange = new EventEmitter<IGoodSubType>();
+  // goodSsubtypeChange = new EventEmitter<IGoodsSubtype>();
+  // goodSssubtypeChange = new EventEmitter<IGoodSssubtype>();
 
   get type() {
     return this.form.get(this.typeField);
@@ -74,6 +74,12 @@ export class RegisterAttributesTypesComponent
   }
   get sssubtype() {
     return this.form.get(this.sssubtypeField);
+  }
+  get attrib() {
+    return this.form.get(this.attribField);
+  }
+  get id() {
+    return this.form.get(this.idField);
   }
 
   constructor(
@@ -106,6 +112,7 @@ export class RegisterAttributesTypesComponent
 
   private prepareForm(): void {
     this.form = this.fb.group({
+      id: [null],
       type: [null, [Validators.required]],
       subtype: [null, [Validators.required]],
       ssubtype: [null, [Validators.required]],
@@ -154,7 +161,7 @@ export class RegisterAttributesTypesComponent
 
   getSubtypes(params: ListParams) {
     this.goodSubtypesService
-      .getAll({ type: this.type.value, ...params })
+      .getAll({ 'filter.idTypeGood': this.type.value, ...params })
       .subscribe(data => {
         console.log(data);
         this.subtypes = new DefaultSelect(data.data, data.count);
@@ -164,8 +171,8 @@ export class RegisterAttributesTypesComponent
   getSsubtypes(params: ListParams) {
     this.goodSsubtypeService
       .getAll({
-        type: this.type.value,
-        subtype: this.subtype.value,
+        'filter.noType': this.type.value,
+        'filter.noSubType': this.subtype.value,
         ...params,
       })
       .subscribe(data => {
@@ -176,9 +183,9 @@ export class RegisterAttributesTypesComponent
   getSssubtypes(params: ListParams) {
     this.goodSssubtypeService
       .getAll({
-        type: this.type.value,
-        subtype: this.subtype.value,
-        ssubtype: this.ssubtype.value,
+        'filter.noType': this.type.value,
+        'filter.numSubType': this.subtype.value,
+        'filter.numSsubType': this.ssubtype.value,
         ...params,
       })
       .subscribe(data => {
@@ -187,34 +194,49 @@ export class RegisterAttributesTypesComponent
   }
 
   onTypesChange(type: any) {
-    this.resetFields([this.subtype, this.ssubtype, this.sssubtype]);
-    this.subtypes = new DefaultSelect();
+    this.resetFields([
+      this.subtype,
+      this.ssubtype,
+      this.sssubtype,
+      this.attrib,
+      this.id,
+    ]);
     this.ssubtypes = new DefaultSelect();
     this.sssubtypes = new DefaultSelect();
+    console.log(type);
+    if (!this.type.value) {
+      this.types = new DefaultSelect([type.idTypeGood], 1);
+      this.type.setValue(type.idTypeGood.id);
+    }
     this.form.updateValueAndValidity();
-    this.goodTypeChange.emit(type);
+    // this.goodTypeChange.emit(type);
+    this.getSubtypes(new ListParams());
   }
 
   onSubtypesChange(subtype: any) {
-    if (!this.type.value) {
-      this.types = new DefaultSelect([subtype.idTypeGood], 1);
-      this.type.setValue(subtype.idTypeGood.id);
-    }
-    this.resetFields([this.ssubtype, this.sssubtype]);
-    this.ssubtypes = new DefaultSelect();
+    this.resetFields([this.ssubtype, this.sssubtype, this.attrib, this.id]);
     this.sssubtypes = new DefaultSelect();
-    this.goodSubtypeChange.emit(subtype);
+    if (!this.type.value || !this.subtype.value) {
+      this.types = new DefaultSelect([subtype.idTypeGood.id], 1);
+      this.subtypes = new DefaultSelect([subtype.id], 1);
+      this.type.setValue(subtype.idTypeGood.id);
+      this.subtype.setValue(subtype.id);
+    }
+    this.getSsubtypes(new ListParams());
   }
 
   onSsubtypesChange(ssubtype: any) {
+    this.resetFields([this.sssubtype, this.attrib, this.id]);
     if (!this.type.value || !this.subtype.value) {
-      this.types = new DefaultSelect([ssubtype.noType], 1);
-      this.subtypes = new DefaultSelect([ssubtype.noSubType], 1);
-      this.type.setValue(ssubtype.noType.id);
-      this.subtype.setValue(ssubtype.noSubType.id);
+      console.log(ssubtype);
+      this.types = new DefaultSelect([ssubtype.numType], 1);
+      this.subtypes = new DefaultSelect([ssubtype.numSubType], 1);
+      this.ssubtypes = new DefaultSelect([ssubtype.numSsubType], 1);
+      this.type.setValue(ssubtype.numType.id);
+      this.subtype.setValue(ssubtype.numSubType.id);
+      this.ssubtype.setValue(ssubtype.numSsubType.id);
     }
-    this.resetFields([this.sssubtype]);
-    this.goodSsubtypeChange.emit(ssubtype);
+    this.getSssubtypes(new ListParams());
   }
 
   onSssubtypesChange(sssubtype: any) {
@@ -228,15 +250,15 @@ export class RegisterAttributesTypesComponent
       this.ssubtype.setValue(sssubtype.numSsubType.id);
     }
 
-    this.goodSssubtypeChange.emit(sssubtype);
+    // this.goodSssubtypeChange.emit(sssubtype);
   }
 
   onValuesChange(goodSssubtypeChange: IGoodSssubtype): void {
     console.log(goodSssubtypeChange);
+    this.dataAttribClassifGood.load([]);
     this.goodSssubType = goodSssubtypeChange;
     this.form.controls['attrib'].setValue(goodSssubtypeChange.numClasifGoods);
     this.form.controls['id'].setValue(goodSssubtypeChange.id);
-    this.sssubtypes = new DefaultSelect();
   }
 
   resetFields(fields: AbstractControl[]) {
@@ -271,6 +293,7 @@ export class RegisterAttributesTypesComponent
           return item;
         });
         this.dataAttribClassifGood.load(data);
+        this.dataAttribClassifGood.refresh();
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -297,5 +320,8 @@ export class RegisterAttributesTypesComponent
 
   resetForm() {
     this.form.reset();
+    this.subtypes = new DefaultSelect([], 0, true);
+    this.ssubtypes = new DefaultSelect([], 0, true);
+    this.sssubtypes = new DefaultSelect([], 0, true);
   }
 }

@@ -1,35 +1,40 @@
 export const DELEGATION_COLUMS = {
   id: {
-    title: 'Id',
+    title: 'Código',
     type: 'number',
     sort: false,
   },
   description: {
-    title: 'Desc',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
   noRegister: {
-    title: 'No Registro',
+    title: 'No. Registro',
     type: 'number',
     sort: false,
   },
-  zoneContractCVE: {
+  zoneContractKey: {
     title: 'Z. Contrato',
     type: 'number',
     sort: false,
   },
-  diffHours: {
-    title: 'Dif Hora',
+  idZoneGeographic: {
+    title: 'Geographic',
     type: 'number',
     sort: false,
   },
-  phaseEdo: {
+  diffHours: {
+    title: 'Dif. Hora',
+    type: 'number',
+    sort: false,
+  },
+  etapaEdo: {
     title: 'Etapa EDO',
     type: 'number',
     sort: false,
   },
-  zoneVigilanceCVE: {
+  zoneVigilanceKey: {
     title: 'Zona Vigilancia',
     type: 'number',
     sort: false,

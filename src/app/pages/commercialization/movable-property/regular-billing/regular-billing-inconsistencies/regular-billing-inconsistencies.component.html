@@ -1,6 +1,21 @@
 <div class="row">
   <div class="ch-content">
     <h5 class="title">Inconsistencias anexo y Clasificador SIAB</h5>
+    <div class="row justify-content-end">
+      <app-columns-select
+        [(settings)]="settings"
+        [leftList]="true"></app-columns-select>
+    </div>
   </div>
-  <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+  <form-loader *ngIf="loading"></form-loader>
+  <div>
+    <ng2-smart-table
+      [ngStyle]="{ height: loading ? '0px' : 'auto' }"
+      [attr.class]="'table-bordered table-responsive mb-4'"
+      [settings]="settings"
+      [source]="dataFilter">
+    </ng2-smart-table>
+  </div>
+  <app-pagination [params]="paramsList" [totalItems]="totalItems">
+  </app-pagination>
 </div>

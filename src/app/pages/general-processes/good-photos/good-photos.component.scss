@@ -1,0 +1,29 @@
+:host ::ng-deep form-field {
+  .form-control[readonly] {
+    background: white;
+    &:focus ~ .form-bar:after,
+    &:focus ~ .form-bar:before {
+      width: 0% !important;
+    }
+  }
+}
+
+// :host ::ng-deep app-pagination {
+//   .paginator-page-size {
+//     display: none !important;
+//   }
+
+//   .pagination {
+//     display: flex;
+//     column-gap: 5px;
+
+//     .page-item {
+//       .page-link {
+//         width: 36px !important;
+//         height: 36px !important;
+//         display: flex !important;
+//         margin-top: 0px !important;
+//       }
+//     }
+//   }
+// }

@@ -1,5 +1,5 @@
 export interface IGoodSituation {
-  situation?: number;
+  situation?: string;
   descSituation: string;
   status: string;
 }

@@ -1,27 +1,40 @@
 export const MUNICIPALITIES_COLUMNS = {
-  key: {
+  stateKey: {
     title: 'Clave',
     type: 'number',
     sort: false,
   },
-  entity: {
-    title: 'Entidad',
+  idMunicipality: {
+    title: 'Código Municipio',
+    type: 'number',
+    sort: false,
+  },
+  nameMunicipality: {
+    title: 'Nombre de Municipio',
     type: 'string',
     sort: false,
   },
-  municipalityName: {
-    title: 'Nombre',
+  description: {
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  userCreation: {
-    title: 'Creado por',
+  state: {
+    title: 'Estado',
     type: 'string',
-    sort: false,
-  },
-  userModification: {
-    title: 'Modificado por',
-    type: 'string',
+    valuePrepareFunction: (value: any) => {
+      return value.descCondition;
+    },
+
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.descCondition;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
     sort: false,
   },
   version: {

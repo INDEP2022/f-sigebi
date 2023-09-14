@@ -15,6 +15,7 @@
         <form-field [control]="form.get('date')" label="Fecha de Solicitud">
           <input
             type="text"
+            [minDate]="maxDate"
             formControlName="date"
             class="form-control"
             bsDatepicker />
@@ -23,73 +24,105 @@
     </div>
     <div class="row mt-4">
       <div class="col-md-6">
-        <form-field
-          label="Envía"
-          class="form-group"
-          [control]="form.get('from')">
-          <ng-custom-select
+        <form-field class="form-group" [control]="form.get('from')">
+          <ngx-select
+            [form]="form"
+            [searchOnInit]="true"
+            [data]="VigEmailSend"
+            (change)="onChangeFrom($event)"
+            bindLabel="emailSend"
+            label="Envía"
+            value="id"
+            [showTooltip]="true"
+            (fetchItems)="getVigEmailSend($event)"
+            [control]="'from'"></ngx-select>
+
+          <!-- <ng-custom-select
+            [isLoadInOnInit]="false"
             [moreParams]="{ 'filter.status': '$eq:1' }"
             class="form-control"
             path="email/api/v1/vig-email-send"
             paramSearch="filter.nameSend"
-            prefixSearch="$ilike">
-            <ng-template let-item>
+            prefixSearch="$ilike"
+            (valueChange)="onChangeFrom($event)">
+            <ng-template #Send let-item>
               {{ item.nameSend }} / {{ item.emailSend }}
             </ng-template>
-          </ng-custom-select>
+          </ng-custom-select> -->
         </form-field>
       </div>
       <div class="col-md-6">
-        <form-field [control]="form.get('to')" label="Para">
-          <ng-custom-select
-            [moreParams]="{
+        <form-field [control]="form.get('to')">
+          <ngx-select
+            [readonly]="!delegationDetail"
+            [form]="form"
+            [data]="VigEmailBook"
+            (change)="onChangeTo($event)"
+            bindLabel="bookEmail"
+            label="Para"
+            value="id"
+            [showTooltip]="true"
+            (fetchItems)="getVigMailBook($event)"
+            [control]="'to'"></ngx-select>
+          <!-- <ng-custom-select [isLoadInOnInit]="false" [moreParams]="{
               'filter.bookType': '$eq:P',
               'filter.bookStatus': '$eq:1'
-            }"
-            class="form-control"
-            path="email/api/v1/vig-mail-book"
-            paramSearch="filter.bookName"
-            prefixSearch="$ilike">
+            }" class="form-control" path="email/api/v1/vig-mail-book" paramSearch="filter.bookName"
+            prefixSearch="$ilike" (valueChange)="onChangeTo($event)">
             <ng-template let-item>
               {{ item.bookName }}/{{ item.bookEmail }}
             </ng-template>
-          </ng-custom-select>
+          </ng-custom-select> -->
         </form-field>
       </div>
     </div>
 
     <div class="row mt-4">
       <div class="col-md-6">
-        <form-field label="CC" [control]="form.get('cc')">
-          <ng-custom-select
-            [moreParams]="{
+        <form-field [control]="form.get('cc')">
+          <ngx-select
+            [readonly]="!delegationDetail"
+            [form]="form"
+            [data]="VigCC"
+            (change)="onChangeCc($event)"
+            bindLabel="bookEmail"
+            label="CC"
+            value="id"
+            [showTooltip]="true"
+            (fetchItems)="getCC($event)"
+            [control]="'cc'"></ngx-select>
+
+          <!-- <ng-custom-select [isLoadInOnInit]="false" [moreParams]="{
               'filter.bookType': '$eq:C',
               'filter.bookStatus': '$eq:1'
-            }"
-            class="form-control"
-            path="email/api/v1/vig-mail-book"
-            paramSearch="filter.bookName"
-            prefixSearch="$ilike">
+            }" class="form-control" path="email/api/v1/vig-mail-book" paramSearch="filter.bookName"
+            prefixSearch="$ilike" (valueChange)="onChangeCc($event)">
             <ng-template let-item>
               {{ item.bookName }}/{{ item.bookEmail }}
             </ng-template>
-          </ng-custom-select>
+          </ng-custom-select> -->
         </form-field>
       </div>
       <div class="col-md-6">
-        <form-field [control]="form.get('type')" label="Tipo">
-          <ng-custom-select
-            (valueChange)="changeType($event)"
-            [isLoadInOnInit]="true"
-            [moreParams]="{ 'filter.status': '$eq:1' }"
-            class="form-control"
-            path="email/api/v1/vig-email-body"
-            paramSearch="filter.bodyEmail"
-            prefixSearch="$ilike">
+        <form-field [control]="form.get('type')">
+          <ngx-select
+            [form]="form"
+            [searchOnInit]="true"
+            [data]="VigEmailBody"
+            (change)="changeType($event)"
+            bindLabel="body"
+            label="Tipo"
+            value="id"
+            [showTooltip]="true"
+            (fetchItems)="getBody($event)"
+            [control]="'type'"></ngx-select>
+          <!-- <ng-custom-select (valueChange)="changeType($event)" [isLoadInOnInit]="true"
+            [moreParams]="{ 'filter.status': '$eq:1' }" class="form-control" path="email/api/v1/vig-email-body"
+            paramSearch="filter.bodyEmail" prefixSearch="$ilike">
             <ng-template let-item>
               {{ convertEmailBody(item.id) }}
             </ng-template>
-          </ng-custom-select>
+          </ng-custom-select> -->
         </form-field>
       </div>
     </div>
@@ -105,22 +138,33 @@
         </form-field>
       </div>
       <div class="col-md-6">
-        <form-field [control]="form.get('body')" label="Cuerpo">
+        <form-field [control]="form.get('textBody')" label="Cuerpo">
           <input
             readonly
             type="text"
             class="form-control px-3"
-            formControlName="body" />
+            formControlName="textBody" />
         </form-field>
       </div>
     </div>
 
-    <div class="row mt-4 float-right">
+    <div class="row mt-4 text-center">
+      <div>
+        <button
+          (click)="cleanForm()"
+          type="button"
+          class="btn btn-danger btn-sm active mr-2">
+          Limpiar
+          <i class="fa fa-eraser" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+    <!-- <div class="row mt-4 float-right">
       <div>
         <button type="submit" class="btn btn-primary btn-sm active mx-4">
           ENVIAR
         </button>
       </div>
-    </div>
+    </div> -->
   </form>
 </div>

@@ -15,8 +15,9 @@ export const CONTRACTS_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: IZoneContract) => {
-      return value.description;
+      return value != undefined ? value.description : '';
     },
+
     filterFunction(cell?: any, search?: string): boolean {
       let column = cell.description;
       if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
@@ -29,10 +30,20 @@ export const CONTRACTS_COLUMNS = {
   startDate: {
     title: 'Fecha inicial',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      const partesFecha = value.split('-'); // Dividir la fecha en partes: [año, mes, día]
+      const fechaFormateada = `${partesFecha[2]}-${partesFecha[1]}-${partesFecha[0]}`;
+      return fechaFormateada;
+    },
   },
   endDate: {
     title: 'Fecha final',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      const partesFecha = value.split('-'); // Dividir la fecha en partes: [año, mes, día]
+      const fechaFormateada = `${partesFecha[2]}-${partesFecha[1]}-${partesFecha[0]}`;
+      return fechaFormateada;
+    },
   },
   statusContract: {
     title: 'Vigente',

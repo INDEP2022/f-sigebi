@@ -1,0 +1,52 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar' : 'Nuevo' }} Comercializaci&oacute;n Destino XML
+    </h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="formGroup">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="formGroup.get('email')"
+            label="Correo Electr&oacute;nico">
+            <input
+              type="email"
+              class="form-control"
+              maxlength="50"
+              formControlName="email"
+              [readonly]="edit" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="formGroup.get('name')"
+            label="Nombre del Destinatario">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="200"
+              formControlName="name" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="formGroup.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

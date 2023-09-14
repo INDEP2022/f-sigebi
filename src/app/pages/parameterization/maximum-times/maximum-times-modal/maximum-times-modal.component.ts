@@ -21,7 +21,7 @@ import { MaximumTimesUserComponent } from '../maximum-times-user/maximum-times-u
 export class MaximumTimesModalComponent extends BasePage implements OnInit {
   maximumTimesForm: ModelForm<IMaximumTimes>;
   maximumTimes: IMaximumTimes;
-  title: string = 'Tiempo Máximo Para Cierre Actas Devolución';
+  title: string = 'Tiempo Máximo para Cierre Actas Devolución';
   edit: boolean = false;
   user: IUsers;
   typeItem: any[];
@@ -53,7 +53,14 @@ export class MaximumTimesModalComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.maximumTimesForm = this.fb.group({
       certificateType: [null, [Validators.required]],
-      tmpMax: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      tmpMax: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(3),
+        ],
+      ],
       activatedBool: [null],
       activated: [null],
       userName: [null],
@@ -100,7 +107,10 @@ export class MaximumTimesModalComponent extends BasePage implements OnInit {
     console.log(data);
     this.maximumTimesService.create(this.maximumTimesForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.onLoadToast('warning', 'Advertencia', error.error.message);
+        this.loading = false;
+      },
     });
   }
   update() {

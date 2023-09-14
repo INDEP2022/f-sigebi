@@ -6,8 +6,12 @@ import {
 } from 'src/app/common/constants/endpoints/ms-proceduremanagement-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import { IListResponse } from '../../interfaces/list-response.interface';
 import {
+  IListResponse,
+  IListResponseMessage,
+} from '../../interfaces/list-response.interface';
+import {
+  IAreaTramite,
   IManagamentProcessPgr,
   IManagamentProcessSat,
   IManagementArea,
@@ -27,6 +31,13 @@ export class ProcedureManagementService extends HttpService {
   getAll(params?: ListParams): Observable<IListResponse<IProceduremanagement>> {
     return this.get<IListResponse<IProceduremanagement>>(
       ProcedureManagementEndPoints.ProcedureManagement,
+      params
+    );
+  }
+
+  getAreaTramite(params: string | ListParams = new ListParams()) {
+    return this.get<IListResponseMessage<IAreaTramite>>(
+      ProcedureManagementEndPoints.AreaTramite,
       params
     );
   }
@@ -170,6 +181,27 @@ export class ProcedureManagementService extends HttpService {
     id: number,
     body: Partial<IProceduremanagement>
   ): Observable<IProceduremanagement> {
+    console.log(body);
+    return this.put<IProceduremanagement>(
+      `${ProcedureManagementEndPoints.ProcedureManagement}/${id}`,
+      body
+    );
+  }
+  updateTramite(
+    id: number,
+    body: Partial<IProceduremanagement>
+  ): Observable<IProceduremanagement> {
+    console.log(body);
+    return this.put<IProceduremanagement>(
+      `${ProcedureManagementEndPoints.ProcedureManagement}/${id}`,
+      body
+    );
+  }
+
+  updateByEx(
+    id: number,
+    body: Partial<IProceduremanagement>
+  ): Observable<IProceduremanagement> {
     return this.put<IProceduremanagement>(
       `${ProcedureManagementEndPoints.ProcedureManagement}/${id}`,
       body
@@ -181,5 +213,21 @@ export class ProcedureManagementService extends HttpService {
       `${ProcedureManagementEndPoints.ProcedureManagement}`,
       body
     );
+  }
+
+  updateForWheelNumber(
+    wheelNumber: number,
+    body: { tiKeyNewPerson: string }
+  ): Observable<IProceduremanagement> {
+    return this.put<IProceduremanagement>(
+      `${ProcedureManagementEndPoints.ProcedureManagement}/editManagementProcedure/${wheelNumber}`,
+      body
+    );
+  }
+
+  updateGestionTramite(no_tramite: number) {
+    const body = { p_no_tramite: no_tramite };
+    const route = ProcedureManagementEndPoints.UpdateGestionTramite;
+    return this.post(`${route}`, body);
   }
 }

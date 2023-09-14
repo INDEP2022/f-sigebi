@@ -1,60 +1,69 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const HISTORICAL_GOOD_SITUATION_COLUMNS = {
-  situacion: {
+  descripcion: {
     title: 'Situación',
     sort: false,
+    // valuePrepareFunction: (value: string) => value ?? 'Estatus no habilitado',
   },
-  fec: {
+  fec_cambio: {
     title: 'Fecha Cambio',
     sort: false,
+    valuePrepareFunction: (value: string) => formatDate(value),
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
-  usuario: {
+  usuario_cambio: {
     title: 'Usuario',
     sort: false,
   },
-  motivo: {
+  motivo_cambio: {
     title: 'Motivo Cambio',
     sort: false,
   },
-  proceso: {
+  proceso_ext_dom: {
     title: 'Proceso',
     sort: false,
   },
 };
 
-export const HISTORICAL_GOOD_SITUATION_EXAMPLE_DATA = [
-  {
-    situacion: 'DI_DESC-ESTAT',
-    fec: new Date().toISOString(),
-    usuario: 'USUARIO',
-    motivo: 'MOTIVO_CAMBIO',
-    proceso: 'PROCESO_EXTERNO',
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${day}/${month}/${year}`;
+}
+
+export const GOODS = {
+  inventoryNumber: {
+    title: 'No. Inventario',
+    sort: false,
   },
-  {
-    situacion: 'DI_DESC-ESTAT',
-    fec: new Date().toISOString(),
-    usuario: 'USUARIO',
-    motivo: 'MOTIVO_CAMBIO',
-    proceso: 'PROCESO_EXTERNO',
+  goodId: {
+    title: 'No. Gestión',
+    sort: false,
   },
-  {
-    situacion: 'DI_DESC-ESTAT',
-    fec: new Date().toISOString(),
-    usuario: 'USUARIO',
-    motivo: 'MOTIVO_CAMBIO',
-    proceso: 'PROCESO_EXTERNO',
+  id: {
+    title: 'No. Bien',
+    sort: false,
   },
-  {
-    situacion: 'DI_DESC-ESTAT',
-    fec: new Date().toISOString(),
-    usuario: 'USUARIO',
-    motivo: 'MOTIVO_CAMBIO',
-    proceso: 'PROCESO_EXTERNO',
+  description: {
+    title: 'Descripción',
+    sort: false,
   },
-  {
-    situacion: 'DI_DESC-ESTAT',
-    fec: new Date().toISOString(),
-    usuario: 'USUARIO',
-    motivo: 'MOTIVO_CAMBIO',
-    proceso: 'PROCESO_EXTERNO',
+  quantity: {
+    title: 'Cantidad',
+    sort: false,
   },
-];
+};

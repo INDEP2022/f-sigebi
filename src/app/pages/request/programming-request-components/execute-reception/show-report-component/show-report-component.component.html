@@ -1,0 +1,125 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">{{ title }}</h5>
+    <button
+      type="button"
+      class="close btn-close pull-right"
+      aria-label="Close"
+      (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div body class="body">
+    <div *ngIf="printReport">
+      <div class="row">
+        <div class="d-flex">
+          <h5 *ngIf="!showTDR" class="mr-auto p-2">{{ btnSubTitle }}</h5>
+          <div class="p-2">
+            <button
+              (click)="signDocument()"
+              *ngIf="typeFirm == 'electronica' && !showTDR"
+              class="btn btn-primary btn-sm active">
+              {{ btnTitle }} <i class="bx bx-edit-alt"></i>
+            </button>
+            <button
+              (click)="signDocument()"
+              *ngIf="
+                (typeFirm == 'autografa' && !showTDR) ||
+                (typeFirm == 'autograf' && !showTDR)
+              "
+              class="btn btn-primary btn-sm active">
+              {{ btnTitle }} <i class="fa fa-file"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <button class="btn btn-primary btn-sm" (click)="print()">
+          Descargar
+        </button>
+        <div style="position: relative; height: 715px">
+          <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+            <form-loader *ngIf="formLoading"></form-loader>
+          </div>
+          <div *ngIf="!formLoading">
+            <div class="pdf-container">
+              <pdf-viewer
+                [src]="src"
+                [rotation]="0"
+                [original-size]="false"
+                [show-all]="true"
+                [fit-to-page]="false"
+                [zoom]="1"
+                [zoom-scale]="'page-width'"
+                [stick-to-page]="false"
+                [render-text]="true"
+                [external-link-target]="'blank'"
+                [autoresize]="true"
+                [show-borders]="false"
+                (after-load-complete)="onLoaded($event)"
+                style="width: 100%; height: 600px"></pdf-viewer>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="listSigns">
+      <h5 class="mr-auto p-2">Listado de Firmantes Electr&oacute;nicos</h5>
+      <div class="row">
+        <div class="d-flex justify-content-end">
+          <div class="p-2" *ngIf="showButtonFirm == true">
+            <confirm-button
+              [text]="'Enviar a firmar'"
+              [loadingText]="'Firmando'"
+              [loading]="loadingButton"
+              [btnSmall]="true"
+              [icon]="'bx bxs-right-arrow-square'"
+              (confirm)="sendSign()"></confirm-button>
+          </div>
+          <div class="p-2">
+            <button (click)="backStep()" class="btn btn-primary btn-sm active">
+              <i class="bx bx-left-arrow-alt"></i> Paso Anterior
+            </button>
+          </div>
+          <div class="p-2" *ngIf="msjCheck == true">
+            <button class="btn btn-primary btn-sm active" (click)="nextStep()">
+              Paso Siguiente <i class="bx bx-right-arrow-alt"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="noncompliance">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings"
+                  [source]="signatories"
+                  (edit)="uploadData($event.data)"
+                  (rowSelect)="selectRow($event.data)">
+                </ng2-smart-table>
+              </div>
+              <app-pagination [params]="params" [totalItems]="totalItems">
+              </app-pagination>
+            </div>
+          </div>
+          <span *ngIf="showButtonFirm == false"
+            ><b>¡Complete la Información de los Firmantes!</b></span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

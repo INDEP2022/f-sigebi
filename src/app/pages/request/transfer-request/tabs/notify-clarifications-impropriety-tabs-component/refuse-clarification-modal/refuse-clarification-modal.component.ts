@@ -99,7 +99,7 @@ export class RefuseClarificationModalComponent
 
     this.chatService.update(idChat, modelChatClarifications).subscribe({
       next: async data => {
-        this.onLoadToast('success', 'Actualizado', '');
+        this.alert('success', 'Actualizado', '');
         console.log('SE ACTUALIZÓ:', data);
         this.loading = false;
         this.modalRef.content.callback(true);
@@ -116,7 +116,7 @@ export class RefuseClarificationModalComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

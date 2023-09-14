@@ -21,7 +21,7 @@ export const FLYER_HISTORY_COLUMNS = {
       if (!value) {
         return '';
       }
-      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
     },
   },
   observations: {

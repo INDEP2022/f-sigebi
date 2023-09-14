@@ -1,9 +1,7 @@
 <div
   class="mx-1"
   [class]="
-    form.invalid || formGood.invalid || vsum >= vimporte || loading
-      ? 'disabled'
-      : ''
+    form?.invalid || !good || vsum >= vimporte || loading ? 'disabled' : ''
   "
   size="small"
   (click)="partialize()">

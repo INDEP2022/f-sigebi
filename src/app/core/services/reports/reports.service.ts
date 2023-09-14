@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
+import { environment } from 'src/environments/environment';
 import { SiabService } from '../jasper-reports/siab.service';
 @Injectable({
   providedIn: 'root',
@@ -51,17 +52,24 @@ export class ReportService extends HttpService {
 
   getGood() {
     return this.httpClient.get(
-      `http://sigebimsqa.indep.gob.mx/catalog/api/v1/good-sssubtype/search`
+      `${environment.API_URL}catalog/api/v1/good-sssubtype/search`
     );
   }
   getBatch(text: string) {
     return this.httpClient.get(
-      `http://reportsqa.indep.gob.mx/catalog/api/v1//batch/search=${text}`
+      `${environment.API_URL}catalog/api/v1//batch/search=${text}`
     );
   }
   getGoodType() {
     return this.httpClient.get(
-      `http://sigebimsqa.indep.gob.mx/catalog/api/v1/good-type`
+      `${environment.API_URL}catalog/api/v1/good-type`
     );
+  }
+
+  getReporteHistorico(nombre: string) {
+    return this.siabService.fetchReport(nombre, {});
+    // return this.httpClient.get(
+    //   `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?PN_DELEG=${PN_DELEG}&PN_SUBDEL=${PN_SUBDEL}&PF_MES=${PF_MES}&PF_ANIO=${PF_ANIO}`
+    // );
   }
 }

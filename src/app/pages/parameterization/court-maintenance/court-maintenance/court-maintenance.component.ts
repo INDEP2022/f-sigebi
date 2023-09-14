@@ -15,6 +15,7 @@ import { CourtService } from 'src/app/core/services/catalogs/court.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { EntFedService } from 'src/app/core/services/catalogs/entfed.service';
 import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
+import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   NUMBERS_PATTERN,
@@ -22,6 +23,7 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { CourtListComponent } from 'src/app/pages/parameterization/court-maintenance/court-list/court-list.component';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { CourtCityComponent } from '../court-city/court-city.component';
 import { COLUMNS } from './columns';
 import { TableCity } from './table.model';
@@ -40,6 +42,9 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   dataCourtCity: IListResponse<TableCity> = {} as IListResponse<TableCity>;
   idCourt: string | number = null;
+  circuit = new DefaultSelect();
+  code: number = 321;
+  id: number;
 
   constructor(
     private modalService: BsModalService,
@@ -48,7 +53,8 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
     private courtCityServ: CourtByCityService,
     private readonly serviceSubDeleg: SubdelegationService,
     private readonly serviceFederation: EntFedService,
-    private readonly serviceDeleg: DelegationService
+    private readonly serviceDeleg: DelegationService,
+    private dinamic: DynamicTablesService
   ) {
     super();
     this.settings = {
@@ -69,7 +75,7 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      circuitCVE: [null, [Validators.maxLength(15), Validators.required]],
+      circuitCVE: [null, [Validators.required]],
       description: [
         null,
         [
@@ -80,15 +86,27 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
       ],
       manager: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       street: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(60),
+        ],
       ],
       numExterior: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(10)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       numInside: [
         null,
@@ -96,23 +114,40 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
       ],
       cologne: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       zipCode: [
         null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(5)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
       ],
       delegationMun: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(60),
+        ],
       ],
       numPhone: [
         null,
-        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(20)],
+        [
+          Validators.required,
+          Validators.pattern(PHONE_PATTERN),
+          Validators.maxLength(20),
+        ],
       ],
       numRegister: [{ value: null, disabled: true }],
       id: [{ value: null, disabled: true }],
     });
+    this.getCircuit(new ListParams());
   }
 
   openModal() {
@@ -150,11 +185,15 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.courtCityServ.deleteCity(this.idCourt, city.idCity).subscribe({
           next: () => {
-            this.onLoadToast('success', 'Eliminado correctamente', '');
+            this.alert(
+              'success',
+              'Registro de Ciudad',
+              'Borrado Correctamente'
+            );
             this.getCourtByCity();
           },
           error: err => {
-            this.onLoadToast('error', err.error.message, '');
+            this.alert('error', err.error.message, '');
           },
         });
       }
@@ -162,21 +201,37 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.form.get('id').enable();
+    this.id = this.form.get('id').value;
+    console.log(this.id);
     this.loadingForm = true;
     if (this.form.value) {
       if (this.edit) {
-        this.courtServ.updateCourt(this.form.value).subscribe({
+        this.courtServ.update(this.id, this.form.getRawValue()).subscribe({
           next: () => (
-            this.onLoadToast('success', 'Juzgado', 'Se ha actualizado'),
+            this.alert('success', 'Juzgado', 'Actualizado Correctamente'),
             this.clean()
           ),
           error: err => this.onLoadToast('error', err.error.message, ''),
         });
       } else {
+        if (
+          this.form.controls['description'].value.trim() === '' ||
+          this.form.controls['manager'].value.trim() === '' ||
+          this.form.controls['street'].value.trim() === '' ||
+          this.form.controls['numExterior'].value.trim() === '' ||
+          this.form.controls['numInside'].value.trim() === '' ||
+          this.form.controls['cologne'].value.trim() === '' ||
+          this.form.controls['delegationMun'].value.trim() === ''
+        ) {
+          this.alert('warning', 'No se puede guardar campos vacíos', ``);
+          return; // Retorna temprano si el campo está vacío.
+        }
+        this.loading = true;
         this.courtServ.create(this.form.value).subscribe({
           next: data => {
-            this.onLoadToast('success', 'Juzgado', 'Se ha guardado');
+            console.log(data);
+
+            this.alert('success', 'Juzgado', 'Guardado Correctamente');
             this.form.patchValue(data);
             this.form.get('id').disable();
             this.isPresent = true;
@@ -202,9 +257,17 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
             };
             this.dataCourtCity.data.push(descCity);
             const properties = city.city as ICity;
-            this.getEntidad(properties.state as any, index);
-            this.getDelegation(properties.noDelegation as any, index);
-            this.getSubDelegation(properties.noSubDelegation as any, index);
+            if (properties !== null) {
+              console.log(properties);
+              this.getEntidad(
+                properties.state !== null ? properties.state : (' ' as any),
+                index
+              );
+              this.getDelegation(properties.noDelegation as any, index);
+              this.getSubDelegation(properties.noSubDelegation as any, index);
+            } else {
+              return;
+            }
           });
           this.dataCourtCity.count = response.count;
           this.loading = false;
@@ -229,9 +292,9 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
   }
 
   private getDelegation(delegation: number, index: number) {
-    this.serviceDeleg.getById(delegation).subscribe({
+    this.serviceDeleg.getByIdEtapaEdo(delegation, '1').subscribe({
       next: data => {
-        this.dataCourtCity.data[index].cvDelDescripcion = data.description;
+        this.dataCourtCity.data[index].cvDelDescription = data.description;
         this.dataCourtCity.data = [...this.dataCourtCity.data];
       },
       error: error => this.onLoadToast('error', error.erro.message, ''),
@@ -241,7 +304,7 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
   private getSubDelegation(subDelegation: number, index: number) {
     this.serviceSubDeleg.getById(subDelegation).subscribe({
       next: data => {
-        this.dataCourtCity.data[index].cvSubDelDescripcion = data.description;
+        this.dataCourtCity.data[index].cvSubDelDescription = data.description;
         this.dataCourtCity.data = [...this.dataCourtCity.data];
       },
       error: error => this.onLoadToast('error', error.erro.message, ''),
@@ -280,5 +343,17 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(CourtCityComponent, config);
+  }
+
+  getCircuit(params?: ListParams) {
+    this.dinamic.getTvalTable1ByTableKey(this.code, params).subscribe({
+      next: response => {
+        this.circuit = new DefaultSelect(response.data, response.count);
+      },
+      error: err => {
+        this.onLoadToast('error', err.error.message, '');
+        this.circuit = new DefaultSelect();
+      },
+    });
   }
 }

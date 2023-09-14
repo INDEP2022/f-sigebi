@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -42,6 +42,7 @@ export class InappropriatenessPgrSatFormComponent
   dataChatClarifications: IChatClarifications[];
   idSolicitud: any;
   formLoading: boolean = false;
+  delegationUser: any;
 
   constructor(
     private modalRef: BsModalRef,
@@ -58,19 +59,17 @@ export class InappropriatenessPgrSatFormComponent
   }
 
   ngOnInit(): void {
-    if (this.folioReporte === null) {
-      console.log('Crear folio');
-      this.dictamenSeq();
-    }
+    this.dictamenSeq();
+
     this.prepareForm();
   }
 
   prepareForm() {
     this.form = this.fb.group({
-      senderName: [null, [Validators.required, Validators.maxLength(50)]],
-      positionSender: [null, [Validators.required, Validators.maxLength(50)]],
-      paragraphInitial: [null, [Validators.maxLength(4000)]],
-      foundation: [null, [Validators.maxLength(4000)]],
+      managedTo: [this.request?.nameOfOwner || null], //NOMBRE DESTINATARIO
+      positionAddressee: [this.request?.holderCharge || null], // CARGO DESTINATARIO
+      paragraphInitial: [null],
+      foundation: [null],
     });
   }
 
@@ -84,15 +83,17 @@ export class InappropriatenessPgrSatFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.notification.clarificationType,
-      sender: this.form.controls['senderName'].value,
+      clarification: this.notification?.clarificationType,
+      //sender: this.request?.nameOfOwner, //Nombre remitente - Titular de la solicitud
       foundation: this.form.controls['foundation'].value,
       id: null,
       version: 1,
-      paragraphInitial: this.form.controls['paragraphInitial'].value,
+      paragraphInitial: this.form.controls['paragraphInitial'].value, //no tiene limite en BD
       applicationId: this.request.id,
-      positionSender: this.form.controls['positionSender'].value,
+      //positionSender: this.request?.holderCharge, //cARGA remitente - Titular de la solicitud
       invoiceLearned: this.folioReporte,
+      managedTo: this.request?.nameOfOwner, //NOMBRE DESTINATARIO - Titular de la solicitud
+      positionAddressee: this.request?.holderCharge, //CARGA DESTINATARIO - Titular de la solicitud
       //invoiceNumber: 1,
       modificationDate: new Date(),
       creationUser: token.name,
@@ -100,12 +101,13 @@ export class InappropriatenessPgrSatFormComponent
       modificationUser: token.name,
       creationDate: new Date(),
       assignmentInvoiceDate: new Date(),
-      rejectNoticeId: this.notification.rejectNotificationId,
+      rejectNoticeId: this.notification?.rejectNotificationId,
+      areaUserCapture: token.name,
     };
 
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
-      next: response => {
+      next: async response => {
         this.openReport(response);
         this.loading = false;
         this.close();
@@ -185,7 +187,6 @@ export class InappropriatenessPgrSatFormComponent
           },
           error: error => {
             this.loading = false;
-            console.log(error);
           },
         });
       },
@@ -217,9 +218,7 @@ export class InappropriatenessPgrSatFormComponent
             this.modalRef.content.callback(true, data.goodId);
             this.modalRef.hide();
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
       },
     });
@@ -244,10 +243,8 @@ export class InappropriatenessPgrSatFormComponent
         notificationValidate,
         callback: (next: boolean) => {
           if (next) {
-            console.log('Modal cerrado 1');
             this.changeStatusAnswered();
           } else {
-            console.log('Modal no cerrado 1');
           }
         },
       },
@@ -269,9 +266,7 @@ export class InappropriatenessPgrSatFormComponent
         this.folio = response;
         this.generateClave(this.folio.dictamenDelregSeq);
       },
-      error: error => {
-        console.log('Error al generar secuencia de dictamen', error.error);
-      },
+      error: error => {},
     });
   }
 

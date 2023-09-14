@@ -17,7 +17,7 @@ export class ValuesModalComponent extends BasePage implements OnInit {
   valuesForm: ModelForm<ITvaltable1>;
   tvalTable: ITvaltable1;
   value: ITablesType;
-  title: string = 'Valores';
+  title: string = 'Valor de Atributo';
   edit: boolean = false;
   constructor(
     private fb: FormBuilder,
@@ -32,11 +32,33 @@ export class ValuesModalComponent extends BasePage implements OnInit {
   }
   private prepareForm() {
     this.valuesForm = this.fb.group({
-      otKey: [null],
-      value: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      otKey: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(40),
+        ],
+      ],
+      value: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          ,
+          Validators.maxLength(40),
+        ],
+      ],
       table: [null],
       numRegister: [null],
-      abbreviation: [null],
+      abbreviation: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(40),
+        ],
+      ],
     });
     console.log(this.tvalTable);
     if (this.tvalTable != null) {
@@ -53,14 +75,25 @@ export class ValuesModalComponent extends BasePage implements OnInit {
   confirm() {
     this.edit ? this.update() : this.create();
   }
-  create() {
-    this.loading = true;
+  create(): void {
+    if (
+      this.valuesForm.controls['otKey'].value.trim() === '' ||
+      this.valuesForm.controls['value'].value.trim() === '' ||
+      this.valuesForm.controls['abbreviation'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', '');
+      return;
+    }
     this.valuesForm.controls['table'].setValue(this.value.nmtabla);
+
     this.tvalTableService
       .create2(this.value.ottipotb, this.valuesForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => {
+          this.loading = false;
+          this.alert('error', 'La Clave ya fue registrada', '');
+        },
       });
   }
   update() {
@@ -74,13 +107,13 @@ export class ValuesModalComponent extends BasePage implements OnInit {
     };
     this.tvalTableService.update(this.value.ottipotb, form).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => (this.loading = true),
     });
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
-    this.loading = false;
+    this.loading = true;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }

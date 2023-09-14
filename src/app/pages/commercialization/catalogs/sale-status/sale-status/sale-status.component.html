@@ -3,6 +3,18 @@
     <h5 class="title">ESTATUS DE VENTA</h5>
   </div>
   <div body>
+    <div class="ch-content">
+      <div class="d-flex justify-content-between align-items-center">
+        <div></div>
+        <div>
+          <button
+            class="btn btn-info btn-sm active ml-2 mr-4"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
     <div class="row">
       <div class="col-12" *ngIf="selectedRow">
         <label for="">Estatus</label>
@@ -13,30 +25,6 @@
           </h5>
         </div>
       </div>
-      <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-12 align-self-baseline">
-        <div class="row">
-          <div class="form-material col-12">
-            <search-bar
-              [filterParams]="params"
-              [filterField]="searchFilter"></search-bar>
-          </div>
-        </div>
-      </div> -->
-      <!-- <div
-        class="col-lg-6 col-md-6 col-sm-12 col-12 align-self-baseline"
-        *ngIf="rowSelected">
-        <div class="row mb-3 mt-3 justify-content-end">
-          <div class="col-lg-6 col-md-6 col-sm-6 col-12">
-            <label for="">Estatus</label>
-            <div class="mt-4">
-              <h5 class="font-size-14 text-muted">
-                <i class="bx bxs-circle me-1 text-muted"></i>
-                {{ selectedRow?.id }}
-              </h5>
-            </div>
-          </div>
-        </div>
-      </div> -->
     </div>
     <!--SALE STATUS TABLE-->
     <div class="row pt-4">
@@ -46,9 +34,8 @@
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="data"
-            (deleteConfirm)="onDeleteConfirm($event)"
-            (createConfirm)="onAddConfirm($event)"
-            (editConfirm)="onSaveConfirm($event)"
+            (delete)="onDeleteConfirm($event.data)"
+            (edit)="openForm($event.data)"
             (userRowSelect)="selectRow($event.data)">
           </ng2-smart-table>
         </div>

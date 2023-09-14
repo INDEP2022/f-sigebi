@@ -6,15 +6,22 @@
     <form class="form-material" [formGroup]="copiesOfficialForm">
       <div class="row">
         <div class="col-md-12 mt-4">
-          <form-field [control]="copiesOfficialForm.get('numberOfDicta')">
-            <ngx-select
+          <form-field
+            label="No. Dictamen"
+            [control]="copiesOfficialForm.get('numberOfDicta')">
+            <!-- <ngx-select
               (fetchItems)="getDictNumbers($event)"
               [data]="selectDictNumber"
               [form]="copiesOfficialForm"
               value="id"
               bindLabel="id"
               label="No. Dictamen"
-              control="numberOfDicta"></ngx-select>
+              control="numberOfDicta"></ngx-select> -->
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="numberOfDicta" />
           </form-field>
         </div>
 
@@ -23,10 +30,10 @@
             label="Tipo de Dictamen"
             [control]="copiesOfficialForm.get('typeDictamination')">
             <input
+              readonly
               required
               type="text"
               class="form-control"
-              maxlength="15"
               formControlName="typeDictamination" />
           </form-field>
         </div>
@@ -38,7 +45,6 @@
             <input
               type="text"
               class="form-control"
-              maxlength="15"
               formControlName="recipientCopy" />
           </form-field>
         </div>
@@ -48,9 +54,8 @@
             label="No. Destinatario Copia"
             [control]="copiesOfficialForm.get('copyDestinationNumber')">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              maxlength="3"
               formControlName="copyDestinationNumber" />
           </form-field>
         </div>
@@ -63,19 +68,17 @@
               required
               type="text"
               class="form-control"
-              maxlength="15"
               formControlName="personExtInt" />
           </form-field>
         </div>
 
         <div class="col-md-12 mt-4">
           <form-field
-            label="Nombre Persona Ext"
+            label="Nombre de la Persona Ext."
             [control]="copiesOfficialForm.get('namePersonExt')">
             <input
               type="text"
               class="form-control"
-              maxlength="1500"
               formControlName="namePersonExt" />
           </form-field>
         </div>

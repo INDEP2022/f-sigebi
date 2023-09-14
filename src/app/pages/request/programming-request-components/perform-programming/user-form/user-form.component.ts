@@ -6,7 +6,7 @@ import { IGeneric } from 'src/app/core/models/catalogs/generic.model';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { EMAIL_PATTERN, NAME_PATTERN } from 'src/app/core/shared/patterns';
+import { EMAIL_PATTERN2, NAME_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -35,8 +35,22 @@ export class UserFormComponent extends BasePage implements OnInit {
   }
   prepareForm() {
     this.userForm = this.fb.group({
-      user: [null, [Validators.required, Validators.pattern(NAME_PATTERN)]],
-      email: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
+      user: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(70),
+          Validators.pattern(NAME_PATTERN),
+        ],
+      ],
+      email: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(40),
+          Validators.pattern(EMAIL_PATTERN2),
+        ],
+      ],
       userCharge: [null, [Validators.required]],
     });
 
@@ -50,8 +64,14 @@ export class UserFormComponent extends BasePage implements OnInit {
 
   getChargesUsers(params?: ListParams) {
     params['filter.name'] = 'Cargos Usuarios';
-    return this.genericService.getAll(params).subscribe(data => {
-      this.chargesUsers = new DefaultSelect(data.data, data.count);
+    params['sortBy'] = 'description:ASC';
+    return this.genericService.getAll(params).subscribe({
+      next: data => {
+        this.chargesUsers = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.chargesUsers = new DefaultSelect();
+      },
     });
   }
 
@@ -66,7 +86,7 @@ export class UserFormComponent extends BasePage implements OnInit {
   create() {
     this.alertQuestion(
       'warning',
-      'Advertencía',
+      'Advertencia',
       '¿Desea crear el usuario a la programación?',
       'Guardar'
     ).then(question => {
@@ -84,6 +104,14 @@ export class UserFormComponent extends BasePage implements OnInit {
             this.modalService.content.callback(true, create);
             this.close();
           },
+          error: error => {
+            this.onLoadToast(
+              'info',
+              'Advertencia',
+              'Correo electrónico ya registrado verifica'
+            );
+            this.loading = false;
+          },
         });
       }
     });
@@ -96,7 +124,6 @@ export class UserFormComponent extends BasePage implements OnInit {
       '¿Desea editar el usuario?'
     ).then(question => {
       if (question.isConfirmed) {
-        console.log(this.userForm.value);
         let formData: Object = {
           programmingId: Number(this.idProgramming),
           email: this.userForm.get('email').value,

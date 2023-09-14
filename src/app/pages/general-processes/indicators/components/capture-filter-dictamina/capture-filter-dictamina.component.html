@@ -1,0 +1,56 @@
+<form [formGroup]="form" class="form-material">
+  <div class="row">
+    <form-field
+      [control]="form.get('de')"
+      label="Fecha Inicial"
+      class="col-md-3">
+      <input
+        type="text"
+        class="form-control"
+        bsDatepicker
+        formControlName="de" />
+    </form-field>
+
+    <form-field [control]="form.get('a')" label="Fecha Final" class="col-md-3">
+      <input
+        type="text"
+        class="form-control"
+        bsDatepicker
+        formControlName="a" />
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <div class="col-md-6">
+      <app-delegation-shared
+        class="col"
+        [form]="form"
+        control="coordinador"
+        [delegationField]="'coordinador'"
+        [labelDelegation]="'Coordinador Regional'"
+        [showSubdelegation]="false"
+        [delegationChange]="false"
+        (emitDelegation)="changeDelegation($event)">
+      </app-delegation-shared>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <button
+        type="button"
+        class="btn btn-primary active btn-sm"
+        (click)="onClickReport()"
+        [disabled]="form.invalid">
+        Reporte <i class="bx bx-printer bx-sm float-icon"></i>
+      </button>
+
+      <button
+        class="btn btn-primary btn-sm active m-3"
+        (click)="onConsultar()"
+        [disabled]="form.invalid">
+        Consultar
+        <i class="bx bx-search-alt bx-sm float-icon"></i>
+      </button>
+    </div>
+  </div>
+</form>

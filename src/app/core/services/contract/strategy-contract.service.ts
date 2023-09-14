@@ -43,4 +43,8 @@ export class ContractService
   remove(id: string | number): Observable<Object> {
     return this.contractRepository.remove(this.route, id);
   }
+
+  getContract(params?: ListParams): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>('vig-contract', params);
+  }
 }

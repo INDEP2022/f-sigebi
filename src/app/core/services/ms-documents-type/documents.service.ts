@@ -1,9 +1,11 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
 import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DocumentsTypeRepository } from 'src/app/common/repository/repositories/ms-documets-type-repository';
+import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDocument } from '../../models/ms-documents/document';
 import { IInventoryQuery } from '../../models/ms-inventory-query/inventory-query.model';
@@ -13,11 +15,18 @@ import { IInventoryQuery } from '../../models/ms-inventory-query/inventory-query
 })
 export class DocumentsService implements ICrudMethods<IDocument> {
   private readonly route: string = ENDPOINT_LINKS.Document;
-
-  constructor(private requestRepository: DocumentsTypeRepository<IDocument>) {}
+  private readonly route1: string = ENDPOINT_LINKS.RelDocuments;
+  constructor(
+    private htpp: HttpClient,
+    private requestRepository: DocumentsTypeRepository<IDocument>
+  ) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IDocument>> {
     return this.requestRepository.getAll(this.route, params);
+  }
+  getGoodsRelDocuments(params?: ListParams): Observable<any> {
+    const url = `${environment.API_URL}documents/api/v1/goods-rel-documents`;
+    return this.htpp.get(url, { params });
   }
 
   getByFilters(filters: any): Observable<IListResponse<IDocument>> {
@@ -38,6 +47,9 @@ export class DocumentsService implements ICrudMethods<IDocument> {
 
   createDocument(model: IInventoryQuery): Observable<IListResponse<IDocument>> {
     return this.requestRepository.create(this.route, model);
+  }
+  createRelDocument(model: IInventoryQuery): Observable<IListResponse<any>> {
+    return this.requestRepository.create(this.route1, model);
   }
 
   updateDocument(

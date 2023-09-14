@@ -1,0 +1,54 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Acceso</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="row">
+          <form-field [control]="form.get('idConversion')">
+            <ngx-select
+              (fetchItems)="serachIdConversion($event)"
+              control="idConversion"
+              label="Id Conversión"
+              bindLabel="id"
+              [data]="conversiones"
+              [form]="form"
+              [attr.autocomplete]="'off'"></ngx-select>
+          </form-field>
+        </div>
+        <div class="row mt-3">
+          <form-field [control]="form.get('password')" label="Password">
+            <!-- <input
+              type="password"
+              class="form-control"
+              formControlName="password"
+               /> -->
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              class="form-control"
+              formControlName="password"
+              autocomplete="new-password" />
+            <i
+              (click)="showPassword = !showPassword"
+              [class]="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"
+              id="togglePassword"></i>
+          </form-field>
+        </div>
+      </div>
+      <div class="row text-center mt-5">
+        <div class="col">
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            [disabled]="!form.valid"
+            (click)="sigin()">
+            Ingresar
+          </button>
+          <button class="btn btn-danger btn-sm active mr-3" (click)="close()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-modal>

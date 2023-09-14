@@ -1,7 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { format, parse } from 'date-fns';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -214,6 +214,7 @@ export class DocumentsReceptionRegisterComponent
   // };
   pageParams: IDocReceptionFlyersRegistrationParams = null;
   globals: IGlobalVars;
+  origin: string = null;
 
   constructor(
     private router: Router,
@@ -243,9 +244,34 @@ export class DocumentsReceptionRegisterComponent
     private globalVarsService: GlobalVarsService,
     private showHideErrorInterceptorService: showHideErrorInterceptorService,
     private fileUpdComService: FileUpdateCommunicationService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
+
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.origin = params['origin'];
+      });
+
+    this.globalVarsService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: gl => {
+          this.globals = gl;
+        },
+      });
+
+    this.globals.gnuActivaGestion = 1;
+    this.globals.bn = 0;
+    this.globals.CREA_EXPEDIENTE = 'S';
+    this.globals.antecede = 0;
+    this.globalVarsService.updateGlobalVars(this.globals);
+
+    // this.globals.gnuActivaGestion = 1
+
     if (this.docDataService.flyersRegistrationParams != null)
       this.pageParams = this.docDataService.flyersRegistrationParams;
   }
@@ -336,6 +362,8 @@ export class DocumentsReceptionRegisterComponent
         (this.pageParams.pNoVolante !== null &&
           this.pageParams.pNoVolante !== undefined)
       ) {
+        console.warn('llego aqui');
+
         // this.formControls.wheelNumber.setValue(null);
         // this.formControls.expedientNumber.setValue(null);
         this.documentsReceptionForm.reset();
@@ -788,7 +816,7 @@ export class DocumentsReceptionRegisterComponent
       this.formControls.goodRelation.setValue('S');
       this.checkPgrGoods();
       this.alert(
-        'info',
+        'warning',
         'Tipo de Trámite',
         'Este registro es parte de la interfaz de SAT, en automático se mostrarán los datos correspondientes.'
       );
@@ -805,7 +833,7 @@ export class DocumentsReceptionRegisterComponent
       this.pgrInterface = true;
       this.checkPgrGoods();
       this.alert(
-        'info',
+        'warning',
         'Tipo de Trámite',
         'Este registro es parte de la interfaz de FGR, en automático se mostrarán los datos correspondientes.'
       );
@@ -1315,7 +1343,7 @@ export class DocumentsReceptionRegisterComponent
             if (data.data.length > 0) {
               if (data.data[0].delegationNumber != this.userDelegation) {
                 this.userRecipient.setValue(null);
-                this.onLoadToast(
+                this.alert(
                   'warning',
                   'Usuario no asignado',
                   'El usuario no esta asignado a la delegación seleccionada.'
@@ -1454,7 +1482,7 @@ export class DocumentsReceptionRegisterComponent
     this.documentsReceptionForm.patchValue({ ...values });
     this.blockErrors(true);
     if (notif.expedientNumber == null) {
-      this.onLoadToast(
+      this.alert(
         'warning',
         'Expediente no disponible',
         'Este volante no tiene asociado un expediente.'
@@ -1679,7 +1707,7 @@ export class DocumentsReceptionRegisterComponent
           },
           error: err => {
             console.log(err);
-            this.onLoadToast(
+            this.alert(
               'warning',
               'Datos de Área no encontrados',
               'No se encontraron todos los datos del area correspondiente.'
@@ -1722,7 +1750,7 @@ export class DocumentsReceptionRegisterComponent
                   },
                   error: err => {
                     console.log(err);
-                    this.onLoadToast(
+                    this.alert(
                       'warning',
                       'Área de Gestión Destino no encontrada',
                       'No se encontró el área del trámite.'
@@ -1730,7 +1758,7 @@ export class DocumentsReceptionRegisterComponent
                   },
                 });
             } else {
-              this.onLoadToast(
+              this.alert(
                 'warning',
                 'Área de Gestión Destino no encontrada',
                 'No se encontró el área del trámite.'
@@ -1752,7 +1780,7 @@ export class DocumentsReceptionRegisterComponent
                   },
                   error: err => {
                     console.log(err);
-                    // this.onLoadToast(
+                    // this.alert(
                     //   'warning',
                     //   'Usuario en atención no encontrado',
                     //   'No se encontró el usuario en atención del trámite.'
@@ -1812,7 +1840,7 @@ export class DocumentsReceptionRegisterComponent
           },
           error: err => {
             console.log(err);
-            this.onLoadToast(
+            this.alert(
               'warning',
               'Datos no encontrados',
               'No se encontraron los datos del trámite asociado al volante.'
@@ -1840,7 +1868,7 @@ export class DocumentsReceptionRegisterComponent
               },
               error: err => {
                 console.log(err);
-                this.onLoadToast(
+                this.alert(
                   'warning',
                   'Usuario en atención no encontrado',
                   'No se encontró el usuario en atención del volante.'
@@ -1850,7 +1878,7 @@ export class DocumentsReceptionRegisterComponent
         },
         error: err => {
           console.log(err);
-          this.onLoadToast(
+          this.alert(
             'warning',
             'Usuario en atención no encontrado',
             'No se encontró el usuario en atención del volante.'
@@ -1935,8 +1963,20 @@ export class DocumentsReceptionRegisterComponent
         dictamen: false,
       };
     }
-    console.log(this.procedureId);
-    this.router.navigateByUrl('/pages/juridical/file-data-update');
+
+    // this.docDataService.previousRoute = {
+    //   route: this.router.url,
+    //   params: {
+    //     wheelNumber: this.wheelNumber.value,
+    //   },
+    // };
+
+    this.router.navigate(['/pages/juridical/file-data-update'], {
+      queryParams: {
+        wheelNumber: this.wheelNumber.value,
+        previousRoute: this.router.url,
+      },
+    });
   }
 
   showTrackRecords(trackRecords: INotification[]) {
@@ -1969,7 +2009,7 @@ export class DocumentsReceptionRegisterComponent
       '',
       'Enviar'
     ).then(question => {
-      if (question) {
+      if (question.isConfirmed) {
         if (
           this.pageParams.pGestOk == 1 ||
           this.globals.gnuActivaGestion == 1
@@ -1982,21 +2022,17 @@ export class DocumentsReceptionRegisterComponent
                   this.formControls.wheelStatus.setValue(ProcedureStatus.sent);
                   this.procedureStatus = ProcedureStatus.sent;
                   this.userProcedureBlockedCheck();
-                  this.onLoadToast(
+                  this.alert(
                     'success',
-                    'Volante y trámite actualizados correctamente',
-                    ''
+                    'Volante y Trámite',
+                    'Volante y Trámite actualizados correctamente'
                   );
                 },
                 error: () =>
-                  this.onLoadToast(
-                    'error',
-                    'Error',
-                    'No se pudo enviar el volante'
-                  ),
+                  this.alert('error', 'Error', 'No se pudo enviar el volante'),
               });
           } else {
-            this.onLoadToast(
+            this.alert(
               'warning',
               'No se puede actualizar el estado',
               'Parametro faltante: pNoTramite'
@@ -2013,15 +2049,15 @@ export class DocumentsReceptionRegisterComponent
                   this.formControls.wheelStatus.setValue(ProcedureStatus.sent);
                   this.procedureStatus = ProcedureStatus.sent;
                   this.userProcedureBlockedCheck();
-                  this.onLoadToast(
+                  this.alert(
                     'success',
-                    'Volante actualizado correctamente',
-                    ''
+                    'Volante',
+                    'Volante actualizado correctamente'
                   );
                 },
                 error: err => {
                   console.log(err);
-                  this.onLoadToast(
+                  this.alert(
                     'error',
                     'Error',
                     'Hubo un problema al enviar y bloquear el volante'
@@ -2029,7 +2065,7 @@ export class DocumentsReceptionRegisterComponent
                 },
               });
           } else {
-            this.onLoadToast(
+            this.alert(
               'error',
               'Error',
               'Hubo un problema al enviar y bloquear el volante'
@@ -2067,8 +2103,8 @@ export class DocumentsReceptionRegisterComponent
       },
       error: err => {
         console.log(err);
-        this.onLoadToast(
-          'info',
+        this.alert(
+          'warning',
           'No disponible',
           'El volante no tiene documentos relacionados.'
         );
@@ -2158,8 +2194,8 @@ export class DocumentsReceptionRegisterComponent
   }
 
   documentMessage() {
-    this.onLoadToast(
-      'info',
+    this.alert(
+      'warning',
       'Enlace no disponible',
       'El enlace al documento no se encuentra disponible'
     );
@@ -2203,7 +2239,7 @@ export class DocumentsReceptionRegisterComponent
     } else {
       error = err.message;
     }
-    this.onLoadToast('error', 'Error', error);
+    this.alert('error', 'Error', error);
   }
 
   getSubjects(params?: ListParams) {
@@ -2856,13 +2892,13 @@ export class DocumentsReceptionRegisterComponent
     ) {
       this.documentsReceptionForm.markAllAsTouched();
       this.documentsReceptionForm.updateValueAndValidity();
-      this.onLoadToast('warning', 'Formulario Inválido', errorMsg);
+      this.alert('warning', 'Formulario Inválido', errorMsg);
       return false;
     }
     if (this.flyerCopyRecipientForm.invalid && !this.reprocessFlag) {
       this.flyerCopyRecipientForm.markAllAsTouched();
       this.flyerCopyRecipientForm.updateValueAndValidity();
-      this.onLoadToast(
+      this.alert(
         'warning',
         'Campos Faltantes',
         'Complete todos los campos requeridos.'
@@ -2905,7 +2941,7 @@ export class DocumentsReceptionRegisterComponent
     }
     // const courtFlag = await this.checkCourt();
     // if (!courtFlag) {
-    //   this.onLoadToast(
+    //   this.alert(
     //     'warning',
     //     'Formulario Inválido',
     //     'El juzgado no corresponde a la ciudad seleccionada.'
@@ -2930,14 +2966,14 @@ export class DocumentsReceptionRegisterComponent
         error: () => {},
       });
     }
-    if (this.globals.bn == 0) {
-      this.notificationService.getLastWheelNumber().subscribe({
-        next: data => {
-          this.formControls.wheelNumber.setValue(data.nextval);
-        },
-        error: () => {},
-      });
-    }
+    // if (this.globals.bn == 0) {
+    //   this.notificationService.getLastWheelNumber().subscribe({
+    //     next: data => {
+    //       this.formControls.wheelNumber.setValue(data.nextval);
+    //     },
+    //     error: () => {},
+    //   });
+    // }
     if (this.formControls.wheelNumber.value == null) {
       this.existingNotification = false;
       this.notificationService.getLastWheelNumber().subscribe({
@@ -3073,7 +3109,7 @@ export class DocumentsReceptionRegisterComponent
           console.log(expedientData);
           this.loading = false;
           this.blockErrors(false);
-          this.onLoadToast(
+          this.alert(
             'error',
             'Error',
             'Error al actualizar datos del expediente.'
@@ -3130,7 +3166,7 @@ export class DocumentsReceptionRegisterComponent
         error: err => {
           console.log(err);
           this.blockErrors(false);
-          this.onLoadToast(
+          this.alert(
             'error',
             'Error',
             'Error al actualizar datos del expediente.'
@@ -3181,11 +3217,7 @@ export class DocumentsReceptionRegisterComponent
         console.log(expedientData);
         this.loading = false;
         this.blockErrors(false);
-        this.onLoadToast(
-          'error',
-          'Error',
-          'Error al guardar datos del expediente.'
-        );
+        this.alert('error', 'Error', 'Error al guardar datos del expediente.');
       },
     });
   }
@@ -3449,7 +3481,7 @@ export class DocumentsReceptionRegisterComponent
             this.formControls.externalOfficeDate.disable();
             this.loading = false;
             this.blockErrors(false);
-            this.onLoadToast(
+            this.alert(
               'error',
               'Error',
               'Hubo un problema al actualizar el volante.'
@@ -3469,7 +3501,7 @@ export class DocumentsReceptionRegisterComponent
             this.formControls.externalOfficeDate.disable();
             this.loading = false;
             this.blockErrors(false);
-            this.onLoadToast(
+            this.alert(
               'error',
               'Error',
               'Hubo un problema al crear el volante.'
@@ -3555,17 +3587,13 @@ export class DocumentsReceptionRegisterComponent
         this.loading = false;
         this.blockErrors(false);
         if (err.message.includes('not_2_jxc_fk')) {
-          this.onLoadToast(
+          this.alert(
             'error',
             'Error',
             'El juzgado no concuerda con la ciudad seleccionada.'
           );
         } else {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Hubo un problema al crear el volante.'
-          );
+          this.alert('error', 'Error', 'Hubo un problema al crear el volante.');
         }
       },
     });
@@ -3807,7 +3835,7 @@ export class DocumentsReceptionRegisterComponent
     }
     // const courtFlag = await this.checkCourt();
     // if (!courtFlag) {
-    //   this.onLoadToast(
+    //   this.alert(
     //     'warning',
     //     'Formulario Inválido',
     //     'El juzgado no corresponde a la ciudad seleccionada.'
@@ -3949,7 +3977,7 @@ export class DocumentsReceptionRegisterComponent
       error: err => {
         console.log(err);
         this.loading = false;
-        this.onLoadToast(
+        this.alert(
           'warning',
           'No se encontraron datos',
           'Hubo un problema al obtener los datos del trámite'
@@ -3980,7 +4008,7 @@ export class DocumentsReceptionRegisterComponent
         error: err => {
           console.log(err);
           this.loading = false;
-          this.onLoadToast(
+          this.alert(
             'warning',
             'Expediente No Creado',
             'Hubo un problema al guardar los datos del expediente.'
@@ -4024,7 +4052,7 @@ export class DocumentsReceptionRegisterComponent
               error: err => {
                 console.log(err);
                 this.loading = false;
-                this.onLoadToast(
+                this.alert(
                   'warning',
                   'Expediente No Creado',
                   'Hubo un problema al guardar los datos del expediente.'
@@ -4085,7 +4113,7 @@ export class DocumentsReceptionRegisterComponent
         this.loading = false;
         console.log(expedientData);
         console.log(err);
-        this.onLoadToast(
+        this.alert(
           'warning',
           'Expediente No Creado',
           'Hubo un problema al guardar los datos del expediente.'
@@ -4106,7 +4134,7 @@ export class DocumentsReceptionRegisterComponent
         error: err => {
           console.log(err);
           this.loading = false;
-          this.onLoadToast(
+          this.alert(
             'warning',
             'Volante No Creado',
             'Hubo un problema al guardar los datos del volante.'
@@ -4135,7 +4163,7 @@ export class DocumentsReceptionRegisterComponent
               error: err => {
                 console.log(err);
                 this.loading = false;
-                this.onLoadToast(
+                this.alert(
                   'warning',
                   'Volante No Creado',
                   'Hubo un problema al guardar los datos del volante.'
@@ -4174,7 +4202,7 @@ export class DocumentsReceptionRegisterComponent
         this.loading = false;
         console.log(notificationData);
         console.log(err);
-        this.onLoadToast(
+        this.alert(
           'warning',
           'Volante No Creado',
           'Hubo un problema al guardar los datos del volante.'
@@ -4208,11 +4236,7 @@ export class DocumentsReceptionRegisterComponent
         error: err => {
           console.log(err);
           this.sendToGoodsCapture();
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Error al buscar el oficio del SAT'
-          );
+          this.alert('error', 'Error', 'Error al buscar el oficio del SAT');
         },
       });
     } else if ([1, '1'].includes(this.globals.pIndicadorSat)) {
@@ -4233,11 +4257,7 @@ export class DocumentsReceptionRegisterComponent
         error: err => {
           console.log(err);
           this.sendToGoodsCapture();
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Error al buscar el oficio del SAT'
-          );
+          this.alert('error', 'Error', 'Error al buscar el oficio del SAT');
         },
       });
     } else if (this.globals.vTipoTramite == 3) {
@@ -4297,7 +4317,7 @@ export class DocumentsReceptionRegisterComponent
     console.log(`pages/documents-reception/goods-bulk-load${route}`);
     this.loading = false;
     this.alertInfo(
-      'info',
+      'warning',
       'Información',
       'El asunto registrado por el SAT contiene más de un bien, a continuación se hará la carga masiva de sus bienes'
     ).then(() => {
@@ -4330,7 +4350,7 @@ export class DocumentsReceptionRegisterComponent
     const route = `/fgr/${this.formControls.expedientNumber.value}/${this.formControls.wheelNumber.value}/${preliminaryInquiry}`;
     console.log(`pages/documents-reception/goods-bulk-load${route}`);
     this.alertInfo(
-      'info',
+      'warning',
       'Información',
       'El asunto registrado por la FGR contiene más de un bien, a continuación se hará la carga masiva de sus bienes'
     ).then(() => {
@@ -4457,7 +4477,9 @@ export class DocumentsReceptionRegisterComponent
     );
     params.addFilter('wheelNumber', this.formControls.wheelNumber.value);
     this.hideError();
-    this.docRegisterService.getGoods(params.getParams()).subscribe({
+    // ! Consulta lenta
+    // this.docRegisterService.getGoods(params.getParams()).subscribe({
+    this.docRegisterService.goodFinder(params.getParams()).subscribe({
       next: data => {
         if (data.data.length > 0) {
           this.updateProcedure(true);
@@ -4518,8 +4540,8 @@ export class DocumentsReceptionRegisterComponent
                   navigator.clipboard.writeText(
                     `Volante: ${this.formControls.wheelNumber.value}, Expediente: ${this.formControls.expedientNumber.value}`
                   );
-                  this.onLoadToast(
-                    'info',
+                  this.alert(
+                    'warning',
                     'Datos copiados al portapapeles',
                     'Se copió la información del volante y expediente.'
                   );
@@ -4540,8 +4562,8 @@ export class DocumentsReceptionRegisterComponent
                   navigator.clipboard.writeText(
                     `Volante: ${this.formControls.wheelNumber.value}, Expediente: ${this.formControls.expedientNumber.value}`
                   );
-                  this.onLoadToast(
-                    'info',
+                  this.alert(
+                    'warning',
                     'Datos copiados al portapapeles',
                     'Se copió la información del volante y expediente.'
                   );
@@ -4587,8 +4609,8 @@ export class DocumentsReceptionRegisterComponent
                           navigator.clipboard.writeText(
                             `Volante: ${this.formControls.wheelNumber.value}, Expediente: ${this.formControls.expedientNumber.value}`
                           );
-                          this.onLoadToast(
-                            'info',
+                          this.alert(
+                            'warning',
                             'Datos copiados al portapapeles',
                             'Se copió la información del volante y expediente.'
                           );
@@ -4621,8 +4643,8 @@ export class DocumentsReceptionRegisterComponent
                           navigator.clipboard.writeText(
                             `Volante: ${this.formControls.wheelNumber.value}, Expediente: ${this.formControls.expedientNumber.value}`
                           );
-                          this.onLoadToast(
-                            'info',
+                          this.alert(
+                            'warning',
                             'Datos copiados al portapapeles',
                             'Se copió la información del volante y expediente.'
                           );
@@ -4654,8 +4676,8 @@ export class DocumentsReceptionRegisterComponent
                     navigator.clipboard.writeText(
                       `Volante: ${this.formControls.wheelNumber.value}, Expediente: ${this.formControls.expedientNumber.value}`
                     );
-                    this.onLoadToast(
-                      'info',
+                    this.alert(
+                      'warning',
                       'Datos copiados al portapapeles',
                       'Se copió la información del volante y expediente.'
                     );
@@ -4687,8 +4709,8 @@ export class DocumentsReceptionRegisterComponent
                   navigator.clipboard.writeText(
                     `Volante: ${this.formControls.wheelNumber.value}, Expediente: ${this.formControls.expedientNumber.value}`
                   );
-                  this.onLoadToast(
-                    'info',
+                  this.alert(
+                    'warning',
                     'Datos copiados al portapapeles',
                     'Se copió la información del volante y expediente.'
                   );
@@ -4702,6 +4724,10 @@ export class DocumentsReceptionRegisterComponent
   }
 
   endProcess() {
+    if (this.origin == 'FCONGENRASTREADOR') {
+      this.router.navigateByUrl('pages/general-processes/goods-tracker');
+      return;
+    }
     this.resetGlobalVars();
     this.docDataService.flyersRegistrationParams = null;
     this.docDataService.documentsReceptionRegisterForm = null;

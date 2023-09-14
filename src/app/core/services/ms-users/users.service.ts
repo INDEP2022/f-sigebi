@@ -23,8 +23,18 @@ export class UsersService extends HttpService {
     this.microservice = UserEndpoints.BasePath;
   }
 
-  getAllSegUsers(_params: _Params) {
+  //http://sigebimsqa.indep.gob.mx/users/api/v1/seg-users
+  getAllSegUsers(_params?: _Params) {
     return this.get<IListResponse<any>>(UserEndpoints.SegUsers, _params);
+  }
+
+  getAllSegUsers2(_params: _Params) {
+    return this.get<IListResponse<any>>(UserEndpoints.GetAllSegUser, _params);
+  }
+
+  getAllDetailSegUsers(_params: _Params) {
+    const route = `${UserEndpoints.SegUsers}/get-all`;
+    return this.get<IListResponse<any>>(route, _params);
   }
 
   getAllSegUsersModal(self?: UsersService, _params?: ListParams | string) {
@@ -91,6 +101,108 @@ export class UsersService extends HttpService {
     return this.get<IListResponse<IUserAccess>>(
       UserEndpoints.VigSupervisionAccess,
       _params
+    );
+  }
+
+  getUsersJob() {
+    return this.get(UserEndpoints.SegUsers);
+  }
+
+  getText(text: string) {
+    return this.get(`${UserEndpoints.GetText}/${text}`);
+  }
+  getUserOt(text: string) {
+    return this.get(`${UserEndpoints.GetUserOt}/${text}`);
+  }
+
+  getAllUsersAsigne(_params: _Params) {
+    return this.get<IListResponse<any>>(UserEndpoints.UserAsigne, _params);
+  }
+
+  postSegAccessXAreasTvalTabla1(body: {
+    delegacionNo: string | number;
+    user: string;
+  }) {
+    return this.post(`factadboficiogestrel/delete-when-button-pressed`, body);
+  }
+
+  getAllIndicator(body: any) {
+    return this.post<IListResponse<any>>(UserEndpoints.IndUserNoInd, body);
+  }
+
+  getAllFaVal(body: any) {
+    return this.post<IListResponse<any>>(UserEndpoints.FaValUserInd, body);
+  }
+
+  deleteAccessUsers(id: any) {
+    return this.delete<IListResponse<IUserAccess>>(
+      `${UserEndpoints.VigSupervisionAccess}/${id}`
+    );
+  }
+
+  editAccessUsers(body: any) {
+    return this.put<IListResponse<IUserAccess>>(
+      UserEndpoints.VigSupervisionAccess,
+      body
+    );
+  }
+
+  createAccessUsers(body: any) {
+    return this.post<IListResponse<IUserAccess>>(
+      UserEndpoints.VigSupervisionAccess,
+      body
+    );
+  }
+
+  getComerUsersAutXEvent(_params?: _Params) {
+    return this.get<IListResponse<any>>(
+      UserEndpoints.ComerUsersAutXEvent,
+      _params
+    );
+  }
+
+  createComerUsersAutXEvent(params: any) {
+    return this.post<IListResponse<any>>(
+      UserEndpoints.ComerUsersAutXEvent,
+      params
+    );
+  }
+
+  updateComerUsersAutXEvent(params: any) {
+    return this.put<IListResponse<any>>(
+      `${UserEndpoints.ComerUsersAutXEvent}`,
+      params
+    );
+  }
+
+  deleteComerUsersAutXEvent(params: any) {
+    return this.delete<IListResponse<any>>(
+      `${UserEndpoints.ComerUsersAutXEvent}`,
+      params
+    );
+  }
+
+  /*
+ getUsersJob() {
+    return this.get<IListResponse<ISegUsers>>(UserEndpoints.SegUsers);
+  }
+*/
+
+  getOtValueFromUserName(name: string) {
+    return this.get<IListResponse<any>>(
+      UserEndpoints.SegUsers + '/getOtValueFromUser/' + name
+    );
+  }
+  postSpInsertWithcopyOfficia(body: any) {
+    return this.post<IListResponse<any>>(
+      UserEndpoints.SpInsertWithcopyOfficial,
+      body
+    );
+  }
+
+  getAllSegUsersbykey(user: any) {
+    return this.get(
+      `${UserEndpoints.GetAllSegUser}?filter.user=$ilike:${user}`
     );
   }
 }

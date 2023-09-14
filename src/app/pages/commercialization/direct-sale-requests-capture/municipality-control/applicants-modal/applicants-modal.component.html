@@ -6,11 +6,14 @@
     <form class="form-material" [formGroup]="applicantForm">
       <div class="row">
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="applicantForm.get('entityId')" label="Entidad">
+          <form-field
+            [control]="applicantForm.get('typeentgobId')"
+            label="Entidad">
             <input
               type="text"
               class="form-control"
-              formControlName="entityId" />
+              formControlName="typeentgobId"
+              maxlength="10" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
@@ -20,7 +23,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="applicant" />
+              formControlName="applicant"
+              maxlength="20" />
           </form-field>
         </div>
       </div>
@@ -30,7 +34,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="position" />
+              formControlName="position"
+              maxlength="20" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
@@ -41,7 +46,7 @@
               label="Municipio"
               value="description"
               bindLabel="description"
-              (fetchItems)="getMunicipalities($event)"
+              (fetchItems)="getMunicipalities()"
               control="municipality">
             </ngx-select>
           </form-field>
@@ -53,10 +58,10 @@
             <ngx-select
               [form]="applicantForm"
               [data]="stateItems"
-              value="description"
-              bindLabel="description"
+              value="descCondition"
+              bindLabel="descCondition"
               label="Estado"
-              (fetchItems)="getStates($event)"
+              (fetchItems)="getStates()"
               control="state">
             </ngx-select>
           </form-field>
@@ -81,41 +86,66 @@
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="description"
+              maxlength="100" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
           <form-field [control]="applicantForm.get('phone')" label="Teléfono">
-            <input type="text" class="form-control" formControlName="phone" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="phone"
+              maxlength="15" />
           </form-field>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
           <form-field
-            [control]="applicantForm.get('adjudication')"
+            [control]="applicantForm.get('award')"
             label="Adjudicación">
             <input
               type="text"
               class="form-control"
-              formControlName="adjudication" />
+              formControlName="award"
+              maxlength="20" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="applicantForm.get('email')" label="Correo Web">
-            <input type="text" class="form-control" formControlName="email" />
+          <form-field
+            [control]="applicantForm.get('webmail')"
+            label="Correo Electrónico">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="webmail"
+              maxlength="20" />
           </form-field>
         </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="applicantForm.get('amount')" label="Cantidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="amount"
+              maxlength="6" />
+          </form-field>
+        </div>
+        <!---  <div class="col-sm-12 col-md-6">
+                    <form-field [control]="applicantForm.get('amount')" label="Cantidad">
+                        <input type="number" class="form-control" formControlName="amount" />
+                    </form-field>
+                </div>---->
       </div>
     </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="!applicantForm.valid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [disabled]="!applicantForm.valid" (confirm)="save()">
         </confirm-button>
       </div>
       <div class="m-3">

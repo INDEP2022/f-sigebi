@@ -17,7 +17,6 @@ import {
 import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { IAffair } from '../../../../core/models/catalogs/affair.model';
 import { IIssuingInstitution } from '../../../../core/models/catalogs/issuing-institution.model';
-import { IOpinion } from '../../../../core/models/catalogs/opinion.model';
 import { STRING_PATTERN } from '../../../../core/shared/patterns';
 
 export type JuridicalFileUpdate = typeof JURIDICAL_FILE_DATA_UPDATE_FORM;
@@ -53,7 +52,7 @@ export const JURIDICAL_FILE_DATA_UPDATE_FORM = {
     Validators.maxLength(60),
     Validators.pattern(STRING_PATTERN),
   ]),
-  affairKey: new FormControl<IAffair>(null),
+  affairKey: new FormControl<IAffair>(null), // CVE_DICTAMEN
   affair: new FormControl<string | number>(null, Validators.required),
   receiptDate: new FormControl<string | Date>(null),
   priority: new FormControl<string>(null),
@@ -104,7 +103,7 @@ export const JURIDICAL_FILE_DATA_UPDATE_FORM = {
   cityNumber: new FormControl<ICity>(null),
   entFedKey: new FormControl<TvalTable1Data | ITablesEntryData>(null),
   endTransferNumber: new FormControl<ITransferente>(null),
-  transference: new FormControl<number>(null),
+  transference: new FormControl<ITransferente>(null),
   courtNumber: new FormControl<ICourt>(null),
   stationNumber: new FormControl<IStation>(null),
   autorityNumber: new FormControl<IAuthority>(null),
@@ -128,7 +127,10 @@ export const JURIDICAL_FILE_DATA_UPDATE_FORM = {
   entryProcedureDate: new FormControl<Date | string>(new Date()),
   registerNumber: new FormControl<number>(null),
   originNumber: new FormControl<number>(null),
-  dictumKey: new FormControl<IOpinion>(null, Validators.required),
+  dictumKey: new FormControl<{ id: string; description: string }>(
+    null,
+    Validators.required
+  ),
   reserved: new FormControl<string>(null, Validators.required),
   autoscan: new FormControl<string>(null),
   userRecipient: new FormControl<string>(null),
@@ -165,7 +167,7 @@ export interface IJuridicalFileDataUpdateForm {
   cityNumber: ICity;
   entFedKey: TvalTable1Data | ITablesEntryData;
   endTransferNumber: ITransferente;
-  transference: number;
+  transference: ITransferente;
   courtNumber: ICourt;
   stationNumber: IStation;
   autorityNumber: IAuthority;
@@ -189,7 +191,7 @@ export interface IJuridicalFileDataUpdateForm {
   entryProcedureDate: Date | string;
   registerNumber: number;
   originNumber: number;
-  dictumKey: IOpinion;
+  dictumKey: { id: string; description: string };
   reserved: string;
   autoscan: string;
   userRecipient: string;

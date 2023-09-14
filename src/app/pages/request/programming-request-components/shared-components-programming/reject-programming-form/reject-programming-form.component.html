@@ -8,32 +8,42 @@
         <div class="col-md-6">
           <form-field
             [control]="form.get('startDate')"
-            label="Fecha inicio operativo">
+            label="Fecha inicio Operativo">
             <input
               bsDatepicker
               class="form-control"
+              [bsConfig]="{
+                withTimepicker: true,
+                rangeInputFormat: 'DD/MM/YYYY HH:mm:ss',
+                dateInputFormat: 'DD/MM/YYYY HH:mm:ss'
+              }"
               formControlName="startDate" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
             [control]="form.get('endDate')"
-            label="Fecha fin operativo">
+            label="Fecha fin Operativo">
             <input
               bsDatepicker
               class="form-control"
+              [bsConfig]="{
+                withTimepicker: true,
+                rangeInputFormat: 'DD/MM/YYYY HH:mm:ss',
+                dateInputFormat: 'DD/MM/YYYY HH:mm:ss'
+              }"
               formControlName="endDate" />
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <form-field
-          [control]="form.get('observation')"
+          [control]="form.get('concurrentMsg')"
           label="Observaci&oacute;n">
           <input
             type="text"
             class="form-control"
-            formControlName="observation" />
+            formControlName="concurrentMsg" />
         </form-field>
       </div>
     </form>

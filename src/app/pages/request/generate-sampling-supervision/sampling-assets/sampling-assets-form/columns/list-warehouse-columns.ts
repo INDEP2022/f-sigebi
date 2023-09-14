@@ -1,10 +1,10 @@
 export const LIST_WAREHOUSE_COLUMN = {
-  noWarehouse: {
+  stockSiabNumber: {
     title: 'No. Almacén',
     type: 'string',
     sort: false,
   },
-  nameWarehouse: {
+  name: {
     title: 'Nombre Almacén',
     type: 'string',
     sort: false,
@@ -14,7 +14,7 @@ export const LIST_WAREHOUSE_COLUMN = {
     type: 'string',
     sort: false,
   },
-  address: {
+  address1: {
     title: 'Dirección',
     type: 'string',
     sort: false,

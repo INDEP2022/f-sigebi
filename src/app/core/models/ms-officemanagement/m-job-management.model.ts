@@ -16,7 +16,7 @@ export interface IMJobManagement {
   deleUser: string;
   insertDate: string;
   jobType: string;
-  nomPersExt: string;
+  nomPersExt: any;
   refersTo: string;
   jobBy: string;
   recordNumber: string;
@@ -29,4 +29,18 @@ export interface IMJobManagement {
   problematiclegal?: any;
   cveChargeRem: string;
   justification: string;
+}
+
+export interface IRSender {
+  no_delegacion: string;
+  no_departamento: string;
+  no_subdelegacion: string;
+  nombre: string;
+  usuario: string;
+}
+
+export interface IMJobManagementExtSSF3 {
+  managementNumber: number;
+  invoiceUniversal: number;
+  recordNumber: number;
 }

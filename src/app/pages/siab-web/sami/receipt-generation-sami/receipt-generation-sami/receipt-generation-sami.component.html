@@ -1,0 +1,299 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Generaci&oacute;n de Recibos</h5>
+    </div>
+  </div>
+  <div body>
+    <form [formGroup]="programmingForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-8">
+          <form-field
+            label="Ingresa la Programaci&oacute;n"
+            [control]="programmingForm.get('programmingId')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="programmingId" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="searchPrograming()">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="row margin-input">
+        <div class="col-md-12">
+          <form-field [control]="programmingForm.get('managementId')">
+            <!-- <input type="text" class="form-control" formControlName="managementId" /> -->
+            <ngx-select
+              (fetchItems)="programmingGoodReceipt($event)"
+              [data]="goodsList"
+              [form]="programmingForm"
+              value="id_bien"
+              bindLabel="descripcion_bien"
+              label="No. Gesti&oacute;n"
+              control="managementId"
+              [labelTemplate]="goodLabel"
+              [optionTemplate]="goodOption"
+              (change)="searchManagement($event)">
+            </ngx-select>
+            <ng-template #goodLabel let-item="item">
+              {{ item.id_bien }} - {{ item.descripcion_bien }}
+            </ng-template>
+            <ng-template #goodOption let-item="item">
+              <div [title]="item.id_bien + '-' + item.descripcion_bien">
+                {{ item.id_bien }} - {{ item.descripcion_bien }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <!-- <div class="col-md-2">
+                    <button type="button" class="btn btn-primary active btn-sm">
+                        Buscar
+                        <i class="bx bx-search-alt bx-sm float-icon"></i>
+                    </button>
+                </div> -->
+      </div>
+    </form>
+
+    <div class="row pt-2" style="margin-left: 0%">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="text-right">No. Gesti&oacute;n:</label>
+          <span> {{ goodID }} </span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="text-right">Clave &Uacute;nica:</label>
+          <span> {{ uniqueKey }} </span>
+        </div>
+        <!-- <label class="label" for=""
+          >Clave &Uacute;nica: <span> {{ uniqueKey }} </span></label
+        > -->
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="text-right">Expediente:</label>
+          <span> {{ noFile }} </span>
+        </div>
+      </div>
+      <div class="col-md-4 pt-2">
+        <div class="form-group">
+          <label class="text-right">Destino Transferente:</label>
+          <span> {{ destinoTransferenteLetra }} </span>
+        </div>
+      </div>
+      <div class="col-md-4 pt-2">
+        <div class="form-group">
+          <label class="text-right">Cantidad Transferente:</label>
+          <span> {{ quantity }} </span>
+        </div>
+      </div>
+      <div class="col-md-4 pt-2">
+        <div class="form-group">
+          <label class="text-right">Unidad Medida Transferente:</label>
+          <span> {{ unitMeasure }} </span>
+        </div>
+      </div>
+      <div class="col-md-4 pt-2">
+        <div class="form-group">
+          <label class="text-right">Estado F&iacute;sico Transferente:</label>
+          <span> {{ physicalStateLetter }} </span>
+        </div>
+      </div>
+      <div class="col-md-4 pt-2">
+        <div class="form-group">
+          <label class="text-right"
+            >Estado Conservaci&oacute;n Transferente:</label
+          >
+          <span> {{ letterConservationStatus }} </span>
+        </div>
+      </div>
+      <div class="col-md-4 pt-2">
+        <div class="form-group">
+          <label class="text-right">Destino Ligie:</label>
+          <span> {{ destinationLetter }} </span>
+        </div>
+      </div>
+      <div class="col-md-12 pt-2">
+        <div class="form-group">
+          <label class="text-right">Descripci&oacute;n Transferente:</label>
+          <span> {{ descriptionGood }} </span>
+        </div>
+      </div>
+    </div>
+    <form [formGroup]="indepForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-12">
+          <form-field
+            [control]="indepForm.get('descripcion_bien_sae')"
+            label="Descripci&oacute;n INDEP">
+            <textarea
+              formControlName="descripcion_bien_sae"
+              class="form-control"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            label="Cantidad INDEP"
+            [control]="indepForm.get('cantidad_sae')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="cantidad_sae" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="indepForm.get('unidad_medida_sae')">
+            <ngx-select
+              (fetchItems)="unitsQuery($event)"
+              [data]="unitsList"
+              [form]="indepForm"
+              value="uom_code"
+              bindLabel="unit_of_measure_tl"
+              label="Unidad Medida INDEP"
+              control="unidad_medida_sae">
+            </ngx-select>
+            <!-- <input type="text" class="form-control" formControlName="unidad_medida_sae" /> -->
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="indepForm.get('estado_fisico_sae')">
+            <ngx-select
+              (fetchItems)="getGenericE($event)"
+              [data]="physicalStateList"
+              [form]="indepForm"
+              value="keyId"
+              bindLabel="description"
+              label="Estado F&iacute;sico INDEP"
+              control="estado_fisico_sae">
+            </ngx-select>
+            <!-- <input type="text" class="form-control" formControlName="estado_fisico_sae" /> -->
+          </form-field>
+        </div>
+        <div class="col-md-4 pt-2">
+          <form-field [control]="indepForm.get('estado_conservacion_sae')">
+            <ngx-select
+              (fetchItems)="getGenericEC($event)"
+              [data]="stateConservationList"
+              [form]="indepForm"
+              value="keyId"
+              bindLabel="description"
+              label="Estado Conservaci&oacute;n INDEP"
+              control="estado_conservacion_sae">
+            </ngx-select>
+            <!-- <input type="text" class="form-control" formControlName="estado_conservacion_sae" /> -->
+          </form-field>
+        </div>
+        <div class="col-md-4 pt-2">
+          <form-field [control]="indepForm.get('destino_sae')">
+            <ngx-select
+              (fetchItems)="getGenericD($event)"
+              [data]="detinationList"
+              [form]="indepForm"
+              value="keyId"
+              bindLabel="description"
+              label="Destino INDEP"
+              control="destino_sae">
+            </ngx-select>
+            <!-- <input type="text" class="form-control" formControlName="destino_sae" /> -->
+          </form-field>
+        </div>
+      </div>
+    </form>
+
+    <tr>
+      <td colspan="5" align="center">
+        <button
+          class="btn btn-primary active btn-sm m-2"
+          (click)="assignReceiptOne(0)"
+          [disabled]="!indepForm.valid">
+          Asignar Recibo
+        </button>
+        <button
+          class="btn btn-primary active btn-sm m-2"
+          (click)="assignReceiptOne(1)"
+          [disabled]="!indepForm.valid">
+          Resguardo
+        </button>
+        <button
+          class="btn btn-primary active btn-sm m-2"
+          (click)="assignReceiptOne(2)"
+          [disabled]="!indepForm.valid">
+          Almacén
+        </button>
+        <button
+          class="btn btn-primary active btn-sm m-2"
+          (click)="reprogrammingOne()"
+          [disabled]="!indepForm.valid">
+          Reprogramaci&oacute;n
+        </button>
+        <button
+          class="btn btn-primary active btn-sm m-2"
+          (click)="cancellationOne()"
+          [disabled]="!indepForm.valid">
+          Cancelaci&oacute;n
+        </button>
+      </td>
+    </tr>
+    <div class="row margin-input">
+      <form [formGroup]="indepForm" class="form-material">
+        <div class="col-md-8 pt-2" *ngIf="cancellationView">
+          <form-field [control]="indepForm.get('cancellation')">
+            <ngx-select
+              (fetchItems)="getGenericC($event)"
+              [data]="cancellationList"
+              [form]="indepForm"
+              value="keyId"
+              bindLabel="description"
+              label="Seleccione el motivo de la Cancelaci&oacute;n"
+              control="cancellation">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4 pt-2" *ngIf="cancellationView">
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="acceptCancellation()">
+            Aceptar
+          </button>
+        </div>
+        <div class="col-md-8 pt-2" *ngIf="reprogramingView">
+          <form-field [control]="indepForm.get('reprogramming')">
+            <ngx-select
+              (fetchItems)="getGenericR($event)"
+              [data]="reprogramingList"
+              [form]="indepForm"
+              value="keyId"
+              bindLabel="description"
+              label="Seleccione el motivo de la Reprogramaci&oacute;n"
+              control="reprogramming">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4 pt-2" *ngIf="reprogramingView">
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="acceptReprogramming()">
+            Aceptar
+          </button>
+        </div>
+      </form>
+    </div>
+    <hr />
+    <app-receipt-tables
+      [folio]="folio"
+      [count]="count"
+      [id_programacion]="id_programacion"></app-receipt-tables>
+  </div>
+</app-card>

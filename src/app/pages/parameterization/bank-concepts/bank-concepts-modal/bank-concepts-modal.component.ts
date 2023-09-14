@@ -17,7 +17,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 export class BankConceptsModalComponent extends BasePage implements OnInit {
   bankConceptsForm: ModelForm<IBankConcepts>;
   bankConcepts: IBankConcepts;
-  title: string = 'Categoria para Conceptos bancarios';
+  title: string = 'Concepto Bancario';
   edit: boolean = false;
 
   constructor(
@@ -34,7 +34,14 @@ export class BankConceptsModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.bankConceptsForm = this.fb.group({
-      key: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      key: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(10),
+        ],
+      ],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -57,25 +64,45 @@ export class BankConceptsModalComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.bankConceptsService.create(this.bankConceptsForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    this.bankConceptsService
-      .update(this.bankConcepts.key, this.bankConceptsForm.value)
-      .subscribe({
+    if (
+      this.bankConceptsForm.controls['key'].value.trim() == '' ||
+      this.bankConceptsForm.controls['description'].value.trim() == '' ||
+      (this.bankConceptsForm.controls['key'].value.trim() == '' &&
+        this.bankConceptsForm.controls['description'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.bankConceptsService.create(this.bankConceptsForm.value).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (
+      this.bankConceptsForm.controls['key'].value.trim() == '' ||
+      this.bankConceptsForm.controls['description'].value.trim() == '' ||
+      (this.bankConceptsForm.controls['key'].value.trim() == '' &&
+        this.bankConceptsForm.controls['description'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.bankConceptsService
+        .update(this.bankConcepts.key, this.bankConceptsForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

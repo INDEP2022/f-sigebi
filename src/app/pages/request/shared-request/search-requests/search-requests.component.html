@@ -23,16 +23,26 @@
           <div class="row mt-3">
             <div class="col-md-4">
               <form-field
-                [control]="searchForm.get('requestNo')"
+                [control]="searchForm.get('id')"
                 label="No&#46; Solicitud">
                 <input
                   type="number"
-                  formControlName="requestNo"
+                  formControlName="id"
+                  min="0"
                   class="form-control" />
               </form-field>
             </div>
             <div class="col-md-4">
-              <form-field
+              <ngx-select
+                [form]="searchForm"
+                control="authorityId"
+                (fetchItems)="getAuthority($event)"
+                [showTooltip]="true"
+                [data]="authorities"
+                bindLabel="authorityName"
+                label="Autoridad"
+                value="idAuthority"></ngx-select>
+              <!-- <form-field
                 [control]="searchForm.get('authority')"
                 label="Autoridad">
                 <ng-select
@@ -44,15 +54,15 @@
                     a.description
                   }}</ng-option>
                 </ng-select>
-              </form-field>
+              </form-field> -->
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="searchForm.get('transferType')"
+                [control]="searchForm.get('typeRecord')"
                 label="Tipo Transferencia">
                 <input
                   type="text"
-                  formControlName="transferType"
+                  formControlName="typeRecord"
                   class="form-control" />
               </form-field>
             </div>
@@ -60,21 +70,23 @@
           <div class="row mt-5">
             <div class="col-md-4">
               <form-field
-                [control]="searchForm.get('fileNo')"
+                [control]="searchForm.get('recordId')"
                 label="No&#46; Expediente">
                 <input
                   type="number"
-                  formControlName="fileNo"
+                  formControlName="recordId"
+                  min="0"
                   class="form-control" />
               </form-field>
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="searchForm.get('contributor')"
+                [control]="searchForm.get('indicatedTaxpayer')"
                 label="Contribuyente y&#47;o Indiciado">
                 <input
                   type="text"
-                  formControlName="contributor"
+                  formControlName="indicatedTaxpayer"
+                  maxlength="200"
                   class="form-control" />
               </form-field>
             </div>
@@ -85,91 +97,97 @@
                 <input
                   type="text"
                   formControlName="domainExtinction"
+                  maxlength="100"
                   class="form-control" />
               </form-field>
             </div>
           </div>
           <div class="row mt-5">
             <div class="col-md-4">
-              <form-field [control]="searchForm.get('regionalDelegation')">
+              <form-field [control]="searchForm.get('regionalDelegationId')">
                 <ngx-select
                   [form]="searchForm"
                   [data]="delegationItems"
                   value="id"
                   bindLabel="description"
                   label="Delegaci&oacute;n Regional"
-                  (fetchItems)="getDelegations($event)"
-                  control="regionalDelegation">
+                  (fetchItems)="getRegionalDeleg($event)"
+                  control="regionalDelegationId"
+                  (change)="updateDelegation($event)">
                 </ngx-select>
               </form-field>
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="searchForm.get('transferFile')"
+                [control]="searchForm.get('transferenceFile')"
                 label="Expediente Transferente &#47; PAMA">
                 <input
                   type="text"
-                  formControlName="transferFile"
+                  formControlName="transferenceFile"
+                  maxlength="500"
                   class="form-control" />
               </form-field>
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="searchForm.get('judgementType')"
+                [control]="searchForm.get('trialType')"
                 label="Tipo Juicio">
                 <input
                   type="text"
-                  formControlName="judgementType"
+                  formControlName="trialType"
+                  maxlength="100"
                   class="form-control" />
               </form-field>
             </div>
           </div>
           <div class="row mt-5">
             <div class="col-md-4">
-              <form-field [control]="searchForm.get('state')">
+              <form-field [control]="searchForm.get('keyStateOfRepublic')">
                 <ngx-select
                   [form]="searchForm"
                   [data]="stateItems"
                   value="id"
-                  bindLabel="description"
+                  bindLabel="descCondition"
                   label="Estado"
                   (fetchItems)="getStates($event)"
-                  control="state">
+                  control="keyStateOfRepublic"
+                  (change)="stateChanged($event)">
                 </ngx-select>
               </form-field>
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="searchForm.get('previousAscertainment')"
+                [control]="searchForm.get('previousInquiry')"
                 label="Averiguaci&oacute;n Previa">
                 <input
                   type="text"
-                  formControlName="previousAscertainment"
+                  formControlName="previousInquiry"
+                  maxlength="100"
                   class="form-control" />
               </form-field>
             </div>
             <div class="col-md-4">
-              <form-field
-                [control]="searchForm.get('judgement')"
-                label="Juicio">
+              <form-field [control]="searchForm.get('trial')" label="Juicio">
                 <input
                   type="text"
-                  formControlName="judgement"
+                  formControlName="trial"
+                  maxlength="100"
                   class="form-control" />
               </form-field>
             </div>
           </div>
           <div class="row mt-5">
             <div class="col-md-4">
-              <form-field [control]="searchForm.get('transferee')">
+              <form-field [control]="searchForm.get('transferenceId')">
                 <ngx-select
                   [form]="searchForm"
                   [data]="transfereeItems"
                   value="id"
-                  bindLabel="description"
+                  bindLabel="nameTransferent"
                   label="Transferente"
-                  (fetchItems)="getTransferees($event)"
-                  control="transferee">
+                  (fetchItems)="getTransferent($event)"
+                  control="transferenceId"
+                  (change)="transferenceChanges($event)">
                 </ngx-select>
               </form-field>
             </div>
@@ -180,50 +198,53 @@
                 <input
                   type="text"
                   formControlName="criminalCase"
+                  maxlength="100"
                   class="form-control" />
               </form-field>
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="searchForm.get('protectionNo')"
+                [control]="searchForm.get('protectNumber')"
                 label="No&#46; Amparo">
                 <input
-                  type="number"
-                  formControlName="protectionNo"
+                  type="text"
+                  formControlName="protectNumber"
+                  maxlength="100"
                   class="form-control" />
               </form-field>
             </div>
           </div>
           <div class="row mt-5">
             <div class="col-md-4">
-              <form-field [control]="searchForm.get('emitter')">
+              <form-field [control]="searchForm.get('stationId')">
                 <ngx-select
                   [form]="searchForm"
                   [data]="emitterItems"
                   value="id"
-                  bindLabel="description"
+                  bindLabel="stationName"
                   label="Emisora"
                   (fetchItems)="getEmitters($event)"
-                  control="emitter">
+                  control="stationId"
+                  (change)="stationChanges($event)">
                 </ngx-select>
               </form-field>
             </div>
           </div>
           <div class="mt-3 d-flex flex-row-reverse">
             <div class="mx-1">
-              <button
-                (click)="search()"
-                class="btn btn-sm btn-primary active btn-sm"
-                [disabled]="!searchForm.touched">
-                <i class="bx bx-search-alt-2 me-1 float-icon"></i> Buscar
-              </button>
-            </div>
-            <div class="mx-1">
+              <!-- [disabled]="!searchForm.touched" -->
               <button
                 (click)="reset()"
                 class="btn btn-danger active btn-sm"
                 [disabled]="!searchForm.touched">
-                <i class="bx bx-reset me-1 float-icon"></i> Limpiar
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+            </div>
+            <div class="mx-1">
+              <button
+                (click)="search()"
+                class="btn btn-sm btn-primary active btn-sm">
+                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
             </div>
           </div>

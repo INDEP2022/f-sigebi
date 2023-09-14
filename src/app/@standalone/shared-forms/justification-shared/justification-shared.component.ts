@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
@@ -27,7 +27,7 @@ export class JustificationSharedComponent extends BasePage implements OnInit {
   @Input() showUsers: boolean = true;
   //If Form PatchValue
   @Input() patchValue: boolean = false;
-
+  @Output() valueJustification = new EventEmitter<any>();
   justifications = new DefaultSelect<IUser>();
 
   constructor(private readonly dynamicTablesService: DynamicTablesService) {
@@ -44,11 +44,14 @@ export class JustificationSharedComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
+        this.justifications = new DefaultSelect([], 0);
+        this.alert('warning', 'No se encontraron registros', '');
       },
     });
   }
 
   onJustificationChange(type: any) {
+    this.valueJustification.emit(type);
     if (this.patchValue) {
       this.form.patchValue({
         value: type.value,

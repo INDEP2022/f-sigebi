@@ -35,16 +35,20 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { ParameterBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-brands.service';
 import { ParameterSubBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-sub-brands.service';
+import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   DOUBLE_PATTERN,
+  DOUBLE_POSITIVE_PATTERN,
   NUMBERS_PATTERN,
+  NUMBERS_POINT_PATTERN,
   NUM_POSITIVE,
   NUM_POSITIVE_LETTERS,
   POSITVE_NUMBERS_PATTERN,
@@ -166,6 +170,11 @@ export class DetailAssetsTabComponentComponent
   ligieUnit: string = '';
   typeOfRequest: string = '';
   detailAssetsInfo: any;
+  subBrand: string = null;
+  @Output() saveDetailInfo: EventEmitter<any> = new EventEmitter();
+  unit: string = null;
+
+  dataToSend: any = {};
 
   constructor(
     private fb: FormBuilder,
@@ -173,7 +182,9 @@ export class DetailAssetsTabComponentComponent
     private goodService: GoodService,
     private goodTypeService: GoodTypeService,
     private relevantTypeService: TypeRelevantService,
-    private goodDomicilieService: GoodDomiciliesService
+    private goodDomicilieService: GoodDomiciliesService,
+    private goodProcessService: GoodProcessService,
+    private strategyService: StrategyServiceService
   ) {
     super();
   }
@@ -207,6 +218,7 @@ export class DetailAssetsTabComponentComponent
       );
     }
     if (this.process == 'classify-assets') {
+      this.initForm();
       if (this.domicilieObject) {
         this.setGoodDomicilieSelected(this.domicilieObject);
       }
@@ -217,16 +229,18 @@ export class DetailAssetsTabComponentComponent
 
         this.brandId = brand;
         this.getSubBrand(new ListParams(), brand);
-        console.log('inicia<>>>><<<<<>>>>>');
       }
-      this.isGoodTypeReadOnly = true;
+      if (this.typeOfRequest == 'MANUAL') {
+        this.isGoodTypeReadOnly = false;
+      } else {
+        this.isGoodTypeReadOnly = true;
+      }
     }
 
     if (this.typeDoc === 'clarification') {
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
         this.brandId = brand;
-        console.log('inicia<>>>><<<<<>>>>>');
         this.getSubBrand(new ListParams(), brand);
       }
     }
@@ -262,16 +276,16 @@ export class DetailAssetsTabComponentComponent
         this.disableDuplicity = true;
       }
 
-      if (this.detailAssets.controls['subBrand'].value) {
+      /*if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
         this.brandId = brand;
-        console.log('inicia<>>>><<<<<>>>>>');
+        this.subBrand = this.detailAssets.controls['subBrand'].value;
         this.getSubBrand(
           new ListParams(),
           brand,
-          this.detailAssets.controls['subBrand'].value
+          this.subBrand
         );
-      }
+      }*/
     }
     if (this.detailAssets.controls['brand'].value) {
       this.getBrand(
@@ -310,11 +324,11 @@ export class DetailAssetsTabComponentComponent
       this.displayTypeTapInformation(Number(data));
     }
 
-    if (this.detailAssets.controls['subBrand'].value) {
+    /*if (this.detailAssets.controls['subBrand'].value) {
       const brand = this.detailAssets.controls['brand'].value;
       this.brandId = brand;
       this.getSubBrand(new ListParams(), brand);
-    }
+    }*/
 
     if (this.detailAssets.controls['destiny'].value) {
       var destiny = this.detailAssets.controls['destiny'].value;
@@ -355,10 +369,10 @@ export class DetailAssetsTabComponentComponent
   ngOnInit(): void {
     this.detailAssetsInfo = this.detailAssets.value;
     this.initForm();
-    this.getDestinyTransfer(new ListParams());
+    this.getDestinyTransfer(new ListParams(), this.detailAssetsInfo.requestId);
     this.getPhysicalState(new ListParams());
     this.getConcervationState(new ListParams());
-    this.getTransferentUnit(new ListParams());
+    //this.getTransferentUnit(new ListParams());
     this.getReactiveFormCall();
 
     if (
@@ -367,7 +381,10 @@ export class DetailAssetsTabComponentComponent
     ) {
       this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
     }
-    this.getBrand(new ListParams(), this.detailAssets.controls['brand'].value);
+
+    if (this.detailAssets.controls['brand'].value == null) {
+      this.getBrand(new ListParams());
+    }
   }
 
   initForm() {
@@ -452,13 +469,16 @@ export class DetailAssetsTabComponentComponent
           Validators.maxLength(40),
         ],
       ],
-      surfaceMts: [0, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
+      surfaceMts: [
+        0,
+        [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)],
+      ],
       consSurfaceMts: [
         0,
         [
           Validators.required,
           Validators.maxLength(40),
-          Validators.pattern(NUM_POSITIVE),
+          Validators.pattern(DOUBLE_POSITIVE_PATTERN),
         ],
       ],
       publicDeed: [
@@ -505,7 +525,7 @@ export class DetailAssetsTabComponentComponent
       ],
       mtsOfiWarehouse: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.maxLength(40)],
       ],
       bedrooms: [
         null,
@@ -551,11 +571,11 @@ export class DetailAssetsTabComponentComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(40),
+          Validators.maxLength(30),
         ],
       ],
       certLibLienDate: [null],
-      pffDate: [null, [Validators.required]],
+      pffDate: [null],
       gravFavorThird: [
         null,
         [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(40)],
@@ -629,7 +649,7 @@ export class DetailAssetsTabComponentComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(40),
+          Validators.maxLength(30),
         ],
       ],
       photosAttached: [
@@ -656,7 +676,30 @@ export class DetailAssetsTabComponentComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
+      //val25: [null],
     });
+
+    /* METODO QUE CAMBIA LOS CAMPOS DEL DOMICILIO A REQUERIDOS
+    ========================================================== */
+    this.setDomiciliesFieldRequired();
+  }
+
+  setDomiciliesFieldRequired() {
+    console.log('TIPO DE TRANSFERENCIA ', this.typeOfRequest);
+    const transferent = this.requestObject.transferenceId;
+
+    /*if (this.typeOfRequest === 'MANUAL') {
+      this.goodDomicilieForm.controls['pffDate'].setValidators([
+        Validators.required,
+      ]);
+    }*/
+    if (transferent == 120 || transferent == 752 || transferent == 942) {
+      this.goodDomicilieForm.controls['pffDate'].setValidators([
+        Validators.required,
+      ]);
+    }
+
+    this.goodDomicilieForm.updateValueAndValidity();
   }
 
   getPhysicalState(params: ListParams) {
@@ -686,7 +729,30 @@ export class DetailAssetsTabComponentComponent
       });
   }
 
-  getDestinyTransfer(params: ListParams) {
+  getDestinyTransfer(params: ListParams, idSolicitud?: string | number) {
+    /*let params2 = new ListParams();
+    params['filter.requestId'] = `$eq:${idSolicitud}`;
+
+    this.goodService.getAll(params2).subscribe({
+      next: (resp: any) => {
+        this.dataToSend.id = resp.id;
+        this.saveDetailInfo.emit(this.dataToSend);
+        this.onLoadToast('success', 'Actualizado', 'Formulario actualizado');
+      },
+      error: error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          `El formulario no se puede actualizar ${error.error.message}`
+        );
+        // this.onLoadToast(
+        //   'error',
+        //   'Error',
+        //   `El formulario no se puede actualizar ${error.error.message}`
+        // );
+      },
+    });*/
+
     params['filter.name'] = '$eq:Destino';
     this.genericService
       .getAll(params)
@@ -695,17 +761,78 @@ export class DetailAssetsTabComponentComponent
         next: (data: any) => {
           this.selectDestinyTransfer = new DefaultSelect(data.data, data.count);
 
-          if (this.detailAssets.controls['transferentDestiny'].value === null) {
-            this.detailAssets.controls['transferentDestiny'].setValue('1');
-          } else {
-            const destinyTransf =
-              this.detailAssets.controls['transferentDestiny'].value;
-            this.detailAssets.controls['transferentDestiny'].setValue(
-              destinyTransf
-            );
+          //OBTENER TIPO DE SOLICITUD
+          /*this.requestService.getById(idSolicitud).subscribe({
+            next: res => {*/
+          const transferente = this.typeOfRequest;
+
+          switch (transferente) {
+            case 'SAT_SAE':
+              console.log('SAT_SAE');
+
+              if (
+                this.detailAssets.controls['transferentDestiny'].value === null
+              ) {
+                this.detailAssets.controls['transferentDestiny'].setValue('1');
+              } else {
+                const destinyTransf =
+                  this.detailAssets.controls['transferentDestiny'].value;
+                this.detailAssets.controls['transferentDestiny'].setValue(
+                  destinyTransf
+                );
+              }
+
+              break;
+            case 'PGR_SAE':
+              console.log('PGR_SAE');
+
+              if (
+                this.detailAssets.controls['transferentDestiny'].value === null
+              ) {
+                this.detailAssets.controls['transferentDestiny'].setValue('4');
+              } else {
+                const destinyTransf =
+                  this.detailAssets.controls['transferentDestiny'].value;
+                this.detailAssets.controls['transferentDestiny'].setValue(
+                  destinyTransf
+                );
+              }
+
+              break;
+            case 'MANUAL':
+              console.log('MANUAL');
+
+              if (
+                this.detailAssets.controls['transferentDestiny'].value === null
+              ) {
+                this.detailAssets.controls['transferentDestiny'].setValue('1');
+              } else {
+                const destinyTransf =
+                  this.detailAssets.controls['transferentDestiny'].value;
+                this.detailAssets.controls['transferentDestiny'].setValue(
+                  destinyTransf
+                );
+              }
+
+              break;
           }
         },
+        // error: error => {
+        //   this.typeTransferent = '';
+        //   console.log(
+        //     'Error al consultar solicitud',
+        //     error,
+        //     'Transferente, ',
+        //     this.typeTransferent
+        //   );
+        // },
       });
+    /*},
+      });*/
+  }
+
+  destinySae(event: any) {
+    this.dataToSend.saeDestiny = event.keyId;
   }
 
   getDestiny(id: number | string) {
@@ -943,62 +1070,94 @@ export class DetailAssetsTabComponentComponent
   //     });
   // }
 
-  getTransferentUnit(params: ListParams) {
-    params['filter.measureTlUnit'] = `$ilike:${params.text}`;
-    params.limit = 20;
-    this.goodsQueryService
-      .getCatMeasureUnitView(params)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: resp => {
+  getTransferentUnit(params: ListParams, unit?: string) {
+    params['filter.unit'] = `$eq:${unit}`;
+    this.strategyService.getUnitsMedXConv(params).subscribe({
+      next: async resp => {
+        const result = resp.data.map(async (item: any) => {
+          const ligieunit: any = await this.getAsyncMedUnid(item.idUnitDestine);
+          item['nbCode'] = ligieunit.data[0].nbCode;
+        });
+
+        Promise.all(result).then(data => {
           this.selectTansferUnitMeasure = new DefaultSelect(
             resp.data,
             resp.count
           );
-        },
-      });
+
+          if (this.detailAssets.controls['unitMeasure'].value) {
+            this.detailAssets.controls['unitMeasure'].setValue(
+              this.detailAssets.controls['unitMeasure'].value
+            );
+          }
+        });
+      },
+    });
+  }
+
+  async unitChange(event: any) {
+    if (event == undefined) {
+      this.selectTansferUnitMeasure = new DefaultSelect();
+      this.getTransferentUnit(new ListParams(), this.unit);
+    } else {
+      this.selectTansferUnitMeasure = new DefaultSelect();
+      this.getTransferentUnit(new ListParams(), event.idUnitDestine);
+      const medUnid: any = await this.getAsyncMedUnid(event.idUnitDestine);
+
+      if (medUnid.data[0].decimals == 'N') {
+        this.detailAssets.controls['quantity'].setValidators([
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ]);
+      } else {
+        this.detailAssets.controls['quantity'].setValidators([
+          Validators.pattern(DOUBLE_PATTERN),
+        ]);
+      }
+      this.detailAssets.updateValueAndValidity();
+    }
   }
 
   getLigieUnit(params: ListParams, id?: string) {
-    params['filter.uomCode'] = `$eq:${id}`;
-    params.limit = 20;
-
-    this.goodsQueryService
-      .getCatMeasureUnitView(params)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: resp => {
-          //const result = resp.data.filter((x: any) => x.uomCode === id);
-          this.ligieUnit = resp.data[0].measureTlUnit;
-          this.setQuantityTypeInput(this.ligieUnit);
-        },
-      });
+    const detail = this.detailAssets.value;
+    let fraction = null;
+    if (detail.ligieLevel4 != '0' && detail.ligieLevel4 != null) {
+      fraction = detail.ligieLevel4;
+    } else if (detail.ligieLevel3 != '0' && detail.ligieLevel3 != null) {
+      fraction = detail.ligieLevel3;
+    } else if (detail.ligieLevel2 != '0' && detail.ligieLevel2 != null) {
+      fraction = detail.ligieLevel2;
+    } else if (detail.ligieLevel1 != '0' && detail.ligieLevel1 != null) {
+      fraction = detail.ligieLevel1;
+    } else if (detail.ligieChapter != '0' && detail.ligieChapter != null) {
+      fraction = detail.ligieChapter;
+    } else if (detail.ligieSection != '0' && detail.ligieSection != null) {
+      fraction = detail.ligieSection;
+    }
+    params['filter.nbCode'] = `$eq:${id}`;
+    params['filter.fractionId'] = `$eq:${+fraction}`;
+    this.goodProcessService.getVsigLigie(params).subscribe({
+      next: resp => {
+        this.ligieUnit = resp.data[0].unitDescription;
+        this.unit = resp.data[0].unit;
+        this.getTransferentUnit(new ListParams(), resp.data[0].unit);
+        this.setQuantityTypeInput(resp.data[0]);
+      },
+    });
   }
 
-  setQuantityTypeInput(unity: string) {
-    if (
-      unity === 'JUEGOS' ||
-      unity === 'PAR' ||
-      unity === 'PIEZA' ||
-      unity === 'UNIDAD' ||
-      unity === 'CAJAS'
-    ) {
-      this.detailAssets.controls['quantity'].setValidators([
-        Validators.required,
-        Validators.pattern(POSITVE_NUMBERS_PATTERN),
-      ]);
-    } else if (
-      unity === 'KILOGRAMOS' ||
-      unity === 'GRAMO' ||
-      unity === 'LITRO' ||
-      unity === 'METRO' ||
-      unity === 'METRO CÚBICO' ||
-      unity === 'METRO CUADRADO'
-    ) {
-      this.detailAssets.controls['quantity'].setValidators([
-        Validators.required,
-        Validators.pattern(DOUBLE_PATTERN),
-      ]);
+  async setQuantityTypeInput(unity: any) {
+    if (this.typeOfRequest == 'PGR_SAE' || this.typeOfRequest == 'SAT_SAE') {
+      this.detailAssets.controls['quantity'].disable();
+    } else {
+      if (unity.amountDecimal == 'N') {
+        this.detailAssets.controls['quantity'].setValidators([
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ]);
+      } else {
+        this.detailAssets.controls['quantity'].setValidators([
+          Validators.pattern(DOUBLE_PATTERN),
+        ]);
+      }
     }
     this.detailAssets.updateValueAndValidity();
   }
@@ -1011,13 +1170,23 @@ export class DetailAssetsTabComponentComponent
       this.getBrand(new ListParams());
     }
   }
+
+  onSubBranchChange(event: any) {
+    if (this.brandId) {
+      this.getSubBrand(new ListParams(), this.brandId);
+    }
+  }
+
   getBrand(params: ListParams, brandId?: string) {
     const filter = new FilterParams();
     filter.page = params.page;
     filter.limit = params.limit;
     filter.addFilter('flexValueMeaning', params.text, SearchFilter.ILIKE);
     if (brandId) {
+      brandId = brandId.toLowerCase();
+      brandId = brandId[0].toUpperCase() + brandId.substring(1);
       filter.addFilter('flexValue', brandId);
+      //filter.search = brandId
     }
 
     this.goodsInvService
@@ -1026,6 +1195,9 @@ export class DetailAssetsTabComponentComponent
       .subscribe({
         next: resp => {
           this.selectBrand = new DefaultSelect(resp.data, resp.count);
+          if (brandId) {
+            this.detailAssets.controls['brand'].setValue(brandId);
+          }
         },
         error: () => {
           this.selectBrand = new DefaultSelect();
@@ -1034,14 +1206,22 @@ export class DetailAssetsTabComponentComponent
   }
 
   getSubBrand(params: ListParams, brandId?: string, description?: string) {
-    const idBrand = brandId ? brandId : this.brandId;
     const filter = new ListParams();
     filter.page = params.page;
     filter.limit = params.limit;
-    filter['filter.carBrand'] = `$eq:${idBrand}`;
+    this.brandId = this.brandId
+      ? this.brandId.toLowerCase()
+      : brandId.toLowerCase();
+    this.brandId = this.brandId
+      ? this.brandId[0].toUpperCase() + this.brandId.substring(1)
+      : brandId[0].toUpperCase() + brandId.substring(1);
+    filter['filter.carBrand'] = `$eq:${this.brandId}`;
     if (description != null) {
-      filter['filter.flexValueMeaningDependent'] = `$ilike:${description}`;
-    } else {
+      description = description.toLowerCase();
+      description = description[0].toUpperCase() + description.substring(1);
+      filter['filter.flexValueMeaningDependent'] = `$eq:${description}`;
+    }
+    if (params.text) {
       filter['filter.flexValueMeaningDependent'] = `$ilike:${params.text}`;
     }
 
@@ -1051,6 +1231,9 @@ export class DetailAssetsTabComponentComponent
       .subscribe({
         next: resp => {
           this.selectSubBrand = new DefaultSelect(resp.data, resp.count);
+          if (description) {
+            this.detailAssets.controls['subBrand'].setValue(description);
+          }
         },
       });
   }
@@ -1074,6 +1257,8 @@ export class DetailAssetsTabComponentComponent
     let value = checked === true ? 'Y' : 'N';
     this.circulateString = value;
     this.detailAssets.controls['fitCircular'].setValue(value);
+    const val25 = value == 'Y' ? 'APTO PARA CIRCULAR' : 'NO APTO PARA CIRCULAR';
+    //this.detailAssets.controls['val25'].setValue(val25);
   }
 
   handleTheftReportEvent(event: any) {
@@ -1176,12 +1361,14 @@ export class DetailAssetsTabComponentComponent
   }
 
   getTypeGood(id: number) {
+    let params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
     this.typeRelevantSevice
-      .getById(id)
+      .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: (data: any) => {
-          this.goodTypeName = data.description;
+          this.goodTypeName = data.data[0].description;
         },
       });
   }
@@ -1263,11 +1450,17 @@ export class DetailAssetsTabComponentComponent
     if (this.immovablesAssets === true) {
       if (this.domicileForm.controls['id'].value === null) {
         this.message(
-          'info',
+          'warning',
           'Error',
-          `Se reguiqere ingresar el domicilio del bien`
+          `Se requiere ingresar el domicilio del Bien`
         );
       } else {
+        if (this.goodDomicilieForm.invalid == true) {
+          setTimeout(() => {
+            this.onLoadToast('warning', 'Recuerde llenar los campos faltantes');
+          }, 1000);
+          return;
+        }
         if (!this.goodDomicilieForm.controls['id'].value) {
           await this.saveGoodRealState();
         } else {
@@ -1296,19 +1489,19 @@ export class DetailAssetsTabComponentComponent
                 this.message(
                   'error',
                   'Error',
-                  `¡El menaje no se pudo guardar!\n. ${data.message}`
+                  `El menaje no se pudo guardar\n. ${data.message}`
                 );
-                reject('¡El registro del bien del domicilio no se guardó!');
+                reject('El registro del Bien del domicilio no se guardó');
               }
 
               if (data.id != null) {
                 this.message(
                   'success',
-                  'Menaje guardado',
+                  'Menaje Guardado',
                   `Se guardaron los menajes exitosamente`
                 );
                 this.isSaveMenaje = false;
-                resolve('¡Se guardó correctamente el menaje!');
+                resolve('Se guardó correctamente el menaje');
               }
             },
           });
@@ -1330,10 +1523,10 @@ export class DetailAssetsTabComponentComponent
               this.message(
                 'error',
                 'Error',
-                `El registro de domicilio del bien no se pudo actualizar!\n. ${data.message}`
+                `El registro de domicilio del bien no se pudo actualizar\n. ${data.message}`
               );
               reject(
-                'No se puedo actualizar el registro del domicilio del bien'
+                'No se puede actualizar el registro del domicilio del bien'
               );
             }
 
@@ -1346,7 +1539,7 @@ export class DetailAssetsTabComponentComponent
             this.message(
               'error',
               'Error',
-              `El registro de domicilio del bien no se pudo actualizar!\n. ${error.error.message}`
+              `El registro de domicilio del bien no se pudo actualizar\n. ${error.error.message}`
             );
           },
         });
@@ -1380,7 +1573,7 @@ export class DetailAssetsTabComponentComponent
           this.message(
             'error',
             'Error',
-            `El registro del inmueble no se guardo!\n. ${error.error.message}`
+            `El registro del inmueble no se guardo\n. ${error.error.message}`
           );
         },
       });
@@ -1406,7 +1599,7 @@ export class DetailAssetsTabComponentComponent
           this.message(
             'error',
             'Error',
-            `El registro del inmueble no se actualizo!\n. ${error.error.message}`
+            `El registro del inmueble no se actualizo\n. ${error.error.message}`
           );
         },
       });
@@ -1437,6 +1630,14 @@ export class DetailAssetsTabComponentComponent
       this.getLigieUnit(new ListParams(), ligieUnit);
     }
 
+    this.detailAssets.controls['destiny'].valueChanges.subscribe(
+      (destiny: any) => {
+        if (destiny != null || destiny != undefined) {
+          this.getDestiny(destiny);
+        }
+      }
+    );
+
     this.detailAssets.controls['ligieUnit'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
@@ -1461,7 +1662,10 @@ export class DetailAssetsTabComponentComponent
     this.detailAssets.controls['brand'].valueChanges.subscribe((data: any) => {
       if (data) {
         this.brandId = data;
-        this.getSubBrand(new ListParams(), data);
+        if (this.detailAssets.controls['subBrand'].value) {
+          const subBrand = this.detailAssets.controls['subBrand'].value;
+          this.getSubBrand(new ListParams(), data, subBrand);
+        }
       }
     });
 
@@ -1641,5 +1845,17 @@ export class DetailAssetsTabComponentComponent
   getDetailInfo(event: any) {
     console.log(event);
     this.sendDetailInfoEvent.emit(event);
+  }
+
+  getAsyncMedUnid(unit: string) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.unit'] = `$eq:${unit}`;
+      this.strategyService.getMedUnits(params).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+      });
+    });
   }
 }

@@ -1,13 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { formatDate } from '@angular/common';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, firstValueFrom, map } from 'rxjs';
-import {
-  showAlert,
-  showQuestion,
-  showToast,
-} from 'src/app/common/helpers/helpers';
+import { BehaviorSubject, firstValueFrom, map, skip } from 'rxjs';
 import {
   ListParams,
   SearchFilter,
@@ -17,17 +13,52 @@ import { IAccountMovement } from 'src/app/core/models/ms-account-movements/accou
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { IMassiveNumeraryChangeSpent } from '../types/massive-numerary.type';
-import {
-  MASSIVE_NUMERARY_CHANGE_MODAL_COLUMNS,
-  WIN_BIENES_MODAL_COLUMNS,
-} from './massive-numerary-change-modal-columns';
+import { IMassiveNumeraryGood } from '../types/massive-numerary.type';
+import { WIN_BIENES_MODAL_COLUMNS } from './massive-numerary-change-modal-columns';
 
 @Component({
   selector: 'app-massive-numerary-change-modal',
   templateUrl: './massive-numerary-change-modal.component.html',
   styles: [
     `
+      .legend {
+        display: flex;
+        column-gap: 10px;
+        > div {
+          display: flex;
+          column-gap: 10px;
+          align-items: center;
+          .rectangle {
+            width: 15px;
+            height: 15px;
+          }
+        }
+        @media screen and (max-width: 576px) {
+          flex-direction: column;
+        }
+      }
+      .modal-body {
+        padding: 0px 40px 20px !important;
+        position: relative;
+        flex: 1 1 auto;
+      }
+      .requiredAva {
+        background-color: #dc3545;
+      }
+      .numerary {
+        background-color: #357935;
+      }
+      .required {
+        background-color: #ffc107;
+      }
+
+      .update {
+        background-color: #17a2b8;
+      }
+      .numeraryGood {
+        background-color: #ff8000;
+      }
+
       ::ng-deep .bg-custom-red {
         background: #dc3545;
         color: white;
@@ -56,111 +87,251 @@ export class MassiveNumeraryChangeModalComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Win Bienes';
+  @Output() refresh = new EventEmitter<true>();
+
+  title: string = 'Bienes';
   form: FormGroup;
-  settings2 = { ...this.settings, actions: false };
-  BLK_BIENES = new LocalDataSource();
-  BLK_GASTOS = new LocalDataSource();
+  settings2 = {
+    ...this.settings,
+    actions: false,
+    hideSubHeader: false,
+    pager: {
+      perPage: 10,
+    },
+  };
+  dataTableGoods: any[] = [];
+  dataTableGoodsLocal = new LocalDataSource([]);
+  dataTableSpents: any[] = [];
+  dataTableSpentsLocal = new LocalDataSource([]);
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsSpent = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsSpent = 0;
   totalItems: number = 0;
 
   constructor(
     private modalRef: BsModalRef,
-    // private fb: FormBuilder,
     private goodServices: GoodService,
     private excelService: ExcelService,
     private accountMovementService: AccountMovementService
   ) {
     super();
-    this.settings = {
-      ...this.settings,
-      actions: false,
-      columns: MASSIVE_NUMERARY_CHANGE_MODAL_COLUMNS,
-      rowClassFunction: (row: any) => {
-        return row?.data?.color;
-      },
-    };
+
     this.settings2.columns = WIN_BIENES_MODAL_COLUMNS;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.dataTableGoods);
+    console.log(this.dataTableSpents);
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: {
+        noGood: {
+          //NO_BIEN
+          title: 'No. Bien',
+          type: 'number',
+          sort: false,
+        },
+        noNum: {
+          title: 'No. Num',
+          type: 'number',
+          sort: false,
+        },
+        description: {
+          //DESCRIPCION
+          title: 'Descripción',
+          type: 'string',
+          sort: false,
+        },
+        cveEvent: {
+          title: 'Clave Evento',
+          type: 'string',
+          sort: false,
+        },
+        status: {
+          //ESTATUS
+          title: 'Estatus',
+          type: 'string',
+          sort: false,
+        },
+        entry: {
+          //INGRESO
+          title: 'Ingreso',
+          type: 'number',
+          sort: false,
+        },
+        costs: {
+          //GASTO
+          title: 'Gastos',
+          type: 'number',
+          sort: false,
+        },
+        tax: {
+          //IVA
+          title: 'I.V.A',
+          type: 'number',
+          sort: false,
+        },
+        impNumerary: {
+          //VALOR_AVALUO
+          title: 'Imp. Numerario',
+          type: 'number',
+          sort: false,
+        },
+      },
+      rowClassFunction: (row: any) => {
+        console.log(row.data.color);
+        let colors = '';
+        if (row.data.color == 'VA_ROJO') {
+          colors = 'bg-danger text-white';
+        } else if (row.data.color == 'VA_VERDE') {
+          colors = 'bg-success text-white';
+        } else if (row.data.color == 'VA_CYAN') {
+          colors = 'bg-cyan text-white';
+        } else if (row.data.color == 'VA_NARANJA') {
+          colors = 'bg-orange text-white';
+        } else if (row.data.color == 'VA_AMARILLO') {
+          colors = 'bg-yellow text-white';
+        }
+        return colors;
+      },
+      hideSubHeader: false,
+      pager: {
+        perPage: 10,
+      },
+    };
+    this.dataTableGoods = this.dataTableGoods.map(item => {
+      return {
+        ...item,
+        entry: (item?.entry?.toFixed(2) || item) as any,
+      };
+    });
+    this.dataTableGoodsLocal.load(this.dataTableGoods);
+    this.dataTableSpentsLocal.load(this.dataTableSpents);
+    this.totalItems = this.dataTableGoods.length;
+    this.totalItemsSpent = this.dataTableSpents.length;
+    this.params.pipe(skip(1)).subscribe(params => {
+      this.dataTableGoodsLocal.setPaging(params.page, params.limit);
+    });
+    this.paramsSpent.pipe(skip(1)).subscribe(params => {
+      console.log(params);
+      this.dataTableSpentsLocal.setPaging(params.page, params.limit);
+    });
+  }
   close() {
     this.modalRef.hide();
   }
 
-  async onClickArchoNumeraryConc() {
-    const goods = await this.getGoodsIn();
-    if (!goods) {
-      showToast({
-        icon: 'error',
-        text: 'No hay bienes para consultar',
-        title: 'Error',
-      });
-      return;
-    }
-    await this.exportExcel(goods.goods, goods.goodsMore);
-  }
-
-  async exportExcel(goods: any[], goodsMore: any[]) {
-    const dataForExcel = goods.map(good => {
-      const goodMoreFilter = goodsMore.find(
-        goodMore => goodMore.noGood == good.noGood
-      );
-      const dataMoreExcel = {
-        DESCRIPCION_NUM: goodMoreFilter?.description,
-        ESTATUS_NUM: goodMoreFilter?.noExpedient,
-        CVE_EVENTO: good?.noExpedient,
-        MONEDA_NUM: goodMoreFilter?.val1,
-        INGRESO_NUM: goodMoreFilter?.val2,
-        IVA_NUM: goodMoreFilter?.val10,
-        GASTO_NUM: goodMoreFilter?.val13,
-        VALOR_AVALUO_NUM: goodMoreFilter?.appraisedValue,
-      };
-      const rowExcel = {
-        NO_BIEN: good.noGood,
-        DESCRIPCION: good.description,
-        ESTATUS: good.status,
-        INGRESO: good.entry,
-        GASTO: good.costs,
-        IVA: good.tax,
-        VALOR_CALC: good.impNumerary,
-        NO_BIEN_NUM: good.npNUm,
-        ...dataMoreExcel,
-      };
-      return rowExcel;
-    });
-    console.log({ dataForExcel });
-    this.excelService.export(dataForExcel, { type: 'csv', filename: 'hoja1' });
-  }
-
-  async getGoodsIn(): Promise<{ goods: any[]; goodsMore: any[] }> {
-    const goods: IMassiveNumeraryChangeSpent[] = await this.BLK_BIENES.getAll();
-    const goodsFilter = goods.filter(item => item.indNume === 3);
-
-    const goodsNumber = goodsFilter.map((item: { noGood: any }) => item.noGood);
-    if (!goodsNumber || goodsNumber?.length < 1) {
-      return null;
-    }
-
-    const queryString = `?filter.id=${SearchFilter.IN}:${goodsNumber.join(
-      ','
-    )}`;
-    const goodsMore = await firstValueFrom(
-      this.goodServices.getAll(queryString).pipe(map(res => res.data || []))
+  getGood(id: number | string) {
+    return firstValueFrom(
+      this.goodServices.getAll(`?filter.id=${id}`).pipe(
+        map(res => {
+          const good = res.data[0];
+          return {
+            V_DESC_NUM: good?.description,
+            V_ESTATUS_NUM: good?.status,
+            V_MONEDA_NUM: good?.val1,
+            V_INGRESO_NUM: good?.val2,
+            V_IVA_NUM: good?.val10,
+            V_GASTO_NUM: good?.val13,
+            V_VALOR_AVALUO_NUM: good?.appraisedValue,
+          };
+        })
+      )
     );
-    console.log({ goodsMore });
-    return { goods: goodsFilter, goodsMore };
   }
 
-  chkMovBan = 'NO';
-  DI_MONEDA_NEW: any;
-  TI_FICHA_NEW: any;
-  TI_BANCO_NEW: any;
-  TI_FECHA_NEW: any;
-  DI_CUENTA_NEW: any;
-  DI_NO_CUENTA_DEPOSITO: any;
-  DI_CATEGORIA: any;
-  DI_NO_MOVIMIENTO: any;
+  async onClickArchoNumeraryConc() {
+    try {
+      let V_DESC_NUM: any = null;
+      let V_ESTATUS_NUM: any = null;
+      let V_MONEDA_NUM: any = null;
+      let V_INGRESO_NUM: any = null;
+      let V_IVA_NUM: any = null;
+      let V_GASTO_NUM: any = null;
+      let V_VALOR_AVALUO_NUM: any = null;
+
+      let rowsExcel: any[] = [];
+      if (this.dataTableGoods.length > 0) {
+        const promiseAll = this.dataTableGoods.map(async good => {
+          console.log(good);
+          if (good.indNume == 3) {
+            try {
+              const goodSearch = await this.getGood(good.npNUm);
+              V_DESC_NUM = goodSearch.V_DESC_NUM;
+              V_ESTATUS_NUM = goodSearch.V_ESTATUS_NUM;
+              V_MONEDA_NUM = goodSearch.V_MONEDA_NUM;
+              V_INGRESO_NUM = goodSearch.V_INGRESO_NUM;
+              V_IVA_NUM = goodSearch.V_IVA_NUM;
+              V_GASTO_NUM = goodSearch.V_GASTO_NUM;
+              V_VALOR_AVALUO_NUM = goodSearch.V_VALOR_AVALUO_NUM;
+            } catch (error) {
+              V_DESC_NUM = null;
+              V_ESTATUS_NUM = null;
+              V_MONEDA_NUM = null;
+              V_INGRESO_NUM = null;
+              V_IVA_NUM = null;
+              V_GASTO_NUM = null;
+              V_VALOR_AVALUO_NUM = null;
+            }
+
+            rowsExcel.push({
+              NO_BIEN: good.noGood,
+              DESCRIPCION: good.description,
+              ESTATUS: good.status,
+              INGRESO: good.entry,
+              GASTO: good.costs,
+              IVA: good.tax,
+              VALOR_CALC: good.impNumerary,
+              NO_BIEN_NUM: good.npNUm,
+              DESCRIPCION_NUM: V_DESC_NUM,
+              ESTATUS_NUM: V_ESTATUS_NUM,
+              CVE_EVENTO: good.cveEvent,
+              MONEDA_NUM: V_MONEDA_NUM,
+              INGRESO_NUM: V_INGRESO_NUM,
+              IVA_NUM: V_IVA_NUM,
+              GASTO_NUM: V_GASTO_NUM,
+              VALOR_AVALUO_NUM: V_VALOR_AVALUO_NUM,
+            });
+          }
+        });
+        await Promise.all(promiseAll);
+      }
+      console.log(rowsExcel.length);
+      if (rowsExcel.length > 0) {
+        this.excelService.export(rowsExcel, {
+          type: 'csv',
+          filename: 'hoja1',
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Con estos Datos no se Puede Generar el Archivo de Excel.'
+        );
+      }
+    } catch (error) {
+      // WHEN NO_DATA_FOUND THEN
+      this.onLoadToast(
+        'warning',
+        '',
+        'No se Puede Copiar el Archivo de Excel.'
+      );
+      //    END;
+    }
+    // END;
+  }
+
+  user: string;
+  chkMovBan = false;
+  DI_MONEDA_NEW = '';
+  TI_FICHA_NEW = '';
+  TI_BANCO_NEW = '';
+  TI_FECHA_NEW = '';
+  DI_CUENTA_NEW = '';
+  DI_NO_CUENTA_DEPOSITO = '';
+  DI_CATEGORIA = '';
+  DI_NO_MOVIMIENTO = '';
   vestatus_ant: any;
   vestatus_nue: any;
   v_clasif_bien: number;
@@ -170,45 +341,43 @@ export class MassiveNumeraryChangeModalComponent
   V_FEC_REG_INSERT: string;
   vNoMovimiento: any;
 
-  async onClickGenerateNumeraries(): Promise<void> {
-    const BLK_BIENES_ALL: IMassiveNumeraryChangeSpent[] =
-      await this.BLK_BIENES.getAll();
-    if (BLK_BIENES_ALL.length > 1) {
-      if (this.chkMovBan === 'SI') {
+  async onClickGenerateNumerareis(): Promise<void> {
+    const dataTableGoods: IMassiveNumeraryGood[] = this.dataTableGoods;
+    if (dataTableGoods.length > 0) {
+      if (this.chkMovBan) {
         if (!this.TI_BANCO_NEW) {
-          showAlert({
-            title: 'Error',
-            text: 'Se debe ingresar los datos del banco',
-          });
+          this.onLoadToast('error', '', 'Se Debe Ingresar Los Datos Del Banco');
           return;
         }
         if (!this.TI_FECHA_NEW) {
-          showAlert({
-            title: 'Error',
-            text: 'Se debe ingresar la fecha de depósito',
-          });
+          this.onLoadToast(
+            'error',
+            '',
+            'Se Debe Ingresar La Fecha De Depósito'
+          );
           return;
         } else {
           try {
             const accountMovement = await this.selectAccountMovementFilter();
             this.vNoMovimiento = accountMovement?.numberMotion;
           } catch (ex) {
-            showAlert({
-              title: 'Error',
-              text: 'Se debe ingresar una fecha de depósito válida',
-            });
+            this.onLoadToast(
+              'error',
+              '',
+              'Se Debe Ingresar Una Fecha De Depósito Válida'
+            );
             return;
           }
         }
       } else {
         this.DI_MONEDA_NEW = 'MN';
-        this.TI_FICHA_NEW = null;
-        this.TI_BANCO_NEW = null;
-        this.TI_FECHA_NEW = null;
-        this.DI_CUENTA_NEW = null;
-        this.DI_NO_CUENTA_DEPOSITO = null;
-        this.DI_CATEGORIA = null;
-        this.DI_NO_MOVIMIENTO = null;
+        this.TI_FICHA_NEW = '';
+        this.TI_BANCO_NEW = '';
+        this.TI_FECHA_NEW = '';
+        this.DI_CUENTA_NEW = '';
+        this.DI_NO_CUENTA_DEPOSITO = '';
+        this.DI_CATEGORIA = '';
+        this.DI_NO_MOVIMIENTO = '';
       }
       this.vestatus_ant = 'CNE';
       this.vestatus_nue = 'ADM';
@@ -217,31 +386,72 @@ export class MassiveNumeraryChangeModalComponent
       } else {
         this.v_clasif_bien = 1426;
       }
-      // this.vBAN = false;
-      this.vBAN = BLK_BIENES_ALL.some(element => element.indNume == 2);
-      if (this.vBAN) {
-        this.vCHECA = (
-          await showQuestion({
-            title: 'Confirmación',
-            text: 'Se Actualizan los importes de los numerarios en ADM sin conciliar?',
-            confirmButtonText: 'SI',
-            cancelButtonText: 'NO',
-          })
-        ).isConfirmed;
-      }
-      /**TODO: Esperando respuesta del backend  */
-      // BLK_BIENES_ALL.forEach(async element => {
-      //   this.vVALIDA_ESTATUS = 0;
+      this.vBAN = dataTableGoods.some(element => element.indNume == 2);
 
-      //   try {
-      //     try {
-      //     } catch (ex) {
-      //       console.log(ex);
-      //     }
-      //   } catch (ex) {
-      //     console.log(ex);
-      //   }
-      // });
+      if (this.vBAN) {
+        const response = await this.alertQuestion(
+          'question',
+          'Confirmación',
+          '¿Desea Actualizar los importes de los numerarios en ADM sin conciliar?'
+        );
+        this.vCHECA = response.isConfirmed;
+        if (response.isConfirmed && this.vCHECA) {
+          const body = {
+            goodArray: dataTableGoods.map(item => {
+              return {
+                goodNumber: item.noGood,
+                indNume: item.indNume,
+                income: item.entry,
+                iva: item.tax,
+                appraisalValue: item.impNumerary,
+                spent: item.costs,
+                numeGoodNumber: item.npNUm,
+                status: item.status,
+                description: item.description,
+                expAssocNumber: item.noExpAssociated,
+                fileNumber: item.noExpedient,
+                delegationNumber: item.noDelegation,
+                subdelegationNumber: item.noSubDelegation,
+                identifier: item.identifier,
+                flyerNumber: item.noFlier,
+              };
+            }),
+            user: this.user,
+            chk_movban: this.chkMovBan,
+            di_moneda_new: this.DI_MONEDA_NEW,
+            ti_ficha_new: this.TI_FICHA_NEW,
+            ti_banco_new: this.TI_BANCO_NEW,
+            ti_fecha_new:
+              this.TI_FECHA_NEW || formatDate(new Date(), 'yyyy/MM/dd', 'en'),
+            di_cuenta_new: this.DI_CUENTA_NEW,
+            di_no_cuenta_deposito: this.DI_NO_CUENTA_DEPOSITO,
+            di_categoria: this.DI_CATEGORIA,
+            di_no_movimiento: this.DI_NO_MOVIMIENTO,
+          };
+          this.accountMovementService.postMassNumeraryGenerate(body).subscribe({
+            next: (res: any) => {
+              this.alert('success', 'Operación Terminada Correctamente', '');
+              this.refresh.emit(true);
+              this.modalRef.hide();
+            },
+            error: (err: any) => {
+              this.alert('error', 'Error', 'Ocurrió un Error al Procesar');
+            },
+          });
+        }
+      } else {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Con estos datos no se puede generar numerarios.'
+        );
+      }
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Con estos datos no se puede generar numerarios.'
+      );
     }
   }
 

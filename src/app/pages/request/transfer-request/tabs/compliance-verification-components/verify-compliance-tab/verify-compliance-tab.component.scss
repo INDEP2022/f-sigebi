@@ -26,7 +26,7 @@ label {
   }
 
   .goodDescription {
-    min-width: 60rem;
+    min-width: 50rem;
   }
 
   .goodTypeName {
@@ -34,10 +34,17 @@ label {
   }
 
   .descriptionGoodSae {
-    min-width: 25rem;
+    min-width: 50rem;
   }
 
   .unitMeasure {
     min-width: 20rem;
+  }
+
+  .descriptionRelevantType {
+    min-width: 30rem;
+  }
+  .uniqueKey {
+    min-width: 10rem;
   }
 }

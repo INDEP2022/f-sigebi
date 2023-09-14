@@ -5,19 +5,15 @@
   <div body>
     <form class="form-material" [formGroup]="goodTypeForm">
       <div class="row">
-        <div class="col-md-3">
-          <form-field [control]="goodTypeForm.get('id')" label="Identificador">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-        <div class="col-md-6 col-md-offset-3">
+        <div class="col-md-6 col-md-offset-3 col-12">
           <form-field
             [control]="goodTypeForm.get('nameGoodType')"
             label="Nombre Tipo Bien">
             <input
               type="text"
               class="form-control"
-              formControlName="nameGoodType" />
+              formControlName="nameGoodType"
+              pattern="^\S.*$" />
           </form-field>
         </div>
       </div>
@@ -26,41 +22,53 @@
         <div class="col-md-3">
           <form-field
             [control]="goodTypeForm.get('maxAsseguranceTime')"
-            label="Tiempo m&aacute;ximo aseguramiento">
+            label="Tiempo M&aacute;ximo Aseguramiento">
             <input
               type="number"
               class="form-control"
-              formControlName="maxAsseguranceTime" />
+              formControlName="maxAsseguranceTime"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="goodTypeForm.get('maxFractionTime')"
-            label="Tiempo m&aacute;ximo fracci&oacute;n">
+            label="Tiempo M&aacute;ximo Fracci&oacute;n">
             <input
               type="number"
               class="form-control"
-              formControlName="maxFractionTime" />
+              formControlName="maxFractionTime"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="goodTypeForm.get('maxExtensionTime')"
-            label="Tiempo m&aacute;ximo prorroga">
+            label="Tiempo M&aacute;ximo Pr&oacute;rroga">
             <input
               type="number"
               class="form-control"
-              formControlName="maxExtensionTime" />
+              formControlName="maxExtensionTime"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="goodTypeForm.get('maxStatementTime')"
-            label="Tiempo m&aacute;ximo declaraci&oacute;n">
+            label="Tiempo M&aacute;ximo Declaraci&oacute;n">
             <input
               type="number"
               class="form-control"
-              formControlName="maxStatementTime" />
+              formControlName="maxStatementTime"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
       </div>
@@ -68,31 +76,40 @@
         <div class="col-md-3">
           <form-field
             [control]="goodTypeForm.get('maxLimitTime1')"
-            label="Tiempo m&aacute;ximo de plazo 1">
+            label="Tiempo M&aacute;ximo de Plazo 1">
             <input
               type="number"
               class="form-control"
-              formControlName="maxLimitTime1" />
+              formControlName="maxLimitTime1"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="goodTypeForm.get('maxLimitTime2')"
-            label="Tiempo m&aacute;ximo de plazo 2">
+            label="Tiempo M&aacute;ximo de Plazo 2">
             <input
               type="number"
               class="form-control"
-              formControlName="maxLimitTime2" />
+              formControlName="maxLimitTime2"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="goodTypeForm.get('maxLimitTime3')"
-            label="Tiempo m&aacute;ximo de plazo 3">
+            label="Tiempo M&aacute;ximo de Plazo 3">
             <input
               type="number"
               class="form-control"
-              formControlName="maxLimitTime3" />
+              formControlName="maxLimitTime3"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -102,7 +119,10 @@
             <input
               type="number"
               class="form-control"
-              formControlName="noRegister" />
+              formControlName="noRegister"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
       </div>
@@ -115,7 +135,10 @@
             <input
               type="number"
               class="form-control"
-              formControlName="version" />
+              formControlName="version"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
       </div>

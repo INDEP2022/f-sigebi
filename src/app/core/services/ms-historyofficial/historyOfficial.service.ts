@@ -22,6 +22,13 @@ export class HistoryOfficialService extends HttpService {
     );
   }
 
+  getFilterUser(params: _Params) {
+    return this.get<IListResponse<IHistoryOfficial>>(
+      this.route.HistoryOffice,
+      params
+    );
+  }
+
   getById(body: {
     flyerNumber: string | number;
     reassignmentDate: string | Date;

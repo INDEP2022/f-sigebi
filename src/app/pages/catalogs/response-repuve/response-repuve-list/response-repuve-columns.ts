@@ -5,7 +5,7 @@ export const RESPONSE_REPUVE_COLUMNS = {
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },

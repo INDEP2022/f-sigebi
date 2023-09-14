@@ -8,7 +8,7 @@ import { ISafe } from 'src/app/core/models/catalogs/safe.model';
 import { DrawerService } from 'src/app/core/services/catalogs/drawer.service';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -22,7 +22,7 @@ export class DrawerFormComponent extends BasePage implements OnInit {
   drawerForm: ModelForm<IDrawer>;
   idBoveda: number = 0;
   boveda = new DefaultSelect<ISafe>();
-  title = 'gaveta';
+  title = 'Gaveta';
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -38,73 +38,89 @@ export class DrawerFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.drawerForm = this.fb.group({
+      id: [null],
       noDrawer: [
         null,
         [
           Validators.required,
-          Validators.maxLength(3),
           Validators.pattern(NUMBERS_PATTERN),
+          Validators.max(99999),
         ],
       ],
-      noBobeda: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
-      status: [null, [Validators.required, Validators.maxLength(2)]],
-      noRegistration: [
+      status: [
         null,
         [
           Validators.required,
-          Validators.maxLength(10),
-          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(1),
+          Validators.pattern(STRING_PATTERN),
         ],
       ],
+      noRegistration: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
 
     if (this.drawer != null) {
       this.edit = true;
-      let bobeda: ISafe = this.drawer.noBobeda as ISafe;
-      this.drawerForm.patchValue({ ...this.drawer, noBobeda: bobeda.idSafe });
-      this.boveda = new DefaultSelect([bobeda], 1);
+      let boveda: ISafe = this.drawer.noDrawer as ISafe;
+      this.drawerForm.patchValue({ ...this.drawer, noDrawner: boveda.idSafe });
+      console.log(this.drawerForm.value);
+
+      this.drawerForm.controls['id'].setValue(this.drawer.id);
       this.drawerForm.get('noDrawer').disable();
+      this.drawerForm.get('id').disable();
+      this.getBoveda(new ListParams(), this.drawerForm.get('noDrawer').value);
     } else {
-      this.getBovedaSelect({ page: 1, text: '' });
+      this.drawerForm.get('id').disable();
+      this.getBoveda(new ListParams());
     }
   }
-
-  getBovedaSelect(params: ListParams) {
+  getBoveda(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.idSafe'] = id;
+    }
     this.safeService.getAll(params).subscribe(data => {
       this.boveda = new DefaultSelect(data.data, data.count);
     });
-
-    this.boveda.data.find(data => {
-      return data.id;
-    });
   }
+
+  bovedaChange(boveda: ISafe) {}
 
   confirm() {
     this.edit ? this.update() : this.create();
   }
 
   create() {
-    this.loading = true;
-
-    this.drawerService.create(this.drawerForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    let { noDrawer, noBobeda } = this.drawer;
-    const idBobeda = (noBobeda as ISafe).idSafe;
-    noBobeda = idBobeda;
-    this.drawerService
-      .updateByIds({ noDrawer, noBobeda }, this.drawerForm.value)
-      .subscribe({
+    if (this.drawerForm.controls['status'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.drawerService.create(this.drawerForm.getRawValue()).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (this.drawerForm.controls['status'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      let { id, noDrawer } = this.drawer;
+      const idBoveda = (noDrawer as ISafe).idSafe;
+      let body = {
+        id,
+        noDrawer,
+        status: this.drawerForm.value.status,
+        noRegistration: this.drawerForm.value.noRegistration,
+      };
+      this.drawerService.updateById(id, body).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+    }
   }
 
   close() {

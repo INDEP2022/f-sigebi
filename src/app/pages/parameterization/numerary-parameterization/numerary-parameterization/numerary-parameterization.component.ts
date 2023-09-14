@@ -1,14 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import {
   ICategorizationAutomNumerary,
   INumeraryParameterization,
 } from 'src/app/core/models/catalogs/numerary-categories-model';
 import { NumeraryParameterizationAutomService } from 'src/app/core/services/catalogs/numerary-parameterization-autom.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { ModalNumeraryParameterizationComponent } from '../modal-numerary-parameterization/modal-numerary-parameterization.component';
 import { NUMERARY_PARAMETERIZATION_COLUMNS } from './numerary-parameterization-columns';
 
@@ -23,72 +27,112 @@ export class NumeraryParameterizationComponent
 {
   numeraryParameterization: INumeraryParameterization[] = [];
   totalItems: number = 0;
+  data: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
+  columnFilters: any = [];
 
   constructor(
     private modalService: BsModalService,
     private numeraryParameterizationAutomService: NumeraryParameterizationAutomService
   ) {
     super();
-    this.settings = {
-      ...this.settings,
-      actions: {
-        columnTitle: 'Acciones',
-        edit: true,
-        delete: true,
-        position: 'right',
-      },
-      columns: NUMERARY_PARAMETERIZATION_COLUMNS,
-    };
+    this.settings.actions.edit = true;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.columns = NUMERARY_PARAMETERIZATION_COLUMNS;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'typeProceeding':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'initialCategoryDetails':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
+                break;
+              case 'finalCategoryDetails':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
+                break;
+              case 'initialCategory':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'finalCategory':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            /*filter.field == 'typeProceeding' ||
+            filter.field == 'initialCategoryDetails' ||
+            filter.field == 'finalCategoryDetails' ||
+            filter.field == 'initialCategory' ||
+            filter.field == 'finalCategory'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);*/
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getValuesAll();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getValuesAll());
+    console.log(this.data);
   }
   getValuesAll() {
     this.loading = true;
-    this.numeraryParameterizationAutomService
-      .getAll(this.params.getValue())
-      .subscribe({
-        next: response => {
-          console.log(response);
-          this.numeraryParameterization = response.data;
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error: error => {
-          this.loading = false;
-          console.log(error);
-        },
-      });
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.numeraryParameterizationAutomService.getAllDetail(params).subscribe({
+      next: response => {
+        this.numeraryParameterization = response.data;
+        this.totalItems = response.count || 0;
+        this.data.load(response.data);
+        this.data.refresh();
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
   openForm(allotment?: ICategorizationAutomNumerary) {
-    console.log(allotment);
-    let config: ModalOptions = {
-      initialState: {
-        allotment,
-        callback: (next: boolean) => {
-          if (next) this.getValuesAll();
-        },
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      allotment,
+      callback: (next: boolean) => {
+        if (next) this.getValuesAll();
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.modalService.show(ModalNumeraryParameterizationComponent, config);
+    this.modalService.show(ModalNumeraryParameterizationComponent, modalConfig);
   }
   showDeleteAlert(event: ICategorizationAutomNumerary) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        if (question.isConfirmed) {
-          this.delete(event);
-          Swal.fire('Borrado', '', 'success');
-        }
+        this.delete(event);
       }
     });
   }
@@ -96,7 +140,21 @@ export class NumeraryParameterizationComponent
     this.numeraryParameterizationAutomService
       .remove3(JSON.stringify(event))
       .subscribe({
-        next: () => this.getValuesAll(),
+        next: () => {
+          this.alert(
+            'success',
+            'Parametrización de Numerario',
+            'Borrado Correctamente'
+          );
+          this.getValuesAll();
+        },
+        error: err => {
+          this.alert(
+            'warning',
+            'Parametrización de Numerario',
+            'No se puede eliminar el objeto debido a una relación con otra tabla.'
+          );
+        },
       });
   }
 }

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -16,13 +17,15 @@ export class TradedGoodsComponent extends BasePage implements OnInit {
   today: Date;
   maxDate: Date;
   minDate: Date;
+  params: any;
 
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
 
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private siabService: SiabService
   ) {
     super();
     this.today = new Date();
@@ -43,14 +46,20 @@ export class TradedGoodsComponent extends BasePage implements OnInit {
     });
   }
   confirm() {
-    let params = {
+    const FECIN = new Date(this.form.controls['PF_FECINI'].value);
+    const formattedFECIN = this.formatDate(FECIN);
+
+    const FECFIN = new Date(this.form.controls['PF_FECFIN'].value);
+    const formattedFECFIN = this.formatDate(FECFIN);
+
+    this.params = {
       PN_DELEGACION: this.form.controls['delegation'].value,
       PN_SUBDELEGACION: this.form.controls['subdelegation'].value,
       TIPO: this.form.controls['typeEvent'].value,
-      PF_FECINI: this.form.controls['PF_FECINI'].value,
-      PF_FECFIN: this.form.controls['PF_FECFIN'].value,
+      PF_FECINI: formattedFECIN,
+      PF_FECFIN: formattedFECFIN,
     };
-    console.log(params);
+    console.log(this.params);
 
     const start = new Date(this.form.get('PF_FECINI').value);
     const end = new Date(this.form.get('PF_FECFIN').value);
@@ -66,19 +75,13 @@ export class TradedGoodsComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'advertencia',
-        'fecha de final no puede ser menor a fecha inicial'
+        'La Fecha Final no Puede ser Menor a la Fecha Inicial'
       );
       return;
     }
-
+    this.onSubmit();
     setTimeout(() => {
-      this.onLoadToast('success', 'procesando', '');
-    }, 1000);
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FGERDESLICITXBIEN.pdf?PN_DELEGACION=${params.PN_DELEGACION}&PN_SUBDELEGACION=${params.PN_SUBDELEGACION}&TIPO=${params.TIPO}&PF_FECINI=${params.PF_FECINI}&PF_FECFIN=${params.PF_FECFIN}`;
-    const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
-    window.open(pdfurl, 'FGERDESLICITXBIEN.pdf');
-    setTimeout(() => {
-      this.onLoadToast('success', 'Reporte generado', '');
+      this.onLoadToast('success', 'Reporte Generado', '');
     }, 2000);
 
     this.loading = false;
@@ -104,5 +107,55 @@ export class TradedGoodsComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true, //ignora el click fuera del modal
     };
     this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
+  onSubmit() {
+    if (this.params != null) {
+      this.siabService.fetchReport('RGERDESBIECOMERCI', this.params).subscribe({
+        next: res => {
+          if (res !== null) {
+            const blob = new Blob([res], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              },
+              class: 'modal-lg modal-dialog-centered',
+              ignoreBackdropClick: true,
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            const blob = new Blob([res], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              },
+              class: 'modal-lg modal-dialog-centered',
+              ignoreBackdropClick: true,
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          }
+        },
+        error: (error: any) => {
+          console.log('error', error);
+        },
+      });
+    }
+  }
+
+  formatDate(date: Date): string {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    return `${day}-${month}-${year}`;
   }
 }

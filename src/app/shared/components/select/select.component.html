@@ -1,9 +1,10 @@
 <ng-container [formGroup]="form">
-  <div class="form-group form-secondary form-static-label">
+  <div class="form-group form-secondary form-static-label pt-2">
     <ng-select
       #select
       [clearable]="clearable"
       class="form-control"
+      [attr.class]="className + ' form-control'"
       [items]="buffer"
       [bindLabel]="bindLabel"
       [hideSelected]="true"
@@ -11,7 +12,7 @@
       [maxSelectedItems]="maxSelectedItems"
       [multiple]="multiple"
       [bindValue]="value"
-      [minTermLength]="1"
+      [minTermLength]="0"
       [loading]="loading"
       [addTag]="addTag"
       [typeToSearchText]="typeToSearchText"

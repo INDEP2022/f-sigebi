@@ -4,224 +4,48 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="customerForm">
-      <div class="row">
-        <div class="col-md-2">
-          <form-field label="ID" [control]="customerForm.get('id')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="id"
-              readonly />
-          </form-field>
-        </div>
-        <div class="col-md-4">
+      <div class="row mt-3">
+        <div class="col-md-6">
           <form-field
-            label="Nombre Razón"
+            label="Nombre o Razón Social"
             [control]="customerForm.get('reasonName')">
             <input
               type="text"
               class="form-control"
-              formControlName="reasonName" />
+              formControlName="reasonName"
+              maxlength="70" />
           </form-field>
         </div>
+
         <div class="col-md-3">
-          <form-field label="RFC" [control]="customerForm.get('rfc')">
-            <input type="text" class="form-control" formControlName="rfc" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            label="Clave vendedor"
-            [control]="customerForm.get('sellerId')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="sellerId" />
-            <!-- <ngx-select
-              [searchOnInit]="true"
-              [form]="customerForm"
-              control="sellerId"
-              [data]="sellers"
-              value="id"
-              bindLabel="id"
-              label="Clave vendedor"
-              (fetchItems)="getSellers($event)"> -->
-          </form-field>
-        </div>
-      </div>
-      <!-- __ -->
-      <div class="row pt-5">
-        <div class="col-md-3">
-          <form-field label="Calle" [control]="customerForm.get('street')">
-            <input type="text" class="form-control" formControlName="street" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field label="Ciudad" [control]="customerForm.get('city')">
-            <input type="text" class="form-control" formControlName="city" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field label="Colonia" [control]="customerForm.get('colony')">
-            <input type="text" class="form-control" formControlName="colony" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            label="Delegación"
-            [control]="customerForm.get('delegation')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="delegation" />
-          </form-field>
-        </div>
-      </div>
-      <!-- __ -->
-      <div class="row pt-5">
-        <div class="col-md-2">
-          <form-field
-            label="Código Postal"
-            [control]="customerForm.get('zipCode')">
-            <input type="text" class="form-control" formControlName="zipCode" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field label="País" [control]="customerForm.get('country')">
-            <input type="text" class="form-control" formControlName="country" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field label="FAX" [control]="customerForm.get('fax')">
-            <input type="text" class="form-control" formControlName="fax" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field label="Teléfono" [control]="customerForm.get('phone')">
-            <input type="text" class="form-control" formControlName="phone" />
-          </form-field>
-        </div>
-      </div>
-      <!-- __ -->
-      <div class="row pt-5">
-        <div class="col-md-3">
-          <form-field label="Email" [control]="customerForm.get('mailWeb')">
-            <input
-              type="email"
-              class="form-control"
-              formControlName="mailWeb" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field label="Estado" [control]="customerForm.get('state')">
-            <input type="text" class="form-control" formControlName="state" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field label="CURP" [control]="customerForm.get('curp')">
-            <input type="text" class="form-control" formControlName="curp" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            label="¿En lista Negra?"
-            [control]="customerForm.get('blackList')">
-            <ng-select
-              formControlName="blackList"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="S">Si</ng-option>
-              <ng-option value="N">No</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
-      </div>
-      <!-- __ -->
-      <div class="row pt-5">
-        <div class="col-md-4">
           <form-field
             label="Apellido Paterno"
             [control]="customerForm.get('paternalSurname')">
             <input
               type="text"
               class="form-control"
-              formControlName="paternalSurname" />
+              formControlName="paternalSurname"
+              maxlength="60" />
           </form-field>
         </div>
-        <div class="col-md-4">
+
+        <div class="col-md-3">
           <form-field
             label="Apellido Materno"
             [control]="customerForm.get('maternalSurname')">
             <input
               type="text"
               class="form-control"
-              formControlName="maternalSurname" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field
-            label="Clave municipal"
-            [control]="customerForm.get('municipalityId')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="municipalityId" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field
-            label="Clave estatal"
-            [control]="customerForm.get('stateId')">
-            <input type="text" class="form-control" formControlName="stateId" />
+              formControlName="maternalSurname"
+              maxlength="60" />
           </form-field>
         </div>
       </div>
-      <!-- __ -->
-      <div class="row pt-5">
+
+      <div class="row mt-3">
         <div class="col-md-3">
           <form-field
-            label="Fecha lista negra"
-            [control]="customerForm.get('blackListDate')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="blackListDate"
-              bsDatepicker
-              [maxDate]="today"
-              [bsConfig]="{
-                dateInputFormat: 'YYYY-MM-DD'
-              }" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            label="Fecha de liberación"
-            [control]="customerForm.get('releaseDate')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="releaseDate"
-              bsDatepicker
-              [maxDate]="today"
-              [bsConfig]="{
-                dateInputFormat: 'YYYY-MM-DD'
-              }" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            label="Clave penalización"
-            [control]="customerForm.get('penaltyId')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="penaltyId" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            label="Tipo de persona"
+            label="Tipo de Persona"
             [control]="customerForm.get('personType')">
             <ng-select
               formControlName="personType"
@@ -233,107 +57,176 @@
             </ng-select>
           </form-field>
         </div>
-      </div>
-      <!-- __ -->
-      <div class="row pt-5">
-        <div class="col-md-4">
-          <form-field
-            label="RFC Aprobado"
-            [control]="customerForm.get('approvedRfc')">
+
+        <div class="col-md-3">
+          <form-field label="RFC" [control]="customerForm.get('rfc')">
             <input
               type="text"
               class="form-control"
-              formControlName="approvedRfc" />
+              formControlName="rfc"
+              maxlength="20" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field
-            label="Usuario liberado"
-            [control]="customerForm.get('userFree')">
+
+        <div class="col-md-3">
+          <form-field label="CURP" [control]="customerForm.get('curp')">
             <input
               type="text"
               class="form-control"
-              formControlName="userFree" />
+              formControlName="curp"
+              maxlength="20" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field
-            label="Fecha liberación"
-            [control]="customerForm.get('freeDate')">
+
+        <div class="col-md-3">
+          <form-field label="País" [control]="customerForm.get('country')">
             <input
               type="text"
               class="form-control"
-              formControlName="freeDate"
-              bsDatepicker
-              [maxDate]="today"
-              [bsConfig]="{
-                dateInputFormat: 'YYYY-MM-DD'
-              }" />
+              formControlName="country"
+              maxlength="30" />
           </form-field>
         </div>
       </div>
-      <!-- __ -->
-      <div class="row pt-5">
-        <div class="col-md-3">
-          <form-field
-            label="Cve. Act. Econo."
-            [control]="customerForm.get('economicAgreementKey')">
+
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field label="Estado" [control]="customerForm.get('state')">
             <input
               type="text"
               class="form-control"
-              formControlName="economicAgreementKey" />
+              formControlName="state"
+              maxlength="31" />
           </form-field>
         </div>
-        <div class="col-md-3">
-          <form-field
-            label="Tipo de identifación"
-            [control]="customerForm.get('identificationType')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="identificationType" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            label="No. Identificación"
-            [control]="customerForm.get('identificationNumber')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="identificationNumber" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            label="Cve. Representante"
-            [control]="customerForm.get('agentId')">
-            <input type="text" class="form-control" formControlName="agentId" />
-          </form-field>
-        </div>
-      </div>
-      <!-- __ -->
-      <div class="row pt-5">
+
         <div class="col-md-2">
           <form-field
-            label="No. Exterior"
-            [control]="customerForm.get('outsideNumber')">
+            label="Clave Estatal"
+            [control]="customerForm.get('stateId')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="stateId"
+              min="0"
+              oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field label="Ciudad" [control]="customerForm.get('city')">
             <input
               type="text"
               class="form-control"
-              formControlName="outsideNumber" />
+              formControlName="city"
+              maxlength="60" />
           </form-field>
         </div>
+
         <div class="col-md-2">
           <form-field
-            label="No. Interior"
-            [control]="customerForm.get('insideNumber')">
+            label="Clave Municipal"
+            [control]="customerForm.get('municipalityId')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="municipalityId"
+              min="0"
+              oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-3">
+          <form-field
+            label="Código Postal"
+            [control]="customerForm.get('zipCode')">
             <input
               type="text"
               class="form-control"
-              formControlName="insideNumber" />
+              formControlName="zipCode"
+              maxlength="6" />
           </form-field>
         </div>
+
+        <div class="col-md-3">
+          <form-field label="Calle" [control]="customerForm.get('street')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="street"
+              maxlength="80" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field label="Colonia" [control]="customerForm.get('colony')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="colony"
+              maxlength="60" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            label="Delegación"
+            [control]="customerForm.get('delegation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation"
+              maxlength="49" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-3">
+          <form-field label="Fax" [control]="customerForm.get('fax')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fax"
+              maxlength="20" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field label="Teléfono" [control]="customerForm.get('phone')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="phone"
+              min="0"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field label="E-mail" [control]="customerForm.get('mailWeb')">
+            <input
+              type="email"
+              class="form-control"
+              formControlName="mailWeb"
+              maxlength="60" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field label="Usuario" [control]="customerForm.get('user')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="user"
+              maxlength="50" />
+          </form-field>
+        </div>
+
         <div class="col-md-4">
           <form-field
             label="Contraseña"
@@ -341,83 +234,383 @@
             <input
               type="text"
               class="form-control"
-              formControlName="password" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field label="Usuario" [control]="customerForm.get('user')">
-            <input type="text" class="form-control" formControlName="user" />
+              formControlName="password"
+              maxlength="50" />
           </form-field>
         </div>
       </div>
-      <!-- __ -->
-      <div class="row pt-5">
+
+      <div class="row mt-3">
         <div class="col-md-4">
           <form-field
-            label="CLABE"
+            label="¿En Lista Negra?"
+            [control]="customerForm.get('blackList')">
+            <ng-select
+              formControlName="blackList"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="S">Si</ng-option>
+              <ng-option value="N">No</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="Fecha Lista Negra"
+            [control]="customerForm.get('blackListDate')">
+            <input
+              type="text"
+              style="position: relative"
+              class="form-control"
+              formControlName="blackListDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+            <i
+              *ngIf="customerForm.get('blackListDate').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('blackListDate')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="Fecha de Liberación"
+            [control]="customerForm.get('releaseDate')">
+            <input
+              type="text"
+              style="position: relative"
+              class="form-control"
+              formControlName="releaseDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+            <i
+              *ngIf="customerForm.get('releaseDate').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('releaseDate')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field
+            label="Clave Penalización"
+            [control]="customerForm.get('penaltyId')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="penaltyId"
+              min="0"
+              oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20);" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="Clave Vendedor"
+            [control]="customerForm.get('sellerId')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="sellerId"
+              min="0"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="RFC Aprobado"
+            [control]="customerForm.get('approvedRfc')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="approvedRfc"
+              maxlength="15" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field
+            label="Usuario Liberado"
+            [control]="customerForm.get('userFree')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userFree"
+              maxlength="30" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="Fecha Libertad"
+            [control]="customerForm.get('freeDate')">
+            <input
+              style="position: relative"
+              type="text"
+              class="form-control"
+              formControlName="freeDate"
+              bsDatepicker
+              [maxDate]="today"
+              [isDisabled]="false"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+            <i
+              *ngIf="customerForm.get('freeDate').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('freeDate')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="Cve. Act. Econo."
+            [control]="customerForm.get('economicAgreementKey')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="economicAgreementKey"
+              maxlength="20" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field
+            label="Tipo de Identificación"
+            [control]="customerForm.get('identificationType')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="identificationType"
+              min="0"
+              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="No. Identificación"
+            [control]="customerForm.get('identificationNumber')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="identificationNumber"
+              min="0"
+              oninput="if(this.value.length > 50) this.value = this.value.slice(0, 50);" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="Cve. Representante"
+            [control]="customerForm.get('agentId')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="agentId"
+              min="0"
+              oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field
+            label="No. Exterior"
+            [control]="customerForm.get('outsideNumber')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="outsideNumber"
+              maxlength="40" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="No. Interior"
+            [control]="customerForm.get('insideNumber')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="insideNumber"
+              maxlength="40" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field
+            label="CLABE Interbancaria"
             [control]="customerForm.get('interbankKey')">
             <input
               type="text"
               class="form-control"
-              formControlName="interbankKey" />
+              formControlName="interbankKey"
+              maxlength="18" />
           </form-field>
         </div>
-        <div class="col-md-3">
-          <form-field label="Banco" [control]="customerForm.get('bank')">
-            <input type="text" class="form-control" formControlName="bank" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field label="Sucursal" [control]="customerForm.get('branch')">
-            <input type="text" class="form-control" formControlName="branch" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
+
+        <div class="col-md-4">
           <form-field
-            label="Cta. Cheque"
+            label="Código de Banco"
+            [control]="customerForm.get('bank')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="bank"
+              maxlength="3" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="Código de Sucursal"
+            [control]="customerForm.get('branch')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="branch"
+              maxlength="10" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field
+            label="Cta. de Cheques"
             [control]="customerForm.get('checksAccount')">
             <input
               type="text"
               class="form-control"
-              formControlName="checksAccount" />
+              formControlName="checksAccount"
+              maxlength="11" />
           </form-field>
         </div>
-      </div>
-      <!-- __ -->
-      <div class="row pt-5">
-        <div class="col-md-5">
+        <div class="col-md-4">
           <form-field
-            label="Fecha inicial de penalización"
+            label="Fecha Inicial de Penalización"
             [control]="customerForm.get('penaltyInitDate')">
             <input
               type="text"
+              style="position: relative"
               class="form-control"
-              formControlName="penaltyInitDate" />
+              formControlName="penaltyInitDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+            <i
+              *ngIf="customerForm.get('penaltyInitDate').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('penaltyInitDate')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
           </form-field>
         </div>
-        <div class="col-md-5">
+
+        <div class="col-md-4">
           <form-field
-            label="Usuario penalizado"
+            label="Fecha Final de Penalización"
+            [control]="customerForm.get('penaltyEndDate')">
+            <input
+              type="text"
+              style="position: relative"
+              class="form-control"
+              formControlName="penaltyEndDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+            <i
+              *ngIf="customerForm.get('penaltyEndDate').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('penaltyEndDate')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field
+            label="Usuario Penalizado"
             [control]="customerForm.get('penalizeUser')">
             <input
               type="text"
               class="form-control"
-              formControlName="penalizeUser" />
+              formControlName="penalizeUser"
+              maxlength="30" />
           </form-field>
         </div>
-        <div class="col-md-2">
+
+        <div class="col-md-4">
           <form-field
             label="No. Registro"
             [control]="customerForm.get('registryNumber')">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="registryNumber" />
+              formControlName="registryNumber"
+              min="0"
+              oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20);" />
           </form-field>
         </div>
       </div>
     </form>
   </div>
+
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">

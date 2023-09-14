@@ -12,6 +12,7 @@
             <input
               formControlName="from"
               placeholder="Selección de fecha"
+              [maxDate]="maxDate"
               class="form-control"
               bsDatepicker />
           </form-field>
@@ -20,6 +21,7 @@
           <form-field [control]="form.get('to')" label="Al">
             <input
               formControlName="to"
+              [maxDate]="maxDate"
               placeholder="Selección de fecha"
               class="form-control"
               bsDatepicker />
@@ -51,6 +53,7 @@
       <confirm-button
         text="Imprimir"
         [disabled]="form.invalid"
+        loadingText="Imprimiendo"
         [loading]="loading"
         (confirm)="confirm()">
       </confirm-button>

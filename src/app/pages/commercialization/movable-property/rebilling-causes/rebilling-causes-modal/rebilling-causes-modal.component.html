@@ -5,53 +5,57 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
           <form-field [control]="form.get('id')" label="ID">
-            <input type="text" class="form-control" formControlName="id" />
+            <input
+              [readOnly]="true"
+              type="text"
+              class="form-control"
+              formControlName="id" />
           </form-field>
         </div>
-        <div class="col-md-9">
-          <form-field [control]="form.get('descripcion')" label="Descripción">
+        <div class="col-md-5">
+          <form-field [control]="form.get('rebill')" label="Refactura/Cancela">
+            <ng-select
+              formControlName="rebill"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="R">Refactura</ng-option>
+              <ng-option value="C">Cancela</ng-option>
+              <ng-option value="N">Refac/Nolmg</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-5">
+          <form-field [control]="form.get('apply')" label="Aplica">
+            <ng-select
+              formControlName="apply"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="F">Factura</ng-option>
+              <ng-option value="D">Devoluci&oacute;n</ng-option>
+              <ng-option value="A">Ambas</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('description')" label="Descripción">
             <input
               type="text"
               class="form-control"
-              formControlName="descripcion" />
+              formControlName="description"
+              oninput="if(this.value.length > 250) this.value = this.value.slice(0, 250)" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-3">
-          <form-field [control]="form.get('refCan')" label="Refactura/Cancela">
-            <ng-select
-              formControlName="refCan"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="Refactura">Refactura</ng-option>
-              <ng-option value="Cancela">Cancela</ng-option>
-              <ng-option value="Refac/Nolmg">Refac/Nolmg</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('aplica')" label="Aplica">
-            <ng-select
-              formControlName="aplica"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="Factura">Factura</ng-option>
-              <ng-option value="Devolución">Devoluci&oacute;n</ng-option>
-              <ng-option value="Ambas">Ambas</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('comentarios')" label="Comentarios">
+        <div class="col-md-12">
+          <form-field [control]="form.get('comments')" label="Comentarios">
             <textarea
               type="text"
               class="form-control"
-              formControlName="comentarios"></textarea>
+              formControlName="comments"
+              oninput="if(this.value.length > 1000) this.value = this.value.slice(0, 1000)"></textarea>
           </form-field>
         </div>
       </div>
@@ -62,11 +66,15 @@
       <div class="m-3">
         <confirm-button
           [disabled]="!form.valid"
+          [btnSmall]="true"
           [loading]="loading"
-          (click)="close()"></confirm-button>
+          (confirm)="saveData()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

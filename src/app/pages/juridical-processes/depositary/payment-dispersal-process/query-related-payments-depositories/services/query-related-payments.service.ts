@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
 import {
   ISendSirSaeBody,
@@ -29,8 +30,8 @@ export class QueryRelatedPaymentsService {
   sendSirsae(params: ISendSirSaeBody) {
     return this.msMsDepositaryPaymentService.sendSirsae(params);
   }
-  getGoodAppointmentDepositaryByNoGood(params: string) {
-    return this.msDepositaryService.getAllFiltered(params);
+  getGoodAppointmentDepositaryByNoGood(params: ListParams) {
+    return this.msDepositaryService.getAppointments(params);
   }
   getGoodDataByFilter(body: string) {
     return this.msGoodService.getAllFilter(body);
@@ -59,19 +60,20 @@ export class QueryRelatedPaymentsService {
   getExportExcell(goodNumber: number) {
     return this.msMsMassivecapturelineService.getRefPayDepositories(goodNumber);
   }
-  setGoodParamGood(goodNumber: number, screenKey: string) {
+  setGoodParamGood(
+    goodNumber: number,
+    screenKey: string,
+    cveContrato: string,
+    depositario: string,
+    desc: string
+  ) {
     let valGood: valorBien = {
       nomPantall: screenKey,
       numBien: goodNumber,
-      cveContrato: '',
-      depositario: '',
-      desc: '',
+      cveContrato: cveContrato,
+      depositario: depositario,
+      desc: desc,
     };
-    //this.svNumBienShare.SharingNumbienData = valGood;
-    console.log(
-      this.svNumBienShare.SharingNumbien,
-      valGood,
-      this.svNumBienShare.SharingNumbienData
-    );
+    this.svNumBienShare.SharingNumbienData = valGood;
   }
 }

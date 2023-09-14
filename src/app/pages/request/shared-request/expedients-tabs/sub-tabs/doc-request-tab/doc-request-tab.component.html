@@ -61,7 +61,7 @@
                   </ng-template>
                 </ng-select>
                 <span class="form-bar"></span>
-                <label class="float-label">Tipo de documento</label>
+                <label class="float-label">Tipo de Documento</label>
               </div>
               <!-- <ngx-select
                 [form]="docRequestForm"
@@ -243,13 +243,13 @@
             </div>
             <div class="col-md-3" *ngIf="typeDoc === 'doc-expedient'">
               <form-field
-                [control]="docRequestForm.get('noRequest')"
+                [control]="docRequestForm.get('recordId')"
                 label="No&#46; Expediente">
                 <input
                   type="text"
                   class="form-control"
                   [readOnly]="true"
-                  formControlName="noRequest" />
+                  formControlName="recordId" />
               </form-field>
             </div>
             <div class="col-md-3">
@@ -278,44 +278,61 @@
             </div>
           </div>
           <div class="row">
-            <div class="col align-self-end">
-              <button
-                (click)="search()"
-                class="btn btn-primary active btn-sm ml-3"
-                style="height: 36px">
-                <i class="bx bx-search-alt-2"></i> Buscar
-              </button>
-              <button
-                (click)="cleanForm()"
-                class="btn btn-danger active btn-sm ml-3">
-                <i class="bx bx-reset"></i> Limpiar
-              </button>
+            <div class="d-flex justify-content-end">
+              <div class="mr-auto p-2"></div>
+              <div class="p-2">
+                <button
+                  (click)="search()"
+                  class="btn btn-primary active btn-sm"
+                  style="height: 36px">
+                  Buscar <i class="bx bx-search-alt-2"></i>
+                </button>
+              </div>
+              <div class="p-2">
+                <button
+                  (click)="cleanForm()"
+                  class="btn btn-danger active btn-sm">
+                  Limpiar <i class="fas fa-eraser"> </i>
+                </button>
+              </div>
             </div>
           </div>
         </form>
       </div>
       <div class="row pt-4">
         <div class="d-flex">
-          <app-columns-select
-            class="float-right"
-            [(settings)]="settings"></app-columns-select>
-          <div class="ml-auto p-2">
+          <div class="mr-auto p-2"></div>
+          <div class="p-2">
             <button
               [disabled]="statusTask == 'FINALIZADA'"
-              class="btn btn-primary btn-sm active"
+              tooltip="Agregar"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active"
               (click)="openNewDocument()">
-              Nuevo
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
-            <!--<button
-              class="btn btn-info btn-sm active ml-2"
-              (click)="updateData()">
-              Actualizar
-            </button> -->
           </div>
+          <div class="p-2">
+            <app-columns-select
+              [leftList]="true"
+              [(settings)]="settings"></app-columns-select>
+          </div>
+          <!-- <div class="ml-auto p-2">
+            <button
+              [disabled]="statusTask == 'FINALIZADA'"
+              tooltip="Agregar"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active"
+              (click)="openNewDocument()">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div> -->
         </div>
       </div>
       <div class="row pt-2">
-        <div class="col-md-12">
+        <div
+          class="col-md-12"
+          *ngIf="typeDoc == 'doc-request' || typeDoc == 'request-expedient'">
           <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
             <form-loader *ngIf="formLoading"></form-loader>
           </div>
@@ -324,13 +341,35 @@
               <ng2-smart-table
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="settings"
-                [source]="paragraphs"
+                [source]="docRequest"
                 (edit)="openDetail($event.data)"
                 (delete)="openDoc($event.data)">
               </ng2-smart-table>
             </div>
 
-            <app-pagination [totalItems]="totalItems"></app-pagination>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </div>
+        </div>
+        <div class="col-md-12" *ngIf="typeDoc == 'doc-expedient'">
+          <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+            <form-loader *ngIf="formLoading"></form-loader>
+          </div>
+          <div *ngIf="!formLoading">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings"
+                [source]="docExpedient"
+                (edit)="openDetail($event.data)"
+                (delete)="openDoc($event.data)">
+              </ng2-smart-table>
+            </div>
+
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
           </div>
         </div>
       </div>

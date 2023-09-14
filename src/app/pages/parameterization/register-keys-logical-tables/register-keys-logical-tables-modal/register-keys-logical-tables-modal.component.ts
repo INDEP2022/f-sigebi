@@ -24,8 +24,9 @@ export class RegisterKeysLogicalTablesModalComponent
   tdescCveForm: ModelForm<ITdescCve>;
   tdescCve: ITdescCve;
   idCve: ITable;
+  selectTabla: string;
 
-  title: string = 'Registro de claves para tablas logicas con 5 claves';
+  title: string = 'Claves para Tabla Lógica con 5 Claves';
   edit: boolean = false;
 
   _id: any;
@@ -46,27 +47,42 @@ export class RegisterKeysLogicalTablesModalComponent
     this.tdescCveForm = this.fb.group({
       id: [null, []],
 
-      dsKey1: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      dsKey1: [
+        null,
+        [Validators.maxLength(8), Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       swFormat1: [null, [Validators.pattern(STRING_PATTERN)]],
       longMin1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       longMax1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
 
-      dsKey2: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      dsKey2: [
+        null,
+        [Validators.maxLength(8), Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       swFormat2: [null, [Validators.pattern(STRING_PATTERN)]],
       longMin2: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       longMax2: [null, [Validators.pattern(NUMBERS_PATTERN)]],
 
-      dsKey3: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      dsKey3: [
+        null,
+        [Validators.maxLength(8), Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       swFormat3: [null, [Validators.pattern(STRING_PATTERN)]],
       longMin3: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       longMax3: [null, [Validators.pattern(NUMBERS_PATTERN)]],
 
-      dsKey4: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      dsKey4: [
+        null,
+        [Validators.maxLength(8), Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       swFormat4: [null, [Validators.pattern(STRING_PATTERN)]],
       longMin4: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       longMax4: [null, [Validators.pattern(NUMBERS_PATTERN)]],
 
-      dsKey5: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      dsKey5: [
+        null,
+        [Validators.maxLength(8), Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       swFormat5: [null, [Validators.pattern(STRING_PATTERN)]],
       longMin5: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       longMax5: [null, [Validators.pattern(NUMBERS_PATTERN)]],
@@ -76,7 +92,7 @@ export class RegisterKeysLogicalTablesModalComponent
       this.tdescCveForm.patchValue(this.tdescCve);
     } else {
       (this.edit = false),
-        this.tdescCveForm.controls['id'].setValue(this.idCve.table);
+        this.tdescCveForm.controls['id'].setValue(this.selectTabla);
     }
   }
 
@@ -124,7 +140,7 @@ export class RegisterKeysLogicalTablesModalComponent
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

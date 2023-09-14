@@ -1,0 +1,34 @@
+.legend {
+  justify-content: center;
+  display: flex;
+  column-gap: 10px;
+  > div {
+    display: flex;
+    column-gap: 10px;
+    align-items: center;
+    .rectangle {
+      width: 15px;
+      height: 15px;
+    }
+  }
+  @media screen and (max-width: 576px) {
+    flex-direction: column;
+  }
+}
+
+.requiredAva {
+  background-color: #dc3545b3;
+}
+
+.required {
+  background-color: #ffc107a6;
+}
+
+.update {
+  background-color: #17a2b899;
+  input.form-control {
+    &:focus {
+      background-color: #17a2b899;
+    }
+  }
+}

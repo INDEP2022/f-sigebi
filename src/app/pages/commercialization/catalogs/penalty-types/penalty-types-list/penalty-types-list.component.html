@@ -1,22 +1,30 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">lista tipos de penalizaci&oacute;n</h5>
+    <h5 class="title">tipos de penalizaci&oacute;n</h5>
     <div class="col-md-5 buttons">
       <div>
-        <button
-          (click)="openForm()"
-          class="btn btn-sm btn-primary active ml-3 btn-header">
+        <!-- <button (click)="openForm()" class="btn btn-sm btn-primary active ml-3 btn-header">
           Nuevo
-        </button>
+        </button> -->
       </div>
     </div>
   </div>
 
   <div body>
     <div class="row">
-      <!-- <div class="form-material col-md-5">
-        <search-bar [params]="params"></search-bar>
-      </div> -->
+      <div class="ch-content" header>
+        <h5 class="title"></h5>
+        <div class="col-md-5 buttons">
+          <div>
+            <button
+              type="button"
+              (click)="openForm()"
+              class="btn btn-info btn-sm active ml-2 mr-2">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="row pt-4">
       <div class="col-md-12">

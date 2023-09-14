@@ -1,0 +1,115 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ newOrEdit ? 'Actualizar' : 'Nuevo' }} {{ title }}
+    </h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('noGood')" label="No. Bien">
+            <input type="text" class="form-control" formControlName="noGood" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('sumAssured')" label="Suma Asegurada">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="sumAssured" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('premiumAmount')" label="Monto Prima">
+            <input
+              type="number"
+              formControlName="premiumAmount"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('shortDate')" label="Fecha Baja">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="shortDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('statusGood')" label="Estatus Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="statusGood" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <form-field class="col mt-4" [control]="filterForm.get('user')">
+            <ngx-select
+              [form]="filterForm"
+              [data]="users$"
+              (fetchItems)="getUsers($event)"
+              bindLabel="userAndName"
+              control="user"
+              label="Usuario"
+              value="id"
+              [searchOnInit]="true"
+              termMaxLength="30">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('factorCostDaily')"
+            label="Costo diario">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="factorCostDaily" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('amountNoteCredit')"
+            label="Cantidad neta Crédito">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="amountNoteCredit" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

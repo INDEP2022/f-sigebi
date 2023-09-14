@@ -13,15 +13,24 @@
               [control]="form.get('dateReport')"
               label="Fecha a reportar">
               <input
+                [(ngModel)]="dateReportNg"
+                (ngModelChange)="dateReport($event)"
                 formControlName="dateReport"
                 class="form-control"
+                [maxDate]="maxDate"
                 bsDatepicker />
             </form-field>
           </div>
           <div class="col-md-4">
-            <button type="button" class="btn btn-sm btn-success active m-3">
-              Imprimir
+            <button
+              type="button"
+              [disabled]="form.invalid"
+              class="btn btn-primary active btn-sm"
+              (click)="Generar()">
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
+            <!-- <confirm-button text="Imprimir" [disabled]="form.invalid" (confirm)="Generar()"> 
+            </confirm-button>-->
           </div>
         </div>
       </form>

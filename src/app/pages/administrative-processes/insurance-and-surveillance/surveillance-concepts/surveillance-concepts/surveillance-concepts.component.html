@@ -1,66 +1,102 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">ONCEPTOS DE VIGILANCIA</h5>
+    <h5 class="title">CONCEPTOS DE VIGILANCIA</h5>
   </div>
 
   <div body>
-    <div class="ch-content">
-      <h5 class="title">CONTRATOS</h5>
-    </div>
-    <form [formGroup]="form" class="form-material">
-      <div class="row mt-4">
-        <div class="col-md-3">
-          <form-field [control]="form.get('noContract')" label="No. Contrato">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="noContract"
-              min="1"
-              pattern="^[0-9]+" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('provider')" label="Proovedor">
-            <input
-              type="text"
-              formControlName="provider"
-              class="form-control" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('licitation')" label="No. Licitación">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="licitation"
-              min="1"
-              pattern="^[0-9]+" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <button type="submit" class="btn btn-primary btn-sm active mx-4">
-            BUSCAR
-          </button>
-        </div>
+    <div class="row mt-3 mb-3">
+      <div class="ch-content">
+        <h5 class="title">Incorporación a Pólizas de Seguros</h5>
+      </div>
+      <div>
+        <form [formGroup]="form" class="form-material">
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <form-field [control]="form.get('from')" label="Fecha del:">
+                <input
+                  [maxDate]="maxDate"
+                  formControlName="from"
+                  class="form-control"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field [control]="form.get('to')" label="al:">
+                <input
+                  [maxDate]="maxDate"
+                  formControlName="to"
+                  class="form-control"
+                  [minDate]="form.get('from').value"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('noRequest')"
+                label="No. Solicitud:">
+                <input
+                  type="number"
+                  max="9999999999"
+                  class="form-control"
+                  formControlName="noRequest" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field [control]="form.get('toRequest')" label="al:">
+                <input
+                  type="number"
+                  max="9999999999"
+                  class="form-control"
+                  formControlName="toRequest"
+                  [min]="form.get('noRequest').value"
+                  [ngModel]="
+                    form.get('toRequest').value < form.get('noRequest').value
+                      ? form.get('noRequest').value
+                      : form.get('toRequest').value
+                  " />
+              </form-field>
+            </div>
+          </div>
+          <div class="row mt-4">
+            <div class="col-md-12">
+              <form-field
+                [control]="form.get('keyPol')"
+                label="Clave de Póliza:">
+                <input
+                  maxlength="30"
+                  max="30"
+                  type="text"
+                  class="form-control"
+                  formControlName="keyPol" />
+              </form-field>
+            </div>
+          </div>
+        </form>
       </div>
 
-      <div class="ch-content">
-        <h5 class="title">CONCEPTOR DE VIGILANCIA</h5>
-      </div>
-      <div class="row pt-4">
-        <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="concepts">
-            </ng2-smart-table>
+      <div footer>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              type="button"
+              [disabled]="form.invalid"
+              class="btn btn-primary active btn-sm"
+              (click)="generar()">
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <button
+              type="button"
+              class="btn btn-danger active btn-sm"
+              (click)="cleanForm()">
+              Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+            </button>
           </div>
         </div>
       </div>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
-    </form>
+    </div>
   </div>
 </app-card>

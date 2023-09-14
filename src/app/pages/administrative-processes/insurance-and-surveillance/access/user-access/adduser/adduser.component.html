@@ -1,0 +1,94 @@
+<app-modal>
+  <div class="w-100" header>
+    <div class="d-flex flex-wrap justify-content-between aling-items-center">
+      <h5 class="modal-title">
+        {{
+          editDialogData
+            ? 'Editando Acceso a Usuarios'
+            : 'Agregando Acceso a Usuarios'
+        }}
+      </h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <!-- *ngIf="editDialogData" -->
+        <div class="col-12">
+          <form-field [control]="form.get('userKey')">
+            <ngx-select
+              [readonly]="editDialogData === true"
+              [form]="form"
+              [data]="users"
+              (fetchItems)="getUser($event)"
+              value="user"
+              bindLabel="userAndName"
+              control="userKey"
+              label="Clave Usuario"
+              [searchOnInit]="false"
+              [showTooltip]="true"
+              termMaxLength="30">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-6 mt-4">
+          <form-field class="mt-4" [control]="form.get('userRole')" label="Rol">
+            <ng-select formControlName="userRole" class="form-control">
+              <!-- <ng-option value=null>Seleccione un Rol</ng-option> -->
+              <ng-option value="1">Administrador</ng-option>
+              <!-- <ng-option value="2">Rol 2</ng-option> -->
+            </ng-select>
+            <!-- <input type="text" formControlName="userRole" class="form-control" /> -->
+          </form-field>
+        </div>
+        <div class="col-6 mt-4">
+          <form-field [control]="form.get('estAccess')">
+            <form-check class="mt-4" label="Estatus" for="Estatus">
+              <input
+                id="Estatus"
+                formControlName="estAccess"
+                class="form-control"
+                type="checkbox" />
+            </form-check>
+            <!-- <input max="100" type="text" formControlName="estAccess" class="form-control" /> -->
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="row m-3">
+        <div class="col-6">
+          <button
+            [disabled]="!form.valid"
+            type="button"
+            style="float: right"
+            class="btn btn-primary active btn-sm"
+            (click)="guardarRegistro()">
+            {{ editDialogData ? 'Actualizar' : 'Guardar' }}
+            <span *ngIf="editDialogData"><i class="fas fa-sync-alt"> </i></span>
+            <span *ngIf="!editDialogData"
+              ><i aria-hidden="true" class="fa fa-save"></i
+            ></span>
+          </button>
+        </div>
+        <div class="col-6" style="float: left">
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm btn-block"
+            (click)="close()">
+            Cerrar
+          </button>
+        </div>
+
+        <!-- <div class="buttons"> -->
+        <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
+        <!-- <button type="button" class="btn btn-danger active ml-3" (click)="close()">
+          Cerrar
+        </button> -->
+        <!-- </div> -->
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -22,10 +22,24 @@
   background-color: #a8bbbf;
 }
 
-:host ::ng-deep ng2-smart-table tr.available td {
+:host ::ng-deep ng2-smart-table tr.bg-dark td:hover {
   color: #28a745 !important;
 }
 
 :host ::ng-deep ng2-smart-table tr.not-available td {
   color: #dc3545 !important;
+}
+
+#smart-t table:not(.normal-hover) tbody tr:hover {
+  color: black !important;
+  font-weight: bold;
+}
+
+td:hover {
+  color: black !important;
+  font-weight: bold;
+}
+
+.hover-c:hover {
+  color: black !important;
 }

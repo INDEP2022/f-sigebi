@@ -14,8 +14,8 @@ import { SelectModalTableSharedComponent } from '../select-modal-table-shared/se
 export class SafeTableSharedComponent implements OnInit {
   @Input() form: FormGroup;
   @Input() disabled: boolean;
-  @Input() label: string = 'No Boveda';
-  @Input() labelName: string = 'Descripción de boveda';
+  @Input() label: string = 'No. Bóveda';
+  @Input() labelName: string = 'Descripción de bóveda';
   @Input() formField: string = 'vaultId';
   @Input() formFieldName: string = 'vaultDescription';
   columnsType = {

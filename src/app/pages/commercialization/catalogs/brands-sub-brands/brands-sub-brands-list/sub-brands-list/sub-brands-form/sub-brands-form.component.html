@@ -1,0 +1,65 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="modelForm">
+      <div class="row mb-3 mt-3">
+        <div class="row">
+          <div class="col-md-6">
+            <form-field [control]="modelForm.get('idBrand')" label="Marca">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="idBrand"
+                maxlength="20"
+                [readonly]="edit" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="modelForm.get('idSubBrand')"
+              label="Submarca">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="idSubBrand"
+                maxlength="30"
+                [readonly]="edit" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-8">
+            <form-field
+              [control]="modelForm.get('subBrandDescription')"
+              label="Descripción Submarca">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="subBrandDescription"
+                maxlength="100" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!modelForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,18 +1,29 @@
 <ng-container>
   <div class="row mb-3 mt-3" *ngIf="showMeasurementUnits">
     <div class="col-md-12">
-      <form-field [control]="form.get(measurementUnitField)">
+      <!-- <form-field [control]="form.get(measurementUnitField)">
         <ngx-select
           (fetchItems)="getUnits($event)"
           [data]="measurementUnits"
           [form]="form"
-          value="id"
+          value="unit"
           bindLabel="description"
           label="Unidades de Medida"
           [control]="measurementUnitField"
           (change)="onUnitsChange($event)">
         </ngx-select>
-      </form-field>
+      </form-field> -->
+      <ng-custom-select-loading
+        [form]="form"
+        [formControlName]="measurementUnitField"
+        label="Unidades de Medida"
+        path="strategy/api/v1/med-units"
+        value="unit"
+        bindLabel="unit"
+        paramSearch="filter.unit"
+        prefixSearch="$ilike"
+        (valueChange)="changeValue($event)">
+      </ng-custom-select-loading>
     </div>
   </div>
 </ng-container>

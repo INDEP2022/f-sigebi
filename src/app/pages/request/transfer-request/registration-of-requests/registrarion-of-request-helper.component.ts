@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
@@ -14,17 +15,38 @@ export class RegistrationHelper extends BasePage {
     private goodService: GoodService,
     private fractionService: FractionService,
     private goodEstateService: RealStateService,
-    private wcontentService: WContentService
+    private wcontentService: WContentService,
+    private goodProcessService: GoodProcessService
   ) {
     super();
   }
 
-  getGoodQuantity(requestId: number) {
+  updateExpedient(requestId: number, recordId: number) {
+    return new Promise((resolve, reject) => {
+      this.goodProcessService.updateFileNumber(requestId, recordId).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          this.onLoadToast(
+            'error',
+            'No se pudo actualizar el expediente de los Bienes'
+          );
+          reject('No se pudo actualizar el expediente de los bienes');
+        },
+      });
+    });
+  }
+
+  getGoodQuantity(requestId: number, newLimit?: number) {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
 
       if (requestId) {
         params['filter.requestId'] = `$eq:${requestId}`;
+        if (newLimit) {
+          params.limit = newLimit;
+        }
         this.goodService.getAll(params).subscribe({
           next: resp => {
             resolve(resp);
@@ -79,11 +101,30 @@ export class RegistrationHelper extends BasePage {
     return new Promise((resolve, reject) => {
       let body: any = {};
       body['xidSolicitud'] = id;
+      //body['xTipoDocumento'] = 90;
       this.wcontentService.getDocumentos(body).subscribe({
         next: (resp: any) => {
           //console.log(resp);
           const length = resp.data.length;
           resolve(length);
+        },
+        error: error => {
+          resolve(0);
+        },
+      });
+    });
+  }
+
+  getDocSolTrans(id: string) {
+    return new Promise((resolve, reject) => {
+      let body: any = {};
+      body['xidSolicitud'] = id;
+      body['xTipoDocumento'] = 90;
+      this.wcontentService.getDocumentos(body).subscribe({
+        next: (resp: any) => {
+          console.log('Documento Sol Trans: ', resp.data[0]);
+          const solTrans = resp.data[0]?.xtipoDocumento;
+          resolve(solTrans);
         },
         error: error => {
           resolve(0);
@@ -112,43 +153,61 @@ export class RegistrationHelper extends BasePage {
     const priorityDate = request.priorityDate;
 
     const lisDocument: any = await this.getDocument(idRequest);
+
+    //Revisa si tiene caráctula inai
+    const solTrans: any = await this.getDocSolTrans(idRequest);
+    console.log('id tipo documento', solTrans);
+    console.log('id Transferente', request.transferenceId);
     //Todo: verificar y obtener documentos de la solicitud
-    /*if (request.recordId === null) {
+    if (request.recordId === null) {
       //Verifica si hay expediente
-      this.message(
-        'error',
-        'Error sin expediente',
-        'La solicitud no tiene expediente asociado'
-      );
+      this.message('warning', 'La solicitud no tiene expediente asociado', ''); //Henry
       validoOk = false;
-    } else*/ if (lisDocument && lisDocument < 1) {
+    } else if (
+      request.transferenceId != 1 &&
+      request.transferenceId != 120 &&
+      request.transferenceId != 752
+    ) {
+      console.log('Soy manual');
+      if (solTrans != 90) {
+        console.log('No tiene Sol. Trans');
+        this.message(
+          'warning',
+          'Falta Documento: Solicitud de Transferencia', //Validar documento SAT y PGR
+          'Se requiere subir el documento'
+        );
+        //validoOk = false;
+        return allOk;
+      }
+    }
+    if (!lisDocument || lisDocument < 1) {
       this.message(
-        'error',
-        'Error sin archivos',
-        'Se debe asociar un archivo a la solicitud'
+        'warning',
+        'Falta Documento relacionado a la solicitud',
+        'Se requiere subir documento(s)'
       );
       validoOk = false;
     } else if (urgentPriority === 'Y' && priorityDate === null) {
       //TODO: Si lista de documentos es < 1 -> Se debe asociar un archivo a la solicitud
       this.message(
-        'error',
-        'Error',
-        'Se marco la solicitud como urgente, se debe tener una fecha prioridad'
+        'warning',
+        'Atención',
+        'Debe seleccionar una fecha de prioridad'
       );
       validoOk = false;
     } else if (idTrandference === 1) {
       if (paperNumber === '' || paperDate == null) {
         this.message(
           'error',
-          'Error',
-          'Para la transferente FGR los campos de No. Oficio y Fecha de Oficio no deben de ser nulos'
+          'Para la transferente FGR/PGR los campos de No. Oficio y Fecha de Oficio no deben de ser nulos',
+          ''
         );
         validoOk = false;
       } else if (circumstantialRecord === '' && previousInquiry === '') {
         this.message(
-          'error',
-          'Error',
-          'Para la transferente FGR se debe tener al menos Acta Circunstancial o Averiguación Previa'
+          'warning',
+          'Para la transferente FGR/PGR se debe tener al menos Acta Circunstancial o Averiguación Previa',
+          ''
         );
       } else {
         validoOk = true;
@@ -156,15 +215,16 @@ export class RegistrationHelper extends BasePage {
     } else if (idTrandference === 3) {
       if (paperNumber === '' || paperDate == null) {
         this.message(
-          'error',
-          'Error',
-          'Para la transferente PJF los campos de No. Oficio y Fecha de Oficio no deben de ser nulos'
+          'warning',
+
+          'Atención',
+          'El No. Oficio no puede ser vacío'
         );
       } else if (lawsuit === '' && protectNumber === '' && tocaPenal === '') {
         this.message(
-          'error',
-          'Error',
-          'Para la trasnferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal'
+          'warning',
+          'Para la trasnferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal',
+          ''
         );
       } else {
         validoOk = true;
@@ -181,8 +241,9 @@ export class RegistrationHelper extends BasePage {
         paperDate == null
       ) {
         this.message(
-          'error',
-          'Error',
+          'warning',
+          'Atención',
+
           'Para la transferente SAT los campos Expediente Transferente, Tipo Expediente, No. Oficio y Fecha Oficio no pueden ser nulos'
         );
       } else {
@@ -197,8 +258,8 @@ export class RegistrationHelper extends BasePage {
     ) {
       if (paperNumber === '' || paperDate == null) {
         this.message(
-          'error',
-          'Error',
+          'warning',
+          'Atención',
           'Para transferentes no obligadas los campos No. Oficio y Fecha Oficio no deben de ser nulos'
         );
       } else {
@@ -206,14 +267,20 @@ export class RegistrationHelper extends BasePage {
       }
     }
 
+    let goodCount: any = null;
     let goods: any = null;
     if (validoOk === true) {
-      goods = await this.getGoodQuantity(Number(request.id));
+      goodCount = await this.getGoodQuantity(Number(request.id));
+      if (goodCount.count > 10) {
+        goods = await this.getGoodQuantity(Number(request.id), goodCount.count);
+      } else {
+        goods = goodCount;
+      }
       if (goods.count < 1) {
         this.message(
-          'error',
-          'Error en los bienes',
-          'La solicitud no cuenta con bienes a transferir'
+          'warning',
+          'La solicitud no cuenta con Bienes a transferir',
+          ''
         );
       } else {
         //validar bienes
@@ -222,9 +289,11 @@ export class RegistrationHelper extends BasePage {
         let sinCantidad: boolean = false;
         let sinDestinoT: boolean = false;
         let sinUnidadM: boolean = false;
+        let sinUnidTrans: boolean = false;
         let sinDescripcionT: boolean = false;
         let codigoFraccion: any = null;
         let faltaClasificacion: boolean = false;
+        let sinNoClasificador: boolean = false;
         // variables para validaci�n de atributos por tipo de bien LIRH 06/02/2021
         let tipoRelVehiculo: boolean = false;
         let tipoRelAeronave: boolean = false;
@@ -236,20 +305,31 @@ export class RegistrationHelper extends BasePage {
         for (let i = 0; i < goods.data.length; i++) {
           const good = goods.data[i];
 
-          if (good.addressId == null && good.idGoodProperty == null) {
+          if (good.addressId == null) {
+            // || good.idGoodProperty == null Henry, idGoodProperty debe ir nulo cuando son volantarias, revisar cuando vienen con menaje
             sinDireccion = true;
             this.message(
-              'error',
-              `Error en el bien ${good.goodDescription}`,
-              'Todos los bienes deben tener asociada una dirección o deben ser menajes'
+              'warning',
+              `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+              'Todos los Bienes deben tener asociada una dirección o deben ser menajes'
             );
             break;
+          } else if (
+            good.goodClassNumber == 0 ||
+            good.goodClassNumber == null
+          ) {
+            sinNoClasificador = true;
+            this.message(
+              'warning',
+              `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+              'No se ha guardado la clasificación del bien'
+            );
           } else if (good.goodTypeId == null) {
             sinTipoRelevante = true;
             this.message(
-              'error',
-              `Error en el bien ${good.goodDescription}`,
-              'Todos los bienes deben tener asignada una clasificación o tipo de bien'
+              'warning',
+              `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+              'Todos los Bienes deben tener asignada una clasificación o tipo de Bien'
             );
             break;
           } else if (
@@ -258,36 +338,46 @@ export class RegistrationHelper extends BasePage {
           ) {
             sinCantidad = true;
             this.message(
-              'error',
-              `Error en el bien ${good.goodDescription}`,
-              'Todos los bienes deben tener una cantidad'
+              'warning',
+              `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+              'Todos los Bienes deben tener Cantidad de la Transferente igual o mayor a 1'
             );
             break;
-          } else if (good.transferentDestiny == null) {
-            sinDestinoT = true;
+          } else if (good.unitMeasure == null) {
+            sinUnidTrans = true;
             this.message(
-              'error',
-              `Error en el bien ${good.goodDescription}`,
-              'Todos los bienes deben tener un Destino Transferente'
+              'warning',
+              `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+              'Todos los Bienes deben tener una Unidad de Medidad Transferente'
             );
             break;
           } else if (good.ligieUnit == null) {
+            /*else if (good.transferentDestiny == null) {
+            sinDestinoT = true;
+            this.message(
+              'error',
+              `Error en el bien ${good.id} ${good.goodDescription}`,
+              'Todos los bienes deben tener un Destino Transferente'
+            );
+            break;
+          }
+          */
             sinUnidadM = true;
             this.message(
-              'error',
-              `Error en el bien ${good.goodDescription}`,
-              'Todos los bienes deben tener una unidad de medida'
+              'warning',
+              `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+              'Todos los Bienes deben tener una unidad de medida'
             );
             break;
-          } /* else if (good.goodDescription == null) {
+          } else if (good.goodDescription == null) {
             sinDescripcionT = true;
             this.message(
-              'error',
-              `Error en el No. Gestion ${good.id}`,
-              'Todos los bienes deben tener una descripción de bien transferente'
+              'warning',
+              `No se puede guardar el Bien #${good.id}`,
+              'Todos los Bienes deben tener una descripción de la transferente'
             );
             break;
-          } */
+          }
 
           // Se valida si la clasificacion tenga 8 caracteres
           if (good.fractionId !== null) {
@@ -300,18 +390,18 @@ export class RegistrationHelper extends BasePage {
             ) {
               faltaClasificacion = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'Todos los bienes deben tener un codigo de fracción de 8 numeros'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'Todos los Bienes deben tener un código de fracción de 8 dígitos'
               );
               break;
             }
           } else {
             faltaClasificacion = true;
             this.message(
-              'error',
-              `Error en el bien ${good.goodDescription}`,
-              'Todos los bienes deben tener un codigo de fracción de 8 numeros'
+              'warning',
+              `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+              'Todos los Bienes deben tener un código de fracción de 8 dígitos'
             );
             break;
           }
@@ -320,137 +410,157 @@ export class RegistrationHelper extends BasePage {
           /* Tipo Inmueble */
           if (Number(good.goodTypeId) === 1) {
             existBienInm = true;
-            if (good.idGoodProperty === null) {
+            /*if (good.idGoodProperty === null) { //Henry idGoodProperty
               this.message(
                 'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El id del bien inmueble no puede estar nulo, favor de complementar'
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El id del bien inmueble no puede estar nulo.'
               );
               break;
-            } else {
-              const realEstate: any = await this.getGoodRealEstate(good.id); //
-              if (realEstate.publicDeed === null) {
+            } */
+            // else {
+            const realEstate: any = await this.getGoodRealEstate(good.id); //
+            if (realEstate.publicDeed === null) {
+              tipoRelInmueble = true;
+              this.message(
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Escritura Pública" en el Bien Inmueble esta vacio.'
+              );
+              break;
+            } else if (realEstate.forProblems === null) {
+              tipoRelInmueble = true;
+              this.message(
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Problemáticas" en el Bien Inmueble esta vacio.'
+              );
+              break;
+            } else if (realEstate.problemDesc === null) {
+              tipoRelInmueble = true;
+              this.message(
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Descripción de Problemática" en el Bien Inmueble esta vacio.'
+              );
+              break;
+            } else if (realEstate.pubRegProperty === null) {
+              tipoRelInmueble = true;
+              this.message(
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Registro Público de Propiedad" en el Bien Inmueble esta vacio.'
+              );
+              break;
+            } else if (realEstate.propertyType == null) {
+              tipoRelInmueble = true;
+              this.message(
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Tipo de Inmueble" en el Bien Inmueble esta vacio.'
+              );
+              break;
+            } else if (realEstate.pffDate == null) {
+              console.log('pffDate; ', realEstate.pffDate);
+              if (
+                idTrandference == 120 ||
+                idTrandference == 752 ||
+                idTrandference == 942
+              ) {
                 tipoRelInmueble = true;
                 this.message(
-                  'error',
-                  `Error en el bien ${good.goodDescription}`,
-                  'El campo Escritura Pública en Bien Inmueble esta vacio, favor de complementar'
-                );
-                break;
-              } else if (realEstate.forProblems === null) {
-                tipoRelInmueble = true;
-                this.message(
-                  'error',
-                  `Error en el bien ${good.goodDescription}`,
-                  'El campo Problematicas en Bien Inmueble esta vacio, favor de complementar'
-                );
-                break;
-              } else if (realEstate.problemDesc === null) {
-                tipoRelInmueble = true;
-                this.message(
-                  'error',
-                  `Error en el bien ${good.goodDescription}`,
-                  'El campo Descripción de Problemática en Bien Inmueble esta vacio, favor de complementar'
-                );
-                break;
-              } else if (realEstate.pubRegProperty === null) {
-                tipoRelInmueble = true;
-                this.message(
-                  'error',
-                  `Error en el bien ${good.goodDescription}`,
-                  'El campo Registro Público de Propiedad en Bien Inmueble esta vacio, favor de complementar'
-                );
-                break;
-              } else if (realEstate.propertyType == null) {
-                tipoRelInmueble = true;
-                this.message(
-                  'error',
-                  `Error en el bien ${good.goodDescription}`,
-                  'El campo Tipo de Inmueble en Bien Inmueble esta vacio, favor de complementar'
+                  'warning',
+                  `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                  'El campo "Fecha de Paso al Fisco" en el Bien Inmueble esta vacio.'
                 );
                 break;
               }
             }
+            // }
           } else if (Number(good.goodTypeId) === 2) {
             /**## Tipo Vehiculos ##*/
-            if (good.fitCircular === null) {
-              //apto para circular
-              tipoRelVehiculo = true;
-              this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Apto para cirular en Información del Vehículo esta vacio, favor de complementar'
-              );
-              break;
-            } else if (good.brand === null) {
+            // if (good.fitCircular === null) {
+            //   //apto para circular
+            //   tipoRelVehiculo = true;
+            //   this.message(
+            //     'error',
+            //     `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+            //     'El campo Apto para cirular en Información del Vehículo esta vacio.'
+            //   );
+            //   break;
+            // } else
+            if (good.brand === null) {
               //marca
               tipoRelVehiculo = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Marca en Información del Vehículo esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Marca" en Información del Vehículo esta vacio.'
               );
               break;
             } else if (good.model === null) {
               //modelo
               tipoRelVehiculo = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Modelo en Información del Vehículo esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Modelo" en Información del Vehículo esta vacio.'
               );
               break;
-            } else if (good.axesNumber === null) {
+            } /*else if (good.axesNumber === null) {
               //numero de ejes
               tipoRelVehiculo = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Número de Ejes en Información del Vehículo esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Número de Ejes" en Información del Vehículo esta vacio.'
               );
               break;
             } else if (good.engineNumber === null) {
               //numero de motor
               tipoRelVehiculo = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Número de Motor en Información del Vehículo esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Número de Motor" en Información del Vehículo esta vacio.'
               );
               break;
-            } /* else if (good.origin === null) {
+            } */
+            /* else if (good.origin === null) {
               tipoRelVehiculo = true;
               this.message(
                 'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Procedencia en Información del Vehículo esta vacio, favor de complementar'
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo Procedencia en Información del Vehículo esta vacio.'
               );
               break;
-            } */ else if (good.theftReport === null) {
-              //reporte de robos
-              tipoRelVehiculo = true;
-              this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Reporte de Robo en Información del Vehículo esta vacio, favor de complementar'
-              );
-              break;
-            } else if (good.serie === null) {
+            } */
+            // else if (good.theftReport === null) {
+            //   //reporte de robos
+            //   tipoRelVehiculo = true;
+            //   this.message(
+            //     'error',
+            //     `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+            //     'El campo Reporte de Robo en Información del Vehículo esta vacio.'
+            //   );
+            //   break;
+            // }
+            else if (good.serie === null) {
               // serie
               tipoRelVehiculo = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Serie en Información del Vehículo esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Serie" en Información del Vehículo esta vacio.'
               );
               break;
             } else if (good.subBrand === null) {
               //sub marca
               tipoRelVehiculo = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Sub-Marca en Información del Vehículo esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Sub-Marca" en Información del Vehículo esta vacio.'
               );
               break;
             }
@@ -460,27 +570,27 @@ export class RegistrationHelper extends BasePage {
               // ano de manufacturacion
               tipoRelEmbarca = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Año de Fabricación en Información de la Embarcación esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Año de Fabricación" en Información de la Embarcación esta vacio.'
               );
               break;
             } else if (good.flag === null) {
               //bandera
               tipoRelEmbarca = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Bandera en Información de la Embarcación esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Bandera" en Información de la Embarcación esta vacio.'
               );
               break;
             } else if (good.openwork === null) {
               //calado
               tipoRelEmbarca = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Calado en Información de la Embarcación esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Calado" en Información de la Embarcación esta vacio.'
               );
               break;
             } /* else if (good.capacity === null) {
@@ -488,26 +598,26 @@ export class RegistrationHelper extends BasePage {
               tipoRelEmbarca = true;
               this.message(
                 'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Capacidad en Información de la Embarcación esta vacio, favor de complementar'
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo Capacidad en Información de la Embarcación esta vacio.'
               );
               break;
             } */ else if (good.length === null) {
               //eslora
               tipoRelEmbarca = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Eslora en Información de la Embarcación esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Eslora" en Información de la Embarcación esta vacio.'
               );
               break;
             } else if (good.operationalState === null) {
               //estado operativo
               tipoRelEmbarca = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Estado Operativo en Información de la Embarcación esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Estado Operativo" en Información de la Embarcación esta vacio.'
               );
               break;
             } /* else if (good.tuition === null) {
@@ -515,35 +625,35 @@ export class RegistrationHelper extends BasePage {
               tipoRelEmbarca = true;
               this.message(
                 'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Matrícula en Información de la Embarcación esta vacio, favor de complementar'
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo Matrícula en Información de la Embarcación esta vacio.'
               );
               break;
             } */ else if (good.shipName === null) {
               //Nombre Barco
               tipoRelEmbarca = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Nombre de Embarcacion en Información de la Embarcación esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Nombre" de Embarcacion en Información de la Embarcación esta vacio.'
               );
               break;
             } else if (good.engineNumber === null) {
               //Num Motor
               tipoRelEmbarca = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Num. Motor en Información de la Embarcación esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "No. Motor" en Información de la Embarcación esta vacio.'
               );
               break;
             } else if (good.enginesNumber === null) {
               //Num Motores
               tipoRelEmbarca = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Num. Motores en Información de la Embarcación esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "No. Motores" en Información de la Embarcación esta vacio.'
               );
               break;
             } /* else if (good.origin === null) {
@@ -551,17 +661,17 @@ export class RegistrationHelper extends BasePage {
               tipoRelEmbarca = true;
               this.message(
                 'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Procedencia en Información de la Embarcación esta vacio, favor de complementar'
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo Procedencia en Información de la Embarcación esta vacio.'
               );
               break;
             } */ else if (good.publicRegistry === null) {
               //Registro Publico de la embarcación
               tipoRelEmbarca = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Registro Publico de la Embarcación en Información de la Embarcación esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Registro Publico" de la Embarcación en Información de la Embarcación esta vacio.'
               );
               break;
             }
@@ -571,9 +681,9 @@ export class RegistrationHelper extends BasePage {
               //Estado Operativo
               tipoRelAeronave = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Estado Operativo en Información de Aereonave esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Estado Operativo" en Información de Aereonave esta vacio.'
               );
               break;
             } /* else if (good.tuition === null) {
@@ -581,35 +691,35 @@ export class RegistrationHelper extends BasePage {
               tipoRelAeronave = true;
               this.message(
                 'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Matrícula en Información de Aereonave esta vacio, favor de complementar'
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo Matrícula en Información de Aereonave esta vacio.'
               );
               break;
             } */ else if (good.model === null) {
               //Modelo
               tipoRelAeronave = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Modelo en Información de Aereonave esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Modelo" en Información de Aereonave esta vacio.'
               );
               break;
             } else if (good.engineNumber === null) {
               //Num Motor
               tipoRelAeronave = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Num. Motor en Información de Aereonave esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "No. Motor" en Información de Aereonave esta vacio.'
               );
               break;
             } else if (good.enginesNumber === null) {
               //Num Motores
               tipoRelAeronave = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Num. Motores en Información de Aereonave esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "No. Motores" en Información de Aereonave esta vacio.'
               );
               break;
             } /* else if (good.origin === null) {
@@ -617,33 +727,33 @@ export class RegistrationHelper extends BasePage {
               tipoRelAeronave = true;
               this.message(
                 'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Procedencia en Información de Aereonave esta vacio, favor de complementar'
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo Procedencia en Información de Aereonave esta vacio.'
               );
               break;
             } */ else if (good.dgacRegistry === null) {
               //Registro Direccion Gral
               tipoRelAeronave = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Registro Direccion Gral. ... en Información de Aereonave esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Registro Direccion Gral..." en Información de Aereonave esta vacio.'
               );
               break;
             } else if (good.serie === null) {
               tipoRelAeronave = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Serie en Información de Aereonave esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Serie" en Información de Aereonave esta vacio.'
               );
               break;
             } else if (good.airplaneType === null) {
               tipoRelAeronave = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Tipo de Avión en Información de Aereonave esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Tipo de Avión" en Información de Aereonave esta vacio.'
               );
               break;
             }
@@ -652,25 +762,25 @@ export class RegistrationHelper extends BasePage {
             if (good.caratage === null) {
               tipoRelJoya = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Kilataje en Información de Joya esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Kilataje" en Información de Joya esta vacio.'
               );
               break;
             } else if (good.material === null) {
               tipoRelJoya = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Material en Información de Joya esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Material" en Información de Joya esta vacio.'
               );
               break;
             } else if (good.weight === null) {
               tipoRelJoya = true;
               this.message(
-                'error',
-                `Error en el bien ${good.goodDescription}`,
-                'El campo Peso en Información de Joya esta vacio, favor de complementar'
+                'warning',
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'El campo "Peso" en Información de Joya esta vacio.'
               );
               break;
             }
@@ -686,9 +796,12 @@ export class RegistrationHelper extends BasePage {
           faltaClasificacion === false &&
           sinDireccion === false &&
           sinTipoRelevante === false &&
+          sinNoClasificador === false &&
           sinCantidad === false &&
           sinDestinoT === false &&
-          sinUnidadM === false
+          sinUnidadM === false &&
+          sinUnidTrans === false &&
+          sinDescripcionT === false
         ) {
           allOk = true;
         }

@@ -1,96 +1,127 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Visualizaci&oacute;n de Documentos</h5>
+    <h5 class="title">Visualización de Documentos</h5>
   </div>
 
   <div body>
-    <form [formGroup]="form" class="form-material">
+    <form [formGroup]="form" class="form-material" (ngSubmit)="onSubmit()">
       <div class="row">
         <form-field
-          [control]="form.get('expediente')"
-          label="No Expediente"
+          [control]="form.get('numberProceedings')"
+          label="No. Expediente"
           class="col-md-3">
           <input
-            type="text"
             class="form-control"
-            formControlName="expediente" />
-        </form-field>
-        <form-field
-          [control]="form.get('volante')"
-          label="No Volante"
-          class="col-md-3">
-          <input type="text" class="form-control" formControlName="volante" />
-        </form-field>
-        <form-field [control]="form.get('separador')" class="col-md-4">
-          <ngx-select
-            [form]="form"
-            control="separador"
-            [data]="select"
-            label="Separador"></ngx-select>
+            formControlName="numberProceedings"
+            type="number"
+            min="0"
+            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
         </form-field>
 
         <form-field
-          [control]="form.get('fecha')"
-          label="Fecha Significativa"
+          [control]="form.get('flyerNumber')"
+          label="No. Volante"
+          class="col-md-3">
+          <input
+            class="form-control"
+            formControlName="flyerNumber"
+            type="number"
+            min="0"
+            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
+        </form-field>
+
+        <form-field [control]="form.get('keySeparator')" class="col-md-4">
+          <ngx-select
+            [data]="selectSeparator"
+            [form]="form"
+            bindLabel="key"
+            label="Separador"
+            control="keySeparator"
+            (fetchItems)="loadDocumentsSeparator($event)"
+            (change)="onOptionsSelectedSeparator($event)">
+          </ngx-select>
+        </form-field>
+
+        <form-field
+          [control]="form.get('significantDate')"
+          label="Fecha Significativa (mm/aaaa)"
           class="col-md-2">
           <input
             type="text"
             class="form-control"
-            formControlName="fecha"
-            bsDatepicker />
+            formControlName="significantDate"
+            bsDatepicker
+            [bsConfig]="{ dateInputFormat: 'MM/YYYY', minMode: 'month' }" />
         </form-field>
       </div>
+
       <div class="row pt-3">
-        <form-field [control]="form.get('tipoDoc')" class="col-md-4">
+        <form-field [control]="form.get('keyTypeDocument')" class="col-md-3">
           <ngx-select
+            [data]="selectTypeDoc"
             [form]="form"
-            control="tipoDoc"
-            [data]="select"
-            label="Tipo de Documento"></ngx-select>
+            bindLabel="id"
+            label="Tipo de Documento"
+            control="keyTypeDocument"
+            (fetchItems)="loadDocumentsType($event)"
+            (change)="onOptionsSelectedTypeDocument($event)">
+          </ngx-select>
         </form-field>
 
         <form-field
-          [control]="form.get('descripcion')"
+          [control]="form.get('descriptionDocument')"
           label="Descripci&oacute;n del Documento"
-          class="col-md-8">
+          class="col-md-9">
           <input
             type="text"
             class="form-control"
-            formControlName="descripcion" />
+            formControlName="descriptionDocument"
+            maxlength="1000" />
         </form-field>
       </div>
+
       <div class="row pt-3">
         <form-field
-          [control]="form.get('averPrevia')"
+          [control]="form.get('preliminaryInquiry')"
           label="Averiguaci&oacute;n Previa"
           class="col-md-3">
           <input
             type="text"
             class="form-control"
-            formControlName="averPrevia" />
+            formControlName="preliminaryInquiry"
+            maxlength="100" />
         </form-field>
 
         <form-field
-          [control]="form.get('causaPenal')"
+          [control]="form.get('criminalCase')"
           label="Causa Penal"
           class="col-md-3">
           <input
             type="text"
             class="form-control"
-            formControlName="causaPenal" />
+            formControlName="criminalCase"
+            maxlength="100" />
         </form-field>
-        <div class="col d-flex">
+
+        <div class="col d-flex justify-content-end">
           <form-radio label="Digitalizados">
-            <input type="radio" formControlName="tipos" value="1" />
+            <input
+              type="radio"
+              formControlName="scanStatus"
+              value="ESCANEADO" />
           </form-radio>
           <form-radio label="Pendientes">
-            <input type="radio" formControlName="tipos" value="2" />
+            <input
+              type="radio"
+              formControlName="scanStatus"
+              value="SOLICITADO" />
           </form-radio>
           <form-radio label="Todos">
-            <input type="radio" formControlName="tipos" value="3" />
+            <input type="radio" formControlName="scanStatus" value="all" />
           </form-radio>
         </div>
       </div>
+
       <div class="row pt-3">
         <div class="col">
           <small class="text-secondary"
@@ -103,40 +134,71 @@
             <form-radio label="SID">
               <input type="radio" formControlName="origen" value="2" />
             </form-radio>
-            <div class="ml-5">
-              <button class="btn btn-primary active">Consultar</button>
+            <div class="ml-4">
+              <button
+                type="submit"
+                class="btn btn-sm btn-info active mr-4"
+                style="background-color: #9d2449">
+                Consultar <i class="bx bx-search float-icon"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-info active"
+                style="width: 90px; background-color: #b38e5d"
+                (click)="cleandInfo()">
+                Limpiar <i class="fa fa-eraser"></i>
+              </button>
             </div>
           </div>
         </div>
       </div>
       <hr />
-      <div class="row pt-3">
-        <div class="row">
-          <div class="col-md-12 d-flex justify-content-between">
-            <div>
-              <span class="text-success mr-5"
-                ><i class="fa fa-square"></i> Documento Digitalizado</span
-              >
-              <span class="text-danger"
-                ><i class="fa fa-square"></i>Documento pendiente de
-                digitalizar</span
-              >
-            </div>
-            <div>
-              <small class="text-secondary"
-                >(Doble click en la imagen para visualizar)</small
-              >
-            </div>
-          </div>
-        </div>
 
-        <div class="row">
-          <div class="col-md-12">
-            <ng2-smart-table
-              [settings]="settings"
-              [source]="data"></ng2-smart-table>
+      <div class="row" style="margin-bottom: 30px">
+        <div class="col-md-10 d-flex justify-content-between">
+          <div class="d-flex align-items-center">
+            <span class="mr-5" style="color: #1e7e34"
+              ><i class="fa fa-square"></i> Documento Digitalizado</span
+            >
+            <span class="text-dark"
+              ><i class="fa fa-square"></i> Documento Pendiente a
+              Digitalizar</span
+            >
           </div>
         </div>
+        <div class="col-md-2 d-flex justify-content-end">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <small class="text-secondary"
+          >(Clic para visualizar la lista de folios relacionados al
+          expediente)</small
+        >
+      </div>
+
+      <div class="row pt-3">
+        <div class="row m-0 p-0">
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <div class="table-responsive">
+                <ng2-smart-table
+                  id="hooverTableDocumentViewer"
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings"
+                  [source]="data"
+                  (delete)="showDeleteAlert($event.data)"
+                  (userRowSelect)="modalImage($event.data)"
+                  (resetFilter)="resetFilters()">
+                </ng2-smart-table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </form>
   </div>

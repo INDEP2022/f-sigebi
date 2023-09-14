@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UserProcessEndpoint } from 'src/app/common/constants/endpoints/ms-user-process-endpoint';
@@ -31,5 +32,31 @@ export class UserProcessService extends HttpService {
       UserProcessEndpoint.UserListWithRol,
       params
     );
+  }
+
+  getAllUsersWithRolDistint(
+    params?: ListParams
+  ): Observable<IListResponse<IUserProcess>> {
+    return this.get<IListResponse<IUserProcess>>(
+      UserProcessEndpoint.UserListWithRolDistint,
+      params
+    );
+  }
+
+  getAllUsersWithProgramming(
+    _params?: ListParams
+  ): Observable<IListResponse<IUserProcess>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IUserProcess>>(
+      `${UserProcessEndpoint.UserListWithRol}?${params}`
+    );
+  }
+
+  private makeParams(params: ListParams): HttpParams {
+    let httpParams: HttpParams = new HttpParams();
+    Object.keys(params).forEach(key => {
+      httpParams = httpParams.append(key, (params as any)[key]);
+    });
+    return httpParams;
   }
 }

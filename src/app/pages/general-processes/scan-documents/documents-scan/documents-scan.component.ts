@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -5,6 +6,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
+  firstValueFrom,
   forkJoin,
   map,
   of,
@@ -23,9 +25,11 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { IParamsLegalOpinionsOffice } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/legal-opinions-office.component';
 import { DOCUMENTS_SCAN_COLUMNS } from '../utils/documents-scan-columns';
 import { DocumentsScanForm } from '../utils/documents-scan-form';
 import { DOCUMENTS_SCAN_MESSAGES } from '../utils/documents-scan-messages';
+
 const INVALID_USER = 'INVALIDO';
 const SERA_USER = 'SERA';
 const DEVELOP_USER = 'DESARROLLO';
@@ -50,9 +54,43 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   noDocumentsFound: boolean = false;
   noFoliosFound: boolean = false;
   registerUser: string = INVALID_USER;
+  pGoodFatherNumber: number;
   get controls() {
     return this.form.controls;
   }
+  paramsScreen: IParamsLegalOpinionsOffice = {
+    PAQUETE: '',
+    P_GEST_OK: '',
+    CLAVE_OFICIO_ARMADA: '',
+    P_NO_TRAMITE: '',
+    TIPO: '',
+    P_VALOR: '',
+    TIPO_VO: '',
+    NO_EXP: '',
+    CONSULTA: '',
+  };
+  origin2: string = ''; // Pantalla para regresar a la anterior de la que se llamo
+  origin3: string = ''; // Pantalla para regresar a la anterior de la que se llamo desde la origin2
+  no_bien: number = null;
+  expedientNumber: number = null; //no_expediente
+  wheelNumber: number = null; //no_volante
+  processNumber: number = null; //no_tramite
+
+  // pantalla FACTCIRCUNR_0001
+  expedient: string | number = null;
+  cveActa: string = null;
+  acta: string | number = null;
+  tipoConv: number;
+  paramsDepositaryAppointment: any = {
+    P_NB: null,
+    P_FOLIO: null,
+    P_ND: null,
+  };
+  P_NO_TRAMITE: number = null;
+  P_GEST_OK: number = null;
+  P_VOLANTE: number = null;
+  P_EXPEDIENTE: number = null;
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -60,7 +98,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     private fileBrowserService: FileBrowserService,
     private modalService: BsModalService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private locations: Location
   ) {
     super();
     this.activatedRoute.queryParams
@@ -71,7 +110,46 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.originFlyer = params['volante'] ?? '';
         this.origin = params['origin'] ?? null;
         this.requestOrigin = params['requestOrigin'] ?? null;
-        console.log(params);
+        //mantenimiento amparo
+        this.expedientNumber = params['expedientNumber'] ?? null;
+        this.wheelNumber = params['wheelNumber'] ?? null;
+        this.processNumber = params['processNumber'] ?? null;
+        this.expedient = params['expedient'] ?? null;
+        this.acta = params['acta'] ?? null;
+        this.cveActa = params['cveActa'] ?? null;
+        //fin
+        console.log(this.expedientNumber);
+        if (this.origin == 'FACTJURDICTAMOFICIO') {
+          for (const key in this.paramsScreen) {
+            if (Object.prototype.hasOwnProperty.call(params, key)) {
+              this.paramsScreen[key as keyof typeof this.paramsScreen] =
+                params[key] ?? null;
+            }
+          }
+          this.origin2 = params['origin2'] ?? null;
+          this.origin3 = params['origin3'] ?? null;
+        }
+        if (this.origin == 'FACTJURREGDESTLEG') {
+          this.no_bien = params['P_NB'] ?? null;
+        }
+        if (this.origin == 'FADMAPROEXTDOM') {
+          this.origin2 = params['origin2'] ?? null;
+          this.P_NO_TRAMITE = params['P_NO_TRAMITE'] ?? null;
+          this.P_GEST_OK = params['P_GEST_OK'] ?? null;
+          this.P_VOLANTE = params['P_VOLANTE'] ?? null;
+          this.P_EXPEDIENTE = params['P_EXPEDIENTE'] ?? null;
+        }
+        if (
+          this.origin == 'FACTGENSOLICDIGIT' &&
+          this.requestOrigin == 'FACTJURREGDESTLEG'
+        ) {
+          this.paramsDepositaryAppointment.P_NB = params['P_NB'] ?? null;
+          this.paramsDepositaryAppointment.P_FOLIO = params['P_FOLIO'] ?? null;
+          this.paramsDepositaryAppointment.P_ND = params['P_ND'] ?? null;
+        }
+        if (this.origin == 'FCONVBIENHIJOS') {
+          this.tipoConv = params['tipoConv'] ?? null;
+        }
       });
     this.settings = {
       ...this.settings,
@@ -121,14 +199,24 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     this.loading = true;
     return this.getDocuments(params).pipe(
       catchError(error => {
+        console.warn('No se encontraron documentos');
+
         this.registerUser = INVALID_USER;
         this.loading = false;
         const message = DOCUMENTS_SCAN_MESSAGES.FOLIO_NOT_FOUND(this.folio);
         this.handleErrorAlert(message, error);
         return throwError(() => error);
       }),
+      tap(res => {
+        console.log(res);
+      }),
       map(response => response.data[0] ?? null),
       tap(document => {
+        console.warn(
+          'Asignacion de usuario que escaneo',
+          document.userRegistersScan
+        );
+
         this.registerUser = document.userRegistersScan ?? INVALID_USER;
         this.loading = false;
         if (!document) {
@@ -136,15 +224,20 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         }
         const { id } = document;
         const { expedient, folio } = this.controls;
+        const _params = new FilterParams();
         if (document.numberProceedings) {
           expedient.setValue(Number(document.numberProceedings));
         }
+        // else {
+        //   expedient.setValue(this.expedientNumber);
+        //   _params.addFilter('numberProceedings', this.expedientNumber);
+        // }
         folio.setValue(this.folio);
-        const _params = new FilterParams();
         _params.addFilter('numberProceedings', document.numberProceedings);
         this.documentsParams.next(_params);
         this.loadImages(id).subscribe(
           response => {
+            console.log('response:', response);
             this.files = response;
             // this.noDocumentsFound = false;
           },
@@ -249,8 +342,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     const config = {
       ...MODAL_CONFIG,
       initialState: {
-        folio: this.folio,
+        identificator: this.folio,
         accept: 'image/*,application/pdf',
+        nameButton: 'Subir archivos',
         callback: (refresh: boolean) => this.fileUploaderClose(refresh),
       },
     };
@@ -276,11 +370,19 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   }
 
   async confirmDelete() {
+    console.log(this.registerUser);
+
     const token = this.authService.decodeToken();
     const user = token?.preferred_username?.toUpperCase();
     const validUsers = [user, SERA_USER, DEVELOP_USER];
+
     if (this.filesToDelete.length < 1) {
-      this.onLoadToast(
+      // this.onLoadToast(
+      //   'warning',
+      //   'Advertencia',
+      //   'Debes seleccionar mínimo un archivo'
+      // );
+      this.alert(
         'warning',
         'Advertencia',
         'Debes seleccionar mínimo un archivo'
@@ -294,14 +396,14 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        'No tiene permiso para borrar las imágenes. Sólo el usuario que escaneo puede borrar las imágenes.'
+        'No tiene permiso para borrar los archivos. Sólo el usuario que escaneo puede borrar los archivos.'
       );
       return;
     }
     const result = await this.alertQuestion(
       'warning',
       'Advertencia',
-      '¿Estás seguro que desea eliminar las imágenes seleccionadas?'
+      '¿Estás seguro que desea eliminar los archivos seleccionados?'
     );
 
     if (result.isConfirmed) {
@@ -311,14 +413,13 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
 
   deleteSelectedFiles() {
     const obs = this.filesToDelete.map(filename => this.deleteFile(filename));
+    console.log('obs', obs);
+    // return;
     forkJoin(obs).subscribe({
       complete: () => {
         this.files = [];
-        this.onLoadToast(
-          'success',
-          'Se eliminaron los archivos correctamente',
-          ''
-        );
+        this.alert('success', 'Escaneo y  Digitalización', 'Eliminado');
+
         this.filesToDelete = [];
         this.loadImages(this.folio).subscribe(() => {
           this.updateSheets();
@@ -336,17 +437,39 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     }
     const userRegistersScan = token?.preferred_username?.toUpperCase();
     const dateRegistrationScan = new Date();
-    this.documentsService
-      .update(this.folio, {
-        sheets,
-        scanStatus,
-        userRegistersScan,
-        dateRegistrationScan,
-      })
-      .subscribe(() => {
-        const params = this.documentsParams.getValue();
-        this.documentsParams.next(params);
-      });
+    const body = {
+      sheets,
+      scanStatus,
+      userRegistersScan,
+      dateRegistrationScan,
+    };
+    if (this.registerUser != INVALID_USER) {
+      delete body.userRegistersScan;
+    }
+    this.documentsService.update(this.folio, body).subscribe(async () => {
+      const params = this.documentsParams.getValue();
+      this.documentsParams.next(params);
+      await this.refreshUserRegisterScan();
+    });
+  }
+
+  async refreshUserRegisterScan() {
+    const params = new FilterParams();
+    params.addFilter('id', this.folio);
+    this.loading = true;
+    return await firstValueFrom(
+      this.getDocuments(params).pipe(
+        catchError(error => {
+          this.registerUser = INVALID_USER;
+          return throwError(() => error);
+        }),
+        map(response => response.data[0] ?? null),
+        tap(document => {
+          this.registerUser = document.userRegistersScan ?? INVALID_USER;
+          this.loading = false;
+        })
+      )
+    );
   }
 
   deleteFile(name: string) {
@@ -357,7 +480,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error',
-            'Ocurrió un error al eliminar la imagen'
+            'Ocurrió un error al eliminar el archivo'
           );
           return throwError(() => error);
         })
@@ -392,12 +515,48 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     if (this.origin == 'FGESTBUZONTRAMITE') {
       this.router.navigate(['/pages/general-processes/work-mailbox']);
     }
+
+    if (this.origin == 'FACTREFACTAENTREC') {
+      this.router.navigate([
+        '/pages/judicial-physical-reception/confiscated-records',
+      ]);
+    }
+
+    if (this.origin == 'FACTREFCANCELAR') {
+      this.router.navigate([
+        '/pages/judicial-physical-reception/cancellation-recepcion',
+      ]);
+    }
+
+    if (this.origin == 'FACTREFACTAVENT') {
+      this.router.navigate([
+        '/pages/judicial-physical-reception/cancellation-sale',
+      ]);
+    }
+
     if (this.origin == 'FESTATUSRGA') {
       this.router.navigate([
         '/pages/executive-processes/destruction-authorization-management',
       ]);
     }
-    if (this.origin == 'FACTGENSOLICDIGIT') {
+    if (
+      this.origin == 'FACTGENSOLICDIGIT' &&
+      this.requestOrigin == 'FACTJURREGDESTLEG'
+    ) {
+      this.router.navigate(
+        [
+          `/pages/general-processes/scan-request/${this.originFlyer}/${this.originFolio}`,
+        ],
+        {
+          queryParams: {
+            origin: this.requestOrigin,
+            P_NB: this.paramsDepositaryAppointment.P_NB,
+            P_FOLIO: this.paramsDepositaryAppointment.P_FOLIO,
+            P_ND: this.paramsDepositaryAppointment.P_ND,
+          },
+        }
+      );
+    } else if (this.origin == 'FACTGENSOLICDIGIT') {
       this.router.navigate(
         [
           `/pages/general-processes/scan-request/${this.originFlyer}/${this.originFolio}`,
@@ -405,5 +564,142 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         { queryParams: { origin: this.requestOrigin } }
       );
     }
+    if (this.origin == 'FACTJURDICTAMOFICIO') {
+      this.router.navigate(
+        [`/pages/juridical/depositary/legal-opinions-office`],
+        {
+          queryParams: {
+            ...this.paramsScreen,
+            origin: this.origin2,
+            origin3: this.origin3,
+          },
+        }
+      );
+    }
+    if (this.origin == 'FACTJURABANDONOS') {
+      this.router.navigate([
+        `/pages/juridical/abandonments-declaration-trades`,
+      ]);
+    }
+    if (this.origin == 'FPROCRECPAG') {
+      this.router.navigate([
+        `/pages/administrative-processes/payment-claim-process`,
+      ]);
+    }
+    if (this.origin == 'FACTJURREGDESTLEG') {
+      this.router.navigate([
+        `/pages/juridical/depositary/depositary-record/` + this.no_bien,
+      ]);
+    }
+    if (this.origin == 'FREGULARIZAJUR') {
+      this.router.navigate([
+        `pages/administrative-processes/legal-regularization`,
+      ]);
+    }
+    if (this.origin == 'FADMAMPAROS') {
+      this.router.navigateByUrl(
+        `pages/juridical/depositary/maintenance-of-coverages?processNumber=${this.processNumber}&wheelNumber=${this.wheelNumber}&proceedingsNumber=${this.expedientNumber}`
+      );
+    }
+    if (this.origin == 'FMTOPAQUETE') {
+      this.router.navigate([
+        `pages/administrative-processes/unit-conversion-packages`,
+      ]);
+    }
+    if (this.origin == 'FADMAPROEXTDOM') {
+      this.router.navigate(
+        ['/pages/juridical/goods-process-validation-extdom'],
+        {
+          queryParams: {
+            origin: this.origin2 ? this.origin2 : null,
+            P_NO_TRAMITE: this.P_NO_TRAMITE,
+            P_GEST_OK: this.P_GEST_OK,
+            P_VOLANTE: this.P_VOLANTE,
+            P_EXPEDIENTE: this.P_EXPEDIENTE,
+          },
+        }
+      );
+    }
+    if (this.origin == 'FCONVBIENHIJOS') {
+      this.router.navigate(
+        [`pages/administrative-processes/derivation-goods`],
+        {
+          queryParams: {
+            folio: this.originFolio,
+            expedientNumber: this.expedientNumber,
+            tipoConv: this.tipoConv,
+            pGoodFatherNumber: this.pGoodFatherNumber,
+          },
+        }
+      );
+    }
+
+    if (this.origin == 'FREPIMPFAC_0001') {
+      this.router.navigate(
+        [
+          '/pages/administrative-processes/services/implementation-reports-invoices',
+        ],
+        {
+          queryParams: {
+            folioScan: this.originFolio,
+          },
+        }
+      );
+    }
+
+    if (this.origin == 'FACTCIRCUNR_0001') {
+      this.router.navigate(
+        [
+          '/pages/final-destination-process/acts-circumstantiated-cancellation-theft',
+        ],
+        {
+          queryParams: {
+            folioScan: this.originFolio,
+            expedient: this.expedient,
+            acta: this.acta,
+            P_NO_TRAMITE: this.P_NO_TRAMITE,
+            P_GEST_OK: this.P_GEST_OK,
+          },
+        }
+      );
+    }
+    if (this.origin == 'FACTREFACTADEVOLU') {
+      this.router.navigate(['/pages/final-destination-process/return-acts'], {
+        queryParams: {
+          folio: this.originFolio,
+          expediente: this.expedientNumber,
+        },
+      });
+    }
+
+    if (this.origin == 'FACTREFACTAPOSTER') {
+      this.router.navigate(
+        ['/pages/final-destination-process/third-possession-acts'],
+        {
+          queryParams: {
+            folio: this.originFolio,
+            expedient: this.expedient,
+          },
+        }
+      );
+    }
+
+    if (this.origin == 'FACTREFACTAENTEST') {
+      this.router.navigate(
+        ['/pages/final-destination-process/acts-goods-delivered'],
+        {
+          queryParams: {
+            folio: this.originFolio,
+            cveActa: this.cveActa,
+          },
+        }
+      );
+    }
+    if (this.origin == 'FACTCONST_0001') {
+      this.router.navigate([
+        '/pages/final-destination-process/proof-of-delivery',
+      ]);
+    }
+    this.locations.back();
   }
 }

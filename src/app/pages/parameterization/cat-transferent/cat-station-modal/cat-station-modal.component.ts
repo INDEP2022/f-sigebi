@@ -36,7 +36,8 @@ export class CatStationModalComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.stationForm = this.fb.group({
       idTransferent: [null, []],
-      stationName: [null, [Validators.required]],
+      stationName: [null, [Validators.required, Validators.maxLength(150)]],
+      keyState: [null, [Validators.maxLength(30)]],
       status: [1, []],
     });
     if (this.station != null) {
@@ -57,6 +58,13 @@ export class CatStationModalComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.stationForm.controls['keyState'].value.trim() === '' ||
+      this.stationForm.controls['stationName'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', '');
+      return;
+    }
     this.loading = true;
     this.stationService.create(this.stationForm.value).subscribe({
       next: data => this.handleSuccess(),
@@ -76,7 +84,8 @@ export class CatStationModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

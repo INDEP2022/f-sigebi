@@ -25,12 +25,12 @@ export class SystemLogFormComponent implements OnInit, OnChanges {
   @Input() form: FormGroup<{
     filter: FormArray<
       FormGroup<{
-        registerNumber: FormControl<string | number>;
-        table: FormControl<string>;
-        column: FormControl<string>;
-        columnDescription: FormControl<string>;
-        dataType: FormControl<string>;
-        value: FormControl<string>;
+        registerNumber: FormControl<any>;
+        table: FormControl<any>;
+        column: FormControl<any>;
+        columnDescription: FormControl<any>;
+        dataType: FormControl<any>;
+        value: FormControl<any>;
       }>
     >;
   }>;
@@ -50,6 +50,18 @@ export class SystemLogFormComponent implements OnInit, OnChanges {
 
   buildForm() {
     this.filter.reset();
+    if (this.fields.length) {
+      this.fields = [
+        {
+          registerNumber: '',
+          table: '',
+          column: 'NO_REGISTRO',
+          columnDescription: 'No. Registro',
+          dataType: 'NUMBER',
+        },
+        ...this.fields,
+      ];
+    }
     this.fields.forEach(field => {
       this.filter.push(this.createFieldForm(field));
     });

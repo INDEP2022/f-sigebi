@@ -42,7 +42,8 @@ export class NumeraryCategoriesService
     id?: string | number,
     model?: INumeraryCategories
   ): Observable<Object> {
-    return this.numeraryCategoriesRepository.update(this.route, id, model);
+    const route = `${NumeraryCategoriesEndpoint.NumeraryCategories}/id/${id}`;
+    return this.put(route, model);
   }
 
   remove(id: string | number) {

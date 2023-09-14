@@ -3,13 +3,13 @@ const NOT_FOUND_MESSAGE = (nameConsult: string) =>
   `No existen resultados para ${nameConsult}`;
 const ERROR_FORM = 'Completa los campos correctamente.';
 const ERROR_FORM_NOT_INSERT =
-  'Completa al menos un campo de la busqueda para continuar.';
+  'Completa al menos un campo de la búsqueda para continuar.';
 const ERROR_FORM_SEARCH_OFICIO_EXPEDIENTE_SAT =
-  'Buscando transferencias SAT por Oficio SAT y Expediente SAT.';
+  'Buscando transferencias SAT por Oficio SAT y Asunto SAT.';
 const ERROR_FORM_SEARCH_OFICIO_SAT =
   'Buscando transferencias SAT por Oficio SAT.';
 const ERROR_FORM_SEARCH_EXPEDIENTE_SAT =
-  'Buscando transferencias SAT por Expediente SAT.';
+  'Buscando transferencias SAT por Asunto SAT.';
 const ERROR_EXPORT = 'No existen registros para exportar.';
 const ERROR_FORM_FECHA =
   'La fecha de inicio debe ser menor o igual a la fecha final.';

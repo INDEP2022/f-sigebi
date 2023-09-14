@@ -12,6 +12,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ThirdpartiesPossessionValidationRoutingModule } from './thirdparties-possession-validation-routing.module';
 
 /** COMPONENTS IMPORTS */
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ThirdpartiesPossessionValidationComponent } from './thirdparties-possession-validation/thirdparties-possession-validation.component';
 
 @NgModule({
@@ -20,6 +21,7 @@ import { ThirdpartiesPossessionValidationComponent } from './thirdparties-posses
     CommonModule,
     ThirdpartiesPossessionValidationRoutingModule,
     SharedModule,
+    TooltipModule,
   ],
 })
 export class ThirdpartiesPossessionValidationModule {}

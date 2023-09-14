@@ -1,108 +1,148 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
-import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IMoneda } from 'src/app/core/models/catalogs/tval-Table5.model';
+import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { SubdelegationService } from '../../../../core/services/catalogs/subdelegation.service';
 
 @Component({
   selector: 'app-other-currencies',
   templateUrl: './other-currencies.component.html',
   styles: [],
 })
-export class OtherCurrenciesComponent extends BasePage implements OnInit {
-  public currenciesForm: FormGroup;
+export class OtherCurrenciesComponent implements OnInit {
+  form: FormGroup;
+  isLoading = false;
+  maxDate = new Date();
+  currencies = new DefaultSelect<IMoneda>([], 0);
+  fromF: string = '';
+  toT: string = '';
+  import: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
 
-  public delegations = new DefaultSelect();
-  public subdelegations = new DefaultSelect();
-  public currencies = new DefaultSelect();
-
-  public get currency() {
-    return this.currenciesForm.get('currencie');
-  }
-  public get from() {
-    return this.currenciesForm.get('from');
-  }
-  public get to() {
-    return this.currenciesForm.get('to');
-  }
-
-  public data = new DefaultSelect();
-
+  @Output() submit = new EventEmitter();
   constructor(
     private fb: FormBuilder,
-    private delegationService: DelegationService,
-    private subdelegationService: SubdelegationService,
+    private tableServ: TvalTable5Service,
     private datePipe: DatePipe,
-    private currencyService: DynamicTablesService
-  ) {
-    super();
-  }
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService
+  ) {}
 
   ngOnInit(): void {
-    this.handleForm();
+    this.prepareForm();
   }
 
-  public handleForm() {
-    this.currenciesForm = this.fb.group({
-      delegation: ['', Validators.required],
-      subdelegation: ['', Validators.required],
-      currencie: [null, Validators.required],
-      from: [null],
-      to: [null],
+  prepareForm() {
+    this.form = this.fb.group({
+      delegation: [null, Validators.required],
+      subdelegation: [null, Validators.required],
+      currency: [null, Validators.required],
+      from: [null, Validators.required],
+      to: [null, Validators.required],
     });
   }
 
-  public send(): void {
-    console.log(this.currenciesForm.value);
-    this.loading = true;
-    // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGERADBNUMEOTRMON.pdf?PARAMFORM=NO&PARA_FECHA_DESDE=` +
-    //   this.datePipe.transform(
-    //     this.currenciesForm.controls['from'].value,
-    //     'dd-mm-yyyy'
-    //   ) +
-    //   `&PARA_FECHA_HASTA=` +
-    //   this.datePipe.transform(
-    //     this.currenciesForm.controls['to'].value,
-    //     'dd-mm-yyyy'
-    //   ) +
-    //   `&PARA_DELEGACION=` +
-    //   this.currenciesForm.controls['delegation'].value +
-    //     `&PARA_SUBDELEGACION=` +
-    //   this.currenciesForm.controls['subdelegation'].value +
-    //   `&PARA_MONEDA=` +
-    //   this.currenciesForm.controls['currencie'].value;
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`;
-    const downloadLink = document.createElement('a');
-    downloadLink.href = pdfurl;
-    downloadLink.target = '_blank';
-    downloadLink.click();
-    let params = { ...this.currenciesForm.value };
-    for (const key in params) {
-      if (params[key] === null) delete params[key];
-    }
-    this.onLoadToast('success', '', 'Reporte generado');
-    this.loading = false;
+  Generar() {
+    this.isLoading = true;
+    this.submit.emit(this.form);
+    this.fromF = this.datePipe.transform(
+      this.form.controls['from'].value,
+      'dd/MM/yyyy'
+    );
+
+    this.toT = this.datePipe.transform(
+      this.form.controls['to'].value,
+      'dd/MM/yyyy'
+    );
+
+    let params = {
+      PARA_DELEGACION: this.form.controls['delegation'].value,
+      PARA_SUBDELEGACION: this.form.controls['subdelegation'].value,
+      PARA_MONEDA: this.form.controls['currency'].value,
+      PARA_FECHA_DESDE: this.fromF,
+      PARA_FECHA_HASTA: this.toT,
+    };
+
+    console.log('params', params);
+    this.siabService
+      .fetchReport('RGERADBNUMEOTRMON', params)
+      // .fetchReportBlank('blank')
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
+  }
+  getCurrencies($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    if ($params.text) params.search = $params.text;
+    this.getRegCurrency(params);
   }
 
-  public getCurrencies(event: any) {
-    this.currencyService.getTvalTable5ByTable(3).subscribe(data => {
-      this.currencies = new DefaultSelect(data.data, data.count);
+  getRegCurrency(_params?: FilterParams, val?: boolean) {
+    // const params = new FilterParams();
+
+    // params.page = _params.page;
+    // params.limit = _params.limit;
+    // if (val) params.addFilter3('filter.desc_moneda', _params.text);
+    _params.sortBy = `cve_moneda:ASC`;
+    this.tableServ.getReg4WidthFilters(_params.getParams()).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.desc_moneda = `${data.cve_moneda}- ${data.desc_moneda}`;
+          return data;
+        });
+        this.currencies = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.currencies = new DefaultSelect();
+      },
     });
   }
 
-  getDelegations(params: ListParams) {
-    this.delegationService.getAll(params).subscribe(data => {
-      this.delegations = new DefaultSelect(data.data, data.count);
-    });
-  }
-
-  getSubdelegations(params: ListParams) {
-    this.subdelegationService.getAll(params).subscribe(data => {
-      this.subdelegations = new DefaultSelect(data.data, data.count);
-    });
+  cleanForm() {
+    this.form.reset();
   }
 }

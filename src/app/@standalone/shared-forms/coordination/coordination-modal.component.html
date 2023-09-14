@@ -4,6 +4,11 @@
   </div>
   <div body>
     <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar [filterParams]="params"></search-bar>
+      </div>
+    </div>
+    <div class="row">
       <div class="col-md-12" [class.table-loading]="loading">
         <ng2-smart-table
           [settings]="settings"

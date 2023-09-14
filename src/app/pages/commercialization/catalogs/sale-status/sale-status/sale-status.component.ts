@@ -1,18 +1,147 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-
-import { COLUMNS } from './columns';
-//Components
-
-//Provisional Data
-import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
-  ICreateConfirmEvent,
-  IDeleteConfirmEvent,
-  IEditConfirmEvent,
-} from '../../../../../core/interfaces/ng2-smart-table.interface';
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { IComerSaleStatus } from '../../../../../core/models/ms-event/sale-status.model';
 import { ComerSaleStatusService } from '../../../../../core/services/ms-event/comer-sale-status.service';
+import { SaleStatusFormComponent } from '../sale-status-form/sale-status-form.component';
+import { COLUMNS } from './columns';
+
+@Component({
+  selector: 'app-sale-status',
+  templateUrl: './sale-status.component.html',
+  styles: [],
+})
+export class SaleStatusComponent extends BasePage implements OnInit {
+  saleStatusD: IComerSaleStatus[];
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+  selectedRow: IComerSaleStatus;
+
+  constructor(
+    private modalService: BsModalService,
+    private saleStatusService: ComerSaleStatusService
+  ) {
+    super();
+    this.settings.columns = COLUMNS;
+    this.settings.hideSubHeader = false;
+    this.settings.actions.add = false;
+    this.settings.actions.edit = true;
+    this.settings.actions.delete = true;
+  }
+
+  ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getDeductives();
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDeductives());
+  }
+
+  selectRow(row: IComerSaleStatus): void {
+    this.selectedRow = row;
+  }
+
+  getDeductives() {
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.saleStatusService.getAll(params).subscribe({
+      next: response => {
+        this.saleStatusD = response.data;
+        this.data.load(response.data);
+        this.data.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
+  openForm(saleStatus?: IComerSaleStatus) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      saleStatus,
+      callback: (next: boolean) => {
+        if (next) this.getDeductives();
+      },
+    };
+    this.modalService.show(SaleStatusFormComponent, modalConfig);
+  }
+
+  onDeleteConfirm(data: any): void {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea Eliminar este Registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.loading = true;
+        this.saleStatusService.remove(data.id).subscribe({
+          next: response => {
+            this.getDeductives();
+            this.loading = false;
+            this.alert('success', 'Elemento Eliminado', '');
+          },
+          error: () => {
+            this.loading = false;
+            this.alert('error', 'Error al Conectar con el Servidor', '');
+          },
+        });
+      }
+    });
+  }
+}
+
+/*
+
+
+import { Component, OnInit } from '@angular/core';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
+import { IComerSaleStatus } from '../../../../../core/models/ms-event/sale-status.model';
+import { ComerSaleStatusService } from '../../../../../core/services/ms-event/comer-sale-status.service';
+import { SaleStatusFormComponent } from '../sale-status-form/sale-status-form.component';
+import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-sale-status',
@@ -25,8 +154,6 @@ export class SaleStatusComponent
 {
   saleStatusD: IComerSaleStatus[];
   selectedRow: IComerSaleStatus | null = null;
-
-  //Columns
   columns = COLUMNS;
 
   constructor(
@@ -39,104 +166,45 @@ export class SaleStatusComponent
       ...this.settings,
       actions: {
         ...this.settings.actions,
-        add: true,
+        add: false,
         edit: true,
         delete: true,
       },
-      edit: {
-        ...this.settings.edit,
-        saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent:
-          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmSave: true,
-      },
-      add: {
-        addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-        createButtonContent:
-          '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent:
-          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmCreate: true,
-      },
-      mode: 'inline',
       columns: COLUMNS,
     };
   }
 
-  onSaveConfirm(event: IEditConfirmEvent<IComerSaleStatus>) {
-    this.loading = true;
-    this.saleStatusService.update(event.newData.id, event.newData).subscribe({
-      next: response => {
-        event.confirm.resolve();
-        this.loading = false;
-        this.onLoadToast('success', 'Elemento Actualizado', '');
+  openForm(saleStatus?: any) {
+    let config: ModalOptions = {
+      initialState: {
+        saleStatus,
+        callback: (next: boolean) => {
+          if (next) this.getData();
+        },
       },
-      error: () => {
-        event.confirm.reject();
-        this.loading = false;
-        this.onLoadToast('error', 'Error al conectar con el servidor', '');
-      },
-    });
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(SaleStatusFormComponent, config);
   }
 
-  onAddConfirm(event: ICreateConfirmEvent<IComerSaleStatus>): void {
-    this.loading = true;
-    this.saleStatusService.checkExistingId(event.newData.id).subscribe({
-      next: response => {
-        console.log(response);
-        if (response) {
-          this.loading = false;
-          this.onLoadToast(
-            'error',
-            'Estatus No Válido',
-            'El estatus ingresado ya existe'
-          );
-          event.confirm.reject();
-        } else {
-          this.saleStatusService.create(event.newData).subscribe({
-            next: response => {
-              event.confirm.resolve();
-              this.getData();
-              this.loading = false;
-              this.onLoadToast('success', 'Elemento Creado', '');
-            },
-            error: () => {
-              event.confirm.reject();
-              this.loading = false;
-              this.onLoadToast(
-                'error',
-                'Error al conectar con el servidor',
-                ''
-              );
-            },
-          });
-        }
-      },
-    });
-  }
-
-  onDeleteConfirm(event: IDeleteConfirmEvent<IComerSaleStatus>): void {
+  onDeleteConfirm(data: any): void {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        if (event.data.id === this.selectedRow.id) {
-          this.selectedRow = null;
-        }
         this.loading = true;
-        this.saleStatusService.remove(event.data.id).subscribe({
+        this.saleStatusService.remove(data.id).subscribe({
           next: response => {
-            event.confirm.resolve();
             this.getData();
             this.loading = false;
-            this.onLoadToast('success', 'Elemento Eliminado', '');
+            this.alert('success', 'Elemento Eliminado', '');
           },
           error: () => {
-            event.confirm.reject();
             this.loading = false;
-            this.onLoadToast('error', 'Error al conectar con el servidor', '');
+            this.alert('error', 'Error al Conectar con el Servidor', '');
           },
         });
       }
@@ -147,3 +215,4 @@ export class SaleStatusComponent
     this.selectedRow = row;
   }
 }
+*/

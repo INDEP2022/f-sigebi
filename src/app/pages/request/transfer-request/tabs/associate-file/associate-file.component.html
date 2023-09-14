@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Nueva car&aacute;tula</h5>
+    <h5 class="modal-title">Nueva Car&aacute;tula</h5>
   </div>
 
   <div body>
@@ -30,7 +30,8 @@
               [virtualScroll]="true"
               [loading]="loading"
               bindLabel="Nombre"
-              bindValue="usrID">
+              bindValue="usrID"
+              notFoundText="No se encontraron elementos">
               <ng-template ng-option-tmp let-item="item" let-index="index">
                 <div [title]="item.Nombre">
                   {{ item.Nombre }}
@@ -65,7 +66,9 @@
               [virtualScroll]="true"
               [loading]="loading"
               bindLabel="DscUnidad"
-              bindValue="IdUnidad">
+              bindValue="IdUnidad"
+              (change)="getUnit($event)"
+              notFoundText="No se encontraron elementos">
               <ng-template ng-option-tmp let-item="item" let-index="index">
                 <div [title]="item.DscUnidad">
                   {{ item.DscUnidad }}
@@ -110,7 +113,8 @@
               [virtualScroll]="true"
               [loading]="loading"
               bindLabel="arhDescripcion"
-              bindValue="arhID">
+              bindValue="arhID"
+              notFoundText="No se encontraron elementos">
               <ng-template ng-option-tmp let-item="item" let-index="index">
                 <div [title]="item.arhDescripcion">
                   {{ item.arhDescripcion }}
@@ -155,7 +159,8 @@
               [virtualScroll]="true"
               [loading]="loading"
               bindLabel="ddcCodificacion"
-              bindValue="ddcId">
+              bindValue="ddcId"
+              notFoundText="No se encontraron elementos">
               <ng-template ng-option-tmp let-item="item" let-index="index">
                 <div [title]="item.ddcCodificacion">
                   {{ item.ddcCodificacion }}
@@ -202,7 +207,8 @@
               [virtualScroll]="true"
               [loading]="loading"
               bindLabel="Nombre"
-              bindValue="usrID">
+              bindValue="usrID"
+              notFoundText="No se encontraron elementos">
               <ng-template ng-option-tmp let-item="item" let-index="index">
                 <div [title]="item.Nombre">
                   {{ item.Nombre }}

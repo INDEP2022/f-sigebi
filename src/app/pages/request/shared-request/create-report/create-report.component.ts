@@ -79,7 +79,9 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.edit ? this.update() : this.create();
+    console.log(this.form.value);
+    console.log(this.document);
+    //this.edit ? this.update() : this.create();
   }
 
   close() {
@@ -112,7 +114,7 @@ export class CreateReportComponent extends BasePage implements OnInit {
   }
 
   onContentChanged = (event: any) => {
-    //console.log(event);
+    console.log(event);
     this.document.content = event.html;
     this.quillInstance = event.content;
   };

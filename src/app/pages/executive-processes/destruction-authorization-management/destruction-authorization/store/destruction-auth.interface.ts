@@ -1,5 +1,8 @@
+import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
+
 export interface IDestructionAuth {
   form: IDestructionAuthForm;
+  trackerGoods?: IDetailProceedingsDeliveryReception[];
 }
 export interface IDestructionAuthForm {
   id?: any;

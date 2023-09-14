@@ -1,4 +1,5 @@
 export interface IRepresentative {
+  [x: string]: any;
   id: number;
   reasonName: string;
   paternalSurname: string;

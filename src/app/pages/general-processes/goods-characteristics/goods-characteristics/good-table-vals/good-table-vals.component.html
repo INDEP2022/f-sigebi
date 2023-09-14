@@ -1,0 +1,12 @@
+<app-characteristics-legend
+  *ngIf="disabled === false"></app-characteristics-legend>
+<app-good-characteristics-table
+  *ngIf="good && clasification && settings && show"
+  [goodChange]="goodChange"
+  [clasification]="clasification"
+  [settings]="settings"
+  [avaluo]="avaluo"
+  [di_numerario_conciliado]="di_numerario_conciliado"
+  [good]="good"
+  [disabled]="disabled"
+  [service]="service"></app-good-characteristics-table>

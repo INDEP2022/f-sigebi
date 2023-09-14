@@ -1,24 +1,32 @@
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 export const COLUMNS_APPROVAL_DONATION = {
-  ref: {
-    title: 'Ref',
+  recordId: {
+    title: 'Ref.',
     type: 'number',
     sort: false,
   },
-  goods: {
-    title: 'Bien',
+  goodNumber: {
+    title: 'No. Bien',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.good.goodNumber;
+    },
   },
-  goodsDescrip: {
+  description: {
     title: 'Descripción del Bien',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.good?.description;
+    },
   },
   quantity: {
     title: 'Cantidad',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.good?.quantity;
+    },
   },
   unit: {
     title: 'Unidad',
@@ -29,66 +37,109 @@ export const COLUMNS_APPROVAL_DONATION = {
     title: 'Estatus',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.good?.status;
+    },
   },
-  proceedings: {
-    title: 'Expediente',
+  noExpediente: {
+    title: 'No. Expediente',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.good?.noExpediente;
+    },
   },
-  targetTag: {
-    title: 'Expediente',
+  noEtiqueta: {
+    title: 'Etiqueta Destino',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.good?.noEtiqueta;
+    },
   },
-  transfNumb: {
+  idNoWorker1: {
     title: 'No. Tranf.',
     type: 'string',
     sort: false,
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.proceeding?.idNoWorker1;
+    // },
   },
-  desTransf: {
+  idExpWorker1: {
     title: 'Des. Tranf.',
     type: 'string',
     sort: false,
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.proceeding?.idExpWorker1;
+    // },
   },
-  clasifNumb: {
+  noClasifBien: {
     title: 'No. Clasif.',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.good?.noClasifBien;
+    },
   },
-  process: {
+  procesoExtDom: {
     title: 'Proceso',
     type: 'string',
     sort: false,
-  },
-  warehouseNumb: {
-    title: 'No. Alma.',
-    type: 'number',
-    sort: false,
-  },
-  warehouse: {
-    title: 'Almacén',
-    type: 'string',
-    sort: false,
-  },
-  warehouseLocat: {
-    title: 'Ubica. Almacén ',
-    type: 'string',
-    sort: false,
-  },
-  coordAdmin: {
-    title: 'Coord. Admin.',
-    type: 'string',
-    sort: false,
-  },
-  select: {
-    title: 'Selec.',
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.good?.procesoExtDom;
     },
+  },
+  // warehouseNumb: {
+  //   title: 'No. Alma.',
+  //   type: 'number',
+  //   sort: false,
+  // },
+  // warehouse: {
+  //   title: 'Almacén',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // warehouseLocat: {
+  //   title: 'Ubica. Almacén ',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // coordAdmin: {
+  //   title: 'Coord. Admin.',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // select: {
+  //   title: 'Selec.',
+  //   type: 'custom',
+  //   renderComponent: CheckboxElementComponent,
+  //   onComponentInitFunction(instance: any) {
+  //     instance.toggle.subscribe((data: any) => {
+  //       data.row.to = data.toggle;
+  //     });
+  //   },
+  //   sort: false,
+  // },
+};
+
+export const COPY = {
+  recordId: {
+    title: 'No. Ref',
+    sort: false,
+  },
+  goodId: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.good?.description;
+    },
+  },
+  amount: {
+    title: 'Cantidad',
     sort: false,
   },
 };

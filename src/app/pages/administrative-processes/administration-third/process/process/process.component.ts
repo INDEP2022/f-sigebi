@@ -36,9 +36,9 @@ export class ProcessComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
-        edit: true,
+        edit: false,
         add: false,
-        delete: true,
+        delete: false,
         position: 'right',
       },
       columns: { ...PROCESS_COLUMNS },

@@ -7,7 +7,7 @@ import { Repository } from 'src/app/common/repository/repository';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { ITables } from '../../models/catalogs/dinamic-tables.model';
-import { ITvalTable5 } from '../../models/catalogs/tval-Table5.model';
+import { IMoneda, ITvalTable5 } from '../../models/catalogs/tval-Table5.model';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +18,8 @@ export class TvalTable5Service
 {
   private readonly route: string = ENDPOINT_LINKS.DinamicTablesTable;
   private readonly route1: string = ENDPOINT_LINKS.DinamicTables;
+  private readonly route2: string = ENDPOINT_LINKS.Currency;
+  private readonly route3: string = ENDPOINT_LINKS.DinamicTablesCurrent;
   private readonly routeFilter: string = ENDPOINT_LINKS.DinamicTable;
   constructor(
     private Tvaltablas1Repository: Repository<ITvalTable5>,
@@ -67,5 +69,12 @@ export class TvalTable5Service
       type,
       model
     );
+  }
+  getReg4WidthFilters(params?: string): Observable<IListResponse<IMoneda>> {
+    return this.get(`${this.route2}`, params);
+  }
+
+  getCurrent(current: string) {
+    return this.get(`${this.route3}?filter.otkey1=$eq:${current}`);
   }
 }

@@ -77,6 +77,7 @@ export class TypeWharehouseListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });
@@ -95,7 +96,7 @@ export class TypeWharehouseListComponent extends BasePage implements OnInit {
     this.typeWarehouseService.getAll(params).subscribe({
       next: response => {
         this.paragraphs = response.data;
-        this.data.load(this.paragraphs);
+        this.data.load(response.data);
         this.totalItems = response.count || 0;
         this.loading = false;
       },
@@ -121,16 +122,20 @@ export class TypeWharehouseListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.typeWarehouseService.remove(typeWarehouse.id).subscribe({
           next: response => {
-            this.onLoadToast('success', 'Exito', 'Eliminado Correctamente');
+            this.alert('success', 'Almacén', 'Borrado Correctamente');
             this.getExample();
           },
           error: err => {
-            this.onLoadToast('error', 'Error', 'Intente nuevamente');
+            this.alert(
+              'warning',
+              'Almacén',
+              'No se puede eliminar el objeto debido a una relación con otra tabla.'
+            );
           },
         });
         //Ejecutar el servicio

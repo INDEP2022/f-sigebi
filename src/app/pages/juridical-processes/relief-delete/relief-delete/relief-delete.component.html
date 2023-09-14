@@ -32,8 +32,12 @@
               <form-field
                 [control]="form.get('noExpediente')"
                 label="No&#46; Expediente">
+                <label class="form-control-label w-100">{{
+                  noExpediente
+                }}</label>
                 <input
                   readonly
+                  hidden
                   class="form-control"
                   formControlName="noExpediente" />
               </form-field>
@@ -41,14 +45,18 @@
           </div>
         </div>
 
-        <div class="col-lg-10 col-sm-12">
+        <div class="col-lg-10 col-sm-12 mb-5">
           <div class="row">
-            <div class="col-12">
+            <div class="col-12 mt-2 mb-2">
               <form-field
                 [control]="form.get('cveDictamen')"
                 label="Clave Dictamen">
+                <label class="form-control-label w-100">{{
+                  cveDictamen
+                }}</label>
                 <input
                   readonly
+                  hidden
                   class="form-control"
                   formControlName="cveDictamen" />
               </form-field>
@@ -66,6 +74,7 @@
                 class="btn btn-primary active btn-sm"
                 (click)="btnBorrarDesahogo()">
                 Borrar Desahogo
+                <i class="fa fa-trash" aria-hidden="true"></i>
               </button>
             </div>
             <div class="col-lg-5 col-md-5 col-5 form-group">
@@ -74,6 +83,7 @@
                 class="btn btn-danger active btn-sm"
                 (click)="cleanForm()">
                 Limpiar
+                <i class="fas fa-eraser"> </i>
               </button>
             </div>
           </div>

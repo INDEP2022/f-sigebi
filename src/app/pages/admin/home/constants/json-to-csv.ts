@@ -1,107 +1,49 @@
 export const JSON_TO_CSV = [
   {
-    id: 1,
-    utf8: 'ñ á é í ó ú Á É Í Ó Ú',
-    column1: 'Lorem ipsum dolor sit',
-    column2: 13246,
-    column3: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
+    recordId: '100',
+    delegationNumber: '11',
+    cvePeriod: '201708',
+    goodNumber: '2793130',
+    address:
+      'INMUEBLE UBICADO EN CALLE FELIPE DE LA GARZA NÚMERO 440, COLONIA JUAN ESCUTIA, DELEGACION IZTAPALAPA, CP. 09100.',
+    transferee: '1 - PROCURADURÍA GENERAL DE LA REPÚBLICA (PGR) -',
+    delegationType: 'S',
+    user: 'BLARA',
   },
   {
-    id: 1,
-    utf8: 'ñ á é í ó ú Á É Í Ó Ú',
-    column1: 'Lorem ipsum dolor sit',
-    column2: 13246,
-    column3: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
+    recordId: '99',
+    delegationNumber: '11',
+    cvePeriod: '201708',
+    goodNumber: '2790988',
+    address:
+      'INMUEBLE UBICADO EN CALLE FELIPE DE LA GARZA, NÚMERO 355, COLONIA JUAN ESCUTIA, DELEGACIÓN IZTAPALAPA, C.P. 09100',
+    transferee: '1 - PROCURADURÍA GENERAL DE LA REPÚBLICA (PGR) -',
+    delegationType: 'S',
+    user: 'BLARA',
   },
+];
+
+export const JSON_TO_CSV_FRELDECOMISO = [
   {
-    id: 1,
-    utf8: 'ñ á é í ó ú Á É Í Ó Ú',
-    column1: 'Lorem ipsum dolor sit',
-    column2: 13246,
-    column3: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
+    no_bien: '',
+    fec_transferencia: '',
+    fec_sentencia: '',
+    intereses: '',
+    fec_of_tesofe: '',
+    oficio_tesofe: '',
+    autoridad: '',
+    causa_penal: '',
   },
+];
+
+export const JSON_TO = [
   {
-    id: 1,
-    utf8: 'ñ á é í ó ú Á É Í Ó Ú',
-    column1: 'Lorem ipsum dolor sit',
-    column2: 13246,
-    column3: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
+    no_bien: '',
   },
+];
+
+export const JSON_TO_MAYUS = [
   {
-    id: 1,
-    utf8: 'ñ á é í ó ú Á É Í Ó Ú',
-    column1: 'Lorem ipsum dolor sit',
-    column2: 13246,
-    column3: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
-  },
-  {
-    id: 1,
-    utf8: 'ñ á é í ó ú Á É Í Ó Ú',
-    column1: 'Lorem ipsum dolor sit',
-    column2: 13246,
-    column3: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
-  },
-  {
-    id: 1,
-    utf8: 'ñ á é í ó ú Á É Í Ó Ú',
-    column1: 'Lorem ipsum dolor sit',
-    column2: 13246,
-    column3: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
-  },
-  {
-    id: 1,
-    utf8: 'ñ á é í ó ú Á É Í Ó Ú',
-    column1: 'Lorem ipsum dolor sit',
-    column2: 13246,
-    column3: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
-  },
-  {
-    id: 1,
-    utf8: 'ñ á é í ó ú Á É Í Ó Ú',
-    column1: 'Lorem ipsum dolor sit',
-    column2: 13246,
-    column3: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
-  },
-  {
-    id: 1,
-    utf8: 'ñ á é í ó ú Á É Í Ó Ú',
-    column1: 'Lorem ipsum dolor sit',
-    column2: 13246,
-    column3: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
-  },
-  {
-    id: 1,
-    utf8: 'ñ á é í ó ú Á É Í Ó Ú',
-    column1: 'Lorem ipsum dolor sit',
-    column2: 13246,
-    column3: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
-  },
-  {
-    id: 1,
-    utf8: 'ñ á é í ó ú Á É Í Ó Ú',
-    column1: 'Lorem ipsum dolor sit',
-    column2: 13246,
-    column3: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
-  },
-  {
-    id: 1,
-    utf8: 'ñ á é í ó ú Á É Í Ó Ú',
-    column1: 'Lorem ipsum dolor sit',
-    column2: 13246,
-    column3: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
-  },
-  {
-    id: 1,
-    utf8: 'ñ á é í ó ú Á É Í Ó Ú',
-    column1: 'Lorem ipsum dolor sit',
-    column2: 13246,
-    column3: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
-  },
-  {
-    id: 1,
-    utf8: 'ñ á é í ó ú Á É Í Ó Ú',
-    column1: 'Lorem ipsum dolor sit',
-    column2: 13246,
-    column3: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
+    NO_BIEN: '',
   },
 ];

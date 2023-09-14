@@ -7,6 +7,8 @@ import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IAffairType } from '../../models/catalogs/affair-type-model';
+import { IOpinion } from '../../models/catalogs/opinion.model';
 import { IRAsuntDic } from '../../models/catalogs/r-asunt-dic.model';
 @Injectable({
   providedIn: 'root',
@@ -17,13 +19,19 @@ export class RAsuntDicService
 {
   private readonly route: string = ENDPOINT_LINKS.RAsuntDic;
   private readonly route2: string = 'r-asunt-dic';
-  constructor(private rAsuntDicRepository: Repository<IRAsuntDic>) {
+  private readonly opinionRoute: string = ENDPOINT_LINKS.Opinion;
+  private readonly affairTypeRoute: string = ENDPOINT_LINKS.AffairType;
+  constructor(
+    private rAsuntDicRepository: Repository<IRAsuntDic>,
+    private opinionRepository: Repository<IOpinion>,
+    private affairTypeRepository: Repository<IAffairType>
+  ) {
     super();
     this.microservice = RAsuntoDicEndpoints.BasePath;
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IRAsuntDic>> {
-    return this.rAsuntDicRepository.getAllPaginated(this.route, params);
+    return this.rAsuntDicRepository.getAll(this.route, params);
   }
 
   getById(id: string | number): Observable<IRAsuntDic> {
@@ -35,10 +43,11 @@ export class RAsuntDicService
   }
 
   update(id: string | number, model: IRAsuntDic): Observable<Object> {
-    return this.rAsuntDicRepository.update(this.route, id, model);
+    return this.rAsuntDicRepository.newUpdate(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {
+    console.log(this.route, id);
     return this.rAsuntDicRepository.remove(this.route, id);
   }
 
@@ -54,5 +63,16 @@ export class RAsuntDicService
   remove2(model: IRAsuntDic) {
     const route = `${RAsuntoDicEndpoints.RAsuntDic}`;
     return this.delete(route, model);
+  }
+
+  getDictamen(params?: ListParams): Observable<IListResponse<IOpinion>> {
+    return this.opinionRepository.getAllPaginated(this.opinionRoute, params);
+  }
+
+  getType(params?: ListParams): Observable<IListResponse<IAffairType>> {
+    return this.affairTypeRepository.getAllPaginated(
+      this.affairTypeRoute,
+      params
+    );
   }
 }

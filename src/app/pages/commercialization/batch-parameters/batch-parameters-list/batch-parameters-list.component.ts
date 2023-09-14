@@ -1,11 +1,16 @@
+import { HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IRequestLotParam } from 'src/app/core/models/requests/request-lot-params.model';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { LotParamsService } from 'src/app/core/services/ms-lot-parameters/lot-parameters.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { BATCH_PARAMETERS_COLUMNS } from './batch-parameters-columns';
 
 @Component({
@@ -14,13 +19,18 @@ import { BATCH_PARAMETERS_COLUMNS } from './batch-parameters-columns';
   styles: [],
 })
 export class BatchParametersListComponent extends BasePage implements OnInit {
+  //
+
+  lotServiceArray: any[] = [];
+  lotServiceArrayTwo: any[] = [];
   adding: boolean = false;
   totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
-  lotparams: IRequestLotParam[] = [];
+  paramsList = new BehaviorSubject<ListParams>(new ListParams());
+  lotData: LocalDataSource = new LocalDataSource();
   filterRow: any;
   addOption: any;
   addRowElement: any;
+  form: FormGroup;
   cancelBtn: any;
   cancelEvent: any;
   createButton: string =
@@ -53,185 +63,220 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
       confirmSave: true,
     },
   };
+  columnFilters: any = [];
 
-  constructor(private lotparamsService: LotParamsService) {
+  //
+
+  constructor(
+    private lotparamsService: LotParamsService,
+    private fb: FormBuilder,
+    private serviceLot: LotService
+  ) {
     super();
     this.paramSettings.columns = BATCH_PARAMETERS_COLUMNS;
     this.paramSettings.actions.delete = true;
+
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: false,
+        add: false,
+        delete: false,
+        position: 'right',
+      },
+      columns: { ...BATCH_PARAMETERS_COLUMNS },
+    };
   }
 
   ngOnInit(): void {
-    this.hideFilters();
-    this.params
+    // this.hideFilters();
+    this.lotData
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              idLot: () => (searchFilter = SearchFilter.EQ),
+              idEvent: () => (searchFilter = SearchFilter.EQ),
+              publicLot: () => (searchFilter = SearchFilter.EQ),
+              specialGuarantee: () => (searchFilter = SearchFilter.EQ),
+            };
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              // this.columnFilters[field] = `${filter.search}`;
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.paramsList = this.pageFilter(this.paramsList);
+          //Su respectivo metodo de busqueda de datos
+          this.getLotParams();
+        }
+      });
+
+    this.paramsList
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getLotParams());
+    this.prepareForm();
+  }
+
+  //
+
+  private prepareForm() {
+    this.form = this.fb.group({
+      idEvent: [null, Validators.required],
+      lotePublico: [null, Validators.required],
+      garantia: [null, Validators.required],
+    });
+  }
+
+  getLotByFilters() {
+    let params: HttpParams = new HttpParams();
+
+    params = params.append(
+      'filter.idEvent',
+      this.form.controls['idEvent'].value
+    );
+    params = params.append(
+      'filter.lotPublic',
+      this.form.controls['lotePublico'].value
+    );
+    params = params.append(
+      'filter.priceGuarantee',
+      this.form.controls['garantia'].value
+    );
+
+    this.serviceLot.getAllComerLotsByFilter(params).subscribe({
+      next: response => {
+        this.lotServiceArray = response.data;
+        this.preValidatedSaveAll();
+        setTimeout(() => {
+          this.getLotParams();
+        }, 1000);
+      },
+      error: error => {
+        if (error.status == 400) {
+          this.alert('warning', 'Advertencia', 'No Existe(n) Registro(s)');
+        } else {
+          this.alert('error', 'Error', 'Ha Ocurrido un Error');
+        }
+      },
+    });
   }
 
   getLotParams() {
-    const params = this.params.getValue();
     this.loading = true;
-    this.lotparamsService.getAll(params).subscribe({
+    this.totalItems = 0;
+    let params = {
+      ...this.paramsList.getValue(),
+      ...this.columnFilters,
+    };
+    this.lotparamsService.getAll_(params).subscribe({
       next: response => {
         this.loading = false;
-        this.lotparams = response.data;
+        this.lotData.load(response.data);
+        this.lotData.refresh();
         this.totalItems = response.count;
+        this.lotServiceArrayTwo = response.data;
       },
-      error: () => (this.loading = false),
-    });
-  }
-
-  hideFilters() {
-    setTimeout(() => {
-      let filterArray = document.getElementsByClassName('ng2-smart-filters');
-      this.filterRow = filterArray.item(0);
-      this.filterRow.classList.add('d-none');
-      this.addOption = document
-        .getElementsByClassName('ng2-smart-action-add-add')
-        .item(0);
-    }, 200);
-  }
-
-  addRow() {
-    this.adding = true;
-    this.addOption.click();
-    setTimeout(() => {
-      this.addRowElement = document
-        .querySelectorAll('tr[ng2-st-thead-form-row]')
-        .item(0);
-      this.addRowElement.classList.add('row-no-pad');
-      this.addRowElement.classList.add('add-row-height');
-      this.cancelBtn = document.querySelectorAll('.cancel').item(0);
-      this.cancelEvent = this.handleCancel.bind(this);
-      this.cancelBtn.addEventListener('click', this.cancelEvent);
-    }, 300);
-  }
-
-  handleCancel() {
-    this.adding = false;
-    this.cancelBtn = document.querySelectorAll('.cancel').item(0);
-    this.cancelBtn.removeEventListener('click', this.cancelEvent);
-  }
-
-  alertTable() {
-    this.onLoadToast(
-      'error',
-      'Campos incompletos',
-      'Complete todos los campos para agregar un registro'
-    );
-  }
-
-  async addEntry(event: any) {
-    let { newData, confirm } = event;
-
-    if (
-      !newData.idEvent ||
-      newData.idLot == '' ||
-      newData.specialGuarantee == ''
-    ) {
-      this.alertTable();
-      return;
-    }
-    const requestBody = {
-      idLot: '',
-      idEvent: event.newData.idEvent,
-      publicLot: event.newData.publicLot,
-      specialGuarantee: event.newData.specialGuarantee,
-      nbOrigin: '',
-    };
-
-    // Llamar servicio para agregar registro
-    this.lotparamsService.createLotParameter(requestBody).subscribe({
-      next: resp => {
-        this.msgModal(
-          'Guardado con exito '.concat(`<strong>${requestBody.idLot}</strong>`),
-          'Parametro Guardado',
-          'success'
-        );
-        confirm.resolve(newData);
-        this.adding = false;
-        this.totalItems += 1;
-      },
-      error: err => {
-        console.log('Hubo un error: ', err);
-        this.msgModal(
-          'Error: '.concat(`<strong>${err.error.message}</strong>`),
-          'Error al guardar',
-          'error'
-        );
+      error: error => {
+        this.totalItems = 0;
+        this.lotData.load([]);
+        this.loading = false;
       },
     });
   }
 
-  editEntry(event: any) {
-    let { newData, confirm } = event;
-    if (
-      !newData.idEvent ||
-      newData.idLot == '' ||
-      newData.specialGuarantee == ''
-    ) {
-      this.alertTable();
-      return;
-    }
-
-    const requestBody = {
-      idLot: event.newData.idLot,
-      idEvent: event.newData.idEvent,
-      publicLot: event.newData.publicLot,
-      specialGuarantee: event.newData.specialGuarantee,
-      nbOrigin: '',
-    };
-    // Llamar servicio para eliminar
-    this.lotparamsService.update(event.newData.idLot, requestBody).subscribe({
-      next: resp => {
-        this.msgModal(
-          'Actualizaci&oacute;n exitosa '.concat(
-            `<strong>${requestBody.idLot}</strong>`
-          ),
-          'Par&aacute;metro guardado',
-          'success'
-        );
+  putLotParams(body: any) {
+    let responseLocal: any;
+    this.lotparamsService.update(body.idLot, body).subscribe({
+      next: response => {
+        return (responseLocal = response.data);
+      },
+      error: error => {
+        this.alert('error', 'Error', 'Ha Ocurrido un Error');
+        return responseLocal;
       },
     });
-    confirm.resolve(newData);
+    responseLocal;
   }
 
-  deleteEntry(event: any) {
-    let { confirm } = event;
-    const idLot = event.data.idLot;
+  postLorParams(body: any) {
+    let responseLocal: any = null;
+    this.lotparamsService.createLotParameter(body).subscribe({
+      next: response => {
+        return (responseLocal = response.data);
+      },
+      error: error => {
+        this.alert('error', 'Error', 'Ha Ocurrido un Error');
+        return responseLocal;
+      },
+    });
+    responseLocal;
+  }
 
-    this.alertQuestion(
-      'question',
-      'Eliminar',
-      '¿Desea eliminar el registro?',
-      'Aceptar'
-    ).then(question => {
-      if (question.isConfirmed) {
-        // Llamar servicio para eliminar
-        this.lotparamsService.remove(idLot).subscribe({
-          next: resp => {
-            this.msgModal(
-              'Se elimino el parametro '.concat(`<strong>${idLot}</strong>`),
-              'Eliminaci&oacute;n exitosa',
-              'success'
-            );
+  preValidatedSaveAll() {
+    let object: any;
+    let message: string = '';
+    let count: number = 0;
+    if (this.lotServiceArray != null) {
+      for (const i of this.lotServiceArray) {
+        let params: HttpParams = new HttpParams();
+        params = params.append('filter.idLot', i.idLot);
+
+        this.lotparamsService.getAll_(params).subscribe({
+          next: response => {
+            object = response.data[0];
+            if (object != null) {
+              object.idEvent = i?.idEvent;
+              object.idLot = i.idLot;
+              object.publicLot = i.lotPublic;
+              object.specialGuarantee = i.priceGuarantee;
+              object.nbOrigin = '';
+              this.putLotParams(object);
+              count++;
+            }
+          },
+          error: error => {
+            object = {
+              idEvent: i.idEvent,
+              idLot: i.idLot,
+              publicLot: i.lotPublic,
+              specialGuarantee: i.priceGuarantee,
+              nbOrigin: '',
+            };
+            this.postLorParams(object);
+            count++;
           },
         });
-
-        confirm.resolve(event.newData);
-        this.totalItems -= 1;
       }
-    });
+
+      setTimeout(() => {
+        this.resetForm();
+        if (count == this.lotServiceArray.length) {
+          this.alert(
+            'success',
+            'Parámetros por Lote',
+            `Agregados Correctamente`
+          );
+        }
+      }, 1000);
+    }
   }
 
-  msgModal(message: string, title: string, typeMsg: any) {
-    Swal.fire({
-      title: title,
-      html: message,
-      icon: typeMsg,
-      showCancelButton: false,
-      confirmButtonColor: '#9D2449',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Aceptar',
-    }).then(result => {});
+  resetForm() {
+    this.form.reset();
   }
 }

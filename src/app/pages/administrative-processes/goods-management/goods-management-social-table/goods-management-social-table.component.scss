@@ -1,0 +1,13 @@
+:host ::ng-deep ng2-smart-table {
+  tr th.officeProce {
+    ng2-smart-table-filter {
+      display: none;
+    }
+  }
+}
+
+:host ::ng-deep app-columns-select {
+  #dropdown-basic.dropdown-menu.show {
+    transform: translate3d(-92px, 0px, 0px) !important;
+  }
+}

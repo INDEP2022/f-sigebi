@@ -1,24 +1,109 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, map } from 'rxjs';
+import { HasMoreResultsComponent } from 'src/app/@standalone/has-more-results/has-more-results.component';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IGood } from 'src/app/core/models/ms-good/good';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryNumeraryService } from 'src/app/core/services/ms-historynumerary/historynumerary.service';
+import { MassiveNumeraryService } from 'src/app/core/services/ms-massivenumerary/massivenumerary.service';
+import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-
+import { ApplyLifRequest } from './apply-lif-requests';
 @Component({
   selector: 'app-apply-lif',
   templateUrl: './apply-lif.component.html',
-  styles: [],
+  styles: [
+    `
+      .loader-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: white;
+        background: #ffffff75;
+        z-index: 100;
+      }
+    `,
+  ],
 })
-export class ApplyLifComponent extends BasePage implements OnInit {
+export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
   public form: FormGroup;
   public disabled: boolean = true;
 
-  constructor(private fb: FormBuilder, private datePipe: DatePipe) {
+  constructor(
+    private fb: FormBuilder,
+    private datePipe: DatePipe,
+    private authService: AuthService,
+    private securityService: SecurityService,
+    protected goodService: GoodService,
+    protected massiveNumeraryService: MassiveNumeraryService,
+    protected historyNumeraryService: HistoryNumeraryService,
+    protected parameterModService: ParameterModService,
+    protected modal: BsModalService,
+    private router: Router
+  ) {
     super();
   }
+  edit = false;
+  userName: string = '';
+  isVisibleMotive = true;
+  isContConvVisible = false;
+  isVisibleVal15 = true;
+  isEnableBtnLif = false;
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  lif: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  validPermisos: boolean = true;
+  dataUserLoggedTokenData: any;
+  isEnableBtnRvlif = false;
+  formGood = new FormGroup({
+    id: new FormControl(''),
+    description: new FormControl(''),
+    status: new FormControl(''),
+    fileNumber: new FormControl(''),
+    identifier: new FormControl(''),
+    extDomProcess: new FormControl(''),
+  });
+
+  formGood1 = new FormGroup({
+    goodReferenceNumber: new FormControl(''),
+    id: new FormControl(''),
+    goodId: new FormControl(''),
+    val2: new FormControl(null),
+    val10: new FormControl(null),
+    val13: new FormControl(null),
+    val15: new FormControl(null),
+    contConv: new FormControl(),
+    status: new FormControl(''),
+  });
+
+  formBlkControl = new FormGroup({
+    dateChange: new FormControl(null),
+    motive: new FormControl(''),
+    tTotal: new FormControl(null),
+  });
 
   ngOnInit(): void {
+    this.userName = this.authService.decodeToken().username;
     this.handleForm();
+    // console.log(this.formGood.value.id);
+    // console.log(this.formGood1.value.id);
+    this.userTracker();
   }
 
   public handleForm(): void {
@@ -46,6 +131,193 @@ export class ApplyLifComponent extends BasePage implements OnInit {
       totalIva: [null],
       total: [null],
     });
+  }
+  userTracker() {
+    this.securityService
+      .getScreenUser('FMCOMDONAC_1', this.userName)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data.data);
+          data.data.map((filter: any) => {
+            switch (true) {
+              case filter.readingPermission == 'S' &&
+                filter.writingPermission == 'S':
+                this.edit = true;
+                console.log('readYes and writeYes');
+                this.validPermisos = true;
+                break;
+              case filter.readingPermission == 'S' &&
+                filter.writingPermission == 'N':
+                this.edit = false;
+                this.validPermisos = false;
+                console.log('readYes and writeNO');
+                break;
+              case filter.readingPermission == 'N' &&
+                filter.writingPermission == 'S':
+                this.edit = true;
+                this.validPermisos = true;
+                console.log('readNo and writeYes');
+                break;
+              default:
+                this.alert(
+                  'info',
+                  'No tiene permiso de Lectura y/o Escritura sobre la Pantalla',
+                  ''
+                );
+                // return;
+                this.edit = false;
+                this.validPermisos = false;
+                console.log('sin permisos');
+            }
+          });
+        },
+        error: (error: any) => {
+          this.edit = false;
+          this.validPermisos = false;
+          console.log('sin permisos');
+          this.alert(
+            'info',
+            'No tiene permiso de Lectura y/o Escritura sobre la Pantalla',
+            ''
+          );
+        },
+      });
+  }
+
+  getGood() {
+    if (!this.formGood.value.id) return;
+    this.loading = true;
+    const listParams = new ListParams();
+    listParams['filter.id'] = this.formGood.value.id;
+    this.clean();
+    this.goodService
+      .getAll(listParams)
+      .pipe(map(x => x.data[0]))
+      .subscribe({
+        next: good => {
+          this.formGood.patchValue(good as any);
+          this.formGood1.get('goodReferenceNumber').setValue(good.id as any);
+          this.getGood1(good.id);
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
+  }
+
+  getGood1(goodId: number) {
+    this.getGoodByReference(goodId).subscribe({
+      next: async good => {
+        // this.formGood1.patchValue(good as any);
+        // await this.postQueryGood1();
+        this.changeGood1(good);
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+
+  openSelectorGood() {
+    const option: Partial<HasMoreResultsComponent> = {
+      title: 'Seleccionar bien',
+      ms: 'good',
+      columns: {
+        id: { title: 'No. Bien' },
+        description: { title: 'Descripción' },
+        status: { title: 'Estatus' },
+        fileNumber: { title: 'No. Expediente' },
+      },
+      path: 'good',
+      queryParams: { 'filter.goodReferenceNumber': this.formGood.value.id },
+    };
+    this.modal
+      .show(HasMoreResultsComponent, {
+        class: 'modal-xl',
+        initialState: option,
+      })
+      .content.onClose.subscribe({
+        next: (good: any) => {
+          console.log(good);
+          this.changeGood1(good);
+        },
+      });
+  }
+
+  async changeGood1(good: IGood) {
+    this.loading = true;
+    this.formGood1.patchValue(good as any);
+    await this.postQueryGood1();
+    this.loading = false;
+  }
+
+  async postQueryGood1() {
+    let TOT: number;
+    const good1 = this.formGood1.getRawValue();
+    try {
+      TOT = await this.getCountGoodByReference(this.formGood.value.id);
+      try {
+        const { dateChange } = await this.getChangeNumeraryByGood(
+          this.formGood.value.id,
+          good1.id
+        );
+        this.formBlkControl.get('dateChange').setValue(new Date(dateChange));
+      } catch (error) {
+        this.loading = false;
+        try {
+          const params = new ListParams();
+          params['filter.originalGood'] = this.formGood.value.id;
+          params['filter.goodNumeraryNumber'] = good1.id;
+          const { dateChange } = await this.getHistoricalNumeraryByGood(params);
+          this.formBlkControl.get('dateChange').setValue(new Date(dateChange));
+        } catch (error) {
+          this.formBlkControl.get('dateChange').setValue(null);
+          this.loading = false;
+        }
+      }
+
+      try {
+        const params = new ListParams();
+        params['filter.originalGood'] = this.formGood.value.id;
+        params['filter.goodNumeraryNumber'] = good1.id;
+        const { reason } = await this.getHistoricalNumeraryByGood(params);
+        this.formBlkControl.get('motive').setValue(reason);
+        this.isVisibleMotive = true;
+      } catch (error) {
+        this.isVisibleMotive = false;
+        this.loading = false;
+      }
+
+      this.formGood1.get('contConv').setValue(TOT);
+      if (TOT == 0) {
+        this.isContConvVisible = false;
+      } else {
+        this.isContConvVisible = true;
+      }
+      const val15 = good1.val15 || 0;
+      if (val15 == 0) {
+        const tTotal = good1.val2 - good1.val13 - (good1.val10 || 0);
+        this.formBlkControl.get('tTotal').setValue(tTotal);
+        this.isVisibleVal15 = false;
+        this.formGood1.get('val15').disable();
+        this.isEnableBtnLif = true;
+        this.isEnableBtnRvlif = false;
+      } else {
+        const tTotal =
+          Number(good1.val2) -
+          (Number(good1.val13) + Number(good1.val15)) -
+          (Number(good1.val10) || 0);
+        this.formBlkControl.get('tTotal').setValue(tTotal);
+        this.isVisibleVal15 = true;
+        this.formGood1.get('val15').enable();
+        this.isEnableBtnLif = false;
+        this.isEnableBtnRvlif = true;
+      }
+    } catch (error) {
+      this.loading = false;
+      console.log(error);
+    }
   }
 
   public send() {
@@ -78,7 +350,114 @@ export class ApplyLifComponent extends BasePage implements OnInit {
     for (const key in params) {
       if (params[key] === null) delete params[key];
     }
-    this.onLoadToast('success', '', 'Reporte generado');
+    this.alert('success', 'Reporte Generado', '');
     this.loading = false;
+  }
+
+  clean() {
+    this.formBlkControl.reset();
+    this.formGood.reset();
+    this.formGood1.reset();
+    this.isEnableBtnLif = false;
+    this.isEnableBtnRvlif = false;
+  }
+
+  async onClickApplyLif() {
+    let VLIF: number;
+    let VEST: string;
+    let GAST: number;
+    let LIF: number;
+    const good1 = this.formGood1.getRawValue();
+    try {
+      GAST = this.formGood1.value.val13;
+      LIF = good1.val15;
+      let params = new ListParams();
+      params['filter.id'] = this.formGood1.value.id;
+      const { status } = await this.getGoodParams(params, true);
+      VEST = status;
+
+      if (VEST != 'ADM') {
+        this.alert(
+          'warning',
+          'El bien numerario no se encuentra en un estatus valido para esta operación',
+          ''
+        );
+      } else {
+        params = new ListParams();
+        params['filter.parameter'] = 'LIF';
+        const { value } = await this.getComerParameterMod(params);
+        VLIF = Number(value);
+        this.lif = (good1.val2 - good1.val10) * VLIF;
+        good1.val15 = this.lif;
+        this.formGood1.get('val15').setValue(this.lif.toFixed(2));
+        console.log(this.lif);
+        GAST = Number(this.formGood1.value.val13) + Number(this.lif);
+        console.log(GAST);
+        this.formBlkControl
+          .get('tTotal')
+          .setValue(
+            Number(this.formGood1.value.val2) -
+              (Number(GAST) || 0) -
+              Number(this.formGood1.value.val10)
+          );
+        this.commit();
+      }
+    } catch (error) {
+      this.alert('error', 'El bien numerario no se encuentra', '');
+      console.log(error);
+    }
+  }
+
+  async onClickApplyRvlif() {
+    // DECLARE
+    let VLIF: number;
+    const good1 = this.formGood1.getRawValue();
+    let VEST: string;
+    try {
+      let params = new ListParams();
+      params['filter.id'] = good1.id;
+      const { status } = await this.getGoodParams(params, true);
+      VEST = status;
+      if (VEST != 'ADM') {
+        this.alert(
+          'warning',
+          'El bien numerario no se encuentra en un estatus valido para esta operación',
+          ''
+        );
+        return;
+      } else {
+        params = new ListParams();
+        params['filter.parameter'] = 'LIF';
+        const { value } = await this.getComerParameterMod(params);
+        VLIF = Number(value);
+        this.formGood1.get('val13').setValue(good1.val13);
+        this.formGood1.get('val15').setValue(0);
+        this.formBlkControl
+          .get('tTotal')
+          .setValue(good1.val2 - good1.val13 - (good1.val10 || 0));
+        // LIP_COMMIT_SILENCIOSO;
+        this.commit();
+      }
+      // GO_BLOCK('BIENES1');
+      // EXECUTE_QUERY;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  commit() {
+    const auxBody = { ...this.formGood1.getRawValue() };
+    delete auxBody.contConv;
+    // auxBody.val15 = String(auxBody.val15) || null;
+
+    this.goodService.update(auxBody).subscribe({
+      next: () => {
+        this.alert('success', 'Bien Actualizado', '');
+        this.postQueryGood1();
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
   }
 }

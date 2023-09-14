@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStatusCode } from 'src/app/core/models/catalogs/status-code.model';
 import { StatusCodeService } from 'src/app/core/services/catalogs/status-code.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-status-code-form',
@@ -13,7 +14,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class StatusCodeFormComponent extends BasePage implements OnInit {
   statusCodeForm: ModelForm<IStatusCode>;
-  title: string = 'Código estado';
+  title: string = 'Código Estado';
   edit: boolean = false;
   statusCode: IStatusCode;
   constructor(
@@ -32,28 +33,29 @@ export class StatusCodeFormComponent extends BasePage implements OnInit {
     this.statusCodeForm = this.fb.group({
       id: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.minLength(1),
           Validators.maxLength(5),
-          Validators.pattern('STRING_PATTERN'),
-        ]),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       descCode: [
         null,
-        Validators.compose([
+        [
+          Validators.required,
           Validators.minLength(1),
           Validators.maxLength(50),
-          Validators.pattern('STRING_PATTERN'),
-        ]),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       order: [
         null,
-        Validators.compose([
+        [
           Validators.minLength(1),
           Validators.maxLength(3),
-          Validators.pattern('NUMBERS_PATTERN'),
-        ]),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
     });
     if (this.statusCode != null) {
@@ -70,26 +72,94 @@ export class StatusCodeFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.statusCodeService.create(this.statusCodeForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (
+      this.statusCodeForm.controls['id'].value.trim() == '' ||
+      this.statusCodeForm.controls['descCode'].value.trim() == '' ||
+      (this.statusCodeForm.controls['id'].value.trim() == '' &&
+        this.statusCodeForm.controls['descCode'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      /*this.loading = true;
+      const params: ListParams = new ListParams();
+      let count: number;
+      params['filter.id'] = this.statusCodeForm.controls['id'].value;
+      this.statusCodeService.getAll(params).subscribe({
+        next: response => {
+          count = response.count;
+          if (response.count > 0) {
+            this.alert('warning', 'Código estado', 'La clave ya existe.');
+          } else {
+            this.statusCodeService
+              .create(this.statusCodeForm.getRawValue())
+              .subscribe({
+                next: data => this.handleSuccess(),
+                error: error => (this.loading = false),
+              });
+          }
+          this.loading = false;
+        },
+        error: error => {
+          if (count > 0) {
+            this.alert('warning', 'Código estado', 'La clave ya existe.');
+          } else {
+            this.statusCodeService
+              .create(this.statusCodeForm.getRawValue())
+              .subscribe({
+                next: data => this.handleSuccess(),
+                error: error => (this.loading = false),
+              });
+          }
+
+          this.loading = false;
+        },
+      });*/
+      this.alertQuestion(
+        'question',
+        'El registro ya existe',
+        '¿Desea reemplazarlo?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          //Ejecutar el servicio
+          this.statusCodeService
+            .create(this.statusCodeForm.getRawValue())
+            .subscribe({
+              next: data => this.handleSuccess(),
+              error: error => {
+                console.log(error);
+              },
+            });
+        }
+      });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.statusCodeService
-      .update(this.statusCode.id, this.statusCodeForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.statusCodeForm.controls['id'].value.trim() == '' ||
+      this.statusCodeForm.controls['descCode'].value.trim() == '' ||
+      (this.statusCodeForm.controls['id'].value.trim() == '' &&
+        this.statusCodeForm.controls['descCode'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.statusCodeService
+        .newUpdate(this.statusCodeForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

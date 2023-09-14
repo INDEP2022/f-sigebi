@@ -1,18 +1,70 @@
-export const RES_CANCEL_VALUATION_COLUMS = {
-  noBien: {
+export const VALUATION_REQUEST_COLUMNS = {
+  no_bien: {
     title: 'No. Bien',
     sort: false,
   },
-  description: {
+  descripcion: {
     title: 'Descripción',
     sort: false,
   },
-  status: {
-    title: 'Estado',
+  estatus: {
+    title: 'Estatus',
     sort: false,
   },
-  motive: {
-    title: 'Motivos',
+};
+
+export const VALUATION_REQUEST_COLUMNS_VALIDATED = {
+  no_bien: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  descripcion: {
+    title: 'Descripción',
+    sort: false,
+  },
+};
+
+export const VALUATION_REQUEST_COLUMNS_TWO = {
+  no_bien: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  descripcion: {
+    title: 'Descripción',
+    sort: false,
+  },
+  estatus: {
+    title: 'Estatus',
+    sort: false,
+  },
+  motivos: {
+    title: 'Motivo(s)',
+    sort: false,
+  },
+};
+
+export const VALUATION_REQUEST_COLUMNS_VALIDATED_TWO = {
+  no_bien: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  descripcion: {
+    title: 'Descripción',
+    sort: false,
+  },
+  motivos: {
+    title: 'Motivo(s)',
+    sort: false,
+  },
+};
+
+export const MOT_CAN = {
+  id_motivo: {
+    title: 'No. Motivo',
+    sort: false,
+  },
+  descripcion_motivo: {
+    title: 'Descripcíon',
     sort: false,
   },
 };

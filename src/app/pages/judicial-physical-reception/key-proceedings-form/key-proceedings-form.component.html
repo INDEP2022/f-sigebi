@@ -1,5 +1,5 @@
-<ng-container [formGroup]="form">
-  <div class="row mr-0">
+<ng-container>
+  <!-- <div class="row mr-0" style="margin: auto">
     <div class="col-md-12 mt-3 pr-0">
       <ng2-smart-table
         *ngIf="source"
@@ -8,14 +8,282 @@
         [source]="source"
         (editConfirm)="updateKeysProcedding($event)"></ng2-smart-table>
     </div>
+    <table class="table-bordered">
+      <thead>
+        <tr>
+          <th *ngIf="!disabled">Acciones</th>
+          <th>Tipo</th>
+          <th>Prog.</th>
+          <th>Transferente</th>
+          <th>Área</th>
+          <th>Usuario</th>
+          <th>Folio</th>
+          <th>Año</th>
+          <th>Mes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td *ngIf="!disabled">
+            <a *ngIf="!row.editing" (click)="row.editing = true">
+              <span class="fa fa-pencil-alt text-warning mx-2"></span>
+            </a>
+            <a
+              *ngIf="row.editing"
+              class="checkEdit"
+              (click)="row.editing = false; updateRow(row)">
+              <span class="fa fa-solid fa-check text-success mx-2"></span>
+            </a>
+            <a *ngIf="row.editing" (click)="row.editing = false; revert()">
+              <span class="fa fa-solid fa-ban text-danger mx-2"></span>
+            </a>
+          </td>
+          <td [class]="haveError(row[0]) ? 'error' : ''">
+            <div *ngIf="!row.editing">{{ row[0] }}</div>
+            <div *ngIf="row.editing">
+              <ng-select [(ngModel)]="row[0]" [clearable]="false">
+                <ng-option
+                  *ngFor="let item of typeOtions"
+                  [value]="item.value"
+                  >{{ item.label }}</ng-option
+                >
+              </ng-select>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="!row.editing">{{ row[1] }}</div>
+            <div *ngIf="row.editing">
+              <ng-select [(ngModel)]="row[1]" [clearable]="false">
+                <ng-option
+                  *ngFor="let item of progOptions"
+                  [value]="item.value"
+                  >{{ item.label }}</ng-option
+                >
+              </ng-select>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="!row.editing">{{ row[2] }}</div>
+            <div *ngIf="row.editing">
+              <ng-select [(ngModel)]="row[2]" [clearable]="false">
+                <ng-option
+                  *ngFor="let item of transfers"
+                  [value]="item.value"
+                  >{{ item.label }}</ng-option
+                >
+              </ng-select>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="!row.editing">{{ row[3] }}</div>
+            <div *ngIf="row.editing">
+              <ng-select [(ngModel)]="row[3]" [clearable]="false">
+                <ng-option
+                  *ngFor="let item of areas"
+                  [value]="item.delegation"
+                  >{{ item.delegation }}</ng-option
+                >
+              </ng-select>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="!row.editing">{{ row[4] }}</div>
+            <div *ngIf="row.editing">
+              <ng-select [(ngModel)]="row[4]" [clearable]="false">
+                <ng-option *ngFor="let item of users" [value]="item.value">{{
+                  item.label
+                }}</ng-option>
+              </ng-select>
+            </div>
+          </td>
+          <td [class]="haveError(row[5]) ? 'error' : ''">
+            <div *ngIf="!row.editing">{{ row[5] }}</div>
+            <div *ngIf="row.editing">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="10"
+                [(ngModel)]="row[5]" />
+              <div class="errorMessage" *ngIf="haveErrorRequired(row[5])">
+                El campo es obligatorio
+              </div>
+              <div
+                class="errorMessage"
+                *ngIf="row[5] && haveNumericError(row[5])">
+                El campo debe ser númerico
+              </div>
+            </div>
+          </td>
+          <td [class]="haveErrorRequired(row[6]) ? 'error' : ''">
+            <div *ngIf="!row.editing">{{ row[6] }}</div>
+            <div *ngIf="row.editing">
+              <input
+                type="number"
+                class="form-control"
+                max="2999"
+                min="1"
+                [(ngModel)]="row[6]" />
+              <div class="errorMessage" *ngIf="haveErrorRequired(row[6])">
+                El campo es obligatorio
+              </div>
+            </div>
+          </td>
+          <td [class]="haveErrorRequired(row[7]) ? 'error' : ''">
+            <div *ngIf="!row.editing">{{ row[7] }}</div>
+            <div *ngIf="row.editing">
+              <input
+                type="number"
+                class="form-control"
+                max="12"
+                min="1"
+                [(ngModel)]="row[7]" />
+              <div class="errorMessage" *ngIf="haveErrorRequired(row[7])">
+                El campo es obligatorio
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  <div class="row mr-0">
-    <div class="col-md-8 mt-5 pr-0">
+
+  <ng-template #requiredError let-row="row">
+    <div class="errorMessage" *ngIf="row === true">El campo es obligatorio</div>
+  </ng-template>
+  <ng-template #numericError let-row="row">
+    <div class="errorMessage" *ngIf="row === true">
+      El campo debe ser númerico
+    </div>
+  </ng-template> -->
+
+  <!-- <div class="row mr-0" [formGroup]="form">
+    <div class="col-md-12 mt-3 pr-0">
+      <ng2-smart-table
+        *ngIf="source"
+        class="col-md-12 p-0 table-responsive"
+        [settings]="settingKeysProceedings"
+        [source]="source"
+        (editConfirm)="updateRow($event)"></ng2-smart-table>
+    </div>
+    <div class="col-md-9 mt-5 pr-0">
       <div>
         <form-field [control]="form.get(formField)" label="Clave Acta">
           <input class="form-control" formControlName="claveActa" readonly />
         </form-field>
       </div>
     </div>
-  </div>
+  </div> -->
+  <form class="form-material" [formGroup]="form">
+    <div class="row pt-4">
+      <form-field class="col-md-2" [control]="form.get('type')">
+        <ngx-select
+          (change)="generateCve()"
+          [data]="typeOtions"
+          [form]="form"
+          [searchable]="false"
+          [clearable]="false"
+          [readonly]="disabled"
+          value="value"
+          bindLabel="label"
+          label="Tipo"
+          control="type">
+        </ngx-select>
+      </form-field>
+
+      <form-field class="col-md-1" [control]="form.get('prog')">
+        <ngx-select
+          [data]="progOptions"
+          [searchable]="false"
+          [form]="form"
+          [clearable]="false"
+          [readonly]="disabled"
+          value="value"
+          bindLabel="label"
+          label="Prog."
+          control="prog">
+        </ngx-select>
+      </form-field>
+
+      <form-field class="col-md-3" [control]="form.get('transference')">
+        <ngx-select
+          (click)="transferClick()"
+          [data]="transfers"
+          [form]="form"
+          [readonly]="disabled"
+          value="value"
+          bindLabel="label"
+          label="Transferente"
+          control="transference">
+        </ngx-select>
+      </form-field>
+
+      <form-field class="col-md-3" [control]="form.get('area')">
+        <ngx-select
+          [data]="areas"
+          (change)="generateCve()"
+          (fetchByParamsItems)="getAreas($event)"
+          [fetchByList]="false"
+          [searchOnInit]="true"
+          [form]="form"
+          [readonly]="disabled"
+          value="delegation"
+          bindLabel="delegation"
+          label="Área"
+          control="area">
+        </ngx-select>
+      </form-field>
+
+      <form-field class="col-md-3" [control]="form.get('user')">
+        <ngx-select
+          [data]="users"
+          [form]="form"
+          [readonly]="disabled"
+          value="value"
+          bindLabel="value"
+          label="Usuario"
+          control="user">
+        </ngx-select>
+      </form-field>
+    </div>
+
+    <div class="row pt-4">
+      <form-field class="col-3" [control]="form.get('folio')" label="Folio">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="folio"
+          [readOnly]="disabled" />
+      </form-field>
+
+      <form-field class="col-1" [control]="form.get('year')" label="Año">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="year"
+          maxlength="2"
+          [readOnly]="disabled" />
+      </form-field>
+
+      <form-field class="col-1" [control]="form.get('month')" label="Mes">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="month"
+          maxlength="2"
+          [readOnly]="disabled" />
+      </form-field>
+
+      <form-field
+        class="col-7"
+        [control]="form.get('keysProceedings')"
+        label="Cve. Acta">
+        <input
+          [max-length]="60"
+          type="text"
+          class="form-control"
+          formControlName="keysProceedings"
+          readonly />
+      </form-field>
+    </div>
+  </form>
 </ng-container>

@@ -1,6 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { KEYGENERATION_PATTERN } from 'src/app/core/shared/patterns';
 import { ProceedingsValidationsService } from './../../../../core/services/ms-proceedings/proceedings-validations.service';
@@ -16,28 +23,92 @@ export class RecordsValidationComponent extends BasePage implements OnInit {
   fileNumber: number;
   proceedingsNumb: number;
   proceedingsCve: string;
-  dataTable: any[] = [];
+  dataTable: LocalDataSource = new LocalDataSource();
   correctRecords: number = 0;
   recordsCount: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
+  columnFilters: any = [];
+  origin: string = null;
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
 
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
-    private proceedingsValidationsService: ProceedingsValidationsService
+    private proceedingsValidationsService: ProceedingsValidationsService,
+    private router: Router
   ) {
     super();
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.origin = params['origin'] ?? null;
+      });
+    console.log('origin: ', this.origin);
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: false,
       columns: RECORDS_VALDIATION_COLUMNS,
+      rowClassFunction: (row: any) => {
+        if (row.data.statusValue === '1') {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-danger text-white';
+        }
+      },
     };
   }
 
   ngOnInit(): void {
+    const exist = this.filterParams.getValue().getFilterParams();
+    if (exist) {
+      const filters = exist.split('&');
+      filters.map(fil => {
+        const partsFilter = fil.split('=');
+        this.columnFilters[partsFilter[0]] = partsFilter[1];
+      });
+    }
+
+    this.dataTable
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            switch (filter.field) {
+              case 'valSec':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+
+          this.getInfo();
+        }
+      });
+
     this.prepareForm();
     this.getParams();
     this.setForm();
-    this.getInfo();
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getInfo();
+    });
   }
 
   getParams() {
@@ -57,19 +128,41 @@ export class RecordsValidationComponent extends BasePage implements OnInit {
   }
 
   getInfo() {
+    this.loading = true;
     let data: any[] = [];
-    let temp: any = {};
-    this.proceedingsValidationsService.getAll(this.proceedingsNumb).subscribe({
+
+    const params = {
+      ...this.params.getValue(),
+      'filter.actaNumber': `$eq:${this.proceedingsNumb}`,
+      ...this.columnFilters,
+    };
+    const params2 = {
+      ...this.params.getValue(),
+      'filter.actaNumber': `$eq:${this.proceedingsNumb}`,
+      'filter.valStatus': `$eq:1`,
+      ...this.columnFilters,
+    };
+
+    this.proceedingsValidationsService.getAll(params).subscribe({
       next: resp => {
         for (let validation of resp.data) {
-          (temp.secVal = validation.secVal),
-            (temp.descVal = validation.proceedingsType.descVal),
-            (temp.resultValue = validation.resultValue);
-          if (validation.statusValue == 1) this.correctRecords++;
-          this.recordsCount++;
+          let temp: any = {};
+          (temp.valSec = validation.valSec),
+            (temp.valDescription =
+              validation.valDescription.charAt(0).toUpperCase() +
+              validation.valDescription.substring(1).toLowerCase()),
+            (temp.valResult =
+              validation.valResult.charAt(0).toUpperCase() +
+              validation.valResult.substring(1).toLowerCase()),
+            (temp.statusValue = validation.valStatus);
           data.push(temp);
         }
-        this.dataTable = data;
+
+        this.dataTable.load(data);
+        this.recordsCount = resp.count;
+
+        this.totalItems = resp.count;
+        this.loading = false;
       },
       error: err => {
         if (err.status <= 404) {
@@ -78,7 +171,18 @@ export class RecordsValidationComponent extends BasePage implements OnInit {
             'Información',
             'No existen validadores para esta acta'
           );
+          this.loading = false;
         }
+      },
+    });
+
+    this.proceedingsValidationsService.getAll(params2).subscribe({
+      next: resp => {
+        this.correctRecords = resp.count;
+        this.loading = false;
+      },
+      error: err => {
+        this.loading = false;
       },
     });
   }
@@ -98,5 +202,14 @@ export class RecordsValidationComponent extends BasePage implements OnInit {
 
   OnDestroy() {
     console.log('Saliendo');
+  }
+
+  goBack() {
+    if (this.origin == 'FACTREFACTADEVOLU') {
+      console.log('entra a goback');
+      this.router.navigate([
+        '/pages/documents-reception/closing-of-confiscation-and-return-records',
+      ]);
+    }
   }
 }

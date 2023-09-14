@@ -1,6 +1,8 @@
+import { DatePipe } from '@angular/common';
+
 export const EXPEDIENTS_REQUEST_COLUMNS = {
   id: {
-    title: 'No. solicitud',
+    title: 'No. Solicitud',
     type: 'string',
     sort: false,
   },
@@ -15,6 +17,11 @@ export const EXPEDIENTS_REQUEST_COLUMNS = {
     title: 'Fecha Solicitud',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      return formatted;
+    },
   },
 
   regionalDelegationId: {
@@ -47,13 +54,13 @@ export const EXPEDIENTS_REQUEST_COLUMNS = {
   },
 
   paperNumber: {
-    title: 'No. oficio',
+    title: 'No. Oficio',
     type: 'string',
     sort: false,
   },
 
   receiptRoute: {
-    title: 'Via de recepción',
+    title: 'Via de Recepción',
     type: 'string',
     sort: false,
   },

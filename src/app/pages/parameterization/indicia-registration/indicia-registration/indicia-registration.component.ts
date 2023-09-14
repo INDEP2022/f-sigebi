@@ -38,18 +38,13 @@ export class IndiciaRegistrationComponent extends BasePage implements OnInit {
       },
       columns: {
         id: {
-          title: 'Número indiciado',
+          title: 'Número Indiciado',
           type: 'number',
           sort: false,
         },
         name: {
           title: 'Nombre',
           type: 'string',
-          sort: false,
-        },
-        noRegistration: {
-          title: 'Número de registro',
-          type: 'number',
           sort: false,
         },
         curp: {
@@ -82,15 +77,31 @@ export class IndiciaRegistrationComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'name':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'curp':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'consecutive':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getIndicated();
         }
       });

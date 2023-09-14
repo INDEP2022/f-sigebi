@@ -4,7 +4,7 @@ import { PaymentDispersionValidationComponent } from './payment-dispersion-valid
 
 const routes: Routes = [
   {
-    path: '',
+    path: ':goodType',
     component: PaymentDispersionValidationComponent,
   },
 ];

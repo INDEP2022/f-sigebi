@@ -2,30 +2,121 @@
 
 export const COLUMNS = {
   movementNumber: {
-    title: 'No Movimiento',
+    title: 'No. Movimiento',
     sort: false,
   },
-  registerSIABDate: {
-    title: 'Fecha Registro SIAB',
+  registrationDate: {
+    title: 'Fecha Registro INDEP',
     sort: false,
   },
   movement: {
     title: 'Movimiento',
     sort: false,
   },
-  references: {
+  reference: {
     title: 'Referencia',
     sort: false,
   },
-  paymentBankDate: {
+  date: {
     title: 'Fecha Pago Banco',
     sort: false,
   },
-  CveBank: {
+  cve_bank: {
     title: 'Cve Banco',
     sort: false,
   },
-  branch: {
+  sucursal: {
+    title: 'Sucursal',
+    sort: false,
+  },
+  amount: {
+    title: 'Monto',
+    sort: false,
+  },
+  result: {
+    title: 'Resultado',
+    sort: false,
+  },
+  validSystem: {
+    title: 'Válido',
+    sort: false,
+  },
+  payId: {
+    title: 'Id Pago',
+    sort: false,
+  },
+  noGood: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  appointmentNum: {
+    title: 'No. contrato',
+    sort: false,
+  },
+  entryorderid: {
+    title: 'Id Orden Ingreso',
+    sort: false,
+  },
+};
+
+export const COLUMNS_EXTRAS = {
+  amount: {
+    title: 'Monto',
+    sort: false,
+  },
+  result: {
+    title: 'Resultado',
+    sort: false,
+  },
+  validSystem: {
+    title: 'Válido',
+    sort: false,
+  },
+  payId: {
+    title: 'Id Pago',
+    sort: false,
+  },
+  noGood: {
+    title: 'No Bien',
+    sort: false,
+  },
+  reference: {
+    title: 'No contrato',
+    sort: false,
+  },
+  entryorderid: {
+    title: 'Id Orden Ingreso',
+    sort: false,
+  },
+};
+
+/*
+export const COLUMNS = {
+  movementNumber: {
+    title: 'No Movimiento',
+    sort: false,
+  },
+  registrationDate: {
+    title: 'Fecha Registro SIAB',
+    sort: false,
+  },
+  sent_oi: {
+    title: 'Movimiento',
+    sort: false,
+  },
+  referenceori: {
+    title: 'Referencia',
+    sort: false,
+  },
+  date: {
+    title: 'Fecha Pago Banco',
+    sort: false,
+  },
+  cve_bank: {
+    title: 'Cve Banco',
+    sort: false,
+  },
+  sucursal: {
     title: 'sucursal',
     sort: false,
   },
@@ -37,31 +128,33 @@ export const COLUMNS = {
     title: 'Resultado',
     sort: false,
   },
-  valid: {
+  validSystem: {
     title: 'Valido',
     sort: false,
   },
-  paymentId: {
+  payId: {
     title: 'Id Pago',
     sort: false,
   },
-  goodNumber: {
+  noGood: {
     title: 'No Bien',
     sort: false,
   },
-  contractNumber: {
+  reference: {
     title: 'No contrato',
     sort: false,
   },
-  orderEntryId: {
+  entryorderid: {
     title: 'Id Orden Ingreso',
     sort: false,
   },
 };
 
+
+*/
 export const COLUMNS_DEVOLUCION = {
   movement: {
-    title: 'Num. Movto',
+    title: 'No. Movto',
     sort: false,
   },
   date: {
@@ -73,7 +166,7 @@ export const COLUMNS_DEVOLUCION = {
     sort: false,
   },
   branch: {
-    title: 'sucursal',
+    title: 'Sucursal',
     sort: false,
   },
   amount: {

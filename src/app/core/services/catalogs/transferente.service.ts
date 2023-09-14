@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -70,5 +70,9 @@ export class TransferenteService extends HttpService {
   search(params: ListParams): Observable<IListResponse<ITransferente>> {
     var route = `${this.endpoint}/search`;
     return this.get<IListResponse<ITransferente>>(route, params);
+  }
+
+  appsGetPassword(transferente: any, params?: _Params) {
+    return this.post('apps/getPassword', transferente, params);
   }
 }

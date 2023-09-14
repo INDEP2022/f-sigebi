@@ -7,6 +7,7 @@ import { ICopiesOfficialOpinion } from 'src/app/core/models/ms-dictation/copies-
 import { CopiesOfficialOpinionService } from 'src/app/core/services/catalogs/copies-official-opinion.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -20,6 +21,8 @@ export class CopyDocumentationGoodsDialogComponent
 {
   copiesOfficialForm: ModelForm<ICopiesOfficialOpinion>;
   copiesOfficial: ICopiesOfficialOpinion;
+  dataCreate: { numberOfDicta: number; typeDictamination: number } | null =
+    null;
 
   title: string = 'Copia de Oficio';
   edit: boolean = false;
@@ -49,14 +52,32 @@ export class CopyDocumentationGoodsDialogComponent
 
   private prepareForm() {
     this.copiesOfficialForm = this.fb.group({
-      numberOfDicta: [null, Validators.required],
-      typeDictamination: ['', Validators.required],
-      copyDestinationNumber: [null],
-      recipientCopy: [''],
-      namePersonExt: [''],
-      personExtInt: ['', Validators.required],
+      numberOfDicta: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(15),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      typeDictamination: ['', [Validators.required, Validators.maxLength(15)]],
+      copyDestinationNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(3),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      recipientCopy: ['', [Validators.required, Validators.maxLength(15)]],
+      namePersonExt: ['', [Validators.required, Validators.maxLength(45)]],
+      personExtInt: ['', [Validators.required, Validators.maxLength(45)]],
       id: [null],
     });
+
+    if (this.dataCreate) {
+      this.copiesOfficialForm.patchValue(this.dataCreate);
+    }
 
     if (this.copiesOfficial != null) {
       this.edit = true;
@@ -77,7 +98,16 @@ export class CopyDocumentationGoodsDialogComponent
 
     this.copiesOfficialService.create(this.copiesOfficialForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.onLoadToast(
+          'error',
+          ' Los Datos Ingresados son Incorrectos.',
+          `Por favor de Verificar`
+        );
+        console.log(error);
+        this.close();
+        this.loading = false;
+      },
     });
   }
 
@@ -85,8 +115,19 @@ export class CopyDocumentationGoodsDialogComponent
     this.loading = true;
     console.log(this.copiesOfficialForm.value);
     this.copiesOfficialService.update(this.copiesOfficialForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      next: data => {
+        this.handleSuccess();
+      },
+      error: error => {
+        this.onLoadToast(
+          'error',
+          error,
+          `Error guardando los datos, verifique`
+        );
+        console.log(error);
+        this.close();
+        this.loading = false;
+      },
     });
   }
 

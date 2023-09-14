@@ -1,16 +1,40 @@
 //Components
 
 export const COLUMNS = {
-  number: {
-    title: 'No. Bien',
+  periodEndDate: {
+    title: 'Fecha fin',
     sort: false,
   },
-  description: {
-    title: 'Descripcion',
+  notificationDate: {
+    title: 'Fecha notificación',
     sort: false,
   },
-  status: {
-    title: 'Estatus',
+  duct: {
+    title: 'Conducto',
+    sort: false,
+  },
+  notifiedTo: {
+    title: 'Notificado',
+    sort: false,
+  },
+  notifiedPlace: {
+    title: 'Lugar',
+    sort: false,
+  },
+  editPublicationDate: {
+    title: 'Fecha publicación',
+    sort: false,
+  },
+  newspaperPublication: {
+    title: 'Periodico publicación',
+    sort: false,
+  },
+  observation: {
+    title: 'Observacion',
+    sort: false,
+  },
+  statusNotified: {
+    title: 'Status',
     sort: false,
   },
 };

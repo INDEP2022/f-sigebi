@@ -6,7 +6,7 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field [control]="form.get('delegation')">
             <ngx-select
               [searchOnInit]="true"
@@ -21,7 +21,7 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field [control]="form.get('subdelegation')">
             <ngx-select
               [form]="form"
@@ -35,7 +35,7 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field [control]="form.get('monthYear')" label="Seleccionar mes">
             <input
               type="text"
@@ -56,14 +56,16 @@
           text="Imprimir"
           loadingText="Generando Reporte"
           (confirm)="confirm()"
+          [btnSmall]="true"
+          icon="bx bx-printer bx-sm float-icon"
           [disabled]="!form.valid"></confirm-button>
       </div>
       <div class="m-3">
         <button
           (click)="cleanForm()"
           type="button"
-          class="btn btn-danger active">
-          Limpiar
+          class="btn btn-danger btn-sm active mr-3">
+          Limpiar <i class="fas fa-eraser"> </i>
         </button>
       </div>
     </div>

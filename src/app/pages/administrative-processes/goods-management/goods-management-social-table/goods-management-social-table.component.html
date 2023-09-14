@@ -1,0 +1,44 @@
+<div class="ch-content">
+  <h5 class="title">Previsualización de Datos</h5>
+  <!-- <div
+    *ngIf="selectedGoods && selectedGoods.length > 0"
+    style="font-weight: 500">
+    Cargados {{ totalItems }} de {{ selectedGoods.length }}
+  </div> -->
+  <div style="display: flex">
+    <app-columns-select
+      (settingsChange)="settingsChange($event)"
+      [settings]="settings"
+      class="row justify-content-end"></app-columns-select>
+    <!-- <button
+      class="btn btn-primary btn-sm active ml-3"
+      type="button"
+      [disabled]="
+        !selectedGoods ||
+        selectedGoods.length === totalItems ||
+        notLoadedGoods.length === 0
+      "
+      (click)="showNotLoads()">
+      No Cargados
+      <i class="fa fa-info-circle"></i>
+    </button> -->
+  </div>
+</div>
+<div class="row pt-4">
+  <div class="col-md-12">
+    <div #containerTable>
+      <ng2-smart-table
+        #table
+        [attr.class]="'table-bordered table-responsive'"
+        [settings]="settings"
+        [source]="dataPaginated">
+      </ng2-smart-table>
+    </div>
+  </div>
+</div>
+<app-pagination
+  [params]="params"
+  [pageSizeOptions]="pageSizeOptions"
+  [limit]="limit"
+  [totalItems]="totalItems">
+</app-pagination>

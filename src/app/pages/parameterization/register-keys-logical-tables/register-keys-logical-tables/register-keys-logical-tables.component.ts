@@ -28,7 +28,6 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITable } from 'src/app/core/models/catalogs/dinamic-tables.model';
 import { ITdescCve } from 'src/app/core/models/ms-parametergood/tdesccve-model';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import Swal from 'sweetalert2';
 import { RegisterKeyOneModalComponent } from '../register-key-one-modal/register-key-one-modal.component';
 
 @Component({
@@ -73,6 +72,10 @@ export class RegisterKeysLogicalTablesComponent
   tableValue: ITable;
 
   showTables: boolean = true;
+
+  idSelectTable: string;
+
+  countTable: number = 0;
 
   constructor(
     private modalService: BsModalService,
@@ -220,11 +223,17 @@ export class RegisterKeysLogicalTablesComponent
 
   //Evento cuando se selecciona un item del select
   onValuesChange(tablesChange: ITable) {
+    this.idSelectTable = tablesChange.table;
     this.form.controls['description'].setValue(tablesChange.description);
     this.form.controls['tableType'].setValue(tablesChange.tableType);
     this.form.controls['table'].setValue(tablesChange.table);
-    this.tableSelect = new DefaultSelect();
-
+    // this.tableSelect = new DefaultSelect();
+    /*if (this.form.controls['tableType'].value == 1){
+      this.showNullRegister();
+    } else if (this.form.controls['tableType'].value == 5){
+      this.showNullRegister1();
+    }*/
+    this.tdescCve = [];
     this.getKeys();
   }
 
@@ -260,35 +269,70 @@ export class RegisterKeysLogicalTablesComponent
 
   //Trae descripción de claves por tabla seleccionada
   getKeys(id?: string | number): void {
+    this.tdescCve = [];
+    this.countTable = 0;
     let _id = this.form.controls['table'].value;
     this.loading2 = true;
-    this.tdescCveService
-      .getById(_id)
-      .pipe(
-        map((data2: any) => {
-          let list: IListResponse<ITdescCve> = {} as IListResponse<ITdescCve>;
-          const array2: ITdescCve[] = [{ ...data2 }];
-          list.data = array2;
-          return list;
-        })
-      )
-      .subscribe({
-        next: response => {
-          this.tdescCve = response.data;
-          this.totalItems2 = response.count;
-          this.loading2 = false;
-        },
-        error: error => (this.showNullRegister(), (this.loading2 = false)),
-      });
+
+    console.log(this.form.controls['tableType'].value);
+    if (this.form.controls['tableType'].value == 1) {
+      this.tdescCveService
+        .getById(_id)
+        .pipe(
+          map((data2: any) => {
+            let list: IListResponse<ITdescCve> = {} as IListResponse<ITdescCve>;
+            const array2: ITdescCve[] = [{ ...data2 }];
+            list.data = array2;
+            return list;
+          })
+        )
+        .subscribe({
+          next: response => {
+            this.tdescCve = response.data;
+            this.countTable = response.count;
+            this.totalItems2 = response.count;
+            this.loading2 = false;
+          },
+          error: error => {
+            this.loading2 = false;
+            this.showNullRegister();
+          },
+        });
+    } else if (this.form.controls['tableType'].value == 5) {
+      this.tdescCveService
+        .getById(_id)
+        .pipe(
+          map((data2: any) => {
+            let list: IListResponse<ITdescCve> = {} as IListResponse<ITdescCve>;
+            const array2: ITdescCve[] = [{ ...data2 }];
+            list.data = array2;
+            return list;
+          })
+        )
+        .subscribe({
+          next: response => {
+            this.tdescCve = response.data;
+            this.countTable = response.count;
+            this.totalItems2 = response.count;
+            this.loading2 = false;
+          },
+          error: error => {
+            this.loading2 = false;
+            this.showNullRegister1();
+          },
+        });
+    }
   }
 
   //Para editar la descripción de atributos con 5 clave
   openForm(tdescCve?: ITdescCve) {
     const idCve = { ...this.descriptionCve };
+    const selectTabla = this.idSelectTable;
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       tdescCve,
       idCve,
+      selectTabla,
       callback: (next: boolean) => {
         if (next) this.getKeys(idCve.table);
       },
@@ -302,10 +346,12 @@ export class RegisterKeysLogicalTablesComponent
   //Para editar la descripción de atributos con 1 clave
   openForm2(tdescCve?: ITdescCve) {
     const idCve = { ...this.descriptionCve };
+    const selectTabla = this.idSelectTable;
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       tdescCve,
       idCve,
+      selectTabla,
       callback: (next: boolean) => {
         if (next) this.getKeys(idCve.table);
       },
@@ -326,6 +372,18 @@ export class RegisterKeysLogicalTablesComponent
     });
   }
 
+  showNullRegister1() {
+    this.alertQuestion(
+      'warning',
+      'Tabla sin claves',
+      '¿Desea agregarlos ahora?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.openForm();
+      }
+    });
+  }
+
   //Msj de alerta para borrar clave 1
   showDeleteAlert1(tdescCve?: ITdescCve) {
     this.alertQuestion(
@@ -341,12 +399,55 @@ export class RegisterKeysLogicalTablesComponent
 
   //método para borrar transferente
   delete(id: number) {
-    const idCve = { ...this.descriptionCve };
-    this.tdescCveService.remove(id).subscribe({
-      next: () => (
-        Swal.fire('Borrado', '', 'success'), this.getKeys(idCve.table)
-      ),
-    });
+    if (this.form.controls['tableType'].value == 1) {
+      const idCve = { ...this.descriptionCve };
+      this.tdescCveService.remove(id).subscribe({
+        next: () => {
+          const idCve = { ...this.descriptionCve };
+          this.alert(
+            'success',
+            'Clave para Tabla Lógica con 1 Clave',
+            'Borrado Correctamente'
+          );
+          setTimeout(() => {
+            this.params2
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getKeys(idCve.table));
+          }, 3000);
+        },
+        error: err => {
+          this.alert(
+            'warning',
+            'Clave para tabla lógica',
+            'No se puede eliminar el objeto debido a una relación con otra tabla.'
+          );
+        },
+      });
+    } else if (this.form.controls['tableType'].value == 5) {
+      const idCve = { ...this.descriptionCve };
+      this.tdescCveService.remove(id).subscribe({
+        next: () => {
+          const idCve = { ...this.descriptionCve };
+          this.alert(
+            'success',
+            'Claves para Tabla Lógica con 5 Claves',
+            'Borrado Correctamente'
+          );
+          setTimeout(() => {
+            this.params2
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getKeys(idCve.table));
+          }, 3000);
+        },
+        error: err => {
+          this.alert(
+            'warning',
+            'Clave para tabla lógica',
+            'No se puede eliminar el objeto debido a una relación con otra tabla.'
+          );
+        },
+      });
+    }
   }
 
   //Muestra información de la fila seleccionada de tablas

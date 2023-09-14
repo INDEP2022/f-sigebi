@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Seleccione la Unidad de Transferencia</h5>
+    <h5 class="modal-title">Seleccionar la Unidad de Transferencia</h5>
   </div>
 
   <div body>
@@ -21,10 +21,16 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
+        <button
+          type="button"
+          (click)="select()"
+          class="btn btn-primary active btn-sm">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
+        <!-- confirm-button
           [btnSmall]="true"
           (click)="select()"
-          [text]="'Seleccional'"></confirm-button>
+          [text]="'Seleccional'"></confirm-button> -->
       </div>
       <div class="m-3">
         <button

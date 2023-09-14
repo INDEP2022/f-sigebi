@@ -4,55 +4,106 @@
   </div>
 
   <div body>
-    <form
-      class="form-material form-horizontal"
-      [formGroup]="form"
-      (ngSubmit)="onSubmit()">
+    <form class="form-material" [formGroup]="form">
       <div class="row mt-5">
         <div class="col-md-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="form.get('keyEvent')" label="Clave Evento">
-              <select class="form-control" formControlName="keyEvent">
-                <option>clave evento</option>
-              </select>
-            </form-field>
-          </div>
+          <form-field [control]="form.get('cveActa')">
+            <ngx-select
+              (fetchItems)="getEventComDonation($event)"
+              [data]="donation"
+              [form]="form"
+              bindLabel="cveAct"
+              value="cveAct"
+              label="Clave Evento"
+              control="cveActa"
+              (change)="onEventChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field [control]="form.get('estatusAct')" label="Estatus Evento">
+            <ng-select
+              formControlName="estatusAct"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
+              (change)="getRowSelec($event)">
+              <ng-option value="">TODOS </ng-option>
+              <ng-option value="ABIERTA">ABIERTA </ng-option>
+              <ng-option value="CERRADA">CERRADA </ng-option>
+            </ng-select>
+          </form-field>
         </div>
         <div class="col-md-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="form.get('status')" label="Estatus Evento">
-              <select class="form-control" formControlName="status">
-                <option>Estatus</option>
-              </select>
-            </form-field>
-          </div>
+          <div class="title">{{ delegation || '' }}</div>
+          <!-- <label for="" class="col-form-label">Coord. Regional</label>
+          <div>{{ delegation || '' }}</div> -->
+          <!--  <form-field [control]="form.get('noDelegation1')" label="Coord. Regional">
+           <input
+              type="text"
+              class="form-control"
+              formControlName="noDelegation1" /> 
+
+          </form-field>-->
         </div>
         <div class="col-md-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="form.get('regionalCoord')"
-              label="Coord. Regional">
-              <input
+          <div class="title">{{ user || '' }}</div>
+          <!--  <form-field label="Usuario" [control]="form.get('elaborated')">
+           <input
                 type="text"
                 class="form-control"
-                formControlName="regionalCoord" />
-            </form-field>
+                formControlName="elaborated" />
+              <ngx-select
+                (fetchItems)="getEventComDonation($event)"
+                [data]="users"
+                [form]="form"
+                bindLabel="name"
+                value="user"
+                label="Usuarios"
+                control="elaborated"
+                (change)="onUsersChange($event)">
+              </ngx-select>
+          </form-field>-->
+        </div>
+      </div>
+
+      <!-- <div class="row pt-4">
+        <div class="d-flex justify-content-center">
+          <div class="col offset-md-3">
+            <button class="btn btn-sm btn-primary active mr-3" [disabled]="!form.valid" (click)="filterButton()">
+              Buscar
+            </button>
+            <button class="btn btn-danger btn-sm active" (click)="clean()">
+              Limpiar <i class="fas fa-eraser"> </i>
+            </button>
           </div>
         </div>
-        <div class="col-md-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="form.get('typeUser')" label="Usuario">
-              <select class="form-control" formControlName="typeUser">
-                <option>Tipo Usuario</option>
-              </select>
-            </form-field>
+      </div> -->
+
+      <div class="row pt-4">
+        <div class="col-md-12 d-flex justify-content-center">
+          <div>
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm mr-3"
+              (click)="filterButton()"
+              [disabled]="validate">
+              Buscar
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+            <button class="btn btn-danger btn-sm active" (click)="clean()">
+              Limpiar <i class="fas fa-eraser"></i>
+            </button>
           </div>
         </div>
       </div>
 
-      <div class="row mt-5 justify-content-center justify-content-sm-end">
+      <!--<div class="row mt-5 justify-content-center justify-content-sm-end">
         <div class="col-12 col-sm-3 text-center text-sm-right">
-          <button class="btn btn-primary active btn-sm" (click)="search()">
+          <button
+            class="btn btn-primary active btn-sm"
+            (click)="filterButton()">
             Buscar
           </button>
         </div>
@@ -63,29 +114,106 @@
             Capturar Evento
           </button>
         </div>
-      </div>
+      </div>-->
     </form>
 
     <div *ngIf="response">
-      <div class="row mt-5">
-        <app-divider class=""></app-divider>
+      <hr />
+      <div class="row pt-5">
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <div>
+            <button
+              class="btn btn-success active btn-sm ml-3"
+              (click)="exportAll()">
+              Exportar a Excel <i class="bx bx-download float-icon"></i>
+            </button>
+          </div>
+          <app-columns-select
+            [(settings)]="settings"
+            [leftList]="true"></app-columns-select>
+        </div>
       </div>
-      <div class="row mt-3 pt-2 scroll-table">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          class="col-md-12"
-          [settings]="settings"
-          [source]="data">
-        </ng2-smart-table>
+      <div class="row">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="data"
+              (rowSelect)="changeEvent($event)">
+            </ng2-smart-table>
+          </div>
+        </div>
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>
 
-      <div class="row mt-5 justify-content-sm-end justify-content-center">
-        <div class="col-12 col-sm-3 text-center">
-          <button class="btn btn-success btn-sm">Exportar</button>
+      <hr />
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings1"
+              [source]="data1"
+              (rowSelect)="selectedDetailActa($event)">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination [params]="params1" [totalItems]="totalItems1">
+      </app-pagination>
+
+      <div class="row pt-4">
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <div>
+            <!-- <button class="btn btn-primary active btn-sm" routerLink="capture-approval-donation">
+              Captura de Evento
+            </button> -->
+            <button
+              type="button"
+              tooltip="Nuevo"
+              containerClass="tooltip-style"
+              class="btn btn-primary btn-sm active ml-2 mr-2"
+              [disabled]="!selectRow"
+              (click)="goDetailDonation()">
+              Captura de Evento <i class="bx bx-edit bx-sm float-icon"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
+
+    <!--<div *ngIf="detail">
+      <hr />
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="data">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+
+      <div class="row pt-4">
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <div>
+            <button
+              class="btn btn-primary active btn-sm"
+              routerLink="capture-approval-donation">
+              Captura de Evento
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>-->
   </div>
 </app-card>

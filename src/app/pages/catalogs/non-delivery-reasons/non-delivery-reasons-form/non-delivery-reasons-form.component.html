@@ -13,7 +13,7 @@
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
             [control]="nonDeliveryReasonsForm.get('reasonType')"
-            label="Tipo motivo">
+            label="Tipo Motivo">
             <select class="form-control" formControlName="reasonType">
               <option [value]="null">Seleccione un tipo motivo</option>
               <option *ngFor="let item of typeReason" [value]="item.label">
@@ -25,7 +25,7 @@
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
             [control]="nonDeliveryReasonsForm.get('eventType')"
-            label="Tipo evento">
+            label="Tipo Evento">
             <select class="form-control" formControlName="eventType">
               <option [value]="null">Seleccione un tipo evento</option>
               <option *ngFor="let item of typeEvent" [value]="item.label">
@@ -35,7 +35,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
+      <div class="row">
         <div class="col-md-12 pt-sm-5 pt-md-2">
           <form-field
             [control]="nonDeliveryReasonsForm.get('reason')"

@@ -4,7 +4,10 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IClarification } from 'src/app/core/models/catalogs/clarification.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { ClarificationService } from '../../../../core/services/catalogs/clarification.service';
 
 @Component({
@@ -14,7 +17,7 @@ import { ClarificationService } from '../../../../core/services/catalogs/clarifi
 })
 export class ClarificationsDetailComponent extends BasePage implements OnInit {
   clarificationForm: ModelForm<IClarification>;
-  title: string = 'Catálogo de aclaraciones ';
+  title: string = 'Aclaración';
   edit: boolean = false;
   clarification: IClarification;
 
@@ -30,31 +33,35 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
-  prepareForm() {
+  private prepareForm() {
     this.clarificationForm = this.fb.group({
       id: [null, [Validators.pattern(STRING_PATTERN), Validators.minLength(1)]],
       clarification: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
       ],
       type: [
         null,
         [
           Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.minLength(1),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(2),
         ],
       ],
       active: [
-        '1',
+        null,
         Validators.compose([
           Validators.required,
           Validators.pattern(STRING_PATTERN),
         ]),
       ],
       version: [
-        1,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.minLength(1)],
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(10)],
       ],
       modificationDate: [null],
       creationUser: [null],
@@ -76,10 +83,17 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.clarificationForm.controls['clarification'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.clarificationService.create(this.clarificationForm.value).subscribe(
       data => this.handleSuccess(),
-      error => (this.loading = false)
+      error => {
+        this.loading = false;
+        this.alert('error', 'ERROR', error.error.message);
+      }
     );
   }
 
@@ -95,7 +109,8 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

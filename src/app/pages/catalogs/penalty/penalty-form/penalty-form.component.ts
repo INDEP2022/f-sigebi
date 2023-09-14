@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IPenalty } from 'src/app/core/models/catalogs/penalty.model';
 import { PenaltyService } from 'src/app/core/services/catalogs/penalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DOUBLE_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-penalty-form',
@@ -14,7 +15,7 @@ import { DOUBLE_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class PenaltyFormComponent extends BasePage implements OnInit {
   penaltyForm: ModelForm<IPenalty>;
-  title: string = 'Estatus Siniestros';
+  title: string = 'Penalización';
   edit: boolean = false;
   penalty: IPenalty;
   constructor(
@@ -31,22 +32,36 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.penaltyForm = this.fb.group({
-      id: [null],
-      serviceType: [null, Validators.required],
+      serviceType: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       penaltyPercentage: [
         null,
-        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       equivalentDays: [
         null,
-        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+        [Validators.maxLength(5), Validators.required],
+        // [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      version: [1],
-      status: [1],
-      contractNumber: [null, Validators.required],
+      contractNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(50),
+        ],
+      ],
     });
-    //this.penaltyForm.controls['version'].setValue(1);
-    //this.penaltyForm.controls['status'].setValue(1);
     if (this.penalty != null) {
       this.edit = true;
       this.penaltyForm.patchValue(this.penalty);
@@ -61,6 +76,10 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.penaltyForm.controls['serviceType'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.penaltyService.create(this.penaltyForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
@@ -79,8 +98,9 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

@@ -13,6 +13,7 @@ import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 
 /** COMPONENTS IMPORTS */
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { COLUMNS_DOCUMENTS } from './columns';
 
 @Component({
   selector: 'ngx-fact-abandonos-oficio',
@@ -37,36 +38,43 @@ export class FormFactAbandonosOficioComponent
   @Output() formValues = new EventEmitter<any>();
 
   /** Tabla bienes */
-  data2 = [
+  data2: [
     {
-      cveDocumento: 25,
-      description: 'UNA BOLSA',
-    },
+      cveDocumento: 25;
+      description: 'UNA BOLSA';
+    }
   ];
-  settings2 = {
-    pager: {
-      display: false,
-    },
-    hideSubHeader: true,
-    actions: false,
-    selectedRowIndex: -1,
-    mode: 'external',
-    columns: {
-      cveDocumento: {
-        title: 'No. Bien',
-        type: 'number',
-      },
-      description: {
-        title: 'Descripcion',
-        type: 'string',
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
+  settings2 = { ...this.settings };
+  // settings2 = {
+  //   pager: {
+  //     display: false,
+  //   },
+  //   hideSubHeader: true,
+  //   actions: false,
+  //   selectedRowIndex: -1,
+  //   mode: 'external',
+  //   columns: {
+  //     cveDocumento: {
+  //       title: 'No. Bien',
+  //       type: 'number',
+  //     },
+  //     description: {
+  //       title: 'Descripcion',
+  //       type: 'string',
+  //     },
+  //   },
+  //   noDataMessage: 'No se encontrarón registros',
+  // };
   /** Tabla bienes */
 
   constructor(private fb: FormBuilder, private exampleService: ExampleService) {
     super();
+    this.settings2 = {
+      ...this.settings,
+      actions: false,
+      // selectMode: 'multi',
+      columns: { ...COLUMNS_DOCUMENTS },
+    };
   }
 
   ngOnInit(): void {}

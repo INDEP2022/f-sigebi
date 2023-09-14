@@ -1,128 +1,130 @@
+import { Location } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs';
+import { TreeViewService } from 'src/app/@standalone/tree-view/tree-view.service';
+import { PreviousRouteService } from 'src/app/common/services/previous-route.service';
 import { ITreeItem } from 'src/app/core/interfaces/menu.interface';
-import { IPartializedGoodList } from 'src/app/core/models/ms-partialize-goods/partialize-good.model';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
-import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
+import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
+import { PartializesGoodsService } from './services/partializes-goods.service';
 
 @Component({
   selector: 'app-partializes-goods',
   templateUrl: './partializes-goods.component.html',
   styleUrls: ['partializes-goods.component.scss'],
 })
-export class PartializesGoodsComponent
-  extends BasePageWidhtDinamicFiltersExtra<IPartializedGoodList>
-  implements OnInit
-{
-  elementToExport: any[];
+export class PartializesGoodsComponent extends BasePage implements OnInit {
   form: FormGroup;
   itemsTree: ITreeItem[] = [];
+  origin: number = null;
   loadingTree = false;
+  noBienValue: number = null;
+  @ViewChild('sideMenu') sideMenu: ElementRef;
+  totalItems: number = 0;
   loadingExcel = false;
   flagDownload = false;
-  @ViewChild('sideMenu') sideMenu: ElementRef;
+  elementToExport: any[];
+
   constructor(
     private fb: FormBuilder,
-
-    private goodPartializeService: GoodPartializeService
+    private serviceData: PartializesGoodsService,
+    private treeViewService: TreeViewService,
+    private service: GoodPartializeService,
+    private location: Location,
+    private activatedRoute: ActivatedRoute,
+    private previousRouteService: PreviousRouteService
   ) {
     super();
-    this.service = this.goodPartializeService;
-    this.settings = {
-      ...this.settings,
-      actions: false,
-      hideSubHeader: false,
-      columns: {
-        goodNumber: {
-          title: 'No. Bien',
-          type: 'string',
-          sort: false,
-        },
-        description: {
-          title: 'Descripción',
-          type: 'string',
-          sort: false,
-        },
-      },
-    };
-    this.ilikeFilters.push('goodNumber');
     this.prepareForm();
+  }
+
+  ngOnInit() {
+    this.activatedRoute.queryParams.subscribe({
+      next: param => {
+        if (param['numberGood']) {
+          this.origin = 1;
+          // this.serviceData.numberGoodQueryParams = param['numberGood'];
+          this.noBien.setValue(param['numberGood']);
+          this.noBienValue = this.noBien.value;
+          this.showTable();
+          // 1697373
+        } else {
+          // this.serviceData.numberGoodQueryParams = null;
+          this.origin = null;
+        }
+      },
+    });
+  }
+
+  get formLoading() {
+    return this.serviceData.loading;
+  }
+
+  get noBien() {
+    return this.form.get('noBien') ?? null;
+  }
+
+  get data() {
+    return this.serviceData.data;
+  }
+
+  searchGood() {
+    if (this.noBien) {
+      this.noBienValue = this.noBien.value;
+      this.showTable();
+    }
   }
 
   exportExcel() {
     this.loadingExcel = true;
     this.elementToExport = [];
     const arrayDetails: any[] = [];
-    this.items.forEach(item => {
+    this.data.forEach(item => {
       arrayDetails.push({
         PARCIALIZACION: item.partializedId,
-        BIEN: item.goodNumber,
+        BIEN: item.goodNumber.id,
         DESCRIPCION: item.description,
       });
     });
     this.elementToExport = [...arrayDetails];
     this.flagDownload = !this.flagDownload;
-    // console.log(x);
     this.loadingExcel = false;
-    // this.service.getExcel(this.filterParams).subscribe(x => {
-
-    // });
-    // console.log(this.table);
   }
 
-  override getData() {
-    this.loading = true;
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-    if (this.service) {
-      this.service.getAll(params).subscribe({
-        next: (response: any) => {
-          if (response) {
-            if (
-              this.columnFilters['filter.goodNumber'] &&
-              response.data &&
-              response.data.length > 0
-            ) {
-              this.select(response.data[0].goodNumber);
-            }
-            this.totalItems = response.count || 0;
-            this.items = response.data;
-            this.data.load(response.data);
-            this.data.refresh();
-            this.loading = false;
-          }
-        },
-        error: err => {
-          this.totalItems = 0;
-          this.data.load([]);
-          this.data.refresh();
-          this.loading = false;
-        },
-      });
-    } else {
-      this.totalItems = 0;
-      this.data.load([]);
-      this.data.refresh();
-      this.loading = false;
-    }
+  back() {
+    this.previousRouteService.back();
+  }
+  get nameExcel() {
+    return 'Reporte Bienes Parcializados ' + this.noBienValue + '.xlsx';
   }
 
-  select(goodNumber: number) {
+  resetForm() {
+    this.form.reset();
+    this.noBienValue = null;
+    // this.serviceData.numberGoodQueryParams = null;
+  }
+
+  showTable() {
     // console.log(row);
+    // debugger;
     this.loadingTree = true;
-    this.goodPartializeService
-      .getTreePartialize(goodNumber)
+    this.treeViewService.selected = null;
+    this.service
+      .getTreePartialize(this.noBienValue)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
           console.log(response);
           if (response[0].subItems.length === 0) {
-            this.onLoadToast(
-              'error',
-              'Bien ' + goodNumber,
+            this.alert(
+              'warning',
+              'Bien ' + this.noBienValue,
               'No tiene bienes parcializados'
             );
           }
@@ -137,8 +139,8 @@ export class PartializesGoodsComponent
 
   prepareForm() {
     this.form = this.fb.group({
-      noBien: [null, [Validators.required]],
-      descripcion: [null, [Validators.required]],
+      noBien: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      description: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 }

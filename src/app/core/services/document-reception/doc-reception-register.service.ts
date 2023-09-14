@@ -37,6 +37,7 @@ import { TransferenteService } from '../catalogs/transferente.service';
 import { DynamicTablesService } from '../dynamic-catalogs/dynamic-tables.service';
 import { RTdictaAarusrService } from '../ms-convertiongood/r-tdicta-aarusr.service';
 import { GoodParametersService } from '../ms-good-parameters/good-parameters.service';
+import { GoodFinderService } from '../ms-good/good-finder.service';
 import { ProcedureManagementService } from '../proceduremanagement/proceduremanagement.service';
 
 @Injectable({
@@ -59,7 +60,8 @@ export class DocReceptionRegisterService extends HttpService {
     private departamentService: DepartamentService,
     private identifierService: IdentifierService,
     private courtsService: CourtByCityService,
-    private userCheckService: RTdictaAarusrService
+    private userCheckService: RTdictaAarusrService,
+    private goodFinderService: GoodFinderService
   ) {
     super();
   }
@@ -297,6 +299,10 @@ export class DocReceptionRegisterService extends HttpService {
     return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params).pipe(
       tap(() => (this.microservice = ''))
     );
+  }
+
+  goodFinder(params: string) {
+    return this.goodFinderService.getAll2(params);
   }
 
   updateGood(body: Partial<IGood>): Observable<IGood> {
@@ -554,5 +560,9 @@ export class DocReceptionRegisterService extends HttpService {
 
   userAreaCheck(params: string) {
     return this.userCheckService.getAllWithFilters(params);
+  }
+
+  getFilterUserAreas(params: any) {
+    return this.get<IListResponse<any>>(`incident-maintenance`, params);
   }
 }

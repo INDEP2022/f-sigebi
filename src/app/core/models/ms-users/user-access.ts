@@ -3,3 +3,8 @@ export interface IUserAccess {
   userRole: string;
   estAccess: string;
 }
+export interface IUserNameOtval {
+  nombre: string;
+  otvalor: string;
+  usuario: string;
+}

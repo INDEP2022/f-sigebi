@@ -52,4 +52,17 @@ export class SignatoriesService extends HttpService {
     const route = `${ElectronicFirmEndpoint.Signatories}/${id}`;
     return this.delete(route);
   }
+
+  signerServiceForOfficeDictation(body: any) {
+    // filesign/filesigner/signe
+    // return this.post(ElectronicFirmEndpoint.Signatories, model);
+    return this.httpClient.post(
+      `${this.url}${ElectronicFirmEndpoint.SignerOfficeDictation}`,
+      body
+    );
+  }
+
+  ssf3FirmaEelecDocs(model: any) {
+    return this.post(ElectronicFirmEndpoint.SSF3FirmaEelecDocs, model);
+  }
 }

@@ -1,0 +1,70 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Seleccione</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <div class="col-md-12">
+          <app-delegation-shared
+            [form]="form"
+            [init]="true"
+            [showDelegation]="true"
+            [delegationField]="'delegationNumber'"
+            labelDelegation="Delegación Recibe"
+            [subdelegationField]="'subDelegation'"
+            [showSubdelegation]="true"></app-delegation-shared>
+          <!-- <form-field [control]="form.get('delegationNumber')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              (fetchItems)="getDelegations($event)"
+              [data]="delegations"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'delegationNumber'"
+              (change)="onDelegationsChange($event)"
+              [showTooltip]="true">
+            </ngx-select>
+          </form-field>
+
+          <form-field [control]="form.get('subDelegation')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="subdelegations"
+              value="id"
+              bindLabel="description"
+              label="Sub Delegaci&oacute;n"
+              [control]="'subDelegation'"
+              (change)="onSubDelegationsChange($event)"
+              [showTooltip]="true">
+            </ngx-select>
+          </form-field> -->
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          [disabled]="form.invalid"
+          class="btn btn-primary btn-sm active"
+          (click)="update()">
+          Guardar <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

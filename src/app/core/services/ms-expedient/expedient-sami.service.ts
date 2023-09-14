@@ -38,4 +38,8 @@ export class ExpedientSamiService extends HttpService {
   update(id: number | string, body: Partial<IExpedientSami>) {
     return this.post(`${this.route.ExpedientSami}/${id}`, body);
   }
+
+  getexpedient(params: any) {
+    return this.get(ExpedientEndpoints.expedientePrueba, params);
+  }
 }

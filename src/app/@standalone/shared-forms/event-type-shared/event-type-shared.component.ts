@@ -23,7 +23,7 @@ import { UserEventTypesService } from 'src/app/core/services/catalogs/users-even
 export class EventTypeSharedComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
   @Input() eventField: string = 'event';
-  @Input() label: string = 'Tipo de evento';
+  @Input() label: string = 'Tipo de Evento';
   @Input() bindLabel: string = 'descripcion';
   @Input() showEvents: boolean = true;
   @Output() emitTevents = new EventEmitter<ITevents>();
@@ -45,6 +45,7 @@ export class EventTypeSharedComponent extends BasePage implements OnInit {
         },
       ]);
     }
+    this.getEvents(new ListParams());
   }
 
   getEvents(params: ListParams) {
@@ -69,7 +70,7 @@ export class EventTypeSharedComponent extends BasePage implements OnInit {
 
   onEventsChange(type: any) {
     this.form.updateValueAndValidity();
-    this.events = new DefaultSelect();
+    // this.events = new DefaultSelect();
     this.emitTevents.emit(type);
   }
 

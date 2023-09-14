@@ -1,0 +1,72 @@
+<form
+  class="form-material"
+  [formGroup]="form"
+  *ngIf="process < typeGabinetProcess.Liberado">
+  <div class="row">
+    <div class="col-md-10 align-self-baseline">
+      <div class="row mb-2">
+        <form-field [control]="form.get('process')" label="Proceso Siguiente">
+          <ng-select
+            formControlName="process"
+            class="form-control"
+            [clearable]="false"
+            [searchable]="false">
+            <ng-option *ngFor="let option of options" [value]="option.value">
+              {{ option.label }}
+            </ng-option>
+          </ng-select>
+        </form-field>
+      </div>
+
+      <div class="row justify-content-between">
+        <div class="col-12 mb-3 excuse" *ngIf="cantByProcess(process) > 0">
+          <form-field [control]="form.get('excuse')" label="Justificación">
+            <textarea
+              class="form-control"
+              formControlName="excuse"
+              rows="4"
+              maxlength="300">
+            </textarea>
+          </form-field>
+        </div>
+        <div class="col-12 mb-3 excuse" *ngIf="cantByProcess(process) === 0">
+          <form-field [control]="form.get('excuse2')" label="Justificación">
+            <textarea
+              class="form-control"
+              formControlName="excuse2"
+              rows="4"
+              readonly>
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+    </div>
+    <div class="buttons col-md-2">
+      <button
+        class="btn btn-primary btn-sm active"
+        type="button"
+        (click)="processCabinetSocial()"
+        [disabled]="form.invalid || disabledProcess">
+        Procesar
+        <i class="fa fa-arrow-right bx-sm float-icon"></i>
+      </button>
+      <!-- <button
+      class="btn btn-danger btn-sm active ml-3"
+      type="button"
+      (click)="clear()">
+      Limpiar
+      <i class="fa fa-eraser"></i>
+    </button> -->
+    </div>
+  </div>
+</form>
+<!--Data Previsualization-->
+<app-goods-management-social-table
+  [identifier]="identifier"
+  [loading]="loading"
+  [process]="process"></app-goods-management-social-table>
+<!--Data Errores-->
+<app-goods-management-social-table-errors
+  *ngIf="process < typeGabinetProcess.Liberado"
+  [change]="processErrors"
+  [identifier]="identifier"></app-goods-management-social-table-errors>

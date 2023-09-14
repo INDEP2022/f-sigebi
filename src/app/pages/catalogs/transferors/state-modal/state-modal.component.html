@@ -5,9 +5,9 @@
   <div body>
     <form class="form-material" [formGroup]="stateForm">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <form-field
-            label="Nombre transferente"
+            label="Nombre Transferente"
             [control]="stateForm.get('nameTransferee')">
             <input
               type="text"
@@ -16,7 +16,9 @@
               readonly />
           </form-field>
         </div>
-        <div class="col-md-6">
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
           <form-field [control]="stateForm.get('stateKey')">
             <ngx-select
               [searchOnInit]="true"

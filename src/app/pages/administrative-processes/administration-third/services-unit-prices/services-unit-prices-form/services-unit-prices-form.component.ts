@@ -18,7 +18,7 @@ export class ServicesUnitPricesFormComponent
   serviceForm: ModelForm<IStrategyService>;
   service: IStrategyService;
 
-  title: string = 'Turno/Tipo';
+  title: string = 'Exitoso';
   edit: boolean = false;
 
   constructor(
@@ -36,6 +36,7 @@ export class ServicesUnitPricesFormComponent
   private prepareForm() {
     this.serviceForm = this.fb.group({
       description: [null, [Validators.required]],
+      registryNumber: [null],
     });
 
     if (this.service != null) {
@@ -73,8 +74,12 @@ export class ServicesUnitPricesFormComponent
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.alert(
+      'success',
+      this.edit ? '' : this.title,
+      `${message} Correctamente`
+    );
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

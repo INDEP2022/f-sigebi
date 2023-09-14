@@ -9,21 +9,21 @@
         *ngIf="!showForm && buttonClaim"
         (click)="showForm = true"
         class="btn btn-primary btn-sm active">
-        <i class="fa fa-file" aria-hidden="true"></i> Reclamar
+        Reclamar <i class="fa fa-file" aria-hidden="true"></i>
+      </button>
+
+      <button
+        (click)="sendRequest()"
+        *ngIf="(showForm && buttonSend) || (!showForm && buttonSendFalse)"
+        class="btn btn-primary btn-sm active">
+        Enviar <i class="bx bx-send"></i>
       </button>
 
       <button
         (click)="liberateRequest()"
         *ngIf="(showForm && task != 3) || (showForm && buttonLiberate)"
         class="btn btn-info btn-sm active">
-        <i class="fa fa-file" aria-hidden="true"></i> Liberar
-      </button>
-
-      <button
-        (click)="sendRequest()"
-        *ngIf="(showForm && buttonSend) || (!showForm && buttonSendFalse)"
-        class="btn btn-success btn-sm active">
-        <i class="fa fa-paper-plane" aria-hidden="true"></i> Enviar
+        Liberar <i class="fa fa-file" aria-hidden="true"></i>
       </button>
 
       <button
@@ -33,8 +33,8 @@
           (!showForm && buttonGenerateReportFalse)
         "
         class="btn btn-pink btn-sm active">
-        <i class="fa fa-file-pdf" aria-hidden="true"></i> Generar reporte de
-        orden de servicio
+        Generar reporte de orden de servicio
+        <i class="fa fa-file-pdf" aria-hidden="true"></i>
       </button>
 
       <button
@@ -45,7 +45,7 @@
           (!showForm && aprobateService && buttonAprobateView5)
         "
         class="btn btn-primary btn-sm active">
-        <i class="fa fa-check" aria-hidden="true"></i> aprobar
+        aprobar <i class="fa fa-check" aria-hidden="true"></i>
       </button>
 
       <button
@@ -56,7 +56,7 @@
           (!showForm && aprobateService && buttonAprobateView4)
         "
         class="btn btn-success btn-sm active">
-        <i class="fa fa-check" aria-hidden="true"></i> aprobar
+        aprobar <i class="fa fa-check" aria-hidden="true"></i>
       </button>
 
       <button
@@ -66,15 +66,15 @@
           (!showForm && buttonRejectFalse && !aprobateService)
         "
         class="btn btn-danger btn-sm active">
-        <i class="fa fa-ban" aria-hidden="true"></i> Rechazar
+        Rechazar <i class="fa fa-ban" aria-hidden="true"></i>
       </button>
 
       <button
         (click)="sendJustify()"
         *ngIf="!showForm && sendNotification"
         class="btn btn-pink btn-sm active">
-        <i class="fa fa-send" aria-hidden="true"></i> Enviar
-        justificaci&oacute;n
+        Enviar justificaci&oacute;n
+        <i class="fa fa-send" aria-hidden="true"></i>
       </button>
 
       <button
@@ -85,28 +85,31 @@
           (!showForm && buttonSaveFalse)
         "
         class="btn btn-primary btn-sm active">
-        <i class="fa fa-save" aria-hidden="true"></i> Guardar
+        Guardar <i class="fa fa-save" aria-hidden="true"></i>
       </button>
 
       <button
         *ngIf="!showForm && buttonAnnexedW"
         (click)="createAnnexedW()"
         class="btn btn-info btn-sm active">
-        <i class="fa fa-file-pdf" aria-hidden="true"></i> Anexo W
+        Anexo W <i class="fa fa-file-pdf" aria-hidden="true"></i>
       </button>
 
       <button
         *ngIf="!showForm && !rejected && task == 10"
         (click)="validateJustification()"
         class="btn btn-danger btn-sm active btn-toolbar">
-        <i class="fa fa-minus-circle" aria-hidden="true"></i> Rechazar
-        justificaci&oacute;n
+        Rechazar justificaci&oacute;n
+        <i class="fa fa-minus-circle" aria-hidden="true"></i>
       </button>
     </div>
 
     <app-order-service-form
-      [op]="task"
-      [showForm]="showForm"></app-order-service-form>
+      *ngIf="orderServiceId != null"
+      [ordServform]="ordServForm"
+      [op]="op"
+      [showForm]="showForm"
+      [total]="total"></app-order-service-form>
 
     <div
       *ngIf="(task != 5 && task != 6 && task != 7 && task != 10) || task == 10">
@@ -115,7 +118,10 @@
         [showForm]="showForm"></app-classificate-vehicle-form>
     </div>
 
-    <app-comments-form [op]="task" [showForm]="showForm"></app-comments-form>
+    <app-comments-form
+      [ordServform]="ordServForm"
+      [op]="op"
+      [showForm]="showForm"></app-comments-form>
 
     <app-event-detail-form [op]="task"></app-event-detail-form>
 

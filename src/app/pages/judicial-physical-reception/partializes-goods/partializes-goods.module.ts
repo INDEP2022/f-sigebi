@@ -9,9 +9,14 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { PartializedTreeViewComponent } from './partialized-tree-view/partialized-tree-view.component';
 import { PartializesGoodsRoutingModule } from './partializes-goods-routing.module';
 import { PartializesGoodsComponent } from './partializes-goods.component';
+import { PartializesTableComponent } from './partializes-table/partializes-table.component';
 
 @NgModule({
-  declarations: [PartializesGoodsComponent, PartializedTreeViewComponent],
+  declarations: [
+    PartializesGoodsComponent,
+    PartializedTreeViewComponent,
+    PartializesTableComponent,
+  ],
   imports: [
     CommonModule,
     PartializesGoodsRoutingModule,

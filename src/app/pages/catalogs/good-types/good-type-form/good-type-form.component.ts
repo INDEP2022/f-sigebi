@@ -4,7 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -35,34 +35,69 @@ export class GoodTypeFormComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.goodTypeForm = this.fb.group({
       id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      nameGoodType: [null, [Validators.required, Validators.maxLength(70)]],
+      nameGoodType: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(70),
+        ],
+      ],
       maxAsseguranceTime: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxFractionTime: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxExtensionTime: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxStatementTime: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxLimitTime1: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxLimitTime2: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxLimitTime3: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       noRegister: [
         null,
@@ -88,26 +123,37 @@ export class GoodTypeFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.goodTypeService.create(this.goodTypeForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    this.goodTypeService
-      .update(this.goodType.id, this.goodTypeForm.value)
-      .subscribe({
+    if (this.goodTypeForm.controls['nameGoodType'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.goodTypeService.create(this.goodTypeForm.value).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (this.goodTypeForm.controls['nameGoodType'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.goodTypeService
+        .update(this.goodType.id, this.goodTypeForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.refresh.emit(true);
     this.modalRef.hide();

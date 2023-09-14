@@ -5,6 +5,17 @@
 
   <div body>
     <div class="row">
+      <div class="col-12 btn-group">
+        <button
+          class="btn btn-primary active btn-sm m-2"
+          style="float: right"
+          (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          Regresar
+        </button>
+      </div>
+    </div>
+    <div class="row pt-5">
       <div class="col-md-12 md-tabs">
         <form [formGroup]="form" class="form-material" (submit)="save()">
           <div class="row">
@@ -32,7 +43,7 @@
               [label]="originalPlaceholder"
               class="col-md-3">
               <input
-                type="number"
+                type="text"
                 class="form-control"
                 formControlName="original" />
             </form-field>
@@ -52,9 +63,19 @@
               <input type="number" class="form-control" formControlName="y" />
             </form-field>
           </div>
-          <div class="row">
-            <div class="col-md-12">
-              <confirm-button [loading]="loading"></confirm-button>
+          <div footer>
+            <div class="d-flex justify-content align-items-start">
+              <div class="m-3 mt-5">
+                <confirm-button [loading]="loading"></confirm-button>
+              </div>
+              <!-- <div class="m-3 mt-5">
+                <button
+                  class="btn btn-primary active btn-md"
+                  (click)="goBack()">
+                  Regresar
+                  <i class="fas fa-arrow-circle-left"></i>
+                </button>
+              </div> -->
             </div>
           </div>
         </form>

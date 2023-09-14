@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="deductiveForm" class="form-material">
@@ -19,9 +19,9 @@
         <div class="col-md-4">
           <form-field
             [control]="deductiveForm.get('weightedDeduction')"
-            label="Deducci&oacute;n Ponderada">
+            label="Ponderaci&oacute;n">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="weightedDeduction" />
           </form-field>
@@ -31,9 +31,9 @@
         <div class="col-md-3">
           <form-field
             [control]="deductiveForm.get('startingRankPercentage')"
-            label="Rango de Porcentaje Inicial">
+            label="Porcentaje Inicial">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="startingRankPercentage" />
           </form-field>
@@ -41,9 +41,9 @@
         <div class="col-md-3">
           <form-field
             [control]="deductiveForm.get('finalRankPercentage')"
-            label="Rango de Porcentaje Final">
+            label="Porcentaje Final">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="finalRankPercentage" />
           </form-field>
@@ -52,9 +52,9 @@
         <div class="col-md-3">
           <form-field
             [control]="deductiveForm.get('contractNumber')"
-            label="No. Contrato">
+            label="Nº de Contrato">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="contractNumber" />
           </form-field>
@@ -64,10 +64,7 @@
           <form-field
             [control]="deductiveForm.get('version')"
             label="Versi&oacute;n">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="version" />
+            <input type="text" class="form-control" formControlName="version" />
           </form-field>
         </div>
       </div>
@@ -80,13 +77,6 @@
           <form-radio label="Inactivo">
             <input type="radio" formControlName="status" value="0" />
           </form-radio>
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-3">
-          <form-field [control]="deductiveForm.get('id')" label="ID">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
         </div>
       </div>
     </form>

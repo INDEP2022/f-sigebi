@@ -37,4 +37,64 @@ export class StrategyProcessService extends HttpService {
     const route = `${StrategyEndpoints.StrategyProcess}/${id}`;
     return this.delete(route);
   }
+
+  getByDelegation(id: number, estado: string, params: any) {
+    const route = `${StrategyEndpoints.getbyStatus}?filter.delegationNumber=${id}&filter.status=${estado}`;
+    return this.get(route, params);
+  }
+
+  getByNoReport(id: number) {
+    const route = `${StrategyEndpoints.StrategySum}/${id}`;
+    return this.get(route);
+  }
+
+  getByMonthYear(month: number, year: number, delegation: number, params: any) {
+    const route = `${StrategyEndpoints.strategyInd}?filter.monthNumber=$eq:${month}&filter.yearNumber=$eq:${year}&filter.delegation1Number=$eq:${delegation}`;
+    return this.get(route, params);
+  }
+
+  getByMonthYearTotal(month: number, year: number, delegation: number) {
+    const route = `${StrategyEndpoints.strategyInd}?filter.monthNumber=$eq:${month}&filter.yearNumber=$eq:${year}&filter.delegation1Number=$eq:${delegation}&filter.estTime=$eq:1`;
+    return this.get(route);
+  }
+
+  ByFormatNumber(params: any) {
+    const route = `${StrategyEndpoints.PaEstGood}`;
+    return this.post(route, params);
+  }
+
+  ByFormats(params: any) {
+    const route = `${StrategyEndpoints.FEstFormat}`;
+    return this.post(route, params);
+  }
+
+  ByIdActaNoGood(proceeding: number, good: number) {
+    const route = `${StrategyEndpoints.FestFormat2}?limit=1000&page=1&filter.proceedingNumber=$eq:${proceeding}&filter.goodNumber=$eq:${good}`;
+    return this.get(route);
+  }
+
+  ByIdProces(process: number) {
+    const route = `${StrategyEndpoints.StrategyProcess}filter.processNumber=$eq:${process}`;
+    return this.get(route);
+  }
+
+  getAllStrategyIndicator(params: any) {
+    const route = `${StrategyEndpoints.strategyIndicator}`;
+    return this.get(route, params);
+  }
+
+  getStrategyIndicatorByRegister(noFormat: any) {
+    const route = `${StrategyEndpoints.strategyIndicator}?filter.registerNumber=$eq:${noFormat}`;
+    return this.get(route);
+  }
+
+  PutStrategyIndicator(params: any) {
+    const route = `${StrategyEndpoints.strategyIndicator}`;
+    return this.put(route, params);
+  }
+
+  getStrategyRepImplementation(noFormat: any) {
+    const route = `${StrategyEndpoints.StrategyRepIm}?filter.formatNumber=$eq:${noFormat}`;
+    return this.get(route);
+  }
 }

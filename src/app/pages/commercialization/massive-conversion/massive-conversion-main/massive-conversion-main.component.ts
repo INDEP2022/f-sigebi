@@ -9,9 +9,6 @@ import { BehaviorSubject, skip } from 'rxjs';
 import {
   convertFormatDate,
   generateUrlOrPath,
-  showAlert,
-  showQuestion,
-  showToast,
 } from 'src/app/common/helpers/helpers';
 import {
   FilterParams,
@@ -24,10 +21,10 @@ import { ComerEventosService } from 'src/app/core/services/ms-event/comer-evento
 import { GuarantyService } from 'src/app/core/services/ms-guaranty/guaranty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { environment } from 'src/environments/environment';
 import { AddLcModalComponent } from '../components/add-lc-modal/add-lc-modal.component';
 import { TableCheckPortalDialogComponent } from '../components/table-check-portal-dialog/table-check-portal-dialog.component';
 import { TableCheckboxComponent } from '../components/table-checkbox/table-checkbox.component';
-import { loadCheckLc } from '../tools/load-check';
 import {
   SETTING_BATCH_REWORK,
   SETTING_CLIENT_ID,
@@ -113,12 +110,13 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     validityDate: new FormControl(null),
   });
 
-  dataSource = new LocalDataSource();
+  dataSource: LocalDataSource = new LocalDataSource();
   rfcSource = new LocalDataSource();
   clientSource = new LocalDataSource();
   lcsSource = new LocalDataSource();
   isLoadingLcs = false;
   pathGetBath = generateUrlOrPath('catalog', 'batch', true);
+  title: string = "Conversión Masiva de LC'S";
 
   constructor(
     private excelService: ExcelService,
@@ -148,11 +146,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   searchEvent(): void {
     const eventId = this.form.controls['eventId'].value;
     if (!eventId) {
-      showToast({
-        title: 'Error',
-        text: 'Debe ingresar un evento',
-        icon: 'warning',
-      });
+      this.alert('warning', this.title, 'Debe ingresar un evento');
       return;
     }
     this.enabledOrDisabledControl('eventId', false);
@@ -164,11 +158,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       },
       error: () => {
         this.enabledOrDisabledControl('eventId', true);
-        showToast({
-          title: 'Error',
-          text: 'No se encontró el evento',
-          icon: 'warning',
-        });
+        this.alert('warning', this.title, 'No se encontró el evento');
       },
     });
   }
@@ -197,29 +187,33 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   consultInServer() {
     if (!this.validConsult()) {
-      showToast({
-        text: 'No se ha insertado ningún filtro de búsqueda.',
-        icon: 'warning',
-        title: 'Atención',
-      });
+      this.alert(
+        'warning',
+        this.title,
+        'No se ha insertado ningún filtro de búsqueda.'
+      );
       this.form.markAllAsTouched();
       return;
     }
     this.searchData();
     this.searchLcs();
+    this.guarantyData();
   }
 
   searchData(list?: ListParams) {
+    console.error('Este es Search');
     this.loading = true;
     const params = this.makeFiltersParams(list).getParams();
     this.capturelineService.getTmpLcComer(params).subscribe({
       next: res => {
+        console.error(res);
         this.loading = false;
         this.dataSource.load(res.data);
         this.dataTotalItems = res.count;
         this.loading = false;
       },
-      error: () => {
+      error: error => {
+        console.error(error);
         this.dataSource.load([]);
         this.loading = false;
       },
@@ -288,49 +282,44 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   //#region on click load file
   isLoadingLoadFile = false;
-  onClickLoadFile(event: any, type: 'rfc' | 'client_id') {
-    showQuestion({
-      text: `¿Está seguro de que desea insertar el archivo por ${type}?`,
-      title: 'Insertar archivo',
-      confirmButtonText: 'Si, insertar',
-      cancelButtonText: 'No, cancelar',
-      icon: 'question',
-    }).then(result => {
-      if (result.isConfirmed) {
-        this.isLoadingLoadFile = true;
-        const file = event.target.files[0];
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('pmode', 'W');
-        let url = '';
-        if (type === 'client_id') {
-          url =
-            'http://sigebimsdev.indep.gob.mx/massivecaptureline/api/v1/application/pupInsertRecord';
-        } else {
-          url =
-            'http://sigebimsdev.indep.gob.mx/massivecaptureline/api/v1/application/pupInsertRecordMassively';
-        }
-
-        this.httpClient.post(url, formData).subscribe({
-          next: res => {
-            showToast({ text: 'Éxito al insertar a datos', title: 'Éxito' });
-            this.isLoadingLoadFile = false;
-            event.target.value = null;
-          },
-          error: err => {
-            console.log({ err });
-            showAlert({
-              icon: 'error',
-              text:
-                err?.error?.message ||
-                'Ups! ocurrió un error al insertar los datos vuelve a intentarlo',
-            });
-            this.isLoadingLoadFile = false;
-            event.target.value = null;
-          },
-        });
+  async onClickLoadFile(event: any, type: 'rfc' | 'client_id') {
+    const result = await this.alertQuestion(
+      'question',
+      this.title,
+      `¿Está seguro de que desea insertar el archivo por ${type}?`
+    );
+    if (result.isConfirmed) {
+      this.isLoadingLoadFile = true;
+      const file = event.target.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('pmode', 'W');
+      let url = '';
+      if (type === 'client_id') {
+        url = `${environment.API_URL}massivecaptureline/api/v1/application/pupInsertRecord`;
+      } else {
+        url = `${environment.API_URL}massivecaptureline/api/v1/application/pupInsertRecordMassively`;
       }
-    });
+
+      this.httpClient.post(url, formData).subscribe({
+        next: res => {
+          this.alert('success', this.title, 'Se insertó correctamente a datos');
+          this.isLoadingLoadFile = false;
+          event.target.value = null;
+        },
+        error: err => {
+          console.log({ err });
+          this.alert(
+            'error',
+            this.title,
+            err?.error?.message ||
+              'Ocurrió un error al insertar los datos vuelve a intentarlo'
+          );
+          this.isLoadingLoadFile = false;
+          event.target.value = null;
+        },
+      });
+    }
   }
 
   //#endregion on click load file
@@ -338,14 +327,12 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   isLoadingExportFile = false;
   exportFile() {
     if (!this.form.get('eventId').value) {
-      showToast({
-        text: 'No se ha seleccionado un evento',
-        icon: 'error',
-      });
+      this.alert('warning', this.title, 'No se ha seleccionado un evento');
       return;
     }
     this.isLoadingExportFile = true;
     const params = this.makeFiltersParams().getParams();
+
     this.guarantyService.getComerRefGuarantees(params).subscribe({
       next: res => {
         this.isLoadingExportFile = false;
@@ -358,84 +345,100 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     });
   }
 
+  guarantyData() {
+    this.isLoadingLcs = true;
+    const params = this.makeFiltersParams().getParams();
+    this.guarantyService.getComerRefGuarantees(params).subscribe({
+      next: res => {
+        this.lcsSource.load(res.data);
+        this.lcsTotalItems = res.count;
+        this.isLoadingLcs = false;
+      },
+      error: () => {
+        this.lcsSource.load([]);
+        this.isLoadingLcs = false;
+      },
+    });
+  }
+
   insertTmpLcComer(tmpLcComer: ITmpLcComer) {
     this.capturelineService.postTmpLcComer(tmpLcComer).subscribe({
       next: () => {
-        showToast({
-          text: 'Se insertó correctamente',
-          icon: 'success',
-        });
+        this.alert('success', this.title, 'Se insertón correctamente');
         this.searchData();
       },
       error: () => {
-        showToast({
-          text: 'Ocurrió un error al insertar',
-          icon: 'error',
-        });
+        this.alert('error', this.title, 'Ocurrión un error al insertar');
       },
     });
   }
 
   loadChecks() {
     if (!this.selectedEvent) {
-      showToast({
-        text: this.form.get('eventId').value
+      this.alert(
+        'warning',
+        this.title,
+        this.form.get('eventId').value
           ? 'El evento seleccionado no existe, por favor ingrese uno correcto'
-          : ' No se ha seleccionado un evento',
-        icon: 'warning',
-        title: 'Advertencia',
-      });
+          : ' No se ha seleccionado un evento'
+      );
       return;
     }
 
-    loadCheckLc(
+    this.loadCheckLc(
       this.form,
       this.capturelineService,
       this.openDialogCheckPortal.bind(this)
     );
-    // .then((res: any) => {
-    //   if (res.isConfirmed) {
-    //     this.openDialogCheckPortal();
-    //   }
-    // });
-    // if (this.form.invalid) {
-    //   showToast({
-    //     text: 'No se ha insertado ningún filtro de búsqueda.',
-    //     title: 'Advertencia',
-    //     icon: 'warning',
-    //   });
-    //   this.form.markAllAsTouched();
-    //   return;
-    // }
-    // const { validityDate, eventId } = this.form.value;
-    // let p_FLAG = Boolean(validityDate);
+  }
 
-    // showQuestion({
-    //   text: validityDate
-    //     ? `La fecha de vigencia será ${convertFormatDate(
-    //         validityDate
-    //       )}. ¿Desea continuar?`
-    //     : 'La Fecha de vigencia se tomará de la tabla. ¿Desea continuar?',
-    // }).then((res: any) => {
-    //   if (res.isConfirmed) {
-    //     this.capturelineService
-    //       .postLoadCheckPortal({
-    //         event: eventId,
-    //         validation: convertFormatDate(validityDate),
-    //         p_FLAG,
-    //       })
-    //       .subscribe({
-    //         next: () => {
-    //           showToast({
-    //             text: 'Se cargaron los checks correctamente',
-    //             icon: 'success',
-    //           });
-    //           this.searchData();
-    //         },
-    //         error: () => {},
-    //       });
-    //   }
-    // });
+  async loadCheckLc(
+    form: FormGroup,
+    capturelineService: CapturelineService,
+    cbOpenCheckPortal: (item: any) => void
+  ) {
+    const { validityDate, eventId } = form.getRawValue();
+    let p_FLAG = Boolean(validityDate);
+    console.log(form.getRawValue());
+    const res = await this.alertQuestion(
+      'question',
+      this.title,
+      validityDate
+        ? `La fecha de vigencia será ${convertFormatDate(
+            validityDate
+          )}. ¿Desea continuar?`
+        : 'La Fecha de vigencia se tomará de la tabla. ¿Desea continuar?'
+    );
+    if (res.isConfirmed) {
+      capturelineService
+        .postLoadCheckPortal({
+          event: eventId,
+          validation: validityDate ? convertFormatDate(validityDate) : '',
+          p_FLAG,
+        })
+        .subscribe({
+          next: res => {
+            console.log(res);
+            if (res.data) {
+              this.alert(
+                'success',
+                this.title,
+                'Se cargaron los checks correctamente'
+              );
+              cbOpenCheckPortal({ list: res.data });
+            } else {
+              this.alert('warning', this.title, 'No se encontraron checks');
+            }
+          },
+          error: () => {
+            this.alert(
+              'error',
+              this.title,
+              'Ocurrión un error al cargar los checks'
+            );
+          },
+        });
+    }
   }
 
   generateLcs() {
@@ -542,7 +545,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   openForm(lc?: any) {
     if (this.addRows.length == 0) {
-      this.onLoadToast(
+      this.alert(
         'error',
         'Acción no permitida',
         'No se permite alteración de registros previos.'
@@ -558,7 +561,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   delete(lc: any) {
     if (this.addRows.length == 0) {
-      this.onLoadToast(
+      this.alert(
         'error',
         'Acción no permitida',
         'No se permite alteración de registros previos.'

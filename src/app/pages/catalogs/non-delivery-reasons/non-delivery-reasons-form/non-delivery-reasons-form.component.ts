@@ -16,7 +16,7 @@ export class NonDeliveryReasonsFormComponent
   implements OnInit
 {
   nonDeliveryReasonsForm: FormGroup = new FormGroup({});
-  title: string = 'Motivo No Entrega';
+  title: string = 'Motivo no Entrega';
   edit: boolean = false;
   nonDeliveryReasons: INonDeliveryReason;
   typeEvent: any[];
@@ -59,7 +59,14 @@ export class NonDeliveryReasonsFormComponent
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      reason: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      reason: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
       userCreation: [null],
       userModification: [null],
       version: [null],
@@ -85,40 +92,52 @@ export class NonDeliveryReasonsFormComponent
   }
 
   create() {
-    this.loading = true;
-    console.log(this.nonDeliveryReasonsForm.value);
-    if (
-      this.nonDeliveryReasonsForm.controls['reasonType'].value != 'null' &&
-      this.nonDeliveryReasonsForm.controls['eventType'].value != 'null'
-    ) {
-      this.nonDeliveryReasonsService
-        .create(this.nonDeliveryReasonsForm.value)
-        .subscribe({
-          next: data => this.handleSuccess(),
-          error: error => (this.loading = false),
-        });
-    } else {
-      this.onLoadToast('warning', this.title, 'Debe agregar un tipo valido.');
+    if (this.nonDeliveryReasonsForm.controls['reason'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
       this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      console.log(this.nonDeliveryReasonsForm.value);
+      if (
+        this.nonDeliveryReasonsForm.controls['reasonType'].value != 'null' &&
+        this.nonDeliveryReasonsForm.controls['eventType'].value != 'null'
+      ) {
+        this.nonDeliveryReasonsService
+          .create(this.nonDeliveryReasonsForm.getRawValue())
+          .subscribe({
+            next: data => this.handleSuccess(),
+            error: error => (this.loading = false),
+          });
+      } else {
+        this.onLoadToast('warning', this.title, 'Debe agregar un tipo valido.');
+        this.loading = false;
+      }
     }
   }
 
   update() {
     this.loading = true;
-    console.log(this.nonDeliveryReasonsForm.value);
-    if (
-      this.nonDeliveryReasonsForm.controls['reasonType'].value != 'null' &&
-      this.nonDeliveryReasonsForm.controls['eventType'].value != 'null'
-    ) {
-      this.nonDeliveryReasonsService
-        .update7(this.nonDeliveryReasonsForm.value)
-        .subscribe({
-          next: data => this.handleSuccess(),
-          error: error => (this.loading = false),
-        });
-    } else {
-      this.onLoadToast('warning', this.title, 'Debe agregar un tipo valido.');
+    if (this.nonDeliveryReasonsForm.controls['reason'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
       this.loading = false;
+      return;
+    } else {
+      console.log(this.nonDeliveryReasonsForm.value);
+      if (
+        this.nonDeliveryReasonsForm.controls['reasonType'].value != 'null' &&
+        this.nonDeliveryReasonsForm.controls['eventType'].value != 'null'
+      ) {
+        this.nonDeliveryReasonsService
+          .update7(this.nonDeliveryReasonsForm.value)
+          .subscribe({
+            next: data => this.handleSuccess(),
+            error: error => (this.loading = false),
+          });
+      } else {
+        this.onLoadToast('warning', this.title, 'Debe agregar un tipo valido.');
+        this.loading = false;
+      }
     }
   }
 

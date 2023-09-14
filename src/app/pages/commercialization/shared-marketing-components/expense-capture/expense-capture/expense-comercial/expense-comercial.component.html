@@ -1,0 +1,268 @@
+<accordion [isAnimated]="true">
+  <accordion-group [isOpen]="true" (isOpenChange)="toggleInformation = $event">
+    <div accordion-heading class="row mt-3">
+      <h5 class="title">
+        Gastos del Área Comercial
+        <i
+          class="bx bx-chevron-down bx-md float-icon-md"
+          style="float: right"
+          [ngClass]="{
+            'rotate-down': toggleInformation,
+            'rotate-up': !toggleInformation
+          }"></i>
+      </h5>
+    </div>
+    <app-card [header]="false">
+      <div body>
+        <form class="form-material" [formGroup]="form">
+          <div class="row mt-4 ml-0">
+            <div class="col-md-4 col-6 p-0">
+              <app-select-modal-table-shared
+                *ngIf="address"
+                [form]="form"
+                [maxlengthInput]="12"
+                [disabled]="false"
+                [widthDescription]="false"
+                [haveSelectColumns]="true"
+                [haveColumnFilters]="true"
+                [ilikeFilters]="ilikeFilters"
+                [dateFilters]="dateFilters"
+                label="Id"
+                formField="expenseNumber"
+                [service]="spentService"
+                [columnsType]="columns"
+                id="expenseNumber"
+                title="Gastos del Área Comercial"
+                (selectRow)="fillForm($event)"></app-select-modal-table-shared>
+            </div>
+          </div>
+          <div class="row mt-4 ml-0">
+            <ng-custom-select-loading
+              [form]="form"
+              [updateValues]="true"
+              formControlName="conceptNumber"
+              label="Concepto"
+              [path]="pathConcept"
+              value="id"
+              bindLabel="description"
+              paramSearch="filter.description"
+              prefixSearch="$ilike"
+              secondParamSearch="filter.id"
+              [labelTemplate]="conceptLabel"
+              [optionTemplate]="conceptOption">
+            </ng-custom-select-loading>
+            <ng-template #conceptLabel let-item="item">
+              {{ item.id }} - {{ item.description }}
+            </ng-template>
+            <ng-template #conceptOption let-item="item">
+              <div [title]="item.id + '-' + item.description">
+                {{ item.id }} - {{ item.description }}
+              </div>
+            </ng-template>
+          </div>
+          <div class="row mt-4">
+            <div class="col-6">
+              <form-field
+                [control]="paymentRequestNumber"
+                label="Solicitud Pago">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="paymentRequestNumber"
+                  maxlength="11" />
+              </form-field>
+            </div>
+            <div class="col-6">
+              <form-field [control]="idOrdinginter" label="OI Intercambio">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="idOrdinginter"
+                  maxlength="11" />
+              </form-field>
+            </div>
+          </div>
+          <br />
+          <div class="ch-content">
+            <h5 style="font-size: 14px">
+              Datos del evento al cual se asociará el gasto
+            </h5>
+          </div>
+          <div class="row mt-4 ml-0">
+            <ng-custom-select-loading
+              [form]="form"
+              [updateValues]="true"
+              formControlName="eventNumber"
+              label="Evento"
+              [path]="pathEvent"
+              value="id"
+              bindLabel="processKey"
+              paramSearch="filter.processKey"
+              prefixSearch="$ilike"
+              secondParamSearch="filter.id"
+              [labelTemplate]="eventLabel"
+              [optionTemplate]="eventOption"
+              (valueChange)="reloadLoteEvent($event)">
+            </ng-custom-select-loading>
+            <ng-template #eventLabel let-item="item">
+              {{ item.id }} - {{ item.processKey }}
+            </ng-template>
+            <ng-template #eventOption let-item="item">
+              <div [title]="item.id + '-' + item.processKey">
+                {{ item.id }} - {{ item.processKey }}
+              </div>
+            </ng-template>
+          </div>
+          <div class="row mt-4 ml-0">
+            <ng-custom-select-loading
+              [form]="form"
+              [updateValues]="true"
+              formControlName="lotNumber"
+              label="Lote"
+              [path]="pathLote"
+              value="idLot"
+              bindLabel="description"
+              paramSearch="filter.description"
+              prefixSearch="$ilike"
+              secondParamSearch="filter.idLot"
+              [labelTemplate]="lotLabel"
+              [optionTemplate]="lotOption">
+            </ng-custom-select-loading>
+            <ng-template #lotLabel let-item="item">
+              {{ item.idLot }} - {{ item.description }}
+            </ng-template>
+            <ng-template #lotOption let-item="item">
+              <div [title]="item.idLot + '-' + item.description">
+                {{ item.idLot }} - {{ item.description }}
+              </div>
+            </ng-template>
+          </div>
+          <div class="row mt-4 ml-0">
+            <div class="col-6 pl-0">
+              <form-field
+                [control]="folioAtnCustomer"
+                label="Folio Atn. Cliente">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="folioAtnCustomer"
+                  maxlength="11" />
+              </form-field>
+            </div>
+            <div class="col-6">
+              <form-field
+                [control]="dateOfResolution"
+                label="Fecha de Resolución">
+                <input
+                  class="form-control"
+                  ngModel
+                  bsDatepicker
+                  formControlName="dateOfResolution" />
+              </form-field>
+            </div>
+          </div>
+          <br />
+          <div class="ch-content">
+            <h5 style="font-size: 14px">Datos del beneficiario o proveedor</h5>
+          </div>
+          <div class="row mt-4 ml-0">
+            <ng-custom-select-loading
+              [form]="form"
+              [updateValues]="true"
+              formControlName="clkpv"
+              label="Proveedor"
+              [path]="pathProvider"
+              value="clkPv"
+              bindLabel="pvName"
+              paramSearch="filter.pvName"
+              prefixSearch="$ilike"
+              secondParamSearch="filter.clkPv"
+              secondPrefixSearch="$eq"
+              [labelTemplate]="providerLabel"
+              [optionTemplate]="providerOption"
+              (valueChange)="updateProvider($event)">
+            </ng-custom-select-loading>
+            <ng-template #providerLabel let-item="item">
+              {{ item.clkPv }} - {{ item.pvName }}
+            </ng-template>
+            <ng-template #providerOption ng-option-tmp let-item="item">
+              <span class="ng-option-tmp">
+                {{ item.clkPv }} - {{ item.pvName }}
+              </span>
+
+              <!-- <div [title]="item.clkPv + '-' + item.pvName">
+                {{ item.clkPv }} - {{ item.pvName }}
+              </div> -->
+            </ng-template>
+          </div>
+          <div class="row mt-4 ml-0">
+            <ng-custom-select-loading
+              [form]="form"
+              formControlName="descurcoord"
+              label="Delegación"
+              path="catalog/api/v1/delegation/get-all"
+              value="description"
+              bindLabel="description"
+              paramSearch="filter.description"
+              prefixSearch="$ilike"
+              [limit]="1000">
+            </ng-custom-select-loading>
+          </div>
+          <div class="row mt-4">
+            <div class="col-12">
+              <form-field [control]="comment" label="Servicio">
+                <textarea
+                  class="form-control"
+                  formControlName="comment"
+                  rows="3"></textarea>
+              </form-field>
+            </div>
+          </div>
+          <br />
+          <app-data-receipt [expense]="data"></app-data-receipt>
+          <tr>
+            <td colspan="5" align="center">
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="
+                  !conceptNumberValue ||
+                  dataCompositionExpensesStatusChange.length === 0
+                "
+                (click)="sendToSIRSAE()">
+                Envíar Solicitud de pago a SIRSAE
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="
+                  !conceptNumberValue || dataCompositionExpenses.length === 0
+                "
+                (click)="notify()">
+                Notificar A:
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="
+                  !conceptNumberValue ||
+                  dataCompositionExpensesToUpdateClasif.length === 0
+                "
+                (click)="updateClasif()">
+                Actualizar Clasificación
+              </button>
+              <button
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                type="button"
+                [disabled]="errorsClasification.length === 0"
+                (click)="showNotLoads()">
+                No Cambiados a Vehículo Robo
+                <i class="fa fa-info-circle"></i>
+              </button>
+            </td>
+          </tr>
+        </form>
+      </div>
+    </app-card>
+  </accordion-group>
+</accordion>

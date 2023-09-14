@@ -1,15 +1,49 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">
-      Listado de Bienes con Informaci&oacute;n Requerida Nula
-    </h5>
+    <div class="row w-100">
+      <div class="col-12 col-sm-12 col-md-8">
+        <h5 class="title">
+          Listado de Bienes con Informaci&oacute;n Requerida Nula
+        </h5>
+      </div>
+      <div class="col-12 col-sm-12 col-md-4 text-end" *ngIf="origin">
+        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+    </div>
   </div>
 
   <div body>
     <div class="row">
+      <div class="d-flex justify-content-end">
+        <div class="m-3">
+          <!-- <input type="file" name="file1" #file1 class="d-none" formControlName="file1"
+                          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                          (change)="onFileChangeDelivery($event)" /> -->
+          <button
+            class="btn btn-success btn-sm ml-2 active"
+            type="button"
+            (click)="exportAll()">
+            Exportar a Excel
+            <i class="bx bx-download float-icon"></i>
+          </button>
+        </div>
+      </div>
       <div class="col-md-12">
-        <ng2-smart-table [settings]="settings"></ng2-smart-table>
-        <app-pagination></app-pagination>
+        <div [class]="loading ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table
+              [settings]="settings"
+              [source]="attribGoodBad"
+              (rowSelect)="openGood($event.data)">
+            </ng2-smart-table>
+          </div>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
       </div>
     </div>
   </div>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import Swal from 'sweetalert2';
-import { SweetalertModel } from '../../shared/base-page';
+import { SweetalertModel } from '../../shared';
 
 @Injectable({
   providedIn: 'root',

@@ -13,40 +13,46 @@
               formControlName="serviceType" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="pt-4 col-md-4">
           <form-field
             [control]="form.get('startingPercentageRange')"
             label="Rango Porcentaje Inicial">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="startingPercentageRange" />
+              formControlName="startingPercentageRange"
+              min="0" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="pt-4 col-md-4">
           <form-field
             [control]="form.get('finalPercentageRange')"
             label="Rango Porcentaje Final">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="finalPercentageRange" />
+              formControlName="finalPercentageRange"
+              min="0" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="pt-4 col-md-4">
           <form-field
             [control]="form.get('contractualPenalty')"
             label="Pena Convencional">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="contractualPenalty" />
+              formControlName="contractualPenalty"
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="pt-4 col-md-4">
           <form-field
             [control]="form.get('contractNumber')"
-            label="N&uacute;mero de Registro">
+            label="No. de Contrato">
             <input
               type="text"
               class="form-control"
@@ -75,20 +81,25 @@
                     </form-field>
                 </div>
                 -->
-        <div class="col-md-4">
+        <div class="pt-4 col-md-4">
           <form-field [control]="form.get('status')" label="Estado">
             <input
               type="number"
               class="form-control"
-              formControlName="status" />
+              formControlName="status"
+              min="0" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="pt-4 col-md-4">
           <form-field [control]="form.get('version')" label="Versi&oacute;n">
             <input
               type="number"
               class="form-control"
-              formControlName="version" />
+              formControlName="version"
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
       </div>

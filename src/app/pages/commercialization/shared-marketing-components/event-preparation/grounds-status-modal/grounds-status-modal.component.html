@@ -18,57 +18,94 @@
         [totalItems]="totalItems"></app-pagination>
     </div>
     <div class="row pt-4">
-      <div class="col-md-2"></div>
-      <div class="col-md-2">
-        <button type="button" class="btn btn-primary btn-sm active ml-3">
-          Cargar Archivo
-        </button>
+      <div class="col-md-7">
+        <label class="title" for="">Cargar Archivo (CSV,XLS)</label>
+        <form [formGroup]="form" class="form-material">
+          <form-field [control]="form.get('fileCSV')">
+            <input
+              type="file"
+              accept=".xls, .xlsx, .csv"
+              formControlName="fileCSV"
+              (change)="chargeFile($event)" />
+          </form-field>
+        </form>
+        <!--         
+        <button type="button" class="btn btn-primary btn-sm active ml-3" (click)="loadGoods()" >
+          
+        </button> -->
       </div>
-      <div class="col-md-1"></div>
-      <div class="col-md-2">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active ml-3"
-          (click)="openModal2()">
+      <!-- <div class="col-md-3" style="padding-top: 3%">
+        <button type="button" class="btn btn-primary btn-sm active ml-3" (click)="openModal2()">
           Cargar Layout
         </button>
-      </div>
-      <div class="col-md-1"></div>
-      <div class="col-md-2">
+      </div> -->
+      <!-- <div class="col-md-2" style="padding-top: 3%">
         <button
           type="button"
           class="btn btn-primary btn-sm active ml-3"
           (click)="close()">
           Cerrar
         </button>
-      </div>
+      </div> -->
     </div>
     <div class="row pt-4">
       <form [formGroup]="form" class="form-material">
         <div class="row mt-4">
-          <div class="col-md-4">
+          <div class="col-md-12">
             <form-field [control]="form.get('file')" label="Archivo">
-              <input type="text" formControlName="file" class="form-control" />
+              <input
+                type="text"
+                formControlName="file"
+                class="form-control"
+                [readOnly]="true" />
             </form-field>
           </div>
-          <div class="col-md-4">
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-12">
             <form-field [control]="form.get('whereMot')" label="Mot">
               <input
                 type="text"
                 formControlName="whereMot"
-                class="form-control" />
+                class="form-control"
+                [readOnly]="true" />
             </form-field>
           </div>
-          <div class="col-md-4">
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-12">
             <form-field [control]="form.get('reasons')" label="Motivos">
-              <input
+              <textarea
+                rows="5"
+                class="form-control"
+                formControlName="reasons"
+                [readOnly]="true"></textarea>
+              <!-- <input
                 type="text"
                 formControlName="reasons"
-                class="form-control" />
+                class="form-control" /> -->
             </form-field>
           </div>
         </div>
       </form>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          (click)="loadMotifs()"
+          [disabled]="!form.valid">
+          Cargar
+        </button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
     </div>
   </div>
 </app-modal>

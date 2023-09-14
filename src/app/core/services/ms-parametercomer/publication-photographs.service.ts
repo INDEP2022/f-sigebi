@@ -28,6 +28,10 @@ export class PublicationPhotographsService extends HttpService {
     return this.post(route, findg);
   }
 
+  pubPhoto(data: Object) {
+    return this.post(PhotoGoodEndpoints.AppPhoto, data);
+  }
+
   // create(photo: IPhoto) {
   //   return this.post(this.endpoint, photo);
   // }

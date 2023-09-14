@@ -1,0 +1,24 @@
+:host ::ng-deep form-field {
+  .float-label {
+    top: -18px !important;
+  }
+}
+
+.disabledDate {
+  input {
+    pointer-events: none;
+    background-color: #eee;
+    opacity: 1;
+  }
+}
+
+.enabledDate {
+  input {
+    background: white;
+  }
+}
+
+.debeDecir {
+  font-weight: 500;
+  margin-bottom: 2.5rem;
+}

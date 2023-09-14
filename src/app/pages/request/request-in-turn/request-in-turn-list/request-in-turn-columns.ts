@@ -13,6 +13,9 @@ export const REQUEST_IN_TURN_COLUMNS = {
     title: 'Nombre Titular',
     type: 'string',
     sort: false,
+    filter: {
+      config: {},
+    },
   },
   holderCharge: {
     title: 'Cargo del Remitente',

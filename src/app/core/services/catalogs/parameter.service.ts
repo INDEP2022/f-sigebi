@@ -6,7 +6,10 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Repository } from 'src/app/common/repository/repository';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IParameters } from '../../models/ms-parametergood/parameters.model';
+import {
+  IIndicatorParameters,
+  IParameters,
+} from '../../models/ms-parametergood/parameters.model';
 
 @Injectable({
   providedIn: 'root',
@@ -40,5 +43,14 @@ export class ParameterCatService
 
   remove(id: string | number): Observable<Object> {
     return this.repository.remove(this.route, id);
+  }
+
+  getParametrs(
+    params?: ListParams
+  ): Observable<IListResponse<IIndicatorParameters>> {
+    return this.get<IListResponse<IIndicatorParameters>>(
+      ParameterGoodEndpoints.IndicatorsParameter,
+      params
+    );
   }
 }

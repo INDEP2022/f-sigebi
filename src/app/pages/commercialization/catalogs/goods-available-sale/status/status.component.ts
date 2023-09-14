@@ -1,85 +1,181 @@
 import { Component, OnInit } from '@angular/core';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
 import { COLUMNS } from './columns';
 //Provisional Data
+import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { StatusDispService } from 'src/app/core/services/ms-status-disp/status-disp.service';
+import { BasePage } from 'src/app/core/shared';
 import { data } from './data';
+import { GoodsAvailableSaleFormComponent } from './goods-available-sale-form/goods-available-sale-form.component';
 
 @Component({
   selector: 'app-status',
   templateUrl: './status.component.html',
   styles: [],
 })
-export class StatusComponent
-  extends BasePageWidhtDinamicFilters
-  implements OnInit
-{
+export class StatusComponent extends BasePage implements OnInit {
   comercializationGoods: any[] = [];
   goodsAFSD = data;
-
   rowSelected: boolean = false;
   selectedRow: any = null;
-
   status: any;
-
-  //Columns
   columns = COLUMNS;
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  columnFilters: any = [];
+  data: LocalDataSource = new LocalDataSource();
 
-  constructor(private goodService: GoodService) {
-    super();
-
+  constructor(
+    private goodService: GoodService,
+    private BsModalService: BsModalService,
+    private statusDispService: StatusDispService
+  ) {
+    /*super();
     this.service = this.goodService;
-
-    /* this.settings = {
-      ...this.settings,
-      actions: {
-        ...this.settings.actions,
-        add: true,
-        edit: true,
-        delete: true,
-      },
-      mode: 'inline',
-      hideSubHeader: false,
-      columns: COLUMNS,
-    }; */
     this.service = this.goodService;
     this.ilikeFilters = ['description'];
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
       columns: COLUMNS,
+    };*/
+    super();
+    this.settings.columns = COLUMNS;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
+  }
+
+  /*extends BasePageWidhtDinamicFilters
+  implements OnInit*/
+
+  ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'idStatus':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'comerTpevents':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getExample();
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getExample());
+  }
+
+  getExample() {
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
     };
+    this.statusDispService.getAllTypeUser(params).subscribe({
+      next: response => {
+        //this.racks = response.data;
+        this.totalItems = response.count || 0;
+        this.data.load(response.data);
+        this.data.refresh();
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
 
-  onSaveConfirm(event: any) {
-    event.confirm.resolve();
-    this.goodService.update(event.newData).subscribe();
-    this.onLoadToast('success', 'Elemento Actualizado', '');
-  }
+  // onSaveConfirm(event: any) {
+  //   event.confirm.resolve();
+  //   this.goodService.update(event.newData).subscribe();
+  //   this.onLoadToast('success', 'Elemento Actualizado', '');
+  // }
 
-  onAddConfirm(event: any) {
-    event.confirm.resolve();
-    this.goodService.create(event.newData).subscribe();
-    this.onLoadToast('success', 'Elemento Creado', '');
-  }
+  // onAddConfirm(event: any) {
+  //   event.confirm.resolve();
+  //   this.goodService.create(event.newData).subscribe();
+  //   this.onLoadToast('success', 'Elemento Creado', '');
+  // }
 
-  onDeleteConfirm(event: any) {
+  showDeleteAlert(event: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        event.confirm.resolve();
-        this.goodService.remove(event.data.id).subscribe();
-
-        this.onLoadToast('success', 'Elemento Eliminado', '');
+        let data = {
+          idStatus: event.idStatus,
+          idDirection: event.idDirection,
+          idTypeEvent: event.idTypeEvent,
+        };
+        this.delete(data);
       }
     });
   }
 
-  selectRow(row: any) {
-    this.selectedRow = row;
-    this.rowSelected = true;
+  delete(body: Object) {
+    this.statusDispService.remove(body).subscribe({
+      next: () => {
+        this.alert('success', 'Borrado Correctamente', '');
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getExample());
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Estatus Disponibles para Comercializar',
+          'No se Puede Eliminar el Objeto Debido a una Relación con otra Tabla.'
+        );
+      },
+    });
+  }
+
+  // selectRow(row: any) {
+  //   this.selectedRow = row;
+  //   this.rowSelected = true;
+  // }
+
+  openForm(goodsAvailable?: any) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      goodsAvailable,
+      callback: (next: boolean) => {
+        if (next) this.getExample();
+      },
+      class: 'modal-lg modal-dialog-centered',
+    };
+    this.BsModalService.show(GoodsAvailableSaleFormComponent, modalConfig);
   }
 }

@@ -28,7 +28,8 @@ export class CheckPermissionsNonWinnersComponent
     this.checkId = this.checkId + this.rowData.user.toString() + 'NonWinners';
   }
 
-  ngAfterViewInit(): void {
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     this.changeState();
   }
 

@@ -47,6 +47,7 @@ export class GoodsDepositaryComponent
   federativeEntityData = new DefaultSelect();
   goodTypeData = new DefaultSelect();
   goodSubTypeData = new DefaultSelect();
+  maxDate = new Date();
 
   public form: FormGroup;
 
@@ -154,9 +155,11 @@ export class GoodsDepositaryComponent
       case 'P':
         return 'RGENADBBIENESXDEP';
       case 'D':
-        return 'RGENADBBIENESXDED';
+        // return 'RGENADBBIENESXDED';
+        return 'blank';
       case 'R':
-        return 'RGENADBBIENESXDER';
+        // return 'RGENADBBIENESXDER';
+        return 'blank';
       default:
         return 'RGENADBBIENESXDET';
     }
@@ -345,5 +348,8 @@ export class GoodsDepositaryComponent
     //   this.form.get('from').clearValidators();
     //   this.form.get('to').clearValidators();
     // }
+  }
+  cleanForm() {
+    this.form.reset();
   }
 }

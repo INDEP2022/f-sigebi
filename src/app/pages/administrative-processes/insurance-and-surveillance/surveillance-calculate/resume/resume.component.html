@@ -1,4 +1,19 @@
 <div body>
+  <div class="row pt-4">
+    <div class="col-md-12">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="resumens">
+        </ng2-smart-table>
+      </div>
+    </div>
+  </div>
+  <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+</div>
+
+<!-- <div body>
   <form [formGroup]="form" class="form-material">
     <div class="row mt-4">
       <div class="col-md-6">
@@ -8,32 +23,17 @@
       </div>
       <div class="col-md-2">
         <form-field [control]="form.get('amount')" label="importe">
-          <input
-            type="number"
-            class="form-control"
-            formControlName="amount"
-            min="1"
-            pattern="^[0-9]+" />
+          <input type="number" class="form-control" formControlName="amount" min="1" pattern="^[0-9]+" />
         </form-field>
       </div>
       <div class="col-md-2">
         <form-field [control]="form.get('iva')" label="IVA">
-          <input
-            type="number"
-            class="form-control"
-            formControlName="iva"
-            min="1"
-            pattern="^[0-9]+" />
+          <input type="number" class="form-control" formControlName="iva" min="1" pattern="^[0-9]+" />
         </form-field>
       </div>
       <div class="col-md-2">
         <form-field [control]="form.get('total')" label="Total">
-          <input
-            type="number"
-            class="form-control"
-            formControlName="total"
-            min="1"
-            pattern="^[0-9]+" />
+          <input type="number" class="form-control" formControlName="total" min="1" pattern="^[0-9]+" />
         </form-field>
       </div>
     </div>
@@ -42,34 +42,19 @@
       <div class="col-md-6 d-flex justify-content-end">TOTALES:</div>
       <div class="col-md-2">
         <form-field [control]="form.get('importe')" label="importe">
-          <input
-            [disabled]="true"
-            type="number"
-            class="form-control"
-            formControlName="importe"
-            min="1"
+          <input [disabled]="true" type="number" class="form-control" formControlName="importe" min="1"
             pattern="^[0-9]+" />
         </form-field>
       </div>
       <div class="col-md-2">
         <form-field [control]="form.get('ivaa')" label="ivaa">
-          <input
-            [disabled]="true"
-            type="number"
-            class="form-control"
-            formControlName="ivaa"
-            min="1"
+          <input [disabled]="true" type="number" class="form-control" formControlName="ivaa" min="1"
             pattern="^[0-9]+" />
         </form-field>
       </div>
       <div class="col-md-2">
         <form-field [control]="form.get('totals')" label="Total">
-          <input
-            [disabled]="true"
-            type="number"
-            class="form-control"
-            formControlName="totals"
-            min="1"
+          <input [disabled]="true" type="number" class="form-control" formControlName="totals" min="1"
             pattern="^[0-9]+" />
         </form-field>
       </div>
@@ -85,4 +70,4 @@
       </button>
     </div>
   </div>
-</div>
+</div> -->

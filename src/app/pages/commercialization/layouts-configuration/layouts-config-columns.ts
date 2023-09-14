@@ -133,67 +133,69 @@ export const LAYOUTS_COLUMNS4 = {
 };
 
 export const LAYOUTS_COLUMNS5 = {
-  // idLayout: {
-  //   title: 'Layout',
-  //   type: 'number',
-  //   sort: true,
-  //   valuePrepareFunction: (cell: any, row: any) => {
-  //     return row.idLayout.id;
-  //   },
-  // },
+  id: {
+    title: 'Id',
+    type: 'number',
+    sort: false,
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.idLayout.id;
+    // },
+  },
   descLayout: {
     title: 'Descripción',
     type: 'string',
-    sort: true,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idLayout.descLayout;
-    },
+    sort: false,
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.idLayout.descLayout;
+    // },
   },
   screenKey: {
     title: 'Pantalla',
     type: 'string',
-    sort: true,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idLayout.screenKey;
-    },
+    sort: false,
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.idLayout.screenKey;
+    // },
   },
   table: {
     title: 'Tabla o Vista',
     type: 'string',
-    sort: true,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idLayout.table;
-    },
+    sort: false,
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.idLayout.table;
+    // },
   },
   criterion: {
     title: 'Filtro de Selección',
     type: 'string',
-    sort: true,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idLayout.criterion;
-    },
+    sort: false,
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.idLayout.criterion;
+    // },
   },
-  registryNumber: {
-    title: 'Número de registro',
-    type: 'number',
-    sort: true,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idLayout.registryNumber;
-    },
-  },
-  indActive: {
+  // registryNumber: {
+  //   title: 'Número de registro',
+  //   type: 'number',
+  //   sort: false,
+  //   valuePrepareFunction: (cell: any, row: any) => {
+  //     return row.idLayout.registryNumber;
+  //   },
+  // },
+  status_active: {
     title: 'Activo',
-    sort: true,
+    sort: false,
     type: 'custom',
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
+        console.log(data);
+
+        // data.row.to = data.toggle;
       });
     },
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idLayout.indActive;
-    },
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.idLayout.indActive;
+    // },
   },
 };
 
@@ -201,7 +203,7 @@ export const LAYOUTS_COLUMNS6 = {
   // idLayout: {
   //   title: 'Layout',
   //   type: 'number',
-  //   sort: true,
+  //   sort: false,
   //   valuePrepareFunction: (cell: any, row: any) => {
   //     return row.idLayout.id;
   //   },
@@ -209,58 +211,58 @@ export const LAYOUTS_COLUMNS6 = {
   // idConsec: {
   //   title: 'Consec',
   //   type: 'number',
-  //   sort: true,
+  //   sort: false,
   // },
   position: {
     title: 'Posición',
     type: 'number',
-    sort: true,
+    sort: false,
   },
   column: {
     title: 'Columna',
     type: 'string',
-    sort: true,
+    sort: false,
   },
   type: {
     title: 'Tipo Dato',
     type: 'string',
-    sort: true,
+    sort: false,
   },
   length: {
     title: 'Longitud',
     type: 'number',
-    sort: true,
+    sort: false,
   },
   constant: {
     title: 'Constante',
     type: 'string',
-    sort: true,
+    sort: false,
   },
   carFilling: {
     title: 'Caracter de Relleno',
     type: 'string',
-    sort: true,
+    sort: false,
   },
   justification: {
     title: 'Justificación',
     type: 'string',
-    sort: true,
+    sort: false,
   },
   decimal: {
     title: 'Decimales',
     type: 'string',
-    sort: true,
+    sort: false,
   },
   dateFormat: {
     title: 'Formato de Fecha',
     type: 'string',
-    sort: true,
+    sort: false,
   },
-  registryNumber: {
-    title: 'Número de Registro',
-    type: 'number',
-    sort: true,
-  },
+  // registryNumber: {
+  //   title: 'Número de Registro',
+  //   type: 'number',
+  //   sort: false,
+  // },
 };
 
 export const LAYOUTS_COLUMNS56 = {

@@ -11,6 +11,7 @@
         </div>
         <div class="col-6">
           <button
+            (click)="Regresar()"
             type="button"
             class="btn btn-primary btn-sm active justify-content-end">
             Regresar
@@ -56,6 +57,8 @@
             [control]="form.get('diEstatusBien')"
             label="Estatus Bien">
             <input
+              (click)="callForm($event)"
+              style="cursor: pointer"
               class="form-control"
               formControlName="diEstatusBien"
               readonly />

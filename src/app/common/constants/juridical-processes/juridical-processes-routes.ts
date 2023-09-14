@@ -22,7 +22,7 @@ export const CREAR_MENU_JURIDICAL_PROCESSES = function () {
         routesJuridicalProcesses[index].link +
         `${
           JURIDICAL_PROCESSES.includes(routesJuridicalProcesses[index].link)
-            ? '/12345'
+            ? '/'
             : ''
         }`,
     });

@@ -41,4 +41,18 @@ export class TypeEventXterComerService extends HttpService {
   create(model: ITypeEventXtercomer) {
     return this.post(ThirdPartyEndpoints.TypeEventsXterComer, model);
   }
+
+  remove(data: any) {
+    const route = `${ThirdPartyEndpoints.TypeEventsXterComer}`;
+    return this.delete(route, data);
+  }
+
+  getTypeEventfindItemV2(
+    params?: ListParams | string
+  ): Observable<IListResponse<ITypeEventXtercomer>> {
+    return this.get<IListResponse<ITypeEventXtercomer>>(
+      ThirdPartyEndpoints.TypeEventfindItemV2,
+      params
+    );
+  }
 }

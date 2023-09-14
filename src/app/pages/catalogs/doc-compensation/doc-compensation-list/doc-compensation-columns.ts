@@ -5,40 +5,27 @@ export const DOC_COMPENSATION_COLUMNNS = {
     sort: false,
   },
   satTypeJob: {
-    title: 'Tipo oficio',
+    title: 'Tipo Oficio',
     type: 'string',
     sort: false,
   },
-  idTypeDocSat: {
-    title: 'Tipo doc SAT',
-    type: 'string',
-    sort: false,
-  },
-  idTypeDocSatXml: {
-    title: 'Tipo doc SAT XML',
-    type: 'string',
-    sort: false,
-  },
-  // idTypeDocSat: {
-  //   title: 'Tipo doc SAT',
-  //   type: 'string',
-  //   valuePrepareFunction: (value: IDocCompesationSat) => value?.typeDocSat,
-  //   sort: false,
-  // },
-  // idTypeDocSatXml: {
-  //   title: 'Tipo doc SAT XML',
-  //   type: 'string',
-  //   valuePrepareFunction: (value: IDocCompensationSatXml) =>
-  //     value?.typeDocSatXml,
-  //   sort: false,
-  // },
   typeDocSae: {
-    title: 'Tipo doc SAE',
+    title: 'Tipo Doc SAE',
     type: 'string',
     sort: false,
   },
   type: {
     title: 'Tipo',
+    type: 'string',
+    sort: false,
+  },
+  idTypeDocSat: {
+    title: 'Doc Resarcimiento SAT',
+    type: 'string',
+    sort: false,
+  },
+  idTypeDocSatXml: {
+    title: 'Doc Resarcimiento SAT XML',
     type: 'string',
     sort: false,
   },

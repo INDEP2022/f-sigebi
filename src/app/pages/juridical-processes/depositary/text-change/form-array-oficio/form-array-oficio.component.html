@@ -1,0 +1,39 @@
+<!--
+<div class="row pl-3" [formGroup]="formulario">C&#46;C&#46;P&#46;</div>
+<div class="row mt-5">
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
+        <form-field [control]="formulario.get('typePerson')" label="Tipo Persona">
+            <select class="form-control" formControlName="typePerson">
+                <option *ngFor="let option of options" [value]="option.value">
+                    {{ option.label }}
+                </option>
+            </select>
+        </form-field>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
+        <form-field class="mb-3 mt-3" [control]="formulario.get('senderUser')">
+            <ngx-select [form]="formulario" [data]="users$" (change)="getDescUser('control', $event)"
+                        [readonly]="formulario.get('typePerson').value === 'E'" (fetchItems)="getUsers($event)"
+                        bindLabel="userAndName" value="id" control="senderUser" label="Usuario" [searchOnInit]="true"
+                        [showTooltip]="true" termMaxLength="30" [labelTemplate]="userLabel"
+                        [optionTemplate]="userOption">
+            </ngx-select>
+
+            <ng-template #userLabel let-item="item">
+                {{ item.id }} - {{ item.name }}
+            </ng-template>
+            <ng-template #userOption let-item="item">
+                <div [title]="item.id + '-' + item.name">
+                    {{ item.id }} - {{ item.name }}
+                </div>
+            </ng-template>
+        </form-field>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
+        <form-field [control]="formulario.get('personaExt')" label="Nombre Persona">
+            <input type="text" class="form-control" formControlName="personaExt"
+                   [readonly]="!(formulario.get('typePerson').value === 'E')" />
+        </form-field>
+    </div>
+</div>
+-->

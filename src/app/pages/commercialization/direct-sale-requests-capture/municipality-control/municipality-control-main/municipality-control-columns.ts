@@ -1,13 +1,16 @@
 export const MUNICIPALITY_CONTROL_APPLICANT_COLUMNS = {
-  applicationId: {
+  soladjinstgobId: {
     title: 'Solicitud',
     type: 'number',
     sort: false,
   },
-  entityId: {
+  typeentgobId: {
     title: 'Entidad',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (id: any) => {
+      return id.typeentgobId;
+    },
   },
   applicant: {
     title: 'Solicitante',
@@ -34,7 +37,7 @@ export const MUNICIPALITY_CONTROL_APPLICANT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  applicationQuantity: {
+  amount: {
     title: 'Cant. Solic.',
     type: 'number',
     sort: false,
@@ -49,12 +52,12 @@ export const MUNICIPALITY_CONTROL_APPLICANT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  adjudication: {
+  award: {
     title: 'Adjudicación',
     type: 'string',
     sort: false,
   },
-  email: {
+  webmail: {
     title: 'Correo Web',
     type: 'string',
     sort: false,
@@ -62,59 +65,70 @@ export const MUNICIPALITY_CONTROL_APPLICANT_COLUMNS = {
 };
 
 export const MUNICIPALITY_CONTROL_ASSIGNED_GOOD_COLUMNS = {
-  goodId: {
-    title: 'N° Bien',
+  estateNumber: {
+    title: 'No. Bien',
     type: 'number',
     sort: false,
+    width: '15%',
   },
-  appraisal: {
+  worthappraisal: {
     title: 'Valor Avalúo',
     type: 'number',
     sort: false,
+    width: '15%',
   },
   appraisalDate: {
     title: 'Fecha Avalúo',
     type: 'string',
     sort: false,
+    width: '15%',
   },
   sessionNumber: {
-    title: 'N° Sesión',
+    title: 'No. Sesión',
     type: 'number',
     sort: false,
+    width: '15%',
   },
-  goodClasification: {
+  ranksEstate: {
     title: 'Clasifica Bien',
     type: 'string',
     sort: false,
+    width: '15%',
   },
   description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
+    width: '15%',
   },
   delegation: {
     title: 'Delegación',
     type: 'string',
     sort: false,
+    width: '10%',
   },
   location: {
     title: 'Ubicación',
     type: 'string',
     sort: false,
+    width: '10%',
   },
   mandate: {
     title: 'Mandato',
     type: 'string',
     sort: false,
+    width: '10%',
   },
-  siabClassification: {
+  rankssiab: {
     title: 'Clasifica SIAB',
     type: 'string',
     sort: false,
+    width: '10%',
   },
-  commentary: {
+  comments: {
     title: 'Comentarios',
     type: 'string',
     sort: false,
+    width: '10%',
   },
 };

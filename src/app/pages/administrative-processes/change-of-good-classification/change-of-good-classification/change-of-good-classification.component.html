@@ -1,55 +1,73 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Cambio de Clasificación del Bien</h5>
+    <div class="row w-100">
+      <div class="col-12 col-sm-12 col-md-8">
+        <h5 class="title">Cambio de Clasificación del Bien</h5>
+      </div>
+    </div>
   </div>
   <div body>
-    <h6>° Actual Clasificación</h6>
+    <form-loader *ngIf="loading"></form-loader>
+    <div class="row">
+      <div class="col-6">
+        <h6>Actual Clasificación</h6>
+      </div>
+      <div class="col-6 text-end" *ngIf="origin && origin > 0">
+        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+    </div>
+
     <br />
     <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-md-2 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('numberGood')" label="Numero de Bien">
+          <form-field [control]="form.get('numberGood')" label="No. Bien">
             <input
               type="text"
               class="form-control"
               formControlName="numberGood"
-              (change)="loadGood()" />
+              [readonly]="readOnlyGood" />
           </form-field>
         </div>
         <div class="col-md-10 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('descriptionGood')"
-            label="Descripcion del bien">
-            <input
-              type="text"
-              class="form-control"
+            label="Descripción del Bien">
+            <textarea
               formControlName="descriptionGood"
-              [disabled]="true" />
+              class="form-control"
+              maxlength="600"
+              [readonly]="true"></textarea>
           </form-field>
         </div>
       </div>
-      <div class="row mt-5">
-        <div class="col-md-2 col-sm-12 col-xs-12">
+      <div class="row">
+        <div
+          class="col-sm-12 col-xs-12 mt-3"
+          [class]="showExpedient ? 'col-md-10' : 'col-md-12'">
           <form-field
-            [control]="form.get('currentClasification')"
-            label="No. Clasif Bien">
+            [control]="form.get('clasification')"
+            label="No. Clasificación Bien">
             <input
               type="text"
               class="form-control"
-              formControlName="currentClasification" />
+              formControlName="clasification" />
           </form-field>
         </div>
-        <div class="col-md-8 col-sm-12 col-xs-12">
+        <!-- <div class="col-md-8 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('descriptionClasification')"
-            label="Descripcion">
+            label="Descripción">
             <input
               type="text"
               class="form-control"
               formControlName="descriptionClasification" />
           </form-field>
-        </div>
-        <div class="col-md-2 col-sm-12 col-xs-12">
+        </div> -->
+        <div class="col-md-2 col-sm-12 col-xs-12 mt-3" *ngIf="showExpedient">
           <form-field [control]="form.get('numberFile')" label="No. Expediente">
             <input
               type="text"
@@ -60,59 +78,93 @@
       </div>
     </form>
     <hr />
-    <h6>° Nueva Clasificación</h6>
-    <form [formGroup]="formNew" class="form-material">
+    <h6>Nueva Clasificación</h6>
+    <form [formGroup]="formNew" class="form-material fixTopInput">
       <div class="row mt-5">
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <app-classification-of-goods-shared
+          <ng-custom-select-loading
             [form]="formNew"
-            [patchValue]="true"
-            (descriptionClasification)="
-              onChange($event)
-            "></app-classification-of-goods-shared>
+            [path]="pathClasification"
+            label="Clasificación del Bien"
+            formControlName="classificationOfGoods"
+            value="numClasifGoods"
+            bindLabel="description"
+            paramSearch="filter.description"
+            prefixSearch="$ilike"
+            secondParamSearch="filter.numClasifGoods"
+            [labelTemplate]="clasLabel"
+            [optionTemplate]="clasOption"
+            (valueChange)="onChange($event)"></ng-custom-select-loading>
+          <ng-template #clasLabel let-item="item">
+            {{ item.numClasifGoods }} - {{ item.description }}
+          </ng-template>
+          <ng-template #clasOption let-item="item">
+            <div [title]="item.numClasifGoods + '-' + item.description">
+              {{ item.numClasifGoods }} - {{ item.description }}
+            </div>
+          </ng-template>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
-          <form-field [control]="formNew.get('unitXClassif')" label="Unidad">
-            <select class="form-control" formControlName="unitXClassif">
-              <option [value]="null">Seleccione un valor</option>
-              <option *ngFor="let unit of units" [value]="unit.unit">
+        <div
+          class="col-sm-12 col-xs-12 mt-3"
+          [class]="showExpedient ? 'col-md-3' : 'col-md-6'">
+          <form-field [control]="unitXClassif" label="Unidad">
+            <ng-select class="form-control" formControlName="unitXClassif">
+              <ng-option [value]="null">Seleccione un valor</ng-option>
+              <ng-option *ngFor="let unit of units" [value]="unit.unit">
                 {{ unit.unit }}
-              </option>
-            </select>
+              </ng-option>
+            </ng-select>
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
-          <form-field
+        <div class="col-md-3 col-sm-12 col-xs-12 mt-3" *ngIf="showExpedient">
+          <ng-custom-select-loading
+            [form]="formNew"
+            [path]="pathExpedient"
+            label="Nuevo No. Expediente"
+            formControlName="fileNumberNew"
+            value="id"
+            bindLabel="id"
+            paramSearch="filter.id"
+            prefixSearch="$eq"></ng-custom-select-loading>
+
+          <!-- <form-field
             [control]="formNew.get('fileNumberNew')"
             label="Nuevo No. Expediente">
             <input
               type="text"
               class="form-control"
               formControlName="fileNumberNew" />
-          </form-field>
+          </form-field> -->
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="formNew.get('destination')" label="Destino">
-            <select class="form-control" formControlName="destination">
-              <option [value]="null">Seleccione un valor</option>
-              <option *ngFor="let dest of destinations" [value]="dest.id">
+          <form-field [control]="destination" label="Destino">
+            <ng-select class="form-control" formControlName="destination">
+              <ng-option [value]="null">Seleccione un valor</ng-option>
+              <ng-option *ngFor="let dest of destinations" [value]="dest.id">
                 {{ dest.description }}
-              </option>
-            </select>
+              </ng-option>
+            </ng-select>
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <div class="d-flex justify-content-center">
-            <div class="m-3">
-              <button
-                type="button"
-                class="btn btn-success btn-sm active"
-                (click)="showAlert()">
-                Cambiar Clasificación
-              </button>
-            </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <div>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="disabledButton()"
+              (click)="showAlert()">
+              Guardar
+              <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+            <button
+              class="btn btn-danger btn-sm active ml-3"
+              type="button"
+              (click)="clear()">
+              Limpiar
+              <i class="fa fa-eraser"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -122,54 +174,32 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Atributos del Bien</h5>
-    <div class="col-md-5 buttons">
-      <div class="mt-2">
-        <button
-          [disabled]="btnNewAtribut"
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="newAtribut()">
-          Nuevos valores
-        </button>
-      </div>
-    </div>
   </div>
   <div body>
+    <app-characteristics-legend></app-characteristics-legend>
     <div class="row">
       <div class="col-md-6 col-sm-12 col-xs-12">
-        <h6>° Atributos actuales</h6>
-        <div class="row"></div>
-        <div class="row">
-          <div class="row pt-4">
-            <div class="col-md-12">
-              <div [class]="loading ? 'table-loading' : ''">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="atributActSettings"
-                  [source]="dataAct">
-                </ng2-smart-table>
-              </div>
-            </div>
-          </div>
-        </div>
+        <h6>ACTUALES</h6>
+        <app-good-characteristics-table
+          [goodChange]="goodChange"
+          [clasification]="currentClasification.value"
+          [settings]="atributActSettings"
+          [avaluo]="false"
+          [good]="good"
+          [disabled]="true"
+          [service]="service"></app-good-characteristics-table>
       </div>
       <div class="col-md-6 col-sm-12 col-xs-12">
-        <h6>° Nuevos atributos</h6>
-        <div class="row">
-          <div class="row pt-4">
-            <div class="col-md-12">
-              <div [class]="loading ? 'table-loading' : ''">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="atributNewSettings"
-                  [source]="listAtributNew"
-                  (edit)="onChangeValid($event.data)"
-                  (editConfirm)="onSaveConfirm($event)">
-                </ng2-smart-table>
-              </div>
-            </div>
-          </div>
-        </div>
+        <h6>NUEVOS</h6>
+        <app-good-characteristics-table
+          [goodChange]="goodChange2"
+          [initValue]="initValue"
+          [clasification]="classificationOfGoods.value"
+          [settings]="atributNewSettings"
+          [avaluo]="false"
+          [good]="good"
+          [disabled]="false"
+          [service]="service"></app-good-characteristics-table>
       </div>
     </div>
   </div>

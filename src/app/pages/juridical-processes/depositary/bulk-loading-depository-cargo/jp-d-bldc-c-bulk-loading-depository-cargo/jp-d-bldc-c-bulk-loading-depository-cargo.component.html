@@ -1,75 +1,160 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Carga masiva de carga de depositarias</h5>
+    <div class="col-12 col-sm-12 col-md-6">
+      <h5 class="title">Carga masiva de carga de depositarias</h5>
+    </div>
   </div>
   <div body>
-    <div class="row pl-4">Proceso de Carga Masiva de pagos de Depositarías</div>
-    <div class="row">
-      <div class="col-md-4 col-sm-12 col-xs-12">
-        <div class="d-flex justify-content-center">
-          <div class="m-3">
+    <div class="ch-content">
+      <h5 class="title"></h5>
+      <div class="col-md-5 buttons">
+        <div>
+          <div *ngIf="origin" class="col-12 col-sm-12 col-md-6 text-end">
             <button
-              class="btn btn-success btn-sm ml-2"
-              type="button"
-              (click)="file.click()">
-              Abrir archivo Excel / CSV
-            </button>
-            <input
-              type="file"
-              name="file"
-              #file
-              class="d-none"
-              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-              (change)="onFileChange($event)" />
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4 col-sm-12 col-xs-12">
-        <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <button
-              type="button"
-              class="btn btn-info btn-sm active"
-              (click)="loadData()">
-              Validar registros
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4 col-sm-12 col-xs-12">
-        <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <button type="button" class="btn btn-primary btn-sm active">
-              Aplicar Registros
+              class="btn btn-primary active btn-sm m-2"
+              (click)="goBack()">
+              Regresar
+              <i class="fas fa-arrow-circle-left"></i>
             </button>
           </div>
         </div>
       </div>
     </div>
+
+    <div class="row pl-4">Proceso de Carga Masiva de pagos de Depositarías</div>
+    <div class="row">
+      <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="m-3">
+          <button
+            [disabled]="loading"
+            type="button"
+            class="btn btn-sm btn-success active"
+            (click)="file.click()">
+            Importar Excel / CSV <i class="bi bi-file-earmark-excel-fill"></i>
+          </button>
+          <input
+            type="file"
+            name="file"
+            #file
+            class="d-none"
+            accept=".xlsx, .xls, .csv, application/vnd.ms-excel"
+            (change)="onFileChange($event)" />
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              [disabled]="loading"
+              type="button"
+              class="btn btn-info btn-sm active"
+              (click)="validRecords()">
+              Validar registros
+              <i class="fa fa-check" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="!disableApplyRecords || loading"
+            (click)="applyRecords()">
+            Aplicar Registros
+            <i aria-hidden="true" class="fa fa-save"></i>
+          </button>
+        </div>
+      </div>
+      <div
+        class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+        *ngIf="loading">
+        <div class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center">
+            <div class="loader"></div>
+            <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+          </div>
+        </div>
+      </div>
+    </div>
     <hr />
+    <form class="form-material">
+      <div class="row">
+        <div class="col-md-3">
+          <label>Correctos Jurídico: </label>
+          &nbsp;&nbsp;
+          <span class="fs-4">{{ regCorjur }}</span>
+        </div>
+        <div class="col-md-3">
+          <label>Registros Leídos: </label>
+          &nbsp;&nbsp;
+          <span class="fs-4">{{ regRead }}</span>
+        </div>
+        <div class="col-md-3">
+          <label>Procesados: </label>
+          &nbsp;&nbsp;
+          <span class="fs-4">{{ regProcessed }}</span>
+        </div>
+        <div class="col-md-3">
+          <label>Correctos: </label>
+          &nbsp;&nbsp;
+          <span class="fs-4">{{ regCorrect }}</span>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <label>Erroneos: </label>
+          &nbsp;&nbsp;
+          <span class="fs-4">{{ regWrong }}</span>
+        </div>
+        <div class="col-md-3">
+          <label>Correctos Admon: </label>
+          &nbsp;&nbsp;
+          <span class="fs-4">{{ regCoradm }}</span>
+        </div>
+      </div>
+    </form>
+
     <div class="row">
       <!--CAN WORK1 TABLE-->
       <div class="row justify-content-end mr-1">
         <div class="ch-content">
           <div class="row justify-content-end pt-3 mr-3">
             <app-columns-select
-              [settings]="settings"
+              [(settings)]="settings"
               class="row justify-content-end"></app-columns-select>
           </div>
         </div>
       </div>
       <div class="row pt-4">
-        <div class="col-md-12">
+        <div class="col-md-12 table-responsive">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="data">
+              [source]="paginatedData">
             </ng2-smart-table>
           </div>
         </div>
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+    <div class="row">
+      <!--CAN WORK2 TABLE-->
+      <div class="row pt-4">
+        <div class="col-md-12 table-responsive">
+          <div>
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="paginatedData2">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination [params]="params2" [totalItems]="totalItems2">
       </app-pagination>
     </div>
   </div>

@@ -17,6 +17,7 @@ export interface IState {
   risk: number;
   version: number;
   zoneHourlyStd: string;
+  transferent: ITransferente;
   zoneHourlyVer: string;
   userCreation: string;
   creationDate: string;

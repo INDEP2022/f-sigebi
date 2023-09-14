@@ -30,9 +30,10 @@ export class ClassificationOfGoodsSharedComponent
 {
   @Input() form: FormGroup;
   @Input() classificationOfGoodsField: string = 'classificationOfGoods';
-  @Input() label: string = 'No de Clasificación de Bien';
+  @Input() label: string = 'Clasificación de Bien';
   @Input() showClasification: boolean = true;
   @Output() descriptionClasification = new EventEmitter<string>();
+  @Output() clasificationEmit = new EventEmitter<any>();
   @Input() patchValue: boolean = false;
   data: IClasifi[] = [];
   sssubtypes = new DefaultSelect<IGoodSsubType>();
@@ -48,6 +49,7 @@ export class ClassificationOfGoodsSharedComponent
   ngOnInit(): void {}
 
   getClasification(params: ListParams) {
+    params['filter.description'] = `$ilike:${params.text}`;
     this.goodSssubtypeService.getAll(params).subscribe({
       next: data => {
         console.log(data);
@@ -67,7 +69,9 @@ export class ClassificationOfGoodsSharedComponent
   }
 
   onPackagesChange(type: any) {
-    this.descriptionClasification.emit(type.description);
+    if (type) {
+      this.descriptionClasification.emit(type.description);
+    }
     this.form.updateValueAndValidity();
   }
 

@@ -1,79 +1,168 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">CALCULO DE COMISIONES PARA TERCERO COMERCIALIZADOR</h5>
+      <h5 class="title">CÁLCULO DE COMISIONES PARA TERCERO COMERCIALIZADOR</h5>
     </div>
   </div>
   <div body>
-    <div class="row">
-      <div class="form-material col-md-5">
-        <search-bar [params]="params"></search-bar>
-      </div>
-    </div>
     <div class="ch-content" header>
       <h5 class="title"></h5>
-      <div class="col-md-5 buttons">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
+      <div class="col-md-5 buttons mb-3">
+        <app-columns-select
+          [defaultColumns]="7"
+          [(settings)]="settings"></app-columns-select>
         <div>
           <button
             (click)="openForm1()"
-            class="btn btn-primary active btn-sm ml-3">
-            Nuevo
+            type="button"
+            class="btn btn-info btn-sm active ml-2 mr-2">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
+          <!-- <button class="btn btn-primary active btn-sm ml-3 mb-2">
+            Nuevo
+          </button> -->
         </div>
       </div>
     </div>
-    <div [class]="loading ? 'table-loading' : ''">
-      <div class="table-responsive">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="settings"
-          [source]="comerComCalculatedList"
-          (edit)="openForm1($event.data)"
-          (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
+    <div class="row">
+      <div class="col-md-12">
+        <form-loader *ngIf="loading"></form-loader>
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="comCalculate"
+            (edit)="openForm1($event.data)"
+            (delete)="questionDelete($event.data)"
+            (userRowSelect)="rowsSelected($event.data)"></ng2-smart-table>
+        </ng-scrollbar>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
       </div>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
     </div>
+    <!-- <div [class]="loading ? 'table-loading' : ''">
+      <div class="table-responsive">
+       
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+    </div> -->
 
-    <div class="row pt-5">
-      <div class="col-md-2">
-        <button class="btn btn-sm btn-secondary active" type="submit">
-          Calcular comisi&oacute;n
+    <div class="row mb-2">
+      <div class="col-md-5 buttons">
+        <button
+          [disabled]="
+            !disabledBtnCerrar || loadingBtnExcel1 || loadingBtnExcel2
+          "
+          [ngClass]="{ loading: loadingBtnExcel1 }"
+          class="btn btn-sm btn-info active mr-3"
+          (click)="goods()"
+          type="button">
+          Bienes
+        </button>
+        <button
+          [disabled]="
+            !disabledBtnCerrar || loadingBtnExcel1 || loadingBtnExcel2
+          "
+          [ngClass]="{ loading: loadingBtnExcel2 }"
+          class="btn btn-sm btn-primary active"
+          (click)="calculateCommision()"
+          type="button">
+          Calcular Comisi&oacute;n
+          <i
+            *ngIf="!loadingBtnExcel2"
+            class="fa fa-calculator"
+            aria-hidden="true"></i>
         </button>
       </div>
     </div>
 
-    <div class="row pt-5">
-      <div class="ch-content" header>
-        <h5 class="title">Comisiones</h5>
-        <div class="col-md-5 buttons">
-          <app-columns-select [(settings)]="settings2"></app-columns-select>
-          <div>
-            <button
-              (click)="openForm2()"
-              class="btn btn-primary active btn-sm ml-3">
-              Nuevo
-            </button>
+    <accordion [isAnimated]="true">
+      <accordion-group
+        [isOpen]="acordionOpen"
+        [class.disabled]="!disabledBtnCerrar">
+        <div accordion-heading class="d-flex justify-content-between">
+          <h5>COMISIONES</h5>
+        </div>
+        <!-- <div class="row"> -->
+        <div class="ch-content" header>
+          <h5 class="title"></h5>
+          <div class="col-md-5 buttons mb-3">
+            <app-columns-select [(settings)]="settings2"></app-columns-select>
+            <div>
+              <button
+                (click)="openForm2()"
+                type="button"
+                class="btn btn-info btn-sm active ml-2 mr-2">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="row pt-3">
+        <!-- </div> -->
+        <div class="row">
+          <div class="col-md-12">
+            <form-loader *ngIf="loading2"></form-loader>
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loading2 ? '0px' : '300px' }">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings2"
+                [source]="comCommisionXGood"
+                (edit)="openForm2($event.data)"
+                (delete)="questionDelete2($event.data)">
+              </ng2-smart-table>
+            </ng-scrollbar>
+            <app-pagination [params]="params2" [totalItems]="totalItems2">
+            </app-pagination>
+          </div>
+
+          <div *ngIf="!loading2" class="row mt-4">
+            <form [formGroup]="totalForm">
+              <div class="col-md-4"></div>
+              <div class="col-md-2 text-center">
+                <form-field [control]="totalForm.get('totalVenta')">
+                  <label for="">Total Venta</label>
+                  <input
+                    currencyMask
+                    readonly
+                    type="text"
+                    class="form-control"
+                    formControlName="totalVenta" />
+                </form-field>
+              </div>
+              <div class="col-md-2 text-center">
+                <form-field [control]="totalForm.get('totalMonto')">
+                  <label for="">Total Monto</label>
+                  <input
+                    currencyMask
+                    readonly
+                    type="text"
+                    class="form-control"
+                    formControlName="totalMonto" />
+                </form-field>
+              </div>
+              <div class="col-md-4"></div>
+            </form>
+          </div>
+        </div>
+      </accordion-group>
+    </accordion>
+    <!-- <div class="row pt-5">
+      <div class="ch-content" header>
+        <h5 class="title">Comisiones</h5>
+        <div class="row pt-3">
         <div [class]="loading ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings2"
-              [source]="comerCommissionsList"
+            <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings2" [source]="comerCommissionsList"
               (edit)="openForm2($event.data)">
             </ng2-smart-table>
           </div>
-          <app-pagination
-            [params]="params2"
-            [totalItems]="totalItems2"></app-pagination>
+          <app-pagination [params]="params2" [totalItems]="totalItems2"></app-pagination>
         </div>
       </div>
-    </div>
+      </div>-->
   </div>
 </app-card>

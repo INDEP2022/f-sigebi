@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="row mt-5">
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('initialValue')"
             label="Valor inicial">
@@ -34,7 +34,7 @@
               formControlName="initialValue" />
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field [control]="form.get('finalValue')" label="Valor final">
             <input
               type="text"
@@ -42,7 +42,9 @@
               formControlName="finalValue" />
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field [control]="form.get('startDate')" label="Fecha Inicial">
             <input
               type="text"
@@ -50,10 +52,11 @@
               formControlName="startDate"
               bsDatepicker
               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"
-              [minDate]="minDate" />
+              [minDate]="minDate"
+              (bsValueChange)="validateDate1($event)" />
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field [control]="form.get('endDate')" label="Fecha Final">
             <input
               type="text"
@@ -61,7 +64,7 @@
               formControlName="endDate"
               bsDatepicker
               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"
-              [minDate]="minDate" />
+              [minDate]="minDate1" />
           </form-field>
         </div>
       </div>
@@ -71,17 +74,12 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [type]="'button'"
-          [btnSmall]="true"
           [disabled]="!form.valid || invalidDate"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-danger btn-sm active"
-          (click)="close()">
+        <button class="btn btn-danger active" (click)="close()">
           Cancelar
         </button>
       </div>

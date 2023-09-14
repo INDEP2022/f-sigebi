@@ -1,29 +1,35 @@
-import { ISafe } from 'src/app/core/models/catalogs/safe.model';
-
 export const DRAWERS_COLUMNS = {
-  noDrawer: {
-    title: 'Registro',
-    type: 'string',
+  id: {
+    title: 'No. Gaveta',
+    type: 'number',
     sort: false,
   },
 
-  noBobeda: {
-    title: 'Boveda',
-    type: 'string',
-    valuePrepareFunction: (boveda: ISafe) => {
-      return boveda?.description;
-    },
+  noDrawer: {
+    title: 'No. Bóveda',
+    type: 'number',
     sort: false,
+  },
+
+  safeDetails: {
+    title: 'Desc. Bóveda',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (value: any): string => {
+      return value.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
 
   status: {
     title: 'Estado',
-    type: 'string',
-    sort: false,
-  },
-
-  noRegistration: {
-    title: 'No. registro',
     type: 'string',
     sort: false,
   },

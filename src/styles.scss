@@ -38,6 +38,16 @@
   display: block;
 }
 
+.not-press {
+  pointer-events: none;
+}
+
+.btn-red {
+  color: #fff !important;
+  background-color: #cb4335 !important;
+  border-color: #cb4335 !important;
+}
+
 * {
   font-size: 14px;
 }
@@ -204,6 +214,36 @@ $checkbox_image: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' v
   border-color: #9d2449;
 }
 
+input[type='checkbox'] {
+  background-color: #fff;
+}
+
+input[type='checkbox'],
+input[type='checkbox']:checked {
+  appearance: none;
+  -webkit-appearance: none;
+  -o-appearance: none;
+  border: 1px solid #ccc;
+}
+
+input[type='checkbox'] {
+  border-radius: 0 !important;
+
+  &:checked {
+    background-image: url($checkbox_image);
+    background-color: #9d2449;
+    border-color: #9d2449;
+  }
+}
+
+input[type='checkbox'] {
+  border-radius: 0 !important;
+
+  &:focus {
+    outline: none !important;
+  }
+}
+
 .ng2-smart-actions input[type='checkbox'] {
   @extend %table-check;
 }
@@ -236,13 +276,20 @@ i {
   font-style: normal !important;
 }
 
+.fill-custom-tab li.nav-item.active > a.nav-link.active {
+  background-color: #9d2449 !important;
+  color: #f0e4d1 !important;
+}
+
 table:not(.normal-hover) tbody tr.selected {
   background: #f0e4d1 !important;
+  color: black !important;
 }
 
 table:not(.normal-hover) tbody tr:hover {
   background: #f0e4d1 !important;
   cursor: pointer;
+  color: black !important;
 }
 
 .mh-80 {
@@ -329,6 +376,10 @@ table:not(.normal-hover) tbody tr:hover {
 
 .bg-gray-card {
   background-color: rgba(173, 181, 189, 0.25);
+}
+
+.bg-blue-card {
+  background-color: #564ab1;
 }
 
 .center-checkbox thead tr th[ng2-st-checkbox-select-all] {
@@ -449,6 +500,21 @@ ng-scrollbar.table-scrollbar {
   max-width: 280px !important;
 }
 
+.theme-green .bs-datepicker-head {
+  background-color: #9d2449;
+}
+
+.bs-datepicker-container {
+  padding: 0px;
+}
+
+.theme-green .bs-datepicker-body table td span.selected,
+.theme-green .bs-datepicker-body table td.selected span,
+.theme-green .bs-datepicker-body table td span[class*='select-']:after,
+.theme-green .bs-datepicker-body table td[class*='select-'] span:after {
+  background-color: #9d2449;
+}
+
 .disabled {
   pointer-events: none !important;
   opacity: 0.7 !important;
@@ -482,24 +548,237 @@ ng-scrollbar.table-scrollbar {
 }
 
 .bg-black-unavailable {
-  // background-color: black !important;
-  color: black;
+  background-color: rgb(14, 14, 14) !important;
+  color: white;
+  padding: 0.3rem;
+  font-weight: 900;
+}
+
+.bg-black-unavailable-roj {
+  background-color: rgb(14, 14, 14) !important;
+  color: red;
   padding: 0.3rem;
   font-weight: 900;
 }
 
 .bg-green-to-confirm {
-  // background-color: green !important;
-  color: green;
+  background-color: #28a745 !important;
+  color: white;
+  font-weight: 900;
+  padding: 0.3rem;
+}
+
+.bg-green-to-confirm-verdadero {
+  background-color: #28a745 !important;
+  color: red;
   font-weight: 900;
   padding: 0.3rem;
 }
 
 #monitorABN table:not(.normal-hover) tbody tr.selected {
-  color: default;
+  color: black;
+  // #28a745
   background: rgb(240, 228, 209) !important;
 }
 
 #monitorABN table:not(.normal-hover) tbody tr:hover {
-  color: default;
+  color: black;
+}
+
+.disabled-custom {
+  pointer-events: none !important;
+  // opacity: 0.7 !important;
+}
+
+#selectAbandono div ng-select {
+  height: 38px !important;
+}
+
+.card-header-span-fix .page-item .page-link {
+  display: flex !important;
+  font-size: auto !important;
+  margin-top: auto !important;
+}
+
+#juridicasSelect table:not(.normal-hover) tbody tr.selected {
+  // color: black;
+  // #28a745
+  background: #117a8b !important;
+}
+
+#juridicasSelect table:not(.normal-hover) tbody tr:hover {
+  // color: black;
+  background: #117a8b !important;
+}
+
+#bienesJuridicos table:not(.normal-hover) tbody tr.selected {
+  color: black !important;
+  font-weight: bold;
+  // #28a745
+  // background: #117a8b !important;
+}
+
+#bienesJuridicos table:not(.normal-hover) tbody tr:hover {
+  color: black !important;
+  font-weight: bold;
+  // background: default !important;
+}
+
+// #idTableTestBody table thead {
+//   // display: none;
+//   visibility: hidden;
+//   height: 0;
+//   padding: 0;
+// }
+
+// #idTableTestHead table tbody {
+//   display: none;
+// }
+
+// #idTableTestBody table tbody tr td {
+//   width: 33% !important;
+// }
+
+// #idTableTestBody2 table tbody tr td {
+//   width: 33.5% !important;
+// }
+
+#custom-table-table-cursor table tbody tr td {
+  cursor: default !important;
+  background-color: #fff;
+}
+
+#hooverTableDocumentViewer table tbody tr td:hover {
+  cursor: pointer !important;
+  background-color: transparent;
+}
+
+.bg-yellow-to-good {
+  background-color: #e2c103 !important;
+  color: black;
+  font-weight: 900;
+  padding: 0.3rem;
+}
+
+.bg-yellow-record {
+  background-color: #e2c103 !important;
+  color: #fff;
+}
+
+.bg-green-record {
+  background-color: #1e7e34 !important;
+  color: #fff;
+}
+
+.bg-blue-record {
+  background-color: #564ab1 !important;
+  color: #fff;
+}
+
+#fichas table:not(.normal-hover) tbody tr.selected {
+  color: black !important;
+  // font-weight: 600;
+  // #28a745
+  background: rgb(219, 219, 219) !important;
+}
+
+#fichas table:not(.normal-hover) tbody tr:hover {
+  color: black !important;
+  // font-weight: 600;
+  background: rgb(219, 219, 219) !important;
+}
+
+.text-no-approved {
+  font-weight: 400;
+  color: crimson !important;
+}
+
+.text-approved {
+  font-weight: 400;
+  color: #1e7e34 !important;
+}
+
+custom-view-component {
+  color: black;
+}
+
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container {
+  overflow-y: auto;
+  flex-wrap: nowrap;
+}
+
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar,
+.info::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* Track */
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar-track,
+.info::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar-thumb,
+.info::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 12px;
+}
+
+/* Handle on hover */
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar-thumb:hover,
+.info::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+#porcentajes .ng2-smart-filter select {
+  /* Estilos específicos para los elementos de entrada (input) y selección (select) en el filtro */
+  border: 1px solid #d4d4d4 !important;
+}
+
+.swal2-html-container {
+  white-space: break-spaces;
+}
+
+.float-icon-md2 {
+  top: 9px;
+}
+
+.hidden-paginate-default .ng2-smart-pagination-nav {
+  display: none !important;
+}
+
+.asdasd {
+  margin-top: 1px;
+}
+
+.tessst {
+  margin-left: 27px !important;
+}
+
+#testDate .form-control[readonly] {
+  background: white !important;
+  // opacity: 1 !important;
+}
+
+//remover si afecta visualizacion
+.main-content {
+  overflow: visible;
+}
+
+.bg-no-approved {
+  font-weight: 400;
+  background-color: crimson !important;
+  color: white;
 }

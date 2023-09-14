@@ -1,71 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Bienes localizados</h5>
-    <div class="buttons">
-      <div class="mx-1">
-        <confirm-button
-          type="button"
-          [loading]="includeLoading"
-          text="Incluir"
-          loadingText="Cargando..."
-          className="btn-secondary"
-          [btnSmall]="true"
-          (confirm)="include()"></confirm-button>
-      </div>
-      <app-columns-select [(settings)]="settings"></app-columns-select>
-      <div class="btn-group" dropdown>
-        <button
-          id="button-basic"
-          dropdownToggle
-          type="button"
-          class="btn btn-primary dropdown-toggle btn-sm active"
-          aria-controls="dropdown-basic">
-          <div class="d-flex align-items-center">
-            Acciones <span class="caret ml-2"></span>
-          </div>
-        </button>
-        <ul
-          id="dropdown-basic"
-          *dropdownMenu
-          class="dropdown-menu dropdown-menu-right"
-          role="menu"
-          aria-labelledby="button-basic">
-          <li role="menuitem">
-            <a class="dropdown-item" (click)="viewImages()">Im&aacute;genes</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item" (click)="viewPhotos()">Visualizar Fotos</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item" href="#">Exportar Fotos</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item" href="#">Ficha T&eacute;cnica</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item" href="#">F&#46; T&eacute;cnica Masiva</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item" href="#">Excel</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item" href="#"
-              >Hist&oacute;rico Actas&#47;Prog&#47;Sus&#47;Can</a
-            >
-          </li>
-          <li class="divider dropdown-divider"></li>
-          <li role="menuitem">
-            <a class="dropdown-item" href="#">C&eacute;dula de Venta</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item" href="#">C&#46; Venta Masiva</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item" href="#">Excel C&#46;Venta</a>
-          </li>
-        </ul>
-      </div>
-    </div>
   </div>
   <div body>
     <div class="row">
@@ -73,24 +8,139 @@
         <button
           (click)="backTo()"
           *ngIf="origin"
-          class="btn btn-secondary btn-sm active">
-          <i class="fa fa-arrow-left" aria-hidden="true"></i>
-          Regresar a {{ backToText() }}
+          class="btn btn-primary btn-sm active">
+          Regresar <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>
     <div class="row">
-      <div class="col-md-12">
-        <div [ngClass]="{ 'table-loading': loading }">
-          <ng2-smart-table
-            [settings]="settings"
-            [source]="goods"></ng2-smart-table>
+      <div class="col-md-12 d-flex justify-content-end">
+        <form
+          [formGroup]="formCheckbox"
+          class="form-material d-flex justify-content-end">
+          <form-check for="galery" label="Ver Fotos">
+            <input type="checkbox" id="galery" formControlName="lookPhoto" />
+          </form-check>
+          <div></div>
+        </form>
+        <div>
+          <confirm-button
+            *ngIf="showInclude"
+            type="button"
+            [loading]="includeLoading"
+            text="Incluir"
+            loadingText="Cargando..."
+            className="btn-secondary"
+            [btnSmall]="true"
+            (confirm)="include()"></confirm-button>
+        </div>
+        <div>
+          <confirm-button
+            *ngIf="showInclude"
+            type="button"
+            [loading]="includeAllLoading"
+            text="Incluir Todos"
+            loadingText="Cargando..."
+            className="btn-secondary ml-2"
+            [btnSmall]="true"
+            (confirm)="includeAll()"></confirm-button>
+        </div>
+        <div>
+          <confirm-button
+            type="button"
+            [loading]="excelLoading"
+            text="Exportar a Excel"
+            loadingText="Cargando..."
+            className="btn-success ml-2"
+            [icon]="'bx bx-download'"
+            [btnSmall]="true"
+            (confirm)="getDataExcell()"></confirm-button>
         </div>
 
-        <app-pagination
-          [totalItems]="totalItems"
-          [params]="params"></app-pagination>
+        <app-columns-select
+          class="mx-1"
+          [(settings)]="settings"
+          (settingsChange)="setterColorRow($event)"
+          [leftList]="true"></app-columns-select>
+        <div>
+          <div class="btn-group mx-1" dropdown>
+            <button
+              id="button-basic"
+              dropdownToggle
+              type="button"
+              class="btn btn-primary dropdown-toggle btn-sm active"
+              aria-controls="dropdown-basic">
+              <div class="d-flex align-items-center">
+                Acciones <span class="caret ml-2"></span>
+              </div>
+            </button>
+            <ul
+              id="dropdown-basic"
+              *dropdownMenu
+              class="dropdown-menu dropdown-menu-right"
+              role="menu"
+              aria-labelledby="button-basic">
+              <li role="menuitem">
+                <a class="dropdown-item" (click)="viewImages()"
+                  >Im&aacute;genes</a
+                >
+              </li>
+              <li role="menuitem">
+                <a class="dropdown-item" (click)="viewPhotos()"
+                  >Visualizar Fotos</a
+                >
+              </li>
+              <li role="menuitem">
+                <a class="dropdown-item" (click)="getPhotos()"
+                  >Exportar Fotos</a
+                >
+              </li>
+              <li role="menuitem">
+                <a class="dropdown-item" (click)="viewImgDataSheet()"
+                  >Ficha T&eacute;cnica</a
+                >
+              </li>
+              <!-- <li role="menuitem">
+                <a class="dropdown-item">F&#46; T&eacute;cnica Masiva</a>
+              </li> -->
+              <!-- <li role="menuitem">
+            <a class="dropdown-item" (click)="getDataExcell()">Excel</a>
+          </li> -->
+              <li role="menuitem">
+                <a class="dropdown-item" (click)="getHistory()">
+                  Hist&oacute;rico Actas&#47;Prog&#47;Sus&#47;Can
+                </a>
+              </li>
+              <li class="divider dropdown-divider"></li>
+              <li role="menuitem">
+                <a class="dropdown-item" (click)="certificateSell()"
+                  >C&eacute;dula de Venta</a
+                >
+              </li>
+              <!-- <li role="menuitem">
+            <a class="dropdown-item" href="#">C&#46; Venta Masiva</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">Excel C&#46;Venta</a>
+          </li> -->
+            </ul>
+          </div>
+        </div>
       </div>
+    </div>
+
+    <div class="row" [ngClass]="{ 'table-loading': loading }">
+      <div class="col-md-12 table-responsive">
+        <ng2-smart-table
+          id="t-rastreador"
+          [settings]="settings"
+          [source]="goods"></ng2-smart-table>
+      </div>
+    </div>
+    <div class="row">
+      <app-pagination
+        [totalItems]="totalItems"
+        [params]="params"></app-pagination>
     </div>
   </div>
 </app-card>

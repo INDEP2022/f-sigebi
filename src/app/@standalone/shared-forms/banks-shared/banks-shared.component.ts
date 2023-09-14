@@ -58,6 +58,7 @@ export class BanksSharedComponent extends BasePage implements OnInit {
         });
       }
     });
+    this.getBanks(new ListParams());
   }
 
   getBanks(params: ListParams) {
@@ -77,19 +78,19 @@ export class BanksSharedComponent extends BasePage implements OnInit {
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        this.onLoadToast('error', 'No se encontraron registros', '');
       },
     });
   }
 
   onBanksChange(type: any) {
-    this.nameBank.next(this.banks.data[0].name);
+    this.nameBank.next(type.name);
     // alert("this.banks.data[0].name " + this.nameBank);
     //this.objBank.next(this.banks.data[0]);
     //alert("this.banks.data[0].bankCode " + this.banks.data[0].bankCode);
+    this.stringBank.next(type.bankCode);
     this.form.updateValueAndValidity();
     //this.objBank.next(this.banks.data[0].bankCode);
-    this.stringBank.next(this.banks.data[0].bankCode);
   }
 
   resetFields(fields: AbstractControl[]) {

@@ -1,0 +1,106 @@
+<div>
+  <div>
+    <form [formGroup]="form" class="form-material">
+      <div class="row pt-3">
+        <form-field
+          label="Estatus"
+          [control]="form.get('status')"
+          class="col-md-12">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="status"
+            readonly />
+        </form-field>
+      </div>
+      <div class="row pt-3">
+        <form-field
+          label="No. Delegación"
+          [control]="form.get('delegation')"
+          class="col-md-12">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="delegation" />
+        </form-field>
+      </div>
+      <div class="row pt-3">
+        <form-field label="Año" [control]="form.get('year')" class="col-md-6">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="year"
+            readonly />
+        </form-field>
+        <form-field label="Mes" [control]="form.get('month')" class="col-md-6">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="month"
+            readonly />
+        </form-field>
+      </div>
+      <div class="card-information mb-3">
+        <div class="row pt-3 mr-2 ml-2"></div>
+        <div class="row pt-3 justify-content-center mr-2 ml-2">
+          <div class="col-md-6">
+            <div>
+              <h5 class="col-md-12 title">
+                Número de Estrategias y Reportes de Implementación que se
+                Debieron Preparar
+              </h5>
+            </div>
+            <form-field
+              label="Estrategias de Administración"
+              [control]="form.get('stragy')"
+              class="col-md-6 mt-2">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="stragy"
+                readonly />
+            </form-field>
+            <form-field
+              label="Reporte Implementación"
+              [control]="form.get('report')"
+              class="col-md-6 mt-2">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="report"
+                readonly />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <div>
+              <h4 class="col-md-12 title">
+                Número de Estrategias y Reportes Entregados en Tiempo
+                <span style="visibility: hidden">IIIIIIIIIIIIIIIIIIII</span>
+              </h4>
+            </div>
+            <form-field
+              label="Estrategias de Administración"
+              [control]="form.get('stragyTwo')"
+              class="col-md-6 mt-2">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="stragy"
+                readonly />
+            </form-field>
+            <form-field
+              label="Reporte Implementación"
+              [control]="form.get('reportTwo')"
+              class="col-md-6 mt-2">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="report"
+                readonly />
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

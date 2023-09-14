@@ -24,7 +24,7 @@ export const goodsClassData = [
     description: 'Calzado diverso',
   },
   {
-    id: 7,
+    id: '778',
     description: 'Blancos diversos',
   },
   {

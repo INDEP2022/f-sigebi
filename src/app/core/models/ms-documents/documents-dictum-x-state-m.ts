@@ -12,3 +12,9 @@ export interface IDocumentsDictumXStateM {
   notificationDate: string;
   secureKey: string;
 }
+
+export interface IDataDocumentosBien {
+  count: number;
+  data: IDocumentsDictumXStateM[];
+  message: string[];
+}

@@ -9,10 +9,12 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDonationGood,
   IFilterDonation,
+  IGoodDonation,
 } from '../../models/ms-donation/donation.model';
 
 const api: string = DonationEndPoint.donation;
-
+const donationEvent = DonationEndPoint.eventComDonation;
+const endpoint: string = DonationEndPoint.eventComDonation;
 @Injectable({
   providedIn: 'root',
 })
@@ -22,6 +24,7 @@ export class DonationService
 {
   constructor(private donationRepository: DonationRepository<IDonationGood>) {
     super();
+
     this.microservice = 'donationgood';
   }
 
@@ -50,5 +53,44 @@ export class DonationService
 
   remove(id: string): Observable<any> {
     return this.donationRepository.remove(api, id);
+  }
+
+  getEventComDonation(params?: ListParams): Observable<IListResponse<any>> {
+    return this.donationRepository.getAll(donationEvent, params);
+  }
+
+  getEventComDonationDetail(
+    params?: ListParams
+  ): Observable<IListResponse<any>> {
+    return this.donationRepository.getAll(
+      DonationEndPoint.DetailEventComDon,
+      params
+    );
+  }
+
+  getExcel() {
+    return this.get(DonationEndPoint.eventComDonationExcel);
+  }
+
+  createAdmonDonation(model: any) {
+    return this.post('admon-donation', model);
+  }
+
+  deleteAdmonDonation(id: number) {
+    return this.delete(`admon-donation/${id}`);
+  }
+  createD(goodDon: IGoodDonation) {
+    const route = `${endpoint}`;
+    return this.post(route, goodDon);
+  }
+  getTempGood(params: ListParams) {
+    return this.get(DonationEndPoint.TempDonationGood, params);
+  }
+
+  createApproveDonation(data: any) {
+    return this.post(DonationEndPoint.ApproveDonation, data);
+  }
+  getDonationRequest(requestId: number) {
+    return this.get(`/donac-request-good?filter.requestId.id=$eq:${requestId}`);
   }
 }

@@ -7,87 +7,155 @@
   <div body>
     <div class="ch-content" header>
       <h5 class="title"></h5>
-      <div class="col-md-5 buttons">
+      <div class="col-md-5 buttons mb-3">
         <div>
           <button
             (click)="openForm1()"
-            class="btn btn-primary active btn-sm ml-3">
-            Nuevo
+            type="button"
+            tooltip="Agregar"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
       </div>
     </div>
-    <div [class]="loading ? 'table-loading' : ''">
-      <div class="table-responsive">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="settings"
-          [source]="thirdPartyList"
-          (userRowSelect)="rowsSelected($event)"
-          (edit)="openForm1($event.data)"></ng2-smart-table>
+    <div class="row">
+      <div class="col-md-12">
+        <form-loader *ngIf="loading"></form-loader>
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
+            [settings]="settings"
+            [source]="thirdPartyList"
+            (userRowSelect)="rowsSelected($event)"
+            (edit)="openForm1($event.data)"
+            (delete)="questionDelete1($event.data)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
-    <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
-  </div>
-</app-card>
 
-<app-card [header]="true">
-  <div header>
-    <div class="ch-content">
-      <h5 class="title">TIPOS DE EVENTOS QUE ATIENDE EL TERCERO</h5>
-    </div>
-  </div>
-  <div body>
-    <div class="ch-content" header>
-      <h5 class="title"></h5>
-      <div class="col-md-5 buttons">
-        <div>
-          <button
-            (click)="openForm2()"
-            class="btn btn-primary active btn-sm ml-3">
-            Nuevo
-          </button>
-        </div>
-      </div>
-    </div>
-    <div [class]="loading ? 'table-loading' : ''">
+    <!-- <div [class]="loading ? 'table-loading' : ''">
       <div class="table-responsive">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="settings2"
-          [source]="typeEventList"
-          (userRowSelect)="rowsSelected2($event)"
-          (edit)="openForm2($event.data)"></ng2-smart-table>
+        <ng2-smart-table [attr.class]="'table-bordered'"></ng2-smart-table>
       </div>
-    </div>
+    </div> -->
   </div>
 </app-card>
-
-<app-card [header]="true">
-  <div header>
-    <div class="ch-content">
-      <h5 class="title">MONTOS</h5>
+<accordion [isAnimated]="true">
+  <accordion-group
+    [isOpen]="acordionOpen"
+    [class.disabled]="!disabledBtnCerrar">
+    <div accordion-heading class="d-flex justify-content-between">
+      <h5>
+        <!-- <i class="fa fa-filter" aria-hidden="true"></i> -->
+        TIPOS DE EVENTOS QUE ATIENDE EL TERCERO
+      </h5>
     </div>
-  </div>
-  <div body>
-    <div class="ch-content" header>
-      <h5 class="title"></h5>
-      <div class="col-md-5 buttons">
-        <div>
-          <button
-            (click)="openForm3()"
-            class="btn btn-primary active btn-sm ml-3">
-            Nuevo
-          </button>
+    <app-card [header]="true">
+      <!-- <div header>
+        <div class="ch-content">
+          <h5 class="title">TIPOS DE EVENTOS QUE ATIENDE EL TERCERO</h5>
+        </div>
+      </div> -->
+      <div body>
+        <div class="ch-content" header>
+          <h5 class="title"></h5>
+          <div class="col-md-5 buttons mb-3">
+            <div>
+              <button
+                (click)="openForm2()"
+                type="button"
+                tooltip="Agregar"
+                containerClass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <form-loader *ngIf="loading2"></form-loader>
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loading2 ? '0px' : '300px' }">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                class="table-responsive"
+                [settings]="settings2"
+                [source]="typeEventList"
+                (edit)="openForm2($event.data)"
+                (delete)="questionDelete2($event.data)">
+              </ng2-smart-table>
+            </ng-scrollbar>
+          </div>
+          <app-pagination
+            [params]="params2"
+            [totalItems]="totalItems2"></app-pagination>
         </div>
       </div>
+    </app-card>
+  </accordion-group>
+  <accordion-group
+    [isOpen]="acordionOpen"
+    [class.disabled]="!disabledBtnCerrar">
+    <div accordion-heading class="d-flex justify-content-between">
+      <h5>
+        <!-- <i class="fa fa-filter" aria-hidden="true"></i> -->
+        MONTOS
+      </h5>
     </div>
-    <ng2-smart-table
-      [attr.class]="'table-bordered'"
-      [settings]="settings3"
-      [source]="amountList"
-      (edit)="openForm3($event.data)"></ng2-smart-table>
-  </div>
-</app-card>
+    <app-card [header]="true">
+      <!-- <div header>
+        <div class="ch-content">
+          <h5 class="title">MONTOS</h5>
+        </div>
+      </div> -->
+      <div body>
+        <div class="ch-content" header>
+          <h5 class="title"></h5>
+          <div class="col-md-5 buttons mb-3">
+            <div>
+              <button
+                (click)="openForm3()"
+                type="button"
+                tooltip="Agregar"
+                containerClass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <form-loader *ngIf="loading3"></form-loader>
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loading3 ? '0px' : '300px' }">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                class="table-responsive"
+                [settings]="settings3"
+                [source]="amountList"
+                (edit)="openForm3($event.data)"
+                (delete)="questionDelete3($event.data)">
+              </ng2-smart-table>
+            </ng-scrollbar>
+          </div>
+          <app-pagination
+            [params]="params3"
+            [totalItems]="totalItems3"></app-pagination>
+        </div>
+      </div>
+    </app-card>
+  </accordion-group>
+</accordion>

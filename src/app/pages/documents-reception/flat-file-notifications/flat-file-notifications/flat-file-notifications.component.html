@@ -6,37 +6,69 @@
   <div body>
     <form [formGroup]="notificationsForm" class="form-material">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-12">
           <app-delegation-shared
             [showSubdelegation]="false"
             [form]="notificationsForm"></app-delegation-shared>
         </div>
-
-        <div class="col-md-4">
-          <div class="row pt-3">
-            <form-field
-              [control]="notificationsForm.get('from')"
-              label="Fecha Desde">
-              <input class="form-control" formControlName="from" bsDatepicker />
-            </form-field>
-          </div>
-
-          <div class="row pt-3">
-            <form-field [control]="notificationsForm.get('from')" label="Hasta">
-              <input class="form-control" formControlName="to" bsDatepicker />
-            </form-field>
-          </div>
+      </div>
+      <div class="row justify-content-start">
+        <div class="col-md-6">
+          <form-field
+            [control]="notificationsForm.get('startDate')"
+            label="Fecha Desde">
+            <input
+              class="form-control"
+              formControlName="startDate"
+              bsDatepicker
+              [maxDate]="maxDate" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="notificationsForm.get('endDate')"
+            label="Fecha Hasta ">
+            <input
+              class="form-control"
+              formControlName="endDate"
+              bsDatepicker
+              [maxDate]="maxDate" />
+          </form-field>
+        </div>
+        <div
+          class="invalid-feedback animated fadeInUp"
+          style="display: block"
+          *ngIf="endDate.touched">
+          {{ getEndDateErrorMessage(endDate, startDate) }}
         </div>
       </div>
+      <div class="row justify-content-start">
+        <div class="col-md-6 p-4">
+          <form-field
+            [control]="notificationsForm.get('name')"
+            label="Nombre del Archivo">
+            <input class="form-control" formControlName="name" maxlength="20" />
+          </form-field>
+        </div>
 
-      <div class="row">
-        <div class="col-md-12">
-          <button
-            type="submit"
-            class="btn btn-primary active"
-            (click)="Generar()">
-            Generar
-          </button>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              type="submit"
+              [disabled]="notificationsForm.invalid"
+              class="btn btn-primary btn-sm active"
+              (click)="Generar()">
+              Guardar
+              <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <button
+              class="btn btn-danger btn-sm active mr-3"
+              (click)="cleanForm()">
+              Limpiar <i class="fas fa-eraser"> </i>
+            </button>
+          </div>
         </div>
       </div>
     </form>

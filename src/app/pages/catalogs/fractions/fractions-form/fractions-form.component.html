@@ -8,7 +8,7 @@
     <form [formGroup]="fractionForm" class="form-material">
       <div class="row">
         <div class="col-md-6">
-          <form-field [control]="fractionForm.get('code')" label="Codigo">
+          <form-field [control]="fractionForm.get('code')" label="Código">
             <input
               type="text"
               class="form-control"
@@ -19,14 +19,11 @@
 
         <div class="col-md-6">
           <form-field [control]="fractionForm.get('level')" label="Nivel">
-            <input
-              type="text"
-              class="form-control disabled"
-              formControlName="level" />
+            <input type="text" class="form-control" formControlName="level" />
           </form-field>
         </div>
 
-        <div class="col-md-12">
+        <div class="col-md-12 pt-4">
           <form-field
             [control]="fractionForm.get('description')"
             label="Descripci&oacute;n">
@@ -37,7 +34,8 @@
             </textarea>
           </form-field>
         </div>
-        <div class="col-md-6">
+
+        <div class="col-md-6 pt-4">
           <form-field [control]="fractionForm.get('normId')">
             <ngx-select
               [form]="fractionForm"
@@ -50,7 +48,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-6 pt-4">
           <form-field [control]="fractionForm.get('clasificationId')">
             <ngx-select
               [form]="fractionForm"
@@ -63,13 +61,13 @@
           </form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 pt-4">
           <form-field [control]="fractionForm.get('unit')" label="Unidad">
             <input type="text" class="form-control" formControlName="unit" />
           </form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 pt-4">
           <form-field
             [control]="fractionForm.get('version')"
             label="Versi&oacute;n">
@@ -77,21 +75,21 @@
           </form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 pt-4">
           <form-field
             [control]="fractionForm.get('relevantTypeId')"
-            label="Tipo relevante">
+            label="Tipo Relevante">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="relevantTypeId" />
           </form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 pt-4">
           <form-field
             [control]="fractionForm.get('codeErp1')"
-            label="Codigo ERP1">
+            label="Código ERP1">
             <input
               type="text"
               class="form-control"
@@ -99,10 +97,10 @@
           </form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 pt-4">
           <form-field
             [control]="fractionForm.get('codeErp2')"
-            label="Codigo ERP2">
+            label="Código ERP2">
             <input
               type="text"
               class="form-control"
@@ -110,10 +108,10 @@
           </form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 pt-4">
           <form-field
             [control]="fractionForm.get('codeErp3')"
-            label="Codigo ERP3">
+            label="Código ERP3">
             <input
               type="text"
               class="form-control"
@@ -121,10 +119,10 @@
           </form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 pt-4">
           <form-field
             [control]="fractionForm.get('decimalAmount')"
-            label="Cantidad decimal">
+            label="Cantidad Decimal">
             <input
               type="text"
               class="form-control"
@@ -132,16 +130,24 @@
           </form-field>
         </div>
 
-        <div class="col-md-4">
-          <form-field [control]="fractionForm.get('status')" label="Estatus">
-            <input type="text" class="form-control" formControlName="status" />
+        <div class="col-md-4 pt-4">
+          <form-field [control]="fractionForm.get('status')" label="Estado">
+            <ng-select
+              formControlName="status"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="2">Activo</ng-option>
+              <ng-option value="1">Inactivo</ng-option>
+            </ng-select>
+            <!--<input type="text" class="form-control" formControlName="status" />-->
           </form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 pt-4">
           <form-field
             [control]="fractionForm.get('fractionCode')"
-            label="Codigo Fracci&oacute;n">
+            label="Código Fracción">
             <input
               type="text"
               class="form-control disabled"
@@ -155,7 +161,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="fractionForm.valid"
+          [disabled]="fractionForm.invalid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

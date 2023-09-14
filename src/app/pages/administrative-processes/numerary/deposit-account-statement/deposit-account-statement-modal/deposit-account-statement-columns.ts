@@ -14,7 +14,7 @@ export const DEPOSIT_ACCOUNT_STATEMENT_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  initialBalance: {
+  capital: {
     title: 'Saldo Inicial',
     type: 'number',
     sort: false,
@@ -24,7 +24,7 @@ export const DEPOSIT_ACCOUNT_STATEMENT_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  endingBalance: {
+  balance: {
     title: 'Saldo Final',
     type: 'number',
     sort: false,

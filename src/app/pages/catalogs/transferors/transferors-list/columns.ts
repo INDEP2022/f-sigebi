@@ -2,7 +2,7 @@ export const TRANSFERENT_STATE_COLUMNS = {
   id: {
     title: 'No.',
     sort: false,
-    width: '25px',
+    width: '10%',
   },
   keyTransferent: {
     title: 'Clave',
@@ -53,5 +53,13 @@ export const STATE_COLUMS = {
       return value.descCondition;
     },
     width: '50%',
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.descCondition;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
 };

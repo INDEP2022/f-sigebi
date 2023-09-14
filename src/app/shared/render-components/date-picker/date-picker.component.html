@@ -2,6 +2,10 @@
   <input
     class="form-control"
     bsDatepicker
+    [bsConfig]="{
+      dateInputFormat: 'DD/MM/YYYY',
+      displayOneMonthRange: true
+    }"
     [bsValue]="bsValue"
     (bsValueChange)="onValueChange($event)" />
 </div>

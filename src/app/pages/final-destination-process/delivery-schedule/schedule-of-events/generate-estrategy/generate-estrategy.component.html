@@ -11,257 +11,175 @@
     </div>
 
     <form
-      class="form-material form-horizontal"
+      class="form-material"
       [formGroup]="formService"
       (ngSubmit)="onSubmit()">
-      <div class="row mt-5">
-        <div class="col-sm-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="formService.get('type')" label="Tipo">
-              <select class="form-control" formControlName="type">
-                <option [value]="'rt'">RT</option>
-                <option [value]="'a'">A</option>
-                <option [value]="'d'">D</option>
-              </select>
-            </form-field>
-          </div>
-        </div>
-        <div class="col-sm-2">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="formService.get('process')" label="Proceso">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="process" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formService.get('processDescrip')"
-              label="Descripci&oacute;n Proceso">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="processDescrip" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formService.get('captureDate')"
-              label="Fecha de Captura">
-              <input
-                type="text"
-                class="form-control"
-                bsDatepicker
-                formControlName="captureDate" />
-            </form-field>
-          </div>
-        </div>
+      <div class="row pt-2">
+        <form-field class="col-md-2" [control]="formService.get('type')">
+          <ngx-select
+            [data]="types"
+            [form]="formService"
+            value="value"
+            bindLabel="label"
+            [searchable]="false"
+            label="Tipo"
+            control="type">
+          </ngx-select>
+        </form-field>
+        <form-field class="col-md-4" [control]="formService.get('process')">
+          <ngx-select
+            [data]="processes"
+            [form]="formService"
+            value="processNumber"
+            bindLabel="description"
+            label="Proceso"
+            control="process"
+            [labelTemplate]="processLabel"
+            [optionTemplate]="processOpion">
+          </ngx-select>
+        </form-field>
+
+        <ng-template #processLabel let-item="item">
+          <strong>{{ item.processNumber }}</strong> -
+          {{ item.description }}</ng-template
+        >
+        <ng-template #processOpion let-item="item">
+          <strong>{{ item.processNumber }}</strong> -
+          {{ item.description }}</ng-template
+        >
+
+        <form-field
+          class="col-md-2"
+          [control]="formService.get('captureDate')"
+          label="Fecha de Captura">
+          <input
+            type="text"
+            class="form-control"
+            bsDatepicker
+            formControlName="captureDate" />
+        </form-field>
+        <form-field
+          class="col-md-4"
+          [control]="formService.get('strategyCve')"
+          label="Clave de Estrategia">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="strategyCve" />
+        </form-field>
       </div>
 
-      <div class="row mt-5">
-        <div class="col-sm-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formService.get('regionalCoord')"
-              label="Coordinaci&oacute;n Regional">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="regionalCoord" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formService.get('coordinationDescrip')"
-              label="Descripci&oacute;n Coordinaci&oacute;n">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="coordinationDescrip" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formService.get('serviceKey')"
-              label="Clave. Orden Servicio">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="serviceKey" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formService.get('cancellAuthDate')"
-              label="Fecha Autorizaci&oacute;n/Cancelaci&oacute;n">
-              <input
-                type="text"
-                class="form-control"
-                bsDatepicker
-                formControlName="cancellAuthDate" />
-            </form-field>
-          </div>
-        </div>
+      <div class="row pt-5">
+        <form-field
+          class="col-md-3"
+          [control]="formService.get('cancellAuthDate')"
+          label="Fecha Autorizaci&oacute;n/Cancelaci&oacute;n">
+          <input
+            type="text"
+            class="form-control"
+            bsDatepicker
+            formControlName="cancellAuthDate" />
+        </form-field>
+
+        <form-field
+          class="col-md-2"
+          [control]="formService.get('uniqueKey')"
+          label="Clave &Uacute;nica de 3 Niveles">
+          <input type="text" class="form-control" formControlName="uniqueKey" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="formService.get('transferenceId')">
+          <ngx-select
+            [data]="transfers"
+            [form]="formService"
+            value="value"
+            bindLabel="label"
+            label="Transferente"
+            control="transferenceId">
+          </ngx-select>
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="formService.get('transmitterId')">
+          <ngx-select
+            [data]="transmitters"
+            [form]="formService"
+            value="value"
+            bindLabel="label"
+            label="Emisora"
+            control="transmitterId">
+          </ngx-select>
+        </form-field>
       </div>
 
-      <div class="row mt-5">
-        <div class="col-sm-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formService.get('uniqueKey')"
-              label="Clave &Uacute;nica de 3 Niveles">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="uniqueKey" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formService.get('transferenceId')"
-              label="Id Transferente">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="transferenceId" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-sm-6">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formService.get('transferenceDescrip')"
-              label="Descripci&oacute;n Transferente">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="transferenceDescrip" />
-            </form-field>
-          </div>
-        </div>
+      <div class="row pt-5">
+        <form-field class="col-md-3" [control]="formService.get('authorityId')">
+          <ngx-select
+            [data]="authorities"
+            [form]="formService"
+            value="value"
+            bindLabel="label"
+            label="Autoridad"
+            control="authorityId">
+          </ngx-select>
+        </form-field>
+        <form-field class="col-md-3" [control]="formService.get('keyStore')">
+          <ngx-select
+            [data]="stores"
+            [form]="formService"
+            value="area_tramite"
+            label="Almacen"
+            control="keyStore">
+          </ngx-select>
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="formService.get('location')"
+          label="Ubicacion">
+          <input type="text" class="form-control" formControlName="location" />
+        </form-field>
+        <form-field
+          class="col-md-3"
+          [control]="formService.get('municipality')"
+          label="Municipio">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="municipality" />
+        </form-field>
       </div>
 
-      <div class="row mt-5">
-        <div class="col-sm-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formService.get('transmitterId')"
-              label="Id Emisora">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="transmitterId" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formService.get('transmitterDescrip')"
-              label="Descripci&oacute;n Emisora">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="transmitterDescrip" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formService.get('authorityId')"
-              label="Id Autoridad">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="authorityId" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formService.get('authorityDescrip')"
-              label="Descripci&oacute;n Autoridad">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="authorityDescrip" />
-            </form-field>
-          </div>
-        </div>
+      <div class="row pt-5">
+        <form-field
+          class="col-md-3"
+          [control]="formService.get('state')"
+          label="Entidad">
+          <input type="text" class="form-control" formControlName="state" />
+        </form-field>
+        <form-field
+          class="col-md-3"
+          [control]="formService.get('providerFolio')"
+          label="Folio Provedor">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="providerFolio" />
+        </form-field>
       </div>
 
-      <div class="row mt-5">
-        <div class="col-sm-2">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formService.get('keyStore')"
-              label="Clave de Almac&eacute;n">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="keyStore" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formService.get('storeDescrip')"
-              label="Descripci&oacute;n Almac&eacute;n">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="storeDescrip" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-sm-7">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formService.get('ubication')"
-              label="Ubicaci&oacute;n">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="ubication" />
-            </form-field>
-          </div>
-        </div>
-      </div>
-    </form>
+      <app-divider></app-divider>
 
-    <app-divider></app-divider>
-
-    <div class="row mt-5">
-      <div class="col-12">
-        <h5 class="">Fechas Evento</h5>
-      </div>
-    </div>
-
-    <form
-      class="form-material form-horizontal"
-      [formGroup]="formGoods"
-      (ngSubmit)="onSubmit2()">
-      <div class="row mt-5 align-items-center">
-        <div class="col-6">
-          <div class="mb-3 pl-4 pr-4">
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <h5>Fechas Evento</h5>
+          <div class="row pt-4">
             <form-field
-              [control]="formGoods.get('eventStartDate')"
+              class="col-md-6"
+              [control]="formService.get('eventStartDate')"
               label="Fecha Inicial">
               <input
                 type="text"
@@ -269,12 +187,10 @@
                 bsDatepicker
                 formControlName="eventStartDate" />
             </form-field>
-          </div>
-        </div>
-        <div class="col-6">
-          <div class="mb-3 pl-4 pr-4">
+
             <form-field
-              [control]="formGoods.get('eventEndDate')"
+              class="col-md-6"
+              [control]="formService.get('eventEndDate')"
               label="Fecha Final">
               <input
                 type="text"
@@ -283,42 +199,40 @@
                 formControlName="eventEndDate" />
             </form-field>
           </div>
-        </div>
-      </div>
 
-      <div class="row mt-5 align-items-center">
-        <div class="col-12 col-md-6 mt-3 mt-md-0 text-center text-md-left">
-          <div class="pl-4 pr-4">
-            <form-field [control]="formGoods.get('eventTime')">
+          <div class="row pt-3">
+            <form-field [control]="formService.get('eventTime')">
               <timepicker formControlName="eventTime"></timepicker>
             </form-field>
           </div>
         </div>
-        <div class="col-12 col-md-6 mt-3 mt-md-0">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formGoods.get('statusChange')"
-              label="Cambio Estatus">
-              <select class="form-control" formControlName="statusChange">
-                <option [value]="1">Autorizada</option>
-                <option [value]="2">Proceso</option>
-                <option [value]="3">Cancelada</option>
-                <option [value]="4">Rechazada</option>
-              </select>
+        <div class="col-md-6">
+          <h5>Cambio Estatus</h5>
+          <div class="row pt-4">
+            <form-field [control]="formService.get('statusChange')">
+              <ngx-select
+                class="col-md-6"
+                [data]="statuses"
+                [form]="formService"
+                value="value"
+                bindLabel="label"
+                [searchable]="false"
+                label="Estatus"
+                control="statusChange">
+              </ngx-select>
+
+              <div class="col-md-6 text-center">
+                <button
+                  class="btn btn-primary active btn-sm"
+                  (click)="openModal()">
+                  Hist&oacute;rico
+                </button>
+              </div>
             </form-field>
           </div>
         </div>
       </div>
-
-      <div class="row mt-5 justify-content-center justify-content-md-end">
-        <div class="col-12 col-md-2 text-center text-md-right">
-          <button class="btn btn-primary active btn-sm" (click)="openModal()">
-            Hist&oacute;rico
-          </button>
-        </div>
-      </div>
     </form>
-
     <div class="row mt-5">
       <ng2-smart-table
         [attr.class]="'table-bordered'"
@@ -329,7 +243,11 @@
 
     <div class="row mt-5 justify-content-center justify-content-md-end">
       <div class="col-12 col-md-3 text-center text-md-right">
-        <button class="btn btn-primary active btn-sm">Incorporar Bienes</button>
+        <button
+          (click)="incorporatesGoods()"
+          class="btn btn-primary active btn-sm">
+          Incorporar Bienes
+        </button>
       </div>
       <div class="col-12 col-md-3 mt-3 mt-md-0 text-center text-right">
         <button class="btn btn-primary active btn-sm">Eliminar Bienes</button>

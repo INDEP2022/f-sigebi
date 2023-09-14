@@ -33,10 +33,17 @@ type Attr = { [key: string]: string };
 @Component({
   selector: 'ngx-select',
   templateUrl: './select.component.html',
-  styles: [],
+  styles: [
+    `
+      .form-control {
+        height: auto !important;
+      }
+    `,
+  ],
 })
 export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   @Input() form: FormGroup;
+  @Input() fetchByList = true;
   @Input() control: string = '';
   @Input() value: string = '';
   @Input() bindLabel: string = '';
@@ -50,7 +57,7 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   @Input() maxSelectedItems: number;
   @Input() searchable: boolean = true;
   @Input() searchOnInit: boolean = false;
-  @Input() typeToSearchText: string = 'Escriba 3 o mas caracteres';
+  @Input() typeToSearchText: string = 'Escriba 3 o más caracteres';
   @Input() paramFilter = 'search';
   @Output() fetchItems = new EventEmitter<ListParams>();
   @Output() fetchByParamsItems = new EventEmitter<FilterParams>();
@@ -63,6 +70,8 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   @Input() showTooltip: boolean = false;
   @Input() labelTemplate: TemplateRef<any>;
   @Input() optionTemplate: TemplateRef<any>;
+  @Input() loadingInit = false;
+  @Input() className = '';
   @ViewChild(NgSelectComponent) ngSelect: NgSelectComponent;
 
   buffer: any[] = [];
@@ -80,8 +89,14 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     if (this.searchOnInit) {
-      const params = new ListParams();
-      this.fetchItems.emit(params);
+      if (this.fetchByList) {
+        this.loadingInit && (this.loading = true);
+        const params = new ListParams();
+        this.fetchItems.emit(params);
+      } else {
+        const params = new FilterParams();
+        this.fetchByParamsItems.emit(params);
+      }
     }
     this.onSearch();
     this.checkMaxAttribute();
@@ -112,7 +127,6 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
     if (changes['data']?.currentValue?.reset == true) {
       this.buffer = [];
       this.page = 1;
@@ -153,13 +167,14 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
 
   fetchMore(text: string) {
     if (!this.loading && this.buffer.length < this.totalItems) {
-      console.log('aouto fecht ', this.buffer.length, this.totalItems);
-
       this.page++;
       this.loading = true;
       this.concat = true;
-      this.emitListParams(text);
-      this.filterParams(text);
+      if (this.fetchByList) {
+        this.emitListParams(text);
+      } else {
+        this.filterParams(text);
+      }
     }
   }
 
@@ -172,12 +187,16 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
           if (text === null) {
             return of([]);
           }
+          console.log(text);
           this.page = 1;
           this.buffer = [];
           this.loading = true;
           this.concat = false;
-          this.emitListParams(text);
-          this.filterParams(text);
+          if (this.fetchByList) {
+            this.emitListParams(text);
+          } else {
+            this.filterParams(text);
+          }
           return of([]);
         })
       )

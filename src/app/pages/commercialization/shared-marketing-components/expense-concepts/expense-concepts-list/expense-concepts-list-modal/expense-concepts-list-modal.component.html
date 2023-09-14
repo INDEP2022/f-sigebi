@@ -1,0 +1,74 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ concept ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <!-- <ng-custom-select-loading
+        [form]="form"
+        formControlName="id"
+        label="Hacia"
+        path="comerconcepts/api/v1/concepts/getIdConcept"
+        value="id_concepto"
+        bindLabel="id_concepto"
+        paramSearch="filter.id_concepto"
+        prefixSearch="$eq"
+        (valueChange)="changeValue($event)">
+      </ng-custom-select-loading> -->
+
+      <div *ngIf="concept">
+        <form-field [control]="form.get('id')" label="Concepto">
+          <input class="form-control" formControlName="id" readonly />
+        </form-field>
+      </div>
+      <div class="pb-2">
+        <form-field [control]="form.get('description')" label="Descripción">
+          <textarea
+            class="form-control"
+            formControlName="description"></textarea>
+        </form-field>
+      </div>
+      <div class="pb-4">
+        <form-field [control]="form.get('address')" label="Dirección">
+          <ng-select class="form-control" formControlName="address">
+            <ng-option [value]="null">Seleccione una dirección</ng-option>
+            <ng-option *ngFor="let dest of directions" [value]="dest.id">
+              {{ dest.description }}
+            </ng-option>
+          </ng-select>
+        </form-field>
+      </div>
+      <div>
+        <form-field
+          [control]="form.get('routineCalculation')"
+          label="Rutina Cálculo">
+          <input class="form-control" formControlName="routineCalculation" />
+        </form-field>
+      </div>
+      <div class="d-flex">
+        <form-check label="Automático" for="automatic">
+          <input id="automatic" type="checkbox" formControlName="automatic" />
+        </form-check>
+        <form-check label="Numerario" for="numerary">
+          <input id="numerary" type="checkbox" formControlName="numerary" />
+        </form-check>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form.invalid"
+          text="Aceptar"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

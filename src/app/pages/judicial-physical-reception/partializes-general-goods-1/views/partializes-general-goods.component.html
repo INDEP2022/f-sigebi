@@ -1,0 +1,35 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Parcializaci&oacute;n de Bienes Generales</h5>
+  </div>
+  <div body>
+    <div class="row pb-5" *ngIf="origin">
+      <div class="col-md-12">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="back()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+    </div>
+    <div id="partializes-general-goods pt-1">
+      <form-loader *ngIf="pageLoading" [greater]="true"></form-loader>
+      <app-partialize-view></app-partialize-view>
+
+      <!-- <tabset>
+        <tab [heading]="clasificators">
+          <app-partialize-view
+            [version]="version"
+            [firstCase]="true"></app-partialize-view>
+        </tab>
+        <tab heading="Otros Clasificadores">
+          <app-partialize-view
+            [version]="version"
+            [firstCase]="false"></app-partialize-view>
+        </tab>
+      </tabset> -->
+    </div>
+  </div>
+</app-card>

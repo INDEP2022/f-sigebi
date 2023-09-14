@@ -1,0 +1,37 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Galería de Fotografías</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-12 d-flex justify-conent-end">
+        <form
+          [formGroup]="formCheckbox"
+          class="form-material d-flex justify-content-end">
+          <form-check for="galery" label="Ver Fotos">
+            <input
+              type="checkbox"
+              [checked]="formCheckbox.get('lookPhoto').value"
+              formControlName="lookPhoto" />
+          </form-check>
+          <div></div>
+        </form>
+      </div>
+    </div>
+    <form-loader *ngIf="loading"></form-loader>
+    <div class="row" *ngIf="!loading">
+      <div class="col-md-6 px-5 py-3" *ngFor="let good of goods">
+        <div class="row photo-container shadow h-100 p-0 m-0 bg-white">
+          <photo-galery-item
+            [good]="good"
+            (dblclick)="goToAdmin(good)"></photo-galery-item>
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="!loading">
+      <app-pagination
+        [totalItems]="totalItems"
+        [params]="params"></app-pagination>
+    </div>
+  </div>
+</app-card>

@@ -1,24 +1,28 @@
 import { DatePipe } from '@angular/common';
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IRejectGood } from 'src/app/core/models/good-reject/good-reject.model';
-import { IGood } from 'src/app/core/models/good/good.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -35,28 +39,33 @@ export class ClarificationListTabComponent
   extends BasePage
   implements OnInit, OnChanges
 {
-  @Input() good: IGood;
+  @Input() good: any[];
   @Input() request: any;
   paragraphs: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
+  @Output() updateGoodTable: EventEmitter<any> = new EventEmitter();
   totalItems: number = 0;
   idClarification: number = 0;
   clarificationsLength: any;
   task: any;
   statusTask: any = '';
+  bsModalRef: BsModalRef;
+
   constructor(
     private modalService: BsModalService,
     private rejectedGoodService: RejectedGoodService,
     private clarificationService: ClarificationService,
     private goodResDevService: GetGoodResVeService,
     private goodServices: GoodService,
-    private chatClarificationService: ChatClarificationsService
+    private chatClarificationService: ChatClarificationsService,
+    private authService: AuthService,
+    private historyGoodService: HistoryGoodService
   ) {
     super();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.good) this.getData();
+    if (this.good.length > 0) this.getData();
   }
 
   ngOnInit(): void {
@@ -81,7 +90,7 @@ export class ClarificationListTabComponent
     if (this.good) {
       this.loading = true;
       this.paragraphs = new LocalDataSource();
-      this.params.getValue()['filter.goodId'] = this.good.id;
+      this.params.getValue()['filter.goodId'] = this.good[0].id;
       this.rejectedGoodService.getAllFilter(this.params.getValue()).subscribe({
         next: async (data: any) => {
           const length = data.count;
@@ -153,7 +162,19 @@ export class ClarificationListTabComponent
         class: 'modal-lg modal-dialog-centered',
         ignoreBackdropClick: true,
       };
-      this.modalService.show(ClarificationFormTabComponent, config);
+
+      this.bsModalRef = this.modalService.show(
+        ClarificationFormTabComponent,
+        config
+      );
+      this.bsModalRef.content.event.subscribe((res: any) => {
+        if (res === 'UPDATE-GOOD') {
+          this.updateGoodTable.emit({
+            processStatus: 'SOLICITAR_ACLARACION',
+            goodStatus: 'SOLICITUD DE ACLARACION',
+          });
+        }
+      });
     }
   }
 
@@ -173,6 +194,7 @@ export class ClarificationListTabComponent
         confirmButtonColor: '#9D2449',
         cancelButtonColor: '#B38E5D',
         confirmButtonText: 'Eliminar',
+        allowOutsideClick: false,
       }).then(async (result: any) => {
         const idChatClarification =
           clarification['chatClarification'].idClarification;
@@ -192,18 +214,38 @@ export class ClarificationListTabComponent
                 'cantidad de aclaraciones:',
                 this.clarificationsLength
               );
+              let body: any = {};
+              //si existe solo una aclaracion
               if (this.clarificationsLength === 1) {
                 const goodResDev: any = await this.getGoodResDev(
-                  Number(this.good.id)
+                  Number(this.good[0].id)
                 );
                 await this.removeDevGood(Number(goodResDev));
-                let body: any = {};
-                body['id'] = this.good.id;
-                body['goodId'] = this.good.goodId;
+
+                body['id'] = this.good[0].id;
+                body['goodId'] = this.good[0].goodId;
                 body.processStatus = 'CLASIFICAR_BIEN';
                 body.goodStatus = 'CLASIFICAR_BIEN';
+                body.status = 'ROP';
+                await this.updateGoods(body);
+              } else {
+                //si existe mas de una aclaracion
+                body['id'] = this.good[0].id;
+                body['goodId'] = this.good[0].goodId;
+                body.goodStatus =
+                  this.good[0].goodStatus != 'ACLARADO'
+                    ? 'ACLARADO'
+                    : 'CLASIFICAR_BIEN';
+                body.processStatus = 'CLASIFICAR_BIEN';
+                body.status = 'ROP';
                 await this.updateGoods(body);
               }
+              //const history = await this.createHistoricGood('ROP', body.id);
+              this.updateGoodTable.emit({
+                processStatus: body.processStatus,
+                goodStatus: body.goodStatus,
+                status: body.status,
+              });
               setTimeout(() => {
                 this.getData();
               }, 400);
@@ -292,6 +334,29 @@ export class ClarificationListTabComponent
             'Error al eliminar',
             'No se pudo eliminar el registro de la tabla Chat Aclaraciones'
           );
+        },
+      });
+    });
+  }
+
+  createHistoricGood(status: string, good: number) {
+    return new Promise((resolve, reject) => {
+      const user: any = this.authService.decodeToken();
+      let body: IHistoryGood = {
+        propertyNum: good,
+        status: status,
+        changeDate: new Date(),
+        userChange: user.username,
+        statusChangeProgram: 'SOLICITUD_TRANSFERENCIA',
+        reasonForChange: 'N/A',
+      };
+      this.historyGoodService.create(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(error);
+          this.onLoadToast('error', 'No se pudo crear el historico del bien');
         },
       });
     });

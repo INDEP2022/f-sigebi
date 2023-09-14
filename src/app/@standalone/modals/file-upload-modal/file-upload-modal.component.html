@@ -3,11 +3,27 @@
     <h5 class="modal-title">Carga de archivos</h5>
   </div>
   <div body>
+    <div class="row mb-4">
+      <b style="padding: 0px">Archivos permitidos </b>
+      <div class="row">
+        {{ accept }}
+      </div>
+      <div class="row" *ngIf="accept === '.zip' && accept2">
+        <b style="padding: 0px">Archivos permitidos dentro del zip </b>
+        <div class="row">
+          {{ accept2 }}
+        </div>
+      </div>
+    </div>
+
     <div class="row">
       <div class="col-md-12">
         <file-upload
           (onUploadFiles)="testFiles($event)"
-          [accept]="accept"></file-upload>
+          [uploadLoading]="uploadFiles"
+          [accept]="accept"
+          [info]="info"
+          [multiple]="multiple"></file-upload>
       </div>
     </div>
   </div>
@@ -15,7 +31,7 @@
   <div footer>
     <div class="row m-3">
       <div class="col-md-12 text-right">
-        <button class="btn btn-danger active btn-sm" (click)="close()">
+        <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
           Cerrar
         </button>
       </div>

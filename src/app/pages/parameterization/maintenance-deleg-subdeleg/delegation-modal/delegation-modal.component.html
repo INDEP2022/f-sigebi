@@ -1,16 +1,11 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="delegationForm">
       <div class="row">
-        <div class="col-md-3">
-          <form-field label="ID" [control]="delegationForm.get('id')">
-            <input type="text" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
+        <div class="col-md-12">
           <form-field
             label="Descripción"
             [control]="delegationForm.get('description')">
@@ -20,7 +15,9 @@
               formControlName="description" />
           </form-field>
         </div>
-        <div class="col-md-3">
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
           <form-field
             label="Etapa Edo"
             [control]="delegationForm.get('etapaEdo')">
@@ -30,14 +27,18 @@
               formControlName="etapaEdo" />
           </form-field>
         </div>
-        <div class="col-md-3">
-          <form-field
-            label="Zona Geográfica"
-            [control]="delegationForm.get('idZoneGeographic')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="idZoneGeographic" />
+        <div class="col-md-6">
+          <form-field [control]="delegationForm.get('idZoneGeographic')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="delegationForm"
+              [data]="idZ"
+              (fetchItems)="getZones($event)"
+              value="id"
+              control="idZoneGeographic"
+              bindLabel="description"
+              label="Zona Geográfica">
+            </ngx-select>
           </form-field>
         </div>
       </div>

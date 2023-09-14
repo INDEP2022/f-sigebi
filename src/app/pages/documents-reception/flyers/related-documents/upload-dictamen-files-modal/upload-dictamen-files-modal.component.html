@@ -1,0 +1,79 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">Proceso de Firma Electr&oacute;nica</h5>
+  </div>
+  <div body class="body">
+    <form [formGroup]="fileForm" class="form-material">
+      <div class="row pt-4">
+        <div class="col-md-6 text-wrap">
+          <label> Documento a Firmar&#58;&nbsp; </label>
+          <span class="fs-4">&nbsp;{{ nameFileDictation }}</span>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="fileForm.get('secpwd')"
+            label="Contrase&ntilde;a">
+            <input
+              [type]="hide ? 'password' : 'text'"
+              class="form-control"
+              formControlName="secpwd"
+              maxlength="40" />
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="hide = !hide"
+              style="margin-top: 7px">
+              <span class="fa fa-eye"></span> {{ hide ? 'Mostrar' : 'Ocultar' }}
+            </button>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="fileForm.get('certificate')"
+            label="Certificado">
+            <input
+              type="file"
+              accept=".cer"
+              class="form-control"
+              #FileInputCert
+              formControlName="certificate"
+              (change)="chargeCertifications($event)" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="fileForm.get('keycertificate')" label="Key">
+            <input
+              type="file"
+              accept=".key"
+              class="form-control"
+              #FileInputKey
+              formControlName="keycertificate"
+              (change)="chargeKeyCertifications($event)" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4"></div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          class="btn btn-primary btn-sm active"
+          [disabled]="fileForm.invalid"
+          (click)="confirm()">
+          Firmar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

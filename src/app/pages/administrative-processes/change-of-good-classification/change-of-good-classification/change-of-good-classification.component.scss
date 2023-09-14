@@ -1,0 +1,28 @@
+:host ::ng-deep app-good-characteristics-table {
+  .table-container > div {
+    margin-left: 13px;
+  }
+  ng2-smart-table table tr {
+    td {
+      &:nth-child(2) {
+        padding: 0.5em 1em;
+      }
+    }
+  }
+}
+
+:host ::ng-deep .fixTopInput {
+  form-field {
+    .float-label {
+      top: -18px;
+    }
+  }
+}
+
+form-loader {
+  position: absolute;
+  width: 100%;
+  left: 0px;
+  z-index: 2;
+  background: #00000005;
+}

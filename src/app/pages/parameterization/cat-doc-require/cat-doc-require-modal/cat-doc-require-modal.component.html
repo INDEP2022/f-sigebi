@@ -7,8 +7,18 @@
       <div class="row">
         <div class="col-md-4">
           <form-field
+            [control]="documentsForDictumForm.get('numRegister')"
+            label="Numero de Registro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numRegister" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
             [control]="documentsForDictumForm.get('id')"
-            label="Clave del documento">
+            label="Clave del Documento">
             <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
@@ -31,16 +41,20 @@
               [searchable]="false"
               class="form-control"
               [clearable]="false">
-              <ng-option value="1">DECOMISO</ng-option>
-              <ng-option value="2">DEVOLUCI&Oacute;N</ng-option>
-              <ng-option value="3">RECREVISI&Oacute;N</ng-option>
-              <ng-option value="4">ASEGURAMIENTO</ng-option>
-              <ng-option value="5">ENAJENACI&Oacute;N</ng-option>
-              <ng-option value="1">DESTRUCCI&Oacute;N</ng-option>
-              <ng-option value="2">DONACI&Oacute;N</ng-option>
-              <ng-option value="3">DESTINO</ng-option>
-              <ng-option value="4">TRANSFERENTE</ng-option>
-              <ng-option value="5">ABANDONO</ng-option>
+              <ng-option value="DECOMISO">DECOMISO</ng-option>
+              <ng-option value="DEVOLUCION">DEVOLUCI&Oacute;N</ng-option>
+              <ng-option value="RECREVISION">RECREVISI&Oacute;N</ng-option>
+              <ng-option value="ASEGURAMIENTO">ASEGURAMIENTO</ng-option>
+              <ng-option value="ENAJENACION">ENAJENACI&Oacute;N</ng-option>
+              <ng-option value="DESTRUCCION">DESTRUCCI&Oacute;N</ng-option>
+              <ng-option value="DONACION">DONACI&Oacute;N</ng-option>
+              <ng-option value="DESTINO">DESTINO</ng-option>
+              <ng-option value="TRANSFERENTE">TRANSFERENTE</ng-option>
+              <ng-option value="ABANDONO">ABANDONO</ng-option>
+              <ng-option value="RESARCIMIENTO">RESARCIMIENTO</ng-option>
+              <ng-option value="PROCEDENCIA">PROCEDENCIA</ng-option>
+              <ng-option value="COMER">COMER</ng-option>
+              <ng-option value="EXT_DOM">EXT_DOM</ng-option>
             </ng-select>
           </form-field>
         </div>

@@ -21,12 +21,14 @@ export class PerformanceIndicatorStrategyComponent
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: false,
       columns: PERFORMANCEINDICATORSTRATEGY_COLUMNS,
     };
   }
 
   ngOnInit(): void {}
+
   close() {
     this.modalRef.hide();
   }

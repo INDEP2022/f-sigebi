@@ -5,22 +5,25 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-6">
-          <form-field [control]="form.get('keyClaims')" label="Cve Siniestro">
-            <input
+        <div class="col-md-12">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <textarea
               type="text"
               class="form-control"
-              formControlName="keyClaims" />
+              maxlength="200"
+              rows="3"
+              formControlName="description"></textarea>
           </form-field>
         </div>
+      </div>
+      <div class="row pt-4">
         <div class="col-md-6">
-          <form-field
-            [control]="form.get('description')"
-            label="Descrici&oacute;n Estatus">
+          <form-field [control]="form.get('flag')" label="Bandera">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="description" />
+              max="99"
+              formControlName="flag" />
           </form-field>
         </div>
       </div>
@@ -32,7 +35,7 @@
         <confirm-button
           [type]="'button'"
           [disabled]="!form.valid"
-          (click)="edit ? PutClaim() : postClaim()"></confirm-button>
+          (click)="edit ? update() : create()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

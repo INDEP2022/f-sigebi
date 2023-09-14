@@ -10,16 +10,24 @@ export interface IGood {
   complianceLeaveDate?: string;
   quantity?: number;
   goodStatus?: string;
+  aliasWarehouse?: string;
   cant: string;
+  physicalStatusName: string;
+  quantitySae: string;
+  saePhysicalState: string;
+  stateConservationSae: string;
+  regionalDelegationNumber: string;
   notifyDate?: string | Date;
   dateEntry: string;
   dateExit?: any;
   dateVencim?: any;
   typeUbucation: string;
   status: string;
+  storeId: number;
   classificationGood?: any;
   remarksOrien?: any;
-  physicalStatus?: boolean;
+  physicalStatus?: number | string;
+  scheduledDateDecoDev?: string;
   destinyName?: string;
   goodId?: number;
   solIncripRegister?: any;
@@ -29,6 +37,7 @@ export interface IGood {
   appraisal?: string;
   appraiserOpinion?: any;
   goodTypeId: number;
+  subTypeId: number;
   originSignals?: any;
   goodDescription?: string;
   saeDestiny?: string;
@@ -45,6 +54,17 @@ export interface IGood {
   fecNotificationAbandonment?: any;
   observationAbandoment?: any;
   fecConfAbandoment?: any;
+  delegationNumber?: { id: string; description: string };
+  subDelegationNumber?: { id: string; description: string };
+  physicalReceptionDate?: string;
+  revRecObservations?: string;
+  resolutionEmissionRecRevDate?: string;
+  revRecCause?: string;
+  statusDetails?: any;
+  observationss?: string;
+  referenceValue?: string;
+  appraisedValue?: string;
+  appraisalVigDate?: string;
   fecNotification?: any;
   notificationA?: any;
   placeNotification?: any;
@@ -112,6 +132,7 @@ export interface IGood {
   userPromoterDecoDevo?: any;
   fecProgramerXDecoDevo?: any;
   ligieUnit: string;
+  unitLigieName: string;
   noGoogDadBias?: any;
   declarationAbnSera?: any;
   identifier: string;
@@ -243,6 +264,7 @@ export interface IGood {
   indAclaration: string;
   msgSatSae?: any;
   color?: any;
+  unitMeasureName: string | null;
   numClow?: any;
   destinyCompensation?: any;
   val1: string;
@@ -634,4 +656,29 @@ export interface IGoodSearchGoodByFile {
 export interface IGoodSearchGoodByClasification {
   screenKey: string;
   clasifGoodNumber: number;
+}
+
+export interface IGoodAttribGoodBad {
+  id: string | number;
+  motive: string;
+}
+
+export interface IbulkLoadGoods {
+  noClasifGood: number;
+  noGoodFather: number;
+  quantity: number;
+  description: string;
+  unit?: string;
+  type?: string;
+  material?: string;
+  edoPhisical?: string;
+}
+
+export interface NumerGood_ {
+  goodNumber: number;
+  applicationChangeCashNumber: number;
+  ProceedingsNumber: number;
+  situationlegal: string;
+  recordNumber: any;
+  reasonApplication: any;
 }

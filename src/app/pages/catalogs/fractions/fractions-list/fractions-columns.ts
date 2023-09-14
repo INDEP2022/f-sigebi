@@ -1,6 +1,3 @@
-import { INorm } from 'src/app/core/models/catalogs/norm.model';
-import { ISiabClasification } from 'src/app/core/models/catalogs/siab-clasification.model';
-
 export const FRACTIONS_COLUMNS = {
   id: {
     title: 'Registro',
@@ -9,7 +6,7 @@ export const FRACTIONS_COLUMNS = {
   },
 
   code: {
-    title: 'Codigo',
+    title: 'Código',
     type: 'string',
     sort: false,
   },
@@ -29,8 +26,8 @@ export const FRACTIONS_COLUMNS = {
   norms: {
     title: 'Norma',
     type: 'string',
-    valuePrepareFunction: (nom: INorm) => {
-      return nom?.norm;
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.norm : '';
     },
     sort: false,
     filterFunction(cell?: any, search?: string): boolean {
@@ -44,15 +41,29 @@ export const FRACTIONS_COLUMNS = {
     },
   },
 
-  clasificationId: {
+  /*clasificationName: {
     title: 'Clasificación',
     type: 'string',
-    valuePrepareFunction: (clasification: ISiabClasification) => {
-      return clasification?.sssubtypeDescription;
+    sort: false,
+  },*/
+
+  siabClasification: {
+    title: 'Clasificación',
+    type: 'string',
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.sssubtypeDescription : '';
     },
     sort: false,
+    filterFunction(cell?: any, search?: string): boolean {
+      //TODO:Validate FILTER
+      let column = cell.sssubtypeDescription;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
-
   unit: {
     title: 'Unidad',
     type: 'string',
@@ -60,43 +71,54 @@ export const FRACTIONS_COLUMNS = {
   },
 
   version: {
-    title: 'Version',
+    title: 'Versión',
     type: 'string',
     sort: false,
   },
 
   codeErp1: {
-    title: 'Codigo Erp 1',
+    title: 'Código  Erp 1',
     type: 'string',
     sort: false,
   },
   codeErp2: {
-    title: 'Codigo Erp 2',
+    title: 'Código  Erp 2',
     type: 'string',
     sort: false,
   },
 
   codeErp3: {
-    title: 'Codigo Erp 3',
+    title: 'Código  Erp 3',
     type: 'string',
     sort: false,
   },
 
   decimalAmount: {
-    title: 'Cantidad en decimal',
+    title: 'Cantidad en Decimal',
     type: 'string',
     sort: false,
   },
 
   status: {
-    title: 'Estatus',
+    title: 'Estado',
     type: 'string',
     sort: false,
+
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Estado',
+        list: [
+          { value: '2', title: 'Activo' },
+          { value: '1', title: 'Inactivo' },
+        ],
+      },
+    },
   },
 
   fractionCode: {
-    title: 'Codigo de fracción',
-    type: 'string',
+    title: 'Código de Fracción',
+    type: 'number',
     sort: false,
   },
 };

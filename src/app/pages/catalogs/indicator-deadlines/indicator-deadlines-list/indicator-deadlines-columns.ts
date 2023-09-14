@@ -10,7 +10,7 @@ export const INDICATORS_DEADLINES_COLUMNS = {
     sort: false,
   },
   formula: {
-    title: 'Formula',
+    title: 'Fórmula',
     type: 'string',
     sort: false,
   },

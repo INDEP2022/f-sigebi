@@ -1,36 +1,51 @@
 <h6>Datos de la Solicitud</h6>
+<div class="row pt-5">
+  <div class="col-md-4">
+    <label class="label" for=""
+      >Fecha Prioridad&#58;
+      <span>{{ requestDoc?.priorityDate | date: 'dd/MM/yyyy' }}</span></label
+    >
+  </div>
+</div>
 <div class="row mt-5">
   <div class="col-md-4">
+    <label class="label" for="priority"
+      >Prioridad&#58;
+      <input
+        type="checkbox"
+        name="priority"
+        id="priority"
+        [ngModelOptions]="{ standalone: true }"
+        [(ngModel)]="isPriority"
+        disabled="true"
+    /></label>
+  </div>
+  <div class="col-md-4">
     <label class="label" for=""
-      >Prioridad&#58; <span>{{ requestDoc.priority }}</span></label
+      >Procedencia Informaci&oacute;n&#58; <span>{{ originInfo }}</span></label
     >
   </div>
   <div class="col-md-4">
     <label class="label" for=""
-      >Procedencia Informaci&oacute;n&#58;
-      <span>{{ requestDoc.infoOrigin }}</span></label
-    >
-  </div>
-  <div class="col-md-4">
-    <label class="label" for=""
-      >Tipo Expediente&#58; <span>{{ requestDoc.fileType }}</span></label
+      >Tipo Expediente&#58; <span>{{ typeExpedient }}</span></label
     >
   </div>
 </div>
 <div class="row mt-5">
   <div class="col-md-4">
     <label class="label" for=""
-      >No&#46; Oficio&#58; <span>{{ requestDoc.memorandumNo }}</span></label
+      >No&#46; Oficio&#58; <span>{{ requestDoc?.paperNumber }}</span></label
     >
   </div>
   <div class="col-md-4">
     <label class="label" for=""
-      >Fecha de Oficio&#58; <span>{{ requestDoc.memorandumDate }}</span></label
+      >Fecha de Oficio&#58;
+      <span>{{ requestDoc?.paperDate | date: 'dd/MM/yyyy' }}</span></label
     >
   </div>
   <div class="col-md-4">
     <label class="label" for=""
-      >Asunto&#58; <span>{{ requestDoc.subject }}</span></label
+      >Asunto&#58; <span>{{ affair }}</span></label
     >
   </div>
 </div>
@@ -38,72 +53,128 @@
   <div class="col-md-4">
     <label class="label" for=""
       >Expediente Transferente &#47; PAMA&#58;
-      <span>{{ requestDoc.transferFile }}</span></label
+      <span>{{ requestDoc?.transferenceFile }}</span></label
     >
   </div>
-  <div class="col-md-4">
-    <label class="label" for=""
-      >Delito&#58; <span>{{ requestDoc.felony }}</span></label
-    >
-  </div>
+
   <div class="col-md-4">
     <label class="label" for=""
       >V&iacute;a de Recepci&oacute;n&#58;
-      <span>{{ requestDoc.receptionMethod }}</span></label
+      <span>{{ requestDoc?.receiptRoute }}</span></label
+    >
+  </div>
+  <div class="col-md-4">
+    <label class="label" for=""
+      >Nombre del Remitente&#58;
+      <span>{{ requestDoc?.nameOfOwner }}</span></label
     >
   </div>
 </div>
 <div class="row mt-5">
   <div class="col-md-4">
     <label class="label" for=""
-      >Nombre del Remitente&#58; <span>{{ requestDoc.senderName }}</span></label
-    >
-  </div>
-  <div class="col-md-4">
-    <label class="label" for=""
       >Cargo del Remitente&#58;
-      <span>{{ requestDoc.senderPosition }}</span></label
+      <span>{{ requestDoc?.holderCharge }}</span></label
     >
   </div>
   <div class="col-md-4">
     <label class="label" for=""
       >Tel&eacute;fono del Remitente&#58;
-      <span>{{ requestDoc.senderPhone }}</span></label
+      <span>{{ requestDoc?.phoneOfOwner }}</span></label
+    >
+  </div>
+  <div class="col-md-4">
+    <label class="label" for=""
+      >Email del Remitente&#58;
+      <span>{{ requestDoc?.emailOfOwner }}</span></label
     >
   </div>
 </div>
 <div class="row mt-5">
-  <div class="col-md-4">
-    <label class="label" for=""
-      >Email del Remitente&#58; <span>{{ requestDoc.senderEmail }}</span></label
-    >
-  </div>
   <div class="col-md-4">
     <label class="label" for=""
       >Contribuyente y&#47;o Indiciado&#58;
-      <span>{{ requestDoc.contributor }}</span></label
+      <span>{{ requestDoc?.indicatedTaxpayer }}</span></label
     >
   </div>
   <div class="col-md-4">
     <label class="label" for=""
-      >Tipo Transferencia&#58; <span>{{ requestDoc.transferType }}</span></label
+      >Tipo Transferencia&#58;
+      <span>{{ requestDoc?.typeOfTransfer }}</span></label
+    >
+  </div>
+  <div class="col-md-4">
+    <label class="label" for=""
+      >Juicio&#58; <span>{{ requestDoc?.trial }}</span></label
     >
   </div>
 </div>
 <div class="row mt-5">
   <div class="col-md-4">
     <label class="label" for=""
-      >Tipo Juicio&#58; <span>{{ requestDoc.judgementType }}</span></label
+      >Gesti&oacute;n de Destino&#58;
+      <span>{{ requestDoc?.destinationManagement }}</span></label
     >
   </div>
-  <div class="col-md-4">
+  <div class="col-md-8">
     <label class="label" for=""
-      >Juicio&#58; <span>{{ requestDoc.judgement }}</span></label
+      >Notas Ent&#46; Transferente&#58;
+      <span>{{ requestDoc?.transferEntNotes }}</span></label
     >
   </div>
-  <div class="col-md-4">
+</div>
+<!-- EMPIEZA LOS INPUTS CON CONDICIONAMIENTO -->
+<div class="row">
+  <div class="col-md-4 pt-5" *ngIf="processDetonate == 'DEVOLUCION'">
     <label class="label" for=""
-      >Observaciones&#58; <span>{{ requestDoc.observations }}</span></label
+      >Autoridad Ordenante&#58;
+      <span>{{ requestDoc?.authorityOrdering }}</span></label
+    >
+  </div>
+  <div class="col-md-4 pt-5" *ngIf="transference == 120">
+    <label class="label" for=""
+      >Tipo Juicio&#58; <span>{{ requestDoc?.trialType }}</span></label
+    >
+  </div>
+  <div
+    class="col-md-4 pt-5"
+    *ngIf="processDetonate == 'AMPARO' || transference == 3">
+    <label class="label" for=""
+      >N&uacute;mero Amparo&#58;
+      <span>{{ requestDoc?.protectNumber }}</span></label
+    >
+  </div>
+  <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <label class="label" for=""
+      >Acta Circunstanciada&#58;
+      <span>{{ requestDoc?.circumstantialRecord }}</span></label
+    >
+  </div>
+  <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <label class="label" for=""
+      >Averiguacion Previa&#58;
+      <span>{{ requestDoc?.previousInquiry }}</span></label
+    >
+  </div>
+  <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <label class="label" for=""
+      >Causa Penal&#58; <span>{{ requestDoc?.lawsuit }}</span></label
+    >
+  </div>
+  <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <label class="label" for=""
+      >Toca Penal&#58; <span>{{ requestDoc?.tocaPenal }}</span></label
+    >
+  </div>
+  <div class="col-md-4 pt-5" *ngIf="transference == 1 || transference == 3">
+    <label class="label" for=""
+      >Delito&#58; <span>{{ requestDoc?.crime }}</span></label
+    >
+  </div>
+  <div class="col-md-8 pt-5" *ngIf="requestDoc?.emailNotification != null">
+    <label class="label" for=""
+      >Correo(s) Electr&oacute;nicos(s) Notificaci&oacute;n&#58;
+      <span>{{ requestDoc?.emailNotification }}</span></label
     >
   </div>
 </div>

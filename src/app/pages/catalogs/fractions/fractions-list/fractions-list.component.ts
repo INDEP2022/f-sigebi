@@ -32,22 +32,9 @@ export class FractionsListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = FRACTIONS_COLUMNS;
-    this.settings = {
-      ...this.settings,
-      hideSubHeader: false,
-      actions: {
-        ...this.settings.actions,
-        add: false,
-        edit: false,
-        delete: false,
-        custom: [
-          {
-            name: 'add',
-            title: '<i class="fa fa-plus text-success mx-2"></i>',
-          },
-        ],
-      },
-    };
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -61,18 +48,42 @@ export class FractionsListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
-            filter.field == 'norms'
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'norms':
+                field = `filter.${filter.field}.norm`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'fractionCode':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'siabClasification':
+                field = `filter.${filter.field}.sssubtypeDescription`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            /*filter.field == 'norms'
               ? (field = `filter.${filter.field}.norm`)
               : (field = `filter.${filter.field}`);
             filter.field == 'id'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getFractions();
         }
       });
@@ -89,9 +100,13 @@ export class FractionsListComponent extends BasePage implements OnInit {
     };
     this.fractionService.getAll(params).subscribe({
       next: response => {
-        this.paragraphs = response.data;
+        /*this.paragraphs = response.data.map((item: any) => {
+          item.clasificationName =
+            item.siabClasification?.sssubtypeDescription || '';
+          return item;
+        });*/
         this.totalItems = response.count || 0;
-        this.data.load(this.paragraphs);
+        this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
       },
@@ -113,18 +128,31 @@ export class FractionsListComponent extends BasePage implements OnInit {
     this.modalService.show(FractionsFormComponent, config);
   }
 
-  delete(fraction: IFraction) {
+  showDeleteAlert(drawer: IFraction) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.fractionService.remove(fraction.id).subscribe({
-          next: data => this.getFractions(),
-          error: error => (this.loading = false),
-        });
+        this.delete(drawer.id);
       }
+    });
+  }
+
+  delete(id: number) {
+    this.fractionService.remove(id).subscribe({
+      next: response => {
+        this.alert('success', 'Fracción', 'Borrada Correctamente'),
+          this.getFractions();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Fraccion',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

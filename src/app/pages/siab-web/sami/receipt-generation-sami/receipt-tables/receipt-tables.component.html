@@ -1,0 +1,162 @@
+<tr>
+  <td colspan="5" align="center">
+    <button
+      class="btn btn-primary btn-sm m-2 active"
+      type="submit"
+      size="small"
+      [disabled]="selectedGoods.length === 0"
+      (click)="assignReception(receiptType.Recibos)">
+      Asignar Recibo
+    </button>
+    <button
+      class="btn btn-info btn-sm m-2 active"
+      type="submit"
+      size="small"
+      [disabled]="selectedGoods.length === 0"
+      (click)="assignReception(receiptType.Resguardo)">
+      Resguardo
+    </button>
+    <button
+      class="btn btn-primary btn-sm m-2 active"
+      type="submit"
+      size="small"
+      [disabled]="selectedGoods.length === 0"
+      (click)="assignReception(receiptType.Almacen)">
+      Almacén
+    </button>
+    <button
+      class="btn btn-info btn-sm m-2 active"
+      type="submit"
+      size="small"
+      [disabled]="selectedGoods.length === 0"
+      (click)="assignReception(receiptType.Reprogramacion)">
+      Reprogramación
+    </button>
+    <button
+      class="btn btn-danger btn-sm m-2 active"
+      type="submit"
+      size="small"
+      [disabled]="selectedGoods.length === 0"
+      (click)="assignReception(receiptType.Cancelacion)">
+      Cancelación
+    </button>
+  </td>
+</tr>
+<div class="mb-4"></div>
+<form action="" class="form-material mt-5 mb-4" [formGroup]="form">
+  <div class="row" *ngIf="divcanmas">
+    <div class="col-md-9">
+      <ng-custom-select-loading
+        [form]="form"
+        [path]="pathCatalogsCancelacion"
+        formControlName="motiveCancel"
+        label="Selecciona el motivo de la Cancelación"
+        value="keyId"
+        bindLabel="description"
+        paramSearch="filter.description"
+        prefixSearch="$ilike">
+      </ng-custom-select-loading>
+    </div>
+    <div class="col-md-3">
+      <button
+        style="width: auto"
+        [disabled]="disabledMassiveButton"
+        class="btn btn-primary btn-sm active"
+        type="submit"
+        size="small"
+        (click)="massiveClick()">
+        Aceptar
+      </button>
+    </div>
+  </div>
+  <div class="row" *ngIf="divrepmas">
+    <div class="col-md-9">
+      <ng-custom-select-loading
+        [form]="form"
+        [path]="pathCatalogsReprogramacion"
+        formControlName="motiveReprograming"
+        label="Selecciona el motivo de la Reprogramación"
+        value="keyId"
+        bindLabel="description"
+        paramSearch="filter.description"
+        prefixSearch="$ilike">
+      </ng-custom-select-loading>
+    </div>
+    <div class="col-md-3">
+      <button
+        style="width: auto"
+        [disabled]="disabledMassiveButton"
+        class="btn btn-primary btn-sm active"
+        type="submit"
+        size="small"
+        (click)="massiveClick()">
+        Aceptar
+      </button>
+    </div>
+  </div>
+  <!-- <div class="pt-4"></div> -->
+</form>
+
+<app-receipt-table-goods
+  [folio]="folio"
+  [selectEnabled]="true"></app-receipt-table-goods>
+<tr>
+  <td colspan="5" align="center">
+    <button
+      [disabled]="count === 0"
+      class="btn btn-primary btn-sm m-2 active"
+      type="submit"
+      size="small"
+      (click)="showTableByTiporecibo(receiptType.Recibos)">
+      Recibos({{ recibos }})
+    </button>
+    <button
+      [disabled]="count === 0"
+      class="btn btn-info btn-sm m-2 active"
+      type="submit"
+      size="small"
+      (click)="showTableByTiporecibo(receiptType.Resguardo)">
+      Resguardo({{ resguardo }})
+    </button>
+    <button
+      [disabled]="count === 0"
+      class="btn btn-primary btn-sm m-2 active"
+      type="submit"
+      size="small"
+      (click)="showTableByTiporecibo(receiptType.Almacen)">
+      Almacén({{ almacen }})
+    </button>
+    <button
+      [disabled]="count === 0"
+      class="btn btn-info btn-sm m-2 active"
+      type="submit"
+      size="small"
+      (click)="showTableByTiporecibo(receiptType.Reprogramacion)">
+      Reprogramación({{ programacion }})
+    </button>
+    <button
+      [disabled]="count === 0"
+      class="btn btn-danger btn-sm m-2 active"
+      type="submit"
+      size="small"
+      (click)="showTableByTiporecibo(receiptType.Cancelacion)">
+      Cancelación({{ cancelacion }})
+    </button>
+  </td>
+</tr>
+
+<div class="row" *ngIf="typeReceiptSelected">
+  <div *ngIf="isFirstTable()">
+    <app-receipt-table-programings
+      [id_programacion]="id_programacion"
+      [folio]="folio"
+      [type]="typeReceiptSelected"></app-receipt-table-programings>
+  </div>
+  <div *ngIf="!isFirstTable()">
+    <app-receipt-table-goods
+      [folio]="folio"
+      [estatus_bien_programacion]="
+        estatus_bien_programacion
+      "></app-receipt-table-goods>
+  </div>
+</div>

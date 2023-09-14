@@ -8,26 +8,28 @@
       </div>
       <div class="p-2 buttons">
         <button
-          [disabled]="isClassifyAsset == true"
-          class="btn btn-secondary btn-sm active"
+          [disabled]="isClassifyAsset"
+          class="btn btn-primary btn-sm active"
           (click)="openSearchModal()">
           B&uacute;squeda Avanzada
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
       </div>
       <div class="p-2 buttons">
         <button
-          [disabled]="statusTask == 'FINALIZADA' || isClassifyAsset == true"
+          [disabled]="statusTask == 'FINALIZADA' || isClassifyAsset"
           class="btn btn-primary btn-sm active"
           (click)="saveRequest()">
-          <i class="bx bx-save"></i> Guardar
+          Guardar
+          <i class="bx bx-save"></i>
         </button>
       </div>
       <div class="p-2 buttons">
         <button
-          [disabled]="isClassifyAsset == true"
+          [disabled]="isClassifyAsset"
           class="btn btn-danger btn-sm active"
           (click)="cleanLvl()">
-          Limpiar
+          Limpiar <i class="fas fa-eraser"> </i>
         </button>
       </div>
     </div>
@@ -214,6 +216,7 @@
     </div>
     <!--   </div> -->
 
+    <!-- Detalle de bienes enc aso de que este en registro de bienes -->
     <div class="row pt-4" *ngIf="typeDoc === 'assets'">
       <hr style="color: black" />
       <app-detail-assets-tab-component
@@ -223,6 +226,25 @@
         [process]="process"
         [childSaveAction]="childSaveAction"
         [typeDoc]="typeDoc"></app-detail-assets-tab-component>
+    </div>
+    <!-- Fin -->
+
+    <!-- Detalle de bienes en caso de que este en clasificaciond de bienes -->
+    <div
+      class="row pt-4"
+      *ngIf="typeDoc == 'classify-assets' && typeTransfer == 'MANUAL'">
+      <hr style="color: black" />
+      <app-detail-assets-tab-component
+        *ngIf="classiGoodsForm.controls['id'].value != null"
+        [requestObject]="requestObject"
+        [detailAssets]="classiGoodsForm"
+        [domicilieObject]="domicilieObject"
+        [process]="process"
+        [childSaveAction]="childSaveAction"
+        [typeDoc]="typeDoc"
+        (sendDetailInfoEvent)="
+          getDetailInfoEvent($event)
+        "></app-detail-assets-tab-component>
     </div>
   </div>
 </div>

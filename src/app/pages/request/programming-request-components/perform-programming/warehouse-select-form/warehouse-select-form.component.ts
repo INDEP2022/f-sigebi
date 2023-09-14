@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
@@ -14,22 +15,31 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class WarehouseSelectFormComponent extends BasePage implements OnInit {
+  @Output() formValue = new EventEmitter<any>();
   form: FormGroup = new FormGroup({});
-  idTransferent: number = 0;
+  data: any[] = [];
   warehouses = new DefaultSelect<IWarehouse>();
   warehouse: IWarehouse;
+  delegation: number = 0;
+  typeTransportable: string = '';
+  typeTrans: string = '';
+  idTransferent: number = 0;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private warehouseService: WarehouseService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private router: Router
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getWarehouses(new ListParams());
+    if (this.typeTransportable == 'warehouse')
+      this.getWarehouses(new ListParams());
+
+    if (this.typeTransportable == 'guard') this.getStoreGuard(new ListParams());
   }
 
   prepareForm() {
@@ -38,27 +48,82 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
     });
   }
 
+  getStoreGuard(params: ListParams) {
+    if (this.typeTrans == 'massive') {
+      params['filter.name'] = `$ilike:${params.text}`;
+      params['filter.regionalDelegation'] = this.delegation;
+      params['filter.administratorName'] = this.idTransferent;
+      this.goodsQueryService.getCatStoresView(params).subscribe({
+        next: data => {
+          this.warehouses = new DefaultSelect(data.data, data.count);
+        },
+        error: () => {
+          this.alert(
+            'warning',
+            'Advertencia',
+            'La transferente no cuenta con almacenes'
+          );
+        },
+      });
+    } else {
+      params['filter.name'] = `$ilike:${params.text}`;
+      params['filter.regionalDelegation'] = this.data[0].idDelegation;
+      params['filter.administratorName'] = this.data[0].idTransferent;
+
+      this.goodsQueryService.getCatStoresView(params).subscribe({
+        next: data => {
+          this.warehouses = new DefaultSelect(data.data, data.count);
+        },
+        error: () => {
+          this.alert(
+            'warning',
+            'Advertencia',
+            'La transferente no cuenta con almacenes'
+          );
+        },
+      });
+    }
+  }
+
   getWarehouses(params: ListParams) {
+    params['filter.name'] = `$ilike:${params.text}`;
+    params['filter.regionalDelegation'] = this.delegation;
+    params['filter.managedBy'] = 'SAE';
     this.goodsQueryService.getCatStoresView(params).subscribe(data => {
-      console.log('alamcenes relacionados con transferente', data);
       this.warehouses = new DefaultSelect(data.data, data.count);
     });
   }
 
   confirm() {
-    this.alertQuestion(
-      'warning',
-      'Advertencía',
-      '¿Desea asignar el almacén para bienes de resguardo?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.loading = true;
-        this.modalRef.content.callback(this.form.value);
-        this.close();
-      } else {
-        this.close();
-      }
-    });
+    if (this.typeTransportable == 'guard') {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea asignar los bienes al almacén seleccionado?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.loading = true;
+          this.modalRef.content.callback(this.form.value.warehouse);
+          this.close();
+        } else {
+          this.close();
+        }
+      });
+    } else if (this.typeTransportable == 'warehouse') {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea asignar los bienes al almacén seleccionado?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.loading = true;
+          this.modalRef.content.callback(this.form.value.warehouse);
+          this.close();
+        } else {
+          this.close();
+        }
+      });
+    }
   }
 
   close() {

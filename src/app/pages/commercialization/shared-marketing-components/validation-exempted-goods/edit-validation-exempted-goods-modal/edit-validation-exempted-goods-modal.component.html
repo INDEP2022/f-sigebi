@@ -10,7 +10,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="goodNumber" />
+              formControlName="goodNumber"
+              [readonly]="edit" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -19,7 +20,8 @@
               formControlName="process"
               [searchable]="false"
               class="form-control"
-              [clearable]="false">
+              [clearable]="false"
+              [readonly]="edit">
               <ng-option value="REV">REV</ng-option>
               <ng-option value="COMER">COMER</ng-option>
             </ng-select>
@@ -28,11 +30,13 @@
         <div class="col-md-3">
           <form-field
             [control]="goodForm.get('registryNumber')"
-            label="No. Registro">
+            label="No. de Registro">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="registryNumber" />
+              formControlName="registryNumber"
+              min="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
       </div>

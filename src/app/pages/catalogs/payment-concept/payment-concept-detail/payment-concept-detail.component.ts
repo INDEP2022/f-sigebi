@@ -16,7 +16,7 @@ export class PaymentConceptDetailComponent extends BasePage implements OnInit {
   paymentConceptForm: ModelForm<IPaymentConcept>;
   paymentconcept: IPaymentConcept;
 
-  title: string = 'Catalogo concepto de pagos';
+  title: string = 'Concepto de Pago';
   edit: boolean = false;
 
   constructor(
@@ -36,11 +36,11 @@ export class PaymentConceptDetailComponent extends BasePage implements OnInit {
       id: [null, []],
       description: [
         null,
-        Validators.compose([
+        [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
           Validators.maxLength(100),
-        ]),
+        ],
       ],
       numRegister: [null, []],
     });
@@ -60,26 +60,37 @@ export class PaymentConceptDetailComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.paymentService.create(this.paymentConceptForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    this.paymentService
-      .update(this.paymentconcept.id, this.paymentConceptForm.value)
-      .subscribe({
+    if (this.paymentConceptForm.controls['description'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.paymentService.create(this.paymentConceptForm.value).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (this.paymentConceptForm.controls['description'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.paymentService
+        .update(this.paymentconcept.id, this.paymentConceptForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

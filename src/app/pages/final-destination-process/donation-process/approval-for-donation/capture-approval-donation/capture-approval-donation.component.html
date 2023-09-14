@@ -16,20 +16,29 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-12 text-md-right">
+            <div class="col-12 text-md-start">
               <span class="badge rounded-pill badge-soft-success">
                 Estatus
               </span>
+              <div>{{ estatus || '' }}</div>
             </div>
           </div>
           <div class="row mt-5">
             <div class="col-md-6">
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('type')" label="Tipo">
-                  <select class="form-control" formControlName="type">
-                    <option>Tipo Evento</option>
-                  </select>
+                  <input
+                    #inputValue
+                    type="text"
+                    class="form-control"
+                    formControlName="type"
+                    readonly />
                 </form-field>
+                <!-- <form-field [control]="regisForm.get('type')" label="Tipo">
+                  <ng-select formControlName="type" class="form-control pt-1" readonly>
+                    <ng-option value="COMPDON">COMPDON</ng-option>
+                  </ng-select>
+                </form-field> -->
               </div>
             </div>
 
@@ -41,7 +50,8 @@
                   <input
                     type="text"
                     class="form-control"
-                    formControlName="area" />
+                    formControlName="area"
+                    readonly />
                 </form-field>
               </div>
             </div>
@@ -50,15 +60,18 @@
           <div class="row mt-3">
             <div class="col-md-2">
               <div class="mb-3 pl-4 pr-4">
+                <!-- <form-field [control]="regisForm.get('year')" label="Año">
+                  <input type="text" class="form-control" [bsConfig]="bsConfigToYear" #dp="bsDatepicker"
+                    formControlName="year" bsDatepicker [(bsValue)]="bsValueToYear" />
+                </form-field> -->
                 <form-field [control]="regisForm.get('year')" label="Año">
                   <input
+                    #inputValue
                     type="text"
                     class="form-control"
-                    [bsConfig]="bsConfigToYear"
-                    #dp="bsDatepicker"
                     formControlName="year"
-                    bsDatepicker
-                    [(bsValue)]="bsValueToYear" />
+                    class="form-control"
+                    readonly />
                 </form-field>
               </div>
             </div>
@@ -66,9 +79,12 @@
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="regisForm.get('folio')" label="Folio">
                   <input
+                    #inputValue
                     type="text"
                     class="form-control"
-                    formControlName="folio" />
+                    formControlName="folio"
+                    class="form-control"
+                    readonly />
                 </form-field>
               </div>
             </div>
@@ -80,28 +96,64 @@
                   <input
                     type="text"
                     class="form-control"
-                    bsDatepicker
-                    formControlName="captureDate" />
+                    formControlName="captureDate"
+                    readonly />
                 </form-field>
               </div>
             </div>
           </div>
           <div class="row mt-3">
-            <div class="col-md-6">
+            <div class="col-md-12">
               <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="regisForm.get('keyEvent')">
+                <form-field
+                  [control]="regisForm.get('keyEvent')"
+                  label="CVE. Acta">
                   <input
+                    #inputValue
                     type="text"
                     class="form-control"
-                    formControlName="keyEvent"
-                    readonly />
+                    readonly
+                    formControlName="keyEvent" />
                 </form-field>
               </div>
             </div>
-            <div class="col-md-6 text-md-right">
+            <!-- <div class="col-md-6 text-md-right">
               <button class="btn btn-primary btn-sm active">
                 Cerrar Evento
               </button>
+            </div> -->
+            <div class="row m-3">
+              <div class="col-4"></div>
+              <div class="col-md-3 text-end">
+                <button
+                  (click)="agregarCaptura()"
+                  type="button"
+                  class="btn btn-info active btn-sm mr-3">
+                  Nueva Captura
+                  <i class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary active btn-sm mr-3"
+                  (click)="searchEventos()">
+                  Estatus Actas
+                  <i class="bx bx-search bx-sm float-icon"></i>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary active btn-sm mr-3"
+                  (click)="cerrarEvento()">
+                  Cerrar Evento
+                  <i class="fas fa-close bx-sm float-icon"></i>
+                </button>
+                <button
+                  (click)="clean()"
+                  type="button"
+                  class="btn btn-danger active btn-sm mr-3">
+                  Limpiar
+                  <i class="fa fa-eraser" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -111,50 +163,61 @@
               <h5>Par&aacute;metros para Traer Informaci&oacute;n de SIAB</h5>
             </div>
           </div>
-          <div class="row mt-5">
-            <div class="col-md-6 text-md-right">
-              <button
-                class="btn btn-secondary btn-sm active"
-                (click)="
-                  openModal(
-                    'Consulta de Bienes',
-                    'check-goods',
-                    '¿Desea Continuar con el Proceso?'
-                  )
-                ">
-                Consulta Bienes
-              </button>
-            </div>
-            <div class="col-md-6 text-md-right">
-              <button class="btn btn-secondary btn-sm active">
-                Valida Bienes
-              </button>
-            </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col-md-6 text-md-right">
-              <button class="btn btn-success btn-sm active">
-                Exp. a Excel
-              </button>
-            </div>
-            <div class="col-md-6 text-md-right">
-              <button class="btn btn-secondary btn-sm active">
-                Rastreador
-              </button>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="card">
+                    <div class="card-body mt-4 mb-4">
+                      <div
+                        class="form-group row p-4 d-flex justify-content-center align-items-center">
+                        <div class="col-md-3">
+                          <button
+                            class="btn btn-secondary btn-sm active"
+                            (click)="ValidGoods()">
+                            Valida Bienes <i class="bx bx-check float-icon"></i>
+                          </button>
+                        </div>
+                        <div class="col-md-3">
+                          <button
+                            class="btn btn-success btn-sm active"
+                            type="button"
+                            (click)="exportToExcel()">
+                            Exportar a Excel
+                            <i class="bx bx-download float-icon"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div
+                        class="form-group row p-4 d-flex justify-content-center align-items-center">
+                        <div class="col-md-3">
+                          <button
+                            class="btn btn-primary btn-sm active"
+                            (click)="ubicaGood()">
+                            Consulta Bienes
+                            <i class="bx bx-search float-icon"></i>
+                          </button>
+                        </div>
+
+                        <div class="col-md-3">
+                          <button
+                            class="btn btn-info active btn-sm active"
+                            (click)="exportToExcel()">
+                            Rastreador de Bienes&nbsp;
+                            <i class="fas fa-map-marker bx-sm float-icon"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <app-divider></app-divider>
-
-      <div class="row mt-5">
-        <div class="col-md-3 text-center">
-          <div [ngStyle]="{ 'background-color': info[0].color }">
-            {{ info[0].title }}
-          </div>
-        </div>
-      </div>
 
       <div class="d-flex justify-content-end mt-5">
         <app-columns-select
@@ -168,13 +231,93 @@
           [attr.class]="'table-bordered'"
           class="col-md-12"
           [settings]="settings"
-          [source]="data">
+          [source]="dataTableGood">
         </ng2-smart-table>
       </div>
 
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>
 
+      <div class="row"></div>
+      <div class="row p-3">
+        <div class="col-md-3"></div>
+
+        <div class="row mt-12 d-flex justify-content-center">
+          <div class="col-md-12 justify-content-center">
+            <div class="row">
+              <div class="d-flex justify-content-end mb-2">
+                <app-columns-select
+                  [(settings)]="settings"></app-columns-select>
+                <div>
+                  <!-- <button type="button" tooltip="Nuevo" containerClass="tooltip-style"
+                                              class="btn btn-primary btn-sm active ml-2 mr-2" (click)="goBack()" *ngIf="origin != null">
+                                              Regresar <i class="bx bx-arrow-back bx-sm float-icon"></i>
+                                            </button> -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- <div class="row pt-2">
+            <div class="col-md-12 text-center mt-4 mb-4">
+              <button tooltip="Agregar Bien al Acta" containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="addSelect()">
+                <i class="bx bx-chevron-down bx-md"></i>
+              </button>
+              <button tooltip="Agregar Bienes al Acta" containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="addAll()">
+                <i class="bx bx-chevrons-down bx-md"></i>
+              </button>
+              <button class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="removeAll()">
+                <i class="bx bx-chevrons-up bx-md"></i>
+              </button>
+              <button tooltip="Quitar Bien del Acta" containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="removeSelect()">
+                <i class="bx bx-chevron-up bx-md"></i>
+              </button>
+            </div>
+          </div> -->
+
+          <div class="col-md-12">
+            <h6>BIENES RELACIONADOS CON EL EVENTO</h6>
+            <div class="row">
+              <form-loader *ngIf="loading3"></form-loader>
+              <div class="col-md-12">
+                <ng-scrollbar
+                  [track]="'all'"
+                  [ngStyle]="{ height: loading3 ? '0px' : '400px' }">
+                  <ng2-smart-table
+                    class="table-responsive"
+                    [attr.class]="'table-bordered table-responsive'"
+                    [settings]="settings2"
+                    (userRowSelect)="rowsSelected($event)"
+                    [source]="dataDetailDonationGood">
+                  </ng2-smart-table>
+                  <app-pagination
+                    [params]="paramsList2"
+                    [totalItems]="totalItems2"></app-pagination>
+                </ng-scrollbar>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div footer>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="ubicaGood()">
+              Ver Error
+            </button>
+          </div>
+          <div class="m-3">
+            <button class="btn btn-danger btn-sm active">
+              Elimina Bienes <i class="fa fa-trash-alt"></i>
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="row mt-5">
         <div class="col-md-6">
           <div class="row">
@@ -209,28 +352,6 @@
                   <span class="badge rounded-pill badge-soft-success">1</span>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="row">
-            <div class="col-md-6">
-              <button
-                class="btn btn-secondary btn-sm active"
-                (click)="
-                  openModal(
-                    'Visualizaci&oacute;n de Errores',
-                    'see-error',
-                    'Los Siguientes Bienes Contienen Errores:'
-                  )
-                ">
-                Ver Error
-              </button>
-            </div>
-            <div class="col-md-6">
-              <button class="btn btn-secondary btn-sm active">
-                Elimina Bienes
-              </button>
             </div>
           </div>
         </div>

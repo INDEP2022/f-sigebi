@@ -5,33 +5,32 @@
   <div body>
     <form class="form-material" [formGroup]="validatorsProceedingsForm">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field
             [control]="validatorsProceedingsForm.get('proceedingsType')"
-            label="Tipo&#58;">
-            <select class="form-control" formControlName="proceedingsType">
-              <option [value]="0">Seleccione un tipo acta</option>
-              <option *ngFor="let item of typeItem" [value]="item.value">
-                {{ item.label }}
-              </option>
-            </select>
+            label="Tipo de Acta">
+            <input
+              class="form-control"
+              formControlName="proceedingsType"
+              type="text" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field
             [control]="validatorsProceedingsForm.get('secVal')"
             label="Secuencia">
-            <input
-              class="form-control"
-              formControlName="secVal"
-              type="number" />
+            <input class="form-control" formControlName="secVal" type="text" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-12">
           <form-field
             [control]="validatorsProceedingsForm.get('descVal')"
-            label="Validacion">
-            <input class="form-control" formControlName="descVal" type="text" />
+            label="Descripción">
+            <input
+              class="form-control"
+              formControlName="descVal"
+              type="text"
+              oninput="if(this.value.length > 200) this.value = this.value.slice(0, 200);" />
           </form-field>
         </div>
       </div>
@@ -41,7 +40,7 @@
             [control]="validatorsProceedingsForm.get('scriptVal')"
             label="Script">
             <textarea
-              class="form-control"
+              class="form-control pt-2"
               formControlName="scriptVal"
               rows="10"></textarea>
           </form-field>
@@ -52,14 +51,17 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="!validatorsProceedingsForm.valid"
-          [loading]="loading"
-          (confirm)="confirm()">
-        </confirm-button>
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()"
+          [disabled]="!validatorsProceedingsForm.valid">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button class="btn btn-danger btn-sm active mr-3" (click)="close()">
           Cancelar
         </button>
       </div>

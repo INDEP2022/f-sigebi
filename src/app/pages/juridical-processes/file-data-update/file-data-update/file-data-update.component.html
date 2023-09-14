@@ -18,11 +18,11 @@
               (onSelect)="selectData($event)">
             </app-form-search-handler>
           </div>
-          <div class="">
+          <div *ngIf="previousRoute" class="">
             <button
               class="btn btn-secondary active btn-sm"
               (click)="returnToFlyers()">
-              Registro de Volantes
+              Regresar
             </button>
           </div>
         </div>

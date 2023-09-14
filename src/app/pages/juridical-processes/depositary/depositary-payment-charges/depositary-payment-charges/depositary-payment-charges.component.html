@@ -1,6 +1,10 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Notificaci&oacute;n de abandono por aseguramiento</h5>
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <h5 class="title">Carga de pagos referenciados de bancos</h5>
+      </div>
+    </div>
   </div>
   <div body>
     <div class="row pl-4">
@@ -8,35 +12,74 @@
     </div>
     <form [formGroup]="form" class="form-material">
       <div class="row mt-5">
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-1 col-sm-12 col-xs-12">
           <form-field [control]="form.get('numberGood')" label="No&#46; Bien">
             <input
               type="text"
               class="form-control"
-              formControlName="numberGood"
-              (keyup.enter)="onSearch()" />
+              formControlName="numberGood" />
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field [control]="form.get('event')" label="Evento">
             <input type="text" class="form-control" formControlName="event" />
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('cve_bank')" label="Banco">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="cve_bank" />
+        <div class="col-md-5 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('cve_bank')">
+            <ngx-select
+              [searchOnInit]="true"
+              (fetchItems)="getUsers($event)"
+              bindLabel="bankDescription"
+              [data]="users$"
+              [form]="form"
+              control="cve_bank"
+              [showTooltip]="true"
+              value="bankCode"
+              label="Banco"
+              (change)="getDescUser($event)"></ngx-select>
           </form-field>
+          <!-- <form-field [control]="form.get('cve_bank')">
+            <ngx-select
+              [form]="form"
+              [data]="users$"
+              (change)="getDescUser($event)"
+              (fetchItems)="getUsers($event)"
+              bindLabel="userAndName"
+              control="cve_bank"
+              label="Banco"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              termMaxLength="30"
+              [labelTemplate]="userLabel"
+              [optionTemplate]="userOption">
+            </ngx-select>
+            <ng-template #userLabel let-item="item">
+              {{ item.bankCode }} - {{ item.name }}
+            </ng-template>
+            <ng-template #userOption let-item="item">
+              <div [title]="item.bankCode + '-' + item.name">
+                {{ item.bankCode }} - {{ item.name }}
+              </div>
+            </ng-template>
+          </form-field> -->
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
-          <!--form-field [control]="form.get('loand')" label="Carga archivo"-->
-          <button type="text" class="btn btn-sm btn-info active">
-            Carga archivo
+        <!-- fileExcel.click() -->
+        <div class="col-md-1 col-sm-12 col-xs-12">
+          <button
+            type="text"
+            class="btn btn-sm btn-info active"
+            (click)="openFile()">
+            Carga Excel o CSV
           </button>
-          <!--input type="text" class="form-control" formControlName="loand" /-->
-          <!--/form-field-->
+          <input
+            type="file"
+            (change)="ReadExcel($event)"
+            name="fileExcel"
+            #fileExcel
+            #uploadFile
+            class="d-none"
+            accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
         </div>
       </div>
     </form>
@@ -45,32 +88,53 @@
         <div class="m-3">
           <button
             type="button"
-            class="btn btn-success active"
-            (click)="paymentDispersion()">
+            class="btn btn-primary btn-sm active"
+            (click)="onSearch()">
+            Buscar<i class="fa fa-search ml-2"></i>
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-success btn-sm active"
+            (click)="btnPaymentDispersion()">
             Dispersi&#243;n de pagos
           </button>
         </div>
+        <div class="m-3">
+          <button class="btn btn-danger btn-sm active" (click)="cleanForm()">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+        </div>
+        <!--  <div class="m-3">
+          <a class="btn btn-sm btn-info active" href="" target="_blank">
+            Excel de prueba
+          </a>
+        </div> -->
       </div>
     </div>
     <div class="row">
-      <div class="form-material col-md-10">
-        <!--search-bar [params]="params"></search-bar>
-      </div>
-      <div class="col-md-2"-->
-      </div>
-      <div class="col-md-2 buttons">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
+      <div class="d-flex justify-content-end">
+        <div class="p-2">
+          <app-columns-select
+            [leftList]="true"
+            [(settings)]="settings"></app-columns-select>
+        </div>
       </div>
     </div>
-    <div [class]="loading ? 'table-loading' : ''">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings"
-        [source]="data">
-      </ng2-smart-table>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
+    <div class="row mb-5">
+      <div class="table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data">
+          </ng2-smart-table>
+          <app-pagination
+            [filterParams]="filterParams"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
     </div>
   </div>
 </app-card>

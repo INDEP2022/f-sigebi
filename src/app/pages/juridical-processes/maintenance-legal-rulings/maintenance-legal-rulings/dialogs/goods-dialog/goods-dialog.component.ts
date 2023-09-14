@@ -10,6 +10,7 @@ import { DictationService } from 'src/app/core/services/ms-dictation/dictation.s
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -20,6 +21,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class GoodsDialogComponent extends BasePage implements OnInit {
   dictationXGoodForm: ModelForm<IDictationXGood1>;
   dictationXGood: IDictationXGood1;
+  dataCreate: { ofDictNumber: number; typeDict: number } | null = null;
 
   title: string = 'Bien';
   edit: boolean = false;
@@ -69,13 +71,45 @@ export class GoodsDialogComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.dictationXGoodForm = this.fb.group({
-      amountDict: [null],
-      descriptionDict: ['', Validators.required],
-      id: [null, Validators.required],
-      ofDictNumber: [null, Validators.required],
-      proceedingsNumber: [null, Validators.required],
+      amountDict: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(21),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      descriptionDict: ['', [Validators.required, Validators.maxLength(1250)]],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(15),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      ofDictNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(15),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      proceedingsNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(15),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
       typeDict: ['', Validators.required],
     });
+
+    if (this.dataCreate) {
+      this.dictationXGoodForm.patchValue(this.dataCreate);
+    }
 
     if (this.dictationXGood != null) {
       this.edit = true;
@@ -95,7 +129,15 @@ export class GoodsDialogComponent extends BasePage implements OnInit {
     this.loading = true;
     this.dictationXGoodService.create(this.dictationXGoodForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.onLoadToast(
+          'error',
+          ' Los Datos Ingresados son Incorrectos.',
+          `Por favor de Verificar`
+        );
+        this.close();
+      },
     });
   }
 
@@ -103,7 +145,15 @@ export class GoodsDialogComponent extends BasePage implements OnInit {
     this.loading = true;
     this.dictationXGoodService.update(this.dictationXGoodForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.onLoadToast(
+          'error',
+          ' Los Datos Ingresados son Incorrectos.',
+          `Por favor de Verificar`
+        );
+        this.close();
+      },
     });
   }
 

@@ -1,11 +1,11 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field
             [control]="form.get('typeProceeding')"
             label="Tipo de Acta o Pantalla">
@@ -15,24 +15,34 @@
               formControlName="typeProceeding" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="form.get('initialCategory')"
-            label="Categor&iacute;a Final">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="initialCategory" />
+        <div class="col-md-6">
+          <form-field [control]="form.get('initialCategory')">
+            <ngx-select
+              [form]="form"
+              control="initialCategory"
+              value="id"
+              bindLabel="id"
+              [data]="categories"
+              (fetchItems)="getCategories($event)"
+              (change)="categoriesChange($event)"
+              label="Categoría Inicial">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="form.get('finalCategory')"
-            label="Categor&iacute;a Final">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="finalCategory" />
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field [control]="form.get('finalCategory')">
+            <ngx-select
+              [form]="form"
+              control="finalCategory"
+              value="id"
+              bindLabel="id"
+              [data]="categories"
+              (fetchItems)="getCategories($event)"
+              (change)="categoriesChange($event)"
+              label="Categoría Final">
+            </ngx-select>
           </form-field>
         </div>
       </div>

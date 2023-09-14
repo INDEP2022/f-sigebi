@@ -17,7 +17,7 @@ import {
 })
 export class TypeOrderServiceFormComponent extends BasePage implements OnInit {
   typeOrderServiceForm: ModelForm<ITypeOrderService>;
-  title: string = 'Tipo de Servicios';
+  title: string = 'Tipo Orden de Servicio';
   edit: boolean = false;
   typeOrderService: ITypeOrderService;
   constructor(
@@ -35,21 +35,21 @@ export class TypeOrderServiceFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.typeOrderServiceForm = this.fb.group({
       id: [null],
-      cve: [
+      key: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.maxLength(50),
           Validators.pattern(KEYGENERATION_PATTERN),
-        ]),
+        ],
       ],
       description: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.maxLength(50),
           Validators.pattern(STRING_PATTERN),
-        ]),
+        ],
       ],
     });
     if (this.typeOrderService != null) {
@@ -66,23 +66,43 @@ export class TypeOrderServiceFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.typeOrderServicesService
-      .create(this.typeOrderServiceForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.typeOrderServiceForm.controls['key'].value.trim() == '' ||
+      this.typeOrderServiceForm.controls['description'].value.trim() == '' ||
+      (this.typeOrderServiceForm.controls['key'].value.trim() == '' &&
+        this.typeOrderServiceForm.controls['description'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.typeOrderServicesService
+        .create(this.typeOrderServiceForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.typeOrderServicesService
-      .update(this.typeOrderService.id, this.typeOrderServiceForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.typeOrderServiceForm.controls['key'].value.trim() == '' ||
+      this.typeOrderServiceForm.controls['description'].value.trim() == '' ||
+      (this.typeOrderServiceForm.controls['key'].value.trim() == '' &&
+        this.typeOrderServiceForm.controls['description'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.typeOrderServicesService
+        .newUpdate(this.typeOrderServiceForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

@@ -1,0 +1,60 @@
+<app-modal>
+  <div class="w-100" header>
+    <div class="d-flex flex-wrap justify-content-between aling-items-center">
+      <h5 class="modal-title">{{ title }}</h5>
+    </div>
+  </div>
+  <div body>
+    <div>
+      <div class="row">
+        <div class="row">
+          <!-- <form-loader *ngIf="loading"></form-loader> -->
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng-scrollbar
+                [track]="'all'"
+                [ngStyle]="{ height: loading ? '0px' : '300px' }">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive'"
+                  (userRowSelect)="onCustomAction2($event)"
+                  class="table-responsive"
+                  [settings]="settings"
+                  [source]="goods">
+                </ng2-smart-table>
+              </ng-scrollbar>
+            </div>
+          </div>
+          <!-- <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="goods">
+                </ng2-smart-table>
+              </div> -->
+        </div>
+      </div>
+      <app-pagination
+        [params]="paramsList"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          [disabled]="!goodSelect"
+          class="btn btn-primary btn-sm active"
+          (click)="seleccionar()">
+          Seleccionar
+          <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

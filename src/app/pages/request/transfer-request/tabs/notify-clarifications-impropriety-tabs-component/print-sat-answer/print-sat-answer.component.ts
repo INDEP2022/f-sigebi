@@ -3,6 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-print-sat-answer',
@@ -25,7 +26,7 @@ export class PrintSatAnswerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    let linkDoc1: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Oficio_Aclaracion_Respuesta.jasper&ID_ACLARACION=${this.idAclaracion}`;
+    let linkDoc1: string = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=Oficio_Aclaracion_Respuesta.jasper&ID_ACLARACION=${this.idAclaracion}`;
     this.src = linkDoc1;
     this.updateStatus();
   }

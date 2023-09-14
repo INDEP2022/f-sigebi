@@ -6,7 +6,7 @@
         (click)="showSearchForm = true"
         *ngIf="!showSearchForm">
         <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
-        bienes</a
+        Bienes</a
       >
     </p>
 
@@ -16,7 +16,7 @@
         (click)="showSearchForm = false"
         *ngIf="showSearchForm">
         <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
-        bienes</a
+        Bienes</a
       >
     </p>
   </h5>
@@ -26,7 +26,7 @@
         <div class="col-md-6">
           <form-field
             [control]="searchForm.get('goodId')"
-            label="N&uacute;mero de gesti&oacute;n">
+            label="N&uacute;mero de Gesti&oacute;n">
             <input
               type="string"
               class="form-control"
@@ -55,7 +55,7 @@
         <div class="col-md-6">
           <form-field
             [control]="searchForm.get('requestId')"
-            label="N&uacute;mero de solicitud">
+            label="N&uacute;mero de Solicitud">
             <input
               type="text"
               class="form-control"
@@ -68,7 +68,7 @@
         <div class="col-md-6">
           <form-field
             [control]="searchForm.get('goodDescription')"
-            label="Descripci&oacute;n de bien transferente">
+            label="Descripci&oacute;n de Bien Transferente">
             <input
               type="text"
               class="form-control"
@@ -80,11 +80,11 @@
     </form>
     <div class="form-inline justify-content-end btn-toolbar">
       <button class="btn btn-primary btn-sm active" (click)="search()">
-        <i class="fa fa-search"></i> Buscar
+        Buscar <i class="fa fa-search"></i>
       </button>
 
       <button class="btn btn-danger btn-sm active" (click)="clean()">
-        Limpiar
+        Limpiar <i class="fas fa-eraser"></i>
       </button>
     </div>
   </div>
@@ -92,15 +92,18 @@
   <div>
     <div class="row pt-4">
       <div class="d-flex">
-        <div class="pt-2">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
-        </div>
+        <div class="mr-auto p-2"></div>
         <div class="p-2">
           <button
             class="btn btn-primary btn-sm active"
             (click)="showDocuments()">
-            Ver Documento
+            Ver Documento <i class="fa fa-eye" aria-hidden="true"></i>
           </button>
+        </div>
+        <div class="p-2">
+          <app-columns-select
+            [leftList]="true"
+            [(settings)]="settings"></app-columns-select>
         </div>
       </div>
     </div>

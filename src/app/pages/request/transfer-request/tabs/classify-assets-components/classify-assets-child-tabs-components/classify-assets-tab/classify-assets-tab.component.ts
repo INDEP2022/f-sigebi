@@ -14,12 +14,17 @@ import { takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IPostGoodResDev } from 'src/app/core/models/ms-rejectedgood/get-good-goodresdev';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodDataAsetService } from 'src/app/core/services/ms-good/good-data-aset.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   NUMBERS_PATTERN,
@@ -46,6 +51,9 @@ export class ClassifyAssetsTabComponent
   @Input() domicilieObject: IDomicilies;
   @Input() process: string = '';
   @Input() goodSelect: any;
+  @Input() typeOfTransfer?: string = '';
+  @Output() updateClassifyAssetTableEvent?: EventEmitter<any> =
+    new EventEmitter();
   @Output() classifyChildSaveFraction?: EventEmitter<any> = new EventEmitter();
 
   classiGoodsForm: IFormGroup<IGood>; //bien
@@ -72,6 +80,7 @@ export class ClassifyAssetsTabComponent
   statusTask: any = '';
   childSaveAction: boolean = false;
   canClean: boolean = false;
+  typeTransfer: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -81,14 +90,18 @@ export class ClassifyAssetsTabComponent
     private goodService: GoodService,
     private route: ActivatedRoute,
     private requestHelperService: RequestHelperService,
-    private showHideErrorInterceptorService: showHideErrorInterceptorService
+    private showHideErrorInterceptorService: showHideErrorInterceptorService,
+    private goodFinderService: GoodFinderService,
+    private goodDataAsetService: GoodDataAsetService,
+    private authService: AuthService,
+    private historyGoodService: HistoryGoodService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.task = JSON.parse(localStorage.getItem('Task'));
-
+    this.typeTransfer = this.typeOfTransfer;
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
 
@@ -110,7 +123,8 @@ export class ClassifyAssetsTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.process === 'classify-assets') {
+    this.typeTransfer = this.typeOfTransfer;
+    if (this.process === 'classify-assets' && this.typeTransfer != 'MANUAL') {
       this.isClassifyAsset = true;
     }
 
@@ -214,7 +228,11 @@ export class ClassifyAssetsTabComponent
       ],
       unitMeasure: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(40),
+        ],
       ], // preguntar Unidad Medida Transferente
       saeDestiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       brand: [
@@ -251,19 +269,11 @@ export class ClassifyAssetsTabComponent
       ],
       axesNumber: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(POSITVE_NUMBERS_PATTERN),
-          Validators.maxLength(5),
-        ],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
       ],
       engineNumber: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(40),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ], //numero motor
       tuition: [
         null,
@@ -418,6 +428,7 @@ export class ClassifyAssetsTabComponent
       duplicatedGood: [null],
       admissionDate: [null],
       federalEntity: [null],
+      val25: [null],
     });
 
     if (this.goodObject != null) {
@@ -425,9 +436,9 @@ export class ClassifyAssetsTabComponent
         this.getSection(new ListParams(), this.good.ligieSection);
       } else {
         this.onLoadToast(
-          'info',
+          'warning',
           'Clasificación del bien',
-          'El bien no cuenta con la fracción arancelaria'
+          'El Bien no cuenta con la fracción arancelaria'
         );
       }
       this.classiGoodsForm.patchValue(this.good);
@@ -441,6 +452,14 @@ export class ClassifyAssetsTabComponent
         this.classiGoodsForm.controls['fitCircular'].setValue('N');
       }
     }
+
+    this.classiGoodsForm.controls['goodTypeId'].valueChanges.subscribe(data => {
+      if (data != 2) {
+        this.classiGoodsForm.controls['axesNumber'].setValidators([]);
+        this.classiGoodsForm.controls['engineNumber'].setValidators([]);
+      }
+      this.classiGoodsForm.updateValueAndValidity();
+    });
   }
 
   loadingForm() {
@@ -473,6 +492,7 @@ export class ClassifyAssetsTabComponent
     for (let i = 0; i <= listReverse.length; i++) {
       const id = listReverse[i];
       this.classiGoodsForm.controls[fractions[i]].setValue(id);
+
       if (i === 0) {
         this.getChapter1(new ListParams(), id);
       } else if (i === 1) {
@@ -489,7 +509,8 @@ export class ClassifyAssetsTabComponent
   }
   getLevels4(params: ListParams, id?: number, clean: boolean = false) {
     params['filter.parentId'] = '$eq:' + id.toString();
-    params.limit = 50;
+    params['sortBy'] = `code:ASC`;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -506,7 +527,8 @@ export class ClassifyAssetsTabComponent
   }
   getLevels3(params: ListParams, id?: number, clean: boolean = false) {
     params['filter.parentId'] = '$eq:' + id.toString();
-    params.limit = 50;
+    params['sortBy'] = `code:ASC`;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -522,7 +544,8 @@ export class ClassifyAssetsTabComponent
   }
   getLevels2(params: ListParams, id?: number, clean: boolean = false) {
     params['filter.parentId'] = '$eq:' + id.toString();
-    params.limit = 50;
+    params['sortBy'] = `code:ASC`;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -538,11 +561,12 @@ export class ClassifyAssetsTabComponent
   }
   getLevels1(params: ListParams, id?: number, clean: boolean = false) {
     params['filter.parentId'] = '$eq:' + id.toString();
+    params['sortBy'] = `code:ASC`;
     delete params.text;
     delete params.inicio;
     delete params.pageSize;
     delete params.take;
-    params.limit = 50;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -560,7 +584,8 @@ export class ClassifyAssetsTabComponent
     if (id) {
       params['filter.parentId'] = '$eq:' + id.toString();
     }
-    params.limit = 50;
+    params['sortBy'] = `code:ASC`;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -576,7 +601,8 @@ export class ClassifyAssetsTabComponent
   }
   getSection1(params: ListParams, id?: number) {
     params['filter.level'] = '$eq:' + 0;
-    params.limit = 50;
+    params['sortBy'] = `id:ASC`;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -595,7 +621,8 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
-    params.limit = 50;
+    params['sortBy'] = `id:ASC`;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -627,7 +654,8 @@ export class ClassifyAssetsTabComponent
         params['filter.id'] = '$eq:' + id.toString();
       }
     }
-    params.limit = 50;
+    params['sortBy'] = `code:ASC`;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -664,11 +692,12 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
+    params['sortBy'] = `code:ASC`;
     delete params.text;
     delete params.inicio;
     delete params.pageSize;
     delete params.take;
-    params.limit = 50;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -699,7 +728,8 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
-    params.limit = 50;
+    params['sortBy'] = `code:ASC`;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -730,7 +760,8 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
-    params.limit = 50;
+    params['sortBy'] = `code:ASC`;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -761,7 +792,8 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
-    params.limit = 50;
+    params['sortBy'] = `code:ASC`;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -800,7 +832,7 @@ export class ClassifyAssetsTabComponent
           //if(next) this.getExample();
         },
       },
-      class: 'modalSizeXL modal-dialog-centered',
+      class: ' modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.bsModalRef = this.modalService.show(AdvancedSearchComponent, config);
@@ -843,6 +875,7 @@ export class ClassifyAssetsTabComponent
     }
   }
   cleanLvl(lvl?: number) {
+    this.advSearch = false;
     this.classiGoodsForm.controls['goodTypeId'].setValue(null);
     this.selectLevel4 = [];
     this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
@@ -862,56 +895,142 @@ export class ClassifyAssetsTabComponent
     const goods = this.classiGoodsForm.getRawValue();
     if (goods.addressId === null) {
       this.message(
-        'error',
-        'Domicilio requerido',
-        'Es requerido el domicilio del bien'
+        'warning',
+        'Domicilio Requerido:',
+        'Es requerido el domicilio del Bien'
       );
       return;
     }
 
     if (this.fractionCode.length < 8) {
       this.message(
-        'error',
-        'Codigo de fraccion',
-        'Todos los bienes deben tener una fracción de 8 números'
+        'warning',
+        'Código de Fracción:',
+        'Todos los Bienes deben tener una fracción de 8 números'
       );
       return;
     }
 
-    if (!goods.idGoodProperty) {
-      goods.idGoodProperty =
-        Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
-    }
+    // if (!goods.idGoodProperty) {
+    //   goods.idGoodProperty =
+    //     Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
+    // }
 
     if (goods.fractionId.id) {
       goods.fractionId = Number(goods.fractionId.id);
     }
+    //modificar el campo duplicidad en caso de estar nulo
+    goods.duplicity = goods.duplicity == null ? 'N' : goods.duplicity;
 
     //se modifica el estadus del bien
-    goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+    if (this.process == 'classify-assets') {
+      goods.processStatus = 'CLASIFICAR_BIEN';
+    } else {
+      goods.processStatus = 'REGISTRO_SOLICITUD';
+      //goods.status = 'ROP';
+    }
+
+    //Verificar que la cantidad transferente para los tipos de bienes
+
+    //no sea vacío
+    if (goods.quantity == null) {
+      this.onLoadToast(
+        'warning',
+        'Cantidad de Transferente',
+        'No puede estar vacío'
+      );
+      return;
+    }
+
+    //no sean mayor a 1
+    if (
+      goods.goodTypeId == 1 ||
+      goods.goodTypeId == 4 ||
+      goods.goodTypeId == 2 ||
+      goods.goodTypeId == 3
+    ) {
+      if (goods.quantity > 1) {
+        this.onLoadToast(
+          'warning',
+          'Cantidad de Transferente',
+          'El Bien no puede tener cantidad de transferente mayor a 1'
+        );
+        return;
+      }
+
+      //Verifica que la cantidad de Transferente para los tienes diferentes acepte fracciones
+      if (goods.quantity % 1 != 0) {
+        console.log('Entra validacion de decimales');
+        this.onLoadToast(
+          'warning',
+          'Cantidad de Transferente',
+          'El Bien no se puede guardar con cantidad de transferente con decimales'
+        );
+        return;
+      }
+    }
+
+    //Verifica que la cantidad de Transferente para los tienes diferentes acepte fracciones
+    if (
+      (goods.unitMeasure == 'PZ' ||
+        goods.unitMeasure == 'BAR' ||
+        goods.unitMeasure == 'PAR' ||
+        goods.unitMeasure == 'PZ' ||
+        goods.unitMeasure == 'CZA') &&
+      goods.quantity % 1 != 0
+    ) {
+      console.log('Entra validacion de decimales');
+      this.onLoadToast(
+        'warning',
+        'No permitido',
+        'La unidad de medida no permite guardar cantidades en decimal'
+      );
+      return;
+    }
+
+    //Revisa si va vacio Unidad de Medida de Transferente
+    if (goods.unitMeasure == null) {
+      this.onLoadToast(
+        'warning',
+        'Debe ingresar unidad de medida transferente'
+      );
+      return;
+    }
+
+    //Establece el campo val25 si es apto o no
+    if (goods.val25 == null && goods.goodTypeId == 2) {
+      goods.val25 =
+        goods.fitCircular == 'Y'
+          ? 'APTO PARA CIRCULAR'
+          : 'NO APTO PARA CIRCULAR';
+    }
+
     let goodResult: any = null;
+
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
+      goods.status = 'ROP';
+
       goodResult = await this.createGood(goods);
+      //CREA HISTORICO DEL STATUS DEL BIEN
+      //const history = await this.createHistoricGood('ROP', goodResult.result.id);
+      this.updateGoodFindRecord(goodResult.result);
       //manda a guardar los campos de los bienes, domicilio, inmueble
-      //if (this.process != 'classify-assets') {
       this.childSaveAction = true;
-      //}
     } else {
       goodResult = await this.updateGood(goods);
+      this.updateGoodFindRecord(goodResult.result);
       //manda a actualizar los campos de los bienes, domicilio, inmueble
-      // if (this.process != 'classify-assets') {
       this.childSaveAction = true;
-      //}
     }
-
-    /*if(this.process === 'classify-assets'){
-      this.classifyChildSaveFraction.emit(goodResult)
-    }*/
-    setTimeout(() => {
-      this.refreshTable(true);
-    }, 5000);
+    if (this.process === 'classify-assets') {
+      this.classifyChildSaveFraction.emit(goodResult.result);
+    } else {
+      setTimeout(() => {
+        this.refreshTable(true);
+      }, 5000);
+    }
   }
 
   createGood(good: any) {
@@ -935,7 +1054,7 @@ export class ClassifyAssetsTabComponent
             this.onLoadToast(
               'error',
               'Bien no creado',
-              `Ocurrio un error al guardar el bien ${error.error.message}`
+              `Ocurrió un error al guardar el Bien ${error.error.message}`
             );
             console.log(error);
           },
@@ -955,11 +1074,7 @@ export class ClassifyAssetsTabComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: data => {
-            this.message(
-              'success',
-              'Guardado',
-              `El registro se actualizo exitosamente`
-            );
+            this.message('success', 'El Bien se ha Actualizado', ``);
             this.classiGoodsForm.controls['id'].setValue(data.id);
 
             resolve({ saved: true, result: data });
@@ -969,12 +1084,30 @@ export class ClassifyAssetsTabComponent
             this.onLoadToast(
               'error',
               'Bien no creado',
-              `Ocurrio un error al guardar el bien ${error.error.message}`
+              `Ocurrió un error al guardar el Bien ${error.error.message}`
             );
             console.log(error);
           },
         });
     });
+  }
+
+  updateGoodFindRecord(good: any) {
+    this.goodDataAsetService
+      .updateGoodFinderRecord(good.goodId, good.id)
+      .subscribe({
+        next: resp => {
+          console.log('registro actualizado');
+        },
+        error: error => {
+          console.log('Error actualizar el registro de good', error);
+          this.onLoadToast(
+            'error',
+            'Error al actualizar',
+            'No se pudo actualizar el registro'
+          );
+        },
+      });
   }
 
   getReactiveFormActions() {
@@ -989,7 +1122,20 @@ export class ClassifyAssetsTabComponent
 
             if (fraction) {
               this.fractionCode = fraction.fractionCode;
+
+              if (this.fractionCode.length === 8) {
+                this.setNoClasifyGood(fraction);
+                this.setUnidLigieMeasure(fraction);
+                this.setFractionId(data, fraction.fractionCode, 'Seccion');
+
+                const relativeTypeId = this.getRelevantTypeId(
+                  this.selectSection,
+                  data
+                );
+                this.setRelevantTypeId(relativeTypeId);
+              }
             }
+
             const section: any = this.good ? this.good.ligieSection : null;
             if (section != data) {
               this.selectChapter = [];
@@ -1179,7 +1325,7 @@ export class ClassifyAssetsTabComponent
   }
 
   getRelevantTypeId(arrayData: any, id: number): any {
-    if (arrayData) {
+    if (arrayData != undefined || arrayData != null) {
       return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
     }
   }
@@ -1205,7 +1351,9 @@ export class ClassifyAssetsTabComponent
     // el el codigo o el codigo de fracion es = 8 verifica la norma
     if (fraction.fractionCode.length === 8) {
       if (fraction.normId != null) {
-        this.classiGoodsForm.controls['destiny'].setValue(fraction.normId);
+        this.classiGoodsForm.controls['destiny'].setValue(
+          fraction.norms.destination
+        );
       } else {
         this.classiGoodsForm.controls['destiny'].setValue(null);
       }
@@ -1223,9 +1371,9 @@ export class ClassifyAssetsTabComponent
         } else {
           this.classiGoodsForm.controls['goodClassNumber'].setValue(null);
           this.message(
-            'info',
-            'clasificación de bien nula',
-            'El bien seleccionado no tiene numero de clasificación de bien'
+            'warning',
+            'Clasificación de Bien nula',
+            'El Bien seleccionado no tiene número de clasificación'
           );
         }
       }
@@ -1247,6 +1395,29 @@ export class ClassifyAssetsTabComponent
       this.classiGoodsForm.controls['ligieUnit'].setValue(null);
     }
   }
+
+  createHistoricGood(status: string, good: number) {
+    return new Promise((resolve, reject) => {
+      const user: any = this.authService.decodeToken();
+      let body: IHistoryGood = {
+        propertyNum: good,
+        status: status,
+        changeDate: new Date(),
+        userChange: user.username,
+        statusChangeProgram: 'SOLICITUD_TRANSFERENCIA',
+        reasonForChange: 'N/A',
+      };
+      this.historyGoodService.create(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(error);
+          this.onLoadToast('error', 'No se pudo crear el historico del bien');
+        },
+      });
+    });
+  }
   //obtenien la unidad de medida
   /*getUnidMeasure(value: string) {
     if (value) {
@@ -1264,7 +1435,7 @@ export class ClassifyAssetsTabComponent
                 );
               } else {
                 this.message(
-                  'info',
+                  'warning',
                   'clasificación de bien nula',
                   'el bien seleccionado no tiene numero de clasificación de bien'
                 );
@@ -1309,5 +1480,9 @@ export class ClassifyAssetsTabComponent
 
   refreshTable(refresh: boolean) {
     this.requestHelperService.isComponentSaving(refresh);
+  }
+
+  getDetailInfoEvent(event: any) {
+    this.updateClassifyAssetTableEvent.emit(event);
   }
 }

@@ -7,7 +7,7 @@ export const PROCEEDINGS_COLUMNS = {
     sort: false,
   },
   keysProceedings: {
-    title: 'CVE Acta',
+    title: 'Cve. Acta',
     sort: false,
   },
   elaborationDate: {

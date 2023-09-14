@@ -1,34 +1,130 @@
-<app-card [header]="true" [footer]="true">
+<!-- <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">REPORTE DE FICHAS DE DEPOSITO SIN CONCILIAR</h5>
+    <h5 class="title">REPORTE DE FICHAS DE DEPÓSITO SIN CONCILIAR</h5>
   </div>
   <div body>
-    <div class="row mt-3 mb-3">
+    <div class="row">
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-md-6">
-            <form-field [control]="form.get('bank')" label="Banco">
-              <input formControlName="bank" class="form-control" />
-            </form-field>
+            <app-banks-shared [form]="form"></app-banks-shared>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('currency')" label="Moneda">
-              <input formControlName="currency" class="form-control" />
+            <form-field [control]="form.get('currency')">
+              <ngx-select
+                (fetchItems)="getRegCurrency()"
+                [data]="currencies"
+                [form]="form"
+                value="cve_moneda"
+                bindLabel="desc_moneda"
+                label="Moneda"
+                control="currency">
+              </ngx-select>
             </form-field>
           </div>
         </div>
 
         <div class="row mt-4">
           <div class="col-md-6">
-            <form-field [control]="form.get('date')" label="Fecha inicial:">
-              <input formControlName="date" class="form-control" bsDatepicker />
+            <form-field [control]="form.get('from')" label="Fecha Inicial:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="from"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field [control]="form.get('to')" label="Fecha Final:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="to"
+                class="form-control"
+                [minDate]="form.get('from').value"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('import')"
+              label="Importe a Buscar:">
+              <input
+                type="number"
+                formControlName="import"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button
+            type="button"
+            [disabled]="form.invalid"
+            class="btn btn-primary active btn-sm"
+            (click)="Generar()">
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm"
+            (click)="cleanForm()">
+            Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card> -->
+
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REPORTE DE FICHAS DE DEPÓSITO SIN CONCILIAR</h5>
+  </div>
+  <div body>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <app-banks-shared [form]="form"></app-banks-shared>
+        <div class="row mt-4">
+          <div class="col-md-6 pt-3">
+            <form-field [control]="form.get('currency')">
+              <ngx-select
+                (fetchItems)="getRegCurrency()"
+                [data]="currencies"
+                [form]="form"
+                value="cve_moneda"
+                bindLabel="desc_moneda"
+                label="Moneda"
+                control="currency">
+              </ngx-select>
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('from')" label="Fecha Inicial:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="from"
+                class="form-control"
+                bsDatepicker />
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('dateTo')" label="Fecha final:">
+            <form-field [control]="form.get('to')" label="Fecha Final:">
               <input
-                formControlName="dateTo"
+                [maxDate]="maxDate"
+                formControlName="to"
                 class="form-control"
+                [minDate]="form.get('from').value"
                 bsDatepicker />
             </form-field>
           </div>
@@ -36,22 +132,33 @@
         <div class="row mt-4">
           <div class="col-md-6">
             <form-field
-              [control]="form.get('searchImport')"
-              label="Importe a buscar:">
+              [control]="form.get('import')"
+              label="Importe a Buscar:">
               <input
                 type="number"
-                formControlName="searchImport"
+                formControlName="import"
                 class="form-control" />
             </form-field>
           </div>
         </div>
       </form>
-
-      <div class="d-flex justify-content-center">
-        <div class="m-3">
-          <div>
-            <button type="button" class="btn btn-sm btn-primary active m-3">
-              IMPRIMIR
+      <div footer>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              type="button"
+              [disabled]="form.invalid"
+              class="btn btn-primary active btn-sm"
+              (click)="Generar()">
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <button
+              type="button"
+              class="btn btn-danger active btn-sm"
+              (click)="cleanForm()">
+              Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
             </button>
           </div>
         </div>

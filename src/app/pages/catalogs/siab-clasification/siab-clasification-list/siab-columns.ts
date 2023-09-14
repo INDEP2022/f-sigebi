@@ -1,50 +1,53 @@
 export const SIAB_COLUMNS = {
   id: {
     title: 'Registro',
-    type: 'string',
+    type: 'number',
+    sort: false,
   },
-  typeId: {
+  /*typeId: {
     title: 'Tipo',
-    type: 'string',
-  },
+    type: 'number',
+    sort: false,
+  },*/
   typeDescription: {
-    title: 'Descripción',
+    title: 'Descripción del Tipo',
     type: 'string',
+    sort: false,
   },
+  /*
   subtypeId: {
     title: 'Subtipo',
-    type: 'string',
-  },
-  subtypeDescription: {
-    title: 'Descripción del subtipo',
-    type: 'string',
-  },
-  ssubtypeId: {
-    title: 'Sub subtipo',
-    type: 'string',
-  },
-  ssubtypeDescription: {
-    title: 'Descripción del Sub subtipo',
     type: 'number',
-  },
-  sssubtypeId: {
-    title: 'Sssubtipo',
+    sort: false,
+  },*/
+  subtypeDescription: {
+    title: 'Descripción del Subtipo',
     type: 'string',
+    sort: false,
+  } /*
+  ssubtypeId: {
+    title: 'Ssubtipo',
+    type: 'number',
+    sort: false,
+  },*/,
+  ssubtypeDescription: {
+    title: 'Descripción del Ssubtipo',
+    type: 'string',
+    sort: false,
   },
+  /*sssubtypeId: {
+    title: 'Sssubtipo',
+    type: 'number',
+    sort: false,
+  },*/
   sssubtypeDescription: {
     title: 'Descripción del Sssubtipo',
-    type: 'number',
-  },
-  creationUser: {
-    title: 'Creado por',
     type: 'string',
-  },
-  editionUser: {
-    title: 'Modificado por',
-    type: 'string',
+    sort: false,
   },
   version: {
     title: 'Version',
-    type: 'string',
+    type: 'number',
+    sort: false,
   },
 };

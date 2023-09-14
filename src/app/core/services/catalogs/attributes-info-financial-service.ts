@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -10,12 +11,15 @@ import { IAttributesFinancialInfo } from '../../models/catalogs/attributes-finan
   providedIn: 'root',
 })
 export class AttributesInfoFinancialService
+  extends HttpService
   implements ICrudMethods<IAttributesFinancialInfo>
 {
   private readonly route: string = ENDPOINT_LINKS.AttributesFinancialInfo;
   constructor(
     private attributesFinancialInfoRepository: Repository<IAttributesFinancialInfo>
-  ) {}
+  ) {
+    super();
+  }
 
   getAll(
     params?: ListParams
@@ -40,10 +44,17 @@ export class AttributesInfoFinancialService
     id: string | number,
     model: IAttributesFinancialInfo
   ): Observable<Object> {
-    return this.attributesFinancialInfoRepository.update(this.route, id, model);
+    return this.attributesFinancialInfoRepository.newUpdateId(
+      this.route,
+      id,
+      model
+    );
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.attributesFinancialInfoRepository.remove(this.route, id);
+    return this.attributesFinancialInfoRepository.remove(
+      this.route + '/id/',
+      id
+    );
   }
 }

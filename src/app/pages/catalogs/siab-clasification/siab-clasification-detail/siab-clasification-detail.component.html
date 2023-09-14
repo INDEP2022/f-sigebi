@@ -1,39 +1,139 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ status }} CLASIFICACI&Oacute;N SIAB</h5>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form [formGroup]="siabClasificationform" class="form-material">
       <div class="row">
-        <div class="col-md-4">
-          <form-field [control]="form.get('id')" label="Id">
-            <input
-              type="number"
+        <div class="col-md-6">
+          <form-field [control]="siabClasificationform.get('typeId')">
+            <ngx-select
+              [form]="siabClasificationform"
+              control="typeId"
+              (fetchItems)="getTypes($event)"
+              [data]="types"
+              value="id"
+              label="Tipo"
+              bindLabel="nameGoodType"
+              (change)="getChangeSutype($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="siabClasificationform.get('typeDescription')"
+            label="Descripción Tipo">
+            <textarea
+              type="text"
               class="form-control"
-              formControlName="id"
-              min="1"
-              pattern="^[0-9]+" />
+              formControlName="typeDescription"
+              [rows]="3">
+            </textarea>
           </form-field>
         </div>
       </div>
-      <div class="row">
-        <app-goods-types-shared
-          [form]="form"
-          [subTypeShow]="true"
-          [ssubTypeShow]="true"
-          [sssubTypeShow]="true">
-        </app-goods-types-shared>
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field [control]="siabClasificationform.get('subtypeId')">
+            <ngx-select
+              [form]="siabClasificationform"
+              control="subtypeId"
+              (fetchItems)="getSubtypes($event)"
+              [data]="subTypes"
+              value="id"
+              label="SubTipo"
+              bindLabel="nameSubtypeGood"
+              (change)="getChangeSsutype($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="siabClasificationform.get('subtypeDescription')"
+            label="Descripción Subtipo">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="subtypeDescription"
+              [rows]="3">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field [control]="siabClasificationform.get('ssubtypeId')">
+            <ngx-select
+              [form]="siabClasificationform"
+              control="ssubtypeId"
+              (fetchItems)="getSsubtypes($event)"
+              [data]="ssubTypes"
+              value="id"
+              label="SsubTipo"
+              bindLabel="description"
+              (change)="getChangeSssutype($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="siabClasificationform.get('ssubtypeDescription')"
+            label="Descripción Ssubtipo">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="ssubtypeDescription"
+              [rows]="3">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field [control]="siabClasificationform.get('sssubtypeId')">
+            <ngx-select
+              [form]="siabClasificationform"
+              control="sssubtypeId"
+              (fetchItems)="getSssubtypes($event)"
+              [data]="sssubTypes"
+              label="SssubTipo"
+              bindLabel="description"
+              value="id">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="siabClasificationform.get('sssubtypeDescription')"
+            label="Descripción Sssubtipo">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="sssubtypeDescription"
+              [rows]="3">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <form-field
+            [control]="siabClasificationform.get('version')"
+            label="Versión">
+            <input type="text" class="form-control" formControlName="version" />
+          </form-field>
+        </div>
       </div>
     </form>
   </div>
-
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!form.valid"
+          [disabled]="siabClasificationform.invalid"
           [loading]="loading"
-          (confirm)="confirm()"></confirm-button>
+          (confirm)="confirm()">
+        </confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

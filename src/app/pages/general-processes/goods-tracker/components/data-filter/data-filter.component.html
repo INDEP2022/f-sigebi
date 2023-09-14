@@ -3,9 +3,10 @@
     <form-field
       [control]="form.get('goodNum')"
       class="col-md-3"
-      label="No&#46; Bien">
+      label="No&#46; Bien(es)">
       <ng-select
-        class="form-control"
+        addTagText="Agregar Elemento"
+        class="form-control scroll-line"
         formControlName="goodNum"
         [items]="[]"
         [addTag]="true"
@@ -13,6 +14,15 @@
       </ng-select>
       <!-- <input type="text" formControlName="goodNum" class="form-control" /> -->
     </form-field>
+    <div class="col-md-1">
+      <button
+        tooltip="Seleccionar desde archivo txt"
+        (click)="goodNumbersInput.click()"
+        type="button"
+        class="btn btn-primary btn-sm active">
+        <i class="bx bx-list-plus bx-sm float-icon"></i>
+      </button>
+    </div>
 
     <!-- <form-check label="List&#46; Bienes" for="goodsList" class="col-md-2">
       <input
@@ -27,7 +37,8 @@
       class="col-md-3"
       label="Proceso">
       <ng-select
-        class="form-control"
+        addTagText="Agregar Elemento"
+        class="form-control scroll-line"
         formControlName="process"
         bindValue="value"
         bindLabel="label"
@@ -37,9 +48,9 @@
     </form-field>
 
     <!-- <form-field
-      [control]="form.get('samiInventory')"
+      [control]="form.get('samial menosentory')"
       class="col-md-3"
-      label="Inv&#46; SAMI">
+      label="Inventario SAMI">
       <input type="text" formControlName="samiInventory" class="form-control" />
     </form-field> -->
 
@@ -59,10 +70,21 @@
         [searchOnInit]="true"
         control="targetIdentifier"
         [data]="labels"
-        value="description"
+        value="id"
         bindLabel="description"
         (fetchItems)="getGoodLabels($event)"
         label="Identificador de Destino"></ngx-select>
+    </form-field>
+
+    <form-field
+      [control]="form.get('photoDate')"
+      class="col-md-2"
+      label="Fecha Foto">
+      <input
+        type="text"
+        formControlName="photoDate"
+        class="form-control"
+        bsDatepicker />
     </form-field>
   </div>
 
@@ -72,25 +94,49 @@
         [form]="form"
         [multiple]="true"
         [searchOnInit]="true"
+        className="scroll-line"
         control="status"
         [data]="goodStatuses"
         value="status"
         bindLabel="description"
         (fetchItems)="getGoodStatuses($event)"
-        label="Estatus"></ngx-select>
+        label="Estatus"
+        [labelTemplate]="statusLabel"
+        [optionTemplate]="statusOption"></ngx-select>
+
+      <ng-template #statusLabel let-item="item" let-clear="clear">
+        <div class="custom-tmp" [title]="item.status + '-' + item.description">
+          <span class="custom-icon" (click)="clear(item)">x</span>
+          <span class="custom-value-label"
+            >{{ item.status }} - {{ item.description }}</span
+          >
+        </div>
+      </ng-template>
+      <ng-template #statusOption let-item="item">
+        <div [title]="item.status + '-' + item.description">
+          {{ item.status }} - {{ item.description }}
+        </div>
+      </ng-template>
     </form-field>
 
     <form-field
       [control]="form.get('withPhoto')"
       class="col-md-2"
       label="Fotos de Bienes">
-      <select formControlName="withPhoto" class="form-control">
+      <ng-select
+        formControlName="withPhoto"
+        [items]="photosOptions"
+        bindValue="value"
+        class="form-control"
+        [searchable]="false"
+        bindLabel="label"></ng-select>
+      <!-- <select formControlName="withPhoto" class="form-control">
         <option
           [value]="photoOption.value"
           *ngFor="let photoOption of photosOptions">
           {{ photoOption.label }}
         </option>
-      </select>
+      </select> -->
     </form-field>
 
     <form-field
@@ -98,106 +144,186 @@
       class="col-md-3"
       label="Bien Padre Menaje">
       <ng-select
-        class="form-control"
+        addTagText="Agregar Elemento"
+        class="form-control scroll-line"
         formControlName="menageFather"
         [items]="[]"
         [addTag]="true"
-        [multiple]="true"
-        [selectOnTab]="true"
-        [isOpen]="false">
+        [multiple]="true">
       </ng-select>
-    </form-field>
-  </div>
-  <div class="row pt-5">
-    <form-field
-      [control]="form.get('valueFrom')"
-      class="col-md-3"
-      label="Valor Aval&uacute;o de">
-      <input type="number" formControlName="valueFrom" class="form-control" />
-    </form-field>
-
-    <form-field [control]="form.get('valueTo')" class="col-md-3" label="A">
-      <input type="number" formControlName="valueTo" class="form-control" />
-    </form-field>
-
-    <form-field
-      [control]="form.get('photoDate')"
-      class="col-md-3"
-      label="Fecha Foto">
-      <input
-        type="text"
-        formControlName="photoDate"
-        class="form-control"
-        bsDatepicker />
     </form-field>
 
     <form-field
       [control]="form.get('identifier')"
-      class="col-md-3"
+      class="col-md-2"
       label="Identificador">
       <input type="text" formControlName="identifier" class="form-control" />
     </form-field>
   </div>
-
   <div class="row pt-5">
-    <form-field
-      [control]="form.get('description')"
-      class="col-md-4"
-      label="Descripci&oacute;n">
-      <input type="text" formControlName="description" class="form-control" />
-    </form-field>
+    <div class="col-md-3 mx-0 px-0 bx-0">
+      <form-field
+        [control]="form.get('valueFrom')"
+        class="col-md-6"
+        label="Valor Aval&uacute;o de">
+        <input
+          type="number"
+          formControlName="valueFrom"
+          class="form-control"
+          oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+      </form-field>
+
+      <form-field [control]="form.get('valueTo')" class="col-md-6" label="A">
+        <input
+          type="number"
+          formControlName="valueTo"
+          class="form-control"
+          oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+      </form-field>
+    </div>
 
     <form-field
-      [control]="form.get('attributes')"
-      class="col-md-4"
-      label="Atributos">
-      <input type="text" formControlName="attributes" class="form-control" />
-    </form-field>
-
-    <!-- <form-check label="Gabinete Social" for="gabinete" class="col-md-4">
-      <input
-        type="checkbox"
-        formControlName="gabinete"
-        id="gabinete"
-        class="form-control" />
-    </form-check> -->
-  </div>
-
-  <div class="row pt-5">
-    <!-- <form-field
       [control]="form.get('movableIventory')"
       class="col-md-3"
-      label="Inv&#46; Mueble">
+      label="Inventario Mueble">
       <input
         type="text"
         formControlName="movableIventory"
+        oninput="if(this.value.length > 200) this.value = this.value.slice(0, 200)"
         class="form-control" />
-    </form-field> -->
+    </form-field>
 
     <form-field
       [control]="form.get('siabiInventory')"
       class="col-md-3"
-      label="Inv&#46; SIABI">
+      label="Inventario SIABI">
       <input
         type="text"
         formControlName="siabiInventory"
+        oninput="if(this.value.length > 200) this.value = this.value.slice(0, 200)"
         class="form-control" />
     </form-field>
 
     <form-field
       [control]="form.get('cisiInventory')"
       class="col-md-3"
-      label="Inv&#46; CISI">
-      <input type="text" formControlName="cisiInventory" class="form-control" />
+      label="Inventario CISI">
+      <input
+        type="text"
+        formControlName="cisiInventory"
+        class="form-control"
+        oninput="if(this.value.length > 200) this.value = this.value.slice(0, 200)" />
     </form-field>
   </div>
 
-  <div class="row">
-    <div class="col-md-12">
-      <button class="btn btn-primary active">
-        {{ subloading ? 'Espere un momento ...' : 'Buscar' }}
-        <i class="fa fa-search ml-2"></i>
+  <div class="row pt-5">
+    <form-field [control]="form.get('description')" label="Descripci&oacute;n">
+      <textarea
+        type="text"
+        formControlName="description"
+        oninput="if(this.value.length > 200) this.value = this.value.slice(0, 200)"
+        class="form-control"></textarea>
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field [control]="form.get('attributes')" label="Atributos">
+      <textarea
+        type="text"
+        formControlName="attributes"
+        oninput="if(this.value.length > 200) this.value = this.value.slice(0, 200)"
+        class="form-control"></textarea>
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field
+      [control]="form.get('inventario')"
+      class="col-md-4"
+      label="Inventario SAMI">
+      <ng-select
+        addTagText="Agregar Elemento"
+        class="form-control scroll-line"
+        formControlName="inventario"
+        [items]="[]"
+        [addTag]="true"
+        [multiple]="true">
+      </ng-select>
+      <!-- <input type="text" formControlName="goodNum" class="form-control" /> -->
+    </form-field>
+    <div class="col-md-1">
+      <button
+        tooltip="Seleccionar desde archivo txt"
+        (click)="inventoryInput.click()"
+        type="button"
+        class="btn btn-primary btn-sm active">
+        <i class="bx bx-list-plus bx-sm float-icon"></i>
+      </button>
+    </div>
+    <form-field
+      [control]="form.get('request')"
+      class="col-md-3"
+      label="No. Solicitud">
+      <ng-select
+        addTagText="Agregar Elemento"
+        class="form-control scroll-line"
+        formControlName="request"
+        [items]="[]"
+        [addTag]="true"
+        [multiple]="true">
+      </ng-select>
+      <!-- <input type="text" formControlName="goodNum" class="form-control" /> -->
+    </form-field>
+    <form-check label="Gabinete Social" for="gabinete" class="col-md-4">
+      <input
+        type="checkbox"
+        formControlName="gabinete"
+        id="gabinete"
+        class="form-control" />
+    </form-check>
+  </div>
+
+  <!-- <div class="row pt-5"> -->
+  <!-- <form-field
+      [control]="form.get('movableIventory')"
+      class="col-md-3"
+      label="Inventario Mueble">
+      <input
+        type="text"
+        formControlName="movableIventory"
+        class="form-control" />
+    </form-field> -->
+  <!-- </div> -->
+
+  <div class="row pt-3">
+    <div class="col-md-12 d-inline">
+      <button class="btn btn-primary active btn-sm mr-3">
+        Buscar
+        <i class="bx bx-search-alt bx-sm float-icon"></i>
+      </button>
+
+      <button
+        type="button"
+        (click)="cleanFilters.emit()"
+        class="btn btn-danger btn-sm active mr-3">
+        Limpiar <i class="fas fa-eraser"> </i>
       </button>
     </div>
   </div>
 </form>
+
+<div [style.display]="'none'">
+  <input
+    #goodNumbersInput
+    (change)="goodNumbersFileChange($event)"
+    [formControl]="goodNumbersControl"
+    type="file" />
+</div>
+
+<div [style.display]="'none'">
+  <input
+    #inventoryInput
+    (change)="invFileChange($event)"
+    [formControl]="inventoryControl"
+    type="file" />
+</div>

@@ -33,23 +33,34 @@ export class TargetTagsSharedComponent extends BasePage implements OnInit {
 
   constructor(private service: LabelOkeyService) {
     super();
+    this.getTargetTags(new ListParams());
   }
 
   ngOnInit(): void {}
 
   getTargetTags(params: ListParams) {
+    console.log(params);
     this.service.getAll(params).subscribe(
-      data => {
-        this.targetTags = new DefaultSelect(data.data, data.count);
+      async data => {
+        const newData = await Promise.all(
+          data['data'].map((e: any) => {
+            return {
+              ...e,
+              viewVal: `${e.id}-${e.description}`,
+            };
+          })
+        );
+        this.targetTags = new DefaultSelect(newData, data.count);
       },
       err => {
-        let error = '';
+        /* let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        this.onLoadToast('error', 'Error', error); */
+        this.targetTags = new DefaultSelect();
       },
       () => {}
     );

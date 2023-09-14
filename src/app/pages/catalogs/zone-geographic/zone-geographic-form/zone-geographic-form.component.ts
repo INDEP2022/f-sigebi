@@ -5,7 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IZoneGeographic } from 'src/app/core/models/catalogs/zone-geographic.model';
 import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { IVA_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-zone-geographic-form',
@@ -14,7 +14,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class ZoneGeographicFormComponent extends BasePage implements OnInit {
   zoneGeographicForm: ModelForm<IZoneGeographic>;
-  title: string = 'Zona Gográficas';
+  title: string = 'Zona Geográfica';
   edit: boolean = false;
   zoneGeographic: IZoneGeographic;
   constructor(
@@ -34,24 +34,24 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
       id: [null],
       description: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.maxLength(200),
           Validators.pattern(STRING_PATTERN),
-        ]),
+        ],
       ],
-      contractNumber: [null, Validators.compose([Validators.required])],
+      contractNumber: [null, [Validators.required]],
       version: [null],
       thirdPartySpecialized: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.maxLength(20),
           Validators.pattern(STRING_PATTERN),
-        ]),
+        ],
       ],
-      vat: [null, Validators.compose([Validators.required])],
-      status: [null, Validators.compose([Validators.required])],
+      vat: [null, [Validators.pattern(IVA_PATTERN)]],
+      status: [null],
     });
     if (this.zoneGeographic != null) {
       this.edit = true;
@@ -67,23 +67,51 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.zoneGeographicService
-      .create(this.zoneGeographicForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.zoneGeographicForm.controls['description'].value.trim() == '' ||
+      this.zoneGeographicForm.controls['thirdPartySpecialized'].value.trim() ==
+        '' ||
+      (this.zoneGeographicForm.controls['description'].value.trim() == '' &&
+        this.zoneGeographicForm.controls[
+          'thirdPartySpecialized'
+        ].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.zoneGeographicService
+        .create(this.zoneGeographicForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.zoneGeographicService
-      .update(this.zoneGeographic.id, this.zoneGeographicForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.zoneGeographicForm.controls['description'].value.trim() == '' ||
+      this.zoneGeographicForm.controls['thirdPartySpecialized'].value.trim() ==
+        '' ||
+      (this.zoneGeographicForm.controls['description'].value.trim() == '' &&
+        this.zoneGeographicForm.controls[
+          'thirdPartySpecialized'
+        ].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.zoneGeographicService
+        .update(this.zoneGeographic.id, this.zoneGeographicForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

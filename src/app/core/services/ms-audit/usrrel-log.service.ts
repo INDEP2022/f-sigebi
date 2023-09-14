@@ -42,4 +42,16 @@ export class UsrRelLogService extends HttpService {
     const route = `${AuditEndpoints.UsrRelLog}/${id}`;
     return this.delete(route);
   }
+
+  saveMotiveChangeLogBook(body: {
+    gestionNumber: number;
+    reasonChange: string;
+    userMovement: string;
+  }) {
+    return this.post(AuditEndpoints.SaveMotiveChangeLogBook, body);
+  }
+
+  getDelegations() {
+    return this.get(AuditEndpoints.Delegations);
+  }
 }

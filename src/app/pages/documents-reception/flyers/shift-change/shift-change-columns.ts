@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 export const SHIFT_CHANGE_DICTUM_COLUMNS = {
   passOfficeArmy: {
     title: 'Clave Oficio Armada',
@@ -13,6 +14,11 @@ export const SHIFT_CHANGE_DICTUM_COLUMNS = {
     title: 'Fecha',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      return formatted;
+    },
   },
 };
 
@@ -31,6 +37,11 @@ export const SHIFT_CHANGE_PROCEEDINGS_COLUMNS = {
     title: 'Fecha Recep. Física',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      return formatted;
+    },
   },
 };
 

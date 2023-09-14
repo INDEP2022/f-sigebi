@@ -4,7 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ITPenalty } from 'src/app/core/models/ms-parametercomer/penalty-type.model';
 import { TPenaltyService } from 'src/app/core/services/ms-parametercomer/tpenalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-penalty-types-form',
@@ -36,10 +36,10 @@ export class PenaltyTypesFormComponent extends BasePage implements OnInit {
       id: [null],
       descPenalty: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(150)],
       ],
-      daysPenalty: [null, [Validators.required]],
-      process: [null, [Validators.required, Validators.maxLength(1)]],
+      daysPenalty: [null, [Validators.pattern(NUM_POSITIVE)]],
+      process: [null, [Validators.maxLength(1)]],
     });
     if (this.penaltyType != null) {
       this.edit = true;
@@ -60,14 +60,10 @@ export class PenaltyTypesFormComponent extends BasePage implements OnInit {
     this.loading = true;
     // this.handleSuccess();
     console.log(this.penaltyTypeForm.value);
-    this.tpenaltyService.create(this.penaltyTypeForm.value).subscribe({
+    this.tpenaltyService.create(this.penaltyTypeForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => {
-        this.onLoadToast(
-          'error',
-          this.title,
-          `Error al conectar con el servidor`
-        );
+        this.alert('error', this.title, `Error al conectar con el servidor`);
         this.loading = false;
         console.log(error);
       },
@@ -78,15 +74,11 @@ export class PenaltyTypesFormComponent extends BasePage implements OnInit {
     this.loading = true;
     // this.handleSuccess();
     this.tpenaltyService
-      .update(this.penaltyType.id, this.penaltyTypeForm.value)
+      .update(this.penaltyType.id, this.penaltyTypeForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => {
-          this.onLoadToast(
-            'error',
-            this.title,
-            `Error al conectar con el servidor`
-          );
+          this.alert('error', this.title, `Error al conectar con el servidor`);
           this.loading = false;
           console.log(error);
         },
@@ -95,7 +87,7 @@ export class PenaltyTypesFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', `${message} Correctamente`, '');
     this.loading = false;
     this.refresh.emit(true);
     this.modalRef.hide();

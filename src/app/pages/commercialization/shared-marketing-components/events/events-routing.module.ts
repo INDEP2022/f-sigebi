@@ -5,7 +5,7 @@ import { EventPermissionControlComponent } from './event-permission-control/even
 
 const routes: Routes = [
   {
-    path: '',
+    path: ':goodType',
     component: EventPermissionControlComponent,
   },
 ];

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DepositaryPaymentEndPoints } from 'src/app/common/constants/endpoints/ms-depositarypayment-endpoint';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
@@ -27,8 +28,10 @@ export class MsDepositaryPaymentService extends HttpService {
     params?: string
   ): Observable<IListResponse<IRefPayDepositary>> {
     return this.get<IListResponse<IRefPayDepositary>>(
-      `${DepositaryPaymentEndPoints.RefPayDepositories}?${params}`
+      `${DepositaryPaymentEndPoints.RefPayDepositories}`,
+      params
     );
+    //return this.get<IListResponse<IRefPayDepositary>>(`${DepositaryPaymentEndPoints.RefPayDepositories}?${params}` );
   }
 
   getPaymentsGensDepositories(
@@ -64,5 +67,36 @@ export class MsDepositaryPaymentService extends HttpService {
       DepositaryPaymentEndPoints.RefPayDepositoriesTotals,
       params
     );
+  }
+
+  postRefPayDepositories(
+    body: IRefPayDepositary
+  ): Observable<IRefPayDepositary> {
+    return this.post<IRefPayDepositary>(
+      `${DepositaryPaymentEndPoints.RefPayDepositories}`,
+      body
+    );
+  }
+
+  updateRefPayDepositories(
+    body: IRefPayDepositary
+  ): Observable<IRefPayDepositary> {
+    return this.put<IRefPayDepositary>(
+      `${DepositaryPaymentEndPoints.RefPayDepositories}`,
+      body
+    );
+  }
+
+  getPaymentsGensDepositories2(
+    params?: ListParams
+  ): Observable<IListResponse<IPaymentsGensDepositary>> {
+    return this.get<IListResponse<IPaymentsGensDepositary>>(
+      DepositaryPaymentEndPoints.PaymentsGensDepositories,
+      params
+    );
+  }
+
+  putPaymentsGensDepositories(model: IPaymentsGensDepositary) {
+    return this.put(DepositaryPaymentEndPoints.PaymentsGensDepositories, model);
   }
 }

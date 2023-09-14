@@ -29,11 +29,21 @@ export class SIABClasificationService
     return this.siabClasificationRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: ISiabClasification): Observable<Object> {
-    return this.siabClasificationRepository.update(this.route, id, model);
+  updateCatalogSiabClasification(
+    id: string | number,
+    model: ISiabClasification
+  ): Observable<Object> {
+    return this.siabClasificationRepository.updateCatalogSiabClasification(
+      this.route,
+      id,
+      model
+    );
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.siabClasificationRepository.remove(this.route, id);
+  removeCatalogSiabClasification(id: string | number): Observable<Object> {
+    return this.siabClasificationRepository.removeCatalogSiabClasification(
+      this.route,
+      id
+    );
   }
 }

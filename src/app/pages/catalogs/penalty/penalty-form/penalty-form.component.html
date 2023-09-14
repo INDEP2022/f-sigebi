@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="penaltyForm" class="form-material">
@@ -18,27 +18,28 @@
         <div class="col-md-6">
           <form-field
             [control]="penaltyForm.get('penaltyPercentage')"
-            label="Porcentaje penalizaci&oacute;n">
+            label="Porcentaje Penalizaci&oacute;n">
             <input
               type="text"
               class="form-control"
               formControlName="penaltyPercentage" />
           </form-field>
         </div>
-        <div class="col-md-6">
+
+        <div class="col-md-6 pt-4">
           <form-field
             [control]="penaltyForm.get('equivalentDays')"
-            label="D&iacute;as equivalentes">
+            label="D&iacute;as Equivalentes">
             <input
               type="text"
               class="form-control"
               formControlName="equivalentDays" />
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 pt-4">
           <form-field
             [control]="penaltyForm.get('contractNumber')"
-            label="N&uacute;mero de contrato">
+            label="N&uacute;mero Contrato">
             <input
               type="text"
               class="form-control"
@@ -52,7 +53,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="penaltyForm.invalid"
+          [disabled]="!penaltyForm.valid"
           [loading]="loading"
           (confirm)="confirm()">
         </confirm-button>

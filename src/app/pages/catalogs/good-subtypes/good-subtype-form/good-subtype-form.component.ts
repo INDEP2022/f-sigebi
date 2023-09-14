@@ -7,7 +7,10 @@ import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -35,10 +38,10 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.goodSubtypeForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null],
       idTypeGood: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
       nameSubtypeGood: [
         null,
@@ -58,33 +61,39 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
       ],
       noPhotography: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      noRegister: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
-      version: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      noRegister: [null],
+      version: [null],
     });
     if (this.goodSubtype != null) {
       this.edit = true;
       let goodType: IGoodType = this.goodSubtype.idTypeGood as IGoodType;
-      this.goodSubtypeForm.patchValue({
+      this.types = new DefaultSelect([goodType], 1);
+      this.goodSubtypeForm.patchValue(this.goodSubtype);
+      this.goodSubtypeForm.controls['idTypeGood'].disable();
+
+      /*this.goodSubtypeForm.patchValue({
         ...this.goodSubtype,
         idTypeGood: goodType.id,
-      });
-      this.types = new DefaultSelect([goodType], 1);
+      });*/
+      this.goodSubtypeForm.controls['idTypeGood'].disable();
     } else {
       this.getTypes({ page: 1, text: '' });
     }
+    setTimeout(() => {
+      this.getTypes(new ListParams());
+    }, 1000);
   }
 
   getTypes(params: ListParams) {
-    this.goodSubtypeService.getTypes(params).subscribe(data => {
-      this.types = new DefaultSelect(data.data, data.count);
+    this.goodSubtypeService.getTypes(params).subscribe({
+      next: data => {
+        this.types = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.types = new DefaultSelect();
+      },
     });
   }
 
@@ -97,25 +106,57 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.goodSubtypeService.create(this.goodSubtypeForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (
+      this.goodSubtypeForm.controls['nameSubtypeGood'].value.trim() == '' ||
+      this.goodSubtypeForm.controls['descriptionPhotography'].value.trim() ==
+        '' ||
+      (this.goodSubtypeForm.controls['nameSubtypeGood'].value.trim() == '' &&
+        this.goodSubtypeForm.controls['descriptionPhotography'].value.trim() ==
+          '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.goodSubtypeService.create(this.goodSubtypeForm.value).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+    }
   }
 
   update() {
-    this.loading = true;
-    console.log(this.goodSubtypeForm.value);
-    this.goodSubtypeService.newUpdate(this.goodSubtypeForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (
+      this.goodSubtypeForm.controls['nameSubtypeGood'].value.trim() == '' ||
+      this.goodSubtypeForm.controls['descriptionPhotography'].value.trim() ==
+        '' ||
+      (this.goodSubtypeForm.controls['nameSubtypeGood'].value.trim() == '' &&
+        this.goodSubtypeForm.controls['descriptionPhotography'].value.trim() ==
+          '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      const ids = {
+        id: this.goodSubtypeForm.controls['id'].value,
+        idTypeGood: this.goodSubtypeForm.controls['idTypeGood'].value,
+      };
+      this.goodSubtypeService
+        .updateByIds(ids, this.goodSubtypeForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

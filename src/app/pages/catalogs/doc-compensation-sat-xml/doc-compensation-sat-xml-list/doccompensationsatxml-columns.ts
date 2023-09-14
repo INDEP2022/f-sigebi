@@ -3,15 +3,18 @@ export const COMPENSATION_COLUMNS = {
     title: 'Registro',
     type: 'number',
     sort: false,
+    width: '15%',
   },
   idOficioSat: {
-    title: 'Id oficio sat',
+    title: 'No. Oficio',
     type: 'string',
     sort: false,
+    width: '15%',
   },
   typeDocSatXml: {
-    title: 'Tipo documento',
+    title: 'Tipo Documento',
     type: 'string',
     sort: false,
+    width: '60%',
   },
 };

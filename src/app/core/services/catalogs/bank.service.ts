@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -9,9 +10,12 @@ import { IBank } from '../../models/catalogs/bank.model';
 @Injectable({
   providedIn: 'root',
 })
-export class BankService implements ICrudMethods<IBank> {
+export class BankService extends HttpService implements ICrudMethods<IBank> {
   private readonly route: string = ENDPOINT_LINKS.Bank;
-  constructor(private bankRepository: Repository<IBank>) {}
+  constructor(private bankRepository: Repository<IBank>) {
+    super();
+    this.microservice = 'catalog';
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IBank>> {
     return this.bankRepository.getAllPaginated(this.route, params);
@@ -31,5 +35,10 @@ export class BankService implements ICrudMethods<IBank> {
 
   remove(id: string | number): Observable<Object> {
     return this.bankRepository.remove(this.route, id);
+  }
+
+  getAll_(params?: _Params): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(`bank`, params);
+    // return this.bankRepository.getAll(this.route, params);
   }
 }

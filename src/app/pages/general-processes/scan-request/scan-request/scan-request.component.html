@@ -1,24 +1,77 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Solicitud de Digitalizaci&oacute;n</h5>
-    <div class="buttons">
-      <button
-        class="btn btn-secondary btn-sm active mr-2"
-        (click)="back()"
-        *ngIf="isParams">
-        Regresar
-      </button>
+    <div class="d-flex justify-content-between">
+      <h5 class="title">Solicitud de Digitalizaci&oacute;n</h5>
+
+      <!-- <div class="d-inline mr-2" *ngIf="isSearch">
+        <div class="btn-group">
+          <button
+            *ngIf="isParams"
+            class="btn btn-primary active btn-sm ml-2"
+            (click)="back()">
+            Regresar
+            <i class="fas fa-arrow-circle-left"></i>
+          </button>
+        </div>
+      </div> -->
     </div>
   </div>
 
   <div body>
-    <form [formGroup]="formNotification" class="form-material">
-      <div class="row">
+    <div class="d-flex justify-content-between pb-4">
+      <div class="d-inline">
+        <button
+          style="float: right"
+          type="button"
+          [disabled]="count <= 1"
+          (click)="notificationList()"
+          tooltip="Lista Expedientes"
+          containerClass="tooltip-style"
+          class="btn btn-primary btn-sm active mr-3">
+          Lista Expedientes
+        </button>
+      </div>
+      <div class="d-inline mr-2">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm mr-2"
+          (click)="searchNotification()">
+          Buscar
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+        <button
+          class="btn btn-danger btn-sm active mr-3"
+          (click)="clear(); isSearch = false">
+          Limpiar <i class="fas fa-eraser"></i>
+        </button>
+        <div class="d-inline mr-2" *ngIf="isSearch">
+          <div class="btn-group">
+            <button
+              *ngIf="isParams"
+              class="btn btn-primary active btn-sm"
+              (click)="back()">
+              Regresar
+              <i class="fas fa-arrow-circle-left"></i>
+            </button>
+          </div>
+        </div>
+        <!-- <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="clear(); isSearch = false">
+          Limpiar
+          <i class="fa fa-trash"></i>
+        </button> -->
+      </div>
+    </div>
+    <form [formGroup]="formNotification" class="form-material mt-2">
+      <div class="row pt-4">
         <form-field
           class="col-md-2"
           [control]="formNotification.get('expedientNumber')"
           label="No&#46; Expediente">
           <input
+            [readOnly]="isSearch"
             type="number"
             min="0"
             [maxlength]="10"
@@ -32,6 +85,7 @@
           [control]="formNotification.get('wheelNumber')"
           label="No&#46; Volante">
           <input
+            [readOnly]="isSearch"
             type="number"
             min="0"
             [maxlength]="10"
@@ -45,10 +99,12 @@
           [control]="formNotification.get('receiptDate')"
           label="Fecha Recepci&oacute;n Volante">
           <input
+            [ngClass]="{ 'not-press bg-gray': isSearch }"
+            [readOnly]="isSearch"
             formControlName="receiptDate"
             class="form-control"
             bsDatepicker
-            [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"
+            [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
             [maxDate]="today" />
         </form-field>
 
@@ -57,6 +113,7 @@
           [control]="formNotification.get('preliminaryInquiry')"
           label="Averiguaci&oacute;n Previa">
           <input
+            [readOnly]="isSearch"
             (ngModelChange)="limit(200, 'preliminaryInquiry', $event)"
             [maxlength]="200"
             formControlName="preliminaryInquiry"
@@ -70,6 +127,7 @@
           [control]="formNotification.get('criminalCase')"
           label="Causa Penal">
           <input
+            [readOnly]="isSearch"
             formControlName="criminalCase"
             class="form-control"
             [maxlength]="40"
@@ -81,6 +139,7 @@
           [control]="formNotification.get('touchPenaltyKey')"
           label="Toca Penal">
           <input
+            [readOnly]="isSearch"
             formControlName="touchPenaltyKey"
             class="form-control"
             [maxlength]="30"
@@ -92,6 +151,7 @@
           [control]="formNotification.get('circumstantialRecord')"
           label="Acta Circunstanciada">
           <input
+            [readOnly]="isSearch"
             formControlName="circumstantialRecord"
             [maxlength]="30"
             class="form-control"
@@ -103,43 +163,49 @@
           [control]="formNotification.get('protectionKey')"
           label="Amparo">
           <input
+            [readOnly]="isSearch"
             formControlName="protectionKey"
             class="form-control"
             [maxlength]="30"
             (ngModelChange)="limit(30, 'protectionKey', $event)" />
         </form-field>
       </div>
-
-      <div class="row">
-        <div class="col-12">
-          <div class="buttons text-end">
-            <span *ngIf="count > 0">
-              <button
-                class="btn btn-primary btn-sm active mr-2"
-                (click)="notificationList()">
-                Ver lista expedientes
-              </button>
-            </span>
-            <confirm-button
-              text="Buscar"
-              [loadingText]="'Buscando'"
-              [loading]="loading"
-              [btnSmall]="true"
-              (confirm)="searchNotification()">
-            </confirm-button>
-            <button
-              class="btn btn-primary btn-sm active ml-2"
-              (click)="clear()"
-              [disabled]="loading">
-              Limpiar
-            </button>
-          </div>
-        </div>
-      </div>
     </form>
     <hr />
     <form [formGroup]="form" class="form-material">
       <div class="row">
+        <div class="col-12 pb-5">
+          <div class="d-flex justify-content-between">
+            <div class="d-inline">
+              <button
+                style="float: left"
+                type="button"
+                [disabled]="countDoc <= 1"
+                (click)="documentsList()"
+                tooltip="Ver Lista Documentos"
+                containerClass="tooltip-style"
+                class="btn btn-primary btn-sm active mr-3">
+                Lista Documentos
+              </button>
+            </div>
+            <div class="d-inline mr-2">
+              <button
+                type="button"
+                (click)="clearDocument()"
+                tooltip="Nueva Solicitud"
+                containerClass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2">
+                Nueva Solicitud<i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+              <button
+                class="btn btn-danger btn-sm active mr-3"
+                (click)="clearDocument()">
+                Limpiar <i class="fas fa-eraser"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <app-document-type-shared
           [form]="form"
           class="col-md-4"></app-document-type-shared>
@@ -163,7 +229,7 @@
         <form-field
           [control]="form.get('significantDate')"
           class="col-md-4 mt-3"
-          label="Fecha Significativa (mm-yyyy)">
+          label="Fecha Significativa (mm/aaaa)">
           <input
             type="text"
             formControlName="significantDate"
@@ -184,37 +250,8 @@
             class="form-control"></textarea>
         </form-field>
         <div class="col">
-          <button class="btn btn-info active btn-sm" (click)="callScan()">
-            Escanear
-          </button>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="buttons text-end">
-            <span *ngIf="countDoc > 0">
-              <button
-                class="btn btn-primary btn-sm active mr-2"
-                (click)="documentsList()">
-                Ver lista documentos
-              </button>
-            </span>
-          </div>
-        </div>
-      </div>
-      <hr />
-      <div class="row align-items-baseline">
-        <div class="col-auto">
-          <button
-            class="btn btn-primary btn-sm active mr-2"
-            (click)="clearDocument()">
-            Nueva Solicitud
-          </button>
-        </div>
-        <div class="col-auto">
           <confirm-button
             text="Generar Solicitud"
-            className="btn-secondary"
             [loadingText]="'Generando Solicitud'"
             [loading]="loadingDoc"
             [btnSmall]="true"
@@ -222,24 +259,42 @@
             [disabled]="form.invalid">
           </confirm-button>
         </div>
+      </div>
+
+      <hr />
+      <div class="row align-items-baseline">
+        <div class="col-auto"></div>
+        <div class="col-auto">
+          <button
+            tooltip="Escanear"
+            containerClass="tooltip-style"
+            class="btn btn-secondary btn-sm active m-1"
+            (click)="callScan()">
+            <i class="bx bxs-file"></i>
+          </button>
+          <!-- <button class="btn btn-info active btn-sm" >
+            Escanear <i class="bx bx-file bx-sm float-icon"></i>
+          </button> -->
+        </div>
         <div class="col-md-auto">
           <p class="mt-3">Folio Universal:</p>
         </div>
         <div class="col-md-3">
           <form-field [control]="form.get('id')">
-            <input
-              type="text"
-              formControlName="id"
-              class="form-control mt-3"
-              placeholder="FOLIO_UNIERVERSAL" />
+            <input type="text" formControlName="id" class="form-control mt-3" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col">
           <button
-            class="btn btn-secondary btn-sm active"
-            (click)="proccesReport()">
-            <i class="fas fa-print"></i>
+            tooltip="Imprimir"
+            (click)="proccesReport(true)"
+            containerClass="tooltip-style"
+            class="btn btn-secondary btn-sm active m-1">
+            <i class="bx bxs-file-find"></i>
           </button>
+          <!-- <button type="button" (click)="proccesReport(true)" class="btn btn-primary active btn-sm">
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+          </button> -->
         </div>
       </div>
     </form>

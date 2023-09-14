@@ -31,7 +31,6 @@ import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/scre
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { HOME_DEFAULT } from 'src/app/utils/constants/main-routes';
 import { truncateNDecimals } from 'src/app/utils/functions/truncate.function';
 import {
   CATEGORIZATION_ERROR,
@@ -65,6 +64,7 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
   select = new DefaultSelect();
   private goodNum: number;
   private screen: string;
+  private NO_EXP: number;
   initialValue: string = null;
   originalPlaceholder = DEFAULT_PLACEHOLDER;
   goodDescriptionCtrl = new FormControl<string>({
@@ -95,6 +95,7 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
       .subscribe(params => {
         this.goodNum = params['good'];
         this.screen = params['screen'];
+        this.NO_EXP = params['NO_EXP'];
       });
   }
 
@@ -102,6 +103,16 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
     this.getInitialParameter().subscribe(param => {
       this.initialValue = param.initialValue;
       this.validateParams(param);
+    });
+    //console.log(this.NO_EXP);
+  }
+
+  goBack() {
+    let url = `${`/pages/juridical/juridical-ruling`}`;
+    this.router.navigate([url], {
+      queryParams: {
+        NO_EXP: this.NO_EXP,
+      },
     });
   }
 
@@ -147,7 +158,8 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
 
   async handleParameterError() {
     await this.alert('error', 'Error', PARAMETER_NOT_FOUND);
-    this.router.navigate([HOME_DEFAULT]);
+    this.goBack();
+    //this.router.navigate([HOME_DEFAULT]);
   }
 
   validateParams(initialParameter: IGoodParameter) {
@@ -172,6 +184,7 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
     if (this.goodClasifNeedsValidate(goodClassNumber, initialStatus)) {
       if (Number(appraisedValue) <= 1) {
         this.handleErrorGoHome(LIMIT_REACHED);
+        //Aumentar Rediccionamiento a la vista enterior
       }
       this.controls.isNume.setValue(true);
       this.controls.original.setValue(appraisedValue);
@@ -183,7 +196,8 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
         this.handleErrorGoHome(LIMIT_REACHED);
       }
       this.controls.isNume.setValue(false);
-      this.controls.original.setValue(quantity);
+      console.log(Number(quantity));
+      this.controls.original.setValue(Number(quantity));
       this.controls.en.addValidators(Validators.max(quantity - 1));
       this.controls.y.addValidators(Validators.max(quantity - 1));
       this.originalPlaceholder = QUANTITY_PLACEHOLDER;
@@ -208,6 +222,7 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
 
   getGoodById(goodId: string | number) {
     return this.goodService.getById(goodId).pipe(
+      map((res: any) => res.data[0] as IGood),
       catchError(error => {
         this.onLoadToast('error', 'Error', GOOD_NOT_FOUND);
         this.controls.bien.reset();
@@ -227,8 +242,8 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
         this.handleErrorGoHome(GOOD_WITHOUT_ACT);
         return throwError(() => error);
       }),
-      map(response => response.data.map(detail => detail.numberProceedings)),
-      switchMap(proceedingsIds => this.getProceedingsByIds(proceedingsIds))
+      map(response => response.data.map(detail => detail.numberProceedings))
+      //switchMap(proceedingsIds => this.getProceedingsByIds(proceedingsIds))
     );
   }
 
@@ -283,7 +298,8 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
   handleErrorGoHome(error: string) {
     this.alertInfo('error', 'Error', error).then(() => {
       if (this.goodNum || this.screen) {
-        this.router.navigate([HOME_DEFAULT]);
+        this.goBack();
+        //this.router.navigate([HOME_DEFAULT]);
       } else {
         this.controls.bien.reset();
         this.goodDescriptionCtrl.reset();
@@ -325,7 +341,7 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
 
     const result = await this.alertQuestion(
       'warning',
-      'Advertencia',
+      'Parcialización de Bienes',
       '¿Seguro que desea parcializar el bien?'
     );
     if (result.isConfirmed) {
@@ -334,12 +350,12 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
   }
 
   partializaGood() {
-    const { bien, en, y, isNume, originalQuantity, originalImport } =
+    const { bien, en, y, isNume, originalQuantity, original } =
       this.form.getRawValue();
     const body = {
       parGood: bien,
       tiValue1: en,
-      tiValueOrigin: originalImport,
+      tiValueOrigin: original,
       diEsNumerary: isNume ? 'S' : 'N',
       diAmountOriginal: originalQuantity,
       tiValue2: y,

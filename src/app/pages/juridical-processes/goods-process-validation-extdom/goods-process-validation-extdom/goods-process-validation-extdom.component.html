@@ -4,239 +4,732 @@
   </div>
 
   <div body>
-    <!-- FORM Expediente -->
-    <form [formGroup]="form" class="form-material">
-      <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('noExpediente')"
-            label="No&#46; Expediente">
-            <input class="form-control" formControlName="noExpediente" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('fechaRecepcion')"
-            label="Fecha Recepci&oacute;n">
-            <input
-              class="form-control"
-              formControlName="fechaRecepcion"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="form.get('noExpedienteTransferente')"
-            label="No&#46; Expediente Transferente">
-            <input
-              class="form-control"
-              formControlName="noExpedienteTransferente" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('cveOficioExterno')"
-            label="Cve&#46; Oficio Externo">
-            <input class="form-control" formControlName="cveOficioExterno" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('fechaOficioExterno')"
-            label="Fecha Oficio Externo">
-            <input
-              class="form-control"
-              formControlName="fechaOficioExterno"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="form.get('remitenteExterno')"
-            label="Remitente Externo">
-            <input class="form-control" formControlName="remitenteExterno" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('cveAmparo')" label="Cve&#46; Amparo">
-            <input class="form-control" formControlName="cveAmparo" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('cveTocaPenal')"
-            label="Cve&#46; Toca Penal">
-            <input class="form-control" formControlName="cveTocaPenal" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="form.get('actaCircunstanciada')"
-            label="Acta Circunstanciada">
-            <input class="form-control" formControlName="actaCircunstanciada" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('averiguacionPrevia')"
-            label="Averiguaci&oacute;n Previa">
-            <input class="form-control" formControlName="averiguacionPrevia" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('causaPenal')" label="Causa Penal">
-            <input class="form-control" formControlName="causaPenal" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('asunto')" label="Asunto">
-            <input class="form-control" formControlName="asunto" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('indiciado')" label="Indiciado">
-            <input class="form-control" formControlName="indiciado" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('ministerioPublico')"
-            label="Ministerio P&uacute;blico">
-            <input class="form-control" formControlName="ministerioPublico" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('juzgado')" label="Juzgado">
-            <input class="form-control" formControlName="juzgado" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('delegacion')"
-            label="Delegaci&oacute;n">
-            <input class="form-control" formControlName="delegacion" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('entidadFederativa')"
-            label="Entidad Federativa">
-            <input class="form-control" formControlName="entidadFederativa" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('ciudad')" label="Ciudad">
-            <input class="form-control" formControlName="ciudad" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('transferente')" label="Transferente">
-            <input class="form-control" formControlName="transferente" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('emisora')" label="Emisora">
-            <input class="form-control" formControlName="emisora" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('autoridad')" label="Autoridad">
-            <input class="form-control" formControlName="autoridad" />
-          </form-field>
+    <div class="row">
+      <div
+        class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+        *ngIf="loading">
+        <div class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center">
+            <div class="loader"></div>
+            <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+          </div>
         </div>
       </div>
-    </form>
-    <!-- FORM Expediente -->
+      <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+        <!-- FORM Expediente -->
+        <div class="card">
+          <form [formGroup]="form" class="container-fluid form-material p-0">
+            <div class="card-body">
+              <div class="row">
+                <form-field
+                  class="col-12 col-sm-12 col-md-3 p-2"
+                  [control]="form.get('wheelNumber')"
+                  label="No&#46; Volante">
+                  <input class="form-control" formControlName="wheelNumber" />
+                </form-field>
+                <form-field
+                  class="col-12 col-sm-12 col-md-3 p-2"
+                  [control]="form.get('expedientNumber')"
+                  label="No&#46; Expediente">
+                  <input
+                    class="form-control"
+                    formControlName="expedientNumber" />
+                </form-field>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <button
+                    type="button"
+                    [disabled]="loading || loadingProcess"
+                    class="btn btn-primary btn-sm active"
+                    (click)="searchNotification()">
+                    Buscar
+                    <i class="bx bx-search-alt bx-sm float-icon"></i>
+                  </button>
+                  <button
+                    [disabled]="loading || loadingProcess"
+                    type="button"
+                    class="btn btn-danger active btn-sm m-2"
+                    (click)="cleanDataform()">
+                    Limpiar
+                    <i class="fa fa-eraser ml-1"></i>
+                  </button>
+                  <!-- <button
+                    type="button"
+                    class="btn btn-primary active btn-sm m-2"
+                    (click)="startLoopGoods()">
+                    TEST LOOP
+                    <i class="fa fa-eraser ml-1"></i>
+                  </button> -->
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12 col-12 col-md-2 p-2">
+                  <form-field
+                    [control]="form.get('receiptDate')"
+                    label="Fecha Recepci&oacute;n">
+                    <input
+                      class="form-control"
+                      formControlName="receiptDate"
+                      bsDatepicker
+                      [disabled]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('expedientTransferenceNumber')"
+                    label="No&#46; Expediente Transferente">
+                    <input
+                      class="form-control"
+                      formControlName="expedientTransferenceNumber"
+                      [readonly]="true"
+                      [disabled]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('officeExternalKey')"
+                    label="Cve&#46; Oficio Externo">
+                    <input
+                      class="form-control"
+                      formControlName="officeExternalKey"
+                      [readonly]="true"
+                      [disabled]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-2 p-2">
+                  <form-field
+                    [control]="form.get('externalOfficeDate')"
+                    label="Fecha Oficio Externo">
+                    <input
+                      class="form-control"
+                      formControlName="externalOfficeDate"
+                      bsDatepicker
+                      [disabled]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('externalRemitter')"
+                    label="Remitente Externo">
+                    <input
+                      class="form-control"
+                      formControlName="externalRemitter"
+                      [readonly]="true"
+                      [disabled]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('protectionKey')"
+                    label="Cve&#46; Amparo">
+                    <input
+                      class="form-control"
+                      formControlName="protectionKey"
+                      [readonly]="true"
+                      [disabled]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('touchPenaltyKey')"
+                    label="Cve&#46; Toca Penal">
+                    <input
+                      class="form-control"
+                      formControlName="touchPenaltyKey"
+                      [readonly]="true"
+                      [disabled]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('circumstantialRecord')"
+                    label="Acta Circunstanciada">
+                    <input
+                      class="form-control"
+                      formControlName="circumstantialRecord"
+                      [readonly]="true"
+                      [disabled]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('preliminaryInquiry')"
+                    label="Averiguaci&oacute;n Previa">
+                    <input
+                      class="form-control"
+                      formControlName="preliminaryInquiry"
+                      [readonly]="true"
+                      [disabled]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('criminalCase')"
+                    label="Causa Penal">
+                    <input
+                      class="form-control"
+                      formControlName="criminalCase"
+                      [readonly]="true"
+                      [disabled]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-2">
+                  <ngx-select
+                    [data]="selectAffairkey"
+                    bindLabel="dataDesc"
+                    label="Asunto"
+                    value="id"
+                    (fetchItems)="getAffair($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="affairKey"
+                    [readonly]="true"></ngx-select>
+                  <!-- <form-field [control]="form.get('asunto')" label="Asunto">
+                    <input class="form-control" formControlName="asunto" />
+                  </form-field> -->
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-2">
+                  <ngx-select
+                    [data]="selectIndiciadoNumber"
+                    bindLabel="dataDesc"
+                    label="Indiciado"
+                    value="id"
+                    (fetchItems)="getIndiciadoNumber($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="indiciadoNumber"
+                    [readonly]="true"></ngx-select>
+                  <!-- <form-field
+                    [control]="form.get('indiciadoNumber')"
+                    label="Indiciado">
+                    <input
+                      class="form-control"
+                      formControlName="indiciadoNumber" />
+                  </form-field> -->
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-2">
+                  <ngx-select
+                    [data]="selectMinpubNumber"
+                    bindLabel="dataDesc"
+                    label="Ministerio P&uacute;blico"
+                    value="id"
+                    (fetchItems)="getMinpubNumber($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="minpubNumber"
+                    [readonly]="true"></ngx-select>
+                  <!-- <form-field
+                    [control]="form.get('minpubNumber')"
+                    label="Ministerio P&uacute;blico">
+                    <input
+                      class="form-control"
+                      formControlName="minpubNumber" />
+                  </form-field> -->
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-2">
+                  <ngx-select
+                    [data]="selectCourtNumber"
+                    bindLabel="dataDesc"
+                    label="Juzgado"
+                    value="id"
+                    (fetchItems)="getCourtNumber($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="courtNumber"
+                    [readonly]="true"></ngx-select>
+                  <!-- <form-field
+                    [control]="form.get('courtNumber')"
+                    label="Juzgado">
+                    <input class="form-control" formControlName="courtNumber" />
+                  </form-field> -->
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <ngx-select
+                    [data]="selectDelegationNumber"
+                    bindLabel="dataDesc"
+                    label="Delegaci&oacute;n"
+                    value="id"
+                    (fetchItems)="getDelegationNumber($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="delegationNumber"
+                    [readonly]="true"></ngx-select>
+                  <!-- <form-field
+                    [control]="form.get('delegationNumber')"
+                    label="Delegaci&oacute;n">
+                    <input
+                      class="form-control"
+                      formControlName="delegationNumber" />
+                  </form-field> -->
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <ngx-select
+                    [data]="selectEntFedKey"
+                    bindLabel="dataDesc"
+                    label="Entidad Federativa"
+                    value="id"
+                    (fetchItems)="getEntFedKey($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="entFedKey"
+                    [readonly]="true"></ngx-select>
+                  <!-- <form-field
+                    [control]="form.get('entFedKey')"
+                    label="Entidad Federativa">
+                    <input class="form-control" formControlName="entFedKey" />
+                  </form-field> -->
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <ngx-select
+                    [data]="selectCityNumber"
+                    bindLabel="dataDesc"
+                    label="Ciudad"
+                    value="idCity"
+                    (fetchItems)="getCityNumber($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="cityNumber"
+                    [readonly]="true"></ngx-select>
+                  <!-- <form-field [control]="form.get('cityNumber')" label="Ciudad">
+                    <input class="form-control" formControlName="cityNumber" />
+                  </form-field> -->
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <ngx-select
+                    [data]="selectTransference"
+                    bindLabel="dataDesc"
+                    label="Transferente"
+                    value="id"
+                    (fetchItems)="getTransference($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="transference"
+                    [readonly]="true"></ngx-select>
+                  <!-- <form-field
+                    [control]="form.get('transference')"
+                    label="Transferente">
+                    <input
+                      class="form-control"
+                      formControlName="transference" />
+                  </form-field> -->
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <ngx-select
+                    [data]="selectStationNumber"
+                    bindLabel="dataDesc"
+                    label="Emisora"
+                    value="id"
+                    (fetchItems)="getStationNumber($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="stationNumber"
+                    [readonly]="true"></ngx-select>
+                  <!-- <form-field
+                    [control]="form.get('stationNumber')"
+                    label="Emisora">
+                    <input
+                      class="form-control"
+                      formControlName="stationNumber" />
+                  </form-field> -->
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <ngx-select
+                    [data]="selectAuthority"
+                    bindLabel="dataDesc"
+                    label="Autoridad"
+                    value="idAuthority"
+                    (fetchItems)="getAuthority($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="authority"
+                    [readonly]="true"></ngx-select>
+                  <!-- <form-field
+                    [control]="form.get('authority')"
+                    label="Autoridad">
+                    <input class="form-control" formControlName="authority" />
+                  </form-field> -->
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <!-- FORM Expediente -->
+      </div>
+    </div>
     <br />
     <!-- tabla Bienes -->
-    <div class="row w-100">
+    <div class="row">
+      <!-- PARTE DE ESCANEO -->
+      <div class="col-md-12 col-12 col-sm-12" *ngIf="showScanForm">
+        <app-scanning-foil-historical-goods-extdom
+          [formScan]="formScan"
+          [notificationData]="notificationData"
+          [dataUserLogged]="dataUserLogged"
+          (changeFolio)="changeFolio($event)"
+          (scanRequestEmitter)="scanRequest($event)"
+          (showScanningPageEmitter)="showScanningPage($event)"
+          (messageDigitalizationEmitter)="messageDigitalization($event)"
+          (viewPicturesEmitter)="
+            viewPictures($event)
+          "></app-scanning-foil-historical-goods-extdom>
+      </div>
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettings"
-          [source]="dataTable"></ng2-smart-table>
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-8">
+                <h6>Bienes Disponibles</h6>
+              </div>
+              <div
+                class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
+                <app-columns-select
+                  [leftList]="true"
+                  [(settings)]="tableSettings"></app-columns-select>
+              </div>
+              <div
+                class="col-sm-12 col-12 col-md-12 table-responsive p-5"
+                style="max-height: 500px; overflow-y: scroll">
+                <div [class]="loadingGoods ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="tableSettings"
+                    [source]="dataTable"></ng2-smart-table>
+                </div>
+              </div>
+              <div class="col-sm-12 col-12 col-md-12">
+                <app-pagination
+                  [params]="dataTableParams"
+                  [totalItems]="totalGoods"></app-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 text-center">
         <div class="form-group">
           <button
+            [disabled]="loadingProcess || totalGoods3 == totalGoods"
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
-            class="btn btn-primary btn-sm active m-3"
-            (click)="btnAgregar()">
-            <i class="bx bxs-down-arrow-circle bx-md"></i>
+            tooltip="Agregar Seleccionados"
+            containerClass="tooltip-style"
+            (click)="addSelect()">
+            <!-- Mover uno -->
+            <i class="bx bx-chevron-down bx-md"></i>
           </button>
           <button
+            [disabled]="loadingProcess || totalGoods3 == totalGoods"
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
-            class="btn btn-danger btn-sm active m-3"
-            (click)="btnEliminar()">
-            <i class="bx bxs-up-arrow-circle bx-md"></i>
+            tooltip="Agregar Todos"
+            containerClass="tooltip-style"
+            (click)="addAll()">
+            <!-- Mover todos -->
+            <i class="bx bx-chevrons-down bx-md"></i>
+          </button>
+          <button
+            [disabled]="loadingProcess"
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button"
+            tooltip="Remover Todos"
+            containerClass="tooltip-style"
+            (click)="removeAll()">
+            <!-- Quitar todos -->
+            <i class="bx bx-chevrons-up bx-md"></i>
+          </button>
+          <button
+            [disabled]="loadingProcess"
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button"
+            tooltip="Remover Seleccionados"
+            containerClass="tooltip-style"
+            (click)="removeSelect()">
+            <!-- Quitar uno -->
+            <i class="bx bx-chevron-up bx-md"></i>
           </button>
         </div>
       </div>
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettings2"
-          [source]="dataTable2"></ng2-smart-table>
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-8">
+                <h6>
+                  Bienes a Procesar para Validaci&oacute;n ASEG_EXTDOM
+                  &#40;Estos son los Nuevos Bienes que se van a Agregar a
+                  ASEG_EXTDOM&#41;
+                </h6>
+              </div>
+              <div
+                class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
+                <app-columns-select
+                  [leftList]="true"
+                  [(settings)]="tableSettings3"></app-columns-select>
+              </div>
+              <div
+                class="col-sm-12 col-12 col-md-12 table-responsive p-5"
+                style="max-height: 500px; overflow-y: scroll">
+                <div [class]="loadingGoods3 ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="tableSettings3"
+                    [source]="dataTable3"></ng2-smart-table>
+                </div>
+              </div>
+              <div class="col-sm-12 col-12 col-md-6">
+                <button
+                  [disabled]="loadingProcess"
+                  class="btn btn-primary btn-sm active m-3"
+                  (click)="btnEjecutarCambios()">
+                  Ejecutar Cambios
+                  <i class="fa fa-check" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="col-sm-12 col-12 col-md-6">
+                <app-pagination
+                  [params]="dataTableParams3"
+                  [totalItems]="totalGoods3"></app-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+        *ngIf="loadingProcess">
+        <div class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center">
+            <div class="loader"></div>
+            <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-8">
+                <h6>Bienes en Validaci&oacute;n ASEG_EXTDOM</h6>
+              </div>
+              <div
+                class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
+                <app-columns-select
+                  [leftList]="true"
+                  [(settings)]="tableSettings2"></app-columns-select>
+              </div>
+              <div
+                class="col-sm-12 col-12 col-md-12 table-responsive p-5"
+                style="max-height: 500px; overflow-y: scroll">
+                <div [class]="loadingGoods2 ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="tableSettings2"
+                    [source]="dataTable2"></ng2-smart-table>
+                </div>
+              </div>
+              <div class="col-sm-12 col-12 col-md-12">
+                <app-pagination
+                  [params]="dataTableParams2"
+                  [totalItems]="totalGoods2"></app-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 text-center">
+        <div class="form-group">
+          <button
+            [disabled]="loadingProcess || totalGoods4 == totalGoods2"
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button"
+            tooltip="Agregar Seleccionados"
+            containerClass="tooltip-style"
+            (click)="addSelectFree()">
+            <!-- Mover uno -->
+            <i class="bx bx-chevron-down bx-md"></i>
+          </button>
+          <button
+            [disabled]="loadingProcess || totalGoods4 == totalGoods2"
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button"
+            tooltip="Agregar Todos"
+            containerClass="tooltip-style"
+            (click)="addAllFree()">
+            <!-- Mover todos -->
+            <i class="bx bx-chevrons-down bx-md"></i>
+          </button>
+          <button
+            [disabled]="loadingProcess"
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button"
+            tooltip="Remover Todos"
+            containerClass="tooltip-style"
+            (click)="removeAllFree()">
+            <!-- Quitar todos -->
+            <i class="bx bx-chevrons-up bx-md"></i>
+          </button>
+          <button
+            [disabled]="loadingProcess"
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button"
+            tooltip="Remover Seleccionados"
+            containerClass="tooltip-style"
+            (click)="removeSelectFree()">
+            <!-- Quitar uno -->
+            <i class="bx bx-chevron-up bx-md"></i>
+          </button>
+        </div>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-8">
+                <h6>
+                  Bienes en Validaci&oacute;n ASEG_EXTDOM para Liberar
+                  &#40;Estos son los Bienes que se van a Liberar&#41;
+                </h6>
+              </div>
+              <div
+                class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
+                <app-columns-select
+                  [leftList]="true"
+                  [(settings)]="tableSettings4"></app-columns-select>
+              </div>
+              <div
+                class="col-sm-12 col-12 col-md-12 table-responsive p-5"
+                style="max-height: 500px; overflow-y: scroll">
+                <div [class]="loadingGoods4 ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="tableSettings4"
+                    [source]="dataTable4"></ng2-smart-table>
+                </div>
+              </div>
+              <div class="col-sm-12 col-12 col-md-6">
+                <button
+                  [disabled]="loadingProcess"
+                  class="btn btn-primary btn-sm active m-3"
+                  (click)="btnEjecutarCambios()">
+                  Ejecutar Cambios
+                  <i class="fa fa-check" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="col-sm-12 col-12 col-md-6">
+                <app-pagination
+                  [params]="dataTableParams4"
+                  [totalItems]="totalGoods4"></app-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <!-- tabla Bienes -->
 
     <div class="row pt-2">
-      <div class="col-sm-12 col-12 col-md-4">
-        <form [formGroup]="formEscaneo" class="form-material">
-          <div class="row w-100">
-            <div class="col-sm-12 col-12 col-md-12 p-2">
-              <form-field
-                [control]="formEscaneo.get('folioEscaneo')"
-                label="Folio Escaneo">
-                <input class="form-control" formControlName="folioEscaneo" />
-              </form-field>
+      <div
+        *ngIf="showReservedForm"
+        class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+        <div class="card">
+          <form
+            [formGroup]="formReserved"
+            class="container-fluid form-material p-0">
+            <div class="card-body m-4">
+              <div class="row">
+                <div class="col-12 col-sm-12 col-md-12">
+                  <form-field
+                    [control]="formReserved.get('reserved')"
+                    label="Reservado">
+                    <textarea
+                      class="form-control"
+                      rows="3"
+                      maxLength="200"
+                      formControlName="reserved"></textarea>
+                  </form-field>
+                </div>
+                <div class="col-12 col-sm-12 col-md-12 text-center">
+                  <button
+                    class="btn btn-primary btn-sm active m-3"
+                    (click)="applyReserved()">
+                    Guardar <i aria-hidden="true" class="fa fa-save"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-danger active btn-sm m-2"
+                    (click)="cleanReserved()">
+                    Limpiar
+                    <i class="fa fa-eraser ml-1"></i>
+                  </button>
+                  <button
+                    class="btn btn-primary btn-sm active mr-3"
+                    (click)="closeApplyReserved()">
+                    Cerrar
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </form>
-      </div>
-      <div class="col-sm-12 col-12 col-md-8 text-center">
-        <div class="form-group">
-          <button
-            class="btn btn-primary btn-sm active m-3"
-            (click)="btnEjecutarCambios()">
-            Ejecutar Cambios
-          </button>
-          <button
-            class="btn btn-info btn-sm active m-3"
-            (click)="btnConsultarHistorico()">
-            Consultar Hist&oacute;rico
-          </button>
+          </form>
         </div>
       </div>
-    </div>
-  </div>
-</app-card>
-
-<app-card [header]="true" *ngIf="listadoHistorico == true">
-  <div class="ch-content" header>
-    <h5 class="title">Hist&oacute;rico Bienes Aseg&#95;Ext&#95;Dom</h5>
-  </div>
-
-  <div body>
-    <div class="row w-100">
-      <div class="col-sm-12 col-12 col-md-12 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettingsHistorico"
-          [source]="dataTableHistorico"></ng2-smart-table>
-      </div>
-      <div class="col-sm-12 col-12 col-md-6 p-2">
-        <span class="m-2">Estatus</span>
-        <span class="badge bagde-3 bg-info m-2">Sin Liberar</span>
-        <span class="badge primary-3 bg-warning m-2">Liberados</span>
-      </div>
-      <div class="col-sm-12 col-12 col-md-6 text-right p-2">
-        <div class="form-group">
-          <button class="btn btn-danger btn-sm active m-3" (click)="btnSalir()">
-            Cerrar Consulta Hist&oacute;rico
-          </button>
-        </div>
+      <div class="col-md-12 col-12 col-sm-12 text-center">
+        <!-- <button
+          [disabled]="loadingProcess"
+          tooltip="Ejecutar Cambios"
+          containerClass="tooltip-style"
+          class="btn btn-primary btn-sm active m-3"
+          (click)="btnEjecutarCambios()">
+          <i class="fa fa-check" aria-hidden="true"></i>
+        </button> -->
+        <button
+          [disabled]="loadingProcess"
+          tooltip="Consultar Histórico"
+          containerClass="tooltip-style"
+          class="btn btn-primary btn-sm active m-3"
+          (click)="btnConsultarHistorico()">
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+        <button
+          [disabled]="loadingProcess"
+          class="btn btn-primary btn-sm active m-3"
+          (click)="btnConocimiento()">
+          Conocimiento&nbsp;
+        </button>
+        <button
+          [disabled]="loadingProcess"
+          class="btn btn-primary btn-sm active m-3"
+          (click)="btnEnvioCorreos()"
+          tooltip="Envio de Correos"
+          containerClass="tooltip-style">
+          <i class="bx bx-send"></i>
+        </button>
+        <button
+          [disabled]="loadingProcess"
+          class="btn btn-primary btn-sm active m-3"
+          (click)="btnMantenimientoCorreo()"
+          tooltip="Mantenimiento de Correos"
+          containerClass="tooltip-style">
+          <i class="fa fa-toolbox"></i>
+        </button>
       </div>
     </div>
   </div>

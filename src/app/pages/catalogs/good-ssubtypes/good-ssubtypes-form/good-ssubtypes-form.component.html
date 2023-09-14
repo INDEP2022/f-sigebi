@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="goodSsubtypeForm">
@@ -13,10 +13,11 @@
             [data]="types"
             label="Tipo"
             bindLabel="nameGoodType"
-            value="id">
+            value="id"
+            (change)="getAllSubtypes($event)">
           </ngx-select>
         </div>
-        <div class="col-md-12">
+        <div class="pt-4 col-md-12">
           <ngx-select
             [form]="goodSsubtypeForm"
             control="noSubType"
@@ -28,7 +29,7 @@
           </ngx-select>
         </div>
 
-        <div class="col-md-12">
+        <div class="pt-4 col-md-12">
           <form-field
             [control]="goodSsubtypeForm.get('description')"
             label="Descripci&oacute;n">
@@ -39,7 +40,7 @@
             </textarea>
           </form-field>
         </div>
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <form-field
             [control]="goodSsubtypeForm.get('noRegister')"
             label="No. Registro"
@@ -48,7 +49,7 @@
               class="form-control"
               formControlName="noRegister" />
           </form-field>
-        </div>
+        </div> -->
       </div>
     </form>
   </div>

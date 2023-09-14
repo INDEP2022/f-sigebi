@@ -4,12 +4,29 @@
   </div>
 
   <div body>
+    <div class="row" style="margin-right: 1%">
+      <div class="col-md-12 d-flex justify-content-end">
+        <div>
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
+      </div>
+    </div>
     <div class="row w-100">
-      <div class="col-sm-12 col-12 col-md-12 p-2">
+      <div
+        class="col-sm-12 col-12 col-md-12 p-2 loading ? 'table-loading' : ''">
+        <form-loader *ngIf="formLoading"></form-loader>
         <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettings"
-          [source]="dataTable"></ng2-smart-table>
+          *ngIf="!formLoading"
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings"
+          (userRowSelect)="onRowSelect($event)"
+          (dblclick)="doubleClick($event)"
+          (edit)="formData($event.data)"
+          [source]="data"></ng2-smart-table>
+        <app-pagination
+          *ngIf="!formLoading"
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
   </div>
@@ -18,18 +35,22 @@
       <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
         <div class="form-group">
           <button
-            *ngIf="showResolucion == false"
+            *ngIf="showResolucion == false && !formLoading"
             type="button"
+            [disabled]="!resolutionBtn"
             class="btn btn-primary btn-sm active p-2"
             (click)="btnResolucion()">
             Resoluci&oacute;n
+            <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
           <button
             *ngIf="showResolucion == true"
+            [disabled]="!validUp"
             type="button"
             class="btn btn-info btn-sm active p-2"
             (click)="btnCloseResolucion()">
             Regresar y Guardar cambios
+            <i aria-hidden="true" class="fa fa-save"></i>
           </button>
         </div>
       </div>
@@ -52,6 +73,7 @@
             <textarea
               class="form-control"
               rows="6"
+              (input)="flag($event)"
               formControlName="resolucion"></textarea>
           </form-field>
         </div>

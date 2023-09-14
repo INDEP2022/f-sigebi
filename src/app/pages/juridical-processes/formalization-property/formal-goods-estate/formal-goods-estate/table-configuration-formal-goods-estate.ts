@@ -45,7 +45,7 @@ export const TABLE_SETTINGS2: TableSettings = {
     deleteButtonContent: '<i class="fa fa-arrow-right text-success mx-2"></i>',
   },
   columns: {},
-  noDataMessage: 'No se encontrarón registros',
+  noDataMessage: 'No se encontraron registros',
   rowClassFunction: (row: any) => {},
 };
 
@@ -113,7 +113,7 @@ export const TABLE_SETTINGS4: TableSettings = {
     deleteButtonContent: '<i class="fa fa-arrow-right text-success mx-2"></i>',
   },
   columns: {},
-  noDataMessage: 'No se encontrarón registros',
+  noDataMessage: 'No se encontraron registros',
   rowClassFunction: (row: any) => {},
 };
 
@@ -161,7 +161,7 @@ export const FORMALIZACION_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  date: {
+  dateIncorporado: {
     title: 'Incorporado',
     type: 'string',
     sort: false,
@@ -212,7 +212,7 @@ export const ASIGN_NOTARIES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  date: {
+  dateIncorporado: {
     title: 'Incorporado',
     type: 'string',
     sort: false,
@@ -242,7 +242,7 @@ export const ASIGN_NOTARIES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  assignmentnotDate: {
+  dateAssignmentnotDate: {
     title: 'Asignación Formalizador',
     type: 'string',
     sort: false,
@@ -286,7 +286,7 @@ export const ESCRITURACION_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  date: {
+  dateIncorporado: {
     title: 'Incorporado',
     type: 'string',
     sort: false,
@@ -296,7 +296,7 @@ export const ESCRITURACION_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  writingDate: {
+  dateWritingAntDate: {
     title: 'Fecha Escritura',
     type: 'number',
     sort: false,
@@ -306,7 +306,7 @@ export const ESCRITURACION_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  writingAntDate: {
+  dateWritingDate: {
     title: 'No. Fecha',
     type: 'string',
     sort: false,
@@ -334,7 +334,7 @@ export const tableSettingsTodos: any = {
 };
 
 export const TODOS_COLUMNS = {
-  goodNumber: {
+  goodnumber: {
     title: 'No. Bien',
     sort: false,
     type: 'string',
@@ -344,22 +344,22 @@ export const TODOS_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  notaryCli: {
+  notary: {
     title: 'Asignado Notario',
     type: 'string',
     sort: false,
   },
-  assignmentnotDate: {
+  formalizes: {
     title: 'En Formalización',
     type: 'string',
     sort: false,
   },
-  writingNumber: {
+  writing: {
     title: 'Escrituración',
     type: 'string',
     sort: false,
   },
-  dias: {
+  days: {
     title: 'Desfase en Días',
     type: 'string',
     sort: false,

@@ -1,36 +1,748 @@
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import {
+  Component,
+  ElementRef,
+  OnChanges,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as moment from 'moment';
+import { LocalDataSource } from 'ng2-smart-table';
+import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
+import { ICuentaDelete } from 'src/app/core/models/catalogs/bank-modelo-type-cuentas';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
+import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { MsMassiveAccountmvmntlineService } from 'src/app/core/services/ms-massiveaccountmvmnt/ms-massiveaccountmvmnt.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { AddMovementComponent } from '../add-movement/add-movement.component';
+import { CustomdbclickComponent } from '../customdbclick/customdbclick.component';
+import { CustomdbclickdepositComponent } from '../customdbclickdeposit/customdbclickdeposit.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
-import { DEPOSIT_TOKENS_COLUMNS } from './deposit-tokens-columns';
+import { CustomMultiSelectFilterComponent } from './filterAccount';
+import { CustomDateFilterComponent_ } from './searchDate';
 
 @Component({
   selector: 'app-deposit-tokens',
   templateUrl: './deposit-tokens.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
-export class DepositTokensComponent extends BasePage implements OnInit {
+export class DepositTokensComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   form: FormGroup;
 
-  data1: any[] = [];
+  data1: LocalDataSource = new LocalDataSource();
+  data2: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  totalItems2: number = 0;
+  filter1 = new BehaviorSubject<FilterParams>(new FilterParams());
+  dataMovements: any = null;
+  columnFilters: any = [];
+  paramsList = new BehaviorSubject<ListParams>(new ListParams());
+  paramsList2 = new BehaviorSubject<ListParams>(new ListParams());
+  jsonToCsv: any[] = [];
+  showPagination: boolean = true;
+  dateMovemInicio: Date;
+  dateMovemFin: Date;
+  loadingBtn: boolean = false;
+  valorDate1: string = 'Fecha Transferencia';
+  @ViewChild('file', { static: false }) myInput: ElementRef;
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  testCompare: any;
+  validExcel: boolean = true;
+  settings2 = { ...this.settings };
+  loadingBtn2: boolean = false;
+  value: number = 0;
+  @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private accountMovementService: AccountMovementService,
+    private datePipe: DatePipe,
+    private readonly goodServices: GoodService,
+    private dynamicCatalogsService: DynamicCatalogsService,
+    private excelService: ExcelService,
+    private msMassiveAccountmvmntlineService: MsMassiveAccountmvmntlineService,
+    private token: AuthService
+  ) {
     super();
     this.settings = {
       ...this.settings,
-      actions: false,
-      columns: DEPOSIT_TOKENS_COLUMNS,
+      actions: {
+        columnTitle: 'Acciones',
+        delete: true,
+        edit: true,
+        add: false,
+        position: 'right',
+      },
+      delete: {
+        deleteButtonContent: '<i class="fa fa-trash text-danger mx-2"></i>',
+        confirmDelete: true,
+      },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-black mx-2 pl-3"></i>',
+      },
+      hideSubHeader: false,
+      columns: {
+        bank: {
+          title: 'Banco',
+          type: 'string',
+          sort: false,
+        },
+        accountkey: {
+          title: 'Cuenta',
+          filter: {
+            type: 'custom',
+            component: CustomMultiSelectFilterComponent,
+            config: {
+              options: this.getUniqueValues('accountkey'),
+            },
+          },
+          valuePrepareFunction: (value: any) => {
+            console.log('value', value);
+            return value != null ? value : '';
+          },
+          filterFunction(cell?: any, search?: string): boolean {
+            let column = cell;
+            console.log(column, '==', search);
+            // if (column?.toUpperCase() >= search.toUpperCase() || search === ''
+            // ) {
+            return true;
+            // } else {
+            //   return false;
+            // }
+          },
+          sort: false,
+        },
+        motionDate_: {
+          title: 'Fecha Depósito',
+          // type: 'string',
+          sort: false,
+          // width: '13%',
+          // type: 'html',
+          valuePrepareFunction: (text: string) => {
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('/') : ''
+            }`;
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent_,
+            // component: CustomDateFilterComponent,
+          },
+          filterFunction(cell?: any, search?: string): boolean {
+            let column = cell;
+            console.log(column, '==', search);
+            // if (column?.toUpperCase() >= search.toUpperCase() || search === ''
+            // ) {
+            return true;
+            // } else {
+            //   return false;
+            // }
+          },
+        },
+        calculationInterestsDate_: {
+          title: 'Fecha TESOFE',
+          // type: 'string',
+          sort: false,
+          // width: '13%',
+          type: 'html',
+          valuePrepareFunction: (text: string) => {
+            // console.log('text', text);
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('/') : ''
+            }`;
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent,
+          },
+        },
+        currency: {
+          title: 'Moneda',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (_cell: any, row: any) => {
+            return row.currency == "'M'" ? 'M' : row.currency;
+          },
+        },
+        deposit: {
+          title: 'Cantidad',
+          type: 'custom',
+          sort: false,
+          renderComponent: CustomdbclickdepositComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.funcionEjecutada.subscribe(() => {
+              this.miFuncion();
+            });
+            instance.loadingConciliar.subscribe(() => {
+              this.miSegundaFuncion(); // Nueva segunda función independiente
+            });
+          },
+        },
+        goodnumber: {
+          title: 'No. Bien',
+          type: 'custom',
+          sort: false,
+          renderComponent: CustomdbclickComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.funcionEjecutada.subscribe(() => {
+              this.miFuncion();
+            });
+            instance.loadingConciliar.subscribe(() => {
+              this.miSegundaFuncion(); // Nueva segunda función independiente
+            });
+          },
+        },
+        proceedingsnumber: {
+          title: 'Expediente',
+          type: 'string',
+          sort: false,
+        },
+
+        invoicefile: {
+          title: 'Folio',
+          type: 'string',
+          sort: false,
+        },
+        category: {
+          title: 'Categoría',
+          type: 'string',
+          sort: false,
+        },
+        ispartialization: {
+          title: 'Parcial',
+          type: 'string',
+          sort: false,
+        },
+        motionnumber: {
+          title: 'No. Movimiento',
+          type: 'string',
+          sort: false,
+        },
+      },
+      rowClassFunction: (row: any) => {
+        // console.log("ROWWWW", row)
+        if (row.data.goodnumber != null) {
+          return 'bg-warning text-black';
+        } else {
+          return '';
+        }
+      },
     };
+
+    this.settings2 = {
+      ...this.settings,
+      // actions: {
+      //   columnTitle: 'Acciones',
+      //   delete: true,
+      //   edit: false,
+      //   add: false,
+      // },
+      // delete: {
+      //   deleteButtonContent:
+      //     '<i class="pl-4 fa fa-trash text-danger mx-2"></i>',
+      //   confirmDelete: true,
+      // },
+      // hideSubHeader: false,
+      columns: {
+        // TI_BANCO: {
+        //   title: 'No. Movimiento',
+        //   type: 'string',
+        //   sort: false,
+        // },
+        TI_BANCO: {
+          title: 'Banco',
+          type: 'string',
+          sort: false,
+        },
+        DI_CUENTA: {
+          title: 'Cuenta',
+          type: 'string',
+          sort: false,
+        },
+        FEC_MOVIMIENTO: {
+          title: 'Fecha Depósito',
+          // type: 'string',
+          sort: false,
+          // width: '13%',
+          type: 'html',
+          valuePrepareFunction: (text: string) => {
+            console.log('text', text);
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('/') : ''
+            }`;
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent,
+          },
+          // type: 'html',
+          // valuePrepareFunction: (text: string) => {
+          //   console.log('text', text);
+          //   if (typeof text === 'number') {
+          //     let date = new Date((Number(text) - 25569) * 86400 * 1000);
+          //     let fechaString = date.toString();
+
+          //     let fecha = new Date(fechaString);
+
+          //     let dia = fecha.getDate();
+          //     let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
+          //     let año = fecha.getFullYear();
+
+          //     // Asegurarse de que el día y el mes tengan dos dígitos
+          //     let diaString = dia < 10 ? '0' + dia : dia;
+          //     let mesString = mes < 10 ? '0' + mes : mes;
+
+          //     let fechaFormateada = `${diaString}/${mesString}/${año}`;
+
+          //     return `${fechaFormateada}`;
+          //   } else {
+          //     return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''
+          //       }`;
+          //   }
+          // },
+          // filter: {
+          //   type: 'custom',
+          //   component: CustomDateFilterComponent,
+          // },
+        },
+        FOLIO_FICHA: {
+          title: 'Folio',
+          type: 'string',
+          sort: false,
+        },
+        FEC_CALCULO_INTERESES: {
+          title: 'Fecha TESOFE',
+          // type: 'string',
+          sort: false,
+          // width: '13%',
+          type: 'html',
+          valuePrepareFunction: (text: string) => {
+            console.log('text', text);
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('/') : ''
+            }`;
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent,
+          },
+          // type: 'html',
+          // valuePrepareFunction: (text: string) => {
+          //   console.log('text', text);
+          //   if (typeof text === 'number') {
+          //     let date = new Date((Number(text) - 25569) * 86400 * 1000);
+          //     let fechaString = date.toString();
+
+          //     let fecha = new Date(fechaString);
+
+          //     let dia = fecha.getDate();
+          //     let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
+          //     let año = fecha.getFullYear();
+
+          //     // Asegurarse de que el día y el mes tengan dos dígitos
+          //     let diaString = dia < 10 ? '0' + dia : dia;
+          //     let mesString = mes < 10 ? '0' + mes : mes;
+
+          //     let fechaFormateada = `${diaString}/${mesString}/${año}`;
+
+          //     return `${fechaFormateada}`;
+          //   } else {
+          //     return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''
+          //       }`;
+          //   }
+          // },
+          // filter: {
+          //   type: 'custom',
+          //   component: CustomDateFilterComponent,
+          // },
+        },
+        DI_MONEDA: {
+          title: 'Moneda',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (_cell: any, row: any) => {
+            return row.currency == "'M'" ? 'M' : row.currency;
+          },
+        },
+        DEPOSITO: {
+          title: 'Cantidad',
+          type: 'string',
+          sort: false,
+          // renderComponent: CustomdbclickdepositComponent,
+          // onComponentInitFunction: (instance: any) => {
+          //   instance.funcionEjecutada.subscribe(() => {
+          //     this.miFuncion();
+          //   });
+          // },
+        },
+        di_expediente2: {
+          title: 'Expediente',
+          type: 'string',
+          sort: false,
+        },
+        no_bien: {
+          title: 'No. Bien',
+          type: 'string',
+          sort: false,
+          // renderComponent: CustomdbclickComponent,
+          // onComponentInitFunction: (instance: any) => {
+          //   instance.funcionEjecutada.subscribe(() => {
+          //     this.miFuncion();
+          //   });
+          // },
+        },
+      },
+      rowClassFunction: (row: any) => {
+        if (row.data.no_bien != null) {
+          return 'bg-warning text-black';
+        } else {
+          return '';
+        }
+      },
+    };
+    this.settings2.hideSubHeader = true;
+    this.settings2.actions = false;
   }
 
+  getUniqueValues(columnName: string): void {
+    // Lógica para obtener valores únicos de la columna
+    // Puedes usar lodash u otras herramientas para esto
+  }
+  miSegundaFuncion() {
+    console.log('SIIAISDASDASD');
+    this.loading = !this.loading;
+  }
   ngOnInit(): void {
+    console.log(screen.width);
     this.prepareForm();
+    this.data1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              motionnumber: () => (searchFilter = SearchFilter.EQ),
+              bank: () => (searchFilter = SearchFilter.ILIKE),
+              accountkey: () => (searchFilter = SearchFilter.IN),
+              motionDate_: () => (searchFilter = SearchFilter.ILIKE),
+              invoicefile: () => (searchFilter = SearchFilter.ILIKE),
+              calculationInterestsDate_: () =>
+                (searchFilter = SearchFilter.ILIKE),
+              currency: () => (searchFilter = SearchFilter.ILIKE),
+              deposit: () => (searchFilter = SearchFilter.EQ),
+              proceedingsnumber: () => (searchFilter = SearchFilter.EQ),
+              goodnumber: () => (searchFilter = SearchFilter.EQ),
+              category: () => (searchFilter = SearchFilter.ILIKE),
+              ispartialization: () => (searchFilter = SearchFilter.ILIKE),
+            };
+
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${filter.search}`;
+              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+
+              // console.log(
+              //   'this.columnFilters[field]',
+              //   this.columnFilters[field]
+              // );
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.paramsList = this.pageFilter(this.paramsList);
+          //Su respectivo metodo de busqueda de datos
+          this.getAccount();
+        }
+      });
+
+    this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getAccount();
+    });
+
+    this.data2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              TI_BANCO: () => (searchFilter = SearchFilter.EQ),
+              DI_CUENTA: () => (searchFilter = SearchFilter.ILIKE),
+              FEC_MOVIMIENTO: () => (searchFilter = SearchFilter.EQ),
+              FOLIO_FICHA: () => (searchFilter = SearchFilter.ILIKE),
+              FEC_CALCULO_INTERESES: () => (searchFilter = SearchFilter.ILIKE),
+              DI_MONEDA: () => (searchFilter = SearchFilter.ILIKE),
+              DEPOSITO: () => (searchFilter = SearchFilter.ILIKE),
+              di_expediente2: () => (searchFilter = SearchFilter.EQ),
+              no_bien: () => (searchFilter = SearchFilter.EQ),
+            };
+
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${filter.search}`;
+              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+
+              // console.log(
+              //   'this.columnFilters[field]',
+              //   this.columnFilters[field]
+              // );
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.paramsList2 = this.pageFilter(this.paramsList2);
+          //Su respectivo metodo de busqueda de datos
+          // this.readExcel(this.excelFile, false);
+        }
+      });
+
+    this.paramsList2
+      .pipe(
+        skip(1),
+        tap(() => {
+          // aquí colocas la función que deseas ejecutar
+          // this.getPupPreviewDatosCsv2(this.cargarDataStorage(this.excelFile), 'no');
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {
+        // this.readExcel(this.excelFile, false);
+        // this.getPupPreviewDatosCsv2(this.cargarDataStorage());
+      });
+  }
+
+  ngOnChanges() {}
+
+  getAccount() {
+    this.loading = true;
+
+    this.data1.load([]);
+    this.data1.refresh();
+    this.totalItems = 0;
+
+    let params: any = {
+      ...this.paramsList.getValue(),
+      ...this.columnFilters,
+    };
+
+    console.log('params1', params['filter.motionDate_']);
+    // CON RANGE //
+    if (params['filter.motionDate_']) {
+      const fechas = params['filter.motionDate_'].split(',');
+      console.log('fechas', fechas);
+      var fecha1 = new Date(fechas[0]);
+      var fecha2 = new Date(fechas[1]);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var ano1 = fecha1.getFullYear();
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var ano2 = fecha2.getFullYear();
+      var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia2 = ('0' + fecha2.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+      var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
+      params['motiondate'] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
+      delete params['filter.motionDate_'];
+    }
+    // SIN RANGE //
+    // if (params['filter.motionDate_']) {
+    //   var fecha = new Date(params['filter.motionDate_']);
+
+    //   // Obtener los componentes de la fecha (año, mes y día)
+    //   var año = fecha.getFullYear();
+    //   var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+    //   var día = ('0' + fecha.getDate()).slice(-2);
+
+    //   // Crear la cadena de fecha en el formato yyyy-mm-dd
+    //   var fechaFormateada = año + '-' + mes + '-' + día;
+    //   params['motionDate'] = fechaFormateada;
+    //   delete params['filter.motionDate_'];
+    // }
+    if (params['filter.deposit']) {
+      params['deposit'] = params['filter.deposit'];
+      delete params['filter.deposit'];
+    }
+    if (params['filter.calculationInterestsDate_']) {
+      var fecha = new Date(params['filter.calculationInterestsDate_']);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var año = fecha.getFullYear();
+      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var día = ('0' + fecha.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada = año + '-' + mes + '-' + día;
+      params['calculationInterestsDate'] = fechaFormateada;
+      delete params['filter.calculationInterestsDate_'];
+    }
+    if (params['filter.goodnumber']) {
+      params['goodNumber'] = params['filter.goodnumber'];
+      delete params['filter.goodnumber'];
+    }
+    if (params['filter.proceedingsnumber']) {
+      params['proceedingsNumber'] = params['filter.proceedingsnumber'];
+      delete params['filter.proceedingsnumber'];
+    }
+    if (params['filter.category']) {
+      params['category'] = params['filter.category'];
+      delete params['filter.category'];
+    }
+    if (params['filter.ispartialization']) {
+      params['ispartialization'] = params['filter.ispartialization'];
+      delete params['filter.ispartialization'];
+    }
+    if (params['filter.currency']) {
+      params['currencykey'] = params['filter.currency'];
+      delete params['filter.currency'];
+    }
+    if (params['filter.bank']) {
+      params['bankkey'] = params['filter.bank'];
+      delete params['filter.bank'];
+    }
+    if (params['filter.accountkey']) {
+      params['accountkey'] = `$in:${params['filter.accountkey']}`;
+      delete params['filter.accountkey'];
+    }
+    if (params['filter.motionnumber']) {
+      params['motionNumber'] = params['filter.motionnumber'];
+      delete params['filter.motionnumber'];
+    }
+
+    params['&sortBy=motionNumber:DESC&'];
+    console.log('params2', params);
+    this.accountMovementService
+      .getMovementAccountXBankAccount(params)
+      .subscribe({
+        next: async (response: any) => {
+          let result = response.data.map(async (item: any) => {
+            const detailsBank: any = await this.returnDataBank(
+              item.accountnumber
+            );
+
+            if (detailsBank.cveCurrency == "'M'") {
+              item['currency'] = 'M';
+            } else {
+              item['currency'] = detailsBank ? detailsBank.cveCurrency : null;
+            }
+            item['bank'] = detailsBank ? detailsBank.cveBank : null;
+            item['cveAccount'] = detailsBank ? detailsBank.cveAccount : null;
+
+            item['motionDate_'] = item.motiondate;
+            // ? this.returnParseDate_(item.motiondate) : null;
+            item['calculationInterestsDate_'] = item.calculationinterestsdate;
+            // ? this.returnParseDate_(item.calculationinterestsdate)
+            //   : null;
+            item['bancoDetails'] = detailsBank ? detailsBank : null;
+            item['bankAndNumber'] = detailsBank
+              ? detailsBank.cveAccount +
+                ' - ' +
+                detailsBank.cveBank +
+                ' - ' +
+                detailsBank.banco.name
+              : null;
+          });
+          console.log('Nop');
+          Promise.all(result).then((resp: any) => {
+            console.log('Sip');
+            this.showPagination = true;
+
+            this.data1.load(response.data);
+            this.data1.refresh();
+
+            this.totalItems = response.count;
+            console.log('AQUI', response);
+            // console.log('this.data1 ', this.data1);
+            this.validExcel = false;
+            this.loading = false;
+          });
+        },
+        error: err => {
+          this.loading = false;
+          this.validExcel = false;
+          this.totalItems = 0;
+          this.data1.load([]);
+          this.data1.refresh();
+        },
+      });
+  }
+
+  async returnDataBank(id: any) {
+    const params = new ListParams();
+    params['filter.accountNumber'] = `$eq:${id}`;
+
+    return new Promise((resolve, reject) => {
+      this.accountMovementService.getAccountBank(params).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: err => {
+          resolve(null);
+          console.log(err);
+        },
+      });
+    });
   }
 
   prepareForm() {
@@ -43,32 +755,718 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       square: [null, Validators.nullValidator],
       description: [null, Validators.nullValidator],
       branch: [null, Validators.nullValidator],
+      di_saldo: [null, Validators.nullValidator],
       balanceOf: [null, Validators.nullValidator],
       balanceAt: [null, Validators.nullValidator],
     });
   }
-  onCustomAction(data: any) {}
-  getAttributes() {
-    this.loading = true;
-    // this.attributesInfoFinancialService
-    //   .getAll(this.params.getValue())
-    //   .subscribe({
-    //     next: response => {
-    //       this.attributes = response.data;
-    //       this.totalItems = response.count;
-    //       this.loading = false;
-    //     },
-    //     error: error => (this.loading = false),
-    //   });
+
+  async onCustomAction(event: any) {
+    this.dataMovements = event.data;
+    console.log('data', event);
+    // DESCRIPCIÓN DEL BIEN
+    if (event.data.goodnumber) {
+      this.getDetailsGood(event.data.goodnumber);
+    } else {
+      this.form.get('descriptionGood').setValue('');
+    }
+
+    // DETALLES DE LA CUENTA
+    if (event.data.bancoDetails) {
+      await this.insertDataBank(event.data.bancoDetails);
+
+      if (event.data.bancoDetails.cveCurrency) {
+        await this.getTvalTable5(event.data.bancoDetails.cveCurrency);
+      }
+    } else {
+      const aaaa: any = await this.returnDataBank(event.data.accountnumber);
+      if (aaaa != null) {
+        await this.insertDataBank(aaaa);
+        await this.getTvalTable5(aaaa.cveCurrency);
+      }
+    }
   }
+
+  async onCustomAction2(event: any) {
+    this.dataMovements = event.data;
+    console.log('data', event);
+    // DESCRIPCIÓN DEL BIEN
+    if (event.data.goodnumber) {
+      this.getDetailsGood(event.data.goodnumber);
+    } else {
+      this.form.get('descriptionGood').setValue('');
+    }
+
+    // DETALLES DE LA CUENTA
+    if (event.data.bancoDetails) {
+      await this.insertDataBank(event.data.bancoDetails);
+
+      if (event.data.bancoDetails.cveCurrency) {
+        await this.getTvalTable5(event.data.bancoDetails.cveCurrency);
+      }
+    } else {
+      const aaaa: any = await this.returnDataBank(event.data.accountnumber);
+      if (aaaa != null) {
+        await this.insertDataBank(aaaa);
+        await this.getTvalTable5(aaaa.cveCurrency);
+      }
+    }
+  }
+
+  async insertDataBank(bank: any) {
+    this.form.get('bank').setValue(bank.banco.name);
+    this.form.get('account').setValue(bank.cveAccount);
+    this.form.get('accountType').setValue(bank.accountType);
+    this.form.get('currency').setValue(bank.cveCurrency);
+    this.form.get('square').setValue(bank.square);
+    this.form.get('branch').setValue(bank.branch);
+    this.form.get('balanceOf').setValue('');
+    this.form.get('balanceAt').setValue('');
+  }
+
+  async cleanDataBank() {
+    this.form.get('bank').setValue('');
+    this.form.get('account').setValue('');
+    this.form.get('accountType').setValue('');
+    this.form.get('currency').setValue('');
+    this.form.get('square').setValue('');
+    this.form.get('branch').setValue('');
+    this.form.get('balanceOf').setValue('');
+    this.form.get('description').setValue('');
+    this.form.get('balanceAt').setValue('');
+    this.form.get('di_saldo').setValue('');
+  }
+
+  // BUTTONS FUNCTIONS //
+
+  async desconciliarFunc() {
+    // this.loading = true;
+    if (!this.validExcel)
+      if (this.dataMovements) {
+        if (this.dataMovements.goodnumber == null) {
+          this.alert(
+            'warning',
+            'No existe un Bien asociado a este depósito.',
+            ''
+          );
+        } else {
+          let obj: any = {
+            numberMotion: this.dataMovements.motionnumber,
+            numberAccount: this.dataMovements.accountnumber,
+            numberGood: null,
+            numberProceedings: null,
+          };
+          this.accountMovementService.update(obj).subscribe({
+            next: async (response: any) => {
+              this.getAccount();
+              this.alert(
+                'success',
+                `El Bien ${this.dataMovements.goodnumber} ha sido desconciliado`,
+                ''
+              );
+              this.form.get('descriptionGood').setValue('');
+            },
+            error: err => {
+              this.alert('error', `Error al desconciliar`, err.error.message);
+              // this.loading = false;
+            },
+          });
+        }
+      }
+  }
+
+  async actualizarFunc() {
+    this.showPagination = true;
+    // await this.clearSubheaderFields();
+
+    this.paramsList.getValue().limit = 10;
+    this.paramsList.getValue().page = 1;
+    this.paramsList2.getValue().limit = 10;
+    this.paramsList2.getValue().page = 1;
+    this.data2.load([]);
+    this.data2.refresh();
+    this.excelFile = null;
+    this.form.get('descriptionGood').setValue('');
+    this.getAccount();
+    if (this.dataMovements) {
+      if (this.dataMovements.bank) {
+        this.cleanDataBank();
+        this.dataMovements = null;
+      }
+    }
+  }
+
+  async clearSubheaderFields() {
+    const subheaderFields: any = this.table.grid.source;
+    const filterConf = subheaderFields.filterConf;
+    filterConf.filters = [];
+    this.columnFilters = [];
+  }
+  async importar() {}
+
+  onFileChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    // const fileReader = new FileReader();
+    // fileReader.readAsBinaryString(files[0]);
+    // fileReader.onload = () => this.readExcel(fileReader.result);
+    // fileReader.onload = () =>
+    this.readExcel(files[0], true);
+  }
+
+  excelFile: any = null;
+  async readExcel(binaryExcel: string | ArrayBuffer | any, filter: any) {
+    try {
+      this.excelFile = binaryExcel;
+      const formData = new FormData();
+      formData.append('file', binaryExcel);
+      formData.append('user', this.token.decodeToken().preferred_username);
+      formData.append('paginated', filter);
+      const excelImport = await this.getPupPreviewDatosCsv2(formData, filter);
+      if (filter == 'si') {
+        // this.alert(
+        //   'info',
+        //   'Se ha cargado el archivo',
+        //   'Espere mientras cargan los datos'
+        // );
+      }
+      this.clearInput();
+    } catch (error) {
+      this.alert('warning', 'Ocurrió un error al leer el archivo', '');
+      this.clearInput();
+    }
+  }
+
+  async cargarDataStorage(data64: any) {
+    if (this.excelFile == null) {
+      // Decodifica el archivo Base64 a un array de bytes
+      const byteCharacters = atob(data64);
+
+      // Crea un array de bytes utilizando el tamaño del archivo decodificado
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+
+      // Crea un Uint8Array a partir del array de bytes
+      const byteArray = new Uint8Array(byteNumbers);
+
+      const blob = new Blob([byteArray], { type: 'text/csv' });
+      // this.readExcel(blob);
+      this.excelFile = blob;
+    }
+    // return '';
+  }
+
+  async getPupPreviewDatosCsv2(formData: any, filter: any) {
+    console.log('formData', formData);
+    this.loading = true;
+    let params: any = {
+      ...this.paramsList2.getValue(),
+      ...this.columnFilters,
+    };
+    console.log('params2', params);
+    this.msMassiveAccountmvmntlineService
+      .getPupPreviewDatosCsv2(formData, params)
+      .subscribe({
+        next: (response: any) => {
+          // console.log("response", response)
+          const data = response;
+          this.validExcel = true;
+
+          let result = data.result.map(async (item: any) => {
+            item['accountnumber'] = item.NO_CUENTA ? item.NO_CUENTA : null;
+            const detailsBank: any = await this.returnDataBank(
+              item.accountnumber
+            );
+            if (detailsBank.cveCurrency == "'M'") {
+              item['currency'] = 'M';
+            } else {
+              item['currency'] = detailsBank ? detailsBank.cveCurrency : null;
+            }
+
+            item['bank'] = detailsBank ? detailsBank.cveBank : null;
+            item['cveAccount'] = detailsBank ? detailsBank.cveAccount : null;
+
+            item['bancoDetails'] = detailsBank ? detailsBank : null;
+          });
+
+          Promise.all(result).then((resp: any) => {
+            this.cleanDataBank();
+            this.showPagination = true;
+            this.totalItems2 = response.count;
+            // this.cargarDataStorage(response.base64.base64File);
+            // this.excelFile =
+
+            let str = response.msg;
+            let substr = str[0].slice(0, Number(str.length) - 7);
+
+            if (filter == true) {
+              this.alert('success', substr, '');
+            }
+            this.data2.load(response.result);
+            this.data2.refresh();
+            console.log('AQUI', response);
+            this.loading = false;
+          });
+        },
+        error: err => {
+          // this.data2.load([]);
+          // this.data2.refresh();
+          this.totalItems2 = 0;
+          this.validExcel = false;
+          this.loading = false;
+          if (err.error.message == 'No es el excel correcto') {
+            this.alert(
+              'error',
+              'El archivo no cumple con las condiciones de inserción',
+              ''
+            );
+          } else {
+            this.alert(
+              'error',
+              'Ha ocurrido un error al intentar cargar el archivo',
+              'Verifique el archivo e intente nuevamente'
+            );
+          }
+        },
+      });
+  }
+
+  async exportar() {
+    if (!this.validExcel) {
+      await this.getExcelExport();
+    } else {
+      this.loadingBtn2 = true;
+      const filename: string = 'CARINSFICHDEPO';
+      const jsonToCsv: any = await this.returnJsonToCsv();
+
+      let arr: any = [];
+      let result = jsonToCsv.map(async (item: any) => {
+        let obj2 = {
+          BANCO: item.TI_BANCO,
+          CUENTA: item.DI_CUENTA,
+          NO_CUENTA: item.NO_CUENTA,
+          MONEDA: item.DI_MONEDA,
+          FECHA_DEPOSITO: item.FEC_MOVIMIENTO,
+          FOLIO: item.FOLIO_FICHA,
+          FECHA_TESOFE: item.FEC_CALCULO_INTERESES,
+          CANTIDAD: item.DEPOSITO,
+          BIEN: item.no_bien,
+          EXPEDIENTE: item.di_expediente2,
+          DESCRIPCION: await this.getDetailsGoodForExcel(item.no_bien),
+          CATEGORIA: '',
+          PARCIAL: '',
+        };
+
+        arr.push(obj2);
+      });
+
+      Promise.all(result).then(i => {
+        console.log('jsonToCsv', arr);
+        this.jsonToCsv = arr;
+        this.excelService.export(this.jsonToCsv, { type: 'xlsx', filename });
+        this.alert('success', 'Archivo descargado correctamente', '');
+        this.loadingBtn2 = false;
+      });
+    }
+  }
+
+  getDetailsGoodForExcel(id: any) {
+    return new Promise((resolve, reject) => {
+      this.goodServices.getGoodById(id).subscribe({
+        next: async (response: any) => {
+          resolve(response.description);
+        },
+        error: err => {
+          resolve('');
+        },
+      });
+    });
+  }
+
+  async getExcelExport() {
+    this.loadingBtn2 = true;
+    let params: any = {
+      ...this.paramsList.getValue(),
+      ...this.columnFilters,
+    };
+
+    if (params['filter.goodnumber']) {
+      params['goodNumber'] = params['filter.goodnumber'];
+      delete params['filter.goodnumber'];
+    }
+
+    if (params['filter.proceedingsnumber']) {
+      params['proceedingsNumber'] = params['filter.proceedingsnumber'];
+      delete params['filter.proceedingsnumber'];
+    }
+
+    if (params['filter.category']) {
+      params['category'] = params['filter.category'];
+      delete params['filter.category'];
+    }
+
+    if (params['filter.ispartialization']) {
+      params['ispartialization'] = params['filter.ispartialization'];
+      delete params['filter.ispartialization'];
+    }
+    if (params['filter.currency']) {
+      params['currencykey'] = params['filter.currency'];
+      delete params['filter.currency'];
+    }
+
+    if (params['filter.bank']) {
+      params['bankkey'] = params['filter.bank'];
+      delete params['filter.bank'];
+    }
+
+    // if (params['filter.accountkey']) {
+    //   params['accountkey'] = params['filter.accountkey'];
+    //   delete params['filter.accountkey'];
+    // }
+
+    if (params['filter.accountkey']) {
+      params['accountkey'] = `$in:${params['filter.accountkey']}`;
+      delete params['filter.accountkey'];
+    }
+
+    if (params['filter.motionnumber']) {
+      params['numberMotion'] = params['filter.motionnumber'];
+      delete params['filter.motionnumber'];
+    }
+    if (params['filter.motionDate_']) {
+      const fechas = params['filter.motionDate_'].split(',');
+      console.log('fechas', fechas);
+      var fecha1 = new Date(fechas[0]);
+      var fecha2 = new Date(fechas[1]);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var ano1 = fecha1.getFullYear();
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var ano2 = fecha2.getFullYear();
+      var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia2 = ('0' + fecha2.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+      var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
+      params['motiondate'] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
+      delete params['filter.motionDate_'];
+    }
+    // if (params['filter.motionDate_']) {
+    //   var fecha = new Date(params['filter.motionDate_']);
+
+    //   // Obtener los componentes de la fecha (año, mes y día)
+    //   var año = fecha.getFullYear();
+    //   var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+    //   var día = ('0' + fecha.getDate()).slice(-2);
+
+    //   // Crear la cadena de fecha en el formato yyyy-mm-dd
+    //   var fechaFormateada = año + '-' + mes + '-' + día;
+    //   params['motionDate'] = fechaFormateada;
+    //   delete params['filter.motionDate_'];
+    // }
+    if (params['filter.deposit']) {
+      params['deposit'] = params['filter.deposit'];
+      delete params['filter.deposit'];
+    }
+    if (params['filter.calculationInterestsDate_']) {
+      var fecha = new Date(params['filter.calculationInterestsDate_']);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var año = fecha.getFullYear();
+      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var día = ('0' + fecha.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada = año + '-' + mes + '-' + día;
+      params['calculationInterestsDate'] = fechaFormateada;
+      delete params['filter.calculationInterestsDate_'];
+    }
+
+    delete params['limit'];
+    delete params['page'];
+    // return new Promise((resolve, reject) => {
+    this.accountMovementService
+      .MovementAccountXBankAccountExcel(params)
+      .subscribe({
+        next: async (response: any) => {
+          console.log('res', response);
+          // Decodifica el archivo Base64 a un array de bytes
+          const base64 = response.resultExcel.base64File;
+          // const base64 = await this.decompressBase64ToString(response.data.base64File)
+          await this.downloadExcel(base64);
+          // resolve(true);
+        },
+        error: err => {
+          if (
+            err.error.message ==
+            'more than one row returned by a subquery used as an expression'
+          ) {
+            this.alert(
+              'warning',
+              'No se puede generar el excel por la cantidad de registros',
+              ''
+            );
+          } else {
+            this.alert('error', 'Error al descargar el archivo', '');
+          }
+
+          this.loadingBtn2 = false;
+          // resolve(false);
+        },
+      });
+    // });
+  }
+  async downloadExcel(base64String: any) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = 'CARINSFICHDEPO.xlsx';
+    link.click();
+    link.remove();
+    this.alert('success', 'Archivo descargado correctamente', '');
+    this.loadingBtn2 = false;
+  }
+
+  async returnJsonToCsv() {
+    return !this.validExcel ? this.data1.getAll() : this.data2.getAll();
+  }
+  // GET DETAILS CURRENCY //
+  async getTvalTable5(currency: any) {
+    const params = new ListParams();
+    params['filter.nmtable'] = `$eq:3`;
+    params['filter.otkey1'] = `$eq:${currency}`;
+    this.dynamicCatalogsService.getTvalTable5(params).subscribe({
+      next: response => {
+        this.form.get('description').setValue(response.data[0].otvalor01);
+        // this.loading = false;
+      },
+      error: err => {
+        console.log(err);
+        this.form.get('description').setValue('');
+        // this.loading = false;
+      },
+    });
+  }
+
+  getDetailsGood(id: any) {
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    this.goodServices.getGoodById(id).subscribe({
+      next: async (response: any) => {
+        this.form.get('descriptionGood').setValue(response.description);
+      },
+      error: err => {
+        this.form
+          .get('descriptionGood')
+          .setValue('No se encontró la descripción del Bien');
+      },
+    });
+  }
+
   openForm(data?: any) {
+    const modalConfig = MODAL_CONFIG;
+    let noCuenta = null;
+    if (this.dataMovements) {
+      noCuenta = this.dataMovements.bancoDetails.accountNumber;
+    }
+    modalConfig.initialState = {
+      noCuenta,
+      data,
+      callback: (next: boolean) => {},
+    };
+    this.modalService.show(DepositTokensModalComponent, modalConfig);
+  }
+
+  miFuncion() {
+    this.getAccount();
+    // console.log('Función ejecutada desde el componente hijo');
+  }
+
+  addMovement() {
+    let data = null;
+    this.openFormAdd(data, false);
+  }
+
+  editMovement(event: any) {
+    let data = event;
+    this.openFormAdd(data, true);
+  }
+
+  openFormAdd(data?: any, valEdit?: boolean) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       data,
+      valEdit,
       callback: (next: boolean) => {
-        if (next) this.getAttributes();
+        this.getAccount();
+        console.log('AQUI', next);
       },
     };
-    this.modalService.show(DepositTokensModalComponent, modalConfig);
+    this.modalService.show(AddMovementComponent, modalConfig);
+  }
+
+  async showDeleteAlert(data: any) {
+    console.log(data);
+    let vb_hay_hijos: boolean = false;
+
+    if (data.goodnumber != null) {
+      this.alert(
+        'warning',
+        'No puede eliminar un movimiento que ya está asociado a un expediente',
+        ''
+      );
+    } else {
+      // VERIFICAR CHEQUES
+      const val: any = await this.getChecksReturn(data.motionnumber);
+      vb_hay_hijos = val;
+
+      if (vb_hay_hijos) {
+        this.alert(
+          'warning',
+          'No se puede eliminar una ficha mientras tenga devoluciones registradas',
+          ''
+        );
+      } else {
+        this.alertQuestion(
+          'question',
+          'Se eliminará el Movimiento',
+          '¿Desea Continuar?'
+        ).then(async question => {
+          if (question.isConfirmed) {
+            let obj: ICuentaDelete = {
+              numberAccount: Number(data.accountnumber),
+              numberMotion: Number(data.motionnumber),
+            };
+            this.accountMovementService.eliminarMovementAccount(obj).subscribe({
+              next: response => {
+                this.getAccount();
+                this.form.reset();
+                this.alert('success', 'Movimiento eliminado correctamente', '');
+                console.log('res', response);
+              },
+              error: err => {
+                this.alert('error', 'Error al eliminar el movimiento', '');
+              },
+            });
+          }
+        });
+      }
+    }
+  }
+
+  async showDeleteAlert2(data: any) {
+    console.log(data);
+    let vb_hay_hijos: boolean = false;
+
+    if (data.goodnumber != null) {
+      this.alert(
+        'warning',
+        'No Puede Eliminar un Movimiento que ya está Asociado a un Expediente',
+        ''
+      );
+    } else {
+      // VERIFICAR CHEQUES
+      const val: any = await this.getChecksReturn(data.motionnumber);
+      vb_hay_hijos = val;
+
+      if (vb_hay_hijos) {
+        this.alert(
+          'warning',
+          'No se Puede Eliminar una Ficha Mientras Tenga Devoluciones Registradas',
+          ''
+        );
+      } else {
+        this.alertQuestion(
+          'question',
+          'Se Eliminará el Movimiento',
+          '¿Desea Continuar?'
+        ).then(async question => {
+          if (question.isConfirmed) {
+            let obj: ICuentaDelete = {
+              numberAccount: Number(data.accountnumber),
+              numberMotion: Number(data.motionnumber),
+            };
+            this.accountMovementService.eliminarMovementAccount(obj).subscribe({
+              next: response => {
+                this.getAccount();
+                this.form.reset();
+                this.alert('success', 'Movimiento Eliminado Correctamente', '');
+                console.log('res', response);
+              },
+              error: err => {
+                this.alert('error', 'Error al Eliminar el Movimiento', '');
+              },
+            });
+          }
+        });
+      }
+    }
+  }
+
+  async getChecksReturn(id: any) {
+    return new Promise((resolve, reject) => {
+      this.accountMovementService.getReturnCheck(id).subscribe({
+        next: response => {
+          console.log('res', response);
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  dateMovementInicio(event: any) {
+    console.log('ev', event);
+    console.log('dateMovem', this.dateMovemInicio);
+    this.form.get('balanceAt').setValue('');
+    // this.dateMovem = event.target.value;
+  }
+
+  dateMovementFin(event: any) {
+    console.log('ev', event);
+    console.log('dateMovem', this.dateMovemInicio);
+    // this.calcularSaldo()
+    // this.dateMovem = event.target.value;
+  }
+
+  calcularSaldo() {
+    if (this.dataMovements) {
+      let obj = {
+        no_cuenta: this.dataMovements.accountnumber,
+        ti_fecha_calculo: this.dateMovemInicio,
+        ti_fecha_calculo_fin: this.dateMovemFin,
+      };
+      this.loadingBtn = true;
+      this.accountMovementService.getReturnSaldo(obj).subscribe({
+        next: async (response: any) => {
+          this.form.get('di_saldo').setValue(response.data[0].di_saldo);
+          this.loadingBtn = false;
+        },
+        error: err => {
+          this.form.get('di_saldo').setValue('');
+          this.loadingBtn = false;
+        },
+      });
+    }
+  }
+
+  clearInput() {
+    this.myInput.nativeElement.value = '';
+  }
+
+  returnParseDate_(data: Date) {
+    console.log('DATEEEE', data);
+
+    const formattedDate = moment(data).format('YYYY-MM-DD');
+    return formattedDate;
   }
 }

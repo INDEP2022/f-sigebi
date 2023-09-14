@@ -1,13 +1,13 @@
-import { ICity } from 'src/app/core/models/catalogs/city.model';
+import { ICitys } from 'src/app/core/models/catalogs/issuing-institution.model';
 import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
 export const ISSUING_INSTITUTION_COLUMNS = {
-  id: {
+  /*id: {
     title: 'No.',
     type: 'number',
     sort: false,
-  },
+  },*/
   numClasif: {
-    title: 'N° clasificación',
+    title: 'No. Clasificación',
     type: 'number',
     sort: false,
     valuePrepareFunction: (value: any) => {
@@ -35,12 +35,12 @@ export const ISSUING_INSTITUTION_COLUMNS = {
     sort: false,
   },
   numInside: {
-    title: 'N° interior',
+    title: 'No. Interior',
     type: 'string',
     sort: false,
   },
   numExterior: {
-    title: 'N° exterior',
+    title: 'No. Exterior',
     type: 'string',
     sort: false,
   },
@@ -50,12 +50,12 @@ export const ISSUING_INSTITUTION_COLUMNS = {
     sort: false,
   },
   zipCode: {
-    title: 'Código postal',
+    title: 'Código Postal',
     type: 'number',
     sort: false,
   },
   delegMunic: {
-    title: 'Delegación munic.',
+    title: 'Delegación Munic.',
     type: 'string',
     sort: false,
   },
@@ -68,13 +68,13 @@ export const ISSUING_INSTITUTION_COLUMNS = {
   numCity: {
     title: 'Ciudad',
     type: 'string',
-    valuePrepareFunction: (value: ICity) => {
-      return value?.nameCity || '';
+    valuePrepareFunction: (value: ICitys) => {
+      return value != null ? value.name : '';
     },
     sort: false,
   },
   numTransference: {
-    title: 'N° transferencia',
+    title: 'No. Transferencia',
     type: 'string',
     valuePrepareFunction: (value: ITransferente) => {
       return value?.nameTransferent || '';

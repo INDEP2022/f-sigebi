@@ -27,4 +27,5 @@ export interface IZoneGeographic {
   thirdPartySpecialized: string;
   vat?: number;
   status?: number;
+  idZoneGeographic?: string;
 }

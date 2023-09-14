@@ -14,9 +14,10 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class TypeRelevantFormComponent extends BasePage implements OnInit {
   typeRelevantForm: ModelForm<ITypeRelevant>;
-  title: string = 'Tipo relevante';
+  title: string = 'Tipo Relevante';
   edit: boolean = false;
   typeRelevant: ITypeRelevant;
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -34,21 +35,21 @@ export class TypeRelevantFormComponent extends BasePage implements OnInit {
       id: [null],
       description: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.maxLength(100),
           Validators.pattern(STRING_PATTERN),
-        ]),
+        ],
       ],
-      version: [null, Validators.compose([Validators.required])],
-      noPhotography: [null, Validators.compose([Validators.required])],
+      version: [null],
+      numberPhotography: [null, [Validators.required]],
       detailsPhotography: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.maxLength(500),
           Validators.pattern(STRING_PATTERN),
-        ]),
+        ],
       ],
     });
     if (this.typeRelevant != null) {
@@ -56,6 +57,7 @@ export class TypeRelevantFormComponent extends BasePage implements OnInit {
       this.typeRelevantForm.patchValue(this.typeRelevant);
     }
   }
+
   close() {
     this.modalRef.hide();
   }
@@ -65,23 +67,48 @@ export class TypeRelevantFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.typeRelevantService
-      .create(this.typeRelevantForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.typeRelevantForm.controls['description'].value.trim() == '' ||
+      this.typeRelevantForm.controls['detailsPhotography'].value.trim() == '' ||
+      (this.typeRelevantForm.controls['description'].value.trim() == '' &&
+        this.typeRelevantForm.controls['detailsPhotography'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.typeRelevantService
+        .create(this.typeRelevantForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.typeRelevantService
-      .update(this.typeRelevant.id, this.typeRelevantForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.typeRelevantForm.controls['description'].value.trim() == '' ||
+      this.typeRelevantForm.controls['detailsPhotography'].value.trim() == '' ||
+      (this.typeRelevantForm.controls['description'].value.trim() == '' &&
+        this.typeRelevantForm.controls['detailsPhotography'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.typeRelevantService
+        .updateTypeRelevant(
+          this.typeRelevant.id,
+          this.typeRelevantForm.getRawValue()
+        )
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

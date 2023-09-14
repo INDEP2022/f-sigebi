@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
-import { format } from 'date-fns';
 import { forkJoin } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { EIndicatorGoodsEndpoints } from 'src/app/common/constants/endpoints/ms-indicatorgoods-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IFormScheduledDetail } from 'src/app/pages/judicial-physical-reception/scheduled-maintenance-1/scheduled-maintenance-detail/interfaces';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import { formatForIsoDate } from 'src/app/shared/utils/date';
+import {
+  IListResponse,
+  IListResponseMessage,
+} from '../../interfaces/list-response.interface';
 import {
   IDetailIndicatorGood,
   IGoodsByProceeding,
@@ -40,15 +43,16 @@ export class MsIndicatorGoodsService extends HttpService {
       { goodNumber }
     ).pipe(
       map(items => {
+        // debugger;
         const data = items.data;
         return {
           ...items,
-          data: data.map(item => {
-            const row = item[0];
+          data: data.pop().map(item => {
             return {
-              ...row,
+              ...item,
               fec_aprobacion_x_admon: good.fec_aprobacion_x_admon,
               fec_indica_usuario_aprobacion: good.fec_indica_usuario_aprobacion,
+              agregado: 'RA',
             };
           }),
         };
@@ -91,25 +95,28 @@ export class MsIndicatorGoodsService extends HttpService {
   }
 
   getGoodsByProceeding(params?: ListParams) {
-    return this.get<IListResponse<IGoodsByProceeding>>(
+    return this.get<IListResponseMessage<IGoodsByProceeding>>(
       this.endpoint + '/' + EIndicatorGoodsEndpoints.GoodsByEvent,
       params
     ).pipe(
       map(items => {
+        console.log(items);
         const data = items.data;
         return {
           ...items,
           data: data.map(item => {
             return {
               ...item,
-              fec_aprobacion_x_admon: format(
-                new Date(item.fec_aprobacion_x_admon),
-                'dd/MM/yyyy'
-              ),
-              fec_indica_usuario_aprobacion: format(
-                new Date(item.fec_indica_usuario_aprobacion),
-                'dd/MM/yyyy'
-              ),
+              cantidad: +(item.cantidad + ''),
+              fec_aprobacion_x_admon: formatForIsoDate(
+                item.fec_aprobacion_x_admon,
+                'string'
+              ) as string,
+              fec_indica_usuario_aprobacion: formatForIsoDate(
+                item.fec_indica_usuario_aprobacion,
+                'string'
+              ) as string,
+              agregado: 'AE',
             };
           }),
         };

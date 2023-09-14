@@ -1,0 +1,32 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Históricos</h5>
+  </div>
+  <div body>
+    <div class="row w100 d-flex justify-content-center">
+      <div class="row">
+        <div class="col">
+          <button
+            class="btn btn-primary btn-sm active mr4 mr-4"
+            (click)="goToHistorico()">
+            Histórico de Bienes
+          </button>
+        </div>
+        <div class="col">
+          <button
+            class="btn btn-primary btn-sm active mr4"
+            (click)="goToDelegation()">
+            Delegaciones
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row w100 d-flex justify-content-center mt-4">
+      <div class="col">
+        <button class="btn btn-danger btn-sm active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

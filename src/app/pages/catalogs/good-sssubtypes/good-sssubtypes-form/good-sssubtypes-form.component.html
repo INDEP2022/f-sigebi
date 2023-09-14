@@ -1,10 +1,17 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="goodSssubtypeForm">
       <div class="row">
+        <div class="col-md-8">
+          <form-field
+            [control]="goodSssubtypeForm.get('id')"
+            label="C&oacute;digo SubsubsubTipo">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
         <div class="col-md-12">
           <form-field
             [control]="goodSssubtypeForm.get('description')"
@@ -22,7 +29,7 @@
             label="Tipo"
             bindLabel="nameGoodType"
             value="id"
-            (change)="getSubtypes($event)">
+            (change)="getChangeSutype($event)">
           </ngx-select>
         </div>
         <div class="col-md-12">
@@ -33,7 +40,8 @@
             [data]="subTypes"
             label="Subtipo"
             bindLabel="nameSubtypeGood"
-            value="id">
+            value="id"
+            (change)="getChangeSsutype($event)">
             <label class="label">Subtipo</label>
           </ngx-select>
         </div>
@@ -43,44 +51,28 @@
             control="numSsubType"
             (fetchItems)="getSsubtypes($event)"
             [data]="ssubTypes"
-            label="Ssubtipo"
+            label="Subsubtipo"
             bindLabel="description"
             value="id">
           </ngx-select>
         </div>
 
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <form-field
             [control]="goodSssubtypeForm.get('numRegister')"
-            label="Estado">
+            label="No. Registro">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="numRegister" />
           </form-field>
-        </div>
+        </div> -->
 
-        <div class="col-md-4">
-          <form-field
-            [control]="goodSssubtypeForm.get('numClasifAlterna')"
-            label="ID Clasificaci&oacute;n alterna">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="numClasifAlterna" />
+        <!--<div class="col-md-4">
+          <form-field [control]="goodSssubtypeForm.get('numClasifAlterna')" label="Clasificaci&oacute;n alterna">
+            <input type="number" class="form-control" formControlName="numClasifAlterna" />
           </form-field>
-        </div>
-
-        <div class="col-md-4">
-          <form-field
-            [control]="goodSssubtypeForm.get('numClasifGoods')"
-            label="ID Clasificaci&oacute;n bien">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="numClasifGoods" />
-          </form-field>
-        </div>
+        </div>-->
       </div>
     </form>
   </div>

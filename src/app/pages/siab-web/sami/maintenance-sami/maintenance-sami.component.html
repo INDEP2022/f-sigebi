@@ -1,0 +1,32 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <div class="row w-100">
+      <div class="col-12 col-sm-12 col-md-8">
+        <h5 class="title">Mantenimiento</h5>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-12 md-tabs">
+        <tabset #staticTabs>
+          <tab heading="Bienes">
+            <app-maintenance-goods> </app-maintenance-goods>
+          </tab>
+          <tab heading="Programaciones">
+            <app-maintenance-programings></app-maintenance-programings>
+          </tab>
+          <tab heading="Fracción Arancelaria">
+            <app-maintenance-fraction></app-maintenance-fraction>
+          </tab>
+          <tab heading="Actualización Oficina Regional">
+            <app-maintenance-delegation></app-maintenance-delegation>
+          </tab>
+          <tab heading="Estatus Aclaración">
+            <app-maintenance-aclaration></app-maintenance-aclaration>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</app-card>

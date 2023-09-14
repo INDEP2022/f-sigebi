@@ -23,7 +23,7 @@ export class LockersModalComponent extends BasePage implements OnInit {
   lockerForm: ModelForm<ILocker>;
   locker: ILocker;
 
-  title: string = 'Casilleros';
+  title: string = 'Casillero';
   edit: boolean = false;
 
   cveSaveValues = new DefaultSelect();
@@ -49,14 +49,31 @@ export class LockersModalComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.lockerForm = this.fb.group({
       saveValueKey: [null, [Validators.pattern(STRING_PATTERN)]],
-      numBattery: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      numShelf: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      numBattery: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.min(0)],
+      ],
+      numShelf: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.min(0)],
+      ],
+      id: [null],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
-      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      status: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
       numRegister: [null, []],
     });
     if (this.locker != null) {
@@ -82,24 +99,46 @@ export class LockersModalComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    console.log(this.lockerForm.value);
-    this.lockersService.create(this.lockerForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (
+      this.lockerForm.controls['description'].value.trim() == '' ||
+      this.lockerForm.controls['status'].value.trim() == '' ||
+      (this.lockerForm.controls['description'].value.trim() == '' &&
+        this.lockerForm.controls['status'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      console.log(this.lockerForm.value);
+      this.lockersService.create(this.lockerForm.getRawValue()).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.lockersService.update(this.lockerForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (
+      this.lockerForm.controls['description'].value.trim() == '' ||
+      this.lockerForm.controls['status'].value.trim() == '' ||
+      (this.lockerForm.controls['description'].value.trim() == '' &&
+        this.lockerForm.controls['status'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.lockersService.update(this.lockerForm.getRawValue()).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+    }
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

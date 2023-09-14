@@ -12,6 +12,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { FileDataUpdateRoutingModule } from './file-data-update-routing.module';
 
 /** COMPONENTS IMPORTS */
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { FormSearchHandlerModule } from '../shared/form-search-handler/form-search-handler.module';
 import { FileDataUpdateComponent } from './file-data-update/file-data-update.component';
@@ -32,6 +33,7 @@ import { JuridicalRecordUpdateComponent } from './shared/juridical-record-update
     SharedModule,
     FormSearchHandlerModule,
     FormLoaderComponent,
+    TooltipModule,
   ],
   exports: [FileDataUpdateComponent, JuridicalRecordUpdateComponent],
 })

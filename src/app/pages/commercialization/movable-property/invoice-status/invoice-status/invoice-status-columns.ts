@@ -1,10 +1,10 @@
 export const INVOICE_STATUS_COLUMNS = {
   id: {
-    title: 'ID',
+    title: 'Id',
     type: 'string',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,

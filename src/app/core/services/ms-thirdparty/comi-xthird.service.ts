@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ThirdPartyEndpoints } from 'src/app/common/constants/endpoints/ms-third-party-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IComiXThird } from '../../models/ms-thirdparty/third-party.model';
 
@@ -34,5 +34,17 @@ export class ComiXThirdService extends HttpService {
 
   create(model: IComiXThird) {
     return this.post(ThirdPartyEndpoints.ComiXthird, model);
+  }
+
+  remove(id: string | number) {
+    const route = `${ThirdPartyEndpoints.ComiXthird}/id/${id}`;
+    return this.delete(route);
+  }
+
+  getAll_(params?: _Params): Observable<IListResponse<IComiXThird>> {
+    return this.get<IListResponse<IComiXThird>>(
+      ThirdPartyEndpoints.ThirdPartyGetAll,
+      params
+    );
   }
 }

@@ -66,7 +66,7 @@ export class CourtListComponent extends BasePage implements OnInit {
             filter.field == 'city'
               ? (field = `filter.${filter.field}.nameCity`)
               : (field = `filter.${filter.field}`);
-            filter.field == 'id'
+            filter.field == 'id' || filter.field == 'zipCode'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -75,6 +75,7 @@ export class CourtListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getCourts();
         }
       });
@@ -98,10 +99,9 @@ export class CourtListComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (
-        this.onLoadToast('error', error.error.message, ''),
-        (this.loading = false)
-      ),
+      error: error =>
+        //this.onLoadToast('error', error.error.message, ''),
+        (this.loading = false),
     });
   }
 
@@ -121,25 +121,34 @@ export class CourtListComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           if (response.data.length > 0) {
-            this.onLoadToast(
+            this.alert(
               'info',
-              'Juzgado con ciudades',
+              'Juzgado con Ciudades',
               'Debe eliminar primero las ciudades asignadas de dicho juzgado'
             );
           } else {
             this.alertQuestion(
               'warning',
               'Eliminar',
-              'Desea eliminar este registro?'
+              '¿Desea eliminar este registro?'
             ).then(question => {
               if (question.isConfirmed) {
                 this.courtService.remove(id).subscribe({
-                  next: () => (
-                    this.onLoadToast('success', 'Eliminado correctamente', ''),
-                    this.getCourts()
-                  ),
-                  error: err =>
-                    this.onLoadToast('error', err.error.message, ''),
+                  next: () => {
+                    this.alert(
+                      'success',
+                      'Registro de Juzgado',
+                      'Borrado Correctamente'
+                    );
+                    this.getCourts();
+                  },
+                  error: err => {
+                    this.alert(
+                      'warning',
+                      'Juzgado con Ciudades',
+                      'No se puede eliminar el objeto debido a una relación con otra tabla.'
+                    );
+                  },
                 });
               }
             });

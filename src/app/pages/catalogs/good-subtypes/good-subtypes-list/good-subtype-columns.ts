@@ -11,32 +11,40 @@ export const GOOD_SUBTYPES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  idTypeGood: {
+  typeGoodDetails: {
     title: 'Nombre Tipo',
     type: 'string',
+    sort: false,
     valuePrepareFunction: (goodType: IGoodType) => {
       return goodType.nameGoodType;
     },
-    sort: false,
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.nameGoodType;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   noPhotography: {
-    title: 'No. fotografías',
+    title: 'No. Fotografías',
     type: 'string',
     sort: false,
   },
   descriptionPhotography: {
-    title: 'Descripcion fotografía',
+    title: 'Descripción Fotografía',
     type: 'string',
     sort: false,
   },
-  noRegister: {
-    title: 'No. registro',
+  /*noRegister: {
+    title: 'No. Registro',
     type: 'number',
     sort: false,
   },
   version: {
-    title: 'Version',
+    title: 'Versión',
     type: 'number',
     sort: false,
-  },
+  },*/
 };

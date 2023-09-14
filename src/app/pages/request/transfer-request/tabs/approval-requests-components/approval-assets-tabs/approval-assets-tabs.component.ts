@@ -9,16 +9,14 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import {
-  FilterParams,
-  ListParams,
-} from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -76,12 +74,14 @@ export class ApprovalAssetsTabsComponent
     private readonly typeRelevantSevice: TypeRelevantService,
     private readonly route: ActivatedRoute,
     private readonly fb: FormBuilder,
-    private readonly goodDomicilieService: GoodDomiciliesService
+    private readonly goodDomicilieService: GoodDomiciliesService,
+    private readonly goodFinderService: GoodFinderService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: approval-assets-tabs');
     this.prepareForm();
     this.settings = {
       ...TABLE_SETTINGS,
@@ -217,11 +217,7 @@ export class ApprovalAssetsTabsComponent
       ],
       axesNumber: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(POSITVE_NUMBERS_PATTERN),
-          Validators.maxLength(5),
-        ],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
       ],
       engineNumber: [
         null,
@@ -394,130 +390,27 @@ export class ApprovalAssetsTabsComponent
     this.params.value.addFilter('requestId', requestId);
     this.params.value.addFilter('processStatus', 'SOLICITAR_APROBACION');
 
-    this.goodService.getAll(this.params.getValue().getParams()).subscribe({
-      next: async (resp: any) => {
-        const result = resp.data.map(async (item: any) => {
-          //obtener tipo bien
-          const goodType = await this.getGoodType(item.goodTypeId);
-          item['goodTypeName'] = goodType;
-          //obtener el estado fisico
-          const physicalStatus = await this.getPhysicalStatus(
-            item.physicalStatus
-          );
-          item['physicalStatusName'] = physicalStatus;
+    this.goodFinderService
+      .goodFinder(this.params.getValue().getParams())
+      .subscribe({
+        next: async (resp: any) => {
+          const result = resp.data.map(async (item: any) => {
+            const goodMenaje = await this.getMenaje(item.id);
+            item['goodMenaje'] = goodMenaje;
+          });
 
-          //obtener el estado de concervacion
-          const stateConservation = await this.getStateConservation(
-            item.stateConservation
-          );
-          item['stateConservationName'] = stateConservation;
-
-          //obtener el destino de la transferencia
-          const transferentDestiny = await this.getTransferDestiny(
-            item.transferentDestiny
-          );
-          item['transferentDestinyName'] = transferentDestiny;
-          const destiny = await this.getDestinyLigie(item.destiny);
-          item['destinyLigieName'] = destiny;
-
-          const goodMenaje = await this.getMenaje(item.id);
-          item['goodMenaje'] = goodMenaje;
-        });
-
-        Promise.all(result).then(x => {
-          this.totalItems = resp.count;
-          this.paragraphs = resp.data;
+          Promise.all(result).then(x => {
+            this.totalItems = resp.count;
+            this.paragraphs = resp.data;
+            this.loading = false;
+          });
+        },
+        error: error => {
           this.loading = false;
-        });
-      },
-      error: error => {
-        this.loading = false;
-        this.paragraphs = [];
-        this.onLoadToast('info', '', 'No se encontraron registros');
-      },
-    });
-  }
-
-  getGoodType(goodTypeId: number) {
-    return new Promise((resolve, reject) => {
-      if (goodTypeId !== null) {
-        this.typeRelevantSevice.getById(goodTypeId).subscribe({
-          next: (data: any) => {
-            resolve(data.description);
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
-  }
-
-  getPhysicalStatus(physicalState: any) {
-    return new Promise((resolve, reject) => {
-      if (physicalState !== null) {
-        var params = new ListParams();
-        params['filter.keyId'] = `$eq:${physicalState}`;
-        params['filter.name'] = `$eq:Estado Fisico`;
-        this.genericService.getAll(params).subscribe({
-          next: data => {
-            resolve(data.data[0].description);
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
-  }
-
-  getStateConservation(stateConcervation: any) {
-    return new Promise((resolve, reject) => {
-      if (stateConcervation !== null) {
-        var params = new ListParams();
-        params['filter.keyId'] = `$eq:${stateConcervation}`;
-        params['filter.name'] = `$eq:Estado Conservacion`;
-        this.genericService.getAll(params).subscribe({
-          next: data => {
-            resolve(data.data[0].description);
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
-  }
-
-  getDestinyLigie(id: any) {
-    return new Promise((resolve, reject) => {
-      if (id !== null) {
-        var params = new ListParams();
-        params['filter.keyId'] = `$eq:${id}`;
-        params['filter.name'] = `$eq:Destino`;
-        this.genericService.getAll(params).subscribe({
-          next: data => {
-            resolve(data.data.length > 0 ? data.data[0].description : '');
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
-  }
-
-  getTransferDestiny(transferentDestiny: any) {
-    return new Promise((resolve, reject) => {
-      if (transferentDestiny !== null) {
-        var params = new ListParams();
-        params['filter.keyId'] = `$eq:${transferentDestiny}`;
-        params['filter.name'] = `$eq:Destino`;
-        this.genericService.getAll(params).subscribe({
-          next: data => {
-            resolve(data.data[0].description);
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
+          this.onLoadToast('error', 'No se encontraron registros', '');
+          console.log('no se encontraron registros del bien ', error);
+        },
+      });
   }
 
   getMenaje(id: number) {

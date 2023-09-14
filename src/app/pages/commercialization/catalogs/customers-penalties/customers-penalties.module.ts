@@ -15,15 +15,23 @@ import { PenaltiesTypeSharedComponent } from 'src/app/@standalone/shared-forms/p
 //Routing
 import { CustomersPenaltiesRoutingModule } from './customers-penalties-routing.module';
 //Components
-import { AddPenaltiesComponent } from './add-penalties/add-penalties.component';
+import { CustomersPenaltiesExportAllComponent } from './customer-penalties-export-all/customer-penalties-export-all.component';
+import { CustomersPenaltiesExportHistoricComponent } from './customer-penalties-export-historic/customer-penalties-export-historic.component';
+import { CustomerPenaltiesModalComponent } from './customer-penalties-modal/customer-penalties-modal.component';
+import { CustomersPenalitiesFormComponent } from './customers-penalties/customers-penalities-form/customers-penalities-form.component';
 import { CustomersPenaltiesComponent } from './customers-penalties/customers-penalties.component';
+import { CustomersExportHistoryCustomersPenaltiesListComponent } from './customers-penalties/history-customers-penalties/customers-export-HistoryCustomersPenalties-list/cus-exp-HisCusPen.component';
 import { HistoryCustomersPenaltiesComponent } from './customers-penalties/history-customers-penalties/history-customers-penalties.component';
 
 @NgModule({
   declarations: [
     CustomersPenaltiesComponent,
-    AddPenaltiesComponent,
+    CustomerPenaltiesModalComponent,
+    CustomersPenaltiesExportAllComponent,
+    CustomersPenaltiesExportHistoricComponent,
     HistoryCustomersPenaltiesComponent,
+    CustomersExportHistoryCustomersPenaltiesListComponent,
+    CustomersPenalitiesFormComponent,
   ],
   imports: [
     CommonModule,

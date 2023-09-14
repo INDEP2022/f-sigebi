@@ -9,42 +9,50 @@
           <form-field
             [control]="typeRelevantForm.get('description')"
             label="Descripci&oacute;n">
-            <textarea
+            <input
               class="form-control"
               type="text"
-              rows="2"
-              formControlName="description"></textarea>
+              formControlName="description"
+              maxlength="255" />
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="pt-4 col-md-6">
           <form-field
             [control]="typeRelevantForm.get('version')"
             label="Versi&oacute;n">
             <input
               type="number"
               class="form-control"
-              formControlName="version" />
+              formControlName="version"
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="pt-4 col-md-6">
           <form-field
-            [control]="typeRelevantForm.get('noPhotography')"
-            label="N&uacute;mero fotograf&iacute;a">
+            [control]="typeRelevantForm.get('numberPhotography')"
+            label="N&uacute;mero Fotograf&iacute;a">
             <input
               type="number"
               class="form-control"
-              formControlName="noPhotography" />
+              formControlName="numberPhotography"
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="pt-4 col-md-12">
           <form-field
             [control]="typeRelevantForm.get('detailsPhotography')"
             label="Detalle">
-            <textarea
+            <input
               class="form-control"
               type="text"
-              rows="2"
-              formControlName="detailsPhotography"></textarea>
+              formControlName="detailsPhotography"
+              maxlength="255" />
           </form-field>
         </div>
       </div>

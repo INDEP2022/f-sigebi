@@ -48,13 +48,16 @@ export class DeductivesListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-            filter.field == 'contractNumber' ||
-            filter.field == 'weightedDeduction' ||
             filter.field == 'startingRankPercentage' ||
             filter.field == 'finalRankPercentage' ||
-            filter.field == 'status' ||
             filter.field == 'version'
-              ? (searchFilter = SearchFilter.EQ)
+              ? // filter.field == 'contractNumber' ||
+                // filter.field == 'weightedDeduction' ||
+                // filter.field == 'startingRankPercentage' ||
+                // filter.field == 'finalRankPercentage' ||
+                // filter.field == 'status' ||
+                // filter.field == 'version'
+                (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
@@ -62,6 +65,7 @@ export class DeductivesListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getDeductives();
         }
       });
@@ -103,7 +107,7 @@ export class DeductivesListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(deductive.id);
@@ -113,7 +117,17 @@ export class DeductivesListComponent extends BasePage implements OnInit {
 
   delete(id: number) {
     this.deductiveService.remove(id).subscribe({
-      next: () => this.getDeductives(),
+      next: () => {
+        this.getDeductives(),
+          this.alert('success', 'Deductiva', 'Borrado Correctamente');
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Sub-tipo',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

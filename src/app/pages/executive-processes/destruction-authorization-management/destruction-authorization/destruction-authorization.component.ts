@@ -1,12 +1,17 @@
-import { DatePipe } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
@@ -18,6 +23,7 @@ import {
   throwError,
 } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -32,14 +38,15 @@ import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceeding
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGoodService } from 'src/app/core/services/ms-dictation/dictation-x-good.service';
-import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
@@ -80,7 +87,7 @@ export class DestructionAuthorizationComponent
 
   $state = this.store.select(getDestructionAuth);
   state: IDestructionAuth;
-
+  modalRef: BsModalRef;
   params = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   params3 = new BehaviorSubject<ListParams>(new ListParams());
@@ -118,6 +125,7 @@ export class DestructionAuthorizationComponent
   loadingProceedings = false;
   loadingGoods = false;
   loadingGoodsByP = false;
+  goodsTrackerLoading = false;
   loadingDictation = false;
   loadingReport = false;
   loadingActReception = false;
@@ -157,6 +165,7 @@ export class DestructionAuthorizationComponent
   subdelegation: number = null;
   department: number = null;
   username: string = null;
+  refusedGoods: string[];
 
   @ViewChild('focusElement', { static: true })
   focusElement: ElementRef<HTMLInputElement>;
@@ -164,9 +173,12 @@ export class DestructionAuthorizationComponent
   @ViewChild('closeDate', { static: true })
   closeDate: ElementRef<HTMLInputElement>;
 
+  @ViewChild('modal', { static: true }) modal: TemplateRef<HTMLElement>;
+
   queryMode = false;
 
-  goodTrackerGoods: IDetailProceedingsDeliveryReception[] = [];
+  goodTrackerGoods: Partial<IDetailProceedingsDeliveryReception>[] = [];
+  selectedGoods: IDetailProceedingsDeliveryReception[] = [];
   get controls() {
     return this.proceedingForm.controls;
   }
@@ -176,8 +188,6 @@ export class DestructionAuthorizationComponent
     private modalService: BsModalService,
     private goodService: GoodService,
     private detailProceeDelRecService: DetailProceeDelRecService,
-    private datePipe: DatePipe,
-    private dictationService: DictationService,
     private dictationXGoodService: DictationXGoodService,
     private router: Router,
     private sanitizer: DomSanitizer,
@@ -187,7 +197,8 @@ export class DestructionAuthorizationComponent
     private segAccessXArea: SegAcessXAreasService,
     private authService: AuthService,
     private documentsService: DocumentsService,
-    private siabService: SiabService
+    private siabService: SiabService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
 
@@ -217,7 +228,19 @@ export class DestructionAuthorizationComponent
       //Bienes por actas
       ...this.settings,
       actions: false,
-      columns: { ...DETAIL_PROCEEDINGS_DELIVERY_RECEPTION },
+      columns: {
+        ...DETAIL_PROCEEDINGS_DELIVERY_RECEPTION,
+        selection: {
+          title: '',
+          sort: false,
+          type: 'custom',
+          valuePrepareFunction: (value: any, row: any) =>
+            this.isGoodSelected(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onSelectGood(instance),
+        },
+      },
     };
 
     this.settings3 = {
@@ -240,7 +263,117 @@ export class DestructionAuthorizationComponent
       actions: false,
       columns: { ...DICTATION_COLUMNS },
     };
-    console.log('constructor');
+  }
+
+  onSelectGood(instance: CheckboxElementComponent) {
+    if (this.controls.statusProceedings.value == 'CERRADA') {
+      instance.disabled = true;
+    }
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.selectGood(data.row, data.toggle),
+    });
+  }
+
+  deleteGood() {
+    const { id } = this.controls;
+    if (!this.controls.keysProceedings.value) {
+      this.alert(
+        'error',
+        'Error',
+        'Debe especificar/buscar la Solicitud para despues eliminar el bien de esta'
+      );
+      return;
+    }
+
+    if (this.controls.statusProceedings.value == 'CERRADA') {
+      this.alert(
+        'error',
+        'Error',
+        'La Solicitud ya esta cerrada, no puede realizar modificaciones a esta'
+      );
+      return;
+    }
+
+    if (this.selectedGoods.length == 0) {
+      this.alert(
+        'error',
+        'Error',
+        'Debe seleccionar un bien que forme parte de la Solicitud primero'
+      );
+      return;
+    }
+
+    const offlineGoods = this.selectedGoods.filter(
+      detail => !detail.numberProceedings
+    );
+    const onlineGoods = this.selectedGoods.filter(
+      detail => detail.numberProceedings != null
+    );
+    offlineGoods.forEach(detail => {
+      this.detailProceedingsList = this.detailProceedingsList.filter(
+        _d => _d.numberGood != detail.numberGood
+      );
+      this.selectedGoods = this.selectedGoods.filter(
+        _d => _d.numberGood != detail.numberGood
+      );
+      this.goodTrackerGoods = this.goodTrackerGoods.filter(
+        _d => _d.numberGood != detail.numberGood
+      );
+    });
+    if (onlineGoods.length == 0 && offlineGoods.length > 0) {
+      this.onLoadToast('success', 'Bienes eliminados del acta');
+    }
+    if (onlineGoods.length == 0) {
+      return;
+    }
+    this.loadingGoodsByP = true;
+    const $obs = onlineGoods.map(detail => this.deleteDetail(detail));
+    forkJoin($obs).subscribe({
+      next: () => {
+        this.loadingGoodsByP = false;
+
+        this.onLoadToast('success', 'Bienes eliminados del acta');
+
+        this.getProceedingGoods(id.value).subscribe();
+      },
+      error: () => {
+        this.loadingGoodsByP = false;
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrió un error al eliminar los bienes del acta'
+        );
+        this.getProceedingGoods(id.value).subscribe();
+      },
+    });
+  }
+
+  deleteDetail(detail: IDetailProceedingsDeliveryReception) {
+    return this.detailProceeDelRecService.remove(
+      detail.numberGood,
+      detail.numberProceedings
+    );
+  }
+
+  selectGood(good: IDetailProceedingsDeliveryReception, selected: boolean) {
+    if (selected) {
+      this.selectedGoods.push(good);
+    } else {
+      this.selectedGoods = this.selectedGoods.filter(
+        _detail => _detail.good.id != good.good.id
+      );
+    }
+  }
+
+  proceedingDetail(): any[] {
+    return [...this.detailProceedingsList, ...this.goodTrackerGoods];
+  }
+
+  isGoodSelected(detail: IDetailProceedingsDeliveryReception) {
+    const exists = this.selectedGoods.find(
+      _detail => _detail.good.id == detail.good.id
+    );
+    return exists ? true : false;
   }
 
   getUserInfo() {
@@ -267,12 +400,13 @@ export class DestructionAuthorizationComponent
   setState() {
     this.$state.pipe(takeUntil(this.$unSubscribe)).subscribe(state => {
       this.state = state;
-      const { form } = this.state;
+      const { form, trackerGoods } = this.state;
       this.proceedingForm.patchValue(form);
       const { id } = this.controls;
       if (!id.value) {
         return;
       }
+      this.goodTrackerGoods = trackerGoods;
       this.getProceedingGoods(id.value).subscribe();
     });
   }
@@ -290,6 +424,7 @@ export class DestructionAuthorizationComponent
         const destructionAuth: IDestructionAuth = {
           ...this.state,
           form: this.proceedingForm.value,
+          trackerGoods: this.goodTrackerGoods,
         };
         this.store.dispatch(SetDestructionAuth({ destructionAuth }));
       },
@@ -304,36 +439,81 @@ export class DestructionAuthorizationComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: global => {
+          this.setState();
           this.ngGlobal = global;
           if (this.ngGlobal.REL_BIENES) {
             this.insertDetailFromGoodsTracker();
           }
-          this.setState();
         },
       });
   }
 
-  insertDetailFromGoodsTracker() {
-    const mockGoods: any = [
-      {
-        numberGood: 4005331,
-        good: { id: 4005331, description: 'Bien de prueba' },
-        amount: 1,
-        expedient: 783558,
-        numberProceedings: null,
-        approved: 'NO',
-      },
-    ];
-    mockGoods.forEach((good: any) => {
-      // TODO: checar si el campo vendra asi en la respuesta
-      if (!this.controls.numFile.value) {
-        this.controls.numFile.setValue(good.expedient);
-      }
+  setExpedientNum(goodId: number | string) {
+    const params = new FilterParams();
+    params.addFilter('id', goodId);
+    this.goodService.getAllFilter(params.getParams()).subscribe(good => {
+      this.controls.numFile.setValue(good.data[0].fileNumber);
     });
-    this.goodTrackerGoods = mockGoods;
-    this.detailProceedingsList = [...mockGoods, ...this.detailProceedingsList];
-    console.log(this.detailProceedingsList);
-    this.getDictAndActs().subscribe();
+  }
+
+  insertDetailFromGoodsTracker() {
+    const body = {
+      keyAct: this.controls.keysProceedings.value,
+      statusAct: 'RGA',
+      goodNumber: this.ngGlobal.REL_BIENES,
+    };
+    this.goodsTrackerLoading = true;
+    this.massiveGoodService.goodTracker(body).subscribe({
+      next: response => {
+        const goods = response.bienes_aceptados.map(good => {
+          return {
+            numberGood: Number(good.goodNumber),
+            good: {
+              id: Number(good.goodNumber),
+              description: good.description,
+            },
+            amount: Number(good.amount),
+            numberProceedings: null,
+          };
+        });
+        if (
+          response.bienes_aceptados.length > 0 &&
+          !this.controls.numFile.value
+        ) {
+          this.setExpedientNum(response.bienes_aceptados[0].goodNumber);
+        }
+        this.goodTrackerGoods = [
+          ...new Set([...this.goodTrackerGoods, ...goods]),
+        ];
+        this.detailProceedingsList = [
+          ...this.goodTrackerGoods,
+          ...this.detailProceedingsList,
+        ];
+        this.refusedGoods = response.bienes_rechazados;
+        this.goodsTrackerLoading = false;
+        let message = `<p>Se ingresaron <b>${response.aceptados}</b> bienes</p>`;
+        if (response.rechazados > 0) {
+          message += `<p>Se rechazaron <b>${response.rechazados}</b> bienes</p>`;
+        }
+        this.alert('info', 'Info', null, message);
+
+        this.getDictAndActs().subscribe();
+        if (response.rechazados > 0) {
+          const modalConfig = {
+            ...MODAL_CONFIG,
+            class: 'modal-dialog-centered',
+          };
+          this.modalRef = this.modalService.show(this.modal, modalConfig);
+        }
+      },
+      error: () => {
+        this.goodsTrackerLoading = false;
+      },
+    });
+  }
+
+  hideRefusedGoods() {
+    this.modalRef.hide();
   }
 
   insertFromGoodsTracker() {
@@ -359,13 +539,14 @@ export class DestructionAuthorizationComponent
   }
 
   save() {
+    console.log(this.proceedingForm.value);
     if (!this.proceedingForm.valid) {
       this.onLoadToast('error', 'Error', 'El formulario es invalido');
       return;
     }
 
     if (!this.controls.numFile.value) {
-      this.onLoadToast('error', 'Error', 'Debe ingresar al menos un Bien');
+      this.onLoadToast('error', 'Error', 'Debe ingresar al menos un bien');
       return;
     }
 
@@ -398,6 +579,12 @@ export class DestructionAuthorizationComponent
       )
       .subscribe({
         next: proceeding => {
+          const destructionAuth: IDestructionAuth = {
+            ...this.state,
+            form: this.proceedingForm.value,
+            trackerGoods: [],
+          };
+          this.store.dispatch(SetDestructionAuth({ destructionAuth }));
           this.goodTrackerGoods = [];
           this.loading = false;
           this.proceedingForm.patchValue(proceeding);
@@ -440,6 +627,12 @@ export class DestructionAuthorizationComponent
       this.saveDetail(id.value),
     ]).subscribe({
       next: () => {
+        const destructionAuth: IDestructionAuth = {
+          ...this.state,
+          form: this.proceedingForm.value,
+          trackerGoods: [],
+        };
+        this.store.dispatch(SetDestructionAuth({ destructionAuth }));
         this.loading = false;
         this.goodTrackerGoods = [];
         this.onLoadToast('success', 'Acta actualizada correctamente');
@@ -657,16 +850,8 @@ export class DestructionAuthorizationComponent
   }
 
   getDictAndActs() {
-    console.log(this.goodTrackerGoods);
-    console.log(this.detailProceedingsList);
-    const trackerGoodNumbers = this.goodTrackerGoods.map(
-      detail => detail.good.id
-    );
-    const goodNumbers = this.detailProceedingsList.map(
-      detail => detail.good.id
-    );
+    const allGoods = this.detailProceedingsList.map(detail => detail.good.id);
 
-    const allGoods = [...trackerGoodNumbers, ...goodNumbers];
     return forkJoin([this.getDicts(allGoods), this.getActs(allGoods)]);
   }
 

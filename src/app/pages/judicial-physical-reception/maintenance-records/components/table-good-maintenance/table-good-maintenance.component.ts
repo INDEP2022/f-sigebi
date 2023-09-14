@@ -4,6 +4,7 @@ import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxDisabledElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-disabled-element';
 import { DatePickerComponent } from 'src/app/shared/render-components/date-picker/date-picker.component';
+import { firstFormatDateToSecondFormatDate } from 'src/app/shared/utils/date';
 
 @Component({
   selector: 'app-table-good-maintenance',
@@ -11,10 +12,13 @@ import { DatePickerComponent } from 'src/app/shared/render-components/date-picke
   styles: [],
 })
 export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
-  @Input() statusActa = 'CERRADA';
+  @Input() override loading = false;
+  statusActa = 'ABIERTA';
+  @Input() page: number;
   @Input() totalItems: number;
   @Input() data: IDetailProceedingsDeliveryReception[];
   @Output() updateData = new EventEmitter();
+  @Output() showDeleteAlert = new EventEmitter();
   @Output() updateRowEvent = new EventEmitter();
   @Output() rowsSelected = new EventEmitter();
   constructor(private service: ProceedingsDetailDeliveryReceptionService) {
@@ -23,6 +27,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
       ...this.settings,
       selectMode: 'multi',
       mode: 'inline',
+      actions: { ...this.settings.actions, position: 'left' },
       edit: {
         editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
         saveButtonContent:
@@ -31,9 +36,10 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           '<i class="fa fa-solid fa-ban text-danger mx-2"></i>',
         confirmSave: true,
       },
+
       columns: {
         numberGood: {
-          title: 'N° Bien',
+          title: 'No. Bien',
           sort: false,
           editable: false,
         },
@@ -48,7 +54,15 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           editable: false,
         },
         approvedDateXAdmon: {
-          title: 'Fec. Aprobación',
+          title: 'Fecha de Aprobación',
+          sort: false,
+          editor: {
+            type: 'custom',
+            component: DatePickerComponent,
+          },
+        },
+        dateIndicatesUserApproval: {
+          title: 'Fecha Indica Usuario Aprobación',
           sort: false,
           editor: {
             type: 'custom',
@@ -60,24 +74,18 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           sort: false,
           editable: false,
         },
-        dateIndicatesUserApproval: {
-          title: 'Fec. Indica Usuario Aprobación',
-          sort: false,
-          editor: {
-            type: 'custom',
-            component: DatePickerComponent,
-          },
-        },
         warehouse: {
           title: 'Almacén',
           sort: false,
+          editable: false,
         },
         vault: {
-          title: 'Boveda',
+          title: 'Bóveda',
           sort: false,
+          editable: false,
         },
         approvedXAdmon: {
-          title: 'Apr.',
+          title: 'Aprobado',
           sort: false,
           type: 'custom',
           renderComponent: CheckboxDisabledElementComponent,
@@ -87,7 +95,10 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           ) => {
             // DATA FROM HERE GOES TO renderComponent
             return {
-              checked: row.approvedXAdmon === 'S' ? true : false,
+              checked:
+                row.approvedXAdmon === 'S' || row.approvedXAdmon === true
+                  ? true
+                  : false,
               disabled: true,
             };
           },
@@ -97,7 +108,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           },
         },
         received: {
-          title: 'Rec.',
+          title: 'Recibido',
           sort: false,
           type: 'custom',
           editable: true,
@@ -107,7 +118,8 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           ) => {
             // DATA FROM HERE GOES TO renderComponent
             return {
-              checked: row.received === 'S' ? true : false,
+              checked:
+                row.received === 'S' || row.received === true ? true : false,
               disabled: true,
             };
           },
@@ -123,33 +135,51 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {}
 
-  updateRow(row: any) {
+  updateRow(event: {
+    newData: IDetailProceedingsDeliveryReception;
+    confirm: any;
+  }) {
     // console.log(row);
-    delete row.good;
-    delete row.description;
-    delete row.status;
-    row = {
-      ...row,
-      approvedXAdmon:
-        typeof row.approvedXAdmon == 'boolean'
-          ? row.approvedXAdmon === true
-            ? 'S'
-            : 'N'
-          : row.approvedXAdmon,
-      received:
-        typeof row.received == 'boolean'
-          ? row.received === true
-            ? 'S'
-            : 'N'
-          : row.received,
-    };
+    let { newData, confirm } = event;
 
-    this.service.update(row).subscribe({
-      next: response => {
-        this.updateRowEvent.emit();
-        this.onLoadToast('success', 'Bien actualizado', '');
-      },
-      error: err => {},
-    });
+    delete newData.good;
+    delete newData.description;
+    delete newData.status;
+    delete newData.warehouse;
+    delete newData.vault;
+    newData = {
+      ...newData,
+      approvedXAdmon:
+        typeof newData.approvedXAdmon == 'boolean'
+          ? newData.approvedXAdmon === true
+            ? 'S'
+            : 'N'
+          : newData.approvedXAdmon,
+      received:
+        typeof newData.received == 'boolean'
+          ? newData.received === true
+            ? 'S'
+            : 'N'
+          : newData.received,
+      approvedDateXAdmon: firstFormatDateToSecondFormatDate(
+        newData.approvedDateXAdmon + ''
+      ),
+      dateIndicatesUserApproval: firstFormatDateToSecondFormatDate(
+        newData.dateIndicatesUserApproval + ''
+      ),
+    };
+    if (!newData.createdLocal) {
+      this.service.update(newData).subscribe({
+        next: response => {
+          this.updateRowEvent.emit();
+          this.alert(
+            'success',
+            'Bien ' + newData.numberGood,
+            'Actualizado correctamente'
+          );
+        },
+        error: err => {},
+      });
+    }
   }
 }

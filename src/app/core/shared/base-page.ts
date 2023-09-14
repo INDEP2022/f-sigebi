@@ -1,58 +1,37 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, OnDestroy } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  OnDestroy,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { AES, enc } from 'crypto-js';
+import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { ToastrService } from 'ngx-toastr';
-import { filter, Subject, takeUntil, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  filter,
+  firstValueFrom,
+  Subject,
+  takeUntil,
+  tap,
+} from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { LoadingPercentService } from 'src/app/common/services/loading-percent.service';
 import { LoadingService } from 'src/app/common/services/loading.service';
 import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
-import Swal, {
-  SweetAlertIcon,
-  SweetAlertOptions,
-  SweetAlertPosition,
-  SweetAlertResult,
-} from 'sweetalert2';
-import { AlertsQueueService } from '../services/alerts/alerts-queue.service';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+import { SweetAlertIcon } from 'sweetalert2';
+import { ClassWidthAlert } from './alert-class';
 
-export class SweetalertModel implements SweetAlertOptions {
-  title: string;
-  text: string;
-  icon: SweetAlertIcon;
-  footer: string;
-  background: string;
-  showConfirmButton: boolean;
-  toast: boolean;
-  showCancelButton: boolean;
-  buttonsStyling: boolean;
-  focusConfirm: boolean;
-  focusCancel: boolean;
-  showCloseButton: boolean;
-  confirmButtonText: string;
-  cancelButtonText: string;
-  confirmButtonClass: string;
-  cancelButtonClass: string;
-  timer: number;
-  timerProgressBar: boolean;
-  position: SweetAlertPosition;
-  constructor() {
-    this.icon = 'success';
-    this.toast = false;
-    this.background = '';
-    this.showConfirmButton = false;
-    this.showCancelButton = false;
-    this.confirmButtonText = 'Aceptar';
-    this.cancelButtonText = 'Cancelar';
-    this.showCloseButton = false;
-    this.confirmButtonClass = 'btn btn-primary active btn-sm';
-    this.cancelButtonClass = 'btn btn-danger active btn-sm';
-    this.buttonsStyling = false;
-  }
-}
 interface TableSettings {
   selectMode: string;
   actions: any;
@@ -102,27 +81,37 @@ const TABLE_SETTINGS: TableSettings = {
     confirmDelete: true,
   },
   columns: {},
-  noDataMessage: 'No se encontrarón registros',
+  noDataMessage: 'No se encontraron registros',
   rowClassFunction: (row: any) => {},
 };
 @Component({
   template: '',
 })
-export abstract class BasePage implements OnDestroy {
+export abstract class BasePage
+  extends ClassWidthAlert
+  implements OnDestroy, AfterViewInit
+{
   loading: boolean = false;
   $unSubscribe = new Subject<void>();
   minMode: BsDatepickerViewMode = 'day';
   bsConfig?: Partial<BsDatepickerConfig>;
   settings = { ...TABLE_SETTINGS };
+  @ViewChildren(Ng2SmartTableComponent)
+  _tables: QueryList<Ng2SmartTableComponent>;
   private readonly key = 'Pru3b4Cr1pt0S1G3B1';
   private _showHide = inject(showHideErrorInterceptorService);
   private _activatedRoute = inject(ActivatedRoute);
   private _router = inject(Router);
   private _screenCode = inject(ScreenCodeService);
-  private _alertsService = inject(AlertsQueueService);
   protected loader = inject(LoadingService);
+  protected loaderProgress = inject(LoadingPercentService);
   protected _toastrService = inject(ToastrService);
+  private _store = inject(GlobalVarsService);
+  get _codeScreen() {
+    return this._screenCode.$id.getValue();
+  }
   constructor() {
+    super();
     this.bsConfig = {
       minMode: this.minMode,
       isAnimated: true,
@@ -141,8 +130,73 @@ export abstract class BasePage implements OnDestroy {
       )
       .subscribe();
   }
+  ngAfterViewInit(): void {
+    const screen = this._screenCode.$id.getValue();
+    this._getGlobalVars().then(global => {
+      if (screen != 'FCONGENBITACORA') {
+        this._store.updateGlobalVars({
+          ...global,
+          G_REGISTRO_BITACORA: null,
+        });
+      }
 
-  protected onLoadToast(icon: SweetAlertIcon, title: string, text?: string) {
+      this._tables.forEach(table => {
+        table.userRowSelect.subscribe(async row => {
+          if (!row) {
+            return;
+          }
+          const { isSelected, data } = row;
+
+          const global = await this._getGlobalVars();
+          if (screen == 'FCONGENBITACORA') {
+            return;
+          }
+          let G_REGISTRO_BITACORA: string | number = null;
+          if (isSelected) {
+            G_REGISTRO_BITACORA = this.getRegisterNum(data);
+          } else {
+            G_REGISTRO_BITACORA = null;
+          }
+          this._store.updateGlobalVars({
+            ...global,
+            G_REGISTRO_BITACORA,
+          });
+        });
+      });
+    });
+  }
+
+  private getRegisterNum(data: any) {
+    return (
+      data?.registerNumber ??
+      data?.noRegister ??
+      data?.iDoNotRegister ??
+      data?.registryNumber ??
+      data?.registrationNumber ??
+      data?.registryNum ??
+      data?.noRegistration ??
+      data?.numberRegister ??
+      data?.no_registro ??
+      data?.noRegistry ??
+      data?.noRegistro ??
+      data?.registerNo ??
+      data?.register_number ??
+      data?.numRegister ??
+      data?.registrationId ??
+      data?.notRecord ??
+      data?.recordNot ??
+      data?.numRegistre ??
+      data?.registerId ??
+      data?.numberRecord ??
+      data?.id ??
+      null
+    );
+  }
+
+  private _getGlobalVars() {
+    return firstValueFrom(this._store.getGlobalVars$());
+  }
+  protected toast(icon: SweetAlertIcon, title: string, text?: string) {
     const throwToast = {
       success: (title: string, text: string) =>
         this._toastrService.success(text, title),
@@ -158,41 +212,22 @@ export abstract class BasePage implements OnDestroy {
     return throwToast[icon](title, text);
   }
 
-  protected alert(icon: SweetAlertIcon, title: string, text: string) {
-    let sweetalert = new SweetalertModel();
-    sweetalert.title = title;
-    sweetalert.text = text;
-    sweetalert.icon = icon;
-    sweetalert.showConfirmButton = true;
-    this._alertsService.alerts.push(sweetalert);
-    this._alertsService.alertQueue.next(true);
-  }
-
-  protected alertInfo(icon: SweetAlertIcon, title: string, text: string) {
-    let sweetalert = new SweetalertModel();
-    sweetalert.title = title;
-    sweetalert.text = text;
-    sweetalert.icon = icon;
-    sweetalert.showConfirmButton = true;
-    return Swal.fire(sweetalert);
-  }
-
-  protected alertQuestion(
-    icon: SweetAlertIcon,
-    title: string,
-    text: string,
-    confirmButtonText?: string,
-    cancelButtonText: string = 'Cancelar'
-  ): Promise<SweetAlertResult> {
-    let sweetalert = new SweetalertModel();
-    sweetalert.title = title;
-    sweetalert.text = text;
-    sweetalert.icon = icon;
-    confirmButtonText ? (sweetalert.confirmButtonText = confirmButtonText) : '';
-    cancelButtonText ? (sweetalert.cancelButtonText = cancelButtonText) : '';
-    sweetalert.showConfirmButton = true;
-    sweetalert.showCancelButton = true;
-    return Swal.fire(sweetalert);
+  protected onLoadToast(icon: SweetAlertIcon, title: string, text?: string) {
+    this.alert(icon, title, text);
+    // ? Se ha reemplazado lost toast por sweet alert
+    // const throwToast = {
+    //   success: (title: string, text: string) =>
+    //     this._toastrService.success(text, title),
+    //   info: (title: string, text: string) =>
+    //     this._toastrService.info(text, title),
+    //   warning: (title: string, text: string) =>
+    //     this._toastrService.warning(text, title),
+    //   error: (title: string, text: string) =>
+    //     this._toastrService.error(text, title),
+    //   question: (title: string, text: string) =>
+    //     this._toastrService.info(text, title),
+    // };
+    // return throwToast[icon](title, text);
   }
 
   protected encodeData<T>(data: T) {
@@ -204,9 +239,31 @@ export abstract class BasePage implements OnDestroy {
     return value;
   }
 
+  protected returnParseDate(data: any) {
+    let fechaString = '';
+    // Obtener los componentes de la fecha
+    if (data !== '') {
+      const año = data.getFullYear().toString();
+      const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+      const dia = data.getDate().toString().padStart(2, '0');
+
+      // Crear la cadena de texto en formato "año mes día"
+      fechaString = `${año}-${mes}-${dia}`;
+    }
+    return fechaString;
+  }
+
   protected decodeData<T>(data: string): T {
     const value = AES.decrypt(data.trim(), this.key.trim()).toString(enc.Utf8);
     return JSON.parse(value);
+  }
+  protected pageFilter(params: BehaviorSubject<ListParams>) {
+    if (params.getValue().page > 1) {
+      const paramsP = params.getValue();
+      paramsP.page = 1;
+      params.next(paramsP);
+    }
+    return params;
   }
 
   hideError(show: boolean = false) {
@@ -235,5 +292,16 @@ export abstract class BasePage implements OnDestroy {
     if (error.status < 500) {
       this.alert('error', 'Error', message);
     }
+  }
+
+  protected _downloadExcelFromBase64(base64String: string, filename: string) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = `${filename ?? 'Descarga'}.xlsx`;
+    link.click();
+    link.remove();
+    this.alert('success', 'Archivo descargado correctamente', '');
   }
 }

@@ -163,14 +163,14 @@ export class ReturnAbandonmentMonitorComponent
         next: resp => {
           if (resp != null) {
             console.warn('=#####################################=');
-            console.warn(JSON.stringify(resp));
+
             this.form.get('goodDescription').setValue(resp.description);
             this.form.get('goodStatus').setValue(resp.goodStatus);
             this.form.get('typeGood').setValue(resp.goodCategory);
             this.form.get('notificationDate').setValue(resp.notifyDate);
             this.detailMonitorDev(resp.goodReferenceNumber, resp.notifyDate);
-            if (this.jsonNotificacion != null) {
-              console.log('this.detailMonitorDev');
+            if (this.jsonNotificacion.length > 0) {
+              console.error(JSON.stringify(this.jsonNotificacion));
               this.form
                 .get('notificationDate1')
                 .setValue(this.jsonNotificacion[0].notificationDate);
@@ -210,6 +210,10 @@ export class ReturnAbandonmentMonitorComponent
     this.getIterObjDates(num);
     this.notificationService.getNotificationxPropertyFilter(valores).subscribe({
       next: resp => {
+        console.log('detailMonitorDev => resp.data ');
+
+        console.log(JSON.stringify(resp.data));
+        console.log(JSON.stringify(valores));
         this.jsonNotificacion = resp.data;
       },
       error: err => {
@@ -293,14 +297,17 @@ export class ReturnAbandonmentMonitorComponent
     let blk_bie_di_max3: number;
     let blk_bie_di_max2: number;
     let blk_bie_di_max1: number;
-    let numero = objLocal.length;
+    console.warn('>======>>=>=>=>=>=>=>=>=>=>');
+    console.warn(objLocal.length);
+    console.warn(JSON.stringify(objLocal));
+    let numero: number;
     objLocal.forEach(element => {
       vn_fec_notif = new Date(element.notificationDate);
       vn_fec_term = new Date(element.periodEndDate);
       vn_sta_notif = element.statusNotified;
 
       if (vn_sta_notif == 'DE' || vn_sta_notif == 'SD') {
-        alert('vn_cuenta' + vn_cuenta);
+        // alert('vn_cuenta' + vn_cuenta);
         vn_cuenta = vn_cuenta + 1;
         if ((vn_cuenta = 1)) {
           if (vn_fec_term == null) {
@@ -328,7 +335,7 @@ export class ReturnAbandonmentMonitorComponent
           vn_fec_notif_old = vn_fec_notif;
           vn_fec_term_old = vn_fec_term;
         } else if ((vn_cuenta = 2)) {
-          alert('vn_cuenta' + vn_cuenta);
+          //alert('vn_cuenta' + vn_cuenta);
           if (
             vn_fec_term.getTime() -
               vn_fec_notif.getTime() +
@@ -423,22 +430,23 @@ export class ReturnAbandonmentMonitorComponent
         }
       } else {
         if (vn_cuenta > 0) {
-          alert('if (vn_cuenta > 0)' + vn_cuenta);
+          //  alert('if (vn_cuenta > 0)' + vn_cuenta);
           if (vn_fec_notif_new == null) {
             vn_fec_notif_new = vn_fec_notif;
           }
         }
       }
     });
-    if (numero == 1) {
+    //   alert("Registros =>  " + vn_cuenta);
+    if (vn_cuenta == 1) {
       this.form.get('currentDays').setValue(blk_bie_di_dias_corrientes);
       this.form.get('daysTerm').setValue(blk_bie_di_dias_plazo);
       this.form.get('daysExpiration').setValue(blk_bie_di_dias_sobregiro);
-    } else if (numero == 2) {
+    } else if (vn_cuenta == 2) {
       this.form.get('currentDays').setValue(blk_bie_di_dias_corrientes_2);
       this.form.get('daysTerm').setValue(blk_bie_di_dias_plazo_2);
       this.form.get('daysExpiration').setValue(blk_bie_di_dias_sobregiro_2);
-    } else if (numero == 3) {
+    } else if (vn_cuenta == 3) {
       this.form.get('currentDays').setValue(blk_bie_di_dias_corrientes_3);
       this.form.get('daysTerm').setValue(blk_bie_di_dias_plazo_3);
       this.form.get('daysExpiration').setValue(blk_bie_di_dias_sobregiro_3);

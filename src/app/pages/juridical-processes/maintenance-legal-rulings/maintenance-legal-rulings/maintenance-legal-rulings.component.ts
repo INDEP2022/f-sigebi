@@ -4,11 +4,11 @@ import { BehaviorSubject } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IUsrRelBitacora } from 'src/app/core/models/ms-audit/usr-rel-bitacora.model';
-import { ICopiesOfficialOpinion } from 'src/app/core/models/ms-dictation/copies-official-opinion.model';
+import { IDataCopiasOficio } from 'src/app/core/models/ms-dictation/copies-official-opinion.model';
 import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
-import { IDictationXGood1 } from 'src/app/core/models/ms-dictation/dictation-x-good1.model';
+import { IDataBienes } from 'src/app/core/models/ms-dictation/dictation-x-good1.model';
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
-import { IDocumentsDictumXStateM } from 'src/app/core/models/ms-documents/documents-dictum-x-state-m';
+import { IDataDocumentosBien } from 'src/app/core/models/ms-documents/documents-dictum-x-state-m';
 import { IJobDictumTexts } from 'src/app/core/models/ms-officemanagement/job-dictum-texts.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/catalogs/copies-official-opinion.service';
@@ -31,9 +31,9 @@ export class MaintenanceLegalRulingComponent
   public form: FormGroup;
   user: TokenInfoModel;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
-  dataDocumentDictumStateM: IDocumentsDictumXStateM[] = [];
-  dataDictationXGood1: IDictationXGood1[] = [];
-  dataCopiesOfficialOpinion: ICopiesOfficialOpinion[] = [];
+  dataDocumentDictumStateM: IDataDocumentosBien;
+  dataDictationXGood1: IDataBienes;
+  dataCopiesOfficialOpinion: IDataCopiasOficio;
   dataJobDictumTexts: IJobDictumTexts;
   dataOfficialDictation: IOfficialDictation;
   loading1: boolean = false;
@@ -59,7 +59,7 @@ export class MaintenanceLegalRulingComponent
   ngOnInit(): void {
     this.prepareForm();
     this.getUser();
-    this.loading = true;
+    // this.loading = true;
   }
 
   getUser() {
@@ -68,20 +68,21 @@ export class MaintenanceLegalRulingComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      justificacion: ['', Validators.required],
+      justificacion: ['', [Validators.required, Validators.maxLength(1000)]],
     });
   }
-
+  dictation: IDictation;
   rulingsData(value: IDictation) {
+    this.dictation = value;
     this.typeDict = value.typeDict;
     this.dictNumber = value.id;
     this.getDocumentsDictumStateM(value.id, value.typeDict);
     this.getCopiesOfficialOpinion(value.id, value.typeDict);
     this.getDictationXGood1(value.id, value.typeDict);
-    this.getJobDictumTexts(value.id, value.typeDict);
     this.getOfficialDictation(value.id, value.typeDict);
   }
 
+  /**@description OFICIO_DICTAMEN_TEXTOS */
   getJobDictumTexts(dictationNumber: number | string, typeDict: string) {
     if (!dictationNumber && !typeDict) {
       return;
@@ -89,7 +90,7 @@ export class MaintenanceLegalRulingComponent
 
     this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     let data = this.params.value;
-
+    let delegación;
     if (dictationNumber) {
       data.addFilter('dictatesNumber', dictationNumber);
     }
@@ -108,6 +109,7 @@ export class MaintenanceLegalRulingComponent
     });
   }
 
+  /**@description oficio_dictamen */
   getOfficialDictation(dictationNumber: number | string, typeDict: string) {
     if (!dictationNumber && !typeDict) {
       return;
@@ -127,6 +129,10 @@ export class MaintenanceLegalRulingComponent
     this.officialDictationService.getAll(data.getParams()).subscribe({
       next: data => {
         this.dataOfficialDictation = data.data[0];
+        this.getJobDictumTexts(
+          this.dataOfficialDictation.officialNumber,
+          this.dataOfficialDictation.typeDict
+        );
       },
       error: err => {
         this.dataOfficialDictation = null;
@@ -134,6 +140,7 @@ export class MaintenanceLegalRulingComponent
     });
   }
 
+  /**@description TABLE: documentos_dictamen_x_bien_m */
   getDocumentsDictumStateM(dictationNumber: number | string, typeDict: string) {
     if (!dictationNumber && !typeDict) {
       return;
@@ -154,15 +161,17 @@ export class MaintenanceLegalRulingComponent
 
     this.documentsDictumStatetMService.getAll(data.getParams()).subscribe({
       next: data => {
-        this.dataDocumentDictumStateM = data.data;
+        this.dataDocumentDictumStateM = data;
+        this.loading2 = false;
       },
-      error: err => {
-        this.dataDocumentDictumStateM = [];
+      error: () => {
+        this.dataDocumentDictumStateM = null;
         this.loading2 = false;
       },
     });
   }
 
+  /**@description TABLE: copias_oficio_dictamen */
   getCopiesOfficialOpinion(dictationNumber: number | string, typeDict: string) {
     if (!dictationNumber && !typeDict) {
       return;
@@ -183,15 +192,17 @@ export class MaintenanceLegalRulingComponent
 
     this.copiesOfficialOpinionService.getAll(data.getParams()).subscribe({
       next: data => {
-        this.dataCopiesOfficialOpinion = data.data;
+        this.dataCopiesOfficialOpinion = data;
+        this.loading3 = false;
       },
       error: err => {
-        this.dataCopiesOfficialOpinion = [];
+        this.dataCopiesOfficialOpinion = null;
         this.loading3 = false;
       },
     });
   }
 
+  /**@description TABLE: dictaminacion_x_bien1*/
   getDictationXGood1(dictationNumber: number | string, typeDict: string) {
     if (!dictationNumber && !typeDict) {
       return;
@@ -212,11 +223,11 @@ export class MaintenanceLegalRulingComponent
 
     this.dictationXGood1Service.getAll(data.getParams()).subscribe({
       next: data => {
-        this.dataDictationXGood1 = data.data;
-        console.log(data.data);
+        this.dataDictationXGood1 = data;
+        this.loading1 = false;
       },
       error: err => {
-        this.dataDictationXGood1 = [];
+        this.dataDictationXGood1 = null;
         this.loading1 = false;
       },
     });
@@ -247,19 +258,24 @@ export class MaintenanceLegalRulingComponent
       this.alert('info', 'Es necesario ingresar la justificación.', '');
     }
     console.log(this.user);
-    const req: IUsrRelBitacora = {
-      observed: this.form.get('justificacion').value,
+    const req: Partial<IUsrRelBitacora> = {
+      sessionId: null, //api dice que es tipo number, pendiente validar, se le preguntó a Marcelo. Henry me confirma que envíe null temporalmente.
+      sidId: null, //api dice que es tipo number, pendiente validar, se le preguntó a Marcelo.Henry me confirma que envíe null temporalmente.
+      user: this.user.name.toUpperCase(),
+      userrequired: this.user.name.toUpperCase(),
+      observed: this.form.get('justificacion').value.toUpperCase(),
       observedDate: new Date(),
-      // sessionId: this.user.session_state,
-      detiUser: 'USER',
-      sidId: this.user.sid,
-      user: this.user.name,
-      userrequired: 'USER',
+      detiUser: this.user.name.toUpperCase(),
     };
 
-    this.usrRelLogService.create(req).subscribe({
+    console.log('Body para justificacion: ', req);
+    this.loading = true;
+
+    this.usrRelLogService.create(req as any).subscribe({
       next: data => {
         this.alert('success', 'Se ha creado la bitácora correctamente.', '');
+        this.loading = false;
+        this.form.reset();
       },
       error: err => {
         this.loading = false;

@@ -21,7 +21,7 @@ export const PROCESS_COLUMNS = {
     },
   },
   relayStrategy: {
-    title: 'Requiere Est. Admon.',
+    title: 'Requiere Est. Admon',
     sort: false,
     valuePrepareFunction: (value: string) => {
       if (value === 'N') {

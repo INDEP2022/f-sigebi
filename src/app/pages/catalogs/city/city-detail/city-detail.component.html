@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="cityForm">
@@ -20,41 +20,49 @@
             <ngx-select
               [searchOnInit]="true"
               [form]="cityForm"
-              control="state"
               [data]="states"
+              (fetchItems)="getStates($event)"
+              (change)="selectState($event)"
+              control="state"
               value="id"
               bindLabel="descCondition"
-              label="Estado"
-              (fetchItems)="getStates($event)">
+              label="Entidad Federativa">
             </ngx-select>
           </form-field>
         </div>
       </div>
       <div class="row mt-4">
         <div class="col-md-4">
-          <form-field
-            [control]="cityForm.get('noDelegation')"
-            label="Delegací&oacute;n">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="noDelegation" />
+          <form-field [control]="cityForm.get('noDelegation')">
+            <ngx-select
+              [form]="cityForm"
+              control="noDelegation"
+              [data]="delegations"
+              value="id"
+              bindLabel="description"
+              label="Delegací&oacute;n"
+              (fetchItems)="getDelegations($event)"
+              (change)="selectDelegation($event)">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="cityForm.get('noSubDelegation')"
-            label="Subdelegaci&oacute;n">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="noSubDelegation" />
+          <form-field [control]="cityForm.get('noSubDelegation')">
+            <ngx-select
+              [form]="cityForm"
+              control="noSubDelegation"
+              [data]="subDelegations"
+              value="id"
+              bindLabel="description"
+              label="Subdelegaci&oacute;n"
+              (fetchItems)="getSubDelegations($event)">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
             [control]="cityForm.get('legendOffice')"
-            label="Leyenda de oficio">
+            label="Leyenda de Oficio">
             <input
               type="text"
               class="form-control"
@@ -70,7 +78,6 @@
       <div class="m-3">
         <confirm-button
           [disabled]="!cityForm.valid"
-          [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

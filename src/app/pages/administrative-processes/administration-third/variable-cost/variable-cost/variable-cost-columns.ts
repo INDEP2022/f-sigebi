@@ -1,5 +1,5 @@
 export const VARIABLECOST_COLUMNS = {
-  number: {
+  registryNumber: {
     title: 'Número',
     width: '10%',
     sort: false,

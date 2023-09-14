@@ -1,12 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 //Components
-import { ExpenseConceptsListComponent } from './expense-concepts-list/expense-concepts-list.component';
+import { ExpenseConceptsComponent } from './expense-concepts/expense-concepts.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: ExpenseConceptsListComponent,
+    component: ExpenseConceptsComponent,
+  },
+  {
+    path: ':id',
+    component: ExpenseConceptsComponent,
   },
 ];
 

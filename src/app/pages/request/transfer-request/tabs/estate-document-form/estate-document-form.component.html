@@ -5,7 +5,7 @@
       (click)="showSearchForm = true"
       *ngIf="!showSearchForm">
       <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
-      bienes</a
+      Bienes</a
     >
   </p>
 
@@ -15,7 +15,7 @@
       (click)="showSearchForm = false"
       *ngIf="showSearchForm">
       <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
-      bienes</a
+      Bienes</a
     >
   </p>
 </h5>
@@ -25,7 +25,7 @@
       <div class="col-md-6">
         <form-field
           [control]="searchForm.get('goodId')"
-          label="N&uacute;mero de gesti&oacute;n">
+          label="N&uacute;mero de Gesti&oacute;n">
           <input
             type="number"
             class="form-control"
@@ -53,7 +53,7 @@
       <div class="col-md-6">
         <form-field
           [control]="searchForm.get('requestId')"
-          label="N&uacute;mero de solicitud">
+          label="N&uacute;mero de Solicitud">
           <input
             type="number"
             class="form-control"
@@ -65,7 +65,7 @@
       <div class="col-md-6">
         <form-field
           [control]="searchForm.get('goodDescription')"
-          label="Descripci&oacute;n de bien transferente">
+          label="Descripci&oacute;n de Bien Transferente">
           <input
             type="text"
             class="form-control"
@@ -78,24 +78,30 @@
 
 <div class="form-inline justify-content-end btn-toolbar">
   <button class="btn btn-primary btn-sm active" (click)="search()">
-    <i class="fa fa-search"></i> Buscar
+    Buscar <i class="fa fa-search"></i>
   </button>
 
   <button class="btn btn-danger btn-sm active" (click)="clean()">
-    Limpiar
+    Limpiar <i class="fas fa-eraser"> </i>
   </button>
 </div>
 
 <div class="row">
-  <div class="btn-toolbar pt-5">
-    <app-columns-select [(settings)]="settings"></app-columns-select>
-    <button
-      (click)="showDocsEstValidate()"
-      class="btn btn-primary btn-sm active">
-      <i class="fa fa-file-archive"></i> Ver documentos
-    </button>
+  <div class="d-flex btn-toolbar pt-5">
+    <div class="mr-auto p-2"></div>
+    <div class="p-2">
+      <button
+        (click)="showDocsEstValidate()"
+        class="btn btn-primary btn-sm active">
+        Ver Documentos <i class="fa fa-eye" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="p-2">
+      <app-columns-select
+        [leftList]="true"
+        [(settings)]="settings"></app-columns-select>
+    </div>
   </div>
-
   <div class="row pt-4">
     <div [class]="loading ? 'table-loading' : ''">
       <ng2-smart-table

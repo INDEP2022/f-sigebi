@@ -1,0 +1,63 @@
+<app-modal *ngIf="!plain">
+  <div class="w-100" header>
+    <div class="d-flex flex-wrap justify-content-between aling-items-center">
+      <h5 class="modal-title">Lista de datos</h5>
+      <div class="buttons">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div body>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <form-loader *ngIf="loading"></form-loader>
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
+            [settings]="settings"
+            [source]="data"
+            (edit)="formData($event.data)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+      </div>
+    </div>
+    <app-pagination [params]="paramsList" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-modal>
+
+<ng-container *ngIf="plain">
+  <div class="row pt-4">
+    <div class="col-md-8 mt-3 mb-3">
+      <h6>Ejemplo de Bot&oacute;n de columnas al final</h6>
+    </div>
+    <div class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+      <app-columns-select
+        [(settings)]="settings"
+        [leftList]="true"></app-columns-select>
+    </div>
+    <div class="col-md-12">
+      <form-loader *ngIf="loading"></form-loader>
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{ height: loading ? '0px' : '300px' }">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
+          class="table-responsive"
+          [settings]="settings"
+          [source]="data"
+          (edit)="formData($event.data)">
+        </ng2-smart-table>
+      </ng-scrollbar>
+    </div>
+  </div>
+  <app-pagination [params]="paramsList" [totalItems]="totalItems">
+  </app-pagination>
+</ng-container>

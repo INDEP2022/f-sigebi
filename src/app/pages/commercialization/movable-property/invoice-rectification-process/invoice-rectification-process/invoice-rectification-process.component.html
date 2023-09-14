@@ -5,81 +5,113 @@
     </div>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <div class="d-flex justify-content-end">
+      <div class="d-inline">
+        <confirm-button
+          text="Buscar"
+          loadingText="Buscando"
+          icon="bx bx-search-alt"
+          class="mr-3"
+          [btnSmall]="true"
+          [loading]="loadingSearch"
+          (confirm)="searchData()"></confirm-button>
+        <button
+          type="button"
+          class="btn btn-info btn-sm active mr-3"
+          (click)="newData()">
+          Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+        </button>
+        <!-- <button class="btn btn-danger btn-sm active" (click)="cleanData()">
+          Limpiar <i class="fas fa-eraser"> </i>
+        </button> -->
+      </div>
+    </div>
+    <form class="form-material mt-5" [formGroup]="form">
       <div class="row">
-        <div class="col-md-2">
-          <form-field label="No. Oficio" [control]="form.get('idOficio')">
+        <div class="col-md-3 mt-3">
+          <form-field label="No. Oficio" [control]="form.get('jobNot')">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="idOficio" />
+              formControlName="jobNot"
+              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)"
+              (blur)="getFirmantes()" />
           </form-field>
         </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('ExpDate')" label="Fecha expedición">
+        <div class="col-md-3 mt-3">
+          <form-field [control]="form.get('expDate')" label="Fecha Expedición">
             <input
               type="text"
-              placeholder=""
               class="form-control"
               bsDatepicker
-              formControlName="ExpDate"
-              [bsConfig]="{ isAnimated: true }" />
+              formControlName="expDate"
+              [bsConfig]="{ isAnimated: true }"
+              (ngModelChange)="setYear($event)" />
           </form-field>
         </div>
-        <div class="col-md-1">
-          <form-field label="Serie" [control]="form.get('serie')">
-            <input type="text" class="form-control" formControlName="serie" />
+        <div class="col-md-3 mt-3">
+          <form-field label="Serie" [control]="form.get('series')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="series"
+              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2)"
+              (blur)="postChangeFolio()" />
           </form-field>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-3 mt-3">
           <form-field
-            label="Folio de la factura"
-            [control]="form.get('invoiceFolio')">
+            label="Folio de la Factura"
+            [control]="form.get('Invoice')">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="invoiceFolio" />
+              formControlName="Invoice"
+              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)"
+              (blur)="postChangeFolio()" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4 mt-3">
           <form-field label="Nombre" [control]="form.get('name')">
-            <input type="text" class="form-control" formControlName="name" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field label="Apellido Paterno" [control]="form.get('lastName')">
             <input
               type="text"
               class="form-control"
-              formControlName="lastName" />
+              formControlName="name"
+              oninput="if(this.value.length > 100) this.value = this.value.slice(0, 100)" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4 mt-3">
+          <form-field
+            label="Apellido Paterno"
+            [control]="form.get('lastnamePat')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="lastnamePat"
+              oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
+          </form-field>
+        </div>
+        <div class="col-md-4 mt-3">
           <form-field
             label="Apellido Materno"
-            [control]="form.get('motherlastName')">
+            [control]="form.get('lastnameMat')">
             <input
               type="text"
               class="form-control"
-              formControlName="motherlastName" />
+              formControlName="lastnameMat"
+              oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-6">
-          <app-user-shared
-            [form]="form"
-            [userField]="'agent'"
-            [label]="'Representante'"></app-user-shared>
-        </div>
-
-        <div class="col-md-2">
-          <button
-            type="button"
-            class="btn-sm btn-primary active"
-            (click)="openModal()">
-            Imagen nueva
-          </button>
+        <div class="col-md-6 mt-3">
+          <form-field
+            label="Representante"
+            [control]="form.get('inrepresentation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="inrepresentation"
+              oninput="if(this.value.length > 60) this.value = this.value.slice(0, 60)" />
+          </form-field>
         </div>
       </div>
       <hr />
@@ -87,91 +119,183 @@
         <h5 class="title">Datos de Atenci&oacute;n a clientes:</h5>
       </div>
       <div class="row pt-5">
-        <div class="col-md-2">
-          <form-field label="Folio" [control]="form.get('idInvoice')">
+        <div class="col-md-3 mt-3">
+          <form-field label="Folio" [control]="form.get('InvoiceAttention')">
             <input
               type="text"
               class="form-control"
-              formControlName="idInvoice" />
+              formControlName="InvoiceAttention"
+              oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('time')" label="Fecha expedición">
+        <div class="col-md-4 mt-3">
+          <form-field [control]="form.get('attentionDate')" label="Fecha">
             <input
               type="text"
-              placeholder=""
               class="form-control"
               bsDatepicker
-              formControlName="time"
-              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY, h:mm:ss a' }" />
+              formControlName="attentionDate"
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+              (ngModelChange)="setParaghrapAll($event)" />
           </form-field>
         </div>
-        <div class="col-md-6">
-          <form-field
-            label="Introducción (Parrafo 1)"
-            [control]="form.get('paragraph1')">
-            <textarea
+        <div class="col-md-4 mt-3">
+          <form-field [control]="form.get('hourAttention')" label="Hora">
+            <input
+              type="text"
               class="form-control"
-              formControlName="paragraph1"></textarea>
+              bsDatepicker
+              formControlName="hourAttention"
+              [bsConfig]="{
+                withTimepicker: true,
+                dateInputFormat: 'DD/MM/YYYY h:mm a',
+                keepDatepickerOpened: true
+              }" />
+            <!--keepDatepickerOpened: true,-->
+          </form-field>
+        </div>
+        <div class="col-md-12 mt-3">
+          <form-field label="Párrafo 1" [control]="form.get('paragraph1')">
+            <textarea
+              rows="4"
+              class="form-control pt-2"
+              formControlName="paragraph1"
+              oninput="if(this.value.length > 800) this.value = this.value.slice(0, 800)"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-12 mt-3">
+          <form-field
+            label="Documentos Presentados"
+            [control]="form.get('documentspresented')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="documentspresented"
+              oninput="if(this.value.length > 300) this.value = this.value.slice(0, 300)" />
+          </form-field>
+        </div>
+        <div class="col-md-12 mt-3">
+          <form-field label="Párrafo 3" [control]="form.get('paragraph3')">
+            <textarea
+              rows="4"
+              class="form-control pt-2"
+              formControlName="paragraph3"
+              oninput="if(this.value.length > 100) this.value = this.value.slice(0, 100)"></textarea>
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
-        <div class="col-md-6">
-          <form-field
-            label="Documentos Presentados (Parrafo 2)"
-            [control]="form.get('paragraph2')">
-            <textarea
-              class="form-control"
-              formControlName="paragraph2"></textarea>
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field label="Parrafo 3" [control]="form.get('paragraph3')">
-            <textarea
-              class="form-control"
-              formControlName="paragraph3"></textarea>
-          </form-field>
+    </form>
+    <div class="row">
+      <div class="d-flex justify-content-end">
+        <div class="d-inline">
+          <button
+            type="button"
+            class="btn btn-info btn-sm active mb-3"
+            (click)="openModalSeparate()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
-      <div class="row pt-5">
+      <form-loader *ngIf="loading"></form-loader>
+      <div>
+        <ng2-smart-table
+          [ngStyle]="{ height: loading ? '0px' : 'auto' }"
+          [attr.class]="'table-bordered table-responsive mb-4'"
+          [settings]="settings"
+          [source]="dataFilter"
+          (edit)="openModalSeparate($event.data)"
+          (delete)="remove($event.data)">
+        </ng2-smart-table>
+      </div>
+      <app-pagination
+        [params]="paramsList"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <form class="form-material mt-5" [formGroup]="form">
+      <div class="row">
         <div class="col-md-12">
-          <form-field
-            label="Tabla con correciones (Parrafo 4)"
-            [control]="form.get('paragraph4')">
+          <form-field label="Párrafo 4" [control]="form.get('paragraph4')">
             <textarea
-              class="form-control"
-              formControlName="paragraph4"></textarea>
+              rows="4"
+              class="form-control pt-2"
+              formControlName="paragraph4"
+              oninput="if(this.value.length > 600) this.value = this.value.slice(0, 600)"></textarea>
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-12">
-          <form-field label="Parrafo 5" [control]="form.get('paragraph5')">
-            <textarea
-              class="form-control"
-              formControlName="paragraph5"></textarea>
+        <div class="col-md-4 mt-3">
+          <form-field [control]="form.get('elaborates')">
+            <ngx-select
+              [data]="dataElabora"
+              [searchOnInit]="true"
+              (fetchItems)="getParamElabora($event)"
+              [form]="form"
+              value="value"
+              bindLabel="value"
+              label="Elabora"
+              [control]="'elaborates'"
+              [searchable]="false"
+              [labelTemplate]="elb"
+              [optionTemplate]="elbd">
+            </ngx-select>
+            <ng-template #elb let-item="item">
+              {{ item.value }}
+            </ng-template>
+            <ng-template #elbd let-item="item">
+              <div [title]="item.value">
+                {{ item.value }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
-        <div class="row pt-5">
-          <div class="col-md-4">
-            <app-user-shared
+        <div class="col-md-4 mt-3">
+          <form-field [control]="form.get('check')">
+            <ngx-select
+              [data]="dataVerifica"
+              [searchOnInit]="true"
+              (fetchItems)="getParamVerifica($event)"
               [form]="form"
-              [userField]="'idCapture'"
-              [label]="'Elabora'"></app-user-shared>
-          </div>
-          <div class="col-md-4">
-            <app-user-shared
+              value="value"
+              bindLabel="value"
+              label="Verifica"
+              [control]="'check'"
+              [searchable]="false"
+              [labelTemplate]="verf"
+              [optionTemplate]="verfd">
+            </ngx-select>
+            <ng-template #verf let-item="item">
+              {{ item.value }}
+            </ng-template>
+            <ng-template #verfd let-item="item">
+              <div [title]="item.value">
+                {{ item.value }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <div class="col-md-4 mt-3">
+          <form-field [control]="form.get('issues')">
+            <ngx-select
+              [data]="dataExpide"
+              [searchOnInit]="true"
+              (fetchItems)="getParamExpide($event)"
               [form]="form"
-              [userField]="'idAuth'"
-              [label]="'Verifica'"></app-user-shared>
-          </div>
-          <div class="col-md-4">
-            <app-user-shared
-              [form]="form"
-              [userField]="'idSol'"
-              [label]="'Expide'"></app-user-shared>
-          </div>
+              value="value"
+              bindLabel="value"
+              label="Expide"
+              [control]="'issues'"
+              [searchable]="false"
+              [labelTemplate]="exp"
+              [optionTemplate]="expd">
+            </ngx-select>
+            <ng-template #exp let-item="item">
+              {{ item.value }}
+            </ng-template>
+            <ng-template #expd let-item="item">
+              <div [title]="item.value">
+                {{ item.value }}
+              </div>
+            </ng-template>
+          </form-field>
         </div>
       </div>
     </form>
@@ -179,13 +303,20 @@
   <div footer>
     <div class="ch-content">
       <h5 class="title"></h5>
-      <div class="col-md-5 buttons">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active ml-3"
-          (click)="openPrevPdf()">
-          Reporte
-        </button>
+      <div class="col-md-12 d-flex justify-content-center text-center buttons">
+        <confirm-button
+          [disabled]="!form.valid"
+          [btnSmall]="true"
+          [loading]="loading"
+          (confirm)="saveData()"></confirm-button>
+        <div class="d-inline">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active ml-3"
+            (click)="openPrevPdf()">
+            Reporte <i class="fa fa-file"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>

@@ -13,7 +13,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
-import { IAppointmentDepositary } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
+import { IDepositaryAppointments } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import {
   IPaymentsGensDepositary,
   IRefPayDepositary,
@@ -22,11 +22,14 @@ import {
   ITotalIvaPaymentsGens,
 } from 'src/app/core/models/ms-depositarypayment/ms-depositarypayment.interface';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { PersonService } from 'src/app/core/services/catalogs/person.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { QueryRelatedPaymentsService } from '../services/query-related-payments.service';
 import {
   PAY_BANK_COLUMNS,
@@ -85,7 +88,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
   loadingTableReceivedPays: boolean = false;
   // Data
   sendSirsae: ISendSirSaeBody;
-  depositaryAppointment: IAppointmentDepositary;
+  depositaryAppointment: IDepositaryAppointments;
   good: IGood;
   payIdSelected: IRefPayDepositary;
   // Loading
@@ -97,11 +100,16 @@ export class QueryRelatedPaymentsDepositoriesComponent
   totalItemsSirsae: number = 0;
   currentItemSirsae: number = 0;
   currentPageSirsae: number = 0;
+  errorSirSae: number = 0;
   // Errores de Sirsae
   errorsSirsae: any[] = [];
   screenKey: string = 'FCONDEPODISPAGOS';
   origin: string = null;
   noBienParams: number = null;
+
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  goods = new DefaultSelect<IGood>();
+  goodSelect: IGood;
 
   constructor(
     private fb: FormBuilder,
@@ -109,7 +117,9 @@ export class QueryRelatedPaymentsDepositoriesComponent
     private datePipe: DatePipe,
     private excelService: ExcelService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private personService: PersonService,
+    private service: GoodFinderService
   ) {
     super();
   }
@@ -133,9 +143,12 @@ export class QueryRelatedPaymentsDepositoriesComponent
       if (!isNaN(Number(id))) {
         this.noBienReadOnly = Number(id);
         this.form.get('noBien').setValue(this.noBienReadOnly);
-        this.validGoodNumberInDepositaryAppointment();
+        // this.validGoodNumberInDepositaryAppointment();
+        let param = new ListParams();
+        param.text = this.form.value.noBien;
+        this.getGoodsSheard(param, true);
       } else {
-        this.alert('warning', 'Número de Bien', ERROR_GOOD_PARAM);
+        this.alert('warning', 'No. de bien', ERROR_GOOD_PARAM);
       }
     }
     // Pagos Bancos
@@ -183,7 +196,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
   private prepareForm() {
     this.form = this.fb.group({
       noBien: [
-        { value: '', disabled: false },
+        { value: null, disabled: false },
         [
           Validators.required,
           Validators.maxLength(11),
@@ -214,14 +227,18 @@ export class QueryRelatedPaymentsDepositoriesComponent
     this.formBienDetalle = this.fb.group({
       idBien: [
         { value: '', disabled: false },
-        [Validators.required, Validators.maxLength(11)],
+        [Validators.maxLength(11), Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ], //*
       descripcion: [
         { value: '', disabled: false },
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1250)],
       ], //*
       cantidad: [{ value: '', disabled: false }, [Validators.maxLength(21)]], //*
-      estatus: [{ value: '', disabled: false }, [Validators.maxLength(300)]], //*
+      estatus: [{ value: '', disabled: false }, [Validators.maxLength(3)]], //*
+      estatusDescription: [
+        { value: '', disabled: false },
+        [Validators.maxLength(300)],
+      ], //*
     });
   }
 
@@ -232,8 +249,8 @@ export class QueryRelatedPaymentsDepositoriesComponent
       if (!this.noBienReadOnly) {
         this.alert(
           'warning',
-          'Carga la Información del Bien primero para Continuar',
-          ''
+          'No. de bien',
+          'Carga la información del bien primero para continuar'
         );
         return;
       }
@@ -253,13 +270,17 @@ export class QueryRelatedPaymentsDepositoriesComponent
             this.loadingGoodAccount = false;
             this.alert(
               'warning',
-              'Número de Bien',
-              NOT_FOUND_GOOD(err.error.message)
+              'No. de bien',
+              NOT_FOUND_GOOD(
+                err.error.message && err.status != 400
+                  ? err.error.message
+                  : 'Error en el servidor'
+              )
             );
           },
         });
     } else {
-      this.alert('warning', 'Número de Bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -287,42 +308,53 @@ export class QueryRelatedPaymentsDepositoriesComponent
     this.sendSirsaeGetPayDepositories();
   }
 
+  closeSendSirsae() {
+    this.startSirsaeValues();
+    this.loadingSirsaeProcess = false;
+  }
+
   startSirsaeValues() {
     this.errorsSirsae = [];
     this.loadingSirsaeProcess = true;
     this.totalItemsSirsae = 0;
     this.currentItemSirsae = 0;
     this.currentPageSirsae = 1;
+    this.errorSirSae = 0;
   }
 
   btnImprimir(): any {
     console.log('Imprimir');
     // LLAMAR PANTALLA FCONDEPOREPINGXBIEN - ordenes de ingreso x bien en depositaria
-    // PASAR SOLO EL NÚMERO DE BIEN
+    // PASAR SOLO EL NO. DE bIEN
     // this.alert('info', 'LLAMAR PANTALLA FCONDEPOREPINGXBIEN', '');
     if (this.form.get('noBien').valid) {
       if (!this.noBienReadOnly) {
         this.alert(
           'warning',
-          'Carga la Información del Bien primero para Continuar',
-          ''
+          'No. de bien',
+          'Carga la información del bien primero para continuar'
         );
         return;
       }
       this.svQueryRelatedPaymentsService.setGoodParamGood(
         this.noBienReadOnly,
-        this.screenKey
+        this.screenKey,
+        this.depositaryAppointment.contractKey,
+        this.depositaryAppointment.personNumber.id.toString(),
+        this.good.description
       ); // Set good param
       this.router.navigate(
         ['/pages/juridical/depositary/income-orders-depository-goods'],
         {
           queryParams: {
             origin: this.screenKey,
+            origin2: this.origin,
+            p_bien: this.noBienReadOnly,
           },
         }
       );
     } else {
-      this.alert('warning', 'Número de Bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -334,6 +366,8 @@ export class QueryRelatedPaymentsDepositoriesComponent
     this.router.navigate(['/pages/juridical/depositary/depository-fees'], {
       queryParams: {
         origin: this.screenKey,
+        origin2: this.origin,
+        p_bien: this.noBienReadOnly,
       },
     });
   }
@@ -342,21 +376,37 @@ export class QueryRelatedPaymentsDepositoriesComponent
     if (this.form.get('noBien').valid) {
       this.loadingAppointment = true;
       this.noBienReadOnly = this.form.get('noBien').value;
-      const params = new FilterParams();
-      params.removeAllFilters();
-      params.addFilter('goodNumber', this.noBienReadOnly);
-      params.addFilter('revocation', 'N');
+      // const params = new FilterParams();
+      // params.removeAllFilters();
+      // params.addFilter('goodNumber', this.noBienReadOnly);
+      // params.addFilter('revocation', 'N');
+      let params = new ListParams();
+      params['filter.goodNum'] = this.noBienReadOnly;
+      params['filter.revocation'] = 'N';
+      console.log(params);
       await this.svQueryRelatedPaymentsService
-        .getGoodAppointmentDepositaryByNoGood(params.getParams())
+        .getGoodAppointmentDepositaryByNoGood(params)
         .subscribe({
           next: res => {
             this.loadingAppointment = false;
             this.depositaryAppointment = res.data[0];
             this.setDataDepositaryAppointment(); // Set data depositary
-            if (this.depositaryAppointment.personNumber) {
-              if (this.depositaryAppointment.personNumber.id) {
-                this.setDataDepositary(); // Set data Person
-              }
+            if (this.depositaryAppointment.personNum) {
+              const params = new FilterParams();
+              params.removeAllFilters();
+              params.addFilter('id', this.depositaryAppointment.personNum);
+              this.personService.getAllFilters().subscribe({
+                next: res => {
+                  console.log(res);
+                  this.depositaryAppointment.personNumber = res.data[0];
+                  if (this.depositaryAppointment.personNumber.id) {
+                    this.setDataDepositary(); // Set data Person
+                  }
+                },
+                error: err => {
+                  console.log(err);
+                },
+              });
             }
             this.startTablePaymentBank();
             this.startTablePaymentReceive();
@@ -366,13 +416,17 @@ export class QueryRelatedPaymentsDepositoriesComponent
             this.loadingAppointment = false;
             this.alert(
               'warning',
-              'Número de Bien',
-              NOT_FOUND_GOOD_APPOINTMENT(err.error.message)
+              'No. de bien',
+              NOT_FOUND_GOOD_APPOINTMENT(
+                err.error.message && err.status != 400
+                  ? err.error.message
+                  : 'Error en el servidor'
+              )
             );
           },
         });
     } else {
-      this.alert('warning', 'Número de Bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -398,11 +452,67 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.loadingGood = false;
           this.alert(
             'warning',
-            'Número de Bien',
-            NOT_FOUND_GOOD(err.error.message)
+            'No. de bien',
+            NOT_FOUND_GOOD(
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
+            )
           );
         },
       });
+  }
+
+  getGoodsSheard(params: ListParams, getByValue: boolean = false) {
+    //Provisional data
+    console.log(params);
+    // this.searchTabForm.controls['noBien'].disable();
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    this.loading = true;
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+    if (!isNaN(parseFloat(params.text)) && isFinite(+params.text)) {
+      if (params.text != undefined && params.text != '') {
+        data.addFilter('id', params.text, SearchFilter.EQ);
+      }
+    } else {
+      if (params.text != undefined && params.text != '') {
+        data.addFilter('description', params.text, SearchFilter.ILIKE);
+      }
+    }
+    this.service.getAll2(data.getParams()).subscribe({
+      next: data => {
+        this.goods = new DefaultSelect(data.data, data.count);
+        this.loading = false;
+        console.log('DATA GOOD ', this.goods);
+        if (getByValue == true) {
+          // this.onChangeGood(this.goods.data[0]);
+          this.form.get('noBien').setValue(this.goods.data[0].id);
+          this.validGoodNumberInDepositaryAppointment();
+        }
+      },
+      error: err => {
+        this.goods = new DefaultSelect([], 0, true);
+        this.loading = false;
+      },
+    });
+  }
+  onChangeGood(event: IGood) {
+    console.log(event);
+    this.goodSelect = event;
+    this.goods = new DefaultSelect([event], 1, true);
+    if (event) {
+      this.validGoodNumberInDepositaryAppointment();
+    } else {
+      this.depositaryAppointment = null;
+      this.form.reset();
+      this.formDepositario.reset();
+      this.formBienDetalle.reset();
+      this.startTablePaymentBank();
+      this.startTablePaymentReceive();
+      this.closeSendSirsae();
+    }
   }
 
   async getStatusGoodByNoGood() {
@@ -414,17 +524,21 @@ export class QueryRelatedPaymentsDepositoriesComponent
       .subscribe({
         next: res => {
           if (res.data.length > 0) {
-            let status = this.formBienDetalle.get('estatus').value;
+            // let status = this.formBienDetalle.get('estatus').value;
             this.formBienDetalle
-              .get('estatus')
-              .setValue(status + ' --- ' + res.data[0].description);
+              .get('estatusDescription')
+              .setValue(res.data[0].description);
           }
         },
         error: err => {
           this.onLoadToast(
             'warning',
-            'Descripción del Bien',
-            NOT_FOUND_GOOD_DESCRIPTION(err.error.message)
+            'Descripción del bien',
+            NOT_FOUND_GOOD_DESCRIPTION(
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
+            )
           );
         },
       });
@@ -433,20 +547,20 @@ export class QueryRelatedPaymentsDepositoriesComponent
   setDataDepositaryAppointment() {
     this.form
       .get('nombramiento')
-      .setValue(this.depositaryAppointment.appointmentNumber);
+      .setValue(this.depositaryAppointment.appointmentNum);
     this.form
       .get('contraprestaciones')
       .setValue(
         this.formatTotalAmount(
-          Number(this.depositaryAppointment.importConsideration)
+          Number(this.depositaryAppointment.amountConsideration)
         )
       );
     this.form
       .get('cveContrato')
       .setValue(this.depositaryAppointment.contractKey);
     let fecha = this.datePipe.transform(
-      this.depositaryAppointment.contractStartDate,
-      'dd-MMM-yyyy'
+      this.depositaryAppointment.startContractDate,
+      'dd/MM/yyyy'
     );
     this.form.get('fecha').setValue(fecha);
   }
@@ -457,7 +571,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
       .setValue(this.depositaryAppointment.personNumber.id);
     this.formDepositario
       .get('depositario')
-      .setValue(this.depositaryAppointment.personNumber.nombre);
+      .setValue(this.depositaryAppointment.personNumber.name);
   }
 
   setDataGood() {
@@ -492,10 +606,14 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.totalItemsPayBanks = 0;
           this.dataTablePayBanks.refresh();
           this.loadingTablePayBanks = false;
-          this.alertQuestion(
+          this.alert(
             'warning',
-            'Pagos Recibidos en el Banco',
-            NOT_FOUND_PAYMENTS_BANK(err.error.message)
+            'Pagos recibidos en el banco',
+            NOT_FOUND_PAYMENTS_BANK(
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
+            )
           );
         },
       });
@@ -515,8 +633,12 @@ export class QueryRelatedPaymentsDepositoriesComponent
         error: err => {
           this.onLoadToast(
             'warning',
-            'Suma del Depósito de los Pagos Recibidos en el Banco',
-            NOT_FOUND_PAYMENTS_BANK_TOTALS(err.error.message)
+            'Suma del depósito de los pagos recibidos en el banco',
+            NOT_FOUND_PAYMENTS_BANK_TOTALS(
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
+            )
           );
         },
       });
@@ -569,10 +691,14 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.totalItemsReceivedPays = 0;
           this.dataTableReceivedPays.refresh();
           this.loadingTableReceivedPays = false;
-          this.alertQuestion(
+          this.alert(
             'warning',
-            'Composición de Pagos Recibidos',
-            NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS(err.error.message)
+            'Composición de pagos recibidos',
+            NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS(
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
+            )
           );
         },
       });
@@ -594,8 +720,12 @@ export class QueryRelatedPaymentsDepositoriesComponent
         error: err => {
           this.onLoadToast(
             'warning',
-            'Sumas del Monto SIN Iva, Monto CON Iva y el Pago Actual de la Composición de Pagos Recibidos',
-            NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS_TOTALS(err.error.message)
+            'Sumas del monto sin iva, monto con iva y el pago actual de la composición de pagos recibidos',
+            NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS_TOTALS(
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
+            )
           );
         },
       });
@@ -663,6 +793,15 @@ export class QueryRelatedPaymentsDepositoriesComponent
         // );
         this.loadingSirsaeProcess = false;
         this.form.get('noBien').enable();
+        if (this.errorSirSae > 0) {
+          this.alert(
+            'warning',
+            'Ocurrió un error en el proceso, intente nuevamente',
+            'Se mostrará un excel con detalles de los errores por cada registro procesado'
+          );
+        } else {
+          this.alert('success', 'Proceso terminado ', '');
+        }
       }
     }
   }
@@ -674,13 +813,14 @@ export class QueryRelatedPaymentsDepositoriesComponent
   ) {
     this.sendSirsae = {
       process: 1,
-      appointment: Number(this.depositaryAppointment.appointmentNumber),
+      appointment: Number(this.depositaryAppointment.appointmentNum),
       idorderincome: String(dataComplete[count].entryorderid),
       validSystem: dataComplete[count].validSystem,
       shipmentOi: dataComplete[count].sent_oi,
       peopleNumber: Number(dataComplete[count].client_id),
       idPay: dataComplete[count].payId,
     };
+    console.log(this.sendSirsae);
     this.svQueryRelatedPaymentsService.sendSirsae(this.sendSirsae).subscribe({
       next: (res: any) => {
         this.currentItemSirsae++;
@@ -698,11 +838,25 @@ export class QueryRelatedPaymentsDepositoriesComponent
         }
       },
       error: err => {
+        this.errorSirSae++;
         this.currentItemSirsae++;
         let obj: any = {};
         obj = dataComplete[count];
-        obj['errores'] = err.error.message;
-        obj['lstLot'] = err.error.message;
+        if (err.status == 500) {
+          obj['errores'] = 'Error al procesar este registro';
+          obj['lstLot'] = 'Realice el proceso nuevamente de envio SIRSAE';
+        } else {
+          obj['errores'] = err.error.message
+            ? err.error.message.includes('duplicate key')
+              ? 'Ya existe un registro en Sirsae de este pago'
+              : 'Error en el Servidor'
+            : 'Error en el Servidor';
+          obj['lstLot'] = err.error.message
+            ? err.error.message.includes('duplicate key')
+              ? 'Ya existe un registro en Sirsae de este pago'
+              : 'Error en el Servidor'
+            : 'Error en el Servidor';
+        }
         this.errorsSirsae.push(obj);
         if (dataLength == count + 1) {
           this.currentPageSirsae++;

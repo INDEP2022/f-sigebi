@@ -1,20 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tables.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { LogicalTablesRegisterModalComponent } from '../logical-tables-register-modal/logical-tables-register-modal.component';
-import { LOGICAL_TABLES_REGISTER_COLUMNS } from './logical-tables-register-columns';
 //models
 import { ITables } from 'src/app/core/models/catalogs/dinamic-tables.model';
+import { LOGICAL_TABLES_REGISTER_COLUMNS } from './logical-tables-register-columns';
 //service
 import { LocalDataSource } from 'ng2-smart-table';
-import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tables.service';
-import Swal from 'sweetalert2';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { LogicalTablesRegisterModalComponent } from '../logical-tables-register-modal/logical-tables-register-modal.component';
 
 @Component({
   selector: 'app-logical-tables-register',
@@ -50,7 +50,7 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -61,18 +61,30 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
-            filter.field == 'city'
-              ? (field = `filter.${filter.field}.nameCity`)
-              : (field = `filter.${filter.field}`);
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'name':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'tableType':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getDinamicTables();
         }
       });
@@ -91,8 +103,7 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
       next: response => {
         this.columns = response.data;
         this.totalItems = response.count || 0;
-
-        this.data.load(this.columns);
+        this.data.load(response.data);
         this.data.refresh();
         //this.dinamicTables = response.data;
         //this.totalItems = response.count;
@@ -107,7 +118,9 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       dinamicTables,
       callback: (next: boolean) => {
-        if (next) this.getDinamicTables();
+        if (next) {
+          this.getDinamicTables();
+        }
       },
     };
     this.modalService.show(LogicalTablesRegisterModalComponent, modalConfig);
@@ -117,18 +130,28 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
+      console.log(dinamicTables);
       if (question.isConfirmed) {
         this.delete(dinamicTables.table);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.dinamicTablesService.remove2(id).subscribe({
-      next: () => this.getDinamicTables(),
+      next: () => {
+        this.getDinamicTables();
+        this.alert('success', 'Tablas Lógicas', 'Borrado Correctamente');
+      },
+      error: erro => {
+        this.alert(
+          'warning',
+          'Tablas Lógicas',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

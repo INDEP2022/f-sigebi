@@ -11,7 +11,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IMeasurementUnits } from 'src/app/core/models/catalogs/measurement-units.model';
-import { unitsData } from './data';
+import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 
 @Component({
   selector: 'app-measurement-units-shared',
@@ -35,35 +35,60 @@ export class MeasurementUnitsSharedComponent
     return this.form.get(this.measurementUnitField);
   }
 
-  constructor(/*private service: WarehouseService*/) {
+  constructor(private service: StrategyServiceService) {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getUnits(new ListParams());
+  }
 
   getUnits(params: ListParams) {
     //Provisional data
-    let data = unitsData;
+    /* let data = unitsData;
     let count = data.length;
-    this.measurementUnits = new DefaultSelect(data, count);
-    /*this.service.getAll(params).subscribe(data => {
-        this.status = new DefaultSelect(data.data,data.count);
-      },err => {
+    console.log(data);
+    this.measurementUnits = new DefaultSelect(data, count); */
+    // if (
+    //   this.measurementUnits.data.length === this.measurementUnits.count &&
+    //   this.measurementUnits.data.length !== 0
+    // ) {
+    //   this.measurementUnits.reset = true;
+    //   return;
+    // }
+    this.service.getMedUnits(params).subscribe(
+      data => {
+        console.log(data);
+        this.measurementUnits = new DefaultSelect(data.data, data.count);
+      },
+      err => {
+        this.measurementUnits = new DefaultSelect();
+        /* console.log(err);
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
-          error = err.message;
+          error = err.error.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        this.measurementUnits = new DefaultSelect([], 0); */
+        // this.onLoadToast('error', 'Error', error);
+      },
+      () => {}
+    );
+  }
 
-      }, () => {}
-    );*/
+  changeValue(event: any) {
+    console.log(event);
+  }
+
+  updateAndValidate() {
+    this.form.updateValueAndValidity();
   }
 
   onUnitsChange(type: any) {
     //this.resetFields([this.subdelegation]);
-    this.form.updateValueAndValidity();
+    this.getUnits(new ListParams());
+    this.updateAndValidate();
   }
 
   resetFields(fields: AbstractControl[]) {
@@ -71,6 +96,6 @@ export class MeasurementUnitsSharedComponent
       //field.setValue(null);
       field = null;
     });
-    this.form.updateValueAndValidity();
+    this.updateAndValidate();
   }
 }

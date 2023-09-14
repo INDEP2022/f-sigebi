@@ -7,28 +7,37 @@
       <div class="row">
         <div class="col-md-4">
           <form-field
-            [control]="goodSituationForm.get('status')"
-            label="Estado">
-            <input type="text" class="form-control" formControlName="status" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
             [control]="goodSituationForm.get('situation')"
             label="Situación">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="situation" />
           </form-field>
         </div>
-        <div class="col-md-8 mt-5">
+        <div class="col-md-8">
+          <form-field [control]="goodSituationForm.get('status')">
+            <ngx-select
+              [form]="goodSituationForm"
+              control="status"
+              (fetchItems)="getStates($event)"
+              [data]="statusSelect"
+              label="Estado"
+              bindLabel="description"
+              value="status">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-12">
           <form-field
             [control]="goodSituationForm.get('descSituation')"
             label="Descripci&oacute;n">
-            <textarea
+            <input
+              type="text"
               class="form-control"
-              formControlName="descSituation"></textarea>
+              formControlName="descSituation" />
           </form-field>
         </div>
       </div>

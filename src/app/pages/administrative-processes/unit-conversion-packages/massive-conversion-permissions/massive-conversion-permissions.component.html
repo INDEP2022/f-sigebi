@@ -1,16 +1,19 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Permisos conversión masiva</h5>
+    <h5 class="title">Permisos Conversión Masiva</h5>
   </div>
   <div body>
     <div class="row">
       <div class="col-md-12">
-        <h5 class="title">Permisos de Usuarios para conversión masiva</h5>
-        <div [class]="loading ? 'table-loading' : ''">
+        <h5 class="title">Permisos de Usuarios para Conversión Masiva</h5>
+        <div
+          class="table-responsive h-1000"
+          [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data1">
+            [source]="data1"
+            (userRowSelect)="selectUserPermissions($event)">
           </ng2-smart-table>
         </div>
         <app-pagination
@@ -18,38 +21,42 @@
           [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-md-12">
         <h5 class="title">Privilegios de Usuarios</h5>
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
-            [source]="data2">
+            [source]="data2"
+            (userRowSelect)="selectEvent($event)">
           </ng2-smart-table>
         </div>
-        <app-pagination
-          [params]="params"
-          [totalItems]="totalItems2"></app-pagination>
       </div>
-    </div>
+    </div> -->
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <button type="button" class="btn btn-primary active">Guardar</button>
-      </div>
-      <div class="m-3">
+      <!-- <div class="m-3">
         <button
+          (click)="saveOrUpdatePermissions()"
           type="button"
-          class="btn btn-primary active"
-          (click)="openPermissionsDelete('')">
+          class="btn btn-primary btn active">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div> -->
+
+      <!--<div class="m-3">
+        <button type="button" class="btn btn-primary active" (click)="openPermissionsDelete('')">
           Eliminar
         </button>
-      </div>
+     
+    </div>-->
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
+        <button (click)="close()" class="btn btn-primary active">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>

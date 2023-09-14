@@ -29,7 +29,7 @@ export class FormCaptureLawyersComponent
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   lawyer: any;
-  string_PTRN: `[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]*'; [a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]`;
+  //string_PTRN: `^(\\!s)[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]*'; [a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]`;
   @Output() refresh = new EventEmitter<true>();
   // loading: boolean;
 
@@ -58,7 +58,7 @@ export class FormCaptureLawyersComponent
       businessName: [
         '',
         [
-          Validators.pattern(this.string_PTRN),
+          Validators.pattern(STRING_PATTERN),
           Validators.required,
           Validators.maxLength(50),
         ],
@@ -136,9 +136,37 @@ export class FormCaptureLawyersComponent
 
   create() {
     this.loading = true;
-    this.comerNotariesTercsService.create(this.form.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
+    let params = new ListParams();
+    params['filter.physicalRfc'] = `$eq:${this.form.get('physicalRfc').value}`;
+
+    if (this.edit) {
+      params['filter.id'] = `$not:${this.lawyer.id}`;
+    }
+
+    this.comerNotariesTercsService.getAll(params).subscribe(
+      data => {
+        this.handleRfcPhisycal();
+        this.loading = false;
+      },
+      error => {
+        if (error.error.message == 'No se encontrarón registros.') {
+          this.comerNotariesTercsService.create(this.form.value).subscribe(
+            data => this.handleSuccess(),
+            error => (
+              this.onLoadToast(
+                'error',
+                'Error al crear abogado formalizador',
+                ``
+              ),
+              (this.loading = false)
+            )
+          );
+        } else {
+          this.onLoadToast('error', error.error.message, ``);
+        }
+
+        this.loading = false;
+      }
     );
   }
 
@@ -170,6 +198,7 @@ export class FormCaptureLawyersComponent
     this.comerNotariesTercsService.getAll(params).subscribe(
       data => {
         this.handleRfcPhisycal();
+        this.loading = false;
       },
       error => {
         this.comerNotariesTercsService
@@ -187,5 +216,18 @@ export class FormCaptureLawyersComponent
 
   handleRfcPhisycal() {
     this.onLoadToast('warning', 'RFC Físico ya existente', ``);
+  }
+
+  public notSpaceInitial(eventPress: any) {
+    let code = eventPress.which ? eventPress.which : eventPress.keyCode;
+
+    if (
+      code == 32 &&
+      eventPress.target.defaultValue == eventPress.target.value
+    ) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

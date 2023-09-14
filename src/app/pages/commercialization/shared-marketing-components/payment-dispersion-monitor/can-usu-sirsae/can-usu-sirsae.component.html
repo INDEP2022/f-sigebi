@@ -1,0 +1,30 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Ingresar Usuario</h5>
+  </div>
+  <div body>
+    <form [formGroup]="formUsu" class="form-material">
+      <div class="row mb-3 mt-3">
+        <form-field [control]="formUsu.get('user')" class="col" label="Usuario">
+          <input type="text" formControlName="user" class="form-control" />
+        </form-field>
+      </div>
+      <div class="row mb-3 mt-3">
+        <form-field
+          [control]="formUsu.get('password')"
+          class="col"
+          label="Password">
+          <input type="text" formControlName="password" class="form-control" />
+        </form-field>
+      </div>
+      <div class="row text-center">
+        <button class="btn btn-danger btn-sm active mr-3" (click)="close()">
+          Cancelar
+        </button>
+        <div class="col">
+          <button class="btn btn-primary btn-sm active">Aceptar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-modal>

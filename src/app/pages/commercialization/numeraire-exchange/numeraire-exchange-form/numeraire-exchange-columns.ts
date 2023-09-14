@@ -19,62 +19,62 @@ export const EXPENSE_COLUMNS = {
 };
 
 export const NUMERAIRE_COLUMNS = {
-  id: {
-    title: 'N° Bien',
+  no_bien: {
+    title: 'No. Bien',
     type: 'number',
     sort: false,
   },
-  description: {
+  descripcion: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  salePrice: {
+  precio_venta: {
     title: 'Precio de Venta',
     type: 'number',
     sort: false,
   },
-  saleTax: {
-    title: 'Iva Venta',
+  ivavta: {
+    title: 'IVA Venta',
     type: 'number',
     sort: false,
   },
-  commission: {
+  comision: {
     title: 'Comisión',
     type: 'number',
     sort: false,
   },
-  commissionTax: {
-    title: 'Iva Comisión',
+  ivacom: {
+    title: 'IVA Comisión',
     type: 'number',
     sort: false,
   },
-  totalExpenses: {
+  importe: {
     title: 'Gasto Total',
     type: 'number',
     sort: false,
   },
-  appraisalAmount: {
+  valor_avaluo: {
     title: 'Importe Avalúo',
     type: 'number',
     sort: false,
   },
-  status: {
+  estatus: {
     title: 'Estatus',
     type: 'number',
     sort: false,
   },
-  identifier: {
+  identificador: {
     title: 'Identificador',
     type: 'number',
     sort: false,
   },
-  domain: {
+  proceso_ext_dom: {
     title: 'Ext. Dominio',
     type: 'number',
     sort: false,
   },
-  commentary: {
+  comentario: {
     title: 'Comentarios',
     type: 'number',
     sort: false,

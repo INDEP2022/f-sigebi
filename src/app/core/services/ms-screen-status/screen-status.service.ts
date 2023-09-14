@@ -37,7 +37,7 @@ export class ScreenStatusService extends HttpService {
   }
 
   getAllFiltro(params: any) {
-    return this.get<IListResponse<IStatusXScreen>>(
+    return this.get<IListResponse<any>>(
       `status-x-screen?filter.status=$eq:${params.estatus}&filter.screenKey=$eq:${params.vc_pantalla}`
     );
   }
@@ -46,5 +46,63 @@ export class ScreenStatusService extends HttpService {
     return this.get<IListResponse<IStatusXScreen>>(
       `status-x-screen?filter.screenKey=$eq:${params.vc_pantalla}`
     );
+  }
+
+  getAllFiltro_(params: any) {
+    return this.get<IListResponse<IStatusXScreen>>(
+      `status-x-screen?filter.status=$eq:${params.estatus}&filter.screenKey=$eq:${params.vc_pantalla}&filter.identifier=$eq:${params.identifier}&filter.processExtSun=$eq:${params.processExtSun}`
+    );
+  }
+
+  getAllFilterFree(params: string) {
+    return this.get<IListResponse<IStatusXScreen>>(`status-x-screen`, params);
+  }
+
+  getStatusCheck(data: any) {
+    return this.post('application/check-status-good', data);
+  }
+
+  getGetGoodScreenStatus(params: any) {
+    return this.post<IListResponse<IStatusXScreen>>(
+      `${this.endpoint.GetGoodScreenStatus}`,
+      params
+    );
+  }
+
+  postPermissionByScreenAndUser(body: { screen: string; user: string }) {
+    return this.post(this.endpoint.PermissionsByScreenAndUser, body);
+  }
+
+  postStatusXPant(params: any) {
+    const route = `${ScreenStatusEndpoints.statusxpant}`;
+    return this.post(route, params);
+  }
+
+  getStatusV(params: any) {
+    const route = `${ScreenStatusEndpoints.getStatusV}`;
+    return this.post(route, params);
+  }
+
+  getStatusTA(params: any) {
+    const route = `${ScreenStatusEndpoints.GetCount}`;
+    return this.post(route, params);
+  }
+
+  getStatusScreen(key: any, action: any) {
+    const route = `${ScreenStatusEndpoints.StatusXScreenList}?filter.screenKey=$ilike:${key}&filter.action=$ilike:${action}`;
+    return this.get(route);
+  }
+
+  getStatusandScreen(key: any, status: any) {
+    const route = `${ScreenStatusEndpoints.StatusXScreenList}?filter.screenKey=$ilike:${key}&filter.status=$ilike:${status}`;
+    return this.get(route);
+  }
+
+  getStatusEndforScreen(key: any, status: any, process: any) {
+    const route = `${ScreenStatusEndpoints.StatusXScreenList}?filter.screenKey=$ilike:${key}&filter.status=$ilike:${status}&filter.processExtSun=$ilike:${process}&filter.action=$ilike:RDON`;
+    return this.get(route);
+  }
+  getStatusXScreenColor(params: any) {
+    return this.get(ScreenStatusEndpoints.StatusXScreenList, params);
   }
 }

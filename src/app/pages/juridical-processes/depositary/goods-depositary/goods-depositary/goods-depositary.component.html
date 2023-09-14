@@ -108,6 +108,7 @@
                 <input
                   class="form-control"
                   formControlName="from"
+                  [maxDate]="maxDate"
                   bsDatepicker />
               </form-field>
 
@@ -116,7 +117,13 @@
                 [control]="form.get('to')"
                 label="Fecha Hasta"
                 class="col-md-3">
-                <input class="form-control" formControlName="to" bsDatepicker />
+                <input
+                  class="form-control"
+                  formControlName="to"
+                  [maxDate]="maxDate"
+                  [min]="form.get('from').value"
+                  [minDate]="form.get('from').value"
+                  bsDatepicker />
               </form-field>
               <div class="col-sm-12 col-12 col-md-12 p-2">
                 <form-radio
@@ -157,13 +164,26 @@
                 </form-radio>
               </div>
             </div>
-            <div class="card-footer text-center">
-              <button
-                type="submit"
-                class="btn btn-primary ml-2 mr-2 active text-wrap p-2"
-                (click)="btnImprimir()">
-                Imprimir
-              </button>
+            <div footer>
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <button
+                    type="button"
+                    [disabled]="form.invalid"
+                    class="btn btn-primary active btn-sm"
+                    (click)="btnImprimir()">
+                    Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+                  </button>
+                </div>
+                <div class="m-3">
+                  <button
+                    type="button"
+                    class="btn btn-danger active btn-sm"
+                    (click)="cleanForm()">
+                    Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

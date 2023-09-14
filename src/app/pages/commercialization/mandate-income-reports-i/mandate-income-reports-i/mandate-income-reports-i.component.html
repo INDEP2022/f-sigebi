@@ -1,0 +1,305 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reporte de Ingresos por Mandato I</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <div class="col-md-2">
+          <form-field label="Fecha" [control]="form.get('startDate')">
+            <input
+              class="form-control"
+              formControlName="startDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('batch')">
+            <ngx-select
+              (fetchItems)="getLot($event)"
+              [data]="selectLot"
+              [form]="form"
+              value="idLot"
+              bindLabel="description"
+              label="Lote"
+              control="batch"
+              (change)="changeLot($event)">
+            </ngx-select>
+            <!--<input
+              type="text"
+              class="form-control"
+              formControlName="lotId"
+              min="0"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />-->
+          </form-field>
+        </div>
+        <!--<div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
+          <form-field label="Lote" [control]="form.get('batch')">
+            <input class="form-control" formControlName="batch" type="number" />
+          </form-field>
+        </div>-->
+        <!--Events Component-->
+        <div class="col-md-3">
+          <form-field [control]="form.get('event')">
+            <ngx-select
+              (fetchItems)="getEvent($event)"
+              [data]="eventSelect"
+              [form]="form"
+              value="id"
+              bindLabel="processKey"
+              label="Evento"
+              control="event"
+              (change)="changeEvent($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <!--Employees Component-->
+        <div class="col-md-4">
+          <!--<app-user-shared
+            [form]="form"
+            [userField]="'capturingUser'"
+            [label]="'Usuario que Captura'"></app-user-shared>-->
+          <form-field [control]="form.get('capturingUser')">
+            <ngx-select
+              (fetchItems)="getAllSegUser1($event)"
+              [data]="user1"
+              [form]="form"
+              value="user"
+              bindLabel="user"
+              label="Usuario que Captura"
+              control="capturingUser"
+              (change)="changeUser1($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <!--Employees Component-->
+        <div class="col-md-4">
+          <form-field label="Nombre" [control]="form.get('capturingUserName')">
+            <input
+              class="form-control"
+              formControlName="capturingUserName"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Cargo" [control]="form.get('capturingUserPost')">
+            <input
+              class="form-control"
+              formControlName="capturingUserPost"
+              type="text" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <form-field [control]="form.get('authorizingUser')">
+            <ngx-select
+              (fetchItems)="getAllSegUser2($event)"
+              [data]="user2"
+              [form]="form"
+              value="user"
+              bindLabel="name"
+              label="Usuario que Autoriza"
+              control="authorizingUser"
+              (change)="changeUser2($event)">
+            </ngx-select>
+          </form-field>
+          <!--<app-user-shared
+            [form]="form"
+            [userField]="'authorizingUser'"
+            [label]="'Usuario que Autoriza'"></app-user-shared>-->
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="Nombre"
+            [control]="form.get('authorizingUserName')">
+            <input
+              class="form-control"
+              formControlName="authorizingUserName"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Cargo" [control]="form.get('authorizingUserPost')">
+            <input
+              class="form-control"
+              formControlName="authorizingUserPost"
+              type="text" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <!--Employees Component-->
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <form-field [control]="form.get('requestingUser')">
+            <ngx-select
+              (fetchItems)="getAllSegUser3($event)"
+              [data]="user3"
+              [form]="form"
+              value="user"
+              bindLabel="name"
+              label="Usuario que Solicita"
+              control="requestingUser"
+              (change)="changeUser3($event)">
+            </ngx-select>
+          </form-field>
+
+          <!--<app-user-shared
+            [form]="form"
+            [userField]="'requestingUser'"
+            [label]="'Usuario que Solicita'"></app-user-shared>-->
+        </div>
+
+        <div class="col-md-4">
+          <form-field label="Nombre" [control]="form.get('requestingUserName')">
+            <input
+              class="form-control"
+              formControlName="requestingUserName"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Cargo" [control]="form.get('requestingUserPost')">
+            <input
+              class="form-control"
+              formControlName="requestingUserPost"
+              type="text" />
+          </form-field>
+        </div>
+      </div>
+      <!--<div class="row mb-3 mt-3 justify-content-end">
+        <div
+          class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col-12 align-self-center">
+          <button type="button" class="btn btn-primary btn-sm active w-100">
+            Consultar
+          </button>
+        </div>
+      </div>-->
+      <div class="row mb-3 mt-3">
+        <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 col-12">
+          <label for=""
+            >Si desea una orden de ingreso en especial índiquela</label
+          >
+          <div class="row mb-3 mt-3">
+            <div class="col-6 mb-3 mb-3 mt-3">
+              <form-field label="O.I" [control]="form.get('incomeOrder')">
+                <input
+                  class="form-control"
+                  formControlName="incomeOrder"
+                  type="number" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 col-12">
+          <!--<label for="">&Uacute;ltimo reporte: </label>-->
+          <div class="row mb-3 mt-5">
+            <div class="col-6 mb-3 mb-3 mt-3">
+              <form-field [control]="form.get('incomeOrder')" label="Tipo">
+                <ng-select
+                  formControlName="incomeOrder"
+                  [searchable]="false"
+                  class="form-control"
+                  [clearable]="false">
+                  <ng-option value="I">NORMAL Y PENALIZACIONES</ng-option>
+                  <ng-option value="D">DEVOLUCIONES</ng-option>
+                  <ng-option value="P">PENALIZACIONES</ng-option>
+                </ng-select>
+              </form-field>
+              <!--<form-field
+                label="No. Reporte a Reimprimir"
+                [control]="form.get('incomeOrder')">
+                <input
+                  class="form-control"
+                  formControlName="reportNumber"
+                  type="number" />
+              </form-field>-->
+            </div>
+          </div>
+        </div>
+        <div
+          class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col-12 align-self-center">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active w-100"
+            [disabled]="form.invalid"
+            (click)="report()">
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+    <!--Income Orders-->
+    <!--<div class="row justify-content-end mr-1">
+      <div class="ch-content">
+        <h5 class="title">Órdenes de Ingreso a Reportar a Tesorería</h5>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end mr-1">
+      <div class="col-2">
+        <button
+          type="button"
+          class="btn btn-success btn-sm active w-100"
+          (click)="exportAsXLSX('O.I a Reportar a Tesorería')">
+          Generar XML
+        </button>
+      </div>
+      <app-columns-select
+        (settingsChange)="settingsChange($event)"
+        [settings]="settings">
+      </app-columns-select>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (userRowSelect)="onUserRowSelect($event)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+
+
+    <div class="row justify-content-end mr-1 mb-3 mt-3">
+      <div class="ch-content">
+        <h5 class="title">Órdenes de Ingreso Afectadas</h5>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end mr-1">
+      <div class="col-2">
+        <button
+          type="button"
+          class="btn btn-success btn-sm active w-100"
+          (click)="exportAsXLSX('O.I Afectadas')">
+          Generar XML
+        </button>
+      </div>
+      <app-columns-select
+        (settingsChange)="settingsChange($event)"
+        [settings]="settings">
+      </app-columns-select>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (userRowSelect)="onUserRowSelect($event)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>-->
+  </div>
+</app-card>

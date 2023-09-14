@@ -8,29 +8,53 @@ export const GOOD_SSUBTYPES_COLUMNS = {
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
   noType: {
-    title: 'Tipo bien',
+    title: 'Tipo Bien',
     type: 'string',
     valuePrepareFunction: (value: IGoodType) => {
       return value.nameGoodType;
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.nameGoodType;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
     sort: false,
   },
+
+  /*nameGoodType: {
+    title: 'Tipo Bien',
+    type: 'string',
+    sort: false,
+  },*/
+
   noSubType: {
-    title: 'Subtipo bien',
+    title: 'Subtipo Bien',
     type: 'string',
     valuePrepareFunction: (value: IGoodSubType) => {
       return value.nameSubtypeGood;
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.nameSubtypeGood;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
     sort: false,
   },
-  noRegister: {
-    title: 'N registro',
-    type: 'number',
+
+  /*nameSubtypeGood: {
+    title: 'Subtipo Bien',
+    type: 'string',
     sort: false,
-  },
+  },*/
 };

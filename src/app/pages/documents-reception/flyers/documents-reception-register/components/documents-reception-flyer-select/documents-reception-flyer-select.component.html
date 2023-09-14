@@ -69,14 +69,21 @@
         <confirm-button
           text="Aceptar"
           loadingText="Cargando"
+          [btnSmall]="true"
           [disabled]="!flyerForm.valid || !notificationExists"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="exit()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active mr-3"
+          (click)="exit()">
           Cancelar
         </button>
+        <!-- <button type="button" class="btn btn-danger active" (click)="exit()">
+          Cancelar
+        </button> -->
       </div>
     </div>
   </div>

@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.interceptor';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
@@ -12,6 +13,7 @@ import {
   IComerLayoutsW,
   ILay,
 } from '../../models/ms-parametercomer/parameter';
+import { AuthService } from '../authentication/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +21,7 @@ import {
 export class LayoutsConfigService extends HttpService {
   private readonly endpoint: string = ParameterComerEndpoints.Layouts;
   private readonly endpointH: string = ParameterComerEndpoints.layoutSH;
-  constructor(private htpp: HttpClient) {
+  constructor(private htpp: HttpClient, private authService: AuthService) {
     super();
     this.microservice = ParameterComerEndpoints.BasePath;
   }
@@ -63,8 +65,8 @@ export class LayoutsConfigService extends HttpService {
   //   const route = `${this.endpoint}`;
   //   return this.put(route, layout);
   // }
-  update(layout: IComerLayouts) {
-    const route = `${this.endpoint}`;
+  update(idLayout: number, layout: IComerLayouts) {
+    const route = `${this.endpoint}/id/${idLayout}`;
     return this.put(route, layout);
   }
 
@@ -88,5 +90,36 @@ export class LayoutsConfigService extends HttpService {
     // return this.httpClient.request<IComerLayoutsH>('update', route, {
     //   body: params,
     // });
+  }
+
+  updatelayoutSH(
+    id: number,
+    body: Partial<IComerLayoutsW>
+  ): Observable<IListResponse<any>> {
+    return this.put<IListResponse<any>>(
+      ParameterComerEndpoints.layoutSH + '/' + id,
+      body
+    );
+  }
+  deletelayoutSH(
+    id: number,
+    body: Partial<IComerLayoutsW>
+  ): Observable<IListResponse<any>> {
+    return this.delete<IListResponse<any>>(
+      ParameterComerEndpoints.layoutSH + '/' + id,
+      body
+    );
+  }
+
+  getAllLayouts_TotalT(params?: ListParams) {
+    //: Observable<IListResponse<IComerLayouts>> {
+    // return this.get<IListResponse<IComerLayouts>>(this.endpoint, params);
+    const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    this.authService.setReportFlag(true);
+    const route = `${this.url}${this.microservice}/${this.prefix}${ParameterComerEndpoints.Layouts}`;
+    return this.htpp.get<any>(`${route}`, {
+      headers,
+      params,
+    });
   }
 }

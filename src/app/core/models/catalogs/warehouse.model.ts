@@ -4,10 +4,11 @@ import { IMunicipality } from './municipality.model';
 import { IStateOfRepublic } from './state-of-republic.model';
 
 export interface IWarehouse {
-  idWarehouse: number | null;
+  idWarehouse: number | any;
   description: string;
   ubication: string;
   manager: string;
+  DetManager?: string;
   registerNumber: number | null;
   stateCode: IStateOfRepublic;
   cityCode: ICity;
@@ -15,5 +16,6 @@ export interface IWarehouse {
   localityCode: ILocality;
   indActive: string | null;
   type: string | null;
+  detType?: string;
   responsibleDelegation: number | string | null;
 }

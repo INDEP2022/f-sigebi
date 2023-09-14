@@ -1,15 +1,10 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="legendForm" class="form-material">
       <div class="row">
-        <!--    <div class="col-md-3">
-          <form-field [control]="legendForm.get('id')" label="ID">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
-        </div> -->
         <div class="col-md-11">
           <form-field [control]="legendForm.get('legend')" label="Leyenda">
             <textarea
@@ -25,10 +20,7 @@
           <form-field
             [control]="legendForm.get('version')"
             label="Versi&oacute;n">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="version" />
+            <input type="test" class="form-control" formControlName="version" />
           </form-field>
         </div>
 
@@ -41,53 +33,6 @@
           </form-radio>
         </div>
       </div>
-
-      <!--  <div class="row pt-5">
-        <div class="col-md-6">
-          <form-field
-            [control]="legendForm.get('userCreation')"
-            label="Creador">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="userCreation" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field
-            [control]="legendForm.get('creationDate')"
-            label="Fecha de creación">
-            <input
-              bsDatePicker
-              type="text"
-              class="form-control"
-              formControlName="creationDate" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-6">
-          <form-field
-            [control]="legendForm.get('userModification')"
-            label="Usuario que modificó">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="userModification" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field
-            [control]="legendForm.get('modificationDate')"
-            label="Fecha de modificación">
-            <input
-              bsDatePicker
-              type="text"
-              class="form-control"
-              formControlName="modificationDate" />
-          </form-field>
-        </div> 
-      </div>-->
     </form>
   </div>
   <div footer>

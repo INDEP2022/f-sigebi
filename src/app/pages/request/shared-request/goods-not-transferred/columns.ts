@@ -1,6 +1,6 @@
 export const COLUMNS = {
   numberGood: {
-    title: 'N° Bien no Transferido',
+    title: 'No. Bien no Transferido',
     type: 'string',
     sort: false,
   },

@@ -6,13 +6,38 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AttribClassifGoodMethodsRepository } from 'src/app/common/repository/repositories/attrib-classif-good-repository';
 import { MsGoodQueryRepository } from 'src/app/common/repository/repositories/ms-good-query-repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { FunctionCumplioIndicador } from 'src/app/pages/general-processes/indicators/indicators-history/indicators-history/indicators-history-columns';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IUnits } from '../../models/administrative-processes/siab-sami-interaction/measurement-units';
 import { IZipCodeGoodQuery } from '../../models/catalogs/zip-code.model';
+import { ICaptureDigViewHistoryIndicators } from '../../models/ms-documents/documents';
 import {
   IAttribClassifGoods,
+  IindicatorsEntRecep,
   IUnityByClasif,
 } from '../../models/ms-goods-query/attributes-classification-good';
+import {
+  IOrderManual,
+  IOrderProg,
+  IOrderProgEnt,
+  IOrderRecDoc,
+  IOrderReubGood,
+  IOrderValReq,
+  IOrderWarehouse,
+} from '../../models/ms-goods-query/order-service';
+import { IVJuridical } from '../../models/ms-goods-query/v-juridical.model';
+
+export class LocalListParamsTest {
+  text?: string = '';
+  [others: string]: string | number;
+  page?: number = 1;
+  inicio?: number = 1;
+  limit?: number = 10;
+  pageSize?: number = 10;
+  take?: number = 10;
+  // filter?: string = '';
+}
 
 @Injectable({
   providedIn: 'root',
@@ -21,22 +46,28 @@ import {
  * @deprecated Cambiar a la nueva forma
  */
 export class GoodsQueryService extends HttpService {
+  //
+
   private routeLigieUnitMeasure = GoodsQueryEndpoints.LigieUnitMeasure;
   private zipCodeRoute = GoodsQueryEndpoints.ZipCode;
   private attribClassifGoodRoute = GoodsQueryEndpoints.AttribClassifBood;
   private routeGoodsProg = GoodsQueryEndpoints.ProgrammingGood;
+  private routeindicators = GoodsQueryEndpoints.indicatorsEntRecep;
   private atributeClassificationGood: GoodsQueryEndpoints.AtributeClassificationGood;
   private catMeasureUnitsView: GoodsQueryEndpoints.MeasureUnitsView;
-
   private goodQueryRepository = inject(MsGoodQueryRepository);
   private attribClassifGoodMethodsRepository = inject(
     AttribClassifGoodMethodsRepository
   );
 
+  //
+
   constructor() {
     super();
     this.microservice = 'goodsquery';
   }
+
+  //
 
   getFractions(body: any) {
     return this.httpClient.post(
@@ -70,6 +101,11 @@ export class GoodsQueryService extends HttpService {
       body,
       { params }
     );
+  }
+
+  postFunctionCumplioIndicador(body: FunctionCumplioIndicador) {
+    let url = `${environment.API_URL}parametergood/api/v1/application/f-cumplio-indicador`;
+    return this.httpClient.post<any>(url, body);
   }
 
   postGoodsProgramming(
@@ -113,10 +149,32 @@ export class GoodsQueryService extends HttpService {
     );
   }
 
+  getAll(params?: ListParams): Observable<IListResponse<IAttribClassifGoods>> {
+    return this.attribClassifGoodMethodsRepository.getAllPaginated(
+      this.attribClassifGoodRoute,
+      params
+    );
+  }
+
+  getFilterAllGood(
+    params?: ListParams
+  ): Observable<IListResponse<IAttribClassifGoods>> {
+    return this.goodQueryRepository.getAllPaginated(
+      this.attribClassifGoodRoute,
+      params
+    );
+  }
+
   getAllFilter(
     params?: string
   ): Observable<IListResponse<IAttribClassifGoods>> {
     return this.get(`${this.attribClassifGoodRoute}?${params}`);
+  }
+
+  getIndicatorsEntRecep(
+    params?: ListParams
+  ): Observable<IListResponse<IindicatorsEntRecep>> {
+    return this.get(`${this.routeindicators}?${params}`);
   }
 
   create(model: IAttribClassifGoods): Observable<IAttribClassifGoods> {
@@ -157,12 +215,22 @@ export class GoodsQueryService extends HttpService {
     );
   }
 
-  getCatStoresView(_params: ListParams): Observable<IListResponse<any>> {
-    const route = `goodsquery/api/v1/views/cat-store-view`;
+  getAtributeClassificationGoodFilter(params: string) {
+    return this.httpClient.get<IListResponse>(
+      `${environment.API_URL}goodsquery/api/v1/attributes-classification-good?${params}`
+    );
+  }
+
+  getCatStoresView(
+    _params: ListParams | string
+  ): Observable<IListResponse<any>> {
+    /*const route = `goodsquery/api/v1/views/cat-store-view`;
     const params = this.makeParams(_params);
     return this.httpClient.get<IListResponse<any>>(
       `${environment.API_URL}${route}?${params}`
-    );
+    );*/
+    const route = `views/cat-store-view`;
+    return this.get<IListResponse<any>>(`${route}`, _params);
   }
 
   getHistoryIndicatorsView(params: _Params) {
@@ -173,6 +241,113 @@ export class GoodsQueryService extends HttpService {
     return this.get(`views/catMeasureUnitsView`, param);
   }
 
+  getAtribuXClasif(_params: _Params) {
+    return this.get<IListResponse<IAttribClassifGoods>>(
+      GoodsQueryEndpoints.AtributesClassificationGood,
+      _params
+    );
+  }
+  getAllUnits(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      `${GoodsQueryEndpoints.getUnits}`,
+      params
+    );
+  }
+
+  postUnits(data: IUnits) {
+    return this.post(`${GoodsQueryEndpoints.getUnits}`, data);
+  }
+
+  putUnits(data: IUnits, numero: string) {
+    return this.put(`${GoodsQueryEndpoints.getUnits}/${numero}`, data);
+  }
+
+  remove(numero: number | string) {
+    return this.delete(`${GoodsQueryEndpoints.getUnits}/${numero}`);
+  }
+
+  getViewIncRecDoc(params: LocalListParamsTest) {
+    console.log('El objeto: ', params);
+    return this.get<IListResponse<ICaptureDigViewHistoryIndicators>>(
+      GoodsQueryEndpoints.getViewIndRecDoc,
+      params
+    );
+  }
+
+  getVIndProcedingsDelivery(params: ListParams) {
+    return this.get<IListResponse<any>>('v-ind-proceedings-delivery', params);
+  }
+
+  getVIndProceedingsEntReception(params: ListParams) {
+    return this.get<IListResponse<any>>('v-ind-proceedings-ent-recep', params);
+  }
+
+  getVCatJur(params: _Params) {
+    return this.get<IListResponse<IVJuridical>>(
+      'application/get-all-v-cat-jur',
+      params
+    );
+  }
+
+  getInfoValReqView(
+    _params: ListParams
+  ): Observable<IListResponse<IOrderValReq>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderValReq>>(
+      `${GoodsQueryEndpoints.OrderValReq}?${params}`
+    );
+  }
+
+  getInfoRecDocView(
+    _params: ListParams
+  ): Observable<IListResponse<IOrderRecDoc>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderRecDoc>>(
+      `${GoodsQueryEndpoints.OrderRecDoc}?${params}`
+    );
+  }
+
+  getInfoProgView(_params: ListParams): Observable<IListResponse<IOrderProg>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderProg>>(
+      `${GoodsQueryEndpoints.OrderProg}?${params}`
+    );
+  }
+
+  getInfoProgEntView(
+    _params: ListParams
+  ): Observable<IListResponse<IOrderProgEnt>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderProgEnt>>(
+      `${GoodsQueryEndpoints.OrderProgEnt}?${params}`
+    );
+  }
+
+  getInfoWarehouseView(
+    _params: ListParams
+  ): Observable<IListResponse<IOrderWarehouse>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderWarehouse>>(
+      `${GoodsQueryEndpoints.OrderWarehouse}?${params}`
+    );
+  }
+
+  getInfoManView(_params: ListParams): Observable<IListResponse<IOrderManual>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderManual>>(
+      `${GoodsQueryEndpoints.OrderManual}?${params}`
+    );
+  }
+
+  getInfoReubGoodView(
+    _params: ListParams
+  ): Observable<IListResponse<IOrderReubGood>> {
+    const params = this.makeParams(_params);
+    return this.get<IListResponse<IOrderReubGood>>(
+      `${GoodsQueryEndpoints.OrderReubGood}?${params}`
+    );
+  }
+
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {
@@ -180,10 +355,6 @@ export class GoodsQueryService extends HttpService {
     });
     return httpParams;
   }
-  getAtribuXClasif(_params: _Params) {
-    return this.get<IListResponse<IAttribClassifGoods>>(
-      GoodsQueryEndpoints.AtributesClassificationGood,
-      _params
-    );
-  }
+
+  //
 }

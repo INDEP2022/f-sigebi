@@ -1,415 +1,621 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Oficio de dictaminaciones jur&iacute;dicas</h5>
+    <h5 class="title">OFICIO DE DICTAMINACIONES JUR&Iacute;DICAS</h5>
+    <!-- <h5 *ngIf="!origin && !showSearchAppointment" class="title">
+      OFICIO DE DICTAMINACIONES JUR&Iacute;DICAS
+    </h5> -->
+    <!-- <div class="row w-100" *ngIf="origin || showSearchAppointment">
+      <div class="col-12 col-sm-12 col-md-6">
+        <h5 class="title">OFICIO DE DICTAMINACIONES JUR&Iacute;DICAS</h5>
+      </div>
+      <div class="col-12 col-sm-12 col-md-6 text-end">
+        <button
+          *ngIf="dictationData && !showSearchAppointment"
+          class="btn btn-danger active btn-sm m-2"
+          (click)="cleanDataForm()">
+          Limpiar Campos
+          <i class="fas fa-trash-alt"></i>
+        </button>
+        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+    </div> -->
   </div>
-  <div body>
+  <div body *ngIf="showSearchAppointment">
+    <app-legal-opinions-office-find-appointment
+      [expediente]="paramsScreen.P_VALOR"
+      (continueEmitter)="continueSearchAppoinment($event)"
+      (cancelEmitter)="
+        cancelEventSearch($event)
+      "></app-legal-opinions-office-find-appointment>
+  </div>
+  <div body *ngIf="!showSearchAppointment">
     <div class="row">
       <div
         class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
-        *ngIf="loading">
+        *ngIf="
+          _saveDictation_loading ||
+          _saveOfficeDictation_loading ||
+          _saveTextDictation_loading ||
+          _saveCopiesDictation_loading
+        ">
         <div class="d-flex justify-content-center">
           <div class="d-flex justify-content-center">
             <div class="loader"></div>
-            <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+            <h6 class="loader-msg pt-3">Guardando... por favor espere...</h6>
           </div>
         </div>
       </div>
-      <div class="col-sm-12 col-12 col-md-12 col-lg-12 p2">
-        <form [formGroup]="form" class="container-fluid form-material p-0">
-          <div class="card">
-            <div class="card-header text-dark">
-              <form-field
-                class="col-sm-12 col-12 col-md-4 p-2"
-                [control]="form.get('file')"
-                label="Expediente">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="file" />
-              </form-field>
-              <form-field
-                class="col-sm-12 col-12 col-md-4 p-2"
-                [control]="form.get('numberOfficeDic')"
-                label="No Oficio Dic&#46;">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="numberOfficeDic" />
-              </form-field>
-              <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
-                <button
-                  type="button"
-                  class="btn btn-primary btn-sm active"
-                  (click)="btnSearchAppointment()">
-                  Buscar
-                  <i aria-hidden="true" class="fa fa-search text-pink"></i>
-                </button>
+    </div>
+    <ng-container
+      *ngIf="
+        !_saveDictation_loading &&
+        !_saveOfficeDictation_loading &&
+        !_saveTextDictation_loading &&
+        !_saveCopiesDictation_loading
+      ">
+      <div class="row">
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p2">
+          <form [formGroup]="form" class="container-fluid form-material p-0">
+            <div class="card">
+              <div class="card-header text-dark row">
+                <div class="col-sm-4 col-12 col-md-6 p-2 text-wrap">
+                  <!-- <button
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="anotherSearchAppointment()">
+                    Buscar Dictaminaciones
+                    <i aria-hidden="true" class="fa fa-search text-pink"></i>
+                  </button> -->
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-2 text-end text-wrap">
+                  <!-- <button
+                    class="btn btn-danger active btn-sm m-2"
+                    (click)="startLoopGoods()">
+                    Test
+                    <i class="fas fa-trash-alt"></i>
+                  </button> -->
+                  <!-- <button
+                    class="btn btn-danger active btn-sm m-2"
+                    (click)="cleanDataForm()">
+                    Limpiar Campos
+                    <i class="fas fa-trash-alt"></i>
+                  </button> -->
+                  <!-- <button
+                    *ngIf="dictationData"
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="openFirmModal()">
+                    TEST FIRMA
+                    <i aria-hidden="true" class="fa fa-filr"></i>
+                  </button> -->
+                  <!-- <button
+                    class="btn btn-danger active btn-sm m-2"
+                    (click)="testUploadPdf()">
+                    Test Files
+                    <i class="fas fa-trash-alt"></i>
+                  </button> -->
+                  <button
+                    *ngIf="dictationData"
+                    [disabled]="blockSender"
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="saveDataForm()">
+                    Guardar
+                    <i aria-hidden="true" class="fa fa-save"></i>
+                  </button>
+                  <button
+                    *ngIf="origin"
+                    class="btn btn-primary active btn-sm m-2"
+                    (click)="goBack()">
+                    Regresar
+                    <i class="fas fa-arrow-circle-left"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="col-sm-12 col-12 col-md-6 p-2">
+                  <div class="col-sm-12 col-12 col-md-12 p-2 text-wrap">
+                    <label> Cve&#46; Oficio Armada&#58;&nbsp; </label>
+                    <br />
+                    <span *ngIf="dictationData" class="fs-4"
+                      >&nbsp;{{ dictationData.passOfficeArmy }}</span
+                    >
+                  </div>
+                  <div class="col-sm-12 col-12 col-md-6 p-2 text-wrap">
+                    <label> Expediente&#58;&nbsp; </label>
+                    <span *ngIf="dictationData" class="fs-4"
+                      >&nbsp;{{ dictationData.expedientNumber }}</span
+                    >
+                  </div>
+                  <div class="col-sm-12 col-12 col-md-6 p-2 text-wrap">
+                    <label> No&#46; Oficio Dic&#46;&#58;&nbsp; </label>
+                    <span *ngIf="dictationData" class="fs-4"
+                      >&nbsp;{{ dictationData.id }}</span
+                    >
+                  </div>
+                  <div class="col-sm-12 col-12 col-md-12 p-2">
+                    <strong>Estatus Oficio&#58;</strong>
+                    <ng-container *ngIf="officeDictationData; else noStatus">
+                      <div
+                        class="badge badge-pill text-wrap ml-2 mr-2"
+                        [ngClass]="
+                          officeDictationData.statusOf == 'ENVIADO'
+                            ? 'bg-success'
+                            : 'bg-info'
+                        ">
+                        &#91;&nbsp;{{ officeDictationData.statusOf }}&nbsp;&#93;
+                      </div>
+                    </ng-container>
+                    <ng-template #noStatus>
+                      <div class="badge badge-pill bg-info text-wrap ml-2 mr-2">
+                        &#91;&nbsp;&nbsp;&#93;
+                      </div>
+                    </ng-template>
+                  </div>
+                  <!-- <form-field
+                    class="col-sm-12 col-12 col-md-12 p-2"
+                    [control]="form.get('cveOfficeGenerate')"
+                    label="Cve&#46; Oficio Armada">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="cveOfficeGenerate" />
+                  </form-field> -->
+                  <!-- <form-field
+                    class="col-sm-12 col-12 col-md-6 p-2"
+                    [control]="form.get('file')"
+                    label="Expediente">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="file" />
+                  </form-field> -->
+                  <!-- <form-field
+                    class="col-sm-12 col-12 col-md-6 p-2"
+                    [control]="form.get('numberOfficeDic')"
+                    label="No&#46; Oficio Dic&#46;">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="numberOfficeDic" />
+                  </form-field> -->
+                  <form-field
+                    *ngIf="showEnableTypeOffice"
+                    class="col-sm-12 col-12 col-md-12 p-2 mt-4"
+                    [control]="form.get('typeOffice')"
+                    label="Tipo Oficio">
+                    <select
+                      class="form-control"
+                      formControlName="typeOffice"
+                      (change)="changeTypeOffice($event)">
+                      <option value="">Seleccione un valor</option>
+                      <option
+                        *ngFor="let optionTypeOffice of officeTypeOption"
+                        [value]="optionTypeOffice.value">
+                        {{ optionTypeOffice.option }}
+                      </option>
+                    </select>
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-2">
+                  <div class="col-sm-12 col-12 col-md-12 p-2">
+                    <ngx-select
+                      [data]="issuingUser"
+                      bindLabel="name"
+                      label="Autoriza Dictaminaci&oacute;n"
+                      value="id"
+                      (fetchItems)="getIssuingUserByDetail($event)"
+                      [form]="form"
+                      [showTooltip]="true"
+                      [searchOnInit]="true"
+                      termMaxLength="100"
+                      control="issuingUser"></ngx-select>
+                  </div>
+                  <div class="col-sm-12 col-12 col-md-12 p-2">
+                    <ngx-select
+                      [data]="addressee"
+                      bindLabel="description"
+                      label="Destinatario"
+                      value="user"
+                      (fetchItems)="getAddresseeByDetail($event)"
+                      (change)="changeAddreseeDetail($event)"
+                      [form]="form"
+                      [showTooltip]="true"
+                      [searchOnInit]="true"
+                      termMaxLength="100"
+                      control="addressee"></ngx-select>
+                  </div>
+                  <div class="col-sm-12 col-12 col-md-12 p-2">
+                    <ngx-select
+                      [data]="cityData"
+                      bindLabel="nameAndId"
+                      label="Ciudad"
+                      value="idCity"
+                      (fetchItems)="getCityByDetail($event)"
+                      [form]="form"
+                      [showTooltip]="true"
+                      [searchOnInit]="true"
+                      termMaxLength="60"
+                      control="city"></ngx-select>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="card-body">
-              <div class="col-sm-12 col-12 col-md-6 p-2">
+            <div class="card">
+              <div class="card-body">
                 <form-field
-                  class="col-sm-12 col-12 col-md-12 p-2"
-                  [control]="form.get('cveOfficeGenerate')"
-                  label="Cve Oficio Armada">
+                  class="col-md-12 col-sm-12 col-12 p-2"
+                  [control]="form.get('introductoryParagraph')"
+                  label="P&aacute;rrafo Inicial">
+                  <textarea
+                    maxlength="2000"
+                    class="form-control"
+                    formControlName="introductoryParagraph"
+                    rows="5"></textarea>
+                </form-field>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-12 col-sm-12 col-md-8">
+                    <h6>Bienes Asociados</h6>
+                  </div>
+                  <div
+                    class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
+                    <app-columns-select
+                      [leftList]="true"
+                      [(settings)]="settings"></app-columns-select>
+                  </div>
+                  <div
+                    class="col-sm-12 col-12 col-md-12 table-responsive p-5"
+                    style="max-height: 500px; overflow-y: scroll">
+                    <div [class]="loadingGoods ? 'table-loading' : ''">
+                      <ng2-smart-table
+                        [attr.class]="'table-bordered'"
+                        [settings]="settings"
+                        [source]="dataTable">
+                      </ng2-smart-table>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-12 col-md-12">
+                    <app-pagination
+                      [params]="goodsByDictation"
+                      [totalItems]="totalData"></app-pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body">
+                <form-field
+                  class="col-md-12 col-sm-12 col-12 p-2"
+                  [control]="form.get('finalParagraph')"
+                  label="P&aacute;rrafo Final">
+                  <textarea
+                    maxlength="4000"
+                    class="form-control"
+                    formControlName="finalParagraph"
+                    rows="5"></textarea>
+                </form-field>
+              </div>
+              <div class="card-body">
+                <div class="col-sm-12 col-12 col-md-3">
+                  <button
+                    (click)="showMoreInformationField(true, 1)"
+                    type="button"
+                    class="btn btn-success btn-sm active">
+                    <i aria-hidden="true" class="fa fa-plus"></i>
+                    M&aacute;s Información 1
+                  </button>
+                </div>
+                <div class="col-sm-12 col-12 col-md-3">
+                  <button
+                    (click)="showMoreInformationField(true, 2)"
+                    type="button"
+                    class="btn btn-info btn-sm active">
+                    <i aria-hidden="true" class="fa fa-plus"></i>
+                    M&aacute;s Información 2
+                  </button>
+                </div>
+                <div class="col-sm-12 col-12 col-md-3">
+                  <button
+                    (click)="showMoreInformationField(true, 3)"
+                    type="button"
+                    class="btn btn-warning btn-sm active">
+                    <i aria-hidden="true" class="fa fa-plus"></i>
+                    M&aacute;s Información 3
+                  </button>
+                </div>
+                <form-field
+                  *ngIf="numberNotaryVisible"
+                  class="col-sm-12 col-12 col-md-3 p-2"
+                  [control]="form.get('numberNotary')"
+                  label="No. Notario">
                   <input
                     type="text"
                     class="form-control"
-                    formControlName="cveOfficeGenerate" />
+                    formControlName="numberNotary" />
+                </form-field>
+              </div>
+              <div
+                class="card-footer"
+                *ngIf="moreInfo1 || moreInfo2 || moreInfo3">
+                <form-field
+                  *ngIf="moreInfo1"
+                  class="col-md-12 col-sm-12 col-12 p-2"
+                  [control]="form.get('moreInformation1')"
+                  label="M&aacute;s Información 1">
+                  <textarea
+                    maxlength="4000"
+                    class="form-control"
+                    formControlName="moreInformation1"
+                    rows="5"></textarea>
                 </form-field>
                 <form-field
-                  *ngIf="showEnableTypeOffice"
-                  class="col-sm-12 col-12 col-md-12 p-2"
-                  [control]="form.get('typeOffice')"
-                  label="Tipo Oficio">
+                  *ngIf="moreInfo2"
+                  class="col-md-12 col-sm-12 col-12 p-2"
+                  [control]="form.get('moreInformation2')"
+                  label="M&aacute;s Información 2">
+                  <textarea
+                    maxlength="4000"
+                    class="form-control"
+                    formControlName="moreInformation2"
+                    rows="5"></textarea>
+                </form-field>
+                <form-field
+                  *ngIf="moreInfo3"
+                  class="col-md-12 col-sm-12 col-12 p-2"
+                  [control]="form.get('moreInformation3')"
+                  label="M&aacute;s Información 3">
+                  <textarea
+                    maxlength="4000"
+                    class="form-control"
+                    formControlName="moreInformation3"
+                    rows="5"></textarea>
+                </form-field>
+                <div class="col-sm-12 col-12 col-md-12 text-center">
+                  <button
+                    (click)="showMoreInformationField(false, 4)"
+                    type="button"
+                    class="btn btn-danger btn-sm active">
+                    Cerrar Información Adicional
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="card">
+              <div class="card-footer row">
+                <div class="col-12 col-sm-12 col-md-12">
+                  <h6>C.C.P.</h6>
+                </div>
+                <form-field
+                  class="col-sm-12 col-12 col-md-4 p-2"
+                  [control]="form.get('ccp_person')"
+                  label="">
                   <select
                     class="form-control"
-                    formControlName="typeOffice"
-                    (change)="changeTypeOffice($event)">
+                    formControlName="ccp_person"
+                    (change)="changeCopiesType($event, 1)">
                     <option value="">Seleccione un valor</option>
-                    <option
-                      *ngFor="let optionTypeOffice of officeTypeOption"
-                      [value]="optionTypeOffice.value">
-                      {{ optionTypeOffice.option }}
-                    </option>
+                    <option value="E">EXTERNA</option>
+                    <option value="I">INTERNA</option>
                   </select>
                 </form-field>
-                <div class="col-sm-12 col-12 col-md-12 p-2">
-                  <strong>Estatus oficio:</strong>
-                  <ng-container *ngIf="officeDictationData; else noStatus">
-                    <div
-                      class="badge badge-pill text-wrap ml-2 mr-2"
-                      [ngClass]="
-                        officeDictationData.statusOf == 'ENVIADO'
-                          ? 'bg-success'
-                          : 'bg-info'
-                      ">
-                      &#91;&nbsp;{{ officeDictationData.statusOf }}&nbsp;&#93;
-                    </div>
-                  </ng-container>
-                  <ng-template #noStatus>
-                    <div
-                      class="badge badge-pill bg-default text-wrap ml-2 mr-2">
-                      &#91;Aquí va el estatus&#93;
-                    </div>
-                  </ng-template>
-                </div>
-              </div>
-              <div class="col-sm-12 col-12 col-md-6 p-2">
-                <div class="col-sm-12 col-12 col-md-12 p-2">
-                  <ngx-select
-                    [data]="issuingUser"
-                    bindLabel="name"
-                    label="Autoriza Dictaminaci&oacute;n"
-                    value="id"
-                    (fetchItems)="getIssuingUserByDetail($event)"
-                    [form]="form"
-                    [showTooltip]="true"
-                    [searchOnInit]="true"
-                    termMaxLength="100"
-                    control="issuingUser"></ngx-select>
-                </div>
-                <div class="col-sm-12 col-12 col-md-12 p-2">
-                  <ngx-select
-                    [data]="addressee"
-                    bindLabel="description"
-                    label="Destinatario"
-                    value="user"
-                    (fetchItems)="getAddresseeByDetail($event)"
-                    (change)="changeAddreseeDetail($event)"
-                    [form]="form"
-                    [showTooltip]="true"
-                    [searchOnInit]="true"
-                    termMaxLength="100"
-                    control="addressee"></ngx-select>
-                </div>
-                <div class="col-sm-12 col-12 col-md-12 p-2">
-                  <ngx-select
-                    [data]="cityData"
-                    bindLabel="nameAndId"
-                    label="Ciudad"
-                    value="idCity"
-                    (fetchItems)="getCityByDetail($event)"
-                    [form]="form"
-                    [showTooltip]="true"
-                    [searchOnInit]="true"
-                    termMaxLength="60"
-                    control="city"></ngx-select>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-body">
-              <form-field
-                class="col-md-12 col-sm-12 col-12 p-2"
-                [control]="form.get('introductoryParagraph')"
-                label="P&aacute;rrafo Inicial">
-                <textarea
-                  class="form-control"
-                  formControlName="introductoryParagraph"
-                  rows="5"
-                  [readonly]="true"></textarea>
-              </form-field>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-body">
-              <div class="row">
-                <div class="col-12 col-sm-12 col-md-8">
-                  <h6>Bienes Asociados</h6>
-                </div>
-                <div class="col-12 col-sm-12 col-md-4 text-end">
-                  <app-columns-select
-                    [(settings)]="settings"></app-columns-select>
+                <div
+                  class="col-sm-12 col-12 col-md-8 p-2"
+                  *ngIf="
+                    form.get('ccp_person').value != 'I' &&
+                    form.get('ccp_person').value != 'E'
+                  ">
+                  <div class="alert alert-info">
+                    Selecciona el Tipo de Copia para ingresar el Nombre del
+                    Usuario o Seleccionar un Usuario desde el catálogo
+                  </div>
                 </div>
                 <div
-                  class="col-sm-12 col-12 col-md-12 table-responsive p-5"
-                  style="max-height: 500px; overflow-y: scroll">
-                  <div [class]="loading ? 'table-loading' : ''">
+                  class="col-sm-12 col-12 col-md-8 p-2"
+                  *ngIf="form.get('ccp_person').value == 'I'">
+                  <ngx-select
+                    [data]="userCopies1"
+                    bindLabel="name"
+                    label="C.C.P."
+                    value="id"
+                    (fetchItems)="getUsersCopies($event, 1)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="100"
+                    control="ccp_addressee"></ngx-select>
+                </div>
+                <form-field
+                  *ngIf="form.get('ccp_person').value == 'E'"
+                  class="col-sm-12 col-12 col-md-8 p-2"
+                  [control]="form.get('ccp_TiPerson')"
+                  label="Nombre Destinatario">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="ccp_TiPerson" />
+                </form-field>
+                <form-field
+                  class="col-sm-12 col-12 col-md-4 p-2"
+                  [control]="form.get('ccp_person_1')"
+                  label="">
+                  <select
+                    class="form-control"
+                    formControlName="ccp_person_1"
+                    (change)="changeCopiesType($event, 2)">
+                    <option value="">Seleccione un valor</option>
+                    <option value="E">EXTERNA</option>
+                    <option value="I">INTERNA</option>
+                  </select>
+                </form-field>
+                <div
+                  class="col-sm-12 col-12 col-md-8 p-2"
+                  *ngIf="
+                    form.get('ccp_person_1').value != 'I' &&
+                    form.get('ccp_person_1').value != 'E'
+                  ">
+                  <div class="alert alert-info">
+                    Selecciona el Tipo de Copia para ingresar el Nombre del
+                    Usuario o Seleccionar un Usuario desde el catálogo
+                  </div>
+                </div>
+                <div
+                  class="col-sm-12 col-12 col-md-8 p-2"
+                  *ngIf="form.get('ccp_person_1').value == 'I'">
+                  <ngx-select
+                    [data]="userCopies2"
+                    bindLabel="name"
+                    label="C.C.P."
+                    value="id"
+                    (fetchItems)="getUsersCopies($event, 2)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="100"
+                    control="ccp_addressee_1"></ngx-select>
+                </div>
+                <form-field
+                  *ngIf="form.get('ccp_person_1').value == 'E'"
+                  class="col-sm-12 col-12 col-md-8 p-2"
+                  [control]="form.get('ccp_TiPerson_1')"
+                  label="Nombre Destinatario">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="ccp_TiPerson_1" />
+                </form-field>
+              </div>
+            </div> -->
+          </form>
+        </div>
+        <div class="col-12 col-sm-12 col-md-12 p-2 mb-5">
+          <div class="ch-content" header>
+            <h5 class="title">C&#46;C&#46;P&#46;</h5>
+            <div class="col-md-5 buttons">
+              <!--app-columns-select [(settings)]="settings"></app-columns-select-->
+              <div *ngIf="officeDictationData">
+                <button
+                  type="button"
+                  class="btn btn-info btn-sm active ml-2 mr-2"
+                  [disabled]="officeDictationData.statusOf == 'ENVIADO'"
+                  (click)="openModalCopy(false)">
+                  Agregar C&#46;C&#46;P&#46;<i
+                    class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+                <!-- <button
+                  [disabled]="officeDictationData.statusOf == 'ENVIADO'"
+                  (click)="openModalCopy(false)"
+                  class="btn btn-primary active btn-sm ml-3">
+                  Agregar C&#46;C&#46;P&#46;
+                </button> -->
+              </div>
+            </div>
+          </div>
+          <div body>
+            <div class="row pt-4">
+              <div class="col-md-12">
+                <div class="table-responsive">
+                  <div [class]="loadingCopiesDictation ? 'table-loading' : ''">
                     <ng2-smart-table
                       [attr.class]="'table-bordered'"
-                      [settings]="settings"
-                      [source]="data">
+                      [settings]="settings3"
+                      [source]="officeCopiesDictationData"
+                      (delete)="showDeleteAlert($event.data)">
                     </ng2-smart-table>
                   </div>
                 </div>
-                <div class="col-sm-12 col-12 col-md-12">
-                  <app-pagination
-                    [params]="params"
-                    [totalItems]="totalItems"></app-pagination>
-                </div>
               </div>
             </div>
-          </div>
-          <div class="card">
-            <div class="card-body">
-              <form-field
-                class="col-md-12 col-sm-12 col-12 p-2"
-                [control]="form.get('finalParagraph')"
-                label="P&aacute;rrafo Final">
-                <textarea
-                  class="form-control"
-                  formControlName="finalParagraph"
-                  rows="5"
-                  [readonly]="true"></textarea>
-              </form-field>
-            </div>
-            <div class="card-body">
-              <div class="col-sm-12 col-12 col-md-3">
-                <button
-                  (click)="showMoreInformationField(true, 1)"
-                  type="button"
-                  class="btn btn-success btn-sm active">
-                  <i aria-hidden="true" class="fa fa-plus"></i>
-                  M&aacute;s Información 1
-                </button>
-              </div>
-              <div class="col-sm-12 col-12 col-md-3">
-                <button
-                  (click)="showMoreInformationField(true, 2)"
-                  type="button"
-                  class="btn btn-info btn-sm active">
-                  <i aria-hidden="true" class="fa fa-plus"></i>
-                  M&aacute;s Información 2
-                </button>
-              </div>
-              <div class="col-sm-12 col-12 col-md-3">
-                <button
-                  (click)="showMoreInformationField(true, 3)"
-                  type="button"
-                  class="btn btn-warning btn-sm active">
-                  <i aria-hidden="true" class="fa fa-plus"></i>
-                  M&aacute;s Información 3
-                </button>
-              </div>
-              <form-field
-                class="col-sm-12 col-12 col-md-3 p-2"
-                [control]="form.get('numberNotary')"
-                label="No. Notario">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="numberNotary" />
-              </form-field>
-            </div>
-            <div
-              class="card-footer"
-              *ngIf="moreInfo1 || moreInfo2 || moreInfo3">
-              <form-field
-                *ngIf="moreInfo1"
-                class="col-md-12 col-sm-12 col-12 p-2"
-                [control]="form.get('moreInformation1')"
-                label="M&aacute;s Información 1">
-                <textarea
-                  class="form-control"
-                  formControlName="moreInformation1"
-                  rows="5"
-                  [readonly]="true"></textarea>
-              </form-field>
-              <form-field
-                *ngIf="moreInfo2"
-                class="col-md-12 col-sm-12 col-12 p-2"
-                [control]="form.get('moreInformation2')"
-                label="M&aacute;s Información 2">
-                <textarea
-                  class="form-control"
-                  formControlName="moreInformation2"
-                  rows="5"
-                  [readonly]="true"></textarea>
-              </form-field>
-              <form-field
-                *ngIf="moreInfo3"
-                class="col-md-12 col-sm-12 col-12 p-2"
-                [control]="form.get('moreInformation3')"
-                label="M&aacute;s Información 3">
-                <textarea
-                  class="form-control"
-                  formControlName="moreInformation3"
-                  rows="5"
-                  [readonly]="true"></textarea>
-              </form-field>
-              <div class="col-sm-12 col-12 col-md-12 text-center">
-                <button
-                  (click)="showMoreInformationField(false, 4)"
-                  type="button"
-                  class="btn btn-danger btn-sm active">
-                  Cerrar Información Adicional
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-footer row">
-              <div class="col-12 col-sm-12 col-md-12">
-                <h6>C.C.P.</h6>
-              </div>
-              <form-field
-                class="col-sm-12 col-12 col-md-4 p-2"
-                [control]="form.get('ccp_person')"
-                label="Tipo Destinatario">
-                <select
-                  class="form-control"
-                  formControlName="ccp_person"
-                  (change)="changeCopiesType($event, 1)">
-                  <option value="">Seleccione un valor</option>
-                  <option value="E">EXTERNA</option>
-                  <option value="I">INTERNA</option>
-                </select>
-              </form-field>
-              <div
-                class="col-sm-12 col-12 col-md-8 p-2"
-                *ngIf="
-                  form.get('ccp_person').value != 'I' &&
-                  form.get('ccp_person').value != 'E'
-                ">
-                <div class="alert alert-info">
-                  Selecciona el "Tipo Destinatario" para ingresar el Nombre o
-                  Seleccionar un Usuario desde el catálogo
-                </div>
-              </div>
-              <div
-                class="col-sm-12 col-12 col-md-8 p-2"
-                *ngIf="form.get('ccp_person').value == 'I'">
-                <ngx-select
-                  [data]="userCopies1"
-                  bindLabel="name"
-                  label="C.C.P."
-                  value="id"
-                  (fetchItems)="getUsersCopies($event, 1)"
-                  [form]="form"
-                  [showTooltip]="true"
-                  [searchOnInit]="true"
-                  termMaxLength="100"
-                  control="ccp_addressee"></ngx-select>
-              </div>
-              <form-field
-                *ngIf="form.get('ccp_person').value == 'E'"
-                class="col-sm-12 col-12 col-md-8 p-2"
-                [control]="form.get('ccp_TiPerson')"
-                label="Nombre Destinatario">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="ccp_TiPerson" />
-              </form-field>
-              <form-field
-                class="col-sm-12 col-12 col-md-4 p-2"
-                [control]="form.get('ccp_person_1')"
-                label="Tipo Destinatario">
-                <select
-                  class="form-control"
-                  formControlName="ccp_person_1"
-                  (change)="changeCopiesType($event, 2)">
-                  <option value="">Seleccione un valor</option>
-                  <option value="E">EXTERNA</option>
-                  <option value="I">INTERNA</option>
-                </select>
-              </form-field>
-              <div
-                class="col-sm-12 col-12 col-md-8 p-2"
-                *ngIf="
-                  form.get('ccp_person_1').value != 'I' &&
-                  form.get('ccp_person_1').value != 'E'
-                ">
-                <div class="alert alert-info">
-                  Selecciona el "Tipo Destinatario" para ingresar el Nombre o
-                  Seleccionar un Usuario desde el catálogo
-                </div>
-              </div>
-              <div
-                class="col-sm-12 col-12 col-md-8 p-2"
-                *ngIf="form.get('ccp_person_1').value == 'I'">
-                <ngx-select
-                  [data]="userCopies2"
-                  bindLabel="name"
-                  label="C.C.P."
-                  value="id"
-                  (fetchItems)="getUsersCopies($event, 2)"
-                  [form]="form"
-                  [showTooltip]="true"
-                  [searchOnInit]="true"
-                  termMaxLength="100"
-                  control="ccp_addressee_1"></ngx-select>
-              </div>
-              <form-field
-                *ngIf="form.get('ccp_person_1').value == 'E'"
-                class="col-sm-12 col-12 col-md-8 p-2"
-                [control]="form.get('ccp_TiPerson_1')"
-                label="Nombre Destinatario">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="ccp_TiPerson_1" />
-              </form-field>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="col-sm-12 col-12 col-md-12 text-center">
-        <button type="button" class="btn btn-primary btn-sm active m-3">
-          Reporte
-          <i class="fa fa-file" aria-hidden="true"></i>
-        </button>
-        <button type="button" class="btn btn-info btn-sm active m-3">
-          Detalle
-          <i class="fa fa-info-circle" aria-hidden="true"></i>
-        </button>
-        <button type="button" class="btn btn-success btn-sm active m-3">
-          Enviar
-          <i class="fa fa-paper-plane" aria-hidden="true"></i>
-        </button>
-      </div>
-    </div>
-    <hr />
-    <div class="row" *ngIf="showScanForm">
-      <div class="col-12 col-sm-12 col-md-12">
-        <div class="card">
-          <div class="card-body">
-            <app-scanning-foil [form]="formScan"></app-scanning-foil>
           </div>
         </div>
+        <!-- <div class="col-md-12 alert alert-warning" *ngIf="loadingSend">
+          Realizando el proceso de "Enviar" los "Bienes Asociados"
+          , Espere un momento...
+        </div>
+        <div class="col-md-12 alert alert-warning" *ngIf="loadDetail">
+          Realizando el proceso para mostrar el Reporte correspondiente, Espere
+          un momento...
+        </div> -->
+        <div
+          class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+          *ngIf="loadingSend || loadDetail">
+          <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center">
+              <div class="loader"></div>
+              <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="col-sm-12 col-12 col-md-12 text-center mt-3">
+          <button
+            [disabled]="loadingSend || loadDetail"
+            (click)="btnDetail()"
+            type="button"
+            class="btn btn-info btn-sm active m-3">
+            Imprimir
+            <i class="fa fa-file" aria-hidden="true"></i>
+          </button>
+          <button
+            [disabled]="loadingSend || blockSender || loadDetail"
+            type="button"
+            class="btn btn-success btn-sm active m-3"
+            (click)="sendOffice()">
+            Enviar
+            <i class="fa fa-paper-plane" aria-hidden="true"></i>
+          </button>
+        </div> -->
       </div>
-    </div>
+      <hr />
+      <div class="row" *ngIf="showScanForm">
+        <div class="col-12 col-sm-12 col-md-9">
+          <div class="card">
+            <div class="card-body">
+              <app-scanning-foil
+                [form]="formScan"
+                [screenKey]="screenKey"
+                [screenKey2]="origin"
+                [screenKey3]="origin3"
+                [paramsScreen]="paramsScreen"
+                [officeDictationData]="officeDictationData"
+                [dictationData]="dictationData"
+                [dataUserLogged]="dataUserLogged"
+                [disabled]="loadingSend || loadDetail"
+                (viewPicturesEmitter)="
+                  viewPictures($event)
+                "></app-scanning-foil>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-3">
+          <button
+            name="imp"
+            data-toggle="tooltip"
+            tooltip="Imprimir"
+            containerClass="tooltip-style"
+            (click)="btnDetail()"
+            [disabled]="loadingSend || loadDetail"
+            class="btn btn-secondary btn-sm active ml-2 mr-2">
+            <i class="bx bxs-printer"></i>
+          </button>
+
+          <button
+            name="env"
+            data-toggle="tooltip"
+            containerClass="tooltip-style"
+            tooltip="Enviar"
+            (click)="sendOffice()"
+            [disabled]="loadingSend || blockSender || loadDetail"
+            class="btn btn-danger btn-sm active ml-2 mr-2">
+            <i class="bx bx-send"></i>
+          </button>
+        </div>
+      </div>
+    </ng-container>
   </div>
 </app-card>

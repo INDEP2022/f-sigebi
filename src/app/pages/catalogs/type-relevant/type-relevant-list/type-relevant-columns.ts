@@ -5,22 +5,22 @@ export const TYPERELEVANT_COLUMS = {
     sort: false,
   },
   description: {
-    title: 'Descrpcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
   version: {
-    title: 'Version',
+    title: 'Versión',
     type: 'number',
     sort: false,
   },
-  noPhotography: {
-    title: 'Numero de fotografía',
+  numberPhotography: {
+    title: 'Número de Fotografía',
     type: 'number',
     sort: false,
   },
   detailsPhotography: {
-    title: 'Detalles de fotografía',
+    title: 'Detalles de Fotografía',
     type: 'string',
     sort: false,
   },

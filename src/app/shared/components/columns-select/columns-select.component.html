@@ -7,12 +7,28 @@
     aria-controls="dropdown-basic">
     Columnas
   </button>
+  <!-- <div ngbDropdownMenu aria-labelledby="dropdownBasic1"> -->
   <ul
     id="dropdown-basic"
     *dropdownMenu
     class="dropdown-menu"
+    [ngClass]="leftList == false ? '' : 'left'"
     role="menu"
     aria-labelledby="button-basic">
+    <li (click)="$event.stopPropagation()" role="menu" class="dropdown-item">
+      <input
+        type="text"
+        id="searchbar"
+        [formControl]="searchControl"
+        class="form-control" />
+    </li>
+    <li (click)="$event.stopPropagation()" role="menu" class="dropdown-item">
+      <input
+        [formControl]="selectAllControl"
+        type="checkbox"
+        (click)="selectAll()" />
+      Todas las columnas
+    </li>
     <li
       role="menuitem"
       *ngFor="let column of getColumns()"
@@ -40,4 +56,25 @@
       {{ column.name }}
     </li>
   </ul>
+  <!-- </div> -->
 </div>
+
+<!-- Example split danger button -->
+<!-- <div class="btn-group">
+  <button type="button" class="btn btn-danger">Action</button>
+  <button
+    type="button"
+    class="btn btn-danger dropdown-toggle dropdown-toggle-split"
+    data-toggle="dropdown"
+    aria-haspopup="true"
+    aria-expanded="false">
+    <span class="sr-only">Toggle Dropdown</span>
+  </button>
+  <div class="dropdown-menu">
+    <a class="dropdown-item" href="#">Action</a>
+    <a class="dropdown-item" href="#">Another action</a>
+    <a class="dropdown-item" href="#">Something else here</a>
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item" href="#">Separated link</a>
+  </div>
+</div> -->

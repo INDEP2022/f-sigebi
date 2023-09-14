@@ -1,0 +1,54 @@
+.info-foto {
+  text-align: right;
+  font-size: 12px;
+}
+
+.errorMessage {
+  margin-bottom: 3em;
+  text-align: center;
+  color: #ba657f;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  @media screen and (max-width: 576px) {
+    margin-bottom: 1.5em;
+  }
+}
+
+.float-check {
+  left: 8px;
+}
+
+.disabledOption {
+  opacity: 0.6;
+  cursor: default;
+  pointer-events: none;
+}
+
+.action-buttons {
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.grid-square {
+  padding: 10px 30px;
+}
+
+.photoGoods {
+  display: flex;
+  form {
+    width: 150px;
+    margin: auto;
+  }
+  @media screen and (max-width: 576px) {
+    flex-direction: column;
+    row-gap: 10px;
+    form {
+      margin: 2em 0 0 0;
+      width: 100%;
+    }
+    button {
+      width: 100%;
+    }
+  }
+}

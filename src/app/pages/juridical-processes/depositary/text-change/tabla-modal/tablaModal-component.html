@@ -1,0 +1,43 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <form action="" class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-12">
+          <div class="table-responsive justify-content-lg-center">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered '"
+                [settings]="settings"
+                (userRowSelect)="getDataColumn($event.data)"
+                [source]="dataLocal">
+              </ng2-smart-table>
+              <app-pagination
+                [filterParams]="filterParams"
+                [totalItems]="totalItems"></app-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          (click)="handleSuccess()">
+          Seleccionar
+        </button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

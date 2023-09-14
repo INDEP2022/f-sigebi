@@ -14,7 +14,6 @@ import { IAttributesFinancialInfo } from 'src/app/core/models/catalogs/attribute
 //Services
 import { LocalDataSource } from 'ng2-smart-table';
 import { AttributesInfoFinancialService } from 'src/app/core/services/catalogs/attributes-info-financial-service';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cat-financial-information-attributes',
@@ -63,18 +62,22 @@ export class CatFinancialInformationAttributesComponent
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
-            filter.field == 'city'
-              ? (field = `filter.${filter.field}.nameCity`)
-              : (field = `filter.${filter.field}`);
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getAttributesFinancialInfo();
         }
       });
@@ -95,7 +98,7 @@ export class CatFinancialInformationAttributesComponent
         this.columns = response.data;
         this.totalItems = response.count || 0;
 
-        this.data.load(this.columns);
+        this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
       },
@@ -125,14 +128,27 @@ export class CatFinancialInformationAttributesComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(attributesFinancialInfo.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.attributesInfoFinancialService.remove(id).subscribe({
-      next: () => this.getAttributesFinancialInfo(),
+      next: () => {
+        this.getAttributesFinancialInfo();
+        this.alert(
+          'success',
+          'Atributos de Informaci&oacute;n Financiera',
+          'Borrado Correctamente'
+        );
+      },
+      error: erro => {
+        this.alert(
+          'warning',
+          'Atributos de Informaci&oacute;n Financiera',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

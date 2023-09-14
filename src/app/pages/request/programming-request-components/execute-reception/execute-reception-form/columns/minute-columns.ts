@@ -1,18 +1,18 @@
 export const RECEIPT_COLUMNS = {
-  noMinute: {
-    title: 'Número de acta',
+  actId: {
+    title: 'No. Acta',
     type: 'number',
     sort: false,
   },
 
-  receipt: {
+  id: {
     title: 'Recibo',
     type: 'string',
     sort: false,
   },
 
   statusReceipt: {
-    title: 'Estatus recibo',
+    title: 'Estatus Recibo',
     type: 'string',
     sort: false,
   },
@@ -20,9 +20,14 @@ export const RECEIPT_COLUMNS = {
 
 export const RECEIPT_GUARD_COLUMNS = {
   receiptDate: {
-    title: 'Fecha recibo',
+    title: 'Fecha Recibo',
     type: 'string',
     sort: false,
+    // valuePrepareFunction: (date: Date) => {
+    //   var raw = new Date(date);
+    //   var formatted = new DatePipe('es-ES').transform(raw, 'dd/MM/aaaa');
+    //   return formatted;
+    // },
   },
 
   typeReceipt: {
@@ -38,14 +43,14 @@ export const RECEIPT_GUARD_COLUMNS = {
   },
 };
 export const RECEIPT_COLUMNS_FORMALIZE = {
-  receipt: {
+  id: {
     title: 'Recibo',
     type: 'text',
     sort: false,
   },
 
   statusReceipt: {
-    title: 'Estatus recibo',
+    title: 'Estatus Recibo',
     type: 'text',
     sort: false,
   },

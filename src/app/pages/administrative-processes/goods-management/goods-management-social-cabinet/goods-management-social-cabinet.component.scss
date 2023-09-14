@@ -1,0 +1,54 @@
+// .excuse {
+//   margin-top: 20px;
+//   @media screen and (max-width: 576px) {
+//     margin-top: 0px;
+//   }
+// }
+
+.upload-button {
+  display: flex;
+  column-gap: 5px;
+  align-items: center;
+  i {
+    font-size: 20px;
+  }
+}
+
+.titleTabs {
+  align-items: center;
+  display: flex;
+  label {
+    font-weight: 500;
+  }
+}
+
+button {
+  margin-right: 20px;
+  @media screen and (max-width: 576px) {
+    margin-right: 0px;
+  }
+}
+
+.clearButton {
+  text-align: right;
+  @media screen and (max-width: 576px) {
+    text-align: left;
+  }
+}
+
+:host ::ng-deep .md-tabs tabset {
+  .tab-content {
+    form {
+      margin-bottom: 10px;
+    }
+  }
+}
+
+// .buttons {
+//   button:last-child {
+//     margin-left: 10px;
+//     @media screen and (max-width: 576px) {
+//       margin-left: 0px;
+//     }
+//   }
+// }

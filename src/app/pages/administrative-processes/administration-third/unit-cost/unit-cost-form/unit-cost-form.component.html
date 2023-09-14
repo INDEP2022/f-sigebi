@@ -21,7 +21,7 @@
         <div class="col-md-6 mt-4">
           <form-field [control]="unitCostForm.get('serviceNumber')">
             <ngx-select
-              (fetchItems)="getProcesses($event)"
+              (fetchItems)="getServices($event)"
               [data]="services"
               [form]="unitCostForm"
               value="serviceNumber"
@@ -78,6 +78,7 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
+          [disabled]="unitCostForm.invalid"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

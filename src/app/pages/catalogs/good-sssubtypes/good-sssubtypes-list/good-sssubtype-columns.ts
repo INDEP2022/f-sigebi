@@ -4,52 +4,62 @@ import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 
 export const GOOD_SSSUBTYPE_COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'Código SubsubsubTipo',
     type: 'number',
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
   numType: {
-    title: 'Tipo bien',
+    title: 'Tipo Bien',
     type: 'string',
+    sort: false,
     valuePrepareFunction: (value: IGoodType) => {
       return value.nameGoodType;
     },
-    sort: false,
+    filterFunction: (cell?: any, search?: string) => {
+      return search != null ? search : '';
+    },
   },
   numSubType: {
-    title: 'Subtipo bien',
+    title: 'Subtipo Bien',
     type: 'string',
+    sort: false,
     valuePrepareFunction: (value: IGoodSubType) => {
       return value.nameSubtypeGood;
     },
-    sort: false,
+    filterFunction: (cell?: any, search?: string) => {
+      return search != null ? search : '';
+    },
   },
   numSsubType: {
-    title: 'Ssubtipo bien',
+    title: 'Subsubtipo Bien',
     type: 'string',
+    sort: false,
     valuePrepareFunction: (value: IGoodSsubType) => {
       return value.description;
     },
-    sort: false,
+    filterFunction: (cell?: any, search?: string) => {
+      return search != null ? search : '';
+    },
   },
   numClasifGoods: {
-    title: 'N Clasif Bien',
+    title: 'No. Clasif Bien',
     type: 'number',
     sort: false,
+    with: '200px',
   },
-  numClasifAlterna: {
-    title: 'N Clasif alterna',
-    type: 'number',
-    sort: false,
-  },
-  numRegister: {
-    title: 'N registro',
-    type: 'number',
-    sort: false,
-  },
+  // numClasifAlterna: {
+  //   title: 'No. Clasif alterna',
+  //   type: 'number',
+  //   sort: false,
+  // },
+  // numRegister: {
+  //   title: 'No. Registro',
+  //   type: 'number',
+  //   sort: false,
+  // },
 };

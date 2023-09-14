@@ -1,44 +1,62 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+
 export const GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS = {
-  regional: {
-    title: 'Regional',
+  RegionalCoordination: {
+    title: 'Coord. Regional',
     sort: false,
   },
-  cve: {
-    title: 'Cve Oficio Externo',
+  OficioExterno: {
+    title: 'Cve. Oficio Externo',
     sort: false,
   },
-  expediente: {
-    title: 'No Expediente',
+  ExpendientNumber: {
+    title: 'No. Expediente',
     sort: false,
   },
-  noVolante: {
-    title: 'No Volante',
+  VolanteNumber: {
+    title: 'No. Volante',
     sort: false,
   },
-  tramite: {
-    title: 'No Tramite',
+  TramiteNumber: {
+    title: 'No. Trámite',
     sort: false,
   },
-  usuario: {
+  ReceivingUnit: {
     title: 'Usuario',
     sort: false,
   },
-  page: {
-    title: 'Fecha page Ind.',
+  Program: {
+    title: 'Programa',
     sort: false,
   },
-  fin: {
+  StartDate: {
+    title: 'Fecha Inicio Ind.',
+    sort: false,
+  },
+  MaxDate: {
     title: 'Fecha Fin Ind.',
     sort: false,
   },
-  max: {
-    title: 'Fecha Máxima',
+  Fulfilled: {
+    title: 'Cumplió',
     sort: false,
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    valuePrepareFunction: (value: any) => {
+      if (value !== null) {
+        switch (value) {
+          case '0':
+            value = false;
+            return value;
+            break;
+          case '1':
+            value = true;
+            return value;
+            break;
+        }
+      }
+    },
   },
-  // cumplio: {
-  //     title: 'Cumplio',
-  //     sort: false
-  // },
 };
 function getData() {
   const data = [];

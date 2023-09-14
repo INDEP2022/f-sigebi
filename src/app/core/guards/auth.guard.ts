@@ -9,6 +9,7 @@ import {
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs';
 import { PermissionsService } from 'src/app/common/services/permissions.service';
 import { showHideErrorInterceptorService } from '../../common/services/show-hide-error-interceptor.service';
@@ -26,7 +27,8 @@ export class AuthGuard implements CanActivate, CanLoad, CanActivateChild {
     private readonly authService: AuthService,
     private readonly router: Router,
     private permissionsService: PermissionsService,
-    private showHideErrorService: showHideErrorInterceptorService
+    private showHideErrorService: showHideErrorInterceptorService,
+    private jwtHelper: JwtHelperService
   ) {}
 
   canActivate(
@@ -51,26 +53,13 @@ export class AuthGuard implements CanActivate, CanLoad, CanActivateChild {
   }
 
   verify(route: Route) {
-    this.authService.getTokenExpiration();
-
-    // Reestablece propiedad al navegar a cualquier pantalla
-    this.showHideErrorService.blockAllErrors = false;
-    if (this.authService.existToken() && !this.authService.isTokenExpired()) {
-      const timeNow = new Date(
-        this.authService.getTokenExpiration().valueOf() - new Date().valueOf()
-      ).getMinutes();
-
-      if (timeNow <= this.timeOut && timeNow > 0) {
-        const token = this.authService.accessRefreshToken();
-        this.refreshToken(token);
-      }
-      return true;
-      //TODO: Habilitar checkRoles()
-      //this.checkRoles(route);
-    } else {
+    const token = localStorage.getItem('token');
+    const isTokenExpired = this.jwtHelper.isTokenExpired(token);
+    if (!token || isTokenExpired) {
       this.router.navigate(['/auth/login']);
       return false;
     }
+    return true;
   }
 
   checkRoles(route: ActivatedRouteSnapshot | Route): boolean {

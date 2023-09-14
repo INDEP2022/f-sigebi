@@ -4,7 +4,10 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import {
   IComerLayouts,
   IComerLayoutsH,
@@ -15,6 +18,7 @@ import { LayoutsConfigService } from 'src/app/core/services/ms-parametercomer/la
 import { BasePage } from 'src/app/core/shared/base-page';
 import { LayoutsConfigurationModalComponent } from './layouts-configuration-modal/layouts-configuration-modal.component';
 
+import { LocalDataSource } from 'ng2-smart-table';
 import {
   EXAMPLE_DAT2,
   EXAMPLE_DAT3,
@@ -27,6 +31,7 @@ import {
   LAYOUTS_COLUMNS5,
   LAYOUTS_COLUMNS6,
 } from './layouts-config-columns';
+import { LayoutsStructureConfigurationModalComponent } from './layouts-structure-configuration-modal/layouts-structure-configuration-modal.component';
 
 @Component({
   selector: 'app-layouts-configuration',
@@ -57,6 +62,24 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   columns: any[] = [];
   @Output() refresh = new EventEmitter<true>();
   @Output() onConfirm = new EventEmitter<any>();
+  // Layouts Table
+  dataTableLayouts: LocalDataSource = new LocalDataSource();
+  dataTableParamsLayouts = new BehaviorSubject<ListParams>(new ListParams());
+  loadingLayouts: boolean = false;
+  totalLayouts: number = 0;
+  testDataLayouts: any[] = [];
+  columnFiltersLayouts: any = [];
+  // Layouts Estructura Table
+  dataTableLayoutsStructure: LocalDataSource = new LocalDataSource();
+  dataTableParamsLayoutsStructure = new BehaviorSubject<ListParams>(
+    new ListParams()
+  );
+  loadingLayoutsStructure: boolean = false;
+  totalLayoutsStructure: number = 0;
+  testDataLayoutsStructure: any[] = [];
+  columnFiltersLayoutsStructure: any = [];
+  // Cantidades de sumatorias
+  lengthTotal: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -67,11 +90,13 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.selectedRow = null;
     this.getLayoutH();
     this.prepareForm();
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getLayouts());
+    // this.params
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() => this.getLayouts());
+    this.loadingDataTableLayouts();
   }
 
   prepareForm() {
@@ -99,56 +124,65 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   }
 
   userRowSelect(event: any) {
-    this.idLayout = event.data.idLayout.id;
-    console.log(this.idLayout);
-    let params: ILay = {
-      idLayout: event.data.idLayout.id,
-      idConsec: event.data.idConsec,
-    };
-    let paramsId: IL = {
-      idLayout: event.data.idLayout.id,
-    };
-    let paramsUpdate: IComerLayouts = {
-      idLayout: event.data.idLayout.id,
-      idConsec: event.data.idConsec,
-      position: event.data.position,
-      column: event.data.column,
-      indActive: event.data.column,
-      type: event.data.type,
-      length: event.data.length,
-      constant: event.data.constant,
-      carFilling: event.data.carFilling,
-      justification: event.data.justification,
-      decimal: event.data.decimal,
-      dateFormat: event.data.dateFormat,
-      registryNumber: event.data.registryNumber,
-    };
-    this.layoutsConfigService.findOne(params).subscribe({
-      next: data => {
-        this.layout = paramsId;
-        this.structureLayout = paramsUpdate;
-        console.log(this.structureLayout);
-        this.valid = true;
-        this.layoutsConfigService.getByIdH(this.idLayout).subscribe({
-          next: data => {
-            this.layoutDuplicated = data;
-            console.log(this.layoutDuplicated);
-            this.valid = true;
-            this.rowSelected = true;
-          },
-          error: error => {
-            this.loading = false;
-            this.onLoadToast('error', 'Layout no existe!!', '');
-            return;
-          },
-        });
-      },
-      error: error => {
-        this.loading = false;
-        this.onLoadToast('error', 'Layout no existe!!', '');
-        return;
-      },
-    });
+    console.log(event);
+    if (event.isSelected) {
+      this.idLayout = event.data.id;
+      this.selectedRow = event.data;
+      this.valid = true;
+      this.loadingDataTableLayoutsStructure();
+    } else {
+      this.idLayout = null;
+      this.selectedRow = null;
+      this.valid = false;
+    }
+    // let params: ILay = {
+    //   idLayout: event.data.idLayout.id,
+    //   idConsec: event.data.idConsec,
+    // };
+    // let paramsId: IL = {
+    //   idLayout: event.data.idLayout.id,
+    // };
+    // let paramsUpdate: IComerLayouts = {
+    //   idLayout: event.data.idLayout.id,
+    //   idConsec: event.data.idConsec,
+    //   position: event.data.position,
+    //   column: event.data.column,
+    //   indActive: event.data.column,
+    //   type: event.data.type,
+    //   length: event.data.length,
+    //   constant: event.data.constant,
+    //   carFilling: event.data.carFilling,
+    //   justification: event.data.justification,
+    //   decimal: event.data.decimal,
+    //   dateFormat: event.data.dateFormat,
+    //   registryNumber: event.data.registryNumber,
+    // };
+    // this.layoutsConfigService.findOne(params).subscribe({
+    //   next: data => {
+    //     this.layout = paramsId;
+    //     this.structureLayout = paramsUpdate;
+    //     console.log(this.structureLayout);
+    //     this.valid = true;
+    //     this.layoutsConfigService.getByIdH(this.idLayout).subscribe({
+    //       next: data => {
+    //         this.layoutDuplicated = data;
+    //         console.log(this.layoutDuplicated);
+    //         this.valid = true;
+    //         this.rowSelected = true;
+    //       },
+    //       error: error => {
+    //         this.loading = false;
+    //         this.onLoadToast('error', 'Layout no existe!!', '');
+    //         return;
+    //       },
+    //     });
+    //   },
+    //   error: error => {
+    //     this.loading = false;
+    //     this.onLoadToast('error', 'Layout no existe!!', '');
+    //     return;
+    //   },
+    // });
   }
 
   userRowLayoutSelect(event: any) {
@@ -163,7 +197,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
-        this.onLoadToast('error', 'error en la búsqueda!!', '');
+        this.onLoadToast('error', 'Error en la búsqueda', '');
         return;
       },
     });
@@ -173,21 +207,42 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.rowSelectedGood = true;
   }
 
-  duplicar() {
-    this.loading = false;
-    this.layoutsConfigService.create(this.structureLayout).subscribe({
-      next: data => {
-        console.log('creado' + data);
-        this.valid = true;
-        this.rowSelected = true;
-        // this.duplicaLayout();
-        this.handleSuccess();
-      },
-      error: error => {
-        this.loading = false;
-        this.onLoadToast('error', 'No se puede duplicar layout!!', '');
-        return;
-      },
+  async duplicar() {
+    if (this.selectedRow == null) {
+      this.alert(
+        'warning',
+        'Selecciona un registro de la tabla "Diseños" para continuar',
+        ''
+      );
+      return;
+    }
+    console.log('DUPLICAR ', this.selectedRow);
+    this.alertQuestion(
+      'warning',
+      'Duplicar Diseño',
+      '¿Está seguro(a) en duplicar el diseño ' +
+        this.selectedRow.id +
+        '.' +
+        this.selectedRow.descLayout +
+        '?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.loading = true;
+        this.layoutsConfigService.createH(this.selectedRow).subscribe({
+          next: data => {
+            console.log('creado' + data);
+            // this.valid = true;
+            // this.rowSelected = true;
+            // this.duplicaLayout();
+            this.handleSuccess();
+          },
+          error: error => {
+            this.loading = false;
+            this.onLoadToast('error', 'No se puede duplicar el diseño', '');
+            // return;
+          },
+        });
+      }
     });
   }
   // duplicaLayout() {
@@ -207,8 +262,8 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     const message: string = 'Duplicado';
     this.onLoadToast('success', `${message} Correctamente`, '');
     this.loading = false;
-    this.onConfirm.emit(true);
-    this.getLayouts();
+    this.loadingDataTableLayouts();
+    this.loadingDataTableLayoutsStructure();
   }
 
   getLayouts() {
@@ -266,21 +321,280 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.layoutsConfigService.remove(del).subscribe({
           next: data => {
             this.loading = false;
-            this.onLoadToast('success', 'Layout eliminado', '');
+            this.onLoadToast('success', 'Diseño Eliminado', '');
             this.getLayouts();
           },
           error: error => {
-            this.onLoadToast('error', 'No se puede eliminar registro', '');
+            this.onLoadToast('error', 'No se puede eliminar el registro', '');
             this.loading = false;
           },
         });
       }
+    });
+  }
+
+  /**
+   * FILTROS DE TABLAS Y FUNCIONES PARA CARGAR DATA
+   */
+
+  loadingDataTableLayouts() {
+    //Filtrado por columnas
+    this.dataTableLayouts
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              email: () => (searchFilter = SearchFilter.ILIKE),
+              name: () => (searchFilter = SearchFilter.ILIKE),
+            };
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFiltersLayouts[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersLayouts[field];
+            }
+          });
+          this.dataTableParamsLayouts = this.pageFilter(
+            this.dataTableParamsLayouts
+          );
+          //Su respectivo metodo de busqueda de datos
+          this.getLayoutsData();
+        }
+      });
+
+    // this.columnFiltersLayouts['filter.originId'] = `$eq:${this.originId}`;
+    //observador para el paginado
+    this.dataTableParamsLayouts
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getLayoutsData());
+  }
+
+  getLayoutsData() {
+    this.loadingLayouts = true;
+    let params = {
+      ...this.dataTableParamsLayouts.getValue(),
+      ...this.columnFiltersLayouts,
+    };
+    console.log('PARAMS ', params);
+    this.layoutsConfigService.getAllLayoutsH(params).subscribe({
+      next: res => {
+        console.log('DATA Layouts', res);
+        this.testDataLayouts = res.data.map((i: any) => {
+          i['status_active'] = i.indActive == '1' ? true : false;
+          return i;
+        });
+        this.dataTableLayouts.load(this.testDataLayouts);
+        this.totalLayouts = res.count;
+        this.loadingLayouts = false;
+      },
+      error: error => {
+        console.log(error);
+        this.testDataLayouts = [];
+        this.dataTableLayouts.load([]);
+        this.totalLayouts = 0;
+        this.loadingLayouts = false;
+      },
+    });
+  }
+
+  /**
+   * FIN FILTROS DE TABLAS Y FUNCIONES PARA CARGAR DATA
+   */
+
+  addLayouts() {
+    console.log('CREAR ');
+    this.openModalLayouts({});
+  }
+
+  editLayouts(event: any) {
+    console.log('EDITAR ', event);
+    if (event) {
+      this.openModalLayouts({
+        provider: event.data,
+        edit: true,
+      });
+    }
+  }
+
+  deleteLayouts(event: any) {
+    console.log('ELIMINAR ', event);
+    this.alertQuestion(
+      'warning',
+      'Eliminar Diseño',
+      '¿Desea eliminar este diseño?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.loadingLayouts = true;
+        this.layoutsConfigService
+          .deletelayoutSH(event.data.id, event.data)
+          .subscribe({
+            next: data => {
+              this.loadingLayouts = false;
+              this.alert('success', 'Eliminado correctamente', ``);
+              this.loadingDataTableLayouts();
+            },
+            error: error => {
+              this.loadingLayouts = false;
+              this.alert(
+                'error',
+                'Error al Actualizar',
+                'Ocurrió un error al actualizar el diseño'
+              );
+            },
+          });
+      }
+    });
+  }
+
+  openModalLayouts(context?: Partial<LayoutsConfigurationModalComponent>) {
+    const modalRef = this.modalService.show(
+      LayoutsConfigurationModalComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    modalRef.content.onConfirm.subscribe(data => {
+      console.log(data);
+      this.loadingDataTableLayouts();
+    });
+  }
+
+  /**
+   * FILTROS DE TABLAS Y FUNCIONES PARA CARGAR DATA
+   */
+
+  loadingDataTableLayoutsStructure() {
+    //Filtrado por columnas
+    this.dataTableLayoutsStructure
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              column: () => (searchFilter = SearchFilter.ILIKE),
+              type: () => (searchFilter = SearchFilter.ILIKE),
+            };
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFiltersLayoutsStructure[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersLayoutsStructure[field];
+            }
+          });
+          this.dataTableParamsLayoutsStructure = this.pageFilter(
+            this.dataTableParamsLayoutsStructure
+          );
+          //Su respectivo metodo de busqueda de datos
+          this.getLayoutsStructureData();
+        }
+      });
+    //observador para el paginado
+    this.dataTableParamsLayoutsStructure
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getLayoutsStructureData());
+  }
+
+  getLayoutsStructureData() {
+    this.loadingLayoutsStructure = true;
+    this.columnFiltersLayoutsStructure[
+      'filter.idLayout'
+    ] = `$eq:${this.idLayout}`;
+    let params = {
+      ...this.dataTableParamsLayoutsStructure.getValue(),
+      ...this.columnFiltersLayoutsStructure,
+    };
+    console.log('PARAMS ', params);
+    this.layoutsConfigService.getAllLayouts_TotalT(params).subscribe({
+      next: res => {
+        console.log('DATA LayoutsStructure', res);
+        this.testDataLayoutsStructure = res.data;
+        this.dataTableLayoutsStructure.load(this.testDataLayoutsStructure);
+        this.totalLayoutsStructure = res.count;
+        this.loadingLayoutsStructure = false;
+        this.lengthTotal = res.totalLength;
+      },
+      error: error => {
+        console.log(error);
+        this.testDataLayoutsStructure = [];
+        this.dataTableLayoutsStructure.load([]);
+        this.totalLayoutsStructure = 0;
+        this.lengthTotal = 0;
+        this.loadingLayoutsStructure = false;
+      },
+    });
+  }
+  /**
+   * FIN FILTROS DE TABLAS Y FUNCIONES PARA CARGAR DATA
+   */
+
+  addLayoutsStructure() {
+    if (this.selectedRow == null) {
+      this.alert(
+        'warning',
+        'Selecciona un registro de la tabla "Diseños" para continuar',
+        ''
+      );
+      return;
+    }
+    console.log('CREAR ', this.selectedRow);
+    this.openModalLayoutsStructure({ id: this.selectedRow.id });
+  }
+
+  editLayoutsStructure(event: any) {
+    console.log('EDITAR ', event);
+    if (event) {
+      this.openModalLayoutsStructure({
+        provider: event.data,
+        edit: true,
+      });
+    }
+  }
+
+  openModalLayoutsStructure(
+    context?: Partial<LayoutsStructureConfigurationModalComponent>
+  ) {
+    const modalRef = this.modalService.show(
+      LayoutsStructureConfigurationModalComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    modalRef.content.onConfirm.subscribe(data => {
+      console.log(data);
+      this.loadingDataTableLayoutsStructure();
     });
   }
 
@@ -290,7 +604,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     columns: {
       ...LAYOUTS_COLUMNS1,
     },
-    noDataMessage: 'No se encontrarón registros',
+    noDataMessage: 'No se encontraron registros',
   };
 
   data = EXAMPLE_DATA;
@@ -299,7 +613,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     ...TABLE_SETTINGS,
     actions: false,
     columns: { ...LAYOUTS_COLUMNS2 },
-    noDataMessage: 'No se encontrarón registros',
+    noDataMessage: 'No se encontraron registros',
   };
 
   data2 = EXAMPLE_DAT2;
@@ -308,7 +622,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     ...TABLE_SETTINGS,
     actions: false,
     columns: { ...LAYOUTS_COLUMNS3 },
-    noDataMessage: 'No se encontrarón registros',
+    noDataMessage: 'No se encontraron registros',
   };
 
   data3 = EXAMPLE_DAT3;
@@ -325,7 +639,13 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   settings5 = {
     ...TABLE_SETTINGS,
     editable: true,
-    actions: false,
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'right',
+      add: false,
+      edit: true,
+      delete: true,
+    },
     columns: { ...LAYOUTS_COLUMNS5 },
     noDataMessage: 'No se encontrarón registros',
   };
@@ -337,7 +657,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     actions: {
       columnTitle: 'Acciones',
       edit: true,
-      delete: true,
+      delete: false,
       add: false,
       position: 'right',
     },

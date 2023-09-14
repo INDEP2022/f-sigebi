@@ -46,20 +46,41 @@ export class IndicatorReportListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'startingPercentageRange':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'finalPercentageRange':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'contractualPenalty':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            /*filter.field == 'id' ||
             filter.field == 'startingPercentageRange' ||
             filter.field == 'finalPercentageRange' ||
             filter.field == 'contractualPenalty' ||
             filter.field == 'status' ||
             filter.field == 'version'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });
@@ -104,16 +125,20 @@ export class IndicatorReportListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.indicatorReportService.remove(indicatorReport.id).subscribe({
           next: response => {
-            this.onLoadToast('success', 'Exito', 'Eliminado Correctamente');
+            this.alert('success', 'Indicador reporte', 'Borrado Correctamente');
             this.getExample();
           },
           error: err => {
-            this.onLoadToast('error', 'Error', 'Intente nuevamente');
+            this.alert(
+              'warning',
+              'Indicador Reporte',
+              'No se puede eliminar el objeto debido a una relación con otra tabla.'
+            );
           },
         });
       }

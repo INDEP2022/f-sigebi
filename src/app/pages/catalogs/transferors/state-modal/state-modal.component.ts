@@ -48,15 +48,18 @@ export class StateModalComponent extends BasePage implements OnInit {
       idTransferee: [null, []],
       stateKey: [null, []],
       nameTransferee: [null, []],
+      version: [null],
     });
     if (this.stateByTransferent != null) {
       this.edit = true;
       this.id = this.stateByTransferent.state as IState;
       this.stateForm.patchValue(this.stateByTransferent);
-      this.stateForm.controls['idTransferee'].setValue(
+      this.stateForm.controls['idTransferee'].setValue(this.idTrans.id);
+      this.stateForm.controls['nameTransferee'].setValue(
         this.idTrans.nameTransferent
       );
       this.stateForm.controls['stateKey'].setValue(this.id.id);
+      this.getStates(new ListParams(), this.id.id);
     } else {
       this.edit = false;
       this.stateForm.controls['nameTransferee'].setValue(
@@ -66,9 +69,14 @@ export class StateModalComponent extends BasePage implements OnInit {
     }
   }
 
-  getStates(params: ListParams) {
+  getStates(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = id;
+    }
     this.stateOfRepublicService.getAll(params).subscribe({
-      next: data => (this.states = new DefaultSelect(data.data, data.count)),
+      next: data => {
+        this.states = new DefaultSelect(data.data, data.count);
+      },
     });
   }
 
@@ -82,6 +90,7 @@ export class StateModalComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
+
     this.transferentesSaeService
       .createStateForTransferent(this.stateForm.value)
       .subscribe({
@@ -93,7 +102,7 @@ export class StateModalComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.transferentesSaeService
-      .updateStateForTransferent(this.stateForm.value)
+      .updateStateForTransferent(this.stateForm.value())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

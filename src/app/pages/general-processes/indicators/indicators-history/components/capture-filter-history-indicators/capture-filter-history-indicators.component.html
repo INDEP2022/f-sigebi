@@ -1,0 +1,186 @@
+<div>
+  <form [formGroup]="formCapture" class="form-material">
+    <div class="row pt-3">
+      <form-field
+        [control]="formCapture.get('finicia')"
+        label="Rango de fechas"
+        class="col-md-3">
+        <input
+          type="text"
+          class="form-control"
+          bsDatepicker
+          formControlName="finicia"
+          [maxDate]="maxDate" />
+      </form-field>
+
+      <form-field
+        [control]="formCapture.get('finmaxima')"
+        label="A"
+        class="col-md-3">
+        <input
+          type="text"
+          class="form-control"
+          bsDatepicker
+          formControlName="finmaxima"
+          [maxDate]="maxDate"
+          [minDate]="formCapture.get('finicia').value" />
+      </form-field>
+
+      <form-field
+        [control]="formCapture.get('finingrs')"
+        label="Fecha Ingreso"
+        class="col-md-3">
+        <input
+          type="text"
+          class="form-control"
+          bsDatepicker
+          formControlName="finingrs"
+          [maxDate]="maxDate" />
+      </form-field>
+
+      <form-field
+        [control]="formCapture.get('tipoVolante')"
+        class="col-md-3"
+        label="Tipo Volante">
+        <select class="form-control" formControlName="tipoVolante">
+          <option *ngFor="let type of flyerTypes" [value]="type">
+            {{ type }}
+          </option>
+        </select>
+      </form-field>
+    </div>
+
+    <!-- <form-field *ngIf="
+        (isReceptionAndDelivery || isReceptionStrategies) && !isConsolidated
+      " [control]="formCapture.get('tipoEvento')" class="col-md-3" label="Tipo Evento">
+      <select class="form-control" formControlName="tipoEvento">
+        <option *ngFor="let event of eventTypes" [value]="event">
+          {{ event }}
+        </option>
+      </select>
+    </form-field> -->
+
+    <div class="row mt-4">
+      <div class="col-md-12">
+        <form-field [control]="formCapture.get('coordinacion_regional')">
+          <ngx-select
+            [form]="formCapture"
+            [searchOnInit]="true"
+            control="coordinacion_regional"
+            label="Coor. Regional"
+            [data]="delegations"
+            (fetchItems)="getDelegations($event)"
+            className="scroll-line"
+            bindLabel="description"></ngx-select>
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <form-field [control]="formCapture.get('urecepcion')" class="col-md-6">
+        <ngx-select
+          label="Usuario"
+          [form]="formCapture"
+          [readonly]="dictNumber ? true : false"
+          [data]="users$"
+          (fetchItems)="getUsers($event)"
+          bindLabel="userAndName"
+          control="urecepcion"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="userLabel"
+          [optionTemplate]="userOption">
+        </ngx-select>
+        <ng-template #userLabel let-item="item">
+          {{ item.id + ' - ' + item.name }}
+        </ng-template>
+        <ng-template #userOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id + ' - ' + item.name }}
+          </div>
+        </ng-template>
+      </form-field>
+
+      <form-field [control]="formCapture.get('cve_asunto')" class="col-md-6">
+        <ngx-select
+          [form]="formCapture"
+          [searchOnInit]="true"
+          control="cve_asunto"
+          label="Clave Asunto"
+          [data]="affairName"
+          (fetchItems)="getSubjects($event)"
+          className="scroll-line"
+          bindLabel="description">
+        </ngx-select>
+      </form-field>
+    </div>
+
+    <div class="row pt-3">
+      <form-field [control]="formCapture.get('transference')" class="col-md-4">
+        <ngx-select
+          [searchOnInit]="true"
+          (fetchItems)="getTransference($event)"
+          [data]="transference"
+          [form]="formCapture"
+          bindLabel="nameTransferent"
+          label="Transferente"
+          control="transference">
+        </ngx-select>
+      </form-field>
+
+      <form-field [control]="formCapture.get('station')" class="col-md-4">
+        <ngx-select
+          [searchOnInit]="true"
+          (fetchItems)="getStation($event)"
+          [data]="station"
+          [form]="formCapture"
+          bindLabel="stationName"
+          label="Emisora"
+          control="station">
+        </ngx-select>
+      </form-field>
+
+      <form-field [control]="formCapture.get('authority')" class="col-md-4">
+        <ngx-select
+          [searchOnInit]="true"
+          (fetchItems)="getAuthority($event)"
+          [data]="authority"
+          [form]="formCapture"
+          bindLabel="authorityName"
+          label="Autoridad"
+          control="authority">
+        </ngx-select>
+      </form-field>
+    </div>
+
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="find()">
+            Consulta <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="Generar()">
+            Reporte <i class="fas fa-print bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm"
+            (click)="cleanForm()">
+            Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

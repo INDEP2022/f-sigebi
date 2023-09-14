@@ -3,15 +3,41 @@
     <h5 class="title">MOVIMIENTOS DE BIENES EN VIGILANCIA</h5>
   </div>
   <div body>
-    <div class="md-tabs">
-      <tabset>
-        <tab heading="Consulta" id="tab1">
-          <app-movements-consults></app-movements-consults>
-        </tab>
-        <tab heading="Movimientos" id="tab2">
-          <app-movements-movements></app-movements-movements>
-        </tab>
-      </tabset>
+    <div class="row">
+      <div class="d-flex justify-content-end">
+        <div class="m-3">
+          <app-columns-select
+            [(settings)]="settings"
+            [defaultColumns]="7"></app-columns-select>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="edit($event.data)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="enterAndPrint()">
+          Ingresar e Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+        </button>
+      </div>
     </div>
   </div>
 </app-card>

@@ -1,0 +1,12 @@
+.d-none {
+  display: none;
+}
+
+.buttonSearch {
+  text-align: right;
+  margin-top: 12px;
+  @media screen and (max-width: 767px) {
+    text-align: center;
+    margin-top: 0px;
+  }
+}

@@ -1,94 +1,184 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Nueva programaci&oacute;n de entrega</h5>
+    <h5 class="title">Nueva programaci&oacute;n entrega</h5>
   </div>
-  <div body style="margin-top: -30px">
+  <div body>
     <div class="justify-content-end btn-toolbar">
       <button
+        (click)="sendProgramming()"
         type="button"
-        [routerLink]="['execute-schelude-delivery']"
-        class="btn btn-primary btn-sm active">
-        Enviar programaci&oacute;n
+        class="btn btn-primary btn-sm active mr-2">
+        Enviar programaci&oacute;n <i class="bx bx-send"></i>
       </button>
-      <button type="button" class="btn btn-success btn-sm active">
-        Guardar
+
+      <confirm-button
+        [disabled]="!schedulingDeliverieForm.valid"
+        [loading]="loading"
+        [btnSmall]="true"
+        (click)="saveProgDelivery()"></confirm-button>
+      <!--<button
+       
+        type="button"
+        class="btn btn btn-primary btn-sm active">
+        Guardar <i aria-hidden="true" class="fa fa-save"></i>
+      </button> -->
+
+      <button (click)="close()" class="btn btn-primary btn-sm active">
+        Regresar <i class="fas fa-arrow-circle-left"></i>
       </button>
     </div>
 
-    <h5 class="title">Detalle de la programaci&oacute;n de entrega</h5>
+    <h5 class="title">
+      <p>
+        <a
+          class="text-color"
+          (click)="showDetailProgramming = true"
+          *ngIf="!showDetailProgramming">
+          <i class="fa fa-angle-down" aria-hidden="true"></i> Detalle
+          Programaci&oacute;n Entrega</a
+        >
+      </p>
+
+      <p>
+        <a
+          class="text-color"
+          (click)="showDetailProgramming = false"
+          *ngIf="showDetailProgramming">
+          <i class="fa fa-angle-right" aria-hidden="true"></i>
+          Detalle Programaci&oacute;n Entrega</a
+        >
+      </p>
+    </h5>
+
     <form [formGroup]="schedulingDeliverieForm" class="form-material">
-      <div class="row pt-3">
+      <div class="row pt-3" *ngIf="!showDetailProgramming">
         <div class="col-md-6">
-          <div class="pt-3">
+          <div class="pt-3" *ngIf="disabledTypeEvent == false">
             <ngx-select
               [form]="schedulingDeliverieForm"
               control="typeEvent"
               [data]="TypeEventOptions"
-              value="nameEvent"
+              value="id"
+              (change)="typeEventSelect($event, 'typeEvent')"
               bindLabel="nameEvent"
-              label="Selecciona un tipo de evento"></ngx-select>
+              label="Tipo de Evento"></ngx-select>
+          </div>
+          <div class="pt-3" *ngIf="disabledTypeEvent == true">
+            <ngx-select
+              [form]="schedulingDeliverieForm"
+              control="typeEventInfo"
+              [data]="TypeEventOptions"
+              value="nameEvent"
+              [readonly]="true"
+              (change)="typeEventSelect($event, 'typeEvent')"
+              bindLabel="nameEvent"
+              label="Tipo de Evento"></ngx-select>
           </div>
 
           <div class="pt-3">
             <form-field
-              [control]="schedulingDeliverieForm.get('dateStartDelivery')"
-              label="Fecha page de entrega">
+              [control]="schedulingDeliverieForm.get('startDate')"
+              label="Fecha Inicio de Entrega">
               <input
                 class="form-control"
-                formControlName="dateStartDelivery"
+                formControlName="startDate"
+                [minDate]="date"
+                (ngModelChange)="startDateSelect($event)"
+                [daysDisabled]="[6, 0]"
+                [bsConfig]="{
+                  withTimepicker: true,
+                  rangeInputFormat: 'DD/MM/YYYY HH:mm:ss',
+                  dateInputFormat: 'DD/MM/YYYY HH:mm:ss',
+                  keepDatepickerOpened: true
+                }"
                 bsDatepicker />
             </form-field>
           </div>
 
-          <div class="pt-3">
-            <form-field
-              [control]="schedulingDeliverieForm.get('transferent')"
-              label="Transferente">
-              <select class="form-control" formControlName="transferent">
-                <option [value]="null">Transferente</option>
-              </select>
+          <div class="pt-3" *ngIf="disableTransfer == false">
+            <form-field [control]="schedulingDeliverieForm.get('transferId')">
+              <ngx-select
+                [form]="schedulingDeliverieForm"
+                control="transferId"
+                [showTooltip]="true"
+                [data]="transferences"
+                value="id"
+                bindLabel="nameAndId"
+                label="Transferente"
+                (change)="typeEventSelect($event, 'transferent')"
+                (fetchItems)="getTransferentSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="pt-3" *ngIf="disableTransfer == true">
+            <form-field [control]="schedulingDeliverieForm.get('transferName')">
+              <ngx-select
+                [form]="schedulingDeliverieForm"
+                control="transferName"
+                [showTooltip]="true"
+                [readonly]="true"
+                [data]="transferences"
+                value="nameAndId"
+                bindLabel="nameAndId"
+                label="Transferente"
+                (change)="typeEventSelect($event, 'transferent')"
+                (fetchItems)="getTransferentSelect($event)"></ngx-select>
             </form-field>
           </div>
         </div>
 
         <div class="col-md-6">
-          <div class="pt-3">
+          <div class="pt-3" *ngIf="disableStore == false">
             <ngx-select
               [form]="schedulingDeliverieForm"
-              control="warehouse"
+              control="store"
               [data]="warehouse"
-              value="id"
-              bindLabel="description"
-              label="Selecciona un almac&eacute;n"
+              value="organizationCode"
+              bindLabel="name"
+              label="Almac&eacute;n"
+              (change)="typeEventSelect($event, 'organization')"
+              (fetchItems)="getWarehouseSelect($event)"></ngx-select>
+          </div>
+
+          <div class="pt-3" *ngIf="disableStore == true">
+            <ngx-select
+              [form]="schedulingDeliverieForm"
+              control="storeName"
+              [data]="warehouse"
+              value="name"
+              bindLabel="name"
+              [readonly]="true"
+              label="Almac&eacute;n"
               (fetchItems)="getWarehouseSelect($event)"></ngx-select>
           </div>
 
           <div class="pt-3">
             <form-field
-              [control]="schedulingDeliverieForm.get('dateEndDelivery')"
-              label="Fecha final de entrega">
+              [control]="schedulingDeliverieForm.get('endDate')"
+              label="Fecha Final de Entrega">
               <input
                 class="form-control"
-                formControlName="dateEndDelivery"
+                [daysDisabled]="[6, 0]"
+                [bsConfig]="{
+                  withTimepicker: true,
+                  rangeInputFormat: 'DD/MM/YYYY HH:mm:ss',
+                  dateInputFormat: 'DD/MM/YYYY HH:mm:ss',
+                  keepDatepickerOpened: true
+                }"
+                formControlName="endDate"
                 bsDatepicker />
             </form-field>
           </div>
 
-          <div class="pt-3" *ngIf="showFileSaleForm">
-            <form-field
-              [control]="schedulingDeliverieForm.get('client')"
-              label="Cliente">
-              <select
-                class="form-control"
-                formControlName="client"
-                (change)="filterSales = true">
-                <option [value]="null">Cliente</option>
-                <option [value]="null">Prueba 2</option>
-                <option [value]="null">comercializadora</option>
-                <option [value]="null">David Baez</option>
-                <option [value]="null">Prueba 5</option>
-              </select>
-            </form-field>
+          <div class="pt-3" *ngIf="idTypeEvent == 1">
+            <ngx-select
+              [form]="schedulingDeliverieForm"
+              control="client"
+              [data]="clients"
+              value="client"
+              bindLabel="client"
+              label="Cliente"
+              (fetchItems)="getClientSelect($event)"></ngx-select>
           </div>
         </div>
         <div class="col-md-12">
@@ -102,171 +192,854 @@
           </div>
           <div class="pt-3">
             <form-field
-              [control]="schedulingDeliverieForm.get('emails')"
-              label="Correos electr&oacute;nicos">
+              [control]="schedulingDeliverieForm.get('email')"
+              label="Correos Electr&oacute;nicos">
               <textarea
                 class="form-control"
-                formControlName="emails"></textarea>
+                maxlength="255"
+                formControlName="email"></textarea>
             </form-field>
           </div>
         </div>
       </div>
-      <div *ngIf="filterSales" class="row pt-3">
-        <h5 class="title">
-          <p>
-            <a
-              class="text-color"
-              (click)="showSearchForm = true"
-              *ngIf="!showSearchForm">
-              <i class="fa fa-angle-right" aria-hidden="true"></i> Filtrar
-              ventas</a
-            >
-          </p>
 
-          <p>
-            <a
-              class="text-color"
-              (click)="showSearchForm = false"
-              *ngIf="showSearchForm">
-              <i class="fa fa-angle-down" aria-hidden="true"></i> Filtrar
-              ventas</a
-            >
-          </p>
-        </h5>
+      <h5 class="title pt-5" *ngIf="idTypeEvent == 5">
+        <p>
+          <a
+            class="text-color"
+            (click)="showDetailProgrammingDes = true"
+            *ngIf="!showDetailProgrammingDes">
+            <i class="fa fa-angle-right" aria-hidden="true"></i> Detalles
+            Programación por Destrucción</a
+          >
+        </p>
 
-        <div *ngIf="showSearchForm" class="row pt-3">
-          <form [formGroup]="searchForm" class="form-material">
-            <div class="col-md-6">
-              <div>
-                <form-field
-                  [control]="searchForm.get('goodDescription')"
-                  label="Descripci&oacute;n bien">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="goodDescription" />
-                </form-field>
-              </div>
+        <p>
+          <a
+            class="text-color"
+            (click)="showDetailProgrammingDes = false"
+            *ngIf="showDetailProgrammingDes">
+            <i class="fa fa-angle-down" aria-hidden="true"></i> Detalles
+            Programación por Destrucción</a
+          >
+        </p>
+      </h5>
 
-              <div class="pt-3">
-                <form-field
-                  [control]="searchForm.get('commercialEvent')"
-                  label="Evento comercial">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="commercialEvent" />
-                </form-field>
-              </div>
+      <div
+        class="row pt-3"
+        *ngIf="idTypeEvent == 5 && showDetailProgrammingDes">
+        <div class="justify-content-end btn-toolbar">
+          <button
+            *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
+            (click)="generateConDestruccion()"
+            class="btn btn-primary btn-sm active">
+            Generar constancias de destrucción <i class="fa fa-file"></i>
+          </button>
 
-              <div class="pt-3">
-                <form-field
-                  [control]="searchForm.get('invoice')"
-                  label="Factura">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="invoice" />
-                </form-field>
-              </div>
+          <button
+            *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+            class="btn btn-primary btn-sm active">
+            Expediente <i class="fa fa-file"></i>
+          </button>
 
-              <div class="pt-3">
-                <form-field
-                  [control]="searchForm.get('commercialLot')"
-                  label="Lote comercial">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="commercialLot" />
-                </form-field>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div>
-                <form-field
-                  [control]="searchForm.get('numberSae')"
-                  label="N&uacute;mero INDEP">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="numberSae" />
-                </form-field>
-              </div>
-
-              <div class="pt-3">
-                <form-field
-                  [control]="searchForm.get('gestionNumber')"
-                  label="N&uacute;mero gesti&oacute;n">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="gestionNumber" />
-                </form-field>
-              </div>
-
-              <div class="pt-3">
-                <form-field
-                  [control]="searchForm.get('numberIventory')"
-                  label="N&uacute;mero de inventario">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="numberIventory" />
-                </form-field>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <div class="justify-content-end btn-toolbar">
-                <button type="submit" class="btn btn-primary btn-sm active">
-                  <i class="fa fa-search"></i>Buscar
-                </button>
-                <button
-                  *ngIf="searchForm"
-                  type="submit"
-                  class="btn btn-danger btn-sm active">
-                  Limpiar
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-        <div class="row">
-          <div class="btn-toolbar pt-3">
-            <app-columns-select
-              [(settings)]="settingsSearchSales"></app-columns-select>
-          </div>
-
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settingsSearchSales"
-            [source]="SearchSalesData"
-            (edit)="addEstate($event.data)">
-          </ng2-smart-table>
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"></app-pagination>
+          <button
+            (click)="notificationDestruccion()"
+            class="btn btn-success btn-sm active">
+            Notificación para destrucción <i class="fa fa-file"></i>
+          </button>
+          <button
+            (click)="notificationDestruccionFond()"
+            class="btn btn-primary btn-sm active">
+            Notificación destrucción fondos <i class="fa fa-file"></i>
+          </button>
         </div>
       </div>
 
-      <div class="row pt-3">
-        <h5 class="title">Vista previa de bienes a programar</h5>
+      <div *ngIf="idTypeEvent == 5 && showDetailProgrammingDes" class="pt-4">
+        <div class="row pt-5">
+          <div class="col-md-6">
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
+              [control]="schedulingDeliverieForm.get('officeDestructionNumber')"
+              label="No. de Oficio">
+              <input
+                class="form-control"
+                maxlength="100"
+                formControlName="officeDestructionNumber" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('officeDestructionNumber')"
+              label="No. de Oficio">
+              <input
+                class="form-control"
+                maxlength="100"
+                [readOnly]="true"
+                formControlName="officeDestructionNumber" />
+            </form-field>
+          </div>
 
-        <div class="btn-toolbar pt-3">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
+          <div class="col-md-6">
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
+              [control]="schedulingDeliverieForm.get('company')"
+              label="Empresa">
+              <input
+                class="form-control"
+                maxlength="250"
+                formControlName="company" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('company')"
+              label="Empresa">
+              <input
+                class="form-control"
+                maxlength="250"
+                [readOnly]="true"
+                formControlName="company" />
+            </form-field>
+          </div>
         </div>
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="goodsToProgramData">
-          </ng2-smart-table>
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"></app-pagination>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
+              [control]="schedulingDeliverieForm.get('addressee')"
+              label="Nombre Destinatario">
+              <input
+                class="form-control"
+                maxlength="100"
+                formControlName="addressee" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('addressee')"
+              label="Nombre Destinatario">
+              <input
+                class="form-control"
+                maxlength="100"
+                [readOnly]="true"
+                formControlName="addressee" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
+              [control]="schedulingDeliverieForm.get('placeDestruction')"
+              label="Lugar Destrucción">
+              <input
+                class="form-control"
+                maxlength="250"
+                formControlName="placeDestruction" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('placeDestruction')"
+              label="Lugar Destrucción">
+              <input
+                class="form-control"
+                maxlength="250"
+                [readOnly]="true"
+                formControlName="placeDestruction" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
+              [control]="schedulingDeliverieForm.get('chargeAddressee')"
+              label="Cargo Destinatario">
+              <input
+                class="form-control"
+                maxlength="150"
+                formControlName="chargeAddressee" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('chargeAddressee')"
+              label="Cargo Destinatario">
+              <input
+                class="form-control"
+                [readOnly]="true"
+                maxlength="150"
+                formControlName="chargeAddressee" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
+              [control]="schedulingDeliverieForm.get('locationDestruction')"
+              label="Ubicación Destrucción">
+              <input
+                class="form-control"
+                maxlength="250"
+                formControlName="locationDestruction" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('locationDestruction')"
+              label="Ubicación Destrucción">
+              <input
+                class="form-control"
+                [readOnly]="true"
+                maxlength="250"
+                formControlName="locationDestruction" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
+              [control]="schedulingDeliverieForm.get('addressAddressee')"
+              label="Dirección Destinatario">
+              <input
+                class="form-control"
+                maxlength="250"
+                formControlName="addressAddressee" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('addressAddressee')"
+              label="Dirección Destinatario">
+              <input
+                class="form-control"
+                [readOnly]="true"
+                maxlength="250"
+                formControlName="addressAddressee" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
+              [control]="schedulingDeliverieForm.get('taxpayerName')"
+              label="Nombre Contribuyente">
+              <input
+                class="form-control"
+                maxlength="150"
+                formControlName="taxpayerName" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('taxpayerName')"
+              label="Nombre Contribuyente">
+              <input
+                class="form-control"
+                maxlength="150"
+                [readOnly]="true"
+                formControlName="taxpayerName" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
+              [control]="schedulingDeliverieForm.get('metodDestruction')"
+              label="Método Destrucción">
+              <input
+                class="form-control"
+                maxlength="150"
+                formControlName="metodDestruction" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('metodDestruction')"
+              label="Método Destrucción">
+              <input
+                class="form-control"
+                maxlength="150"
+                [readOnly]="true"
+                formControlName="metodDestruction" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
+              [control]="schedulingDeliverieForm.get('legalRepresentativeName')"
+              label="Nombre Representante Legal">
+              <input
+                class="form-control"
+                maxlength="150"
+                formControlName="legalRepresentativeName" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('legalRepresentativeName')"
+              label="Nombre Representante Legal">
+              <input
+                class="form-control"
+                [readOnly]="true"
+                maxlength="150"
+                formControlName="legalRepresentativeName" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'N'"
+              [control]="schedulingDeliverieForm.get('term')"
+              label="Plazo (días)">
+              <input
+                class="form-control"
+                maxlength="20"
+                formControlName="term" />
+            </form-field>
+            <form-field
+              *ngIf="programmingDeliveryInfo?.statusNotification == 'Y'"
+              [control]="schedulingDeliverieForm.get('term')"
+              label="Plazo (días)">
+              <input
+                class="form-control"
+                maxlength="20"
+                [readOnly]="true"
+                formControlName="term" />
+            </form-field>
+          </div>
         </div>
       </div>
     </form>
+    <!--Destrucción-->
+
+    <h5 class="title pt-3" *ngIf="idTypeEvent == 5">
+      <p>
+        <a
+          class="text-color"
+          (click)="filterDestruction = true"
+          *ngIf="!filterDestruction">
+          <i class="fa fa-angle-right" aria-hidden="true"></i> Filtrar
+          Destrucción</a
+        >
+      </p>
+
+      <p>
+        <a
+          class="text-color"
+          (click)="filterDestruction = false"
+          *ngIf="filterDestruction">
+          <i class="fa fa-angle-down" aria-hidden="true"></i> Filtrar
+          Destrucción</a
+        >
+      </p>
+    </h5>
+
+    <div *ngIf="idTypeEvent == 5 && filterDestruction" class="pt-3">
+      <form [formGroup]="searchDestructionForm" class="form-material">
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="searchDestructionForm.get('quantity')"
+              label="Cantidad Bienes">
+              <input
+                class="form-control"
+                maxlength="50"
+                formControlName="quantity" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="searchDestructionForm.get('managementNum')"
+              label="No. Gestión">
+              <input
+                class="form-control"
+                maxlength="50"
+                formControlName="managementNum" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="searchDestructionForm.get('descriptionGood')"
+              label="Descripción Bien">
+              <input
+                class="form-control"
+                maxlength="250"
+                formControlName="descriptionGood" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="searchDestructionForm.get('inventoryNum')"
+              label="No. Inventario">
+              <input
+                class="form-control"
+                maxlength="100"
+                formControlName="inventoryNum" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="searchDestructionForm.get('bienSiabNum')"
+              label="No. INDEP">
+              <input
+                class="form-control"
+                maxlength="100"
+                formControlName="bienSiabNum" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+
+      <div class="form-inline justify-content-end pt-3">
+        <button
+          (click)="showGoodsInventory()"
+          class="btn btn-primary btn-sm active mr-2">
+          Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+        <button
+          (click)="cleanSearchForm()"
+          class="btn btn-danger btn-sm active">
+          Limpiar <i class="fa fa-eraser"></i>
+        </button>
+      </div>
+
+      <div class="row pt-4">
+        <div class="btn-toolbar pt-3">
+          <app-columns-select
+            [(settings)]="settingsSearchDest"></app-columns-select>
+        </div>
+        <div [class]="loadingGoodsDest ? 'table-loading' : ''">
+          <ng2-smart-table
+            (userRowSelect)="goodsSelectDest($event.selected)"
+            [attr.class]="'table-bordered table-responsive pt-3'"
+            [settings]="settingsSearchDest"
+            event
+            [source]="infoGoodDestruction">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsSearchDest"
+            [totalItems]="totalItemsSearchDest"></app-pagination>
+        </div>
+      </div>
+    </div>
+
+    <!--Devolución-->
+    <h5 class="title pt-3" *ngIf="idTypeEvent == 4">
+      <p>
+        <a
+          class="text-color"
+          (click)="filterDevolution = true"
+          *ngIf="!filterDevolution">
+          <i class="fa fa-angle-right" aria-hidden="true"></i> Filtrar
+          Devolución</a
+        >
+      </p>
+
+      <p>
+        <a
+          class="text-color"
+          (click)="filterDevolution = false"
+          *ngIf="filterDevolution">
+          <i class="fa fa-angle-down" aria-hidden="true"></i> Filtrar
+          Devolución</a
+        >
+      </p>
+    </h5>
+
+    <div *ngIf="idTypeEvent == 4 && filterDevolution" class="pt-3">
+      <form [formGroup]="searchDevolutionForm" class="form-material">
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="searchDevolutionForm.get('quantity')"
+              label="Cantidad Bienes">
+              <input
+                class="form-control"
+                maxlength="100"
+                formControlName="quantity" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="searchDevolutionForm.get('managementNum')"
+              label="No. Gestión">
+              <input
+                class="form-control"
+                maxlength="100"
+                formControlName="managementNum" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="searchDevolutionForm.get('descriptionGood')"
+              label="Descripción Bien">
+              <input
+                class="form-control"
+                maxlength="250"
+                formControlName="descriptionGood" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="searchDevolutionForm.get('inventoryNum')"
+              label="No. Inventario">
+              <input
+                class="form-control"
+                maxlength="100"
+                formControlName="inventoryNum" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="searchDevolutionForm.get('bienSiabNum')"
+              label="No. INDEP">
+              <input
+                class="form-control"
+                maxlength="100"
+                formControlName="bienSiabNum" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+
+      <div class="form-inline justify-content-end pt-3">
+        <button
+          (click)="showGoodsInventory()"
+          class="btn btn-primary btn-sm active mr-2">
+          Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+        <button
+          (click)="cleanSearchForm()"
+          class="btn btn-danger btn-sm active">
+          Limpiar <i class="fa fa-eraser"></i>
+        </button>
+      </div>
+
+      <div class="row pt-4">
+        <div class="btn-toolbar pt-3">
+          <app-columns-select
+            [(settings)]="settingsSearchDevol"></app-columns-select>
+        </div>
+
+        <div [class]="loadingGoodsDevolution ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive pt-3'"
+            [settings]="settingsSearchDevol"
+            [source]="infoGoodDevolution">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsSearchDevol"
+            [totalItems]="totalItemsSearchDevol"></app-pagination>
+        </div>
+      </div>
+    </div>
+
+    <!--Donación-->
+
+    <h5 class="title pt-3" *ngIf="idTypeEvent == 2">
+      <p>
+        <a
+          class="text-color"
+          (click)="filterDonation = true"
+          *ngIf="!filterDonation">
+          <i class="fa fa-angle-right" aria-hidden="true"></i> Filtrar
+          Donación</a
+        >
+      </p>
+
+      <p>
+        <a
+          class="text-color"
+          (click)="filterDonation = false"
+          *ngIf="filterDonation">
+          <i class="fa fa-angle-down" aria-hidden="true"></i> Filtrar
+          Donación</a
+        >
+      </p>
+    </h5>
+
+    <div *ngIf="idTypeEvent == 2 && filterDonation" class="pt-3">
+      <form [formGroup]="searchDonationForm" class="form-material">
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="searchDonationForm.get('quantity')"
+              label="Cantidad Bienes">
+              <input
+                class="form-control"
+                maxlength="100"
+                formControlName="quantity" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="searchDonationForm.get('managementNum')"
+              label="No. Gestión">
+              <input
+                class="form-control"
+                maxlength="100"
+                formControlName="managementNum" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="searchDonationForm.get('descriptionGood')"
+              label="Descripción Bien">
+              <input
+                class="form-control"
+                maxlength="250"
+                formControlName="descriptionGood" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="searchDonationForm.get('inventoryNum')"
+              label="No. Inventario">
+              <input
+                class="form-control"
+                maxlength="100"
+                formControlName="inventoryNum" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="searchDonationForm.get('bienSiabNum')"
+              label="No. INDEP">
+              <input
+                class="form-control"
+                maxlength="100"
+                formControlName="bienSiabNum" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+
+      <div class="form-inline justify-content-end pt-3">
+        <button
+          (click)="showGoodsInventory()"
+          class="btn btn-primary btn-sm active mr-2">
+          Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+        <button
+          (click)="cleanSearchForm()"
+          class="btn btn-danger btn-sm active">
+          Limpiar <i class="fa fa-eraser"></i>
+        </button>
+      </div>
+
+      <div class="row pt-4">
+        <div class="btn-toolbar pt-3">
+          <app-columns-select
+            [(settings)]="settingsSearchDonation"></app-columns-select>
+        </div>
+        <div [class]="loadingGoodsDonation ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive pt-3'"
+            [settings]="settingsSearchDonation"
+            [source]="infoGoodDonation">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsSearchDonation"
+            [totalItems]="totalItemsSearchDonation"></app-pagination>
+        </div>
+      </div>
+    </div>
+
+    <!--Ventas-->
+
+    <h5 class="title pt-3" *ngIf="idTypeEvent == 1">
+      <p>
+        <a class="text-color" (click)="filterSales = true" *ngIf="!filterSales">
+          <i class="fa fa-angle-right" aria-hidden="true"></i> Filtrar Ventas</a
+        >
+      </p>
+
+      <p>
+        <a class="text-color" (click)="filterSales = false" *ngIf="filterSales">
+          <i class="fa fa-angle-down" aria-hidden="true"></i> Filtrar Ventas</a
+        >
+      </p>
+    </h5>
+
+    <div *ngIf="idTypeEvent == 1 && filterSales" class="pt-5">
+      <form [formGroup]="searchSalesForm" class="form-material">
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="searchSalesForm.get('descriptionGood')"
+              label="Descripción Bien">
+              <input
+                class="form-control"
+                maxlength="250"
+                formControlName="descriptionGood" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="searchSalesForm.get('bienSiabNum')"
+              label="No. INDEP">
+              <input
+                class="form-control"
+                maxlength="250"
+                formControlName="bienSiabNum" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="searchSalesForm.get('commercialEvent')"
+              label="Evento Comercial">
+              <input
+                class="form-control"
+                maxlength="250"
+                formControlName="commercialEvent" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="searchSalesForm.get('managementNum')"
+              label="No. Gestión">
+              <input
+                class="form-control"
+                maxlength="250"
+                formControlName="managementNum" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field [control]="searchSalesForm.get('bill')" label="Factura">
+              <input
+                class="form-control"
+                maxlength="250"
+                formControlName="bill" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="searchSalesForm.get('inventoryNum')"
+              label="No. Inventario">
+              <input
+                class="form-control"
+                maxlength="250"
+                formControlName="inventoryNum" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="searchSalesForm.get('commercialLot')"
+              label="Lote Comercial">
+              <input
+                class="form-control"
+                maxlength="250"
+                formControlName="commercialLot" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+
+      <div class="form-inline justify-content-end pt-3">
+        <button
+          (click)="showGoodsInventory()"
+          class="btn btn-primary btn-sm active mr-2">
+          Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+        <button
+          (click)="cleanSearchForm()"
+          class="btn btn-danger btn-sm active">
+          Limpiar <i class="fa fa-eraser"></i>
+        </button>
+      </div>
+
+      <div class="row pt-4">
+        <div class="btn-toolbar pt-3">
+          <app-columns-select
+            [(settings)]="settingsSearchSales"></app-columns-select>
+        </div>
+        <div [class]="loadingGoodsSales ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive pt-3'"
+            [settings]="settingsSearchSales"
+            [source]="infoGoodSales">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsSearchSales"
+            [totalItems]="totalItemsSearchSales"></app-pagination>
+        </div>
+      </div>
+    </div>
+
+    <h5 class="title">
+      <p>
+        <a
+          class="text-color"
+          (click)="filterPreviewGood = true"
+          *ngIf="!filterPreviewGood">
+          <i class="fa fa-angle-right" aria-hidden="true"></i> Vista Previa de
+          Bienes a Programar</a
+        >
+      </p>
+
+      <p>
+        <a
+          class="text-color"
+          (click)="filterPreviewGood = false"
+          *ngIf="filterPreviewGood">
+          <i class="fa fa-angle-down" aria-hidden="true"></i> Vista Previa de
+          Bienes a Programar</a
+        >
+      </p>
+    </h5>
+
+    <div class="row pt-3" *ngIf="filterPreviewGood">
+      <div class="btn-toolbar pt-3">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <button
+          (click)="addGoodsProgrammingDelivery()"
+          class="btn btn-primary btn-sm active">
+          Agregar <i class="bx bx-plus bx-sm float-icon"></i>
+        </button>
+        <button class="btn btn-danger btn-sm active">
+          Eliminar <i class="fa fa-trash" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive pt-3'"
+          [settings]="settings"
+          [source]="goodsToProgramData">
+        </ng2-smart-table>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
   </div>
 </app-card>

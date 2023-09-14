@@ -1,34 +1,69 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const EVENT_COLUMNS = {
-  event: {
+  eventId: {
     title: 'Evento',
     type: 'number',
     sort: false,
   },
-  cve: {
-    title: 'Cve.',
-    type: 'string',
+  eatEventDetail: {
+    title: 'Clave Procedimiento',
+    // type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return cell.processKey;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.processKey;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
-  bmxClient: {
+  customerBmx: {
     title: 'Cliente Bmx',
     type: 'number',
     sort: false,
   },
-  userCreate: {
-    title: 'Creo',
+  userCreated: {
+    title: 'Usuario Creo',
     type: 'string',
     sort: false,
   },
-  date: {
+  creationDate: {
     title: 'Fecha',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      const parts = cell.split('-');
+      const year = parts[0];
+      const month = parts[1];
+      const day = parts[2];
+      const formattedDate = `${day}/${month}/${year}`;
+      return formattedDate;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+
+    /*filter: {
+      type: 'custom',
+      component: CustomDateDayFilterComponent,
+    },*/
   },
 };
 
 export const CAPTURE_LINES_COLUMNS = {
-  palette: {
-    title: 'N° Paleta',
+  eventId: {
+    title: 'Evento',
+    type: 'number',
+    sort: false,
+  },
+  pallette: {
+    title: 'No. Paleta',
     type: 'number',
     sort: false,
   },

@@ -175,6 +175,7 @@ export class RegisterRequestGoodsComponent extends BasePage implements OnInit {
         autocapitalize: 'off',
       },
       showCancelButton: true,
+      allowOutsideClick: false,
       confirmButtonColor: '#9d2449',
       confirmButtonText:
         "<i class='bx bxs-check-circle check-icon fs-2 mr-2'></i>Aceptar",
@@ -182,6 +183,7 @@ export class RegisterRequestGoodsComponent extends BasePage implements OnInit {
       cancelButtonText:
         "<i class='bx bxs-x-circle cancel-icon fs-2 mr-2'></i>Cancelar",
       showLoaderOnConfirm: true,
+
       preConfirm: (comment: any) => {
         try {
           if (!comment) {

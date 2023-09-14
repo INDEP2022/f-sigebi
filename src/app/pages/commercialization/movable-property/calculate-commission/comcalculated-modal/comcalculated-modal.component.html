@@ -5,90 +5,77 @@
   <div body>
     <form class="form-material" [formGroup]="calculatedForm">
       <div class="row">
-        <div class="col-md-3">
-          <form-field
-            label="id_comcalculada"
-            [control]="calculatedForm.get('comCalculatedId')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="comCalculatedId" />
+        <div class="col-md-6">
+          <form-field [control]="calculatedForm.get('thirdComerId')">
+            <ngx-select
+              [form]="calculatedForm"
+              [searchOnInit]="true"
+              [data]="thirdPartySelect"
+              bindLabel="IdAndNameReason"
+              label="Tercero Comercializador"
+              (fetchItems)="getThirdPartyAll($event)"
+              control="thirdComerId"
+              (change)="selectThird($event)">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-3">
-          <form-field
-            label="id_tercerocomer"
-            [control]="calculatedForm.get('thirdComerId')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="thirdComerId" />
+        <div class="col-md-6">
+          <form-field [control]="calculatedForm.get('eventId')">
+            <ngx-select
+              [form]="calculatedForm"
+              [searchOnInit]="true"
+              [data]="comerEventSelect"
+              bindLabel="idAndProcessKey"
+              label="Evento"
+              (fetchItems)="getComerEvents($event)"
+              control="eventId"
+              (change)="selectEvent($event)">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-3">
-          <form-field
-            label="usuario_creo"
-            [control]="calculatedForm.get('userBelieve')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="userBelieve" />
+        <!-- <div class="col-md-6">
+          <form-field label="Usuario Creo" [control]="calculatedForm.get('userBelieve')">
+            <input type="text" class="form-control" formControlName="userBelieve" />
           </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            label="fecha_creo"
-            [control]="calculatedForm.get('believeDate')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="believeDate" />
-          </form-field>
-        </div>
+        </div> -->
       </div>
       <div class="row pt-5">
-        <div class="col-md-3">
+        <!-- <div class="col-md-4">
+          <form-field label="Fecha Creo" [control]="calculatedForm.get('believeDate')">
+            <input bsDatepicker type="text" class="form-control" formControlName="believeDate"
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+          </form-field>
+        </div> -->
+        <div class="col-md-4">
           <form-field
-            label="fecha_ini"
+            label="Fecha Inicio"
             [control]="calculatedForm.get('startDate')">
             <input
+              bsDatepicker
               type="text"
               class="form-control"
-              formControlName="startDate" />
+              formControlName="startDate"
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field
-            label="fecha_fin"
+            label="Fecha Fin"
             [control]="calculatedForm.get('endDate')">
-            <input type="text" class="form-control" formControlName="endDate" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            label="id_evento"
-            [control]="calculatedForm.get('eventId')">
-            <input type="text" class="form-control" formControlName="eventId" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            label="comision_total"
-            [control]="calculatedForm.get('commissionTotal')">
             <input
+              bsDatepicker
               type="text"
               class="form-control"
-              formControlName="commissionTotal" />
+              formControlName="endDate"
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field
-            label="tipo_cambio"
+            label="Tipo Cambio"
             [control]="calculatedForm.get('changeType')">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="changeType" />
           </form-field>
@@ -99,13 +86,20 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          (confirm)="confirm()"
-          [disabled]="!calculatedForm.valid">
-        </confirm-button>
+        <button
+          type="button"
+          [disabled]="!calculatedForm.valid"
+          class="btn btn-primary active btn-sm"
+          (click)="confirm()">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
           Cancelar
         </button>
       </div>

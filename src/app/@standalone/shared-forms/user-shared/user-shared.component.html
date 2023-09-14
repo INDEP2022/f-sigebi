@@ -6,7 +6,7 @@
           (fetchItems)="getUsers($event)"
           [data]="users"
           [form]="form"
-          value="userId"
+          [value]="id ? 'id' : 'userId'"
           bindLabel="name"
           [label]="label"
           [control]="userField"

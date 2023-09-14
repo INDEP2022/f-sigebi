@@ -1,60 +1,62 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevas' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="tdescCveForm">
       <div class="row">
-        <div class="col-md-3">
-          <form-field [control]="tdescCveForm.get('id')" label="ID">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="id"
-              readonly />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-5">
         <h6>Campos para Clave 1</h6>
-        <div class="col-md-3 pt-3">
-          <form-field [control]="tdescCveForm.get('dsKey1')" label="Clave">
-            <input type="text" class="form-control" formControlName="dsKey1" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="tdescCveForm.get('swFormat1')" label="Formato">
-            <ng-select
-              formControlName="swFormat1"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="V">Alfanum&eacute;rico</ng-option>
-              <ng-option value="N">Num&eacute;rico</ng-option>
-              <ng-option value="F">Flotante</ng-option>
-              <ng-option value="D">Fecha</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="tdescCveForm.get('longMin1')"
-            label="Longitud Min&#46;">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="longMin1" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="tdescCveForm.get('longMax1')"
-            label="Longitud Max&#46;">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="longMax1" />
-          </form-field>
+        <div class="row pt-4">
+          <div class="col-md-3">
+            <form-field [control]="tdescCveForm.get('dsKey1')" label="Clave">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dsKey1" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tdescCveForm.get('swFormat1')"
+              label="Formato">
+              <ng-select
+                formControlName="swFormat1"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="V">Alfanum&eacute;rico</ng-option>
+                <ng-option value="N">Num&eacute;rico</ng-option>
+                <ng-option value="F">Flotante</ng-option>
+                <ng-option value="D">Fecha</ng-option>
+              </ng-select>
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tdescCveForm.get('longMin1')"
+              label="Longitud Min&#46;">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="longMin1"
+                min="1"
+                [defaultValue]="1"
+                oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tdescCveForm.get('longMax1')"
+              label="Longitud Max&#46;">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="longMax1"
+                min="1"
+                [defaultValue]="1"
+                oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
+            </form-field>
+          </div>
         </div>
       </div>
 
@@ -93,7 +95,10 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="longMin2" />
+                formControlName="longMin2"
+                min="1"
+                [defaultValue]="1"
+                oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -103,7 +108,10 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="longMax2" />
+                formControlName="longMax2"
+                min="1"
+                [defaultValue]="1"
+                oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
             </form-field>
           </div>
         </div>
@@ -143,7 +151,10 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="longMin3" />
+                  formControlName="longMin3"
+                  min="1"
+                  [defaultValue]="1"
+                  oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
               </form-field>
             </div>
             <div class="col-md-3">
@@ -153,7 +164,10 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="longMax3" />
+                  formControlName="longMax3"
+                  min="1"
+                  [defaultValue]="1"
+                  oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
               </form-field>
             </div>
           </div>
@@ -194,7 +208,10 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="longMin4" />
+                  formControlName="longMin4"
+                  min="1"
+                  [defaultValue]="1"
+                  oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
               </form-field>
             </div>
             <div class="col-md-3">
@@ -204,7 +221,10 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="longMax4" />
+                  formControlName="longMax4"
+                  min="1"
+                  [defaultValue]="1"
+                  oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
               </form-field>
             </div>
           </div>
@@ -245,7 +265,10 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="longMin5" />
+                  formControlName="longMin5"
+                  min="1"
+                  [defaultValue]="1"
+                  oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
               </form-field>
             </div>
             <div class="col-md-3">
@@ -255,7 +278,10 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="longMax5" />
+                  formControlName="longMax5"
+                  min="1"
+                  [defaultValue]="1"
+                  oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
               </form-field>
             </div>
           </div>

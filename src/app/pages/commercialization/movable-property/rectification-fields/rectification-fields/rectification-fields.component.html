@@ -5,8 +5,33 @@
     </div>
   </div>
   <div body>
+    <div class="row mb-3">
+      <div class="d-flex justify-content-end">
+        <div class="d-inline">
+          <button
+            type="button"
+            class="btn btn-info btn-sm active"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
     <div class="row">
-      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+      <form-loader *ngIf="loading"></form-loader>
+      <div>
+        <ng2-smart-table
+          [ngStyle]="{ height: loading ? '0px' : 'auto' }"
+          [ngStyle]="{ height: loading ? '0px' : 'auto' }"
+          [attr.class]="'table-bordered table-responsive mb-4'"
+          [settings]="settings"
+          [source]="dataFilter"
+          (edit)="openForm($event.data)"
+          (delete)="remove($event.data)">
+        </ng2-smart-table>
+      </div>
+      <app-pagination [params]="paramsList" [totalItems]="totalItems">
+      </app-pagination>
     </div>
   </div>
 </app-card>

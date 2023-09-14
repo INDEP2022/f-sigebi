@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IIdentifier } from 'src/app/core/models/catalogs/identifier.model';
 import { IdentifierService } from 'src/app/core/services/catalogs/identifier.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-identifier-form',
@@ -12,7 +13,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
   styles: [],
 })
 export class IdentifierFormComponent extends BasePage implements OnInit {
-  title: string = 'Identificadores';
+  title: string = 'Identificador';
   edit: boolean = false;
 
   identifier: IIdentifier;
@@ -32,16 +33,26 @@ export class IdentifierFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.identifierForm = this.fb.group({
-      id: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      keyview: [null, [Validators.required, Validators.maxLength(1)]],
-      noRegistration: [null, []],
+      id: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      keyview: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(1),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      noRegistration: [null],
     });
 
     if (this.identifier != null) {
       this.edit = true;
       this.identifierForm.patchValue(this.identifier);
-      this.identifierForm.get('code').disable();
+      this.identifierForm.get('id').disable();
     }
   }
 
@@ -50,21 +61,55 @@ export class IdentifierFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.identifierService.create(this.identifierForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (
+      this.identifierForm.controls['id'].value.trim() == '' ||
+      this.identifierForm.controls['description'].value.trim() == '' ||
+      this.identifierForm.controls['keyview'].value.trim() == '' ||
+      (this.identifierForm.controls['id'].value.trim() == '' &&
+        this.identifierForm.controls['description'].value.trim() == '' &&
+        this.identifierForm.controls['keyview'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.identifierService.create(this.identifierForm.value).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => {
+          this.loading = false;
+          this.alert('warning', 'Dato duplicado', ``);
+        },
+      });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.identifierService
-      .update(this.identifier.id, this.identifierForm.value)
-      .subscribe({
+    if (
+      this.identifierForm.controls['id'].value.trim() == '' ||
+      this.identifierForm.controls['description'].value.trim() == '' ||
+      this.identifierForm.controls['keyview'].value.trim() == '' ||
+      (this.identifierForm.controls['id'].value.trim() == '' &&
+        this.identifierForm.controls['description'].value.trim() == '' &&
+        this.identifierForm.controls['keyview'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      let data = {
+        id: this.identifierForm.controls['id'].value,
+        description: this.identifierForm.controls['description'].value,
+        keyview: this.identifierForm.controls['keyview'].value,
+        noRegistration: this.identifierForm.controls['noRegistration'].value,
+      };
+      console.log(data);
+      this.identifierService.update(this.identifier.id, data).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
   }
 
   close() {

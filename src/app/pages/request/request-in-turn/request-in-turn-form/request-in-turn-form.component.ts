@@ -15,6 +15,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TransferentesSaeService } from 'src/app/core/services/catalogs/transferentes-sae.service';
+import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IAffair } from '../../../../core/models/catalogs/affair.model';
@@ -30,7 +31,7 @@ import { TransferenteService } from '../../../../core/services/catalogs/transfer
   templateUrl: './request-in-turn-form.component.html',
   styleUrls: ['./request-in-turn-form.component.scss'],
 })
-export class RequestInTurnFormComponent implements OnInit {
+export class RequestInTurnFormComponent extends BasePage implements OnInit {
   @Output() sendSearchForm = new EventEmitter<any>();
   @Output() resetForm = new EventEmitter<boolean>();
   showSearchForm: boolean = true;
@@ -45,7 +46,7 @@ export class RequestInTurnFormComponent implements OnInit {
   transferenceId: number = null;
   stationId: number = null;
 
-  loading: boolean = false;
+  //loading: boolean = false;
 
   selectStation = new DefaultSelect<any>();
   selectAuthority = new DefaultSelect<any>();
@@ -68,7 +69,9 @@ export class RequestInTurnFormComponent implements OnInit {
     public modalRef: BsModalRef,
     public fb: FormBuilder,
     private transferentesSaeService: TransferentesSaeService //public requestService: ResquestService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.initialForm();
@@ -102,6 +105,7 @@ export class RequestInTurnFormComponent implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
+      paperNumber: [null, [Validators.maxLength(100)]],
     });
 
     if (this.requestInTurn != null) {
@@ -178,22 +182,53 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   getRegionalDelegationId(params: ListParams) {
-    // const id = this.authService.decodeToken().department;
-    // console.log(id);
-    //return id;
-    params['filter.description'] = `$ilike:${params.text}`;
+    params['filter.id'] = `$eq:${this.deleRegionalId}`;
+    /*const isNumber = !isNaN(Number(params.text));
+    if (params.text != '' && isNumber != true) {
+      params['filter.description'] = `$ilike:${params.text}`;
+    } else if (params.text != '' && isNumber == true) {
+      params['filter.id'] = `$eq:${Number(params.text)}`;
+    }
     params['sortBy'] = 'description:ASC';
+    delete params.text;
+    delete params['search'];*/
     this.regDelegationService.getAll(params).subscribe({
       next: resp => {
+        resp.data.map((item: any) => {
+          item.idDescript = item.id + ' - ' + item.description;
+        });
         this.selectRegDele = new DefaultSelect(resp.data, resp.count);
+        this.searchForm.controls['regionalDelegationId'].setValue(
+          this.deleRegionalId.toString()
+        );
       },
       error: error => (this.selectRegDele = new DefaultSelect([], 0, true)),
     });
   }
+
+  changeRegDele(event: any) {
+    if (event == undefined) {
+      this.getRegionalDelegationId(new ListParams());
+    }
+  }
+
   getAffair(params?: ListParams) {
+    const isNumber = !isNaN(Number(params.text));
+    if (params.text != '' && isNumber != true) {
+      params['filter.description'] = params.text;
+    } else if (params.text != '' && isNumber == true) {
+      params['filter.id'] = Number(params.text);
+    }
+    delete params.text;
+    delete params['search'];
+    //params['filter.nbOrigen'] = 'SAMI'; SIAB
     params['sortBy'] = 'description:ASC';
     this.affairService.getAll(params).subscribe(
       (data: IListResponse<IAffair>) => {
+        data.data.map((item: any) => {
+          item.idDescrip = item.id + ' - ' + item.description;
+        });
+
         this.selectAffeir = new DefaultSelect(data.data, data.count);
       },
       error => {
@@ -201,6 +236,13 @@ export class RequestInTurnFormComponent implements OnInit {
       }
     );
   }
+
+  changeAffair(event: any) {
+    if (event == undefined) {
+      this.getAffair(new ListParams());
+    }
+  }
+
   getTransferente(params?: ListParams) {
     params['filter.transferent.nameTransferent'] = `$ilike:${params.text}`;
     params['sortBy'] = 'nameTransferent:ASC';
@@ -228,6 +270,10 @@ export class RequestInTurnFormComponent implements OnInit {
             return x.stateCode;
           })
           .filter((x: any) => x != undefined);
+
+        result.map((item: any) => {
+          item.idDescrip = item.id + ' - ' + item.descCondition;
+        });
 
         this.selectState = new DefaultSelect(result, result.length);
       },
@@ -302,23 +348,42 @@ export class RequestInTurnFormComponent implements OnInit {
     this.selectTransfer = new DefaultSelect([], 0, true);
     this.selectAuthority = this.selectTransfer = new DefaultSelect([], 0, true);
     this.selectState = this.selectTransfer = new DefaultSelect([], 0, true);
+    const idDelegation = this.searchForm.get('regionalDelegationId');
+    const idDelegationValue = idDelegation.value;
     this.searchForm.reset();
     this.resetForm.emit(true);
+    idDelegation.setValue(idDelegationValue);
     this.deleRegionalId = Number(this.authService.decodeToken().department);
+    this.search();
   }
 
   getFormChanges() {
     var params = new FilterParams();
     params.removeAllFilters();
     //filtro de la delegacion regional
-    this.deleRegionalId
-      ? params.addFilter(
-          'regionalDelegationId',
-          this.deleRegionalId,
-          SearchFilter.EQ
-        )
-      : null;
 
+    if (this.searchForm.controls['paperNumber'].value != null) {
+      this.deleRegionalId
+        ? params.addFilter(
+            'regionalDelegationId',
+            this.deleRegionalId,
+            SearchFilter.EQ
+          )
+        : null;
+    } else {
+      this.deleRegionalId
+        ? params.addFilter(
+            'regionalDelegationId',
+            this.deleRegionalId,
+            SearchFilter.EQ
+          )
+        : null;
+    }
+
+    /*if (this.searchForm.controls['regionalDelegationId'].value != null) {
+        const regionalDelegationId = this.searchForm.controls['regionalDelegationId'].value;
+        params.addFilter('regionalDelegationId', regionalDelegationId, SearchFilter.EQ);
+      }*/
     //filtro estado solicitudes por tunar
     params.addFilter('requestStatus', 'POR_TURNAR', SearchFilter.EQ);
 
@@ -390,8 +455,26 @@ export class RequestInTurnFormComponent implements OnInit {
       const affair = this.searchForm.controls['affair'].value;
       params.addFilter('affair', affair, SearchFilter.EQ);
     }
+    if (this.searchForm.controls['paperNumber'].value != null) {
+      const paperNumber = this.searchForm.controls['paperNumber'].value;
+      params.addFilter('paperNumber', paperNumber, SearchFilter.ILIKE);
+    }
 
-    return params;
+    console.log('parámetros: ', params);
+
+    console.log('Longitud: ', params.filters.length);
+
+    if (params.filters.length > 1) {
+      return params;
+    } else {
+      this.alert(
+        'warning',
+        'Atención',
+        'Ingrese un filtro para buscar solicitudes'
+      );
+    }
+
+    return (params = new FilterParams());
   }
 
   getDateFormat(date: string): string {

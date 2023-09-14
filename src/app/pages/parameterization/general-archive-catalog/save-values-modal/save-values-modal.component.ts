@@ -15,7 +15,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class SaveValuesModalComponent extends BasePage implements OnInit {
-  title: string = 'Guardavaloress';
+  title: string = 'Guarda Valor';
   edit: boolean = false;
 
   saveValuesForm: ModelForm<ISaveValue>;
@@ -35,18 +35,37 @@ export class SaveValuesModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.saveValuesForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(5),
+        ],
+      ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(60),
+        ],
       ],
       location: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(60),
+        ],
       ],
       responsible: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
     });
     if (this.saveValues != null) {
@@ -64,26 +83,65 @@ export class SaveValuesModalComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    console.log(this.saveValuesForm.value);
-    this.saveValueService.create(this.saveValuesForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (
+      this.saveValuesForm.controls['id'].value.trim() == '' ||
+      this.saveValuesForm.controls['description'].value.trim() == '' ||
+      this.saveValuesForm.controls['location'].value.trim() == '' ||
+      this.saveValuesForm.controls['responsible'].value.trim() == '' ||
+      (this.saveValuesForm.controls['id'].value.trim() == '' &&
+        this.saveValuesForm.controls['description'].value.trim() == '' &&
+        this.saveValuesForm.controls['location'].value.trim() == '' &&
+        this.saveValuesForm.controls['responsible'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      console.log(this.saveValuesForm.value);
+      this.saveValueService
+        .create(this.saveValuesForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => {
+            this.loading = false;
+            this.onLoadToast(
+              'warning',
+              'La CVE Guarda Valor ya Fue Registrada',
+              ``
+            );
+          },
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.saveValueService
-      .update(this.saveValues.id, this.saveValuesForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.saveValuesForm.controls['id'].value.trim() == '' ||
+      this.saveValuesForm.controls['description'].value.trim() == '' ||
+      this.saveValuesForm.controls['location'].value.trim() == '' ||
+      this.saveValuesForm.controls['responsible'].value.trim() == '' ||
+      (this.saveValuesForm.controls['id'].value.trim() == '' &&
+        this.saveValuesForm.controls['description'].value.trim() == '' &&
+        this.saveValuesForm.controls['location'].value.trim() == '' &&
+        this.saveValuesForm.controls['responsible'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.saveValueService
+        .update(this.saveValues.id, this.saveValuesForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

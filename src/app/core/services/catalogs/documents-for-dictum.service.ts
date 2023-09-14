@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -10,6 +11,7 @@ import { IDocumentsForDictum } from '../../models/catalogs/documents-for-dictum.
   providedIn: 'root',
 })
 export class DocumentsForDictumService
+  extends HttpService
   implements ICrudMethods<IDocumentsForDictum>
 {
   private readonly route: string = ENDPOINT_LINKS.DocumentsForDictum;
@@ -17,13 +19,13 @@ export class DocumentsForDictumService
 
   constructor(
     private documentsForDictumRepository: Repository<IDocumentsForDictum>
-  ) {}
+  ) {
+    super();
+    this.microservice = ENDPOINT_LINKS.Document;
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IDocumentsForDictum>> {
-    return this.documentsForDictumRepository.getAllPaginated(
-      this.route,
-      params
-    );
+    return this.documentsForDictumRepository.getAll(this.route, params);
   }
 
   getById(id: string | number): Observable<IDocumentsForDictum> {
@@ -33,6 +35,7 @@ export class DocumentsForDictumService
   getById3(
     id: string | number
   ): Observable<IListResponse<IDocumentsForDictum>> {
+    console.log(this.route1);
     return this.documentsForDictumRepository.getById3(
       `${this.route1}/typeDictum`,
       id
@@ -48,5 +51,36 @@ export class DocumentsForDictumService
 
   remove(id: string | number): Observable<Object> {
     return this.documentsForDictumRepository.remove(this.route, id);
+  }
+
+  getAplication1(data: any) {
+    return this.post(ENDPOINT_LINKS.DocumentAplication1, data);
+  }
+
+  getAplication2(data: any) {
+    return this.post(ENDPOINT_LINKS.DocumentAplication2, data);
+  }
+
+  postDocuemntFolio(params: any) {
+    return this.post(ENDPOINT_LINKS.insertDocumentFolio, params);
+  }
+  postDocuemntFolio2(params: any) {
+    return this.post(ENDPOINT_LINKS.insertDocumentFol, params);
+  }
+
+  postDocuemnt(params: any) {
+    return this.post(ENDPOINT_LINKS.insertDocument, params);
+  }
+
+  getByFolio(folio: number) {
+    return this.get(`${ENDPOINT_LINKS.documentFolio}/${folio}`);
+  }
+
+  changeStatus(params: any) {
+    return this.put(ENDPOINT_LINKS.setStatus, params);
+  }
+
+  postDocumentHist(params: any) {
+    return this.post(ENDPOINT_LINKS.documentHist, params);
   }
 }

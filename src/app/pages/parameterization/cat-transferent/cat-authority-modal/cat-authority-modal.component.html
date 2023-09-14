@@ -1,20 +1,10 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="authorityForm">
-      <!-- <div class="row">
-        <div class="col-md-3">
-          <form-field
-            label="No. Autoridad"
-            [control]="authorityForm.get('idAuthority')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="idAuthority" />
-          </form-field>
-        </div>
+      <div class="row">
         <div class="col-md-3">
           <form-field
             label="No. Transferente"
@@ -37,11 +27,9 @@
               readonly />
           </form-field>
         </div>
-      </div> -->
-      <div class="row">
         <div class="col-md-2">
           <form-field
-            label="Clave única"
+            label="Clave Única"
             [control]="authorityForm.get('cveUnique')">
             <input
               type="text"
@@ -58,7 +46,17 @@
         </div>
         <div class="col-md-6">
           <form-field
-            label="Nombre autoridad"
+            label="Código de Estado"
+            [control]="authorityForm.get('codeStatus')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="codeStatus" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            label="Nombre Autoridad"
             [control]="authorityForm.get('authorityName')">
             <input
               type="text"
@@ -74,7 +72,7 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
-          [disabled]="!authorityForm.valid"
+          [disabled]=""
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

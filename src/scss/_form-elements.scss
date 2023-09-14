@@ -828,8 +828,8 @@ $fade-in-checkbox-bg-color: $primary, $secondary, $success, $info, $warning,
 }
 
 .checkbox-primary input[type='checkbox']:checked + label::before {
-  background-color: #2196f3;
-  border-color: #2196f3;
+  background-color: #9d2449;
+  border-color: #9d2449;
 }
 
 $background-checkbox-bg-state: primary, secondary, success, info, warning,
@@ -1248,6 +1248,7 @@ $background-checkbox-bg-color: $primary, $secondary, $success, $info, $warning,
 
         .form-control {
           border-bottom-color: nth($matrial-color, $i);
+          min-width: 80px;
         }
       }
     }
@@ -1264,7 +1265,7 @@ $background-checkbox-bg-color: $primary, $secondary, $success, $info, $warning,
 }
 
 select.form-control {
-  height: 43px !important;
+  min-height: 43px !important;
 
   &,
   &:focus,

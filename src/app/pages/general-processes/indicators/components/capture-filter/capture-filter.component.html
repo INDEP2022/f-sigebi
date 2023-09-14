@@ -1,124 +1,222 @@
-<form [formGroup]="form" class="form-material">
-  <div class="row">
-    <form-field
-      [control]="form.get('de')"
-      label="Rango de fechas"
-      class="col-md-2">
-      <input
-        type="text"
-        class="form-control"
-        bsDatepicker
-        formControlName="de" />
-    </form-field>
+<div>
+  <form [formGroup]="formCapture" class="form-material" (ngSubmit)="find()">
+    <div class="row pt-3">
+      <form-field
+        [control]="formCapture.get('finicia')"
+        label="Rango de Fechas"
+        class="col-md-3">
+        <input
+          type="text"
+          class="form-control"
+          bsDatepicker
+          formControlName="finicia"
+          [maxDate]="maxDate" />
+      </form-field>
 
-    <form-field [control]="form.get('a')" label="A" class="col-md-2">
-      <input
-        type="text"
-        class="form-control"
-        bsDatepicker
-        formControlName="a" />
-    </form-field>
+      <form-field
+        [control]="formCapture.get('fmaxima')"
+        label="A"
+        class="col-md-3">
+        <input
+          type="text"
+          class="form-control"
+          bsDatepicker
+          formControlName="fecEnd"
+          [min]="formCapture.get('fecStart').value"
+          [minDate]="formCapture.get('fecStart').value"
+          [ngModel]="
+            formCapture.get('fecEnd').value < formCapture.get('fecStart').value
+              ? formCapture.get('fecStart').value
+              : formCapture.get('fecEnd').value
+          "
+          bsDatepicker />
+      </form-field>
 
-    <form-field
-      *ngIf="
-        !isReceptionAndDelivery && !isReceptionStrategies && !isConsolidated
-      "
-      [control]="form.get('fecha')"
-      label="Fecha Ingreso"
-      class="col-md-2">
-      <input
-        type="text"
-        class="form-control"
-        bsDatepicker
-        formControlName="fecha" />
-    </form-field>
+      <form-field
+        *ngIf="
+          !isReceptionAndDelivery && !isReceptionStrategies && !isConsolidated
+        "
+        [control]="formCapture.get('finingrs')"
+        label="Fecha Ingreso"
+        class="col-md-3">
+        <input
+          type="text"
+          class="form-control"
+          bsDatepicker
+          formControlName="finingrs"
+          [maxDate]="maxDate" />
+      </form-field>
 
-    <form-field
-      *ngIf="
+      <form-field
+        [control]="formCapture.get('typeSteering')"
+        class="col-md-3"
+        label="Tipo Volante">
+        <select class="form-control" formControlName="typeSteering">
+          <option *ngFor="let type of flyerTypes" [value]="type">
+            {{ type }}
+          </option>
+        </select>
+      </form-field>
+    </div>
+
+    <!-- <form-field *ngIf="
         (isReceptionAndDelivery || isReceptionStrategies) && !isConsolidated
-      "
-      [control]="form.get('tipoEvento')"
-      class="col-md-3"
-      label="Tipo Evento">
+      " [control]="formCapture.get('tipoEvento')" class="col-md-3" label="Tipo Evento">
       <select class="form-control" formControlName="tipoEvento">
         <option *ngFor="let event of eventTypes" [value]="event">
           {{ event }}
         </option>
       </select>
-    </form-field>
+    </form-field> -->
 
-    <form-field [control]="form.get('cordinador')" class="col">
-      <ngx-select
-        [form]="form"
-        control="cordinador"
-        label="Cordinador Regional"
-        [data]="select">
-      </ngx-select>
-    </form-field>
-  </div>
-  <div class="row pt-3" *ngIf="!isReceptionStrategies && !isConsolidated">
-    <form-field [control]="form.get('transferente')" class="col-md-4">
-      <ngx-select
-        [form]="form"
-        control="transferente"
-        label="Transferente"
-        [data]="select">
-      </ngx-select>
-    </form-field>
-    <form-field [control]="form.get('emisora')" class="col-md-4">
-      <ngx-select
-        [form]="form"
-        control="emisora"
-        label="Emisora"
-        [data]="select">
-      </ngx-select>
-    </form-field>
-    <form-field [control]="form.get('autoridad')" class="col-md-4">
-      <ngx-select
-        [form]="form"
-        control="autoridad"
-        label="Autoridad"
-        [data]="select">
-      </ngx-select>
-    </form-field>
-  </div>
-  <div class="row pt-3" *ngIf="!isReceptionAndDelivery">
-    <form-field [control]="form.get('usuario')" class="col-md-4">
-      <ngx-select
-        [form]="form"
-        control="usuario"
-        label="Usuario"
-        [data]="select">
-      </ngx-select>
-    </form-field>
-    <form-field
-      [control]="form.get('clave')"
-      class="col-md-4"
-      *ngIf="!isReceptionStrategies && !isConsolidated">
-      <ngx-select
-        [form]="form"
-        control="clave"
-        label="Clave Asunto"
-        [data]="select">
-      </ngx-select>
-    </form-field>
-
-    <form-field
-      [control]="form.get('tipoVolante')"
-      class="col-md-2"
-      label="Tipo Volante"
-      *ngIf="!isReceptionStrategies && !isConsolidated">
-      <select class="form-control" formControlName="tipoVolante">
-        <option *ngFor="let type of flyerTypes" [value]="type">
-          {{ type }}
-        </option>
-      </select>
-    </form-field>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <button class="btn active btn-info mr-2">Reporte</button>
-      <button class="btn active btn-primary">Consulta</button>
+    <div class="row mt-4">
+      <div class="col-md-12">
+        <form-field [control]="formCapture.get('coordinacion_regional')">
+          <ngx-select
+            [form]="formCapture"
+            [searchOnInit]="true"
+            control="coordinacion_regional"
+            label="Coor. Regional"
+            [data]="delegations"
+            (fetchItems)="getDelegations($event)"
+            className="scroll-line"
+            bindLabel="description"></ngx-select>
+        </form-field>
+      </div>
     </div>
-  </div>
-</form>
+
+    <div class="row pt-3">
+      <form-field [control]="formCapture.get('user')" class="col-md-6">
+        <ngx-select
+          label="Usuario"
+          [form]="formCapture"
+          [readonly]="dictNumber ? true : false"
+          [data]="users$"
+          (fetchItems)="getUsers($event)"
+          bindLabel="userAndName"
+          control="urecepcion"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="userLabel"
+          [optionTemplate]="userOption">
+        </ngx-select>
+        <ng-template #userLabel let-item="item">
+          {{ item.id + ' - ' + item.name }}
+        </ng-template>
+        <ng-template #userOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id + ' - ' + item.name }}
+          </div>
+        </ng-template>
+      </form-field>
+
+      <form-field
+        [control]="formCapture.get('cveJobExternal')"
+        class="col-md-6">
+        <!-- <ngx-select [form]="formCapture" [searchOnInit]="true" control="cveJobExternal" label="Clave Oficio Externo"
+          [data]="affairName" (fetchItems)="getSubjects($event)" className="scroll-line" bindLabel="description">
+        </ngx-select> -->
+        <input
+          type="text"
+          class="form-control"
+          formControlName="cveJobExternal" />
+      </form-field>
+
+      <form-field [control]="formCapture.get('cvCoors')">
+        <!-- <ngx-select [form]="formCapture" [searchOnInit]="true" control="cvCoors" label="Coor. Regional"
+          [data]="delegations" (change)="getTotalDelegation()" (fetchItems)="getDelegations($event)"
+          className="scroll-line" bindLabel="description" [multiple]="true"></ngx-select>
+      -->
+        <ngx-select
+          [form]="formCapture"
+          control="cvCoors"
+          (fetchItems)="getDelegations($event)"
+          [showTooltip]="true"
+          [data]="delegations"
+          bindLabel="description"
+          label="Coor. Regional"
+          value="id"
+          [multiple]="true"></ngx-select>
+      </form-field>
+    </div>
+
+    <div class="row pt-3">
+      <form-field [control]="formCapture.get('noTransfere')" class="col-md-4">
+        <ngx-select
+          [searchOnInit]="true"
+          (fetchItems)="getTransference($event)"
+          [data]="transference"
+          [form]="formCapture"
+          bindLabel="nameTransferent"
+          label="Transferente"
+          control="transference">
+        </ngx-select>
+      </form-field>
+
+      <form-field [control]="formCapture.get('station')" class="col-md-4">
+        <ngx-select
+          [searchOnInit]="true"
+          (fetchItems)="
+            getStation(
+              formCapture.get('noTransfere').value,
+              formCapture.get('noStation').value
+            )
+          "
+          [data]="station"
+          [form]="formCapture"
+          bindLabel="stationName"
+          label="Emisora"
+          control="station">
+        </ngx-select>
+      </form-field>
+      <form-field [control]="formCapture.get('noAuthority')" class="col-md-4">
+        <ngx-select
+          [searchOnInit]="true"
+          (fetchItems)="
+            getAuthority(
+              formCapture.get('noTransfere').value,
+              formCapture.get('noStation').value,
+              formCapture.get('noAuthority').value
+            )
+          "
+          [data]="authority"
+          [form]="formCapture"
+          bindLabel="authorityName"
+          label="Autoridad"
+          control="authority">
+        </ngx-select>
+      </form-field>
+    </div>
+
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            type="submit">
+            Consulta <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="Generar()">
+            Reporte <i class="fas fa-print bx-sm float-icon"></i>
+          </button>
+        </div>
+
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm"
+            (click)="cleanForm()">
+            Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

@@ -5,148 +5,216 @@
     </div>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-2">
-          <form-field [control]="form.get('event')" label="Evento">
-            <input type="text" class="form-control" formControlName="event" />
+        <div class="col-md-3">
+          <form-field [control]="form.get('event')">
+            <ngx-select
+              [form]="form"
+              control="event"
+              (fetchItems)="getEvent($event)"
+              label="Evento"
+              [data]="event"
+              bindLabel="evento"
+              [searchOnInit]="true"
+              value="id_evento"
+              (change)="changeEvent($event)">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-4">
           <div class="justify-content-center">
             <button
               type="button"
-              class="btn btn-primary btn-sm active"
+              class="btn btn-primary btn-sm active mr-3"
               [disabled]="!form.valid"
-              (click)="showLiquidacion = !showLiquidacion">
+              (click)="settlement()">
               Liquidaci&oacute;n
             </button>
-          </div>
-        </div>
-        <div class="col-md-1">
-          <div class="justify-content-center">
             <button
               type="button"
-              class="btn btn-primary btn-sm active"
+              class="btn btn-primary btn-sm active mr-3"
               [disabled]="!form.valid"
-              (click)="showGarantia = !showGarantia">
+              (click)="warranty()">
               Garant&iacute;as
             </button>
           </div>
         </div>
-        <div class="col-md-2" *ngIf="showGarantia || showLiquidacion">
-          <form-field [control]="form.get('filter01')" label="Lote Público:">
-            <ng-select
-              formControlName="filter01"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="1">651</ng-option>
-              <ng-option value="2">987</ng-option>
-              <ng-option value="3">234</ng-option>
-              <ng-option value="4">234</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
-        <div class="col-md-2" *ngIf="showGarantia || showLiquidacion">
-          <form-field [control]="form.get('filter02')" label="Cliente:">
-            <ng-select
-              formControlName="filter02"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="1">user 001</ng-option>
-              <ng-option value="2">user 002</ng-option>
-              <ng-option value="3">user 003</ng-option>
-              <ng-option value="4">user 004</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
-        <div class="col-md-2" *ngIf="showGarantia || showLiquidacion">
-          <form-field [control]="form.get('filter03')" label="Estatus&#58;">
-            <ng-select
-              formControlName="filter03"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="1">Disponible</ng-option>
-              <ng-option value="2">No disponible</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
-        <div class="col-md-2" *ngIf="showGarantia || showLiquidacion">
-          <form-field
-            [control]="form.get('filter04')"
-            label="LC&#39;s Vistas&#58;">
-            <ng-select
-              formControlName="filter03"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="1">Vistas</ng-option>
-              <ng-option value="2">No vistas</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
-      </div>
-      <div
-        class="row justify-content-end"
-        *ngIf="showGarantia || showLiquidacion">
-        <button
-          type="button"
-          class="btn btn-secondary btn-sm active mx-4"
-          disabled>
-          Filtrar
-        </button>
-        <button type="submit" class="btn btn-secondary btn-sm active mx-4">
-          quitar Filtros
-        </button>
       </div>
     </form>
-    <div class="row pt-5" *ngIf="showLiquidacion">
-      <div class="ch-content" header>
-        <h5 class="title">Liquidaci&oacute;n</h5>
-        <div class="col-md-5 buttons">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
+    <div class="row pt-5" *ngIf="filter">
+      <form
+        class="form-material"
+        [formGroup]="formFilter"
+        (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-4">
+            <form-field [control]="formFilter.get('lot')">
+              <ngx-select
+                [form]="formFilter"
+                control="lot"
+                (fetchItems)="getLotPublic($event)"
+                label="Lote Público"
+                [data]="lotPublic"
+                bindLabel="lote_publico"
+                value="lote_publico"
+                (change)="changeLot($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="formFilter.get('customer')">
+              <ngx-select
+                [form]="formFilter"
+                control="customer"
+                (fetchItems)="getClient($event)"
+                label="Cliente"
+                [data]="customer"
+                bindLabel="cliente"
+                value="cliente"
+                (change)="changeClient($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field [control]="formFilter.get('status')">
+              <ngx-select
+                [form]="formFilter"
+                control="status"
+                (fetchItems)="getClient($event)"
+                label="Estatus&#58;"
+                [data]="status"
+                bindLabel="estatus"
+                value="estatus"
+                (change)="changeClient($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field
+              [control]="formFilter.get('view')"
+              label="LC&#39;s Vistas&#58;">
+              <ng-select
+                formControlName="view"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="VISTA">VISTAS</ng-option>
+                <ng-option value="NO VISTA">NO VISTAS</ng-option>
+              </ng-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-12 d-flex justify-content-center">
+            <div>
+              <button
+                type="button"
+                [disabled]="!formFilter.valid"
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="search()">
+                Filtrar
+                <i class="fa fa-filter" aria-hidden="true"></i>
+              </button>
+              <button
+                class="btn btn-danger btn-sm active mr-3"
+                type="submit"
+                [disabled]="!formFilter.valid">
+                Limpiar <i class="fas fa-eraser"></i>
+              </button>
+              <button
+                class="btn btn-primary btn-sm active"
+                (click)="buildFilters()">
+                Quitar Filtro
+                <i class="fa fa-filter" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div *ngIf="showFilter">
+      <div class="row pt-4">
+        <div class="ch-content">
+          <h5 class="title">Liquidaci&oacute;n</h5>
+        </div>
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <app-columns-select
+            [(settings)]="settings2"
+            [leftList]="true"></app-columns-select>
         </div>
       </div>
-      <div class="row mt-2">
-        <div class="col-sm-12 col-md-12 col-lg-6">
-          <div class="form-material">
-            <search-bar [params]="params"></search-bar>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings2"
+              [source]="data2">
+            </ng2-smart-table>
+            <app-pagination [params]="params2" [totalItems]="totalItems2">
+            </app-pagination>
           </div>
         </div>
       </div>
-      <div class="table-responsive">
-        <ng2-smart-table
-          [settings]="settings"
-          [source]="data"></ng2-smart-table>
+    </div>
+
+    <div *ngIf="showLiquidacion">
+      <div class="row pt-4">
+        <div class="ch-content">
+          <h5 class="title">Liquidaci&oacute;n</h5>
+        </div>
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <app-columns-select
+            [(settings)]="settings"
+            [leftList]="true"></app-columns-select>
+        </div>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="data">
+            </ng2-smart-table>
+            <app-pagination [params]="params" [totalItems]="totalItems">
+            </app-pagination>
+          </div>
+        </div>
+      </div>
     </div>
     <!-- Es la misma tabla, solo cambia el título, falta configuración por separado (Pendiente) -->
-    <div class="row pt-5" *ngIf="showGarantia">
-      <div class="ch-content" header>
-        <h5 class="title">Garant&iacute;as</h5>
-        <div class="col-md-5 buttons">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
+    <div *ngIf="showGarantia">
+      <div class="row pt-3">
+        <div class="ch-content">
+          <h5 class="title">Garant&iacute;as</h5>
+        </div>
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <app-columns-select
+            [(settings)]="settings1"
+            [leftList]="true"></app-columns-select>
         </div>
       </div>
-      <div class="row mt-2">
-        <div class="col-sm-12 col-md-12 col-lg-6">
-          <div class="form-material">
-            <search-bar [params]="params"></search-bar>
+      <div class="row">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings1"
+              [source]="data1"></ng2-smart-table>
+            <app-pagination [params]="params1" [totalItems]="totalItems1">
+            </app-pagination>
           </div>
         </div>
       </div>
-      <div class="table-responsive">
-        <ng2-smart-table
-          [settings]="settings"
-          [source]="data"></ng2-smart-table>
-      </div>
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>
     </div>
 
     <div class="row pt-5" *ngIf="showGarantia || showLiquidacion">
@@ -154,7 +222,7 @@
         <div class="col-md-2">
           <form-field
             [control]="formReport.get('nameReport')"
-            label="Nombre del reporte&#58;">
+            label="Nombre del Reporte&#58;">
             <input
               type="text"
               class="form-control"

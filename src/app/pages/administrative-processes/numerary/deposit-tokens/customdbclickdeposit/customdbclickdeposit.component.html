@@ -1,0 +1,11 @@
+<div class="">
+  <div
+    *ngIf="value"
+    (click)="onCellClick($event)"
+    (contextmenu)="onContextMenu($event)"
+    class=""
+    style="width: auto; height: 20px; text-align: end">
+    {{ value | number: '1.2-2' }}
+    <!-- {{ value }} -->
+  </div>
+</div>

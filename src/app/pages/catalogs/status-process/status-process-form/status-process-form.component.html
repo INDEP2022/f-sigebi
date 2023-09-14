@@ -9,7 +9,11 @@
           <form-field
             [control]="statusProcessForm.get('status')"
             label="Estatus">
-            <input type="text" class="form-control" formControlName="status" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="status"
+              id="inputstatus" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -19,16 +23,18 @@
             <input type="text" class="form-control" formControlName="process" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field
-            [control]="statusProcessForm.get('description')"
-            label="Descripci&oacute;n">
-            <textarea
-              class="form-control"
-              type="text"
-              rows="2"
-              formControlName="description"></textarea>
-          </form-field>
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <form-field
+              [control]="statusProcessForm.get('description')"
+              label="Descripci&oacute;n">
+              <textarea
+                class="form-control"
+                type="text"
+                rows="2"
+                formControlName="description"></textarea>
+            </form-field>
+          </div>
         </div>
       </div>
     </form>

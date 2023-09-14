@@ -1,15 +1,17 @@
 //Components
 
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const COLUMNS = {
-  appointment: {
+  no_appointment: {
     title: 'Nombramiento',
     sort: false,
   },
-  goodNumber: {
+  noGoods: {
     title: 'No. Bien',
     sort: false,
   },
-  paymentId: {
+  payId: {
     title: 'Id Pago',
     sort: false,
   },
@@ -17,56 +19,64 @@ export const COLUMNS = {
     title: 'Monto',
     sort: false,
   },
-  IVA: {
+  iva: {
     title: 'Iva',
     sort: false,
   },
-  amountIva: {
+  ivaAmount: {
     title: 'Monto Iva',
     sort: false,
   },
-  subscription: {
+  payment: {
     title: 'Abono',
     sort: false,
   },
-  paymentAct: {
+  actPay: {
     title: 'Pago Act',
     sort: false,
   },
-  taxExcludingVat: {
-    title: 'Imp sin Iva',
+  impWithoutIva: {
+    title: 'Imp. Sin Iva',
     sort: false,
   },
-  paymentGenId: {
+  payIdGens: {
     title: 'Id Pagogens',
     sort: false,
   },
   status: {
-    title: 'Estatus',
+    title: 'Status',
     sort: false,
   },
-  paymentCubrio: {
+  cubrioPayId: {
     title: 'Id Pago cubrido',
     sort: false,
   },
-  coveredSubscription: {
+  coveredPayment: {
     title: 'Abono Cubierto',
     sort: false,
   },
   processDate: {
     title: 'Fecha Proceso',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
-  paymentObservation: {
+  payObserv: {
     title: 'Observación Pago',
     sort: false,
   },
-  references: {
+  reference: {
     title: 'Referencia',
     sort: false,
   },
-  transfer: {
-    title: 'Transferencia',
+  not_transferring: {
+    title: 'Transferente',
     sort: false,
   },
 };

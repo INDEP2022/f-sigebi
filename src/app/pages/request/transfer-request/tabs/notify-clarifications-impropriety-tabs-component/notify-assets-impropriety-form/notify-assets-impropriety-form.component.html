@@ -10,7 +10,10 @@
           *ngIf="
             infoRequest.typeOfTransfer != 'SAT_SAE' ||
             (infoRequest.typeOfTransfer == 'SAT_SAE' &&
-              dataClarifications2.chatClarification.idClarificationType == '2')
+              (dataClarifications2.chatClarification.idClarificationType ==
+                '2' ||
+                dataClarifications2.chatClarification.idClarificationType ==
+                  '1'))
           ">
           <form-field
             [control]="clarificationForm.get('addresseeName')"
@@ -18,7 +21,7 @@
             <input
               type="text"
               class="form-control"
-              maxlength="50"
+              maxlength="255"
               formControlName="addresseeName" />
           </form-field>
         </div>
@@ -27,7 +30,10 @@
           *ngIf="
             infoRequest.typeOfTransfer != 'SAT_SAE' ||
             (infoRequest.typeOfTransfer == 'SAT_SAE' &&
-              dataClarifications2.chatClarification.idClarificationType == '2')
+              (dataClarifications2.chatClarification.idClarificationType ==
+                '2' ||
+                dataClarifications2.chatClarification.idClarificationType ==
+                  '1'))
           ">
           <form-field
             [control]="clarificationForm.get('positionAddressee')"
@@ -35,7 +41,7 @@
             <input
               type="text"
               class="form-control"
-              maxlength="50"
+              maxlength="250"
               formControlName="positionAddressee" />
           </form-field>
         </div>
@@ -49,7 +55,7 @@
             <input
               type="text"
               class="form-control"
-              maxlength="50"
+              maxlength="200"
               formControlName="senderName" />
           </form-field>
         </div>
@@ -61,7 +67,7 @@
             <input
               type="text"
               class="form-control"
-              maxlength="50"
+              maxlength="200"
               formControlName="senderCharge" />
           </form-field>
         </div>
@@ -80,7 +86,7 @@
             label="Consistente en">
             <textarea
               class="form-control"
-              maxlength="1000"
+              maxlength="4000"
               formControlName="consistentIn"></textarea>
           </form-field>
         </div>
@@ -98,7 +104,7 @@
             label="P&aacute;rrafo Inicial">
             <textarea
               class="form-control"
-              maxlength="1000"
+              maxlength="4000"
               formControlName="paragraphInitial"></textarea>
           </form-field>
         </div>
@@ -108,7 +114,7 @@
             label="P&aacute;rrafo Final">
             <textarea
               class="form-control"
-              maxlength="1000"
+              maxlength="4000"
               formControlName="paragraphFinal"></textarea>
           </form-field>
         </div>
@@ -127,7 +133,7 @@
             label="Aclaraci&oacute;n">
             <textarea
               class="form-control"
-              maxlength="1000"
+              maxlength="4000"
               formControlName="clarification"></textarea>
           </form-field>
         </div>
@@ -146,58 +152,7 @@
         </div>
       </div>
 
-      <!-- <div class="row pt-3">
-        <div class="col-md-12">
-          <form-field
-            [control]="clarificationForm.get('foundation')"
-            label="Fundamentaci&oacute;n">
-            <textarea
-              class="form-control"
-              maxlength="4000"
-              formControlName="foundation"></textarea>
-          </form-field>
-        </div>
-      </div> -->
-
-      <!--<div class="row pt-3">
-        <div class="col-md-6">
-          <form-field
-            [control]="clarificationForm.get('transmitterId')"
-            label="ID Emisor">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="15"
-              formControlName="transmitterId" />
-          </form-field>
-        </div>
-
-        <div class="col md-6">
-          <form-field
-            [control]="clarificationForm.get('invoiceLearned')"
-            label="Folio Documento">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="60"
-              formControlName="invoiceLearned" />
-          </form-field>
-        </div>
-      </div> -->
-
       <div class="row pt-3">
-        <!--<div class="col-md-4">
-          <form-field
-            [control]="clarificationForm.get('worthAppraisal')"
-            label="Valor Aval&uacute;o">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="60"
-              formControlName="worthAppraisal" />
-          </form-field>
-        </div> -->
-
         <div class="col-md-4">
           <form-field
             [control]="clarificationForm.get('userAreaCaptures')"
@@ -205,7 +160,7 @@
             <input
               type="text"
               class="form-control"
-              maxlength="60"
+              maxlength="200"
               formControlName="userAreaCaptures" />
           </form-field>
         </div>
@@ -215,10 +170,57 @@
             [control]="clarificationForm.get('webMail')"
             label="Correo Notificaci&oacute;n Respuesta SAT">
             <input
+              style="text-transform: lowercase"
+              onkeyup="javascript:this.value=this.value.toLowerCase();"
               type="text"
               class="form-control"
-              maxlength="30"
+              maxlength="100"
               formControlName="webMail" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row" *ngIf="infoRequest.typeOfTransfer == 'SAT_SAE'">
+        <div class="col-md-12">
+          <p>
+            <a
+              class="text-color"
+              (click)="showSearchForm = true"
+              *ngIf="!showSearchForm">
+              <i class="fa fa-angle-right" aria-hidden="true"></i>
+              <strong>Simular datos a cambiar del Bien</strong></a
+            >
+          </p>
+
+          <p>
+            <a
+              class="text-color"
+              (click)="showSearchForm = false"
+              *ngIf="showSearchForm">
+              <i class="fa fa-angle-down" aria-hidden="true"></i>
+              <strong>Simular datos a cambiar del Bien</strong></a
+            >
+          </p>
+        </div>
+      </div>
+      <div class="row pt-3" *ngIf="infoRequest.typeOfTransfer == 'SAT_SAE'">
+        <div class="col-md-6" *ngIf="showSearchForm">
+          <form-field
+            [control]="clarificationForm.get('amount')"
+            label="Cantidad">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="200"
+              formControlName="amount" />
+          </form-field>
+        </div>
+        <div class="col-md-6" *ngIf="showSearchForm">
+          <form-field [control]="clarificationForm.get('unit')" label="Unidad">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="200"
+              formControlName="unit" />
           </form-field>
         </div>
       </div>
@@ -230,11 +232,15 @@
         <confirm-button
           [text]="'Continuar'"
           [loading]="loading"
+          [btnSmall]="true"
           (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

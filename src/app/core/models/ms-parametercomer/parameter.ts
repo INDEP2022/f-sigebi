@@ -1,9 +1,18 @@
 export interface IParameter {
-  idParam: string;
-  idValue: string;
+  parameter: string;
+  value: string;
   description: string;
-  idDirection: string;
-  eventTypeId: null;
+  address: string;
+  typeEventId: number | null;
+}
+
+export interface ITypeEvent {
+  id: number;
+  description: string | null;
+  descReceipt: string | null;
+  use: string | null;
+  typeDispId: number | null;
+  typeFailedpId: number | null;
 }
 
 export interface IBrand {
@@ -12,9 +21,32 @@ export interface IBrand {
 }
 
 export interface ISubBrands {
-  idBrand: string;
+  idBrand: {
+    id: string;
+  };
   idSubBrand: string;
   subBrandDescription?: string;
+}
+
+export interface ISubBrandsModel {
+  idBrand: string;
+  idSubBrand: string;
+}
+
+export interface IUpdateSubBrands {
+  idBrand: {
+    id: string;
+  };
+  idSubBrand: string;
+  subBrandDescription?: string;
+  nbOrigin?: string;
+}
+
+export interface IUpdateSubBrandsModel {
+  idBrand: string;
+  idSubBrand: string;
+  subBrandDescription: string;
+  nbOrigin: string;
 }
 
 export interface ITiieV1 {
@@ -330,4 +362,22 @@ export interface IComerLotsEG {
   lotpre: string;
   affectationDate: string;
   eventDad: number;
+}
+
+export interface IClientLot {
+  rfc: string;
+  calle: string;
+  delegacion: string;
+  colonia: string;
+  ciudad: string;
+  estado: string;
+  cp: string;
+  idEvento: number;
+}
+
+export interface IRespLetter {
+  id: string;
+  paragraph1: string;
+  paragraph2: string;
+  paragraph3: string;
 }

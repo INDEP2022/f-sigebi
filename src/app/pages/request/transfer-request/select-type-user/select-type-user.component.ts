@@ -4,12 +4,16 @@ import { Router } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
@@ -32,6 +36,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   data: any; // solicitud pasada por el modal
   typeAnnex: string;
   task: any = null;
+  task1: any;
 
   paragraphs: any[] = [];
   params = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -39,6 +44,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   user: IUserProcess = null;
   warningTLP: boolean = false;
   deleRegionalUserId: number = null;
+  today: Date;
 
   //injections
   private fb = inject(FormBuilder);
@@ -50,13 +56,15 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   private authService = inject(AuthService);
   private orderService = inject(OrderServiceService);
   private router = inject(Router);
+  private goodfinderService = inject(GoodFinderService);
 
   constructor(private modalRef: BsModalRef) {
     super();
+    this.today = new Date();
   }
 
   ngOnInit(): void {
-    //console.log(this.data);
+    console.log('Tarea Antigua', this.task1);
     const authService: any = this.authService.decodeToken();
     this.deleRegionalUserId = authService.delegacionreg;
     let column: any = null;
@@ -75,6 +83,9 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     //TRAE USUARIOS QUE SERAN ASIGNADOS PARA LA SIGUIENTE TAREA
     if (this.typeAnnex === 'commit-request') {
       this.userForm.controls['typeUser'].valueChanges.subscribe((data: any) => {
+        this.params.getValue().page = 1;
+        this.params.getValue().limit = 10;
+
         this.getUsers();
         this.TLPMessage();
       });
@@ -100,7 +111,11 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     this.loading = true;
     const typeEmployee = this.userForm.controls['typeUser'].value;
     this.params.value.addFilter('employeeType', typeEmployee);
-    //this.params.value.addFilter('regionalDelegation', this.deleRegionalUserId);
+    this.params.value.addFilter(
+      'regionalDelegation',
+      this.deleRegionalUserId,
+      SearchFilter.ILIKE
+    );
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {
@@ -158,7 +173,11 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       'SolicitudProgramacion.DelegadosRegionales'
     );
     this.params.value.addFilter('employeetype', 'DR');*/
-
+    this.params.value.addFilter(
+      'regionalDelegation',
+      this.deleRegionalUserId,
+      SearchFilter.ILIKE
+    );
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAllUsersWithRol(filter).subscribe({
       next: resp => {
@@ -186,8 +205,8 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       requestUpdate.id = this.data.id;
       requestUpdate.targetUserType = this.userForm.controls['typeUser'].value;
       requestUpdate.targetUser = this.user.id;
-      //Todo: enviar la solicitud
 
+      //Todo: enviar la solicitud
       const requestResult = await this.saveRequest(requestUpdate);
       if (requestResult === true) {
         //TODO: generar o recuperar el reporte
@@ -254,13 +273,14 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
               // actualizar status del bien
               this.loader.load = false;
               Swal.fire({
-                title: 'Solicitud Turnada',
-                text: 'La solicitud se turnó correctamente',
+                title: 'La Solicitud ha sido Turnada',
+                text: 'Se ha creado una nueva tarea',
                 icon: 'success',
                 showCancelButton: false,
                 confirmButtonColor: '#9D2449',
                 cancelButtonColor: '#B38E5D',
                 confirmButtonText: 'Aceptar',
+                allowOutsideClick: false,
               }).then(result => {
                 this.closeAll();
               });
@@ -281,14 +301,16 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   async ReturnRequest() {
     const actualUser: any = this.authService.decodeToken();
     this.loader.load = true;
-    this.data.observations =
+    const body: any = {};
+    body.id = this.data.id;
+    body.observations =
       'Solicitud Returnada por la Delegacion Regional ' +
       this.user.delegationreg;
-    this.data.targetUserType = 'DR';
-    this.data.requestStatus = 'Captura';
-    this.data.targetUser = this.user.id;
+    body.targetUserType = 'DR';
+    body.requestStatus = 'Captura';
+    body.targetUser = this.user.id;
 
-    const requestResult = await this.saveRequest(this.data);
+    const requestResult = await this.saveRequest(body);
     if (requestResult === true) {
       this.loader.load = false;
 
@@ -306,8 +328,8 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
         url,
         from,
         to,
-        false,
-        0,
+        true,
+        this.task.id,
         actualUser.username,
         'SOLICITUD_TRANSFERENCIA',
         'Registro_Solicitud',
@@ -316,12 +338,13 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       if (taskResponse) {
         Swal.fire({
           title: 'Solicitud Returnada',
-          text: 'La solicitud se returno correctamente',
+          text: 'La solicitud se returnó correctamente',
           icon: 'success',
           showCancelButton: false,
           confirmButtonColor: '#9D2449',
           cancelButtonColor: '#B38E5D',
           confirmButtonText: 'Aceptar',
+          allowOutsideClick: false,
         }).then(result => {
           this.closeAll();
         });
@@ -407,9 +430,9 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
         body['userProcess'] = userProcess;
       }
 
-      body['type'] = type;
-      body['subtype'] = subtype;
-      body['ssubtype'] = ssubtype;
+      body['type'] = 'SOLICITUD_TRANSFERENCIA';
+      body['subtype'] = 'Verificar_Cumplimiento';
+      body['ssubtype'] = 'APPROVE';
 
       let task: any = {};
       task['id'] = 0;
@@ -420,21 +443,35 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       task['title'] = title;
       task['programmingId'] = 0;
       task['requestId'] = request.id;
-      task['expedientId'] = 0;
+      task['expedientId'] = request.recordId;
       task['urlNb'] = url;
+      task['processName'] = 'SolicitudTransferencia';
+      task['idstation'] = request?.stationId;
+      task['idTransferee'] = request?.transferenceId;
+      task['idAuthority'] = request?.authorityId;
+      task['idDelegationRegional'] = user.department;
+
+      if (this.task1?.createdDate != null) {
+        task['createdDate'] = this.task1?.createdDate;
+      } else {
+        task['createdDate'] = this.today;
+      }
+
+      //task['endDate'] = this.today;
+
       body['task'] = task;
 
       let orderservice: any = {};
       orderservice['pActualStatus'] = from;
       orderservice['pNewStatus'] = to;
       orderservice['pIdApplication'] = request.id;
-      orderservice['pCurrentDate'] = new Date().toISOString();
+      orderservice['pCurrentDate'] = this.generateDateFormat();
       orderservice['pOrderServiceIn'] = '';
 
       body['orderservice'] = orderservice;
-
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
+          console.log(resp);
           resolve(true);
         },
         error: error => {
@@ -464,7 +501,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             this.message(
               'error',
               'Error al guardar',
-              'No se pudo bajar el documento'
+              'No se pudo generar el reporte de volante'
             );
             reject('false');
           },
@@ -482,5 +519,40 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
 
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
+  }
+
+  generateDateFormat() {
+    let date = new Date();
+    let day = this.setMonthsAndDay(date.getDate());
+    const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(
+      new Date()
+    );
+    const year = date.getFullYear().toString().substring(2, 4);
+    return day + '-' + month.toUpperCase() + '-' + year;
+  }
+
+  setMonthsAndDay(month: number) {
+    let result = month.toString();
+    if (month === 1) {
+      result = '01';
+    } else if (month === 2) {
+      result = '02';
+    } else if (month === 3) {
+      result = '03';
+    } else if (month === 4) {
+      result = '04';
+    } else if (month === 5) {
+      result = '05';
+    } else if (month === 6) {
+      result = '06';
+    } else if (month === 7) {
+      result = '07';
+    } else if (month === 8) {
+      result = '08';
+    } else if (month === 9) {
+      result = '09';
+    }
+
+    return result;
   }
 }

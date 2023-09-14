@@ -3,41 +3,80 @@
     <h5 class="title">par&aacute;metros por lote</h5>
   </div>
   <div body>
-    <form class="form-material">
-      <div class="row mb-5">
-        <div class="col-sm-12 col-md-6">
-          <div class="form-material">
-            <search-bar [params]="params"></search-bar>
+    <div>
+      <!--  -->
+      <form class="form-material" [formGroup]="form">
+        <div class="row">
+          <div class="col-md-4">
+            <form-field [control]="form.get('idEvent')" label="Id Evento">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="idEvent"
+                [max-length]="7" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('lotePublico')"
+              label="Lote Público">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="lotePublico"
+                [max-length]="8" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('garantia')" label="Garantía">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="garantia"
+                [max-length]="15" />
+            </form-field>
           </div>
         </div>
-        <div class="col-sm-12 col-md-6">
-          <div class="d-flex flex-row-reverse mb-4 mt-0">
-            <div class="">
-              <button
-                class="btn btn-sm btn-success active font-size-14"
-                (click)="addRow()"
-                [disabled]="adding">
-                Agregar Registro
-              </button>
-            </div>
-          </div>
-        </div>
-        <div class="table-container">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              id="params-table"
-              [attr.class]="'table-bordered'"
-              [settings]="paramSettings"
-              [source]="lotparams"
-              (createConfirm)="addEntry($event)"
-              (editConfirm)="editEntry($event)"
-              (deleteConfirm)="deleteEntry($event)">
-            </ng2-smart-table>
-          </div>
+      </form>
+      <!--  -->
+      <div class="d-flex mb-3">
+        <div class="ml-auto">
+          <button
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="resetForm()">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+          <button
+            type="button"
+            tooltip="Agregar"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active"
+            (click)="getLotByFilters()"
+            [disabled]="!form.valid">
+            Agregar <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>
-    </form>
+      <!--  -->
+      <div class="row">
+        <div class="col-md-12">
+          <form-loader *ngIf="loading"></form-loader>
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading ? '0px' : '400px' }">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              class="table-responsive"
+              [settings]="settings"
+              [source]="lotData">
+            </ng2-smart-table>
+          </ng-scrollbar>
+        </div>
+        <app-pagination
+          [params]="paramsList"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+      <!--  -->
+    </div>
   </div>
 </app-card>

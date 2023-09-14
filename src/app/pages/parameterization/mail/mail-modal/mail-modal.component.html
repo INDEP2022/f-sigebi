@@ -10,7 +10,7 @@
             <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
           <form-field label="Nombre" [control]="form.get('name')">
             <input type="text" class="form-control" formControlName="name" />
           </form-field>
@@ -20,19 +20,19 @@
             <input type="text" class="form-control" formControlName="rfc" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-3">
         <div class="col-md-3">
           <form-field label="CURP" [control]="form.get('curp')">
             <input type="text" class="form-control" formControlName="curp" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field label="Calle" [control]="form.get('street')">
             <input type="text" class="form-control" formControlName="street" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field label="No. Int" [control]="form.get('insideNumber')">
             <input
               type="text"
@@ -40,62 +40,71 @@
               formControlName="insideNumber" />
           </form-field>
         </div>
-        <div class="col-md-4">
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-6">
           <form-field label="Colonia" [control]="form.get('suburb')">
             <input type="text" class="form-control" formControlName="suburb" />
           </form-field>
         </div>
-        <div class="col-md-2">
-          <form-field label="C.P." [control]="form.get('zipCode')">
+        <div class="col-md-3">
+          <form-field label="Codigo Postal" [control]="form.get('zipCode')">
             <input type="text" class="form-control" formControlName="zipCode" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-2">
-          <form-field label="telefono" [control]="form.get('phone')">
+        <div class="col-md-3">
+          <form-field label="Telefono" [control]="form.get('phone')">
             <input type="text" class="form-control" formControlName="phone" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field label="profesion" [control]="form.get('profession')">
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field
+            label="Profesi&oacute;n"
+            [control]="form.get('profession')">
             <input
               type="text"
               class="form-control"
               formControlName="profession" />
           </form-field>
         </div>
-        <div class="col-md-2">
-          <form-field label="cve_cargo" [control]="form.get('positionKey')">
+        <div class="col-md-3">
+          <form-field label="Cve. Cargo" [control]="form.get('positionKey')">
             <input
               type="text"
               class="form-control"
               formControlName="positionKey" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field
-            label="Fecha ingreso x 1ra vez"
-            [control]="form.get('firstTimeLoginDate')">
+            [control]="form.get('firstTimeLoginDate')"
+            label="Fecha Inicio">
             <input
               type="text"
+              formControlName="firstTimeLoginDate"
               class="form-control"
-              formControlName="firstTimeLoginDate" />
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD',
+                displayOneMonthRange: true
+              }"
+              bsDatepicker />
+            <!--<input
+              class="form-control"
+              ngModel
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD',
+                displayOneMonthRange: true
+              }"
+              formControlName="firstTimeLoginDate" />-->
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
-        <!-- <div class="col-md-3">
-          <form-field label="Delegación" [control]="form.get('usuario')">
-            <input type="text" class="form-control" formControlName="usuario" />
-          </form-field>
-        </div> -->
-        <!-- <div class="col-md-3">
-          <form-field label="No. Registro" [control]="form.get('registryNumber')">
-            <input type="text" class="form-control" formControlName="registryNumber" />
-          </form-field>
-        </div> -->
-        <div class="col-md-3">
+      <div class="row pt-3">
+        <div class="col-md-6">
           <form-field label="Email" [control]="form.get('email')">
             <input type="text" class="form-control" formControlName="email" />
           </form-field>
@@ -110,19 +119,19 @@
               formControlName="userSirsae" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
         <div class="col-md-3">
-          <form-field label="Envio de email" [control]="form.get('sendEmail')">
+          <form-field label="Envio de Email" [control]="form.get('sendEmail')">
             <input
               type="text"
               class="form-control"
               formControlName="sendEmail" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-3">
         <div class="col-md-3">
           <form-field
-            label="Asignación de atributos"
+            label="Asignación de Atributos"
             [control]="form.get('attribAsign')">
             <input
               type="text"
@@ -132,7 +141,7 @@
         </div>
         <div class="col-md-3">
           <form-field
-            label="clkdet SIRSAE"
+            label="Clkdet SIRSAE"
             [control]="form.get('clkdetSirsae')">
             <input
               type="text"
@@ -140,9 +149,9 @@
               formControlName="clkdetSirsae" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
           <form-field
-            label="Intercambiar usuario"
+            label="Intercambiar Usuario"
             [control]="form.get('exchangeAlias')">
             <input
               type="text"
@@ -151,20 +160,20 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
-        <div class="col-md-2">
-          <form-field label="clkdet" [control]="form.get('clkdet')">
+      <div class="row pt-3">
+        <div class="col-md-3">
+          <form-field label="Clkdet" [control]="form.get('clkdet')">
             <input type="text" class="form-control" formControlName="clkdet" />
           </form-field>
         </div>
-        <div class="col-md-2">
-          <form-field label="clkid" [control]="form.get('clkid')">
+        <div class="col-md-3">
+          <form-field label="Clkid" [control]="form.get('clkid')">
             <input type="text" class="form-control" formControlName="clkid" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field
-            label="clave de perfil"
+            label="Ciudad de Perfil"
             [control]="form.get('profileMimKey')">
             <input
               type="text"
@@ -173,16 +182,18 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field label="Agregar Nombre" [control]="form.get('nameAd')">
-            <input type="text" class="form-control" formControlName="nameAd" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field label="Cve anterior" [control]="form.get('posPrevKey')">
+          <form-field label="Cve. Anterior" [control]="form.get('posPrevKey')">
             <input
               type="text"
               class="form-control"
               formControlName="posPrevKey" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field label="Agregar Nombre" [control]="form.get('nameAd')">
+            <input type="text" class="form-control" formControlName="nameAd" />
           </form-field>
         </div>
       </div>
@@ -191,14 +202,11 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [type]="'button'"
-          [disabled]="!form.valid"
-          (confirm)="confirm()"></confirm-button>
+        <confirm-button (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
-          Cerrar
+          Cancelar
         </button>
       </div>
     </div>

@@ -2,13 +2,17 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2/src/sweetalert2.js';
 import { IRequest } from '../../../../core/models/requests/request.model';
 import { RequestService } from '../../../../core/services/requests/request.service';
 import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
@@ -20,7 +24,7 @@ import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
 })
 export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   requestForm: FormGroup;
-  title: string = 'TURNAR LAS SOLICITUDES SELECCIONAS';
+  title: string = 'TURNAR LAS SOLICITUDES SELECCIONADAS';
   paragraphs: any[] = [];
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
@@ -29,6 +33,9 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   typeUser: string = 'TE';
   user: any;
   username: string = '';
+  deleRegionalId: string = '';
+  listResquestForTurn: any = [];
+
   requestService = inject(RequestService);
   userProcessService = inject(UserProcessService);
   taskService = inject(TaskService);
@@ -51,11 +58,17 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('Solicitudes a turnar, ', this.requestToTurn);
     this.prepareForm();
     this.removeUnNecessaryData();
-
+    const storeData = this.authService.decodeToken();
+    this.deleRegionalId = storeData.delegacionreg;
     this.requestForm.controls['typeUser'].valueChanges.subscribe(
       (data: any) => {
+        if (this.typeUser != data) {
+          this.params.getValue().page = 1;
+          this.params.getValue().limit = 10;
+        }
         this.typeUser = data;
 
         this.getUserList();
@@ -77,6 +90,11 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     this.loading = true;
     this.typeUser = this.requestForm.controls['typeUser'].value;
     this.params.value.addFilter('employeeType', this.typeUser);
+    this.params.value.addFilter(
+      'regionalDelegation',
+      this.deleRegionalId,
+      SearchFilter.ILIKE
+    );
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {
@@ -158,16 +176,11 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
         const taskResult = await this.createTask(item);
 
         if (taskResult) {
+          console.log('taskResult: ', taskResult);
           if (this.requestToTurn.length === index) {
-            this.message(
-              'success',
-              'Turnado Exitoso',
-              'Se turnaron las solicitudes correctamente'
-            );
-
             this.loading = false;
-            this.modalRef.content.callback(true);
-            this.close();
+            const list = this.listResquestForTurn.join(',');
+            this.showRequestsTurned(list);
           }
         }
       }
@@ -177,6 +190,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   saveRequest(request: any) {
     /* Se crea la solicitud */
     return new Promise((resolve, reject) => {
+      this.listResquestForTurn.push(request.id);
       this.requestService.update(request.id, request as IRequest).subscribe({
         next: resp => {
           resolve(resp);
@@ -196,6 +210,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   }
 
   createTask(request: any) {
+    console.log('Creando tarea');
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
@@ -212,11 +227,18 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       task['programmingId'] = 0;
       task['requestId'] = request.id;
       task['expedientId'] = 0;
+      task['idDelegationRegional'] = user.department;
+      //task['assignedDate'] = new Date().toISOString();
       task['urlNb'] = 'pages/request/transfer-request/registration-request';
       task['processName'] = 'SolicitudTransferencia';
+      task['idTransferee'] = this.requestToTurn[0]?.transferenceId;
+      task['idAuthority'] = this.requestToTurn[0]?.authorityId;
+      task['idstation'] = this.requestToTurn[0]?.stationId;
 
+      console.log('Objeto a enviar: ', task);
       this.taskService.createTask(task).subscribe({
         next: resp => {
+          console.log('Se creo la tarea: ', resp);
           resolve(true);
         },
         error: error => {
@@ -235,5 +257,23 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
 
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
+  }
+
+  showRequestsTurned(list: any) {
+    Swal.fire({
+      title: 'Turnado Correctamente',
+      html: `Se turnaron las siguientes solicitudes exitosamente <strong>${list}</strong>`,
+      icon: 'success',
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.modalRef.content.callback(true);
+        this.close();
+      }
+    });
   }
 }

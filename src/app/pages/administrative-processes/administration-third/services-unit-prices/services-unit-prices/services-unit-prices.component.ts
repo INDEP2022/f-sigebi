@@ -9,7 +9,6 @@ import {
 import { IStrategyService } from 'src/app/core/models/ms-strategy-service/strategy-service.model';
 import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { ServicesUnitPricesFormComponent } from '../services-unit-prices-form/services-unit-prices-form.component';
 import { SERVICEUNITPRECES_COLUMNS } from './service-unit-preces-columns';
 
@@ -119,16 +118,14 @@ export class ServicesUnitPricesComponent extends BasePage implements OnInit {
   }
 
   showDeleteAlert(service?: IStrategyService) {
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      '¿Desea borrar este registro?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.delete(service.serviceNumber);
-        Swal.fire('Borrado', '', 'success');
+    this.alertQuestion('warning', '', '¿Desea borrar este registro?').then(
+      question => {
+        if (question.isConfirmed) {
+          this.delete(service.serviceNumber);
+          this.alert('success', 'Registro Eliminado Correctamente', '');
+        }
       }
-    });
+    );
   }
 
   delete(id: number) {

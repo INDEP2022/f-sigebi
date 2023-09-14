@@ -1,0 +1,35 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">Cargar Documento</h5>
+  </div>
+  <div body class="body">
+    <div class="d-flex justify-content-end">
+      <div class="mt-3 btn-toolbar">
+        <button (click)="saveDocument()" class="btn btn-primary btn-sm active">
+          Adjuntar documento <i class="fa fa-file"></i>
+        </button>
+      </div>
+    </div>
+    <form [formGroup]="form" class="form-material pt-5">
+      <form-field [control]="form.get('file')" label="Selecciona Archivo">
+        <input
+          type="file"
+          class="form-control"
+          formControlName="file"
+          (change)="selectFile($event)" />
+      </form-field>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

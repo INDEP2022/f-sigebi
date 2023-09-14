@@ -83,8 +83,20 @@ export const MENU: IMenuItem[] = [
         label: 'Applicaciones',
         subItems: [
           {
-            label: 'Solicitud de transferencia',
+            label: 'Solicitud de Transferencia',
             link: '/pages/request/list/new-transfer-request',
+          },
+          {
+            label: 'Programar Recepción',
+            link: '/pages/request/programming-request/schedule-reception',
+          },
+          {
+            label: 'Programaciones',
+            link: '/pages/request/programming-request/search-schedules',
+          },
+          {
+            label: 'Programar Entregas',
+            link: '/pages/request/scheduling-deliveries',
           },
           {
             label: 'Muestreo Bienes',
@@ -96,7 +108,7 @@ export const MENU: IMenuItem[] = [
           },
           {
             label: 'Solicitud de Documentación Complementaria',
-            link: '/pages/request/request-comp-doc',
+            link: '/pages/request/request-comp-doc/create',
           },
         ],
       },

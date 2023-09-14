@@ -1,79 +1,137 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">
+    <h5 class="title" *ngIf="!formLoading">
       Formalizar entrega con folio&#58;
-      R&#45;METROPOLITANA&#45;SAT&#45;3468&#45;OS
+      {{ programming?.folio }}
     </h5>
   </div>
   <div body>
-    <div class="row">
-      <div class="col-md-4">
-        <form class="form-horizontal" style="margin: 0 auto">
+    <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+      <form-loader *ngIf="formLoading"></form-loader>
+    </div>
+    <div *ngIf="!formLoading">
+      <div class="justify-content-end btn-toolbar">
+        <confirm-button
+          *ngIf="task?.State == 'PROCESO'"
+          [loading]="loading"
+          [text]="'Formalizar'"
+          [loadingText]="'Formalizando'"
+          [btnSmall]="true"
+          [icon]="'fa fa-check'"
+          (confirm)="confirm()"></confirm-button>
+
+        <confirm-button
+          *ngIf="task?.State == 'FINALIZADA'"
+          [loading]="loading"
+          [text]="'Formalizar'"
+          [loadingText]="'Formalizando'"
+          [btnSmall]="true"
+          [icon]="'fa fa-check'"
+          [disabled]="true"
+          [className]="'btn-primary'"></confirm-button>
+
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="close()">
+          Regresar <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+
+      <h5 class="title pt-4">Programaci&oacute;n</h5>
+      <div class="row pt-2">
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right"
-              >Delegaci&oacute;n regional&#58;</label
+            <label class="text-right mr-2"
+              >Delegaci&oacute;n Regional&#58;</label
             >
-            <span> NOROESTE </span>
+            <span class="fs-4">
+              {{ programming?.regionalDelegationName }}
+            </span>
           </div>
-
+        </div>
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Transferente&#58;</label>
-            <span> SAT - comercio exterior </span>
+            <label class="text-right mr-2">Estado&#58;</label>
+            <span class="fs-4"> {{ stateName }} </span>
           </div>
-
+        </div>
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Emisora&#58;</label>
-            <span> AGA </span>
+            <label class="text-right mr-2">Ciudad&#58;</label>
+            <span class="fs-4"> {{ programming?.city }} </span>
           </div>
-
-          <div class="form-group">
-            <label class="col-lg-5 text-right">Autoridad&#58;</label>
-            <span> Administración de la aduana de Nuevo Laredo </span>
-          </div>
-        </form>
+        </div>
       </div>
 
-      <div class="col-md-4">
-        <form class="form-horizontal" style="margin: 0 auto">
+      <div class="row pt-3">
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Correo transferente&#58;</label>
-            <span> OST12363@SAE.GOB.MX </span>
+            <label class="text-right mr-2">Transferente&#58;</label>
+            <span class="fs-4"> {{ transferentName }} </span>
           </div>
-
+        </div>
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Fecha page operativo&#58;</label>
-            <span> 11-oct-2022 00:00 </span>
+            <label class="text-right mr-2">Fecha Inicio Operativo&#58;</label>
+            <span class="fs-4">
+              {{ programming?.startDate | date: 'dd/MM/yyyy HH:mm:ss' }}
+            </span>
           </div>
-
+        </div>
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Fecha fin operativo&#58;</label>
-            <span> 12-oct-2022 00:00 </span>
+            <label class="text-right mr-2">Fecha Fin Operativo&#58;</label>
+            <span class="fs-4">
+              {{ programming?.endDate | date: 'dd/MM/yyyy HH:mm:ss' }}</span
+            >
           </div>
-
-          <div class="form-group">
-            <label class="col-lg-5 text-right">Direcci&oacute;n&#58;</label>
-            <span> Domicilio desconocido </span>
-          </div>
-        </form>
+        </div>
       </div>
 
-      <div class="col-md-4">
-        <form class="form-horizontal" style="margin: 0 auto">
+      <div class="row pt-3">
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Tipo relevante&#58;</label>
-            <span> Diverso </span>
+            <label class="text-right mr-2">Emisora&#58;</label>
+            <span class="fs-4"> {{ stationName }} </span>
           </div>
+        </div>
 
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Ciudad&#58;</label>
-            <span> Nuevo Laredo </span>
+            <label class="text-right mr-2">Dirección&#58;</label>
+            <span class="fs-4"> {{ programming?.address }} </span>
           </div>
+        </div>
 
+        <div class="col-md-4">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Observaci&oacute;n&#58;</label>
-            <span> Ninguna </span>
+            <label class="text-right mr-2">Correo Transferente&#58;</label>
+            <span class="fs-4">{{ programming?.emailTransfer }}</span>
           </div>
-        </form>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Autoridad&#58;</label>
+            <span class="fs-4"> {{ authorityName }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Observación&#58;</label>
+            <span class="fs-4"> {{ programming?.observation }} </span>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Tipo Relevante&#58;</label>
+            <span class="fs-3"> {{ typeRelevantName }} </span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -82,15 +140,14 @@
       <div class="col-lg-6">
         <div class="form-group">
           <label class="text-right">Almac&eacute;n&#58;</label>
-          <span> Nombre de Almacén test </span>
+          <span> {{ nameWarehouse }} </span>
         </div>
       </div>
       <div class="col-lg-6">
         <div class="form-group">
-          <label class="text-right">Direcci&oacute;n almac&eacute;n&#58;</label>
+          <label class="text-right">Direcci&oacute;n Almac&eacute;n&#58;</label>
           <span>
-            Boulevard José López Portillo No 200, Apodaca, Nuevo León, C.P.
-            66613
+            {{ ubicationWarehouse }}
           </span>
         </div>
       </div>
@@ -99,135 +156,319 @@
     <div class="row pt-4">
       <h5 class="title">Actas</h5>
       <div class="btn-toolbar">
-        <button class="btn btn-primary btn-sm active">
-          <i class="fa fa-save"></i> Guardar
+        <button
+          *ngIf="task?.State == 'PROCESO'"
+          (click)="saveInfoProceeding()"
+          class="btn btn-primary btn-sm active">
+          Guardar <i class="fa fa-save"></i>
         </button>
 
         <button
-          (click)="uploadDocuments()"
-          class="btn btn-success btn-sm active">
-          <i class="fa fa-file-archive"></i> Adjuntar documentos
+          *ngIf="task?.State == 'FINALIZADA'"
+          class="btn btn-primary disabled btn-sm active">
+          Guardar <i class="fa fa-save"></i>
         </button>
 
-        <button class="btn btn-info btn-sm active">
-          <i class="fa fa-retweet"></i> Actualizar
+        <button
+          *ngIf="task?.State == 'PROCESO'"
+          (click)="documents()"
+          class="btn btn-success btn-sm active">
+          Adjuntar documentos <i class="fa fa-file-archive"></i>
+        </button>
+
+        <button
+          *ngIf="task?.State == 'FINALIZADA'"
+          class="btn btn-success disabled btn-sm active">
+          Adjuntar documentos <i class="fa fa-file-archive"></i>
+        </button>
+
+        <button
+          *ngIf="task?.State == 'PROCESO'"
+          (click)="getProccedings()"
+          class="btn btn-primary btn-sm active">
+          Actualizar <i class="fas fa-sync-alt"> </i>
+        </button>
+
+        <button
+          *ngIf="task?.State == 'FINALIZADA'"
+          class="btn btn-primary disabled btn-sm active">
+          Actualizar <i class="fas fa-sync-alt"> </i>
+        </button>
+
+        <button
+          (click)="showProceedingClose()"
+          class="btn btn-info btn-sm active">
+          Ver actas cerradas <i class="fas fa-eye"> </i>
         </button>
       </div>
+      <div class="row pt-3">
+        <form [formGroup]="proceedingForm">
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <col style="width: 20%" />
+              <col style="width: 20%" />
+              <col style="width: 50%" />
+              <thead>
+                <tr>
+                  <th scope="col">No. Acta</th>
+                  <th scope="col">Estatus Acta</th>
+                  <th scope="col">Observación</th>
+                  <th scope="col">Generar/Cerrar Acta</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container formArrayName="proceeding">
+                  <tr
+                    *ngFor="
+                      let proceeding of proceeding.controls;
+                      let i = index
+                    ">
+                    <ng-container [formGroupName]="i">
+                      <td>
+                        {{ proceeding.get('id').value }}
+                      </td>
+                      <td>
+                        {{ proceeding.get('statusProceeedings').value }}
+                      </td>
+                      <td
+                        *ngIf="proceedingData.statusProceeedings == 'ABIERTO'">
+                        <form-field
+                          [control]="
+                            proceedingForm.get('observationProceedings')
+                          ">
+                          <input
+                            type="text"
+                            class="form-control"
+                            maxlength="100"
+                            formControlName="observationProceedings" />
+                        </form-field>
+                      </td>
 
-      <ng2-smart-table
+                      <td
+                        *ngIf="proceedingData.statusProceeedings == 'CERRADO'">
+                        <form-field
+                          [control]="
+                            proceedingForm.get('observationProceedings')
+                          ">
+                          <input
+                            type="text"
+                            class="form-control"
+                            maxlength="100"
+                            [readOnly]="true"
+                            formControlName="observationProceedings" />
+                        </form-field>
+                      </td>
+
+                      <td
+                        class="text-center align-baseline"
+                        *ngIf="proceedingData.statusProceeedings == 'ABIERTO'">
+                        <a class="text-center">
+                          <button
+                            (click)="generateMinute(proceeding.value)"
+                            type="button"
+                            class="btn btn-primary active btn-sm">
+                            <i class="fa fa-file"></i>
+                          </button>
+                        </a>
+                      </td>
+
+                      <td
+                        class="text-center align-baseline"
+                        *ngIf="proceedingData.statusProceeedings == 'CERRADO'">
+                        <a class="text-center">
+                          <button
+                            (click)="showProceeding(proceeding.value)"
+                            type="button"
+                            class="btn btn-primary active btn-sm">
+                            <i class="fa fa-eye mr-2"></i>
+                          </button>
+                        </a>
+                      </td>
+                    </ng-container>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </form>
+      </div>
+      <!--<ng2-smart-table
         [attr.class]="'table-bordered'"
         [settings]="settingsMinutes"
-        [source]="minutes"
-        (edit)="generateMinute()">
-      </ng2-smart-table>
+        [source]="proceedings"
+        (edit)="generateMinute($event.data)">
+      </ng2-smart-table> -->
+      <app-pagination
+        [params]="paramsProceeding"
+        [totalItems]="totalItemsProceedings"></app-pagination>
     </div>
 
     <div class="row pt-5">
       <h5 class="title">Bienes</h5>
       <div class="md-tabs">
         <tabset>
-          <tab heading="Recibos(0)" id="tab1">
+          <tab heading="Recibos" id="tab1">
             <div class="row">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settingsReceipt"
-                [source]="receipts">
+                (userRowSelect)="receiptResGood($event.data)"
+                [source]="receipts"
+                (edit)="showReceipt($event.data)">
               </ng2-smart-table>
             </div>
 
             <div class="row pt-4">
-              <div class="d-flex">
+              <div class="d-flex justify-content-end">
                 <app-columns-select
-                  [(settings)]="settingsTranGoods"></app-columns-select>
+                  [(settings)]="settingsRecepGoods"></app-columns-select>
               </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingsTranGoods"
-                [source]="tranGoods">
-              </ng2-smart-table>
+              <div class="row pt-4 table-container">
+                <div class="col-md-12 table-responsive">
+                  <div [class]="loading ? 'table-loading' : ''">
+                    <ng2-smart-table
+                      [attr.class]="'table-bordered'"
+                      [settings]="settingsRecepGoods"
+                      [source]="goodsRecepcion">
+                    </ng2-smart-table>
+                  </div>
+                </div>
+              </div>
               <app-pagination
                 [params]="params"
-                [totalItems]="totalItems"></app-pagination>
+                [totalItems]="totalItemsReception"></app-pagination>
             </div>
           </tab>
+          <!-- RESGUARDO -->
+          <tab [heading]="headingGuard">
+            <div class="row pt-4">
+              <ng2-smart-table
+                [attr.class]="'table-bordered pt-3'"
+                [settings]="settingsReceiptClose"
+                [source]="receiptGuardGood"
+                (userRowSelect)="receiptGuardSelect($event.data)"
+                (edit)="showReceipt($event.data)">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="paramsReceipts"
+                [totalItems]="totalItemsReceipt"></app-pagination>
 
-          <tab heading="Resguardo(0)">
-            <div class="row pt-4">
-              <div class="d-flex">
+              <div class="d-flex justify-content-end pt-5">
                 <app-columns-select
-                  [(settings)]="settingsTranGoods"></app-columns-select>
+                  [(settings)]="settingsGuardGoods"></app-columns-select>
               </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingsTranGoods"
-                [source]="tranGoods">
-              </ng2-smart-table>
-              <app-pagination
+              <div class="row pt-4 table-container">
+                <div class="col-md-12 table-responsive">
+                  <div [class]="loading ? 'table-loading' : ''">
+                    <ng2-smart-table
+                      [attr.class]="'table-bordered'"
+                      [settings]="settingsGuardGoods"
+                      [source]="goodsGuards">
+                    </ng2-smart-table>
+                    <app-pagination
+                      [params]="paramsGuard"
+                      [totalItems]="totalItemsGuard"></app-pagination>
+                  </div>
+                </div>
+              </div>
+
+              <!--
+                <div class="row pt-5">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settingsReceiptsGuards">
+                  </ng2-smart-table>
+                </div>
+                <app-pagination
                 [params]="params"
-                [totalItems]="totalItems"></app-pagination>
+                [totalItems]="totalItems"></app-pagination> -->
             </div>
           </tab>
-          <tab heading="Almacén INDEP(0)">
+          <!-- ALMACEN -->
+          <tab [heading]="headingWarehouse">
             <div class="row pt-4">
-              <div class="d-flex">
-                <app-columns-select
-                  [(settings)]="settingsTranGoods"></app-columns-select>
-              </div>
               <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingsTranGoods"
-                [source]="tranGoods">
+                [attr.class]="'table-bordered pt-3'"
+                [settings]="settingsReceiptWarehouseClose"
+                [source]="receiptWarehouseGood"
+                (userRowSelect)="receiptWarehouseSelect($event.data)"
+                (edit)="showReceipt($event.data)">
               </ng2-smart-table>
               <app-pagination
-                [params]="params"
-                [totalItems]="totalItems"></app-pagination>
+                [params]="paramsReceiptsWarehouse"
+                [totalItems]="totalItemsReceiptWarehouse"></app-pagination>
+
+              <div class="d-flex justify-content-end pt-5">
+                <app-columns-select
+                  [(settings)]="settingsWarehouseGoods"></app-columns-select>
+              </div>
+              <div class="row pt-4 table-container">
+                <div class="col-md-12 table-responsive">
+                  <div [class]="loading ? 'table-loading' : ''">
+                    <ng2-smart-table
+                      [attr.class]="'table-bordered'"
+                      [settings]="settingsWarehouseGoods"
+                      [source]="goodsWarehouse">
+                    </ng2-smart-table>
+                  </div>
+                </div>
+              </div>
+              <app-pagination
+                [params]="paramsGoodsWarehouse"
+                [totalItems]="totalItemsWarehouse"></app-pagination>
             </div>
           </tab>
-          <tab heading="Reprogramación(0)">
+          <!-- REPROGRAMACION -->
+          <tab [heading]="headingReprogramation">
             <div class="row pt-4">
-              <div class="d-flex">
+              <div class="d-flex justify-content-end">
                 <app-columns-select
-                  [(settings)]="settingsTranGoods"></app-columns-select>
+                  [(settings)]="settingsReprog"></app-columns-select>
               </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingsTranGoods"
-                [source]="tranGoods">
-              </ng2-smart-table>
+              <div class="row pt-4 table-container">
+                <div class="col-md-12 table-responsive">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settingsReprog"
+                    [source]="goodsReprog">
+                  </ng2-smart-table>
+                </div>
+              </div>
               <app-pagination
-                [params]="params"
-                [totalItems]="totalItems"></app-pagination>
+                [params]="paramsReprog"
+                [totalItems]="totalItemsReprog"></app-pagination>
             </div>
           </tab>
-          <tab heading="Cancelación(0)">
-            <div class="row pt-4">
-              <div class="d-flex">
-                <app-columns-select
-                  [(settings)]="settingsTranGoods"></app-columns-select>
+          <!-- CANCELACION -->
+          <tab [heading]="headingCancelation">
+            <div class="d-flex justify-content-end">
+              <app-columns-select
+                [(settings)]="settingsCancelation"></app-columns-select>
+            </div>
+            <div class="row pt-4 table-container">
+              <div class="col-md-12 table-responsive">
+                <div [class]="loading ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settingsCancelation"
+                    [source]="goodsCancel">
+                  </ng2-smart-table>
+
+                  <app-pagination
+                    [params]="paramsCanc"
+                    [totalItems]="totalItemsCanc"></app-pagination>
+                </div>
               </div>
+            </div>
+            <!--<div class="row pt-5">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
-                [settings]="settingsTranGoods"
-                [source]="tranGoods">
+                [settings]="settingsReceiptsGuards"
+                [source]="">
               </ng2-smart-table>
-              <app-pagination
-                [params]="params"
-                [totalItems]="totalItems"></app-pagination>
-            </div>
+            </div> -->
           </tab>
         </tabset>
-      </div>
-    </div>
-    <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <confirm-button
-          [loading]="loading"
-          (confirm)="confirm()"></confirm-button>
-      </div>
-      <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
-        </button>
       </div>
     </div>
   </div>

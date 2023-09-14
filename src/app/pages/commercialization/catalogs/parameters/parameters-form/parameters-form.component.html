@@ -7,45 +7,84 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
-        <div class="col-lg-3 col-md-3 col-sm-12 col-12 mb-3 mt-3">
-          <form-field [control]="form.get('idParam')" label="Parámetro">
-            <input
-              type="text"
-              id="idP"
-              class="form-control disabled"
-              formControlName="idParam" />
-          </form-field>
-        </div>
-        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-          <form-field [control]="form.get('description')" label="Descripción">
+        <div class="col-md-12">
+          <form-field [control]="form.get('parameter')" label="Parámetro">
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="parameter" />
+            <!-- <ngx-select
+              [form]="form"
+              control="parameter"
+              value="id"
+              bindLabel="description"
+              [data]="parameters"
+              (fetchItems)="getParameters($event)"
+              label="Parámetro">
+            </ngx-select> -->
           </form-field>
         </div>
-        <div class="col-lg-3 col-md-3 col-sm-12 col-12 mb-3 mt-3">
-          <form-field [control]="form.get('idValue')" label="Valor">
-            <input type="text" class="form-control" formControlName="idValue" />
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <form-field [control]="form.get('value')" label="Valor">
+            <textarea
+              rows="2"
+              type="text"
+              class="form-control"
+              formControlName="value"></textarea>
           </form-field>
         </div>
-        <!--VALUE SELECT PROVISIONAL-->
-        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-          <form-field [control]="form.get('idDirection')" label="Dirección">
-            <select class="form-control" formControlName="idDirection">
-              <option [value]="null">Selecciona un Valor</option>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field [control]="form.get('address')">
+            <ngx-select
+              [searchable]="false"
+              [data]="addressList"
+              [form]="form"
+              value="value"
+              bindLabel="description"
+              label="Dirección"
+              control="address"></ngx-select>
+            <!-- <select class="form-control" formControlName="address">
+              <option selected>Selecciona un Valor</option>
+              <option value="I">Inmuebles</option>
               <option value="M">Muebles</option>
               <option value="C">Comercial</option>
               <option value="D">Conciliaci&oacute;n</option>
-            </select>
+            </select> -->
           </form-field>
         </div>
-        <!--Event Types Component-->
-        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-          <app-event-type-shared [form]="form" [eventField]="'eventTypeId'">
-          </app-event-type-shared>
+        <div class="col-md-6">
+          <form-field [control]="form.get('typeEventId')">
+            <ngx-select
+              [form]="form"
+              control="typeEventId"
+              value="id"
+              bindLabel="description"
+              [data]="typeEvents"
+              (fetchItems)="getTypeEvent($event)"
+              (change)="typeEventChange($event)"
+              label="Tipo de Evento">
+            </ngx-select>
+          </form-field>
         </div>
       </div>
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <textarea
+              rows="2"
+              type="text"
+              class="form-control"
+              formControlName="description"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <!--VALUE SELECT PROVISIONAL-->
+
+      <!--Event Types Component-->
     </form>
   </div>
   <div footer>

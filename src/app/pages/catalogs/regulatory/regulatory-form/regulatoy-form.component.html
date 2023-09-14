@@ -1,97 +1,64 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
+        <div class="col-md-12">
+          <form-field [control]="form.get('fractionId')">
+            <ngx-select
+              [form]="form"
+              control="fractionId"
+              [data]="fractionIdSelected"
+              value="id"
+              bindLabel="description"
+              label="No. Fracci&oacute;n"
+              (fetchItems)="getFractionAll($event)"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
         <div class="col-md-6">
-          <form-field
-            [control]="form.get('id_fraccion')"
-            label="Id Fracci&oacute;n">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="id_fraccion" />
+          <form-field [control]="form.get('number')" label="N&uacute;mero">
+            <input type="text" class="form-control" formControlName="number" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('numero')" label="N&uacute;mero">
-            <input type="text" class="form-control" formControlName="numero" />
+          <form-field [control]="form.get('validateEf')" label="Validar Ef">
+            <select class="form-control" formControlName="validateEf">
+              <option [value]="null">Seleccione un valor</option>
+              <option [value]="'True'">Si</option>
+              <option [value]="'False'">No</option>
+            </select>
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('descripcion')"
-            label="Descripci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="descripcion" />
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field [control]="form.get('validateEc')" label="Validar Ec">
+            <select class="form-control" formControlName="validateEc">
+              <option [value]="null">Seleccione un valor</option>
+              <option [value]="'True'">Si</option>
+              <option [value]="'False'">No</option>
+            </select>
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('validar_ef')" label="Validar Ef">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="validar_ef" />
-          </form-field>
-        </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('validar_ec')" label="Validar Ec">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="validar_ec" />
-          </form-field>
-        </div>
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('usuario_creacion')"
-            label="Usuario Creaci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="usuario_creacion" />
-          </form-field>
-        </div>
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('fecha_creacion')"
-            label="Fecha Creaci&oacute;n">
-            <input
-              type="date"
-              class="form-control"
-              formControlName="fecha_creacion" />
-          </form-field>
-        </div>
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('usuario_modificacion')"
-            label="Usuario Modificaci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="usuario_modificacion" />
-          </form-field>
-        </div>
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('fecha_modificacion')"
-            label="Fecha Modificaci&oacute;n">
-            <input
-              type="date"
-              class="form-control"
-              formControlName="fecha_modificacion" />
-          </form-field>
-        </div>
-        <div class="col-md-12">
+        <div class="col-md-6">
           <form-field [control]="form.get('version')" label="Versi&oacute;n">
-            <input
-              type="number"
+            <input type="text" class="form-control" formControlName="version" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              rows="3"
               class="form-control"
-              formControlName="version" />
+              formControlName="description"></textarea>
           </form-field>
         </div>
       </div>

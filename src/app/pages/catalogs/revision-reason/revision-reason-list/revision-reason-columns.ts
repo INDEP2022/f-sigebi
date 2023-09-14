@@ -4,42 +4,42 @@ export const REVISION_REASON_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  estatus_inicial: {
-    title: 'Estado inicial',
+  initialStatus: {
+    title: 'Estado Inicial',
     type: 'string',
     sort: false,
   },
-  descripcion_motivo: {
+  descriptionCause: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  tipo_bien: {
-    title: 'Tipo bien',
+  goodType: {
+    title: 'Tipo Bien',
     type: 'string',
     sort: false,
   },
-  estatus_rev: {
-    title: 'Estado de revisión',
+  statusRev: {
+    title: 'Estado de Revisión',
     type: 'string',
     sort: false,
   },
-  area_responsable: {
-    title: 'Área responsable',
+  managerArea: {
+    title: 'Área Responsable',
     type: 'string',
     sort: false,
   },
-  estatus_fin: {
-    title: 'Estado final',
+  statusPurpose: {
+    title: 'Estado Final',
     type: 'string',
     sort: false,
   },
-  pantalla: {
+  screen: {
     title: 'Pantalla',
     type: 'string',
     sort: false,
   },
-  parametro: {
+  parameter: {
     title: 'Parámetro',
     type: 'string',
     sort: false,

@@ -5,33 +5,77 @@
   <div body>
     <form class="form-material" [formGroup]="municipalityForm">
       <div class="row">
-        <div class="col-12 pt-4">
-          <form-field [control]="municipalityForm.get('key')" label="Clave">
-            <input type="number" class="form-control" formControlName="key" />
-          </form-field>
-        </div>
-        <div class="col-12 pt-4">
+        <div class="col-4 pt-4">
           <form-field
-            [control]="municipalityForm.get('entity')"
-            label="Entidad">
-            <input type="text" class="form-control" formControlName="entity" />
-          </form-field>
-        </div>
-        <div class="col-12 pt-4">
-          <form-field
-            [control]="municipalityForm.get('municipalityName')"
-            label="Nombre">
+            [control]="municipalityForm.get('idMunicipality')"
+            label="Código Municipio">
             <input
               type="text"
               class="form-control"
-              formControlName="municipalityName" />
+              formControlName="idMunicipality" />
           </form-field>
         </div>
         <div class="col-12 pt-4">
           <form-field
-            [control]="municipalityForm.get('version')"
-            label="Versi&oacute;n">
-            <input type="text" class="form-control" formControlName="version" />
+            [control]="municipalityForm.get('nameMunicipality')"
+            label="Nombre de Municipio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameMunicipality" />
+          </form-field>
+        </div>
+        <div class="col-12 pt-4">
+          <form-field [control]="municipalityForm.get('stateKey')">
+            <ngx-select
+              [form]="municipalityForm"
+              control="stateKey"
+              value="id"
+              bindLabel="descCondition"
+              [data]="states"
+              (fetchItems)="getStates($event)"
+              (change)="stateChange($event)"
+              label="Cve. Estado">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="municipalityForm.get('version')"
+              label="Versi&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="version"
+                min="0" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="municipalityForm.get('codMarginality')"
+              label="Código Marginalidad">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="codMarginality" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="municipalityForm.get('risk')" label="Riesgo">
+              <input type="text" class="form-control" formControlName="risk" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-12 pt-4">
+          <form-field
+            [control]="municipalityForm.get('description')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
           </form-field>
         </div>
       </div>
@@ -41,9 +85,9 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!municipalityForm.valid"
+          [disabled]="municipalityForm.invalid"
           [loading]="loading"
-          (confirm)="confirm()">
+          (click)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

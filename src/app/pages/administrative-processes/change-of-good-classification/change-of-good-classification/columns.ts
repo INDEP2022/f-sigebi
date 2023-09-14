@@ -1,25 +1,31 @@
 export const ATRIBUT_ACT_COLUMNS = {
   attribute: {
-    title: 'Atributos actuales',
+    title: 'Atributo',
     sort: false,
-    filter: false,
+    filter: true,
+    editable: false,
   },
-  val: {
-    title: 'valores',
+  value: {
+    title: 'Valores',
     sort: false,
-    filter: false,
+    filter: true,
+    editable: false,
   },
 };
 
-export const ATRIBUT_NEW_COLUMNS = {
-  attribute: {
-    title: 'Nuevos atributos',
-    sort: false,
-    filter: false,
-  },
-  newVal: {
-    title: 'Nuevos valores',
-    sort: false,
-    filter: false,
-  },
-};
+// export const ATRIBUT_NEW_COLUMNS = {
+//   attribute: {
+//     title: 'Atributos',
+//     sort: false,
+//     filter: true,
+//   },
+//   newVal: {
+//     title: 'Valores',
+//     sort: false,
+//     filter: true,
+//     type: 'custom',
+//     editable: false,
+//     valuePrepareFunction: (cell: any, row: any) => row,
+//     renderComponent: GoodCharacteristicCellValueComponent,
+//   },
+// };

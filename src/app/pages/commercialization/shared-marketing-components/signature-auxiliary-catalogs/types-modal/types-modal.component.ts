@@ -2,7 +2,8 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { SignatureAuxiliaryCatalogsService } from '../services/signature-auxiliary-catalogs.service';
 
 @Component({
   selector: 'app-types-modal',
@@ -10,14 +11,16 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class TypesModalComponent extends BasePage implements OnInit {
-  title: string = 'Tipo de Firmante';
-  type: any;
-  orders: number[] = [];
+  data: any;
   edit: boolean = false;
-  typeForm: FormGroup = new FormGroup({});
+  formGroup: FormGroup = new FormGroup({});
   @Output() onConfirm = new EventEmitter<boolean>();
 
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private svSignatureAuxiliaryCatalogsService: SignatureAuxiliaryCatalogsService
+  ) {
     super();
   }
 
@@ -26,17 +29,31 @@ export class TypesModalComponent extends BasePage implements OnInit {
   }
 
   private prepareForm(): void {
-    this.typeForm = this.fb.group({
-      denomination: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+    this.formGroup = this.fb.group({
+      signatoryType: [null],
+      recordNumber: [null],
+      nbOrigin: [null],
+      orderId: [
+        { value: null, disabled: false },
+        [
+          Validators.required,
+          Validators.maxLength(2),
+          Validators.pattern(NUM_POSITIVE),
+        ],
       ],
-      order: [null, [Validators.required]],
+      denomination: [
+        { value: null, disabled: false },
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
     });
-    console.log(this.type);
-    if (this.type !== undefined) {
+    console.log(this.data);
+    if (this.data !== undefined) {
       this.edit = true;
-      this.typeForm.patchValue(this.type);
+      this.formGroup.patchValue(this.data);
     }
   }
 
@@ -45,22 +62,55 @@ export class TypesModalComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.handleSuccess();
-  }
-
-  handleSuccess() {
-    if (this.orders.indexOf(this.typeForm.controls['order'].value) != -1) {
-      this.onLoadToast(
-        'error',
-        'Orden no permitido',
-        'El valor del orden del firmante introducido ya está siendo utilizado'
-      );
+    console.log(this.formGroup.value);
+    if (this.formGroup.invalid) {
+      this.alert('warning', 'Complete los campos requeridos correctamente', '');
+      this.formGroup.markAllAsTouched();
       return;
     }
-    this.loading = true;
-    // Llamar servicio para realizar accion
-    this.loading = false;
-    this.onConfirm.emit(this.typeForm.value);
-    this.modalRef.hide();
+    if (this.edit == false) {
+      this.svSignatureAuxiliaryCatalogsService
+        .createComerTypeSignatories(this.formGroup.value)
+        .subscribe({
+          next: res => {
+            console.log('RESPONSE', res);
+            this.onConfirm.emit(this.formGroup.value);
+            this.alert('success', 'Registro creado correctamente', '');
+            this.formGroup.reset();
+            this.close();
+          },
+          error: error => {
+            console.log(error);
+            this.alert(
+              'warning',
+              'Ocurrió un error al intentar crear el registro',
+              ''
+            );
+          },
+        });
+    } else {
+      this.svSignatureAuxiliaryCatalogsService
+        .updateComerTypeSignatories(
+          this.formGroup.value.signatoryType,
+          this.formGroup.value
+        )
+        .subscribe({
+          next: res => {
+            console.log('RESPONSE', res);
+            this.onConfirm.emit(this.formGroup.value);
+            this.alert('success', 'Registro actualizado correctamente', '');
+            this.formGroup.reset();
+            this.close();
+          },
+          error: error => {
+            console.log(error);
+            this.alert(
+              'warning',
+              'Ocurrió un error al intentar actualizar el registro',
+              ''
+            );
+          },
+        });
+    }
   }
 }

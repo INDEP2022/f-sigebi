@@ -1,21 +1,21 @@
 export const LIST_ASSETS_COLUMN = {
-  noInventory: {
+  inventoryNumber: {
     title: 'No. Inventario',
     type: 'string',
     sort: false,
   },
-  noManagement: {
+  goodId: {
     title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
-  address: {
-    title: 'Address',
+  siabiInventoryId: {
+    title: 'Número Siab',
     type: 'string',
     sort: false,
   },
-  transferente: {
-    title: 'Transferente',
+  goodDescription: {
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
@@ -29,7 +29,7 @@ export const LIST_ASSETS_COLUMN = {
     type: 'string',
     sort: false,
   },
-  unity: {
+  unitMeasure: {
     title: 'Unidad',
     type: 'string',
     sort: false,

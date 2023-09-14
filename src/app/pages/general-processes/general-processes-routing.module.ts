@@ -199,6 +199,15 @@ const routes: Routes = [
       (await import('./text-change-mod/text-change-mod.module'))
         .TextChangeModModule,
   },
+  {
+    path: 'good-photos',
+    data: {
+      screen: 'FIMGFOTBIEADD',
+      title: 'Agregar Fotos por Bien',
+    },
+    loadChildren: () =>
+      import('./good-photos/good-photos.module').then(m => m.GoodPhotosModule),
+  },
 ];
 
 @NgModule({

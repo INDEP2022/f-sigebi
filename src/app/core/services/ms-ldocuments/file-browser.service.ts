@@ -1,6 +1,6 @@
 import { HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { v4 as uuidv4 } from 'uuid';
@@ -26,6 +26,30 @@ export class FileBrowserService extends HttpService {
     return this.post<IListResponse<{ name: string }>>('file-browser/folios', {
       invoiceNumber,
     });
+  }
+
+  uploadFile(
+    folio: string | number,
+    file: File,
+    fileField = 'file'
+  ): Observable<any> {
+    const filename = file.name;
+    const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';
+    const formData = new FormData();
+    formData.append(fileField, file, `FU_${uuidv4()}.${ext}`);
+    formData.append('invoiceNumber', `${folio}`);
+    const request = new HttpRequest(
+      'POST',
+      `${this._url}${this.microservice}/${this._prefix}file-browser/saveFolio`,
+      formData,
+      { reportProgress: true, responseType: 'json' }
+    );
+    return this.httpClient.request(request).pipe(
+      catchError(error => {
+        console.log(error);
+        return throwError(() => error);
+      })
+    );
   }
 
   uploadFileByFolio(folio: string | number, file: File, fileField = 'file') {

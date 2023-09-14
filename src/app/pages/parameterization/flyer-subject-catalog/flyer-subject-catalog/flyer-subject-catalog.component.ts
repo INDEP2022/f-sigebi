@@ -16,7 +16,6 @@ import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 //service
 import { AffairTypeService } from 'src/app/core/services/affair/affair-type.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
-import Swal from 'sweetalert2';
 import { AffairModalComponent } from '../affair-modal/affair-modal.component';
 import { FlyerSubjectCatalogModelComponent } from '../flyer-subject-catalog-model/flyer-subject-catalog-model.component';
 
@@ -27,8 +26,9 @@ import { FlyerSubjectCatalogModelComponent } from '../flyer-subject-catalog-mode
 })
 export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
-  columns: IAffair[] = [];
+  data1: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
+  columns: IAffair[] = [];
 
   affairList: IAffair[] = [];
   affairTypeList: IAffairType[] = [];
@@ -77,6 +77,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
         columnTitle: 'Acciones',
         edit: true,
         delete: true,
+        add: false,
         position: 'right',
       },
       columns: { ...AFFAIR_TYPE_COLUMNS },
@@ -95,22 +96,29 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
-            filter.field == 'city'
-              ? (field = `filter.${filter.field}.nameCity`)
-              : (field = `filter.${filter.field}`);
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getAffairAll();
         }
       });
-
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getAffairAll());
@@ -128,7 +136,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
       next: response => {
         this.columns = response.data;
         this.totalItems = response.count || 0;
-        this.data.load(this.columns);
+        this.data.load(response.data);
         this.data.refresh();
         this.loading1 = false;
       },
@@ -147,7 +155,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       this.getAffairType(this.affairs);
       const btn = document.getElementById('btn-new');
-      this.r2.removeClass(btn, 'disabled');
+      // this.r2.removeClass(btn, 'disabled');
       this.id = this.affairs;
       console.log(this.id);
     });
@@ -161,6 +169,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           this.affairTypeList = response.data;
+          this.data1.load(response.data);
           this.totalItems2 = response.count;
           this.loading2 = false;
         },
@@ -207,23 +216,27 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea borrar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(affair.id);
+        this.delete(affair.id, affair.nbOrigen);
       }
     });
   }
 
   //método para borrar registro de asunto
-  delete(id: number) {
-    this.affairService.remove2(id).subscribe({
-      next: () => (Swal.fire('Borrado', '', 'success'), this.getAffairAll()),
+  delete(id: number, nb: string) {
+    this.affairService.remove2(id, nb).subscribe({
+      next: () => {
+        this.getAffairAll();
+        this.alert('success', 'Asunto para Volante', 'Borrado Correctamente');
+        this.rowSelected = false;
+      },
       error: err => {
-        this.alertQuestion(
-          'error',
-          'No se puede eliminar Asunto',
-          'Primero elimine sus tipos de asuntos'
+        this.alert(
+          'warning',
+          'Asunto para Volante',
+          'Primero elimine sus tipos de volante'
         );
       },
     });
@@ -234,7 +247,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea borrar este registro?'
+      '¿Desea Borrar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete2(affairType);
@@ -246,9 +259,17 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
   delete2(affairType?: IAffairType) {
     let affair = this.affairs;
     this.affairTypeService.remove(affairType).subscribe({
-      next: () => (
-        Swal.fire('Borrado', '', 'success'), this.getAffairType(affair)
-      ),
+      next: () => {
+        this.getAffairType(affair);
+        this.alert('success', 'Tipo de Volante', 'Borrado Correctamente');
+      },
+      error: erro => {
+        this.alert(
+          'warning',
+          'Tipo Volante',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 
@@ -256,8 +277,8 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
   showNullRegister() {
     this.alertQuestion(
       'warning',
-      'Asunto sin volantes',
-      '¿Desea agregarlos ahora?'
+      'Asunto sin Volantes',
+      '¿Desea Agregarlos Ahora?'
     ).then(question => {
       if (question.isConfirmed) {
         this.openForm();

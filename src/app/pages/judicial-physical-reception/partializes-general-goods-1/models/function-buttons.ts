@@ -1,10 +1,11 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { firstValueFrom } from 'rxjs';
+import { LoadingService } from 'src/app/common/services/loading.service';
+import { AlertsQueueService } from 'src/app/core/services/alerts/alerts-queue.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { SweetalertModel } from 'src/app/core/shared/base-page';
+import { SweetalertModel } from 'src/app/core/shared';
 import Swal, { SweetAlertIcon, SweetAlertResult } from 'sweetalert2';
-import { PartializeGeneralGoodTab2Service } from '../services/partialize-general-good-tab2.service';
 import { PartializeGeneralGoodService } from '../services/partialize-general-good.service';
 
 @Component({
@@ -13,23 +14,61 @@ import { PartializeGeneralGoodService } from '../services/partialize-general-goo
   styles: [``],
 })
 export class FunctionButtons {
-  @Input() firstCase: boolean = null;
-  private serviceTab1 = inject(PartializeGeneralGoodService);
-  private serviceTab2 = inject(PartializeGeneralGoodTab2Service);
+  // @Input() firstCase: boolean = null;
+  // @Input() version: number = null;
+  version: number = 1;
+  service = inject(PartializeGeneralGoodService);
+  // private serviceTab2 = inject(PartializeGeneralGoodTab2Service);
+  // private service2 = inject(PartializeGeneralGoodV2Service);
+  // private service2Tab2 = inject(PartializeGeneralGoodV2Tab2Service);
   protected goodService = inject(GoodService);
   private _toastrService = inject(ToastrService);
+  protected loader = inject(LoadingService);
   v_numerario: number;
   vfactor: number;
+  private _alertsService = inject(AlertsQueueService);
+
+  protected alert(
+    icon: SweetAlertIcon,
+    title: string,
+    text: string,
+    html?: string
+  ) {
+    let sweetalert = new SweetalertModel();
+    sweetalert.title = title;
+    sweetalert.text = text;
+    sweetalert.icon = icon;
+    sweetalert.html = html;
+    sweetalert.showConfirmButton = true;
+    this._alertsService.alerts.push(sweetalert);
+    this._alertsService.alertQueue.next(true);
+  }
+
+  protected alertInfo(icon: SweetAlertIcon, title: string, text: string) {
+    let sweetalert = new SweetalertModel();
+    sweetalert.title = title;
+    sweetalert.text = text;
+    sweetalert.icon = icon;
+    sweetalert.showConfirmButton = true;
+    return Swal.fire(sweetalert);
+  }
 
   ngOnInit() {
-    if (this.firstCase === null) {
+    if (this.version === null) {
       return;
     }
   }
 
-  get service() {
-    return this.firstCase === true ? this.serviceTab1 : this.serviceTab2;
-  }
+  // get service() {
+  //   return this.version === 1 ? this.service1 : this.service2;
+  //   // return this.version === 1
+  //   //   ? this.firstCase === true
+  //   //     ? this.serviceTab1
+  //   //     : this.serviceTab2
+  //   //   : this.firstCase === true
+  //   //   ? this.service2Tab1
+  //   //   : this.service2Tab2;
+  // }
 
   get loading() {
     return this.service ? this.service.buttonsLoading : false;
@@ -47,9 +86,9 @@ export class FunctionButtons {
     return this.service?.formControl;
   }
 
-  get formGood() {
-    return this.service?.formGood;
-  }
+  // get formGood() {
+  //   return this.service?.formGood;
+  // }
 
   get bienesPar() {
     return this.service?.bienesPar;
@@ -118,6 +157,7 @@ export class FunctionButtons {
       const data = await firstValueFrom(
         this.goodService.getGoodWidthMeasure(this.good.goodId)
       );
+      console.log(data);
       cantidad = data.data[0].cantidad;
       descripcion = data.data[0].descripcion;
       cve_moneda_avaluo = data.data[0].cve_moneda_avaluo;

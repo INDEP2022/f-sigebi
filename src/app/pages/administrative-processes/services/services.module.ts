@@ -14,6 +14,7 @@ import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/good
 import { RecordsSharedComponent } from 'src/app/@standalone/shared-forms/records-shared/records-shared.component';
 import { ServicesSharedComponent } from 'src/app/@standalone/shared-forms/services-shared/services-shared.component';
 //Components
+import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
 import { DescriptionOfTheMatterComponent } from './description-of-the-matter/description-of-the-matter.component';
 import { GlobalServicePaymentComponent } from './global-service-payments/global-service-payment.component';
 import { GoodsServicePaymentComponent } from './goods-service-payments/goods-service-payment.component';
@@ -45,6 +46,7 @@ import { ServiceMonitoringComponent } from './service-monitoring/service-monitor
     GoodsTypesSharedComponent,
     RecordsSharedComponent,
     ServicesSharedComponent,
+    DelegationSharedComponent,
   ],
 })
 export class PaSMServicesModule {}

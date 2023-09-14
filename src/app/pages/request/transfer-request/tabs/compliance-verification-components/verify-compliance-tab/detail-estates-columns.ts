@@ -1,7 +1,19 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { SaeInputComponent } from './sae-input/sae-input.component';
-import { SelectInputComponent } from './select-input/select-input.component';
 
 export const DETAIL_ESTATE_COLUMNS = {
+  selected: {
+    title: '',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+    sort: false,
+    hide: false,
+  },
   id: {
     title: 'No. Gestión',
     type: 'string',
@@ -21,7 +33,7 @@ export const DETAIL_ESTATE_COLUMNS = {
     onComponentInitFunction(instance?: any) {},
     sort: false,
   },
-  goodTypeName: {
+  descriptionRelevantType: {
     title: 'Tipo Bien',
     type: 'string',
     sort: false,
@@ -31,16 +43,13 @@ export const DETAIL_ESTATE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  unitMeasureName: {
-    /* title: 'Unidad de Medida Transferente',
-    type: 'string',
-    sort: false, */
+  measureUnitTransferent: {
     title: 'Unidad de Medida Transferente',
-    type: 'custom',
+    type: 'string',
     class: 'custom-field',
     filter: false,
-    renderComponent: SelectInputComponent,
-    onComponentInitFunction(instance?: any) {},
+    //renderComponent: SelectInputComponent,
+    //onComponentInitFunction(instance?: any) {},
     sort: false,
   },
   uniqueKey: {
@@ -48,27 +57,28 @@ export const DETAIL_ESTATE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  physicstateName: {
+  descriptionPhysicalStatus: {
     title: 'Estado Físico',
     type: 'string',
     sort: false,
   },
-  stateConservationName: {
+  descriptionConservationStatus: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },
-  destinyName: {
+  descriptionDestiny: {
     title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
-  ligieUnit: {
+
+  measureUnitLigie: {
     title: 'Unidad de Medida Ligie',
     type: 'string',
     sort: false,
   },
-  transferentDestinyName: {
+  descriptionDestinyTransferent: {
     title: 'Destino Transferente',
     type: 'string',
     sort: false,

@@ -8,168 +8,205 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row">
-        <div class="col-md-1">
-          <h5 class="font-size-14 d-inline">Seleccione OI</h5>
-          <ngx-select
-            [form]="form"
-            [data]="OItems"
-            value="id"
-            bindLabel="id"
-            (fetchItems)="getOI($event)"
-            (change)="selectOI($event)"
-            control="id">
-          </ngx-select>
+      <app-card [header]="true">
+        <div header class="ch-content">
+          <h5 class="title">Cabecera OI</h5>
         </div>
-        <div class="col-md-2" *ngIf="selectedOI != null">
-          <h5 class="font-size-14 d-inline">&Aacute;rea</h5>
-          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.idArea }}</p>
-          <!-- <form-field [control]="form.get('idArea')" label="Área">
-            <input type="text" class="form-control" formControlName="idArea" />
-          </form-field> -->
+        <div body>
+          <div class="row mb-3 mt-3">
+            <form-field [control]="form.get('idOI')" class="col" label="OI">
+              <input type="text" formControlName="idOI" class="form-control" />
+            </form-field>
+            <form-field [control]="form.get('idArea')" label="Área" class="col">
+              <input
+                type="text"
+                readonly
+                formControlName="idArea"
+                class="form-control" />
+            </form-field>
+            <form-field [control]="form.get('ur')" label="UR" class="col">
+              <input
+                type="text"
+                formControlName="ur"
+                readOnly
+                class="form-control" />
+            </form-field>
+            <form-field [control]="form.get('anexo')" label="Anexo" class="col">
+              <input
+                type="text"
+                formControlName="anexo"
+                readOnly
+                class="form-control" />
+            </form-field>
+            <form-field
+              [control]="form.get('typepe')"
+              label="Tipope"
+              class="col">
+              <input
+                type="text"
+                readonly
+                formControlName="typepe"
+                class="form-control" />
+            </form-field>
+            <form-field
+              [control]="form.get('idEvent')"
+              label="Evento"
+              class="col">
+              <input
+                type="text"
+                readonly
+                formControlName="idEvent"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="row mb-3 mt-3">
+            <form-field
+              [control]="form.get('clientRFC')"
+              label="Cliente RFC"
+              class="col-md-4">
+              <input
+                type="text"
+                readonly
+                formControlName="clientRFC"
+                class="form-control" />
+            </form-field>
+            <form-field
+              [control]="form.get('descriptionRFC')"
+              label="Nombre Cliente RFC"
+              class="col-md-8">
+              <input
+                type="text"
+                readonly
+                formControlName="descriptionRFC"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="row mb-3 mt-3">
+            <form-field
+              [control]="form.get('concept')"
+              class="col-md-12"
+              label="Concepto">
+              <input
+                type="text"
+                readonly
+                formControlName="concept"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="row mb-3 mt-3">
+            <form-field
+              [control]="form.get('idBank')"
+              class="col"
+              label="Banco">
+              <input
+                type="text"
+                readonly
+                formControlName="idBank"
+                class="form-control" />
+            </form-field>
+            <form-field
+              [control]="form.get('ordenDate')"
+              class="col"
+              label="Fecha Orden">
+              <input
+                type="text"
+                readonly
+                formControlName="ordenDate"
+                class="form-control" />
+            </form-field>
+            <form-field
+              [control]="form.get('numovto')"
+              class="col"
+              label="Numovto">
+              <input
+                type="text"
+                readonly
+                formControlName="numovto"
+                class="form-control" />
+            </form-field>
+            <form-field
+              [control]="form.get('amount')"
+              class="col"
+              label="Monto">
+              <input
+                type="text"
+                readonly
+                formControlName="amount"
+                class="form-control" />
+            </form-field>
+            <form-field
+              [control]="form.get('reference')"
+              class="col"
+              label="Referencia">
+              <input
+                type="text"
+                readonly
+                formControlName="reference"
+                class="form-control" />
+            </form-field>
+            <form-field
+              [control]="form.get('idPayment')"
+              class="col"
+              label="Id Pago">
+              <input
+                type="text"
+                readonly
+                formControlName="idPayment"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="row mb-3 mt-3 text-center">
+            <div class="col">
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm mr-3"
+                (click)="searchOI()">
+                Buscar
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                class="btn btn-danger btn-sm active mr-3"
+                (click)="clearAll()">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+              <button
+                type="button"
+                (click)="sendSIRSAE()"
+                class="btn btn-primary active btn-sm mr-3">
+                Enviar SIRSAE <i class="bx bx-send"></i>
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="col-md-1" *ngIf="selectedOI != null">
-          <h5 class="font-size-14 d-inline">UR</h5>
-          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.ur }}</p>
-          <!-- <form-field [control]="form.get('ur')" label="UR">
-            <input type="text" class="form-control" formControlName="ur" />
-          </form-field> -->
+      </app-card>
+      <app-card [header]="true">
+        <div header>
+          <div class="ch-content">
+            <h5 class="title">DETALLES OI</h5>
+          </div>
         </div>
-        <div class="col-md-2" *ngIf="selectedOI != null">
-          <h5 class="font-size-14 d-inline">Cliente RFC</h5>
-          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.clientRFC }}</p>
-          <!-- <form-field [control]="form.get('clientRFC')" label="Cliente RFC">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="clientRFC" />
-          </form-field> -->
+        <div body>
+          <div class="row mr-3 mb-3">
+            <div class="col-md-12 d-flex justify-content-end">
+              <app-columns-select [(settings)]="settings"></app-columns-select>
+            </div>
+          </div>
+          <div [class]="loading ? 'table-loading' : 'row pt-2'">
+            <ng2-smart-table
+              class="col-md-12"
+              [attr.class]="'table-responsive table-bordered '"
+              [settings]="settings"
+              (userRowSelect)="selectRow()"
+              [source]="dataComerDetails"></ng2-smart-table>
+          </div>
+          <app-pagination
+            [params]="params"
+            [limit]="limit"
+            [totalItems]="totalItems"></app-pagination>
+          <hr class="row mt-5 mb-5" />
         </div>
-        <div class="col-md-2" *ngIf="selectedOI != null">
-          <h5 class="font-size-14 d-inline">Descripción cliente</h5>
-          <p class="mt-2 font-size-28 text-muted">
-            {{ selectedOI.descripRFC }}
-          </p>
-          <!-- <form-field
-            [control]="form.get('descripRFC')"
-            label="Descripción Cliente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="descripRFC" />
-          </form-field> -->
-        </div>
-        <div class="col-md-2" *ngIf="selectedOI != null">
-          <h5 class="font-size-14 d-inline">Anexo</h5>
-          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.anexo }}</p>
-          <!-- <form-field [control]="form.get('anexo')" label="Anexo">
-            <input type="text" class="form-control" formControlName="anexo" />
-          </form-field> -->
-        </div>
-        <div class="col-md-1" *ngIf="selectedOI != null">
-          <h5 class="font-size-14 d-inline">Tipo Pe</h5>
-          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.tiPe }}</p>
-          <!-- <form-field [control]="form.get('tiPe')" label="Tipo Pe">
-            <input type="text" class="form-control" formControlName="tiPe" />
-          </form-field> -->
-        </div>
-        <div class="col-md-1" *ngIf="selectedOI != null">
-          <h5 class="font-size-14 d-inline">Evento</h5>
-          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.idEvent }}</p>
-          <!-- <form-field [control]="form.get('idEvent')" label="Evento">
-            <input type="text" class="form-control" formControlName="idEvent" />
-          </form-field> -->
-        </div>
-      </div>
-      <div class="row pt-5" *ngIf="selectedOI != null">
-        <div class="col-md-6">
-          <h5 class="font-size-14 d-inline">Concepto</h5>
-          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.concept }}</p>
-          <!-- <form-field [control]="form.get('concept')" label="Concepto">
-            <input type="text" class="form-control" formControlName="concept" />
-          </form-field> -->
-        </div>
-        <div class="col-md-2" *ngIf="selectedOI != null">
-          <h5 class="font-size-14 d-inline">Banco</h5>
-          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.idBank }}</p>
-          <!-- <form-field [control]="form.get('idBank')" label="Banco">
-            <input type="text" class="form-control" formControlName="idBank" />
-          </form-field> -->
-        </div>
-        <div class="col-md-2" *ngIf="selectedOI != null">
-          <h5 class="font-size-14 d-inline">Fecha de orden</h5>
-          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.ordenDate }}</p>
-          <!-- <form-field [control]="form.get('ordenDate')" label="Fecha de orden">
-            <input
-              type="text"
-              placeholder=""
-              class="form-control"
-              bsDatepicker
-              formControlName="ordenDate"
-              [bsConfig]="{ isAnimated: true }" />
-          </form-field> -->
-        </div>
-        <div class="col-md-1" *ngIf="selectedOI != null">
-          <h5 class="font-size-14 d-inline">Numovto</h5>
-          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.numovto }}</p>
-          <!-- <form-field [control]="form.get('numovto')" label="Numovto">
-            <input type="text" class="form-control" formControlName="numovto" />
-          </form-field> -->
-        </div>
-        <div class="col-md-1" *ngIf="selectedOI != null">
-          <h5 class="font-size-14 d-inline">id Pago</h5>
-          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.idPayment }}</p>
-          <!-- <form-field [control]="form.get('idPayment')" label="id Pago">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="idPayment" />
-          </form-field> -->
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-1" *ngIf="selectedOI != null">
-          <h5 class="font-size-14 d-inline">Monto</h5>
-          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.amount }}</p>
-          <!-- <form-field [control]="form.get('amount')" label="Monto">
-            <input type="text" class="form-control" formControlName="amount" />
-          </form-field> -->
-        </div>
-        <div class="col-md-2" *ngIf="selectedOI != null">
-          <h5 class="font-size-14 d-inline">Referencia</h5>
-          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.reference }}</p>
-          <!-- <form-field [control]="form.get('reference')" label="Referencia">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="reference" />
-          </form-field> -->
-        </div>
-
-        <!-- <div class="col-md-2" *ngIf="selectedOI != null">
-          <button type="button" class="btn btn-primary btn-sm active">
-            Envar a SIRSAE
-          </button>
-        </div> -->
-      </div>
+      </app-card>
     </form>
   </div>
   <div></div>
 </app-card>
-
-<div *ngIf="selectedOI != null">
-  <app-card [header]="true">
-    <div header>
-      <div class="ch-content">
-        <h5 class="title">DETALLES OI</h5>
-        <div class="row justify-content-end pt-3 mr-3">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
-        </div>
-      </div>
-    </div>
-    <div body>
-      <ng2-smart-table [settings]="settings" [source]="dataTable">
-      </ng2-smart-table>
-    </div>
-  </app-card>
-</div>

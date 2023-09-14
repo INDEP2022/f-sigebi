@@ -4,20 +4,24 @@ import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
 import { DynamicCatalogEndpoint } from 'src/app/common/constants/endpoints/ms-dynamiccatalog-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DynamicCatalogRepository } from 'src/app/common/repository/repositories/ms-dynamiccatalog-repository';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   ISingleTable,
   ITable,
   ITables,
   ITablesData,
+  ITvalTable1,
   TvalTable1Data,
 } from '../../models/catalogs/dinamic-tables.model';
+
 @Injectable({
   providedIn: 'root',
 })
 export class DynamicTablesService extends HttpService {
   private readonly route: string = DynamicCatalogEndpoint.getTablesByID;
+  selectedClasification: number;
+  selectedTable: string;
   constructor(
     private dynamicCatalogRepository: DynamicCatalogRepository<ITables>
   ) {
@@ -46,6 +50,86 @@ export class DynamicTablesService extends HttpService {
       DynamicCatalogEndpoint.DinamicTables,
       params
     );
+  }
+  getAllTvalTable1(
+    params?: ListParams
+  ): Observable<IListResponse<ITvalTable1>> {
+    return this.get<IListResponse<ITvalTable1>>('tval-table-1', params);
+  }
+
+  getAllOtkey(
+    classificationGoodNumber: number,
+    table: string,
+    params?: _Params
+  ) {
+    return this.post(
+      'dinamic-tables/get-otkey-otvalue',
+      {
+        classificationGoodNumber,
+        table,
+      },
+      params
+    );
+  }
+
+  getAllOtkeyModal(self?: DynamicTablesService, params?: _Params) {
+    return self.post(
+      'dinamic-tables/get-otkey-otvalue?sortBy=otvalor:ASC',
+      {
+        classificationGoodNumber: self.selectedClasification,
+        table: self.selectedTable,
+      },
+      params
+    );
+  }
+
+  getAllOtkeyReservadoModal(self?: DynamicTablesService, params?: _Params) {
+    return self.post(
+      'dinamic-tables/get-otkey-otvalue?filter.nmtabla=417&sortBy=otvalor:ASC',
+      {
+        classificationGoodNumber: self.selectedClasification,
+        table: self.selectedTable,
+        //table: 417,
+      },
+      params
+    );
+
+    // return self.get<IListResponse<ITvalTable1>>(
+    //   'tval-table-1?filter.nmtable=417',
+    //   params
+    // );
+  }
+
+  getAllOtkeySJuridaModal(self?: DynamicTablesService, params?: _Params) {
+    return self.post(
+      'dinamic-tables/get-otkey-otvalue?filter.nmTablefilter.nmtabla=418&sortBy=otvalor:ASC',
+      {
+        classificationGoodNumber: self.selectedClasification,
+        table: self.selectedTable,
+        //table: 418,
+      },
+      params
+    );
+  }
+
+  pufValidaEntFed(valor: string) {
+    return this.get<number>(
+      DynamicCatalogEndpoint.pufValidaEntFed + '?entFed=' + valor
+    );
+  }
+
+  getAllOtkeyCatWebObligModal(self?: DynamicTablesService, params?: _Params) {
+    return self
+      .post(
+        'dinamic-tables/get-otkey-otvalue?filter.nmTablefilter.nmtabla=427',
+        {
+          classificationGoodNumber: self.selectedClasification,
+          table: self.selectedTable,
+          //nmTable: 427,
+        },
+        params
+      )
+      .pipe(map(x => {}));
   }
 
   getTvalTable1ByTableKey(
@@ -83,7 +167,7 @@ export class DynamicTablesService extends HttpService {
           }),
         };
       }),
-      tap(() => (this.microservice = ''))
+      tap(() => this.microservice)
     );
   }
 }

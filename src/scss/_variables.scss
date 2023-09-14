@@ -116,8 +116,8 @@ $orange: #f1734f;
 $yellow: #f1b44c;
 $green: #34c38f;
 $teal: #050505;
-$cyan: #50a5f1;
-
+$cyan: #17a2b8;
+$info: #50a5f1;
 // scss-docs-start colors-map
 $colors: (
   'blue': $blue,
@@ -139,12 +139,14 @@ $colors: (
 $primary: $blue;
 $secondary: $gray-600;
 $success: $green;
-$info: $cyan;
+$info: $info;
 $warning: $yellow;
 $danger: $red;
 $light: $gray-200;
 $dark: $gray-800;
-
+$orange: $orange;
+$cyan: $cyan;
+$yellow: $yellow;
 // scss-docs-start theme-colors-map
 $theme-colors: (
   'primary': $primary,
@@ -156,6 +158,9 @@ $theme-colors: (
   'pink': $pink,
   'light': $light,
   'dark': $dark,
+  'orange': $orange,
+  'cyan': $cyan,
+  'yellow': $yellow,
 );
 // scss-docs-end theme-colors-map
 $theme-colors-rgb: map-loop($theme-colors, to-rgb, '$value');
@@ -617,6 +622,9 @@ $table-variants: (
   'primary': shift-color($primary, $table-bg-scale),
   'secondary': shift-color($secondary, $table-bg-scale),
   'success': shift-color($success, $table-bg-scale),
+  'yellow': shift-color($yellow, $table-bg-scale),
+  'cyan': shift-color($cyan, $table-bg-scale),
+  'orange': shift-color($orange, $table-bg-scale),
   'info': shift-color($info, $table-bg-scale),
   'warning': shift-color($warning, $table-bg-scale),
   'danger': shift-color($danger, $table-bg-scale),
@@ -909,6 +917,9 @@ $form-feedback-margin-top: $form-text-margin-top;
 $form-feedback-font-size: $form-text-font-size;
 $form-feedback-font-style: $form-text-font-style;
 $form-feedback-valid-color: $success;
+$form-feedback-valid-color: $yellow;
+$form-feedback-valid-color: $cyan;
+$form-feedback-valid-color: $orange;
 $form-feedback-invalid-color: $danger;
 
 $form-feedback-icon-valid-color: $form-feedback-valid-color;

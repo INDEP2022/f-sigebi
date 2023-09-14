@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { WarehouseShowComponent } from '../shared-request/warehouse-show/warehouse-show.component';
 
 const routes: Routes = [
   {
@@ -7,7 +8,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./acept-programming/acept-programming.module'))
         .AceptProgrammingModule,
-    data: { title: 'Solicitud de programación' },
+    data: { title: 'Aceptar Programación' },
   },
 
   {
@@ -15,6 +16,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./execute-reception/execute-reception.module'))
         .ExecuteReceptionModule,
+    data: { title: 'Ejecutar Recepción' },
   },
 
   {
@@ -22,6 +24,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./formalize-programming/formalize-programming.module'))
         .FormalizeProgrammingModule,
+    data: { title: 'Formalizar Programación' },
   },
 
   {
@@ -37,6 +40,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./schedule-notify/schedule-notify.module'))
         .ScheduleNotifyModule,
+    data: { title: 'Notificación Programación' },
   },
 
   {
@@ -61,7 +65,20 @@ const routes: Routes = [
           './return-to-perform-programming/return-to-perform-programming.module'
         )
       ).ReturnToPerformProgramming,
-    data: { title: 'Realizar programación' },
+    data: { title: 'Rechazar Programación' },
+  },
+
+  {
+    path: 'search-schedules',
+    loadChildren: async () =>
+      (await import('./search-schedules/search-schedules.module'))
+        .SearchScheduleModule,
+    data: { title: 'Búsqueda Programaciones' },
+  },
+
+  {
+    path: 'warehouse/:id',
+    component: WarehouseShowComponent,
   },
 ];
 

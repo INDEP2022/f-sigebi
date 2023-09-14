@@ -4,9 +4,16 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, forkJoin, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IRequestInTurn } from 'src/app/core/models/catalogs/request-in-turn.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IRequest } from '../../../../core/models/requests/request.model';
 import { AffairService } from '../../../../core/services/catalogs/affair.service';
@@ -42,17 +49,34 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
   listRequest: any;
   listTable: any[] = [];
 
-  constructor(private modalService: BsModalService, public fb: FormBuilder) {
+  checkRequest: boolean = true;
+  reportRequest: string = '';
+
+  constructor(
+    private modalService: BsModalService,
+    public fb: FormBuilder,
+    private wcontentService: WContentService,
+    private authService: AuthService
+  ) {
     super();
   }
 
   ngOnInit(): void {
     this.settings = {
       ...TABLE_SETTINGS,
+      //hideSubHeader: false,
       actions: false,
       selectMode: 'multi',
       columns: REQUEST_IN_TURN_COLUMNS,
     };
+
+    const user = this.authService.decodeToken();
+    var params = new FilterParams();
+    params.addFilter('regionalDelegationId', user.department, SearchFilter.EQ);
+    params.addFilter('requestStatus', 'POR_TURNAR', SearchFilter.EQ);
+    params.sortBy = 'applicationDate:DESC';
+
+    this.searchForm(params);
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       if (this.active) this.getRequest();
@@ -61,16 +85,63 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
     });
   }
 
+  countError: number = 0;
+  requestError: string = '';
+
   openTurnRequests() {
     if (this.requestSelected.length === 0) {
       this.onLoadToast(
-        'info',
+        'warning',
         'Información',
-        `Seleccione una o mas solicitudes!`
+        `Seleccione una o mas solicitudes`
       );
       return;
     }
 
+    let config: ModalOptions = {
+      initialState: {
+        requestToTurn: this.requestSelected,
+        callback: (next: boolean) => {
+          if (next) {
+            this.paragraphs = new LocalDataSource();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(RequestInTurnSelectedComponent, config);
+  }
+
+  msjCondition(countError: number) {
+    if (this.countError != 0) {
+      Swal.fire({
+        title: 'Importante',
+        html: `Existen solicitudes que no se pueden turnar: <strong>${this.requestError}</strong> por falta de información. <br> <strong>Verificar solicitudes seleccionadas</strong>`,
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonColor: '#9D2449',
+        cancelButtonColor: '#B08C5C',
+        confirmButtonText: 'Aceptar',
+        allowOutsideClick: false,
+        //cancelButtonText: 'Cancelar',
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.countError = 0;
+          this.requestError = '';
+          this.resetForm(this.active);
+        }
+      });
+    }
+  }
+
+  openModelTurn() {
+    if (this.checkRequest === true) {
+      this.modalRequestTurn();
+    }
+  }
+
+  modalRequestTurn() {
     let config: ModalOptions = {
       initialState: {
         requestToTurn: this.requestSelected,
@@ -97,8 +168,6 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
     this.loading = true;
     this.requestService.getAll(this.params.getValue().getParams()).subscribe({
       next: (data: IListResponse<IRequest>) => {
-        console.log(data);
-
         this.totalItems = Number(data.count);
         this.getresponse(data.data);
       },
@@ -106,7 +175,11 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
         this.loading = false;
         this.totalItems = 0;
         this.paragraphs.load([]);
-        this.onLoadToast('error', '', `${error.error.message}`);
+        this.onLoadToast(
+          'warning',
+          'No hay Solicitudes',
+          `Intente con otros filtros`
+        );
         console.log(error);
       },
     });
@@ -178,6 +251,58 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
 
   onCustomAction(event: any) {
     this.requestSelected = event.selected;
+    console.log('Solicitud, ', this.requestSelected);
+
+    const request = this.requestSelected[0];
+
+    //Verifíca que tenga documentos la solicitud
+    const body = {
+      xidSolicitud: request.id,
+    };
+
+    const params = new ListParams();
+
+    this.wcontentService.getDocumentos(body, params).subscribe({
+      next: res => {
+        console.log('Respuesta, ', res.data.length);
+
+        if (res.data.length >= 1) {
+          //Verifica si tiene Emisora, Autoridad y Delegación la Solicitud
+          if (
+            request?.stationId === null ||
+            request?.authorityId === null ||
+            request?.transferenceId === null ||
+            request?.regionalDelegationId === null ||
+            request?.keyStateOfRepublic === null
+          ) {
+            //this.checkRequest = false;
+            this.countError = this.countError + 1;
+            this.requestError = this.requestError + `${request?.id}`;
+            console.log('SOLICITUD CON ERROR, SIN IDS, count +1');
+            this.msjCondition(this.countError);
+          } else {
+            console.log('SOLICITUD CORRECTA, CON IDS');
+            this.checkRequest = true;
+          }
+        } else {
+          console.log(
+            'SOLICITUD CON ERROR, SIN DOCUMENTOS DEL ENDPOINT, count +1'
+          );
+          //this.checkRequest = false;
+          this.countError = this.countError + 1;
+          this.requestError = this.requestError + `${request?.id}`;
+          this.msjCondition(this.countError);
+        }
+      },
+      error: error => {
+        console.log('SOLICITUD CON ERROR, ERROR ENDPOINT, count +1');
+        this.alert(
+          'error',
+          'Hubo un problema al obtener los documentos de la solicitud',
+          'inténtelo más tarde'
+        );
+      },
+    });
   }
 
   resetForm(event: any) {

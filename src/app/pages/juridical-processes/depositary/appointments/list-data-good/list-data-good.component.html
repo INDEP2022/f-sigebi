@@ -1,0 +1,38 @@
+<app-modal *ngIf="!plain">
+  <div class="w-100" header>
+    <div class="d-flex flex-wrap justify-content-between aling-items-center">
+      <h5 class="modal-title">Asociaci&oacute;n de Bienes</h5>
+    </div>
+  </div>
+
+  <div body>
+    <!-- <div class="alert alert-info">
+      Selecciona un registro para cargar el Bien
+    </div> -->
+    <div class="row pt-2" style="max-height: 400px; overflow-y: scroll">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
+            [settings]="settings"
+            (userRowSelect)="formData($event)"
+            [source]="dataTableGood">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="paramsList" [totalItems]="totalItems">
+    </app-pagination>
+    <div class="row">
+      <div class="col-12 col-sm-12 col-md-12 text-center">
+        <button class="btn btn-primary active btn-sm m-3" (click)="confirm()">
+          Aceptar
+        </button>
+        <button class="btn btn-danger active btn-sm m-3" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

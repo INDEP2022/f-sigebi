@@ -6,10 +6,28 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-6">
-          <app-goods-status-shared [form]="form"></app-goods-status-shared>
+          <ngx-select
+            [form]="form"
+            control="goodStatus"
+            (fetchItems)="getStatus($event)"
+            [data]="statusSelect"
+            label="Estatus Bien"
+            bindLabel="description"
+            value="status">
+          </ngx-select>
+          <!--<app-goods-status-shared [form]="form"></app-goods-status-shared>-->
         </div>
         <div class="col-md-6">
-          <app-label-good-shared [form]="form"></app-label-good-shared>
+          <ngx-select
+            [form]="form"
+            control="targetIndicator"
+            (fetchItems)="getLabel($event)"
+            [data]="labelSelect"
+            label="Identificador Destino"
+            bindLabel="description"
+            value="id">
+          </ngx-select>
+          <!--<app-label-good-shared [form]="form"></app-label-good-shared>-->
         </div>
       </div>
     </form>
@@ -18,17 +36,12 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [type]="'button'"
           [disabled]="!form.valid"
           [loading]="loading"
-          [btnSmall]="true"
           (confirm)="createDonation()"></confirm-button>
       </div>
       <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-danger btn-sm active"
-          (click)="close()">
+        <button type="button" class="btn btn-danger active" (click)="close()">
           Cancelar
         </button>
       </div>

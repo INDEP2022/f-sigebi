@@ -1,0 +1,28 @@
+:host ::ng-deep accordion {
+  ::ng-deep {
+    .panel-default > .panel-heading + .panel-collapse > .panel-body {
+      padding: 0px !important;
+
+      app-card {
+        .card {
+          box-shadow: 0 0 !important;
+          .card-block {
+            padding: 20px 20px 0px !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+:host ::ng-deep app-select-modal-table-shared {
+  form-field {
+    .float-label {
+      top: -18px !important;
+    }
+  }
+}
+
+ng-custom-select-loading {
+  padding-left: 2px;
+}

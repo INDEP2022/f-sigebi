@@ -4,26 +4,31 @@
   </div>
 
   <div body>
-    <div class="row pt-4">
+    <div class="row">
       <div class="ch-content">
         <h5 class="title">Clasificación Instituciones</h5>
-        <div class="col-md-5 buttons">
-          <div>
-            <app-columns-select [(settings)]="settings"></app-columns-select>
-            <button
-              class="btn btn-primary active btn-sm ml-3"
-              (click)="openForm2()">
-              Nuevo
-            </button>
-          </div>
+      </div>
+      <div class="col-md-8 mt-3 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+        <div>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm2()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
-      <div class="pt-4 col-md-12">
+    </div>
+    <div class="row">
+      <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
-            [source]="institutionClassificationList"
+            [source]="data"
             (edit)="openForm2($event.data)"
             (delete)="showDeleteAlert2($event.data)"
             (userRowSelect)="rowsSelected($event)"
@@ -35,26 +40,33 @@
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
 
-    <div class="row pt-4" *ngIf="totalItems2 > 0">
+    <div class="row">
       <div class="ch-content">
-        <h5 class="title">Autoridades Emisoraas</h5>
-        <div class="col-md-5 buttons">
-          <div>
-            <app-columns-select [(settings)]="settings2"></app-columns-select>
-            <button
-              class="btn btn-primary active btn-sm ml-3"
-              (click)="openForm()">
-              Nuevo
-            </button>
-          </div>
-        </div>
+        <h5 class="title">Autoridades Emisoras</h5>
       </div>
-      <div class="pt-4 col-md-12">
+      <div class="col-md-8 mt-3 mb-3"></div>
+      <div
+        class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3"
+        *ngIf="rowSelected">
+        <div>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+        <app-columns-select [(settings)]="settings2"></app-columns-select>
+      </div>
+
+      <div class="col-md-12" *ngIf="rowSelected">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settings2"
-            [source]="issuingInstitutionList"
+            [source]="data1"
             (edit)="openForm($event.data)"
             (delete)="showDeleteAlert($event.data)">
           </ng2-smart-table>

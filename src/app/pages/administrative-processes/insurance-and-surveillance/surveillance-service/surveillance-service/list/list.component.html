@@ -1,0 +1,36 @@
+<app-modal>
+  <div class="w-100" header>
+    <div class="d-flex flex-wrap justify-content-between aling-items-center">
+      <h5 class="modal-title">{{ title }}</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="row pt-4">
+      <form-loader *ngIf="loading"></form-loader>
+      <div class="col-md-12">
+        <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
+            [settings]="settings"
+            [source]="data1">
+          </ng2-smart-table>
+        </ng-scrollbar>
+        <!-- </div> -->
+      </div>
+      <app-pagination [params]="paramsList" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+  </div>
+  <div footer>
+    <div class="text-center">
+      <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
+      <button class="btn btn-primary active mb-4" (click)="close()">
+        Cerrar
+      </button>
+    </div>
+  </div>
+</app-modal>

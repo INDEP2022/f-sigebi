@@ -1,0 +1,35 @@
+:host ::ng-deep accordion {
+  ::ng-deep {
+    .panel-default > .panel-heading + .panel-collapse > .panel-body {
+      padding: 0px !important;
+
+      app-card {
+        .card {
+          box-shadow: 0 0 !important;
+          .card-block {
+            padding: 20px 20px 0px !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+.cantidad {
+  border-radius: 10px;
+  border: 1px solid #eaeaeaea;
+  // width: 150px;
+  padding: 8px 10px;
+  position: relative;
+  top: -19px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 0px 20px 0px rgba(69, 90, 100, 0.08) !important;
+
+  @media screen and (max-width: 576px) {
+    margin-top: 10px;
+  }
+}

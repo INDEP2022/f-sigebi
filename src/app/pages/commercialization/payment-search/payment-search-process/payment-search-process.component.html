@@ -1,0 +1,48 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Cambiar Proceso</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <form-field [control]="form.get('process')" label="Nuevo Proceso">
+            <ng-select
+              formControlName="process"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="0">Realizados</ng-option>
+              <ng-option value="1">Duplicados</ng-option>
+              <ng-option value="2">No Referenciados</ng-option>
+              <ng-option value="3">Efectivo</ng-option>
+              <ng-option value="4">Iconsistencia</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="submit"
+          class="btn btn-sm btn-primary btn-sm active"
+          (click)="execute()"
+          [disabled]="!form.valid">
+          Cambiar <i class="fas fa-sync-alt"> </i>
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -3,16 +3,19 @@ export const TYPESINISTER_COLUMS = {
     title: 'Registro',
     type: 'number',
     sort: false,
+    width: '10%',
   },
   description: {
     title: 'Descripción',
     type: 'string',
     editable: true,
     sort: false,
+    width: '70%',
   },
-  noRegistre: {
-    title: 'Numero de registro',
-    type: 'number',
+  flag: {
+    title: 'Bandera',
+    type: 'string',
     sort: false,
+    width: '10%',
   },
 };

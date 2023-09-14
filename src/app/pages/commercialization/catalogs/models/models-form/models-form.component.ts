@@ -1,8 +1,11 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IParameterComer } from 'src/app/core/models/catalogs/parameter-comer.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { ModelsService } from '../models.service';
 
 @Component({
   selector: 'app-models-form',
@@ -10,15 +13,16 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class ModelsFormComponent extends BasePage implements OnInit {
-  status: string = 'Nueva';
+  modelForm: ModelForm<IParameterComer>;
+  title: string = 'Modelo';
   edit: boolean = false;
+  parameterComer: IParameterComer;
 
-  form: FormGroup = new FormGroup({});
-  model: any;
-
-  @Output() refresh = new EventEmitter<true>();
-
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private modelServices: ModelsService
+  ) {
     super();
   }
 
@@ -27,46 +31,72 @@ export class ModelsFormComponent extends BasePage implements OnInit {
   }
 
   prepareForm() {
-    this.form = this.fb.group({
-      model: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+    this.modelForm = this.fb.group({
+      id: [null, [Validators.pattern(STRING_PATTERN)]],
+      modelComment: [null, [Validators.pattern(STRING_PATTERN)]],
+      nbOrigin: [null, [Validators.pattern(STRING_PATTERN)]],
     });
-
-    if (this.edit) {
-      //console.log(this.brand)
-      this.status = 'Actualizar';
-      this.form.patchValue(this.model);
+    if (this.parameterComer != null) {
+      this.edit = true;
+      this.modelForm.patchValue(this.parameterComer);
     }
-  }
-
-  confirm() {
-    this.edit ? this.update() : this.create();
   }
 
   close() {
     this.modalRef.hide();
   }
 
-  create() {
-    this.loading = true;
-    this.handleSuccess();
-    /*this.bankService.create(this.form.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );*/
-  }
-
-  handleSuccess() {
-    this.loading = false;
-    this.refresh.emit(true);
-    this.modalRef.hide();
+  confirm() {
+    this.edit ? this.update() : this.create();
   }
 
   update() {
     this.loading = true;
-    this.handleSuccess();
-    /*this.bankService.update(this.bank.bankCode, this.form.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );*/
+    this.modelServices
+      .update(this.parameterComer.id, this.modelForm.value)
+      .subscribe({
+        next: data => {
+          this.handleSuccess();
+          this.modalRef.hide();
+        },
+        error: error => {
+          this.loading = false;
+          this.alert('warning', `No es Posible Actualizar el Modelo`, '');
+          this.modalRef.hide();
+        },
+      });
+    this.modalRef.hide();
+  }
+
+  create() {
+    this.loading = true;
+    if (this.modelForm.valid) {
+      this.modelServices.create(this.modelForm.value).subscribe({
+        next: data => {
+          this.loading = false;
+          this.handleSuccess();
+          this.modalRef.hide();
+        },
+        error: error => {
+          this.alert('warning', `No es Posible Crear el Modelo`, '');
+          this.loading = false;
+        },
+      });
+    } else {
+      this.alert(
+        'warning',
+        'El Formulario no es Válido. Revise los Campos Requeridos',
+        ''
+      );
+      this.loading = false;
+    }
+  }
+
+  handleSuccess() {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.alert('success', `${message} Correctamente`, '');
+    this.loading = false;
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
   }
 }

@@ -98,6 +98,7 @@ const routes: Routes = [
     path: 'states',
     loadChildren: async () =>
       (await import('./states/states.module')).StatesModule,
+    data: { title: 'Estados' },
   },
   {
     path: 'sat-clasification',
@@ -499,7 +500,7 @@ const routes: Routes = [
     path: 'edos-x-coor',
     loadChildren: async () =>
       (await import('./edos-x-coor/edos-x-coor.module')).EdosXCoorModule,
-    data: { title: 'Lista de Edos X Coor' },
+    data: { title: 'Lista de Estados por Coordinación' },
   },
   {
     path: 'station',
@@ -512,7 +513,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./third-party-company/third-party-company.module'))
         .ThirdPartyCompanyModule,
-    data: { title: 'Lista de Emisoras' },
+    data: { title: 'Lista de Empresas de Terceros' },
   },
   {
     path: 'status-transfer',

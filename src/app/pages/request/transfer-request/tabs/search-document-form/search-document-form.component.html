@@ -5,7 +5,7 @@
       (click)="showSearchForm = true"
       *ngIf="!showSearchForm">
       <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
-      documentos</a
+      Documentos</a
     >
   </p>
 
@@ -15,7 +15,7 @@
       (click)="showSearchForm = false"
       *ngIf="showSearchForm">
       <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
-      documentos</a
+      Documentos</a
     >
   </p>
 </h5>
@@ -42,7 +42,7 @@
             [data]="typeDocuments"
             value="ddocType"
             bindLabel="ddescription"
-            label="Tipo de documento"
+            label="Tipo de Documento"
             (fetchItems)="getTypeDocumentSelect($event)">
           </ngx-select>
         </form-field>
@@ -53,7 +53,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchForm.get('dDocTitle')"
-          label="T&iacute;tulo del documento">
+          label="T&iacute;tulo del Documento">
           <input
             type="text"
             maxlength="30"
@@ -62,7 +62,7 @@
         </form-field>
       </div>
       <div class="col-md-4">
-        <form-field [control]="searchForm.get('xIdSIAB')" label="No&#46; siab">
+        <form-field [control]="searchForm.get('xIdSIAB')" label="No&#46; Siab">
           <input
             type="number"
             class="form-control"
@@ -73,7 +73,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchForm.get('xcargoRemitente')"
-          label="Cargo remitente">
+          label="Cargo Remitente">
           <input
             type="text"
             maxlength="100"
@@ -96,7 +96,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchForm.get('xtipoTransferencia')"
-          label="Tipo transferencia">
+          label="Tipo Transferencia">
           <input
             type="text"
             maxlength="30"
@@ -121,7 +121,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchForm.get('dDocName')"
-          label="Nombre documento">
+          label="Nombre Documento">
           <input
             type="text"
             maxlength="100"
@@ -159,7 +159,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchForm.get('xidExpediente')"
-          label="No&#46; expediente">
+          label="No&#46; Expediente">
           <input
             type="number"
             class="form-control"
@@ -183,7 +183,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchForm.get('xnoOficio')"
-          label="No&#46; oficio">
+          label="No&#46; Oficio">
           <input
             type="text"
             maxlength="30"
@@ -197,7 +197,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchForm.get('xidSolicitud')"
-          label="No&#46; solicitud">
+          label="No&#46; Solicitud">
           <input
             type="number"
             class="form-control"
@@ -231,7 +231,7 @@
 
     <div class="row pt-3">
       <div class="col-md-4">
-        <form-field [control]="searchForm.get('xidBien')" label="No&#46; bien">
+        <form-field [control]="searchForm.get('xidBien')" label="No&#46; Bien">
           <input
             type="text"
             class="form-control"
@@ -254,23 +254,28 @@
 
 <div class="form-inline justify-content-end btn-toolbar">
   <button class="btn btn-primary btn-sm active" (click)="search()">
-    <i class="fa fa-search"></i> Buscar
+    Buscar <i class="fa fa-search"></i>
   </button>
 
   <button
     *ngIf="showSearchForm"
     class="btn btn-danger btn-sm active"
     (click)="clean()">
-    Limpiar
+    Limpiar <i class="fas fa-eraser"> </i>
   </button>
 </div>
 
 <div class="row">
-  <div class="btn-toolbar pt-5">
-    <app-columns-select [(settings)]="settings"></app-columns-select>
-    <button (click)="newDocument()" class="btn btn-primary btn-sm active">
-      <i class="fa fa-file-archive"></i> Nuevo documento
-    </button>
+  <div class="d-flex btn-toolbar pt-5">
+    <div class="mr-auto p-2"></div>
+    <div class="p-2">
+      <button (click)="newDocument()" class="btn btn-primary btn-sm active">
+        Nuevo Documento <i class="fa fa-file"></i>
+      </button>
+    </div>
+    <div class="p-2">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
   </div>
 
   <div class="row pt-4">

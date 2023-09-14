@@ -6,14 +6,32 @@
     <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <app-delegation-shared
-            [form]="form"
-            [showSubdelegation]="false"></app-delegation-shared>
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getDelegations($event)"
+              [data]="delegations"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'delegation'"
+              (change)="getDelegations($event)">
+            </ngx-select>
+          </form-field>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <app-delegation-shared
-            [form]="form"
-            [showDelegation]="false"></app-delegation-shared>
+          <form-field [control]="form.get('subdelegation')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getSubdelegations($event)"
+              [data]="subdelegations"
+              value="id"
+              bindLabel="description"
+              label="Sub Delegaci&oacute;n"
+              [control]="'subdelegation'"
+              (change)="getSubdelegations($event)">
+            </ngx-select>
+          </form-field>
         </div>
       </div>
       <div class="row mt-5">
@@ -34,6 +52,14 @@
               type="text"
               class="form-control"
               formControlName="dateFinish"
+              [min]="form.get('dateInitRatification').value"
+              [minDate]="form.get('dateInitRatification').value"
+              [ngModel]="
+                form.get('dateFinish').value <
+                form.get('dateInitRatification').value
+                  ? form.get('dateInitRatification').value
+                  : form.get('dateFinish').value
+              "
               bsDatepicker />
           </form-field>
         </div>
@@ -43,48 +69,109 @@
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('atFile')" label="Al Expediente">
-            <input type="text" class="form-control" formControlName="atFile" />
+          <form-field [control]="form.get('atFile')" label="al Expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="atFile"
+              [min]="form.get('ofFile').value"
+              [ngModel]="
+                form.get('atFile').value < form.get('ofFile').value
+                  ? form.get('ofFile').value
+                  : form.get('atFile').value
+              " />
           </form-field>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
           <form-field [control]="form.get('ofgood')" label="Del Bien">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="ofgood"
-              bsDatepicker />
+            <input type="text" class="form-control" formControlName="ofgood" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-          <form-field [control]="form.get('atgood')" label="Al Bien">
+          <form-field [control]="form.get('atgood')" label="al Bien">
             <input
               type="text"
               class="form-control"
               formControlName="atgood"
-              bsDatepicker />
+              [min]="form.get('ofgood').value"
+              [ngModel]="
+                form.get('atgood').value < form.get('ofgood').value
+                  ? form.get('ofgood').value
+                  : form.get('atgood').value
+              " />
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <app-user-shared
+        <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+          <ngx-select
             [form]="form"
-            [userField]="'capturingUser'"
-            [label]="'Usuario que Ratifica'"></app-user-shared>
+            [data]="users$"
+            (change)="getDescUserPuesto($event)"
+            (fetchItems)="getUsers($event)"
+            bindLabel="userAndName"
+            control="capturingUser"
+            label="Usuario que Ratifica"
+            [searchOnInit]="true"
+            [showTooltip]="true"
+            termMaxLength="30"
+            [labelTemplate]="userLabel"
+            [optionTemplate]="userOption">
+          </ngx-select>
+          <ng-template #userLabel let-item="item">
+            {{ item.id }} - {{ item.name }}
+          </ng-template>
+          <ng-template #userOption let-item="item">
+            <div [title]="item.id + '-' + item.name">
+              {{ item.id }} - {{ item.name }}
+            </div>
+          </ng-template>
         </div>
+        <form-field [control]="form.get('user')">
+          <input type="hidden" class="form-control" formControlName="user" />
+        </form-field>
       </div>
     </form>
   </div>
+  <!-- <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="submit"
+          class="btn btn-primary active"
+          [disabled]="!form.valid"
+          (click)="confirm()">
+          Imprimir
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          (click)="cleanForm()"
+          type="button"
+          class="btn btn-danger active">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div> -->
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          text="Imprimir"
+        <!-- <button
+          type="button"
           [disabled]="form.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
-        </confirm-button>
+          class="btn btn-primary active btn-sm"
+          (click)="confirm()">
+          Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+        </button> -->
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="cleanForm()">
+          Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+        </button>
       </div>
     </div>
   </div>

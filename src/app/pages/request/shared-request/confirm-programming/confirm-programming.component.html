@@ -1,20 +1,37 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Datos del firmante</h5>
+    <h5 class="modal-title">Captura datos del firmante</h5>
   </div>
   <div body>
     <form [formGroup]="confirmForm" class="form-material">
       <div class="row">
         <form-field
-          [control]="confirmForm.get('name')"
-          label="Nombre del firmate">
-          <input type="text" class="form-control" formControlName="name" />
+          [control]="confirmForm.get('nameSignatore')"
+          label="Nombre del Firmante">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="nameSignatore" />
         </form-field>
       </div>
       <div class="row pt-4">
-        <form-field [control]="confirmForm.get('charge')" label="Cargo">
-          <input type="text" class="form-control" formControlName="charge" />
+        <form-field
+          [control]="confirmForm.get('chargeSignatore')"
+          label="Cargo">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="chargeSignatore" />
         </form-field>
+      </div>
+      <div class="row pt-4" *ngIf="type == 'order-service'">
+        <form-check label="Firma electrónica" for="firma">
+          <input
+            id="firma"
+            type="checkbox"
+            [(ngModel)]="electronicSignature"
+            [ngModelOptions]="{ standalone: true }" />
+        </form-check>
       </div>
     </form>
   </div>

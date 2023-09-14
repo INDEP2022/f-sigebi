@@ -1,69 +1,116 @@
-<form class="form-material" [formGroup]="inventoryDataForm">
+<div class="row">
   <div class="row">
-    <div class="col">
-      <form-field
-        [control]="inventoryDataForm.get('noInventario')"
-        label="No. Inventario">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="noInventario" />
-      </form-field>
+    <div class="col-md-8">
+      <p><strong>Seleccione un Inventario</strong></p>
     </div>
-    <div class="col">
-      <form-field
-        [control]="inventoryDataForm.get('fechaInventario')"
-        label="Fecha Inventario">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="fechaInventario"
-          bsDatepicker />
-      </form-field>
-    </div>
-    <div class="col">
-      <form-field
-        [control]="inventoryDataForm.get('responsable')"
-        label="Responsable">
-        <input type="text" class="form-control" formControlName="responsable" />
-      </form-field>
+    <div class="col-md-4" *ngIf="inventorySelect">
+      <p>
+        Inventario Seleccionado:
+        <strong>{{
+          inventorySelect ? inventorySelect.inventoryNumber : ''
+        }}</strong>
+      </p>
     </div>
   </div>
   <div class="row">
-    <div class="col-md-3">
-      <button class="btn btn-secondary btn-sm active">Obtener Atributos</button>
+    <div class="col-md-12">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="dataLoand"
+          (rowSelect)="selectInventory($event)">
+        </ng2-smart-table>
+      </div>
     </div>
-    <div class="col">
-      <ng-scrollbar style="height: calc(100vh - 700px)">
-        <div class="css-table" style="width: 100%">
-          <div class="css-table-header">
-            <div style="width: 50%">Atributo</div>
-            <div style="width: 50%">Valor</div>
-          </div>
-
-          <div class="css-table-body">
-            <div class="css-table-row" *ngFor="let item of list">
-              <div style="text-align: end; font-weight: bold">
-                {{ item.atributo }}
-              </div>
-              <div>
-                <input
-                  type="text"
-                  class="form-control"
-                  [value]="item.valor"
-                  style="background-color: #afeeee" />
-              </div>
-            </div>
-          </div>
+  </div>
+  <div class="row">
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+</div>
+<div class="row">
+  <form class="form-material" [formGroup]="inventoryDataForm">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="inventoryDataForm.get('fechaInventario')"
+            label="Fecha Inventario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fechaInventario"
+              bsDatepicker />
+          </form-field>
         </div>
-      </ng-scrollbar>
+        <div class="col-md-6">
+          <form-field
+            [control]="inventoryDataForm.get('responsable')"
+            label="Responsable">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="responsable"
+              maxlength="60" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="row">
+  <div class="col-md-3">
+    <div class="row">
+      <div class="col-md-10">
+        <button
+          [disabled]="generateAtri"
+          class="btn btn-primary btn-sm active"
+          (click)="generateAtribute()">
+          {{ atribute }}&nbsp;
+        </button>
+      </div>
+    </div>
+    <br />
+    <div class="row">
+      <div class="col-md-10">
+        <button (click)="add()" class="btn btn-primary active btn-sm">
+          {{ textButon }}
+          <i *ngIf="textButon.includes('Actualizar')" class="fas fa-sync-alt">
+          </i>
+        </button>
+      </div>
+    </div>
+    <br />
+  </div>
+  <div class="col">
+    <div class="row" *ngIf="viewAct">
+      <app-characteristics-legend></app-characteristics-legend>
+      <app-good-characteristics-table
+        [goodChange]="goodChange"
+        [clasification]="classificationOfGoods"
+        [settings]="atributActSettings"
+        [avaluo]="false"
+        [good]="good"
+        [disabled]="false"
+        [loadInventary]="loadInventary"
+        [inventary]="inventary"
+        [initValue]="true"
+        [service]="service"></app-good-characteristics-table>
+    </div>
+    <div class="row" *ngIf="!viewAct">
+      <app-characteristics-legend></app-characteristics-legend>
+      <app-good-characteristics-table
+        [goodChange]="goodChange"
+        [clasification]="classificationOfGoods"
+        [settings]="atributActSettings"
+        [avaluo]="false"
+        [good]="good"
+        [disabled]="false"
+        [loadInventary]="loadInventary"
+        [inventary]="inventary"
+        [initValue]="false"
+        [service]="service"></app-good-characteristics-table>
     </div>
   </div>
-  <div class="d-flex justify-content-center">
-    <div>
-      <button class="btn btn-secondary btn-sm active">
-        Inventario Autoridad Emisora
-      </button>
-    </div>
-  </div>
-</form>
+</div>

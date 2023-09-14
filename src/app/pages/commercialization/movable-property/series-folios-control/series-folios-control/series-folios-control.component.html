@@ -2,51 +2,122 @@
   <div header>
     <div class="ch-content">
       <h5 class="title">CONTROL DE SERIES Y FOLIOS</h5>
-      <div class="row justify-content-end pt-3 mr-3">
+      <!-- <div class="row justify-content-end pt-3 mr-3">
         <app-columns-select [(settings)]="settings"></app-columns-select>
-      </div>
+      </div> -->
     </div>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
-      <div class="row">
-        <div class="col-md-4">
-          <h5 class="font-size-14 d-inline">Seleccione Coordinaci&oacute;n</h5>
-          <ngx-select
-            [form]="form"
-            [data]="coordItems"
-            value="id"
-            bindLabel="name"
-            (fetchItems)="getCoord($event)"
-            (change)="selectCoord($event)"
-            control="id">
-          </ngx-select>
-        </div>
+    <div class="d-flex justify-content-end">
+      <div class="d-inline">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active mr-3"
+          (click)="getInvoiceFolio()">
+          Consultar Todos <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
       </div>
-    </form>
-    <div *ngIf="selectedCoord != null">
-      <div class="row pt-5">
-        <ng2-smart-table
-          [settings]="settings"
-          [source]="data"
-          (edit)="openForm($event.data)"></ng2-smart-table>
-      </div>
-      <div class="row pt-5">
-        <div class="ch-title">
-          <h5 class="title">Tipo de eventos por serie</h5>
-        </div>
-        <ng2-smart-table
-          [settings]="settings1"
-          [source]="data1"></ng2-smart-table>
-      </div>
-      <div class="row pt-5">
-        <div class="ch-title">
-          <h5 class="title">Folios apartados</h5>
-        </div>
-        <ng2-smart-table
-          [settings]="settings2"
-          [source]="data2"></ng2-smart-table>
+      <div class="d-inline">
+        <button
+          type="button"
+          class="btn btn-info btn-sm active mr-3"
+          (click)="openForm()">
+          Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+        </button>
       </div>
     </div>
+    <div class="row">
+      <div class="ch-title">
+        <h5 class="title">
+          Folios
+          <small
+            >(Seleccione un folio para consultar Tipo Eventos por Serie y Folios
+            Apartados)</small
+          >
+        </h5>
+      </div>
+      <div class="d-flex justify-content-end mb-3">
+        <app-columns-select
+          [(settings)]="settings"
+          [leftList]="true"
+          [defaultColumns]="7"></app-columns-select>
+      </div>
+      <form-loader *ngIf="loading"></form-loader>
+      <div>
+        <ng2-smart-table
+          [ngStyle]="{ height: loading ? '0px' : 'auto' }"
+          [attr.class]="'table-bordered table-responsive mb-4'"
+          [settings]="settings"
+          [source]="dataFilter"
+          (edit)="openForm($event.data)"
+          (userRowSelect)="
+            getInvoiceFolioSeparate($event.data); getEventXSerie($event.data)
+          "
+          (delete)="remove('folio', $event.data)">
+        </ng2-smart-table>
+      </div>
+      <app-pagination [params]="paramsList" [totalItems]="totalItems">
+      </app-pagination>
+      <!-- <app-pagination [filterParams]="filter" [totalItems]="totalItems"></app-pagination> -->
+    </div>
+    <div class="row pt-5" #content>
+      <div class="col-md-6">
+        <div class="d-flex justify-content-end">
+          <div class="d-inline">
+            <button
+              type="button"
+              class="btn btn-info btn-sm active mr-3"
+              (click)="openFormEvent()">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+        <div class="ch-title">
+          <h5 class="title">Tipo de Eventos por Serie</h5>
+        </div>
+        <form-loader *ngIf="loading3"></form-loader>
+        <div>
+          <ng2-smart-table
+            [ngStyle]="{ height: loading ? '0px' : 'auto' }"
+            [attr.class]="'table-bordered table-responsive mb-4'"
+            [settings]="settings1"
+            [source]="dataFilter3"
+            (edit)="openFormEvent($event.data)"
+            (delete)="remove('serie', $event.data)">
+          </ng2-smart-table>
+        </div>
+        <app-pagination [params]="paramsList3" [totalItems]="totalItems3">
+        </app-pagination>
+      </div>
+      <div class="col-md-6">
+        <div class="d-flex justify-content-end">
+          <div class="d-inline">
+            <button
+              type="button"
+              class="btn btn-info btn-sm active mr-3"
+              (click)="openFormSeparate()">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+        <div class="ch-title">
+          <h5 class="title">Folios Apartados</h5>
+        </div>
+        <form-loader *ngIf="loading2"></form-loader>
+        <div>
+          <ng2-smart-table
+            [ngStyle]="{ height: loading ? '0px' : 'auto' }"
+            [attr.class]="'table-bordered table-responsive mb-4'"
+            [settings]="settings2"
+            [source]="dataFilter2"
+            (edit)="openFormSeparate($event.data)"
+            (delete)="remove('apartado', $event.data)">
+          </ng2-smart-table>
+        </div>
+        <app-pagination [params]="paramsList2" [totalItems]="totalItems2">
+        </app-pagination>
+      </div>
+    </div>
+    <div class="row pt-5"></div>
   </div>
 </app-card>

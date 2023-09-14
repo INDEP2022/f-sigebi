@@ -1,11 +1,7 @@
 //Components
 
 export const COLUMNS = {
-  goodId: {
-    title: '-No. Bien',
-    sort: false,
-  },
-  number: {
+  periodEndDate: {
     title: 'Fecha Término',
     sort: false,
   },
@@ -13,31 +9,31 @@ export const COLUMNS = {
     title: 'Fecha Notificación',
     sort: false,
   },
-  conduct: {
-    title: '*Conducto',
+  duct: {
+    title: 'Conducto',
     sort: false,
   },
   notifiedTo: {
     title: 'Notificado a',
     sort: false,
   },
-  placeNotify: {
+  notifiedPlace: {
     title: 'Lugar',
     sort: false,
   },
-  publishdate: {
-    title: '*Fecha Publicación',
+  editPublicationDate: {
+    title: 'Fecha Publicación',
     sort: false,
   },
-  observations: {
+  newspaperPublication: {
+    title: 'Periodico de publicación',
+    sort: false,
+  },
+  observation: {
     title: 'Observaciones',
     sort: false,
   },
-  description: {
-    title: 'Descripcion',
-    sort: false,
-  },
-  status: {
+  statusNotified: {
     title: 'Estatus',
     sort: false,
   },

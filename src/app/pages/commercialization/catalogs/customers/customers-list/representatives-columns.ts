@@ -1,58 +1,71 @@
+import { CustomDateDayFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
+
 export const REPRESENTATIVES_COLUMNS = {
   id: {
-    title: 'Clave representantes',
+    title: 'Clave Representante',
     sort: false,
   },
   reasonName: {
-    title: 'Nombre razón',
+    title: 'Nombre o Razón Social',
     sort: false,
   },
   paternalSurname: {
-    title: 'Apellido paterno',
+    title: 'Apellido Paterno',
     sort: false,
   },
   maternalSurname: {
-    title: 'Apellido materno',
+    title: 'Apellido Materno',
     sort: false,
   },
   dateBorn: {
-    title: 'Fecha de nacimiento',
+    title: 'Fecha de Nacimiento',
     sort: false,
+    valuePrepareFunction: (date: string) => {
+      const dateObj = new Date(date);
+      const day = dateObj.getDate().toString().padStart(2, '0');
+      const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+      const year = dateObj.getFullYear();
+      return `${day}/${month}/${year}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateDayFilterComponent,
+    },
   },
   rfc: {
     title: 'Registro Federal de Contribuyentes',
     sort: false,
   },
   curp: {
-    title: 'Clave única de registro de población',
+    title: 'Clave Única de Registro de Población',
     sort: false,
   },
   personType: {
-    title: 'Tipo de persona',
+    title: 'Tipo de Persona',
     sort: false,
   },
   identificationType: {
-    title: 'Tipo de identificación',
+    title: 'Tipo de Identificación',
     sort: false,
   },
   autEmiIndentify: {
-    title: 'Autorizador de emisión de identificación',
+    title: 'Autorizador de Emisión de Identificación',
     sort: false,
   },
   identificationNumber: {
-    title: 'Número de identificación',
+    title: 'Número de Identificación',
     sort: false,
   },
   escrowNumber: {
-    title: 'Número de fideicomiso',
+    title: 'Número de Fideicomiso',
     sort: false,
   },
   nationalityKey: {
-    title: 'Clave de nacionalidad',
+    title: 'Clave de Nacionalidad',
     sort: false,
   },
   countryOriginKey: {
-    title: 'Clave de país de nacimiento',
+    title: 'Clave de País de Nacimiento',
     sort: false,
   },
   street: {
@@ -60,11 +73,11 @@ export const REPRESENTATIVES_COLUMNS = {
     sort: false,
   },
   outsideNumber: {
-    title: 'Número exterior',
+    title: 'Número Exterior',
     sort: false,
   },
   insisdeNumber: {
-    title: 'Número interior',
+    title: 'Número Interior',
     sort: false,
   },
   city: {
@@ -88,7 +101,7 @@ export const REPRESENTATIVES_COLUMNS = {
     sort: false,
   },
   homeCountryKey: {
-    title: 'Clave de país domicilio',
+    title: 'Clave de País Domicilio',
     sort: false,
   },
   fax: {
@@ -96,7 +109,7 @@ export const REPRESENTATIVES_COLUMNS = {
     sort: false,
   },
   countryPhoneKey: {
-    title: 'Clave de teléfono del país',
+    title: 'Clave de Teléfono del País',
     sort: false,
   },
   phone: {
@@ -104,15 +117,15 @@ export const REPRESENTATIVES_COLUMNS = {
     sort: false,
   },
   mailWeb: {
-    title: 'Correo electrónico',
+    title: 'Correo Electrónico',
     sort: false,
   },
   ecoActivityKey: {
-    title: 'Clave de actividad económica',
+    title: 'Clave de Actividad Económica',
     sort: false,
   },
   repAssociatedId: {
-    title: 'Clave representante asociado',
+    title: 'Clave Representante Asociado',
     sort: false,
   },
   registerNumber: {

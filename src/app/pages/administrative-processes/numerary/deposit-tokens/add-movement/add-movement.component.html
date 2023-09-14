@@ -1,0 +1,131 @@
+<app-modal>
+  <div class="w-100 mt-3" header>
+    <div class="d-flex flex-wrap justify-content-between aling-items-center">
+      <h5 class="modal-title">
+        {{ valEdit ? 'Editar' : 'Agregar' }} {{ title }}
+      </h5>
+      <!-- <div class="buttons">
+        <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
+          Cerrar
+        </button>
+      </div> -->
+    </div>
+  </div>
+  <div body>
+    <div class="col-12 mb-3">
+      <form class="form-material" [formGroup]="form">
+        <div class="row">
+          <div class="col-6 mt-4">
+            <div class="row">
+              <div class="col-md-12 mt-3">
+                <form-field [control]="form.get('bank')">
+                  <ngx-select
+                    [readonly]="valEdit"
+                    [form]="form"
+                    [data]="banks"
+                    (fetchItems)="getBanks($event)"
+                    bindLabel="bankAndNumber"
+                    control="bank"
+                    label="Banco"
+                    [searchOnInit]="false"
+                    [showTooltip]="true"
+                    termMaxLength="30">
+                  </ngx-select>
+                </form-field>
+              </div>
+              <div class="col-md-12 mt-3">
+                <form-field
+                  [control]="form.get('dateMovement')"
+                  label="Fecha Depósito">
+                  <input
+                    (ngModelChange)="dateMovement($event)"
+                    [(ngModel)]="dateMovem"
+                    bsDatepicker
+                    [maxDate]="maxDate"
+                    type="text"
+                    class="form-control"
+                    formControlName="dateMovement"
+                    [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+                </form-field>
+              </div>
+              <div class="col-md-12 mt-3">
+                <form-field
+                  [control]="form.get('dateCalculationInterests')"
+                  label="Fecha TESOFE">
+                  <input
+                    (ngModelChange)="dateMovement2($event)"
+                    [(ngModel)]="dateMovem2"
+                    bsDatepicker
+                    type="text"
+                    class="form-control"
+                    formControlName="dateCalculationInterests"
+                    [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+                </form-field>
+              </div>
+              <!-- <form-field [control]="formCapture.get('fecEnd')" label="A">
+                <input type="text" class="form-control" bsDatepicker formControlName="fecEnd"
+                  [min]="formCapture.get('fecStart').value" [minDate]="formCapture.get('fecStart').value"
+                  [ngModel]="formCapture.get('fecEnd').value < formCapture.get('fecStart').value ? formCapture.get('fecStart').value : formCapture.get('fecEnd').value"
+                  bsDatepicker />
+              </form-field> -->
+            </div>
+          </div>
+          <div class="col-md-6 mt-4">
+            <div class="row">
+              <div class="col-md-12 mt-3">
+                <form-field [control]="form.get('category')">
+                  <ngx-select
+                    [form]="form"
+                    [data]="categories"
+                    (fetchItems)="getCategory($event)"
+                    bindLabel="categoryAndDesc"
+                    control="category"
+                    label="Categoría"
+                    [searchOnInit]="false"
+                    [showTooltip]="true"
+                    termMaxLength="30">
+                  </ngx-select>
+                </form-field>
+              </div>
+              <div class="col-md-12 mt-3">
+                <form-field [control]="form.get('deposit')" label="Cantidad">
+                  <input
+                    currencyMask
+                    type="text"
+                    class="form-control"
+                    formControlName="deposit" />
+                </form-field>
+              </div>
+              <div class="col-md-12 mt-3"></div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="row m-3">
+        <div class="col-6">
+          <button
+            type="button"
+            style="float: right"
+            [disabled]="!form.valid"
+            class="btn btn-primary btn-sm active"
+            (click)="save()">
+            Guardar
+            <i aria-hidden="true" class="fa fa-save"></i>
+          </button>
+        </div>
+        <div class="col-6" style="float: left">
+          <button
+            type="button"
+            class="btn btn-danger btn-sm active"
+            (click)="close()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal>

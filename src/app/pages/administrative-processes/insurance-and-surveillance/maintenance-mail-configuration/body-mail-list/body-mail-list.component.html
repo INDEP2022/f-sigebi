@@ -1,0 +1,63 @@
+<app-modal *ngIf="!plain">
+  <div header>
+    <h5 class="modal-title">DATOS GENERALES DEL CORREO</h5>
+  </div>
+  <div body>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <!--<form-loader *ngIf="loading"></form-loader>-->
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
+            [settings]="settings"
+            [source]="data"
+            (userRowSelect)="selectRow($event)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+      </div>
+    </div>
+    <app-pagination [params]="paramsList" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+
+  <ng-container *ngIf="plain">
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <!--<form-loader *ngIf="loading"></form-loader>-->
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
+            [settings]="settings"
+            [source]="data"
+            (userRowSelect)="selectRow($event.data)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+      </div>
+    </div>
+    <app-pagination [params]="paramsList" [totalItems]="totalItems">
+    </app-pagination>
+  </ng-container>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          class="btn btn-primary btn-sm active"
+          [disabled]="!rowSelected"
+          (click)="confirm()">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-danger btn-sm active mr-3" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

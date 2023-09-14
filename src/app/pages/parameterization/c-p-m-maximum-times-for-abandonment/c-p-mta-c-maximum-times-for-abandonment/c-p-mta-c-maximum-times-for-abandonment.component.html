@@ -4,14 +4,32 @@
   </div>
   <div body>
     <div class="row">
-      <div class="col-md-4">
+      <div class="col-md-8 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <div>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="pt-4 col-md-5">
         <div class="table-responsive">
           <ng2-smart-table
             [settings]="settings"
-            [source]="contentData.data"></ng2-smart-table>
+            [source]="dataTable"
+            (rowSelect)="selectRow($event.data)"></ng2-smart-table>
         </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
       </div>
-      <div class="col-md-8">
+      <div class="col-md-7">
         <div class="md-tabs">
           <tabset>
             <tab heading="NO MANIFESTADOS">
@@ -26,11 +44,11 @@
           </tabset>
         </div>
       </div>
-      <div class="col-12">
+      <!--<div class="col-12">
         <app-pagination
           [params]="params"
-          [totalItems]="contentData.count"></app-pagination>
-      </div>
+          [totalItems]="totalItems"></app-pagination>
+      </div>-->
     </div>
   </div>
 </app-card>

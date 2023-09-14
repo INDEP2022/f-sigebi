@@ -8,29 +8,32 @@
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('numberGoodFather')"
-            label="No Bien Padre">
+            label="No. Bien Padre">
             <input
               type="text"
               class="form-control"
-              formControlName="numberGoodFather" />
+              formControlName="numberGoodFather"
+              [readOnly]="true" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('numberDossier')"
-            label="No Expediente">
+            label="No. Expediente">
             <input
               type="text"
               class="form-control"
-              formControlName="numberDossier" />
+              formControlName="numberDossier"
+              [readOnly]="true" />
           </form-field>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('fileLoad')" label="Archivo a cargar">
+          <form-field [control]="form.get('fileLoad')" label="Nombre Archivo">
             <input
-              type="file"
+              type="text"
               class="form-control"
-              formControlName="fileLoad" />
+              formControlName="fileLoad"
+              readonly />
           </form-field>
         </div>
       </div>
@@ -45,8 +48,9 @@
   <div body>
     <ng2-smart-table
       [attr.class]="'table-bordered'"
-      [settings]="settings"
-      [source]="data">
+      [settings]="settings0"
+      [source]="data"
+      (userRowSelect)="rowsSelected($event)">
     </ng2-smart-table>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
@@ -55,7 +59,7 @@
 
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Registros erroneos</h5>
+    <h5 class="title">Registros erróneos</h5>
   </div>
   <div body>
     <ng2-smart-table
@@ -63,7 +67,7 @@
       [settings]="settings1"
       [source]="data1">
     </ng2-smart-table>
-    <app-pagination [params]="params" [totalItems]="totalItems">
+    <app-pagination [params]="params" [totalItems]="totalItems1">
     </app-pagination>
   </div>
 </app-card>
@@ -71,20 +75,35 @@
 <app-card>
   <div body>
     <div class="col-md-3 col-sm-6 col-xs-12">
-      <button class="btn btn-success btn-sm active" (click)="fileLoadBtn()">
-        Cargar archivo
+      <button
+        type="button"
+        class="btn btn-success btn-sm active"
+        (click)="file.click()">
+        Cargar Excel/CSV
+        <i aria-hidden="true" class="fa fa-upload"></i>
       </button>
+      <input
+        type="file"
+        name="file"
+        #file
+        class="d-none"
+        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+        (change)="onFileChange($event)" />
     </div>
 
-    <div class="col-md-3 col-sm-6 col-xs-12">
-      <button class="btn btn-info btn-sm active" (click)="enterGoods()">
-        Ingresar Bien
+    <div class="col-md-2 col-sm-6 col-xs-12">
+      <button
+        class="btn btn-info btn-sm active"
+        (click)="postDatatableItemBtn()"
+        [disabled]="!(totalItems > 0)">
+        Ingresar Bienes
       </button>
     </div>
-
+    <div class="col-md-4 col-sm-6 col-xs-12"></div>
     <div class="col-md-3 col-sm-6 col-xs-12">
-      <button class="btn btn-danger btn-sm active" (click)="exit()">
-        Salir
+      <button class="btn btn-primary active btn-sm m-2" (click)="exit()">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
       </button>
     </div>
   </div>

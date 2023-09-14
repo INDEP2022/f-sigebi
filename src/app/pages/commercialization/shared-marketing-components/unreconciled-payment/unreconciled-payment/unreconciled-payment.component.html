@@ -1,16 +1,95 @@
 <!--Unreconciled Payments-->
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">ENVÍO DE INF. DE PAGOS NO CONCILIADOS</h5>
-    <div class="col-md-5 buttons">
-      <app-columns-select
-        (settingsChange)="settingsChange($event)"
-        [settings]="settings"></app-columns-select>
-    </div>
+    <h5 class="title">ENVÍO DE PAGOS NO CONCILIADOS</h5>
   </div>
+
   <div body>
+    <div class="ch-content" header>
+      <div class="col-md-12 text-end">
+        <div class="row">
+          <div class="col-12 text-end">
+            <div class="row">
+              <div class="col-11 justify-content-end align-items-end mt-3 mb-3">
+                <!-- <button
+                  (click)="add()"
+                  type="button"
+                  containerClass="tooltip-style"
+                  class="btn btn-info btn-sm active mr-5"
+                  style="float: right">
+                  Agregar
+                  <i class="bx bx-plus bx-sm float-icon"></i>
+                </button> -->
+              </div>
+              <div class="col-md-1 text-end d-flex flex-row-reverse mt-3 mb-3">
+                <app-columns-select
+                  [(settings)]="settings"
+                  [leftList]="true"></app-columns-select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="col-md-5 buttons mb-3">
+        <div>
+          <div class="col-md-5 buttons">
+            <app-columns-select (settingsChange)="settingsChange($event)" [settings]="settings"></app-columns-select>
+          </div>
+        </div>
+      </div> -->
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <form-loader *ngIf="loading"></form-loader>
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
+            [settings]="settings"
+            [source]="data"
+            (edit)="edit($event.data)"
+            (userRowSelect)="rowsSelected($event)"
+            (delete)="questionDelete($event.data)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+
+    <div class="row text-center">
+      <div>
+        <!-- <div class="col-lg-3 col-md-3 col-sm-6 col-12 mb-3 mt-3"> -->
+        <button
+          [ngClass]="{ loading: loadingBtn }"
+          [disabled]="!valAcc || loadingBtn"
+          (click)="enviarSIRSAE()"
+          class="btn btn btn-primary active btn-sm">
+          Enviar SIRSAE <i *ngIf="!loadingBtn" class="bx bx-send"></i>
+        </button>
+        <!-- </div> -->
+      </div>
+    </div>
+    <!-- <form class="form-material" [formGroup]="form">
+      <div class="row mt-5">
+        <div class="col-12">
+          <form-field [control]="form.get('cadena')" label="Cadena">
+            <textarea
+              class="form-control"
+              cols="5"
+              rows="5"
+              formControlName="cadena"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form> -->
+  </div>
+  <!-- <div body>
     <div class="row mb-3 mt-3 justify-content-end">
-      <!--Actions-->
+      
       <div class="col-lg-3 col-md-3 col-sm-6 col-12 mb-3 mt-3">
         <button class="btn btn btn-success active btn-sm w-100">
           Enviar SIRSAE
@@ -30,5 +109,5 @@
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
-  </div>
+  </div> -->
 </app-card>

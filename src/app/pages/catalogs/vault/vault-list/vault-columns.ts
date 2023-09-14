@@ -24,7 +24,15 @@ export const VAULT_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value.nameCity;
+      return value != null ? value.nameCity : '';
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.nameCity;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
   stateDetail: {
@@ -32,23 +40,49 @@ export const VAULT_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value.descCondition;
+      return value != null ? value.descCondition : '';
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.descCondition;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
+
   municipalityDetail: {
     title: 'Municipio',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value.nameMunicipality;
+      return value != null ? value.nameMunicipality : '';
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.nameMunicipality;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
+
   localityDetail: {
     title: 'Localidad',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value.nameLocation;
+      return value != null ? value.nameLocation : '';
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.nameLocation;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
 };

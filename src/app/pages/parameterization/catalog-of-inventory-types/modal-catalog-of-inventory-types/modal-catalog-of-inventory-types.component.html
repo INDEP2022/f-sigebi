@@ -6,6 +6,14 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-6">
+          <form-field [control]="form.get('noTypeInventory')" label="Número">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noTypeInventory" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
           <form-field
             [control]="form.get('attributeInventory')"
             label="Atributo Inventario">
@@ -34,14 +42,12 @@
         <confirm-button
           type="button"
           [btnSmall]="true"
-          [disabled]="!form.valid"
-          (confirm)="confirm()"
-          [loading]="loading"></confirm-button>
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button
           type="button"
-          class="btn btn-primary btn-sm active"
+          class="btn btn-danger active btn-sm"
           (click)="close()">
           Cancelar
         </button>

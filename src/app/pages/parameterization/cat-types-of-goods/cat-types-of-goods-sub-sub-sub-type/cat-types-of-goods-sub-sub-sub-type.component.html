@@ -1,0 +1,45 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar' : 'Nuevo' }} SubSubSubTipo Bien
+    </h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="typeGoodsForm">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="typeGoodsForm.get('id')" label="No. Ssstipo">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="typeGoodsForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              class="form-control"
+              type="text"
+              formControlName="description"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="typeGoodsForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { IGeneric } from 'src/app/core/models/catalogs/generic.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { NormsDestinationComponent } from '../norms-destination/norms-destination.component';
 import { INorm } from './../../../../core/models/catalogs/norm.model';
@@ -43,18 +44,44 @@ export class NormsFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.normForm = this.fb.group({
-      norm: [null, [Validators.required]],
-      article: [null],
-      type: [null, [Validators.required]],
-      destination: [null, [Validators.required]],
-      name: [null, [Validators.required]],
-      characteristics: [null, [Validators.required]],
-      merchandise: [null, [Validators.required]],
-      fundament: [null, [Validators.required]],
-      objective: [null, [Validators.required]],
-      condition: [null],
+      id: [null],
+      norm: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      article: [
+        null,
+        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+      ],
+      type: [null],
+      destination: [null],
+      characteristics: [
+        null,
+        [Validators.maxLength(4000), Validators.pattern(STRING_PATTERN)],
+      ],
+      merchandise: [
+        null,
+        [Validators.maxLength(500), Validators.pattern(STRING_PATTERN)],
+      ],
+      fundament: [
+        null,
+        [Validators.maxLength(500), Validators.pattern(STRING_PATTERN)],
+      ],
+      objective: [
+        null,
+        [Validators.maxLength(4000), Validators.pattern(STRING_PATTERN)],
+      ],
+      condition: [
+        null,
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+      ],
       version: [null],
       status: [null],
+      name: [null, [Validators.required]],
     });
     this.normForm.controls['version'].setValue(1);
     this.normForm.controls['status'].setValue(1);
@@ -88,6 +115,14 @@ export class NormsFormComponent extends BasePage implements OnInit {
       version: this.normForm.controls['version'].value,
       status: this.normForm.controls['status'].value,
     };
+    if (
+      this.normForm.controls['norm'].value.trim() === '' ||
+      this.normForm.controls['destination'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
+    this.loading = true;
     this.normService.create(form).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
@@ -110,14 +145,27 @@ export class NormsFormComponent extends BasePage implements OnInit {
   }
   update() {
     this.loading = true;
-    this.normService.update(this.norm.id, this.normForm.value).subscribe({
+    let form = {
+      norm: this.normForm.controls['norm'].value,
+      article: this.normForm.controls['article'].value,
+      type: this.normForm.controls['type'].value,
+      destination: this.normForm.controls['destination'].value,
+      characteristics: this.normForm.controls['characteristics'].value,
+      merchandise: this.normForm.controls['merchandise'].value,
+      fundament: this.normForm.controls['fundament'].value,
+      objective: this.normForm.controls['objective'].value,
+      condition: this.normForm.controls['condition'].value,
+      version: this.normForm.controls['version'].value,
+      status: this.normForm.controls['status'].value,
+    };
+    this.normService.update(this.norm.id, form).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.refresh.emit(true);

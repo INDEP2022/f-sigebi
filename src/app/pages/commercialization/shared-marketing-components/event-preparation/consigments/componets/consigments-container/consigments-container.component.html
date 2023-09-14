@@ -1,0 +1,30 @@
+<div class="row">
+  <h6>{{ title }}</h6>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <consigments-events
+      [parameters]="parameters"
+      [preparation]="preparation"
+      [(eventSelected)]="eventSelected"
+      (exit)="
+        exit.emit({ refresh: false, preparation: preparation })
+      "></consigments-events>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-9">
+    <consigments-lots
+      [eventSelected]="eventSelected"
+      [(lotSelected)]="lotSelected"></consigments-lots>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <consigments-goods
+      [preparation]="preparation"
+      [lotSelected]="lotSelected"
+      [eventSelected]="eventSelected"
+      (onAccept)="confirm($event)"></consigments-goods>
+  </div>
+</div>

@@ -3,149 +3,391 @@
     <h5 class="title">Estado de cuenta (Depósito)</h5>
   </div>
   <div body>
-    <h5 class="title">Datos del Depósito</h5>
-    <div class="row mt-3 mb-3">
+    <div class="row mt-2 mb-1">
       <form action="" class="form-material" [formGroup]="form">
-        <div class="row mt-4">
-          <div class="col-md-3">
-            <form-field [control]="form.get('account')" label="Cuenta">
+        <h5 class="title">Datos del Depósito</h5>
+        <div class="row pb-4">
+          <div class="col text-right">
+            <div class="btn-group">
+              <button
+                type="button"
+                class="btn btn-danger active btn-sm"
+                (click)="clean()">
+                Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+              </button>
+              <button
+                class="btn btn-primary btn-sm active mx-1"
+                [disabled]="!validDetail"
+                (click)="detailCalculation()">
+                Estado de Cuenta
+              </button>
+              <button
+                class="btn btn-primary btn-sm active mx-1"
+                (click)="openFormParameter()">
+                Parámetros
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <!-- <div class="col-md-3">
+            <form-field [control]="form.get('account')">
+              <ngx-select
+                label="Cuenta"
+                [form]="form"
+                control="account"
+                [data]="accountChecksSelect"
+                value="accountOriginDepositNumber"
+                bindLabel="accountOriginDepositNumber"
+                label="Cuenta"
+                (fetchItems)="returnChecks($event)"
+                (change)="changeChecks($event)"></ngx-select>
+            </form-field>
+          </div> -->
+
+          <!-- <div class="col-md-3">
+            <form-field
+              [control]="expedientFilter"
+              label="Filtrar por Expediente">
               <input
+                type="number"
+                class="form-control"
+                formControlName="expedientFilter" />
+            </form-field>
+          </div> -->
+          <!-- <div class="col-md-3">
+            <ng-custom-select-loading
+              [isLoadInOnInit]="false"
+              [form]="form"
+              formControlName="goodFilter"
+              label="Filtrar por Bien"
+              path="good/api/v1/good"
+              value="goodId"
+              bindLabel="goodId"
+              paramSearch="filter.goodId"
+              prefixSearch="$eq"
+              (valueChange)="changeGood($event)">
+            </ng-custom-select-loading> -->
+          <!-- <form-field [control]="form.get('good')">
+              <ngx-select
+                label="Bien"
+                [form]="form"
+                control="good"
+                [data]="goodSelect"
+                value="id"
+                bindLabel="description"
+                label="Bien"
+                (fetchItems)="returnChecks($event)"
+                (change)="changeGood($event)"></ngx-select>
+            </form-field> -->
+          <!-- </div> -->
+        </div>
+        <div class="row">
+          <div class="col-md-4 mt-4">
+            <app-select-modal-table-shared
+              [form]="form"
+              [maxlengthInput]="12"
+              [disabled]="false"
+              [widthDescription]="false"
+              [haveSelectColumns]="true"
+              [haveColumnFilters]="true"
+              [ilikeFilters]="ilikeFilters"
+              [dateFilters]="dateFilters"
+              label="Devolución"
+              formField="devolutionnumber"
+              [service]="detailsIndMovementService"
+              [columnsType]="columnsDevolution"
+              searchField="description"
+              id="devolutionnumber"
+              title="Devolución"
+              (selectRow)="
+                changeChecks($event)
+              "></app-select-modal-table-shared>
+
+            <!-- <form-field [control]="form.get('account')">
+              <ngx-select
+                label="Cuenta"
+                [form]="form"
+                control="account"
+                [data]="accountChecksSelect"
+                value="accountnumber"
+                bindLabel="accountnumber"
+                label="Cuenta"
+                [labelTemplate]="accountLabel"
+                [optionTemplate]="accountOption"
+                (fetchItems)="returnChecks($event)"
+                (change)="changeChecks($event)"></ngx-select>
+              <ng-template #accountLabel let-item="item">
+                {{ item.accountnumber }} - {{ item.movementnumber }} -
+                {{ item.devolutionnumber }}
+              </ng-template>
+              <ng-template #accountOption let-item="item">
+                <div
+                  [title]="
+                    item.accountnumber +
+                    '-' +
+                    item.movementnumber +
+                    '-' +
+                    item.devolutionnumber
+                  ">
+                  {{ item.accountnumber }} - {{ item.movementnumber }} -
+                  {{ item.devolutionnumber }}
+                </div>
+              </ng-template>
+            </form-field> -->
+          </div>
+          <div class="col-md-4 mt-4">
+            <form-field
+              [control]="accountnumberpayreturn"
+              label="Origen Devolución">
+              <input
+                readonly
                 type="text"
                 class="form-control"
-                formControlName="account" />
+                formControlName="accountnumberpayreturn" />
             </form-field>
           </div>
-          <div class="col-md-3">
+        </div>
+        <div class="row">
+          <div class="col-md-4 mt-4">
+            <app-select-modal-table-shared
+              [form]="form"
+              [maxlengthInput]="12"
+              [disabled]="disabledAccount"
+              [widthDescription]="false"
+              [haveSelectColumns]="true"
+              [haveColumnFilters]="true"
+              [ilikeFilters]="ilikeAccountFilters"
+              label="Cuenta"
+              formField="accountKey"
+              [service]="detailsIndMovementService"
+              [columnsType]="columnsAccounts"
+              functionFilterName="getAllFilterSelfAccounts"
+              searchField="description"
+              id="accountkey"
+              title="Cuenta"
+              (selectRow)="
+                changeAccount($event)
+              "></app-select-modal-table-shared>
+
+            <!-- <form-field
+              [control]="accountnumberorigindeposit"
+              label="Origen Depósito">
+              <input
+                readonly
+                type="text"
+                class="form-control"
+                formControlName="accountnumberorigindeposit" />
+            </form-field> -->
+          </div>
+          <div class="col-md-3 mt-4">
             <form-field [control]="form.get('bank')" label="Banco">
-              <input type="text" class="form-control" formControlName="bank" />
+              <input
+                readonly
+                type="text"
+                class="form-control"
+                formControlName="bank" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2 mt-4">
             <form-field [control]="form.get('currency')" label="Moneda">
               <input
+                readonly
                 type="text"
                 class="form-control"
                 formControlName="currency" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3 mt-4">
             <form-field [control]="form.get('amount')" label="Importe">
               <input
+                readonly
                 type="text"
                 class="form-control"
                 formControlName="amount" />
             </form-field>
           </div>
         </div>
-        <div class="row mt-4">
-          <div class="col-md-3">
+        <div class="row">
+          <div class="col-md-3 mt-4">
+            <app-select-modal-table-shared
+              [form]="form"
+              [maxlengthInput]="12"
+              [disabled]="disabledMovement"
+              [widthDescription]="false"
+              [haveSelectColumns]="true"
+              [haveColumnFilters]="true"
+              label="Movimiento"
+              formField="movementNumber"
+              [service]="accountMovementService"
+              [columnsType]="columnsMovementType"
+              searchField="description"
+              id="numberMotion"
+              title="Movimiento"
+              (selectRow)="
+                changeAccount($event)
+              "></app-select-modal-table-shared>
+            <!-- <form-field [control]="devolutionnumber" label="Devolución">
+              <input
+                readonly
+                type="number"
+                class="form-control"
+                formControlName="devolutionnumber"
+               />
+            </form-field> -->
+          </div>
+          <div class="col-md-3 mt-4">
+            <form-field [control]="expedient" label="Expediente">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="expedient"
+                readonly />
+            </form-field>
+          </div>
+          <div class="col-md-3 mt-4" [class]="readonly ? 'disabledInput' : ''">
             <form-field
               [control]="form.get('depositDate')"
               label="Fecha Depósito">
               <input
                 type="text"
                 formControlName="depositDate"
-                placeholder="Fecha"
                 class="form-control"
-                bsDatepicker />
+                bsDatepicker
+                [readonly]="readonly" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3 mt-4" [class]="readonly ? 'disabledInput' : ''">
             <form-field
               [control]="form.get('transfDate')"
-              label="Fecha Transf.">
+              label="Fecha Transferencia">
               <input
                 type="text"
                 formControlName="transfDate"
-                placeholder="Fecha"
                 class="form-control"
-                bsDatepicker />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('proceedings')" label="Expediente">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="proceedings"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('good')" label="Bien">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="good"
-                min="1"
-                pattern="^[0-9]+" />
+                bsDatepicker
+                [readonly]="readonly" />
             </form-field>
           </div>
         </div>
-        <div class="row mt-4">
-          <div class="col-md-3">
+        <div class="row">
+          <div class="col-md-3 mt-4">
+            <form-field [control]="goodId" label="Bien">
+              <input
+                readonly
+                type="number"
+                class="form-control"
+                formControlName="goodId" />
+            </form-field>
+          </div>
+          <div class="col-md-3 mt-4">
             <form-field [control]="form.get('status')" label="Estatus">
               <input
+                readonly
                 type="text"
                 class="form-control"
                 formControlName="status" />
             </form-field>
           </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('indicated')" label="Indiciando">
+          <div class="col-md-6 fixTextarea mt-4">
+            <form-field
+              [control]="form.get('goodDescription')"
+              label="Descripción">
+              <textarea
+                readonly
+                rows="2"
+                class="form-control"
+                formControlName="goodDescription"
+                [max-length]="4000"></textarea>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mt-4">
+            <form-field
+              [control]="form.get('avPrevious')"
+              label="Averiguaci&oacute;n Previa">
               <input
                 type="text"
                 class="form-control"
-                formControlName="indicated" />
+                formControlName="avPrevious"
+                [readonly]="readonly" />
             </form-field>
           </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('avPrevious')" label="Av.previa">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="avPrevious" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
+          <div class="col-md-6 mt-4">
             <form-field
               [control]="form.get('criminalCase')"
               label="Causa penal">
               <input
                 type="text"
                 class="form-control"
-                formControlName="criminalCase" />
+                formControlName="criminalCase"
+                [readonly]="readonly" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 mt-4">
+            <form-field [control]="form.get('indicated')" label="Indiciado">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="indicated"
+                [readonly]="readonly" />
             </form-field>
           </div>
         </div>
       </form>
     </div>
     <h5 class="title">Datos para cálculo</h5>
-    <div class="row mt-3 mb-3">
+    <div class="row">
+      <div class="col text-right">
+        <button
+          class="btn btn-primary btn-sm active mx-1"
+          [disabled]="!validCheck"
+          (click)="interestCheck()">
+          Cheque Complementario
+        </button>
+      </div>
+    </div>
+    <div class="row pt-5">
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
-          <div class="col-md-3">
+          <div
+            class="col-md-3"
+            [class]="disabled && readonly ? 'disabledInput' : ''">
+            <!---->
             <form-field
               [control]="form.get('transferDate')"
-              label="Fecha de tranferencia">
+              label="Fecha de Transferencia">
+              <!--<input
+                [maxDate]="maxDate"
+                class="form-control"
+                formControlName="formFin"
+                (bsValueChange)="onChangeFin($event, form.get('transferDate'))"
+                [minDate]="minDate"
+                bsDatepicker />-->
               <input
                 type="text"
                 formControlName="transferDate"
-                placeholder="Fecha"
                 class="form-control"
-                bsDatepicker />
+                bsDatepicker
+                [maxDate]="maxTransferDate"
+                [minDate]="minTransferDate" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div
+            class="col-md-3"
+            [class]="disabled && readonly ? 'disabledInput' : ''">
             <form-field
               [control]="form.get('cutoffDate')"
-              label="Fecha de corte">
+              label="Fecha de Corte">
               <input
                 type="text"
                 formControlName="cutoffDate"
-                placeholder="Fecha"
                 class="form-control"
+                [minDate]="transferDate"
                 bsDatepicker />
             </form-field>
           </div>
@@ -156,111 +398,105 @@
                 class="form-control"
                 formControlName="toReturn"
                 min="1"
-                pattern="^[0-9]+" />
+                [readonly]="disabled"
+                (input)="updateCalculateData()" />
             </form-field>
           </div>
           <div class="col-md-3">
             <form-field
-              [control]="form.get('interestCredited')"
-              label="Interes acreditados">
+              [control]="interestCredited"
+              label="Inter&eacute;s Acreditado">
               <input
                 type="number"
                 class="form-control"
                 formControlName="interestCredited"
-                min="1"
-                pattern="^[0-9]+" />
+                min="0"
+                readonly
+                (input)="updateCalculateData()" />
             </form-field>
           </div>
         </div>
         <div class="row mt-4">
           <div class="col-md-3">
-            <form-field [control]="form.get('costsAdmon')" label="Sub total">
+            <form-field [control]="form.get('subTotal')" label="Sub Total">
               <input
                 type="number"
                 class="form-control"
                 formControlName="subTotal"
-                min="1"
-                pattern="^[0-9]+" />
+                min="0"
+                readonly
+                (input)="updateCalculateData()" />
             </form-field>
           </div>
           <div class="col-md-3">
             <form-field
               [control]="form.get('costsAdmon')"
-              label="Gastos de admon">
+              label="Gastos de Admon.">
               <input
                 type="number"
                 class="form-control"
                 formControlName="costsAdmon"
-                min="1"
-                pattern="^[0-9]+" />
+                min="0"
+                readonly
+                (input)="updateCalculateData()" />
             </form-field>
           </div>
           <div class="col-md-3">
             <form-field
               [control]="form.get('associatedCosts')"
-              label="Costos asociados">
+              label="Costos Asociados">
               <input
                 type="number"
                 class="form-control"
                 formControlName="associatedCosts"
-                min="1"
-                pattern="^[0-9]+" />
+                readonly
+                min="0" />
             </form-field>
           </div>
           <div class="col-md-3">
             <form-field
               [control]="form.get('checkAmount')"
-              label="Importe cheque">
+              label="Importe Cheque">
               <input
                 type="number"
                 class="form-control"
                 formControlName="checkAmount"
-                min="1"
-                pattern="^[0-9]+" />
+                min="0"
+                readonly />
             </form-field>
-          </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-md-2">
-            <button class="btn btn-secondary btn-sm active">
-              Edo. de Cta.
-            </button>
-          </div>
-          <div class="col-md-2">
-            <button class="btn btn-secondary btn-sm active">Parametros</button>
-          </div>
-          <div class="col-md-2">
-            <button class="btn btn-secondary btn-sm active">
-              Cheque Compl.
-            </button>
           </div>
         </div>
       </form>
     </div>
     <h5 class="title">Datos para el cheque</h5>
-    <div class="row mt-3 mb-3">
+    <div class="d-flex mt-4">
+      <div
+        *ngIf="accountTras && accountTras.value"
+        class="accounttras text-primary">
+        {{ accountTras.value }}
+      </div>
+      <div class="col text-right">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="transferMov()"
+          [disabled]="!validTras">
+          Traspasar
+        </button>
+      </div>
+    </div>
+    <div class="row pt-5">
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-md-3">
-            <form-field
-              [control]="form.get('checkType')"
-              label="Tipo de cheque">
-              <input
-                type="text"
+            <form-field [control]="checkType" label="Tipo de Cheque">
+              <ng-select
+                formControlName="checkType"
                 class="form-control"
-                formControlName="checkType" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="form.get('bankAccount')"
-              label="Cuenta bancaria">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="bankAccount"
-                min="1"
-                pattern="^[0-9]+" />
+                [readonly]="disabled"
+                [clearable]="false">
+                <ng-option value="NORMAL">Normal</ng-option>
+                <ng-option value="INTERES">Interés</ng-option>
+              </ng-select>
             </form-field>
           </div>
           <div class="col-md-3">
@@ -270,61 +506,88 @@
                 class="form-control"
                 formControlName="check"
                 min="1"
-                pattern="^[0-9]+" />
+                pattern="^[0-9]+"
+                [readonly]="readonly && disabled" />
             </form-field>
           </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('bankCheck')" label="Banco">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="bankCheck" />
-            </form-field>
+          <div class="col-md-6">
+            <ng-custom-select-loading
+              [isLoadInOnInit]="false"
+              [form]="form"
+              [readonly]="disabled"
+              [path]="pathBankAccount"
+              formControlName="bankAccount"
+              label="Cuenta Bancaria"
+              value="cveAccount"
+              bindLabel="cveAccount"
+              paramSearch="filter.cveBank"
+              prefixSearch="$ilike"
+              secondParamSearch="filter.cveAccount"
+              [labelTemplate]="bankLabel"
+              [optionTemplate]="bankOption"
+              (valueChange)="changeCveCuenta($event)">
+            </ng-custom-select-loading>
+            <ng-template #bankLabel let-item="item">
+              {{ item.cveAccount }} - {{ item.cveBank }}
+            </ng-template>
+            <ng-template #bankOption let-item="item">
+              <div [title]="item.cveAccount + '-' + item.cveBank">
+                {{ item.cveAccount }} - {{ item.cveBank }}
+              </div>
+            </ng-template>
           </div>
         </div>
         <div class="row mt-4">
-          <div class="col-md-3">
+          <div
+            class="col-md-3"
+            [class]="disabled && readonly ? 'disabledInput' : ''">
             <form-field
               [control]="form.get('expeditionDate')"
-              label="Fecha expedición">
+              label="Fecha Expedici&oacute;n">
               <input
                 type="text"
                 formControlName="expeditionDate"
-                placeholder="Fecha"
                 class="form-control"
-                bsDatepicker />
+                [maxDate]="maxExpeditionDate"
+                bsDatepicker
+                (bsValueChange)="validateExpeditionCheck($event)" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div
+            class="col-md-3"
+            [class]="disabled && readonly ? 'disabledInput' : ''">
             <form-field
               [control]="form.get('collectionDate')"
-              label="Fecha cobro">
+              label="Fecha Cobro">
               <input
                 type="text"
                 formControlName="collectionDate"
-                placeholder="Fecha"
                 class="form-control"
+                [minDate]="minCollectionDate"
                 bsDatepicker />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-6">
+            <!-- <ng-custom-select-loading
+              [isLoadInOnInit]="false"
+              [load]="userChecks != null"
+              [form]="form"
+              paramLimitName="perPage"
+              formControlName="beneficiary"
+              label="Beneficiario"
+              [path]="pathBeneficiary"
+              value="beneficiario_cheque"
+              bindLabel="beneficiario_cheque">
+            </ng-custom-select-loading> -->
             <form-field
               [control]="form.get('beneficiary')"
-              label="Benefeciario">
+              label="Beneficiario">
               <input
                 type="text"
                 class="form-control"
-                formControlName="beneficiary" />
+                formControlName="beneficiary"
+                [readonly]="readonly && disabled" />
             </form-field>
-          </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-md-2">
-            <button
-              class="btn btn-secondary btn-sm active"
-              (click)="openForm()">
-              Traspasar
-            </button>
           </div>
         </div>
       </form>

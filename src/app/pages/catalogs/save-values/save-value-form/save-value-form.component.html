@@ -1,7 +1,7 @@
 <app-modal>
   <div header>
     <h5 class="modal-title">
-      {{ edit ? 'Editar guarda valores' : 'Crear guarda valores' }}
+      {{ edit ? 'Editar guarda valor' : 'Nuevo guarda valor' }}
     </h5>
   </div>
   <div body>
@@ -42,17 +42,6 @@
               type="text"
               class="form-control"
               formControlName="responsible" />
-          </form-field>
-        </div>
-
-        <div class="col-md-6">
-          <form-field
-            [control]="saveValueForm.get('noRegistration')"
-            label="Número de registro">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="noRegistration" />
           </form-field>
         </div>
       </div>

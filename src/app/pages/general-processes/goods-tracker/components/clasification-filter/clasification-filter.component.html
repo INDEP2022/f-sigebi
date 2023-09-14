@@ -2,27 +2,45 @@
   <div class="row">
     <form-field
       [control]="form.get('satDepartureNum')"
-      label="Fracci&oacute;n Arancelar&iacute;a"
+      label="Fracci&oacute;n Arancelaria"
       class="col-md-2">
       <input
         type="number"
         (change)="fractionChange()"
         formControlName="satDepartureNum"
+        oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16)"
         class="form-control" />
     </form-field>
 
     <div class="col-1 mx-0 px-0">
-      <button class="btn btn-small" type="button" (click)="selectFraction()">
-        <i class="fa fa-search text-pink" aria-hidden="true"></i>
+      <button
+        tooltip="Seleccionar Fracción"
+        (click)="selectFraction()"
+        type="button"
+        class="btn btn-primary btn-sm active">
+        <i class="bx bx-list-plus bx-sm float-icon"></i>
       </button>
     </div>
 
     <form-field
       [control]="form.get('clasifNum')"
-      label="N&uacute;mero Clasificaci&oacute;n de Bien"
+      label="No. Clasificaci&oacute;n de Bien"
       class="col-md-2">
-      <input type="number" formControlName="clasifNum" class="form-control" />
+      <input
+        type="number"
+        formControlName="clasifNum"
+        class="form-control"
+        oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16)" />
     </form-field>
+    <div class="col-1 mx-0 px-0">
+      <button
+        tooltip="Buscar"
+        (click)="searchClasif()"
+        type="button"
+        class="btn btn-primary active btn-sm">
+        <i class="bx bx-search-alt bx-sm float-icon"></i>
+      </button>
+    </div>
 
     <form-field
       [control]="form.get('alternativeClasifNum')"
@@ -30,13 +48,23 @@
       class="col-md-4">
       <input
         type="text"
+        readonly
         formControlName="alternativeClasifNum"
         class="form-control" />
     </form-field>
+    <div class="col-1 mx-0 px-0">
+      <button
+        tooltip="Seleccionar Clasificación Alterna"
+        (click)="openAlternClasification()"
+        type="button"
+        class="btn btn-primary btn-sm active">
+        <i class="bx bx-list-plus bx-sm float-icon"></i>
+      </button>
+    </div>
   </div>
 
   <div class="row pt-3">
-    <form-field [control]="form.get('types')" class="col-md-3">
+    <form-field [control]="form.get('types')" class="col-md-6">
       <ngx-select
         [form]="form"
         [searchOnInit]="true"
@@ -46,11 +74,28 @@
         label="Tipo"
         [data]="types"
         bindLabel="nameGoodType"
+        className="scroll-line"
         (fetchItems)="getTypes($event)"
-        (change)="typesChange($event)"></ngx-select>
+        (change)="typesChange($event)"
+        [labelTemplate]="typeLabel"
+        [optionTemplate]="typeOption"></ngx-select>
+
+      <ng-template #typeLabel let-item="item" let-clear="clear">
+        <div class="custom-tmp" [title]="item.id + '-' + item.nameGoodType">
+          <span class="custom-icon" (click)="clear(item)">x</span>
+          <span class="custom-value-label"
+            >{{ item.id }} - {{ item.nameGoodType }}</span
+          >
+        </div>
+      </ng-template>
+      <ng-template #typeOption let-item="item">
+        <div [title]="item.id + '-' + item.nameGoodType">
+          {{ item.id }} - {{ item.nameGoodType }}
+        </div>
+      </ng-template>
     </form-field>
 
-    <form-field [control]="form.get('subtypes')" class="col-md-3">
+    <form-field [control]="form.get('subtypes')" class="col-md-6">
       <ngx-select
         [form]="form"
         [multiple]="true"
@@ -59,11 +104,29 @@
         label="Subtipo"
         [data]="subtypes"
         bindLabel="nameSubtypeGood"
+        className="scroll-line"
         (fetchItems)="getSubtypes($event)"
-        (change)="subtypesChange($event)"></ngx-select>
+        (change)="subtypesChange($event)"
+        [labelTemplate]="subtypeLabel"
+        [optionTemplate]="subtypeOption"></ngx-select>
+      <ng-template #subtypeLabel let-item="item" let-clear="clear">
+        <div class="custom-tmp" [title]="item.id + '-' + item.nameSubtypeGood">
+          <span class="custom-icon" (click)="clear(item)">x</span>
+          <span class="custom-value-label"
+            >{{ item.id }} - {{ item.nameSubtypeGood }}</span
+          >
+        </div>
+      </ng-template>
+      <ng-template #subtypeOption let-item="item">
+        <div [title]="item.id + '-' + item.nameSubtypeGood">
+          {{ item.id }} - {{ item.nameSubtypeGood }}
+        </div>
+      </ng-template>
     </form-field>
+  </div>
 
-    <form-field [control]="form.get('ssubtypes')" class="col-md-3">
+  <div class="row pt-3">
+    <form-field [control]="form.get('ssubtypes')" class="col-md-6">
       <ngx-select
         [form]="form"
         [multiple]="true"
@@ -72,11 +135,28 @@
         label="Ssubtipo"
         [data]="ssubtypes"
         bindLabel="description"
+        className="scroll-line"
         (fetchItems)="getSsubtypes($event)"
-        (change)="ssubtypesChange($event)"></ngx-select>
+        (change)="ssubtypesChange($event)"
+        [labelTemplate]="ssubtypeLabel"
+        [optionTemplate]="ssubtypeOption"></ngx-select>
+
+      <ng-template #ssubtypeLabel let-item="item" let-clear="clear">
+        <div class="custom-tmp" [title]="item.id + '-' + item.description">
+          <span class="custom-icon" (click)="clear(item)">x</span>
+          <span class="custom-value-label"
+            >{{ item.id }} - {{ item.description }}</span
+          >
+        </div>
+      </ng-template>
+      <ng-template #ssubtypeOption let-item="item">
+        <div [title]="item.id + '-' + item.description">
+          {{ item.id }} - {{ item.description }}
+        </div>
+      </ng-template>
     </form-field>
 
-    <form-field [control]="form.get('sssubtypes')" class="col-md-3">
+    <form-field [control]="form.get('sssubtypes')" class="col-md-6">
       <ngx-select
         [form]="form"
         [multiple]="true"
@@ -85,17 +165,40 @@
         label="Sssubtipo"
         [data]="sssubtypes"
         value="numClasifGoods"
+        className="scroll-line"
         bindLabel="description"
         (fetchItems)="getSssubtypes($event)"
-        (change)="sssubtypesChange($event)"></ngx-select>
+        (change)="sssubtypesChange($event)"
+        [labelTemplate]="sssubtypeLabel"
+        [optionTemplate]="sssubtypeOption"></ngx-select>
+      <ng-template #sssubtypeLabel let-item="item" let-clear="clear">
+        <div class="custom-tmp" [title]="item.id + '-' + item.description">
+          <span class="custom-icon" (click)="clear(item)">x</span>
+          <span class="custom-value-label"
+            >{{ item.id }} - {{ item.description }}</span
+          >
+        </div>
+      </ng-template>
+      <ng-template #sssubtypeOption let-item="item">
+        <div [title]="item.id + '-' + item.description">
+          {{ item.id }} - {{ item.description }}
+        </div>
+      </ng-template>
     </form-field>
   </div>
 
   <div class="row pt-3">
-    <div class="col-md-12">
-      <button class="btn btn-primary active" [disabled]="subloading">
-        {{ subloading ? 'Espere un momento ...' : 'Buscar' }}
-        <i class="fa fa-search ml-2"></i>
+    <div class="col-md-12 d-inline">
+      <button class="btn btn-primary active btn-sm mr-3">
+        Buscar
+        <i class="bx bx-search-alt bx-sm float-icon"></i>
+      </button>
+
+      <button
+        type="button"
+        (click)="cleanFilter()"
+        class="btn btn-danger btn-sm active mr-3">
+        Limpiar <i class="fas fa-eraser"> </i>
       </button>
     </div>
   </div>

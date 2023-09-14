@@ -5,70 +5,73 @@
   <div body>
     <form [formGroup]="delegationStateForm" class="form-material">
       <div class="row">
-        <div class="col-md-4">
-          <form-field
-            [control]="delegationStateForm.get('regionalDelegation')"
-            label="ID">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="regionalDelegation" />
+        <!-- <div class="col-md-4">
+          <form-field [control]="delegationStateForm.get('regionalDelegation')" label="Codigo">
+            <input type="string" class="form-control" formControlName="regionalDelegation" />
+          </form-field>
+        </div> -->
+        <div class="col-md-12">
+          <form-field [control]="delegationStateForm.get('regionalDelegation')">
+            <ngx-select
+              [form]="delegationStateForm"
+              control="regionalDelegation"
+              [data]="regionalDelegation"
+              value="id"
+              bindLabel="description"
+              label="Delegacion Regional"
+              (fetchItems)="getRegionalDelegation($event)"
+              (change)="stateRegional($event)"
+              [readonly]="false"></ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="delegationStateForm.get('stateCode')"
-            label="Código de Estado">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="stateCode" />
+      </div>
+      <div class="row pt-3">
+        <!-- <div class="col-md-6">
+          <form-field [control]="delegationStateForm.get('keyState')" label="Clave de estado">
+            <input type="string" class="form-control" formControlName="keyState" />
           </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="delegationStateForm.get('keyState')"
-            label="keyState">
-            <input
-              type="string"
-              class="form-control"
-              formControlName="keyState" />
-          </form-field>
-        </div>
-        <!-- <div class="col-md-8">
+        </div> -->
+        <div class="col-md-12">
           <form-field [control]="delegationStateForm.get('stateCode')">
             <ngx-select
               [form]="delegationStateForm"
               control="stateCode"
               [data]="states"
               value="codeCondition"
-              bindLabel="codeCondition"
+              bindLabel="descCondition"
               label="Estado"
-              (fetchItems)="getStates($event)"
-              (change)="stateChange($event)"></ngx-select>
+              (fetchItems)="getStatesAll($event)"
+              (change)="stateChange($event)"
+              [readonly]="false"></ngx-select>
           </form-field>
-        </div> -->
+        </div>
       </div>
-      <div class="row pt-5">
-        <div class="col-md-3">
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field
+            [control]="delegationStateForm.get('status')"
+            label="Número de Contrato">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+          <!-- <form-radio label="Activo">
+            <input type="radio" formControlName="status" value="1" />
+          </form-radio>
+          <form-radio label="Inactivo">
+            <input type="radio" formControlName="status" value="0" />
+          </form-radio> -->
+        </div>
+        <div class="col-md-6">
           <form-field
             [control]="delegationStateForm.get('version')"
             label="Versi&oacute;n">
             <input
-              type="string"
+              type="number"
               class="form-control"
-              formControlName="version" />
-          </form-field>
-        </div>
-
-        <div class="col-md-3">
-          <form-field
-            [control]="delegationStateForm.get('status')"
-            label="Status">
-            <input
-              type="string"
-              class="form-control"
-              formControlName="status" />
+              formControlName="version"
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
       </div>

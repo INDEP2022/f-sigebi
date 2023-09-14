@@ -41,12 +41,12 @@ export class DepartamentService
     return this.departamentRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IDepartment): Observable<Object> {
-    return this.departamentRepository.update(this.route, id, model);
+  update4(model: IDepartment): Observable<Object> {
+    return this.departamentRepository.update4(this.route, model);
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.departamentRepository.remove(this.route, id);
+  remove3(model: any): Observable<Object> {
+    return this.departamentRepository.remove3(this.route, model);
   }
 
   getDelegations(params: ListParams) {
@@ -55,10 +55,15 @@ export class DepartamentService
       params
     );
   }
-
+  getDelegationsCatalog(params: ListParams) {
+    return this.delegationRepository.getAllPaginated(
+      this.delegationsRoute + '/get-all',
+      params
+    );
+  }
   getSubdelegations(params: ListParams) {
     return this.subdelegationRepository.getAllPaginated(
-      this.subdelegationsRoute,
+      this.subdelegationsRoute + '/get-all',
       params
     );
   }
@@ -74,7 +79,7 @@ export class DepartamentService
   }
 
   removeByBody(obj: Object): Observable<Object> {
-    return this.departamentRepository.removeByBody(this.route, obj);
+    return this.departamentRepository.remove3(this.route, obj);
   }
 
   update2(model: IDepartment): Observable<Object> {
@@ -95,5 +100,19 @@ export class DepartamentService
   ): Observable<IListResponse<IDepartment>> {
     const route = `${DepartamentEndpoints.Departament}?filter.numDelegation=${idDelegation}&filter.numSubDelegation=${idSubdelegation}`;
     return this.get(route, params);
+  }
+
+  getInCatDepartaments(body: any) {
+    const route = `${DepartamentEndpoints.GetInCatDepartaments}`;
+    return this.post(route, body);
+  }
+
+  getbyDelegation(id: any, descripcion: any) {
+    const route = `${DepartamentEndpoints.Departament}?filter.numDelegation=$eq:${id}&filter.description=$ilike:${descripcion}`;
+    return this.get(route);
+  }
+
+  getDeparmentById(model: any): Observable<IDepartment> {
+    return this.departamentRepository.create(this.route + '/id', model);
   }
 }

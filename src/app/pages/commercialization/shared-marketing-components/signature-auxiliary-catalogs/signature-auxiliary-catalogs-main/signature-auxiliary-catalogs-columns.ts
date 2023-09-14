@@ -1,20 +1,22 @@
+import { DatePipe } from '@angular/common';
+
 export const ELECTRONIC_SIGNATURE_REPORT_COLUMNS = {
-  screen: {
+  screenKey: {
     title: 'Pantalla',
     type: 'string',
     sort: false,
   },
-  signerQuantity: {
-    title: 'Número de Firmantes.',
+  signatoriesNumber: {
+    title: 'Número de Firmantes',
     type: 'number',
     sort: false,
   },
-  title: {
+  description: {
     title: 'Título del Reporte (XML)',
     type: 'string',
     sort: false,
   },
-  report: {
+  reportKey: {
     title: 'Reporte Asociado (XML)',
     type: 'string',
     sort: false,
@@ -40,7 +42,7 @@ export const ELECTRONIC_SIGNATURE_TYPE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  order: {
+  orderId: {
     title: 'Orden de Presentación',
     type: 'number',
     sort: false,
@@ -48,17 +50,17 @@ export const ELECTRONIC_SIGNATURE_TYPE_COLUMNS = {
 };
 
 export const ELECTRONIC_SIGNATURE_EVENT_COLUMNS = {
-  event: {
+  referenceId: {
     title: 'Evento',
     type: 'number',
     sort: false,
   },
-  reportId: {
-    title: 'N° Reporte',
+  documentsXMLId: {
+    title: 'No. Reporte',
     type: 'number',
     sort: false,
   },
-  originId: {
+  origin: {
     title: 'Id Origen',
     type: 'number',
     sort: false,
@@ -68,7 +70,7 @@ export const ELECTRONIC_SIGNATURE_EVENT_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  title: {
+  qualification: {
     title: 'Título',
     type: 'string',
     sort: false,
@@ -77,53 +79,71 @@ export const ELECTRONIC_SIGNATURE_EVENT_COLUMNS = {
     title: 'Fecha de Creación',
     type: 'string',
     sort: false,
+    filter: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    },
   },
-  status: {
+  description: {
     title: 'Estatus Reporte',
     type: 'string',
     sort: false,
+    filter: false,
   },
 };
 
 export const ELECTRONIC_SIGNATURE_SIGNATURE_COLUMNS = {
-  reportId: {
-    title: 'N°',
+  no_consec: {
+    title: 'No',
     type: 'number',
     sort: false,
+    filter: false,
   },
-  reportNumber: {
-    title: 'N° Reporte',
+  id_docums_xml: {
+    title: 'No Reporte',
     type: 'number',
     sort: false,
+    filter: false,
   },
-  user: {
+  usuario: {
     title: 'Usuario',
     type: 'string',
     sort: false,
   },
-  name: {
+  nombre: {
     title: 'Nombre',
     type: 'string',
     sort: false,
   },
-  position: {
+  cargo: {
     title: 'Cargo',
     type: 'string',
     sort: false,
   },
-  type: {
+  id_tipo_firmante: {
     title: 'Tipo',
     type: 'string',
     sort: false,
   },
-  signer: {
+  description: {
     title: 'Firmante',
     type: 'string',
     sort: false,
+    filter: false,
   },
-  signDate: {
+  fec_firma: {
     title: 'Fecha Firma',
     type: 'string',
     sort: false,
+    filter: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    },
   },
 };

@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="satSubclassificationForm">
@@ -8,20 +8,20 @@
         <div class="col-md-12">
           <form-field
             [control]="satSubclassificationForm.get('nameSubClasification')"
-            label="Nombre sub clasificaci&oacute;n">
+            label="Nombre Subclasificaci&oacute;n">
             <input
               type="text"
               class="form-control"
               formControlName="nameSubClasification" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="pt-4 col-md-12">
           <ngx-select
             [form]="satSubclassificationForm"
             control="idClasification"
             [data]="classifications"
             value="id"
-            bindLabel="nombre_clasificacion"
+            bindLabel="typeDescription"
             label="Clasificación"
             (fetchItems)="getClassifications($event)"></ngx-select>
         </div>

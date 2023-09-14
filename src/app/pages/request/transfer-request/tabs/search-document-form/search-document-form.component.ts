@@ -190,6 +190,7 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
   }
 
   getData() {
+    this.data = [];
     if (this.data.length == 0) {
       //siab 3785794
       this.loading = true;
@@ -203,7 +204,10 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
             item['xtipoDocumentoNombre'] = typeDocument;
           });
           Promise.all(result).then(data => {
-            this.documentsSeaData = this.setPaginate([...resp.data]);
+            this.documentsSeaData =
+              resp.data.length > 10
+                ? this.setPaginate([...resp.data])
+                : resp.data;
             this.totalItems = resp.data.length;
             this.loading = false;
           });
@@ -253,6 +257,23 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
 
   //añadir nuevo documento
   newDocument() {
+    if (this.rowSelected == null) {
+      this.onLoadToast(
+        'info',
+        '',
+        'Seleccione una registro para poder adjuntar documentos'
+      );
+      return;
+    }
+
+    if (this.rowSelected.xdelegacionRegional == null) {
+      this.onLoadToast(
+        'info',
+        '',
+        'El registro no cuenta con una delegación regional'
+      );
+      return;
+    }
     this.openModal(DocumentFormComponent, 'doc-buscar', this.rowSelected);
   }
 

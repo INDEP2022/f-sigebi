@@ -1,71 +1,124 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Clave de costo</h5>
-    <div class="col-md-5 buttons">
-      <app-columns-select
-        [defaultColumns]="11"
-        [(settings)]="settings"></app-columns-select>
-      <div>
-        <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
-          Nuevo
-        </button>
-      </div>
-    </div>
   </div>
   <div body>
-    <button
-      type="submit"
-      class="btn btn-primary btn-sm active"
-      (click)="confirm()">
-      Reporte
-    </button>
-    <div class="row pt-4">
-      <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-8">
+        <button
+          type="submit"
+          class="btn btn-primary btn-sm active btn-sm ml-3"
+          (click)="report()">
+          Reporte
+        </button>
+      </div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <div>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+        <app-columns-select
+          [defaultColumns]="11"
+          [(settings)]="settings"></app-columns-select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="data1"
-            (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
+            (delete)="showDeleteAlert($event.data)"
+            (rowSelect)="selectValidity($event)"></ng2-smart-table>
         </div>
       </div>
       <app-pagination
         [params]="params1"
         [totalItems]="totalItems1"></app-pagination>
     </div>
-  </div>
-</app-card>
-<app-card [header]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Vigencia y costo</h5>
-    <div class="col-md-5 buttons">
-      <app-columns-select [(settings)]="settings2"></app-columns-select>
-      <div>
-        <button
-          (click)="openForm2()"
-          class="btn btn-primary active btn-sm ml-3">
-          Nuevo
-        </button>
-      </div>
-    </div>
-  </div>
-  <div body>
-    <button type="submit" class="btn btn-primary btn-sm active">
-      Actualizar Costos
-    </button>
-    <div class="row pt-4">
-      <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings2"
-            [source]="data2"
-            (delete)="showDeleteAlert2($event.data)"></ng2-smart-table>
+
+    <div class="row mt-5">
+      <div class="col-md-12" *ngIf="validityAndCost">
+        <!--<div class="row pt-4">
+          <div class="ch-content" header>
+            <h5 class="title">Vigencia y costo</h5>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="ch-content">
+            <button
+              [type]="'button'"
+              [disabled]="!buttonCost"
+              (click)="calculate()"
+              class="btn btn-primary btn-sm active">
+              Actualizar Costos
+            </button>
+            <div class="col-md-5 buttons">
+              <app-columns-select [(settings)]="settings2"></app-columns-select>
+              <div>
+                <button
+                  (click)="openForm2()"
+                  class="btn btn-primary active btn-sm ml-3">
+                  Nuevo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>-->
+
+        <div class="row">
+          <div class="ch-content">
+            <h5 class="title">Vigencia y costo</h5>
+          </div>
+          <div class="col-md-8 mb-3">
+            <button
+              [type]="'button'"
+              [disabled]="!buttonCost"
+              (click)="calculate()"
+              class="btn btn-primary btn-sm active">
+              Actualizar Costos
+            </button>
+          </div>
+          <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+            <div>
+              <button
+                type="button"
+                tooltip="Nuevo"
+                containerclass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2"
+                (click)="openForm2()">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+            </div>
+            <app-columns-select [(settings)]="settings2"></app-columns-select>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-12 table-responsive">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings2"
+                [source]="data2"
+                (edit)="openForm2($event)"
+                (delete)="showDeleteAlert2($event.data)"
+                (rowSelect)="selectDetValidity($event)"></ng2-smart-table>
+            </div>
+          </div>
+          <app-pagination
+            [params]="params2"
+            [totalItems]="totalItems2"></app-pagination>
         </div>
       </div>
-      <app-pagination
-        [params]="params2"
-        [totalItems]="totalItems2"></app-pagination>
     </div>
   </div>
 </app-card>

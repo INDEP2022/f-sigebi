@@ -11,7 +11,6 @@ import {
 import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { RegionalDelegationFormComponent } from '../regional-delegation-form/regional-delegation-form.component';
 import { REGIONAL_DELEGATIONS_COLUMNS } from './regional-delegations-columns';
 
@@ -87,6 +86,7 @@ export class RegionalDelegationsListComponent
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getRegionalDelegations();
         }
       });
@@ -101,15 +101,21 @@ export class RegionalDelegationsListComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.regionalDelegationService.getAll(params).subscribe(
-      response => {
+    this.regionalDelegationService.getAll(params).subscribe({
+      next: response => {
         this.regionalDelegation = response.data;
-        this.data.load(this.regionalDelegation);
+        this.data.load(response.data);
+        this.data.refresh();
         this.totalItems = response.count || 0;
         this.loading = false;
       },
-      error => (this.loading = false)
-    );
+      error: err => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
+    });
   }
 
   openForm(regionalDelegation?: IRegionalDelegation) {
@@ -127,18 +133,27 @@ export class RegionalDelegationsListComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(reginalDelegation.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.regionalDelegationService.remove(id).subscribe({
-      next: () => this.getRegionalDelegations(),
+      next: () => {
+        this.alert('success', 'Delegación Regional', 'Borrado Correctamente');
+        this.getRegionalDelegations();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Delegación Regional',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

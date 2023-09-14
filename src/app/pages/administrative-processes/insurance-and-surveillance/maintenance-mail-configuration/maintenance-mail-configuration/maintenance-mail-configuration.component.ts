@@ -1,10 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import {
+  IVigEmailBody,
+  IVigEmailSend,
+} from 'src/app/core/models/ms-email/email-model';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { EventSelectionModalComponent } from 'src/app/pages/commercialization/catalogs/components/event-selection-modal/event-selection-modal.component';
+import { MailBodyListDataComponent } from '../body-mail-list/body-mail-list.component';
+import { CreateOrEditEmailMaintenencekDialogComponent } from '../components/create-or-edit-maintenence-mail-dialog/create-or-edit-maintenence-mail-dialog.component';
 import { EMAIL_CONFIG_COLUMNS } from './mail-configuration-columns';
 
 @Component({
@@ -16,53 +28,204 @@ export class MaintenanceMailConfigurationComponent
   extends BasePage
   implements OnInit
 {
-  form = new FormGroup({
-    identifier: new FormControl('', [Validators.required]),
-    asunto: new FormControl('', [Validators.required]),
-    body: new FormControl('', [Validators.required]),
-    status: new FormControl('', [Validators.required]),
-  });
-
-  emailsSend = new LocalDataSource();
+  sendMail: IVigEmailSend[] = [];
+  columnFilters: any = [];
+  formCorreo: ModelForm<IVigEmailBody>;
+  createOrEditEmailMaintenencekDialogComponent: CreateOrEditEmailMaintenencekDialogComponent;
+  mailBodyListDataComponent = MailBodyListDataComponent;
+  data: LocalDataSource = new LocalDataSource();
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  constructor(private emailService: EmailService) {
+  emailBody: IVigEmailBody;
+  event: IVigEmailBody = null;
+  modalRef: any;
+  constructor(
+    private emailService: EmailService,
+    private modalService: BsModalService,
+    private fb: FormBuilder
+  ) {
     super();
     this.settings.columns = EMAIL_CONFIG_COLUMNS;
     this.settings.actions.delete = true;
   }
 
   ngOnInit(): void {
-    this.params.subscribe(params => {
-      this.getEmailSend(params);
-    });
-    // this.prepareForm();
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getEmailSend();
+        }
+      });
+
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getEmailSend());
+    this.prepareform2();
   }
 
-  // prepareForm() {
-  //   this.form = this.fb.group({
-  //     identifier: [null, Validators.required],
-  //     asunto: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
-  //     body: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
-  //     status: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
-  //   });
-  // }
-
-  getEmailSend(listParams: ListParams): void {
+  getEmailSend(): void {
     this.loading = true;
-    this.emailService.getVigEmailSend(listParams).subscribe({
-      next: res => {
-        this.emailsSend.load(res.data);
-        this.totalItems = res.count;
+    let params = {
+      ...this.params.getValue(),
+    };
+    this.emailService.getVigEmailSend(params).subscribe({
+      next: async (res: any) => {
+        this.sendMail = res.data;
+        this.totalItems = res.count || 0;
+        this.data.load(res.data);
+        this.data.refresh();
         this.loading = false;
+        console.log(res);
       },
       error: () => {
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
         this.loading = false;
       },
     });
   }
 
-  save() {
-    console.log(this.form.value);
+  openForm(emailSend?: any, valEdit?: boolean) {
+    const data = emailSend;
+    console.log(emailSend);
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        valEdit,
+        callback: (next: boolean) => {
+          if (next) {
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getEmailSend());
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(
+      CreateOrEditEmailMaintenencekDialogComponent,
+      config
+    );
+  }
+  private prepareform2() {
+    this.formCorreo = this.fb.group({
+      id: ['', [Validators.required]],
+      bodyEmail: [{ value: '', disabled: true }, [Validators.required]],
+      subjectEmail: [{ value: '', disabled: true }, [Validators.required]],
+      status: [{ value: '', disabled: true }, [Validators.required]],
+    });
+    if (this.emailBody != null) {
+      console.log(this.emailBody);
+    }
+  }
+
+  delete(Email: IVigEmailSend) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea Eliminar este Registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.deleteEmail(Email.id);
+      }
+    });
+  }
+
+  deleteEmail(id: string) {
+    this.emailService.deleteSendMail(id).subscribe({
+      next: () => {
+        this.getEmailSend(),
+          this.alert('success', 'Registro Eliminado Correctamente', '');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Estados',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+        console.log(error);
+      },
+    });
+  }
+
+  handleSuccess() {
+    const message: string = 'Actualizado';
+    this.alert(
+      'success',
+      'Datos Generales del Correo',
+      'Registro Actualizado Correctamente'
+    );
+    this.loading = false;
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
+  }
+
+  update() {
+    this.loading = true;
+    this.emailService
+      .updateEmailBody(
+        this.formCorreo.controls['id'].value,
+        this.formCorreo.value
+      )
+      .subscribe({
+        next: data => {
+          const readonlyFields = ['subjectEmail', 'bodyEmail', 'status'];
+
+          readonlyFields.forEach(fieldName => {
+            this.formCorreo.get(fieldName).disable();
+          });
+          this.handleSuccess();
+        },
+        error: error => {
+          this.loading = false;
+          this.alert('warning', 'Error al Actualizar Registros', '');
+          this.data.refresh();
+        },
+      });
+  }
+
+  resetForm(): void {
+    this.formCorreo.reset();
+  }
+
+  showData(context?: Partial<EventSelectionModalComponent>) {
+    const modalRef = this.modalService.show(MailBodyListDataComponent, {
+      initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe((next: any) => {
+      if (next) {
+        console.log(next);
+        this.event = next;
+        this.formCorreo.controls['id'].setValue(this.event.id);
+        this.formCorreo.controls['subjectEmail'].setValue(
+          this.event.subjectEmail
+        );
+        this.formCorreo.controls['bodyEmail'].setValue(this.event.bodyEmail);
+        this.formCorreo.controls['status'].setValue(this.event.status);
+        Object.keys(this.formCorreo.controls).forEach(controlName => {
+          this.formCorreo.get(controlName).enable();
+        });
+      }
+    });
   }
 }

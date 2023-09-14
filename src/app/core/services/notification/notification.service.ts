@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AnyFn } from '@ngrx/store/src/selector';
 import { Observable } from 'rxjs';
+import { NotificationEndpoints } from 'src/app/common/constants/endpoints/ms-notification-endpoints';
+import { HttpService } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -18,11 +19,17 @@ import {
 /**
  * @deprecated Cambiar a la nueva forma
  */
-export class NotificationService implements ICrudMethods<AnyFn> {
-  constructor(
-    private notificationRepository: Repository<any>,
-    private httpClient: HttpClient
-  ) {}
+export class NotificationService
+  extends HttpService
+  implements ICrudMethods<AnyFn>
+{
+  getByFileNumber(fileNumber: number) {
+    throw new Error('Method not implemented.');
+  }
+  constructor(private notificationRepository: Repository<any>) {
+    super();
+    this.microservice = NotificationEndpoints.BasePath;
+  }
   /**
    * @deprecated Cambiar a la nueva forma
    */
@@ -74,5 +81,8 @@ export class NotificationService implements ICrudMethods<AnyFn> {
     return this.httpClient.get<
       IListResponse<ItVolanteNotificacionesByNoExpedient>
     >('notification/notification/find-count-by-expedient/' + expedient);
+  }
+  create(data: any) {
+    return this.post('notification', data);
   }
 }

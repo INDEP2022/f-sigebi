@@ -3,3 +3,7 @@ export interface IPhotographMedia {
   ruta: string;
   estatus: string;
 }
+
+export interface IPhotos {
+  dDocName: string;
+}

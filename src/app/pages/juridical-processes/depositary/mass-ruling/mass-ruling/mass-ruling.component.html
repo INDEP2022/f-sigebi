@@ -4,159 +4,232 @@
   </div>
 
   <div body>
-    <form [formGroup]="searchForm" class="form-material">
-      <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="searchForm.get('wheelNumber')"
-            label="No&#46; Volante">
-            <input class="form-control" formControlName="wheelNumber" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="searchForm.get('expedientNumber')"
-            label="No&#46; Expediente">
-            <input
-              required
-              class="form-control"
-              formControlName="expedientNumber" />
-          </form-field>
+    <form [formGroup]="form">
+      <div class="form-material row align-items-start">
+        <div class="col-md-12">
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('id')"
+              label="No&#46; Dictaminaci&oacute;n">
+              <input class="form-control" formControlName="id" maxlength="7" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('wheelNumber')"
+              label="No&#46; Volante">
+              <input
+                class="form-control"
+                formControlName="wheelNumber"
+                maxlength="7" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('expedientNumber')"
+              label="No&#46; Expediente">
+              <input
+                class="form-control"
+                formControlName="expedientNumber"
+                maxlength="7" />
+            </form-field>
+          </div>
         </div>
       </div>
-    </form>
-    <form [formGroup]="form" class="form-material">
-      <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('id')" label="No&#46; Oficio">
-            <input class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('typeDict')"
-            label="Tipo Dictaminaci&oacute;n">
-            <input class="form-control" formControlName="typeDict" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('dictDate')" label="Fecha">
-            <input
-              class="form-control"
-              formControlName="dictDate"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('statusDict')" label="Estatus">
-            <input class="form-control" formControlName="statusDict" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('passOfficeArmy')"
-            label="Clave Oficio Armada">
-            <input class="form-control" formControlName="passOfficeArmy" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('userDict')"
-            label="Usuario Dictamina">
-            <input class="form-control" formControlName="userDict" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('instructorDate')"
-            label="Fecha Instructora">
-            <input
-              class="form-control"
-              formControlName="instructorDate"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2 mb-2">
+      <br />
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
           <button
             type="submit"
-            class="btn btn-primary active btn-sm text-wrap"
+            class="btn btn-primary active btn-sm text-wrap ml-2"
             (click)="searchDictation()">
             Buscar
           </button>
         </div>
-        <div class="col-sm-12 col-12 col-md-12 p-2 pl-4">
-          <form-check label="Eliminar" for="eliminar">
-            <input id="eliminar" type="checkbox" formControlName="delete" />
-          </form-check>
+        <div class="m-3">
+          <button
+            class="btn btn-danger active btn-sm text-wrap ml-2"
+            (click)="onClickBtnClear()">
+            Limpiar
+          </button>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 col-xl-2 p-2">
-          <div class="form-group mr-2">
-            <button
-              type="button"
-              class="btn btn-primary active btn-sm text-wrap"
-              (click)="btnBienesDictamen()">
-              Bienes del Dictamen
-            </button>
+      </div>
+      <br />
+      <hr />
+
+      <br />
+      <div class="form-material row align-items-start">
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('typeDict')"
+              label="Tipo Dictaminaci&oacute;n">
+              <input
+                class="form-control"
+                formControlName="typeDict"
+                maxlength="40" />
+            </form-field>
           </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 col-xl-2 p-2">
-          <div class="form-group ml-2 mr-2">
-            <button
-              type="button"
-              class="btn btn-primary active btn-sm text-wrap"
-              (click)="btnDictamenes()">
-              Dict&aacute;menes
-            </button>
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('dictDate')"
+              label="Fecha Dictaminaci&oacute;n">
+              <input
+                class="form-control"
+                formControlName="dictDate"
+                bsDatepicker
+                [maxDate]="maxDate" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('statusDict')"
+              label="Estatus Dictaminaci&oacute;n">
+              <input
+                class="form-control"
+                formControlName="statusDict"
+                maxlength="40" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('passOfficeArmy')"
+              label="Clave Oficio Armada">
+              <input
+                class="form-control"
+                formControlName="passOfficeArmy"
+                maxlength="200" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('userDict')"
+              label="Usuario Dictamina">
+              <input
+                class="form-control"
+                formControlName="userDict"
+                maxlength="40" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('instructorDate')"
+              label="Fecha Instructora">
+              <input
+                class="form-control"
+                formControlName="instructorDate"
+                bsDatepicker
+                [maxDate]="maxDate" />
+            </form-field>
+          </div>
+          <div>
+            <div class="col-sm-12 col-12 col-md-12 p-2 pl-4">
+              <form-check label="Eliminar" for="eliminar">
+                <input
+                  (change)="changeCbDelete($event)"
+                  id="eliminar"
+                  type="checkbox"
+                  formControlName="delete" />
+              </form-check>
+            </div>
+
+            <div class="d-flex justify-content-center">
+              <div class="m-3">
+                <div class="form-group mr-2">
+                  <button
+                    type="button"
+                    [disabled]="
+                      !form.value.expedientNumber ||
+                      !form.value.id ||
+                      !form.value.typeDict ||
+                      !form.value.delete
+                    "
+                    class="btn btn-primary active btn-sm text-wrap"
+                    (click)="onClickGoodDictation()">
+                    Bienes del Dictamen
+                  </button>
+                </div>
+              </div>
+              <div class="m-3">
+                <div class="form-group ml-2 mr-2">
+                  <button
+                    [disabled]="
+                      !form.value.expedientNumber ||
+                      !form.value.id ||
+                      !form.value.typeDict ||
+                      !form.value.delete ||
+                      !form.value.passOfficeArmy
+                    "
+                    type="button"
+                    class="btn btn-primary active btn-sm text-wrap"
+                    (click)="onClickDictation()">
+                    Dict&aacute;menes
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </form>
-
-    <div class="row w-100">
-      <div class="col-sm-12 col-12 col-md-3 p-2">
-        <form [formGroup]="formCargaMasiva" class="form-material">
+    <hr />
+    <div class="col-md-12">
+      <form [formGroup]="formCargaMasiva" class="form-material col-12">
+        <!-- <form-field
+                          [control]="formCargaMasiva.get('identificadorCargaMasiva')"
+                          label="Identificador Carga Masiva">
+                          <input
+                            class="form-control"
+                            formControlName="identificadorCargaMasiva" />
+                        </form-field> -->
+        <div class="col-md-12">
           <form-field
-            [control]="formCargaMasiva.get('identificadorCargaMasiva')"
-            label="Identificador Carga Masiva">
-            <input
+            label="Identificador Carga Masiva"
+            class="col-md-3"
+            [control]="formCargaMasiva.get('identificadorCargaMasiva')">
+            <ng-custom-select
               class="form-control"
-              formControlName="identificadorCargaMasiva" />
+              formControlName="identificadorCargaMasiva"
+              [isLoadInOnInit]="true"
+              value="identificador"
+              path="massivegood/api/v1/application/getIdentifierCount">
+              <ng-template let-item>
+                {{ item.identificador }} -
+                {{ item?.fec_cargamasiv | date: 'shortDate' }} -
+                {{ item?.count }}
+              </ng-template>
+            </ng-custom-select>
           </form-field>
-          <div class="col-sm-12 col-12 col-md-12 pl-2 p-1 text-center">
-            <div class="form-group m-1 ml-2 mr-2">
-              <button
-                type="button"
-                (click)="btnCargarIdentificador()"
-                class="btn btn-primary active btn-sm text-wrap">
-                Cargar de Identificador
+        </div>
+      </form>
+      <!-- <div class="d-flex justify-content-center">
+                <div class="md-3">
+                    <div class="form-group m-1 ml-2 mr-2">
+                        <button [disabled]="formCargaMasiva.invalid" type="button" (click)="onClickLoadByIdentifier()" class="btn btn-primary active btn-sm">
+              Cargar de Identificador
+            </button>
+                    </div>
+                </div>
+                <div class="md-3">
+                    <div class="form-group m-1 ml-2 mr-2">
+                        <button [disabled]="formCargaMasiva.invalid" type="button" (click)="onClickLoadFile($event)" class="btn btn-primary active btn-sm">
+              Cargar de Expedientes csv
+            </button>
+                    </div>
+                </div>
+                <div class="md-3">
+                    <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
+                        <div class="form-group m-1 ml-2 mr-2">
+                            <button type="button" [disabled]="isDisableCreateDictation" (click)="onClickCreatedDictation()" class="btn btn-primary active btn-sm">
+                Crear Dict&aacute;menes
               </button>
-            </div>
-            <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
-              <div class="form-group m-1 ml-2 mr-2">
-                <button
-                  type="button"
-                  (click)="btnCrearDictamenes()"
-                  class="btn btn-primary active btn-sm text-wrap">
-                  Crear Dict&aacute;menes
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
     </div>
-
-    <div class="row pt-4 w-100">
-      <div>
-        <input
-          type="file"
-          name="file"
-          #fileExpedient
-          #uploadFile
-          class="d-none"
-          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-          (change)="btnExpedientesCsv($event)" />
-      </div>
+    <div class="col-md-12">
+      <br />
       <div class="d-flex justify-content-end">
         <div class="p-2">
           <div class="btn-group" dropdown placement="bottom right">
@@ -174,19 +247,32 @@
               class="dropdown-menu dropdown-menu-right"
               role="menu"
               aria-labelledby="button-alignment">
+              <!---  <li role="menuitem">
+                                <a class="dropdown-item" style="color: green" #fileExpedient (click)="fileExpedient.click()">
+                                    <i class="bx bx-import"></i> Cargar Expediente
+                                </a>
+                            </li>-->
               <li role="menuitem">
                 <a
                   class="dropdown-item"
-                  style="color: green"
-                  (click)="fileExpedient.click()">
-                  <i class="bx bx-import"></i> Cargar Expediente
+                  style="color: blue"
+                  (click)="onClickLoadByIdentifier()">
+                  <i class="bx bx-layer"></i> Cargar Identificador
                 </a>
               </li>
               <li role="menuitem">
                 <a
                   class="dropdown-item"
                   style="color: blue"
-                  (click)="btnImprimeOficio()">
+                  (click)="onClickCreatedDictation()">
+                  <i class="bx bx-layer"></i> Crear Dict&aacute;men
+                </a>
+              </li>
+              <li role="menuitem">
+                <a
+                  class="dropdown-item"
+                  style="color: blue"
+                  (click)="onClickPrintOffice()">
                   <i class="bx bx-layer"></i> Imprimir Oficio
                 </a>
               </li>
@@ -194,16 +280,16 @@
                 <a
                   class="dropdown-item"
                   style="color: blue"
-                  (click)="btnImprimeRelacionBienes()">
-                  <i class="bx bx-layer"></i> Imprimir Relacion Bienes
+                  (click)="onClickPrintRelationGood()">
+                  <i class="bx bx-layer"></i> Imprimir Relación Bienes
                 </a>
               </li>
               <li role="menuitem">
                 <a
                   class="dropdown-item"
                   style="color: blue"
-                  (click)="btnImprimeRelacionExpediente()">
-                  <i class="bx bx-layer"></i> Imprimir Relacion Expediente
+                  (click)="onClickPrintRelationExpedient()">
+                  <i class="bx bx-layer"></i> Imprimir Relación Expediente
                 </a>
               </li>
             </ul>
@@ -213,13 +299,18 @@
     </div>
 
     <!-- TABLAS  -->
-    <div class="row w-100">
+    <div class="col-md-12">
       <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="tableSettings"
-            [source]="dataTable"></ng2-smart-table>
+            [source]="dataTable2"></ng2-smart-table>
+        </div>
+        <div>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
         </div>
       </div>
       <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
@@ -227,7 +318,12 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="tableSettings1"
-            [source]="dataTable1"></ng2-smart-table>
+            [source]="dataTableErrors"></ng2-smart-table>
+        </div>
+        <div>
+          <app-pagination
+            [params]="paramsErrors"
+            [totalItems]="totalItemsErrors"></app-pagination>
         </div>
       </div>
     </div>

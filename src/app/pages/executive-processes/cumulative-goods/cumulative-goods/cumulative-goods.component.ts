@@ -102,8 +102,8 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      delegation: [null],
-      subdelegation: [null],
+      delegation: [null, [Validators.required]],
+      subdelegation: [null, [Validators.required]],
       rangeDate: [null, [Validators.required, maxDate(new Date())]],
       //toMonth: [null, [Validators.required, maxDate(new Date())]],
       //fromMonth: [null, [Validators.required, maxDate(new Date())]],
@@ -176,17 +176,8 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
 
     const { rangeDate, delegation, subdelegation } = this.form.value;
 
-    const startTemp = `${rangeDate[0].getFullYear()}-${
-      rangeDate[0].getUTCMonth() + 1 <= 9 ? 0 : ''
-    }${rangeDate[0].getUTCMonth() + 1}-${
-      rangeDate[0].getDate() <= 9 ? 0 : ''
-    }${rangeDate[0].getDate()}`;
-
-    const endTemp = `${rangeDate[1].getFullYear()}-${
-      rangeDate[1].getUTCMonth() + 1 <= 9 ? 0 : ''
-    }${rangeDate[1].getUTCMonth() + 1}-${
-      rangeDate[1].getDate() <= 9 ? 0 : ''
-    }${rangeDate[1].getDate()}`;
+    const startTemp = this.formatDateToDDMMYYYY(rangeDate[0]);
+    const endTemp = this.formatDateToDDMMYYYY(rangeDate[1]);
 
     let reportParams: any = {
       pf_fecini: startTemp,
@@ -208,9 +199,18 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
     }
 
     console.log(reportParams);
-    //Todo: Get Real Report
     this.getReport('RGERDIRCTRLXMES', reportParams);
     //this.getReportBlank('blank');
+  }
+
+  formatDateToDDMMYYYY(date: Date) {
+    const day = date.getDate() <= 9 ? '0' + date.getDate() : date.getDate();
+    const month =
+      date.getUTCMonth() + 1 <= 9
+        ? '0' + (date.getUTCMonth() + 1)
+        : date.getUTCMonth() + 1;
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
   }
 
   getReport(report: string, params: any): void {

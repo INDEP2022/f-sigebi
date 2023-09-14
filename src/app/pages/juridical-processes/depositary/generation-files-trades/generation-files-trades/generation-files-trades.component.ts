@@ -71,7 +71,8 @@ export class GenerationFilesTradesComponent
 
         this.selectWheel = new DefaultSelect(data.data, data.count);
       },
-      error: () => {
+      error: error => {
+        this.onLoadToast('warning', 'No se Encuentra el Volante', '');
         this.cleanForm();
         this.selectWheel = new DefaultSelect();
       },
@@ -85,8 +86,8 @@ export class GenerationFilesTradesComponent
     if (item.managementNumber) {
       if (item != undefined) {
         this.loading = false;
-        this.form.get('noExpediente').setValue(item.recordNumber);
-        this.form.get('noExpediente').setValue(item.recordNumber);
+        // this.form.get('noExpediente').setValue(item.recordNumber);
+        this.form.get('noExpediente').setValue(item.proceedingsNumber);
         this.form.get('noOficio').setValue(item.managementNumber);
         this.form.get('tipoOficio').setValue(item.jobType);
         this.form.get('estatus').setValue(item.statusOf);
@@ -99,7 +100,7 @@ export class GenerationFilesTradesComponent
         this.cleanForm();
       }
     } else {
-      this.onLoadToast('warning', 'No se ha especificado el Dictamen', '');
+      this.onLoadToast('warning', 'No se ha Especificado el Dictamen', '');
     }
   }
 
@@ -128,19 +129,19 @@ export class GenerationFilesTradesComponent
     //   EXP: this.form.get('noExpediente').value
     // };
 
-    let params = {
-      P_USR: 'ZLB11_128',
-      P_CUMP: 1,
-      P_T_NO_CUMP: 2,
-      P_T_CUMP: 3,
-    };
-
     // let params = {
-    //   P_USR: this.form.get('noOficio').value,
-    //   P_CUMP: this.form.get('tipoOficio').value,
-    //   P_T_NO_CUMP: this.form.get('noVolante').value,
-    //   P_T_CUMP: this.form.get('noExpediente').value,
+    //   P_USR: 'ZLB11_128',
+    //   P_CUMP: 1,
+    //   P_T_NO_CUMP: 2,
+    //   P_T_CUMP: 3,
     // };
+
+    let params = {
+      P_USR: this.form.get('remitente').value,
+      P_CUMP: this.form.get('tipoOficio').value,
+      P_T_NO_CUMP: this.form.get('noVolante').value,
+      P_T_CUMP: this.form.get('noExpediente').value,
+    };
 
     if (STATUS == 'INTERNO') {
       this.siabService
@@ -185,7 +186,7 @@ export class GenerationFilesTradesComponent
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
             };
-            this.onLoadToast('success', '', 'Reporte generado');
+            this.onLoadToast('success', '', 'Reporte Generado');
             this.cleanForm();
             this.modalService.show(PreviewDocumentsComponent, config);
           }

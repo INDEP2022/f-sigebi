@@ -51,6 +51,7 @@ export class DataCaptureForEntryOrderFormComponent implements OnInit {
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#b38e5d',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         console.log('Guardar solicitud');

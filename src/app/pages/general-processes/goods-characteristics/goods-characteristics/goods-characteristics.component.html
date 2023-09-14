@@ -1,18 +1,119 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Caracter&Iacute;sticas del bien</h5>
+    <div class="row w-100">
+      <div class="col-12 col-sm-12 col-md-8">
+        <h5
+          class="title"
+          [class]="actualGoodNumber ? 'pointer' : ''"
+          (click)="goToHistoric()">
+          Caracter&Iacute;sticas del Bien
+          <ng-container *ngIf="numberGood">{{ actualGoodNumber }}</ng-container>
+        </h5>
+      </div>
+      <div class="col-12 col-sm-12 col-md-4 text-end" *ngIf="origin">
+        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+    </div>
   </div>
 
   <div body>
     <div class="row">
-      <div class="col-md-12 md-tabs">
+      <div class="col-md-12 md-tabs" *ngIf="form">
         <form [formGroup]="form" class="form-material">
-          <tabset>
+          <div class="paginator" *ngIf="totalItems > 1">
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"
+              [limit]="newLimit"
+              [maxSize]="1"></app-pagination>
+          </div>
+
+          <tabset #staticTabs>
             <tab heading="Datos de B&uacute;squeda">
               <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6">
+                  <!-- <ng-template #typeLabel let-item="item">
+                    {{ item.id }} - {{ item.nameGoodType }}
+                  </ng-template>
+                  <ng-template #typeOption let-item="item">
+                    <div [title]="item.id + '-' + item.nameGoodType">
+                      {{ item.id }} - {{ item.nameGoodType }}
+                    </div>
+                  </ng-template>
+                  <div class="row pt-3">
+                    <ng-custom-select-loading
+                      [form]="form"
+                      formControlName="type"
+                      label="Tipo"
+                      path="catalog/api/v1/good-type"
+                      value="id"
+                      bindLabel="nameGoodType"
+                      paramSearch="search"
+                      [labelTemplate]="typeLabel"
+                      [optionTemplate]="typeOption">
+                    </ng-custom-select-loading>
+                  </div>
+                  <div class="row pt-3">
+                    <ng-custom-select-loading
+                      [form]="form"
+                      formControlName="subtype"
+                      label="Subtipo"
+                      path="catalog/api/v1/good-subtype"
+                      value="id"
+                      bindLabel="nameSubtypeGood"
+                      paramSearch="search"
+                      [labelTemplate]="subtypeLabel"
+                      [optionTemplate]="subtypeOption">
+                    </ng-custom-select-loading>
+                    <ng-template #subtypeLabel let-item="item">
+                      {{ item.id }} - {{ item.nameSubtypeGood }}
+                    </ng-template>
+                    <ng-template #subtypeOption let-item="item">
+                      <div [title]="item.id + '-' + item.nameSubtypeGood">
+                        {{ item.id }} - {{ item.nameSubtypeGood }}
+                      </div>
+                    </ng-template>
+                  </div>
+                  <div class="row pt-3">
+                    <ng-custom-select-loading
+                      [form]="form"
+                      formControlName="ssubtype"
+                      label="Ssubtipo"
+                      path="catalog/api/v1/good-ssubtype"
+                      value="id"
+                      bindLabel="description"
+                      paramSearch="search"
+                      [labelTemplate]="ssubtypeLabel"
+                      [optionTemplate]="ssubtypeOption">
+                    </ng-custom-select-loading>
+                  </div>
+                  <div class="row pt-3">
+                    <ng-custom-select-loading
+                      [form]="form"
+                      formControlName="sssubtype"
+                      label="Sssubtipo"
+                      path="catalog/api/v1/good-sssubtype"
+                      value="id"
+                      bindLabel="description"
+                      paramSearch="search"
+                      [labelTemplate]="ssubtypeLabel"
+                      [optionTemplate]="ssubtypeOption">
+                    </ng-custom-select-loading>
+                  </div>
+                  <ng-template #ssubtypeLabel let-item="item">
+                    {{ item.id }} - {{ item.description }}
+                  </ng-template>
+                  <ng-template #ssubtypeOption let-item="item">
+                    <div [title]="item.id + '-' + item.description">
+                      {{ item.id }} - {{ item.description }}
+                    </div>
+                  </ng-template> -->
                   <app-goods-types-shared
                     [form]="form"
+                    [(loadTypes)]="loadTypes"
                     typeField="type"
                     subtypeField="subtype"
                     ssubtypeField="ssubtype"
@@ -21,65 +122,176 @@
                       getGoods($event)
                     "></app-goods-types-shared>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                   <div class="row pt-3">
-                    <!-- <form-field [control]="form.get('noBien')">
-                      <ngx-select
-                        [form]="form"
-                        control="noBien"
-                        [data]="select"
-                        label="No&#46; Bien"></ngx-select>
-                    </form-field> -->
-                    <div class="form-group row">
+                    <form-field
+                      [control]="form.get('noBien')"
+                      label="No. de Bien">
+                      <input
+                        class="form-control"
+                        formControlName="noBien"
+                        maxlength="10" />
+                    </form-field>
+                    <!-- <div class="form-group row">
                       <goods-filter-shared
                         [form]="form"
                         goodField="noBien"
                         [classifGood]="good"></goods-filter-shared>
-                    </div>
+                    </div> -->
                   </div>
                   <div class="row pt-4">
-                    <form-field
+                    <ng-custom-select-loading
+                      [form]="form"
+                      [path]="pathClasification"
+                      [updateValues]="true"
+                      label="No. Clasificación del Bien"
+                      formControlName="noClasif"
+                      value="numClasifGoods"
+                      bindLabel="description"
+                      paramSearch="filter.description"
+                      prefixSearch="$ilike"
+                      secondParamSearch="filter.numClasifGoods"
+                      [labelTemplate]="clasLabel"
+                      [optionTemplate]="clasOption">
+                    </ng-custom-select-loading>
+                    <ng-template #clasLabel let-item="item">
+                      {{ item.numClasifGoods }} - {{ item.description }}
+                    </ng-template>
+                    <ng-template #clasOption let-item="item">
+                      <div
+                        [title]="item.numClasifGoods + '-' + item.description">
+                        {{ item.numClasifGoods }} - {{ item.description }}
+                      </div>
+                    </ng-template>
+                    <!-- <form-field
                       [control]="form.get('noClasif')"
-                      label="No Clasif Bien">
+                      label="No. Clasificación Bien">
                       <input
                         type="text"
                         class="form-control"
-                        formControlName="noClasif" />
-                    </form-field>
+                        maxlength="6"
+                        formControlName="noClasif"
+                        readonly
+                        (change)="updateClasif($event)"
+                        (customEvent)="handleEvent($event)" />
+                    </form-field> -->
                   </div>
                   <div class="row pt-3">
-                    <form-field [control]="form.get('status')" label="Estatus">
+                    <app-goods-status-shared
+                      [form]="form"
+                      goodStatusField="status"
+                      labelStatus="
+                        Estatus
+                      "></app-goods-status-shared>
+                    <!-- <form-field [control]="form.get('status')" label="Estatus">
                       <input
                         type="text"
                         class="form-control"
-                        formControlName="status" />
-                    </form-field>
+                        formControlName="status"
+                        readonly />
+                    </form-field> -->
+                  </div>
+                  <div class="row pt-3 buttons" style="margin: auto">
+                    <button
+                      [disabled]="formLoading"
+                      class="btn btn-primary btn-sm active"
+                      type="button"
+                      (click)="searchGood()">
+                      Buscar
+                      <i class="bx bx-search-alt bx-sm float-icon"></i>
+                    </button>
+                    <button
+                      [disabled]="formLoading"
+                      class="btn btn-danger btn-sm active"
+                      type="button"
+                      (click)="clearFilter()">
+                      Limpiar
+                      <i class="fa fa-eraser"></i>
+                    </button>
+
+                    <!-- <div class="col-6 p-0">
+                      <button
+                        [disabled]="formLoading"
+                        class="btn btn-danger btn-sm active"
+                        type="button"
+                        (click)="clearFilter()">
+                        Limpiar
+                      </button>
+                    </div>
+                    <div class="col-6 p-0" style="text-align: right">
+
+                    </div> -->
                   </div>
                 </div>
               </div>
             </tab>
             <tab heading="Datos Generales del Bien">
+              <div *ngIf="errorMessage" class="errorMessage">
+                {{ errorMessage }}
+              </div>
+              <div
+                *ngIf="!disabledBienes || di_numerario_conciliado"
+                class="mb-5"
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                ">
+                <button
+                  *ngIf="!disabledBienes"
+                  type="button"
+                  class="btn btn-sm btn-primary active"
+                  (click)="save()">
+                  Guardar
+                  <i class="bx bx-save text-light float-icon"></i>
+                </button>
+                <h5
+                  class="text-danger"
+                  style="text-align: right"
+                  *ngIf="di_numerario_conciliado">
+                  {{ di_numerario_conciliado }}
+                </h5>
+              </div>
               <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-12">
                   <div class="row">
                     <form-field
                       [control]="form.get('descripcion')"
                       label="Descripci&oacute;n">
                       <textarea
                         formControlName="descripcion"
-                        class="form-control"></textarea>
+                        class="form-control"
+                        [readonly]="disabledDescripcion2"
+                        maxlength="1250"></textarea>
                     </form-field>
                   </div>
                   <div class="row pt-3">
-                    <form-field
+                    <div class="col-md-4">
+                      <ng-custom-select-loading
+                        [form]="form"
+                        [path]="pathUnit"
+                        [readonly]="disabledBienes"
+                        [updateValues]="true"
+                        label="Unidad"
+                        formControlName="unidad"
+                        value="unit"
+                        bindLabel="unit"
+                        paramSearch="filter.unit"
+                        prefixSearch="$ilike">
+                      </ng-custom-select-loading>
+                    </div>
+
+                    <!-- <form-field
                       [control]="form.get('unidad')"
                       label="Unidad"
                       class="col-md-4">
                       <input
                         type="text"
                         formControlName="unidad"
-                        class="form-control" />
-                    </form-field>
+                        class="form-control"
+                        [readonly]="disabledBienes"
+                        maxlength="30" />
+                    </form-field> -->
                     <form-field
                       class="col-md-4"
                       [control]="form.get('cantidad')"
@@ -87,22 +299,51 @@
                       <input
                         type="text"
                         formControlName="cantidad"
-                        class="form-control" />
+                        class="form-control"
+                        [readonly]="disabledBienes"
+                        maxlength="21" />
                     </form-field>
                     <form-field
                       class="col-md-4"
                       [control]="form.get('valRef')"
-                      label="Val&#46; Referencia">
+                      label="Valor de Referencia">
                       <input
                         type="text"
                         formControlName="valRef"
-                        class="form-control" />
+                        class="form-control"
+                        [readonly]="disabledBienes"
+                        maxlength="18" />
                     </form-field>
                   </div>
                 </div>
-                <div class="col-md-4">
+              </div>
+              <div class="row mt-3">
+                <!-- <app-delegation-shared [form]="form"></app-delegation-shared> -->
+                <ng-template #coordinationLabel let-item="item">
+                  {{ item.id }} - {{ item.description }}
+                </ng-template>
+                <ng-template #coordinationOption let-item="item">
+                  <div [title]="item.id + '-' + item.description">
+                    {{ item.id }} - {{ item.description }}
+                  </div>
+                </ng-template>
+                <div class="col-md-6">
                   <div class="form-group row">
-                    <form-field
+                    <ng-custom-select-loading
+                      [form]="form"
+                      [readonly]="disabledBienes"
+                      formControlName="delegation"
+                      label="Delegación"
+                      path="catalog/api/v1/delegation/get-all"
+                      value="id"
+                      bindLabel="description"
+                      paramSearch="filter.id"
+                      [limit]="1000"
+                      [labelTemplate]="coordinationLabel"
+                      [optionTemplate]="coordinationOption"
+                      (valueChange)="updateDelegation($event)">
+                    </ng-custom-select-loading>
+                    <!-- <form-field
                       [control]="form.get('delegation')"
                       label="Delegación"
                       class="col-md-12">
@@ -110,32 +351,62 @@
                         type="text"
                         formControlName="delegation"
                         class="form-control" />
-                    </form-field>
+                    </form-field> -->
                   </div>
+                </div>
+                <div class="col-md-6">
                   <div class="form-group row">
-                    <form-field
+                    <ng-custom-select-loading
+                      [form]="form"
+                      [path]="pathSubdelegation"
+                      [isLoadInOnInit]="false"
+                      [readonly]="disabledBienes"
+                      [limit]="1000"
+                      [labelTemplate]="coordinationLabel"
+                      [optionTemplate]="coordinationOption"
+                      formControlName="subdelegation"
+                      label="Oficina de Atención Regional"
+                      value="id"
+                      bindLabel="description"
+                      paramSearch="filter.description"
+                      prefixSearch="$ilike"
+                      secondParamSearch="filter.id"
+                      (valueChange)="updateSubdelegation($event)">
+                    </ng-custom-select-loading>
+
+                    <!-- <form-field
                       [control]="form.get('subdelegation')"
-                      label="Delegación"
+                      label="Subdelegación"
                       class="col-md-12">
                       <input
                         type="text"
                         formControlName="subdelegation"
-                        class="form-control" />
-                    </form-field>
+                        class="form-control"
+                        [readonly]="disabledBienes" />
+                    </form-field> -->
                   </div>
                 </div>
               </div>
-
               <div class="row">
                 <form-field
                   [control]="form.get('fechaAval')"
                   label="Fecha Aval&uacute;o Vigencia"
                   class="col-md-3">
                   <input
+                    *ngIf="!disabledBienes"
                     type="text"
                     formControlName="fechaAval"
                     class="form-control"
+                    style="background-color: white"
+                    [disabled]="disabledBienes"
+                    readonly
                     bsDatepicker />
+                  <input
+                    *ngIf="disabledBienes"
+                    type="text"
+                    formControlName="fechaAval"
+                    class="form-control"
+                    readonly />
                 </form-field>
 
                 <form-field
@@ -145,7 +416,9 @@
                   <input
                     type="text"
                     formControlName="valorAval"
-                    class="form-control" />
+                    class="form-control"
+                    [readonly]="disabledBienes"
+                    maxlength="22" />
                 </form-field>
 
                 <form-field
@@ -155,7 +428,9 @@
                   <input
                     type="text"
                     formControlName="latitud"
-                    class="form-control" />
+                    class="form-control"
+                    maxlength="30"
+                    [readonly]="disabledBienes" />
                 </form-field>
 
                 <form-field
@@ -165,7 +440,9 @@
                   <input
                     type="text"
                     formControlName="longitud"
-                    class="form-control" />
+                    class="form-control"
+                    maxlength="30"
+                    [readonly]="disabledBienes" />
                 </form-field>
               </div>
 
@@ -173,24 +450,58 @@
                 <form-field
                   [control]="form.get('observaciones')"
                   label="Observaciones"
-                  class="col-md-8">
+                  [class]="showAvaluo ? 'col-md-8' : 'col-md-12'">
                   <textarea
                     formControlName="observaciones"
-                    class="form-control"></textarea>
+                    class="form-control"
+                    maxlength="600"
+                    [readonly]="disabledBienes"></textarea>
                 </form-field>
 
-                <div class="col-md-4">
+                <div class="col-md-4" *ngIf="showAvaluo">
                   <small>¿Con Aval&uacute;o?</small>
-                  <div class="d-flex">
+                  <div
+                    class="d-flex"
+                    [class]="disabledBienes ? 'not-press' : ''">
                     <form-radio label="Si">
-                      <input type="radio" formControlName="avaluo" value="1" />
+                      <input
+                        type="radio"
+                        formControlName="avaluo"
+                        [value]="true" />
                     </form-radio>
                     <form-radio label="No">
-                      <input type="radio" formControlName="avaluo" value="0" />
+                      <input
+                        type="radio"
+                        formControlName="avaluo"
+                        [value]="false" />
                     </form-radio>
                   </div>
                 </div>
               </div>
+              <div class="row" *ngIf="loading === false">
+                <app-good-table-vals
+                  *ngIf="good"
+                  [goodChange]="goodChange"
+                  [disabled]="disabledBienes"
+                  [good]="good"
+                  [clasification]="
+                    numberClassification ? numberClassification.value : null
+                  "
+                  [avaluo]="goodAppraisal2 ? goodAppraisal2.value : null"
+                  [di_numerario_conciliado]="
+                    di_numerario_conciliado
+                  "></app-good-table-vals>
+              </div>
+            </tab>
+            <tab heading="Fotos">
+              <app-photos-tabs
+                [goodNumber]="actualGoodNumber + ''"
+                [disabled]="false"></app-photos-tabs>
+              <!-- <app-good-photos
+                *ngIf="actualGoodNumber"
+                [showPhoto]="showPhoto"
+                [disabledBienes]="disabledBienes"
+                [goodNumber]="actualGoodNumber"></app-good-photos> -->
             </tab>
           </tabset>
         </form>

@@ -1,24 +1,24 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="ClaimConclusionForm" class="form-material">
       <div class="row">
-        <div class="col-md-4">
-          <form-field
-            [control]="ClaimConclusionForm.get('id')"
-            label="Id Conclusi&oacute;n siniestro">
+        <!--<div *ngIf="edit" class="col-md-4">
+          <form-field [control]="ClaimConclusionForm.get('id')" label="Id Conclusi&oacute;n siniestro">
             <input type="number" class="form-control" formControlName="id" />
           </form-field>
-        </div>
+        </div>-->
         <div class="col-md-4">
           <form-field
             [control]="ClaimConclusionForm.get('flag')"
             label="Bandera">
-            <input type="number" class="form-control" formControlName="flag" />
+            <input type="text" class="form-control" formControlName="flag" />
           </form-field>
         </div>
+      </div>
+      <div class="row mt-3">
         <div class="col-md-12">
           <form-field
             [control]="ClaimConclusionForm.get('description')"
@@ -27,8 +27,7 @@
               class="form-control"
               type="text"
               rows="2"
-              formControlName="description"
-              placeholder="Descripción"></textarea>
+              formControlName="description"></textarea>
           </form-field>
         </div>
       </div>

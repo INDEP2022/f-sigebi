@@ -4,7 +4,10 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Columns
 import { BATTERY_COLUMNS } from './battery-colums';
@@ -22,7 +25,6 @@ import { ILocker } from 'src/app/core/models/catalogs/locker.model';
 import { IShelves } from 'src/app/core/models/catalogs/shelves.model';
 //Component modal
 import { ISaveValue } from 'src/app/core/models/catalogs/save-value.model';
-import Swal from 'sweetalert2';
 import { BatteryModalComponent } from '../battery-modal/battery-modal.component';
 import { LockersModalComponent } from '../lockers-modal/lockers-modal.component';
 import { SaveValuesModalComponent } from '../save-values-modal/save-values-modal.component';
@@ -69,7 +71,9 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   dataBattery: LocalDataSource = new LocalDataSource();
   dataLockers: LocalDataSource = new LocalDataSource();
 
-  settingsSaveValues;
+  columnFilters: any = [];
+
+  //settingsSaveValues: any;
   settingsBattery;
   settingsShelves;
   settingsLockers;
@@ -89,7 +93,12 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     private modalService: BsModalService
   ) {
     super();
-    this.settingsSaveValues = {
+
+    this.settings.columns = SAVEVALUES_COLUMNS;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
+    /*this.settingsSaveValues = {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
@@ -98,41 +107,92 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
         position: 'right',
       },
       columns: { ...SAVEVALUES_COLUMNS },
-    };
+
+    };*/
     this.settingsBattery = {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
+        add: false,
         edit: true,
         delete: true,
         position: 'right',
       },
       columns: { ...BATTERY_COLUMNS },
+      hideSubHeader: false,
     };
     this.settingsShelves = {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
+        add: false,
         edit: true,
         delete: true,
         position: 'right',
       },
       columns: { ...SHELVES_COLUMNS },
+      hideSubHeader: false,
     };
     this.settingsLockers = {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
+        add: false,
         edit: true,
         delete: true,
         position: 'right',
       },
       columns: { ...LOCKERS_COLUMNS },
+      hideSubHeader: false,
     };
   }
 
   ngOnInit(): void {
     // this.prepareForm();
+    (this.loading1 = true),
+      this.dataShelves
+        .onChanged()
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(change => {
+          if (change.action === 'filter') {
+            let filters = change.filter.filters;
+            filters.map((filter: any) => {
+              let field = ``;
+              let searchFilter = SearchFilter.ILIKE;
+              field = `filter.${filter.field}`;
+              switch (filter.field) {
+                case 'id':
+                  searchFilter = SearchFilter.EQ;
+                  break;
+                case 'description':
+                  searchFilter = SearchFilter.ILIKE;
+                  break;
+                case 'location':
+                  searchFilter = SearchFilter.ILIKE;
+                  break;
+                case 'responsible':
+                  searchFilter = SearchFilter.ILIKE;
+                  break;
+                default:
+                  searchFilter = SearchFilter.ILIKE;
+                  break;
+              }
+              /*filter.field == 'id' ||
+              filter.field == 'description' ||
+              filter.field == 'location' ||
+              filter.field == 'responsible'
+                ? (searchFilter = SearchFilter.EQ)
+                : (searchFilter = SearchFilter.ILIKE);*/
+              if (filter.search !== '') {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              } else {
+                delete this.columnFilters[field];
+              }
+            });
+            this.params1 = this.pageFilter(this.params1);
+            this.getSaveValues();
+          }
+        });
     this.params1
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getSaveValues());
@@ -141,17 +201,19 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   //Tabla GuardaValor Archivo Gral
   getSaveValues() {
     this.loading1 = true;
-    this.saveValueService.getAll(this.params1.getValue()).subscribe({
+    let params = {
+      ...this.params1.getValue(),
+      ...this.columnFilters,
+    };
+    this.saveValueService.getAll(params).subscribe({
       next: response => {
-        console.log(response);
-        this.saveValuesList = response.data;
+        this.dataShelves.load(response.data);
+        this.dataShelves.refresh();
+        //this.saveValuesList = response.data;
         this.totalItems1 = response.count;
         this.loading1 = false;
       },
-      error: error => {
-        this.loading1 = false;
-        console.log(error);
-      },
+      error: error => (this.loading1 = false),
     });
   }
 
@@ -182,7 +244,10 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   //método para borrar registro de guardavalor
   delete(saveValues?: ISaveValue) {
     this.saveValueService.remove2(saveValues).subscribe({
-      next: () => (Swal.fire('Borrado', '', 'success'), this.getSaveValues()),
+      next: () => {
+        this.getSaveValues(),
+          this.alert('success', 'Guardavalor', 'Borrado Correctamente');
+      },
       error: err => {
         this.alertQuestion(
           'error',
@@ -264,7 +329,10 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   //método para borrar registro de Batteria
   delete2(battery?: IBattery) {
     this.batterysService.remove(battery.idBattery).subscribe({
-      next: () => (Swal.fire('Borrado', '', 'success'), this.getSaveValues()),
+      next: () => {
+        this.getSaveValues(),
+          this.alert('success', 'Bateria', 'Borrado Correctamente');
+      },
       error: err => {
         this.alertQuestion(
           'error',
@@ -364,7 +432,10 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     };
     console.log('key', formData);
     this.shelvessService.remove(formData).subscribe({
-      next: () => (Swal.fire('Borrado', '', 'success'), this.getSaveValues()),
+      next: () => {
+        this.getSaveValues(),
+          this.alert('success', 'Estante', 'Borrado Correctamente');
+      },
       error: err => {
         this.alertQuestion(
           'error',
@@ -403,14 +474,17 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: response => {
-          console.log(response);
+          console.log('GETLOCKER', response);
           this.lockerList = response.data;
           this.totalItems4 = response.count;
           this.loading4 = false;
         },
-        error: error => (
-          this.showNullRegisterLocker(), (this.loading4 = false)
-        ),
+        error: error => {
+          this.showNullRegisterLocker();
+          this.lockerList = [];
+          this.totalItems4 = 0;
+          this.loading4 = false;
+        },
       });
   }
 
@@ -462,11 +536,11 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   //método para borrar registro de casillero
   delete4(locker?: ILocker) {
     this.lockersService.remove(locker.id).subscribe({
-      next: () => (
-        (this.loading4 = false),
-        Swal.fire('Borrado', '', 'success'),
-        this.getShelves(this.storeCode, this.idBattery)
-      ),
+      next: () => {
+        this.loading4 = false;
+        this.getLocker(this.saveValueKey, this.numBattery, this.numShelf);
+        this.alert('success', 'Casillero', 'Borrado Correctamente');
+      },
     });
   }
 }

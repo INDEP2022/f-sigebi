@@ -1,12 +1,34 @@
+#detailActMaintenance {
+  accordion-group {
+    ::ng-deep {
+      .panel-body {
+        padding: 0px !important;
+      }
+    }
+  }
+}
+
+.card .card-header .returnMaintenance h5::after {
+  top: -5px !important;
+}
+
+.title {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  position: relative !important;
+}
+
 :host ::ng-deep ng2-smart-table {
   .fec_indica_usuario_aprobacion,
   .fec_aprobacion_x_admon {
     min-width: 105px;
     text-align: center;
   }
+
   .descripcion {
     min-width: 250px;
   }
+
   // .ng2-smart-actions {
   //   position: absolute;
   //   width: 5em;
@@ -19,13 +41,30 @@
   // }
 }
 
-.row {
-  > div {
-    @media screen and (max-width: 567px) {
-      padding-right: 0px;
-    }
-  }
+.goodTracker {
+  text-align: left;
+  display: flex;
+  column-gap: 10px;
 }
+
+.massiveDelete {
+  text-align: right;
+  display: flex;
+  column-gap: 10px;
+  justify-content: flex-end;
+}
+
+app-cants {
+  margin-top: 10px;
+}
+
+// .row {
+//   >div {
+//     @media screen and (max-width: 567px) {
+//       padding-right: 0px;
+//     }
+//   }
+// }
 
 .action-buttons {
   @media screen and (max-width: 567px) {
@@ -42,9 +81,12 @@
   display: flex;
   align-items: center;
   top: -20px;
+  margin-top: 5px;
+
   > i {
     font-size: 35px;
   }
+
   &:hover {
     color: #9d2449;
   }

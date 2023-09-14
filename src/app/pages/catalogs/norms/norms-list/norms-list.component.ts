@@ -53,18 +53,32 @@ export class NormsListComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
-            filter.field == 'id'
-              ? ((searchFilter = SearchFilter.EQ),
-                (field = `filter.${filter.field}`))
-              : ((searchFilter = SearchFilter.ILIKE),
-                (field = `filter.${filter.field}`));
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'type':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'destination':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'condition':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });
@@ -83,9 +97,25 @@ export class NormsListComponent extends BasePage implements OnInit {
       next: response => {
         //TODO:Solicitar que se regrese un array vacio cuando no hay elementos
         if (typeof response.data !== 'undefined' && response.data.length > 0) {
+          console.log(response.data);
+          // this.data.load(response.data);
+          // this.data.refresh();
+          // this.loading = false;
           this.columns = response.data;
           this.totalItems = response.count || 0;
-          this.getList();
+          this.getList()
+            .then(resultado => {
+              console.log(resultado);
+              console.log(this.columns);
+              this.columns1 = this.columns;
+
+              this.data.load(this.columns1);
+              this.data.refresh(); // Operación exitosa
+              this.loading = false;
+            })
+            .catch(error => {
+              console.error(error); // Error en la operación
+            });
         } else {
           this.loading = false;
         }
@@ -93,23 +123,33 @@ export class NormsListComponent extends BasePage implements OnInit {
       error: error => (this.loading = false),
     });
   }
-  getList() {
-    for (let i = 0; i < this.columns.length; i++) {
-      this.params1['filter.name'] = 'Destino';
-      this.params1['filter.keyId'] = this.columns[i].destination;
-      this.genericService.getByFilter(this.params1).subscribe({
-        next: response => {
-          this.columns[i].name = response.data[0].description;
+  getList(): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      for (let i = 0; i < this.columns.length; i++) {
+        console.log(this.columns[i].destination);
+        if (this.columns[i].destination) {
+          this.params1['filter.name'] = 'Destino';
+          this.params1['filter.keyId'] = this.columns[i].destination;
+          this.genericService.getByFilter(this.params1).subscribe({
+            next: response => {
+              this.columns[i].name = response.data[0].description;
+              if (i == this.columns.length - 1) {
+                resolve('Operación exitosa');
+              }
+            },
+            error: error => (this.loading = false),
+          });
+        } else {
+          // this.columns[i].name = '';
           if (i == this.columns.length - 1) {
-            this.columns1 = this.columns;
-            this.data.load(this.columns1);
-            this.data.refresh();
-            this.loading = false;
+            resolve('Operación exitosa');
           }
-        },
-        error: error => (this.loading = false),
-      });
-    }
+          // this.loading = false;
+        }
+      }
+      // Ejemplo de rechazo de la promesa
+      // reject('Error en la operación');
+    });
   }
   openModal(context?: Partial<NormsFormComponent>) {
     const modalRef = this.modalService.show(NormsFormComponent, {
@@ -134,7 +174,7 @@ export class NormsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

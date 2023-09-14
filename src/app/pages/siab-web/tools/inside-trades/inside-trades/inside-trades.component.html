@@ -1,0 +1,144 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Oficios Internos</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="form.get('cve_of_gestion')"
+            label="CVE de Gestion">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cve_of_gestion"
+              maxlength="20" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="form.get('fecha')" label="Fecha">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fecha"
+              bsDatepicker
+              [maxDate]="maxDate" />
+          </form-field>
+        </div>
+
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="form.get('nombre')" label="Nombre">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nombre"
+              maxlength="20" />
+          </form-field>
+        </div>
+
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="form.get('ciudad')" label="Ciudad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ciudad"
+              maxlength="20" />
+          </form-field>
+        </div>
+
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="form.get('texto1')" label="Texto 1">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="texto1"
+              maxlength="50" />
+          </form-field>
+        </div>
+
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="form.get('texto2')" label="Texto 2">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="texto2"
+              maxlength="50" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="form.get('NoVolante')" label="No. Volante">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="NoVolante" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="form.get('NoExpediente')"
+            label="No. Expediente">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="NoExpediente" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="form.get('avePre')" label="Ave Pre">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="avePre"
+              maxlength="20" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="form.get('nombre2')" label="Nombre 2">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nombre2"
+              maxlength="20" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="form.get('OTVALOR1')" label="OTVALOR1">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="OTVALOR1"
+              maxlength="20" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="form.get('cpp')" label="C.C.P.">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cpp"
+              maxlength="20" />
+          </form-field>
+        </div>
+        <div class="row justify-content-center">
+          <br />
+          <div class="col-md-1">
+            <button class="btn btn-primary active btn-sm" (click)="goBack()">
+              Regresar <i class="fas fa-arrow-circle-left"></i>
+            </button>
+          </div>
+          <div class="col-md-1">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="onClickPrintOffice()">
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

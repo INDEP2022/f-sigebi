@@ -33,10 +33,10 @@ export class DocCompensationSATService
   }
 
   update(id: string | number, model: IDocCompesationSat): Observable<Object> {
-    return this.docCompensationSATRepository.update(this.route, id, model);
+    return this.docCompensationSATRepository.newUpdateId(this.route, id, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.docCompensationSATRepository.remove(this.route, id);
+    return this.docCompensationSATRepository.remove(`${this.route}/id`, id);
   }
 }

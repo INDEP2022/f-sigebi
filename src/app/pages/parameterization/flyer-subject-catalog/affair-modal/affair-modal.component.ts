@@ -16,7 +16,7 @@ export class AffairModalComponent extends BasePage implements OnInit {
   affairForm: ModelForm<IAffair>;
   affair: IAffair;
 
-  title: string = 'Asunto';
+  title: string = 'Asunto para Volante';
   edit: boolean = false;
 
   constructor(
@@ -33,11 +33,31 @@ export class AffairModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.affairForm = this.fb.group({
-      id: [null, []],
-      description: [null, [Validators.pattern(STRING_PATTERN)]],
+      id: [null],
+      description: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(200),
+        ],
+      ],
+      referralNoteType: [null],
+      userCreation: [null],
+      creationDate: [null],
+      userModification: [null],
+      modificationDate: [null],
+      versionUser: [null],
+      status: [null],
+      registerNumber: [null],
+      version: [null],
+      processDetonate: [null],
+      clv: [null],
+      nbOrigen: [null],
     });
     if (this.affair != null) {
       this.edit = true;
+      console.log(this.affair);
       this.affairForm.patchValue(this.affair);
     }
   }
@@ -51,7 +71,12 @@ export class AffairModalComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.affairForm.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
+    this.affairForm.controls['nbOrigen'].setValue('SIAB');
     this.affairService.create2(this.affairForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
@@ -60,6 +85,7 @@ export class AffairModalComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+
     this.affairService
       .update2(this.affair.id, this.affairForm.value)
       .subscribe({
@@ -69,7 +95,7 @@ export class AffairModalComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

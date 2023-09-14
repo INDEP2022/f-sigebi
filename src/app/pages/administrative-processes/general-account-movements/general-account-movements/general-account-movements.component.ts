@@ -1,94 +1,176 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IMoneda } from 'src/app/core/models/catalogs/tval-Table5.model';
+import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { BankService } from '../../../../core/services/catalogs/bank.service';
 
 @Component({
   selector: 'app-general-account-movements',
   templateUrl: './general-account-movements.component.html',
   styles: [],
 })
-export class GeneralAccountMovementsComponent
-  extends BasePage
-  implements OnInit
-{
-  public form: FormGroup;
-  public id: string = 'id';
-  public currency = new DefaultSelect();
-  public banks = new DefaultSelect();
+export class GeneralAccountMovementsComponent implements OnInit {
+  form: FormGroup;
+  isLoading = false;
+  maxDate = new Date();
+  currencies = new DefaultSelect<IMoneda>([], 0);
+  fromF: string = '';
+  toT: string = '';
+  import: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
 
+  @Output() submit = new EventEmitter();
   constructor(
     private fb: FormBuilder,
-    private bankService: BankService,
+    private tableServ: TvalTable5Service,
     private datePipe: DatePipe,
-    private currencyService: DynamicTablesService
-  ) {
-    super();
-  }
-
-  public get noBien() {
-    return this.form.get('noBien');
-  }
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService
+  ) {}
 
   ngOnInit(): void {
-    this.handleForm();
+    this.prepareForm();
   }
 
-  public handleForm(): void {
+  prepareForm() {
     this.form = this.fb.group({
-      noBien: [null, [Validators.required, Validators.maxLength(10)]],
-      record: [''],
-      amount: [null],
+      good: [null, Validators.required],
+      fileFrom: [null],
       currency: [null],
-      bank: [''],
-      from: [''],
-      to: [''],
+      deposito: [null],
+      bank: [null],
+      from: [null],
+      to: [null],
     });
   }
 
-  public send(): void {
-    console.log(this.form.controls);
-    // this.loading = true;
-    // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGERADBMOVCUEGEN.pdf?PARAMFORM=NO&PN_BIEN=` +
-    //   this.form.controls['noBien'].value +
-    //   `&PN_EXPE=` +
-    //   this.form.controls['record'].value +
-    //   `&PC_MONEDA=` +
-    //   this.form.controls['currency'].value +
-    //   `&PC_BANCO=` +
-    //   this.form.controls['bank'].value +
-    //   `&PN_MOVIMI=` +
-    //   this.form.controls['amount'].value +
-    //   `PC_FEC_INI=` +
-    //   this.datePipe.transform(this.form.controls['from'].value, 'dd-mm-yyyy') +
-    //   `PC_FEC_FIN=` +
-    //   this.datePipe.transform(this.form.controls['to'].value, 'dd-mm-yyyy');
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`;
-    const downloadLink = document.createElement('a');
-    downloadLink.href = pdfurl;
-    downloadLink.target = '_blank';
-    downloadLink.click();
-    let params = { ...this.form.value };
-    for (const key in params) {
-      if (params[key] === null) delete params[key];
+  Generar() {
+    this.isLoading = true;
+    this.submit.emit(this.form);
+    this.fromF = this.datePipe.transform(
+      this.form.controls['from'].value,
+      'dd/MM/yyyy'
+    );
+
+    this.toT = this.datePipe.transform(
+      this.form.controls['to'].value,
+      'dd/MM/yyyy'
+    );
+
+    let params: any = {};
+
+    if (this.form.controls['good'].value) {
+      params.PN_BIEN = this.form.controls['good'].value;
     }
-    this.onLoadToast('success', '', 'Reporte generado');
-    this.loading = false;
+    if (this.form.controls['fileFrom'].value) {
+      params.PN_EXPE = this.form.controls['fileFrom'].value;
+    }
+    if (this.form.controls['currency'].value) {
+      params.PC_MONEDA = this.form.controls['currency'].value;
+    }
+    if (this.form.controls['bank'].value) {
+      params.PC_BANCO = this.form.controls['bank'].value;
+    }
+    if (this.form.controls['deposito'].value) {
+      params.PN_MOVIMI = this.form.controls['deposito'].value;
+    }
+    if (this.fromF) {
+      params.PC_FEC_INI = this.fromF;
+    }
+    if (this.toT) {
+      params.PC_FEC_FIN = this.toT;
+    }
+
+    // let params = {
+    //   PN_BIEN: this.form.controls['good'].value,
+    //   PN_EXPE: this.form.controls['fileFrom'].value,
+    //   PC_MONEDA: this.form.controls['currency'].value,
+    //   PC_BANCO: this.form.controls['bank'].value,
+    //   PN_MOVIMI: this.form.controls['deposito'].value,
+    //   PC_FEC_INI: this.fromF,
+    //   PC_FEC_FIN: this.toT,
+    // };
+    console.log('params', params);
+    this.siabService
+      .fetchReport('RGERADBMOVCUEGEN', params)
+      // .fetchReportBlank('blank')
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
   }
 
-  public getCurrencies(event: any) {
-    this.currencyService.getTvalTable5ByTable(3).subscribe(data => {
-      this.currency = new DefaultSelect(data.data, data.count);
+  getCurrencies($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    if ($params.text) params.search = $params.text;
+    this.getRegCurrency(params);
+  }
+
+  getRegCurrency(_params?: FilterParams, val?: boolean) {
+    // const params = new FilterParams();
+
+    // params.page = _params.page;
+    // params.limit = _params.limit;
+    // if (val) params.addFilter3('filter.desc_moneda', _params.text);
+
+    this.tableServ.getReg4WidthFilters(_params.getParams()).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.desc_moneda = `${data.cve_moneda}- ${data.desc_moneda}`;
+          return data;
+        });
+        this.currencies = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.currencies = new DefaultSelect();
+      },
     });
   }
 
-  public getBanks(event: any) {
-    console.log(event);
-    this.bankService.getAll(event).subscribe(data => {
-      this.banks = new DefaultSelect(data.data, data.count);
-    });
+  cleanForm() {
+    this.form.reset();
   }
 }

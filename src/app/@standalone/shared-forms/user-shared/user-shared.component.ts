@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
@@ -11,7 +11,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IUser } from 'src/app/core/models/administrative-processes/siab-sami-interaction/user.model';
-import { usersData } from './data';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 
 @Component({
   selector: 'app-user-shared',
@@ -25,22 +25,25 @@ export class UsersSharedComponent extends BasePage implements OnInit {
   @Input() userField: string = 'user';
   @Input() label: string = 'Usuarios';
   @Input() showUsers: boolean = true;
+  @Input() id: boolean = false;
   //If Form PatchValue
   @Input() patchValue: boolean = false;
+  @Output() change = new EventEmitter<IUser>();
 
   users = new DefaultSelect<IUser>();
 
-  constructor(/*private service: WarehouseService*/) {
+  constructor(private serviceUser: UsersService) {
     super();
   }
 
   ngOnInit(): void {}
 
   getUsers(params: ListParams) {
-    //Provisional data
-    let data = usersData;
-    let count = data.length;
-    this.users = new DefaultSelect(data, count);
+    const routeUser = `?filter.name=$ilike:${params.text}`;
+    this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
+      this.users = new DefaultSelect(res.data, res.count);
+    });
+
     /*this.service.getAll(params).subscribe(data => {
         this.status = new DefaultSelect(data.data,data.count);
       },err => {
@@ -66,6 +69,7 @@ export class UsersSharedComponent extends BasePage implements OnInit {
     } else {
       this.form.updateValueAndValidity();
     }
+    this.change.emit(type);
   }
 
   resetFields(fields: AbstractControl[]) {

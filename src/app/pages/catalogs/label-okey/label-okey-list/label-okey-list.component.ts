@@ -1,8 +1,13 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { LocalDataSource } from 'ng2-smart-table';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ILabelOKey } from 'src/app/core/models/catalogs/label-okey.model';
 import { LabelOkeyService } from 'src/app/core/services/catalogs/label-okey.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -19,6 +24,8 @@ export class LabelOkeyListComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   @Output() refresh = new EventEmitter<true>();
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
   constructor(
     private labelOkeyService: LabelOkeyService,
     private modalService: BsModalService
@@ -26,9 +33,40 @@ export class LabelOkeyListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = LABEL_OKEY_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            filter.field == 'id' ||
+            filter.field == 'contractNumber' ||
+            filter.field == 'weightedDeduction' ||
+            filter.field == 'startingRankPercentage' ||
+            filter.field == 'finalRankPercentage' ||
+            filter.field == 'status' ||
+            filter.field == 'version'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getLabelsOkey();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getLabelsOkey());
@@ -36,10 +74,16 @@ export class LabelOkeyListComponent extends BasePage implements OnInit {
 
   getLabelsOkey() {
     this.loading = true;
-    this.labelOkeyService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.labelOkeyService.getAll(params).subscribe({
       next: response => {
         this.paragraphs = response.data;
-        this.totalItems = response.count;
+        this.totalItems = response.count || 0;
+        this.data.load(response.data);
+        this.data.refresh();
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -47,17 +91,14 @@ export class LabelOkeyListComponent extends BasePage implements OnInit {
   }
 
   openForm(labelOKey?: ILabelOKey) {
-    let config: ModalOptions = {
-      initialState: {
-        labelOKey,
-        callback: (next: boolean) => {
-          if (next) this.getLabelsOkey();
-        },
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      labelOKey,
+      callback: (next: boolean) => {
+        if (next) this.getLabelsOkey();
       },
-      class: 'modal-md modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.modalService.show(LabelOkeyFormComponent, config);
+    this.modalService.show(LabelOkeyFormComponent, modalConfig);
   }
 
   delete(labelOKey: ILabelOKey) {
@@ -67,9 +108,18 @@ export class LabelOkeyListComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.labelOkeyService.remove(labelOKey.id).subscribe({
-          next: data => this.getLabelsOkey(),
-          error: error => (this.loading = false),
+        this.labelOkeyService.remove2(labelOKey.id).subscribe({
+          next: () => {
+            this.getLabelsOkey(),
+              this.alert('success', 'Etiqueta Bien', 'Borrado Correctamente');
+          },
+          error: error => {
+            this.alert(
+              'warning',
+              'Etiquetas bien',
+              'No se puede eliminar el objeto debido a una relación con otra tabla.'
+            );
+          },
         });
       }
     });

@@ -1,96 +1,110 @@
 <form class="form-material" [formGroup]="form" (submit)="getData()">
-  <div class="row pt-5">
-    <div class="col-md-2">
-      <form-field [control]="form.get('good')" label="No. Siab">
-        <input type="number" class="form-control" formControlName="good" />
-      </form-field>
-    </div>
-    <div class="col-md-2">
-      <form-field [control]="form.get('beneficiary')" label="Beneficiario">
-        <input type="text" class="form-control" formControlName="beneficiary" />
-      </form-field>
-    </div>
-    <div class="col-md-2">
-      <form-field [control]="form.get('mandate')">
-        <ngx-select
-          [form]="form"
-          label="Transferente"
-          [data]="transferents"
-          (fetchItems)="getTransferent($event)"
-          value="cvman"
-          bindLabel="nameTransferent"
-          control="mandate"
-          [searchOnInit]="true"></ngx-select>
-      </form-field>
-    </div>
-    <div class="col-md-2">
-      <form-field
-        [control]="form.get('paymentRequest')"
-        label="Solicitud de pago">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="paymentRequest" />
-      </form-field>
-    </div>
-    <div class="col-md-2">
-      <form-field [control]="form.get('invoice')" label="Factura">
-        <input type="text" class="form-control" formControlName="invoice" />
-      </form-field>
-    </div>
-    <div class="col-md-2">
-      <form-field [control]="form.get('importeF')" label="Importe Factura">
-        <input type="text" class="form-control" formControlName="importeF" />
-      </form-field>
-    </div>
+  <div class="row mb-3 mt-3">
+    <form-field [control]="form.get('good')" class="col-md-2" label="No. Bien">
+      <input
+        type="number"
+        [min]="0"
+        formControlName="good"
+        class="form-control" />
+    </form-field>
+    <form-field
+      [control]="form.get('beneficiary')"
+      class="col-md-4"
+      label="Beneficiario">
+      <input type="text" formControlName="beneficiary" class="form-control"
+    /></form-field>
+    <form-field
+      [control]="form.get('mandate')"
+      class="col-md-2"
+      label="Transferente">
+      <input type="text" class="form-control" formControlName="mandate" />
+    </form-field>
+    <form-field
+      [control]="form.get('descMandate')"
+      class="col-md-4"
+      label="Descripción Transferente">
+      <input type="text" class="form-control" formControlName="descMandate" />
+    </form-field>
   </div>
-  <div class="row pt-5">
-    <div class="col-md-2">
-      <form-field
-        [control]="form.get('folatenclie')"
-        label="Folio atención a clientes">
-        <input type="text" class="form-control" formControlName="folatenclie" />
-      </form-field>
-    </div>
-    <div class="col-md-2">
-      <form-field [control]="form.get('concept')" label="Concepto">
-        <input type="text" class="form-control" formControlName="concept" />
-      </form-field>
-    </div>
-    <div class="col-md-2">
-      <form-field [control]="form.get('capture')" label="Captura">
-        <input type="text" class="form-control" formControlName="capture" />
-      </form-field>
-    </div>
-    <div class="col-md-2">
-      <form-field [control]="form.get('request')" label="Solicita">
-        <input type="text" class="form-control" formControlName="request" />
-      </form-field>
-    </div>
-    <div class="col-md-2">
-      <form-field [control]="form.get('authority')" label="Autorizó">
-        <input type="text" class="form-control" formControlName="authority" />
-      </form-field>
-    </div>
+  <div class="row mb-3 mt-3">
+    <form-field
+      [control]="form.get('paymentRequest')"
+      class="col-md-3"
+      label="Solicitud de Pago">
+      <input
+        type="text"
+        formControlName="paymentRequest"
+        class="form-control" />
+    </form-field>
+    <form-field
+      [control]="form.get('invoice')"
+      class="col-md-3"
+      label="Factura">
+      <input type="text" formControlName="invoice" class="form-control" />
+    </form-field>
+    <form-field
+      [control]="form.get('importeF')"
+      class="col-md-3"
+      label="Importe Factura">
+      <input type="text" formControlName="importeF" class="form-control" />
+    </form-field>
+    <form-field
+      [control]="form.get('folatenclie')"
+      class="col-md-3"
+      label="Folio de Atención Cliente">
+      <input type="text" formControlName="folatenclie" class="form-control" />
+    </form-field>
   </div>
-  <div class="row">
-    <div class="col-md-12 d-flex">
-      <div>
-        <confirm-button
-          [loading]="loading"
-          text="Ejecutar consutla"
-          [btnSmall]="true"
-          loadingText="Obteniendo datos"></confirm-button>
-      </div>
-      <div class="ml-3">
-        <button
-          [disabled]="loading"
-          class="btn btn-danger btn-sm active"
-          type="button"
-          (click)="resetForm()">
-          Limpiar Filtro
-        </button>
-      </div>
+  <div class="row mb-3 mt-3">
+    <form-field
+      [control]="form.get('concept')"
+      class="col-md-2"
+      label="Concepto">
+      <input type="text" formControlName="concept" class="form-control" />
+    </form-field>
+    <form-field
+      [control]="form.get('descConcept')"
+      class="col-md-4"
+      label="Descripción Concepto">
+      <input type="text" formControlName="descConcept" class="form-control" />
+    </form-field>
+  </div>
+  <div class="row mb-3 mt-3">
+    <form-field
+      [control]="form.get('capture')"
+      class="col-md-4"
+      label="Capturó">
+      <input type="text" formControlName="capture" class="form-control" />
+    </form-field>
+    <form-field
+      [control]="form.get('request')"
+      class="col-md-4"
+      label="Solicita">
+      <input type="text" formControlName="request" class="form-control" />
+    </form-field>
+    <form-field
+      [control]="form.get('authority')"
+      class="col-md-4"
+      label="Autoriza">
+      <input type="text" formControlName="authority" class="form-control" />
+    </form-field>
+  </div>
+  <div class="row text-center">
+    <div class="col">
+      <button
+        class="btn btn-danger btn-sm active mr-3"
+        [disabled]="loading"
+        (click)="cleanFilters()">
+        Limpiar Filtros <i class="fas fa-eraser"> </i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary active btn-sm"
+        [disabled]="loading"
+        (click)="executeConsult()">
+        Ejecutar Consulta
+        <i class="bx bx-search-alt bx-sm float-icon"></i>
+      </button>
     </div>
   </div>
 </form>
@@ -99,22 +113,32 @@
   <div class="ch-content">
     <h5 class="title">Datos</h5>
     <div class="row justify-content-end mr-3">
-      <div>
-        <button type="button" class="btn btn-success btn-sm active mx-2">
-          Exportar Todo a Excel
-        </button>
-        <button
-          type="button"
-          (click)="exportSelected()"
-          class="btn btn-success btn-sm active mx-2"
-          [disabled]="selectedRows.length === 0">
-          Exportar Seleccionados a Excel
-        </button>
-        <app-columns-select [(settings)]="settings"></app-columns-select>
-      </div>
+      <app-columns-select [(settings)]="settings"></app-columns-select>
     </div>
   </div>
-  <div class="row pt-3">
+  <div [class]="loading ? 'table-loading row pt-3' : 'row pt-3'">
     <ng2-smart-table [settings]="settings" [source]="data"> </ng2-smart-table>
+  </div>
+  <app-pagination
+    [params]="params2"
+    [totalItems]="totalItems2"
+    [limit]="newLimit2"></app-pagination>
+  <div class="row text-center mt-5">
+    <div class="col">
+      <button
+        class="btn btn-sm btn-success active mr-3"
+        (click)="exportAll()"
+        [disabled]="loading">
+        Exportar a Excel Todos
+        <i class="bx bx-download float-icon"></i>
+      </button>
+      <button
+        class="btn btn-sm btn-success active"
+        (click)="exportSelected()"
+        [disabled]="loading">
+        Exportar a Excel Seleccionados
+        <i class="bx bx-download float-icon"></i>
+      </button>
+    </div>
   </div>
 </div>

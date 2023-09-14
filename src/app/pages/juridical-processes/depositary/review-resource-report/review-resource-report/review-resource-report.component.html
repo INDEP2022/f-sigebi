@@ -91,7 +91,9 @@
             <input
               class="form-control"
               formControlName="startDate"
-              bsDatepicker />
+              bsDatepicker
+              (ngModelChange)="onStartDateChange($event)"
+              [maxDate]="maxDate" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -99,7 +101,9 @@
             <input
               class="form-control"
               formControlName="endDate"
-              bsDatepicker />
+              [minDate]="dateMinEnd"
+              bsDatepicker
+              [maxDate]="maxDate" />
           </form-field>
           <div
             class="invalid-feedback animated fadeInUp"
@@ -108,17 +112,29 @@
             {{ getEndDateErrorMessage(endDate, startDate) }}
           </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
-          <div class="form-group">
-            <button
-              class="btn btn-primary active"
-              (click)="btnGenerarReporte()"
-              [disabled]="!form.valid">
-              Generar Reporte
-            </button>
-          </div>
-        </div>
       </div>
     </form>
+
+    <div>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button
+            type="button"
+            [disabled]="form.invalid"
+            class="btn btn-primary active btn-sm"
+            (click)="btnGenerarReporte()">
+            Generar Reporte <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm"
+            (click)="cleanForm()">
+            Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </app-card>

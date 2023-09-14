@@ -1,144 +1,188 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Impresi&oacute;n de Actas de Entrega Recepci&oacute;n</h5>
+    <h5 class="title">Impresi&oacute;n de Actas de {{ title }}</h5>
   </div>
 
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-6">
-          <div class="row">
-            <form-radio label="Acta Entrega Recepci&oacute;n">
-              <input
-                type="radio"
-                [formControl]="type"
-                [value]="REPORT_TYPES.Reception" />
-            </form-radio>
-            <form-radio label="Acta Decomiso">
-              <input
-                type="radio"
-                [formControl]="type"
-                [value]="REPORT_TYPES.Confiscation" />
-            </form-radio>
-          </div>
-
-          <div class="row">
-            <div class="col-md-9">
-              <app-delegation-shared
-                [form]="form"
-                [delegationField]="delegacionRecibe"
-                [labelDelegation]="labelDelegation"
-                [labelSubdelegation]="
-                  labelSubdelegation
-                "></app-delegation-shared>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-9">
-              <form-field
-                [control]="form.get('estatusActa')"
-                label="Estatus Acta">
-                <select class="form-control" formControlName="estatusActa">
-                  <option value="Abierta">Abierta</option>
-                  <option value="Cerrada">Cerrada</option>
-                  <option value="Todos">Todos</option>
-                </select>
-              </form-field>
-            </div>
-          </div>
-
-          <div class="row" *ngIf="type.value === REPORT_TYPES.Reception">
-            <div class="col-md-9">
-              <form-field [control]="form.get('actaInicial')">
-                <ngx-select
-                  (fetchItems)="getInitialProceedings($event)"
-                  [class]="!initialProceedingBool ? 'disabled' : ''"
-                  id="actaI"
-                  bindLabel="cve_acta"
-                  control="actaInicial"
-                  label="Acta Inicial"
+        <div class="row">
+          <form-radio label="Acta Entrega Recepci&oacute;n">
+            <input
+              type="radio"
+              [formControl]="type"
+              [value]="REPORT_TYPES.Reception" />
+          </form-radio>
+          <form-radio label="Acta Decomiso">
+            <input
+              type="radio"
+              [formControl]="type"
+              [value]="REPORT_TYPES.Confiscation" />
+          </form-radio>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-md-9">
+                <app-delegation-shared
                   [form]="form"
-                  [data]="initialProceeding"></ngx-select>
-              </form-field>
+                  [delegationField]="delegacionRecibe"
+                  [labelDelegation]="labelDelegation"
+                  [labelSubdelegation]="
+                    labelSubdelegation
+                  "></app-delegation-shared>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-9">
+                <form-field [control]="form.get('estatusActa')">
+                  <ngx-select
+                    control="estatusActa"
+                    label="Estatus Acta"
+                    bindLabel="estatusData"
+                    [form]="form"
+                    [searchable]="false"
+                    [data]="estatusData"></ngx-select>
+                  <!-- <select class="form-control" formControlName="estatusActa">
+                    <option value="Abierta">Abierta</option>
+                    <option value="Cerrada">Cerrada</option>
+                    <option value="Todos">Todos</option>
+                  </select> -->
+                </form-field>
+              </div>
+            </div>
+
+            <div class="row" *ngIf="type.value === REPORT_TYPES.Reception">
+              <div class="col-md-9">
+                <div class="row">
+                  <div class="col-md-4">
+                    <form-field [control]="form.get('actaInicial')">
+                      <ngx-select
+                        (fetchItems)="getInitialProceedings($event)"
+                        [class]="!initialProceedingBool ? 'disabled' : ''"
+                        id="actaI"
+                        bindLabel="proceedingsnumber"
+                        control="actaInicial"
+                        label="Acta Inicial"
+                        [form]="form"
+                        [data]="initialProceeding"></ngx-select>
+                    </form-field>
+                  </div>
+                  <div class="col-md-5">
+                    <span className="labelActa">{{
+                      keyProceedingInitial
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" *ngIf="type.value === REPORT_TYPES.Reception">
+              <div class="col-md-9">
+                <div class="row">
+                  <div class="col-md-4">
+                    <form-field [control]="form.get('actaFinal')">
+                      <ngx-select
+                        (fetchItems)="getFinalProceedings($event)"
+                        id="actaF"
+                        control="actaFinal"
+                        [class]="!finalProceedingBool ? 'disabled' : ''"
+                        bindLabel="proceedingsnumber"
+                        label="Acta Final"
+                        [form]="form"
+                        [data]="finalProceeding"></ngx-select>
+                    </form-field>
+                  </div>
+                  <div class="col-md-5">
+                    <span className="labelActa">{{ keyProceedingFinal }}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="row" *ngIf="type.value === REPORT_TYPES.Reception">
-            <div class="col-md-9">
-              <form-field [control]="form.get('actaFinal')">
-                <ngx-select
-                  (fetchItems)="getFinalProceedings($event)"
-                  id="actaF"
-                  control="actaFinal"
-                  [class]="!finalProceedingBool ? 'disabled' : ''"
-                  bindLabel="cve_acta"
-                  label="Acta Final"
-                  [form]="form"
-                  [data]="finalProceeding"></ngx-select>
-              </form-field>
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="row mb-4">
+                  <!-- <label>No.Expediente</label> -->
+                  <span class="fw">No. Expediente</span>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <form-field [control]="form.get('desde')" label="Desde el">
+                      <input
+                        type="number"
+                        [min]="0"
+                        [maxlength]="15"
+                        class="form-control"
+                        formControlName="desde" />
+                    </form-field>
+                  </div>
+                  <div class="col-md-6">
+                    <form-field [control]="form.get('hasta')" label="Hasta el">
+                      <input
+                        type="number"
+                        [min]="form.get('desde').value + 1"
+                        [maxlength]="15"
+                        class="form-control"
+                        [class]="
+                          this.form.get('desde').value != null ? '' : 'disabled'
+                        "
+                        formControlName="hasta" />
+                    </form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="row mb-4">
+                  <span>Fecha Elaboraci&oacute;n</span>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <form-field
+                      [control]="form.get('fechaDesde')"
+                      label="Desde">
+                      <input
+                        bsDatepicker
+                        class="form-control"
+                        [maxlength]="10"
+                        formControlName="fechaDesde" />
+                    </form-field>
+                  </div>
+
+                  <div class="col-md-6">
+                    <form-field
+                      [control]="form.get('fechaHasta')"
+                      label="Hasta">
+                      <input
+                        bsDatepicker
+                        [maxlength]="10"
+                        [minDate]="form.get('fechaDesde').value"
+                        class="form-control"
+                        [class]="
+                          this.form.get('fechaDesde').value != null
+                            ? ''
+                            : 'disabled'
+                        "
+                        formControlName="fechaHasta" />
+                    </form-field>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="col-md-6">
-          <div class="row">
-            <div class="col-md-6">
-              <form-field
-                [control]="form.get('desde')"
-                label="No Expediente Desde el">
-                <input
-                  type="number"
-                  [min]="0"
-                  class="form-control"
-                  formControlName="desde" />
-              </form-field>
-            </div>
-
-            <div class="col-md-6">
-              <form-field [control]="form.get('hasta')" label="Hasta el">
-                <input
-                  type="number"
-                  [min]="form.get('desde').value + 1"
-                  class="form-control"
-                  formControlName="hasta" />
-              </form-field>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6">
-              <form-field
-                [control]="form.get('fechaDesde')"
-                label="Fecha Elaboraci&oacute;n desde">
-                <input
-                  bsDatepicker
-                  class="form-control"
-                  formControlName="fechaDesde" />
-              </form-field>
-            </div>
-
-            <div class="col-md-6">
-              <form-field
-                [control]="form.get('fechaHasta')"
-                label="Fecha Elaboraci&oacute;n Hasta">
-                <input
-                  bsDatepicker
-                  [minDate]="form.get('fechaDesde').value"
-                  class="form-control"
-                  formControlName="fechaHasta" />
-              </form-field>
-            </div>
-          </div>
-          <div class="d-flex justify-content-center">
-            <div>
-              <button
-                (click)="onSubmit()"
-                class="btn btn-primary active"
-                type="submit"
-                size="small">
-                Imprimir
-              </button>
-            </div>
+        <div class="d-flex justify-content-center">
+          <div>
+            <button
+              (click)="onSubmit()"
+              class="btn btn-primary active btn-sm"
+              type="button"
+              size="small">
+              Imprimir<i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
           </div>
         </div>
       </div>

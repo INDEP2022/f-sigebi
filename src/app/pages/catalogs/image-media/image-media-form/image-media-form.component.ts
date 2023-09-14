@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IImageMedia } from '../../../../core/models/catalogs/image-media.model';
 import { ImageMediaService } from '../../../../core/services/catalogs/image-media.service';
@@ -33,8 +34,15 @@ export class ImageMediaFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.imageMediaForm = this.fb.group({
-      route: [null, [Validators.required]],
-      status: [null, [Validators.required, Validators.maxLength(1)]],
+      route: [null, [Validators.required, Validators.maxLength(40)]],
+      status: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(1),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
     });
     if (this.imageMedia != null) {
       this.edit = true;
@@ -52,21 +60,41 @@ export class ImageMediaFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.imageMediaService.create(this.imageMediaForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    this.imageMediaService
-      .update(this.imageMedia.id, this.imageMediaForm.value)
-      .subscribe({
+    if (
+      this.imageMediaForm.controls['route'].value.trim() == '' ||
+      this.imageMediaForm.controls['status'].value.trim() == '' ||
+      (this.imageMediaForm.controls['route'].value.trim() == '' &&
+        this.imageMediaForm.controls['status'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.imageMediaService.create(this.imageMediaForm.value).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (
+      this.imageMediaForm.controls['route'].value.trim() == '' ||
+      this.imageMediaForm.controls['status'].value.trim() == '' ||
+      (this.imageMediaForm.controls['route'].value.trim() == '' &&
+        this.imageMediaForm.controls['status'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.imageMediaService
+        .newUpdateId(this.imageMedia.id, this.imageMediaForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

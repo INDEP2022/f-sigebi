@@ -71,16 +71,12 @@ export const TARGET_IDENTIFIERS = [
 
 export const GOOD_PHOTOS_OPTIOS = [
   {
-    label: 'Todos',
-    value: null,
-  },
-  {
     label: 'Con fotografías',
-    value: '2',
+    value: 'F',
   },
   {
     label: 'Sin fotografías',
-    value: '3',
+    value: 'N',
   },
 ];
 
@@ -94,17 +90,17 @@ export class GoodTrackerForm {
   subtypes = new FormControl<IGoodSubType[]>([]);
   ssubtypes = new FormControl<IGoodSsubType[]>([]);
   sssubtypes = new FormControl<string[]>([]);
-  goodNum = new FormControl<string>(null);
-  process = new FormControl<string>(null);
+  goodNum = new FormControl<string[]>([]);
+  process = new FormControl<string[]>([]);
   samiInventory = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),
   ]);
   targetIdentifier = new FormControl<string>(null);
-  status = new FormControl<string>(null);
+  status = new FormControl<string[]>([]);
   withPhoto = new FormControl<string>(null);
   menageFather = new FormControl<string>(null);
-  valueFrom = new FormControl<string>(null);
-  valueTo = new FormControl<string>(null);
+  valueFrom = new FormControl<number>(null);
+  valueTo = new FormControl<number>(null);
   photoDate = new FormControl<string>(null);
   identifier = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),
@@ -154,16 +150,19 @@ export class GoodTrackerForm {
   criminalCause = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),
   ]);
-  receptionForm = new FormControl<string>(null);
+  receptionFrom = new FormControl<string>(null);
   receptionTo = new FormControl<string>(null);
   certificate = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),
   ]);
-  receptionStatus = new FormControl<string>(null, [
-    Validators.pattern(STRING_PATTERN),
-  ]);
+  receptionStatus = new FormControl<string[]>(
+    [],
+    [Validators.pattern(STRING_PATTERN)]
+  );
   statusChangeFrom = new FormControl<string>(null);
   statusChaangeTo = new FormControl<string>(null);
+  devolutionDateFrom = new FormControl<string>(null);
+  devolutionDateTo = new FormControl<string>(null);
   eventNum = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),
   ]);
@@ -173,8 +172,11 @@ export class GoodTrackerForm {
   transfers = new FormControl<string[]>([]);
   transmitters = new FormControl<string[]>([]);
   autorities = new FormControl<string[]>([]);
-  warehouse = new FormControl<string>(null);
-  cordination = new FormControl<string>(null);
-  autorityState = new FormControl<string>(null);
-  goodState = new FormControl<string>(null);
+  warehouse = new FormControl<string[]>([]);
+  cordination = new FormControl<string[]>([]);
+  autorityState = new FormControl<string[]>([]);
+  goodState = new FormControl<string[]>([]);
+  gabinete = new FormControl<boolean>(false);
+  inventario = new FormControl<string[]>([]);
+  request = new FormControl<string[]>([]);
 }

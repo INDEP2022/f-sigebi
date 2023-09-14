@@ -11,13 +11,13 @@
         <div class="col-md-6">
           <p class="font-size-16 mt-2">
             <strong class="font-size-13"
-              >Cantidad Disponible &#40;M2&#41;&#58;
+              >Cantidad Disponible &#40; m&#178; &#41;&#58;
             </strong>
           </p>
         </div>
         <div class="col-md-6">
           <p class="font-size-16 mt-2">
-            {{ good.availableAmount }}
+            {{ good?.quantity }}
           </p>
         </div>
       </div>
@@ -25,14 +25,14 @@
         <div class="col-md-6">
           <p class="font-size-16 mt-2">
             <strong class="font-size-13"
-              >Cantidad a Reservar &#40;M2&#41;&#58;
+              >Cantidad a Reservar &#40; m&#178; &#41;&#58;
             </strong>
           </p>
         </div>
         <div class="col-md-6">
           <form-field
             [control]="reserveForm.get('reserve')"
-            label="Cantidad a Reservar (M2)">
+            label="Cantidad a Reservar &#40; m&#178; &#41;">
             <input
               type="number"
               formControlName="reserve"
@@ -45,17 +45,20 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          [disabled]="reserveForm.invalid"
+          (click)="confirm()">
+          Aceptar
         </button>
       </div>
       <div class="m-3">
         <button
           type="button"
-          class="btn btn-primary active"
-          [disabled]="reserveForm.invalid"
-          (click)="confirm()">
-          Aceptar
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
         </button>
       </div>
     </div>

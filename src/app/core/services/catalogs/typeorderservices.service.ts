@@ -29,8 +29,8 @@ export class TypeOrderServicesService
     return this.typeOrderServicesRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: ITypeOrderService): Observable<Object> {
-    return this.typeOrderServicesRepository.update(this.route, id, model);
+  newUpdate(model: ITypeOrderService): Observable<Object> {
+    return this.typeOrderServicesRepository.newUpdate(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {

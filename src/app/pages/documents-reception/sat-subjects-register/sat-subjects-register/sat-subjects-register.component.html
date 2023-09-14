@@ -54,7 +54,7 @@
             type="button"
             class="ml-2 btn btn-danger active btn-sm"
             (click)="resetStatusProcess()">
-            Limpiar Estatus<i class="fa fa-trash ml-1"></i>
+            Limpiar Estatus<i class="fa fa-eraser ml-1"></i>
           </button>
         </div>
         <form-field
@@ -76,17 +76,31 @@
             type="button"
             class="ml-2 btn btn-danger active btn-sm"
             (click)="resetDelegation()">
-            Limpiar Cord&#46; Regional<i class="fa fa-trash ml-1"></i>
+            Limpiar Cord&#46; Regional<i class="fa fa-eraser ml-1"></i>
           </button>
         </div>
       </div>
       <div class="row pb-4">
         <div class="col-md-12">
-          <button
+          <!-- <button
             [disabled]="downloading"
             type="submit"
             class="btn btn-primary active btn-sm">
             Consultar
+          </button> -->
+          <button
+            [disabled]="downloading"
+            type="submit"
+            class="btn btn-primary active btn-sm m-2">
+            Consultar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm m-2"
+            (click)="cleanSatForm()">
+            Limpiar
+            <i class="fa fa-eraser ml-1"></i>
           </button>
         </div>
       </div>
@@ -106,6 +120,22 @@
             <button
               [disabled]="downloading"
               type="button"
+              class="btn btn-sm btn-success active ml-2 mr-2"
+              (click)="getReportTramiteSat()">
+              Exportar Todos los Registros
+              <i class="bx bx-download float-icon"></i>
+            </button>
+            <button
+              [disabled]="downloading"
+              type="button"
+              class="btn btn-sm btn-success active ml-2 mr-2"
+              (click)="exportXlsx('gestion', listGestionSat)">
+              Exportar Tabla
+              <i class="bx bx-download float-icon"></i>
+            </button>
+            <!-- <button
+              [disabled]="downloading"
+              type="button"
               class="ml-2 mr-2 btn btn-success btn-sm"
               (click)="getReportTramiteSat()">
               Exportar Todos los Registros<i class="fa fa-file-excel ml-1"></i>
@@ -116,7 +146,7 @@
               class="ml-2 mr-2 btn btn-success btn-sm"
               (click)="exportXlsx('gestion', listGestionSat)">
               Exportar Tabla<i class="fa fa-file-excel ml-1"></i>
-            </button>
+            </button> -->
           </ng-container>
         </div>
         <div class="col-md-12" *ngIf="downloading">
@@ -184,11 +214,25 @@
       </div>
       <div class="row pb-4">
         <div class="col-md-12">
-          <button
+          <!-- <button
             [disabled]="downloadingTransferente"
             type="submit"
             class="btn btn-primary active btn-sm">
             Consultar
+          </button> -->
+          <button
+            [disabled]="downloadingTransferente"
+            type="submit"
+            class="btn btn-primary active btn-sm m-2">
+            Consultar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm m-2"
+            (click)="cleanSatTransfer()">
+            Limpiar
+            <i class="fa fa-eraser ml-1"></i>
           </button>
         </div>
       </div>
@@ -208,6 +252,22 @@
             <button
               [disabled]="downloadingTransferente"
               type="button"
+              class="btn btn-sm btn-success active ml-2 mr-2"
+              (click)="getReportTransferenciaSat(true)">
+              Exportar Todos los Registros
+              <i class="bx bx-download float-icon"></i>
+            </button>
+            <button
+              [disabled]="downloadingTransferente"
+              type="button"
+              class="btn btn-sm btn-success active ml-2 mr-2"
+              (click)="getReportTransferenciaSat()">
+              Exportar Tabla
+              <i class="bx bx-download float-icon"></i>
+            </button>
+            <!-- <button
+              [disabled]="downloadingTransferente"
+              type="button"
               class="ml-2 mr-2 btn btn-success btn-sm"
               (click)="getReportTransferenciaSat(true)">
               Exportar Todos los Registros<i class="fa fa-file-excel ml-1"></i>
@@ -217,9 +277,8 @@
               type="button"
               class="ml-2 mr-2 btn btn-success btn-sm"
               (click)="getReportTransferenciaSat()">
-              <!-- (click)="exportXlsx('transferencia', listSatTransferencia)"> -->
               Exportar Tabla<i class="fa fa-file-excel ml-1"></i>
-            </button>
+            </button> -->
           </ng-container>
         </div>
         <div class="col-md-12" *ngIf="downloadingTransferente">

@@ -9,5 +9,8 @@ export enum ParameterComerEndpoints {
   Layouts = 'comer-layouts-t',
   layoutSH = 'comer-layouts-h',
   Configvtadmun = 'comer-configvtadmun',
+  ComerModels = 'comer-models',
   Entities = 'type-entity-gov',
+  ApplicationUser = 'aplication/get-lval-usu',
+  ApplicationSigna = 'aplication/get-full-signatories',
 }

@@ -79,13 +79,16 @@ export interface INotification {
   hcEntryProcedureDate?: Date;
   desKnowingDate?: Date;
   addressGeneral: number;
-  affair?: IAffair | null;
+  affair?: null | IAffair;
   delegation?: null | IDelegation;
   subDelegation?: null | ISubdelegation;
   departament?: null | IDepartment;
+  authority?: any;
+  city?: any;
   numberProperty?: number;
   notificationDate?: any;
   userCorrectsKey?: any;
+  periodEndDate?: any;
 }
 
 export interface IAffair {
@@ -295,4 +298,76 @@ export interface INotificationTransferentIndiciadoCity {
 
 export interface INotificationDictum {
   dictumKey: string;
+}
+
+export interface DictumData {
+  id: any;
+  description: string;
+}
+
+export interface INotificationUpdate {
+  wheelNumber: number;
+  receiptDate: Date | string;
+  captureDate: Date | string;
+  officeExternalKey: string;
+  externalOfficeDate: Date | string;
+  externalRemitter: string;
+  protectionKey: string;
+  touchPenaltyKey: string;
+  circumstantialRecord: string;
+  preliminaryInquiry: string;
+  criminalCase: string;
+  addressee?: string;
+  expedientNumber: number;
+  crimeKey: string;
+  affairKey: string;
+  entFedKey: string;
+  viaKey: string;
+  consecutiveNumber: number;
+  observations: string;
+  delegationNumber: number;
+  subDelegationNumber: number;
+  institutionNumber: IInstitutionNumber | number;
+  indiciadoNumber: number;
+  delDestinyNumber: number;
+  subDelDestinyNumber: number;
+  departamentDestinyNumber: number;
+  officeNumber: number;
+  minpubNumber: number | IMinpub;
+  cityNumber: number;
+  courtNumber: number;
+  registerNumber?: number;
+  dictumKey: string;
+  identifier: string;
+  observationDictum?: string;
+  wheelStatus: string;
+  transference: number;
+  expedientTransferenceNumber: string;
+  priority: string;
+  wheelType: string;
+  reserved: string;
+  entryProcedureDate: Date | string;
+  userInsert?: string;
+  originNumber: number;
+  stationNumber: number;
+  autorityNumber: number;
+  endTransferNumber: number;
+  dailyEviction: number;
+  hcCaptureDate?: Date | string;
+  hcEntryProcedureDate?: Date;
+  desKnowingDate?: Date;
+  addressGeneral: number;
+  /*affair?: null | IAffair;
+  delegation?: null | IDelegation;
+  subDelegation?: null | ISubdelegation;
+  departament?: null | IDepartment;
+  numberProperty?: number;
+  notificationDate?: any;
+  userCorrectsKey?: any;*/
+}
+
+export interface ITransfActaEntrec {
+  indcap: string;
+  no_expediente: number;
+  id_tipo_acta: string;
 }

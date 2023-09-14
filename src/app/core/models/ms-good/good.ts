@@ -1,4 +1,5 @@
 import { ILabelOKey } from '../catalogs/label-okey.model';
+import { IServiceCat } from '../catalogs/service-cat.model';
 import { IWarehouse } from '../catalogs/warehouse.model';
 import { IExpedient } from '../ms-expedient/expedient';
 import { IFraccion } from './fraccion';
@@ -353,10 +354,12 @@ export interface IGoodSami {
 }
 
 export interface IGood {
+  [x: string]: any;
   protection?: string;
   id?: number;
   inventoryNumber?: number;
   goodId?: number;
+  notSelect?: boolean;
   description?: string;
   quantity?: number;
   dateIn?: Date;
@@ -373,7 +376,7 @@ export interface IGood {
   opinion?: string;
   appraisedValue?: number;
   drawerNumber?: number;
-  vaultNumber?: number;
+  vaultNumber?: string | number;
   goodReferenceNumber?: number;
   appraisalCurrencyKey?: string;
   appraisalVigDate?: Date;
@@ -418,8 +421,8 @@ export interface IGood {
   storeNumber?: number;
   lotNumber?: number;
   goodClassNumber?: number | string;
-  subDelegationNumber?: number;
-  delegationNumber?: number;
+  subDelegationNumber?: any;
+  delegationNumber?: any;
   physicalReceptionDate?: Date;
   statusResourceReview?: string;
   judicialDate?: Date;
@@ -695,6 +698,7 @@ export interface IGood {
   estatus?: Estatus;
   no_expediente?: NoExpediente;
   promoter?: string;
+  statusDetails?: any;
   dateRenderDecoDev?: Date | string;
   //TODO: Implement Promoter Interface
   //TODO?: Implement Promoter Interface
@@ -725,6 +729,23 @@ export interface IVban {
   ];
 }
 
+export interface IValidaCambioEstatus {
+  p2: number | string | null;
+  p1: number | string | null;
+  p3: string | number | null;
+  p4: string | number | null;
+}
+
+export interface ICharacteristicsGoodDTO {
+  noType?: number;
+  noSubType?: number;
+  noSsubType?: number;
+  noSssubType?: number;
+  noGood?: number;
+  status?: string;
+  goodclassnumber?: string;
+}
+
 export interface IValNumeOtro {
   pc_pantalla: string;
   no_bien: number;
@@ -745,9 +766,30 @@ export interface GoodGetData {
   screenKey: string;
 }
 
+export interface ILvlPrograma {
+  no_bien: string | number;
+  no_expediente: string | number;
+}
+
 export interface IGoodAndDetailProceeding {
   pTiNumberDeleg: number;
   pTiNumberSubdel: number;
+}
+
+export interface IAcceptGoodStatus {
+  pNumberGood: number | string;
+  pExpedients: number | string;
+}
+
+export interface IAcceptGoodActa {
+  pNumberGood: number | string;
+  pIdentify: string;
+  pVcScreen: string;
+}
+
+export interface IAcceptGoodStatusScreen {
+  pNumberGood: number | string;
+  pVcScreen: string;
 }
 
 // TODO: Checar si la interfaz es la del modelo:
@@ -804,4 +846,63 @@ export interface NoExpediente {
   stationNumber: string;
   authorityNumber: string;
   insertionDatehc?: any;
+}
+
+export interface IAttribGoodBad {
+  id?: any;
+  motive: string;
+  pair1: number;
+  pair2: number;
+  pair3: number;
+  pair4: number;
+  arrayMotive?: string[];
+}
+
+export interface IGoodSiab {
+  goodNumber: number;
+  status: string;
+}
+
+export interface IServiceGood {
+  goodNumber: string | number;
+  cveService: string;
+  periodicity: string;
+  dateCourt: string;
+  recordNumber?: string;
+  good?: IGood;
+  serviceCat?: IServiceCat;
+}
+
+export interface ISecondIfMC {
+  noPackage: number;
+  noGoodFather: number;
+  encStatus: string;
+  vcScreen: string;
+  user: string;
+  toolbarUser: string;
+}
+
+export interface IGoodCharge {
+  goodNumber?: number;
+  descriptionGood?: string;
+  lot?: number;
+  expedientNumber?: number;
+  typeEvent?: number;
+  mandate?: string;
+  eventId?: number;
+  rfc?: string;
+  reasonName?: string;
+  price?: number;
+  entryOrderId?: number;
+  delegationNumber?: number;
+  reference?: string;
+  invoice?: string;
+  serieNumber?: number;
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface IValidationExempte {
+  goodNumber?: number;
+  process?: string;
 }

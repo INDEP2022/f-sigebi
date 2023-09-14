@@ -20,7 +20,9 @@
                     "></app-columns-select>
                 </div>
               </div>
-              <div class="col-sm-12 col-12 col-md-12 p-2">
+              <div
+                class="col-sm-12 col-12 col-md-12 p-2"
+                [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="_tableSettingsProcedeFormalizacion"
@@ -42,20 +44,26 @@
                 <h6>Asigna Notario</h6>
               </div>
               <div class="row mb-2">
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end col-md-11">
                   <app-columns-select
                     [(settings)]="
                       _tableSettingsAsignaNotario
                     "></app-columns-select>
                 </div>
               </div>
-              <div class="col-sm-12 col-12 col-md-12 p-2">
-                <ng2-smart-table
-                  (edit)="editStage2($event.data)"
-                  [attr.class]="'table-bordered'"
-                  [settings]="_tableSettingsAsignaNotario"
-                  [source]="_dataTableAsignaNotario"
-                  (delete)="goEscrituracion($event.data)"></ng2-smart-table>
+              <div
+                class="col-sm-12 col-12 col-md-12 p-2"
+                [class]="loading ? 'table-loading' : ''">
+                <ng-scrollbar
+                  [track]="'all'"
+                  [ngStyle]="{ height: loading ? '0px' : '400px' }">
+                  <ng2-smart-table
+                    (edit)="editStage2($event.data)"
+                    [attr.class]="'table-bordered'"
+                    [settings]="_tableSettingsAsignaNotario"
+                    [source]="_dataTableAsignaNotario"
+                    (delete)="goEscrituracion($event.data)"></ng2-smart-table>
+                </ng-scrollbar>
               </div>
 
               <app-pagination
@@ -77,7 +85,9 @@
                     "></app-columns-select>
                 </div>
               </div>
-              <div class="col-sm-12 col-12 col-md-12 p-2">
+              <div
+                class="col-sm-12 col-12 col-md-12 p-2"
+                [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   (edit)="editStage3($event.data)"
                   [attr.class]="'table-bordered'"
@@ -102,7 +112,9 @@
                     [(settings)]="_tableSettingsTodos"></app-columns-select>
                 </div>
               </div>
-              <div class="col-sm-12 col-12 col-md-12 p-2">
+              <div
+                class="col-sm-12 col-12 col-md-12 p-2"
+                [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="_tableSettingsTodos"

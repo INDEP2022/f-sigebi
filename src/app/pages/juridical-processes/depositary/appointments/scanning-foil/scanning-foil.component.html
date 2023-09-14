@@ -1,0 +1,83 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-12 col-md-12 p-0">
+      <div class="row">
+        <div class="col-sm-12 col-12 col-md-3 text-center">
+          <button
+            [disabled]="disabled"
+            (click)="createScannerFoil()"
+            tooltip="Generar Folio de Escaneo y Solicitud"
+            containerClass="tooltip-style"
+            class="btn btn-secondary btn-sm active m-1">
+            <i class="bx bxs-file-find"></i>
+          </button>
+          <button
+            [disabled]="disabled"
+            (click)="openScannerPage()"
+            tooltip="Escanear"
+            containerClass="tooltip-style"
+            class="btn btn-secondary btn-sm active m-1">
+            <i class="bx bxs-file"></i>
+          </button>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 w-100 p-0">
+          <form [formGroup]="formScan" class="form-material">
+            <div class="col-md-12 col-sm-12 col-12 p-0">
+              <div class="col-md-6 col-sm-12 col-xs-12 p-1">
+                <form-field
+                  label="Folio de Remoci&oacute;n"
+                  [control]="formScan.get('returnFoli')">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="returnFoli" />
+                </form-field>
+              </div>
+              <div class="col-md-6 col-sm-12 col-xs-12 p-1">
+                <form-field
+                  label="Folio Acta Depositar&iacute;a"
+                  [control]="formScan.get('scanningFoli')">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="scanningFoli" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-md-12 col-sm-12 col-12">
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <button
+                    [disabled]="disabled"
+                    (click)="replicate()"
+                    type="button"
+                    class="btn btn-primary btn-sm active">
+                    Replicar Folio
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 text-center">
+          <button
+            [disabled]="disabled"
+            (click)="showMessageDigitalization()"
+            tooltip="Imprimir Solicitud de Escaneo"
+            containerClass="tooltip-style"
+            class="btn btn-secondary btn-sm active m-1">
+            <i class="bx bxs-file-find"></i>
+          </button>
+          <button
+            [disabled]="disabled"
+            (click)="showScannerFoil()"
+            tooltip="Consulta de Imágenes Escaneadas"
+            containerClass="tooltip-style"
+            class="btn btn-secondary btn-sm active m-1">
+            <i class="bx bxs-file"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

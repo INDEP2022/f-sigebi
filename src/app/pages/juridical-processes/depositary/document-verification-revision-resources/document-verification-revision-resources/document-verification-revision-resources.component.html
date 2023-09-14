@@ -6,91 +6,267 @@
   </div>
 
   <div body>
-    <form [formGroup]="form" class="form-material">
+    <form [formGroup]="formExp" class="form-material">
       <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-12 p-2">
+        <div class="col-sm-12 col-12 col-md-12">
           <h6>Informaci&oacute;n de Expediente</h6>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
+        <div
+          class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+          *ngIf="loadingExpedient">
+          <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center">
+              <div class="loader"></div>
+              <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+            </div>
+          </div>
+        </div>
+        <div class="row m-3">
+          <div class="col-4"></div>
+          <div class="col-md-8 text-end">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm mr-3"
+              (click)="searchExpedient()">
+              Buscar Expedientes
+              <i class="bx bx-search bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="card">
+                  <!-- <div class="row m-3 flex-row justify-content-end">
+                    <div class="col-md-8 text-end">
+                      <button type="button" class="btn btn-primary btn-sm active" (click)="searchExpedient()">
+                        Buscar Expedientes<i class="bx bx-search bx-sm float-icon"></i>
+                      </button>
+                    </div>
+                  </div> -->
+                  <div class="card-body mt-4 mb-4">
+                    <div class="form-group row p-4">
+                      <div class="col-md-3">
+                        <label for="" class="col-form-label"
+                          >No. Expediente:</label
+                        >
+                        <div>{{ fileNumber || '' }}</div>
+                      </div>
+                      <div class="col-md-3">
+                        <label for="" class="col-form-label"
+                          >Causa Penal:</label
+                        >
+                        <div>{{ causa || '' }}</div>
+                      </div>
+                      <div class="col-md-3">
+                        <label for="" class="col-form-label"
+                          >Averiguación Previa:</label
+                        >
+                        <div>{{ aprevia || '' }}</div>
+                      </div>
+                    </div>
+                    <div class="form-group row p-4">
+                      <div class="col-md-3">
+                        <label for="" class="col-form-label"
+                          >No&#46; Amparo:</label
+                        >
+                        <div>{{ pKey || '' }}</div>
+                      </div>
+                      <div class="col-md-5">
+                        <label for="" class="col-form-label"
+                          >Fecha Presentaci&oacute;n Recurso
+                          Revisi&oacute;n:</label
+                        >
+                        <div>{{ dateToday || '00/00/0000' }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="col-sm-12 col-12 col-md-4">
           <app-expedient-shared
             expedientField="id"
-            [form]="form"
+            [form]="formExp"
             (selectExpedient)="expedientSelect($event)"></app-expedient-shared>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
+        <div class="col-sm-12 col-12 col-md-4 p-3">
           <form-field
-            [control]="form.get('protectionKey')"
-            label="No&#46; Amparo">
-            <input class="form-control" formControlName="protectionKey" />
+            [control]="formExp.get('criminalCase')"
+            label="Causa Penal">
+            <input
+              class="form-control"
+              formControlName="criminalCase"
+              [readOnly]="true"
+              oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
+        <div class="col-sm-12 col-12 col-md-4 p-3">
+          <form-field [control]="formExp.get('protectionKey')">
+            <ngx-select
+              (fetchItems)="getExpedient($event)"
+              [data]="expedient"
+              [form]="formExp"
+              value="protectionKey"
+              bindLabel="protectionKey"
+              (change)="expedientSelect($event)"
+              label="No&#46; Amparo"
+              [searchOnInit]="true"
+              [control]="'protectionKey'">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-3">
           <form-field
-            [control]="form.get('fechaPresentacionRecursoRevision')"
+            [control]="formExp.get('preliminaryInquiry')"
+            label="Averiguaci&oacute;n Previa">
+            <input
+              class="form-control"
+              [readOnly]="true"
+              formControlName="preliminaryInquiry"
+              oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-3">
+          <form-field
+            [control]="formExp.get('dateAgreementAssurance')"
             label="Fecha Presentaci&oacute;n Recurso Revisi&oacute;n">
             <input
               class="form-control"
-              formControlName="fechaPresentacionRecursoRevision"
-              bsDatepicker />
+              formControlName="dateAgreementAssurance"
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY'
+              }"
+              (ngModelChange)="validateItem($event)" />
           </form-field>
+        </div> -->
+      </div>
+      <div class="row m-3">
+        <div class="col-4"></div>
+        <div class="col-md-8 text-end">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm mr-3"
+            (click)="searchGoods()">
+            Buscar Bienes
+            <i class="bx bx-search bx-sm float-icon"></i>
+          </button>
+          <button
+            (click)="clean()"
+            type="button"
+            class="btn btn-danger active btn-sm mr-3">
+            Limpiar
+            <i class="fa fa-eraser" aria-hidden="true"></i>
+          </button>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('preliminaryInquiry')"
-            label="Averiguaci&oacute;n Previa">
-            <input class="form-control" formControlName="preliminaryInquiry" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('criminalCase')" label="Causa Penal">
-            <input class="form-control" formControlName="criminalCase" />
-          </form-field>
-        </div>
+      </div>
+    </form>
+    <form [formGroup]="form" class="form-material">
+      <div clas="row w-100">
         <div class="col-sm-12 col-12 col-md-12 p-2">
           <h6>Informaci&oacute;n de Bienes</h6>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('goodId')" label="No&#46; Bien">
-            <input class="form-control" formControlName="goodId" />
+            <input
+              class="form-control"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }"
+              formControlName="goodId"
+              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="col-sm-12 col-12 col-md-8 p-2">
           <form-field
             [control]="form.get('description')"
             label="No&#46; Bien Descripción">
-            <input class="form-control" formControlName="description" />
+            <input
+              class="form-control"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }"
+              formControlName="description"
+              [readOnly]="true"
+              oninput="if(this.value.length > 1000) this.value = this.value.slice(0, 1000)" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
-            [control]="form.get('initialAgreementDate')"
-            label="Fecha Notificaci&oacute;n">
+            [control]="form.get('agreementDate')"
+            label="Fecha Acuerdo Inicial">
             <input
               class="form-control"
-              formControlName="initialAgreementDate"
-              bsDatepicker />
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }"
+              formControlName="agreementDate"
+              [readOnly]="true"
+              oninput="if(this.value.length > 1000) this.value = this.value.slice(0, 1000)" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('status')" label="Estatus Bien">
-            <input class="form-control" formControlName="status" />
+            <input
+              class="form-control"
+              formControlName="status"
+              [readOnly]="true"
+              (dblclick)="showHistory()"
+              oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3)"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field
+            [control]="form.get('descriptionStatus')"
+            label="Descripción Estatus">
+            <input
+              (dblclick)="showHistory()"
+              class="form-control"
+              formControlName="descriptionStatus"
+              [readOnly]="true"
+              oninput="if(this.value.length > 100) this.value = this.value.slice(0, 100)"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
-            [control]="form.get('notificationDate')"
+            [control]="form.get('notifyRevRecDate')"
             label="Fecha Notificaci&oacute;n">
             <input
               class="form-control"
-              formControlName="notificationDate"
-              bsDatepicker />
+              formControlName="notifyRevRecDate"
+              bsDatepicker
+              [readOnly]="form.get('di_disponible').value == 'N'"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY'
+              }"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
-            [control]="form.get('statusDictaminacion')"
+            [control]="form.get('di_situacion_bien')"
             label="Estatus Dictaminaci&oacute;n">
-            <input class="form-control" formControlName="statusDictaminacion" />
+            <input
+              class="form-control"
+              formControlName="di_situacion_bien"
+              [readOnly]="true"
+              oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -100,17 +276,39 @@
             <textarea
               rows="3"
               class="form-control"
-              formControlName="initialAgreement"></textarea>
+              formControlName="initialAgreement"
+              [readOnly]="form.get('di_disponible').value == 'N'"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }"></textarea>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
-            [control]="form.get('motivoRecursoRevision')"
+            [control]="form.get('estatus_recurso_revision')"
+            label="Estatus Recurso Revisi&oacute;n">
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="estatus_recurso_revision"
+              [readOnly]="form.get('di_disponible').value == 'N'"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="form.get('revRecCause')"
             label="Motivo Recurso Revisi&oacute;n">
             <textarea
               rows="3"
               class="form-control"
-              formControlName="motivoRecursoRevision"></textarea>
+              formControlName="revRecCause"
+              [readOnly]="form.get('di_disponible').value == 'N'"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }"></textarea>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -120,16 +318,30 @@
             <textarea
               rows="3"
               class="form-control"
-              formControlName="observations"></textarea>
+              formControlName="observations"
+              [readOnly]="form.get('di_disponible').value == 'N'"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }"></textarea>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
-          <div class="form-group">
+        <!-- <div class="paginator" *ngIf="totalItems > 1">
+          <app-pagination [params]="params" [totalItems]="totalItems" [maxSize]="1"></app-pagination>
+        </div> -->
+        <div class="col-sm-12 col-12 col-md-12 p-2 text-left">
+          <div class="buttons">
             <button
               type="button"
-              class="btn btn-primary active"
-              (click)="btnAprobar()">
+              class="btn btn-primary active btn-sm"
+              (click)="btnAprobar()"
+              [disabled]="form.get('di_disponible').value == 'N'">
               Aprobar
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm ml-2"
+              (click)="preUpdateGood()">
+              Dictamen Bien
             </button>
           </div>
         </div>
@@ -137,26 +349,28 @@
     </form>
   </div>
   <div footer *ngIf="autoridad" class="alert alert-info">
-    <form [formGroup]="formAutoridad" class="form-material">
+    <form [formGroup]="form" class="form-material">
       <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-6 p-2">
+        <div class="col-sm-12 col-12 col-md-auto p-2">
           <form-field
-            [control]="formAutoridad.get('autoridad')"
-            label="Autoridad que aprueba el Dictamen">
-            <input class="form-control" formControlName="autoridad" />
+            [control]="form.get('ti_autoridad_ordena_dictamen')"
+            label="Ingrese la autoridad que aprueba el dictámen">
+            <input
+              class="form-control"
+              formControlName="ti_autoridad_ordena_dictamen" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 p-2">
+        <div class="col-sm-12 col-12 col-md-auto p-2">
           <div class="form-group">
             <button
               type="button"
-              class="btn btn-primary active ml-2 mr-2"
+              class="btn btn-primary btn-sm active ml-2 mr-2"
               (click)="btnEjecutarAutoridad()">
               Aceptar
             </button>
             <button
               type="button"
-              class="btn btn-primary active ml-2 mr-2"
+              class="btn btn-primary btn-sm active ml-2 mr-2"
               (click)="btnSalirAutoridad()">
               Cancelar
             </button>
@@ -167,6 +381,23 @@
   </div>
 </app-card>
 
+<div class="col-12 text-center mb-3">
+  <button
+    *ngIf="isHistory"
+    type="button"
+    class="btn btn-danger btn-sm active p-3"
+    (click)="isHistory = !isHistory; goodId = null">
+    Cerrar Ventana
+    <i class="bx bx-window-close"></i>
+  </button>
+</div>
+
+<div #df>
+  <app-historical-situation-goods
+    *ngIf="isHistory"
+    [noBien]="goodId"></app-historical-situation-goods>
+</div>
+
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">DOCUMENTACI&Oacute;N</h5>
@@ -175,23 +406,33 @@
   <div body>
     <div class="row w-100">
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettings"
-          [source]="dataTable"></ng2-smart-table>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            id="table"
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="tableSettingsDoc"
+            [source]="dataTableDocument.data"
+            (userRowSelect)="userRowSelect($event)"></ng2-smart-table>
+          <app-pagination
+            [totalItems]="totalItemsDocument"
+            [filterParams]="params"></app-pagination>
+        </div>
       </div>
       <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
         <div class="form-group">
           <button
             type="button"
-            class="btn btn-primary active ml-2 mr-2"
+            class="btn btn-primary btn-sm active ml-2 mr-2"
             (click)="btnRecursos()">
             Recursos
           </button>
           <button
             type="button"
-            class="btn btn-primary active ml-2 mr-2"
-            (click)="btnSeleccionarDocumentos()">
+            class="btn btn-primary btn-sm active ml-2 mr-2"
+            (click)="btnSeleccionarDocumentos()"
+            [disabled]="
+              selectedKey == null || form.get('di_disponible').value == 'N'
+            ">
             Seleccionar Documentos
           </button>
         </div>
@@ -212,27 +453,29 @@
             <div class="row w-100">
               <div class="col-sm-12 col-12 col-md-6 p-2">
                 <form-field
-                  [control]="form.get('noExpediente')"
+                  [control]="formInforme.get('id')"
                   label="No&#46; Expediente">
-                  <input class="form-control" formControlName="noExpediente" />
+                  <input class="form-control" formControlName="id" />
                 </form-field>
               </div>
               <div class="col-sm-12 col-12 col-md-6 p-2">
-                <form-field [control]="form.get('noBien')" label="No&#46; Bien">
-                  <input class="form-control" formControlName="noBien" />
+                <form-field
+                  [control]="formInforme.get('goodId')"
+                  label="No&#46; Bien">
+                  <input class="form-control" formControlName="goodId" />
                 </form-field>
               </div>
               <div class="col-sm-12 col-12 col-md-12 p-2">
                 <div class="form-group">
-                  <button
+                  <!-- <button
                     type="button"
-                    class="btn btn-primary active ml-2 mr-2"
+                    class="btn btn-primary active btn-sm"
                     (click)="btnEjecutarInformes()">
-                    Ejecutar Informes
-                  </button>
+                    Reporte <i class="fas fa-print bx-sm float-icon"></i>
+                  </button> -->
                   <button
                     type="button"
-                    class="btn btn-primary active ml-2 mr-2"
+                    class="btn btn-primary active ml-2 mr-2 btn-sm"
                     (click)="btnSalir()">
                     Salir
                   </button>
@@ -245,3 +488,37 @@
     </div>
   </div>
 </app-card>
+
+<div #docTable>
+  <app-card *ngIf="activeBlocDoc" [header]="true" [footer]="true">
+    <div class="ch-content" header>
+      <h5 class="title">DOCUMENTOS PARA DICTAMEN</h5>
+    </div>
+    <div body>
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+          <div [class]="loadingDoc ? 'table-loading' : ''">
+            <ng2-smart-table
+              id="table"
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="tableSettings"
+              [source]="dataTable.data"></ng2-smart-table>
+            <app-pagination
+              [totalItems]="totalItemsDic"
+              [filterParams]="paramsDoc"></app-pagination>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+          <div class="form-group">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active ml-2 mr-2"
+              (click)="btnSalirDoc()">
+              Salir de selección de documentos
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </app-card>
+</div>

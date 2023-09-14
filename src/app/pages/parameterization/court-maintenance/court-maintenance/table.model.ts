@@ -5,6 +5,6 @@ export interface TableCity {
   cvEntDescripcion: string;
   noDelegation: number;
   noSubDelegation: number;
-  cvDelDescripcion: string;
-  cvSubDelDescripcion: string;
+  cvDelDescription: string;
+  cvSubDelDescription: string;
 }

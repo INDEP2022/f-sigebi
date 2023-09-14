@@ -1,20 +1,54 @@
-<form [formGroup]="form" class="form-material">
-  <app-card [header]="true" [footer]="true">
-    <div class="ch-content" header>
-      <h5 class="title">Registro del menaje del bien</h5>
-    </div>
-    <div body>
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Registro del menaje del bien</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
       <div class="row">
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('numberFile')" label="No Expediente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="numberFile"
-              (change)="searchExpedient()" />
-          </form-field>
+        <div class="col-12">
+          <div class="d-flex justify-content-between">
+            <div class="col-6 pl-2">
+              <form-field
+                [control]="form.get('numberFile')"
+                label="No. Expediente">
+                <input
+                  type="number"
+                  min="0"
+                  class="form-control"
+                  formControlName="numberFile"
+                  oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
+              </form-field>
+            </div>
+
+            <div class="col-6 d-flex justify-content-start pr-2">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active ml-1 border-0"
+                style="width: 90px"
+                [ngStyle]="{
+                  'background-color': form.get('numberFile').value
+                    ? '#9D2449'
+                    : 'rgba(157, 36, 73, 1)'
+                }"
+                [disabled]="!form.get('numberFile').value"
+                (click)="searchExpedient(form.get('numberFile').value)">
+                Buscar <i class="fa fa-search"></i>
+              </button>
+              <div class="ms-3"></div>
+              <button
+                type="button"
+                class="btn btn-sm btn-info active ml-4"
+                style="width: 90px; background-color: #b38e5d"
+                (click)="cleandInfo()">
+                Limpiar <i class="fa fa-eraser"></i>
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field [control]="form.get('causePenal')" label="Causa Penal">
             <input
               type="text"
@@ -22,7 +56,7 @@
               formControlName="causePenal" />
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('preliminaryInquiry')"
             label="Averiguación Previa">
@@ -33,91 +67,91 @@
           </form-field>
         </div>
       </div>
-      <hr />
-      <div class="container">
-        <div class="row"></div>
-        <div class="row mt-5">
-          <!-- <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings1"
-            [source]="goods"
-            (userRowSelect)="uploadTableMenaje($event.data)">
-          </ng2-smart-table> -->
-          <form-field [control]="form.get('goodSelect')">
+
+      <div class="row mt-5">
+        <div class="col-12">
+          <form-field
+            [control]="form.get('goodSelect')"
+            label="Seleccione un Bien para ver sus Menajes">
+            <textarea
+              type="text"
+              rows="4"
+              class="form-control"
+              formControlName="goodSelect"
+              (click)="openSearchGoods()"></textarea>
+            <!-- <input
+              type="text"
+              class="form-control"
+              formControlName="goodSelect"
+              (click)="openSearchGoods()" />  -->
+          </form-field>
+          <!-- <form-field [control]="form.get('goodSelect')">
             <ngx-select
               [data]="goods"
               [form]="form"
               value="id"
               bindLabel="description"
-              label="Seleccione un bien para ver sus menajes"
+              label="Seleccione un Bien para ver sus Menajes"
               [control]="'goodSelect'"
+              (fetchItems)="searchGoods($event)"
               (change)="uploadTableMenaje($event)">
             </ngx-select>
-          </form-field>
-        </div>
-        <hr />
-        <div class="container">
-          <div class="row">
-            <div class="col-md-6 col-sm-12 col-xs-12">
-              <div class="d-flex justify-content-start">
-                <div class="m-3">
-                  <span>
-                    Listado de menages del bien No
-                    <strong>{{ numberGoodSelect }}</strong>
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3 col-sm-12 col-xs-12">
-              <div class="d-flex justify-content-end">
-                <div class="m-3">
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-info active"
-                    (click)="cleandInfo()">
-                    Limpiar
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3 col-sm-12 col-xs-12">
-              <div class="d-flex justify-content-end">
-                <div class="m-3">
-                  <button
-                    [disabled]="enableAddgood"
-                    type="button"
-                    class="btn btn-sm btn-primary active"
-                    (click)="showGoods()">
-                    {{ textButton }}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row" *ngIf="addGood">
-            <app-goods-shared
-              [form]="formGood"
-              (good)="addMenage($event)"></app-goods-shared>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <div [class]="loading ? 'table-loading' : ''">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="settings"
-                  [source]="menajes"
-                  (delete)="showDeleteAlert($event.data)">
-                </ng2-smart-table>
-              </div>
-            </div>
-          </div>
-          <div class="roe">
-            <app-pagination
-              [params]="params"
-              [totalItems]="totalItems"></app-pagination>
-          </div>
+          </form-field> -->
         </div>
       </div>
-    </div>
-  </app-card>
-</form>
+
+      <div class="container">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-md-3 col-sm-12 col-xs-12">
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <!-- <button [disabled]="enableAddgood" *ngIf="showButton && showSearchButton" type="button"
+                    class="btn btn-sm btn-primary active" (click)="showGoods()">
+                    {{ textButton }}
+                  </button> -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- <div class="row" *ngIf="addGood">
+            <ngx-select [data]="goodsList" [form]="formGood" value="id" bindLabel="goodDescription" label="Menajes"
+              [control]="'goodsList'" (fetchItems)="searchGood($event)" (change)="onSelect($event)">
+            </ngx-select>
+          </div> -->
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="m-3">
+                <span
+                  >Listado de Menajes del Bien
+                  <strong>{{ numberGoodSelect }}</strong></span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <div [class]="loading ? 'table-loading' : ''">
+                <div class="table-responsive">
+                  <ng2-smart-table
+                    id="okosdsd1"
+                    [attr.class]="'table-bordered'"
+                    [settings]="settings"
+                    [source]="menajes"
+                    (delete)="showDeleteAlert($event.data)">
+                  </ng2-smart-table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

@@ -1,8 +1,11 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { ITypeSiniesters } from 'src/app/core/models/catalogs/types-of-claims.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TypesOfClaimsService } from '../types-of-claims.service';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { TypesOfClaimsService } from '../../../../core/services/catalogs/types-of-claims.service';
 
 @Component({
   selector: 'app-modal-type-of-claims',
@@ -10,12 +13,10 @@ import { TypesOfClaimsService } from '../types-of-claims.service';
   styles: [],
 })
 export class ModalTypeOfClaimsComponent extends BasePage implements OnInit {
-  title: string = 'TIPO DE SINIESTRO';
+  title: string = 'Tipo de Siniestro';
   edit: boolean = false;
-  form: FormGroup = new FormGroup({});
-  allotment: any;
-  lengthData = 0;
-  @Output() refresh = new EventEmitter<true>();
+  form: ModelForm<ITypeSiniesters>;
+  claims: ITypeSiniesters;
 
   constructor(
     private fb: FormBuilder,
@@ -31,55 +32,45 @@ export class ModalTypeOfClaimsComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      keyClaims: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      id: [null],
+      description: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      flag: [null, [Validators.max(99)]],
     });
-    if (this.allotment != null) {
+    if (this.claims != null) {
       this.edit = true;
-      console.log(this.allotment);
-      this.form.patchValue(this.allotment);
+      this.form.patchValue(this.claims);
     }
   }
 
-  PutClaim() {
-    const body = {
-      id: this.allotment.id,
-      description: this.form.get('description').value,
-      flag: this.form.get('keyClaims').value,
-    };
-
-    this.claimService.PutClaim(this.allotment.id, body).subscribe({
-      next: (resp: any) => {
-        if (resp) {
-          this.handleSuccess(), this.refresh.emit(true);
-          this.close();
-        }
-      },
+  update() {
+    this.loading = true;
+    this.claimService.update(this.form.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
     });
   }
 
-  postClaim() {
-    const body = {
-      id: String(this.lengthData),
-      description: this.form.get('description').value,
-      flag: this.form.get('keyClaims').value,
-    };
-
-    this.claimService.postClaims(body).subscribe({
-      next: (resp: any) => {
-        if (resp) {
-          this.handleSuccess(), this.refresh.emit(true);
-          this.close();
-        }
-      },
+  create() {
+    this.loading = true;
+    this.claimService.create(this.form.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
     });
   }
+
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    // this.modalRef.content.callback(true);
-    this.modalRef.hide();
+    this.modalRef.content.callback(true);
+    this.close();
   }
   close() {
     this.modalRef.hide();

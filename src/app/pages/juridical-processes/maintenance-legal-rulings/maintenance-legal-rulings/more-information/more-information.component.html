@@ -5,9 +5,8 @@
         [control]="form.get('dictatesNumber')"
         label="No&#46; Dictaminaci&oacute;n">
         <input
-          type="number"
+          type="text"
           class="form-control"
-          maxlength="11"
           formControlName="dictatesNumber" />
       </form-field>
     </div>
@@ -17,7 +16,7 @@
         label="Tipo Dictaminaci&oacute;n">
         <input
           class="form-control"
-          maxlength="15"
+          type="text"
           required
           formControlName="rulingType" />
       </form-field>
@@ -27,7 +26,6 @@
         <textarea
           rows="5"
           class="form-control"
-          maxlength="4000"
           formControlName="textx"></textarea>
       </form-field>
     </div>
@@ -36,7 +34,6 @@
         <textarea
           rows="5"
           class="form-control"
-          maxlength="4000"
           formControlName="textoy"></textarea>
       </form-field>
     </div>
@@ -45,16 +42,16 @@
         <textarea
           rows="5"
           class="form-control"
-          maxlength="4000"
           formControlName="textoz"></textarea>
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-12 p-2">
       <button
-        class="btn btn-sm btn-primary active"
         type="submit"
+        class="btn btn-primary btn-sm active"
         [disabled]="form.invalid">
         Guardar
+        <i aria-hidden="true" class="fa fa-save"></i>
       </button>
     </div>
   </div>

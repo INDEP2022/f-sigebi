@@ -1,132 +1,160 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-
-import { COLUMNS } from './columns';
-//Components
-import { EventTypesFornComponent } from '../event-types-form/event-types-forn.component';
-//Provisional Data
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
-import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
+import { ITevents } from 'src/app/core/models/catalogs/tevents.model';
+import { BasePage } from 'src/app/core/shared';
 import { IComerTpEvent } from '../../../../../core/models/ms-event/event-type.model';
 import { ComerTpEventosService } from '../../../../../core/services/ms-event/comer-tpeventos.service';
+import { EventTypesFornComponent } from '../event-types-form/event-types-forn.component';
+import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-event-types',
   templateUrl: './event-types.component.html',
   styles: [],
 })
-export class EventTypesComponent
-  extends BasePageWidhtDinamicFilters
-  implements OnInit
-{
+export class EventTypesComponent extends BasePage implements OnInit {
   eventTypesD: IComerTpEvent[] = [];
   searchFilter: SearchBarFilter;
-
-  rowSelected: boolean = false;
+  columnFilters: any = [];
   selectedRow: IComerTpEvent | null = null;
   newId: number = 0;
-
-  //Columns
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  data: LocalDataSource = new LocalDataSource();
   columns = COLUMNS;
 
   constructor(
     private modalService: BsModalService,
-    private tpEventService: ComerTpEventosService
+    private comerTpEventosService: ComerTpEventosService
   ) {
     super();
-    this.service = this.tpEventService;
     this.settings = {
       ...this.settings,
-      columns: COLUMNS,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        add: false,
+        delete: true,
+        position: 'right',
+      },
+      columns: { ...COLUMNS },
     };
   }
 
-  override getData() {
+  ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'status':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'zoneGeographic':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getAllEventTypes();
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getAllEventTypes());
+  }
+
+  getAllEventTypes() {
     this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.service.getAll(params).subscribe({
+    this.comerTpEventosService.getAllComerTpEvent(params).subscribe({
       next: (response: any) => {
         if (response) {
-          this.totalItems = response.count || 0;
           this.data.load(response.data);
           this.data.refresh();
-          this.newId = this.tpEventService.getNewId(response.data);
+          this.totalItems = response.count || 0;
           this.loading = false;
         }
       },
       error: err => {
-        this.totalItems = 0;
-        this.data.load([]);
-        this.data.refresh();
         this.loading = false;
+        this.alert(
+          'error',
+          'Se Presenta un Error en el Servidor para Mostrar los Tipos de Evenos',
+          ''
+        );
       },
     });
   }
 
-  openModal(context?: Partial<EventTypesFornComponent>): void {
-    const modalRef = this.modalService.show(EventTypesFornComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getData();
-    });
+  openForm(comerTpEvent?: IComerTpEvent) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      comerTpEvent,
+      callback: (next: boolean) => {
+        if (next) this.getAllEventTypes();
+      },
+    };
+    this.modalService.show(EventTypesFornComponent, modalConfig);
   }
 
-  add(): void {
-    this.openModal({ newId: this.newId });
-  }
-
-  openForm(eventType: IComerTpEvent): void {
-    this.openModal({ edit: true, eventType });
-  }
-
-  delete(eventType: IComerTpEvent): void {
+  showDeleteAlert(reginalDelegation: ITevents) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.loading = true;
-        this.tpEventService.remove(eventType.id).subscribe({
-          next: data => {
-            this.loading = false;
-            this.showSuccess();
-            this.getData();
-          },
-          error: error => {
-            this.loading = false;
-            this.showError();
-          },
-        });
+        this.delete(reginalDelegation.id);
       }
     });
   }
 
-  selectRow(row: IComerTpEvent): void {
-    this.selectedRow = row;
-    this.rowSelected = true;
-  }
-
-  showSuccess(): void {
-    this.onLoadToast(
-      'success',
-      'Tipo Evento',
-      `Registro Eliminado Correctamente`
-    );
-  }
-
-  showError(error?: any): void {
-    this.onLoadToast(
-      'error',
-      `Error al eliminar datos`,
-      'Hubo un problema al conectarse con el servior'
-    );
-    error ? console.log(error) : null;
+  delete(id: number) {
+    this.comerTpEventosService.removeTevents(id).subscribe({
+      next: () => {
+        this.alert('success', 'Tipo de Eveno Eliminado', '');
+        this.getAllEventTypes();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'No se Puede Eliminar el Tipo de Evento Debido a una Relación con Otra Tabla',
+          ''
+        );
+      },
+    });
   }
 }

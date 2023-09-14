@@ -5,7 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITypeSiniester } from 'src/app/core/models/catalogs/type-siniester.model';
 import { TypeSiniesterService } from 'src/app/core/services/catalogs/type-siniester.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-type-sinister-form',
@@ -31,7 +31,7 @@ export class TypeSinisterFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.typeSinisterForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null],
       description: [
         null,
         [
@@ -40,8 +40,8 @@ export class TypeSinisterFormComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      flag: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      noRegistre: [null, [Validators.required]],
+      flag: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      //noRegistre: [null, [Validators.required]],
     });
     if (this.typeSiniester != null) {
       this.edit = true;
@@ -57,23 +57,33 @@ export class TypeSinisterFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.typeSinisterService
-      .create(this.typeSinisterForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (this.typeSinisterForm.controls['description'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.typeSinisterService
+        .create(this.typeSinisterForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.typeSinisterService
-      .update(this.typeSiniester.id, this.typeSinisterForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (this.typeSinisterForm.controls['description'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.typeSinisterService
+        .newUpdate(this.typeSinisterForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

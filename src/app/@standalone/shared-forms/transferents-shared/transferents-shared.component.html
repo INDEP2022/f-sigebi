@@ -6,8 +6,8 @@
           (fetchItems)="getTransferents($event)"
           [data]="transferents"
           [form]="form"
+          bindLabel="selectValue"
           value="id"
-          bindLabel="name"
           label="Transferentes"
           [control]="transferentField"
           (change)="onTransferentsChange($event)">

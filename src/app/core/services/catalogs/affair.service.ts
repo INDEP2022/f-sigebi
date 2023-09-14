@@ -24,6 +24,21 @@ export class AffairService
     return this.affairRepository.getAllPaginated(this.route, params);
   }
 
+  getCrime(params?: ListParams) {
+    const route1 = 'catalog/apps/getOtPass';
+    return this.affairRepository.getAllPaginated(route1, params);
+  }
+
+  getObtnGood(params?: ListParams) {
+    const route1 = 'apps/obtn-good-pag';
+    return this.get(route1, params);
+  }
+
+  getCveTransfer(body: any, params?: ListParams) {
+    const route1 = 'catalog/apps/getTransferKey';
+    return this.affairRepository.create3(route1, body, params);
+  }
+
   /**
    * @deprecated
    **/
@@ -64,12 +79,12 @@ export class AffairService
   }
 
   update2(id: number, model: IAffair) {
-    const route = `affair/id/${id}`;
+    const route = `affair/id/${id}/nbOrigen/${model.nbOrigen}`;
     return this.put(route, model);
   }
 
-  remove2(id: number) {
-    const route = `affair/id/${id}`;
+  remove2(id: number, nb: string) {
+    const route = `affair/id/${id}/nbOrigen/${nb}`;
     return this.delete(route);
   }
 }

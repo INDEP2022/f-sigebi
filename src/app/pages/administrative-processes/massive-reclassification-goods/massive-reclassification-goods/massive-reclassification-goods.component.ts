@@ -1,102 +1,131 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { catchError, debounceTime, forkJoin, of, takeUntil } from 'rxjs';
+import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { COLUMNS } from './columns';
+import { MassiveReclassificationGoodsService } from '../services/massive-reclassification-goods.service';
 
 @Component({
   selector: 'app-massive-reclassification-goods',
   templateUrl: './massive-reclassification-goods.component.html',
-  styles: [],
+  styleUrls: ['./massive-reclassification-goods.component.scss'],
 })
 export class MassiveReclassificationGoodsComponent
   extends BasePage
   implements OnInit
 {
-  listGood: IGood[] = [];
-  form: FormGroup;
-  selectedGooods: IGood[] = [];
+  // listGood: IGood[] = [];
+  files: any = [];
   goodNotValid: IGood[] = [];
   origin: string = null;
   changeDescription: string;
   changeDescriptionAlterning: string;
+  contador = 0;
+
+  get pathClasification() {
+    return 'catalog/api/v1/good-sssubtype?sortBy=numClasifGoods:ASC';
+  }
+
+  get selectedGooods() {
+    return this.service.selectedGooods;
+  }
+
+  get form() {
+    return this.service.form;
+  }
+
   get mode() {
     return this.form.get('mode');
   }
+
   get classificationOfGoods() {
     return this.form.get('classificationOfGoods');
   }
-  get description() {
-    return this.form.get('description');
-  }
-  get goodStatus() {
-    return this.form.get('goodStatus');
-  }
+
   get classificationGoodAlterning() {
     return this.form.get('classificationGoodAlterning');
   }
-  get descriptionAlternating() {
-    return this.form.get('descriptionAlternating');
-  }
-  totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
-    private fb: FormBuilder,
-    private readonly goodServices: GoodService
+    private service: MassiveReclassificationGoodsService,
+    private readonly goodServices: GoodService,
+    private router: Router
   ) {
     super();
-    this.settings = {
-      ...this.settings,
-      actions: false,
-      columns: {
-        name: {
-          title: 'Reclasificar',
-          sort: false,
-          type: 'custom',
-          showAlways: true,
-          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
-            this.isGoodSelected(row),
-          renderComponent: CheckboxElementComponent,
-          onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.onGoodSelect(instance),
-        },
-        ...COLUMNS,
-      },
-    };
   }
 
-  onGoodSelect(instance: CheckboxElementComponent) {
-    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: data => this.goodSelectedChange(data.row, data.toggle),
-    });
+  loadGoods() {
+    this.service.loadGoods.next(true);
   }
 
-  isGoodSelected(_good: IGood) {
-    const exists = this.selectedGooods.find(good => good.id == _good.id);
-    return !exists ? false : true;
-  }
-
-  goodSelectedChange(good: IGood, selected: boolean) {
-    if (selected) {
-      this.selectedGooods.push(good);
+  enabledReclass() {
+    let validacion = this.selectedGooods.length > 0;
+    if (this.mode.value && this.mode.value === 'I') {
+      validacion =
+        validacion &&
+        this.form.valid &&
+        this.classificationGoodAlterning.value !== null;
     } else {
-      this.selectedGooods = this.selectedGooods.filter(
-        _good => _good.id != good.id
-      );
+      validacion =
+        validacion &&
+        this.mode.value !== null &&
+        this.classificationOfGoods.value !== null;
     }
+    return validacion;
   }
 
   ngOnInit(): void {
-    this.buildForm();
+    this.service.buildForm();
     this.form.disable();
     this.mode.enable();
+    this.mode.valueChanges
+      .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
+      .subscribe(x => {
+        // console.log(x);
+        if (x === 'I') {
+          this.classificationGoodAlterning.setValue(null);
+          this.classificationGoodAlterning.addValidators(Validators.required);
+        } else {
+          this.classificationGoodAlterning.setValue(null);
+          this.classificationGoodAlterning.removeValidators(
+            Validators.required
+          );
+          this.classificationOfGoods.addValidators(Validators.required);
+        }
+        this.form.updateValueAndValidity();
+        // console.log(this.form.valid);
+      });
+
+    // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+    //   console.log('Entro', this.params.getValue());
+    //   if (this.contador > 0) {
+    //     this.loadGoods();
+    //   }
+    //   this.contador++;
+    // });
+    // this.form.valueChanges.subscribe(x => {
+    //   if (this.listGood.length > 0) {
+    //     console.log(x);
+    //   }
+    // });
+
     console.log(this.mode.value);
+  }
+
+  get ids() {
+    return this.service.ids;
+  }
+
+  clearFilter() {
+    this.form.reset();
+    this.files = [];
+    this.changeDescription = null;
+    this.service.ids = null;
+    this.service.selectedGooods = [];
+    this.service.loadGoods.next(false);
   }
 
   /**
@@ -104,36 +133,12 @@ export class MassiveReclassificationGoodsComponent
    * @author:  Alexander Alvarez
    * @since: 27/09/2022
    */
-  private buildForm() {
-    this.form = this.fb.group({
-      mode: [null, [Validators.required]],
-      classificationOfGoods: [null, [Validators.required]],
-      description: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      goodStatus: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      classificationGoodAlterning: [null, [Validators.required]],
-      descriptionAlternating: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-    });
-  }
-
-  settingsChange($event: any): void {
-    this.settings = $event;
-  }
 
   openQuestion() {
     this.alertQuestion(
       'question',
-      '¿Desea reclasificar los bienes seleccionados?',
-      '',
-      'Cambiar'
+      '¿Desea reclasificar los Bienes Seleccionados?',
+      ''
     ).then(resp => {
       if (resp.isConfirmed) {
         this.changeClassification();
@@ -143,63 +148,97 @@ export class MassiveReclassificationGoodsComponent
 
   changeClassification() {
     console.log('Se cambiaron los datos de forma masiva');
-    console.log(this.selectedGooods);
-    this.selectedGooods.forEach(good => {
-      if (good.goodClassNumber === 1575) {
-        this.goodNotValid.push(good);
-      } else {
-        this.mode.value === 'E'
-          ? this.updateMode(good, this.classificationOfGoods.value)
-          : this.updateMode(good, this.classificationGoodAlterning.value);
-      }
-    });
-    this.onLoadToast(
-      'success',
-      'Exitoso',
-      'Se ha reclasificado los bienes seleccionados.'
+    // console.log(this.selectedGooods);
+    this.loading = true;
+    let newClassNumber: any;
+    if (this.mode.value === 'I') {
+      newClassNumber = this.classificationGoodAlterning.value;
+    } else {
+      newClassNumber = this.classificationOfGoods.value;
+    }
+    // setTimeout(() => {
+    //   this.loading = false;
+    // }, 1000);
+    // return;
+    // console.log(this.selectedGooods);
+    forkJoin(
+      this.selectedGooods.map(good => {
+        return this.updateMode(good, newClassNumber);
+      })
+    )
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(x => {
+        this.alert(
+          'success',
+          'Reclasificación Masiva',
+          'Se han reclasificado los Bienes Seleccionados.'
+        );
+        this.loading = false;
+        this.loadGoods();
+      });
+
+    // forkJoin(this.selectedGooods.map(good => {
+    //         const filterParams = new FilterParams();
+    //         filterParams.addFilter('typeManagement', 2);
+    //         filterParams.addFilter2(
+    //           'filter.expedient=' +
+    //             (good.fileNumber ? '$eq:' + good.fileNumber : '$null')
+    //         );
+    //         filterParams.addFilter2(
+    //           'filter.flierNumber=' +
+    //             (good.flierNumber ? '$eq:' + good.flyerNumber : '$null')
+    //         );
+    // }))
+  }
+
+  goGoodRastrer() {}
+  // get disabled() {
+  //   return (
+  //     this.selectedGooods.length === 0 ||
+  //     !this.form ||
+  //     this.form.invalid ||
+  //     (this.mode.value === 'I' && !this.classificationGoodAlterning.value)
+  //   );
+  // }
+
+  updateMode(good: IGood, newClassNumber: string) {
+    // console.log(Number(newClassNumber), this.classificationOfGoods.value);
+    let body: any = {};
+    body.id = good.id;
+    body.goodId = good.goodId;
+    body.goodClassNumber = Number(newClassNumber);
+    body.requestId = Number(good.requestId);
+    body.fractionId = Number(good.fractionId);
+    body.addressId = Number(good.addressId);
+    // console.log(body);
+    return this.goodServices.update(body).pipe(
+      takeUntil(this.$unSubscribe),
+      catchError(x => of(null))
     );
   }
 
-  updateMode(good: IGood, newClassNumber: string) {
-    console.log(Number(newClassNumber), this.classificationOfGoods.value);
-    good.goodClassNumber = Number(newClassNumber);
-    good.requestId = Number(good.requestId);
-    good.fractionId = Number(good.fractionId);
-    good.addressId = Number(good.addressId);
-    console.log(good);
-    this.goodServices.update(good).subscribe({
-      next: response => {
-        console.log(response);
-      },
-      error: err => {
-        console.log(err);
-      },
-    });
-  }
   formEnable() {
     this.form.enable();
   }
 
-  loadGoods() {
-    console.log(this.classificationOfGoods.value);
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      console.log('Entro', this.params.getValue());
-      this.goodServices.getAll(this.params.getValue()).subscribe({
-        next: response => {
-          console.log(response);
-          this.listGood = response.data;
-          this.totalItems = response.count;
-        },
-        error: err => {
-          console.log(err);
-        },
-      });
-    });
-  }
-  onChage(event: string) {
-    this.changeDescription = event;
+  onChange(event: IGoodSssubtype) {
+    console.log(event);
+    this.changeDescription = event ? event.description : null;
   }
   onChageAlterning(event: string) {
     this.changeDescriptionAlterning = event;
+  }
+
+  goToRastreador() {
+    this.router.navigate(['/pages/general-processes/goods-tracker'], {
+      queryParams: { origin: 'FACTADBCAMBIOESTAT' },
+    });
+  }
+
+  //Llenado de excel
+  onFileChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    this.files = files;
   }
 }

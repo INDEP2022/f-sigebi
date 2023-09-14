@@ -1,6 +1,6 @@
 export const COLUMNS = {
   idCity: {
-    title: 'No Ciudad',
+    title: 'No. Ciudad',
     sort: false,
   },
   nameCity: {
@@ -16,18 +16,18 @@ export const COLUMNS = {
     sort: false,
   },
   noDelegation: {
-    title: 'No Delegación',
+    title: 'No. Delegación',
     sort: false,
   },
-  cvDelDescripcion: {
+  cvDelDescription: {
     title: 'Descripción',
     sort: false,
   },
   noSubDelegation: {
-    title: 'No Subdelegación',
+    title: 'No. Subdelegación',
     sort: false,
   },
-  cvSubDelDescripcion: {
+  cvSubDelDescription: {
     title: 'Descripción',
     sort: false,
   },
@@ -35,7 +35,7 @@ export const COLUMNS = {
 
 export const COLUMNSLIST = {
   id: {
-    title: 'No Juzgado',
+    title: 'No. Juzgado',
     sort: false,
   },
   description: {
@@ -51,11 +51,11 @@ export const COLUMNSLIST = {
     sort: false,
   },
   numExterior: {
-    title: 'No Exterior',
+    title: 'No. Exterior',
     sort: false,
   },
   numInside: {
-    title: 'No Interior',
+    title: 'No. Interior',
     sort: false,
   },
   cologne: {
@@ -69,13 +69,14 @@ export const COLUMNSLIST = {
   zipCode: {
     title: 'Codigo Postal',
     sort: false,
+    width: '100%',
   },
   numPhone: {
     title: 'Teléfono',
     sort: false,
   },
   circuitCVE: {
-    title: 'Cv circuito',
+    title: 'Cv Circuito',
     sort: false,
   },
 };

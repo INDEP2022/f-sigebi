@@ -1,26 +1,27 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Agregar' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="thirdPartyForm">
       <div class="row">
-        <div class="col-md-2">
+        <!-- <div class="col-md-2">
           <form-field [control]="thirdPartyForm.get('id')" label="ID">
             <input type="number" class="form-control" formControlName="id" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-6">
           <form-field
             [control]="thirdPartyForm.get('nameReason')"
             label="Nombre Razón">
             <input
+              maxlength="100"
               type="text"
               class="form-control"
               formControlName="nameReason" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field
             [control]="thirdPartyForm.get('calculationRoutine')"
             label="Rutina Cálculo">
@@ -29,14 +30,14 @@
               [searchable]="false"
               class="form-control"
               [clearable]="false">
-              <ng-option value="COMI_RANGO">COMI_RANGO</ng-option>
-              <ng-option value="COMI_RANGOESP">COMI_RANGOESP</ng-option>
-              <ng-option value="COMI_TOTAL">COMI_TOTAL</ng-option>
+              <ng-option value="COMI_RANGO">CALCULO X RANGO</ng-option>
+              <ng-option value="COMI_RANGOESP">CALCULO_RANGO_ESP</ng-option>
+              <ng-option value="COMI_TOTAL">CALCULO_TOTAL</ng-option>
             </ng-select>
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
+      <!-- <div class="row pt-5">
         <div class="col-md-2">
           <form-field
             [control]="thirdPartyForm.get('userAttempts')"
@@ -106,19 +107,41 @@
             <input type="text" class="form-control" formControlName="user" />
           </form-field>
         </div>
-      </div>
+      </div> -->
     </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
+        <button
+          [disabled]="!thirdPartyForm.valid"
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Guardar
+          <span><i aria-hidden="true" class="fa fa-save"></i></span>
+        </button>
+        <!-- <button
+          [disabled]="thirdPartyForm.invalid"
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          {{ edit ? 'Actualizar' : 'Guardar' }}
+          <span *ngIf="edit"><i class="fas fa-sync-alt"> </i></span>
+          <span *ngIf="!edit"
+            ><i aria-hidden="true" class="fa fa-save"></i
+          ></span>
+        </button> -->
+        <!-- <confirm-button
           [type]="'button'"
           [disabled]="thirdPartyForm.invalid"
-          (confirm)="confirm()"></confirm-button>
+          (confirm)="confirm()"></confirm-button> -->
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

@@ -2,10 +2,21 @@
   <div class="ch-content">
     <h5 class="title">Cat&aacute;logos SAT</h5>
     <div class="row justify-content-end mr-1">
-      <app-columns-select [(settings)]="settings"></app-columns-select>
+      <app-columns-select
+        [(settings)]="settings"
+        [leftList]="true"></app-columns-select>
     </div>
   </div>
 </div>
 <div class="row pt-3">
-  <ng2-smart-table [source]="data" [settings]="settings"></ng2-smart-table>
+  <form-loader *ngIf="loading"></form-loader>
+  <div>
+    <ng2-smart-table
+      [ngStyle]="{ height: loading ? '0px' : 'auto' }"
+      [attr.class]="'table-bordered table-responsive mb-4'"
+      [settings]="settings"
+      [source]="dataFilter">
+    </ng2-smart-table>
+  </div>
+  <app-pagination [params]="paramsList" [totalItems]="count"> </app-pagination>
 </div>

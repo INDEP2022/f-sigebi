@@ -1,6 +1,6 @@
 export interface IDocCompesationSat {
   id?: number;
-  idcat?: number;
+  officeSatId?: number;
   typeDocSat?: string;
   addressee?: string;
   subjectCode: number;

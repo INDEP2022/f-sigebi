@@ -5,20 +5,31 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IOriginCisi } from 'src/app/core/models/catalogs/origin-cisi.model';
 import { OiriginCisiService } from 'src/app/core/services/catalogs/origin-cisi.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ModelForm } from '../../../../core/interfaces/model-form';
+// function noSpaceValidator(control: AbstractControl): ValidationErrors | null {
+//   const value = control.value;
 
+//   if (value && /^\s/.test(value)) {
+//     ERROR_MESSAGES.noSpace();
+//     return { noSpace: true };
+//   }
+
+//   return null;
+// }
 @Component({
   selector: 'app-orign-cisi-form',
   templateUrl: './orign-cisi-form.component.html',
   styles: [],
 })
 export class OrignCisiFormComponent extends BasePage implements OnInit {
-  form: ModelForm<IOriginCisi>;
+  orignCisiForm: ModelForm<IOriginCisi>;
   title: string = 'Procedencia Cisi';
   edit: boolean = false;
   originCisi: IOriginCisi;
   originCisis = new DefaultSelect<IOriginCisi>();
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -32,14 +43,25 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
-    this.form = this.fb.group({
+    this.orignCisiForm = this.fb.group({
       id: [null],
-      detail: [null, [Validators.required]],
+      detail: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(40),
+          Validators.pattern(STRING_PATTERN),
+          //noSpaceValidator
+          ,
+        ],
+      ],
     });
     if (this.originCisi != null) {
-      console.log(this.form);
       this.edit = true;
-      this.form.patchValue(this.originCisi);
+      this.orignCisiForm.setValue({
+        id: this.originCisi.id,
+        detail: this.originCisi.detail,
+      });
     }
   }
 
@@ -48,17 +70,30 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
       this.originCisis = new DefaultSelect(data.data, data.count);
     });
   }
+
   close() {
     this.modalRef.hide();
   }
 
   confirm() {
-    this.edit ? this.update() : this.create();
+    if (this.orignCisiForm.valid) {
+      if (this.edit) {
+        this.update();
+      } else {
+        this.create();
+      }
+    }
   }
 
   create() {
-    this.loading = true;
-    this.originCisiService.create(this.form.getRawValue()).subscribe({
+    if (this.orignCisiForm.controls['detail'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
+
+    this.loading = true; // Coloca el loading en true antes de realizar la petición.
+
+    this.originCisiService.create(this.orignCisiForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -67,7 +102,7 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.originCisiService
-      .update(this.originCisi.id, this.form.getRawValue())
+      .update(this.originCisi.id, this.orignCisiForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -76,7 +111,7 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

@@ -1,35 +1,30 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="revisionReasonForm">
       <div class="row">
         <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field [control]="revisionReasonForm.get('id')" label="Registro">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
-            [control]="revisionReasonForm.get('estatus_inicial')"
+            [control]="revisionReasonForm.get('initialStatus')"
             label="Estado Inicial">
             <input
               type="text"
               class="form-control"
-              formControlName="estatus_inicial" />
+              formControlName="initialStatus" />
           </form-field>
         </div>
       </div>
       <div class="row pt-md-5">
         <div class="col-12 pt-sm-5 pt-md-2">
           <form-field
-            [control]="revisionReasonForm.get('descripcion_motivo')"
+            [control]="revisionReasonForm.get('descriptionCause')"
             label="Descripci&oacute;n">
             <textarea
               rows="2"
               class="form-control pt-3"
-              formControlName="descripcion_motivo">
+              formControlName="descriptionCause">
             </textarea>
           </form-field>
         </div>
@@ -37,66 +32,63 @@
       <div class="row pt-md-5">
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
-            [control]="revisionReasonForm.get('tipo_bien')"
+            [control]="revisionReasonForm.get('goodType')"
             label="Tipo Bien">
             <input
               type="text"
               class="form-control"
-              formControlName="tipo_bien" />
+              formControlName="goodType" />
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
-            [control]="revisionReasonForm.get('estatus_rev')"
+            [control]="revisionReasonForm.get('statusRev')"
             label="Estado de Revisi&oacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="estatus_rev" />
+              formControlName="statusRev" />
           </form-field>
         </div>
       </div>
       <div class="row pt-md-5">
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
-            [control]="revisionReasonForm.get('area_responsable')"
+            [control]="revisionReasonForm.get('managerArea')"
             label="&Aacute;rea Responsable">
             <input
               type="text"
               class="form-control"
-              formControlName="area_responsable" />
+              formControlName="managerArea" />
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
-            [control]="revisionReasonForm.get('estatus_fin')"
+            [control]="revisionReasonForm.get('statusPurpose')"
             label="Estado Final">
             <input
               type="text"
               class="form-control"
-              formControlName="estatus_fin" />
+              formControlName="statusPurpose" />
           </form-field>
         </div>
       </div>
       <div class="row pt-md-5">
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
-            [control]="revisionReasonForm.get('pantalla')"
+            [control]="revisionReasonForm.get('screen')"
             label="Pantalla">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="pantalla" />
+            <input type="text" class="form-control" formControlName="screen" />
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
-            [control]="revisionReasonForm.get('parametro')"
+            [control]="revisionReasonForm.get('parameter')"
             label="Par&aacute;metro">
             <input
               type="text"
               class="form-control"
-              formControlName="parametro" />
+              formControlName="parameter" />
           </form-field>
         </div>
       </div>
@@ -105,10 +97,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="!revisionReasonForm.valid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

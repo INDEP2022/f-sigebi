@@ -36,14 +36,14 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data"
+            [source]="dataIncome"
             (edit)="edit($event.data)"
             (delete)="delete($event.data)">
           </ng2-smart-table>
         </div>
       </div>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
+    <app-pagination [params]="params" [totalItems]="totalIncome">
     </app-pagination>
   </div>
 </app-card>

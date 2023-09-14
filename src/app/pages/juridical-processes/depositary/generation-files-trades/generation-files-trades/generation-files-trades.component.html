@@ -39,7 +39,7 @@
             <div class="col-12 mt-2 mb-2">
               <form-field
                 [control]="form.get('tipoOficio')"
-                label="Tipo Oficio">
+                label="Tipo de Oficio">
                 <input
                   readonly
                   class="form-control"
@@ -61,7 +61,7 @@
             <div class="col-12 mt-2 mb-2">
               <form-field
                 [control]="form.get('nomPerExt')"
-                label="Nombre Persona Extenso">
+                label="Nombre de la Persona Extenso">
                 <textarea
                   readonly
                   class="form-control"
@@ -133,15 +133,15 @@
                 type="button"
                 class="btn btn-primary active text-wrap btn-sm"
                 (click)="btnGenerarOficio()">
-                GENERAR ARCHIVO DE OFICIO
+                GENERAR ARCHIVO DE OFICIO <i class="bx bxs-file-find"></i>
               </button>
             </div>
             <div class="col-lg-5 col-md-5 col-5 form-group">
               <button
                 type="button"
-                class="btn btn-danger active btn-sm"
+                class="btn btn-danger btn-sm active mr-3"
                 (click)="cleanForm()">
-                Limpiar
+                Limpiar <i class="fas fa-eraser"> </i>
               </button>
             </div>
           </div>

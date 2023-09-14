@@ -14,7 +14,7 @@ import { SelectModalTableSharedComponent } from '../select-modal-table-shared/se
 export class WarehouseTableSharedComponent implements OnInit {
   @Input() form: FormGroup;
   @Input() disabled: boolean;
-  @Input() label: string = 'No Almacén';
+  @Input() label: string = 'No. Almacén';
   @Input() labelName: string = 'Descripción de almacén';
   @Input() formField: string = 'warehouseId';
   @Input() formFieldName: string = 'warehouseDescription';

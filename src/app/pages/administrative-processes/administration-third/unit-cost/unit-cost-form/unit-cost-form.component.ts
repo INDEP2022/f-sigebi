@@ -45,11 +45,6 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getProcesses(new ListParams());
-    this.getServices(new ListParams());
-    this.getServicesTypes(new ListParams());
-    this.getShifts(new ListParams());
-    this.getVarCosts(new ListParams());
   }
 
   private prepareForm() {
@@ -73,6 +68,11 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
       this.edit = true;
       this.unitCostForm.patchValue(this.unitCost);
     }
+    this.getProcesses(new ListParams());
+    this.getServices(new ListParams());
+    this.getServicesTypes(new ListParams());
+    this.getShifts(new ListParams());
+    this.getVarCosts(new ListParams());
   }
 
   close() {
@@ -127,26 +127,47 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
 
   getVarCosts(params: ListParams) {
     this.varCostService.getAll(params).subscribe({
-      next: data =>
-        (this.variablesCosts = new DefaultSelect(data.data, data.count)),
+      next: data => {
+        this.variablesCosts = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.variablesCosts = new DefaultSelect();
+        this.loading = false;
+      },
     });
   }
 
   getProcesses(params: ListParams) {
     this.processService.getAll(params).subscribe({
-      next: data => (this.processes = new DefaultSelect(data.data, data.count)),
+      next: data => {
+        this.processes = new DefaultSelect(data.data, data.count);
+        this.loading = false;
+      },
+      error: err => {
+        console.log(err);
+        this.processes = new DefaultSelect();
+        this.loading = false;
+      },
     });
   }
 
   getShifts(params: ListParams) {
     this.shiftService.getAll(params).subscribe({
       next: data => (this.shifts = new DefaultSelect(data.data, data.count)),
+      error: err => {
+        this.shifts = new DefaultSelect();
+        this.loading = false;
+      },
     });
   }
 
   getServices(params: ListParams) {
     this.serviceService.getAll(params).subscribe({
       next: data => (this.services = new DefaultSelect(data.data, data.count)),
+      error: err => {
+        this.services = new DefaultSelect();
+        this.loading = false;
+      },
     });
   }
 
@@ -154,6 +175,10 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
     this.serviceTypeService.getAll(params).subscribe({
       next: data =>
         (this.servicesTypes = new DefaultSelect(data.data, data.count)),
+      error: err => {
+        this.servicesTypes = new DefaultSelect();
+        this.loading = false;
+      },
     });
   }
 }

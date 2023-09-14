@@ -1,6 +1,8 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar' : 'Nuevo' }} Categoria para almacenes
+    </h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="warehouseForm">
@@ -37,6 +39,7 @@
               label="Estado"
               value="id"
               (fetchItems)="getStates($event)"
+              (change)="getCitie($event)"
               control="stateCode"></ngx-select>
           </form-field>
         </div>
@@ -48,7 +51,8 @@
               bindLabel="nameCity"
               label="Ciudad"
               value="idCity"
-              (fetchItems)="getCities($event)"
+              (fetchItems)="getCitiesParams($event)"
+              (change)="getMunicipalitie($event)"
               control="cityCode"></ngx-select>
           </form-field>
         </div>
@@ -59,22 +63,16 @@
               [data]="municipalities"
               bindLabel="description"
               label="Municipio"
-              value="codeMunicipalityId"
-              (fetchItems)="getMunicipalities($event)"
+              value="idMunicipality"
+              (fetchItems)="getMunicipalitiesParams($event)"
+              (change)="getLocalitie($event)"
               control="municipalityCode"></ngx-select>
           </form-field>
         </div>
       </div>
 
       <div class="row mt-4">
-        <div class="col-md-4">
-          <form-field
-            [control]="warehouseForm.get('type')"
-            label="Tipo Almac&eacute;n">
-            <input type="text" class="form-control" formControlName="type" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-12">
           <form-field [control]="warehouseForm.get('localityCode')">
             <ngx-select
               [form]="warehouseForm"
@@ -84,6 +82,48 @@
               value="id"
               (fetchItems)="getLocalities($event)"
               control="localityCode"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('responsibleDelegation')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="warehouseForm"
+              [data]="responsibleDelegation"
+              label="Delegaci&oacute;n Responsable"
+              bindLabel="description"
+              value="delegation"
+              (fetchItems)="getResponsibleDelegation($event)"
+              control="responsibleDelegation"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('manager')">
+            <ngx-select
+              [form]="warehouseForm"
+              [data]="user"
+              label="Responsable"
+              bindLabel="name"
+              value="user"
+              (fetchItems)="getUser($event)"
+              control="manager"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <form-field [control]="warehouseForm.get('type')">
+            <ngx-select
+              [searchable]="true"
+              [form]="warehouseForm"
+              [data]="type"
+              label="Tipo Almac&eacute;n"
+              bindLabel="otvalor"
+              value="otkey"
+              (fetchItems)="getType($event)"
+              control="type"></ngx-select>
           </form-field>
         </div>
       </div>

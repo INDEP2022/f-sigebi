@@ -4,48 +4,82 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row mb-3 mt-3">
-        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-          <form-field [control]="form.get('description')" label="Descripción">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description" />
-          </form-field>
-        </div>
-        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-          <form-field
-            [control]="form.get('descReceipt')"
-            label="Descripción Reporte">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="descReceipt" />
-          </form-field>
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-6 mb-3 mt-3">
-          <form-field
-            [control]="form.get('typeDispId')"
-            label="Tipo de Dispersión">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('id')" label="No. Tipo evento">
             <input
               type="number"
               class="form-control"
-              formControlName="typeDispId" />
+              formControlName="id"
+              min="0"
+              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
           </form-field>
         </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-6 mb-3 mt-3">
+
+        <div class="col-md-4">
           <form-field
             [control]="form.get('typeFailedpId')"
             label="Tipo de Fallo">
             <input
               type="number"
               class="form-control"
-              formControlName="typeFailedpId" />
+              formControlName="typeFailedpId"
+              min="0"
+              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('typeDispId')"
+            label="Tipo de Dispersión">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="typeDispId"
+              min="0"
+              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description"
+              maxlength="30" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('descReceipt')"
+            label="Descripción Reporte">
+            <input
+              rows="2"
+              class="form-control"
+              formControlName="descReceipt"
+              maxlength="30" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <form-field [control]="form.get('use')" label="Uso">
+            <input
+              rows="3"
+              class="form-control"
+              formControlName="use"
+              maxlength="240" />
           </form-field>
         </div>
       </div>
     </form>
   </div>
+
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">

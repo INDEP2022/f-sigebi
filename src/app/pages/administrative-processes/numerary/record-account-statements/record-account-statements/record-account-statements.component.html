@@ -2,65 +2,112 @@
   <div class="ch-content" header>
     <h5 class="title">Estado de cuenta (Bancos)</h5>
   </div>
+
   <div body>
     <div class="row mt-3 mb-3">
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
-          <div class="col-md-3">
-            <form-field [control]="form.get('bank')" label="Banco">
+          <div class="col-6">
+            <!-- <form-field [control]="form.get('bankSelect')">
+              <ngx-select [data]="banks" [form]="form" bindLabel="name" label="Seleccione un Banco"
+                [control]="'bankSelect'" (change)="onBankSelectChange($event)" (fetchItems)="searchBanks($event)"
+                (input)="onSearchName($event.target)"></ngx-select>
+            </form-field> -->
+            <form-field [control]="form.get('bankSelect')">
+              <ngx-select
+                [form]="form"
+                [data]="banks"
+                (fetchItems)="getBanks($event)"
+                bindLabel="bankAndNumber"
+                control="bankSelect"
+                label="Banco"
+                [searchOnInit]="true"
+                termMaxLength="30"
+                (change)="onBankSelectChange($event)"
+                (input)="onSearchNameAccount($event.target)">
+              </ngx-select>
+            </form-field>
+          </div>
+
+          <div class="col-6">
+            <!-- <form-field [control]="form.get('account')">
+              <ngx-select [data]="bankAccountSelect" [form]="form" bindLabel="accountAndNumber" label="Cuenta"
+                [control]="'account'" (change)="onBankAccountSelectChange($event)" (fetchItems)="getEvent($event)
+                " (input)="onSearchAccount($event.target)"></ngx-select>
+            </form-field> -->
+            <form-field [control]="form.get('account')">
+              <ngx-select
+                label="Cuenta"
+                [form]="form"
+                [data]="bankAccountSelect"
+                (fetchItems)="searchBankAccount($event)"
+                bindLabel="accountAndNumber"
+                control="account"
+                [searchOnInit]="true"
+                [showTooltip]="true"
+                termMaxLength="50"
+                (input)="onSearchAccount($event.target)"
+                [labelTemplate]="bankLabel"
+                [optionTemplate]="bankOption"
+                (change)="onBankAccountSelectChange($event)"
+                (clear)="onClearSelection()">
+              </ngx-select>
+              <ng-template #bankLabel let-item="item">
+                {{ item.accountNumber.cveAccount }}
+              </ng-template>
+              <ng-template #bankOption let-item="item">
+                <div [title]="item.accountNumber.cveAccount">
+                  {{ item.accountNumber.cveAccount }}
+                </div>
+              </ng-template>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('accountType')"
+              label="Tipo de Cuenta">
               <input
                 type="text"
                 class="form-control"
-                formControlName="bank"
-                (click)="openForm()" />
+                formControlName="accountType"
+                maxlength="13"
+                readonly />
             </form-field>
           </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('account')" label="Cuenta">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="account"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <form-field [control]="form.get('square')" label="Plaza">
               <input
                 type="text"
                 class="form-control"
-                formControlName="square" />
+                formControlName="square"
+                maxlength="30"
+                readonly />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <form-field [control]="form.get('branch')" label="Sucursal">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="branch"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
-          </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-md-3">
-            <form-field
-              [control]="form.get('accountType')"
-              label="Tipo de cuenta">
               <input
                 type="text"
                 class="form-control"
-                formControlName="accountType" />
+                formControlName="branch"
+                maxlength="30"
+                readonly />
             </form-field>
           </div>
+        </div>
+
+        <div class="row mt-4">
           <div class="col-md-3">
             <form-field [control]="form.get('currency')" label="Moneda">
               <input
                 type="text"
                 class="form-control"
-                formControlName="currency" />
+                formControlName="currency"
+                maxlength="15"
+                readonly />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -68,59 +115,125 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="description" />
+                formControlName="description"
+                readonly />
             </form-field>
           </div>
+
+          <div class="col-md-3">
+            <button
+              type="button"
+              class="btn btn-sm btn-info active"
+              style="width: 90px; background-color: #b38e5d"
+              (click)="cleandInfo()">
+              Limpiar <i class="fa fa-eraser"></i>
+            </button>
+          </div>
+        </div>
+
+        <h5 class="row ml-0 mt-5">
+          Consulta Movimientos de Cuenta por Rango de Fecha
+        </h5>
+        <div class="row mt-5">
           <div class="col-md-3">
             <form-field [control]="form.get('balanceOf')" label="Saldo de">
               <input
                 type="text"
                 class="form-control"
-                formControlName="balanceOf" />
+                bsDatepicker
+                formControlName="balanceOf"
+                [maxDate]="maxDate"
+                [(ngModel)]="variableOf" />
             </form-field>
           </div>
-        </div>
-        <div class="row mt-4">
+
           <div class="col-md-3">
             <form-field [control]="form.get('balanceAt')" label="Saldo al">
               <input
                 type="text"
                 class="form-control"
-                formControlName="balanceAt" />
+                bsDatepicker
+                [maxDate]="maxDate"
+                formControlName="balanceAt"
+                [(ngModel)]="variableAt"
+                [min]="form.get('balanceOf').value"
+                [minDate]="form.get('balanceOf').value"
+                [ngModel]="
+                  form.get('balanceAt').value < form.get('balanceOf').value
+                    ? form.get('balanceOf').value
+                    : form.get('balanceAt').value
+                " />
             </form-field>
+          </div>
+
+          <div class="col-md-3">
+            <form-field [control]="form.get('balance')" label="Saldo">
+              <input
+                type="text"
+                currencyMask
+                type="Formato Moneda"
+                class="form-control"
+                formControlName="balance"
+                [value]="balance"
+                readonly />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <button
+              type="button"
+              class="btn btn-sm btn-info active mr-4"
+              style="background-color: #9d2449"
+              (click)="DateAccountBalance()">
+              Consultar <i class="bx bx-search float-icon"></i>
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-info active"
+              style="width: 90px; background-color: #b38e5d"
+              (click)="cleandInfoDate()">
+              Limpiar <i class="fa fa-eraser"></i>
+            </button>
           </div>
         </div>
       </form>
-      <div class="row pt-4">
-        <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="data1">
-            </ng2-smart-table>
-          </div>
-        </div>
-        <app-pagination [params]="params" [totalItems]="totalItems">
-        </app-pagination>
-      </div>
-      <p>(Doble click para traspasar movimientos)</p>
-      <div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-md-10">
+
+      <div class="row mt-5">
+        <div class="col-md-12 d-flex align-items-center justify-content-center">
           <p>
-            .
             <span class="text-success mr-5"
-              ><i class="fa fa-square"></i> Movimiento de transferencia(Padre)
-            </span>
-            <span class="text-yellow mr-5"
-              ><i class="fa fa-square"></i> Movimiento de transferencia(Hijo)
-            </span>
-            <span class="text-blue"
-              ><i class="fa fa-square"></i> Cobro de Cheque x Dev
-            </span>
+              ><i class="fa fa-square"></i> Movimiento de Transferencia
+              (Padre)</span
+            >
+            <span class="mr-5" style="color: #bc955c"
+              ><i class="fa fa-square"></i> Movimiento de Transferencia
+              (Hijo)</span
+            >
+            <span style="color: #564ab1"
+              ><i class="fa fa-square"></i> Cobro de Cheque por Dev</span
+            >
           </p>
         </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 mt-6">
+          <p class="row ml-2">(Clic para Traspasar Movimientos)</p>
+          <div class="table-responsive">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="dataAccount"
+                (userRowSelect)="openModal($event.data)"
+                (delete)="showDeleteAlert($event.data)">
+              </ng2-smart-table>
+            </div>
+          </div>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
   </div>

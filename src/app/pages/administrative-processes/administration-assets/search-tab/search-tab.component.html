@@ -1,58 +1,185 @@
-<form [formGroup]="searchTabForm" class="form-material">
+<div class="container-fluid">
   <div class="row">
-    <div class="col-md-6">
-      <app-goods-types-shared
-        [form]="searchTabForm"
-        typeField="tipo"
-        subtypeField="subtipo"
-        ssubtypeField="ssubtipo"
-        sssubtypeField="sssubtipo"
-        (goodSssubtypeChange)="getGoods($event)"></app-goods-types-shared>
-      <div class="form-group row">
-        <goods-filter-shared
-          [form]="searchTabForm"
-          goodField="noBien"
-          [classifGood]="classifGood"></goods-filter-shared>
-      </div>
-      <div class="form-group row">
-        <form-field [control]="searchTabForm.get('estatus')" label="Estatus">
-          <input
-            class="form-control"
-            type="text"
-            name="estatus"
-            formControlName="estatus" />
-        </form-field>
-      </div>
-      <div class="form-group row">
-        <div class="col-md-6">
-          <form-field
-            [control]="searchTabForm.get('situacion')"
-            label="Situacion">
-            <input
-              class="form-control"
-              type="text"
-              name="situacion"
-              formControlName="situacion" />
-          </form-field>
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-12">
+          <form [formGroup]="searchTabForm" class="form-material">
+            <div class="row">
+              <div class="col-md-12">
+                <app-goods-types-shared-Good
+                  [reloadGood]="reloadGood"
+                  [loadOnChangesNoBien]="true"
+                  [goodselect]="goodSelect"
+                  [form]="searchTabForm"
+                  typeField="tipo"
+                  subtypeField="subtipo"
+                  ssubtypeField="ssubtipo"
+                  sssubtypeField="sssubtipo"
+                  (goodTypeChange)="getGoodType($event)"
+                  (goodSssubtypeChange)="
+                    getGoods($event)
+                  "></app-goods-types-shared-Good>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <form-field [control]="searchTabForm.get('noBien')">
+                    <ngx-select
+                      (fetchItems)="getGoodsSheard($event)"
+                      [data]="goods"
+                      [form]="searchTabForm"
+                      value="id"
+                      bindLabel="description"
+                      label="Bien"
+                      control="noBien"
+                      (change)="onChangeGood($event)"
+                      [labelTemplate]="userLabel"
+                      [optionTemplate]="userOption">
+                    </ngx-select>
+                  </form-field>
+                  <ng-template #userLabel let-item="item"
+                    >{{ item.id }} - {{ item.description }}</ng-template
+                  >
+                  <ng-template #userOption let-item="item"
+                    >{{ item.id }} - {{ item.description }}</ng-template
+                  >
+                  <!-- <goods-filter-shared [reloadGood]="reloadGood" [clean]="cleanGood" [form]="searchTabForm"
+                    goodField="noBien" [classifGood]="classifGood" (good)="onChangeGood($event)"></goods-filter-shared> -->
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <form-field
+                    [control]="searchTabForm.get('estatus')"
+                    label="Estatus">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="estatus"
+                      formControlName="estatus"
+                      [readOnly]="true" />
+                  </form-field>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <form-field
+                    [control]="searchTabForm.get('destino')"
+                    label="Destino">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="destino"
+                      formControlName="destino"
+                      [readOnly]="true" />
+                  </form-field>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <form-field
+                    [control]="searchTabForm.get('situacion')"
+                    label="Situación">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="situacion"
+                      formControlName="situacion"
+                      [readOnly]="true" />
+                  </form-field>
+                </div>
+              </div>
+              <div class="col-md-6 d-flex justify-content-end">
+                <div class="m-4">
+                  <button
+                    class="btn btn-sm btn-primary active mr-2"
+                    (click)="search()">
+                    Buscar <i class="fas fa-search"></i>
+                  </button>
+                  <button
+                    class="btn btn-danger btn-sm active mr-2"
+                    (click)="clean()">
+                    Limpiar <i class="fas fa-eraser"></i>
+                  </button>
+                  <button
+                    class="btn btn-sm btn-primary active mr-2"
+                    (click)="openPhotos()">
+                    Ver Fotos <i class="fas fa-eye"></i>
+                  </button>
+                  <button
+                    class="btn btn-sm btn-primary active"
+                    (click)="goToRastreador()"
+                    *ngIf="queryParams">
+                    Regresar
+                    <i class="fas fa-arrow-circle-left"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
-        <div class="col-md-6">
-          <form-field [control]="searchTabForm.get('destino')" label="Destino">
-            <input
-              class="form-control"
-              type="text"
-              name="destino"
-              formControlName="destino" />
-          </form-field>
+        <!-- <div class="form-group row">
+          <div class="col-md-3 col-ms-3 col-xs-6">
+            <div class="d-flex justify-content-center">
+              <div class="m-3">
+                <button
+                  class="btn btn-sm btn-primary active"
+                  (click)="search()">
+                  Buscar <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-ms-3 col-xs-6">
+            <div class="d-flex justify-content-center">
+              <div class="m-3">
+                <button class="btn btn-danger btn-sm active" (click)="clean()">
+                  Limpiar
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-ms-3 col-xs-6">
+            <div class="d-flex justify-content-center">
+              <div class="m-3">
+                <button
+                  class="btn btn-sm btn-primary active"
+                  (click)="openPhotos()">
+                  Ver fotos <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div> -->
+      </div>
+      <div class="row">
+        <div class="d-flex justify-content-end">
+          <app-columns-select
+            [(settings)]="settings"
+            [defaultColumns]="5"></app-columns-select>
         </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="data">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <app-pagination
+          [params]="params1"
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
-    <div class="col-md-6"></div>
   </div>
-  <div>
-    <app-columns-select [(settings)]="settings"></app-columns-select>
-    <br />
-    <ng-scrollbar [track]="'all'" style="min-height: 120px">
-      <ng2-smart-table [settings]="settings" [source]="list"> </ng2-smart-table>
-    </ng-scrollbar>
-  </div>
-</form>
+</div>

@@ -13,32 +13,46 @@
               class="form-control"
               type="text"
               rows="2"
-              formControlName="description"></textarea>
+              formControlName="description"
+              maxlength="200"></textarea>
           </form-field>
         </div>
+      </div>
+      <div class="row pt-3">
         <div class="col-md-6">
           <form-field
             [control]="zoneGeographicForm.get('contractNumber')"
-            label="No de contrato">
+            label="No de Contrato">
             <input
               type="number"
               class="form-control"
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
               formControlName="contractNumber" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
             [control]="zoneGeographicForm.get('thirdPartySpecialized')"
-            label="Tercero especializado">
+            label="Tercero Especializado">
             <input
               type="text"
               class="form-control"
-              formControlName="thirdPartySpecialized" />
+              formControlName="thirdPartySpecialized"
+              maxlength="20" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-3">
         <div class="col-md-6">
-          <form-field [control]="zoneGeographicForm.get('vat')" label="Iva">
-            <input type="number" class="form-control" formControlName="vat" />
+          <form-field [control]="zoneGeographicForm.get('vat')" label="IVA">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="vat"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -48,7 +62,11 @@
             <input
               type="number"
               class="form-control"
-              formControlName="status" />
+              formControlName="status"
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
       </div>

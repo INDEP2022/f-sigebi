@@ -1,1 +1,819 @@
-<p>numerary-massive-conciliation works!</p>
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Conciliación masiva numerario</h5>
+  </div>
+  <div body>
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Bienes</h5>
+      </div>
+      <div body>
+        <form [formGroup]="form" class="form-material">
+          <div class="row mt-4">
+            <div class="col-md-4">
+              <ngx-select
+                class="form-group"
+                id="goodClasification"
+                control="goodClasification"
+                label="Clasificador"
+                bindLabel="numClasifGoods"
+                [data]="dataClassGood"
+                [form]="form"></ngx-select>
+            </div>
+
+            <div class="col-md-4">
+              <ngx-select
+                class="form-group"
+                id="bank"
+                control="bank"
+                label="Banco"
+                bindLabel="cveBank"
+                [class]="form.get('current').value == null ? 'disabled' : ''"
+                [data]="banks"
+                (fetchItems)="getBanks()"
+                [form]="form"></ngx-select>
+            </div>
+
+            <div class="col-md-4">
+              <ngx-select
+                class="form-group"
+                id="bankAccount"
+                [data]="bankAccountData"
+                [form]="form"
+                [class]="form.get('bank').value == null ? 'disabled' : ''"
+                bindLabel="cveAccount"
+                label="Cuenta Bancaria"
+                control="bankAccount"></ngx-select>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <form-field
+              [control]="form.get('deposit')"
+              label="Depósito"
+              class="col-md-4">
+              <input
+                class="form-group"
+                type="number"
+                [min]="0"
+                class="form-control"
+                formControlName="deposit" />
+            </form-field>
+
+            <form-field
+              [control]="form.get('current')"
+              label="Moneda"
+              class="col-md-4">
+              <input
+                class="form-group"
+                type="text"
+                class="form-control"
+                formControlName="current"
+                maxlength="15"
+                readonly />
+            </form-field>
+          </div>
+
+          <div class="row mt-4">
+            <form-field
+              [control]="form.get('dateTesofe')"
+              label="Aplicar Fecha Tesofe:"
+              class="col-md-4">
+              <input
+                class="form-control"
+                bsDatepicker
+                formControlName="dateTesofe" />
+            </form-field>
+
+            <form-field
+              [control]="form.get('dateOf')"
+              label="Fecha desde:"
+              class="col-md-4">
+              <input
+                class="form-control"
+                bsDatepicker
+                formControlName="dateOf" />
+            </form-field>
+
+            <form-field
+              [control]="form.get('dateAt')"
+              label="Fecha hasta:"
+              class="col-md-4">
+              <input
+                class="form-control"
+                [minDate]="minDate"
+                [class]="form.get('dateOf').value == null ? 'disabled' : ''"
+                bsDatepicker
+                formControlName="dateAt" />
+            </form-field>
+          </div>
+
+          <div class="row text-center">
+            <div class="col">
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm mr-2"
+                (click)="searchFilterGood()">
+                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-info active ml-2"
+                style="width: 90px; background-color: #b38e5d"
+                (click)="cleandInfo()">
+                Limpiar <i class="fa fa-eraser"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </app-card>
+
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Bienes Filtrados</h5>
+      </div>
+      <div body>
+        <form [formGroup]="form" class="form-material">
+          <div class="row">
+            <div
+              class="col-md-12 d-flex align-items-center justify-content-center">
+              <p>
+                <span class="text-success mr-5">
+                  <i class="fa fa-square"></i> No Conciliado
+                </span>
+                <span class="text-dark">
+                  <i class="fa fa-square"></i> Conciliado
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <div class="col-12 mt-6 mb-4">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings"
+                (userRowSelect)="selectRowGood($event)"
+                [source]="dataGoods">
+              </ng2-smart-table>
+            </div>
+            <app-pagination
+              [params]="params"
+              [limit]="limit"
+              [totalItems]="totalItems"></app-pagination>
+          </div>
+
+          <div class="row mt-4">
+            <form-field
+              [control]="form.get('description')"
+              label="Descripción"
+              class="col-md-8"
+              style="margin-top: 20px">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="description"
+                readonly />
+            </form-field>
+
+            <form-field
+              [control]="form.get('statusGood')"
+              label="Estatus"
+              class="col-md-4"
+              style="margin-top: 20px">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="statusGood"
+                readonly />
+            </form-field>
+          </div>
+        </form>
+      </div>
+    </app-card>
+
+    <app-card>
+      <div body>
+        <div class="row text-center">
+          <div class="col">
+            <button
+              type="button"
+              (click)="updateButton()"
+              class="btn btn-primary btn-sm active ml-1 mr-3">
+              Actualiza <i class="fas fa-sync-alt"></i>
+            </button>
+
+            <button
+              type="button"
+              (click)="reconcileButton()"
+              class="btn btn-primary btn-sm active ml-1 mr-3">
+              Conciliar
+            </button>
+
+            <button
+              type="button"
+              (click)="disconnectButton()"
+              class="btn btn-primary btn-sm active ml-1">
+              Desconcilia
+            </button>
+          </div>
+        </div>
+      </div>
+    </app-card>
+
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Cuentas bancarias</h5>
+      </div>
+      <div body>
+        <form [formGroup]="form2" class="form-material">
+          <div class="row mt-4">
+            <form-field [control]="form2.get('current')" class="col-md-4">
+              <ngx-select
+                label="Moneda"
+                [data]="currentDataF2"
+                [form]="form2"
+                bindLabel="cve_moneda"
+                control="current"></ngx-select>
+            </form-field>
+
+            <form-field [control]="form2.get('bank')" class="col-md-4">
+              <ngx-select
+                label="Banco"
+                [data]="banksDataF2"
+                [form]="form2"
+                bindLabel="cveBank"
+                [class]="form2.get('current').value == null ? 'disabled' : ''"
+                (fetchItems)="getBanks2()"
+                [control]="'bank'"></ngx-select>
+            </form-field>
+
+            <form-field [control]="form2.get('bankAccount')" class="col-md-4">
+              <ngx-select
+                label="Cuenta Bancaria"
+                [data]="bankAccountDataF2"
+                [form]="form2"
+                bindLabel="cveAccount"
+                [class]="form2.get('bank').value == null ? 'disabled' : ''"
+                [control]="'bankAccount'"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row mt-4">
+            <form-field
+              [control]="form2.get('deposit')"
+              label="Depósito"
+              class="col-md-4">
+              <input
+                type="number"
+                [min]="0"
+                [readOnly]="form2.get('bankAccount').value == null"
+                class="form-control"
+                formControlName="deposit" />
+            </form-field>
+          </div>
+
+          <div class="row text-center">
+            <div class="col">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="searchGoodBankAccount()">
+                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="openAsociate()">
+                Asociación <i class="fa fa-link" aria-hidden="true"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-info active"
+                style="width: 90px; background-color: #b38e5d"
+                (click)="cleandInfo2()">
+                Limpiar <i class="fa fa-eraser"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </app-card>
+
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Bienes Cuentas Bancarias</h5>
+      </div>
+      <div body>
+        <div class="row">
+          <form [formGroup]="form2" class="form-material">
+            <div class="col-12 mt-5">
+              <div class="table-responsive">
+                <div [class]="loading2 ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settings2"
+                    [source]="dataGoods2">
+                  </ng2-smart-table>
+                </div>
+                <!-- [limit]="limit2" -->
+              </div>
+              <app-pagination
+                [params]="params2"
+                [totalItems]="totalItems2"></app-pagination>
+            </div>
+
+            <div class="row mt-4">
+              <form-field
+                [control]="form2.get('total')"
+                label="Total"
+                class="col-md-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="total"
+                  readonly />
+              </form-field>
+
+              <form-field
+                [control]="form2.get('totalDateTesofe')"
+                label="Total con Fecha Tesofe"
+                class="col-md-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="totalDateTesofe"
+                  readonly />
+              </form-field>
+
+              <form-field
+                [control]="form2.get('totalWithoutTesofe')"
+                label="Total sin Fecha Tesofe"
+                class="col-md-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="totalWithoutTesofe"
+                  readonly />
+              </form-field>
+            </div>
+          </form>
+        </div>
+      </div>
+    </app-card>
+
+    <app-card>
+      <div class="ch-content" header>
+        <h5 class="title">Bienes Cuentas Bancarias</h5>
+      </div>
+      <div body>
+        <form [formGroup]="form2" class="form-material">
+          <div class="row mt-4">
+            <form-field
+              [control]="form2.get('proposal')"
+              label="Propuesta"
+              class="col-md-4">
+              <input
+                type="text"
+                class="form-control"
+                readOnly
+                formControlName="proposal" />
+            </form-field>
+
+            <form-field
+              [control]="form2.get('currencyDeposit')"
+              label="Depósito"
+              class="col-md-4">
+              <input
+                type="text"
+                class="form-control"
+                readOnly
+                formControlName="currencyDeposit" />
+            </form-field>
+
+            <button
+              style="width: 100px; margin-left: 15px"
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="finalAsociate()">
+              Asociar <i class="fa fa-link" aria-hidden="true"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </app-card>
+  </div>
+</app-card>
+
+<!-- <app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Conciliación masiva numerario</h5>
+  </div>
+  <div body>
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Bienes</h5>
+      </div>
+      <div body>
+        <form [formGroup]="form" class="form-material">
+          <div class="row mt-4">
+            <div class="col-md-4">
+              <ngx-select
+                class="form-group"
+                id="goodClasification"
+                control="goodClasification"
+                label="Clasificador"
+                bindLabel="numClasifGoods"
+                [data]="dataClassGood"
+                [form]="form"></ngx-select>
+            </div>
+
+            <div class="col-md-4">
+              <ngx-select
+                class="form-group"
+                id="bank"
+                control="bank"
+                label="Banco"
+                bindLabel="cveBank"
+                [class]="form.get('current').value == null ? 'disabled' : ''"
+                [data]="banks"
+                (fetchItems)="getBanks()"
+                [form]="form"></ngx-select>
+            </div>
+
+            <div class="col-md-4">
+              <ngx-select
+                class="form-group"
+                id="bankAccount"
+                [data]="bankAccountData"
+                [form]="form"
+                [class]="form.get('bank').value == null ? 'disabled' : ''"
+                bindLabel="cveAccount"
+                label="Cuenta Bancaria"
+                control="bankAccount"></ngx-select>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <form-field
+              [control]="form.get('deposit')"
+              label="Depósito"
+              class="col-md-4">
+              <input
+                class="form-group"
+                type="number"
+                [min]="0"
+                class="form-control"
+                formControlName="deposit" />
+            </form-field>
+
+            <form-field
+              [control]="form.get('current')"
+              label="Moneda"
+              class="col-md-4">
+              <input
+                class="form-group"
+                type="text"
+                class="form-control"
+                formControlName="current"
+                maxlength="15"
+                readonly />
+            </form-field>
+          </div>
+
+          <div class="row mt-4">
+            <form-field
+              [control]="form.get('dateTesofe')"
+              label="Aplicar Fecha Tesofe:"
+              class="col-md-4">
+              <input
+                class="form-control"
+                bsDatepicker
+                formControlName="dateTesofe" />
+            </form-field>
+
+            <form-field
+              [control]="form.get('dateOf')"
+              label="Fecha desde:"
+              class="col-md-4">
+              <input
+                class="form-control"
+                bsDatepicker
+                formControlName="dateOf" />
+            </form-field>
+
+            <form-field
+              [control]="form.get('dateAt')"
+              label="Fecha hasta:"
+              class="col-md-4">
+              <input
+                class="form-control"
+                [minDate]="minDate"
+                [class]="form.get('dateOf').value == null ? 'disabled' : ''"
+                bsDatepicker
+                formControlName="dateAt" />
+            </form-field>
+          </div>
+
+          <div class="row text-center">
+            <div class="col">
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm mr-2"
+                (click)="searchFilterGood()">
+                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-info active ml-2"
+                style="width: 90px; background-color: #b38e5d"
+                (click)="cleandInfo()">
+                Limpiar <i class="fa fa-eraser"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </app-card>
+
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Bienes Filtrados</h5>
+      </div>
+      <div body>
+        <form [formGroup]="form" class="form-material">
+          <div class="row">
+            <div
+              class="col-md-12 d-flex align-items-center justify-content-center">
+              <p>
+                <span class="text-success mr-5">
+                  <i class="fa fa-square"></i> No Conciliado
+                </span>
+                <span class="text-dark">
+                  <i class="fa fa-square"></i> Conciliado
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <div class="col-12 mt-6 mb-4">
+            <div class="table-responsive">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings"
+                  (userRowSelect)="selectRowGood($event)"
+                  [source]="dataGoods">
+                </ng2-smart-table>
+              </div>
+              <app-pagination
+                [params]="params"
+                [limit]="limit"
+                [totalItems]="totalItems"></app-pagination>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <form-field
+              [control]="form.get('description')"
+              label="Descripción"
+              class="col-md-8"
+              style="margin-top: 20px">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="description"
+                readonly />
+            </form-field>
+
+            <form-field
+              [control]="form.get('statusGood')"
+              label="Estatus"
+              class="col-md-4"
+              style="margin-top: 20px">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="statusGood"
+                readonly />
+            </form-field>
+          </div>
+        </form>
+      </div>
+    </app-card>
+
+    <app-card>
+      <div body>
+        <div class="row text-center">
+          <div class="col">
+            <button
+              type="button"
+              (click)="updateButton()"
+              class="btn btn-primary btn-sm active ml-1 mr-3">
+              Actualiza <i class="fas fa-sync-alt"></i>
+            </button>
+
+            <button
+              type="button"
+              (click)="reconcileButton()"
+              class="btn btn-primary btn-sm active ml-1 mr-3">
+              Conciliar
+            </button>
+
+            <button
+              type="button"
+              (click)="disconnectButton()"
+              class="btn btn-primary btn-sm active ml-1">
+              Desconcilia
+            </button>
+          </div>
+        </div>
+      </div>
+    </app-card>
+
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Cuentas bancarias</h5>
+      </div>
+      <div body>
+        <form [formGroup]="form2" class="form-material">
+          <div class="row mt-4">
+            <form-field [control]="form2.get('current')" class="col-md-4">
+              <ngx-select
+                label="Moneda"
+                [data]="currentDataF2"
+                [form]="form2"
+                (fetchItems)="getCveCurrency()"
+                bindLabel="cve_moneda"
+                control="current"></ngx-select>
+            </form-field>
+
+            <form-field [control]="form2.get('bank')" class="col-md-4">
+              <ngx-select
+                label="Seleccione un Banco"
+                [data]="banksDataF2"
+                [form]="form2"
+                bindLabel="cveBank"
+                [class]="form2.get('current').value == null ? 'disabled' : ''"
+                (fetchItems)="getBanks2()"
+                [control]="'bank'"></ngx-select>
+            </form-field>
+
+            <form-field [control]="form2.get('bankAccount')" class="col-md-4">
+              <ngx-select
+                label="Cuenta Bancaria"
+                [data]="bankAccountDataF2"
+                [form]="form2"
+                bindLabel="cveAccount"
+                [class]="form2.get('bank').value == null ? 'disabled' : ''"
+                [control]="'bankAccount'"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row mt-4">
+            <form-field
+              [control]="form2.get('deposit')"
+              label="Depósito"
+              class="col-md-4">
+              <input
+                type="number"
+                [min]="0"
+                [readOnly]="form2.get('bankAccount').value == null"
+                class="form-control"
+                formControlName="deposit" />
+            </form-field>
+          </div>
+
+          <div class="row text-center">
+            <div class="col">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="searchGoodBankAccount()">
+                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="openAsociate()">
+                Asociación <i class="fa fa-link" aria-hidden="true"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-info active"
+                style="width: 90px; background-color: #b38e5d"
+                (click)="cleandInfo2()">
+                Limpiar <i class="fa fa-eraser"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </app-card>
+
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Bienes Cuentas Bancarias</h5>
+      </div>
+      <div body>
+        <div class="row">
+          <form [formGroup]="form2" class="form-material">
+            <div class="col-12 mt-5">
+              <div class="table-responsive">
+                <div [class]="loading2 ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settings2"
+                    [source]="dataGoods2">
+                  </ng2-smart-table>
+                </div>
+                <app-pagination
+                  [params]="params2"
+                  [totalItems]="totalItems2"
+                  [limit]="limit2"
+                  ></app-pagination>
+              </div>
+            </div>
+
+            <div class="row mt-4">
+              <form-field
+                [control]="form2.get('total')"
+                label="Total"
+                class="col-md-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="total"
+                  readonly />
+              </form-field>
+
+              <form-field
+                [control]="form2.get('totalDateTesofe')"
+                label="Total con Fecha Tesofe"
+                class="col-md-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="totalDateTesofe"
+                  readonly />
+              </form-field>
+
+              <form-field
+                [control]="form2.get('totalWithoutTesofe')"
+                label="Total sin Fecha Tesofe"
+                class="col-md-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="totalWithoutTesofe"
+                  readonly />
+              </form-field>
+            </div>
+          </form>
+        </div>
+      </div>
+    </app-card>
+
+    <app-card>
+      <div class="ch-content" header>
+        <h5 class="title">Bienes Cuentas Bancarias</h5>
+      </div>
+      <div body>
+        <form [formGroup]="form2" class="form-material">
+          <div class="row mt-4">
+            <form-field
+              [control]="form2.get('proposal')"
+              label="Propuesta"
+              class="col-md-4">
+              <input
+                type="text"
+                class="form-control"
+                readOnly
+                formControlName="proposal" />
+            </form-field>
+
+            <form-field
+              [control]="form2.get('currencyDeposit')"
+              label="Depósito"
+              class="col-md-4">
+              <input
+                type="text"
+                class="form-control"
+                readOnly
+                formControlName="currencyDeposit" />
+            </form-field>
+
+            <button
+              style="width: 100px; margin-left: 15px"
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="finalAsociate()">
+              Asociar <i class="fa fa-link" aria-hidden="true"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </app-card>
+  </div>
+</app-card> -->

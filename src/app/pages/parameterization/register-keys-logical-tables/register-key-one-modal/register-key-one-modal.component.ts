@@ -21,8 +21,9 @@ export class RegisterKeyOneModalComponent extends BasePage implements OnInit {
   tdescCveForm: ModelForm<ITdescCve>;
   tdescCve: ITdescCve;
   idCve: ITable;
+  selectTabla: string;
 
-  title: string = 'Registro de claves para tablas logicas con una clave';
+  title: string = 'Clave para Tabla Lógica con 1 Clave';
   edit: boolean = false;
 
   _id: any;
@@ -42,18 +43,26 @@ export class RegisterKeyOneModalComponent extends BasePage implements OnInit {
   private prepareForom() {
     this.tdescCveForm = this.fb.group({
       id: [null, []],
-
-      dsKey1: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      dsKey1: [
+        null,
+        [Validators.maxLength(8), Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       swFormat1: [null, [Validators.pattern(STRING_PATTERN)]],
-      longMin1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      longMax1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      longMin1: [
+        null,
+        [Validators.maxLength(2), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      longMax1: [
+        null,
+        [Validators.maxLength(2), Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.tdescCve != null) {
       this.edit = true;
       this.tdescCveForm.patchValue(this.tdescCve);
     } else {
-      (this.edit = false),
-        this.tdescCveForm.controls['id'].setValue(this.idCve.table);
+      this.edit = false;
+      this.tdescCveForm.controls['id'].setValue(this.selectTabla);
     }
   }
 
@@ -101,7 +110,7 @@ export class RegisterKeyOneModalComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

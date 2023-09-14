@@ -1,6 +1,6 @@
 export const packagesData = [
   {
-    id: 40,
+    numberPackage: 40,
     description: 'FOLIO: 00023, DELEGACION: DELEGACIÓN REGIONAL NORESTE',
     packageType: 2,
     amount: 295.2,
@@ -18,9 +18,9 @@ export const packagesData = [
     validationDate: '2012-11-01',
     authorizationDate: '2012-11-01',
     closingDate: '2012-11-01',
-    applicationDate: 'NULL',
+    applicationDate: '2012-11-01',
     packageCVE: 'CONV/RT/SAT/DRNE/DRNE/00023/12/11',
-    cancellationDate: 'NULL',
+    cancellationDate: '2012-11-01',
     universalFolio: 1237582,
     paragraph1:
       '- - - En la Ciudad de Apodaca, siendo las 13:00 horas, del día 29 de Octubre de 2012, se encuentran presentes en la Bodega ubicada en la calle de Jose Lopez Portillo No. 2000 de esta Ciudad, el C. Carlos Andrés Gómez-Danés Mejía con cargo de Gerente Regional Monterrey de la, empresa TDR Transportes S.A de C.V. y el C. Rolando Arciniega Fuantos adscrito a la Delegación regional Noreste del Servicio de Administración y Enajenación de Bienes (SAE), Organismo Descentralizado de la Administración Pública Federal; ambos con el fin de llevar a cabo la validación y conversión de los bienes transferidos al SAE.- - - - - - - - - - - - - - - - - - - - - - - - - - - -\n- - -Interviene como testigo de asistencia el C.Julio Hernandez García - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n-------------------------------------------------- A N T E C E D E N T E S --------------------------------------------------- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n- - - l. Los bienes fueron transferidos al SAE por el Servicio de Administración Tributaria, con fundamento en los artículos 3 de la LFAEBSP, 12 y 13 del Reglamento de la ley en comento. - - \n- - - II.- Los bienes sujetos ha validación y conversión de unidad, se encuentran en administración del SAE y bajo la custodia de TDR Transportes S.A de C.V. los cuales se incorporan a este procedimiento a efecto de facilitar la ejecución de su destino.- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n----------------------------------------------------- DECLARACIONES ------------------------------------------------------\n- - - PRIMERA.- El C. Rolando Arciniega Fuantos manifiesta que los bienes que fueron transferidos al SAE se encuentran bajo su custodia y con el fin de dar cumplimento al destino final sugerido por la Entidad Transferente se sujetaran a un procedimiento de validación y conversión en virtud de que fueron puestos a disposición con un tipo de unidad diferente al de kilogramos.- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n- - - SEGUNDA.- Que para realizar el proceso de validación y conversión se verifican las amountes físicas, contra las amountes señaladas en los documentos y registros oficiales para posteriormente determinar el valor de conversión a kilogramos. - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n- - - TERCERA.- La conversión integra un paquete de bienes, que puede estar conformado por uno o varios registros y que son consistentes en las siguientes características: a) Autoridad SAT - COMERCIO EXTERIOR, b) Clasificador del bien ROPA DIVERSA, c) Estatus del bien ADM, d) Etiqueta de destino DONACION, e) La custodia se encuentra a cargo del almacén TDR ALMACEN MONTERREY, y f) La administración de los bienes esta a cargo de la  la Delegación Regional Noreste.- - - - - - - -',
@@ -28,12 +28,12 @@ export const packagesData = [
       '- - - CUARTA.- Una vez validada la existencia física de los bienes descritos en la declaratoria anterior, se determinó que su valor de conversión a kilogramos corresponde a 295.2',
     paragraph3:
       '-- - - QUINTA.- El valor de conversión a kilogramos determinado en la Cláusula Cuarta es una referencia para ejecutar el destino de Donación de los bienes  que conforman en paquete, por lo que cada registro conserva la referencia de amount y unidad recibidas del transferente - - - - - - - - - - -  -- - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - \n- - - - - - - - - -  - - - - - - - - - - - - -  CIERRE DEL ACTA - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  ------Se da por concluida la presente acta, siendo las 13:30 horas del día 29 de Octubre de 2012, firmando  al margen y al calce por las personas que en ella intervienen, para todos los efectos a que haya lugar. - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\nCUSTODIA, VALIDA Y EJECUTA CONVERSIÓN\n\t\t\t\n         POR EL S.A.E.                                        POR EL ALMACEN TDR MONTERREY\n\nC. Rolando Arciniega Fuantos                 C. Carlos Andres Gomez-Danes Mejia\n\nUltima página del Acta Administrativa de Validación y Conversión de Bienes con Clave CONV/RT/SAT/DRNE/DRNE/00023/12/11 de fecha  29 de  octubre de 2012, constante de 3 fojas. - - - - - - - - - - - -',
-    delegationNumber: 4,
+    delegationNumber: '40',
     elaborationUSU: 'RARCINIEGA',
     validationUSU: 'RARCINIEGA',
     authorizationUSU: 'RARCINIEGA',
     closingUSU: 'RARCINIEGA',
-    applicationUSU: 'NULL',
+    applicationUSU: 'RARCINIEGA',
     cancellationUSU: 'NULL',
     goodNumberF: 1946807,
     trial785: 'T',

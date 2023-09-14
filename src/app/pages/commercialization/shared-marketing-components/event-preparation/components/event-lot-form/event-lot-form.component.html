@@ -1,0 +1,148 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="lotForm">
+      <div class="row">
+        <form-field
+          class="col-md-3"
+          [control]="lotForm.get('publicLot')"
+          label="Lote Público">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="publicLot" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="lotForm.get('baseValue')"
+          label="Valor Base">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="baseValue" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="lotForm.get('customerId')"
+          label="ID Cliente">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="customerId" />
+        </form-field>
+      </div>
+      <div class="row pt-3">
+        <form-field [control]="lotForm.get('description')" label="Descripción">
+          <textarea
+            class="form-control"
+            formControlName="description"></textarea>
+        </form-field>
+      </div>
+
+      <div class="row pt-3">
+        <!-- <form-field
+          class="col-md-3"
+          [control]="lotForm.get('transferenceNumber')"
+          label="No Transferente">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="transferenceNumber" />
+        </form-field> -->
+
+        <form-field
+          class="col-md-3"
+          [control]="lotForm.get('warrantyPrice')"
+          label="Precio Garantía">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="warrantyPrice" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="lotForm.get('finalPrice')"
+          label="Precio Final">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="finalPrice" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="lotForm.get('referenceG')"
+          label="Referenciag">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="referenceG" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="lotForm.get('referential')"
+          label="Referencial">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="referential" />
+        </form-field>
+      </div>
+
+      <!-- <div class="row pt-3">
+        <form-field
+          class="col-md-3"
+          [control]="lotForm.get('statusVtaId')"
+          label="Estatus Venta">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="statusVtaId" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="lotForm.get('assignedEs')"
+          label="Asignado">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="assignedEs" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="lotForm.get('scrapEs')"
+          label="Chatarra">
+          <input type="number" class="form-control" formControlName="scrapEs" />
+        </form-field>
+      </div> -->
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          (click)="confirm()"
+          [btnSmall]="true"
+          [disabled]="!lotForm.valid">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

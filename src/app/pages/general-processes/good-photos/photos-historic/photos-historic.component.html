@@ -1,0 +1,82 @@
+<!-- <app-modal>
+  <div header class="d-flex justify-content-between">
+    <h5 class="modal-title">Histórico de bienes</h5>
+    <div class="buttons">
+      <button (click)="close()" type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+  <div body> -->
+<!-- <div class="row b-content"></div>
+    <div class="row pt-1">
+      <div class="col-md-4 vertical-carousel">
+        <div class="row" *ngFor="let slide of slides; let index = index">
+          <div class="col-md-10">
+            <img
+              [src]="slide.image"
+              alt="Bien"
+              class="w-100"
+              (click)="mainUrl = slide.image" />
+          </div>
+          <div class="col-md-2">
+            <form-check [for]="'img-' + index">
+              <input type="checkbox" name="" [id]="'img-' + index" />
+            </form-check>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="row">
+          <div class="col-md-12">
+            <img [src]="mainUrl" alt="" class="w-100" />
+          </div>
+        </div>
+      </div>
+    </div> -->
+<!-- <div class="row docs-scroll">
+      <div class="col-md-12 p-0">
+        <h6 class="text-center" *ngIf="files.length === 0">
+          No hay fotos cargadas
+        </h6>
+        <div
+          class="col-md-6 grid-square"
+          *ngFor="let image of files; let i = index">
+          <div class="w-100 m-1 img-container">
+            <div class="row">
+              <div class="col-md-12">
+                <app-photo-historic
+                  [filename]="image"
+                  [goodNumber]="goodNumber + ''"></app-photo-historic>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div footer></div>
+</app-modal> -->
+
+<div class="row docs-scroll">
+  <div class="col-md-12 p-0">
+    <h6 class="text-center" *ngIf="files.length === 0">
+      No hay fotos cargadas
+    </h6>
+    <div
+      class="col-sm-6 grid-square"
+      *ngFor="let image of files; let i = index">
+      <div class="w-100 m-1 img-container">
+        <div class="row">
+          <div class="col-md-12">
+            <app-photo-historic
+              [file]="image"
+              [goodNumber]="image.goodNumber"
+              [userDeleted]="image.userDeleted"
+              [deletedDate]="image.deletedDate"></app-photo-historic>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -22,7 +22,7 @@ export class DelegationService
   private readonly statesRoute = ENDPOINT_LINKS.StateOfRepublic;
   private readonly zonesRoute = ENDPOINT_LINKS.ZoneGeographic;
   constructor(
-    private delegationRepository: Repository<IDelegation>,
+    private delegationRepository: Repository<any>,
 
     private statesRepository: Repository<IStateOfRepublic>,
     private zonesRepository: Repository<IZoneGeographic>
@@ -31,8 +31,18 @@ export class DelegationService
     this.microservice = DelegationsEndpoints.BasePage;
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<IDelegation>> {
+  getAll(params?: ListParams | string): Observable<IListResponse<any>> {
+    return this.delegationRepository.getAll(this.route, params);
+  }
+
+  getAllPaginated(params?: ListParams): Observable<IListResponse<IDelegation>> {
     return this.delegationRepository.getAllPaginated(this.route, params);
+  }
+
+  getAppsAll(): Observable<IListResponse<IDelegation>> {
+    return this.get<
+      IListResponse<{ delegationId: string; description: string }>
+    >('apps/getDelegations');
   }
 
   getAllModal(self?: DelegationService, params?: ListParams) {
@@ -43,8 +53,20 @@ export class DelegationService
     return self.get<IListResponse<IDelegation>>('delegation', params);
   }
 
+  getFiltered(params: string) {
+    return this.get('delegation', params);
+  }
+
   getById(id: string | number): Observable<IDelegation> {
-    return this.delegationRepository.getById(this.route, id);
+    return this.delegationRepository.newGetById(this.route, id);
+  }
+
+  getByIdEtapaEdo(
+    id: string | number,
+    etapaEdo: string
+  ): Observable<IDelegation> {
+    const route = `${DelegationsEndpoints.Delegation}/id/${id}/etapaEdo/${etapaEdo}`;
+    return this.get(route);
   }
 
   create(model: IDelegation): Observable<IDelegation> {
@@ -52,7 +74,11 @@ export class DelegationService
   }
 
   update(id: string | number, model: IDelegation): Observable<Object> {
-    return this.delegationRepository.update(this.route, id, model);
+    return this.delegationRepository.updateCatagaloDelegations(
+      this.route,
+      id,
+      model
+    );
   }
 
   remove(id: string | number): Observable<Object> {
@@ -79,6 +105,14 @@ export class DelegationService
       params
     );
   }
+  getAll3(
+    params?: ListParams | string
+  ): Observable<IListResponse<IDelegation>> {
+    return this.get<IListResponse<IDelegation>>(
+      DelegationsEndpoints.DelegationAll,
+      params
+    );
+  }
 
   create2(model: IDelegation) {
     return this.post(DelegationsEndpoints.Delegation, model);
@@ -92,5 +126,13 @@ export class DelegationService
   remove2(id: string | number, etapaEdo: string | number) {
     const route = `${DelegationsEndpoints.Delegation}/id/${id}/etapaEdo/${etapaEdo}`;
     return this.delete(route);
+  }
+
+  postCatalog(model: any) {
+    return this.post(DelegationsEndpoints.catalogetNoActa, model);
+  }
+
+  getTran(file: number) {
+    return this.get(`${DelegationsEndpoints.tranEmi}/${file}`);
   }
 }

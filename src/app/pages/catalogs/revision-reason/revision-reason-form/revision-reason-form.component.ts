@@ -14,7 +14,7 @@ import { IRevisionReason } from '../../../../core/models/catalogs/revision-reaso
 })
 export class RevisionReasonFormComponent extends BasePage implements OnInit {
   revisionReasonForm: FormGroup = new FormGroup({});
-  title: string = 'Motivo Revisión';
+  title: string = 'Motivo para Estatus REV';
   edit: boolean = false;
   revisionReason: IRevisionReason;
   items = new DefaultSelect<IRevisionReason>();
@@ -34,23 +34,69 @@ export class RevisionReasonFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.revisionReasonForm = this.fb.group({
-      id: [null, [Validators.required]],
-      estatus_inicial: [null, [Validators.required, Validators.maxLength(3)]],
-      descripcion_motivo: [
+      initialStatus: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(3),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
-      tipo_bien: [null, [Validators.required, Validators.maxLength(1)]],
-      estatus_rev: [null, [Validators.required, Validators.maxLength(3)]],
-      area_responsable: [
+      descriptionCause: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(80),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
-      estatus_fin: [null, [Validators.required, Validators.maxLength(3)]],
-      pantalla: [null, [Validators.required]],
-      parametro: [
+      goodType: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(1),
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      statusRev: [
+        null,
+        [
+          Validators.maxLength(3),
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      managerArea: [
+        null,
+        [
+          Validators.maxLength(50),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
+      ],
+      statusPurpose: [
+        null,
+        [
+          Validators.maxLength(3),
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      screen: [
+        null,
+        [
+          Validators.maxLength(80),
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      parameter: [
+        null,
+        [
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
     });
     if (this.revisionReason != null) {
@@ -69,6 +115,20 @@ export class RevisionReasonFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.revisionReasonForm.controls['initialStatus'].value.trim() === '' ||
+      this.revisionReasonForm.controls['goodType'].value.trim() === '' ||
+      this.revisionReasonForm.controls['descriptionCause'].value.trim() ===
+        '' ||
+      this.revisionReasonForm.controls['statusRev'].value.trim() === '' ||
+      this.revisionReasonForm.controls['managerArea'].value.trim() === '' ||
+      this.revisionReasonForm.controls['statusPurpose'].value.trim() === '' ||
+      this.revisionReasonForm.controls['parameter'].value.trim() === '' ||
+      this.revisionReasonForm.controls['screen'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.revisionReasonService.create(this.revisionReasonForm.value).subscribe({
       next: data => this.handleSuccess(),

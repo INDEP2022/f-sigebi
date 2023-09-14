@@ -5,14 +5,18 @@ import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
 import { BehaviorSubject } from 'rxjs';
 //Params
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
 /**import SERVICE**/
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IGood } from 'src/app/core/models/catalogs/goods.model';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 
 @Component({
   selector: 'app-goods-shared',
@@ -30,14 +34,16 @@ export class GoodsSharedComponent extends BasePage implements OnInit {
   //If Form PatchValue
   @Input() patchValue: boolean = false;
   @Output() good = new EventEmitter<IGood>();
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   goods = new DefaultSelect<IGood>();
 
-  constructor(private readonly goodServices: GoodService) {
+  constructor(private readonly service: GoodFinderService) {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getGoods({ limit: 10, page: 1 });
+  }
 
   getGoods(params: ListParams) {
     //Provisional data
@@ -45,7 +51,14 @@ export class GoodsSharedComponent extends BasePage implements OnInit {
     let count = data.length;
     this.goods = new DefaultSelect(data, count);
  */
-    this.goodServices.getAll(params).subscribe(
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+    if (params.text != undefined && params.text != '') {
+      data.addFilter('description', params.text, SearchFilter.ILIKE);
+    }
+    this.service.getAll2(data.getParams()).subscribe(
       data => {
         this.goods = new DefaultSelect(data.data, data.count);
       },

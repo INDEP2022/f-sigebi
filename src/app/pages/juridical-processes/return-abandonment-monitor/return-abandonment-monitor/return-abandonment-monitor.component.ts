@@ -1,7 +1,7 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -38,6 +38,7 @@ export class ReturnAbandonmentMonitorComponent
   notificationPropertyResponse: any;
 
   constructor(
+    private route: Router,
     private fb: FormBuilder,
     private activateRoute: ActivatedRoute,
     private goodService: GoodService,
@@ -186,7 +187,7 @@ export class ReturnAbandonmentMonitorComponent
             this.onLoadToast(
               'warning',
               'Notificación por Bien',
-              'Se encontró un CVE usuario ractifica'
+              'Se encontró una Cve. de Usuario que Ractifica'
             );
           } else if (
             data[0].userCorrectsKey == null &&
@@ -220,7 +221,7 @@ export class ReturnAbandonmentMonitorComponent
           this.onLoadToast(
             'success',
             'Ratificado',
-            'Se modificó el CVE Usuario Ratifica'
+            'Se modificó la Cve. de Usuario que Ratifica'
           );
         },
         error: err => {
@@ -295,5 +296,10 @@ export class ReturnAbandonmentMonitorComponent
         );
       }
     );
+  }
+
+  Regresar() {
+    const route = `pages/juridical/monitor-return-abandonment/${this.idBien}`;
+    this.route.navigate([route]);
   }
 }

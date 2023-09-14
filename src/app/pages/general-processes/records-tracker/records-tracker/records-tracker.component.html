@@ -6,168 +6,309 @@
   <div body>
     <div class="row">
       <div class="col-md-12 md-tabs">
-        <form [formGroup]="form" class="form-material">
-          <h6>Criterios por Notificaci&oacute;n</h6>
-          <hr />
-          <div class="row pt-3">
-            <form-field [control]="form.get('noExpediente')" class="col-md-3">
-              <ngx-select
-                [form]="form"
-                control="noExpediente"
-                label="No&#46; Expediente"
-                [data]="select">
-              </ngx-select>
-            </form-field>
+        <accordion [isAnimated]="true">
+          <accordion-group [isOpen]="true">
+            <div accordion-heading class="d-flex justify-content-between">
+              <div>
+                <h5>
+                  <i class="fa fa-filter" aria-hidden="true"></i>
+                  Filtros
+                </h5>
+              </div>
 
-            <form-field [control]="form.get('averPrevia')" class="col-md-3">
-              <ngx-select
-                [form]="form"
-                control="averPrevia"
-                label="Averiguaci&oacute;n Previa"
-                [data]="select">
-              </ngx-select>
-            </form-field>
-
-            <form-field [control]="form.get('causaPenal')" class="col-md-3">
-              <ngx-select
-                [form]="form"
-                control="causaPenal"
-                label="Causa Penal"
-                [data]="select">
-              </ngx-select>
-            </form-field>
-
-            <form-field [control]="form.get('noVolante')" class="col-md-3">
-              <ngx-select
-                [form]="form"
-                control="noVolante"
-                label="No&#46; Volante"
-                [data]="select">
-              </ngx-select>
-            </form-field>
-          </div>
-
-          <div class="row pt-3">
-            <form-field [control]="form.get('indiciado')" class="col-md-3">
-              <ngx-select
-                [form]="form"
-                control="indiciado"
-                label="Nombre Indiciado"
-                [data]="select">
-              </ngx-select>
-            </form-field>
-
-            <form-field [control]="form.get('fechaRec')" class="col-md-3">
-              <ngx-select
-                [form]="form"
-                control="fechaRec"
-                label="Fecha Recepci&oacute;n"
-                [data]="select">
-              </ngx-select>
-            </form-field>
-
-            <form-field [control]="form.get('amparo')" class="col-md-3">
-              <ngx-select
-                [form]="form"
-                control="amparo"
-                label="Amparo"
-                [data]="select">
-              </ngx-select>
-            </form-field>
-
-            <form-field [control]="form.get('tocaPenal')" class="col-md-3">
-              <ngx-select
-                [form]="form"
-                control="tocaPenal"
-                label="Toca Penal"
-                [data]="select">
-              </ngx-select>
-            </form-field>
-          </div>
-
-          <div class="row pt-3">
-            <form-field [control]="form.get('noJuzgado')" class="col-md-3">
-              <ngx-select
-                [form]="form"
-                control="noJuzgado"
-                label="No&#46; Juzgado"
-                [data]="select">
-              </ngx-select>
-            </form-field>
-
-            <form-field [control]="form.get('fechaOficio')" class="col-md-3">
-              <ngx-select
-                [form]="form"
-                control="fechaOficio"
-                label="Fecha Oficio Externo"
-                [data]="select">
-              </ngx-select>
-            </form-field>
-
-            <form-field [control]="form.get('minPub')" class="col-md-3">
-              <ngx-select
-                [form]="form"
-                control="minPub"
-                label="Ministerio P&uacute;blico"
-                [data]="select">
-              </ngx-select>
-            </form-field>
-
-            <form-field [control]="form.get('oficioExterno')" class="col-md-3">
-              <ngx-select
-                [form]="form"
-                control="oficioExterno"
-                label="Fecha Externo No&#46;"
-                [data]="select">
-              </ngx-select>
-            </form-field>
-          </div>
-
-          <div class="row pt-3">
-            <form-field [control]="form.get('entFed')" class="col-md-3">
-              <ngx-select
-                [form]="form"
-                control="entFed"
-                label="Entidad Federativa"
-                [data]="select">
-              </ngx-select>
-            </form-field>
-          </div>
-
-          <div class="row pt-3">
-            <div class="col-md-12">
-              <button class="btn btn-primary active">Consultar</button>
+              <div></div>
             </div>
-          </div>
-        </form>
+            <div class="form-material">
+              <app-card [header]="false">
+                <div body>
+                  <form [formGroup]="form" class="form-material">
+                    <h6>Criterios por Notificaci&oacute;n</h6>
+                    <div class="row pt-3">
+                      <form-field
+                        [control]="form.get('noExpediente')"
+                        class="col-md-3">
+                        <ngx-select
+                          (fetchItems)="getDistinct($event, 'fileNumber')"
+                          [data]="fileNumberselect"
+                          [form]="form"
+                          bindLabel="no_expediente"
+                          value="no_expediente"
+                          label="No&#46; Expediente"
+                          [control]="'noExpediente'"
+                          [showTooltip]="true"
+                          (change)="onNotificationChange($event)">
+                        </ngx-select>
+                      </form-field>
+                      <form-field
+                        [control]="form.get('averPrevia')"
+                        class="col-md-3">
+                        <ngx-select
+                          (fetchItems)="getDistinct($event, 'previousSearch')"
+                          [data]="previousSearchselect"
+                          [form]="form"
+                          bindLabel="averiguacion_previa"
+                          value="averiguacion_previa"
+                          label="Averiguaci&oacute;n Previa"
+                          [control]="'averPrevia'"
+                          [showTooltip]="true"
+                          (change)="onNotificationChange($event)">
+                        </ngx-select>
+                      </form-field>
+
+                      <form-field
+                        [control]="form.get('causaPenal')"
+                        class="col-md-3">
+                        <ngx-select
+                          (fetchItems)="getDistinct($event, 'penalCause')"
+                          [data]="penalCauseselect"
+                          [form]="form"
+                          bindLabel="causa_penal"
+                          value="causa_penal"
+                          label="Causa Penal"
+                          [control]="'causaPenal'"
+                          [showTooltip]="true"
+                          (change)="onNotificationChange($event)">
+                        </ngx-select>
+                      </form-field>
+                      <!-- wheelNumber -->
+                      <form-field
+                        [control]="form.get('noVolante')"
+                        class="col-md-3">
+                        <ngx-select
+                          (fetchItems)="getDistinct($event, 'flierNumber')"
+                          [data]="flierNumberselect"
+                          [form]="form"
+                          bindLabel="no_volante"
+                          value="no_volante"
+                          label="No&#46; Volante"
+                          [control]="'noVolante'"
+                          [showTooltip]="true"
+                          (change)="onNotificationChange($event)">
+                        </ngx-select>
+                      </form-field>
+                    </div>
+
+                    <div class="row pt-3">
+                      <form-field
+                        [control]="form.get('indiciado')"
+                        label="Nombre Indiciado"
+                        class="col-md-3">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="indiciado"
+                          [max-length]="100" />
+                      </form-field>
+                      <!-- receiptDate -->
+                      <form-field
+                        [control]="form.get('fechaRec')"
+                        class="col-md-3">
+                        <ngx-select
+                          (fetchItems)="getDistinct($event, 'receptionDate')"
+                          [data]="receptionDateselect"
+                          [form]="form"
+                          bindLabel="fec_recepcion"
+                          value="fec_recepcion"
+                          label="Fecha Recepci&oacute;n"
+                          [control]="'fechaRec'"
+                          [showTooltip]="true"
+                          (change)="onNotificationChange($event)">
+                        </ngx-select>
+                      </form-field>
+                      <!-- protectionKey -->
+                      <form-field
+                        [control]="form.get('amparo')"
+                        class="col-md-3">
+                        <ngx-select
+                          (fetchItems)="getDistinct($event, 'amparoKey')"
+                          [data]="amparoKeyselect"
+                          [form]="form"
+                          bindLabel="cve_amparo"
+                          value="cve_amparo"
+                          label="Amparo"
+                          [control]="'amparo'"
+                          [showTooltip]="true"
+                          (change)="onNotificationChange($event)">
+                        </ngx-select>
+                      </form-field>
+                      <!-- touchPenaltyKey -->
+                      <form-field
+                        [control]="form.get('tocaPenal')"
+                        class="col-md-3">
+                        <ngx-select
+                          (fetchItems)="getNotifications($event)"
+                          [data]="notificationselect"
+                          [form]="form"
+                          bindLabel="touchPenaltyKey"
+                          value="touchPenaltyKey"
+                          label="Toca Penal"
+                          [control]="'tocaPenal'"
+                          [showTooltip]="true"
+                          (change)="onNotificationChange($event)">
+                        </ngx-select>
+                      </form-field>
+                    </div>
+                    <!-- courtNumber -->
+                    <div class="row pt-3">
+                      <form-field
+                        [control]="form.get('noJuzgado')"
+                        class="col-md-3">
+                        <ngx-select
+                          (fetchItems)="getNotifications($event)"
+                          [data]="notificationselect"
+                          [form]="form"
+                          bindLabel="courtNumber"
+                          value="courtNumber"
+                          label="No&#46; Juzgado"
+                          [control]="'noJuzgado'"
+                          [showTooltip]="true"
+                          (change)="onNotificationChange($event)">
+                        </ngx-select>
+                      </form-field>
+                      <!-- externalOfficeDate -->
+                      <form-field
+                        [control]="form.get('fechaOficio')"
+                        class="col-md-3">
+                        <ngx-select
+                          (fetchItems)="getDistinct($event, 'extJobDate')"
+                          [data]="extJobDateselect"
+                          [form]="form"
+                          bindLabel="fec_oficio_externo"
+                          value="fec_oficio_externo"
+                          label="Fecha Oficio Externo"
+                          [control]="'fechaOficio'"
+                          [showTooltip]="true"
+                          (change)="onNotificationChange($event)">
+                        </ngx-select>
+                      </form-field>
+
+                      <form-field
+                        [control]="form.get('minPub')"
+                        class="col-md-3">
+                        <ngx-select
+                          (fetchItems)="getMinsPublic($event)"
+                          [data]="minsPublic"
+                          [form]="form"
+                          bindLabel="manager"
+                          value="id"
+                          label="Ministerio P&uacute;blico"
+                          [control]="'minPub'"
+                          [showTooltip]="true"
+                          (change)="onMinsPublicChange($event)">
+                        </ngx-select>
+                      </form-field>
+                      <!-- officeExternalKey -->
+                      <form-field
+                        [control]="form.get('oficioExterno')"
+                        class="col-md-3">
+                        <ngx-select
+                          (fetchItems)="getDistinct($event, 'extJobKey')"
+                          [data]="extJobKeyselect"
+                          [form]="form"
+                          bindLabel="cve_oficio_externo"
+                          value="cve_oficio_externo"
+                          label="Oficio Externo No&#46;"
+                          [control]="'oficioExterno'"
+                          [showTooltip]="true"
+                          (change)="onNotificationChange($event)">
+                        </ngx-select>
+                      </form-field>
+                    </div>
+                    <!-- getEntFed -->
+                    <div class="row pt-3">
+                      <form-field
+                        [control]="form.get('entFed')"
+                        class="col-md-3">
+                        <ngx-select
+                          (fetchItems)="getEntFed($event)"
+                          [data]="entsFed"
+                          [form]="form"
+                          bindLabel="downloadState"
+                          value="codeState"
+                          label="Entidad Federativa"
+                          [control]="'entFed'"
+                          [showTooltip]="true"
+                          (change)="onEntidadChange($event)">
+                        </ngx-select>
+                      </form-field>
+                    </div>
+
+                    <div class="row pt-3">
+                      <div class="col-md-12">
+                        <button
+                          class="btn btn-primary btn-sm active m-3"
+                          (click)="consult()">
+                          Consultar
+                          <i class="bx bx-search-alt bx-sm float-icon"></i>
+                        </button>
+                        <button
+                          class="btn btn-danger btn-sm active mr-3"
+                          (click)="clean()">
+                          Limpiar <i class="fas fa-eraser"> </i>
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </app-card>
+            </div>
+          </accordion-group>
+        </accordion>
       </div>
     </div>
-
-    <div class="row">
-      <div class="col-md-8">
-        <h6>Notificaciones</h6>
-        <hr />
-        <p class="col-md-6">No&#46; Expediente&#58; <b>Lorem</b></p>
-        <p class="col-md-6">Averiguaci&oacute;n Previa&#58; <b>Lorem</b></p>
-        <p class="col-md-6">Causa Penal&#58; <b>Lorem</b></p>
-        <p class="col-md-6">No&#46; Volante&#58; <b>Lorem</b></p>
-        <p class="col-md-6">Nombre Indiciado&#58; <b>Lorem</b></p>
-        <p class="col-md-6">Fecha Recepci&oacute;n&#58; <b>Lorem</b></p>
-        <p class="col-md-6">Amparo&#58; <b>Lorem</b></p>
-        <p class="col-md-6">Toca Penal&#58; <b>Lorem</b></p>
-        <p class="col-md-6">No&#46; Juzgado&#58; <b>Lorem</b></p>
-        <p class="col-md-6">Fecha Oficio Externo&#58; <b>Lorem</b></p>
-        <p class="col-md-6">Ministerio P&uacute;blico&#58; <b>Lorem</b></p>
-        <p class="col-md-6">Fecha Externo No&#46; &#58; <b>Lorem</b></p>
-        <p class="col-md-6">Entidad Federativa&#58; <b>Lorem</b></p>
+    <div #scrollTable></div>
+    <div class="row" *ngIf="showTable">
+      <h6>Notificaciones</h6>
+      <div class="row">
+        <div class="d-flex justify-content-end">
+          <app-columns-select
+            [(settings)]="settingsNotifications"
+            [defaultColumns]="5"></app-columns-select>
+        </div>
       </div>
-      <div class="col-md-4">
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settingsNotifications"
+              [source]="data">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+    <div class="row" *ngIf="showTable">
+      <div class="row mt-5">
         <h6>Bienes Relacionados</h6>
-        <hr />
-        <p>Tipo&#58; <b>Lorem</b></p>
-        <p>Subtipo&#58; <b>Lorem</b></p>
-        <p>Ssubtipo&#58; <b>Lorem</b></p>
-        <p>Sssubtipo&#58; <b>Lorem</b></p>
+      </div>
+      <div class="row">
+        <div class="d-flex justify-content-end">
+          <app-columns-select
+            [(settings)]="settingsGood"
+            [defaultColumns]="5"></app-columns-select>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <div [class]="loadingGood ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settingsGood"
+              [source]="dataGood">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <app-pagination
+          [params]="paramsGood"
+          [totalItems]="totalItemsGood"></app-pagination>
       </div>
     </div>
   </div>

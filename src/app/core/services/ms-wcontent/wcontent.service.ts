@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { WContentEndpoint } from 'src/app/common/constants/endpoints/ms-wcontent-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpWContentService } from 'src/app/common/services/http-wcontet.service';
+import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDocTypes, IWContent } from '../../models/ms-wcontent/wcontent.model';
 
@@ -82,8 +83,8 @@ export class WContentService extends HttpWContentService {
     );
   }
 
-  getObtainFile(docName: string) {
-    return this.get(`${WContentEndpoint.ObtainFile}/${docName}`);
+  getObtainFile(docName: string, params?: ListParams) {
+    return this.get(`${WContentEndpoint.ObtainFile}/${docName}`, params);
   }
 
   obtainFile(docName: string): Observable<any> {
@@ -96,7 +97,7 @@ export class WContentService extends HttpWContentService {
     //responseType: 'arraybuffer' as 'json',
     //responseType: 'blob',
     //});
-    const url = `http://sigebimsqa.indep.gob.mx/${WContentEndpoint.CallReport}/${WContentEndpoint.ShowReport}?nombreReporte=${reportName}.jasper&idSolicitud=${idRequest}`;
+    const url = `${environment.API_CONTENT}${WContentEndpoint.CallReport}/${WContentEndpoint.ShowReport}?nombreReporte=${reportName}.jasper&idSolicitud=${idRequest}`;
 
     return this.http.get(url, { responseType: 'blob' });
   }
@@ -106,7 +107,7 @@ export class WContentService extends HttpWContentService {
     idRequest: string,
     ciudad?: string
   ) {
-    const url = `http://sigebimsqa.indep.gob.mx/${WContentEndpoint.CallReport}/${WContentEndpoint.ShowReport}?nombreReporte=${reportName}.jasper&ID_SOLICITUD=${idRequest}&ID_SOLICITUD=${ciudad}`;
+    const url = `${environment.API_CONTENT}${WContentEndpoint.CallReport}/${WContentEndpoint.ShowReport}?nombreReporte=${reportName}.jasper&ID_SOLICITUD=${idRequest}&NOM_CIUDAD=`;
 
     return this.http.get(url, { responseType: 'blob' });
   }

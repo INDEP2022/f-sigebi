@@ -22,4 +22,13 @@ export class Ssf3SignatureElecDocsService extends HttpService {
       params
     );
   }
+
+  deleteElectronicFirm(
+    body: any
+  ): Observable<IListResponse<ISSF3FirmaEelecDocs>> {
+    return this.delete<IListResponse<ISSF3FirmaEelecDocs>>(
+      ElectronicFirmEndpoint.SSF3FirmaEelecDocs,
+      body
+    );
+  }
 }

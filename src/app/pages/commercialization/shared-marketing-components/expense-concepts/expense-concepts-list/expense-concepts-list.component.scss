@@ -1,0 +1,42 @@
+:host ::ng-deep accordion {
+  ::ng-deep {
+    .panel-default > .panel-heading + .panel-collapse > .panel-body {
+      padding: 0px !important;
+
+      app-card {
+        .card {
+          box-shadow: 0 0 !important;
+          .card-block {
+            padding: 20px 20px 0px !important;
+          }
+        }
+      }
+
+      ng2-smart-table {
+        thead {
+          checkbox-filter {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            a {
+              margin-left: 10px;
+            }
+          }
+          td:nth-child(2) {
+            ng2-smart-table-cell {
+              table-cell-edit-mode {
+                table-cell-default-editor {
+                  input-editor {
+                    input {
+                      display: none;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

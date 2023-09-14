@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BehaviorSubject, takeUntil, tap } from 'rxjs';
+import { saveAs } from 'file-saver';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject, map, takeUntil, tap } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -9,43 +11,76 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
-import { IRequestTask } from 'src/app/core/models/requests/request-task.model';
+import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { REQUEST_LIST_COLUMNS } from 'src/app/pages/siab-web/sami/consult-tasks/consult-tasks/consult-tasks-columns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-consult-tasks',
   templateUrl: './consult-tasks.component.html',
-  styles: [],
+  styleUrls: ['./consult-tasks.component.scss'],
 })
 export class ConsultTasksComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
-
+  filter: any;
   totalItems: number = 0;
-  tasks: IRequestTask[] = [];
+  //tasks: IRequestTask[] = [];
+  tasks = new LocalDataSource();
 
   loadingText = '';
   userName = '';
   consultTasksForm: FormGroup;
   department = '';
+  delegation: string = null;
+  excelLoading = this.loading;
+  transferents$ = new DefaultSelect<ITransferente>();
+
+  get txtFecAsigDesde() {
+    return this.consultTasksForm.get('txtFecAsigDesde');
+  }
+
+  get txtFechaFinDesde() {
+    return this.consultTasksForm.get('txtFechaFinDesde');
+  }
 
   constructor(
     private taskService: TaskService,
     private authService: AuthService,
     private excelService: ExcelService,
     public router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private regionalDelegacionService: RegionalDelegationService,
+    private transferentService: TransferenteService,
+    private requestServevice: RequestService
   ) {
     super();
-    this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: '' };
+    this.settings = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      selectMode: '',
+      hideSubHeader: true,
+    };
     this.settings.columns = REQUEST_LIST_COLUMNS;
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    /*this.tasks.onChanged()
+    .subscribe( change => {
+      if (change.action === 'filter') {
+        let filters = change.filter.filters;
+        
+        filters.map((filter: any) => {})
+      }
+    })*/
   }
 
   private prepareForm() {
@@ -64,15 +99,16 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       txtNoProgramacionEntrega: ['', Validators.pattern(NUMBERS_PATTERN)],
+      txtNoProgramacionRecepcion: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNombreActividad: [
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       txtNoOrdenServicio: ['', Validators.pattern(NUMBERS_PATTERN)],
-      // txtAsignado: [
-      //   '',
-      //   [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
-      // ],
+      txtAsignado: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
       txtNoOrdenPago: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtAprobador: [
         '',
@@ -99,8 +135,9 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       txtNoSolicitud: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoTransferente: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoProgramacion: ['', Validators.pattern(NUMBERS_PATTERN)],
-      State: ['null'],
+      State: ['PROCESO'],
       typeOfTrasnfer: [null],
+      txtDaysAtrasos: [null],
     });
 
     this.params
@@ -111,7 +148,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       .subscribe();
   }
   searchTasks() {
-    this.params = new BehaviorSubject<ListParams>(new ListParams());
+    //this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -119,41 +156,173 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       )
       .subscribe();
   }
-  exportToExcel() {
-    const filename: string = this.userName + '-Tasks';
-    // El type no es necesario ya que por defecto toma 'xlsx'
-    this.excelService.export(this.tasks, { filename });
+
+  donwloadReport() {
+    const obj: Object = {
+      idDelegationRegional: this.consultTasksForm.value.txtNoDelegacionRegional,
+      idTransferee: Number(this.consultTasksForm.value.txtNoTransferente),
+    };
+
+    console.log('Objeto', obj);
+
+    this.taskService.downloadReport(obj).subscribe({
+      next: resp => {
+        const data = resp.base64File;
+        console.log('Base64: ', data);
+        if (data != '') {
+          const base64String = data;
+          const binaryData = atob(base64String);
+          const bytes = new Uint8Array(binaryData.length);
+          for (let i = 0; i < binaryData.length; i++) {
+            bytes[i] = binaryData.charCodeAt(i);
+          }
+
+          const workbook = XLSX.read(bytes, { type: 'array' });
+          const excelBuffer = XLSX.write(workbook, {
+            bookType: 'xlsx',
+            type: 'array',
+          });
+
+          const blob = new Blob([excelBuffer], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          });
+          const filename = 'reporteAtrasos.xlsx';
+          saveAs(blob, filename);
+        } else if (data === '') {
+          this.alert(
+            'warning',
+            'Sin información',
+            'No hay reporte disponible para la transferente seleccionada'
+          );
+        }
+      },
+      error: error => {
+        this.alert('error', 'Error', 'Hubo un problema al generar el reporte');
+      },
+    });
   }
 
-  private getTasks() {
+  replaceAccents(text: string) {
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  getTransferent(params?: ListParams) {
+    params['sortBy'] = 'nameTransferent:ASC';
+    params['filter.status'] = `$eq:${1}`;
+    //params['filter.typeTransferent'] = `$eq:NO`;
+    this.transferentService.getAll(params).subscribe({
+      next: data => {
+        const text = this.replaceAccents(params.text);
+        data.data.map(data => {
+          data.nameAndId = `${data.nameTransferent}`;
+          return data;
+        });
+        this.transferents$ = new DefaultSelect(data.data, data.count);
+
+        if (params.text) {
+          let copyData = [...data.data];
+          copyData.map(data => {
+            data.nameAndId = this.replaceAccents(data.nameAndId);
+            return data;
+          });
+
+          copyData = copyData.filter(item => {
+            return text.toUpperCase() === ''
+              ? item
+              : item.nameAndId.toUpperCase().includes(text.toUpperCase());
+          });
+
+          copyData.map(x => {
+            x.nameAndId = `${x.nameTransferent}`;
+            return x;
+          });
+
+          if (copyData.length > 0) {
+            this.transferents$ = new DefaultSelect(copyData, copyData.length);
+          }
+        }
+      },
+      error: () => {
+        this.transferents$ = new DefaultSelect();
+      },
+    });
+  }
+
+  async exportToExcel() {
+    this.excelLoading = true;
+    //const filename: string = this.userName + '-Tasks';
+    // El type no es necesario ya que por defecto toma 'xlsx'
+    /*let filter = this.filter;
+    filter.getValue().limit = 99999999;
+    filter.sortBy = 'id:DESC'
+    console.log(filter.getValue());*/
+
+    const user = this.authService.decodeToken() as any;
+    const idDeleReg = this.consultTasksForm.value.txtNoDelegacionRegional;
+    const filterStatus = this.consultTasksForm.get('State').value;
+    const params = new ListParams();
+    params['filter.assignees'] = `$ilike:${user.username}`;
+    params['filter.State'] = `$eq:${filterStatus}`;
+    params['filter.idDelegationRegional'] = `$eq:${idDeleReg}`;
+    params['sortBy'] = 'id:DESC';
+    const result: any = await this.getTaskRepostBase64(params);
+    const base64String = result.base64File;
+    const filename: string = result.nameFile;
+    if (base64String != '') {
+      const base64 = base64String;
+      const linkSource = 'data:application/xlsx;base64,' + base64;
+      const downloadLink = document.createElement('a');
+      const fileName = `tareas.xlsx`; //filename
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.click();
+      this.excelLoading = false;
+    } else {
+      this.alert('warning', 'No se encontraron datos para exportar', '');
+      this.excelLoading = false;
+    }
+  }
+
+  async getTasks(limitExport?: number) {
     let isfilterUsed = false;
+    this.loading = true;
     const params = this.params.getValue();
-    console.log(params);
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
+    if (limitExport) {
+      this.filterParams.getValue().limit = limitExport;
+    } else {
+      this.filterParams.getValue().limit = params.limit;
+    }
     const user = this.authService.decodeToken() as any;
 
     this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue(
       Number.parseInt(user.department)
     );
-    console.log(this.consultTasksForm.value);
+
     this.filterParams
       .getValue()
       .addFilter('assignees', user.username, SearchFilter.ILIKE);
     //this.filterParams.getValue().addFilter('title','',SearchFilter.NOT);
     const filterStatus = this.consultTasksForm.get('State').value;
-    console.log(filterStatus);
+
     if (filterStatus) {
       isfilterUsed = true;
       if (filterStatus === 'null') {
+        //Cambiar filtro a PROCESO, cuando esten abiertas
         this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
+        this.getDelegationRegional(user.department);
       } else if (filterStatus === 'FINALIZADA') {
-        this.filterParams.getValue().addFilter('FINALIZADA', filterStatus);
+        this.filterParams.getValue().addFilter('State', filterStatus);
+        this.getDelegationRegional(user.department);
+      } else if (filterStatus === 'PROCESO') {
+        this.filterParams.getValue().addFilter('State', filterStatus);
+        this.getDelegationRegional(user.department);
       }
-      if (filterStatus === 'TODOS') {
-        console.log('todos');
-        this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue('');
-      }
+      // if (filterStatus === 'TODOS') {
+      //   this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue('');
+      //   this.delegation = '';
+      // }
     }
 
     if (this.consultTasksForm.value.typeOfTrasnfer) {
@@ -172,6 +341,40 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           .getValue()
           .addFilter('request.typeOfTransfer', value, SearchFilter.EQ);
       }
+    }
+
+    if (this.consultTasksForm.value.txtNoSolicitud) {
+      isfilterUsed = true;
+      this.filterParams
+        .getValue()
+        .addFilter(
+          'requestId',
+          this.consultTasksForm.value.txtNoSolicitud,
+          SearchFilter.EQ
+        );
+    }
+
+    if (this.consultTasksForm.value.txtNoTransferente) {
+      console.log('Filtro de transferente activado');
+      isfilterUsed = true;
+      this.filterParams
+        .getValue()
+        .addFilter(
+          'idTransferee',
+          this.consultTasksForm.value.txtNoTransferente,
+          SearchFilter.EQ
+        );
+    }
+
+    if (this.consultTasksForm.value.txtDaysAtrasos) {
+      isfilterUsed = true;
+      this.filterParams
+        .getValue()
+        .addFilter(
+          'backwardness',
+          this.consultTasksForm.value.txtDaysAtrasos,
+          SearchFilter.BTW
+        );
     }
 
     if (this.consultTasksForm.value.txtTituloTarea) {
@@ -214,16 +417,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           SearchFilter.ILIKE
         );
     }
-    // if (this.consultTasksForm.value.txtAsignado || this.userName) {
-    //   // isfilterUsed = true;
-    //   this.filterParams
-    //     .getValue()
-    //     .addFilter(
-    //       'assignees',
-    //       this.consultTasksForm.value.txtAsignado || this.userName,
-    //       SearchFilter.ILIKE
-    //     );
-    // }
+
     if (this.consultTasksForm.value.txtNoOrdenPago) {
       isfilterUsed = true;
       this.filterParams
@@ -287,7 +481,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
       this.filterParams
         .getValue()
-        .addFilter('assignedDate', inicio + ',' + final, SearchFilter.BTW);
+        .addFilter('createdDate', inicio + ',' + final, SearchFilter.BTW);
     }
     if (this.consultTasksForm.value.txtNoMuestreoOrden) {
       isfilterUsed = true;
@@ -318,35 +512,15 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       typeof this.consultTasksForm.value.txtNoDelegacionRegional == 'number'
     ) {
       isfilterUsed = true;
-      this.filterParams
-        .getValue()
-        .addFilter(
-          'request.regionalDelegationId',
-          this.consultTasksForm.value.txtNoDelegacionRegional,
-          SearchFilter.EQ
-        );
-    }
-    if (this.consultTasksForm.value.txtNoSolicitud) {
-      isfilterUsed = true;
-      this.filterParams
-        .getValue()
-        .addFilter(
-          '-NoSolicitud',
-          this.consultTasksForm.value.txtNoSolicitud,
-          SearchFilter.ILIKE
-        );
-    }
-    if (typeof this.consultTasksForm.value.txtNoTransferente == 'number') {
-      isfilterUsed = true;
-      this.filterParams
-        .getValue()
-        .addFilter(
-          'request.transferenceId',
-          this.consultTasksForm.value.txtNoTransferente,
-          SearchFilter.EQ
-        );
+      this.filterParams.getValue().addFilter(
+        'idDelegationRegional',
+        // request.regionalDelegationNumber
+        this.consultTasksForm.value.txtNoDelegacionRegional,
+        SearchFilter.EQ
+      );
     }
     if (typeof this.consultTasksForm.value.txtNoProgramacion == 'number') {
+      console.log('txtNoProgramacion');
       isfilterUsed = true;
       this.filterParams
         .getValue()
@@ -357,49 +531,54 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
 
-    console.log(
-      'this.filterParams: ',
-      this.filterParams.getValue().getParams()
-    );
-
     this.loading = true;
     this.loadingText = 'Cargando';
 
     params.text = this.consultTasksForm.value.txtSearch;
     params['others'] = this.userName;
 
-    this.tasks = [];
+    //this.tasks = [];
+    this.tasks = new LocalDataSource();
     this.totalItems = 0;
     // if (!isfilterUsed) {
     //   this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
     // }
-    this.taskService
-      .getTasksByUser(
-        this.filterParams.getValue().getParams().concat('&sortBy=id:DESC')
-      )
-      .subscribe({
-        next: response => {
-          console.log('Response: ', response);
-          this.loading = false;
-          console.log('Hay un filtro activo? ', isfilterUsed);
-          /*  if (isfilterUsed) {
-            this.tasks = response.data.filter(
-              (record: { State: string }) => record.State != 'FINALIZADA'
-            );
-            this.totalItems = this.tasks.length;
-          } else {
-            this.tasks = response.data;
-            this.totalItems = response.count;
-          } */
-          response.data.map((item: any) => {
-            item.taskNumber = item.id;
-          });
+    this.filter = this.filterParams;
+    let filter = this.filterParams
+      .getValue()
+      .getParams()
+      .concat('&sortBy=id:DESC');
 
-          this.tasks = response.data;
-          this.totalItems = response.count;
+    const response: any = await this.getData(filter);
+    if (response) {
+      this.tasks.load(response.data);
+      this.tasks.refresh();
+      this.totalItems = response.count;
+    } else {
+      this.tasks.load([]);
+      this.tasks.refresh();
+    }
+  }
+
+  getData(filter: any) {
+    return new Promise((resolve, _reject) => {
+      this.taskService.getTasksByUser(filter).subscribe({
+        next: response => {
+          this.loading = false;
+          response.data.map(async (item: any) => {
+            item.taskNumber = item.id;
+            item.requestId =
+              item.requestId != null ? item.requestId : item.programmingId;
+          });
+          console.log(response);
+          resolve(response);
         },
-        error: () => ((this.tasks = []), (this.loading = false)),
+        error: () => {
+          resolve(null);
+          this.loading = false;
+        },
       });
+    });
   }
 
   cleanFilter() {
@@ -410,12 +589,27 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   }
 
   onKeydown(event: any) {
-    console.log('Apreto enter event', event);
     this.searchTasks();
   }
 
+  getDelegationRegional(id: number | string) {
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    this.regionalDelegacionService.getAll(params).subscribe({
+      next: resp => {
+        this.delegation = resp.data[0].id + ' - ' + resp.data[0].description;
+      },
+      error: error => {},
+    });
+  }
+
   openTask(selected: any): void {
+    /*let typeProcess:any = ''
+    if(selected.processName == 'DocComplementaria'){
+      typeProcess = this.processDocComplementaria(selected);
+    }*/
     let obj2Storage = {
+      //typeProcess: selected.processName == 'DocComplementaria'? typeProcess : '',
       assignees: selected.assignees,
       displayName: this.userName,
       taskId: selected.requestId,
@@ -426,10 +620,63 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
     if (selected.requestId !== null && selected.urlNb !== null) {
       let url = `${selected.urlNb}/${selected.requestId}`;
-      console.log(url);
       this.router.navigateByUrl(url);
     } else {
       this.alert('warning', 'No disponible', 'Tarea no disponible');
     }
+  }
+
+  async processDocComplementaria(selected: any) {
+    let affair = await this.getRequest(selected.requestId);
+    switch (affair) {
+      case 33:
+        return 'BSRegistroSolicitudes';
+        break;
+
+      default:
+        return null;
+        break;
+    }
+  }
+
+  getRequest(id: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.id'] = `$eq:${id}`;
+      this.requestServevice.getAll(params).subscribe({
+        next: resp => {
+          resolve(resp.data[0]);
+        },
+      });
+    });
+  }
+
+  getAsyncTransferent(id: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.id'] = `$eq:${id}`;
+      this.transferentService
+        .getAll(params)
+        .pipe(
+          map(x => {
+            return x.data[0];
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resolve(resp.nameTransferent);
+          },
+        });
+    });
+  }
+
+  getTaskRepostBase64(params: ListParams | string) {
+    return new Promise((resolve, reject) => {
+      this.taskService.downloadReportBase64(params).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+      });
+    });
   }
 }

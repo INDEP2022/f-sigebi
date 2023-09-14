@@ -4,29 +4,45 @@
   </div>
   <div body>
     <div class="row">
-      <capture-filter></capture-filter>
+      <capture-filter-dict
+        (consultEmmit)="consult($event)"
+        (reportEmmit)="report($event)"
+        (exportEmmit)="export($event)"
+        (cleanEmmit)="clean($event)"
+        [isOpinion]="true"></capture-filter-dict>
     </div>
     <div class="row pt-3">
       <div class="col-md-12 d-flex justify-content-between">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
         <span class="text-success">
           <i class="fa fa-check" aria-hidden="true"></i> Total Cumplidos&#58;
-          <b>123</b>
+          <b>{{ blkcontrol.totalcumplido }}</b>
         </span>
         <span class="text-danger"
           ><i class="fa fa-ban" aria-hidden="true"></i> Total No Cumplidos&#58;
-          <b>123</b></span
+          <b>{{ blkcontrol.totalNocumplido }}</b></span
         >
         <span class="text-info"
           ><i class="fa fa-percent" aria-hidden="true"></i> Cumplidos&#58;
-          <b>90&#37;</b></span
+          <b>{{ blkcontrol.porcentajeCunplido }}&#37;</b></span
         >
-        <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>
     </div>
-    <div class="row pt-3 table-content">
-      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
-
-      <app-pagination></app-pagination>
+    <div class="row">
+      <div class="row pt-4 table-container">
+        <div class="col-md-12 table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
   </div>
 </app-card>

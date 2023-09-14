@@ -1,116 +1,223 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">CALCULO DE NUMERARIO</h5>
+    <h5 class="title">CÁLCULO DE NUMERARIO</h5>
   </div>
   <div body>
     <div class="row mt-3 mb-3">
-      <form action="" class="form-material" [formGroup]="form">
+      <form class="form-material" [formGroup]="formProcessNum">
         <div class="row mt-4">
-          <div class="col-md-6">
-            <form-field [control]="form.get('idProcess')" label="Id Proceso">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="idProcess"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
-          </div>
-          <div class="col-md-6">
-            <form-field [control]="form.get('date')" label="Fecha">
-              <input formControlName="date" class="form-control" bsDatepicker />
-            </form-field>
-          </div>
-        </div>
-        <div class="row mt-4">
-          <form-field [control]="form.get('concept')" label="Concepto">
-            <input type="text" formControlName="concept" class="form-control" />
-          </form-field>
-        </div>
-        <div class="row mt-4">
-          <div class="col-md-3">
-            <form-radio label="Devolución">
-              <input type="radio" formControlName="devolution" value="value" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio label="Decomiso">
-              <input type="radio" formControlName="decomiso" value="value" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio label="Abandono">
-              <input type="radio" formControlName="abandono" value="value" />
-            </form-radio>
-          </div>
           <div class="col-md-3">
             <form-field
-              [control]="form.get('totalInterests')"
-              label="Total interés">
+              label="Id Proceso"
+              [control]="formProcessNum.get('idProcess')">
               <input
+                formControlName="idProcess"
+                [readOnly]="fillNewData"
                 type="number"
-                class="form-control"
-                formControlName="totalInterests"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
-          </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-md-4">
-            <form-field [control]="form.get('currency')" label="Tipo moneda">
-              <input
-                type="text"
-                formControlName="currency"
                 class="form-control" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col">
+            <button
+              type="button"
+              (click)="searchProcess()"
+              class="btn btn-primary active btn-sm mr-3">
+              Buscar
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+            <button
+              (click)="clearAll()"
+              class="btn btn-danger btn-sm active mr-3"
+              *ngIf="!fillNewData">
+              Limpiar <i class="fas fa-eraser"> </i>
+            </button>
+            <button
+              (click)="cancelNewProcess()"
+              class="btn btn-danger btn-sm active mr-3"
+              *ngIf="fillNewData">
+              Cancelar
+            </button>
+            <button
+              type="button"
+              class="btn btn-info btn-sm active"
+              *ngIf="!fillNewData"
+              (click)="newProcess()">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="newProcessFn()"
+              *ngIf="fillNewData">
+              Guardar Nuevo
+              <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="formProcessNum.get('date')" label="Fecha">
+              <input
+                id="disabled"
+                formControlName="date"
+                class="form-control"
+                readOnly
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <form-field
+            [control]="formProcessNum.get('description')"
+            label="Concepto">
+            <input
+              type="text"
+              formControlName="description"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <div class="row">
+              <small class="label text-secondary r-label">Tipo</small>
+            </div>
+            <div class="row">
+              <div
+                class="d-flex justify-content-around"
+                [class]="searchedData ? 'disabled' : ''">
+                <form-radio label="Devolución">
+                  <input type="radio" formControlName="type" value="D" />
+                </form-radio>
+                <form-radio label="Decomiso">
+                  <input type="radio" formControlName="type" value="E" />
+                </form-radio>
+                <form-radio label="Abandono">
+                  <input type="radio" formControlName="type" value="A" />
+                </form-radio>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
             <form-field
-              [control]="form.get('bankComision')"
-              label="Comisión bancaria">
+              [control]="formProcessNum.get('totalInterest')"
+              label="Total Interés">
               <input
                 type="number"
                 class="form-control"
-                formControlName="bankComision"
+                readOnly
+                formControlName="totalInterest"
                 min="1"
                 pattern="^[0-9]+" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <form-field
-              [control]="form.get('totalImport')"
-              label="Importe total">
+              [control]="formProcessNum.get('totalImport')"
+              label="Importe Total">
               <input
                 type="number"
                 class="form-control"
+                readOnly
                 formControlName="totalImport"
                 min="1"
                 pattern="^[0-9]+" />
             </form-field>
           </div>
         </div>
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <form-field [control]="formProcessNum.get('currency')">
+              <ngx-select
+                [data]="dataSelect"
+                [form]="formProcessNum"
+                value="value"
+                bindLabel="label"
+                label="Tipo Moneda"
+                [control]="'currency'">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="formProcessNum.get('bankCommision')"
+              label="Comisión Bancaria">
+              <input
+                (ngModelChange)="validateComissionBank()"
+                type="number"
+                class="form-control"
+                formControlName="bankCommision"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+        </div>
       </form>
+
       <div class="d-flex justify-content-center">
         <div class="m-3">
           <div>
-            <button type="button" class="btn btn-sm btn-primary active m-3">
-              SELECCIONA SOLICITUDES
+            <button
+              type="button"
+              class="btn btn-sm btn-primary active m-3"
+              (click)="selectRequest()">
+              Selecciona Solicitudes
+              <i class="fas fa-edit bx-sm float-icon"></i>
             </button>
-            <button type="button" class="btn btn-sm btn-primary active m-3">
-              CALCULA INTERESES
+            <button
+              [disabled]="!calcButton"
+              type="button"
+              class="btn btn-sm btn-primary active m-3"
+              (click)="calculInteres()">
+              {{ textButton }}
+              <i
+                *ngIf="textButton.includes('Elimina')"
+                class="fa fa-trash"
+                aria-hidden="true"></i>
             </button>
-            <button type="button" class="btn btn-sm btn-primary active m-3">
-              ESTADO DE CUENTA
+            <button
+              type="button"
+              [disabled]="isLoadingStatusAccount"
+              class="btn btn-sm btn-primary active m-3"
+              (click)="printStatusAccount()">
+              Estado de Cuenta <i class="bx bx-printer bx-sm float-icon"></i>
+              <ng-container *ngIf="isLoadingStatusAccount">
+                <i class="bx bx-loader bx-spin"></i>
+              </ng-container>
             </button>
-            <button type="button" class="btn btn-sm btn-primary active m-3">
-              DETALLE MOVIMIENTOS
+            <button
+              type="button"
+              [disabled]="isLoadingDetailMovi"
+              class="btn btn-sm btn-primary active m-3"
+              (click)="printDetailMovi()">
+              Detalle Movimiento <i class="bx bx-printer bx-sm float-icon"></i>
+              <ng-container *ngIf="isLoadingDetailMovi">
+                <i class="bx bx-loader bx-spin"></i>
+              </ng-container>
             </button>
-            <button type="button" class="btn btn-sm btn-primary active m-3">
-              PRORRATEO COMISION
+            <button
+              type="button"
+              [disabled]="isLoadingProrraComission"
+              class="btn btn-sm btn-primary active m-3"
+              (click)="printProrraComission()">
+              Prorrateo Comisión <i class="bx bx-printer bx-sm float-icon"></i>
+              <ng-container *ngIf="isLoadingProrraComission">
+                <i class="bx bx-loader bx-spin"></i>
+              </ng-container>
             </button>
-            <button type="button" class="btn btn-sm btn-primary active m-3">
-              ELIMINA PROCESO
+            <button
+              [disabled]="!process"
+              class="btn btn-red btn-sm active m-3"
+              (click)="deleteRequest()">
+              Eliminar Proceso <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+            <button
+              [disabled]="!process"
+              (click)="exportarTotal()"
+              class="btn btn-success active btn-sm m-3">
+              Exportar Total CSV <i class="bx bx-download float-icon"></i>
+            </button>
+            <button
+              [disabled]="!process"
+              (click)="exportar()"
+              class="btn btn-success active btn-sm m-3">
+              Exportar Prorra CSV <i class="bx bx-download float-icon"></i>
             </button>
           </div>
         </div>
@@ -118,11 +225,12 @@
     </div>
     <div class="row pt-4">
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
+        <div [class]="loading1 ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data1">
+            [source]="data"
+            (rowSelect)="onChangeProcces($event.data)">
           </ng2-smart-table>
         </div>
       </div>
@@ -131,20 +239,35 @@
     </div>
     <div class="row pt-4">
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
+        <div [class]="loading2 ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings1"
-            [source]="data2">
+            [source]="data2"
+            (userRowSelect)="onChangeTable2($event.data)">
           </ng2-smart-table>
         </div>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems">
+      <app-pagination [params]="params1" [totalItems]="totalItems1">
       </app-pagination>
+      <div class="row">
+        <form action="" class="form-material" [formGroup]="formBlkControl">
+          <!-- <div class="col-md-4">
+            <form-field
+              [control]="formBlkControl.get('sumCommision')"
+              label="Comisión Bancaria">
+              <input
+                type="text"
+                formControlName="sumCommision"
+                class="form-control" />
+            </form-field>
+          </div> -->
+        </form>
+      </div>
     </div>
     <div class="row pt-4">
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
+        <div [class]="loading3 ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
@@ -152,7 +275,7 @@
           </ng2-smart-table>
         </div>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems">
+      <app-pagination [params]="params2" [totalItems]="totalItems2">
       </app-pagination>
     </div>
   </div>

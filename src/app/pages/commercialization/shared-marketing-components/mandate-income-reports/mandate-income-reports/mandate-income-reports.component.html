@@ -27,41 +27,91 @@
           </form-field>
         </div>
         <!--Events Component-->
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <app-events-shared [form]="form"></app-events-shared>
+        <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
+          <form-field [control]="form.get('event')">
+            <ngx-select
+              (fetchItems)="getEvent($event)"
+              [data]="eventSelect"
+              [form]="form"
+              value="id"
+              bindLabel="processKey"
+              label="Evento"
+              control="event"
+              (change)="changeEvent($event)">
+            </ngx-select>
+          </form-field>
+          <!--<app-events-shared [form]="form"></app-events-shared>-->
         </div>
       </div>
       <div class="row mb-3 mt-3">
         <!--Employees Component-->
         <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
-          <app-user-shared
+          <!--<app-user-shared
             [form]="form"
             [userField]="'capturingUser'"
-            [label]="'Usuario que Captura'"></app-user-shared>
+            [label]="'Usuario que Captura'"></app-user-shared>-->
+          <form-field [control]="form.get('capturingUser')">
+            <ngx-select
+              (fetchItems)="getAllSegUser1($event)"
+              [data]="user1"
+              [form]="form"
+              value="user"
+              bindLabel="name"
+              label="Usuario que Captura"
+              control="capturingUser"
+              (change)="changeUser1($event)">
+            </ngx-select>
+          </form-field>
         </div>
         <!--Employees Component-->
         <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
-          <app-user-shared
+          <form-field [control]="form.get('authorizingUser')">
+            <ngx-select
+              (fetchItems)="getAllSegUser2($event)"
+              [data]="user2"
+              [form]="form"
+              value="user"
+              bindLabel="name"
+              label="Usuario que Autoriza"
+              control="authorizingUser"
+              (change)="changeUser2($event)">
+            </ngx-select>
+          </form-field>
+          <!--<app-user-shared
             [form]="form"
             [userField]="'authorizingUser'"
-            [label]="'Usuario que Autoriza'"></app-user-shared>
+            [label]="'Usuario que Autoriza'"></app-user-shared>-->
         </div>
+
         <!--Employees Component-->
         <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
-          <app-user-shared
+          <form-field [control]="form.get('requestingUser')">
+            <ngx-select
+              (fetchItems)="getAllSegUser3($event)"
+              [data]="user3"
+              [form]="form"
+              value="user"
+              bindLabel="name"
+              label="Usuario que Solicita"
+              control="requestingUser"
+              (change)="changeUser3($event)">
+            </ngx-select>
+          </form-field>
+
+          <!--<app-user-shared
             [form]="form"
             [userField]="'requestingUser'"
-            [label]="'Usuario que Solicita'"></app-user-shared>
+            [label]="'Usuario que Solicita'"></app-user-shared>-->
         </div>
       </div>
-      <div class="row mb-3 mt-3 justify-content-end">
+      <!--<div class="row mb-3 mt-3 justify-content-end">
         <div
           class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col-12 align-self-center">
           <button type="button" class="btn btn-primary btn-sm active w-100">
             Consultar
           </button>
         </div>
-      </div>
+      </div>-->
       <div class="row mb-3 mt-3">
         <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 col-12">
           <label for=""
@@ -79,30 +129,44 @@
           </div>
         </div>
         <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 col-12">
-          <label for="">&Uacute;ltimo reporte: </label>
-          <div class="row mb-3 mt-3">
+          <!--<label for="">&Uacute;ltimo reporte: </label>-->
+          <div class="row mb-3 mt-5">
             <div class="col-6 mb-3 mb-3 mt-3">
-              <form-field
+              <form-field [control]="form.get('incomeOrder')" label="Tipo">
+                <ng-select
+                  formControlName="incomeOrder"
+                  [searchable]="false"
+                  class="form-control"
+                  [clearable]="false">
+                  <ng-option value="I">NORMAL Y PENALIZACIONES</ng-option>
+                  <ng-option value="D">DEVOLUCIONES</ng-option>
+                  <ng-option value="P">PENALIZACIONES</ng-option>
+                </ng-select>
+              </form-field>
+              <!--<form-field
                 label="No. Reporte a Reimprimir"
                 [control]="form.get('incomeOrder')">
                 <input
                   class="form-control"
                   formControlName="reportNumber"
                   type="number" />
-              </form-field>
+              </form-field>-->
             </div>
           </div>
         </div>
         <div
           class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col-12 align-self-center">
-          <button type="button" class="btn btn-primary btn-sm active w-100">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active w-100"
+            (click)="report()">
             Imprimir
           </button>
         </div>
       </div>
     </form>
     <!--Income Orders-->
-    <div class="row justify-content-end mr-1">
+    <!--<div class="row justify-content-end mr-1">
       <div class="ch-content">
         <h5 class="title">Órdenes de Ingreso a Reportar a Tesorería</h5>
       </div>
@@ -135,7 +199,8 @@
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
-    <!--Affected Income Orders-->
+
+
     <div class="row justify-content-end mr-1 mb-3 mt-3">
       <div class="ch-content">
         <h5 class="title">Órdenes de Ingreso Afectadas</h5>
@@ -168,6 +233,6 @@
       </div>
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
+    </app-pagination>-->
   </div>
 </app-card>

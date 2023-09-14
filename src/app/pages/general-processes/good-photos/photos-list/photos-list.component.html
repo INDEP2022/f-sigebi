@@ -1,0 +1,154 @@
+<div class="errorMessage" *ngIf="errorMessage && errorMessage.length > 0">
+  {{ errorMessage }}
+</div>
+<div class="photoGoods mt-3 mb-3">
+  <div class="col-md-4 p-0">
+    <button
+      class="btn btn-primary btn-sm active"
+      type="button"
+      [disabled]="disabled"
+      (click)="openFileUploader()">
+      Subir Fotos
+      <i class="fa fa-upload"></i>
+    </button>
+  </div>
+  <!-- <div class="col-md-4 p-0" style="text-align: center">
+    <button
+      class="btn btn-primary btn-sm active"
+      type="button"
+      [disabled]="disabled"
+      (click)="showHistoric()">
+      Histórico
+      <i class="fa fa-list"></i>
+    </button>
+  </div> -->
+
+  <div class="col-md-4 p-0">
+    <form class="form-material" [formGroup]="form">
+      <form-field
+        [control]="form.get('typedblClickAction')"
+        label="Acciones de Doble Click">
+        <ng-select
+          class="form-control"
+          formControlName="typedblClickAction"
+          [clearable]="false"
+          [searchable]="false"
+          [readonly]="files.length < 1 || disabled">
+          <ng-option *ngFor="let option of options" [value]="option.value">
+            {{ option.label }}
+          </ng-option>
+        </ng-select>
+      </form-field>
+    </form>
+  </div>
+  <div class="col-md-4 p-0 action-buttons">
+    <!-- <button
+      type="button"
+      [disabled]="disabledDeletePhotos()"
+      class="btn btn-danger btn-sm active"
+      (click)="confirmDelete()">
+      Borrar fotos seleccionadas
+      <i class="fa fa-eraser"></i>
+    </button> -->
+    <div class="buttons">
+      <div class="btn-group" dropdown>
+        <button
+          id="button-basic"
+          dropdownToggle
+          class="btn btn-primary dropdown-toggle btn-sm active"
+          [class]="disabled ? 'disabled' : ''"
+          type="button"
+          aria-controls="dropdown-basic">
+          <div class="d-flex align-items-center">
+            Acciones <span class="caret ml-2"></span>
+          </div>
+        </button>
+        <ul
+          id="dropdown-basic"
+          *dropdownMenu
+          class="dropdown-menu dropdown-menu-right"
+          role="menu"
+          aria-labelledby="button-basic">
+          <li
+            role="menuitem"
+            [class]="filesToDelete.length === 0 ? 'disabledOption' : ''">
+            <a class="dropdown-item" (click)="download()"
+              >Exportar Seleccionadas</a
+            >
+          </li>
+          <li
+            role="menuitem"
+            [class]="files.length === 0 ? 'disabledOption' : ''">
+            <a class="dropdown-item" (click)="download(true)"
+              >Exportar Fotos (Todas)</a
+            >
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" (click)="openZipUploader()"
+              >Carga Masiva (ZIP)</a
+            >
+          </li>
+          <li
+            role="menuitem"
+            [class]="disabledDeletePhotos() ? 'disabledDelete' : ''"
+            [tooltip]="errorMessage">
+            <a class="dropdown-item" (click)="confirmDelete()"
+              >Borrar Seleccionadas</a
+            >
+          </li>
+          <li class="divider dropdown-divider"></li>
+          <li
+            role="menuitem"
+            [class]="disabledDeleteAllPhotos() ? 'disabledDelete' : ''"
+            [tooltip]="errorMessage">
+            <a class="dropdown-item" (click)="confirmDelete(true)"
+              >Eliminar Todas</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row m-0">
+  <!-- <small class="text-info mt-3 mb-2 info-foto" *ngIf="files.length > 0"
+    >Da doble click a la foto para visualizarlo</small
+  > -->
+  <div class="row docs-scroll">
+    <div class="col-md-12 p-0">
+      <h6 class="text-center" *ngIf="files.length === 0">
+        No hay fotos cargadas
+      </h6>
+      <div
+        class="col-md-4 col-sm-6 grid-square"
+        *ngFor="let image of files; let i = index">
+        <div class="w-100 m-1 img-container">
+          <div class="row">
+            <div class="col-md-12">
+              <app-photo
+                #photo
+                (refreshFiles)="refresh($event)"
+                [typedblClickAction]="typedblClickAction"
+                [file]="image"
+                [goodNumber]="goodNumber + ''"></app-photo>
+            </div>
+          </div>
+          <!-- <input
+                    type="checkbox"
+                    class="float-check checkbox-color checkbox-primary"
+                    id="check2" /> -->
+          <form-check
+            for="keep-{{ i }}"
+            class="float-check"
+            *ngIf="validationUser(image)">
+            <input
+              type="checkbox"
+              id="keep-{{ i }}"
+              (change)="selectFile(image, $event)"
+              class="form-control" />
+          </form-check>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

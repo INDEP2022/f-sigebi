@@ -1,0 +1,46 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">COPIAR PARÁMETROS DE {{ conceptId }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <ng-custom-select-loading
+        [form]="form"
+        formControlName="id"
+        label="Hacia"
+        path="comerconcepts/api/v1/concepts/getIdConcept"
+        value="id_concepto"
+        bindLabel="id_concepto"
+        paramSearch="filter.id_concepto"
+        prefixSearch="$eq"
+        [labelTemplate]="conceptLabel"
+        [optionTemplate]="conceptOption"
+        (valueChange)="changeValue($event)">
+      </ng-custom-select-loading>
+      <ng-template #conceptLabel let-item="item">
+        {{ item.id_concepto }} - {{ item.descripcion }}
+      </ng-template>
+      <ng-template #conceptOption let-item="item">
+        <div [title]="item.id_concepto + '-' + item.descripcion">
+          {{ item.id_concepto }} - {{ item.descripcion }}
+        </div>
+      </ng-template>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form.invalid"
+          text="Aceptar"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

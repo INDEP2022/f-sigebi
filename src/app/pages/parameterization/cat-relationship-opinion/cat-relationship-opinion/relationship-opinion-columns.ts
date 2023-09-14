@@ -2,14 +2,15 @@ export const AFFAIR_COLUMNS = {
   id: {
     title: 'Código',
     sort: false,
-    width: '35px',
+    width: '10%',
   },
   description: {
     title: 'Descripción',
     sort: false,
+    width: '70%',
   },
   processDetonate: {
-    title: 'Proceso detona',
+    title: 'Proceso Detona',
     sort: false,
   },
 };
@@ -18,12 +19,12 @@ export const AFFAIR_TYPE_COLUMNS = {
   code: {
     title: 'Código',
     sort: false,
-    filter: false,
+    //filter: false,
   },
   referralNoteType: {
-    title: 'Tipo de volante',
+    title: 'Tipo de Volante',
     sort: false,
-    filter: false,
+    //filter: false,
     valuePrepareFunction: (value: string) => {
       if (value == 'P') return 'Procesal';
       if (value == 'T') return 'Transferente';
@@ -33,9 +34,9 @@ export const AFFAIR_TYPE_COLUMNS = {
     },
   },
   relationPropertyKey: {
-    title: 'Relación con bien',
+    title: 'Relación con Bien',
     sort: false,
-    filter: false,
+    //filter: false,
     valuePrepareFunction: (value: string) => {
       if (value == 'N') return 'NO';
       if (value == 'S') return 'SI';
@@ -45,7 +46,7 @@ export const AFFAIR_TYPE_COLUMNS = {
   versionUser: {
     title: 'Permiso Usuario',
     sort: false,
-    filter: false,
+    //filter: false,
     valuePrepareFunction: (value: string) => {
       if (value == 'N') return 'NO';
       if (value == 'S') return 'SI';
@@ -65,9 +66,17 @@ export const DICTA_COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value.description;
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   flyerType: {
-    title: 'Tipo volante',
+    title: 'Tipo Volante',
     sort: false,
     valuePrepareFunction: (value: string) => {
       if (value == 'P') return 'Procesal';
@@ -75,6 +84,17 @@ export const DICTA_COLUMNS = {
       if (value == 'AT') return 'AdminTransferente';
 
       return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Tipo Volante',
+        list: [
+          { value: 'P', title: 'Procesal' },
+          { value: 'T', title: 'Transferente' },
+          { value: 'AT', title: 'AdminTransferente' },
+        ],
+      },
     },
   },
   doc: {
@@ -85,6 +105,16 @@ export const DICTA_COLUMNS = {
       if (value == 'S') return 'SI';
       return value;
     },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Doc',
+        list: [
+          { value: 'N', title: 'NO' },
+          { value: 'S', title: 'SI' },
+        ],
+      },
+    },
   },
   property: {
     title: 'Bien',
@@ -93,6 +123,16 @@ export const DICTA_COLUMNS = {
       if (value == 'N') return 'NO';
       if (value == 'S') return 'SI';
       return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Bien',
+        list: [
+          { value: 'N', title: 'NO' },
+          { value: 'S', title: 'SI' },
+        ],
+      },
     },
   },
   g_of: {
@@ -103,6 +143,16 @@ export const DICTA_COLUMNS = {
       if (value == 'S') return 'SI';
       return value;
     },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'g_of',
+        list: [
+          { value: 'N', title: 'NO' },
+          { value: 'S', title: 'SI' },
+        ],
+      },
+    },
   },
   i: {
     title: 'i',
@@ -112,6 +162,16 @@ export const DICTA_COLUMNS = {
       if (value == 'S') return 'SI';
       return value;
     },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'i',
+        list: [
+          { value: 'N', title: 'NO' },
+          { value: 'S', title: 'SI' },
+        ],
+      },
+    },
   },
   e: {
     title: 'e',
@@ -120,6 +180,16 @@ export const DICTA_COLUMNS = {
       if (value == 'N') return 'NO';
       if (value == 'S') return 'SI';
       return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'e',
+        list: [
+          { value: 'N', title: 'NO' },
+          { value: 'S', title: 'SI' },
+        ],
+      },
     },
   },
 };

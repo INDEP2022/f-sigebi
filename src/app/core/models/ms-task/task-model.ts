@@ -1,6 +1,7 @@
 export interface ITask {
   id?: number;
   taskNumber?: number;
+  taskDefinitionId?: number;
   assignees?: string;
   assigneesDisplayname?: string;
   reviewers?: string;
@@ -40,7 +41,6 @@ export interface ITask {
   identificationKey?: string;
   userComment?: string;
   workflowDescriptorUri?: string;
-  taskDefinitionId?: string;
   taskDefinitionName?: string;
   applicationContext?: string;
   applicationName?: string;

@@ -3,24 +3,68 @@
     <h5 class="title">Mantenimiento de Programaciones</h5>
   </div>
   <div body>
-    <div class="row mb-5">
+    <!-- <div class="row mb-5">
       <app-clean-filters-shared
         [form]="form"
-        formStorage="filtersActa"></app-clean-filters-shared>
-    </div>
+        formStorage="filtersActa"
+        (cleanFiltersEvent)="resetView()"></app-clean-filters-shared>
+    </div> -->
 
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-6">
-          <app-proceeding-types-shared
-            [form]="form"></app-proceeding-types-shared>
+          <form-field
+            [control]="form.get('tipoEvento')"
+            label="Tipos de evento">
+            <ng-select class="form-control" formControlName="tipoEvento">
+              <!-- <ng-option [value]="'TODOS'">TODOS</ng-option> -->
+              <ng-option
+                *ngFor="let event of typeEvents"
+                [value]="event.tipo_acta">
+                {{ event.descripcion }}
+              </ng-option>
+            </ng-select>
+          </form-field>
+          <!-- <ng-custom-select-loading
+            [form]="form"
+            formControlName="tipoEvento"
+            label="Tipo de Evento"
+            value="id"
+            bindLabel="description"
+            [searchable]="false"
+            loadingText="Cargando tipos de evento..."
+            path="proceeding/api/v1/proceedings-delivery-reception/get-types">
+          </ng-custom-select-loading> -->
+          <!-- <app-proceeding-types-shared
+            [form]="form"></app-proceeding-types-shared> -->
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
+          <form-field [control]="form.get('rangeDate')" label="Rango de Fechas">
+            <input
+              bsDaterangepicker
+              class="form-control form-date"
+              formControlName="rangeDate"
+              readonly
+              [maxDate]="hoy" />
+            <div
+              *ngIf="rangeDateValue !== null"
+              class="deleteDate"
+              (click)="deleteRange()">
+              x
+            </div>
+          </form-field>
+
+          <!-- <button class="btn btn-primary btn-xs active" type="submit" size="small" (click)="deleteRange()">
+            x
+          </button> -->
+        </div>
+        <!-- <div class="col-md-2">
           <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control form-date"
               formControlName="fechaInicio"
+              readonly
               [maxDate]="hoy" />
           </form-field>
         </div>
@@ -28,27 +72,50 @@
           <form-field [control]="form.get('fechaFin')" label="Fecha Fin">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control form-date"
               [minDate]="fechaInicio.value"
               [maxDate]="hoy"
+              readonly
               formControlName="fechaFin" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-2">
           <form-field
             [control]="form.get('statusEvento')"
             label="Estatus Evento">
-            <select class="form-control" formControlName="statusEvento">
-              <option value="TODOS">Todos</option>
-              <option value="ABIERTA">Abierto</option>
-              <option value="CERRADA">Cerrado</option>
-            </select>
+            <ng-select
+              formControlName="statusEvento"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="TODOS">Todos</ng-option>
+              <ng-option value="ABIERT">Abierto</ng-option>
+              <ng-option value="CERRAD">Cerrado</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>
       <div class="row mt-3" style="margin-top: 20px">
-        <div class="col-md-6">
-          <app-select-form
+        <div class="col-lg-6 mt-2">
+          <ng-custom-select-loading
+            [form]="form"
+            formControlName="coordRegional"
+            [multiple]="true"
+            label="Coordinación Regional"
+            value="description"
+            bindLabel="description"
+            paramSearch="search"
+            path="catalog/api/v1/delegation/get-all">
+          </ng-custom-select-loading>
+          <!-- <ng-template #coordinationLabel let-item="item">
+            {{ item.id }} - {{ item.description }}
+          </ng-template> -->
+          <!-- <ng-template #coordinationOption let-item="item">
+            <div [title]="item.id + '-' + item.description">
+              {{ item.id }} - {{ item.description }}
+            </div>
+          </ng-template> -->
+          <!-- <app-select-form
             [form]="form"
             [multiple]="true"
             formField="coordRegional"
@@ -56,43 +123,90 @@
             value="description"
             [haveTodos]="false"
             [getListObservable]="coordRegional"
-            [(params)]="paramsCoords"></app-select-form>
+            [(params)]="paramsCoords"></app-select-form> -->
           <!-- <app-regional-coord-shared [form]="form"></app-regional-coord-shared> -->
         </div>
-        <div class="col-md-6">
-          <app-select-form
+        <div class="col-lg-6 mt-2">
+          <ng-custom-select-loading
+            [form]="form"
+            formControlName="usuario"
+            label="Usuario"
+            value="id"
+            bindLabel="name"
+            loadingText="Cargando usuarios..."
+            typeToSearchText="Escriba el nombre del usuario"
+            path="users/api/v1/seg-users"
+            [labelTemplate]="usuarioLabel"
+            [optionTemplate]="usuarioOption">
+          </ng-custom-select-loading>
+
+          <ng-template #usuarioLabel let-item="item">
+            {{ item.id }} - {{ item.name }}
+          </ng-template>
+          <ng-template #usuarioOption let-item="item">
+            <div [title]="item.id + '-' + item.name">
+              {{ item.id }} - {{ item.name }}
+            </div>
+          </ng-template>
+
+          <!-- <app-select-form
             [form]="form"
             formField="usuario"
             label="Usuarios"
             bindLabel="name"
             [haveTodos]="false"
             [operator]="like"
+            paramFilter="goodId"
             [getListObservable]="usuarios"
-            [(paramsFilter)]="paramsUsers"></app-select-form>
+            [(paramsFilter)]="paramsUsers"></app-select-form> -->
           <!-- <app-elaborate-users-shared
             [form]="form"></app-elaborate-users-shared> -->
         </div>
+        <!-- <div class="col-md-12 mt-4">
+          <form-field [control]="form.get('claveActa')" label="Programación">
+            <input
+              class="form-control"
+              formControlName="claveActa"
+              maxlength="75" />
+          </form-field>
+        </div> -->
       </div>
 
-      <div class="action-buttons">
-        <div class="col-md-6" [class]="loading ? 'disabled' : ''">
+      <div class="action-buttons row" style="margin: auto">
+        <div
+          class="col-md-4"
+          [class]="loading || form.invalid ? 'disabled' : ''">
           <button
             class="btn btn-primary btn-sm active"
             type="submit"
             size="small"
             (click)="getData()">
-            <i class="fa fa-search"></i>
             Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
+          <!-- <button
+            class="btn btn-primary btn-sm active"
+            type="submit"
+            size="small"
+            (click)="getNulls()">
+            <i class="fa fa-search"></i>
+            Bienes nulos
+          </button> -->
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+          <app-clean-filters-shared
+            [form]="form"
+            formStorage="filtersActa"
+            (cleanFiltersEvent)="resetView()"></app-clean-filters-shared>
+        </div>
+        <div class="col-md-4">
           <button
             class="btn btn-primary btn-sm active"
             type="submit"
             size="small"
             (click)="openModalActas()">
-            <i class="bx bx-search float-icon"></i>
-            Buscar Bien en Acta
+            Buscar Bien en Actas
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
       </div>
@@ -103,24 +217,26 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Programaciones</h5>
-    <div class="buttons mt-2">
-      <app-columns-select
-        [(settings)]="settings1"
-        [defaultColumns]="4"></app-columns-select>
-      <button
-        class="btn btn-primary btn-sm active"
-        type="submit"
-        size="small"
-        [disabled]="selecteds.length === 0"
-        (click)="deleteProgramations()">
-        <i class="bx bx-trash float-icon"></i>
-        Borrar Programaciones
-      </button>
-    </div>
   </div>
   <div body>
+    <div class="row">
+      <div class="mt-2 righButtons">
+        <button
+          class="btn btn-red btn-sm active"
+          type="submit"
+          size="small"
+          [disabled]="selecteds.length === 0"
+          (click)="deleteProgramations()">
+          Eliminar <i class="fa fa-trash" aria-hidden="true"></i>
+        </button>
+        <app-columns-select
+          [leftList]="true"
+          [(settings)]="settings1"
+          [defaultColumns]="5"></app-columns-select>
+      </div>
+    </div>
     <div class="row pt-4">
-      <div class="col-md-12 scheduledTable">
+      <div class="form-material col-md-12 scheduledTable">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             class="col-md-12 table-responsive"
@@ -135,7 +251,9 @@
 
     <app-pagination
       [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+      [totalItems]="totalItems"
+      [limit]="limit"
+      [pageSizeOptions]="pageSizeOptions"></app-pagination>
     <hr class="row" />
   </div>
 </app-card>

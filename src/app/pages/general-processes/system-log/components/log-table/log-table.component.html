@@ -1,3 +1,23 @@
-<div class="row" [class.table-loading]="loading">
-  <ng2-smart-table [source]="binnacles" [settings]="settings"></ng2-smart-table>
+<!-- <form-loader *ngIf="loadingLog"></form-loader>
+<div class="row" [class.table-loading]="loadingLog">
+  <ng2-smart-table [settings]="settings" [source]="binnacles" [attr.class]="'table-bordered table-responsive'">
+  </ng2-smart-table>
+  <app-pagination [filterParams]="params" [totalItems]="totalItems"></app-pagination>
+</div> -->
+
+<div class="row">
+  <div class="col-md-12 table-responsive">
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered table-responsive'"
+        [settings]="settings"
+        [source]="binnacles">
+      </ng2-smart-table>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <app-pagination
+    [filterParams]="params"
+    [totalItems]="totalItems"></app-pagination>
 </div>

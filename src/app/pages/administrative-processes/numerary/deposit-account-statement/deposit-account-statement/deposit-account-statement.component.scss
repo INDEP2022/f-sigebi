@@ -1,0 +1,22 @@
+:host ::ng-deep form-field {
+  // .form-control[readonly] {
+  //   background-color: white !important;
+  // }
+  &.fixTextarea {
+    .form-bar {
+      top: -4px;
+    }
+  }
+}
+
+:host ::ng-deep .disabledInput form-field {
+  input {
+    pointer-events: none;
+    background-color: #eee !important;
+  }
+}
+
+.accounttras {
+  font-weight: 600;
+  margin: auto;
+}

@@ -43,10 +43,15 @@ export class SiabService {
       );
   }
 
-  private _getReport(reportName: string, params?: any) {
+  private _getReport(
+    reportName: string,
+    params?: any,
+    extension: string = SiabReportEndpoints.EXTENSION
+  ) {
     const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
     this.authService.setReportFlag(true);
-    const route = `${this.url}${SiabReportEndpoints.SIAB}/${reportName}${SiabReportEndpoints.EXTENSION}`;
+    // const route = `${this.url}${SiabReportEndpoints.SIAB}/${reportName}${SiabReportEndpoints.EXTENSION}`;
+    const route = `${this.url}${SiabReportEndpoints.SIAB}/${reportName}${extension}`;
     return this.http
       .get<any>(`${route}`, {
         params,
@@ -64,9 +69,9 @@ export class SiabService {
       );
   }
 
-  fetchReport(reportName: string, params?: any) {
+  fetchReport(reportName: string, params?: any, extension?: string) {
     return this.signIn().pipe(
-      switchMap(() => this._getReport(reportName, params))
+      switchMap(() => this._getReport(reportName, params, extension))
     );
   }
 

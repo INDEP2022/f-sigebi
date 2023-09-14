@@ -1,15 +1,15 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="stateForm" class="form-material">
       <div class="row">
-        <div class="col-md-3">
+        <!--<div class="col-md-3">
           <form-field [control]="stateForm.get('id')" label="CVE Estado">
-            <input type="number" class="form-control" formControlName="id" />
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
-        </div>
+        </div>-->
 
         <div class="col-md-3">
           <form-field
@@ -40,7 +40,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="zoneHourlyStd" />
+              formControlName="zoneHourlyStd"
+              placeholder="HH:MM" />
           </form-field>
         </div>
 
@@ -51,7 +52,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="zoneHourlyVer" />
+              formControlName="zoneHourlyVer"
+              placeholder="HH:MM" />
           </form-field>
         </div>
 
@@ -59,10 +61,7 @@
           <form-field
             [control]="stateForm.get('version')"
             label="Versi&oacute;n">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="version" />
+            <input type="text" class="form-control" formControlName="version" />
           </form-field>
         </div>
       </div>
@@ -72,7 +71,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="stateForm.invalid"
+          [disabled]="false"
           [loading]="loading"
           (confirm)="confirm()">
         </confirm-button>

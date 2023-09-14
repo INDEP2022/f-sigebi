@@ -1,9 +1,9 @@
 export interface IConvertiongood {
   id?: number;
   fileNumber?: /* IExpedient | number */ any;
-  goodFatherNumber: string | number;
+  goodFatherNumber?: string | number;
   pageDocto?: string;
-  fCreate: Date;
+  fCreate?: Date;
   fConversions?: Date;
   hourConv?: string;
   fInvitation?: string;
@@ -33,7 +33,21 @@ export interface IConvertiongood {
   chargeCcp4?: string;
   ccp5?: string;
   chargeCcp5?: string;
-  fecActaEr: Date;
-  typeConv: string | number;
-  pwAccess: string;
+  fecActaEr?: Date;
+  typeConv?: string | number;
+  pwAccess?: string;
+}
+
+export class IActasConversion {
+  cve_acta_conv: number | string;
+  tipo_acta: string;
+  emisora: string;
+  administra: string;
+  ejecuta: string;
+  folio_universal: string;
+  parrafo1: string;
+  parrafo2: string;
+  parrafo3: string;
+  no_registro: string;
+  nb_origen: string;
 }

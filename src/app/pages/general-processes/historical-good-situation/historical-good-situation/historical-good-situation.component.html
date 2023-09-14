@@ -1,26 +1,94 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Hist&oacute;rica situaci&oacute;n del bien</h5>
+    <!-- <h5 class="title">Situación histórica del bien</h5> -->
+    <div class="row w-100">
+      <div class="col-12 col-sm-12 col-md-8">
+        <h5 class="title">Situación histórica del bien</h5>
+      </div>
+      <!-- <div class="col-12 col-sm-12 col-md-4 text-end" *ngIf="_params.goodNumber > 0">
+        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div> -->
+    </div>
   </div>
-
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
-        <div class="col-md-4">
-          <app-goods-types-shared
-            [form]="form"
-            [subTypeShow]="false"
-            [ssubTypeShow]="false"
-            [sssubTypeShow]="false"></app-goods-types-shared>
+        <div class="col-4"></div>
+        <div class="col-md-8 text-end">
+          <button
+            (click)="goBack()"
+            type="button"
+            class="btn btn-info active btn-sm mr-3"
+            *ngIf="_params.goodNumber > 0">
+            Regresar
+            <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm mr-3"
+            (click)="findInventary()">
+            Buscar Bienes
+            <i class="bx bx-search bx-sm float-icon"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm"
+            (click)="cleanForm()">
+            Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-12">
-          <ng2-smart-table
-            [settings]="settings"
-            [source]="data"></ng2-smart-table>
+        <form-field
+          [control]="form.get('goodNumber')"
+          class="col-md-2"
+          label="No. Bien">
+          <input
+            type="number"
+            formControlName="goodNumber"
+            class="form-control pl-1"
+            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
+        </form-field>
+        <form-field
+          [control]="form.get('description')"
+          class="col-md-10"
+          label="Descripción">
+          <input
+            type="text"
+            readonly
+            formControlName="description"
+            class="form-control pl-1"
+            maxlength="600" />
+        </form-field>
+      </div>
+      <!-- <div footer>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button type="button" class="btn btn-danger active btn-sm" (click)="cleanForm()">
+              Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+      </div> -->
+    </form>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="data">
+            </ng2-smart-table>
+          </div>
         </div>
       </div>
-    </form>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
   </div>
 </app-card>

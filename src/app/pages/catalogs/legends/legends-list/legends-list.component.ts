@@ -11,7 +11,6 @@ import {
 import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { LegendService } from 'src/app/core/services/catalogs/legend.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { LegendFormComponent } from '../legend-form/legend-form.component';
 import { LEGENDS_COLUMS } from './legends-columns';
 
@@ -40,6 +39,7 @@ export class LegendsListComponent extends BasePage implements OnInit {
       actions: {
         ...this.settings.actions,
         delete: true,
+        edit: true,
         add: false,
       },
     };
@@ -78,6 +78,7 @@ export class LegendsListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getDeductives();
         }
       });
@@ -96,7 +97,7 @@ export class LegendsListComponent extends BasePage implements OnInit {
       next: response => {
         this.legends = response.data;
         this.totalItems = response.count || 0;
-        this.data.load(this.legends);
+        this.data.load(response.data);
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -118,19 +119,22 @@ export class LegendsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         console.log(legend);
         this.delete(legend.id);
-        Swal.fire('Borrado', '', 'success');
+        //Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.legendService.remove(id).subscribe({
-      next: () => this.getDeductives(),
+      next: () => {
+        this.getDeductives();
+        this.alert('success', 'Leyenda', 'Borrada Correctamente');
+      },
     });
   }
 }

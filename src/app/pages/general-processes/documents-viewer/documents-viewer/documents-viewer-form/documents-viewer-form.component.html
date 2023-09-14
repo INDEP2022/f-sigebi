@@ -1,0 +1,165 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <!-- <div class="col-md-10 d-flex justify-content-between">
+      <div class="d-flex align-items-center">
+        <span class="mr-5" style="color: #b38e5d"
+          ><i class="fa fa-square"></i> Documento digitalizado</span
+        >
+        <span style="color: #05668d"
+          ><i class="fa fa-square"></i> Documento pendiente a digitalizar</span
+        >
+      </div>
+    </div> -->
+
+    <div class="row m-0 p-0">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data"
+              (userRowSelect)="onRowSelect($event)">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+
+    <div footer>
+      <div class="d-flex justify-content-end">
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="logSelectedRows()"
+            [disabled]="!isRowSelected">
+            Aceptar
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger btn-sm active"
+            (click)="close()">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal>
+
+<!-- 
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+
+  <div body>
+
+          <div class="row">
+            <div class="col-md-10 d-flex justify-content-between">
+              <div class="d-flex align-items-center">
+                <span class="mr-5" style="color: #b38e5d"
+                  ><i class="fa fa-square"></i> Documento digitalizado</span
+                >
+                <span style="color: #05668d"
+                  ><i class="fa fa-square"></i> Documento pendiente a digitalizar</span
+                >
+              </div>
+            </div>
+          </div>
+
+    <form [formGroup]="documentViewerForm" class="form-material" (ngSubmit)="onSubmit()">
+      <div class="col d-flex justify-content-end">
+        <form-radio label="Digitalizados">
+          <input
+            type="radio"
+            formControlName="scanStatus"
+            value="ESCANEADO" />
+        </form-radio>
+        <form-radio label="Pendientes">
+          <input
+            type="radio"
+            formControlName="scanStatus"
+            value="SOLICITADO" />
+        </form-radio>
+        <form-radio label="Todos">
+          <input type="radio" formControlName="scanStatus" value="all" />
+        </form-radio>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col">
+          <div class="d-flex align-items-center">
+            <div class="ml-4">
+              <button
+                type="submit"
+                class="btn btn-sm btn-info active mr-4"
+                style="background-color: #9d2449">
+                Consultar
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-info active"
+                style="width: 90px; background-color: #b38e5d"
+                (click)="cleandInfo()">
+                Limpiar <i class="fa fa-eraser"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </form>
+   
+    <div class="row m-0 p-0">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data"
+              (userRowSelect)="onRowSelect($event)">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+
+    <div footer>
+      <div class="d-flex justify-content-end">
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="logSelectedRows()"
+            [disabled]="!isRowSelected">
+            Aceptar
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger btn-sm active"
+            (click)="close()">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal> -->

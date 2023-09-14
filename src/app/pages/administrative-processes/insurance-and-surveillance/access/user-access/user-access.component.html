@@ -4,18 +4,39 @@
   </div>
 
   <div body>
+    <div class="col-12 justify-content-end text-end">
+      <button
+        (click)="addUser()"
+        type="button"
+        class="btn btn-primary btn-sm active ml-2 mr-2">
+        Agregar
+        <i class="bx bx-plus bx-sm float-icon"></i>
+      </button>
+    </div>
     <div class="row pt-4">
+      <form-loader *ngIf="loading"></form-loader>
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
-            [source]="users">
+            [source]="users"
+            (edit)="onEditConfirm($event)"
+            (delete)="onDeleteConfirm($event)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+      </div>
+
+      <!-- <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="users">
           </ng2-smart-table>
         </div>
-      </div>
+      </div> -->
       <app-pagination
-        [params]="params"
+        [params]="paramsList"
         [totalItems]="totalItems"></app-pagination>
     </div>
   </div>

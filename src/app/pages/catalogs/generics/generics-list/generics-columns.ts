@@ -5,7 +5,7 @@ export const GENERICS_COLUMNS = {
     sort: false,
   },
   keyId: {
-    title: 'Identificador clave',
+    title: 'Identificador Clave',
     type: 'number',
     sort: false,
   },
@@ -14,7 +14,7 @@ export const GENERICS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  userCreation: {
+  /*userCreation: {
     title: 'Creado por',
     type: 'string',
     sort: false,
@@ -23,7 +23,7 @@ export const GENERICS_COLUMNS = {
     title: 'Modificado por',
     type: 'string',
     sort: false,
-  },
+  },*/
   version: {
     title: 'Versión',
     type: 'number',
@@ -31,12 +31,46 @@ export const GENERICS_COLUMNS = {
   },
   active: {
     title: 'Estado',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'Y')
+        return '<strong><span class="badge badge-pill badge-success">Activo</span></strong>';
+      if (value == 'N')
+        return '<strong><span class="badge badge-pill badge-warning">Inactivo</span></strong>';
+      return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'Y', title: 'Activo' },
+          { value: 'N', title: 'Inactivo' },
+        ],
+      },
+    },
   },
   editable: {
     title: 'Editable',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'Y')
+        return '<strong><span class="badge badge-pill badge-success">Editable</span></strong>';
+      if (value == 'N')
+        return '<strong><span class="badge badge-pill badge-warning">No editable</span></strong>';
+      return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'Y', title: 'Editable' },
+          { value: 'N', title: 'No editable' },
+        ],
+      },
+    },
   },
 };

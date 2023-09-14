@@ -1,14 +1,12 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ status }} ABOGADO</h5>
+    <h5 class="modal-title">{{ status }} BANCO</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-5">
-          <form-field
-            [control]="form.get('bankCode')"
-            label="Resgitro del Banco">
+          <form-field [control]="form.get('bankCode')" label="Clave del Banco">
             <input
               type="text"
               class="form-control"
@@ -23,14 +21,16 @@
       </div>
 
       <div class="row mt-4">
+        <!-- <div class="col-md-6">
+          <form-field [control]="form.get('registerNumber')" label="N&uacute;mero de Registro">
+            <input type="number" class="form-control" formControlName="registerNumber" />
+          </form-field>
+        </div> -->
         <div class="col-md-6">
           <form-field
-            [control]="form.get('registerNumber')"
-            label="N&uacute;mero de Registro">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="registerNumber" />
+            [control]="form.get('code')"
+            label="C&oacute;digo de Banco">
+            <input type="text" class="form-control" formControlName="code" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -40,29 +40,23 @@
         </div>
       </div>
       <div class="row mt-4">
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <form-field [control]="form.get('dateType')" label="Tipo">
             <input
               type="text"
               class="form-control"
               formControlName="dateType" />
           </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="form.get('code')"
-            label="C&oacute;digo de Banco">
-            <input type="number" class="form-control" formControlName="code" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
+        </div> -->
+
+        <!-- <div class="col-md-4">
           <form-field [control]="form.get('idProvider')" label="ID Proveedor">
             <input
               type="number"
               class="form-control"
               formControlName="idProvider" />
           </form-field>
-        </div>
+        </div> -->
       </div>
     </form>
   </div>

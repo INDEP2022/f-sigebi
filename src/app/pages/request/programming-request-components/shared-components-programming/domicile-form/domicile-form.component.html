@@ -1,0 +1,103 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Detalle de la Direcci&oacute;n</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Alias Almac&eacute;n: </label>
+          <span>{{ domicileInfo?.aliasWarehouse }}</span>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Estado: </label>
+          <span>{{ stateName }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Municipio: </label>
+          <span>{{ municipalityName }}</span>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Asentamiento: </label>
+          <span>{{ domicileInfo?.cveSettlement }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Código Postal: </label>
+          <span>{{ domicileInfo?.code }}</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Nombre de la Vía: </label>
+          <span>{{ domicileInfo?.viaName }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Origen de la Vía: </label>
+          <span>{{ domicileInfo?.viaOrigin }}</span>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Destino de la Vía: </label>
+          <span>{{ domicileInfo?.viaDestination }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Kil&oacute;metro de la Vía: </label>
+          <span>{{ domicileInfo?.viaChaining }}</span>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">No. Exterior: </label>
+          <span>{{ domicileInfo?.numExt }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+        <!-- <confirm-button
+        [loading]="loadingReport"
+        [btnSmall]="true"
+        [text]="'Detalle de la Dirección'"
+        [loadingText]="'Generando Dirección'"
+        [className]="'btn-info'"
+        class="mr-2"
+        (click)="close()"></confirm-button> -->
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,18 +1,18 @@
 export const RECEIPT_WITNESS_COLUMNS = {
   nameWitness: {
-    title: 'Nombre de testigo',
+    title: 'Nombre de Testigo',
     type: 'string',
     sort: false,
   },
 
   chargeWitness: {
-    title: 'Cargo de testigo',
+    title: 'Cargo de Testigo',
     type: 'string',
     sort: false,
   },
 
-  electronicSignature: {
-    title: 'Firma electronica',
+  electronicSignatureName: {
+    title: 'Firma Electrónica',
     type: 'string',
     sort: false,
   },

@@ -4,25 +4,32 @@
   </div>
   <div body>
     <div class="md-tabs">
-      <tabset>
-        <tab heading="Eliminar periodos" id="tab1">
+      <tabset (click)="onTabChanged($event)" #tabset>
+        <tab #tab1 heading="Eliminar Periodos" id="tab1">
           <app-delete-period
             (eventDelete)="onClickDeletePeriod()"></app-delete-period>
         </tab>
-        <tab heading="Cambiar periodos" id="tab2">
+        <tab #tab2 heading="Cambiar Periodos" id="tab2">
           <app-change-period
             (eventChangePeriod)="onClickChangePeriod()"></app-change-period>
         </tab>
-        <tab heading="Cambiar bienes de numero aleatorio" id="tab2">
+        <tab #tab3 heading="Cambiar Bienes de Número Aleatorio" id="tab3">
           <app-change-goods-random
             (eventChangeGoodsRandom)="
               onClickChangeGoodsRandom()
             "></app-change-goods-random>
         </tab>
-        <tab heading="Información de correo" id="tab2">
-          <app-email-information></app-email-information>
-        </tab>
       </tabset>
+      <div class="row mt-5 pl-5 pr-5">
+        <div class="ch-content">
+          <h5 class="title">Información de Correo</h5>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <app-email-information></app-email-information>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </app-card>

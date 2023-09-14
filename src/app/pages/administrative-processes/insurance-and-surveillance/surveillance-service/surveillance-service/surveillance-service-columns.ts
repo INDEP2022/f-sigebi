@@ -1,22 +1,26 @@
 export const SURVEILLANCE_SERVICE_COLUMNS = {
-  random: {
+  randomId: {
     title: 'Aleatorio',
     type: 'string',
     sort: false,
+    width: '15%',
   },
-  noBien: {
-    title: 'No Bien',
+  goodNumber: {
+    title: 'No. Bien',
     type: 'number',
     sort: false,
+    width: '15%',
   },
-  description: {
-    title: 'Descripción',
+  address: {
+    title: 'Dirección/Descripción',
     type: 'number',
     sort: false,
+    width: '35%',
   },
-  transferent: {
+  transferee: {
     title: 'Transferente',
     type: 'number',
     sort: false,
+    width: '35%',
   },
 };

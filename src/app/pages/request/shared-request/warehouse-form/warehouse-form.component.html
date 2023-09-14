@@ -1,30 +1,33 @@
-+<app-modal>
+<app-modal>
   <div header>
     <h5 class="modal-title">Alta almac&eacute;n</h5>
   </div>
   <div body>
     <form [formGroup]="warehouseForm" class="form-material">
-      <div class="row">
+      <div class="row pt-4">
         <div class="col-md-6">
           <form-field
-            [control]="warehouseForm.get('numberRegister')"
-            label="No&#46; de registro">
+            [control]="warehouseForm.get('nbidstore')"
+            label="N&uacute;mero de Gesti&oacute;n Inmueble">
             <input
               type="text"
               class="form-control"
               maxlength="30"
-              formControlName="numberRegister" />
+              [readOnly]="true"
+              formControlName="nbidstore" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="warehouseForm.get('responsibleUser')">
+          <form-field [control]="warehouseForm.get('nbusername')">
             <ngx-select
               [form]="warehouseForm"
-              control="responsibleUser"
+              control="nbusername"
               [data]="users"
-              value="id"
-              bindLabel="firstName"
-              label="Usuario reponsable"
+              value="username"
+              [showTooltip]="true"
+              bindLabel="nomComplete"
+              label="Usuario Reponsable"
+              (change)="userSelect($event)"
               (fetchItems)="getResponsibleUserSelect($event)"></ngx-select>
           </form-field>
         </div>
@@ -33,25 +36,26 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
-            [control]="warehouseForm.get('description')"
-            label="Nombre del almac&eacute;n">
+            [control]="warehouseForm.get('nbstoresiab')"
+            label="Nombre del Almac&eacute;n">
             <input
               type="text"
               class="form-control"
               maxlength="1000"
-              formControlName="description" />
+              formControlName="nbstoresiab" />
           </form-field>
         </div>
 
         <div class="col-md-6">
-          <form-field [control]="warehouseForm.get('typeTercero')">
+          <form-field [control]="warehouseForm.get('tpThird')">
             <ngx-select
               [form]="warehouseForm"
-              control="typeTercero"
+              control="tpThird"
               [data]="typeTercero"
+              [showTooltip]="true"
               value="code"
               bindLabel="description"
-              label="Tipo tercero"
+              label="Tipo Tercero"
               (fetchItems)="getTypeTerceroSelect($event)"></ngx-select>
           </form-field>
         </div>
@@ -60,106 +64,37 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
-            [control]="warehouseForm.get('numberManagement')"
-            label="N&uacute;mero de gesti&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="30"
-              formControlName="numberManagement" />
-          </form-field>
-        </div>
-
-        <div class="col-md-6">
-          <form-check label="Con localizador" for="label">
-            <input id="label" type="checkbox" formControlName="locator" />
-          </form-check>
-        </div>
-      </div>
-
-      <div class="row pt-4">
-        <div class="col-md-6">
-          <form-field
-            [control]="warehouseForm.get('contractNumber')"
-            label="N&uacute;mero de contrato">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="40"
-              formControlName="contractNumber" />
-          </form-field>
-        </div>
-
-        <div class="col-md-6">
-          <form-field
-            [control]="warehouseForm.get('siabWarehouse')"
-            label="Almac&eacute;n SIAB">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="60"
-              formControlName="siabWarehouse" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-4">
-        <div class="col-md-6">
-          <form-field
-            [control]="warehouseForm.get('startOperation')"
-            label="inicio operaciones">
-            <input
-              bsDatepicker
-              class="form-control"
-              formControlName="startOperation" />
-          </form-field>
-        </div>
-
-        <div class="col-md-6">
-          <form-field
-            [control]="warehouseForm.get('endOperation')"
-            label="Fin operaciones">
-            <input
-              bsDatepicker
-              class="form-control"
-              formControlName="endOperation" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-4">
-        <div class="col-md-6">
-          <form-field
-            [control]="warehouseForm.get('responsibleDelegation')"
+            [control]="warehouseForm.get('wildebeestDelegationregion')"
             label="Delegaci&oacute;n Regional">
             <input
               type="text"
               class="form-control"
               maxlength="150"
-              formControlName="responsibleDelegation"
+              formControlName="wildebeestDelegationregion"
               readonly />
           </form-field>
         </div>
 
         <div class="col-md-6">
           <form-field
-            [control]="warehouseForm.get('managedBy')"
-            label="Administrado por">
+            [control]="warehouseForm.get('nbadmonby')"
+            label="Administrado Por">
             <input
               type="text"
               class="form-control"
               maxlength="100"
-              formControlName="managedBy" />
+              formControlName="nbadmonby" />
           </form-field>
         </div>
       </div>
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <form-field [control]="warehouseForm.get('stateCode')">
+          <form-field [control]="warehouseForm.get('idState')">
             <ngx-select
               [form]="warehouseForm"
-              control="stateCode"
+              control="idState"
+              [showTooltip]="true"
               [data]="states"
               value="id"
               bindLabel="descCondition"
@@ -171,29 +106,12 @@
 
         <div class="col-md-6">
           <form-field
-            [control]="warehouseForm.get('cityCode')"
-            *ngIf="show_city_municipality">
-            <ngx-select
-              [form]="warehouseForm"
-              control="cityCode"
-              [data]="cities"
-              value="idCity"
-              bindLabel="nameCity"
-              label="Ciudad"
-              (fetchItems)="getCitySelect($event)"></ngx-select>
-          </form-field>
-          <form-field
-            [control]="warehouseForm.get('cityCode')"
-            *ngIf="!show_city_municipality">
-            <ngx-select
-              [form]="warehouseForm"
-              control="cityCode"
-              [data]="cities"
-              [searchable]="show_city_municipality"
-              value="id"
-              bindLabel="nameCity"
-              label="Ciudad"
-              (fetchItems)="getCitySelect($event)"></ngx-select>
+            [control]="warehouseForm.get('nbidstore')"
+            label="N&uacute;mero de Gesti&oacute;n Inmueble">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nbidstore" />
           </form-field>
         </div>
       </div>
@@ -201,99 +119,189 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
-            [control]="warehouseForm.get('municipalityCode')"
+            [control]="warehouseForm.get('wildebeestmunicipality')"
             *ngIf="show_city_municipality">
             <ngx-select
               [form]="warehouseForm"
-              control="municipalityCode"
+              control="wildebeestmunicipality"
               [data]="municipalities"
               value="idMunicipality"
+              [showTooltip]="true"
               bindLabel="nameMunicipality"
               label="Municipio"
               (change)="municipalitySelect($event)"
               (fetchItems)="getMunicipalitiesSelect($event)"></ngx-select>
           </form-field>
           <form-field
-            [control]="warehouseForm.get('municipalityCode')"
+            [control]="warehouseForm.get('wildebeestmunicipality')"
             *ngIf="!show_city_municipality">
             <ngx-select
               [form]="warehouseForm"
               [searchable]="show_city_municipality"
-              control="municipalityCode"
+              control="wildebeestmunicipality"
               [data]="municipalities"
               value="idMunicipality"
+              [showTooltip]="true"
               bindLabel="nameMunicipality"
               label="Municipio"
               (fetchItems)="getMunicipalitiesSelect($event)"></ngx-select>
           </form-field>
         </div>
+        <div class="col-md-6">
+          <form-check label="Con Localizador" for="label">
+            <input id="label" type="checkbox" formControlName="nbwithlocator" />
+          </form-check>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="warehouseForm.get('idCity')"
+            *ngIf="show_city_municipality">
+            <ngx-select
+              [form]="warehouseForm"
+              control="idCity"
+              [data]="cities"
+              [showTooltip]="true"
+              value="idCity"
+              bindLabel="nameCity"
+              label="Ciudad"
+              (fetchItems)="getCitySelect($event)"></ngx-select>
+          </form-field>
+          <form-field
+            [control]="warehouseForm.get('idCity')"
+            *ngIf="!show_city_municipality">
+            <ngx-select
+              [form]="warehouseForm"
+              control="idCity"
+              [data]="cities"
+              [searchable]="show_city_municipality"
+              [showTooltip]="true"
+              value="id"
+              bindLabel="nameCity"
+              label="Ciudad"
+              (fetchItems)="getCitySelect($event)"></ngx-select>
+          </form-field>
+        </div>
 
         <div class="col-md-6">
           <form-field
-            [control]="warehouseForm.get('localityCode')"
+            [control]="warehouseForm.get('nbcontract')"
+            label="N&uacute;mero de Contrato">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="40"
+              formControlName="nbcontract" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="warehouseForm.get('wildebeestSettlement')"
             *ngIf="showLocality">
             <ngx-select
               [form]="warehouseForm"
-              control="localityCode"
+              control="wildebeestSettlement"
               [data]="localities"
               value="id"
+              [showTooltip]="true"
               bindLabel="nameLocation"
               label="Localidad"
               (change)="localitySelect($event)"
               (fetchItems)="getLocalitySelect($event)"></ngx-select>
           </form-field>
           <form-field
-            [control]="warehouseForm.get('localityCode')"
+            [control]="warehouseForm.get('wildebeestSettlement')"
             *ngIf="!showLocality">
             <ngx-select
               [form]="warehouseForm"
               [searchable]="showLocality"
-              control="localityCode"
+              control="wildebeestSettlement"
               [data]="localities"
               value="id"
               bindLabel="nameLocation"
+              [showTooltip]="true"
               label="Localidad"
               (fetchItems)="getLocalitySelect($event)"></ngx-select>
           </form-field>
         </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="warehouseForm.get('nbstoresiab')"
+            label="Almac&eacute;n SIAB">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="60"
+              formControlName="nbstoresiab" />
+          </form-field>
+        </div>
       </div>
 
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
-            [control]="warehouseForm.get('zipCode')"
+            [control]="warehouseForm.get('nbzipcode')"
             *ngIf="showZipCode">
             <ngx-select
               [form]="warehouseForm"
-              control="zipCode"
+              control="nbzipcode"
               [data]="zipCode"
               value="codePostal"
+              [showTooltip]="true"
               bindLabel="codePostal"
-              label="C&oacute;digo postal"
+              label="C&oacute;digo Postal"
               (fetchItems)="getZipCodeSelect($event)"></ngx-select>
           </form-field>
           <form-field
-            [control]="warehouseForm.get('zipCode')"
+            [control]="warehouseForm.get('nbzipcode')"
             *ngIf="!showZipCode">
             <ngx-select
               [form]="warehouseForm"
-              control="zipCode"
+              control="nbzipcode"
               [data]="zipCode"
+              [showTooltip]="true"
               [searchable]="showZipCode"
               value="id"
               bindLabel="codePostal"
-              label="C&oacute;digo postal"
+              label="C&oacute;digo Postal"
               (fetchItems)="getZipCodeSelect($event)"></ngx-select>
           </form-field>
         </div>
 
         <div class="col-md-6">
-          <form-field [control]="warehouseForm.get('street')" label="Calle">
+          <form-field
+            [control]="warehouseForm.get('fhstart')"
+            label="Inicio Operaciones">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="fhstart" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('nbstreet')" label="Calle">
             <input
               type="text"
               maxlength="200"
               class="form-control"
-              formControlName="street" />
+              formControlName="nbstreet" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="warehouseForm.get('fhend')"
+            label="Fin Operaciones">
+            <input bsDatepicker class="form-control" formControlName="fhend" />
           </form-field>
         </div>
       </div>
@@ -301,23 +309,25 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
-            [control]="warehouseForm.get('numberOutside')"
-            label="N&uacute;mero exterior">
+            [control]="warehouseForm.get('nbnoexternal')"
+            label="N&uacute;mero Exterior">
             <input
               type="text"
               class="form-control"
               maxlength="100"
-              formControlName="numberOutside" />
+              formControlName="nbnoexternal" />
           </form-field>
         </div>
 
         <div class="col-md-6">
-          <form-field [control]="warehouseForm.get('latitude')" label="Latitud">
+          <form-field
+            [control]="warehouseForm.get('nblatitude')"
+            label="Latitud">
             <input
               type="text"
               class="form-control"
               maxlength="150"
-              formControlName="latitude" />
+              formControlName="nblatitude" />
           </form-field>
         </div>
       </div>
@@ -325,25 +335,26 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
-            [control]="warehouseForm.get('longitude')"
+            [control]="warehouseForm.get('nblength')"
             label="Longitud">
             <input
               type="text"
               class="form-control"
               maxlength="100"
-              formControlName="longitude" />
+              formControlName="nblength" />
           </form-field>
         </div>
 
         <div class="col-md-6">
-          <form-field [control]="warehouseForm.get('type')">
+          <form-field [control]="warehouseForm.get('tpstore')">
             <ngx-select
               [form]="warehouseForm"
-              control="type"
+              control="tpstore"
               [data]="typeWarehouse"
+              [showTooltip]="true"
               value="id"
               bindLabel="description"
-              label="Tipo de almac&eacute;n"
+              label="Tipo de Almac&eacute;n"
               (fetchItems)="getTypeWarehouseSelect($event)"></ngx-select>
           </form-field>
         </div>
@@ -355,12 +366,15 @@
       <div class="m-3">
         <confirm-button
           [disabled]="!warehouseForm.valid"
+          [text]="'Enviar'"
+          [loadingText]="'Enviando almacén'"
           [loading]="loading"
+          [icon]="'bx bx-send'"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
+        <button class="btn btn-primary active" (click)="close()" type="button">
+          Regresar <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>

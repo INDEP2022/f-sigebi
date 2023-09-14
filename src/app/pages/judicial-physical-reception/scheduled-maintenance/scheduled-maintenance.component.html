@@ -1,34 +1,58 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Mantenimiento y Seguimiento de Eventos</h5>
+    <h5 class="title">Programación de Recepciones</h5>
   </div>
   <div body>
-    <div class="row mb-5">
-      <app-clean-filters-shared
-        [form]="form"
-        formStorage="filtersActa"></app-clean-filters-shared>
-    </div>
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-6">
-          <!-- <form-field [control]="form.get('tipoEvento')" label="Tipo de Evento">
-            <select class="form-control" formControlName="tipoEvento">
-              <option value="TODOS">TODOS</option>
-              <option value="EVENTREC">RECEPCIÓN FÍSICA</option>
-            </select>
-          </form-field> -->
-          <app-proceeding-types-shared
-            [form]="form"></app-proceeding-types-shared>
+          <form-field
+            [control]="form.get('tipoEvento')"
+            label="Tipos de evento">
+            <ng-select class="form-control" formControlName="tipoEvento">
+              <ng-option [value]="null">Seleccione un tipo de evento</ng-option>
+              <ng-option
+                *ngFor="let event of typeEvents1"
+                [value]="event.tipo_acta">
+                {{ event.descripcion }}
+              </ng-option>
+            </ng-select>
+          </form-field>
 
-          <!-- <app-select-form [form]="form" formField="tipoEvento" label="Tipo de Evento" [list]="tiposEvento"
-            [(params)]="paramsTypes" [haveTodos]="false"></app-select-form> -->
+          <!-- <ng-custom-select-loading
+            [form]="form"
+            formControlName="tipoEvento"
+            label="Tipo de Evento"
+            value="id"
+            bindLabel="description"
+            [searchable]="false"
+            loadingText="Cargando tipos de evento..."
+            [path]="path">
+          </ng-custom-select-loading> -->
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4 rangeDate">
+          <form-field [control]="form.get('rangeDate')" label="Rango de Fechas">
+            <input
+              bsDaterangepicker
+              class="form-control form-date"
+              formControlName="rangeDate"
+              readonly
+              [maxDate]="hoy" />
+            <div
+              *ngIf="rangeDateValue !== null"
+              class="deleteDate"
+              (click)="deleteRange()">
+              x
+            </div>
+          </form-field>
+        </div>
+        <!-- <div class="col-md-2">
           <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control form-date"
               formControlName="fechaInicio"
+              readonly
               [maxDate]="hoy" />
           </form-field>
         </div>
@@ -36,30 +60,53 @@
           <form-field [control]="form.get('fechaFin')" label="Fecha Fin">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control form-date"
               [minDate]="fechaInicio.value"
               [maxDate]="hoy"
+              readonly
               formControlName="fechaFin" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-2">
           <form-field
             [control]="form.get('statusEvento')"
             label="Estatus Evento">
-            <select class="form-control" formControlName="statusEvento">
-              <option value="TODOS">Todos</option>
-              <option value="ABIERTA">Abierto</option>
-              <option value="CERRADO">Cerrado</option>
-            </select>
+            <ng-select
+              formControlName="statusEvento"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="TODOS">Todos</ng-option>
+              <ng-option value="ABIERT">Abierta</ng-option>
+              <ng-option value="CERRAD">Cerrada</ng-option>
+            </ng-select>
           </form-field>
 
           <!-- <app-select-form [form]="form" formField="statusEvento" label="Estatus Evento" [list]="statusList2"
             [(params)]="paramsStatus" [haveTodos]="false"></app-select-form> -->
         </div>
       </div>
-      <div class="row mb-3" style="margin-top: 20px">
-        <div class="col-md-6">
-          <app-select-form
+      <div class="row mb-3">
+        <div class="col-lg-6 mt-2">
+          <ng-custom-select-loading
+            [form]="form"
+            formControlName="coordRegional"
+            label="Coordinación Regional"
+            value="description"
+            bindLabel="description"
+            paramSearch="search"
+            [multiple]="true"
+            path="catalog/api/v1/delegation/get-all">
+          </ng-custom-select-loading>
+          <!-- <ng-template #coordinationLabel let-item="item">
+            {{ item.id }} - {{ item.description }}
+          </ng-template> -->
+          <!-- <ng-template #coordinationOption let-item="item">
+            <div [title]="item.id + '-' + item.description">
+              {{ item.id }} - {{ item.description }}
+            </div>
+          </ng-template> -->
+          <!-- <app-select-form
             [form]="form"
             [multiple]="true"
             formField="coordRegional"
@@ -67,11 +114,33 @@
             value="description"
             [haveTodos]="false"
             [getListObservable]="coordRegional"
-            [(params)]="paramsCoords"></app-select-form>
+            [(params)]="paramsCoords"></app-select-form> -->
           <!-- <app-regional-coord-shared [form]="form"></app-regional-coord-shared> -->
         </div>
-        <div class="col-md-6">
-          <app-select-form
+        <div class="col-lg-6 mt-2">
+          <ng-custom-select-loading
+            [form]="form"
+            formControlName="usuario"
+            label="Usuario"
+            value="id"
+            bindLabel="name"
+            loadingText="Cargando usuarios..."
+            typeToSearchText="Escriba el nombre del usuario"
+            path="users/api/v1/seg-users"
+            [labelTemplate]="usuarioLabel"
+            [optionTemplate]="usuarioOption">
+          </ng-custom-select-loading>
+
+          <ng-template #usuarioLabel let-item="item">
+            {{ item.id }} - {{ item.name }}
+          </ng-template>
+          <ng-template #usuarioOption let-item="item">
+            <div [title]="item.id + '-' + item.name">
+              {{ item.id }} - {{ item.name }}
+            </div>
+          </ng-template>
+
+          <!-- <app-select-form
             [form]="form"
             formField="usuario"
             label="Usuarios"
@@ -80,37 +149,42 @@
             [operator]="like"
             paramFilter="goodId"
             [getListObservable]="usuarios"
-            [(paramsFilter)]="paramsUsers"></app-select-form>
+            [(paramsFilter)]="paramsUsers"></app-select-form> -->
           <!-- <app-elaborate-users-shared
             [form]="form"></app-elaborate-users-shared> -->
         </div>
       </div>
-      <div class="row">
-        <form-field [control]="form.get('claveActa')" label="Clave Acta">
-          <input class="form-control" formControlName="claveActa" />
+      <!-- <div class="row">
+        <form-field [control]="form.get('claveActa')" label="Programación">
+          <input
+            class="form-control"
+            formControlName="claveActa"
+            maxlength="75" />
         </form-field>
-      </div>
+      </div> -->
       <!-- <app-key-proceedings-form
         [form]="form"
         statusActaValue="ABIERTA"></app-key-proceedings-form> -->
 
-      <div class="action-buttons">
+      <div class="row action-buttons" style="margin: auto">
         <div class="col-md-4" [class]="loading ? 'disabled' : ''">
+          <app-clean-filters-shared
+            [form]="form"
+            formStorage="filtersIndica"
+            (cleanFiltersEvent)="resetView()"></app-clean-filters-shared>
           <button
-            class="btn btn-primary btn-sm active"
+            class="btn btn-primary btn-sm active search"
             type="submit"
             size="small"
             (click)="getData()">
-            <i class="fa fa-search"></i>
             Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
-        <div
-          class="col-md-4"
-          [class]="loading || data.length === 0 ? 'disabled' : ''">
+        <div class="col-md-4" [class]="loading ? 'disabled' : ''">
           <button
-            *ngIf="!showTable1"
             class="btn btn-primary btn-sm active"
+            [class]="loading || form.invalid ? 'disabled' : ''"
             type="submit"
             size="small"
             (click)="captureEvent()">
@@ -118,10 +192,25 @@
             Captura de Evento
           </button>
         </div>
-        <div class="col-md-4">
-          <div
+        <div class="col-md-4 righButtons">
+          <button
+            class="btn btn-success btn-sm active"
+            type="submit"
+            size="small"
+            [disabled]="loading || loadingExcel || items.length === 0"
+            (click)="exportExcel2()">
+            <i class="bx bx-download float-icon"></i>
+            Exportar Excel
+          </button>
+          <div [class]="loading || items.length === 0 ? 'disabled' : ''">
+            <app-columns-select
+              [leftList]="true"
+              [(settings)]="settings1"
+              [defaultColumns]="5"></app-columns-select>
+          </div>
+          <!-- <div
             [class]="
-              loading || loadingExcel || data.length === 0 ? 'disabled' : ''
+              loading || loadingExcel || items.length === 0 ? 'disabled' : ''
             "
             (click)="exportExcel()">
             <app-excel-report
@@ -129,31 +218,34 @@
               [externalClick]="flagDownload"
               [nameExcel]="'Reporte de Mantenimiento de Programaciones.xlsx'"
               text="Exportar Excel"></app-excel-report>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="row pt-4 scheduledTable">
-        <div class="col-md-12" [class]="showTable1 ? '' : 'hide'">
+        <div class="col-md-12">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
               class="table-responsive"
               [settings]="settings1"
               [source]="data"
-              (edit)="rowsSelected($event)"></ng2-smart-table>
+              (edit)="rowsSelected($event.data)"
+              (delete)="deleteRow($event.data)"></ng2-smart-table>
           </div>
         </div>
-        <div class="col-md-12" [class]="showTable1 ? 'hide' : ''">
+        <!-- <div class="col-md-12" [class]="showTable1 ? 'hide' : ''">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
               class="table-responsive"
               [settings]="settings1"
               [source]="data2"></ng2-smart-table>
           </div>
-        </div>
+        </div> -->
       </div>
       <app-pagination
         [params]="params"
-        [totalItems]="totalItems"></app-pagination>
+        [totalItems]="totalItems"
+        [limit]="limit"
+        [pageSizeOptions]="pageSizeOptions"></app-pagination>
     </form>
   </div>
 </app-card>

@@ -1,5 +1,5 @@
 export interface IRefPayDepositary {
-  payId: number;
+  payId?: number;
   reference: string;
   movementNumber: number;
   date: Date;
@@ -24,6 +24,7 @@ export interface IRefPayDepositary {
   invoice_oi: string;
   indicator: number;
   system_val_date: Date;
+  incomeid?: number;
 }
 
 export interface IPaymentsGensDepositary {

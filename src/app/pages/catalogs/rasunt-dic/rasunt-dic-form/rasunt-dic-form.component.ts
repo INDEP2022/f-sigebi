@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -6,7 +6,10 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRAsuntDic } from 'src/app/core/models/catalogs/r-asunt-dic.model';
 import { RAsuntDicService } from 'src/app/core/services/catalogs/r-asunt-dic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -23,7 +26,8 @@ export class RAsuntDicFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private rAsuntDicService: RAsuntDicService
+    private rAsuntDicService: RAsuntDicService,
+    private render: Renderer2
   ) {
     super();
   }
@@ -34,23 +38,52 @@ export class RAsuntDicFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      code: [null],
-      dictum: [null, [Validators.required]],
+      code: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(5),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ],
+      ],
+      dictum: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(3),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ],
+      ],
       flyerType: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(2),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
-      doc: [null, [Validators.pattern(STRING_PATTERN)]],
+      doc: [
+        null,
+        [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)],
+      ],
       property: [null, [Validators.pattern(STRING_PATTERN)]],
-      g_of: [null, [Validators.pattern(STRING_PATTERN)]],
-      i: [null, [Validators.pattern(STRING_PATTERN)]],
-      e: [null, [Validators.pattern(STRING_PATTERN)]],
-      registryNumber: [null],
+      g_of: [
+        null,
+        [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)],
+      ],
+      i: [null, [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)]],
+      e: [null, [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)]],
+      // registryNumber: [null],
     });
+
     if (this.rAsuntDic != null) {
       this.edit = true;
       this.form.patchValue(this.rAsuntDic);
+      this.form.get('flyerType').disable();
+      this.form.get('dictum').disable();
+      this.form.get('code').disable();
     }
+    this.getData(new ListParams());
   }
 
   getData(params: ListParams) {
@@ -76,10 +109,12 @@ export class RAsuntDicFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    console.log(this.form.getRawValue());
     this.rAsuntDicService
       .update(this.rAsuntDic.code, this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
+
         error: error => (this.loading = false),
       });
   }

@@ -1,6 +1,8 @@
+import { CustomDateFilterComponent } from '../../../@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const COLUMNSPARAMETER = {
   id: {
-    title: 'Clave parámetro',
+    title: 'Clave Parámetro',
     sort: false,
   },
   description: {
@@ -8,27 +10,37 @@ export const COLUMNSPARAMETER = {
     sort: false,
   },
   startDate: {
-    title: 'Fecha inical',
+    title: 'Fecha Inical',
     sort: false,
     type: 'html',
+    width: '13%',
     valuePrepareFunction: (text: string) => {
       return `
         ${text ? text.split('T')[0].split('-').reverse().join('-') : ''}  
       `;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
     },
   },
   endDate: {
-    title: 'Fecha final',
+    title: 'Fecha Final',
     sort: false,
+    width: '13%',
     type: 'html',
     valuePrepareFunction: (text: string) => {
       return `
         ${text ? text.split('T')[0].split('-').reverse().join('-') : ''}  
       `;
     },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   initialValue: {
-    title: 'Valor inicial',
+    title: 'Valor Inicial',
     sort: false,
     type: 'html',
     valuePrepareFunction: (text: string) => {
@@ -37,7 +49,7 @@ export const COLUMNSPARAMETER = {
     },
   },
   finalValue: {
-    title: 'Valor final',
+    title: 'Valor Final',
     sort: false,
   },
 };

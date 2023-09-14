@@ -2,20 +2,58 @@
   <div class="ch-content" header>
     <h5 class="modal-title">{{ title }}</h5>
   </div>
-  <div body>
+  <div body class="modal-body">
     <div class="row pt-4">
-      <div class="col-md-10"></div>
-      <div class="col-md-2">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
+      <div class="legend mb-4">
+        <div>
+          <div class="rectangle numeraryGood"></div>
+          <span style="font-size: 0.875em">Bien sin Acta</span>
+        </div>
+        <div>
+          <div class="rectangle required"></div>
+          <span style="font-size: 0.875em">Numerario Conciliado</span>
+        </div>
+        <div>
+          <div class="rectangle requiredAva"></div>
+          <span style="font-size: 0.875em">Numerario ADM</span>
+        </div>
       </div>
     </div>
+    <div class="row pt-4">
+      <div class="col-md-8">
+        <div class="legend mb-4">
+          <div>
+            <div class="rectangle numerary"></div>
+            <span style="font-size: 0.875em"
+              >Numerario 'CNE','CBD','CDS','CNS','CNR'</span
+            >
+          </div>
+          <div>
+            <div class="rectangle update"></div>
+            <span style="font-size: 0.875em">Numerario TRANSFERENTE</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="d-flex gap-3 justify-content-end">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+          <button
+            class="btn btn-primary btn-sm active w-auto"
+            (click)="close()">
+            Cerrar
+          </button>
+        </div>
+      </div>
+      <!-- <div class="col-md-2">
+      </div> -->
+    </div>
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-12 hidden-paginate-default">
         <div class="overflow-auto" [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="BLK_BIENES">
+            [source]="dataTableGoodsLocal">
           </ng2-smart-table>
         </div>
         <app-pagination [params]="params" [totalItems]="totalItems">
@@ -23,15 +61,15 @@
       </div>
     </div>
     <div class="row pt-4">
-      <div class="col-md-12">
+      <div class="col-md-12 hidden-paginate-default">
         <div class="overflow-auto" [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
-            [source]="BLK_GASTOS">
+            [source]="dataTableSpentsLocal">
           </ng2-smart-table>
         </div>
-        <app-pagination [params]="params" [totalItems]="totalItems">
+        <app-pagination [params]="paramsSpent" [totalItems]="totalItemsSpent">
         </app-pagination>
       </div>
     </div>
@@ -39,20 +77,21 @@
       <div class="col-md-4">
         <button
           (click)="onClickArchoNumeraryConc()"
-          class="btn btn-secondary btn-sm active">
-          Archo numerario conc.
+          class="btn btn-primary btn-sm active w-100">
+          Archo Numerario Conc.
         </button>
       </div>
       <div class="col-md-4">
         <button
-          (click)="onClickGenerateNumeraries()"
-          class="btn btn-secondary btn-sm active">
+          (click)="onClickGenerateNumerareis()"
+          class="btn btn-primary btn-sm active w-100">
           Genera Numerarios
         </button>
       </div>
-      <div class="col-md-3">
-        <button class="btn btn-danger btn-sm active" (click)="close()">
-          Salir
+      <div class="col-md-4">
+        <button class="btn btn-primary btn-sm active w-100" (click)="close()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>

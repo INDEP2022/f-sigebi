@@ -1,6 +1,6 @@
 export const STOREHOUSE_COLUMNS = {
-  idStorehouse: {
-    title: 'Registro',
+  id: {
+    title: 'No.Bodega',
     type: 'string',
     sort: false,
   },
@@ -31,7 +31,7 @@ export const STOREHOUSE_COLUMNS = {
   },
   idEntity: {
     title: 'Entidad',
-    type: 'string',
+    type: 'number',
     sort: false,
   },
 };

@@ -16,6 +16,14 @@ export class PartializeGoodService extends HttpService {
     this.microservice = 'partializegood';
   }
 
+  getAll(params?: string) {
+    return this.get('partialized-good', params);
+  }
+
+  partializePaGood(pGoodNum: number) {
+    return this.get(`aplication/pa-partialization/${pGoodNum}`);
+  }
+
   partializeGood(body: {}) {
     return this.post('aplication/partWell', body);
   }
@@ -25,6 +33,11 @@ export class PartializeGoodService extends HttpService {
   }
 
   pupInsertGood(body: GoodDTO) {
-    return this.post(PartializeGoodEndpoints.PupInsertGood, body);
+    return this.post<{
+      no_bien: number;
+      vobservaciones: string;
+      vdesc_padre: string;
+      observ_padre: string;
+    }>(PartializeGoodEndpoints.PupInsertGood, body);
   }
 }

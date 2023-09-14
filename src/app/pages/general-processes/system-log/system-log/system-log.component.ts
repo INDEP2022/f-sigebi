@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import {
   BehaviorSubject,
   catchError,
@@ -12,8 +13,11 @@ import {
 } from 'rxjs';
 import {
   FilterParams,
+  ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IBinnacle } from 'src/app/core/models/ms-audit/binnacle.model';
+import { Registers } from 'src/app/core/models/ms-audit/registers.model';
 import { ITableField } from 'src/app/core/models/ms-audit/table-field.model';
 import { ITableLog } from 'src/app/core/models/ms-audit/table-log.model';
 import { SeraLogService } from 'src/app/core/services/ms-audit/sera-log.service';
@@ -32,15 +36,21 @@ import { TABLE_LOGS_COLUMNS } from '../utils/table-logs-columns';
   styles: [],
 })
 export class SystemLogComponent extends BasePage implements OnInit {
-  params = new BehaviorSubject(new FilterParams());
+  paramsTemporal: FilterParams = new FilterParams();
+  globalVars: any;
+  registers: Registers;
+  params = new BehaviorSubject(new ListParams());
   dynamicParams = new BehaviorSubject(new FilterParams());
   rowSelected: ITableLog = null;
-  tableLogs: ITableLog[] = [];
+  tableLogs: LocalDataSource = new LocalDataSource();
+  dataFacRegister: LocalDataSource = new LocalDataSource();
   dynamicRegisters: any[] = [];
-  totalLogs = 0;
-  totalDynamic = 0;
+  totalLogs: number = 0;
+  totalDynamic: number = 0;
+  iBinnacles: IBinnacle[];
   filterFields: ITableField[] = [];
   registerNum: number = null;
+  columnFilters: any = [];
   filterForm = this.fb.group({
     filter: this.fb.array<
       FormGroup<{
@@ -67,30 +77,47 @@ export class SystemLogComponent extends BasePage implements OnInit {
     private seraLogService: SeraLogService
   ) {
     super();
-    this.settings = {
-      ...this.settings,
-      actions: false,
-      columns: TABLE_LOGS_COLUMNS,
-    };
+    this.settings.columns = TABLE_LOGS_COLUMNS;
+    this.settings.actions = false;
+    this.settings.hideSubHeader = false;
     this.registerSettings = { ...this.settings, columns: {} };
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        this.origin = params['screen'];
+        this.origin = params['origin'];
       });
+
+    this.registers = new Registers();
+    this.paramsTemporal = new FilterParams();
   }
 
-  ngOnInit(): void {
-    console.log(this.origin);
-    this.params
-      .pipe(
-        takeUntil(this.$unSubscribe),
-        switchMap(params =>
-          this.origin ? this.getTableLogsFiltered() : this.getTableLogs(params)
-        )
-      )
-      .subscribe();
-
+  ngOnInit() {
+    this.tableLogs
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.EQ;
+            field = `filter.${filter.field}`;
+            filter.field == 'destable'
+              ? (searchFilter = SearchFilter.ILIKE)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getTableLogs();
+        }
+      });
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.origin ? this.getTableLogsFiltered() : this.getTableLogs();
+    });
     this.dynamicParams.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       if (this.rowSelected) {
         this.getDynamicRegisters(params).subscribe();
@@ -98,37 +125,60 @@ export class SystemLogComponent extends BasePage implements OnInit {
     });
   }
 
-  getTableLogs(params: FilterParams, tables?: string[]) {
+  //Es la función que trae los nombres de las tablas para visualizarse en el Módulo
+  getTableLogs(tables?: string[]): any {
     this.loading = true;
-    params.removeAllFilters();
-    params.addFilter('valid', 1);
+    // params.removeAllFilters();
+    // params.addFilter('valid', 1);
+    this.params.getValue()['filter.valid'] = 1;
     if (tables) {
-      params.addFilter('table', tables.join(','), SearchFilter.IN);
+      this.params.getValue()['filter.table'] = `$in:${tables.join(',')}`;
     }
-    return this.tablesLogService.getAllFiltered(params.getParams()).pipe(
-      catchError(error => {
+
+    let param = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    return this.tablesLogService.getAllFiltered(param).subscribe({
+      next: response => {
         this.loading = false;
-        return throwError(() => error);
-      }),
-      tap(response => {
-        this.loading = false;
-        this.tableLogs = response.data;
+        this.tableLogs.load(response.data);
+        this.tableLogs.refresh(); //Son todos los nombres de las tablas
+
         this.totalLogs = response.count;
-      })
-    );
+        this.registers.table = response.data[0].table;
+        // this.onSelectTable(this.tableLogs[0]); //Es la primer tabla que se setea
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+
+    // .pipe(
+    //   catchError(error => {
+
+    //   }),
+    //   tap(response => {
+
+    //     // console.log(this.tableLogs[0]);
+    //     // this.getDynamicRegistersInit().subscribe();
+    //   })
+    // );
   }
 
   getTableLogsFiltered() {
-    const params = new FilterParams();
+    const params = new ListParams();
     params.limit = 100;
-    params.addFilter('screen', this.origin);
-    const logsParams = this.params.getValue();
-    return this.screenTableService.getAllFiltered(params.getParams()).pipe(
+    // params.addFilter('screen', this.origin);
+    params['filter.screen'] = this.origin;
+    // const logsParams = this.params.getValue();
+    return this.screenTableService.getAllFiltered(params).pipe(
       map(response => response.data.map(screenTable => screenTable.board)),
-      switchMap(tables => this.getTableLogs(logsParams, tables))
+      switchMap(tables => this.getTableLogs(tables))
     );
   }
 
+  //Es la tabla que se escoge
   onSelectTable(row: ITableLog) {
     this.dynamicRegisters = [];
     this.totalDynamic = 0;
@@ -136,8 +186,10 @@ export class SystemLogComponent extends BasePage implements OnInit {
     this.getFilterFields(row.table).subscribe(() => {
       this.rowSelected = row;
     });
+    this.getTableData();
   }
 
+  //Son las columnas que salen en la tabla
   getFilterFields(table: string) {
     const params = new FilterParams();
     params.limit = 100;
@@ -152,6 +204,8 @@ export class SystemLogComponent extends BasePage implements OnInit {
       tap(response => {
         // TODO: Quitar el filtro cuando se arregle el endpoint
         this.filterFields = response.data.filter(field => field.table == table);
+        console.warn(this.filterFields);
+
         this.dynamicColumns = generateColumnsFromFields(
           response.data.filter(field => field.table == table)
         );
@@ -165,6 +219,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
     });
   }
 
+  //Se ejecuta con el botón de Generar Filtrado
   getTableData() {
     const params = new FilterParams();
     this.dynamicParams.next(params);
@@ -179,10 +234,35 @@ export class SystemLogComponent extends BasePage implements OnInit {
         catchError(error => {
           this.dynamicLoading = false;
           if (error.status >= 500) {
-            this.onLoadToast(
+            this.alert(
               'error',
-              'Error',
-              'Ocurrio un error al obtener la informac'
+              'Ocurrió un error al obtener la información',
+              ''
+            );
+          }
+          return throwError(() => error);
+        }),
+        tap(response => {
+          this.dynamicLoading = false;
+          this.dynamicRegisters = response.data;
+          this.totalDynamic = response.count;
+        })
+      );
+  }
+
+  //Es la información que se muestra en la tabla al escoger alguna en el Módulo de tablas
+  getDynamicRegistersInit() {
+    // this.registers.table = this.tableLogs[0].table;
+    return this.seraLogService
+      .getDynamicTables(this.paramsTemporal.getParams(), this.registers)
+      .pipe(
+        catchError(error => {
+          this.dynamicLoading = false;
+          if (error.status >= 500) {
+            this.alert(
+              'error',
+              'Ocurrio un error al obtener la información',
+              ``
             );
           }
           return throwError(() => error);
@@ -206,6 +286,20 @@ export class SystemLogComponent extends BasePage implements OnInit {
       .filter(filter => !isEmpty(filter.value));
     return { table, filters };
   }
+
+  // cleandInfo() {
+  //   this.loading = false;
+  //   this.totalDynamic = 0;
+  //   this.rowSelected = null;
+  //   this.filterFields = null;
+  //   this.dynamicColumns = null;
+  //   this.dynamicParams = null;
+  //   this.dynamicRegisters = null;
+  //   this.router = null;
+  //   this.dynamicLoading = false;
+  //   this.totalLogs = 0;
+  //   this.filterForm.reset();
+  // }
 }
 
 const MATCH_OPERATORS: any = {

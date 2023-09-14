@@ -5,7 +5,7 @@
   <div body>
     <div class="row" style="margin-top: -40px">
       <div class="form-material col-md-5">
-        <search-bar [filterParams]="params"></search-bar>
+        <search-bar [params]="params"></search-bar>
       </div>
     </div>
     <div [class]="loading ? 'table-loading' : ''">
@@ -13,12 +13,13 @@
         id="tableUser"
         [attr.class]="'table-bordered'"
         [settings]="settings"
+        (userRowSelect)="userSelect($event)"
         [source]="usersData">
       </ng2-smart-table>
     </div>
 
     <app-pagination
-      [filterParams]="params"
+      [params]="params"
       [totalItems]="totalItems"></app-pagination>
   </div>
   <div footer>
@@ -28,11 +29,17 @@
           [disabled]="!userInfo"
           [text]="textButton"
           [loading]="loading"
+          [btnSmall]="true"
+          [icon]="'fas fa-edit'"
+          [className]="'btn-primary'"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="close()"
+          type="button">
+          Regresar <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>

@@ -1,6 +1,6 @@
 export interface IBinnacle {
-  modifictiondate: string;
-  modificationuser: string;
+  modificationDate: string;
+  modificationUser: string;
   cadmodif1: string;
   table: string;
   modif3: string;

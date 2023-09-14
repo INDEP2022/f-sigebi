@@ -7,20 +7,22 @@
       <div class="row">
         <div class="col-md-6">
           <form-field
-            [control]="generateReceiptForm.get('deliveryName')"
-            label="Nombre de quien entrega">
+            [control]="generateReceiptForm.get('nameDelivery')"
+            label="Nombre de Quien Entrega">
             <input
+              maxlength="150"
               type="text"
               class="form-control"
-              formControlName="deliveryName" />
+              formControlName="nameDelivery" />
           </form-field>
         </div>
 
         <div class="col-md-6">
           <form-field
             [control]="generateReceiptForm.get('typeTransport')"
-            label="Tipo de transporte">
+            label="Tipo de Transporte">
             <input
+              maxlength="150"
               type="text"
               class="form-control"
               formControlName="typeTransport" />
@@ -31,20 +33,22 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field
-            [control]="generateReceiptForm.get('deliveryCharge')"
-            label="Cargo de quien entrega">
+            [control]="generateReceiptForm.get('chargeDelivery')"
+            label="Cargo de Quien Entrega">
             <input
+              maxlength="150"
               type="text"
               class="form-control"
-              formControlName="deliveryCharge" />
+              formControlName="chargeDelivery" />
           </form-field>
         </div>
 
         <div class="col-md-6">
           <form-field
             [control]="generateReceiptForm.get('plateNumber')"
-            label="Número de placa">
+            label="Número de Placa">
             <input
+              maxlength="20"
               type="text"
               class="form-control"
               formControlName="plateNumber" />
@@ -54,11 +58,13 @@
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <form-check label="Firma electrónica" for="eleSigDelivery">
+          <form-check label="Firma Electrónica" for="electronicSignatureEnt">
             <input
-              id="eleSigDelivery"
+              id="electronicSignatureEnt"
+              value="S"
               type="checkbox"
-              formControlName="eleSigDelivery" />
+              (change)="electronicSignatureEntSelect()"
+              formControlName="electronicSignatureEnt" />
           </form-check>
         </div>
 
@@ -66,7 +72,11 @@
           <form-field
             [control]="generateReceiptForm.get('seal')"
             label="Precinto">
-            <input type="text" class="form-control" formControlName="seal" />
+            <input
+              maxlength="150"
+              type="text"
+              class="form-control"
+              formControlName="seal" />
           </form-field>
         </div>
       </div>
@@ -75,8 +85,9 @@
         <div class="col-md-6">
           <form-field
             [control]="generateReceiptForm.get('nameReceipt')"
-            label="Nombre quien recibe">
+            label="Nombre Quien Recibe">
             <input
+              maxlength="150"
               type="text"
               class="form-control"
               formControlName="nameReceipt" />
@@ -85,12 +96,13 @@
 
         <div class="col-md-6">
           <form-field
-            [control]="generateReceiptForm.get('observations')"
+            [control]="generateReceiptForm.get('observation')"
             label="Observaciones">
             <input
+              maxlength="1500"
               type="text"
               class="form-control"
-              formControlName="observations" />
+              formControlName="observation" />
           </form-field>
         </div>
       </div>
@@ -99,10 +111,11 @@
         <div class="col-md-6">
           <form-field
             [control]="generateReceiptForm.get('chargeReceipt')"
-            label="Cargo quien recibe">
+            label="Cargo Quien Recibe">
             <input
               type="text"
               class="form-control"
+              maxlength="15"
               formControlName="chargeReceipt" />
           </form-field>
         </div>
@@ -111,30 +124,34 @@
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <form-check label="Firma electrónica" for="eleSigReceipt">
+          <form-check
+            label="Firma Electrónica"
+            for="electronicSignatureReceipt">
             <input
-              id="eleSigReceipt"
+              id="electronicSignatureReceipt"
+              (change)="electronicSignatureReceiptSelect()"
               type="checkbox"
-              formControlName="eleSigReceipt" />
+              formControlName="electronicSignatureReceipt" />
           </form-check>
         </div>
       </div>
 
       <div class="row pt-4">
-        <h5 class="title">Testigo del recibo</h5>
+        <h5 class="title">Testigo del Recibo</h5>
 
         <div class="m-3 btn-toolbar">
-          <button (click)="newWitness()" class="btn btn-primary btn-sm active">
-            Nuevo Testigo
+          <button (click)="newWitness()" class="btn btn-info btn-sm active">
+            Nuevo Testigo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
-
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="settings"
-          [source]="paragraphs"
-          (delete)="delete($event.data)">
-        </ng2-smart-table>
+        <div [class]="loadingWitness ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="paragraphs"
+            (delete)="delete($event.data)">
+          </ng2-smart-table>
+        </div>
       </div>
     </form>
   </div>
@@ -144,6 +161,7 @@
         <confirm-button
           [disabled]="!generateReceiptForm.valid"
           [loading]="loading"
+          [btnSmall]="false"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

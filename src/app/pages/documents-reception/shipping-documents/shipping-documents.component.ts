@@ -19,7 +19,6 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
-  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
@@ -33,6 +32,8 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { TmpNotificationService } from 'src/app/core/services/ms-notification/tmp-notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -69,6 +70,8 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   officeNumber: string = null;
   officeKey: string = null;
   queryMode: boolean = null;
+  loadingDoc: boolean = false;
+  selectedRow: any = null;
 
   get formControls() {
     return this.documentsForm.controls;
@@ -87,7 +90,9 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     private reportService: ReportService,
     private goodParameterService: GoodParametersService,
     private securityService: SecurityService,
-    private jwtHelper: JwtHelperService
+    private jwtHelper: JwtHelperService,
+    private tmpNotificationService: TmpNotificationService,
+    private jasperService: SiabService
   ) {
     super();
     this.settings = {
@@ -123,6 +128,17 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     return true;
   }
 
+  sendNotification(notification: any, selected: boolean) {
+    if (selected) {
+      this.selectedNotifications.push(notification);
+      console.log('this.selectedNotifications ', this.selectedNotifications);
+    } else {
+      this.selectedNotifications = this.selectedNotifications.filter(
+        _notification => _notification.wheelNumber != notification.wheelNumber
+      );
+    }
+  }
+
   ngOnInit(): void {
     this.openDialog();
     this.formControls.messageType.valueChanges
@@ -153,13 +169,31 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
       ...MODAL_CONFIG,
       class: 'modal-dialog-centered',
       initialState: {
-        callback: (data: { job: any; copies: any[] }) => {
-          if (data) {
-            this.queryMode = true;
-            this.patchFormValue(data);
-          } else {
+        callback: (data: { job: any; copies: any[]; estado: any }) => {
+          //console.log("data", data);
+          const cadena = JSON.stringify(data);
+          //console.log("entraaaaa :", cadena);
+          if (cadena == '"campo"') {
+            //console.log("entra a cadena");
             this.queryMode = false;
             this.documentsForm.enable();
+            this.notifications = [];
+            window.scrollTo(0, 0);
+            this.documentsForm.reset();
+            this.jobForm.reset();
+            this.officeNumber = null;
+            this.officeKey = null;
+          } else {
+            if (data) {
+              //console.log("entra1");
+              this.queryMode = true;
+              this.patchFormValue(data);
+              window.scrollTo(0, 0);
+            } else {
+              //console.log("entra2")
+              this.queryMode = false;
+              this.documentsForm.enable();
+            }
           }
         },
       },
@@ -227,26 +261,46 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     }
   }
 
-  sendNotification(notification: any, selected: boolean) {
-    if (selected) {
-      this.selectedNotifications.push(notification);
-    } else {
-      this.selectedNotifications = this.selectedNotifications.filter(
-        _notification => _notification.wheelNumber != notification.wheelNumber
-      );
-    }
-  }
+  //NO SE MIGRA EL REPORTE RGEROFPOFIVOLANTE
+  //Actualmente en SIAB no se visualizan, presentan error
 
-  printPdf() {
-    const url = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPOFIVOLANTE.pdf?NO_OFICIO=${this.officeNumber}`;
-    window.open(url, `${this.officeKey}.pdf`);
-  }
-
+  /*  printPdf() {
+  
+      let params = {
+        PARAMFORM: 'NO',
+        PNO_OFICIO: this.officeNumber,
+        PTEXTO_OFICIO: this.officeKey,
+      };
+  
+      this.jasperService
+  
+        //.fetchReport('RGEROFPOFIVOLANTE', params)
+        .fetchReportBlank('blank')
+        .subscribe(response => {
+          if (response !== null) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            // this.onLoadToast('success', '', 'Reporte generado');
+            this.modalService.show(PreviewDocumentsComponent, config);
+          }
+        });
+    } */
   save() {
-    if (this.queryMode) {
+    /*if (this.queryMode) {
       this.printPdf();
       return;
-    }
+    }*/
     this.documentsForm.markAllAsTouched();
     if (!this.documentsForm.valid && !this.queryMode) {
       this.onLoadToast('warning', 'Advertencia', 'Valida el formulario');
@@ -260,12 +314,18 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
       );
       return;
     }
-    this.getDepartmentById().subscribe({
+    let idDepart = this.jwtHelper.decodeToken().department;
+    console.log('idDepart ', idDepart);
+    this.getDepartmentById(Number(idDepart)).subscribe({
       next: (department: any) => this.setOfficeKey(department),
     });
+    for (let i = 0; i < this.selectedNotifications.length; i++) {
+      this.saveNotification(this.selectedNotifications[i]);
+    }
   }
 
   setOfficeKey(department: IDepartment) {
+    //debugger;
     const { dsarea, lastOffice } = department;
     const last = Number(lastOffice ?? 0) + 1;
     const year = new Date().getFullYear();
@@ -279,18 +339,23 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     this.departmentService.update2(department).subscribe();
   }
 
-  getDepartmentById() {
-    const token = this.jwtHelper.decodeToken();
+  getDeparmentById(id: number) {
+    const data = {
+      id: id,
+    };
+    return this.departmentService.getDeparmentById(data);
+  }
+
+  getDepartmentById(id: number) {
     return this.getPhaseEdo().pipe(
       map((res: any) => res.stagecreated as number),
       switchMap(phaseEdo =>
-        this.getLoogedUser(token.preferred_username).pipe(
+        this.getDeparmentById(id).pipe(
           map(res => {
-            const info = res.data[0];
             return {
-              id: Number(info.departament),
-              numDelegation: Number(info.delegation),
-              numSubDelegation: Number(info.subdelegation),
+              id: Number(id),
+              numDelegation: Number(res.numDelegation),
+              numSubDelegation: Number(res.numSubDelegation),
               phaseEdo,
             };
           })
@@ -323,6 +388,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     const { receiver, cpp } = this.formControls;
     this.receiver.controls.personKey.setValue(receiver.value);
     this.cpp.controls.personKey.setValue(`${cpp.value}`);
+
     const copies = [this.receiver];
     if (cpp.value) {
       copies.push(this.cpp);
@@ -364,7 +430,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
       tap(response => {
         this.loading = false;
         this.patchOfficeCve(response);
-        this.printPdf();
+        //this.printPdf();
       })
     );
   }
@@ -376,10 +442,9 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   }
 
   resetScreen() {
-    this.notifications = [];
-    window.scrollTo(0, 0);
-    this.documentsForm.reset();
-    this.jobForm.reset();
+    //this.notifications = [];
+    //this.documentsForm.reset();
+    //this.jobForm.reset();
     this.officeNumber = null;
     this.officeKey = null;
     this.openDialog();
@@ -479,12 +544,13 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
       this.documentsForm.markAllAsTouched();
       return;
     }
+
     const { delegation, subdelegation, department } = this.formControls;
-    const params = this.params.getValue();
-    params.addFilter('delDestinyNumber', delegation.value);
+    const params = new FilterParams(); //this.params.getValue();
+    params.addFilter('delDestinyNumber', this.formControls.delegation.value);
     params.addFilter('subDelDestinyNumber', subdelegation.value);
     params.addFilter('departamentDestinyNumber', department.value);
-    params.addFilter('officeNumber', SearchFilter.NULL);
+    //params.addFilter('officeNumber', SearchFilter.NULL);
     this.params.next(params);
   }
 
@@ -512,5 +578,25 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
 
   getSubjectById(code: string) {
     return this.affairService.getById(code);
+  }
+
+  saveNotification(notificacion: any) {
+    //console.log('notifica -> ', notificacion);
+    notificacion.institutionNumber = notificacion.institutionNumber.id;
+    this.notificationService.create(notificacion).subscribe({
+      next: data => {
+        console.log(data);
+        //this.onLoadToast('success', 'Notificación exitosa', '');
+      },
+      error: err => {
+        console.log(err);
+        this.onLoadToast('error', 'Error', 'No se logro guardar notificación');
+      },
+    });
+  }
+
+  selectRow(row: any) {
+    this.selectedRow = row;
+    console.log('this.selectedRow -> ', this.selectedRow);
   }
 }

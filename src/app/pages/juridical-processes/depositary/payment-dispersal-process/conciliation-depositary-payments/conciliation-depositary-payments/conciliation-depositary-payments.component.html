@@ -8,6 +8,7 @@
       <div class="col-12 col-sm-12 col-md-4 text-end">
         <button class="btn btn-primary active btn-sm" (click)="goBack()">
           Regresar
+          <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>
@@ -24,14 +25,16 @@
         </div>
       </div>
     </div>
-    <!-- Forms DEPOSITARIA -->
-    <ng-container *ngIf="!loading">
+    <!-- Forms DEPOSITARIA *ngIf="!loading" -->
+    <ng-container>
       <ngx-form-depositaria
         [form]="form"
         [formDepositario]="formDepositario"
         [listDateOptions]="dataPagosRecibidos"
+        (cleanData)="clearData($event)"
         (formValues)="btnRunPayment($event)"
         (searchGoodNumber)="btnSearchGood($event)"
+        (searchGoodData)="selectedGood($event)"
         (formDepositariaValues)="btnDepositaryRecharge($event)"
         (formValuesValidacion)="btnValidacionPagos($event)"
         (eliminarDispersionPagos)="btnDispersar($event)"

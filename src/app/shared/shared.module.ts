@@ -4,7 +4,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { defineLocale } from 'ngx-bootstrap/chronos';
-import { BsDatepickerModule, BsLocaleService } from 'ngx-bootstrap/datepicker';
+import {
+  BsDatepickerConfig,
+  BsDatepickerModule,
+  BsLocaleService,
+} from 'ngx-bootstrap/datepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { esLocale } from 'ngx-bootstrap/locale';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
@@ -13,6 +17,7 @@ import { CardComponent } from './components/card/card.component';
 import { CheckboxColumnComponent } from './components/checkbox-column/checkbox-column.component';
 import { CheckboxDisabledElementComponent } from './components/checkbox-element-smarttable/checkbox-disabled-element';
 import { CheckboxElementComponent } from './components/checkbox-element-smarttable/checkbox-element';
+import { CheckboxElementRecordAccountStatementsComponent } from './components/checkbox-element-smarttable/checkbox-element-record-account-statements';
 import { ColumnsSelectComponent } from './components/columns-select/columns-select.component';
 import { ConfirmButtonComponent } from './components/confirm-button/confirm-button.component';
 import { DividerComponent } from './components/divider/divider.component';
@@ -31,9 +36,28 @@ import { MaxLengthDirective } from './directives/maxlength.directive';
 import { NumbersFilterDirective } from './directives/numbers-filter.directive';
 import { PermissionsDirective } from './directives/permissions.directive';
 /*Redux NgRX Global Vars Store*/
+import { NgxCurrencyModule } from 'ngx-currency';
+import { CustomSelectWidthLoading } from '../@standalone/shared-forms/custom-select-loading/custom-select-loading.component';
+import { CustomDateFilterComponent } from '../@standalone/shared-forms/filter-date-custom/custom-date-filter';
+import { CustomDateDayFilterComponent } from '../@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
+import { CustomDateMounthFilterComponent } from '../@standalone/shared-forms/filter-date-mounth-custom/custom-date-mounth-filter';
+import { CustomFilterComponent } from '../@standalone/shared-forms/input-number/input-number';
+import { ButtonColumnComponent } from './components/button-column/button-column.component';
+import { DatePickerDirective } from './directives/date-picker.directive';
 import { UppercaseDirective } from './directives/uppercase.directive';
 import { GlobalVarsModule } from './global-vars/global-vars.module';
 
+export const customCurrencyMaskConfig = {
+  align: 'right',
+  allowNegative: true,
+  allowZero: false,
+  decimal: '.',
+  precision: 2,
+  prefix: '',
+  suffix: '',
+  thousands: ',',
+  nullable: true,
+};
 @NgModule({
   declarations: [
     ColumnsSelectComponent,
@@ -41,6 +65,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     SearchBarComponent,
     ConfirmButtonComponent,
     SelectComponent,
+    CustomSelectWidthLoading,
     SeeMoreComponent,
     ModalComponent,
     CardComponent,
@@ -52,12 +77,19 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     SearchBarSimpleComponent,
     DividerComponent,
     CheckboxElementComponent,
+    CheckboxElementRecordAccountStatementsComponent,
     CheckboxDisabledElementComponent,
     PermissionsDirective,
     MaxLengthDirective,
     NumbersFilterDirective,
     AutoSizeDirective,
     UppercaseDirective,
+    DatePickerDirective,
+    CustomDateFilterComponent,
+    CustomDateMounthFilterComponent,
+    CustomDateDayFilterComponent,
+    ButtonColumnComponent,
+    CustomFilterComponent,
   ],
   imports: [
     CommonModule,
@@ -70,6 +102,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     BsDatepickerModule.forRoot(),
     NgScrollbarModule,
     GlobalVarsModule,
+    NgxCurrencyModule.forRoot(customCurrencyMaskConfig),
   ],
   exports: [
     ColumnsSelectComponent,
@@ -79,6 +112,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     DividerComponent,
     ConfirmButtonComponent,
     SelectComponent,
+    CustomSelectWidthLoading,
     SeeMoreComponent,
     ModalComponent,
     CardComponent,
@@ -93,6 +127,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     FormRadioComponent,
     CommonModule,
     CheckboxElementComponent,
+    CheckboxElementRecordAccountStatementsComponent,
     CheckboxDisabledElementComponent,
     CheckboxColumnComponent,
     NgScrollbarModule,
@@ -102,11 +137,24 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     NumbersFilterDirective,
     AutoSizeDirective,
     UppercaseDirective,
+    DatePickerDirective,
+    CustomDateFilterComponent,
+    CustomDateMounthFilterComponent,
+    CustomDateDayFilterComponent,
+    ButtonColumnComponent,
+    CustomFilterComponent,
+    NgxCurrencyModule,
   ],
+  providers: [{ provide: BsDatepickerConfig, useFactory: getDatepickerConfig }],
 })
 export class SharedModule {
   constructor(private localeService: BsLocaleService) {
     defineLocale('es', esLocale);
     this.localeService.use('es');
   }
+}
+export function getDatepickerConfig(): BsDatepickerConfig {
+  return Object.assign(new BsDatepickerConfig(), {
+    showWeekNumbers: false,
+  });
 }

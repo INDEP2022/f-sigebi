@@ -1,4 +1,4 @@
 export enum LabelGoodEndPoints {
-  cat = `catalog`,
-  labelGood = `label-good`,
+  BasePage = 'catalog',
+  labelGood = 'label-good',
 }

@@ -7,10 +7,12 @@ import { AtachedDocumentsService } from 'src/app/core/services/ms-documents/atta
   styles: [],
 })
 export class TextChangeComponent implements OnInit {
+  oficnum: number | string;
+
   constructor(private atachedDocumentsService: AtachedDocumentsService) {}
 
   ngOnInit(): void {
-    this.atachedDocumentsService.getAllFilter().subscribe({
+    /* this.atachedDocumentsService.getAllFilter().subscribe({
       next: resp => {
         // this.itemsJsonBienes = [...resp.data];
         console.log(JSON.stringify([...resp.data]));
@@ -24,7 +26,7 @@ export class TextChangeComponent implements OnInit {
           this.onLoadToast('error', 'Error', err.error.message);
         }
       },
-    });
+    });*/
   }
   onLoadToast(arg0: string, arg1: string, error: string) {
     throw new Error('Method not implemented.');

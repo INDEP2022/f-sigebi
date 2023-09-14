@@ -1,17 +1,26 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
+import {
+  BsDatepickerConfig,
+  BsDatepickerViewMode,
+} from 'ngx-bootstrap/datepicker';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export interface IReport {
   data: File;
 }
@@ -24,10 +33,21 @@ export interface IReport {
 export class ReportComponent extends BasePage implements OnInit {
   @Output() sendSearchForm = new EventEmitter<any>();
   @Output() resetForm = new EventEmitter<boolean>();
+  @Input() delegationField: string = 'delegation';
+  @Input() subdelegationField: string = 'subdelegation';
+  flyersForm: FormGroup;
+  minModeFromMonth: BsDatepickerViewMode = 'month';
+  minModeFromYear: BsDatepickerViewMode = 'year';
   params = new BehaviorSubject<ListParams>(new ListParams());
   PN_DELEG = new EventEmitter<IDelegation>();
   PN_SUBDEL = new EventEmitter<ISubdelegation>();
+  selectedSubDelegation = new DefaultSelect<ISubdelegation>();
+  selectedDelegation = new DefaultSelect<IDelegation>();
+  bsValueFromMonth: Date = new Date();
+  bsValueFromYear: Date = new Date();
   showSearchForm: boolean = true;
+  bsConfigFromMonth: Partial<BsDatepickerConfig>;
+  bsConfigFromYear: Partial<BsDatepickerConfig>;
   searchForm: ModelForm<any>;
   reportForm: FormGroup;
   datePickerConfig: Partial<BsDatepickerConfig> = {
@@ -35,12 +55,19 @@ export class ReportComponent extends BasePage implements OnInit {
     adaptivePosition: true,
     dateInputFormat: 'MMMM YYYY',
   };
-
+  get delegation() {
+    return this.reportForm.get(this.delegationField);
+  }
+  get subdelegation() {
+    return this.reportForm.get(this.subdelegationField);
+  }
   constructor(
     private fb: FormBuilder,
     private reportService: ReportService,
+    private delegationService: DelegationService,
     private siabService: SiabService,
     private modalService: BsModalService,
+    private printFlyersService: PrintFlyersService,
     private sanitizer: DomSanitizer
   ) {
     super();
@@ -48,6 +75,60 @@ export class ReportComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    const params = new ListParams();
+    this.getDelegation(params);
+    this.getSubDelegations(params);
+    this.startCalendars();
+  }
+  getDelegation(params?: ListParams) {
+    this.delegationService.getAll(params).subscribe({
+      next: data => {
+        this.selectedDelegation = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        console.log(err);
+        this.selectedDelegation = new DefaultSelect();
+        this.onLoadToast('error', 'Error', err);
+      },
+    });
+  }
+  getSubDelegations(params?: ListParams) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter(
+      'delegationNumber',
+      this.reportForm.get(this.delegationField).value
+    );
+    this.printFlyersService.getSubdelegations2(paramsF.getParams()).subscribe({
+      next: data => {
+        this.selectedSubDelegation = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+
+        this.onLoadToast('error', 'Error', error);
+      },
+    });
+  }
+  startCalendars() {
+    this.bsConfigFromMonth = Object.assign(
+      {},
+      {
+        minMode: this.minModeFromMonth,
+        dateInputFormat: 'MM',
+      }
+    );
+    this.bsConfigFromYear = Object.assign(
+      {},
+      {
+        minMode: this.minModeFromYear,
+        dateInputFormat: 'YYYY',
+      }
+    );
   }
 
   prepareForm() {
@@ -65,12 +146,11 @@ export class ReportComponent extends BasePage implements OnInit {
     let params = {
       PN_DELEG: this.reportForm.controls['delegation'].value,
       PN_SUBDEL: Number(this.reportForm.controls['subdelegation'].value),
-      PF_MES: this.reportForm.controls['PF_MES'].value,
-      PF_ANIO: this.reportForm.controls['PF_ANIO'].value,
+      PF_MES: this.bsValueFromMonth.getFullYear(),
+      PF_ANIO: this.bsValueFromYear.getMonth(),
     };
 
     //this.showSearch = true;
-    console.log(params);
 
     setTimeout(() => {
       this.onLoadToast('success', 'procesando', '');
@@ -79,7 +159,7 @@ export class ReportComponent extends BasePage implements OnInit {
     const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
     window.open(pdfurl, 'RGEROFPRECEPDOCUM.pdf');
     setTimeout(() => {
-      this.onLoadToast('success', 'Reporte generado', '');
+      this.onLoadToast('success', 'Reporte', 'Generado Correctamente');
     }, 2000);
 
     this.loading = false;
@@ -94,13 +174,15 @@ export class ReportComponent extends BasePage implements OnInit {
     let params = {
       PN_DELEG: this.reportForm.controls['delegation'].value,
       PN_SUBDEL: this.reportForm.controls['subdelegation'].value,
-      PF_MES: this.reportForm.controls['PF_MES'].value,
-      PF_ANIO: this.reportForm.controls['PF_ANIO'].value,
+      PF_MES: this.bsValueFromMonth.getFullYear(),
+      PF_ANIO: this.bsValueFromYear.getMonth(),
     };
 
     this.siabService
-      .fetchReport('RGEROFPRECEPDOCUM', params)
+      // .fetchReport('RGEROFPRECEPDOCUM', params)
+      .fetchReport('blank', params)
       .subscribe(response => {
+        // response=null;
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
           const url = URL.createObjectURL(blob);
@@ -116,6 +198,12 @@ export class ReportComponent extends BasePage implements OnInit {
             ignoreBackdropClick: true, //ignora el click fuera del modal
           };
           this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          this.onLoadToast(
+            'warning',
+            'advertencia',
+            'Sin Datos Para los Rangos de Fechas Suministrados'
+          );
         }
       });
   }

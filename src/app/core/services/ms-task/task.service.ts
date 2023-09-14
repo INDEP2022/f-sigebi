@@ -28,8 +28,6 @@ export class TaskService extends HttpService {
 
   // getTasksByUser(id: string | number, params?: ListParams) {
   getTasksByUser(_params: ListParams | string) {
-    console.log('Parametros recibidos: ', _params);
-
     const params = this.makeParams(_params);
 
     // const route = `${TaskEndpoints.FindAll}?filter.user=${id}`;
@@ -37,9 +35,7 @@ export class TaskService extends HttpService {
     //   params.get('text')
     // )}&limit=${params.get('limit')}&page=${params.get('page')}&filter.assignees=$ilike:${params.get('others')}`;
 
-    const route = `${TaskEndpoints.FindAll}`;
-
-    console.log('Route: ', route);
+    const route = `${TaskEndpoints.newFind}`;
 
     // return this.get(route, params);
     return this.get(route, _params);
@@ -54,10 +50,19 @@ export class TaskService extends HttpService {
   }
 
   getAll(params: ListParams | string): Observable<any> {
-    return this.get<any>(TaskEndpoints.FindAll, params);
+    return this.get<any>(TaskEndpoints.newFind, params);
   }
 
   update(id: number | string, body: ITask): Observable<any> {
     return this.put<any>(`${TaskEndpoints.Update}/${id}`, body);
+  }
+
+  downloadReport(body: Object) {
+    return this.post<any>(TaskEndpoints.DownloadReport, body);
+  }
+
+  downloadReportBase64(params: ListParams | string) {
+    const route = TaskEndpoints.GetBase64TaskReport;
+    return this.get(route, params);
   }
 }

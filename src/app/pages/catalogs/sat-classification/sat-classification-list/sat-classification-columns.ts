@@ -3,10 +3,18 @@ export const SAT_CLASSIFICATION_COLUMNS = {
     title: 'Id',
     type: 'number',
     sort: false,
+    width: '20%',
   },
   nombre_clasificacion: {
     title: 'Nombre Clasificación',
     type: 'string',
     sort: false,
+    width: '60%',
+  },
+  version: {
+    title: 'Versión',
+    type: 'string',
+    sort: false,
+    width: '20%',
   },
 };

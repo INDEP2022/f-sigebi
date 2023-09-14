@@ -20,6 +20,7 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { IRequest } from 'src/app/core/models/requests/request.model';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
@@ -56,6 +57,8 @@ export class DocRequestTabComponent
   @Input() typeDoc = '';
   @Input() updateInfo: boolean = true;
   @Input() displayName: string = '';
+  @Input() typeModule?: string = '';
+  @Input() requestId?: number = null; // se pasa desde el padre en algunos componentes
   title: string = '';
   showSearchForm: boolean = false;
   selectDocType = new DefaultSelect<any>();
@@ -64,6 +67,9 @@ export class DocRequestTabComponent
   paramsTypeDoc = new BehaviorSubject<ListParams>(new ListParams());
   paramsRegDel = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: LocalDataSource = new LocalDataSource();
+  paragraphs1: any[] = [];
+  docRequest: any[] = [];
+  docExpedient: any[] = [];
   columns = DOC_REQUEST_TAB_COLUMNS;
   parameter: any;
   type: string = '';
@@ -71,6 +77,8 @@ export class DocRequestTabComponent
   selectState = new DefaultSelect<any>();
   selectTransfe = new DefaultSelect<any>();
   idRequest: number = 0;
+  recordId: number = 0;
+  requestInfo: IRequest;
   totalItems: number = 0;
   formLoading: boolean = false;
   allDataDocReq: any[] = [];
@@ -92,22 +100,21 @@ export class DocRequestTabComponent
     private requestService: RequestService
   ) {
     super();
-    this.idRequest = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as unknown as number;
+    this.idRequest = this.idRequest
+      ? this.idRequest
+      : (this.activatedRoute.snapshot.paramMap.get('id') as unknown as number);
   }
 
   ngOnInit(): void {
-    // DISABLED BUTTON - FINALIZED //
     this.task = JSON.parse(localStorage.getItem('Task'));
-    this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
+    this.statusTask = this.task?.status;
 
     this.prepareForm();
     this.getRegDelegation(new ListParams());
     this.getState(new ListParams());
     this.getTransfe(new ListParams());
     this.getDocType(new ListParams());
+    this.getInfoRequest();
     this.typeDoc = this.type ? this.type : this.typeDoc;
     if (this.typeDoc === 'doc-request') {
       this.container.createEmbeddedView(this.template);
@@ -122,11 +129,10 @@ export class DocRequestTabComponent
       },
 
       edit: {
-        editButtonContent:
-          '<i class="fa fa-file text-primary mx-2" > Detalle</i>',
+        editButtonContent: '<i class="fa fa-file text-primary mx-2" > </i>',
       },
       delete: {
-        deleteButtonContent: '<i  class="fa fa-eye text-info mx-2"> Ver</i>',
+        deleteButtonContent: '<i  class="fa fa-eye text-info mx-2"> </i>',
       },
       columns: DOC_REQUEST_TAB_COLUMNS,
     };
@@ -142,17 +148,39 @@ export class DocRequestTabComponent
         });
       },
     }; */
+  }
 
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getData(data);
+  getInfoRequest() {
+    this.requestService.getById(this.idRequest).subscribe({
+      next: response => {
+        this.recordId = response.recordId;
+        this.requestInfo = response;
+        this.docRequestForm.get('recordId').setValue(response.recordId);
+        this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+          this.getData(data);
+        });
+      },
+      error: error => {},
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('typeDoc', this.typeDoc);
+    this.idRequest = this.idRequest || this.requestId;
+    if (
+      this.typeModule != '' &&
+      this.typeModule == 'doc-complementary' &&
+      !this.idRequest
+    ) {
+      this.idRequest = this.activatedRoute.snapshot.paramMap.get(
+        'request'
+      ) as unknown as number;
+    }
     let onChangeCurrentValue = changes['typeDoc'].currentValue;
     let updateInfo = changes['updateInfo']?.currentValue;
     this.typeDoc = onChangeCurrentValue;
     this.setTitle(onChangeCurrentValue);
+    this.getInfoRequest();
   }
 
   prepareForm(): void {
@@ -197,6 +225,7 @@ export class DocRequestTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       noRequest: [null],
+      recordId: [null],
       responsible: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
@@ -210,37 +239,35 @@ export class DocRequestTabComponent
 
     this.docRequestForm.get('noRequest').setValue(this.idRequest);
   }
+  private data: any[][] = [];
 
   getData(params: ListParams) {
     this.loading = true;
-    this.getInfoRequest();
-    this.docRequestForm.get('noRequest').setValue(this.idRequest);
+    this.docRequestForm.get('noRequest').setValue(this.requestInfo.id);
     const idSolicitud: Object = {
-      xidSolicitud: this.idRequest,
+      xidSolicitud: this.requestInfo.id,
     };
     this.wContentService
       .getDocumentos(idSolicitud, params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
-        next: async data => {
-          console.log('docs', data);
-          const transferent = await this.getInfoRequest();
-          if (transferent == 1) {
-            const filterDoc = data.data.filter((item: any) => {
-              if (
-                item.dDocType == 'Document' &&
-                item.xidTransferente == 1 &&
-                item.xidBien == '         '
-              ) {
-                return item;
-              }
-            });
-
-            const info = filterDoc.map(async (items: any) => {
-              const filter: any = await this.filterGoodDoc([
-                items.xtipoDocumento,
-              ]);
-              if (items?.xdelegacionRegional) {
+        next: async res => {
+          if (this.typeDoc == 'doc-request') {
+            if (this.requestInfo.transferenceId == 1) {
+              const filterDoc = res.data.filter((item: any) => {
+                if (
+                  item.dDocType == 'Document'
+                  //&&
+                  //item.xidBien == '         '
+                ) {
+                  return item;
+                }
+              });
+              const info = filterDoc.map(async (items: any) => {
+                const filter: any = await this.filterGoodDoc([
+                  items.xtipoDocumento,
+                ]);
+                /*if (items?.xdelegacionRegional) {
                 const regionalDelegation = await this.getRegionalDelegation(
                   items?.xdelegacionRegional
                 );
@@ -252,33 +279,41 @@ export class DocRequestTabComponent
                 );
                 items['transferentName'] = transferent;
               }
-              /*if (items?.xestado) {
+                if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
-              items.xtipoDocumento = filter[0]?.ddescription;
-              return items;
-            });
+                items.xtipoDocumento = filter[0]?.ddescription;
+                return items;
+              });
 
-            Promise.all(info).then(x => {
-              this.allDataDocReq = x;
-              this.paragraphs.load(x);
-              this.totalItems = this.paragraphs.count();
-              this.loading = false;
-            });
-          }
+              Promise.all(info).then(data => {
+                this.docRequest =
+                  res.data.length > 10 ? this.setPaginate([...data]) : data;
+                this.totalItems = data.length;
 
-          if (transferent != 1) {
-            const filterDoc = data.data.filter((item: any) => {
-              if (item.dDocType == 'Document' && item.xidBien == '         ') {
-                return item;
-              }
-            });
-            const info = filterDoc.map(async (items: any) => {
-              const filter: any = await this.filterGoodDoc([
-                items.xtipoDocumento,
-              ]);
-              if (items?.xdelegacionRegional) {
+                //this.allDataDocReq = x;
+                //this.paragraphs.load(x);
+
+                this.loading = false;
+              });
+            }
+
+            if (this.requestInfo.transferenceId != 1) {
+              const filterDoc = res.data.filter((item: any) => {
+                if (
+                  item.dDocType == 'Document'
+                  //&&
+                  //item.xidBien == '         '
+                ) {
+                  return item;
+                }
+              });
+              const info = filterDoc.map(async (items: any) => {
+                const filter: any = await this.filterGoodDoc([
+                  items.xtipoDocumento,
+                ]);
+                /*if (items?.xdelegacionRegional) {
                 const regionalDelegation = await this.getRegionalDelegation(
                   items?.xdelegacionRegional
                 );
@@ -289,22 +324,129 @@ export class DocRequestTabComponent
                   items?.xidTransferente
                 );
                 items['transferentName'] = transferent;
-              }
-              /*if (items?.xestado) {
+              }*/
+                /*if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
-              items.xtipoDocumento = filter[0]?.ddescription;
-              return items;
-            });
+                items.xtipoDocumento = filter[0]?.ddescription;
+                return items;
+              });
 
-            Promise.all(info).then(x => {
-              this.allDataDocReq = x;
-              this.paragraphs.load(x);
-              this.totalItems = this.paragraphs.count();
-              this.loading = false;
-            });
+              Promise.all(info).then(data => {
+                this.docRequest =
+                  res.data.length > 10 ? this.setPaginate([...data]) : data;
+                this.totalItems = data.length;
+
+                //this.allDataDocReq = x;
+                //this.paragraphs.load(x);
+
+                this.loading = false;
+              });
+            }
           }
+
+          if (this.typeDoc == 'doc-expedient') {
+            if (
+              this.requestInfo.transferenceId != 1 &&
+              this.requestInfo.recordId
+            ) {
+              const filterDoc = res.data.filter((item: any) => {
+                if (
+                  item.dDocType == 'Document' &&
+                  item.xidBien == '         ' &&
+                  item.xidExpediente == this.requestInfo.recordId
+                ) {
+                  return item;
+                }
+              });
+              const info = filterDoc.map(async (items: any) => {
+                const filter: any = await this.filterGoodDoc([
+                  items.xtipoDocumento,
+                ]);
+                /*if (items?.xdelegacionRegional) {
+                const regionalDelegation = await this.getRegionalDelegation(
+                  items?.xdelegacionRegional
+                );
+                items['delegationName'] = regionalDelegation;
+              }
+              if (items?.xidTransferente) {
+                const transferent = await this.getTransferent(
+                  items?.xidTransferente
+                );
+                items['transferentName'] = transferent;
+              }*/
+                /*if (items?.xestado) {
+                const state = await this.getStateDoc(items?.xestado);
+                items['stateName'] = state;
+              } */
+                items.xtipoDocumento = filter[0]?.ddescription;
+                return items;
+              });
+
+              Promise.all(info).then(data => {
+                this.docExpedient =
+                  res.data.length > 10 ? this.setPaginate([...data]) : data;
+                this.totalItems = data.length;
+
+                //this.allDataDocReq = x;
+                //this.paragraphs.load(x);
+
+                this.loading = false;
+              });
+            }
+
+            if (
+              this.requestInfo.transferenceId != 1 &&
+              this.requestInfo.recordId
+            ) {
+              const filterDoc = res.data.filter((item: any) => {
+                if (
+                  item.dDocType == 'Document' &&
+                  item.xidBien == '         ' &&
+                  item.xidExpediente == this.requestInfo.recordId
+                ) {
+                  return item;
+                }
+              });
+              const info = filterDoc.map(async (items: any) => {
+                const filter: any = await this.filterGoodDoc([
+                  items.xtipoDocumento,
+                ]);
+                /*if (items?.xdelegacionRegional) {
+                const regionalDelegation = await this.getRegionalDelegation(
+                  items?.xdelegacionRegional
+                );
+                items['delegationName'] = regionalDelegation;
+              }
+              if (items?.xidTransferente) {
+                const transferent = await this.getTransferent(
+                  items?.xidTransferente
+                );
+                items['transferentName'] = transferent;
+              }*/
+                /*if (items?.xestado) {
+                const state = await this.getStateDoc(items?.xestado);
+                items['stateName'] = state;
+              } */
+                items.xtipoDocumento = filter[0]?.ddescription;
+                return items;
+              });
+
+              Promise.all(info).then(data => {
+                this.docExpedient =
+                  res.data.length > 10 ? this.setPaginate([...data]) : data;
+                this.totalItems = data.length;
+
+                //this.allDataDocReq = x;
+                //this.paragraphs.load(x);
+
+                this.loading = false;
+              });
+            }
+          }
+
+          this.loading = false;
         },
         error: error => {
           this.loading = false;
@@ -312,15 +454,18 @@ export class DocRequestTabComponent
       });
   }
 
-  getInfoRequest() {
-    return new Promise((resolve, reject) => {
-      this.requestService.getById(this.idRequest).subscribe({
-        next: response => {
-          resolve(response.transferenceId);
-        },
-        error: error => {},
-      });
+  private setPaginate(value: any[]): any[] {
+    let data: any[] = [];
+    let dataActual: any = [];
+    value.forEach((val, i) => {
+      dataActual.push(val);
+      if ((i + 1) % this.params.value.limit === 0) {
+        this.data.push(dataActual);
+        dataActual = [];
+      }
     });
+    data = this.data[this.params.value.page - 1];
+    return data;
   }
 
   filterGoodDoc(typeDocument: any[]) {
@@ -379,19 +524,20 @@ export class DocRequestTabComponent
     });
   }
 
-  getTransferent(id: number) {
+  /*getTransferent(id: number) {
     return new Promise((resolve, reject) => {
       this.transferentService
         .getById(id)
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: data => {
+            console.log('Método getTransferent');
             resolve(data?.nameTransferent);
           },
           error: error => {},
         });
     });
-  }
+  }*/
 
   getDocType(params: ListParams) {
     this.wContentService

@@ -1,102 +1,210 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Recibo resguardo</h5>
+    <h5 *ngIf="proceess == 'warehouse'" class="modal-title">Recibo Almacén</h5>
+    <h5 *ngIf="proceess == 'guard'" class="modal-title">Recibo Resguardo</h5>
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-md-6">
-          <form-field [control]="form.get('witness1')" label="Testigo 1">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="witness1" />
-          </form-field>
+          <h6>Testigo 1</h6>
+          <div class="row pt-3">
+            <form-field
+              [control]="form.get('nameWitnessOne')"
+              label="Testigo 1">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="nameWitnessOne" />
+            </form-field>
+          </div>
+          <div class="row pt-2">
+            <form-field [control]="form.get('catIdWitnessOne')">
+              <ngx-select
+                [form]="form"
+                control="catIdWitnessOne"
+                [data]="identifications"
+                value="keyId"
+                bindLabel="description"
+                (fetchItems)="getIdentification($event)"
+                label="Identificaci&oacute;n"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-2">
+            <form-field
+              [control]="form.get('noIdWitnessOne')"
+              label="No. Identificaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noIdWitnessOne" />
+            </form-field>
+          </div>
+
+          <div class="row pt-2">
+            <form-field
+              [control]="form.get('expIdWitnessIne')"
+              label="Expedida Por">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="expIdWitnessIne" />
+            </form-field>
+          </div>
         </div>
+
         <div class="col-md-6">
-          <form-field [control]="form.get('identification')">
-            <ngx-select
-              [form]="form"
-              control="identification"
-              [data]="identifications"
-              value="id"
-              bindLabel="name"
-              label="Identificaci&oacute;n"></ngx-select>
-          </form-field>
+          <h6>Testigo 2</h6>
+          <div class="row pt-3">
+            <form-field
+              [control]="form.get('nameWitnessTwo')"
+              label="Testigo 2">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="nameWitnessTwo" />
+            </form-field>
+          </div>
+          <div class="row pt-2">
+            <form-field [control]="form.get('catIdWitnessTwo')">
+              <ngx-select
+                [form]="form"
+                control="catIdWitnessTwo"
+                [data]="identifications"
+                value="keyId"
+                bindLabel="description"
+                (fetchItems)="getIdentification($event)"
+                label="Identificaci&oacute;n"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-2">
+            <form-field
+              [control]="form.get('noIdWitnessTwo')"
+              label="No. Identificaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noIdWitnessTwo" />
+            </form-field>
+          </div>
+
+          <div class="row pt-2">
+            <form-field
+              [control]="form.get('expIdWitnessTwo')"
+              label="Expedida Por">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="expIdWitnessTwo" />
+            </form-field>
+          </div>
         </div>
       </div>
+      <div class="row pt-4">
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <h6>Persona Recibe</h6>
+            <div class="row pt-3">
+              <form-field
+                [control]="form.get('officialSeg')"
+                label="Persona Recibe ">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="officialSeg" />
+              </form-field>
+            </div>
+            <div class="row pt-3">
+              <form-field
+                [control]="form.get('chargeSeg')"
+                label="Cargo Persona Recibe ">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="chargeSeg" />
+              </form-field>
+            </div>
+            <div class="row pt-2">
+              <form-field [control]="form.get('catIdFuncSeg')">
+                <ngx-select
+                  [form]="form"
+                  control="catIdFuncSeg"
+                  [data]="identifications"
+                  value="keyId"
+                  bindLabel="description"
+                  (fetchItems)="getIdentification($event)"
+                  label="Identificaci&oacute;n"></ngx-select>
+              </form-field>
+            </div>
 
-      <div class="row pt-5">
-        <div class="col-md-6">
-          <form-field
-            [control]="form.get('numIdentification')"
-            label="No. identificaci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="numIdentification" />
-          </form-field>
+            <div class="row pt-2">
+              <form-field
+                [control]="form.get('noIdFuncSeg')"
+                label="No. identificaci&oacute;n">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="noIdFuncSeg" />
+              </form-field>
+            </div>
+
+            <div class="row pt-2">
+              <form-field
+                [control]="form.get('expIdFuncSeg')"
+                label="Expedida Por">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="expIdFuncSeg" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h6>Funcionario INDEP</h6>
+            <div class="row pt-3">
+              <form-field
+                [control]="form.get('officialSae')"
+                label="Representante INDEP">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="officialSae" />
+              </form-field>
+            </div>
+
+            <div class="row pt-2">
+              <form-field
+                [control]="form.get('chargeSae')"
+                label="Cargo Representate INDEP">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="chargeSae" />
+              </form-field>
+            </div>
+            <p>Datos del convenio</p>
+            <div class="row pt-4">
+              <form-field
+                [control]="form.get('contractNumber')"
+                label="No. de Contrato">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="contractNumber" />
+              </form-field>
+            </div>
+            <div class="row pt-2">
+              <form-field [control]="form.get('vigencia')" label="Vigencia">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="vigencia" />
+              </form-field>
+            </div>
+          </div>
         </div>
-
-        <div class="col-md-6">
-          <form-field [control]="form.get('issuedBy')" label="Expedida Por">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="issuedBy" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-5">
-        <div class="col-md-6">
-          <form-field [control]="form.get('witness2')" label="Testigo 2">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="witness2" />
-          </form-field>
-        </div>
-
-        <div class="col-md-6">
-          <form-field [control]="form.get('identification2')">
-            <ngx-select
-              [form]="form"
-              control="identification2"
-              [data]="identifications"
-              value="id"
-              bindLabel="name"
-              label="Identificaci&oacute;n"></ngx-select>
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-5">
-        <div class="col-md-6">
-          <form-field
-            [control]="form.get('numIdentification2')"
-            label="No. identificaci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="numIdentification2" />
-          </form-field>
-        </div>
-
-        <div class="col-md-6">
-          <form-field [control]="form.get('issuedBy2')" label="Expedida Por">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="issuedBy2" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-5">
-        <form-field [control]="form.get('validity')" label="Vigencia">
-          <input type="text" class="form-control" formControlName="validity" />
-        </form-field>
       </div>
     </form>
   </div>

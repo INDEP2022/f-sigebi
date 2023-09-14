@@ -1,76 +1,129 @@
+import { DatePipe } from '@angular/common';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
+
 export const REFUND_CONTROL_COLUMNS = {
-  id: {
+  ctlDevPagId: {
     title: 'Id',
     type: 'number',
     sort: false,
   },
-  key: {
+  cveCtlDevPag: {
     title: 'Clave',
     type: 'string',
     sort: false,
   },
-  status: {
+  idEstatus: {
     title: 'Estatus',
     type: 'string',
     sort: false,
   },
-  dispersion: {
+  direccion: {
     title: 'Dis.',
     type: 'string',
     sort: false,
   },
-  dispersionType: {
+  idTipoDisp: {
     title: 'Tipo Dispersión',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      if (value !== null) {
+        if (value == '1') {
+          return 'Por Cliente';
+        } else {
+          return 'Por Lote';
+        }
+      } else {
+        return '';
+      }
+    },
   },
-  origin: {
+  idOrigen: {
     title: 'Origen',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      if (value !== null) {
+        if (value == '1') {
+          return 'No Ganadores';
+        } else {
+          return 'Ganadores';
+        }
+      } else {
+        return '';
+      }
+    },
   },
-  createDate: {
+  fecCreacion: {
     title: 'Fecha Creación',
     type: 'string',
     sort: false,
+    filter: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+    },
   },
-  endDate: {
+  fecTermino: {
     title: 'Fecha Término',
     type: 'string',
     sort: false,
+    filter: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+    },
   },
 };
 
 export const RELATED_EVENT_COLUMNS = {
-  id: {
+  eventId: {
     title: 'Id',
     type: 'number',
     sort: false,
   },
-  cve: {
+  processKey: {
     title: 'Cve. Proceso',
     type: 'string',
     sort: false,
+    filter: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.event) {
+        if (row.event.processKey) {
+          return row.event.processKey;
+        } else {
+          return 'Clave NO Encontrada';
+        }
+      } else {
+        return 'Clave NO Encontrada';
+      }
+    },
   },
-  quantity: {
+  numPayments: {
     title: 'Cantidad',
     type: 'number',
     sort: false,
   },
-  amount: {
+  paymentsAmount: {
     title: 'Monto',
     type: 'number',
     sort: false,
+    filter: false,
   },
 };
 
 export const BANK_ACCOUNTS_COLUMNS = {
-  status: {
-    title: 'Estatus',
-    type: 'string',
-    sort: false,
-  },
-  cve: {
+  // status: {
+  //   title: 'Estatus',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  cveBank: {
     title: 'Cve. Banco',
     type: 'string',
     sort: false,
@@ -80,92 +133,137 @@ export const BANK_ACCOUNTS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  quantity: {
+  countPayments: {
     title: 'Cantidad',
     type: 'number',
     sort: false,
   },
-  amount: {
+  amountPayments: {
     title: 'Monto',
     type: 'number',
     sort: false,
+    filter: false,
   },
-  expenseId: {
+  idwaste: {
     title: 'Id Gasto',
     type: 'number',
     sort: false,
   },
-  paymentId: {
+  idCtldevpag: {
     title: 'Id Pago',
     type: 'number',
     sort: false,
   },
-  folioNumber: {
+  numberInvoicePay: {
     title: 'Folio Pag.',
     type: 'number',
     sort: false,
   },
-  paymentDate: {
+  datePay: {
     title: 'Fecha Pago',
     type: 'number',
     sort: false,
+    filter: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+    },
   },
-  checkNumber: {
+  numberCheck: {
     title: 'No. de Cheque',
     type: 'number',
     sort: false,
   },
-  observations: {
+  obscanc: {
     title: 'Observaciones de Cancelación',
-    type: 'number',
     sort: false,
+    type: 'custom',
+    renderComponent: SeeMoreComponent,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'null' || value == 'undefined') {
+        return '';
+      }
+
+      return value ? value : '';
+    },
+  },
+  _fis: {
+    title: 'FIS',
+    sort: false,
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        console.log(data);
+      });
+    },
+  },
+  _cnt: {
+    title: 'CNT',
+    sort: false,
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        console.log(data);
+      });
+    },
+  },
+  _pto: {
+    title: 'PTO',
+    sort: false,
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        console.log(data);
+      });
+    },
+  },
+  _tsr: {
+    title: 'TSR',
+    sort: false,
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        console.log(data);
+      });
+    },
   },
 };
 
 export const PAYMENT_COLUMNS = {
-  validKey: {
-    title: 'Clave Válida',
-    type: 'string',
-    sort: false,
-  },
-  transferDate: {
-    title: 'Fecha Transf.',
-    type: 'string',
-    sort: false,
-  },
-  id: {
+  paymentId: {
     title: 'Id Pago',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  date: {
+  paymentDate: {
     title: 'Fecha',
     type: 'string',
     sort: false,
   },
-  reference: {
+  id: {
     title: 'Referencia',
+    type: 'number',
+    sort: false,
+  },
+  date: {
+    title: 'Monto',
     type: 'string',
     sort: false,
   },
-  amount: {
-    title: 'Monto',
-    type: 'number',
-    sort: false,
-  },
-  batch: {
+  _reference: {
     title: 'Lote',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  clientId: {
+  _clientId: {
     title: 'Id Cliente',
     type: 'number',
-    sort: false,
-  },
-  rfc: {
-    title: 'R.F.C.',
-    type: 'string',
     sort: false,
   },
   name: {
@@ -174,22 +272,32 @@ export const PAYMENT_COLUMNS = {
     sort: false,
   },
   crossBankKey: {
-    title: 'Clave Interbancaria',
+    title: 'Clabe Interbancaria',
     type: 'string',
     sort: false,
   },
   keyAuthorization: {
-    title: 'Autoriza Cambio Clave',
+    title: 'Autoriza Cambio Clabe',
     type: 'string',
     sort: false,
   },
   keyChangeObservations: {
-    title: 'Autoriza Cambio Clave',
+    title: 'Observaciones de Cambio Clabe',
     type: 'string',
     sort: false,
   },
   transferDateObservations: {
     title: 'Observaciones de Fecha de Transferencia',
+    type: 'string',
+    sort: false,
+  },
+  amount: {
+    title: 'Clabe Válida',
+    type: 'custom',
+    sort: false,
+  },
+  dateTransfer: {
+    title: 'Fecha Transf.',
     type: 'string',
     sort: false,
   },

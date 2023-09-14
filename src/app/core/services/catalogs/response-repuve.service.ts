@@ -26,10 +26,14 @@ export class ResponseRepuveService implements ICrudMethods<IResponseRepuve> {
   }
 
   update(id: string | number, model: IResponseRepuve): Observable<Object> {
-    return this.responseRepuveRepository.update(this.route, id, model);
+    return this.responseRepuveRepository.updateResponseRepuve(
+      this.route,
+      id,
+      model
+    );
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.responseRepuveRepository.remove(this.route, id);
+    return this.responseRepuveRepository.remove(`${this.route}/id/`, id);
   }
 }

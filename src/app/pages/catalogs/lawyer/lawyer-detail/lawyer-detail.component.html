@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ status }} ABOGADO</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
@@ -11,7 +11,7 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('street')" label="Calle N">
+          <form-field [control]="form.get('street')" label="Calle">
             <input type="text" class="form-control" formControlName="street" />
           </form-field>
         </div>
@@ -23,7 +23,7 @@
             [control]="form.get('streetNumber')"
             label="No&#46; Exterior">
             <input
-              type="number"
+              type="text"
               class="form-control"
               min="1"
               pattern="^[0-9]+"
@@ -35,7 +35,7 @@
             [control]="form.get('apartmentNumber')"
             label="No&#46; Interior">
             <input
-              type="number"
+              type="text"
               min="1"
               pattern="^[0-9]+"
               class="form-control"
@@ -58,7 +58,8 @@
             label="Delegaci&oacute;n o municipio"
             value="id"
             (fetchItems)="getFromSelect($event)"
-            control="delegation"></ngx-select>
+            control="delegation"
+            [readonly]="false"></ngx-select>
         </div>
         <div class="col-md-4">
           <form-field
@@ -93,7 +94,8 @@
             label="No. de Despacho"
             value="id"
             (fetchItems)="getOffices($event)"
-            control="idOffice"></ngx-select>
+            control="idOffice"
+            [readonly]="false"></ngx-select>
         </div>
       </div>
     </form>

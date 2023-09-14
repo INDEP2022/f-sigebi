@@ -57,6 +57,7 @@ export class TypeDoctoListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });
@@ -101,17 +102,21 @@ export class TypeDoctoListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
         this.typeDoctoService.remove(typeDocto.id).subscribe({
           next: response => {
-            this.onLoadToast('success', 'Exito', 'Eliminado Correctamente');
+            this.alert('success', 'Tipo Siniestro', 'Borrado Correctamente');
             this.getExample();
           },
           error: err => {
-            this.onLoadToast('error', 'Error', 'Intente nuevamente');
+            this.alert(
+              'warning',
+              'Tipo Docto',
+              'No se puede eliminar el objeto debido a una relación con otra tabla.'
+            );
           },
         });
       }

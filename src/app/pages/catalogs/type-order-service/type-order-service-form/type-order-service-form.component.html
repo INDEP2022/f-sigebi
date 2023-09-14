@@ -6,10 +6,12 @@
     <form [formGroup]="typeOrderServiceForm" class="form-material">
       <div class="row">
         <div class="col-md-12">
-          <form-field [control]="typeOrderServiceForm.get('cve')" label="CVE">
-            <input type="text" class="form-control" formControlName="cve" />
+          <form-field [control]="typeOrderServiceForm.get('key')" label="Clave">
+            <input type="text" class="form-control" formControlName="key" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-4">
         <div class="col-md-12">
           <form-field
             [control]="typeOrderServiceForm.get('description')"

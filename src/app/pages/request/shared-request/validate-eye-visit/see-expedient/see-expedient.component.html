@@ -1,0 +1,48 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <div class="row pt-2">
+      <tabset class="md-tabs">
+        <tab heading="Documentos Expediente" (selectTab)="requestSelected(2)">
+          <app-doc-request-tab
+            [typeDoc]="typeDoc"
+            [updateInfo]="updateInfo"
+            [displayName]="'validateEyeVisitResult'"
+            [typeModule]="'doc-complementary'"
+            [requestId]="idRequest"></app-doc-request-tab>
+        </tab>
+        <tab heading="Documentos Solicitud" (selectTab)="requestSelected(1)">
+          <app-doc-request-tab
+            [typeDoc]="typeDoc"
+            [updateInfo]="updateInfo"
+            [requestId]="idRequest"></app-doc-request-tab>
+        </tab>
+        <tab heading="Documentos Bienes">
+          <app-good-doc-tab [requestId]="idRequest"></app-good-doc-tab>
+        </tab>
+        <tab heading="Fotos Bienes" (selectTab)="selectTabData()">
+          <app-photos-assets [requestId]="idRequest"></app-photos-assets>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <!--       <div class="m-3">
+        <button type="button" class="btn btn-primary btn-sm active">
+          Aceptar
+        </button>
+      </div> -->
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

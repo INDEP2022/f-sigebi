@@ -1,39 +1,336 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Componentes basicos form</h5>
-    <div class="add-select">
-      <button class="btn btn-primary btn-sm active" (click)="openModal()">
-        Nueva
-      </button>
-    </div>
+    <h5 class="title">Wiki - Componentes</h5>
   </div>
   <div body>
     <div class="row">
+      <div class="col-md-12">
+        <h4>Lista bloque con filtros</h4>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <button class="btn btn-primary btn-sm active mr-2" (click)="showData()">
+          Ver lista datos
+        </button>
+      </div>
+    </div>
+
+    <hr class="row" />
+
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Información del usuario logeado</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6" style="height: 250px; overflow-y: auto">
+        <pre>{{ token | json }}</pre>
+      </div>
+    </div>
+
+    <hr class="row" />
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Botones</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="alert alert-danger">
+          <b
+            >A consideración del desarrollador y/o el espacio desponible en la
+            pantalla; el botón puede tener texto e icono o solo icono
+          </b>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4 my-3" *ngFor="let button of buttons">
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <b>{{ button.name }}</b>
+            <button class="btn" [cdkCopyToClipboard]="button.code">
+              <i
+                class="fa fa-clone"
+                [style.color]="'#AEB6BF'"
+                aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+        <div class="row pt-1">
+          <div
+            class="col-md-12 text-center"
+            [innerHTML]="getElement(button.code)"></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="row" />
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Diseño de pestañas</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="md-tabs">
+        <tabset>
+          <tab heading="Pestaña 1" id="tab1"
+            >Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt
+            adipisci, totam earum repudiandae illo aliquam quia deserunt
+            voluptate aperiam amet soluta? Sunt similique, eaque ullam aperiam
+            placeat facilis quidem corrupti.</tab
+          >
+          <tab heading="Pestaña 2"
+            >Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur
+            suscipit facere sunt architecto aliquam vero excepturi quam, ut
+            facilis sit minus neque consequuntur unde maiores illo est,
+            recusandae repellendus ducimus!</tab
+          >
+          <tab heading="Pestaña 3"
+            >Lorem, ipsum dolor sit amet consectetur adipisicing elit. Mollitia
+            voluptatum natus optio! Pariatur voluptate hic provident illo!
+            Labore aspernatur nemo voluptas eos! Nostrum earum veniam adipisci
+            consequatur dolores. Quaerat, eveniet!</tab
+          >
+        </tabset>
+      </div>
+    </div>
+
+    <hr class="row" />
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Carga de datos en formulario</h4>
+      </div>
+    </div>
+
+    <div class="row">
+      <form-loader></form-loader>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        Para agregar el loader se debe importar el componente
+        <code>FormLoaderComponent</code> en el módulo correspondiente
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <pre>
+// component.ts
+import {{ '{' }} FormLoaderComponent {{
+            '}'
+          }} from 'src/app/@standalone/form-loader/form-loader.component';
+
+imports: [
+    ....
+    FormLoaderComponent
+        ],
+// component.html
+{{ '&lt;form-loader>&lt;/form-loader>' }}
+        </pre>
+      </div>
+    </div>
+
+    <hr class="row" />
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Alertas</h4>
+      </div>
+    </div>
+
+    <hr class="row" />
+    <div class="row pt-3">
+      <h5>Estructura de los mensajes de alerta</h5>
+      <div class="col-md-12">
+        <ul>
+          <li>El/La <b>"ELEMENTO"</b> se ha <b>"ACCION"</b></li>
+          <li>El/La <b>"ELEMENTO"</b> ha sido <b>"ACCION"</b></li>
+        </ul>
+        Ejemplos:
+        <ul>
+          <li>El Acta se ha Guardado</li>
+          <li>El Reporte se ha Generado</li>
+          <li>El Expediente ha sido Eliminado</li>
+        </ul>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <b>Alerta de eliminar</b>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <div>
+                <button
+                  class="btn btn-info btn-sm active"
+                  (click)="deleteAlert()">
+                  Mostrar alerta
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <b>Alerta de continuar con el proceso</b>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <div>
+                <button
+                  class="btn btn-info btn-sm active"
+                  (click)="questionAlert()">
+                  Mostrar alerta
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <b>Alerta de error</b>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <div>
+                <button
+                  class="btn btn-info btn-sm active"
+                  (click)="errorAlert()">
+                  Mostrar alerta
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <b>Alerta de advertencia</b>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <div>
+                <button
+                  class="btn btn-info btn-sm active"
+                  (click)="warningAlert()">
+                  Mostrar alerta
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <b>Alerta de proceso completado</b>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <div>
+                <button
+                  class="btn btn-info btn-sm active"
+                  (click)="successAlert()">
+                  Mostrar alerta
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="row" />
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Paginación</h4>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+
+    <hr class="row" />
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Filtrado por columnas</h4>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <app-list-data [plain]="true"></app-list-data>
+      </div>
+    </div>
+
+    <div class="row">
       <h5>Ejemplo de formulario tipado</h5>
       <form [formGroup]="userExample" class="form-material">
-        <form-field
-          [control]="userExample.get('username')"
-          label="Input Usuario">
-          <input type="text" class="form-control" formControlName="username" />
-        </form-field>
-        <ng-container formGroupName="person">
+        <div class="row pt-3">
+          <div class="col-md-3">
+            <form-field
+              label="Formato de Moneda"
+              [control]="userExample.get('currency')">
+              <input
+                currencyMask
+                type="Formato Moneda"
+                class="form-control"
+                formControlName="currency" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
           <form-field
-            [control]="personForm.get('name')"
-            label="Input Nombre Persona">
-            <input type="text" class="form-control" formControlName="name" />
-          </form-field>
-          <form-field
-            [control]="personForm.get('birthdate')"
-            label="Input Fecha Persona">
+            [control]="userExample.get('username')"
+            label="Input Usuario">
             <input
               type="text"
               class="form-control"
-              formControlName="birthdate"
-              bsDatepicker />
+              formControlName="username" />
           </form-field>
+        </div>
+        <ng-container formGroupName="person">
+          <div class="row pt-3">
+            <form-field
+              [control]="personForm.get('name')"
+              label="Input Nombre Persona">
+              <input type="text" class="form-control" formControlName="name" />
+            </form-field>
+          </div>
+          <div class="row pt-3">
+            <form-field
+              [control]="personForm.get('birthdate')"
+              label="Input Fecha Persona">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="birthdate"
+                bsDatepicker />
+            </form-field>
+          </div>
         </ng-container>
         <div>
-          <button class="btn btn-primary" (click)="addRole()">
+          <button class="btn btn-primary active btn-sm" (click)="addRole()">
             Agregar Rol
           </button>
         </div>
@@ -46,7 +343,9 @@
               <input type="text" class="form-control" formControlName="role" />
             </form-field>
             <div>
-              <button class="btn btn-danger" (click)="removeRole(i)">
+              <button
+                class="btn btn-danger active btn-sm"
+                (click)="removeRole(i)">
                 Eliminar Role
               </button>
             </div>
@@ -67,15 +366,7 @@
           [accept]="'image/*'"></file-upload>
       </div>
     </div>
-    <div>
-      <div class="md-tabs">
-        <tabset>
-          <tab heading="Basic title" id="tab1">Basic content</tab>
-          <tab heading="Basic Title 1">Basic content 1</tab>
-          <tab heading="Basic Title 2">Basic content 2</tab>
-        </tabset>
-      </div>
-    </div>
+
     <br />
     <form [formGroup]="formExample" class="form-material">
       <form-field [control]="formExample.get('input')" label="Input Label">

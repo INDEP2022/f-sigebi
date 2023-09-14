@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IGoodsTransAva } from 'src/app/core/models/ms-good/goods-trans-ava.model';
 import { GoodTransAvaService } from 'src/app/core/services/ms-good/goods-trans-ava.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -18,10 +19,9 @@ export class EditValidationExemptedGoodsModalComponent
 {
   title: string = 'Bienes Exentos de validación';
   edit: boolean = false;
-
+  goodsTransAva: IGoodsTransAva;
   goodForm: ModelForm<IGood>;
   good: IGood;
-
   goods = new DefaultSelect();
 
   constructor(
@@ -40,22 +40,12 @@ export class EditValidationExemptedGoodsModalComponent
     this.goodForm = this.fb.group({
       goodNumber: [null, []],
       process: [null, []],
-      registryNumber: [null, []],
+      registryNumber: [null, [Validators.required]],
     });
-    if (this.good != null) {
+    if (this.goodsTransAva != null) {
       this.edit = true;
-      console.log(this.good);
-      this.goodForm.patchValue(this.good);
+      this.goodForm.patchValue(this.goodsTransAva);
     }
-  }
-
-  onValuesChange() {
-    // console.log(delegationChange);
-    // this.delegationValue = delegationChange;
-    // this.subDelegationForm.controls['phaseEdo'].setValue(
-    //   delegationChange.etapaEdo
-    // );
-    // this.delegations = new DefaultSelect();
   }
 
   close() {
@@ -66,25 +56,46 @@ export class EditValidationExemptedGoodsModalComponent
     this.edit ? this.update() : this.create();
   }
 
+  update() {
+    if (this.goodForm.valid) {
+      this.loading = true;
+      console.log(this.goodForm.value);
+      this.goodTransAvaService.update(this.goodForm.value).subscribe({
+        next: data => {
+          this.handleSuccess();
+          this.modalRef.hide();
+        },
+        error: error => {
+          this.loading = false;
+          this.alert('warning', `No es Posible Actualizar el Registro`, '');
+        },
+      });
+    } else {
+      this.alert(
+        'warning',
+        'El Formulario no es Válido. Revise los Campos Requeridos',
+        ''
+      );
+    }
+  }
+
   create() {
     this.loading = true;
     this.goodTransAvaService.create(this.goodForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    this.goodTransAvaService.update(this.goodForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      next: data => {
+        this.handleSuccess();
+        this.modalRef.hide();
+      },
+      error: error => {
+        this.loading = false;
+        this.alert('warning', `No es Posible Crear el Registro`, '');
+      },
     });
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', `${message} Correctamente`, ``);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

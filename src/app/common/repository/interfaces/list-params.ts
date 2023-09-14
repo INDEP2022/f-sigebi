@@ -6,7 +6,18 @@ export class ListParams {
   limit?: number = 10;
   pageSize?: number = 10;
   take?: number = 10;
-  //filter?: string = '';
+  // filter?: string = '';
+}
+
+export class FilterBulkTechnical {
+  //text?: string = '';
+  [others: string]: string | number;
+  page?: number = 1;
+  inicio?: number = 1;
+  limit?: number = 10;
+  pageSize?: number = 10;
+  //take?: number = 10;
+  filter?: string = '';
 }
 
 export class FilterParams {
@@ -14,7 +25,7 @@ export class FilterParams {
   limit?: number = 10;
   search?: string = '';
   sortBy?: string = null;
-  private filters: string[] = [];
+  filters: string[] = [];
 
   constructor(filter?: FilterParams) {
     if (filter) {
@@ -30,6 +41,10 @@ export class FilterParams {
     this.filters.push(filter);
   }
 
+  addFilter3(field: string, value: string) {
+    this.filters.push(`${field}=${value}`);
+  }
+
   addFilter(field: string, value: string | number, operator?: SearchFilter) {
     const filter = new DynamicFilter(field, value, operator).getParams();
     this.filters.push(filter);
@@ -38,11 +53,16 @@ export class FilterParams {
   getParams() {
     const paginationParams = this.getPaginationParams();
     const allParams = [...this.filters, ...paginationParams];
+    // console.log(allParams);
     return allParams.join('&');
   }
 
   getFilterParams() {
     return this.filters.join('&');
+  }
+
+  getFilterByParam(param: string) {
+    return this.filters.find(x => x.includes(param));
   }
 
   removeAllFilters() {
@@ -70,9 +90,13 @@ class DynamicFilter {
 
   getParams() {
     if (this.value == SearchFilter.NULL) {
-      return `filter.${this.field}=${this.operator ? this.operator + ':' : ''}${
-        SearchFilter.NULL
-      }`;
+      if (this.operator == SearchFilter.NULL) {
+        return `filter.${this.field}=${SearchFilter.NULL}`;
+      } else {
+        return `filter.${this.field}=${
+          this.operator ? this.operator + ':' : ''
+        }${SearchFilter.NULL}`;
+      }
     }
     return `filter.${this.field}=${this.operator}:${this.value}`;
   }
@@ -92,6 +116,9 @@ export enum SearchFilter {
   LTE = '$lte',
   BTW = '$btw',
   OR = '$or',
+  NOTIN = '$not:$in',
+  SD = '$sd',
+  LIKE2 = '$like',
 }
 
 export interface DynamicFilterLike {

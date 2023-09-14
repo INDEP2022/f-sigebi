@@ -1,0 +1,63 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Editar Texto</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row justify-content-center">
+        <div class="col-12">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                *ngIf="filterButton == 1"
+                [control]="form.get('editText')"
+                label="Editar texto">
+                <textarea
+                  rows="30"
+                  type="text"
+                  [readonly]="!disabledDictum"
+                  class="form-control"
+                  formControlName="editText"></textarea>
+              </form-field>
+
+              <form-field
+                *ngIf="filterButton != 1"
+                [control]="form.get('editText')"
+                label="Editar texto">
+                <textarea
+                  rows="30"
+                  type="text"
+                  class="form-control"
+                  formControlName="editText"></textarea>
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          *ngIf="filterButton == 1"
+          [disabled]="!disabledDictum"
+          (confirm)="confirm()"></confirm-button>
+        <confirm-button
+          *ngIf="filterButton != 1"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+
+      <!-- <div class="m-3">
+        
+      </div> -->
+
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

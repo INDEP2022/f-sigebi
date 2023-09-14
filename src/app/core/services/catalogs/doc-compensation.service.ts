@@ -34,12 +34,22 @@ export class DocCompensationService implements ICrudMethods<IDocCompensation> {
     return this.docCompensationRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IDocCompensation): Observable<Object> {
-    return this.docCompensationRepository.update(this.route, id, model);
+  updateCatalogDocCompensation(
+    id: string | number,
+    model: IDocCompensation
+  ): Observable<Object> {
+    return this.docCompensationRepository.updateCatalogDocCompensation(
+      this.route,
+      id,
+      model
+    );
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.docCompensationRepository.remove(this.route, id);
+  removeCatalogDocCompensation(id: string | number): Observable<Object> {
+    return this.docCompensationRepository.removeCatalogDocCompensation(
+      this.route,
+      id
+    );
   }
 
   getDocCompensationSat(params: ListParams) {

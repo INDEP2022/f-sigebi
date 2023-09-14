@@ -22,7 +22,19 @@ export class Repository<T> implements IRepository<T> {
   ): Observable<IListResponse<T>> {
     const params = this.makeParams(_params);
     const fullRoute = this.buildRoute(route);
+
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
+  }
+
+  getAll(
+    route: string,
+    _params?: ListParams | string
+  ): Observable<IListResponse<T>> {
+    const params = this.makeParams(_params);
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.get<IListResponse<T>>(`${fullRoute}/get-all`, {
+      params,
+    });
   }
 
   getById(route: string, id: number | string): Observable<T> {
@@ -30,11 +42,40 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.get<T>(`${fullRoute}/${id}`);
   }
 
+  getByIdH(route: string): Observable<T> {
+    const fullRoute = this.buildRoute(route);
+
+    return this.httpClient.get<T>(`${fullRoute}`);
+  }
+
+  getById02(route: string, params: ListParams): Observable<IListResponse<T>> {
+    const fullRoute = this.buildRoute(route);
+
+    const httpParams = new HttpParams({ fromObject: params as any });
+    return this.httpClient.get<IListResponse<T>>(fullRoute, {
+      params: httpParams,
+    });
+  }
+
+  newGetById(route: string, id: number | string): Observable<T> {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.get<T>(`${fullRoute}/id/${id}`);
+  }
+
+  getGoodByIds(route: string): Observable<T> {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.get<T>(`${fullRoute}`);
+  }
+
   create(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
-    // console.log(fullRoute);
-
     return this.httpClient.post<T>(`${fullRoute}`, formData);
+  }
+
+  create3(route: string, formData: Object, _params?: ListParams | string) {
+    const fullRoute = this.buildRoute(route);
+    const params = this.makeParams(_params);
+    return this.httpClient.post<T>(`${fullRoute}`, formData, { params });
   }
 
   update(route: string, id: number | string, formData: Object) {
@@ -43,6 +84,51 @@ export class Repository<T> implements IRepository<T> {
     // console.log(formData);
 
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
+  }
+  update22(route: string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/${id}`);
+    // console.log(formData);
+
+    return this.httpClient.put(`${fullRoute}`, formData);
+  }
+
+  updateTypeServices(route: string, id: number | string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/${id}`);
+    // console.log(formData);
+
+    return this.httpClient.put(`${fullRoute}`, formData);
+  }
+
+  updateClaimConclusion(route: string, id: number | string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.put(`${fullRoute}/${id}`, formData);
+  }
+
+  updateManegement(route: string, id: number | string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  updateSaveValue(route: string, id: number | string, formData: any) {
+    const fullRoute = this.buildRoute(route);
+    formData.id = id;
+    return this.httpClient.put(`${fullRoute}`, formData);
+  }
+
+  updateResponseRepuve(route: string, id: number | string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  updateCatagaloDelegations(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.put(`${fullRoute}`, formData);
   }
 
   newUpdate(route: string, formData: Object) {
@@ -63,12 +149,27 @@ export class Repository<T> implements IRepository<T> {
 
   remove(route: string, id: number | string) {
     const fullRoute = this.buildRoute(route);
+
     return this.httpClient.delete(`${fullRoute}/${id}`);
   }
 
+  remove5(route: string, id: number | string, id2: number | string) {
+    const fullRoute = this.buildRoute(route);
+
+    return this.httpClient.delete(`${fullRoute}`);
+  }
+
+  removeRepuves(route: string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.delete(`${fullRoute}`, { body: { key: formData } });
+  }
   newRemove(route: string, id: number | string) {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.delete(`${fullRoute}/id/${id}`);
+  }
+  removeDocSac(route: string, formData: any) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.delete(`${fullRoute}/id/${formData.id}`);
   }
 
   updateByIds(route: string, ids: Partial<T>, formData: Object) {
@@ -90,6 +191,7 @@ export class Repository<T> implements IRepository<T> {
   }
 
   private buildRoute(route: string) {
+    // debugger;
     const paths = route.split('/');
     paths.shift();
     if (paths.length === 0) {
@@ -197,6 +299,11 @@ export class Repository<T> implements IRepository<T> {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.delete(`${fullRoute}`, obj);
   }
+
+  removeDateDocuments(route: string, body?: {}) {
+    return this.httpClient.delete(`${environment.API_URL}${route}`, { body });
+  }
+
   update4(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.put(`${fullRoute}`, formData);
@@ -268,7 +375,15 @@ export class Repository<T> implements IRepository<T> {
   }
   getClassif(classif: string | number): Observable<IListResponse<T>> {
     return this.httpClient.get<IListResponse<T>>(
-      `${environment.API_URL}/catalog/api/v1/good-sssubtype?filter.numClasifGoods=$eq:${classif}`
+      `${environment.API_URL}catalog/api/v1/good-sssubtype?filter.numClasifGoods=$eq:${classif}`
+    );
+  }
+
+  getMenajeInmueble(
+    goodClassNumber: string | number
+  ): Observable<IListResponse<T>> {
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL}catalog/api/v1/good-sssubtype?filter.numClasifGoods=$eq:${goodClassNumber}`
     );
   }
 
@@ -278,7 +393,7 @@ export class Repository<T> implements IRepository<T> {
   ): Observable<IListResponse<T>> {
     const params = this.makeParams(_params);
     const fullRoute = this.buildRouteFilter(route);
-    console.log(fullRoute);
+
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
   }
 
@@ -290,5 +405,150 @@ export class Repository<T> implements IRepository<T> {
     }
     const ms = route.split('/')[0];
     return `${environment.API_URL}${ms}/api/v1/${paths.join('/')}`;
+  }
+
+  updateCatalogOpinions(route: string, id: number | string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(formData);
+
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  removeCatalogOpinions(route: string, id: number | string) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/id/${id}`);
+
+    return this.httpClient.delete(`${fullRoute}/id/${id}`);
+  }
+
+  updateCatalogDocCompensation(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(formData);
+
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  removeCatalogDocCompensation(route: string, id: number | string) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/id/${id}`);
+
+    return this.httpClient.delete(`${fullRoute}/id/${id}`);
+  }
+
+  updateCatalogSiabClasification(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(formData);
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  removeCatalogSiabClasification(route: string, id: number | string) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/id/${id}`);
+
+    return this.httpClient.delete(`${fullRoute}/id/${id}`);
+  }
+
+  updateThirdPartyCompany(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(formData);
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  removeThirdPartyCompany(route: string, id: number | string) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/id/${id}`);
+
+    return this.httpClient.delete(`${fullRoute}/id/${id}`);
+  }
+
+  updateTypeRelevant(route: string, id: number | string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  updateTypeRelevant2(route: string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+
+    return this.httpClient.put(`${fullRoute}`, formData);
+  }
+
+  updateCatalogPhotographMedia(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  removeCatalogPhotographMedia(route: string, id: number | string) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/id/${id}`);
+
+    return this.httpClient.delete(`${fullRoute}/id/${id}`);
+  }
+
+  // updateCatalogGoodSituation(route: string, formData: Object) {
+  //   const fullRoute = this.buildRoute(route);
+  //   console.log('fullRoute ', fullRoute)
+  //   console.log('formData ', formData)
+  //   return this.httpClient.put(`${fullRoute}`, formData);
+  // }
+
+  updateCatalogGoodSituation(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.put(`${fullRoute}`, formData);
+  }
+
+  removeCatalogGoodSituation(
+    route: string,
+    situation: number | string,
+    status: number | string
+  ) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/delete/${situation}/${status}`);
+
+    return this.httpClient.delete(`${fullRoute}/delete/${situation}/${status}`);
+  }
+
+  update8(
+    route: string,
+    id: number | string,
+    id1: number | string,
+    id2: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(fullRoute);
+    return this.httpClient.put(`${fullRoute}/${id}/${id1}/${id2}`, formData);
+  }
+
+  getAll3(
+    route: string,
+    id: number | string,
+    id1: number | string,
+    id2: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.get(`${fullRoute}/${id}/${id1}/${id2}`, formData);
   }
 }

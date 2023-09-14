@@ -27,6 +27,8 @@ export class ReliefDeleteComponent
   public form: FormGroup;
   selectWheel = new DefaultSelect<any>();
   ltrModel: string = '';
+  noExpediente: any = null;
+  cveDictamen: any = '';
   constructor(
     private notificationService: NotificationService,
     private fb: FormBuilder
@@ -64,6 +66,7 @@ export class ReliefDeleteComponent
       error: error => {
         console.log('', error);
         this.selectWheel = new DefaultSelect();
+        this.onLoadToast('warning', error.error.message, '');
       },
     });
   }
@@ -78,10 +81,12 @@ export class ReliefDeleteComponent
         this.onLoadToast(
           'warning',
           'Desahogo',
-          'El volante no tiene desahogo por borrar'
+          'El volante no tiene dictamen por desahogar'
         );
       } else {
-        this.form.get('noExpediente').setValue(item.expedientNumber);
+        this.noExpediente = item.expedientNumber;
+        this.cveDictamen = item.dictumKey;
+        // this.form.get('noExpediente').setValue(item.expedientNumber);
         this.form.get('cveDictamen').setValue(item.dictumKey);
       }
     } else {
@@ -90,7 +95,9 @@ export class ReliefDeleteComponent
   }
   cleanForm() {
     this.form.get('noVolante').setValue('');
-    this.form.get('noExpediente').setValue('');
+    this.noExpediente = '';
+    this.cveDictamen = '';
+    // this.form.get('noExpediente').setValue('');
     this.form.get('cveDictamen').setValue('');
   }
   btnBorrarDesahogo() {
@@ -100,21 +107,29 @@ export class ReliefDeleteComponent
       dictumKey: null,
     };
 
-    this.notificationService.update(idWheel, WheelObj).subscribe({
-      next: (data: any) => {
-        if (data) {
-          this.cleanForm();
-          this.onLoadToast(
-            'success',
-            'Desahogo',
-            'El desahogo se ha borrado con éxito'
-          );
-          this.selectWheel = new DefaultSelect();
-        }
-      },
-      error: error => {
-        this.onLoadToast('success', 'Desahogo', error.error.message);
-      },
+    this.alertQuestion(
+      'question',
+      'Continuar',
+      '¿Desea aplicar el desahogo?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        this.notificationService.update(idWheel, WheelObj).subscribe({
+          next: (data: any) => {
+            if (data) {
+              this.cleanForm();
+              this.alert(
+                'success',
+                'Desahogo',
+                'El Desahogo se ha aplicado con éxito'
+              );
+              this.selectWheel = new DefaultSelect();
+            }
+          },
+          error: error => {
+            this.alert('error', 'Desahogo', error.error.message);
+          },
+        });
+      }
     });
   }
 }

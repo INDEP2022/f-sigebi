@@ -1,29 +1,25 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">
-      {{ status }} CLASIFICACI&Oacute;N DE INSTITUCI&Oacute;N
-    </h5>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material" [formGroup]="officeForm">
       <div class="row">
         <div class="col-md-4">
           <form-field
-            [control]="form.get('numRegister')"
-            label="N&Uacute;mero de Registro">
+            [control]="officeForm.get('numRegister')"
+            label="N&uacute;mero de Registro">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="numRegister"
-              min="1"
-              pattern="^[0-9]+" />
+              formControlName="numRegister" />
           </form-field>
         </div>
 
         <div class="row mt-4">
           <div class="col-md-12">
             <form-field
-              [control]="form.get('description')"
+              [control]="officeForm.get('description')"
               label="Descripci&oacute;n">
               <input
                 type="text"
@@ -40,7 +36,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!form.valid"
+          [disabled]="officeForm.invalid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

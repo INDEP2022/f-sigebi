@@ -24,7 +24,7 @@ export class CatFinancialIndicatorsModalComponent
   financialIndicatorsForm: ModelForm<IFinancialIndicators>;
   financialIndicators: IFinancialIndicators;
 
-  title: string = 'Catálogo de indicadores financieros';
+  title: string = 'Catálogo de Indicador Financiero';
   edit: boolean = false;
 
   constructor(
@@ -57,7 +57,8 @@ export class CatFinancialIndicatorsModalComponent
   }
 
   //Teclado virtual
-  ngAfterViewInit() {
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     this.keyboard = new Keyboard({
       onChange: input => this.onChange(input),
       onKeyPress: (button: string) => this.onKeyPress(button),
@@ -71,12 +72,15 @@ export class CatFinancialIndicatorsModalComponent
   }
 
   onChange = (input: string) => {
+    console.log(input);
+    this.financialIndicatorsForm.controls['formula'].setValue(input);
     this.value = input;
     console.log('Input changed', input);
   };
 
   onKeyPress = (button: string) => {
     console.log('Button pressed', button);
+    this.financialIndicatorsForm.controls['formula'].setValue('');
 
     /**
      * If you want to handle the shift and caps lock buttons
@@ -107,24 +111,54 @@ export class CatFinancialIndicatorsModalComponent
   }
 
   create() {
-    this.loading = true;
-    this.financialIndicatorsService
-      .create(this.financialIndicatorsForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.financialIndicatorsForm.controls['name'].value.trim() == '' ||
+      this.financialIndicatorsForm.controls['description'].value.trim() == '' ||
+      this.financialIndicatorsForm.controls['formula'].value.trim() == '' ||
+      (this.financialIndicatorsForm.controls['name'].value.trim() == '' &&
+        this.financialIndicatorsForm.controls['description'].value.trim() ==
+          '' &&
+        this.financialIndicatorsForm.controls['formula'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.financialIndicatorsService
+        .create(this.financialIndicatorsForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    console.log(this.financialIndicatorsForm);
-    this.financialIndicatorsService
-      .update(this.financialIndicators.id, this.financialIndicatorsForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.financialIndicatorsForm.controls['name'].value.trim() == '' ||
+      this.financialIndicatorsForm.controls['description'].value.trim() == '' ||
+      this.financialIndicatorsForm.controls['formula'].value.trim() == '' ||
+      (this.financialIndicatorsForm.controls['name'].value.trim() == '' &&
+        this.financialIndicatorsForm.controls['description'].value.trim() ==
+          '' &&
+        this.financialIndicatorsForm.controls['formula'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      console.log(this.financialIndicatorsForm.getRawValue());
+
+      this.financialIndicatorsService
+        .update(
+          this.financialIndicators.id,
+          this.financialIndicatorsForm.getRawValue()
+        )
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

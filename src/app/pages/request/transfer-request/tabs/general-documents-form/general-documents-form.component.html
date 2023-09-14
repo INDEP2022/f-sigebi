@@ -5,7 +5,7 @@
       (click)="showSearchForm = true"
       *ngIf="!showSearchForm">
       <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
-      expedientes</a
+      Expedientes</a
     >
   </p>
 
@@ -15,7 +15,7 @@
       (click)="showSearchForm = false"
       *ngIf="showSearchForm">
       <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
-      expedientes</a
+      Expedientes</a
     >
   </p>
 </h5>
@@ -24,7 +24,7 @@
   <form [formGroup]="searchForm" class="form-material">
     <div class="row pt-3">
       <div class="col-md-4">
-        <form-field [control]="searchForm.get('id')" label="No&#46; solicitud">
+        <form-field [control]="searchForm.get('id')" label="No&#46; Solicitud">
           <input
             type="number"
             class="form-control"
@@ -47,7 +47,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchForm.get('typeOfTransfer')"
-          label="Tipo transferencía">
+          label="Tipo Transferencía">
           <input
             type="text"
             class="form-control"
@@ -60,7 +60,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchForm.get('recordId')"
-          label="No&#46; expediente">
+          label="No&#46; Expediente">
           <input
             type="number"
             class="form-control"
@@ -71,7 +71,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchForm.get('indicatedTaxpayer')"
-          label="Contribuyente y&#47;o indiciado">
+          label="Contribuyente y&#47;o Indiciado">
           <input
             type="text"
             class="form-control"
@@ -81,7 +81,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchForm.get('domainExtinction')"
-          label="Extinci&oacute;n de dominio">
+          label="Extinci&oacute;n de Dominio">
           <input
             type="text"
             class="form-control"
@@ -108,7 +108,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchForm.get('transferenceFile')"
-          label="Expediente transferente &#47; PAMA">
+          label="Expediente Transferente &#47; PAMA">
           <input
             type="text"
             class="form-control"
@@ -117,7 +117,7 @@
       </div>
 
       <div class="col-md-4">
-        <form-field [control]="searchForm.get('trialType')" label="Tipo juicio">
+        <form-field [control]="searchForm.get('trialType')" label="Tipo Juicio">
           <input type="text" class="form-control" formControlName="trialType" />
         </form-field>
       </div>
@@ -147,7 +147,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchForm.get('previousInquiry')"
-          label="Averiguaci&oacute;n previa">
+          label="Averiguaci&oacute;n Previa">
           <input
             type="text"
             class="form-control"
@@ -183,7 +183,7 @@
         </form-field>
       </div>
       <div class="col-md-4">
-        <form-field [control]="searchForm.get('lawsuit')" label="Causa penal">
+        <form-field [control]="searchForm.get('lawsuit')" label="Causa Penal">
           <input type="text" class="form-control" formControlName="lawsuit" />
         </form-field>
       </div>
@@ -207,28 +207,41 @@
 </div>
 <div class="form-inline justify-content-end btn-toolbar">
   <button class="btn btn-primary btn-sm active" (click)="search()">
-    <i class="fa fa-search"></i> Buscar
+    Buscar <i class="fa fa-search"></i>
   </button>
 
   <button class="btn btn-danger btn-sm active" (click)="resetForm()">
-    Limpiar
+    Limpiar <i class="fas fa-eraser"> </i>
   </button>
 </div>
 
 <div class="btn-toolbar">
-  <button (click)="showDocsEst()" class="btn btn-primary btn-sm active">
-    <i class="fa fa-file-archive"></i> Ver documentos
+  <!-- <button (click)="showDocsEst()" class="btn btn-primary btn-sm active">
+    Ver Documentos <i class="fa fa-eye" aria-hidden="true"></i>
   </button>
   <button (click)="newExpedient()" class="btn btn-success btn-sm active">
-    <i class="fa fa-file"></i> Nuevo expediente
-  </button>
+    Nuevo Expediente <i class="fa fa-file"></i>
+  </button> -->
   <!-- <button (click)="electronicSign()" class="btn btn-pink btn-sm active">
     <i class="fa fa-key"></i> Firma electr&oacute;nica
   </button> -->
 </div>
-<div class="d-flex pt-4">
-  <div class="mr-auto p-2">
-    <app-columns-select [(settings)]="settings"></app-columns-select>
+<div class="d-flex pt-5">
+  <div class="mr-auto p-2"></div>
+  <div class="p-2">
+    <button (click)="showDocsEst()" class="btn btn-primary btn-sm active">
+      Ver Documentos <i class="fa fa-eye" aria-hidden="true"></i>
+    </button>
+  </div>
+  <div class="p-2">
+    <button (click)="newExpedient()" class="btn btn-success btn-sm active">
+      Nuevo Expediente <i class="fa fa-file"></i>
+    </button>
+  </div>
+  <div class="p-2">
+    <app-columns-select
+      [leftList]="true"
+      [(settings)]="settings"></app-columns-select>
   </div>
 </div>
 <div class="row pt-3">

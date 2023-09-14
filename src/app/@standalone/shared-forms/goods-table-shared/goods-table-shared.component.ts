@@ -20,7 +20,7 @@ export class GoodsTableSharedComponent
   implements OnInit
 {
   @Input() form: FormGroup;
-  @Input() label: string = 'Agregar Nuevo bien';
+  @Input() label: string = 'Agregar Nuevo Bien';
   @Input() formField: string = 'goodId';
   @Input() disabled = false;
   @Output() selectRow = new EventEmitter();

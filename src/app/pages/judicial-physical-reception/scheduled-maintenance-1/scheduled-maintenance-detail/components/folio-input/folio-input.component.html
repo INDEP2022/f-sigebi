@@ -1,0 +1,11 @@
+<form class="form-material mb-0 pb-0" [formGroup]="form">
+  <form-field [control]="form.get('folio')">
+    <input
+      type="text"
+      class="form-control"
+      formControlName="folio"
+      maxlength="10"
+      (input)="updateData()"
+      required />
+  </form-field>
+</form>

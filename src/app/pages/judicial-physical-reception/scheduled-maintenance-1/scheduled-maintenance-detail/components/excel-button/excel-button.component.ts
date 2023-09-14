@@ -31,7 +31,7 @@ export class ExcelButtonComponent implements OnInit {
   nameExcel() {
     return (
       'Reporte Mantenimiento de Acta Entrega Recepción_' +
-      this.form.get('claveActa').value +
+      (this.form ? this.form.get('claveActa').value : '') +
       '.xlsx'
     );
   }

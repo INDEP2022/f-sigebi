@@ -6,8 +6,15 @@
   <div body>
     <div class="row">
       <div class="col-md-12">
-        <ng2-smart-table [settings]="settings"></ng2-smart-table>
-        <app-pagination></app-pagination>
+        <div [class]="loading ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table
+              [settings]="settings"
+              [source]="business"></ng2-smart-table>
+          </div>
+          <app-pagination [filterParams]="params" [totalItems]="totalItems">
+          </app-pagination>
+        </div>
       </div>
     </div>
   </div>

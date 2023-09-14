@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ServiceCatService } from 'src/app/core/services/catalogs/service-cat.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { CostCatalogService } from '../cost-catalog.service';
 import { ModalCostCatalogComponent } from '../modal-cost-catalog/modal-cost-catalog.component';
 import { COLUMNS } from './columns';
 
@@ -17,21 +18,19 @@ import { COLUMNS } from './columns';
   styles: [],
 })
 export class CostCatalogComponent extends BasePage implements OnInit {
-  columns: any[] = [];
-  dataTable: LocalDataSource = new LocalDataSource();
-  data1: LocalDataSource = new LocalDataSource();
+  cost: any[] = [];
+  data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
-  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
     private modalService: BsModalService,
-    private catalogService: CostCatalogService
+    private serviceCatService: ServiceCatService
   ) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
     this.settings.actions.add = false;
     this.settings = {
       ...this.settings,
@@ -40,7 +39,7 @@ export class CostCatalogComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.data1
+    this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
@@ -53,6 +52,27 @@ export class CostCatalogComponent extends BasePage implements OnInit {
             // filter.field == 'id'
             //   ? (searchFilter = SearchFilter.EQ)
             //   : (searchFilter = SearchFilter.ILIKE);
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'code':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'subaccount':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              /*case 'unaffordabilityCriterion':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'cost':
+                searchFilter = SearchFilter.EQ;
+                break;*/
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -68,29 +88,35 @@ export class CostCatalogComponent extends BasePage implements OnInit {
   }
 
   getCostCatalog() {
-    this.data = [];
     this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.catalogService.getCostCatalogparams(params).subscribe({
-      next: (resp: any) => {
+    this.serviceCatService.getAll(params).subscribe({
+      /*next: (resp: any) => {
         if (resp.data) {
-          resp.data.forEach((item: any) => {
-            this.data.push({
-              keyServices: item.code,
-              descriptionServices: item.description,
-              typeExpenditure: item.subaccount,
-              unaffordable:
-                item.unaffordabilityCriterion === 'N' ? false : true,
-              cost: item.cost !== 'GASTO' ? true : false,
-              expenditure: item.cost === 'GASTO' ? true : false,
-            });
-          });
+          // resp.data.forEach((item: any) => {
+          //   this.data1.push({
+          //     keyServices: item.code,
+          //     descriptionServices: item.description,
+          //     typeExpenditure: item.subaccount,
+          //     unaffordable: item.unaffordabilityCriterion,
+          //     cost: item.cost,
+          //   });
+          // });
+
+          this.cost = resp.data;
+          this.data.load(this.cost);
+          console.log(this.data);
+          this.data.refresh();
           this.totalItems = resp.count;
-        }
-        this.columns = this.data;
+        }*/
+      next: resp => {
+        //this.cost = this.data1;
+        this.totalItems = resp.count;
+        this.data.load(resp.data);
+        this.data.refresh();
         this.loading = false;
       },
       error: error => {
@@ -98,20 +124,20 @@ export class CostCatalogComponent extends BasePage implements OnInit {
       },
     });
   }
+
   openForm(allotment?: any) {
-    let config: ModalOptions = {
-      initialState: {
-        allotment,
-        callback: (next: boolean) => {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      allotment,
+      callback: (next: boolean) => {
+        if (next) {
           this.params
             .pipe(takeUntil(this.$unSubscribe))
             .subscribe(() => this.getCostCatalog());
-        },
+        }
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.modalService.show(ModalCostCatalogComponent, config);
+    this.modalService.show(ModalCostCatalogComponent, modalConfig);
   }
 
   delete(drawer: any) {
@@ -121,10 +147,14 @@ export class CostCatalogComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.catalogService.deleteCostCatalog(drawer.keyServices).subscribe({
+        this.serviceCatService.delete(drawer.code).subscribe({
           next: (resp: any) => {
             if (resp) {
-              this.alert('success', 'Eliminado correctamente', '');
+              this.alert(
+                'success',
+                'Catálogo de Costo',
+                'Borrado Correctamente'
+              );
               this.getCostCatalog();
             }
           },

@@ -1,0 +1,81 @@
+/****************************************
+Proceso:		PUP_EXPORTA_FOTOS_MASIV.
+Objetivo:		Realiza la exportación de las Fotogracias de los bienes.
+Empresa:		KOM.
+Fecha:			16/03/2016.
+Elaboro:		Jesús P. H.
+****************************************/
+
+PROCEDURE PUP_EXPORTA_FOTOS_MASIV IS
+
+	LFIARCHIVO				TEXT_IO.FILE_TYPE;
+	L_PATH            VARCHAR2(4000);
+	L_FILE						VARCHAR2(4000);
+	V_PATH_ORIGEN			VARCHAR2(4000);
+	V_PATH_DESTINO		VARCHAR2(4000);
+	V_PATH_F					VARCHAR2(4000);
+	
+BEGIN
+
+		BEGIN
+			LFIARCHIVO := TEXT_IO.FOPEN('C:\SIABTMP\SIABIMGSFOTPATH.PTH', 'R');
+			IF TEXT_IO.IS_OPEN(LFIARCHIVO) THEN 
+		    	TEXT_IO.GET_LINE(LFIARCHIVO, L_PATH);
+		      TEXT_IO.FCLOSE(LFIARCHIVO);
+	    END IF;
+	  EXCEPTION
+			WHEN OTHERS THEN
+		  	L_PATH := 'C:\SIABTMP\';
+	  END;
+		
+		L_FILE := GET_FILE_NAME(DIRECTORY_NAME=>L_PATH);		
+		L_PATH := GET_PATH_NAME(L_FILE);
+		
+		IF UPPER(L_PATH) = 'C:\SCTMSIABFOT\' THEN
+    		LIP_MENSAJE('LA RUTA DE ORÍGEN ES LA MISMA QUE LA DE DESTINO.','S');
+		ELSE
+				
+				GO_BLOCK('V_BIENES_RASTREADOR');
+				FIRST_RECORD;
+				SET_APPLICATION_PROPERTY(CURSOR_STYLE, 'BUSY'); 
+				LOOP
+					
+						IF :V_BIENES_RASTREADOR.NUM_FOTOS > 0 THEN 
+						
+							FOR C_FOT IN (SELECT  '"'||RUTA||'*.jpg"' PATH_ORIGEN, NO_BIEN
+													    FROM(SELECT NO_BIEN, SUBSTR(UBICACION,1,INSTR(UBICACION,'\',1,FA_CUENTA_PALABRAS(UBICACION,'\'))) AS RUTA    
+													            FROM BIENES_FOTO BT
+													            WHERE NO_BIEN = :V_BIENES_RASTREADOR.NO_BIEN                      
+													         )
+													    GROUP BY RUTA, NO_BIEN
+							             )
+							LOOP
+									BEGIN
+											V_PATH_ORIGEN 	:= NULL;
+											V_PATH_DESTINO	:= NULL;
+											V_PATH_F				:= NULL;
+											
+											V_PATH_ORIGEN 	:= 'XCOPY '||C_FOT.PATH_ORIGEN;	
+											V_PATH_DESTINO	:= '"'||L_PATH||C_FOT.NO_BIEN||'"\ /Y /S /D /C /F';
+											V_PATH_F 				:= V_PATH_ORIGEN||' '||V_PATH_DESTINO;
+--LIP_MENSAJE('V_PATH_F: '||V_PATH_F,'A');
+											HOST(V_PATH_F,NO_SCREEN);
+									EXCEPTION
+											WHEN OTHERS THEN
+												LIP_MENSAJE('al exportar las fotografias del bien  '||:V_BIENES_RASTREADOR.NO_BIEN||', '||SQLERRM,'A');
+									END;
+							END LOOP;
+							
+						END IF;
+					EXIT WHEN :SYSTEM.LAST_RECORD = 'TRUE';
+					NEXT_RECORD;
+					SYNCHRONIZE;
+				END LOOP;		
+				SET_APPLICATION_PROPERTY(CURSOR_STYLE, 'NORMAL');
+				LIP_MENSAJE('Proceso de exportación de fotografías terminado.','A');
+				FIRST_RECORD;
+		END IF;
+EXCEPTION
+		WHEN OTHERS THEN
+		LIP_MENSAJE('en el proceso de exportar las fotografias...'||SQLERRM,'S');
+END;

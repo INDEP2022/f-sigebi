@@ -5,12 +5,18 @@
   <div body>
     <form class="form-material" [formGroup]="bankConceptsForm">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-3">
           <form-field [control]="bankConceptsForm.get('key')" label="Concepto">
-            <input type="text" class="form-control" formControlName="key" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="key"
+              maxlength="10" />
           </form-field>
         </div>
-        <div class="col-md-6">
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
           <form-field
             [control]="bankConceptsForm.get('description')"
             label="Descripci&oacute;n">

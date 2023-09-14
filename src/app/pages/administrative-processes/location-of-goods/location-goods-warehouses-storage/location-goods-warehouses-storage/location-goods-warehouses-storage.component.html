@@ -1,8 +1,18 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Ubicacion de bienes en almacenes y bóvedas</h5>
+    <div class="col-md-12">
+      <h5 class="title">Ubicacion de bienes en almacénes y bóvedas</h5>
+    </div>
   </div>
   <div body>
+    <div class="d-flex justify-content-end" *ngIf="origin != null">
+      <div class="d-inline mr-2">
+        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+    </div>
     <div>
       <div class="md-tabs">
         <tabset>
@@ -12,7 +22,7 @@
                 <div class="col-md-9 col-sm-12 col-xs-12">
                   <div class="row">
                     <div class="col-md-3 col-sm-12 col-xs-12">
-                      <form-field [control]="form.get('good')" label="Bien">
+                      <form-field [control]="form.get('good')" label="No. Bien">
                         <input
                           type="text"
                           class="form-control"
@@ -35,24 +45,34 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                       <form-field
                         [control]="form.get('statusGoods')"
-                        label="Estátus del bien">
+                        label="Estatus del Bien">
                         <input
                           type="text"
                           class="form-control"
                           formControlName="statusGoods" />
                       </form-field>
                     </div>
+                    <div class="m-3">
+                      <label for="statusGoods">Disponible: </label>&nbsp;&nbsp;
+                      <span
+                        [style.background-color]="
+                          getEstatusColor(this.di_desc_est)
+                        "
+                        [style.color]="getEstatusColor(this.di_desc_est)"
+                        >{{ this.di_desc_est }}</span
+                      >
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-3 col-sm-12 col-xs-12">
-                  <form-radio label="Almacén" *ngIf="warehouseDisable">
+                  <form-radio label="Almacén">
                     <input
                       type="radio"
                       formControlName="radio"
                       value="A"
                       (change)="onChangeType('A')" />
                   </form-radio>
-                  <form-radio label="Bóveda" *ngIf="vaultDisable">
+                  <form-radio label="Bóveda">
                     <input
                       type="radio"
                       formControlName="radio"
@@ -69,15 +89,13 @@
                 </div>
               </div>
               <div class="row">
-                <div
-                  class="col-md-12 col-sm-12 col-xs-12"
-                  *ngIf="disableConsultLocation">
+                <div class="col-md-12 col-sm-12 col-xs-12">
                   <div class="d-flex justify-content-center">
                     <div class="m-3">
                       <button
-                        [disabled]="good === undefined"
                         type="button"
-                        class="btn btn-info active"
+                        *ngIf="form.get('good').value != null"
+                        class="btn btn-info btn-sm active"
                         (click)="checkLocations()">
                         Consultar Ubicaciones
                       </button>
@@ -88,6 +106,7 @@
             </form>
             <!-- radio.value === null -->
             <app-card [header]="true" *ngIf="radio.value === 'A'">
+              <!-- <app-card [header]="true" *ngIf="radio.value === 'A'"> -->
               <div class="ch-content" header>
                 <h5 class="title">Almacén</h5>
               </div>
@@ -125,9 +144,11 @@
                   <div class="d-flex justify-content-center">
                     <div class="m-3">
                       <button
-                        class="btn btn-primary active"
+                        class="btn btn-primary btn-sm active"
+                        [disabled]="formWarehouse.invalid"
                         (click)="changeLocation()">
-                        Cambiar
+                        Actualizar
+                        <i class="fas fa-sync bx-sm float-icon"></i>
                       </button>
                     </div>
                   </div>
@@ -171,9 +192,10 @@
                   <div class="d-flex justify-content-center">
                     <div class="m-3">
                       <button
-                        class="btn btn-primary active"
-                        (click)="changeLocation()">
-                        Cambiar
+                        class="btn btn-primary btn-sm active"
+                        [disabled]="formVault.invalid"
+                        (click)="changeLocationVault()">
+                        Actualizar<i class="fas fa-sync bx-sm float-icon"></i>
                       </button>
                     </div>
                   </div>
@@ -182,7 +204,10 @@
             </app-card>
           </tab>
           <tab heading="Asignación masiva">
-            <app-modal-selects-goods></app-modal-selects-goods>
+            <app-modal-selects-goods
+              [allGoods]="allGoods"
+              [totalItems]="totalItems"
+              [noExpediente]="noExpediente"></app-modal-selects-goods>
           </tab>
         </tabset>
       </div>

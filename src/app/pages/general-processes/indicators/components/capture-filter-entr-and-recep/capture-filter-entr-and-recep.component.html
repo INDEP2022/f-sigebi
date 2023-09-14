@@ -1,0 +1,119 @@
+<form [formGroup]="form" class="form-material">
+  <div class="row">
+    <form-field
+      [control]="form.get('fechaInicio')"
+      label="Rango de Fechas"
+      class="col-md-3 mt-3">
+      <input
+        class="form-control"
+        ngModel
+        bsDatepicker
+        [bsConfig]="{
+          dateInputFormat: 'DD/MM/YYYY',
+          displayOneMonthRange: true
+        }"
+        formControlName="fechaInicio" />
+    </form-field>
+
+    <form-field
+      [control]="form.get('fechaFin')"
+      label="A"
+      class="col-md-3 mt-3">
+      <input
+        type="text"
+        class="form-control"
+        bsDatepicker
+        class="form-control"
+        ngModel
+        bsDatepicker
+        [bsConfig]="{
+          dateInputFormat: 'DD/MM/YYYY',
+          displayOneMonthRange: true
+        }"
+        [minDate]="fechaInicio.value"
+        formControlName="fechaFin" />
+    </form-field>
+
+    <form-field class="col-md-6 mt-3" [control]="form.get('tipoEvento')">
+      <ngx-select
+        [data]="typesEvents"
+        [form]="form"
+        value="value"
+        bindLabel="label"
+        label="Tipo Evento"
+        [control]="'tipoEvento'">
+      </ngx-select>
+    </form-field>
+  </div>
+
+  <div class="row">
+    <app-delegation-shared
+      class="col"
+      [form]="form"
+      [delegationField]="'cordinador'"
+      [labelDelegation]="'Coordinador Regional'"
+      [showSubdelegation]="false"
+      [delegationChange]="false"
+      (emitDelegation)="changeDelegation($event)"></app-delegation-shared>
+    <app-user-shared
+      class="col-md-6"
+      [form]="form"
+      [userField]="'usuario'"
+      [label]="'Usuario'"
+      [id]="true"
+      (change)="onChangeUser($event)"></app-user-shared>
+  </div>
+
+  <div class="row">
+    <app-transferente-shared
+      class="col-md-4"
+      [transferentField]="'transferente'"
+      [form]="form"></app-transferente-shared>
+    <form-field [control]="form.get('emisora')" class="col-md-4 mt-3">
+      <ngx-select
+        (fetchItems)="getStations($event)"
+        [data]="stations"
+        [form]="form"
+        bindLabel="stationName"
+        value="id"
+        label="Emisora"
+        [control]="'emisora'"
+        (change)="onStationsChange($event)">
+      </ngx-select>
+    </form-field>
+    <form-field class="col-md-4 mt-3" [control]="form.get('autoridad')">
+      <ngx-select
+        (fetchItems)="getAutoritys($event)"
+        [data]="autoritys"
+        [form]="form"
+        bindLabel="authorityName"
+        value="idAuthority"
+        label="Autoridad"
+        [control]="'autoridad'"
+        (change)="onAutoritysChange($event)">
+      </ngx-select>
+    </form-field>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <button class="btn btn-primary btn-sm active mr-3" (click)="consult()">
+        Consultar
+        <i class="bx bx-search-alt bx-sm float-icon"></i>
+      </button>
+      <button class="btn btn-danger btn-sm active mr-3" (click)="clean()">
+        Limpiar <i class="fas fa-eraser"> </i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary active btn-sm mr-3"
+        (click)="report()">
+        Reporte <i class="bx bx-printer bx-sm float-icon"></i>
+      </button>
+      <button class="btn btn-sm btn-success active" (click)="export()">
+        Exportar a Excel
+        <i class="bx bx-download float-icon"></i>
+      </button>
+    </div>
+  </div>
+</form>

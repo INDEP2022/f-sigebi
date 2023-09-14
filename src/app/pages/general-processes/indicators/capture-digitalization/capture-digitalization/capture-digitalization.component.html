@@ -2,31 +2,284 @@
   <div class="ch-content" header>
     <h5 class="title">Indicador de captura y digitalizaci&oacute;n</h5>
   </div>
+  <!-- <div class="d-flex justify-content-end">
+    <div class="d-inline mr-2">
+      <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
+      </button>
+    </div>
+  </div> -->
+  <!-- <capture-filter></capture-filter> -->
   <div body>
     <div class="row">
-      <capture-filter></capture-filter>
-    </div>
-    <div class="row pt-3">
-      <div class="col-md-12 d-flex justify-content-between">
-        <span class="text-success">
-          <i class="fa fa-check" aria-hidden="true"></i> Total Cumplidos&#58;
-          <b>123</b>
-        </span>
-        <span class="text-danger"
-          ><i class="fa fa-ban" aria-hidden="true"></i> Total No Cumplidos&#58;
-          <b>123</b></span
-        >
-        <span class="text-info"
-          ><i class="fa fa-percent" aria-hidden="true"></i> Cumplidos&#58;
-          <b>90&#37;</b></span
-        >
-        <app-columns-select [(settings)]="settings"></app-columns-select>
+      <div class="col-md-12">
+        <accordion [isAnimated]="true">
+          <accordion-group [isOpen]="true">
+            <div accordion-heading class="d-flex justify-content-between">
+              <h5>
+                <i class="fa fa-filter" aria-hidden="true"></i>
+                Filtros de Búsqueda
+              </h5>
+            </div>
+            <form [formGroup]="formCapture" class="form-material">
+              <div class="row mt-4">
+                <div class="col-md-6">
+                  <form-field
+                    [control]="formCapture.get('fecStart')"
+                    label="Fecha de Inicio">
+                    <input
+                      type="text"
+                      class="form-control"
+                      bsDatepicker
+                      formControlName="fecStart"
+                      [maxDate]="maxDate" />
+                  </form-field>
+                </div>
+                <div class="col-md-6">
+                  <form-field [control]="formCapture.get('fecEnd')" label="A">
+                    <input
+                      type="text"
+                      class="form-control"
+                      bsDatepicker
+                      formControlName="fecEnd"
+                      [min]="formCapture.get('fecStart').value"
+                      [minDate]="formCapture.get('fecStart').value"
+                      [ngModel]="
+                        formCapture.get('fecEnd').value <
+                        formCapture.get('fecStart').value
+                          ? formCapture.get('fecStart').value
+                          : formCapture.get('fecEnd').value
+                      "
+                      bsDatepicker />
+                  </form-field>
+                </div>
+                <div class="col-md-6">
+                  <form-field
+                    [control]="formCapture.get('typeSteering')"
+                    label="Tipo Volante">
+                    <select class="form-control" formControlName="typeSteering">
+                      <option *ngFor="let type of flyerTypes" [value]="type">
+                        &nbsp;&nbsp;
+                        {{ type }}
+                      </option>
+                    </select>
+                    <!-- <select ng-options="n for n in []" class="form-select shadow-none" aria-label="Tipo Volante"
+                      formControlName="typeSteering" (change)="getEvent()">
+                      <option [ngValue]="range" *ngFor="let range of flyerTypes">${{range}}</option>
+                    </select> -->
+
+                    <!-- <ngx-select [form]="formCapture" control="typeSteering" (fetchItems)="getEvent()"
+                      [showTooltip]="true" [data]="flyerTypes" bindLabel="description"
+                      label="Tipo Volante"></ngx-select> -->
+                  </form-field>
+                  <!-- <form-field [control]="formCapture.get('typeSteering')" label="Tipo Volante">
+                    <ngx-select [formControlName]="typeSteering" [items]="flyerTypes"></ngx-select>
+                  </form-field> -->
+                </div>
+                <div class="col-md-6">
+                  <form-field [control]="formCapture.get('user')">
+                    <ngx-select
+                      label="Usuario"
+                      [form]="formCapture"
+                      [readonly]="dictNumber ? true : false"
+                      [data]="users$"
+                      (fetchItems)="getUsers($event)"
+                      bindLabel="userAndName"
+                      control="user"
+                      [searchOnInit]="true"
+                      [showTooltip]="true"
+                      termMaxLength="50"
+                      value="id"
+                      [labelTemplate]="userLabel"
+                      [optionTemplate]="userOption">
+                    </ngx-select>
+                    <ng-template #userLabel let-item="item">
+                      {{ item.id + ' - ' + item.name }}
+                    </ng-template>
+                    <ng-template #userOption let-item="item">
+                      <div [title]="item.id + '-' + item.name">
+                        {{ item.id + ' - ' + item.name }}
+                      </div>
+                    </ng-template>
+                  </form-field>
+                </div>
+              </div>
+              <div class="row mt-4">
+                <div class="col-md-6">
+                  <form-field [control]="formCapture.get('cvCoors')">
+                    <ngx-select
+                      label="Coor. Regional"
+                      [form]="formCapture"
+                      [data]="delegations$"
+                      (fetchItems)="getDels($event)"
+                      bindLabel="description"
+                      control="cvCoors"
+                      [searchOnInit]="true"
+                      [showTooltip]="true"
+                      (change)="updateSelectedIds($event)"
+                      termMaxLength="50"
+                      value="id"
+                      [multiple]="true">
+                    </ngx-select>
+                    <ng-template #userLabel let-item="item">
+                      {{ item.id + ' - ' + item.description }}
+                    </ng-template>
+                    <ng-template #userOption let-item="item">
+                      <div [title]="item.id + '-' + item.description">
+                        {{ item.id + ' - ' + item.description }}
+                      </div>
+                    </ng-template>
+                  </form-field>
+                </div>
+                <div class="col-md-6">
+                  <form-field [control]="formCapture.get('noTransfere')">
+                    <ngx-select
+                      [searchOnInit]="true"
+                      (fetchItems)="getTransference($event)"
+                      [data]="transference"
+                      [form]="formCapture"
+                      bindLabel="nameTransferent"
+                      label="Transferente"
+                      control="noTransfere">
+                    </ngx-select>
+                  </form-field>
+                </div>
+                <div class="col-md-6">
+                  <form-field [control]="formCapture.get('noStation')">
+                    <ngx-select
+                      [searchOnInit]="true"
+                      (fetchItems)="getStation($event)"
+                      [data]="station"
+                      [form]="formCapture"
+                      bindLabel="stationName"
+                      label="Emisora"
+                      control="noStation">
+                    </ngx-select>
+                  </form-field>
+                </div>
+                <div class="col-md-6">
+                  <form-field [control]="formCapture.get('noAuthority')">
+                    <ngx-select
+                      [searchOnInit]="true"
+                      (fetchItems)="getAuthority($event)"
+                      [data]="authority"
+                      [form]="formCapture"
+                      bindLabel="authorityName"
+                      label="Autoridad"
+                      control="noAuthority">
+                    </ngx-select>
+                  </form-field>
+                </div>
+              </div>
+              <div></div>
+              <div footer>
+                <div class="d-flex justify-content-center">
+                  <div class="m-3">
+                    <button
+                      type="button"
+                      class="btn btn-primary active btn-sm"
+                      (click)="find()">
+                      Consulta <i class="bx bx-search-alt bx-sm float-icon"></i>
+                    </button>
+                  </div>
+                  <div class="m-3">
+                    <button
+                      type="button"
+                      class="btn btn-primary active btn-sm"
+                      (click)="Generar()">
+                      Reporte <i class="fas fa-print bx-sm float-icon"></i>
+                    </button>
+                  </div>
+
+                  <div class="m-3">
+                    <button
+                      type="button"
+                      class="btn btn-danger active btn-sm"
+                      (click)="cleanForm()">
+                      Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-center">
+                  <div class="m-3">
+                    <!-- <input type="file" name="file1" #file1 class="d-none" formControlName="file1"
+                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                    (change)="onFileChangeDelivery($event)" /> -->
+                    <button
+                      class="btn btn-success btn-sm ml-2 active"
+                      type="button"
+                      (click)="exportAll()">
+                      Exportar a Excel
+                      <i class="bx bx-download float-icon"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </accordion-group>
+        </accordion>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-12 d-flex justify-content-between">
+          <span class="text-success">
+            <i class="fa fa-check" aria-hidden="true"></i> Total Cumplidos&#58;
+            <b>{{ P_T_CUMP }}</b>
+          </span>
+          <span class="text-danger"
+            ><i class="fa fa-ban" aria-hidden="true"></i> Total No
+            Cumplidos&#58; <b>{{ P_T_NO_CUMP }}</b></span
+          >
+          <span class="text-info"
+            ><i class="fa fa-percent" aria-hidden="true"></i> Cumplidos&#58;
+            <b>{{ P_CUMP }}&#37;</b></span
+          >
+        </div>
       </div>
     </div>
-    <div class="row pt-3 table-content">
-      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
-
-      <app-pagination></app-pagination>
+    <br /><br />
+    <div class="col-md-12">
+      <div class="table-padding"></div>
+      <div class="justify-content-end d-flex mb-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+      <div class="row">
+        <form-loader *ngIf="loading"></form-loader>
+        <div class="col-md-12">
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{
+              height: loading ? '0px' : '500px'
+            }">
+            <ng2-smart-table
+              class="table-responsive"
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              (userRowSelect)="selectData($event)"
+              [source]="dataFactCapt">
+            </ng2-smart-table>
+          </ng-scrollbar>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItemsCaptura"></app-pagination>
+      </div>
     </div>
+    <!-- <div class="row">
+      <div class="d-flex justify-content-end">
+          <div class="d-inline mr-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+      </div>
+      <div class="col-md-12">
+        <div class="col-md-12 table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="dataFactCapt"
+              (userRowSelect)="selectData($event)">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+    </div> -->
   </div>
 </app-card>

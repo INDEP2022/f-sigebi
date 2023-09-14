@@ -2,6 +2,32 @@
   width: 20px;
 }
 
+.deleteDate {
+  position: absolute;
+  margin: 10px auto auto;
+  right: 5px;
+  top: 0px;
+  cursor: pointer;
+}
+
+.righButtons {
+  display: flex;
+  justify-content: flex-end;
+  column-gap: 10px;
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+
+    > *:last-child {
+      margin-top: 1rem;
+    }
+  }
+}
+
+.form-date {
+  background-color: white !important;
+}
+
 .scroll-table::-webkit-scrollbar-track {
   background-color: transparent;
 }
@@ -25,13 +51,28 @@
   color: #dc3545 !important;
 }
 
+:host ::ng-deep app-columns-select > div {
+  width: 100%;
+}
+
+:host {
+  ::ng-deep ng2-smart-table-filter {
+    .ng2-smart-filter input,
+    .ng2-smart-filter select {
+      padding: 0 !important;
+    }
+  }
+}
+
 ng2-smart-table {
   padding: 0px;
 }
+
 .list-group {
   overflow: auto;
   height: 45px;
 }
+
 .list-group .list-group-item:last-child {
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
@@ -39,10 +80,12 @@ ng2-smart-table {
 
 .table-container {
   margin-right: 14px;
+
   .table-responsive {
     padding: 0px;
     margin-left: 15px;
   }
+
   @media screen and (max-width: 767px) {
     .table-responsive {
       padding: 0px;
@@ -50,35 +93,41 @@ ng2-smart-table {
   }
 }
 
-:host ::ng-deep app-clean-filters-shared {
-  text-align: right;
-  position: absolute;
-  top: 12px;
-  @media (max-width: 576px) {
-    position: relative;
-    top: -10px;
-    > div {
-      padding: 0px;
-    }
-  }
-}
+// :host ::ng-deep app-clean-filters-shared {
+//   text-align: right;
+//   position: absolute;
+//   top: 12px;
+
+//   @media (max-width: 576px) {
+//     position: relative;
+//     top: -10px;
+
+//     > div {
+//       padding: 0px;
+//     }
+//   }
+// }
 
 .action-buttons {
   > div {
-    margin-top: 1rem;
     padding: 0px;
     text-align: center;
+
     &:first-child {
       text-align: left;
     }
+
     &:last-child {
       text-align: right;
     }
   }
+
   @media (max-width: 767px) {
     > div {
       text-align: center !important;
+      margin-top: 1rem;
     }
+
     ::ng-deep button {
       width: 100%;
     }

@@ -34,6 +34,7 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
   loadingGif = LOADING_GIF;
   error: boolean = false;
   documentLength: number = 0;
+  subscription: any;
   private mimeType: string = null;
   constructor(
     private fileBrowserService: FileBrowserService,
@@ -55,7 +56,7 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
 
   filenameChange() {
     this.loading = true;
-    this.fileBrowserService
+    this.subscription = this.fileBrowserService
       .getFileFromFolioAndName(this.folio, this.filename)
       .subscribe({
         next: base64 => {
@@ -114,7 +115,7 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
     mimeType = getMimeTypeFromBase64(base64, this.filename);
     const ext =
       this.filename.substring(this.filename.lastIndexOf('.') + 1) ?? '';
-    if (ext == 'pdf') {
+    if (ext?.toLowerCase() == 'pdf') {
       mimeType = 'application/pdf';
       this.isDocument = true;
       this.imgDocument = 'assets/images/documents-icons/pdf.png';
@@ -144,5 +145,11 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
       ignoreBackdropClick: true, //ignora el click fuera del modal
     };
     this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
+  override ngOnDestroy() {
+    console.log('AQUI ESTAMOS');
+    this.subscription.unsubscribe();
+    // this.sub.unsubscribe();
   }
 }

@@ -14,24 +14,31 @@ export const CLARIFICATION_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  userCreation: {
-    title: 'Creado por',
-    type: 'string',
-    sort: false,
-  },
-  userModification: {
-    title: 'Modificado por',
-    type: 'string',
-    sort: false,
-  },
   version: {
-    title: 'Version',
+    title: 'Versión',
     type: 'number',
     sort: false,
   },
   active: {
-    title: 'Activo',
-    type: 'number',
+    title: 'Estatus',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1')
+        return '<strong><span class="badge badge-pill badge-success">Activo</span></strong>';
+      if (value == '0')
+        return '<strong><span class="badge badge-pill badge-warning">Inactivo</span></strong>';
+      return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: '1', title: 'Activo' },
+          { value: '0', title: 'Inactivo' },
+        ],
+      },
+    },
   },
 };

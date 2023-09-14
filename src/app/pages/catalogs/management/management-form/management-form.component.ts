@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -16,6 +16,7 @@ export class ManagementFormComponent extends BasePage implements OnInit {
   management: IManagement;
   edit: boolean = false;
   managementForm: ModelForm<IManagement>;
+  @Output() refresh = new EventEmitter<true>();
 
   constructor(
     private modalRef: BsModalRef,
@@ -39,7 +40,7 @@ export class ManagementFormComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      idTramite: [null, [Validators.required, Validators.maxLength(2)]],
+      transactId: [null, [Validators.required, Validators.maxLength(2)]],
     });
 
     if (this.management != null) {
@@ -53,6 +54,13 @@ export class ManagementFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.managementForm.controls['description'].value.trim() === '' ||
+      this.managementForm.controls['transactId'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.managemetService.create(this.managementForm.value).subscribe({
       next: data => this.handleSuccess(),
@@ -74,6 +82,8 @@ export class ManagementFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    this.alert('success', 'Gestión', `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

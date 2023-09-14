@@ -408,7 +408,8 @@ export class DocumentsPartOfficeComponent extends BasePage implements OnInit {
     let params = new FilterParams();
     params.page = $params.page;
     params.limit = $params.limit;
-    params.addFilter('name', $params.text, SearchFilter.LIKE);
+    params.search = $params.text;
+    // params.addFilter('name', $params.text, SearchFilter.LIKE);
     this.usersService.getAllSegUsers(params.getParams()).subscribe({
       next: data => {
         data.data.map(user => {
@@ -621,7 +622,7 @@ export class DocumentsPartOfficeComponent extends BasePage implements OnInit {
     try {
       this.getReport('RGERGENSOLICDIGIT', { pn_folio: 1 });
     } catch (error) {
-      Swal.fire('No se puedo generar el reporte', '', 'error');
+      Swal.fire('No se puede generar el reporte', '', 'error');
     }
 
     //this.userDel, this.newFolio_rep

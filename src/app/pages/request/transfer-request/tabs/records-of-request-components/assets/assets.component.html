@@ -4,11 +4,11 @@
       <div class="mr-auto p-2">
         <h5 class="title"><strong>Bienes</strong></h5>
       </div>
-      <div class="p-2">
+      <!-- <div class="p-2">
         <button class="btn btn-primary btn-sm active" (click)="save()">
           Guardar
         </button>
-      </div>
+      </div> -->
     </div>
   </div>
   <div class="row pt-4">
@@ -26,15 +26,30 @@
           accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
           (change)="onFileChange($event, 'inmueble')" />
       </div>
-      <div class="p-2">
+      <div
+        class="p-2"
+        style="margin-left: 1%"
+        *ngIf="
+          isSaveDomicilie == true ||
+          isSaveFraction == true ||
+          isSaveMenaje == true
+        ">
+        <button class="btn btn-primary btn-sm active" (click)="save()">
+          <i class="bx bx-save"></i> Guardar
+        </button>
+      </div>
+      <div class="p-2" style="margin-left: 1%">
         <div class="btn-group" dropdown placement="bottom right">
           <button
             id="button-alignment"
+            data-toggle="tooltip"
+            title="Más Acciones"
             dropdownToggle
             type="button"
             class="btn btn-info btn-sm active dropdown-toggle"
             aria-controls="dropdown-alignment">
-            Acciones <span class="caret"></span>
+            <i class="bx bx-list-plus bx-sm float-icon"></i>
+            <span class="caret"></span>
           </button>
           <ul
             id="dropdown-alignment"
@@ -44,27 +59,39 @@
             aria-labelledby="button-alignment">
             <li role="menuitem">
               <a class="dropdown-item" (click)="openSelectAddressModal()">
-                <i class="bx bx-home"></i> Seleccionar Domicilio</a
+                <i class="bx bx-directions"></i> Seleccionar Domicilio</a
               >
             </li>
             <li role="menuitem">
               <a class="dropdown-item" (click)="menajeModal()">
-                <i class="bx bx-layer"></i> Menaje
+                <i class="bx bx-dock-top"></i> Menaje
               </a>
             </li>
             <!-- *ngIf="typeRecord == 'PAMA' && transferente === 'SAT_SAE'" -->
             <li role="menuitem">
               <a class="dropdown-item" (click)="masiveClasification()">
-                <i class="bx bx-layer"></i> Clasificaci&oacute;n Masiva
+                <i class="bx bx-poll"></i> Clasificar Bienes
               </a>
             </li>
             <!-- sub menu de importacion -->
             <!-- *ngIf="transferente == 'PGR_SAE' || transferente === 'SAT_SAE'" -->
-            <li role="menuitem">
+            <li role="menuitem" *ngIf="typeRequest == 'MANUAL'">
               <a class="dropdown-item" (click)="fileInmueble.click()"
-                ><i class="bx bx-import"></i> Importar archivo Excel &#47; CSV
+                ><i class="bx bx-import"></i> Importar Archivo Excel &#47; CSV
               </a>
             </li>
+            <li class="divider dropdown-divider"></li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="classifyAllGoods()">
+                <i class="bx bx-poll"></i> Clasificar Todos los Bienes
+              </a>
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="assignAllAddress()">
+                <i class="bx bx-directions"></i> Asignar a Todos el Domicilio
+              </a>
+            </li>
+            <li class="divider dropdown-divider"></li>
             <!-- *ngIf="transferente == 'PGR_SAE' || transferente === 'SAT_SAE'" -->
             <li role="menuitem">
               <a class="dropdown-item" style="color: red" (click)="delete()">
@@ -74,9 +101,19 @@
           </ul>
         </div>
       </div>
+
+      <div class="p-2" style="margin-left: 1%" *ngIf="typeRequest == 'MANUAL'">
+        <button
+          class="btn btn-info btn-sm active"
+          type="button"
+          containerClass="tooltip-style"
+          (click)="newAsset()">
+          {{ btnCreate }} <i class="bx bx-plus bx-sm float-icon"></i>
+        </button>
+      </div>
       <div class="p-2" style="margin-left: 1%">
-        <button class="btn btn-secondary btn-sm active" (click)="newAsset()">
-          {{ btnCreate }}
+        <button class="btn btn-primary btn-sm active mr-3" (click)="getData()">
+          Recargar <i class="fas fa-sync-alt"> </i>
         </button>
       </div>
     </div>
@@ -88,6 +125,7 @@
       <div class="table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
+            #table
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="paragraphs"

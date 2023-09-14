@@ -24,3 +24,7 @@
 .grid-square {
   min-height: 240px;
 }
+
+::ng-deep .paginator-range-label {
+  font-size: 13px !important;
+}

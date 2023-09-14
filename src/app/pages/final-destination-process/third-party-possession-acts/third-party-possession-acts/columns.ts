@@ -1,5 +1,5 @@
 export const COLUMNS = {
-  noBien: {
+  id: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
@@ -9,14 +9,38 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  cantidad: {
+  quantity: {
     title: 'Cantidad',
     type: 'number',
     sort: false,
   },
-  importe: {
+  appraisedValue: {
     title: 'Importe',
     type: 'string',
+    sort: false,
+  },
+
+  status: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const COLUMNS2 = {
+  numGoodProceedingsId: {
+    title: 'No. Detalle Bien',
+    type: 'number',
+    sort: false,
+  },
+  numberRegister: {
+    title: 'Numero de Registro',
+    type: 'string',
+    sort: false,
+  },
+  refundAmount: {
+    title: 'Cantidad',
+    type: 'number',
     sort: false,
   },
 };

@@ -3,21 +3,29 @@
     <div class="d-flex bd-highlight">
       <div class="p-2 flex-grow-1 bd-highlight">
         <h5 class="title">
-          <strong>Solicitudes del expediente</strong>
+          <strong>Solicitudes del Expediente</strong>
         </h5>
       </div>
     </div>
   </div>
   <div class="row pt-4">
     <div class="col-md-12">
-      <app-columns-select
-        class="float-right"
-        [(settings)]="settings"></app-columns-select>
-      <button
-        [disabled]="statusTask == 'FINALIZADA'"
-        class="btn btn-primary btn-sm active mr-2 float-right">
-        Actualizar
-      </button>
+      <div class="d-flex">
+        <div class="mr-auto p-2"></div>
+        <div class="p-2">
+          <button
+            [disabled]="statusTask == 'FINALIZADA'"
+            class="btn btn-primary btn-sm active mr-2 float-right">
+            Recargar <i class="fas fa-sync-alt"> </i>
+          </button>
+        </div>
+        <div class="p-2">
+          <app-columns-select
+            [leftList]="true"
+            class="float-right"
+            [(settings)]="settings"></app-columns-select>
+        </div>
+      </div>
     </div>
   </div>
   <div class="row pt-2">
@@ -36,12 +44,15 @@
         heading="Documentos Solicitud"
         id="tab1"
         (selectTab)="requestSelected(3)">
-        <app-doc-request-tab [typeDoc]="typeDoc"></app-doc-request-tab>
+        <app-doc-request-tab
+          [typeDoc]="typeDoc"
+          [typeModule]="typeModule"></app-doc-request-tab>
       </tab>
       <tab heading="Bienes de la Solicitud" (selectTab)="requestSelected(4)">
         <app-good-doc-tab
           [typeDoc]="typeDoc"
-          [screen]="screen"></app-good-doc-tab>
+          [screen]="screen"
+          [typeModule]="typeModule"></app-good-doc-tab>
       </tab>
     </tabset>
   </div>

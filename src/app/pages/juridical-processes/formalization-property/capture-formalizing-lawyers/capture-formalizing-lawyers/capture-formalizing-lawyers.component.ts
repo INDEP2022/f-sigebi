@@ -101,7 +101,6 @@ export class CaptureFormalizingLawyersComponent
         this.data.refresh();
         this.totalItems = response.count;
         this.loading = false;
-        console.log('SI', response);
       },
       error => (this.loading = false)
     );
@@ -120,14 +119,17 @@ export class CaptureFormalizingLawyersComponent
   }
 
   delete(id: number) {
-    console.log('SI', id);
     this.comerNotariesTercsService.remove(id).subscribe({
       next: () => {
         this.getLawyers(),
-          this.alert('success', 'ABOGADO FORMALIZADOR', 'Borrado');
+          this.alert('success', 'ABOGADO FORMALIZADOR', 'Eliminado');
       },
-      error(err) {
-        console.log('ERROR', err);
+      error: err => {
+        this.alert(
+          'error',
+          'ABOGADO FORMALIZADOR',
+          'Error al intentar eliminar'
+        );
       },
     });
   }

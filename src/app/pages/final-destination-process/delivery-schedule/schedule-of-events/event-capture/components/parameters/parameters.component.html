@@ -1,0 +1,313 @@
+<form class="form-material" [formGroup]="formSiab" (ngSubmit)="onSubmit()">
+  <div class="row">
+    <form-field
+      class="col-md-4 mt-4"
+      [control]="formSiab.get('initialDate')"
+      label="Fecha Inicial">
+      <input
+        (bsValueChange)="initialDateChange($event)"
+        type="text"
+        class="form-control"
+        bsDatepicker
+        formControlName="initialDate" />
+    </form-field>
+
+    <form-field
+      class="col-md-4 mt-4"
+      [control]="formSiab.get('finalDate')"
+      label="Fecha Final">
+      <input
+        type="text"
+        class="form-control"
+        bsDatepicker
+        formControlName="finalDate" />
+    </form-field>
+
+    <form-field
+      *ngIf="registerControls.typeEvent.value == 'RF'"
+      class="col-md-4 mt-4"
+      [control]="formSiab.get('flyer')"
+      label="Volante">
+      <input
+        type="number"
+        min="1"
+        [max-length]="2000"
+        class="form-control"
+        formControlName="flyer" />
+    </form-field>
+
+    <form-field
+      *ngIf="registerControls.typeEvent.value == 'CM'"
+      class="col-md-4 mt-4"
+      [control]="formSiab.get('lot')"
+      label="Lote">
+      <input
+        type="number"
+        [max-length]="2000"
+        class="form-control"
+        formControlName="lot" />
+    </form-field>
+
+    <form-field
+      *ngIf="registerControls.typeEvent.value == 'DN'"
+      class="col-md-4 mt-4"
+      [control]="formSiab.get('cdonacCve')"
+      label="Cve. Don">
+      <input
+        type="text"
+        [max-length]="2000"
+        class="form-control"
+        formControlName="cdonacCve" />
+    </form-field>
+
+    <form-field
+      *ngIf="registerControls.typeEvent.value == 'DN'"
+      class="col-md-4 mt-4"
+      [control]="formSiab.get('donatNumber')"
+      label="No. Donatario">
+      <input
+        type="text"
+        [max-length]="2000"
+        class="form-control"
+        formControlName="donatNumber" />
+    </form-field>
+
+    <form-field
+      *ngIf="
+        registerControls.typeEvent.value == 'RF' ||
+        registerControls.typeEvent.value == 'DV' ||
+        registerControls.typeEvent.value == 'CM' ||
+        registerControls.typeEvent.value == 'DS'
+      "
+      class="col-md-4 mt-4"
+      [control]="formSiab.get('expedient')"
+      label="Expediente">
+      <input
+        type="number"
+        min="1"
+        [max-length]="2000"
+        class="form-control"
+        formControlName="expedient" />
+    </form-field>
+
+    <form-field
+      *ngIf="registerControls.typeEvent.value == 'RF'"
+      class="col-md-4 mt-4"
+      [control]="formSiab.get('dictumCve')"
+      label="Cve. Dictamen">
+      <input
+        type="text"
+        [max-length]="2000"
+        class="form-control"
+        formControlName="dictumCve" />
+    </form-field>
+    <form-field
+      *ngIf="registerControls.typeEvent.value == 'CM'"
+      class="col-md-4 mt-4"
+      [control]="formSiab.get('event')"
+      label="Evento">
+      <input type="text" class="form-control" formControlName="event" />
+    </form-field>
+    <form-field
+      *ngIf="registerControls.typeEvent.value == 'DN'"
+      class="col-md-4 mt-4"
+      [control]="formSiab.get('adonacCve')"
+      label="Cve. Aut.">
+      <input type="text" class="form-control" formControlName="adonacCve" />
+    </form-field>
+
+    <form-field
+      class="col-md-4 mt-4  {{
+        siabControls.delegation.value.length > 2 ? ' d-flex mb-3' : ''
+      }}"
+      [control]="formSiab.get('delegation')">
+      <ngx-select
+        (click)="openCoordination()"
+        [multiple]="true"
+        [readonly]="true"
+        [data]="delegations"
+        [searchable]="false"
+        [form]="formSiab"
+        bindLabel="description"
+        label="Delegación"
+        control="delegation"
+        [labelTemplate]="delLabel">
+      </ngx-select>
+    </form-field>
+
+    <ng-template #delLabel let-item="item" let-clear="clear">
+      <div class="ng-value">
+        <span class="ng-value-label" [title]="item.description">
+          {{ sliceLongName(item.description) }}
+        </span>
+      </div>
+    </ng-template>
+
+    <form-field
+      class="col-md-4 mt-4 {{
+        siabControls.transfer.value.length > 2 ? ' d-flex mb-3' : ''
+      }}"
+      [control]="formSiab.get('transfer')">
+      <ngx-select
+        [data]="transferents"
+        [form]="formSiab"
+        [multiple]="true"
+        (change)="transferChange()"
+        (fetchByParamsItems)="getTransfers($event)"
+        [fetchByList]="false"
+        [searchOnInit]="true"
+        value="id"
+        bindLabel="nameTransferent"
+        label="Transferente"
+        [labelTemplate]="transferLabel"
+        control="transfer">
+      </ngx-select>
+    </form-field>
+    <ng-template #transferLabel let-item="item" let-clear="clear">
+      <div class="ng-value">
+        <span class="ng-value-label" [title]="item.nameTransferent">
+          {{ sliceLongName(item.nameTransferent) }}
+        </span>
+        <span
+          class="ng-value-icon right"
+          (click)="clear(item)"
+          aria-hidden="true"
+          >×</span
+        >
+      </div>
+    </ng-template>
+    <form-field
+      class="col-md-4 mt-4 {{
+        siabControls.transmitter.value.length > 2 ? ' d-flex mb-3' : ''
+      }}"
+      [control]="formSiab.get('transmitter')">
+      <ngx-select
+        [data]="transmitters"
+        [multiple]="true"
+        [class.disabled]="formSiab.get('transfer').value?.length == 0"
+        [readonly]="formSiab.get('transfer').value?.length == 0"
+        (change)="transmitterChange()"
+        (fetchByParamsItems)="getTransmitters($event)"
+        [fetchByList]="false"
+        [form]="formSiab"
+        value="value"
+        bindLabel="stationName"
+        label="Emisora"
+        control="transmitter"
+        [labelTemplate]="transmitterLabel">
+      </ngx-select>
+    </form-field>
+    <ng-template #transmitterLabel let-item="item" let-clear="clear">
+      <div class="ng-value">
+        <span class="ng-value-label" [title]="item.stationName">
+          {{ sliceLongName(item.stationName) }}
+        </span>
+        <span
+          class="ng-value-icon right"
+          (click)="clear(item)"
+          aria-hidden="true"
+          >×</span
+        >
+      </div>
+    </ng-template>
+    <form-field
+      class="col-md-4 mt-4 {{
+        siabControls.authority.value.length > 2 ? ' d-flex mb-3' : ''
+      }}"
+      [control]="formSiab.get('authority')">
+      <ngx-select
+        [data]="authorities"
+        [form]="formSiab"
+        [class.disabled]="formSiab.get('transmitter').value?.length == 0"
+        [readonly]="formSiab.get('transmitter').value?.length == 0"
+        [multiple]="true"
+        (fetchByParamsItems)="getAuthorities($event)"
+        [fetchByList]="false"
+        value="value"
+        bindLabel="authorityName"
+        label="Autoridad"
+        control="authority"
+        [labelTemplate]="authLabel">
+      </ngx-select>
+    </form-field>
+    <ng-template #authLabel let-item="item" let-clear="clear">
+      <div class="ng-value">
+        <span class="ng-value-label" [title]="item.authorityName">
+          {{ sliceLongName(item.authorityName) }}
+        </span>
+        <span
+          class="ng-value-icon right"
+          (click)="clear(item)"
+          aria-hidden="true"
+          >×</span
+        >
+      </div>
+    </ng-template>
+    <form-field
+      *ngIf="registerControls.typeEvent.value == 'RF'"
+      class="col-md-4 mt-4"
+      [control]="formSiab.get('programed')">
+      <ngx-select
+        [data]="programedOptions"
+        [form]="formSiab"
+        [searchable]="false"
+        value="value"
+        bindLabel="label"
+        label="Programa"
+        control="programed">
+      </ngx-select>
+    </form-field>
+
+    <form-field
+      *ngIf="registerControls.typeEvent.value == 'DN'"
+      class="col-md-4 mt-4"
+      [control]="formSiab.get('almPaso')"
+      label="Almacén">
+      <input type="text" class="form-control" formControlName="almPaso" />
+    </form-field>
+    <form-field
+      *ngIf="registerControls.typeEvent.value == 'CM'"
+      class="col-md-4 mt-4"
+      [control]="formSiab.get('autoComer')"
+      label="Auto Comer">
+      <input type="text" class="form-control" formControlName="autoComer" />
+    </form-field>
+    <form-field
+      *ngIf="registerControls.typeEvent.value == 'DN'"
+      class="col-md-4 mt-4"
+      [control]="formSiab.get('warehouse')">
+      <ngx-select
+        [data]="users"
+        [form]="formSiab"
+        value="value"
+        bindLabel="label"
+        label="Almacén"
+        control="warehouse">
+      </ngx-select>
+    </form-field>
+
+    <form-field
+      *ngIf="registerControls.typeEvent.value == 'DN'"
+      class="col-md-4 mt-4"
+      [control]="formSiab.get('autoInitialDate')"
+      label="Fecha Auto Inicial">
+      <input
+        type="text"
+        class="form-control"
+        bsDaterangepicker
+        formControlName="autoInitialDate" />
+    </form-field>
+
+    <form-field
+      *ngIf="registerControls.typeEvent.value == 'DN'"
+      class="col-md-4 mt-4"
+      [control]="formSiab.get('autoFinalDate')"
+      label="Fecha Auto Final">
+      <input
+        type="text"
+        class="form-control"
+        bsDaterangepicker
+        formControlName="autoFinalDate" />
+    </form-field>
+  </div>
+</form>

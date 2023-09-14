@@ -24,6 +24,38 @@ export class GoodPartializeService extends HttpService {
     this.microservice = PartializeGoodEndpoints.BasePath;
   }
 
+  getData(goodNumber: number) {
+    return this.get<IListResponse<IPartializedGoods>>(
+      this.endpoint + `?filter.goodNumber=$eq:${goodNumber}`
+    ).pipe(
+      catchError(err => of({ data: [] as IPartializedGoods[] })),
+      mergeMap(x => {
+        return x.data
+          ? x.data.length > 0
+            ? x.data[0].fatherIndicator
+              ? this.getSons2(x.data[0].fatherIndicator)
+              : of({ data: [] as IPartializedGoods[] })
+            : of({ data: [] as IPartializedGoods[] })
+          : of({ data: [] as IPartializedGoods[] });
+      })
+    );
+  }
+
+  getSons2(fatherIndicator: string) {
+    return this.get<IListResponse<IPartializedGoods>>(
+      this.endpoint +
+        '?limit=100000&filter.fatherIndicator=$eq:' +
+        fatherIndicator +
+        '&sortBy=childIndicator:ASC'
+    ).pipe(catchError(err => of({ data: [] as IPartializedGoods[] })));
+  }
+
+  isPartializeGood(noBien: number) {
+    return this.get(
+      PartializeGoodEndpoints.IsPartializeGood + '?noBien=' + noBien
+    );
+  }
+
   getTTTTTTNietos(
     fatherIndicator: string,
     childIndicator: string,
@@ -100,7 +132,7 @@ export class GoodPartializeService extends HttpService {
     // ];
     return this.get<IListResponse<IPartializedGoods>>(
       this.endpoint +
-        '?filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
+        '?limit=10000&filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
         '&filter.grandSonIndicator=$not:$null&filter.greatGrandsonIndicator=$not:$null' +
         '&filter.gGrandsonIndicator=$not:$null&filter.gGreatGrandsonIndicator=$not:$null' +
         '&filter.ggGreatGrandsonIndicator=$not:$null&filter.gggGreatGrandsonIndicator=$not:$null' +
@@ -183,7 +215,7 @@ export class GoodPartializeService extends HttpService {
     // let array: Observable<ITreeItem>[] = [];
     return this.get<IListResponse<IPartializedGoods>>(
       this.endpoint +
-        '?filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
+        '?limit=10000&filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
         '&filter.grandSonIndicator=$not:$null&filter.greatGrandsonIndicator=$not:$null' +
         '&filter.gGrandsonIndicator=$not:$null&filter.gGreatGrandsonIndicator=$not:$null' +
         '&filter.ggGreatGrandsonIndicator=$not:$null&filter.gggGreatGrandsonIndicator=$not:$null' +
@@ -261,7 +293,7 @@ export class GoodPartializeService extends HttpService {
     // ];
     return this.get<IListResponse<IPartializedGoods>>(
       this.endpoint +
-        '?filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
+        '?limit=10000&filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
         '&filter.grandSonIndicator=$not:$null&filter.greatGrandsonIndicator=$not:$null' +
         '&filter.gGrandsonIndicator=$not:$null&filter.gGreatGrandsonIndicator=$not:$null' +
         '&filter.ggGreatGrandsonIndicator=$not:$null&filter.gggGreatGrandsonIndicator=$null' +
@@ -334,7 +366,7 @@ export class GoodPartializeService extends HttpService {
     // ];
     return this.get<IListResponse<IPartializedGoods>>(
       this.endpoint +
-        '?filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
+        '?limit=10000&filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
         '&filter.grandSonIndicator=$not:$null&filter.greatGrandsonIndicator=$not:$null' +
         '&filter.gGrandsonIndicator=$not:$null&filter.gGreatGrandsonIndicator=$not:$null' +
         '&filter.ggGreatGrandsonIndicator=$null' +
@@ -403,7 +435,7 @@ export class GoodPartializeService extends HttpService {
     // ];
     return this.get<IListResponse<IPartializedGoods>>(
       this.endpoint +
-        '?filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
+        '?limit=10000&filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
         '&filter.grandSonIndicator=$not:$null&filter.greatGrandsonIndicator=$not:$null' +
         '&filter.gGrandsonIndicator=$not:$null&filter.gGreatGrandsonIndicator=$null' +
         '&filter.fatherIndicator=$eq:' +
@@ -467,7 +499,7 @@ export class GoodPartializeService extends HttpService {
     // ];
     return this.get<IListResponse<IPartializedGoods>>(
       this.endpoint +
-        '?filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
+        '?limit=10000&filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
         '&filter.grandSonIndicator=$not:$null&filter.greatGrandsonIndicator=$not:$null' +
         '&filter.gGrandsonIndicator=$null&filter.fatherIndicator=$eq:' +
         fatherIndicator +
@@ -526,7 +558,7 @@ export class GoodPartializeService extends HttpService {
     // ];
     return this.get<IListResponse<IPartializedGoods>>(
       this.endpoint +
-        '?filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
+        '?limit=10000&filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
         '&filter.grandSonIndicator=$not:$null&filter.greatGrandsonIndicator=$null' +
         '&filter.fatherIndicator=$eq:' +
         fatherIndicator +
@@ -593,7 +625,7 @@ export class GoodPartializeService extends HttpService {
     // ];
     return this.get<IListResponse<IPartializedGoods>>(
       this.endpoint +
-        '?filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
+        '?limit=10000&filter.fatherIndicator=$not:$null&filter.childIndicator=$not:$null' +
         '&filter.grandSonIndicator=$null&filter.fatherIndicator=$eq:' +
         fatherIndicator +
         '&sortBy=childIndicator:ASC'
@@ -659,7 +691,7 @@ export class GoodPartializeService extends HttpService {
     // ];
     return this.get<IListResponse<IPartializedGoods>>(
       this.endpoint +
-        '?filter.fatherIndicator=$not:$null&filter.childIndicator=$null' +
+        '?limit=10000&filter.fatherIndicator=$not:$null&filter.childIndicator=$null' +
         `&filter.goodNumber=$eq:${goodNumber}&sortBy=fatherIndicator:DESC`
     ).pipe(
       catchError(err => of({ data: [] as IPartializedGoods[] })),
@@ -674,6 +706,7 @@ export class GoodPartializeService extends HttpService {
                         return {
                           noBien: item.goodNumber.id,
                           description: item.description,
+                          partializedId: item.partializedId,
                           subItems,
                         };
                       })
@@ -681,6 +714,7 @@ export class GoodPartializeService extends HttpService {
                   : of({
                       noBien: item.goodNumber.id,
                       description: item.description,
+                      partializedId: item.partializedId,
                       subItems: [],
                     });
               })

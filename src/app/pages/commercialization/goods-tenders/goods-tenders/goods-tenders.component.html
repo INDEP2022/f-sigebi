@@ -7,48 +7,62 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-4">
-          <app-delegation-shared [form]="form"></app-delegation-shared>
+        <div class="col-md-6 p-2">
+          <ngx-select
+            [data]="dataDelegation"
+            bindLabel="description"
+            label="Delegaci&oacute;n"
+            value="id"
+            (fetchItems)="getDelegation($event)"
+            (change)="changeDelegation($event)"
+            [form]="form"
+            [showTooltip]="true"
+            [searchOnInit]="true"
+            termMaxLength="100"
+            control="delegation"></ngx-select>
         </div>
-        <div class="col-md-4">
-          <div class="row pt-3">
-            <form-field
-              [control]="form.get('noBidding')"
-              label="Número de licitación">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="noBidding" />
-            </form-field>
-            <div class="row pt-3">
-              <form-field [control]="form.get('PF_FECINI')" label="Desde">
-                <input
-                  formControlName="PF_FECINI"
-                  class="form-control"
-                  bsDatepicker />
-              </form-field>
-            </div>
-          </div>
+        <div class="col-md-6 p-2">
+          <ngx-select
+            [data]="dataSubDelegation"
+            bindLabel="description"
+            label="SubDelegaci&oacute;n"
+            value="id"
+            (fetchItems)="getSubDelegation($event)"
+            [form]="form"
+            [showTooltip]="true"
+            [searchOnInit]="true"
+            termMaxLength="100"
+            control="subdelegation"></ngx-select>
         </div>
-        <div class="col-md-4">
-          <div class="row pt-3">
-            <form-field
-              [control]="form.get('description')"
-              label="Descripción de licitación">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="description" />
-            </form-field>
-          </div>
-          <div class="row pt-3">
-            <form-field [control]="form.get('PF_FECFIN')" label="Hasta">
-              <input
-                formControlName="PF_FECFIN"
-                class="form-control"
-                bsDatepicker />
-            </form-field>
-          </div>
+        <div class="col-md-4 p-2">
+          <ngx-select
+            [data]="dataBidding"
+            bindLabel="clueTender"
+            label="No&#46; Licitaci&oacute;n"
+            value="tenderNumber"
+            (fetchItems)="getBidding($event)"
+            (change)="changeBidding($event)"
+            [form]="form"
+            [showTooltip]="true"
+            [searchOnInit]="true"
+            termMaxLength="100"
+            control="noBidding"></ngx-select>
+        </div>
+        <div class="col-md-4 p-2">
+          <form-field [control]="form.get('PF_FECINI')" label="Desde">
+            <input
+              formControlName="PF_FECINI"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4 p-2">
+          <form-field [control]="form.get('PF_FECFIN')" label="Hasta">
+            <input
+              formControlName="PF_FECFIN"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
         </div>
       </div>
     </form>
@@ -60,15 +74,14 @@
           text="Imprimir"
           [disabled]="form.invalid"
           [loading]="loading"
+          [btnSmall]="true"
+          [icon]="'bx bx-printer bx-sm float-icon'"
           (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-danger active"
-          (click)="cleanForm()">
-          Limpiar
+        <button class="btn btn-danger btn-sm active mr-3" (click)="cleanForm()">
+          Limpiar <i class="fas fa-eraser"> </i>
         </button>
       </div>
     </div>

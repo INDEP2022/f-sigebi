@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -24,6 +24,10 @@ export class GoodSsubtypeService
     return this.goodSsubtypeRepository.getAllPaginated(this.route, params);
   }
 
+  getAll1(params?: ListParams): Observable<IListResponse<IGoodSsubType>> {
+    return this.goodSsubtypeRepository.getAll(this.route, params);
+  }
+
   // getById(id: string | number): Observable<IGoodSsubType> {
   //   return this.goodSsubtypeRepository.getById(this.route, id);
   // }
@@ -45,11 +49,20 @@ export class GoodSsubtypeService
     return this.goodSsubtypeRepository.updateByIds(this.route, ids, model);
   }
   remove(id: string | number): Observable<Object> {
+    console.log('que elimina', this.route, id);
     return this.goodSsubtypeRepository.remove(this.route, id);
+  }
+
+  removeByIds(ids: Partial<IGoodSsubType>): Observable<Object> {
+    return this.goodSsubtypeRepository.removeByIds(this.route, ids);
   }
 
   getByManyIds(body: any, params?: ListParams) {
     const route = 'good-ssubtype/search-by-type';
     return this.post<IListResponse<IGoodSsubType>>(route, body, params);
+  }
+
+  getAllFilter(params: _Params) {
+    return this.get('good-ssubtype', params);
   }
 }

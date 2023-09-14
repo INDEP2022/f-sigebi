@@ -9,42 +9,54 @@
         class="form-material form-horizontal"
         [formGroup]="form"
         (ngSubmit)="onSubmit()">
-        <div class="row mt-5 align-items-center">
-          <div class="col-12 col-md-6">
+        <div class="row mt-5 d-flex justify-content-center">
+          <div class="col-12 col-md-4">
             <div class="mb-3 pl-4 pr-4">
               <form-field [control]="form.get('goodNumb')" label="No. Bien">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="goodNumb" />
               </form-field>
             </div>
           </div>
-          <div class="col-12 col-md-6 mt-3 mt-md-0">
+          <div class="col-12 col-md-2">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="loadGood()">
+              Buscar
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+        <div class="row mt-5 align-items-center">
+          <div class="col-12 col-md-8 mt-3 mt-md-0">
             <div class="pl-4 pr-4">
               <form-field
                 [control]="form.get('description')"
                 label="Descripci&oacute;n">
                 <textarea
                   class="form-control"
-                  formControlName="description"></textarea>
+                  formControlName="description"
+                  [readOnly]="true"></textarea>
               </form-field>
             </div>
           </div>
-        </div>
-
-        <div class="row mt-3">
-          <div class="col-12 col-md-3">
+          <div class="col-12 col-md-4">
             <div class="mb-3 pl-4 pr-4">
               <form-field [control]="form.get('quantity')" label="Cantidad">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="quantity" />
+                  formControlName="quantity"
+                  readOnly />
               </form-field>
             </div>
           </div>
-          <div class="col-12 col-md-3 mt-3 mt-md-0">
+        </div>
+        <div class="row mt-3">
+          <div class="col-12 col-md-4 mt-3 mt-md-0">
             <div class="mb-3 pl-4 pr-4">
               <form-field
                 [control]="form.get('appraisedValue')"
@@ -52,29 +64,32 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="appraisedValue" />
+                  formControlName="appraisedValue"
+                  readOnly />
               </form-field>
             </div>
           </div>
-          <div class="col-12 col-md-3 mt-3 mt-md-0">
+          <div class="col-12 col-md-4 mt-3 mt-md-0">
             <div class="mb-3 pl-4 pr-4">
-              <form-field [control]="form.get('status')" label="Estatus">
+              <form-field [control]="form.get('status')" label="Estado">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="status" />
+                  formControlName="status"
+                  readOnly />
               </form-field>
             </div>
           </div>
-          <div class="col-12 col-md-3 mt-3 mt-md-0">
+          <div class="col-12 col-md-4 mt-3 mt-md-0">
             <div class="mb-3 pl-4 pr-4">
               <form-field
                 [control]="form.get('statusDescrip')"
-                label="Descrip. Estatus">
+                label="Descripión Estado">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="statusDescrip" />
+                  formControlName="statusDescrip"
+                  readOnly />
               </form-field>
             </div>
           </div>
@@ -89,7 +104,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="proceedings" />
+                  formControlName="proceedings"
+                  readOnly />
               </form-field>
             </div>
           </div>
@@ -101,7 +117,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="sorterNumb" />
+                  formControlName="sorterNumb"
+                  readOnly />
               </form-field>
             </div>
           </div>
@@ -109,34 +126,37 @@
             <div class="mb-3 pl-4 pr-4">
               <form-field
                 [control]="form.get('sorterDescrip')"
-                label="Descrip. Clasificador">
+                label="Descripción Clasificador">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="sorterDescrip" />
+                  formControlName="sorterDescrip"
+                  readOnly />
               </form-field>
             </div>
           </div>
         </div>
 
         <div class="row mt-3">
-          <div class="col-12 col-md-4 mt-3 mt-md-0">
+          <div class="col-12 col-md-4 mt-3 mt-md-0" *ngIf="classif">
             <div class="mb-3 pl-4 pr-4">
               <form-field [control]="form.get('currency')" label="Moneda">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="currency" />
+                  formControlName="currency"
+                  readOnly />
               </form-field>
             </div>
           </div>
-          <div class="col-12 col-md-4 mt-3 mt-md-0">
+          <div class="col-12 col-md-4 mt-3 mt-md-0" *ngIf="classif">
             <div class="mb-3 pl-4 pr-4">
               <form-field [control]="form.get('amount')" label="Importe">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="amount" />
+                  formControlName="amount"
+                  readOnly />
               </form-field>
             </div>
           </div>
@@ -148,7 +168,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="amountToSplit" />
+                  formControlName="amountToSplit"
+                  readOnly />
               </form-field>
             </div>
           </div>
@@ -156,8 +177,10 @@
       </form>
 
       <div class="row mt-3">
-        <div class="col-12 tetx-center text-md-right">
-          <button class="btn btn-secondary btn-sm active">Parcializa</button>
+        <div class="col-12 tetx-center text-md-right" (click)="Parcializa()">
+          <button type="button" class="btn btn-primary active btn-sm">
+            Parcializa
+          </button>
         </div>
       </div>
 

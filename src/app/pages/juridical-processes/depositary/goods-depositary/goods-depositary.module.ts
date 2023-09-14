@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { SharedModule } from 'src/app/shared/shared.module';
 /** BASE IMPORT */
-
+import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
 /** LIBRERIAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -16,6 +16,11 @@ import { GoodsDepositaryComponent } from './goods-depositary/goods-depositary.co
 
 @NgModule({
   declarations: [GoodsDepositaryComponent],
-  imports: [CommonModule, GoodsDepositaryRoutingModule, SharedModule],
+  imports: [
+    CommonModule,
+    GoodsDepositaryRoutingModule,
+    DelegationSharedComponent,
+    SharedModule,
+  ],
 })
 export class GoodsDepositaryModule {}

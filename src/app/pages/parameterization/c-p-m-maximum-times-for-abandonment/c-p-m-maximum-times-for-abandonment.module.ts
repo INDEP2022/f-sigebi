@@ -6,6 +6,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CPMMaximumTimesForAbandonmentRoutingModule } from './c-p-m-maximum-times-for-abandonment-routing.module';
 import { CPMtaCMaximumTimesForAbandonmentComponent } from './c-p-mta-c-maximum-times-for-abandonment/c-p-mta-c-maximum-times-for-abandonment.component';
+import { ModalCPMtaCMaximumTimesForAbandonmentComponent } from './c-p-mta-c-maximum-times-for-abandonment/modal-c-p-mta-c-maximum-times-for-abandonment/modal-c-p-mta-c-maximum-times-for-abandonment';
 import { GetpickFormComponent } from './components/getpick-form/getpick-form.component';
 import { ManifestFormComponent } from './components/manifest-form/manifest-form.component';
 import { FielSetUncollectedComponent } from './fiel-set-uncollected/fiel-set-uncollected.component';
@@ -14,6 +15,7 @@ import { FielSetUnstatedComponent } from './fiel-set-unstated/fiel-set-unstated.
 @NgModule({
   declarations: [
     CPMtaCMaximumTimesForAbandonmentComponent,
+    ModalCPMtaCMaximumTimesForAbandonmentComponent,
     FielSetUnstatedComponent,
     FielSetUncollectedComponent,
     ManifestFormComponent,

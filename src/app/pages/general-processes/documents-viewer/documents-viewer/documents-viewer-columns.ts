@@ -1,30 +1,37 @@
+import { CustomDateMounthFilterComponent } from '../../../../@standalone/shared-forms/filter-date-mounth-custom/custom-date-mounth-filter';
+
 export const GENERAL_DOCS_DOCUMENTS_VIEWER_COLUMNS = {
-  expediente: {
-    title: 'No Expediente',
+  numberProceedings: {
+    title: 'No. Expediente',
     sort: false,
   },
-  voalnte: {
-    title: 'No Expediente',
+  flyerNumber: {
+    title: 'No. Volante',
     sort: false,
   },
-  tipo: {
-    title: 'No Expediente',
+  keyTypeDocument: {
+    title: 'Tipo Documento',
     sort: false,
   },
-  fecha: {
-    title: 'No Expediente',
+  significantDate: {
+    title: 'Fecha Significativa',
+    sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomDateMounthFilterComponent,
+    },
+    // valuePrepareFunction: (date: string) => formatDate(date),
+  },
+  id: {
+    title: 'Folio Universal',
     sort: false,
   },
-  folio: {
-    title: 'No Expediente',
+  descriptionDocument: {
+    title: 'Desc. Documento',
     sort: false,
   },
-  desc: {
-    title: 'No Expediente',
-    sort: false,
-  },
-  hojas: {
-    title: 'No Expediente',
+  sheets: {
+    title: 'Hojas',
     sort: false,
   },
 };
@@ -47,6 +54,10 @@ function generateData() {
     data.push(el);
   }
   return data;
+}
+
+function formatDate(date: string): string {
+  return date.replace('-', '/');
 }
 
 export const GENERAL_DOCS_DOCUMENTS_VIEWER_DATA = generateData();

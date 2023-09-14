@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable, take } from 'rxjs';
 import { IGlobalVars } from '../models/IGlobalVars.model';
 import * as GlobalVarsActions from '../store/global-vars.actions';
 import * as GlobalVarsSelectors from '../store/global-vars.selectors';
@@ -29,6 +29,10 @@ export class GlobalVarsService {
 
   public getGlobalVars$(): Observable<IGlobalVars> {
     return this.store.select(GlobalVarsSelectors.getGlobalVars);
+  }
+
+  getVars() {
+    return firstValueFrom(this.getGlobalVars$().pipe(take(1)));
   }
 
   public updateSingleGlobal<ParamKey extends keyof IGlobalVars>(

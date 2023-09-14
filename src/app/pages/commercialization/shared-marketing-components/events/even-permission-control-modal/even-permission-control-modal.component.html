@@ -5,38 +5,43 @@
   <div body>
     <form class="form-material" [formGroup]="comerUserForm">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field
             label="ID Evento"
             [control]="comerUserForm.get('idEvent')">
-            <input type="text" class="form-control" formControlName="idEvent" />
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="idEvent" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field [control]="comerUserForm.get('username')">
             <ngx-select
+              [readonly]="edit"
               [searchOnInit]="true"
               (fetchItems)="getUsers($event)"
               [data]="users"
               [form]="comerUserForm"
-              value="reasonName"
-              bindLabel="reasonName"
+              (change)="userChange($event)"
+              value="user"
+              bindLabel="userAndName"
               control="username"
               label="Usuario">
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field label="Fecha" [control]="comerUserForm.get('date')">
             <input
+              [ngClass]="{ 'bg-gray': disabledSend }"
               type="text"
               class="form-control"
               formControlName="date"
               bsDatepicker
               [maxDate]="today"
-              [bsConfig]="{
-                dateInputFormat: 'YYYY-MM-DD'
-              }" />
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
           </form-field>
         </div>
       </div>
@@ -45,12 +50,35 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [type]="'button'"
-          (confirm)="confirm()"></confirm-button>
+        <button
+          [disabled]="
+            comerUserForm.invalid ||
+            comerUserForm.get('date').value == undefined ||
+            comerUserForm.get('date').value == null
+          "
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Guardar
+          <span><i aria-hidden="true" class="fa fa-save"></i></span>
+        </button>
+        <!-- <button
+          [disabled]="comerUserForm.invalid"
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          {{ edit ? 'Actualizar' : 'Guardar' }}
+          <span *ngIf="edit"><i class="fas fa-sync-alt"> </i></span>
+          <span *ngIf="!edit"
+            ><i aria-hidden="true" class="fa fa-save"></i
+          ></span>
+        </button> -->
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
           Cancelar
         </button>
       </div>

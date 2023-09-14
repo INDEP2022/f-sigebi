@@ -7,20 +7,12 @@
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="fileForm.get('name')" label="Nombre">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="name"
-              readonly />
+            <input type="text" class="form-control" formControlName="name" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="fileForm.get('post')" label="Cargo">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="post"
-              readonly />
+            <input type="text" class="form-control" formControlName="post" />
           </form-field>
         </div>
       </div>
@@ -33,9 +25,9 @@
               [type]="hide ? 'password' : 'text'"
               class="form-control"
               formControlName="pass"
-              maxlength="10" />
+              maxlength="40" />
             <button
-              class="btn btn-secondary btn-sm active"
+              class="btn btn-primary btn-sm active"
               (click)="hide = !hide"
               style="margin-top: 7px">
               <span class="fa fa-eye"></span> {{ hide ? 'Mostrar' : 'Ocultar' }}
@@ -95,7 +87,7 @@
           class="btn btn-primary btn-sm active"
           [disabled]="fileForm.invalid"
           (click)="confirm()">
-          Guardar
+          Guardar <i aria-hidden="true" class="fa fa-save"></i>
         </button>
         <!--<confirm-button
           [disabled]="fileForm.invalid"

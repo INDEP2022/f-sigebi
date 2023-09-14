@@ -1,31 +1,43 @@
 import { Component, Inject, inject, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { format } from 'date-fns';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { catchError, map, of, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IAreaTramite } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-detail-delivery-reception.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
+import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  firstFormatDateToSecondFormatDate,
+  formatForIsoDate,
+  secondFormatDate,
+} from 'src/app/shared/utils/date';
 import { IProceedingDeliveryReception } from './../../../core/models/ms-proceedings/proceeding-delivery-reception';
 
 @Component({
   template: '',
 })
-export abstract class ScheduledMaintenance extends BasePage {
+export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersExtra<IProceedingDeliveryReception> {
   form: FormGroup;
   first = true;
   @ViewChild(Ng2SmartTableComponent) table: Ng2SmartTableComponent;
   elementToExport: any[];
-
+  pageSizeOptions = [5, 10, 15, 20];
+  typeEvents: IAreaTramite[] = [];
   like = SearchFilter.LIKE;
   hoy = new Date();
   settings1 = {
@@ -33,17 +45,28 @@ export abstract class ScheduledMaintenance extends BasePage {
     pager: {
       display: false,
     },
-    hideSubHeader: true,
+    hideSubHeader: false,
     selectedRowIndex: -1,
     mode: 'external',
+    actions: {
+      ...TABLE_SETTINGS.actions,
+      columnTitle: '',
+      position: 'left',
+      add: false,
+    },
     columns: {
       id: {
         title: 'ID',
         type: 'string',
         sort: false,
       },
+      // typeProceedings: {
+      //   title: 'Tipo de Evento',
+      //   type: 'string',
+      //   sort: false,
+      // },
       keysProceedings: {
-        title: 'Programa Recepcion Entrega',
+        title: 'Programa Recepción Entrega',
         type: 'string',
         sort: false,
       },
@@ -54,7 +77,7 @@ export abstract class ScheduledMaintenance extends BasePage {
         // width: '150px'
       },
       elaborate: {
-        title: 'Ingreso',
+        title: 'Ingresó',
         type: 'string',
         sort: false,
       },
@@ -68,7 +91,7 @@ export abstract class ScheduledMaintenance extends BasePage {
         sort: false,
       },
       numFile: {
-        title: 'N° Archivo',
+        title: 'No. Archivo',
         sort: false,
       },
       witness1: {
@@ -80,7 +103,7 @@ export abstract class ScheduledMaintenance extends BasePage {
         sort: false,
       },
       comptrollerWitness: {
-        title: 'Testigo Contraloria',
+        title: 'Testigo Contraloría',
         sort: false,
       },
       observations: {
@@ -88,132 +111,295 @@ export abstract class ScheduledMaintenance extends BasePage {
         sort: false,
       },
     },
+    rowClassFunction: (row: any) => {
+      return row?.data?.statusProceedings;
+    },
     noDataMessage: 'No se encontrarón registros',
   };
   statusList = [
     { id: 'ABIERTA', description: 'Abierto' },
     { id: 'CERRADA', description: 'Cerrado' },
   ];
-  data: IProceedingDeliveryReception[] = [];
-  totalItems: number = 0;
+
+  stringPattern = STRING_PATTERN;
+  // oldLimit = 10;
+  // data: IProceedingDeliveryReception[] = [];
   paramsTypes: ListParams = new ListParams();
   paramsStatus: ListParams = new ListParams();
-  tiposEvento: { id: string; description: string }[] = [];
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  // params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new FilterParams();
   paramsCoords = new ListParams();
   paramsUsers = new FilterParams();
   delegationService = inject(DelegationService);
   userService = inject(UsersService);
+  procedureManagementService = inject(ProcedureManagementService);
+  limit: FormControl = new FormControl(10);
   constructor(
     protected fb: FormBuilder,
-    protected service: ProceedingsDeliveryReceptionService,
+    protected deliveryService: ProceedingsDeliveryReceptionService,
     protected detailService: ProceedingsDetailDeliveryReceptionService,
-    @Inject('formStorage') protected formStorage: string
+    @Inject('formStorage') protected formStorage: string,
+    @Inject('paramsActa') protected paramsActa: string
   ) {
     super();
+    this.service = this.deliveryService;
+    this.ilikeFilters = [
+      'keysProceedings',
+      'elaborate',
+      'statusProceedings',
+      'address',
+      'witness1',
+      'witness2',
+      'comptrollerWitness',
+      'observations',
+    ];
+    const paramsActa2 = localStorage.getItem(this.paramsActa);
+    if (paramsActa2) {
+      const params = JSON.parse(paramsActa2);
+      this.params.value.limit = params.limit;
+      this.params.value.page = params.page;
+      this.limit = new FormControl(params.limit);
+    }
     // this.maxDate = new Date();
     // console.log(this.settings1);
   }
 
-  get fechaInicio() {
-    return this.form.get('fechaInicio');
-  }
+  // get fechaInicio() {
+  //   return this.form.get('fechaInicio');
+  // }
 
-  get coordRegional() {
-    return this.delegationService.getAll(this.paramsCoords);
-  }
+  // get coordRegional() {
+  //   return this.delegationService.getAll(this.paramsCoords);
+  // }
 
   get usuarios() {
     return this.userService.getAllSegUsers(this.paramsUsers.getParams());
   }
 
-  ngOnInit(): void {
-    this.prepareForm();
-    this.service.getTypes().subscribe({
+  get rangeDateValue() {
+    return this.form
+      ? this.form.get('rangeDate')
+        ? this.form.get('rangeDate').value
+        : null
+      : null;
+  }
+
+  deleteRange() {
+    this.form.get('rangeDate').setValue(null);
+  }
+
+  resetView() {
+    console.log('RESET VIEW');
+
+    // const filter = this.data.getFilter();
+    this.data.setFilter([], true, false);
+    this.data.load([]);
+    // console.log(filter);
+    this.data.refresh();
+    this.totalItems = 0;
+    localStorage.removeItem(this.formStorage);
+    localStorage.removeItem(this.paramsActa);
+    this.limit = new FormControl(10);
+    this.columnFilters = [];
+    // this.dinamicFilterUpdate();
+  }
+
+  extraOperations() {}
+
+  override searchParams() {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
-        this.tiposEvento = response.data;
+        localStorage.setItem(
+          this.paramsActa,
+          JSON.stringify({ limit: response.limit, page: response.page })
+        );
+        this.getData(true);
       },
     });
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(x => {
-      // console.log(x);
-      this.getData();
-    });
+  }
+
+  override ngOnInit(): void {
+    this.dinamicFilterUpdate();
+    this.prepareForm();
+    // this.searchParams();
+    this.procedureManagementService
+      .getAreaTramite()
+      .pipe(
+        catchError(x => of({ data: [] as IAreaTramite[], count: 0 })),
+        map(response => {
+          return response.data
+            ? response.data.map(item => {
+                return {
+                  ...item,
+                  descripcion:
+                    item.area_tramite === 'RF' || item.area_tramite === 'OP'
+                      ? item.descripcion
+                      : 'ENTREGA-' + item.descripcion,
+                };
+              })
+            : [];
+        })
+      )
+      .subscribe({
+        next: data => {
+          if (data) {
+            this.typeEvents = data;
+            // this.typeEvents.unshift({
+            //   area_tramite: 'OP',
+            //   descripcion: 'OFICIALIA DE PARTES',
+            // });
+          }
+        },
+        error: err => {},
+      });
+    this.extraOperations();
+    // this.deliveryService.getTypes().subscribe({
+    //   next: response => {
+    //     this.tiposEvento = response.data;
+    //   },
+    // });
+    this.searchParams();
+  }
+
+  override dinamicFilterUpdate() {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        // debugger;
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            if (this.ilikeFilters.includes(filter.field)) {
+              searchFilter = SearchFilter.ILIKE;
+            } else {
+              searchFilter = SearchFilter.EQ;
+            }
+            // if (this.ilikeFilters.includes(filter.field)) {
+            //   searchFilter = SearchFilter.ILIKE;
+            // }
+            field = `filter.${filter.field}`;
+            if (filter.search !== '') {
+              let search = filter.search;
+              if (filter.field === 'captureDate') {
+                const initDate = firstFormatDateToSecondFormatDate(search);
+                this.columnFilters[field] = `$btw:${initDate},${initDate}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${search}`;
+              }
+              // this.columnFilters[field] = `${searchFilter}:${search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getData();
+        }
+      });
   }
 
   setForm() {
     const filtersActa = window.localStorage.getItem(this.formStorage);
     if (filtersActa) {
       const newData = JSON.parse(filtersActa);
-      newData.fechaInicio = newData.fechaInicio
-        ? new Date(newData.fechaInicio)
-        : null;
-      newData.fechaFin = newData.fechaFin ? new Date(newData.fechaFin) : null;
+      if (newData.rangeDate) {
+        const inicio = newData.rangeDate[0].split('T')[0];
+        const final = newData.rangeDate[1].split('T')[0];
+        newData.rangeDate = [new Date(inicio), new Date(final)];
+      }
+      // const fechaInicio = newData.fechaInicio
+      //   ? new Date(newData.fechaInicio)
+      //   : null;
+      // const fechaFin = newData.fechaFin ? new Date(newData.fechaFin) : null;
+      // newData.rangeDate = [fechaInicio, fechaFin];
       this.form.setValue(newData);
     }
   }
 
   saveForm() {
-    let form = this.form.getRawValue();
-    if (!form.fechaInicio) {
-      form.fechaInicio = null;
+    if (this.form) {
+      let form = this.form.getRawValue();
+
+      // if (!form.rangeDate) {
+      //   form.rangeDate = null;
+      // }
+      // if (!form.fechaInicio) {
+      //   form.fechaInicio = null;
+      // }
+      // if (!form.fechaFin) {
+      //   form.fechaFin = null;
+      // }
+      window.localStorage.setItem(this.formStorage, JSON.stringify(form));
     }
-    if (!form.fechaFin) {
-      form.fechaFin = null;
-    }
-    window.localStorage.setItem(this.formStorage, JSON.stringify(form));
   }
 
   prepareForm() {
     this.form = this.fb.group({
       tipoEvento: [null, [Validators.required]],
-      fechaInicio: [null],
-      fechaFin: [null],
+      rangeDate: [null],
+      // fechaInicio: [null],
+      // fechaFin: [null],
       statusEvento: [null],
       coordRegional: [null, [Validators.pattern(STRING_PATTERN)]],
       usuario: [null, [Validators.pattern(STRING_PATTERN)]],
-      claveActa: [null],
+      claveActa: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.setForm();
-    console.log(this.form.value);
   }
 
-  private fillParams() {
+  private fillParams(byPage = false) {
+    // debugger;
     const tipoEvento = this.form.get('tipoEvento').value;
-    const fechaInicio: Date | string = this.form.get('fechaInicio').value;
-    const fechaFin: Date = this.form.get('fechaFin').value;
+    // const fechaInicio: Date | string = this.form.get('fechaInicio').value;
+    // const fechaFin: Date = this.form.get('fechaFin').value;
     const statusEvento = this.form.get('statusEvento').value;
     const coordRegional = this.form.get('coordRegional').value;
     const usuario = this.form.get('usuario').value;
-    const cveActa = this.form.get('claveActa').value;
-    // console.log(fechaInicio, coordRegional);
+    // const cveActa = this.form.get('claveActa').value;
+    const rangeDate = this.form.get('rangeDate').value;
     if (this.form.invalid) {
       return false;
     }
     this.filterParams = new FilterParams();
     if (tipoEvento && tipoEvento !== 'TODOS') {
-      console.log(tipoEvento);
       this.filterParams.addFilter('typeProceedings', tipoEvento);
     }
 
     if (statusEvento && statusEvento !== 'TODOS') {
-      this.filterParams.addFilter('statusProceedings', statusEvento);
+      this.filterParams.addFilter(
+        'statusProceedings',
+        statusEvento,
+        SearchFilter.ILIKE
+      );
     }
-    if (fechaInicio) {
-      const inicio =
-        fechaInicio instanceof Date
-          ? fechaInicio.toISOString().split('T')[0]
-          : fechaInicio;
-      const final = fechaFin
-        ? fechaFin.toISOString().split('T')[0]
-        : new Date().toISOString().split('T')[0];
+
+    if (rangeDate) {
+      const inicio = secondFormatDate(rangeDate[0]);
+      const final = secondFormatDate(rangeDate[1]);
       this.filterParams.addFilter(
         'captureDate',
         inicio + ',' + final,
         SearchFilter.BTW
       );
+      // rangeDate instanceof Date
+      //   ? fechaInicio.toISOString().split('T')[0]
+      //   : fechaInicio;
     }
-    console.log(coordRegional);
+    // if (fechaInicio) {
+    //   const inicio =
+    //     fechaInicio instanceof Date
+    //       ? fechaInicio.toISOString().split('T')[0]
+    //       : fechaInicio;
+    //   const final = fechaFin
+    //     ? fechaFin.toISOString().split('T')[0]
+    //     : new Date().toISOString().split('T')[0];
+    //   this.filterParams.addFilter(
+    //     'captureDate',
+    //     inicio + ',' + final,
+    //     SearchFilter.BTW
+    //   );
+    // }
     if (coordRegional && coordRegional.length > 0) {
       this.filterParams.addFilter(
         'numDelegation_1.description',
@@ -222,31 +408,57 @@ export abstract class ScheduledMaintenance extends BasePage {
       );
     }
 
-    if (cveActa) {
-      this.filterParams.addFilter('keysProceedings', cveActa);
-    }
-    if (usuario)
+    // if (cveActa) {
+    //   this.filterParams.addFilter('keysProceedings', cveActa);
+    // }
+    if (usuario) {
       this.filterParams.addFilter('elaborate', usuario, SearchFilter.LIKE);
-    this.filterParams.page = this.params.getValue().page;
+    }
+
+    // this.columnFilters.forEach(x => {
+    //   this.filterParams.addFilter2(x)
+    // })
+    for (var filter in this.columnFilters) {
+      if (this.columnFilters.hasOwnProperty(filter)) {
+        this.filterParams.addFilter3(filter, this.columnFilters[filter]);
+      }
+    }
+    // this.filterParams.addFilter2(this.columnFilters);
     this.filterParams.limit = this.params.getValue().limit;
+    if (byPage) {
+      this.filterParams.page = this.params.getValue().page;
+    } else {
+      this.params.value.page = 1;
+      localStorage.setItem(
+        this.paramsActa,
+        JSON.stringify({ limit: this.params.getValue().limit, page: 1 })
+      );
+      // this.params.value.limit = 10;
+    }
+
     return true;
   }
 
-  getData() {
+  override getData(byPage = false) {
+    if (!this.form) {
+      return;
+    }
     this.saveForm();
-    if (this.fillParams()) {
+    // this.fillParams()
+    if (this.fillParams(byPage)) {
       this.loading = true;
       this.service.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
-          console.log(response);
-          this.data = [
-            ...response.data.map(x => {
-              return {
-                ...x,
-                captureDate: format(new Date(x.captureDate), 'dd-MM-yyyy'),
-              };
-            }),
-          ];
+          // if (response.data.length === 0) {
+          //   this.onLoadToast('error', 'No se encontraron datos');
+          // }
+          (this.items = response.data.map(x => {
+            return {
+              ...x,
+              captureDate: formatForIsoDate(x.captureDate, 'string') + '',
+            };
+          })),
+            this.data.load(this.items);
           this.totalItems = response.count;
           this.loading = false;
           // setTimeout(() => {
@@ -255,8 +467,10 @@ export abstract class ScheduledMaintenance extends BasePage {
         },
         error: error => {
           console.log(error);
+          // this.onLoadToast('error', 'No se encontraron datos');
+          this.data.load([]);
+          this.totalItems = 0;
           this.loading = false;
-          this.data = [];
         },
       });
     } else {

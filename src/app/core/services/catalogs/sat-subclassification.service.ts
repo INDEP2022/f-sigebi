@@ -20,8 +20,8 @@ export class SATSubclassificationService
   getAll(
     params?: ListParams
   ): Observable<IListResponse<ISatSubclassification>> {
-    return this.satSubclasificationRepository.getAllPaginated(
-      this.route,
+    return this.satSubclasificationRepository.getAllPaginatedFilter(
+      `${this.route}/get-all`,
       params
     );
   }

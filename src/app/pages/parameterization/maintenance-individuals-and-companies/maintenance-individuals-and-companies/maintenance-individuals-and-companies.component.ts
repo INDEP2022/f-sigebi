@@ -4,8 +4,10 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PersonService } from 'src/app/core/services/catalogs/person.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
+  CURP_PATTERN,
   NUMBERS_PATTERN,
   PHONE_PATTERN,
+  RFC_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 
@@ -21,8 +23,9 @@ export class MaintenanceIndividualsAndCompaniesComponent
   form!: FormGroup;
   isCreate: boolean = true;
   edit: boolean = false;
-  title: string = 'MANTENIMIENTO DE PERSONAS FÍSICAS Y MORALES';
+  title: string = 'Mantenimiento de Personas Físicas y Morales';
   dataPerson: any;
+  value: string;
   constructor(
     private readonly fb: FormBuilder,
     private readonly personService: PersonService,
@@ -59,21 +62,24 @@ export class MaintenanceIndividualsAndCompaniesComponent
       streetNumber: [null, [Validators.maxLength(10)]],
       apartmentNumber: [null, [Validators.maxLength(10)]],
       suburb: [null, [Validators.maxLength(100)]],
-      zipCode: [null, Validators.pattern(NUMBERS_PATTERN)],
+      zipCode: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(5)],
+      ],
       delegation: [null, [Validators.maxLength(100)]],
       federative: [null],
       phone: [
         null,
         [Validators.pattern(PHONE_PATTERN), Validators.maxLength(13)],
       ],
-      observations: [null, [Validators.maxLength(100)]],
-      rfc: [null, [Validators.maxLength(20)]],
-      curp: [null, [Validators.maxLength(20)]],
+      observations: [null, [Validators.required, Validators.maxLength(100)]],
+      rfc: [null, [Validators.pattern(RFC_PATTERN)]],
+      curp: [null, [Validators.pattern(CURP_PATTERN)]],
       curriculumV: [null],
       curriculum: ['N'],
-      typePerson: [null, Validators.required],
+      typePerson: [null, [Validators.required]],
       keyOperation: [null],
-      profile: [null, [Validators.maxLength(500)]],
+      profile: [null, [Validators.required, Validators.maxLength(500)]],
       manager: [null, [Validators.maxLength(60)]],
       numberDeep: [null, [Validators.maxLength(20)]],
       keyEntFed: [null, [Validators.required]],
@@ -86,6 +92,18 @@ export class MaintenanceIndividualsAndCompaniesComponent
       this.form.controls['federative'].setValue(
         this.dataPerson.state.descCondition
       );
+
+      this.form.controls['curriculumV'].setValue(
+        this.dataPerson.curriculum == 'N' ? false : true
+      );
+
+      if (this.form.controls['typePerson'].value === 'M') {
+        this.form
+          .get('manager')
+          .setValidators([Validators.required, Validators.maxLength(50)]);
+        this.form.get('manager').updateValueAndValidity();
+        this.form.get('numberDeep').setValidators(Validators.required);
+      }
       console.log(this.form.value);
     }
     this.onChangeForm();
@@ -103,6 +121,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
           this.form.get('manager').patchValue(null);
           this.form.get('numberDeep').patchValue(null);
         }
+        this.value = value;
       },
     });
 
@@ -115,6 +134,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
   }
 
   confirm() {
+    console.log(this.form.value);
     if (this.form.valid) {
       this.loading = true;
       this.form.get('typeResponsible').patchValue('D');
@@ -126,9 +146,37 @@ export class MaintenanceIndividualsAndCompaniesComponent
             this.handleSuccess();
             this.loading = false;
           },
-          error: error => this.onLoadToast('error', error.error.message, ''),
+          error: error => {
+            this.onLoadToast('error', error.error.message, '');
+            this.loading = false;
+          },
         });
       } else {
+        if (this.value == 'M') {
+          if (
+            this.form.controls['personName'].value.trim() === '' ||
+            this.form.controls['name'].value.trim() === '' ||
+            this.form.controls['observations'].value.trim() === '' ||
+            this.form.controls['profile'].value.trim() === '' ||
+            this.form.controls['manager'].value.trim() === '' ||
+            this.form.controls['numberDeep'].value.trim() === ''
+          ) {
+            this.alert('warning', 'No se puede guardar campos vacíos', '');
+            return;
+          }
+        }
+        if (this.value == 'F') {
+          if (
+            this.form.controls['personName'].value.trim() === '' ||
+            this.form.controls['name'].value.trim() === '' ||
+            this.form.controls['observations'].value.trim() === '' ||
+            this.form.controls['profile'].value.trim() === ''
+          ) {
+            this.alert('warning', 'No se puede guardar campos vacíos', '');
+            return;
+          }
+        }
+        console.log();
         this.personService.create(this.form.value).subscribe({
           next: () => {
             this.handleSuccess();
@@ -144,10 +192,27 @@ export class MaintenanceIndividualsAndCompaniesComponent
   handleSuccess() {
     this.loading = false;
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `${message} Correctamente`, this.title);
+    this.alert('success', `${message} correctamente`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
+  }
+  typeChange(data: string) {
+    if (data === 'M') {
+      this.form
+        .get('manager')
+        .setValidators([Validators.required, Validators.maxLength(50)]);
+      this.form
+        .get('numberDeep')
+        .setValidators([Validators.required, Validators.maxLength(50)]);
+      this.form.get('manager').updateValueAndValidity();
+      this.form.get('numberDeep').updateValueAndValidity();
+    } else {
+      this.form.get('manager').clearValidators();
+      this.form.get('numberDeep').clearValidators();
+      this.form.get('manager').updateValueAndValidity();
+      this.form.get('numberDeep').updateValueAndValidity();
+    }
   }
   close() {
     this.modalRef.hide();

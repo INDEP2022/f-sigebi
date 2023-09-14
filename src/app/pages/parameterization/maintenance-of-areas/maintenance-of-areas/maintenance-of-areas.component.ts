@@ -5,8 +5,10 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -47,7 +49,10 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   form: FormGroup = new FormGroup({});
-
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+  delegationId: string;
+  subdelegationId: string;
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
@@ -57,20 +62,65 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
     private printFlyersService: PrintFlyersService
   ) {
     super();
+    // this.settings = {
+    //   ...this.settings,
+    //   actions: {
+    //     hideSubHeader: false,
+    //     columnTitle: 'Acciones',
+    //     /* edit: true, */
+    //     delete: true,
+    //     position: 'right',
+    //   },
+    //   columns: { ...COLUMNS },
+    // };
+    this.settings.columns = COLUMNS;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
     this.settings = {
       ...this.settings,
-      actions: {
-        columnTitle: 'Acciones',
-        /* edit: true, */
-        delete: true,
-        position: 'right',
-      },
-      columns: { ...COLUMNS },
+      hideSubHeader: false,
     };
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getDepartmentByIds();
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDepartmentByIds());
   }
 
   private prepareForm() {
@@ -82,28 +132,38 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
 
   getDelegations(params: ListParams) {
     this.serviceDeleg.getAll(params).subscribe(
-      data => {
-        this.delegations = new DefaultSelect(data.data, data.count);
-      },
-      err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
-      },
-      () => {}
+      {
+        next: data => {
+          this.delegations = new DefaultSelect(data.data, data.count);
+        },
+        error: err => {
+          let error = '';
+          if (err.status === 0) {
+            error = 'Revise su conexión de Internet.';
+          } else {
+            error = err.message;
+          }
+          this.onLoadToast('error', 'Error', error);
+        },
+      }
+
+      //() => {}
     );
   }
 
   onDelegationsChange(element: any) {
+    console.log(element.id);
+    this.delegationId = element.id;
     this.resetFields([this.delegation]);
-    this.subdelegations = new DefaultSelect();
+    this.subdelegations = new DefaultSelect([], 0, true);
+    this.form.controls['subdelegation'].setValue('');
     // console.log(this.PN_NODELEGACION.value);
-    if (this.delegation.value)
+    if (this.delegation.value) {
       this.getSubDelegations({ page: 1, limit: 10, text: '' });
+    } else {
+      this.data = new LocalDataSource();
+      this.data.refresh();
+    }
   }
 
   getSubDelegations(lparams: ListParams) {
@@ -130,12 +190,14 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
           error = err.message;
         }
 
-        this.onLoadToast('error', 'Error', error);
+        this.alert('error', 'No esta registrada ninguna Subdelegación', '');
       },
     });
   }
 
   onSubDelegationsChange(element: any) {
+    console.log(element.id);
+    this.subdelegationId = element.id;
     this.resetFields([this.subdelegation]);
     this.getDepartmentByIds();
     this.params
@@ -153,35 +215,61 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
   getDepartmentByIds() {
     this.departments = [];
     this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
     this.departmentService
       .getByDelegationsSubdelegation2(
         this.delegation.value,
         this.subdelegation.value,
-        this.params.getValue()
+        params
       )
       .subscribe({
         next: response => {
           console.log(response);
           this.departments = response.data;
-          this.totalItems = response.count;
+          this.data.load(response.data);
+          this.data.refresh();
+          this.totalItems = response.count | 0;
           this.loading = false;
         },
         error: error => (this.loading = false),
       });
+    /*this.departmentService
+      .getAll(params)
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.departments = response.data;
+          this.data.load(response.data);
+          this.data.refresh();
+          this.totalItems = response.count | 0;
+          this.loading = false;
+        },
+        error: error => (this.loading = false),
+      });*/
   }
 
   openForm(department?: IDepartment) {
-    const idDelegation = { ...this.delegation.value };
-    const idSubDelegation = { ...this.subdelegation.value };
-    const modalConfig = {
+    /*const idDelegation = { ...this.delegation.value };
+    const idSubDelegation = { ...this.subdelegation.value };*/
+
+    const idDelegation = this.delegationId;
+    const idSubDelegation = this.subdelegationId;
+    console.log(this.delegationId, this.subdelegationId);
+    const modalConfig = MODAL_CONFIG;
+    /*const modalConfig = {
       idDelegation,
       idSubDelegation,
       initialState: {},
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    };
+    };*/
     modalConfig.initialState = {
       department,
+      idDelegation,
+      idSubDelegation,
       callback: (next: boolean) => {
         if (next) this.getDepartmentByIds();
       },
@@ -190,16 +278,28 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
   }
 
   delete(departament: IDepartment) {
+    let numSubDelegation = departament.numSubDelegation as ISubdelegation;
     let obj = {
       id: departament.id,
       numDelegation: departament.numDelegation,
-      numSubDelegation: departament.numSubDelegation,
+      numSubDelegation: numSubDelegation.id,
       phaseEdo: departament.phaseEdo,
     };
     this.departmentService.removeByBody(obj).subscribe({
       next: () => {
         this.getDepartmentByIds();
-        this.alert('success', '', 'Borrado');
+        this.alert(
+          'success',
+          'Mantenimiento de Areas',
+          'Borrado Correctamente'
+        );
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Mantenimiento de Areas',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
       },
     });
   }
@@ -208,7 +308,7 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(department);

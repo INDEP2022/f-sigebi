@@ -7,9 +7,9 @@ import {
 } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, firstValueFrom, map, skip } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, map, skip, take } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { readFile, showAlert, showToast } from 'src/app/common/helpers/helpers';
+import { readFile } from 'src/app/common/helpers/helpers';
 import {
   ListParams,
   SearchFilter,
@@ -17,17 +17,16 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { ISpentConcept } from 'src/app/core/models/ms-spent/spent.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { UtilComerV1Service } from 'src/app/core/services/ms-prepareevent/util-comer-v1.service';
 import { SpentService } from 'src/app/core/services/ms-spent/spent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SelectConceptSpentDialogComponent } from '../components/select-concept-spent-dialog/select-concept-spent-dialog.component';
 import { MassiveNumeraryChangeModalComponent } from '../massive-numerary-change-modal/massive-numerary-change-modal.component';
-import {
-  IMassiveNumeraryChangeSpent,
-  IMassiveNumeraryTableSmall,
-} from '../types/massive-numerary.type';
+import { IMassiveNumeraryGood } from '../types/massive-numerary.type';
 import {
   HELP_ARR,
   MASSIVE_NUMERARY_CHANGE_COLUMNS,
@@ -38,7 +37,7 @@ import {
   templateUrl: './massive-numerary-change.component.html',
   styles: [
     `
-      .selects-origin-data select {
+      /* .selects-origin-data select {
         border: none;
         border-bottom: 1px solid black;
         margin-left: 5px;
@@ -57,13 +56,29 @@ import {
       .spent-inputs > div {
         display: flex;
         flex-direction: column;
+      } */
+      .spent-container {
+        width: 250px;
+      }
+      .spent-container input {
+        width: 150px;
+      }
+      select.selects-origin-data {
+        width: 105px;
+        min-height: auto !important;
+      }
+      .btn-custom-search {
+        position: absolute;
+        right: 3px;
+        top: 8px;
       }
     `,
   ],
 })
 export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   form: FormGroup;
-  dataPrevious = new LocalDataSource();
+  dataPrevious: any[] = [];
+  dataPreviousTable = new LocalDataSource([]);
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
@@ -78,7 +93,6 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   BLK_GASTOS = new LocalDataSource();
 
   isVisibleSpent: boolean = false;
-
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -86,21 +100,31 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     private accountMovementService: AccountMovementService,
     private spentService: SpentService,
     private excelService: ExcelService,
-    private prepareEventService: UtilComerV1Service
+    private prepareEventService: UtilComerV1Service,
+    private authService: AuthService,
+    private goodProcess: GoodprocessService
   ) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
+      hideHeader: false,
+      hideSubHeader: false,
       columns: MASSIVE_NUMERARY_CHANGE_COLUMNS,
-    };
+      pager: {
+        perPage: 10,
+      },
+    } as any;
   }
 
   ngOnInit(): void {
     this.prepareForm();
     this.onInit();
-    this.params.pipe(skip(1)).subscribe((res: any) => {
-      this.loadTablePreviewData(res);
+    this.params.pipe(skip(1)).subscribe((res: ListParams) => {
+      // this.loadTablePreviewData(res);
+      // this.tableSpent.changePage(res.page);
+      console.log(res);
+      this.dataPreviousTable.setPaging(res.page, res.limit, true);
     });
     // this.changeValueFormTips();
   }
@@ -119,6 +143,24 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     );
   }
 
+  clean() {
+    this.form.reset();
+    this.formGad.reset();
+    this.formGad.disable();
+    this.formGas.reset();
+    this.formGas.disable();
+    this.formTips.reset();
+
+    this.BLK_BIENES.reset();
+    this.BLK_GASTOS.reset();
+    this.dataPrevious = [];
+    this.dataPreviousTable = new LocalDataSource([]);
+    this.registerReads = 0;
+    this.registerProcessed = 0;
+    this.registerCorrect = 0;
+    this.registerIncorrect = 0;
+  }
+
   prepareForm() {
     this.form = this.fb.group({
       recordsRead: [null, Validators.nullValidator],
@@ -131,11 +173,21 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     });
   }
 
-  onDobleClickInputGas(num: number) {
+  onClickInputGas(num: number) {
     console.log('onDobleClickInputGas');
     this.formGas.get(`GAS${num}`).setValue('');
-    this.modalService.show(SelectConceptSpentDialogComponent, {
+    const modal = this.modalService.show(SelectConceptSpentDialogComponent, {
       class: 'modal-lg',
+      ignoreBackdropClick: true,
+    });
+    modal.onHidden.pipe(take(1)).subscribe((res: any) => {
+      console.log(res, modal.content);
+      if (modal.content) {
+        this.formGas.get(`GAS${num}`).setValue(modal.content.selectedItem.id);
+        this.formGad
+          .get(`GAD${num}`)
+          .setValue(modal.content.selectedItem.description);
+      }
     });
   }
 
@@ -155,7 +207,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
 
   formTips = new FormGroup({});
   formGas = new FormGroup<any>({});
-  formGad = new FormGroup({});
+  formGad = new FormGroup<any>({});
   async onInit() {
     this.columns.forEach((column, index) => {
       this.formTips.addControl(`TIP${index + 1}`, new FormControl(''));
@@ -170,131 +222,205 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     });
   }
 
-  //#region On click Button Process Extraction
   isLoadingProcessExtraction = false;
   async onClickBtnProcessExtraction() {
-    this.isLoadingProcessExtraction = true;
-    let colB = 0;
-    let banB = 0;
+    // this.registerReads = 0;
+    this.registerProcessed = 0;
+    this.registerCorrect = 0;
+    this.registerIncorrect = 0;
+    console.log('onClickBtnProcessExtraction');
+    let vBanB = 0;
+    let vBanI = 0;
+    let vBanV = 0;
+    let vBanG = false;
 
-    let colI = 0;
-    let banI = 0;
-
-    let colG: any = null;
-    let banG = false;
-    let colV = 0;
-    let banV = 0;
+    let vColI = 0;
+    let vColG: any = null;
+    let vColV = 0;
+    let vColB = 0;
     this.columns.forEach((_column, index) => {
       index++;
       const control = this.formTips.get(`TIP${index}`);
       const controlValue = control?.value;
       switch (controlValue) {
         case 'B':
-          colB = index;
-          banB++;
+          vColB = index;
+          vBanB++;
           break;
         case 'I':
-          colI = index;
-          banI++;
+          vColI = index;
+          vBanI++;
           break;
         case 'G':
           const controlGas = this.formGas.get(`GAS${index}`);
           if (!controlGas?.value) {
-            banG = true;
+            vBanG = true;
           } else {
-            colG = colG + index + ',';
+            vColG = vColG + index + ',';
           }
           break;
         case 'V':
-          colV = index;
-          banV++;
+          vColV = index;
+          vBanV++;
       }
     });
     const messages = [];
-    let ban = false;
-    if (banB === 0 || banB > 1) {
+    let vBan = false;
+    if (vBanB === 0 || vBanB > 1) {
       messages.push(
-        banB === 0
-          ? 'Se debe especificar la columna del No. de Bien'
-          : 'Se especificó más de una columna del No. de Bien'
+        vBanB === 0
+          ? 'Se Debe Especificar La Columna Del No. De Bien'
+          : 'Se Especificó Más De Una Columna Del No. De Bien'
       );
-      ban = true;
+      vBan = true;
     }
 
-    if (banI === 0 || banI > 1) {
+    if (vBanI === 0 || vBanI > 1) {
       messages.push(
-        banI === 0
-          ? 'Se debe especificar la columna del Ingreso neto'
-          : 'Se especificó más de una columna del Ingreso neto'
+        vBanI === 0
+          ? 'Se Debe Especificar La Columna Del Ingreso Neto'
+          : 'Se Especificó Más De Una Columna Del Ingreso Neto'
       );
-      ban = true;
+      vBan = true;
     }
 
-    if (banG) {
+    if (vBanG) {
       messages.push(
-        'No se especificó el Concepto de Gasto en al menos una columna'
+        'No Se Especificó El Concepto De Gasto En Al Menos Una Columna'
       );
-      ban = true;
+      vBan = true;
     }
 
-    if (banV === 0 || banV > 1) {
+    if (vBanV === 0 || vBanV > 1) {
       messages.push(
-        banV === 0
-          ? 'Se debe especificar la columna del IVA'
-          : 'Se especificó más de una columna del IVA'
+        vBanV === 0
+          ? 'Se Debe Especificar La Columna Del IVA'
+          : 'Se Especificó Más De Una Columna Del IVA'
       );
-      ban = true;
+      vBan = true;
     }
     if (messages.length > 0) {
-      showToast({
-        icon: 'warning',
-        title: 'Advertencia',
-        text: messages.join('\n'),
-      });
+      this.alert(
+        'warning',
+        'Advertencia',
+        'No puede Haber Más de Una Columna con el No. Bien, Ingreso Neto o IVA'
+      );
     }
-    if (ban) {
-      this.isLoadingProcessExtraction = false;
+    if (vBan) {
       return;
     }
 
-    /*TODO: limpiar tablas 
-        GO_BLOCK('BLK_BIENES');
-        CLEAR_BLOCK;
-        GO_BLOCK('BLK_GASTOS');
-        CLEAR_BLOCK;
-        GO_BLOCK('BLK_PREVIEW');
-        FIRST_RECORD;
-    */
+    const dataPreviousAux = await this.dataPreviousTable.getAll();
+    console.log({ dataPreviousAux });
+    dataPreviousAux.shift();
+    const body = {
+      colB: vColB,
+      colI: vColI,
+      colV: vColV,
+      colG: vColG,
+      bienes: dataPreviousAux,
+      formG: this.formGas.value,
+      formGad: this.formGad.value,
+    };
+    console.log({ body });
+    this.isLoadingProcessExtraction = true;
+    this.loader.load = true;
+    this.goodProcess.postFMasInsNumerario(body).subscribe({
+      next: (res: any) => {
+        this.isLoadingProcessExtraction = false;
+        this.loader.load = false;
+        this.registerReads = res.T_REG.T_REG_PROCESADOS;
+        this.registerProcessed = res.T_REG.T_REG_PROCESADOS;
+        this.registerCorrect = res.T_REG.T_REG_CORRECTOS;
+        this.registerIncorrect = res.T_REG.T_REG_ERRONEOS;
+        console.log(res);
+        this.dataTableSpent = res.BLK_BIENES.map((res: any) => {
+          return {
+            costs: res.GASTO,
+            cveEvent: res.CVE_PROCESO,
+            description: res.DESCRIPCION,
+            entry: res.INGRESO,
+            identifier: res.IDENTIFICADOR,
+            impNumerary: res.VALOR_AVALUO,
+            indNume: res.IND_NUME,
+            noDelegation: res.NO_DELEGACION,
+            noExpAssociated: res.NO_EXP_ASOCIADO,
+            noExpedient: res.NO_EXPEDIENTE,
+            noFlier: res.NO_VOLANTE,
+            noGood: res.NO_BIEN,
+            noSubDelegation: res.NO_SUBDELEGACION,
+            npNUm: res.NO_BIEN_NUME as any,
+            quantity: res.CANTIDAD as any,
+            status: res.ESTATUS,
+            tax: res.IVA as any,
+            color: res.COLOR as any,
+          };
+        });
 
-    const dataTablePreview = await this.dataPrevious.getAll();
-    console.log({ dataTablePreview });
-    this.processExtraction(dataTablePreview, colB, colI, colV, colG);
+        this.dataTableSmall = res.BLK_GASTOS.map((res: any) => {
+          return {
+            amount: res.IMPORTE as any,
+            cveie: res.NO_CONCEPTO_GASTO,
+            noGood: res.NO_BIEN,
+            description: res.DESCRIPCION,
+            status: res.ESTATUS,
+            type: res.TIPO,
+          };
+        });
+        const modalRef = this.modalService.show(
+          MassiveNumeraryChangeModalComponent,
+          {
+            initialState: {
+              dataTableGoods: this.dataTableSpent,
+              dataTableSpents: this.dataTableSmall,
+              user: this.getUser().preferred_username.toUpperCase(),
+            },
+            class: 'modal-lg',
+            ignoreBackdropClick: true,
+          }
+        );
+        modalRef.content.refresh.subscribe((next: any) => {
+          if (next) {
+            this.clean();
+            this.totalItems = 0;
+          }
+        });
+      },
+      error: err => {
+        this.loader.load = false;
+        this.isLoadingProcessExtraction = false;
+      },
+      complete: () => {},
+    });
+    // this.processExtraction(vColB, vColI, vColV, vColG);
   }
 
+  dataTableSpent: any[] = [];
+  dataTableSmall: any[] = [];
   async processExtraction(
-    dataTablePreview: any[],
+    // dataTablePreview: any[],
     colB: number,
     colI: number,
     colV: number,
     colG: string
   ) {
-    let dataTableSpent: IMassiveNumeraryChangeSpent[] = [];
-    let dataTableSmall: IMassiveNumeraryTableSmall[] = [];
-    // let indNume;
-    // let contm = 0;
+    this.dataTableSpent = [];
+    this.dataTableSmall = [];
     let cont = 0;
-    // let cveProcess: string | null = null;
-    // let actaOk = false;
     let vItem = null;
 
     let vType = null;
-    let vnoGood;
+    let vNoGood;
     let vContm = 0;
 
-    let vGood = null;
-    let vGoodStatus = null;
+    /** @description vdescripcion, vestatus, vno_exp_asociado, vno_expediente, vcantidad,
+                      vno_delegacion, vno_subdelegacion, videntificador, vno_volante, vno_clasif_bien, vno_bien_padre_parcializacion */
+    let good: IGood | null = null;
+    /** @description no_bien: vno_bienn, estatus: vestatusn */
+    let vGoodStatus: IGood | null = null;
 
-    let vnoGoodn = null;
+    // let vnoGoodN = null;
+    let vSpent = null;
     let vcveProcess = null;
     let vIndNume: number;
     let vActaOk = null;
@@ -305,29 +431,27 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     let vColgu;
     let vdSpent = null;
     let vDescription = null;
-    // /** @replace vno_bienn */
-    // let numberGoodn = null;
-
-    /** @replace vestatusn */
-    // let status = null;
-
-    // dataTablePreview.map(
-    const test = async (item: any) => {
+    const mapAsync = await this.dataPrevious.map(async (item, index) => {
+      if (index === 0) {
+        return;
+      }
+      // const test = async (item: any) => {
       vItem = 'COL' + colB;
       vType = item[vItem];
 
       if (vType) {
         try {
-          vnoGood = Number(vType.replace(',', '.'));
+          vNoGood = Number(String(vType).replace(',', '.'));
           try {
-            vGood = await this.selectGoodForId(vnoGood);
-            vnoGoodn = null;
+            /** @description no_bien */
+            good = await this.selectGoodForId(vNoGood);
+            // vnoGoodN = null;
             vcveProcess = null;
             try {
               vGoodStatus = await this.selectGoodFilterNoGoodReferenceAndNoGood(
-                vnoGood
+                vNoGood
               );
-              vnoGoodn = vGoodStatus?.id;
+              // vnoGoodN = vGoodStatus?.id;
               if (vGoodStatus?.status !== 'ADM') {
                 vIndNume = 0;
                 vContm++;
@@ -335,16 +459,17 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
               } else {
                 try {
                   const accountMovement = await this.selectMovementAccount(
-                    vnoGoodn
+                    vGoodStatus.id // vnoGoodN
                   );
                   vIndNume = 3;
                   vContm++;
                   vcveProcess = 'Numerario conciliado.';
                 } catch (ex) {
-                  vContm++;
+                  // vContm++;
+                  vIndNume = 2;
                 }
               }
-              vcveProcess = await this.pufSearchEvent(vnoGood);
+              vcveProcess = await this.pufSearchEvent(vNoGood);
             } catch (ex: any) {
               console.log({ ex: ex.message });
               if (ex?.message === 'Más de una ref.') {
@@ -353,23 +478,23 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                 vcveProcess = ex?.message;
               } else {
                 if (
-                  vGood.identifier == 'TRANS' &&
-                  ['CNE', 'CBD', 'CDS', 'CNS', 'CNR'].includes(vGood.status)
+                  good.identifier == 'TRANS' &&
+                  ['CNE', 'CBD', 'CDS', 'CNS', 'CNR'].includes(good.status)
                 ) {
                   vIndNume = 2;
-                  vcveProcess = await this.pufSearchEvent(vnoGood);
+                  vcveProcess = await this.pufSearchEvent(vNoGood);
                 } else {
                   vIndNume = 1;
-                  if (vGood.identifier == 'TRANS') {
+                  if (good.identifier == 'TRANS') {
                     vIndNume = 4;
                   }
-                  vActaOk = await this.pufValidActaReception(vnoGood);
+                  vActaOk = await this.pufValidActaReception(vNoGood);
                   if (
                     !vActaOk &&
-                    this.nvl(vGood.goodsPartializationFatherNumber) > 0
+                    this.nvl(good.goodsPartializationFatherNumber) > 0
                   ) {
                     vActaOk = await this.pufValidActaReception(
-                      vGood.goodsPartializationFatherNumber
+                      good.goodsPartializationFatherNumber
                     );
                   }
                   if (!vActaOk) {
@@ -385,33 +510,30 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
             if (vType) {
               try {
                 vIncome = Number(
-                  Math.round(parseFloat((vType as string).replace(',', '.')))
+                  Math.round(parseFloat(String(vType).replace(',', '.')))
                 ).toFixed(2);
                 vItem = 'COL' + colV;
                 vType = item[vItem];
                 if (vType) {
                   try {
                     vTax = Number(
-                      Math.round(
-                        parseFloat((vType as string).replace(',', '.'))
-                      )
+                      Math.round(parseFloat(String(vType).replace(',', '.')))
                     ).toFixed(2);
                     vColg1 = colG;
                     vTotalSpent = 0;
                     while (vColg1) {
-                      vColgu = vColg1.substring(0, vColg1.indexOf(','));
+                      vColgu = vColg1.substring(0, vColg1.indexOf(',')); //TODO: verificar | v_colgu := SUBSTR(v_colg1,1,INSTR(v_colg1,',',1)-1);
                       vItem = 'COL' + vColgu;
                       vType = item[vItem];
                       try {
-                        vdSpent = Number(
+                        vSpent = Number(
                           Math.round(
-                            parseFloat((vType as string).replace(',', '.'))
+                            parseFloat(String(vType).replace(',', '.'))
                           )
-                        ).toFixed(2);
+                        ).toFixed(2); //:TODO verificar | vgasto := NVL(ROUND(TO_NUMBER(REPLACE(v_tipo,',','.'),'99999999999999.9999999999'),2),0);
                         vItem = 'GAS' + vColgu;
                         vdSpent = this.formGas.get(vItem)?.value;
-                        vTotalSpent =
-                          vTotalSpent + Number(this.nvl(vdSpent, 0));
+                        vTotalSpent = vTotalSpent + Number(this.nvl(vSpent, 0));
                         vItem = 'GAD' + vColgu;
                         vDescription = this.formGad.get(vItem)?.value;
                         if (!vDescription) {
@@ -431,50 +553,51 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                         //            END IF;
 
                         const blkSpent = {
-                          noGood: vnoGood,
+                          noGood: vNoGood,
                           cveie: vdSpent,
-                          amount: vdSpent,
+                          amount: vSpent as any,
                           description: vDescription,
-                          status: vGood.status,
+                          status: good.status,
                           type: 'E',
                         };
-                        dataTableSmall.push(blkSpent);
+                        this.dataTableSmall.push(blkSpent);
                       } catch (ex) {
                         null;
                       }
                       vColg1 = vColg1.substring(vColg1.indexOf(',') + 1);
                     }
-
-                    // IF :BLK_GASTOS.NO_BIEN IS NOT NULL THEN
-                    //           CREATE_RECORD;
-                    //        END IF;
-                    dataTableSmall.push({
-                      noGood: vnoGood,
+                    const blkSpent = {
+                      noGood: vNoGood,
                       cveie: 0,
-                      amount: vTax.toString(),
-                      description: 'I.V.A',
-                      status: vGood.status,
-                      type: 'I',
+                      amount: vTax,
+                      description: 'I.V.A.',
+                      status: good.status,
+                      type: 'i',
+                    };
+                    this.dataTableSmall.push(blkSpent);
+                    console.log({
+                      dataTableSmall: this.dataTableSmall,
+                      blkSpent,
                     });
 
-                    const prevDataTableSpent: IMassiveNumeraryChangeSpent = {
-                      noGood: vnoGood,
-                      description: vGood.description,
-                      status: vGood.status,
+                    const prevDataTableSpent: IMassiveNumeraryGood = {
+                      noGood: vNoGood,
+                      description: good.description,
+                      status: good.status,
                       entry: vIncome + vTotalSpent - vTax,
                       costs: vTotalSpent,
                       tax: vTax,
                       impNumerary: vIncome,
-                      noExpAssociated: vGood.associatedFileNumber,
-                      noExpedient: vGood.fileeNumber,
-                      quantity: vGood.quantity,
-                      noDelegation: (vGood.delegationNumber as any)?.id,
-                      noSubDelegation: (vGood.subDelegationNumber as any)?.id,
-                      identifier: vGood.identifier,
-                      noFlier: vGood.flyerNumber,
+                      noExpAssociated: good.associatedFileNumber,
+                      noExpedient: good.fileeNumber,
+                      quantity: good.quantity,
+                      noDelegation: (good.delegationNumber as any)?.id,
+                      noSubDelegation: (good.subDelegationNumber as any)?.id,
+                      identifier: good.identifier,
+                      noFlier: good.flyerNumber,
                       indNume: vIndNume,
                       cveEvent: vcveProcess,
-                      npNUm: vnoGoodn,
+                      npNUm: vGoodStatus?.id,
                     };
 
                     if (vIndNume !== 1) {
@@ -495,7 +618,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                           prevDataTableSpent['color'] = 'bg-custom-yellow';
                       }
                     }
-                    dataTableSpent.push(prevDataTableSpent);
+                    this.dataTableSpent.push(prevDataTableSpent);
                     cont++;
                   } catch (ex) {
                     vContm++;
@@ -519,17 +642,23 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       this.registerProcessed = cont + vContm;
       this.registerCorrect = cont;
       this.registerIncorrect = vContm;
-    };
+    });
 
-    await test({ COL1: '7349', COL2: '10', COL3: '10', COL4: '10' });
+    await Promise.all(mapAsync);
+
     this.isLoadingProcessExtraction = false;
     this.modalService.show(MassiveNumeraryChangeModalComponent, {
       initialState: {
-        BLK_BIENES: new LocalDataSource(dataTableSpent),
-        BLK_GASTOS: new LocalDataSource(dataTableSmall),
+        dataTableGoods: this.dataTableSpent,
+        dataTableSpents: this.dataTableSmall,
+        user: this.getUser().preferred_username.toUpperCase(),
       },
       class: 'modal-lg',
     });
+  }
+
+  getUser() {
+    return this.authService.decodeToken();
   }
 
   selectMovementAccount(numberGoodn: number): Promise<any> {
@@ -630,18 +759,23 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
 
   //#region On click Button File Excel
   onClickBtnFileExcel(e: Event) {
+    this.loader.load = true;
+    this.registerReads = 0;
+    this.registerProcessed = 0;
+    this.registerCorrect = 0;
+    this.registerIncorrect = 0;
     const file = (e.target as HTMLInputElement).files[0];
     try {
-      readFile(file).then(data => {
+      readFile(file, 'BinaryString').then(data => {
         const dataExcel = this.excelService.getData(data.result);
         if (dataExcel.length < 1 || !this.validatorFileExcel()) {
-          showAlert({
-            text:
-              dataExcel.length < 1
-                ? 'El archivo no contiene datos.'
-                : 'El archivo no es valido verifique su cabecera.',
-            icon: 'error',
-          });
+          this.alert(
+            'error',
+            '',
+            dataExcel.length < 1
+              ? 'El Archivo no Contiene Datos.'
+              : 'El Archivo no es Valido Verifique su Cabecera.'
+          );
           return;
         }
         //ERROR: por implentar la validacion del archivo;
@@ -650,14 +784,26 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
           const itemValues = Object.values(item);
           this.columns.forEach((column, index) => {
             const key = `COL${index + 1}`;
-            data[key] = itemValues?.[index] || '';
+            data[key] = itemValues?.[index];
           });
           return data;
         });
         this.registerReads = dataPreviewTable.length;
+        const keys = Object.keys(dataExcel[0]);
+        const header: { [key: string]: string } = {};
+        keys.forEach((element, index) => {
+          const key = `COL${index + 1}`;
+          header[key] = element;
+        });
+        dataPreviewTable.unshift(header);
 
-        this.dataPrevious.load(dataPreviewTable);
+        // this.dataPrevious = dataPreviewTable;
+        this.loader.load = false;
+        console.log({ dataPreviewTable: this.dataPrevious });
+        // this.tableSpent.changePage({ page: 1, perPage: 10 });
+        this.dataPreviousTable.load(dataPreviewTable);
 
+        this.totalItems = dataPreviewTable.length - 1;
         // console.log({ dataPreviewTable, dataExcel });
       });
     } catch (ex) {
@@ -671,119 +817,5 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     return true;
   }
 
-  // getIndexForNameColumn(name: string): number {
-
-  // }
-
-  //#endregion On click Button File Excel
-
   loadTablePreviewData(params: ListParams): void {}
 }
-
-// function _onClickBtnProcessExtraction(
-//   columns: string[],
-//   formTips: FormGroup,
-//   formGas: FormGroup
-// ) {
-//   let colB = 0;
-//   let banB = 0;
-
-//   let colI = 0;
-//   let banI = 0;
-
-//   let colG = '';
-//   let banG = false;
-//   let colV = 0;
-//   let banV = 0;
-//   columns.forEach((column, index) => {
-//     index++;
-//     console.log(`TIP${index}`);
-//     const control = formTips.get(`TIP${index}`);
-//     const controlValue = control?.value;
-//     switch (controlValue) {
-//       case 'B':
-//         colB = index;
-//         banB++;
-//         break;
-//       case 'I':
-//         colI = index;
-//         banI++;
-//         break;
-//       case 'G':
-//         const controlGas = formGas.get(`GAS${index}`);
-//         controlGas?.value ? (banG = true) : (colG = `${colG}${index},`);
-//         break;
-//       case 'V':
-//         colV = index;
-//         banV++;
-//     }
-//   });
-//   const messages = [];
-//   let ban = false;
-//   if (banB === 0 || banB > 1) {
-//     messages.push(
-//       banB === 0
-//         ? 'Se debe especificar la columna del No. de Bien'
-//         : 'Se especificó más de una columna del No. de Bien'
-//     );
-//     ban = true;
-//   }
-
-//   if (banI === 0 || banI > 1) {
-//     messages.push(
-//       banI === 0
-//         ? 'Se debe especificar la columna del Ingreso neto'
-//         : 'Se especificó más de una columna del Ingreso neto'
-//     );
-//     ban = true;
-//   }
-
-//   if (banG) {
-//     messages.push(
-//       'No se especificó el Concepto de Gasto en al menos una columna'
-//     );
-//     ban = true;
-//   }
-
-//   if (banV === 0 || banV > 1) {
-//     messages.push(
-//       banV === 0
-//         ? 'Se debe especificar la columna del IVA'
-//         : 'Se especificó más de una columna del IVA'
-//     );
-//     ban = true;
-//   }
-//   if (messages.length > 0) {
-//     showToast({
-//       icon: 'warning',
-//       title: 'Advertencia',
-//       text: messages.join('\n'),
-//     });
-//   }
-//   // console.log(colB);
-//   if (ban) return;
-
-//   //TODO: CONTINUAR CON EL PROCESO DEL LOOP
-
-//   const params = new ListParams();
-//   params.limit = 10000000000000;
-//   // this.service.getDataExcel(params).subscribe(res: any) => {
-//   //   if (!Array.isArray(res)){
-//   //     showAlert({
-//   //       icon: 'error',
-//   //       text: 'Ups! ocurrió un error al procesar los datos vuelve a intentarlo'
-//   //     })
-//   //     return;
-//   //   }
-//   //   processExtraction(res, colB)
-//   // });
-// }
-
-// function processExtraction(res: any[], colB: number) {
-//   res.map((item) => {
-//     const typeValue = item[`F${colB}`];
-//     if (typeValue) {
-
-//     }
-//   })
-// }

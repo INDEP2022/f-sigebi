@@ -7,15 +7,21 @@
       <div class="row">
         <div class="col-md-2">
           <form-field [control]="form.get('id')" label="ID">
-            <input type="text" class="form-control" formControlName="id" />
+            <input
+              [readOnly]="edit"
+              type="text"
+              class="form-control"
+              formControlName="id"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4)" />
           </form-field>
         </div>
         <div class="col-md-10">
-          <form-field [control]="form.get('descripcion')" label="Descripción">
+          <form-field [control]="form.get('description')" label="Descripción">
             <input
               type="text"
               class="form-control"
-              formControlName="descripcion" />
+              formControlName="description"
+              oninput="if(this.value.length > 100) this.value = this.value.slice(0, 100)" />
           </form-field>
         </div>
       </div>
@@ -25,11 +31,16 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
+          (confirm)="saveData()"
           [disabled]="!form.valid"
+          [btnSmall]="true"
           [loading]="loading"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

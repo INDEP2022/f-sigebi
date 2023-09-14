@@ -25,19 +25,14 @@ export class TypeRelevantService implements ICrudMethods<ITypeRelevant> {
     return this.typeRelevantRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: ITypeRelevant): Observable<Object> {
-    return this.typeRelevantRepository.update(this.route, id, model);
+  updateTypeRelevant(
+    id: string | number,
+    model: ITypeRelevant
+  ): Observable<Object> {
+    return this.typeRelevantRepository.updateTypeRelevant2(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {
     return this.typeRelevantRepository.remove(this.route, id);
-  }
-
-  //Borrar servicio
-  search(params: ListParams): Observable<IListResponse<ITypeRelevant>> {
-    return this.typeRelevantRepository.getAllPaginated(
-      `${this.route}/search`,
-      params
-    );
   }
 }

@@ -39,7 +39,7 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field
             [control]="form.get('rangeDate')"
             label="Fechas de recepci&oacute;n">
@@ -61,21 +61,21 @@
 
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3">
+      <!-- <div class="m-3">
         <button
           type="button"
-          class="btn btn-primary active"
+          class="btn btn-primary active btn-sm"
           [disabled]="!form.valid"
           (click)="confirm()">
-          Imprimir
+          Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
         </button>
-      </div>
+      </div> -->
       <div class="m-3">
         <button
           (click)="cleanForm()"
           type="button"
-          class="btn btn-danger active">
-          Limpiar
+          class="btn btn-danger btn-sm active mr-3">
+          Limpiar <i class="fas fa-eraser"> </i>
         </button>
       </div>
     </div>

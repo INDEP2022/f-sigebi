@@ -3,6 +3,7 @@
     <button
       type="button"
       class="btn btn-primary active btn-sm"
+      tooltip="Buscar"
       (click)="enableSearchMode()">
       <i class="bx bx-search-alt bx-sm float-icon"></i>
     </button>
@@ -31,6 +32,8 @@
   <div class="d-inline mx-2" *ngIf="modalLoaded">
     <button
       type="button"
+      tooltip="Var mas coincidencias"
+      placement="left"
       class="btn btn-primary btn-sm active"
       [disabled]="this.loading"
       (click)="openModalSearch()">
@@ -38,20 +41,59 @@
     </button>
   </div>
 </div>
-<div #modal="bs-modal" bsModal class="modal fade">
-  <app-modal class="modal-dialog modal-lg modal-dialog-centered">
+<div
+  #modal="bs-modal"
+  [config]="{ ignoreBackdropClick: true }"
+  bsModal
+  class="modal fade w-100">
+  <app-modal class="modal-dialog modalSizeXL modal-dialog-centered">
     <div header>
       <h5 class="modal-title">&nbsp;&nbsp;Seleccionar {{ title }}</h5>
     </div>
     <div body>
       <div class="row mt-n3">
+        <!-- <form
+          [formGroup]="formSearch"
+          (ngSubmit)="searchForFilter()"
+          class="col-12 form-material">
+          <div class="row">
+            <div class="col-md-4">
+              <form-field
+                label="No. Volante"
+                [control]="formSearch.get('wheelNumber')">
+                <input
+                  formControlName="wheelNumber"
+                  class="form-control"
+                  type="number" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                label="No. Oficio"
+                [control]="formSearch.get('officeExternalKey')">
+                <input
+                  formControlName="officeExternalKey"
+                  class="form-control"
+                  type="text" />
+              </form-field>
+            </div>
+            <div class="col">
+              <button type="submit" class="btn btn-sm btn-primary active">
+                Buscar <i class="ml-2 fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </form> -->
         <div class="col-md-12 heigth-limit">
+          <div class="d-flex justify-content-end mb-2">
+            <app-columns-select [(settings)]="_settings"></app-columns-select>
+          </div>
           <ng-scrollbar track="all" [autoHeightDisabled]="true">
             <div [class]="loading ? 'table-loading' : ''">
               <ng2-smart-table
                 id="events-table"
-                [attr.class]="'table-bordered'"
-                [settings]="settings"
+                [attr.class]="'my-table table-bordered'"
+                [settings]="_settings"
                 [source]="columns"
                 (userRowSelect)="selectRow($event)">
               </ng2-smart-table>
@@ -60,11 +102,13 @@
           </ng-scrollbar>
         </div>
       </div>
-      <app-pagination
-        *ngIf="dataObservableFn"
-        [filterParams]="filterParams"
-        [totalItems]="totalItems">
-      </app-pagination>
+      <div class="overflow-auto card-header-span-fix mt-5">
+        <app-pagination
+          *ngIf="dataObservableFn"
+          [filterParams]="filterParams"
+          [totalItems]="totalItems">
+        </app-pagination>
+      </div>
     </div>
     <div footer>
       <div class="d-flex justify-content-center">

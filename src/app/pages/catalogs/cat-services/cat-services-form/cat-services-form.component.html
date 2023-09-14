@@ -1,30 +1,18 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="catserviceForm" class="form-material">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field
             [control]="catserviceForm.get('code')"
             label="C&oacute;digo">
-            <input type="text" class="form-control" formControlName="code" />
+            <input type="string" class="form-control" formControlName="code" />
           </form-field>
         </div>
-
-        <div class="col-md-4">
-          <form-field
-            [control]="catserviceForm.get('unaffordabilityCriterion')"
-            label="Criterio de incosteabilidad">
-            <input
-              type="string"
-              class="form-control"
-              formControlName="unaffordabilityCriterion" />
-          </form-field>
-        </div>
-
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field
             [control]="catserviceForm.get('subaccount')"
             label="Subcuenta">
@@ -34,7 +22,8 @@
               formControlName="subaccount" />
           </form-field>
         </div>
-
+      </div>
+      <div class="row">
         <div class="col-md-12">
           <form-field
             [control]="catserviceForm.get('description')"
@@ -46,21 +35,37 @@
             </textarea>
           </form-field>
         </div>
-
+      </div>
+      <div class="row">
         <div class="col-md-6">
-          <form-field
-            [control]="catserviceForm.get('registryNumber')"
-            label="No. de registro">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="registryNumber" />
+          <form-field [control]="catserviceForm.get('cost')">
+            <!--<input type="text" class="form-control" formControlName="cost" />-->
+            <div class="row">
+              <div class="col-md-4">
+                <form-radio label="Gastos">
+                  <input type="radio" formControlName="cost" value="GASTO" />
+                </form-radio>
+              </div>
+              <div class="col-md-4">
+                <form-radio label="Costos">
+                  <input type="radio" formControlName="cost" value="COSTO" />
+                </form-radio>
+              </div>
+            </div>
           </form-field>
         </div>
-
         <div class="col-md-6">
-          <form-field [control]="catserviceForm.get('cost')" label="Costo">
-            <input type="text" class="form-control" formControlName="cost" />
+          <form-field
+            label="Clave Relación Bien"
+            [control]="catserviceForm.get('unaffordabilityCriterion')">
+            <ng-select
+              formControlName="unaffordabilityCriterion"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="Y">Si</ng-option>
+              <ng-option value="N">No</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>

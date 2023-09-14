@@ -1,7 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ActivatedRoute, Router } from '@angular/router';
+import * as moment from 'moment';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { minDate } from 'src/app/common/validations/date.validators';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { ILocality } from 'src/app/core/models/catalogs/locality.model';
 import { IMunicipality } from 'src/app/core/models/catalogs/municipality.model';
@@ -10,7 +17,10 @@ import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic
 import { ITypeWarehouse } from 'src/app/core/models/catalogs/type-warehouse.model';
 import { IZipCodeGoodQuery } from 'src/app/core/models/catalogs/zip-code.model';
 import { ICatThirdView } from 'src/app/core/models/ms-goods-inv/goods-inv.model';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
+import { IUserTurn } from 'src/app/core/models/user-turn/user-turn.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
@@ -18,10 +28,13 @@ import { MunicipalityService } from 'src/app/core/services/catalogs/municipality
 import { TypeWarehouseService } from 'src/app/core/services/catalogs/type-warehouse.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { StoreAliasStockService } from 'src/app/core/services/ms-store/store-alias-stock.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-warehouse-form',
@@ -38,7 +51,9 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   cities = new DefaultSelect<ICity>();
   localities = new DefaultSelect<ILocality>();
   zipCode = new DefaultSelect<IZipCodeGoodQuery>();
-
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  userNameSelect: string = '';
+  userFirstName: string = '';
   typeWarehouse = new DefaultSelect<ITypeWarehouse>();
   stateKey: string = '';
   municipalityId: string = '';
@@ -46,8 +61,12 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   show_city_municipality: boolean = false;
   showLocality: boolean = false;
   showZipCode: boolean = false;
+  programmingId: number = 0;
+  task: ITask;
+  stateKeySelect: number = 0;
   constructor(
     private modalService: BsModalService,
+    private modalRef: BsModalRef,
     private fb: FormBuilder,
     private municipalityService: MunicipalityService,
     private typeWarehouseService: TypeWarehouseService,
@@ -56,7 +75,12 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     private goodsQueryService: GoodsQueryService,
     private stateService: DelegationStateService,
     private programmingService: ProgrammingRequestService,
-    private userProcessService: UserProcessService
+    private userProcessService: UserProcessService,
+    private authService: AuthService,
+    private activatedRoute: ActivatedRoute,
+    private taskService: TaskService,
+    private router: Router,
+    private storeService: StoreAliasStockService
   ) {
     super();
   }
@@ -71,17 +95,11 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   //Verificar typeTercero//
   prepareForm() {
+    const now = moment();
+    const date = new Date(now.format());
     this.warehouseForm = this.fb.group({
-      numberRegister: [
-        null,
-        [
-          Validators.required,
-          Validators.maxLength(30),
-          Validators.pattern(STRING_PATTERN),
-        ],
-      ],
-      responsibleUser: [null],
-      description: [
+      nbidstore: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      nbusername: [
         null,
         [
           Validators.required,
@@ -89,77 +107,196 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      typeTercero: [null, [Validators.required]],
-      numberManagement: [
-        null,
-        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
-      ],
-      locator: [null],
+      tpThird: [null],
 
-      contractNumber: [
+      wildebeestSettlement: [null, [Validators.required]],
+      nbwithlocator: [null],
+
+      nbcontract: [
         null,
         [Validators.maxLength(40), Validators.pattern(STRING_PATTERN)],
       ],
 
-      siabWarehouse: [
+      nbstoresiab: [
         null,
-        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(60),
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
-      startOperation: [null],
-      endOperation: [null],
+      fhstart: [null, [Validators.required, minDate(new Date(date))]],
+      fhend: [null, [Validators.required, minDate(new Date(date))]],
 
-      responsibleDelegation: [
+      wildebeestDelegationregion: [
         this.regDelData.description,
         [Validators.maxLength(150), Validators.pattern(STRING_PATTERN)],
       ],
 
-      managedBy: [
+      nbadmonby: [
         null,
         [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
       ],
-      stateCode: [null, [Validators.required]],
-      cityCode: [null, [Validators.required]],
-      municipalityCode: [null, [Validators.required]],
-      localityCode: [null, [Validators.required]],
-      zipCode: [null, [Validators.required]],
-      street: [
+      idState: [null, [Validators.required]],
+      idCity: [null, [Validators.required]],
+      wildebeestmunicipality: [null, [Validators.required]],
+      idProgramming: [this.programmingId],
+      nbzipcode: [null],
+      nbstreet: [
         null,
-        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
-      numberOutside: [
+      nbnoexternal: [
         null,
         [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
       ],
-      latitude: [
+      nblatitude: [
         null,
         [Validators.maxLength(150), Validators.pattern(STRING_PATTERN)],
       ],
-      type: [null],
+      tpstore: [null, [Validators.required]],
 
-      longitude: [
+      nblength: [
         null,
         [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
       ],
     });
   }
+
+  userSelect(user: IUserTurn) {
+    this.userNameSelect = user.username;
+    this.userFirstName = user.firstName;
+  }
+
   confirm() {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
-      '¿Estás seguro de crear almacén?'
-    ).then(question => {
+      '¿Seguro de mandar a solicitar un nuevo almacén?'
+    ).then(async question => {
       if (question.isConfirmed) {
-        console.log(this.warehouseForm.value);
-        this.onLoadToast('success', 'Almacén creado correctamente', '');
-        this.close();
+        this.loading = true;
+        this.warehouseForm
+          .get('wildebeestDelegationregion')
+          .setValue(this.regDelData.id);
+
+        this.storeService.createdataStore(this.warehouseForm.value).subscribe({
+          next: async response => {
+            this.loading = false;
+            await this.createTaskWarehouse(response.id);
+          },
+          error: error => {},
+        });
+        //Verificar donde se guarda el almacén//
       }
     });
   }
 
+  async createTaskWarehouse(idWarehouse: number) {
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    const user: any = this.authService.decodeToken();
+    let body: any = {};
+    body['type'] = 'SOLICITUD_PROGRAMACION';
+    body['subtype'] = 'Realizar_Programacion';
+    body['ssubtype'] = 'ALTA_ALMACEN';
+
+    let task: any = {};
+    task['id'] = 0;
+    task['assignees'] = this.userNameSelect;
+    task['assigneesDisplayname'] = this.userFirstName;
+    task['creator'] = user.username;
+    task['taskNumber'] = Number(this.programmingId);
+    task['title'] =
+      'Solicitud de alta de almacén con folio: ' + this.programmingId;
+    task['programmingId'] = this.programmingId;
+    task['expedientId'] = 0;
+    task['idDelegationRegional'] = this.regDelData.id;
+    task['urlNb'] = 'pages/request/programming-request/warehouse';
+    task['processName'] = 'SolicitudProgramacion';
+    task['taskDefinitionId'] = _task.id;
+    body['task'] = task;
+    const taskResult = await this.createTaskOrderService(body);
+    if (taskResult) {
+      const closeTaskPerformProg = await this.closeTaskPerform();
+      if (closeTaskPerformProg) {
+        this.alert(
+          'success',
+          'Registro guardado',
+          `Solicitud de alta de almacén con folio: ${this.programmingId}`
+        );
+        this.close();
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+      }
+    }
+  }
+
+  closeTaskPerform() {
+    return new Promise((resolve, reject) => {
+      this.task = JSON.parse(localStorage.getItem('Task'));
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.id'] = `$eq:${this.task.id}`;
+      this.taskService.getAll(params.getValue()).subscribe({
+        next: async response => {
+          const updateStatusTMP = await this.updateTask(response.data[0]);
+          if (updateStatusTMP == true) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+        error: error => {},
+      });
+    });
+  }
+
+  updateTask(task: ITask) {
+    return new Promise((resolve, reject) => {
+      const taskForm: ITask = {
+        State: 'FINALIZADA',
+        taskDefinitionId: task.id,
+      };
+      this.taskService.update(task.id, taskForm).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  createTaskOrderService(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
+        },
+      });
+    });
+  }
+
   getResponsibleUserSelect(params: ListParams) {
-    this.userProcessService.getAll(params).subscribe(data => {
-      console.log('usuarios responsables', data);
-      this.users = new DefaultSelect(data.data, data.count);
+    const user: any = this.authService.decodeToken();
+
+    params['filter.search'] = params.text;
+    this.userProcessService.getAll(params).subscribe({
+      next: data => {
+        const concatNom = data.data.map(user => {
+          user['nomComplete'] = user.firstName + ' ' + user.lastName;
+          return user;
+        });
+        this.users = new DefaultSelect(concatNom, data.count);
+      },
+      error: error => {},
     });
   }
 
@@ -200,7 +337,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   getCitySelect(params?: ListParams) {
     if (this.stateKey) {
       this.show_city_municipality = true;
-      params['stateKey'] = this.stateKey;
+      params['filter.state'] = this.stateKey;
       this.cityService.getAll(params).subscribe(data => {
         this.cities = new DefaultSelect(data.data, data.count);
       });
@@ -210,7 +347,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   getMunicipalitiesSelect(params?: ListParams) {
     if (this.stateKey) {
       this.show_city_municipality = true;
-      params['stateKey'] = this.stateKey;
+      params['filter.stateKey'] = this.stateKey;
       this.municipalityService.getAll(params).subscribe(data => {
         this.municipalities = new DefaultSelect(data.data, data.count);
       });
@@ -225,8 +362,8 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   getLocalitySelect(params?: ListParams) {
     if (this.stateKey && this.municipalityId) {
       this.showLocality = true;
-      params['stateKey'] = this.stateKey;
-      params['municipalityId'] = this.municipalityId;
+      params['filter.stateKey'] = this.stateKey;
+      params['filter.municipalityId'] = this.municipalityId;
       this.localityService.getAll(params).subscribe(data => {
         this.localities = new DefaultSelect(data.data, data.count);
       });
@@ -261,5 +398,23 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   close() {
     this.modalService.hide();
+    this.modalRef.content.callback(true);
+  }
+
+  msgGuardado(icon: any, title: string, message: string) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: icon,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+      }
+    });
   }
 }

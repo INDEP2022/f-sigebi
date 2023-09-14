@@ -8,37 +8,35 @@
       class="form-material"
       class="form-material">
       <div class="row pt-5">
-        <div class="col-md-2">
-          <form-field [control]="delegationForm.get('id')" label="Id">
-            <input type="number" class="form-control" formControlName="id" />
+        <!-- <div class="col-md-4">
+          <form-field [control]="delegationForm.get('id')" label="Código">
+            <input type="number" class="form-control" formControlName="id" min="0" />
           </form-field>
-        </div>
+        </div> -->
 
-        <div class="col-md-4 offset-md-2">
-          <form-field [control]="delegationForm.get('cveState')">
+        <div class="col-md-6">
+          <form-field [control]="delegationForm.get('stateKey')">
             <ngx-select
               [form]="delegationForm"
-              control="cveState"
-              value="cveState"
-              bindLabel="descState"
+              control="stateKey"
+              value="id"
+              bindLabel="descCondition"
               [data]="states"
               (fetchItems)="getStates($event)"
-              (change)="stateChange($event)"
-              label="CVE Estado">
+              label="Clave Estado">
             </ngx-select>
           </form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field [control]="delegationForm.get('idZoneGeographic')">
             <ngx-select
               [form]="delegationForm"
               control="idZoneGeographic"
-              value="id_zona_geografica"
-              bindLabel="descripcion"
+              value="id"
+              bindLabel="description"
               [data]="zones"
               (fetchItems)="getZones($event)"
-              (change)="zoneChange($event)"
               label="Zona Geogr&aacute;fica">
             </ngx-select>
           </form-field>
@@ -80,24 +78,30 @@
             [control]="delegationForm.get('etapaEdo')"
             label="Etapa Estado">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="etapaEdo" />
+              formControlName="etapaEdo"
+              min="0" />
           </form-field>
         </div>
 
         <div class="col-md-2">
           <form-field [control]="delegationForm.get('status')" label="Estatus">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="status" />
+              formControlName="status"
+              min="0" />
           </form-field>
         </div>
 
         <div class="col-md-2">
           <form-field [control]="delegationForm.get('iva')" label="IVA">
-            <input type="number" class="form-control" formControlName="iva" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="iva"
+              min="0" />
           </form-field>
         </div>
       </div>
@@ -119,13 +123,14 @@
       <div class="row pt-5">
         <div class="col-md-3">
           <form-field
-            [control]="delegationForm.get('zoneVigilanceCVE')"
-            label="CVE Zona">
+            [control]="delegationForm.get('zoneVigilanceKey')"
+            label="Cve. Zona">
             <input
-              type="number"
+              type="text"
               class="form-control"
               class="form-control"
-              formControlName="zoneVigilanceCVE" />
+              formControlName="zoneVigilanceKey"
+              min="0" />
           </form-field>
         </div>
 
@@ -135,21 +140,23 @@
             [control]="delegationForm.get('diffHours')"
             label="Diferencia de horas">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="diffHours" />
+              formControlName="diffHours"
+              min="0" />
           </form-field>
         </div>
 
         <!-- Cona de contrato CVE -->
         <div class="col-md-3">
           <form-field
-            [control]="delegationForm.get('zoneContractCVE')"
-            label="CVE zona de contrato">
+            [control]="delegationForm.get('zoneContractKey')"
+            label="Cve. zona de contrato">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="zoneContractCVE" />
+              formControlName="zoneContractKey"
+              min="0" />
           </form-field>
         </div>
 
@@ -157,11 +164,12 @@
         <div class="col-md-3">
           <form-field
             [control]="delegationForm.get('noRegister')"
-            label="noRegistro">
+            label="No. Registro">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="noRegister" />
+              formControlName="noRegister"
+              min="0" />
           </form-field>
         </div>
       </div>

@@ -1,0 +1,109 @@
+<div class="row">
+  <div class="col-md-12 d-flex justify-content-end"></div>
+</div>
+<div class="row">
+  <div class="col-md-12 d-flex justify-content-end">
+    <div>
+      <button
+        (click)="onActDesc()"
+        type="button"
+        containerClass="tooltip-style"
+        class="btn btn-secondary btn-sm active ml-2 mr-2">
+        Actualizar Descripción
+      </button>
+    </div>
+
+    <div>
+      <button
+        (click)="onUpdateMand()"
+        type="button"
+        containerClass="tooltip-style"
+        class="btn btn-secondary btn-sm active ml-2 mr-2">
+        Actualizar Mandato
+      </button>
+    </div>
+
+    <div>
+      <button
+        (click)="onValFile()"
+        type="button"
+        containerClass="tooltip-style"
+        class="btn btn-secondary btn-sm active ml-2 mr-2">
+        Validar Archivo
+      </button>
+    </div>
+    <div>
+      <button
+        (click)="openForm()"
+        type="button"
+        containerClass="tooltip-style"
+        class="btn btn-info btn-sm active ml-2 mr-2">
+        Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+      </button>
+    </div>
+    <div>
+      <div class="btn-group mx-2" dropdown>
+        <button
+          id="button-basic"
+          dropdownToggle
+          type="button"
+          class="btn btn-primary dropdown-toggle btn-sm active"
+          aria-controls="dropdown-basic">
+          <div class="d-flex align-items-center">
+            Acciones <span class="caret ml-2"></span>
+          </div>
+        </button>
+        <ul
+          id="dropdown-basic"
+          *dropdownMenu
+          class="dropdown-menu dropdown-menu-right"
+          role="menu"
+          aria-labelledby="button-basic">
+          <event-goods-lots-list-actions
+            [viewRejectedGoods]="viewRejectedGoods"
+            (viewRejectedGoodsChange)="viewRejectedGoodsChange.emit($event)"
+            [params]="params"
+            [lotSelected]="lotSelected"
+            [parameters]="parameters"
+            [onlyBase]="onlyBase"
+            [eventForm]="eventForm"
+            [loggedUser]="loggedUser"
+            [totalItems]="totalItems"
+            (fillStadistics)="
+              fillStadistics.emit()
+            "></event-goods-lots-list-actions>
+        </ul>
+      </div>
+    </div>
+    <app-columns-select [(settings)]="settings"></app-columns-select>
+  </div>
+</div>
+<div class="row pt-2">
+  <div class="col-md-12 table-responsive">
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        (edit)="openForm($event.data)"
+        (userRowSelect)="userSelectLot($event)"
+        (delete)="onDeleteLot($event.data)"
+        [source]="lots">
+      </ng2-smart-table>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <app-pagination
+      [filterParams]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+</div>
+
+<input
+  #validFileInput
+  [formControl]="excelControl"
+  [style.display]="'none'"
+  type="file"
+  (change)="valFileChange($event)"
+  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />

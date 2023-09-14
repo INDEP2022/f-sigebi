@@ -1,0 +1,76 @@
+FUNCTION WHEREKEYWORDS(lst_keywords_params varchar2, 
+                       lst_dbfield varchar2, 
+                       lbl_chartype boolean,
+                       lst_logical_opr Varchar2, 
+                       lst_comparative_opr Varchar2,
+                       lnu_delchar Number, 
+                       lst_separator varchar2) RETURN VARCHAR IS
+	lnu_ciclo  Number; 
+	lnu_Limite Number;
+  lst_where Varchar2(4000);
+  lst_palabra Varchar2(4000);
+  lst_keywords Varchar2(4000);
+  lst_carac Varchar2(1);
+  Lbl_primera Boolean;
+  lst_comodin varchar2(1);
+BEGIN
+
+  If upper(LTRIM(RTRIM(lst_comparative_opr))) = 'LIKE' then
+  	lst_comodin := '%';
+  else	
+  	lst_comodin := '';
+  end if;	
+	
+	Lbl_primera := true;
+	
+	lst_Palabra := '';
+	lst_keywords := replace(lst_keywords_params,'''','');
+	
+	lst_keywords := lst_keywords || lst_separator;
+	
+	Lnu_Limite := length(lst_keywords);
+	
+	FOR lnu_ciclo in 1..lnu_limite LOOP 
+	  
+	  lst_carac := substr(lst_keywords,lnu_ciclo,1);
+	  
+	  If lst_carac = lst_separator then
+	  	lst_Palabra := ltrim(rtrim(lst_Palabra));
+	  	
+	  	If length(lst_Palabra) > 0 then
+	  		
+  		If lnu_delchar > 0 then
+  			lst_Palabra := substr(lst_Palabra, 1, length(lst_Palabra) - lnu_delchar);
+  		end If;	
+  		
+  		if Lbl_primera then
+  			  If lbl_chartype then
+						lst_palabra := ' '||lst_dbfield || ' '||lst_comparative_opr||' '''||lst_comodin||''||lst_Palabra||''||lst_comodin||'''';
+					Else	
+						lst_palabra := ' '||lst_dbfield || ' '||lst_comparative_opr||' '||lst_comodin||''||lst_Palabra||''||lst_comodin||'';
+					End If;	
+					Lbl_primera := false;
+				else	
+  			  If lbl_chartype then
+						lst_palabra := ' '||lst_logical_opr||' '||lst_dbfield || ' '||lst_comparative_opr||' '''||lst_comodin||''||lst_Palabra||''||lst_comodin||'''';
+  			  Else	
+						lst_palabra := ' '||lst_logical_opr||' '||lst_dbfield || ' '||lst_comparative_opr||' '||lst_comodin||''||lst_Palabra||''||lst_comodin||'';
+					End If;	
+				end If;
+				
+  			lst_where := lst_where || lst_palabra;
+	  	end If;	
+	  	
+			lst_Palabra := '';
+	  else
+		  lst_Palabra := lst_Palabra || lst_carac;
+	  end If;	
+	  
+	END LOOP;   
+  
+  lst_where := upper(lst_where);
+    
+  return(lst_where);  
+  
+END;
+

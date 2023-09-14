@@ -13,7 +13,9 @@
           </form-field>
         </div> -->
         <div class="col-md-5">
-          <form-field [control]="form.get('personName')" label="Nombre Persona">
+          <form-field
+            [control]="form.get('personName')"
+            label="Nombre de la Persona">
             <input
               type="text"
               class="form-control"
@@ -35,7 +37,7 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="form.get('streetNumber')" label="No Exterior">
+          <form-field [control]="form.get('streetNumber')" label="No. Exterior">
             <input
               type="text"
               class="form-control"
@@ -45,7 +47,7 @@
         <div class="col-md-2">
           <form-field
             [control]="form.get('apartmentNumber')"
-            label="No Interior">
+            label="No. Interior">
             <input
               type="text"
               class="form-control"
@@ -120,20 +122,32 @@
         </div>
         <div class="col-md-3 col-sm-6 col-xs-6">
           <form-radio label="* Persona Moral">
-            <input type="radio" formControlName="typePerson" value="M" />
+            <input
+              type="radio"
+              formControlName="typePerson"
+              value="M"
+              (change)="typeChange('M')" />
           </form-radio>
         </div>
         <div class="col-md-3 col-sm-6 col-xs-6">
           <form-radio label="* Persona F&iacute;sica">
-            <input type="radio" formControlName="typePerson" value="F" />
+            <input
+              type="radio"
+              formControlName="typePerson"
+              value="F"
+              (change)="typeChange('F')" />
           </form-radio>
         </div>
       </div>
       <div class="row mt-4">
-        <div class="col-md-4">
-          <app-turn-company [form]="form"></app-turn-company>
+        <div class="col-md-12">
+          <app-turn-company
+            [form]="form"
+            [turnField]="'keyOperation'"></app-turn-company>
         </div>
-        <div class="col-md-8 mt-2">
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-12 mt-2">
           <form-field [control]="form.get('profile')" label="Perfil">
             <textarea
               type="text"
@@ -143,13 +157,15 @@
         </div>
       </div>
       <div class="row mt-4" *ngIf="form.get('typePerson').value === 'M'">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <form-field [control]="form.get('manager')" label="Representante">
             <input type="text" class="form-control" formControlName="manager" />
           </form-field>
         </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('numberDeep')" label="No Escritura">
+      </div>
+      <div class="row mt-4" *ngIf="form.get('typePerson').value === 'M'">
+        <div class="col-md-8">
+          <form-field [control]="form.get('numberDeep')" label="No. Escritura">
             <input
               type="text"
               class="form-control"
@@ -162,10 +178,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="!form.valid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [disabled]="!form.valid" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

@@ -4,4 +4,5 @@ export interface ISatSubclassification {
   id?: number;
   idClasification: number | ISatClassification;
   nameSubClasification: string;
+  clasificationDetails: any;
 }

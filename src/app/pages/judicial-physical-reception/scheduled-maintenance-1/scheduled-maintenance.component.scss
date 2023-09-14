@@ -2,11 +2,22 @@
   ng2-smart-table {
     ::ng-deep {
       table {
-        tr {
-          td:not(:first-child),
-          th:not(:first-child) {
-            min-width: 110px;
+        tr.CERRADA {
+          td:first-child {
+            input {
+              display: none;
+            }
           }
+
+          td:nth-child(2) {
+            .ng2-smart-action-delete-delete {
+              display: none;
+            }
+          }
+
+          // th:not(:first-child) {
+          //   min-width: 110px;
+          // }
         }
       }
     }

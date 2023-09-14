@@ -1,14 +1,14 @@
 <ng-container>
   <div id="selectModalTable" class="row">
     <div *ngIf="form" [formGroup]="form" class="row ml-4" style="padding: 0px">
-      <div class="col-md-5 row">
+      <div class="row" [class]="widthDescription ? 'col-md-4' : 'col-md-12'">
         <button
           [disabled]="disabled"
           type="button"
-          class="btn btn-primary btn-sm active"
+          class="btn btn-primary btn-sm active p-0"
           style="width: 36px"
           (click)="openModal()">
-          <i class="bx bx-list-plus bx-sm float-icon"></i>
+          <i class="bx bx-list-ul bx-sm float-icon"></i>
         </button>
         <form-field
           style="width: calc(100% - 36px)"
@@ -18,12 +18,14 @@
             type="text"
             [formControlName]="formField"
             class="form-control"
-            [readonly]="disabled" />
+            [maxlength]="maxlengthInput"
+            readonly />
         </form-field>
       </div>
 
       <form-field
-        class="row col-md-7 description"
+        *ngIf="widthDescription"
+        class="row col-md-8 description"
         [control]="form.get(formFieldName)"
         [label]="labelName">
         <textarea

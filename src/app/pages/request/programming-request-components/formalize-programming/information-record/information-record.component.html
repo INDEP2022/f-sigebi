@@ -2,331 +2,609 @@
   <div header>
     <h5 class="modal-title">Informaci&oacute;n de acta</h5>
   </div>
+
   <div body>
-    <div class="row">
-      <div class="col-md-6">
-        <h5 style="font-size: 15px">Entrega</h5>
-        <form [formGroup]="deliveryForm" class="form-material pt-4">
-          <form-field [control]="deliveryForm.get('name')" label="Nombre">
-            <input type="text" class="form-control" formControlName="name" />
-          </form-field>
-          <div class="row">
-            <form-check label="Firma electrónica" for="label">
-              <input
-                id="label"
-                type="checkbox"
-                formControlName="electronicSignature" />
-            </form-check>
-          </div>
-
-          <div class="row pt-2">
-            <form-field [control]="deliveryForm.get('charge')" label="Cargo">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="charge" />
-            </form-field>
-          </div>
-
-          <div class="row pt-4">
-            <form-field
-              [control]="deliveryForm.get('resistance')"
-              label="Resistencia">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="resistance" />
-            </form-field>
-          </div>
-
-          <div class="row pt-4">
-            <form-field
-              [control]="deliveryForm.get('identification')"
-              label="Identificaci&oacute;n">
-              <select class="form-control" formControlName="identification">
-                <option [value]="null">
-                  Seleccione una identificaci&oacute;n
-                </option>
-                <option [value]="1">Identificaci&oacute;n</option>
-                <option [value]="2">Identificaci&oacute;n</option>
-              </select>
-            </form-field>
-          </div>
-
-          <div class="row pt-4">
-            <form-field
-              [control]="deliveryForm.get('noIdentification')"
-              label="N&uacute;mero de identificaci&oacute;n">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="noIdentification" />
-            </form-field>
-          </div>
-
-          <div class="row pt-4">
-            <form-field
-              [control]="deliveryForm.get('issuedBy')"
-              label="Expedida por">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="issuedBy" />
-            </form-field>
-          </div>
-
-          <div class="row pt-4">
-            <form-field [control]="deliveryForm.get('email')" label="Email">
-              <input type="text" class="form-control" formControlName="email" />
-            </form-field>
-          </div>
-        </form>
-      </div>
-
-      <div class="col-md-6">
-        <h5 style="font-size: 15px">Recibe</h5>
-        <form [formGroup]="receiveForm" class="form-material pt-4">
-          <form-field [control]="receiveForm.get('name')" label="Nombre">
-            <input type="text" class="form-control" formControlName="name" />
-          </form-field>
-          <div class="row">
-            <form-check label="Firma electr&oacute;nica" for="label">
-              <input
-                id="label"
-                type="checkbox"
-                formControlName="electronicSignature" />
-            </form-check>
-          </div>
-
-          <div class="row pt-2">
-            <form-field [control]="receiveForm.get('charge')" label="Cargo">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="charge" />
-            </form-field>
-          </div>
-
-          <div class="row pt-4">
-            <form-field
-              [control]="receiveForm.get('resistance')"
-              label="Resistencia">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="resistance" />
-            </form-field>
-          </div>
-
-          <div class="row pt-4">
-            <form-field
-              [control]="receiveForm.get('identification')"
-              label="Identificaci&oacute;n">
-              <select class="form-control" formControlName="identification">
-                <option [value]="null">
-                  Seleccione una identificaci&oacute;n
-                </option>
-                <option [value]="1">Identificaci&oacute;n</option>
-                <option [value]="2">Identificaci&oacute;n</option>
-              </select>
-            </form-field>
-          </div>
-
-          <div class="row pt-4">
-            <form-field
-              [control]="receiveForm.get('noIdentification')"
-              label="N&uacute;mero de identificaci&oacute;n">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="noIdentification" />
-            </form-field>
-          </div>
-
-          <div class="row pt-4">
-            <form-field
-              [control]="receiveForm.get('issuedBy')"
-              label="Expedida por">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="issuedBy" />
-            </form-field>
-          </div>
-
-          <div class="row pt-4">
-            <form-field [control]="receiveForm.get('email')" label="Email">
-              <input type="text" class="form-control" formControlName="email" />
-            </form-field>
-          </div>
-        </form>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <!-- <form [formGroup]="infoForm" class="form-material pt-4">
+          <form-field
+            [control]="infoForm.get('startTime')"
+            label="Hora :">
+            <input
+          type="text"
+          id="hora"
+          name="startTime"
+          [(ngModel)]="horaActual"
+          readonly />
+          </form-field> -->
+        <label for="startTime">Hora:</label>
+        <input
+          type="text"
+          id="hora"
+          class="form-control"
+          name="startTime"
+          [(ngModel)]="horaActual" />
+        <!-- </form> -->
       </div>
     </div>
-
-    <div class="row">
-      <div class="col-md-6">
-        <h5 style="font-size: 15px">Testigo 1</h5>
-        <form [formGroup]="witnessOneForm" class="form-material pt-4">
-          <form-field [control]="witnessOneForm.get('name')" label="Nombre">
-            <input type="text" class="form-control" formControlName="name" />
-          </form-field>
-          <div class="row">
-            <form-check label="Firma electr&oacute;nica" for="label">
+    <hr style="border: none; border-top: 1px solid black; margin: 10px 0" />
+    <form [formGroup]="infoForm" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <h5 style="font-size: 15px">Entrega</h5>
+          <div class="pt-3">
+            <form-field [control]="infoForm.get('nameWorker1')" label="Nombre">
               <input
-                id="label"
-                type="checkbox"
-                formControlName="electronicSignature" />
-            </form-check>
-          </div>
-
-          <div class="row pt-2">
-            <form-field [control]="witnessOneForm.get('charge')" label="Cargo">
-              <input
+                maxlength="100"
                 type="text"
                 class="form-control"
-                formControlName="charge" />
+                formControlName="nameWorker1" />
+            </form-field>
+          </div>
+
+          <form-check
+            label="Firma Electr&oacute;nica"
+            for="electronicSignatureWorker1">
+            <input
+              id="electronicSignatureWorker1"
+              value="false"
+              type="checkbox"
+              (change)="SignatureWorker1Select()"
+              formControlName="electronicSignatureWorker1" />
+          </form-check>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('positionWorker1')"
+              label="Cargo">
+              <input
+                maxlength="100"
+                type="text"
+                class="form-control"
+                formControlName="positionWorker1" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field [control]="infoForm.get('idCatWorker1')">
+              <ngx-select
+                [form]="infoForm"
+                control="idCatWorker1"
+                [data]="identifications"
+                value="keyId"
+                bindLabel="description"
+                (fetchItems)="getIdentification($event)"
+                label="Identificaci&oacute;n"></ngx-select>
             </form-field>
           </div>
 
           <div class="row pt-4">
             <form-field
-              [control]="witnessOneForm.get('resistance')"
-              label="Resistencia">
+              [control]="infoForm.get('residentialWorker1')"
+              label="Residencia">
               <input
+                maxlength="400"
                 type="text"
                 class="form-control"
-                formControlName="resistance" />
+                formControlName="residentialWorker1" />
             </form-field>
           </div>
 
           <div class="row pt-4">
             <form-field
-              [control]="witnessOneForm.get('identification')"
-              label="Identificaci&oacute;n">
-              <select class="form-control" formControlName="identification">
-                <option [value]="null">
-                  Seleccione una identificaci&oacute;n
-                </option>
-                <option [value]="1">Identificaci&oacute;n</option>
-                <option [value]="2">Identificaci&oacute;n</option>
-              </select>
+              [control]="infoForm.get('idNoWorker1')"
+              label="No. de Identificaci&oacute;n">
+              <input
+                maxlength="30"
+                type="text"
+                class="form-control"
+                formControlName="idNoWorker1" />
             </form-field>
           </div>
 
           <div class="row pt-4">
             <form-field
-              [control]="witnessOneForm.get('noIdentification')"
-              label="N&uacute;mero de identificaci&oacute;n">
+              [control]="infoForm.get('idExpWorker1')"
+              label="Expedida Por">
               <input
+                maxlength="150"
                 type="text"
                 class="form-control"
-                formControlName="noIdentification" />
+                formControlName="idExpWorker1" />
             </form-field>
           </div>
 
           <div class="row pt-4">
             <form-field
-              [control]="witnessOneForm.get('issuedBy')"
-              label="Expedida por">
+              [control]="infoForm.get('emailWorker1')"
+              label="Correo Electrónico">
               <input
+                maxlength="40"
                 type="text"
                 class="form-control"
-                formControlName="issuedBy" />
+                formControlName="emailWorker1" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h5 style="font-size: 15px">Recibe</h5>
+          <div class="pt-3">
+            <form-field [control]="infoForm.get('nameWorker2')" label="Nombre">
+              <input
+                maxlength="100"
+                type="text"
+                class="form-control"
+                formControlName="nameWorker2" />
+            </form-field>
+          </div>
+
+          <form-check
+            label="Firma Electr&oacute;nica"
+            for="electronicSignatureWorker2">
+            <input
+              id="electronicSignatureWorker2"
+              type="checkbox"
+              (change)="SignatureWorker2Select()"
+              formControlName="electronicSignatureWorker2" />
+          </form-check>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('positionWorker2')"
+              label="Cargo">
+              <input
+                maxlength="100"
+                type="text"
+                class="form-control"
+                formControlName="positionWorker2" />
             </form-field>
           </div>
 
           <div class="row pt-4">
-            <form-field [control]="witnessOneForm.get('email')" label="Email">
-              <input type="text" class="form-control" formControlName="email" />
+            <form-field [control]="infoForm.get('idCatWorker2')">
+              <ngx-select
+                [form]="infoForm"
+                control="idCatWorker2"
+                [data]="identifications"
+                value="keyId"
+                bindLabel="description"
+                (fetchItems)="getIdentification($event)"
+                label="Identificaci&oacute;n"></ngx-select>
             </form-field>
           </div>
-        </form>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('idNoWorker2')"
+              label="No. de Identificaci&oacute;n">
+              <input
+                maxlength="30"
+                type="text"
+                class="form-control"
+                formControlName="idNoWorker2" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('idExpWorker2')"
+              label="Expedida Por">
+              <input
+                maxlength="150"
+                type="text"
+                class="form-control"
+                formControlName="idExpWorker2" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('emailWorker2')"
+              label="Correo Electrónico">
+              <input
+                maxlength="40"
+                type="text"
+                class="form-control"
+                formControlName="emailWorker2" />
+            </form-field>
+          </div>
+        </div>
       </div>
 
-      <div class="col-md-6">
-        <h5 style="font-size: 15px">Testigo 2</h5>
-        <form [formGroup]="witnessTwoForm" class="form-material pt-4">
-          <form-field [control]="witnessTwoForm.get('name')" label="Nombre">
-            <input type="text" class="form-control" formControlName="name" />
-          </form-field>
-          <div class="row">
-            <form-check label="Firma electrónica" for="label">
-              <input
-                id="label"
-                type="checkbox"
-                formControlName="electronicSignature" />
-            </form-check>
-          </div>
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <h5 style="font-size: 15px">Testigo 1</h5>
 
-          <div class="row pt-2">
-            <form-field [control]="witnessTwoForm.get('charge')" label="Cargo">
+          <div class="pt-3">
+            <form-field [control]="infoForm.get('nameWitness1')" label="Nombre">
               <input
+                maxlength="100"
                 type="text"
                 class="form-control"
-                formControlName="charge" />
+                formControlName="nameWitness1" />
+            </form-field>
+          </div>
+
+          <form-check
+            label="Firma Electr&oacute;nica"
+            for="electronicSignatureWitness1">
+            <input
+              id="electronicSignatureWitness1"
+              value="false"
+              type="checkbox"
+              (change)="SignatureWitness1Select()"
+              formControlName="electronicSignatureWitness1" />
+          </form-check>
+
+          <div class="row pt-4">
+            <form-field [control]="infoForm.get('idCatWitness1')">
+              <ngx-select
+                [form]="infoForm"
+                control="idCatWitness1"
+                [data]="identifications"
+                value="keyId"
+                bindLabel="description"
+                (fetchItems)="getIdentification($event)"
+                label="Identificaci&oacute;n"></ngx-select>
             </form-field>
           </div>
 
           <div class="row pt-4">
             <form-field
-              [control]="witnessTwoForm.get('resistance')"
-              label="Resistencia">
+              [control]="infoForm.get('idNoWitness1')"
+              label="No. de Identificaci&oacute;n">
               <input
+                maxlength="30"
                 type="text"
                 class="form-control"
-                formControlName="resistance" />
+                formControlName="idNoWitness1" />
             </form-field>
           </div>
 
           <div class="row pt-4">
             <form-field
-              [control]="witnessTwoForm.get('identification')"
-              label="Identificaci&oacute;n">
-              <select class="form-control" formControlName="identification">
-                <option [value]="null">
-                  Seleccione una identificaci&oacute;n
-                </option>
-                <option [value]="1">Identificaci&oacute;n</option>
-                <option [value]="2">Identificaci&oacute;n</option>
-              </select>
+              [control]="infoForm.get('emailWitness1')"
+              label="Correo Electrónico">
+              <input
+                maxlength="40"
+                type="text"
+                class="form-control"
+                formControlName="emailWitness1" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <h5 style="font-size: 15px">Testigo 2</h5>
+
+          <div class="pt-3">
+            <form-field [control]="infoForm.get('nameWitness2')" label="Nombre">
+              <input
+                maxlength="100"
+                type="text"
+                class="form-control"
+                formControlName="nameWitness2" />
+            </form-field>
+          </div>
+
+          <form-check
+            label="Firma Electrónica"
+            for="electronicSignatureWitness2">
+            <input
+              id="electronicSignatureWitness2"
+              value="false"
+              type="checkbox"
+              (change)="SignatureWitness2Select()"
+              formControlName="electronicSignatureWitness2" />
+          </form-check>
+
+          <div class="row pt-4">
+            <form-field [control]="infoForm.get('idCatWitness2')">
+              <ngx-select
+                [form]="infoForm"
+                control="idCatWitness2"
+                [data]="identifications"
+                value="keyId"
+                bindLabel="description"
+                (fetchItems)="getIdentification($event)"
+                label="Identificaci&oacute;n"></ngx-select>
             </form-field>
           </div>
 
           <div class="row pt-4">
             <form-field
-              [control]="witnessTwoForm.get('noIdentification')"
-              label="Numero de identificaci&oacute;n">
+              [control]="infoForm.get('idNoWitness2')"
+              label="No. de Identificaci&oacute;n">
               <input
+                maxlength="30"
                 type="text"
                 class="form-control"
-                formControlName="noIdentification" />
+                formControlName="idNoWitness2" />
             </form-field>
           </div>
 
           <div class="row pt-4">
             <form-field
-              [control]="witnessTwoForm.get('issuedBy')"
-              label="Expedida por">
+              [control]="infoForm.get('emailWitness2')"
+              label="Correo Electrónico">
               <input
+                maxlength="40"
                 type="text"
                 class="form-control"
-                formControlName="issuedBy" />
+                formControlName="emailWitness2" />
             </form-field>
           </div>
-
-          <div class="row pt-4">
-            <form-field [control]="witnessTwoForm.get('email')" label="Email">
-              <input type="text" class="form-control" formControlName="email" />
-            </form-field>
-          </div>
-        </form>
+        </div>
       </div>
-    </div>
+
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <h5 style="font-size: 15px">OIC</h5>
+          <div class="pt-3">
+            <form-field
+              *ngIf="!event"
+              [control]="infoForm.get('evet')"
+              label="No. de Evento OIC">
+              <input
+                maxlength="100"
+                type="text"
+                class="form-control"
+                formControlName="evet" />
+            </form-field>
+
+            <form-field
+              *ngIf="event"
+              [control]="infoForm.get('evet')"
+              label="No. de Evento OIC">
+              <input
+                maxlength="100"
+                type="text"
+                class="form-control"
+                [readOnly]="true"
+                formControlName="evet" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('nameWorkerOic')"
+              label="Nombre">
+              <input
+                maxlength="100"
+                type="text"
+                class="form-control"
+                formControlName="nameWorkerOic" />
+            </form-field>
+          </div>
+
+          <form-check label="Firma Electrónica" for="electronicSignatureOic">
+            <input
+              id="electronicSignatureOic"
+              value="false"
+              type="checkbox"
+              (change)="SignatureOICSelect()"
+              formControlName="electronicSignatureOic" />
+          </form-check>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('positionWorkerOic')"
+              label="Cargo">
+              <input
+                maxlength="100"
+                type="text"
+                class="form-control"
+                formControlName="positionWorkerOic" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field [control]="infoForm.get('idCatWorkerOic')">
+              <ngx-select
+                [form]="infoForm"
+                control="idCatWorkerOic"
+                [data]="identifications"
+                value="keyId"
+                bindLabel="description"
+                (fetchItems)="getIdentification($event)"
+                label="Identificaci&oacute;n"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('idNoWorkerOic')"
+              label="No. de Identificaci&oacute;n">
+              <input
+                maxlength="30"
+                type="text"
+                class="form-control"
+                formControlName="idNoWorkerOic" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('idExpWorkerOic')"
+              label="Expedida Por">
+              <input
+                maxlength="150"
+                type="text"
+                class="form-control"
+                formControlName="idExpWorkerOic" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('emailOic')"
+              label="Correo Electrónico">
+              <input
+                maxlength="40"
+                type="text"
+                class="form-control"
+                formControlName="emailOic" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-6" *ngIf="tranType == 'CE'">
+          <h5 style="font-size: 15px">UVFV</h5>
+
+          <div class="pt-3">
+            <form-field [control]="infoForm.get('nameWorker4')" label="Nombre">
+              <input
+                maxlength="100"
+                type="text"
+                class="form-control"
+                formControlName="nameWorker4" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('positionWorker4')"
+              label="Cargo">
+              <input
+                maxlength="100"
+                type="text"
+                class="form-control"
+                formControlName="positionWorker4" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('emailUvfv')"
+              label="Correo Electrónico">
+              <input
+                maxlength="40"
+                type="text"
+                class="form-control"
+                formControlName="emailUvfv" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('nameWorkerUvfv')"
+              label="Nombre Funcionario SAT">
+              <input
+                maxlength="100"
+                type="text"
+                class="form-control"
+                formControlName="nameWorkerUvfv" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('positionWorker4')"
+              label="Cargo Funcionario SAT">
+              <input
+                maxlength="100"
+                type="text"
+                class="form-control"
+                formControlName="positionWorker4" />
+            </form-field>
+          </div>
+
+          <!--<div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('reg_envio_sat')"
+              label="Nº Oficio de convocatiria UVFV">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="reg_envio_sat" />
+            </form-field>
+          </div> -->
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('dateOfficie')"
+              label="Fecha Oficio UVFV">
+              <input
+                class="form-control"
+                formControlName="dateOfficie"
+                [daysDisabled]="[6, 0]"
+                [bsConfig]="{
+                  rangeInputFormat: 'DD/MM/YYYY',
+                  dateInputFormat: 'DD/MM/YYYY'
+                }"
+                [minDate]="minDateFecElab"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="tranType == 'A'">
+        <div class="col-md-6">
+          <h5 style="font-size: 15px">Funcionario 3</h5>
+          <div class="pt-3">
+            <form-field
+              [control]="infoForm.get('nameWorker3')"
+              label="Administrador Titular Jurídico y de Recepción">
+              <input
+                maxlength="30"
+                type="text-area"
+                class="form-control"
+                formControlName="nameWorker3" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="tranType == 'NO'">
+        <h5 style="font-size: 15px">Apartado 2</h5>
+        <div class="col-md-6">
+          <div class="pt-3">
+            <form-field [control]="infoForm.get('bases')" label="Bases">
+              <input
+                maxlength="200"
+                type="text"
+                class="form-control"
+                formControlName="bases" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="pt-3">
+            <form-field [control]="infoForm.get('celebrates')" label="Celebra">
+              <input
+                maxlength="200"
+                type="text"
+                class="form-control"
+                formControlName="celebrates" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+      <hr style="border: none; border-top: 1px solid black; margin: 10px 0" />
+      <div class="row">
+        <div class="col-md-6">
+          <h5 style="font-size: 15px">Apartado 1</h5>
+          <h5 style="font-size: 12px">Otros Hechos</h5>
+          <div class="pt-3">
+            <textarea
+              class="form-control"
+              formControlName="otherFacts"
+              rows="4"
+              maxlength="4000"
+              cols="50">
+            </textarea>
+          </div>
+        </div>
+      </div>
+    </form>
   </div>
+
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
+          [disabled]="!infoForm.valid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

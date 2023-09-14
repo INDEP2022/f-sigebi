@@ -1,0 +1,290 @@
+<form class="row form-material" [formGroup]="stadisticsForm">
+  <div class="row">
+    <div class="col-md-12">
+      <table class="col-md-12 table table-bordered">
+        <thead>
+          <tr [style.border-top]="'none'">
+            <th></th>
+            <th class="text-right">Pagados</th>
+            <th class="text-right">Penalizados</th>
+            <th class="text-right">Desiertos</th>
+            <th class="text-right">Totales Lotes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Lotes</b></td>
+            <td class="text-right">{{ controls.lotes_pag.value | number }}</td>
+            <td class="text-right">
+              {{ controls.lotes_penal.value | number }}
+            </td>
+            <td class="text-right">{{ controls.lotes_des.value | number }}</td>
+            <td class="text-right">{{ controls.num_lotes.value | number }}</td>
+          </tr>
+          <tr>
+            <td><b>Registros</b></td>
+            <td class="text-right">{{ controls.pag_bienes.value | number }}</td>
+            <td class="text-right">{{ controls.pen_bienes.value | number }}</td>
+            <td class="text-right">{{ controls.des_bienes.value | number }}</td>
+            <td class="text-right">{{ controls.num_bienes.value | number }}</td>
+          </tr>
+          <tr>
+            <td><b>Base</b></td>
+            <td class="text-right">{{ controls.pag_salida.value | number }}</td>
+            <td class="text-right">{{ controls.pen_salida.value | number }}</td>
+            <td class="text-right">{{ controls.des_salida.value | number }}</td>
+            <td class="text-right">{{ controls.tot_base.value | number }}</td>
+          </tr>
+          <tr>
+            <td><b>Cantidad</b></td>
+            <td class="text-right">{{ controls.pag_cant.value | number }}</td>
+            <td class="text-right">{{ controls.pen_cant.value | number }}</td>
+            <td class="text-right">{{ controls.des_cant.value | number }}</td>
+            <td class="text-right">{{ controls.tot_cant.value | number }}</td>
+          </tr>
+          <tr>
+            <td><b>Venta</b></td>
+            <td class="text-right">{{ controls.pag_total.value | number }}</td>
+            <td class="text-right">{{ controls.pen_total.value | number }}</td>
+            <td class="text-right">{{ controls.des_total.value | number }}</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- <div class="col-md-3 text-center">
+    <div class="row">
+      <h6>Pagados</h6>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Lotes:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.lotes_pag.value | number }}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Reg:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.pag_bienes.value | number }}</b>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Base:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.pag_salida.value | number }}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Cantidad:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.pag_cant.value | number }}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Venta:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.pag_total.value | number }}</b>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 text-center">
+    <div class="row">
+      <h6>Penalizados</h6>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Lotes:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.lotes_penal.value | number }}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Reg:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.pen_bienes.value | number }}</b>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Base:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.pen_salida.value | number }}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Cantidad:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.pen_cant.value | number }}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Venta:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.pen_total.value | number }}</b>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 text-center">
+    <div class="row">
+      <h6>Desiertos</h6>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Lotes:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.lotes_des.value | number }}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Reg:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.des_bienes.value | number }}</b>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Base:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.des_salida.value | number }}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Cantidad:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.des_cant.value | number }}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Venta:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.des_total.value | number }}</b>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 text-center">
+    <div class="row">
+      <h6>Totales Lotes</h6>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Lotes:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.num_lotes.value | number }}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Reg:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.num_bienes.value | number }}</b>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Base:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.tot_base.value | number }}</b>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row">
+            <div class="col-md-12">Cantidad:</div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <b>{{ controls.tot_cant.value | number }}</b>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+</form>

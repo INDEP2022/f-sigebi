@@ -3,6 +3,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
@@ -31,11 +32,18 @@ export class LawyerListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = LAWYER_COLUMNS;
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
+    //this.settings.actions.delete = true;
+    //this.settings.actions.add = false;
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        add: false,
+        delete: true,
+        position: 'right',
+      },
     };
   }
 
@@ -49,16 +57,67 @@ export class LawyerListComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
-            filter.field == 'id'
+            field = `filter.${filter.field}`;
+            /*filter.field == 'id' ||
+              filter.field == 'office' ||
+              filter.field == 'name' ||
+              filter.field == 'street' ||
+              filter.field == 'streetNumber' ||
+              filter.field == 'apartmentNumber' ||
+              filter.field == 'suburb' ||
+              filter.field == 'delegation' ||
+              filter.field == 'zipCode' ||
+              filter.field == 'rfc' ||
+              filter.field == 'phone'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'officeDetails':
+                field = `filter.${filter.field}.name`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'name':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'street':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'streetNumber':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'apartmentNumber':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'suburb':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'delegation':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'zipCode':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'rfc':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'phone':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getLawyers();
         }
       });
@@ -73,35 +132,33 @@ export class LawyerListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.lawyerService.getAll(params).subscribe(
-      response => {
-        this.lawyers = response.data;
-        this.data.load(this.lawyers);
+    this.lawyerService.getAllDetail(params).subscribe({
+      next: response => {
+        console.log(response.data);
+        //this.lawyers = response.data;
+        this.data.load(response.data);
         this.data.refresh();
-        this.totalItems = response.count;
         this.loading = false;
       },
-      error => (this.loading = false)
-    );
-  }
-
-  add() {
-    this.openModal();
-  }
-
-  openModal(context?: Partial<LawyerDetailComponent>) {
-    const modalRef = this.modalService.show(LawyerDetailComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getLawyers();
+      error: error => (this.loading = false),
     });
   }
 
-  edit(lawyer: ILawyer) {
-    this.openModal({ edit: true, lawyer });
+  openForm(lawyer?: ILawyer) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      lawyer,
+      callback: (next: boolean) => {
+        if (next) this.getLawyers();
+      },
+    };
+    this.modalService.show(LawyerDetailComponent, modalConfig);
+  }
+
+  cleanCreate() {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getLawyers());
   }
 
   showDeleteAlert(lawyer: ILawyer) {
@@ -119,7 +176,8 @@ export class LawyerListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.lawyerService.remove(id).subscribe({
       next: () => {
-        this.getLawyers(), this.alert('success', 'ABOGADO', 'Borrado');
+        this.getLawyers(),
+          this.alert('success', 'Abogado', 'Borrado Correctemente');
       },
     });
   }

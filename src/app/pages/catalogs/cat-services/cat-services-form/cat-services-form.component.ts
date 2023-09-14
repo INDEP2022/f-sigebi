@@ -34,7 +34,6 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
       code: [
         null,
         [
-          Validators.required,
           Validators.pattern(STRING_PATTERN),
           Validators.maxLength(30),
           Validators.minLength(1),
@@ -49,14 +48,7 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
           Validators.minLength(1),
         ],
       ],
-      unaffordabilityCriterion: [
-        null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-          Validators.minLength(1),
-        ],
-      ],
+      unaffordabilityCriterion: [null],
       subaccount: [
         null,
         [
@@ -67,18 +59,13 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
         ],
       ],
       registryNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      cost: [
-        null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(5),
-          Validators.minLength(1),
-        ],
-      ],
+      cost: [null],
     });
     if (this.catservice != null) {
       this.edit = true;
       this.catserviceForm.patchValue(this.catservice);
+      this.catserviceForm.controls['code'].setValue(this.catservice.code);
+      this.catserviceForm.get('code').disable();
     }
   }
   close() {
@@ -90,6 +77,14 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.catserviceForm.controls['code'].value.trim() === '' ||
+      this.catserviceForm.controls['description'].value.trim() === '' ||
+      this.catserviceForm.controls['subaccount'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.catserviceService.create(this.catserviceForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
@@ -109,7 +104,8 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

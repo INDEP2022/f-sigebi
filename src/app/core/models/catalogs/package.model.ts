@@ -1,37 +1,65 @@
 //Interface Provisional sin Validar
 export interface IPackage {
-  id?: number;
+  numberPackage?: number;
   description: string;
-  packageType: number;
+  typePackage: number;
   amount: number;
-  elaborationDate: Date;
-  captureDate: Date;
-  capturehcDate: Date;
-  packageStatus: string;
-  classificationNumber: number;
-  targetNumber: number;
+  dateElaboration: string;
+  dateCapture: string;
+  dateCaptureHc: string;
+  statuspack: string;
+  numberClassifyGood: number;
+  numberLabel: number;
   unit: string;
-  warehouseNumber: number;
-  registryNumber: number;
+  numberStore: number;
+  numberRecord: number;
   status: string;
-  tranEmiAutNumber: number;
-  validationDate: Date;
-  authorizationDate: Date;
-  closingDate: Date;
-  applicationDate: Date;
-  packageCVE: string;
-  cancellationDate: Date;
-  universalFolio: number;
+  numbertrainemiaut: number;
+  dateValid: string;
+  dateauthorize: string;
+  dateClosed: string;
+  dateApplied: string;
+  cvePackage: string;
+  dateCancelled: string;
+  InvoiceUniversal: number;
   paragraph1: string;
   paragraph2: string;
   paragraph3: string;
+  numberDelegation: number;
+  useElaboration: string;
+  useValid: string;
+  useauthorize: string;
+  useClosed: string;
+  useApplied: string;
+  useCancelled: string;
+  numberGoodFather: number;
+  nbOrigin: string;
+}
+
+export interface IPackageInfo {
+  packageNumber: number;
   delegationNumber: number;
-  elaborationUSU: string;
-  validationUSU: string;
-  authorizationUSU: string;
-  closingUSU: string;
-  applicationUSU: string;
-  cancellationUSU: string;
-  goodNumberF: number;
-  trial785: string;
+  proceedingNumber: number;
+  goodFatherNumber: number;
+  descGood: string;
+  amountGood: number;
+  unitGood: number;
+  statusGood: number;
+}
+
+export interface IFoliovInvoice {
+  vExecute: string;
+  vYear: number;
+}
+
+export interface IDecPackage extends IPrincipalPackageDec {
+  amount: number;
+  amountConv: number;
+  numberRecord: number;
+  nbOrigin: string;
+}
+
+export interface IPrincipalPackageDec {
+  numberPackage: string;
+  numberGood: number;
 }

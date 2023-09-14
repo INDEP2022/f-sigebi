@@ -7,17 +7,7 @@
       <div class="row">
         <div class="col-md-6">
           <form-field
-            label="Descripción"
-            [control]="affairForm.get('description')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field
-            label="Proceso detona"
+            label="Proceso Detona"
             [control]="affairForm.get('processDetonate')">
             <ng-select
               formControlName="processDetonate"
@@ -35,6 +25,16 @@
             </ng-select>
           </form-field>
         </div>
+        <div class="col-md-12 pt-4">
+          <form-field
+            label="Descripción"
+            [control]="affairForm.get('description')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
       </div>
     </form>
   </div>
@@ -43,6 +43,7 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
+          [disabled]="affairForm.invalid"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

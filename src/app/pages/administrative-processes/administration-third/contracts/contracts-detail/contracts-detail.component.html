@@ -13,8 +13,7 @@
               type="text"
               class="form-control"
               maxlength="60"
-              formControlName="contractKey"
-              required />
+              formControlName="contractKey" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -37,12 +36,13 @@
             label="Fecha inicial"
             [control]="contractForm.get('startDate')">
             <input
+              type="text"
               class="form-control"
               formControlName="startDate"
               bsDatepicker
               required
               [bsConfig]="{
-                dateInputFormat: 'YYYY-MM-DD'
+                dateInputFormat: 'DD-MM-YYYY'
               }" />
           </form-field>
         </div>
@@ -51,13 +51,27 @@
             label="Fecha final"
             [control]="contractForm.get('endDate')">
             <input
+              type="text"
               class="form-control"
               formControlName="endDate"
               bsDatepicker
               required
               [bsConfig]="{
-                dateInputFormat: 'YYYY-MM-DD'
+                dateInputFormat: 'DD-MM-YYYY'
               }" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="contractForm.get('statusContract')">
+            <ngx-select
+              [data]="status"
+              value="id"
+              bindLabel="descripcion"
+              label="Estado"
+              [form]="contractForm"
+              control="statusContract">
+            </ngx-select>
           </form-field>
         </div>
       </div>
@@ -68,6 +82,7 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
+          [disabled]="contractForm.invalid"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

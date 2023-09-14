@@ -9,96 +9,176 @@
           <div class="col-md-2">
             <form-field
               [control]="form.get('forfeitureKey')"
-              label="Clave Decomiso">
+              label="Cve. Decomiso">
               <input
-                type="number"
-                min="0"
+                type="text"
                 class="form-control"
-                formControlName="forfeitureKey"
-                oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20);" />
+                formControlName="forfeitureKey" />
             </form-field>
           </div>
-          <div class="col-1">
-            <button class="btn btn-danger btn-sm" (click)="lock = !lock">
-              <i
-                class="fa"
-                [ngClass]="{ 'fa-lock': lock, 'fa-lock-open': !lock }"></i>
+          <div class="col-md-4">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm m-1"
+              (click)="openFile()">
+              Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+            <button
+              type="button"
+              tooltip="Genera reporte de relación de decomiso."
+              class="btn btn-primary active btn-sm m-2"
+              (click)="callReport()">
+              Imprimir<i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+            <button
+              class="btn btn-danger btn-sm active m-1"
+              (click)="cleanFilter()">
+              Limpiar <i class="fas fa-eraser"> </i>
             </button>
           </div>
-          <div class="col-md-2">
-            <form-radio label="M.N">
-              <input type="radio" formControlName="check" value="PESOS" />
-            </form-radio>
-            <form-radio label="U.S.DLLS.">
-              <input type="radio" formControlName="check" value="DOLARES" />
-            </form-radio>
-            <form-radio label="CONV_NUM">
-              <input type="radio" formControlName="check" value="CONV_NUM" />
-            </form-radio>
-          </div>
-          <div class="col-md-7">
+
+          <div>
             <div class="row">
-              <div class="col-1">
-                <button class="btn btn-danger btn-sm" (click)="callReport()">
-                  <i class="fa fa-print"></i>
-                </button>
-              </div>
-              <div class="col-5">
+              <div class="col-6 mt-4">
                 <form-field [control]="form.get('import')" label="Importe">
                   <input
                     type="number"
                     class="form-control"
                     formControlName="import"
                     min="0"
-                    oninput="if(this.value.length > 12) this.value = this.value.slice(0, 12);" />
+                    oninput="if(this.value.length > 12) this.value = this.value.slice(0, 12);"
+                    readonly />
                 </form-field>
               </div>
-              <div class="col-6">
+              <div class="col-6 mt-4">
                 <form-field [control]="form.get('pgr')" label="PGR">
                   <input
                     type="number"
                     class="form-control"
                     formControlName="pgr"
-                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);" />
+                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);"
+                    readonly />
                 </form-field>
               </div>
-              <div class="col-6">
+              <div class="col-6 mt-4">
                 <form-field [control]="form.get('ssa')" label="SSA">
                   <input
                     type="number"
                     class="form-control"
                     formControlName="ssa"
-                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);" />
+                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);"
+                    readonly />
                 </form-field>
               </div>
-              <div class="col-6">
+              <div class="col-6 mt-4">
                 <form-field [control]="form.get('pjf')" label="PJF">
                   <input
                     type="number"
                     class="form-control"
                     formControlName="pjf"
-                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);" />
+                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);"
+                    readonly />
+                </form-field>
+              </div>
+              <div class="col-6 mt-4">
+                <form-field
+                  [control]="form.get('totalAmount')"
+                  label="Importe Total">
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="totalAmount"
+                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);"
+                    readonly />
                 </form-field>
               </div>
             </div>
           </div>
         </div>
       </form>
-      <form action="" class="form-material" [formGroup]="file">
+      <br />
+      <hr />
+      <form class="form-material" [formGroup]="Only">
         <div class="row mt-4">
-          <div class="col-md-2">
-            <button class="btn btn-secondary btn-sm active">
-              Abrir archivo de texto
+          <div class="col-2 mt-4">
+            <form-field [control]="Only.get('nobien')" label="No. Bien">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="nobien" />
+            </form-field>
+          </div>
+          <div class="col-md-1 mt-4">
+            <form-radio label="M.N.">
+              <input type="radio" formControlName="radio" value="1424" />
+            </form-radio>
+          </div>
+          <div class="col-md-1 mt-4">
+            <form-radio label="U.S. DLLS.">
+              <input type="radio" formControlName="radio" value="1426" />
+            </form-radio>
+          </div>
+          <div class="col-md-1 mt-4">
+            <form-radio label="Conv Nume">
+              <input type="radio" formControlName="radio" value="1427" />
+            </form-radio>
+          </div>
+          <div class="col-md-4 mt-4">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm m-1"
+              (click)="only()">
+              Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+            <button
+              class="btn btn-primary btn-sm active m-1"
+              (click)="aproveOnly()">
+              Aprobar <i class="fa fa-check" aria-hidden="true"></i>
+            </button>
+            <button
+              class="btn btn-danger btn-sm active m-1"
+              (click)="cleanOnly()">
+              Limpiar <i class="fas fa-eraser"> </i>
             </button>
           </div>
-          <div class="col-md-2">
+        </div>
+      </form>
+
+      <form class="form-material" [formGroup]="file">
+        <div class="row container">
+          <div class="col-md-5 mt-4">
+            <button
+              type="button"
+              class="btn btn-sm btn-success active"
+              (click)="filee.click()">
+              Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
+            </button>
             <input
               type="file"
-              #FileInput
-              class="form-control"
-              formControlName="recordRead" />
+              name="filee"
+              #filee
+              class="d-none"
+              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              (change)="onFileChange($event)" />
+            <button
+              class="btn btn-primary btn-sm active m-1"
+              (click)="aprove()">
+              Aprobar <i class="fa fa-check" aria-hidden="true"></i>
+            </button>
+            <button class="btn btn-danger btn-sm active m-1" (click)="clean()">
+              Limpiar <i class="fas fa-eraser"> </i>
+            </button>
+            <button
+              tooltip="Formato de Ejemplo"
+              containerClass="tooltip-style"
+              type="button"
+              class="btn btn-info btn-sm active m-1 pointer"
+              (click)="exportCsv()">
+              <i class="bi bi-question-circle"></i>
+            </button>
           </div>
-          <div class="col-md-2">
+
+          <div class="col-xs-2 mt-4">
             <form-field
               [control]="file.get('recordRead')"
               label="Registros Leídos:">
@@ -106,10 +186,10 @@
                 type="number"
                 class="form-control"
                 formControlName="recordRead"
-                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+                readonly />
             </form-field>
           </div>
-          <div class="col-md-2">
+          <div class="col-xs-2 mt-4">
             <form-field
               [control]="file.get('recordsProcessed')"
               label="Registros Procesados:">
@@ -117,158 +197,171 @@
                 type="number"
                 class="form-control"
                 formControlName="recordsProcessed"
-                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+                readonly />
             </form-field>
           </div>
-          <div class="col-md-2">
+          <div class="col-xs-2 mt-4">
             <form-field [control]="file.get('processed')" label="Procesados:">
               <input
                 type="number"
                 class="form-control"
                 formControlName="processed"
-                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+                readonly />
             </form-field>
           </div>
-          <div class="col-md-2">
-            <form-field [control]="file.get('wrong')" label="Erroneos:">
+          <div class="col-xs-1 mt-4">
+            <form-field [control]="file.get('wrong')" label="Erróneos:">
               <input
                 type="number"
                 class="form-control"
                 formControlName="wrong"
-                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+                readonly />
             </form-field>
           </div>
         </div>
       </form>
-      <form action="" class="form-material" [formGroup]="data">
-        <div class="row mt-4 pt-4">
-          <div class="col-md-3">
-            <form-field [control]="data.get('noGood')">
-              <ngx-select
-                (fetchItems)="getGood($event)"
-                label="No. Bien"
-                [data]="goods"
-                [form]="data"
-                value="goodId"
-                bindLabel="goodDescription"
-                [control]="'noGood'"
-                (change)="(null)"
-                [searchOnInit]="true"
-                [showTooltip]="true">
-              </ngx-select>
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <form-field
-              [control]="data.get('criminalCase')"
-              label="Causa Penal">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="criminalCase" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="data.get('preliminaryInvestigation')"
-              label="Averiguación Previa">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="preliminaryInvestigation"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <form-field [control]="data.get('dateTesofe')" label="Fecha Tesofe">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="dateTesofe" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <form-field
-              [control]="data.get('jobTesofe')"
-              label="Oficio a Tesofe">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="jobTesofe" />
-            </form-field>
-          </div>
+      <div class="row mt-4" *ngIf="unt">
+        <div class="col-md-12">
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading ? '0px' : '300px' }">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings"
+                [source]="source"></ng2-smart-table>
+            </div>
+          </ng-scrollbar>
         </div>
-        <div class="row mt-4">
-          <div class="col-md-2">
-            <form-field [control]="data.get('authority')" label="Autoridad">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="authority" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <form-field
-              [control]="data.get('dateTreasury')"
-              label="Fecha Tesoreria">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="dateTreasury" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <form-field
-              [control]="data.get('dateJudgment')"
-              label="Fecha Sentencia">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="dateJudgment" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <form-field
-              [control]="data.get('appraisalValue')"
-              label="Valor Avaluo">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="appraisalValue" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <form-field [control]="data.get('interests')" label="Intereses">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="interests" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <form-field [control]="data.get('results')" label="Resultado">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="results" />
-            </form-field>
-          </div>
+        <!--<app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>-->
+      </div>
+      <div class="row mt-4" *ngIf="until">
+        <div class="col-md-12">
+          <form [formGroup]="formaplicationData" class="form-material">
+            <div body>
+              <div class="row">
+                <div class="col-md-3 col-sm-12 col-xs-12" style="display: flex">
+                  <form-field
+                    [control]="formaplicationData.get('NoBien')"
+                    label="No. Bien"
+                    style="top: -20px">
+                    <input
+                      type="number"
+                      class="form-control"
+                      formControlName="NoBien" />
+                  </form-field>
+                </div>
+              </div>
+              <br />
+              <div class="row">
+                <div class="col-md-2 col-sm-12 col-xs-12">
+                  <form-field
+                    [control]="formaplicationData.get('f_trnas')"
+                    label="Fecha Transferencia">
+                    <input
+                      type="text"
+                      class="form-control mt-2"
+                      formControlName="f_trnas"
+                      readonly />
+                  </form-field>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <form-field
+                    [control]="formaplicationData.get('f_sent')"
+                    label="Fecha Sentencia">
+                    <input
+                      type="text"
+                      class="form-control mt-2"
+                      formControlName="f_sent"
+                      readonly />
+                  </form-field>
+                </div>
+                <div class="col-md-6 col-sm-12 col-xs-12">
+                  <form-field
+                    [control]="formaplicationData.get('Inte')"
+                    label="Intereses">
+                    <input
+                      type="text"
+                      class="form-control mt-2"
+                      formControlName="Inte"
+                      maxlength="200"
+                      readonly />
+                  </form-field>
+                </div>
+              </div>
+              <br />
+              <div class="row">
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <form-field
+                    [control]="formaplicationData.get('tesofeDate')"
+                    label="Fecha Tesofe">
+                    <input
+                      type="text"
+                      class="form-control mt-2"
+                      formControlName="tesofeDate"
+                      maxlength="200"
+                      readonly />
+                  </form-field>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <form-field
+                    [control]="formaplicationData.get('tesofeFolio')"
+                    label="Oficio Tesofe">
+                    <input
+                      type="text"
+                      class="form-control mt-2"
+                      formControlName="tesofeFolio"
+                      maxlength="200"
+                      readonly />
+                  </form-field>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <form-field
+                    [control]="formaplicationData.get('appraisalCurrencyKey')"
+                    label="Moneda">
+                    <input
+                      type="text"
+                      class="form-control mt-2"
+                      formControlName="appraisalCurrencyKey"
+                      maxlength="200"
+                      readonly />
+                  </form-field>
+                </div>
+              </div>
+              <br />
+              <div class="row">
+                <div class="col-md-6 col-sm-12 col-xs-12">
+                  <form-field
+                    [control]="formaplicationData.get('aut')"
+                    label="Autoridad">
+                    <input
+                      type="text"
+                      class="form-control mt-2"
+                      formControlName="aut"
+                      readonly />
+                  </form-field>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                  <form-field
+                    [control]="formaplicationData.get('expedientecriminalCase')"
+                    label="Causa Penal">
+                    <input
+                      type="text"
+                      class="form-control mt-2"
+                      formControlName="expedientecriminalCase"
+                      readonly />
+                  </form-field>
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
-        <div class="row mt-4">
-          <div class="col-md-8"></div>
-          <div class="col-md-4">
-            <form-field
-              [control]="data.get('totalSeizures')"
-              label="Total en Decomisos:">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="totalSeizures" />
-            </form-field>
-          </div>
-        </div>
-      </form>
+        <!--<app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>-->
+      </div>
     </div>
   </div>
 </app-card>

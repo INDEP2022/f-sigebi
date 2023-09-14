@@ -48,6 +48,7 @@ import {
 } from './utils/good-capture-form';
 import { getDeparturesIdsFromFraction } from './utils/goods-capture-functions';
 
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import {
   COMPENSATION_GOOD_ALERT,
   NO_CLASIF_NUMBER_NOT_FOUND,
@@ -137,7 +138,8 @@ export class GoodsCaptureMain extends BasePage {
     public router: Router,
     public menageService: MenageService,
     public drDataService: DocumentsReceptionDataService,
-    public globalVarService: GlobalVarsService
+    public globalVarService: GlobalVarsService,
+    private goodProcessService: GoodProcessService
   ) {
     super();
     const paramsMap = this.activatedRoute.snapshot.queryParamMap;
@@ -170,7 +172,7 @@ export class GoodsCaptureMain extends BasePage {
   }
 
   protected showError(message: string) {
-    this.onLoadToast('error', 'Error', message);
+    this.onLoadToast('warning', 'Atención', message);
   }
 
   isCalledFrom(origin: string): boolean {
@@ -934,11 +936,30 @@ export class GoodsCaptureMain extends BasePage {
   }
 
   getLabelsByClasifNum(clasifNum: string | number) {
-    return this.goodsCaptureService.getLabelsByClasif(clasifNum).pipe(
-      tap(response => {
-        this.goodLabels = new DefaultSelect(response.data, response.count);
-      })
-    );
+    if (this.global.noTransferente) {
+      return this.goodProcessService
+        .getLabelDesc({
+          transferNumber: this.global.noTransferente,
+          clasifGooNumber: clasifNum,
+        })
+        .pipe(
+          tap(response => {
+            const lbls = response.data.map((l: any) => {
+              return {
+                labelNumber: l.no_etiqueta,
+                e_descripcion: l.descripcion,
+              };
+            });
+            this.goodLabels = new DefaultSelect(lbls, response.count);
+          })
+        );
+    } else {
+      return this.goodsCaptureService.getLabelsByClasif(clasifNum).pipe(
+        tap(response => {
+          this.goodLabels = new DefaultSelect(response.data, response.count);
+        })
+      );
+    }
   }
 
   getFractions(body: any) {

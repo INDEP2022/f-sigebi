@@ -11,26 +11,55 @@
           [source]="tableLogs"
           (userRowSelect)="onSelectTable($event.data)">
         </ng2-smart-table>
-
         <app-pagination
-          [filterParams]="params"
+          [params]="params"
           [totalItems]="totalLogs"></app-pagination>
       </div>
       <div class="col-md-4">
         <system-log-form [fields]="filterFields" [form]="filterForm">
           <confirm-button
-            [loading]="dynamicLoading"
+            *ngIf="rowSelected"
             (confirm)="getTableData()"
-            text="Generar"
-            loadingText="Cargando"></confirm-button>
+            text="Generar Filtrado"
+            class="pb-5"
+            [btnSmall]="true"
+            icon="bx bx-search float-icon">
+          </confirm-button>
         </system-log-form>
+
+        <!-- <div class="col-md-3">
+          <button
+            type="button"
+            class="btn btn-sm btn-info active"
+            style="width: 90px; background-color: #b38e5d"
+            (click)="cleandInfo()">
+            Limpiar <i class="fa fa-eraser"></i>
+          </button>
+        </div> -->
+
+        <div *ngIf="!rowSelected" class="alert alert-warning mt-3">
+          Por favor, seleccione un elemento para generar el filtrado.
+        </div>
       </div>
     </div>
-    <system-log-registers-table
-      [class.table-loading]="dynamicLoading"
-      [columns]="dynamicColumns"
-      [params]="dynamicParams"
-      [totalItems]="totalDynamic"
-      [registers]="dynamicRegisters"></system-log-registers-table>
+    <ng-container *ngIf="rowSelected">
+      <system-log-registers-table
+        [class.table-loading]="dynamicLoading"
+        [columns]="dynamicColumns"
+        [params]="dynamicParams"
+        [totalItems]="totalDynamic"
+        [registers]="dynamicRegisters"></system-log-registers-table>
+    </ng-container>
   </div>
 </app-card>
+
+<!-- [loading]="dynamicLoading"
+  loadingText="Cargando" -->
+
+<!-- <system-log-registers-table
+        [class.table-loading]="dynamicLoading"
+        [columns]="dynamicColumns"
+        [params]="dynamicParams"
+        [totalItems]="totalDynamic"
+        [registers]="dynamicRegisters"
+        ></system-log-registers-table> -->

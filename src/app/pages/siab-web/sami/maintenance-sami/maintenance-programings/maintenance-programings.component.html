@@ -1,0 +1,139 @@
+<form [formGroup]="form" class="form-material">
+  <div class="row mt-2 mb-3 ml-0 mr-0">
+    <div class="col-md-6">
+      <form-radio label="Programaciones Recepción">
+        <input
+          type="radio"
+          value="RECEPCION"
+          formControlName="typePrograming" />
+      </form-radio>
+    </div>
+    <div class="col-md-6">
+      <form-radio label="Programaciones Entrega">
+        <input type="radio" value="ENTREGA" formControlName="typePrograming" />
+      </form-radio>
+    </div>
+  </div>
+  <div class="row margin-input">
+    <div class="col-md-8 p-0">
+      <form-field label="Programación" [control]="id">
+        <input
+          type="number"
+          class="form-control"
+          formControlName="id"
+          [readonly]="idDisabled" />
+      </form-field>
+    </div>
+    <div class="col-md-2 col-6 mb-4 pl-0">
+      <button
+        type="button"
+        class="btn btn-primary active btn-sm"
+        [disabled]="id.invalid"
+        (click)="consultDates()">
+        Buscar
+        <i class="bx bx-search-alt bx-sm float-icon"></i>
+      </button>
+    </div>
+    <div class="col-md-2 col-6 mb-4 p-0" style="text-align: right">
+      <button
+        type="button"
+        class="btn btn-danger active btn-sm"
+        (click)="clear()">
+        Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <form-field label="Fecha Inicio" [control]="form.get('fechaInicio')">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="fechaInicio"
+          readonly />
+      </form-field>
+    </div>
+    <div class="col-md-6">
+      <form-field label="Fecha Fin" [control]="form.get('fechaFin')">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="fechaFin"
+          readonly />
+      </form-field>
+    </div>
+  </div>
+  <div class="row debeDecir">
+    <span>Debe decir:</span>
+  </div>
+  <div class="row">
+    <div
+      class="col-md-6"
+      [class]="disabledDates ? 'disabledDate' : 'enabledDate'">
+      <form-field label="Fecha Inicio" [control]="form.get('newFechaInicio')">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="newFechaInicio"
+          readonly
+          required
+          [bsConfig]="{
+            withTimepicker: true,
+            rangeInputFormat: 'DD/MM/YYYY, h:mm:ss a',
+            dateInputFormat: 'DD/MM/YYYY, h:mm:ss a'
+          }"
+          bsDatepicker />
+        <!-- keepDatepickerOpened: true, -->
+      </form-field>
+    </div>
+    <div
+      class="col-md-6"
+      [class]="disabledDates ? 'disabledDate' : 'enabledDate'">
+      <form-field label="Fecha Fin" [control]="form.get('newFechaFin')">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="newFechaFin"
+          readonly
+          required
+          [bsConfig]="{
+            withTimepicker: true,
+            rangeInputFormat: 'DD/MM/YYYY, h:mm:ss a',
+            dateInputFormat: 'DD/MM/YYYY, h:mm:ss a'
+          }"
+          bsDatepicker />
+        <!-- keepDatepickerOpened: true, -->
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <form-field
+      label="Justificación del Cambio"
+      [control]="form.get('txtMotivoCambio')">
+      <textarea
+        class="form-control"
+        formControlName="txtMotivoCambio"
+        rows="2"
+        maxlength="1250"></textarea>
+    </form-field>
+  </div>
+  <tr>
+    <td colspan="5" align="center">
+      <button
+        [disabled]="form.invalid"
+        class="btn btn-primary btn-sm mr-2 active"
+        type="submit"
+        size="small"
+        (click)="update()">
+        Actualizar
+      </button>
+      <button
+        class="btn btn-danger btn-sm m-2 active"
+        type="submit"
+        size="small"
+        (click)="clear()">
+        Cancelar
+      </button>
+    </td>
+  </tr>
+</form>

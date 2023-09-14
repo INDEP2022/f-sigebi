@@ -1,45 +1,100 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const GENERAL_RECEPTION_STRATEGIES_COLUNNS = {
-  regional: {
+  proceedings: {
     title: 'Expediente',
     sort: false,
   },
-  cve: {
+  id: {
     title: 'Bien',
     sort: false,
   },
-  expediente: {
+  statusGood: {
     title: 'Estatus Bien',
     sort: false,
   },
-  noVolante: {
+  keyCodeMinutesReception: {
     title: 'Clave Acta Recepción',
     sort: false,
   },
-  tramite: {
+  coordinationRegional: {
     title: 'Coordinación Regional',
     sort: false,
   },
-  usuario: {
+  usrActrecep: {
     title: 'Usuario',
     sort: false,
   },
-  page: {
+  estgiaRecepFecCapture: {
     title: 'Fecha de Estrategia',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
-  fin: {
-    title: 'Fecha page Programación',
+  programmingRecepFecIni: {
+    title: 'Fecha inicio Programación',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
-  max: {
+  programmingRecepFecFin: {
     title: 'Fecha Fin Programación',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  programmingRecepFecClosing: {
+    title: 'Fecha Maxima Estrategia',
+    sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  receptionPhysicalDate: {
+    title: 'Fecha Recepción',
+    sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   cumplio: {
-    title: 'Cumplio',
+    title: 'Cumplió',
     sort: false,
+    /* valuePrepareFunction: (text: string) => {
+      return text === 'S' ? 'SI' : 'NO';
+    } */
   },
 };
+
+///cumplio
 function getData() {
   const data = [];
   const el = {

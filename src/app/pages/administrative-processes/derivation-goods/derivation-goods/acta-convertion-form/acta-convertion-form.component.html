@@ -1,0 +1,174 @@
+<app-modal class="col-md-15">
+  <div header>
+    <h5 class="modal-title">{{ 'Actas Conversión' }}</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-9">
+        <div class="card custom-card">
+          <div class="card-body">
+            <table class="table table-striped table-container">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th style="text-align: center" scope="col">Clave Acta</th>
+                  <th scope="col">Sel.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of items; let i = index">
+                  <th scope="row">{{ i + 1 }}</th>
+                  <td class="custom-cell">{{ item.cve_acta_conv }}</td>
+                  <td>
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        [checked]="i === selectedIndex"
+                        (change)="onCheckboxChange($event, i)"
+                        [disabled]="disableAllChecks == true" />
+                      <label class="form-check-label" for="check{{ i }}">
+                      </label>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <input
+              type="text"
+              [(ngModel)]="selectItem2"
+              class="form-control custom-cell"
+              placeholder="Clave Acta" />
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <!-- Columna para los botones -->
+        <div class="d-flex flex-column">
+          <button
+            style="
+              width: 100%;
+              height: 40px;
+              text-overflow: ellipsis;
+              text-align: center;
+            "
+            class="btn btn-primary btn-sm active m-3"
+            (click)="handleSubmitNewItem()"
+            [disabled]="flagNewActa">
+            Genera Acta <i class="fa fa-check" aria-hidden="true"></i>
+          </button>
+          <button
+            style="
+              width: 100%;
+              height: 40px;
+              text-overflow: ellipsis;
+              text-align: center;
+            "
+            class="btn btn-primary active btn-sm m-3"
+            (click)="generateAsignarActa()"
+            [disabled]="flagAsignaActa">
+            Asigna Acta <i class="fas fa-edit bx-sm float-icon"></i>
+          </button>
+          <button
+            style="
+              width: 100%;
+              height: 40px;
+              text-overflow: ellipsis;
+              text-align: center;
+            "
+            class="btn btn-primary active btn-sm m-3"
+            (click)="close()">
+            Regresar
+            <i class="fas fa-arrow-circle-left"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <app-scanning-foil
+      [good]="pGoodFatherNumber"
+      [numberFoli]="numberFoli"
+      [tipoConv]="tipoConv"
+      cveScreen="FCONVBIENHIJOS"
+      reportPrint="RGERGENSOLICDIGIT"
+      [expedientNumber]="expedientNumber"
+      [refresh]="refresh"
+      (documentEmmit)="document($event)">
+    </app-scanning-foil>
+    <div class="row text-center mb-3">
+      <div class="col-md-6 col-sm-12">
+        <button
+          type="button"
+          data-toggle="tooltop"
+          title="Agregar Bien"
+          class="btn btn-info btn-sm active ml-2 mr-2 float-center"
+          (click)="insertParaph()"
+          [disabled]="insertParaphs">
+          <i class=""></i> Insertar Párrafos
+        </button>
+      </div>
+      <div class="col-md-6 col-sm-12" *ngIf="printMinutes">
+        <button
+          type="button"
+          data-toggle="tooltop"
+          title="Eliminar Bien"
+          class="btn btn-danger btn-sm active ml-2 mr-2 float-center"
+          (click)="printAct()">
+          <i class=""></i> Imprimir Acta
+        </button>
+      </div>
+    </div>
+
+    <div class="card custom-card-textareas">
+      <div class="card-body">
+        <div class="form-group">
+          <label for="textarea1">Párrafo Inicial</label>
+          <textarea
+            [(ngModel)]="parrafo1"
+            class="form-control"
+            id="textarea1"
+            rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="textarea2">Párrafo Secundario</label>
+          <textarea
+            [(ngModel)]="parrafo2"
+            class="form-control"
+            id="textarea2"
+            rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="textarea3">Párrafo Final</label>
+          <textarea
+            [(ngModel)]="parrafo3"
+            class="form-control"
+            id="textarea3"
+            rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          (click)="createMinuteConversion()">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+        <!-- <button type="button" class="btn btn-primary" >
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button> -->
+      </div>
+
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

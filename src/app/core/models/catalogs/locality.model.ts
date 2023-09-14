@@ -5,6 +5,7 @@ export interface ILocality {
   nameLocation: string;
   ambitKey: number;
   userCreation: string;
+  description: string;
   creationDate: Date;
   userModification: string;
   modificationDate: Date;
@@ -25,4 +26,9 @@ export interface ILocality2 {
   creationDate: string;
   editionUser: string;
   modificationDate: string;
+}
+
+export interface ILocalityGetAll {
+  idLocality: number;
+  nameLocation: string;
 }

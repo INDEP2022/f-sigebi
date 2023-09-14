@@ -1,0 +1,11 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CATÁLOGO DE CONCEPTOS</h5>
+  </div>
+  <div body>
+    <app-expense-concepts-list [address]="address"></app-expense-concepts-list>
+    <app-params-conceps-list
+      [address]="address"
+      [conceptId]="conceptId"></app-params-conceps-list>
+  </div>
+</app-card>

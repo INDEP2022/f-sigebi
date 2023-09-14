@@ -1,26 +1,27 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">
-      &Oacute;rdenes de ingreso por bien de depositar&iacute;a
-    </h5>
+    <div class="col-12 col-sm-12 col-md-8">
+      <h5 class="title">
+        &Oacute;rdenes de ingreso por bien de depositar&iacute;a
+      </h5>
+    </div>
+    <div class="col-12 col-sm-12 col-md-4 text-end">
+      <button class="btn btn-primary active btn-sm" (click)="goBack()">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
+      </button>
+    </div>
   </div>
-  <div body>
+  <div body style="padding-bottom: 13rem">
     <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field [control]="form.get('numberGood')" label="No Bien">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="numberGood"
               [readonly]="true" />
-            <!--ng-select
-              [items]="itemsJsonInterfaz"
-              bindLabel="goodNumber"
-              bindValue="appointmentNumber"
-              formControlName="numberGood"
-              class="form-control">
-            </ng-select-->
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -71,7 +72,7 @@
                 class="btn btn-primary btn-sm active"
                 (click)="print()"
                 [disabled]="form.invalid">
-                Imprimir
+                Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
               </button>
             </div>
           </div>
@@ -82,22 +83,31 @@
       </div>
       <hr />
       <div class="row pl-3">Firmante</div>
-
       <div class="row mt-5">
         <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('userId')" label="Usuario">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="userId"
-              [readonly]="true" />
-            <!--ng-select
-              [items]="itemsJsonInterfazUser"
-              bindLabel="usuario.user"
-              bindValue="id"
-              formControlName="user"
-              class="form-control">
-            </ng-select-->
+          <form-field [control]="form.get('userId')">
+            <ngx-select
+              [form]="form"
+              [data]="users$"
+              (change)="getDescUser($event)"
+              (fetchItems)="getUsers($event)"
+              bindLabel="userAndName"
+              control="userId"
+              label="Usuario"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              termMaxLength="30"
+              [labelTemplate]="userLabel"
+              [optionTemplate]="userOption">
+            </ngx-select>
+            <ng-template #userLabel let-item="item">
+              {{ item.id }} - {{ item.name }}
+            </ng-template>
+            <ng-template #userOption let-item="item">
+              <div [title]="item.id + '-' + item.name">
+                {{ item.id }} - {{ item.name }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -119,7 +129,9 @@
           </form-field>
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-4 col-sm-12 col-xs-12"></div>
+      </div>
     </form>
   </div>
 </app-card>
-<!--{{itemsJsonInterfaz | json}}-->

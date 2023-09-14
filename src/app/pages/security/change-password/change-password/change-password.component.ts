@@ -71,6 +71,7 @@ export class ChangePasswordComponent
       showCancelButton: false,
       confirmButtonColor: '#9D2449',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         console.log('OK');

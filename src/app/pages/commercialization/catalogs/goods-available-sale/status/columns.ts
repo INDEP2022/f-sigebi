@@ -1,13 +1,5 @@
-const options: any[] = [
-  { value: 'Muebles', title: 'Muebles' },
-  { value: 'Inmuebles', title: 'Inmuebles' },
-  { value: 'Remesas', title: 'Remesas' },
-  { value: 'Disponibles', title: 'Disponibles' },
-  { value: 'Validar SIRSAE', title: 'Validar SIRSAE' },
-];
-
 export const COLUMNS = {
-  goodStatus: {
+  idStatus: {
     title: 'Estatus',
     sort: false,
     filter: true,
@@ -17,19 +9,50 @@ export const COLUMNS = {
     sort: false,
     filter: true,
   },
-  processStatus: {
-    title: 'Estatus del proceso',
+  idDirection: {
+    title: 'Dirección',
+    type: 'html',
     sort: false,
-    filter: true,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'I')
+        return '<strong><span class="badge badge-pill badge-success">Inmuebles</span></strong>';
+      if (value == 'M')
+        return '<strong><span class="badge badge-pill badge-success">Muebles</span></strong>';
+      if (value == 'R')
+        return '<strong><span class="badge badge-pill badge-success">Remesas</span></strong>';
+      if (value == 'D')
+        return '<strong><span class="badge badge-pill badge-success">Disponibles</span></strong>';
+      if (value == 'V')
+        return '<strong><span class="badge badge-pill badge-success">Validar SIRSAE</span></strong>';
+      return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'M', title: 'Muebles' },
+          { value: 'I', title: 'Inmuebles' },
+          { value: 'R', title: 'Remesas' },
+          { value: 'D', title: 'Disponibles' },
+          { value: 'V', title: 'Validar SIRSAE' },
+        ],
+      },
+    },
   },
-  quantity: {
-    title: 'Cantidad',
+  comerTpevents: {
+    title: 'Estatus del Proceso',
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.description : '';
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
     sort: false,
-    filter: true,
-  },
-  transferentDestiny: {
-    title: 'Destino',
-    sort: false,
-    filter: true,
   },
 };

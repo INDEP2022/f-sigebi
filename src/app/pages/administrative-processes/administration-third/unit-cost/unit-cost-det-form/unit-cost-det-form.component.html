@@ -14,7 +14,22 @@
               value="id"
               bindLabel="description"
               label="Zona"
-              control="cveZoneContract">
+              control="cveZoneContract"
+              (change)="changeZone($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-4">
+          <form-field [control]="unitCostDetForm.get('contract')">
+            <ngx-select
+              (fetchItems)="getZoneContracts($event)"
+              [data]="contracts"
+              [form]="unitCostDetForm"
+              value="zoneContractKey"
+              bindLabel="contractKey"
+              label="Contrato"
+              control="contract"
+              (change)="changeContract($event)">
             </ngx-select>
           </form-field>
         </div>
@@ -23,8 +38,10 @@
             label="Fecha inicial"
             [control]="unitCostDetForm.get('startDate')">
             <input
-              class="form-control"
+              [maxDate]="maxDate"
               formControlName="startDate"
+              class="form-control"
+              [minDate]="minDate"
               bsDatepicker
               [bsConfig]="{
                 dateInputFormat: 'YYYY-MM-DD'
@@ -64,6 +81,35 @@
               formControlName="costUnitarian" />
           </form-field>
         </div>
+        <div class="col-md-6 mt-4">
+          <!--<form-field
+            label="Vigente"
+            [control]="unitCostDetForm.get('validity')">
+            <select
+              formcontrolName="validity"
+              class="form-control ng-pristine ng-invalid ng-touched">
+              <option value="null">Seleccione un valor</option>
+              <option value="1">SI</option>
+              <option value="0">NO</option>
+            </select>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="validity" />
+            </form-field>-->
+          <form-field
+            label="Vigente"
+            [control]="unitCostDetForm.get('validity')">
+            <ng-select
+              formControlName="validity"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">Si</ng-option>
+              <ng-option value="0">No</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
       </div>
     </form>
   </div>
@@ -72,6 +118,7 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
+          [disabled]="unitCostDetForm.invalid"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

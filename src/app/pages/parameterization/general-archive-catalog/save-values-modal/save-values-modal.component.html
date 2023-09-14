@@ -5,34 +5,18 @@
   <div body>
     <form class="form-material" [formGroup]="saveValuesForm">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-6">
           <form-field
-            label="Cve Guardavalor"
+            label="Cve Guarda Valor"
             [control]="saveValuesForm.get('id')">
-            <input type="text" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            label="Descripcipon"
-            [control]="saveValuesForm.get('description')">
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="id"
+              oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
           </form-field>
         </div>
-        <div class="col-md-3">
-          <form-field
-            label="Locación"
-            [control]="saveValuesForm.get('location')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="location" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
           <form-field
             label="Responsable"
             [control]="saveValuesForm.get('responsible')">
@@ -43,13 +27,40 @@
           </form-field>
         </div>
       </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <form-field
+            label="Descripción"
+            [control]="saveValuesForm.get('description')">
+            <textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="description"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <form-field
+            label="Locación"
+            [control]="saveValuesForm.get('location')">
+            <textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="location"></textarea>
+          </form-field>
+        </div>
+      </div>
     </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [type]="'button'"
+          [disabled]="saveValuesForm.invalid"
+          [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

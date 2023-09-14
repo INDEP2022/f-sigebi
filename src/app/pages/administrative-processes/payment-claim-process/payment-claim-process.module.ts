@@ -10,13 +10,14 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { JustificationSharedComponent } from 'src/app/@standalone/shared-forms/justification-shared/justification-shared.component';
 import { PaymentClaimProcessRoutingModule } from './payment-claim-process-routing.module';
 import { ModalJustifier } from './payment-claim-process/modal-justifier.component';
 import { PaymentClaimProcessComponent } from './payment-claim-process/payment-claim-process.component';
 import { ScanningFoilComponent } from './scanning-foil/scanning-foil.component';
-
 @NgModule({
   declarations: [
     PaymentClaimProcessComponent,
@@ -37,6 +38,8 @@ import { ScanningFoilComponent } from './scanning-foil/scanning-foil.component';
     ModalModule.forChild(),
     GoodsTypesSharedComponent,
     JustificationSharedComponent,
+    TooltipModule.forRoot(),
+    FormLoaderComponent,
   ],
 })
 export class PaymentClaimProcessModule {}

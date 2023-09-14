@@ -64,7 +64,7 @@ const routes: Routes = [
       ),
     data: {
       title: 'Programación de Entregas',
-      screen: 'FINDICA_0035V',
+      screen: 'FINDICA_0035_1',
     },
   },
   {
@@ -170,7 +170,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'review-technical-sheets',
+    path: 'review-technical-sheets/:fechaInicial/:fechaFinal/:usuarioRevision/:noDelegacion',
     loadChildren: () =>
       import('./review-technical-sheets/review-technical-sheets.module').then(
         m => m.ReviewTechnicalSheetsModule

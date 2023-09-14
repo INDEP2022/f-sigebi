@@ -1,6 +1,12 @@
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 /** BASE IMPORT */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -17,11 +23,13 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 import { BehaviorSubject } from 'rxjs';
-import { SiabReportEndpoints } from 'src/app/common/constants/endpoints/siab-reports-endpoints';
 import { IGood } from 'src/app/core/models/good/good.model';
 
 /** SERVICE IMPORTS */
 import { DatePipe } from '@angular/common';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { dateRangeValidator } from 'src/app/common/validations/date.validators';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
@@ -52,6 +60,8 @@ export class ReviewResourceReportComponent
 
   phaseEdo: number;
   patchValue: boolean = false;
+  dateMinEnd: Date = null;
+  maxDate: Date = null;
 
   get startDate(): AbstractControl {
     return this.form.get('startDate');
@@ -71,19 +81,23 @@ export class ReviewResourceReportComponent
   get alBien() {
     return this.form.get('alBien');
   }
+  @Output() submit = new EventEmitter();
   constructor(
     private fb?: FormBuilder,
     private printFlyersService?: PrintFlyersService,
     private serviceDeleg?: DelegationService,
     private goodServices?: GoodService,
     private siabService?: SiabService,
-    private datePipe?: DatePipe
+    private datePipe?: DatePipe,
+    private sanitizer?: DomSanitizer,
+    private modalService?: BsModalService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.maxDate = new Date();
     this.loading = true;
   }
 
@@ -94,11 +108,17 @@ export class ReviewResourceReportComponent
         subdelegation: [null, [Validators.required]],
         startDate: [null, [Validators.required]],
         endDate: [null, [Validators.required]],
-        delBien: [null], // Del Bien Detalle
-        alBien: [null], // Al Bien Detalle
+        delBien: [null, [Validators.required]], // Del Bien Detalle
+        alBien: [null, [Validators.required]], // Al Bien Detalle
       },
       { validator: dateRangeValidator() }
     );
+    this.disableInit();
+  }
+  private disableInit() {
+    this.form.get('subdelegation').disable();
+    this.form.get('alBien').disable();
+    this.form.get('endDate').disable();
   }
   getDelegations(params: ListParams) {
     this.serviceDeleg.getAll(params).subscribe(
@@ -106,29 +126,30 @@ export class ReviewResourceReportComponent
         this.delegations = new DefaultSelect(data.data, data.count);
       },
       err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
+        this.delegations = new DefaultSelect();
+        this.loading = false;
       },
       () => {}
     );
   }
 
   onDelegationsChange(element: any) {
-    this.resetFields([this.delegation]);
-    this.subdelegations = new DefaultSelect();
-    this.good = new DefaultSelect();
-    this.goodAl = new DefaultSelect();
+    if (element != undefined) {
+      this.resetFields([this.delegation]);
+      this.subdelegations = new DefaultSelect();
+      this.good = new DefaultSelect();
+      this.goodAl = new DefaultSelect();
 
-    if (this.delegation.value)
-      console.log('change delegacion', this.delegation.value);
-    this.getSubDelegations({ page: 1, limit: 10, text: '' });
-    this.getGoodIdDescription({ page: 1, limit: 10, text: '' });
-    this.getGoodAlIdDescription({ page: 1, limit: 10, text: '' });
+      if (this.delegation.value) {
+        this.form.get('subdelegation').enable();
+        this.getSubDelegations({ page: 1, limit: 10, text: '' });
+        this.getGoodIdDescription({ page: 1, limit: 10, text: '' });
+        this.getGoodAlIdDescription({ page: 1, limit: 10, text: '' });
+      }
+    } else {
+      this.form.get('subdelegation').disable();
+      this.form.get('subdelegation').setValue(null);
+    }
   }
 
   getSubDelegations(lparams: ListParams) {
@@ -146,13 +167,7 @@ export class ReviewResourceReportComponent
         this.subdelegations = new DefaultSelect(data.data, data.count);
       },
       error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
+        this.subdelegations = new DefaultSelect();
       },
     });
   }
@@ -173,14 +188,7 @@ export class ReviewResourceReportComponent
         this.good = new DefaultSelect(data.data, data.count);
       },
       error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-
-        this.onLoadToast('error', 'Error', error);
+        this.good = new DefaultSelect();
       },
     });
   }
@@ -198,10 +206,26 @@ export class ReviewResourceReportComponent
     });
   }
   onGoodIdDescription(sssubtype: any) {
-    this.resetFields([this.delBien]);
+    if (sssubtype != undefined) {
+      this.resetFields([this.delBien]);
+      this.form.get('alBien').enable();
+    } else {
+      this.form.get('alBien').disable();
+      this.form.get('alBien').setValue(null);
+    }
   }
+
   onGoodAlIdDescription(sssubtype: any) {
     this.resetFields([this.alBien]);
+  }
+
+  onStartDateChange(sssubtype: any) {
+    if (sssubtype != null) {
+      this.form.get('endDate').setValue(null);
+      this.form.get('endDate').enable();
+      this.dateMinEnd = this.form.get('startDate').value;
+      this.resetFields([this.alBien]);
+    }
   }
 
   resetFields(fields: AbstractControl[]) {
@@ -222,36 +246,64 @@ export class ReviewResourceReportComponent
   }
 
   btnGenerarReporte() {
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/flow.html?_flowId=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2FSIGEBI%2FReportes%2FSIAB&reportUnit=%2FSIGEBI%2FReportes%2FSIAB%2FRGERJURRECDEREV&standAlone=true`; //window.URL.createObjectURL(blob);
+    this.submit.emit(this.form);
+    let fechaInicio = this.datePipe.transform(
+      this.form.controls['startDate'].value,
+      'dd/MM/yyyy'
+    );
 
-    // Crea enlace de etiqueta anchor con js
-    const downloadLink = document.createElement('a');
-    downloadLink.href = pdfurl;
-    downloadLink.target = '_blank';
+    let fechaFin = this.datePipe.transform(
+      this.form.controls['endDate'].value,
+      'dd/MM/yyyy'
+    );
+    let params = {
+      PN_BIENINI: this.form.controls['delBien'].value,
+      PN_BIENFIN: this.form.controls['alBien'].value,
+      PF_FECINI: fechaInicio,
+      PF_FECFIN: fechaFin,
+      PN_DELEG: this.form.controls['delegation'].value,
+      PN_SUBDEL: this.form.controls['subdelegation'].value,
+    };
 
-    let params = { ...this.form.value };
-    for (const key in params) {
-      if (params[key] === null) delete params[key];
-      if (key === 'endDate' || key === 'startDate') {
-        params[key] = this.datePipe.transform(params[key], 'dd-MM-yyyy');
-      }
-    }
-    console.log('params', params);
+    this.siabService
+      //.fetchReport('RGERJURRECDEREV', params)
+      .fetchReportBlank('blank')
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
+  }
 
-    setTimeout(() => {
-      this.siabService
-        .getReport(SiabReportEndpoints.FGERJURRECDEREV, params)
-        .subscribe({
-          next: response => {
-            console.log('response', response);
-            window.open(pdfurl, 'DOCUMENT');
-          },
-          error: () => {
-            console.log('error');
-
-            window.open(pdfurl, 'DOCUMENT');
-          },
-        });
-    }, 4000);
+  cleanForm() {
+    this.form.reset();
   }
 }

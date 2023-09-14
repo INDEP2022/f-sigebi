@@ -18,7 +18,7 @@
             <input
               type="text"
               class="form-control"
-              maxlength="50"
+              maxlength="255"
               formControlName="addresseeName" />
           </form-field>
         </div>
@@ -29,7 +29,7 @@
             <input
               type="text"
               class="form-control"
-              maxlength="50"
+              maxlength="200"
               formControlName="positionAddressee" />
           </form-field>
         </div>
@@ -39,11 +39,11 @@
         <div class="col-md-6">
           <form-field
             [control]="form.get('senderName')"
-            label="Nombre Remitente">
+            label="Nombre Remitente -">
             <input
               type="text"
               class="form-control"
-              maxlength="50"
+              maxlength="200"
               formControlName="senderName" />
           </form-field>
         </div>
@@ -55,7 +55,7 @@
             <input
               type="text"
               class="form-control"
-              maxlength="50"
+              maxlength="200"
               formControlName="senderCharge" />
           </form-field>
         </div>
@@ -100,7 +100,7 @@
             label="P&aacute;rrafo Inicial">
             <textarea
               class="form-control"
-              maxlength="1000"
+              maxlength="4000"
               formControlName="paragraphInitial"></textarea>
           </form-field>
         </div>
@@ -110,7 +110,7 @@
             label="P&aacute;rrafo Final">
             <textarea
               class="form-control"
-              maxlength="1000"
+              maxlength="4000"
               formControlName="paragraphFinal"></textarea>
           </form-field>
         </div>
@@ -128,53 +128,6 @@
           </form-field>
         </div>
       </div>
-
-      <!--<div class="row pt-3">
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('foundation')"
-            label="Fundamentaci&oacute;n">
-            <textarea
-              class="form-control"
-              maxlength="4000"
-              formControlName="foundation"></textarea>
-          </form-field>
-        </div>
-      </div> -->
-
-      <!--<div class="row pt-3">
-        <div class="col-md-4">
-          <form-field [control]="form.get('transmitterId')" label="ID Emisor">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="15"
-              formControlName="transmitterId" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="form.get('invoiceLearned')"
-            label="Folio Documento">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="60"
-              formControlName="invoiceLearned" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="form.get('worthAppraisal')"
-            label="Valor Aval&uacute;o">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="60"
-              formControlName="worthAppraisal" />
-          </form-field>
-        </div>
-      </div> -->
     </form>
   </div>
 

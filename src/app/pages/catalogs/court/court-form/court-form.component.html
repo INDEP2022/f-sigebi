@@ -25,9 +25,9 @@
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
             [control]="courtForm.get('numRegister')"
-            label="N&uacute;mero de registro">
+            label="No. Registro">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="numRegister" />
           </form-field>
@@ -58,18 +58,18 @@
       <div class="row pt-md-5">
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
-            [control]="courtForm.get('numInterior')"
-            label="N&uacute;mero interior">
+            [control]="courtForm.get('numInside')"
+            label="No. Interior">
             <input
               type="text"
               class="form-control"
-              formControlName="numInterior" />
+              formControlName="numInside" />
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
             [control]="courtForm.get('numExterior')"
-            label="N&uacute;mero exterior">
+            label="No. Exterior">
             <input
               type="text"
               class="form-control"
@@ -81,7 +81,7 @@
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
             [control]="courtForm.get('delegationMun')"
-            label="Delegaci&oacute;n municipal">
+            label="Delegaci&oacute;n Municipal">
             <input
               type="text"
               class="form-control"
@@ -91,23 +91,23 @@
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
             [control]="courtForm.get('zipCode')"
-            label="C&oacute;digo postal">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="zipCode" />
+            label="C&oacute;digo Postal">
+            <input type="text" class="form-control" formControlName="zipCode" />
           </form-field>
         </div>
       </div>
       <div class="row pt-md-5">
         <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field
-            [control]="courtForm.get('circuitCVE')"
-            label="CVE circuito">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="circuitCVE" />
+          <form-field [control]="courtForm.get('circuitCVE')">
+            <ngx-select
+              [form]="courtForm"
+              (fetchItems)="getCircuit($event)"
+              [data]="circuit"
+              value="otKey"
+              bindLabel="value"
+              label="Circuito Cve."
+              control="circuitCVE">
+            </ngx-select>
           </form-field>
         </div>
       </div>

@@ -1,19 +1,28 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Bienes por recibo resguardo</h5>
+    <h5 *ngIf="type == 'guard'" class="modal-title">
+      Bienes por recibo resguardo
+    </h5>
+    <h5 *ngIf="type == 'warehouse'" class="modal-title">
+      Bienes por recibo Almacén
+    </h5>
   </div>
   <div body>
     <div class="d-flex justify-content-end">
       <app-columns-select [(settings)]="settings"></app-columns-select>
     </div>
-    <ng2-smart-table
-      [attr.class]="'table-bordered'"
-      [settings]="settings"
-      [source]="goodsReceiptGuards">
-    </ng2-smart-table>
-    <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+    <div class="row pt-3">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings"
+          [source]="goodsReceiptGuards">
+        </ng2-smart-table>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">

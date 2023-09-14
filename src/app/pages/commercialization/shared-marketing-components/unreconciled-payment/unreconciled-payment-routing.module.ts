@@ -5,7 +5,7 @@ import { UnreconciledPaymentComponent } from './unreconciled-payment/unreconcile
 
 const routes: Routes = [
   {
-    path: '',
+    path: ':goodType',
     component: UnreconciledPaymentComponent,
   },
 ];

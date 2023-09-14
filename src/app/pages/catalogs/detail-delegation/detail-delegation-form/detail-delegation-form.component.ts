@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDetailDelegation } from 'src/app/core/models/catalogs/detail-delegation.model';
+import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { DetailDelegationService } from 'src/app/core/services/catalogs/detail-delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -11,6 +12,7 @@ import {
   PHONE_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-detail-delegation-form',
@@ -22,10 +24,12 @@ export class DetailDelegationFormComponent extends BasePage implements OnInit {
   title: string = 'Detalle Delegación';
   edit: boolean = false;
   detailDelegation: IDetailDelegation;
+  delegation = new DefaultSelect();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private detailDelegationService: DetailDelegationService
+    private detailDelegationService: DetailDelegationService,
+    private affairService: AffairService
   ) {
     super();
   }
@@ -36,29 +40,71 @@ export class DetailDelegationFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.detailDelegationForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      id: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(80)],
+      ],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
       location: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
       ],
       address: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+          Validators.required,
+        ],
       ],
       position: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
       ],
-      area: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      mail: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
-      numP1: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
-      numP2: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
-      numP3: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
-      numDelegation: [
+      area: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
       ],
+      mail: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(EMAIL_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
+      tel1: [
+        null,
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(80)],
+      ],
+      tel2: [
+        null,
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(80)],
+      ],
+      tel3: [
+        null,
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(80)],
+      ],
+      numberDelegation: [null, [Validators.required]],
     });
     if (this.detailDelegation != null) {
       this.edit = true;
@@ -74,6 +120,16 @@ export class DetailDelegationFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.detailDelegationForm.controls['name'].value.trim() === '' ||
+      this.detailDelegationForm.controls['location'].value.trim() === '' ||
+      this.detailDelegationForm.controls['address'].value.trim() === '' ||
+      this.detailDelegationForm.controls['position'].value.trim() === '' ||
+      this.detailDelegationForm.controls['area'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.detailDelegationService
       .create(this.detailDelegationForm.value)
@@ -95,7 +151,8 @@ export class DetailDelegationFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

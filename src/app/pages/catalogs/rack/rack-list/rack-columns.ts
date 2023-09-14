@@ -1,26 +1,46 @@
+import { IBatch } from 'src/app/core/models/catalogs/batch.model';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 
 export const RACK_COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'Código',
     type: 'number',
     sort: false,
   },
-  idWarehouse: {
-    title: 'Deposito',
+  warehouseDetails: {
+    title: 'Almacén',
     type: 'number',
     valuePrepareFunction: (value: IWarehouse) => {
       return value.description;
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
     sort: false,
   },
-  idBatch: {
-    title: 'Id Lote',
+  batchDetails: {
+    title: 'Lote',
+    valuePrepareFunction: (value: IBatch) => {
+      return value.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
     type: 'number',
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
@@ -29,9 +49,9 @@ export const RACK_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  registerNumber: {
-    title: 'Numero Registro',
-    type: 'number',
-    sort: false,
-  },
+  // registerNumber: {
+  //   title: 'Numero Registro',
+  //   type: 'number',
+  //   sort: false,
+  // },
 };

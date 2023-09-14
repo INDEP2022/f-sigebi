@@ -1,30 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ISafe } from 'src/app/core/models/catalogs/safe.model';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModalListGoodsComponent } from '../modal-list-goods/modal-list-goods.component';
-
-export interface ExampleVault {
-  number: number;
-  description: string;
-  location: string;
-  responsible: string;
-  entity: string;
-  municipality: string;
-  city: string;
-  locality: string;
-  goods?: ExapleGoods[];
-}
-
-export interface ExapleGoods {
-  numberGood: number;
-  description: string;
-  quantity: number;
-  dossier: string;
-}
+import { COUNT_SAFE_COLUMNS } from './vault-consultation-column';
 
 @Component({
   selector: 'app-vault-consultation',
@@ -33,108 +22,163 @@ export interface ExapleGoods {
 })
 export class VaultConsultationComponent extends BasePage implements OnInit {
   totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  form: FormGroup;
+  idSelected: number = 0;
   vaults: ISafe[] = [];
-  //Data Table
+  columnFilters: any = [];
+  vault: ISafe;
+  origin: string = '';
+  origin2: string = '';
+  origin3: string = '';
+  origin4: string = '';
+  paramsScreen: IParamsVault = {
+    PAR_MASIVO: '', // PAQUETE
+  };
 
+  screenKey = 'FCONADBBOVEDAS';
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  dataFactGen: LocalDataSource = new LocalDataSource();
+  @ViewChild('idSafe') idSafe: ElementRef;
+  @ViewChild('goodNumber') goodNumber: ElementRef;
+  @Input() PAR_MASIVO: string;
   constructor(
+    private router: Router,
+    private fb: FormBuilder,
+    private activatedRoute: ActivatedRoute,
     private modalService: BsModalService,
     private safeService: SafeService
   ) {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: false,
-      columns: {
-        idSafe: {
-          title: 'No',
-          width: '10%',
-          sort: false,
-        },
-        description: {
-          title: 'Descripcion',
-          width: '20%',
-          sort: false,
-        },
-        ubication: {
-          title: 'Ubicacion',
-          width: '10%',
-          sort: false,
-        },
-        manager: {
-          title: 'Responsable',
-          width: '10%',
-          sort: false,
-        },
-        stateCode: {
-          title: 'Entidad',
-          width: '10%',
-          sort: false,
-        },
-        municipalityCode: {
-          title: 'Municipio',
-          width: '10%',
-          sort: false,
-        },
-        cityCode: {
-          title: 'Ciudad',
-          width: '10%',
-          sort: false,
-        },
-        localityCode: {
-          title: 'Localidad',
-          width: '10%',
-          sort: false,
-        },
-      },
+      columns: { ...COUNT_SAFE_COLUMNS },
+      noDataMessage: 'No se encontrarón registros',
     };
   }
-
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params: any) => {
+        console.log(params);
+        console.log(this.paramsScreen);
+        for (const key in this.paramsScreen) {
+          if (Object.prototype.hasOwnProperty.call(params, key)) {
+            this.paramsScreen[key as keyof typeof this.paramsScreen] =
+              params[key] ?? null;
+          }
+        }
+        this.origin = params['origin2']
+          ? params['origin2']
+          : params['origin'] ?? null;
+        this.origin2 = params['origin3'] ?? null;
+        this.origin3 = params['origin4'] ?? null;
+        this.origin4 = params['origin5'] ?? null;
+        this.PAR_MASIVO = params['PAR_MASIVO'] ?? null;
+        console.log(this.paramsScreen.PAR_MASIVO);
+
+        if (this.origin && this.paramsScreen.PAR_MASIVO != null) {
+          // this.btnSearchAppointment();
+        }
+      });
+    if (this.paramsScreen) {
+      if (this.paramsScreen.PAR_MASIVO) {
+        this.search();
+      } else {
+        console.log('SIN PARAMETROS');
+        if (!this.origin) {
+          console.log(this.origin);
+        }
+      }
+    }
+    this.dataFactGen
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            filter.field == 'idSafe' ||
+            filter.field == 'description' ||
+            filter.field == 'ubication' ||
+            filter.field == 'manager' ||
+            filter.field == 'stateCode' ||
+            filter.field == 'municipalityCode' ||
+            filter.field == 'cityCode' ||
+            filter.field == ' localityCode'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.search();
+        }
+      });
+
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getVaults());
+      .subscribe(() => this.search());
   }
 
-  getVaults() {
+  goBack() {
+    this.router.navigate(['/pages/administrative-processes/location-goods'], {
+      queryParams: {
+        origin2: this.screenKey,
+        PAR_MASIVO: this.goodNumber,
+        origin: 'FACTADBUBICABIEN',
+        origin3: 'FACTGENACTDATEX',
+        origin4: 'FCONADBALMACENES',
+        ...this.paramsScreen,
+      },
+    });
+  }
+
+  openForm(provider?: ISafe) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      provider,
+    };
+    this.modalService.show(ModalListGoodsComponent, modalConfig);
+  }
+
+  search() {
     this.loading = true;
-    this.safeService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        console.log(response);
-        this.vaults = response.data.map(vault => {
-          return {
-            idSafe: vault.idSafe,
-            description: vault.description,
-            localityCode: vault.localityDetail.nameLocation,
-            cityCode: vault.cityDetail.nameCity,
-            municipalityCode: vault.municipalityDetail.nameMunicipality,
-            registerNumber: vault.registerNumber,
-            responsibleDelegation: vault.manager,
-            stateCode: vault.stateDetail.descCondition,
-            ubication: vault.ubication,
-            cityDetail: null,
-            manager: vault.manager,
-          };
-        });
-        this.totalItems = response.count;
+    this.params.getValue()['sortBy'] = `idSafe:DESC`;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.safeService.getAll(params).subscribe({
+      next: (data: any) => {
+        this.loading = false;
+        this.totalItems = data.count;
+        this.vaults = data.data;
+        console.log(this.vaults);
+        this.dataFactGen.load(data.data);
+        this.dataFactGen.refresh();
+      },
+      error: () => {
         this.loading = false;
       },
-      error: error => (this.loading = false),
     });
   }
-
   select(event: any) {
-    console.log(event.data.idSafe);
+    this.idSafe = event.data.idSafe;
+    console.log(this.idSafe);
     event.data
-      ? this.openModal(event.data.idSafe)
-      : this.alert('info', 'Ooop...', 'Esta Bóveda no contiene Bines');
+      ? this.openForm(event.data)
+      : this.alert('info', 'Esta Bóveda no contiene Bienes', '');
   }
+}
 
-  openModal(data: any): void {
-    this.modalService.show(ModalListGoodsComponent, {
-      initialState: data,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-  }
+export interface IParamsVault {
+  PAR_MASIVO: string;
 }

@@ -187,6 +187,7 @@ export class NotificationsFileComponent
       .getNotificationByFileNumber(params.getParams())
       .subscribe({
         next: res => {
+          console.log(res.data);
           this.loading = false;
           res.data.map((i: any) => {
             // Área destino
@@ -222,6 +223,11 @@ export class NotificationsFileComponent
           );
         },
       });
+  }
+
+  btnCleanData() {
+    this.form.reset();
+    this.setDataTable(); // Set data in table
   }
 
   goBack() {

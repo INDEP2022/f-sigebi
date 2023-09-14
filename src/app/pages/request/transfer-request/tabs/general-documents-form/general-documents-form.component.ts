@@ -182,9 +182,9 @@ export class GeneralDocumentsFormComponent
   showDocsEst() {
     if (!this.rowSelected) {
       this.message(
-        'info',
-        'Error',
-        'Seleccione un data para poder ver sus documentos'
+        'warning',
+        'Seleccione una solicitud para poder ver sus documentos',
+        ''
       );
       return;
     }
@@ -400,48 +400,40 @@ export class GeneralDocumentsFormComponent
         '¿Está seguro de querer asociar la solicitud actual con el expediente Nº ' +
         request.recordId +
         '?',
-      icon: 'info',
+      icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#B38E5D',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
-        this.onLoadToast(
-          'success',
-          'Expediente relacionado a la solicitud correctamente',
-          ''
-        );
-        this.updateStateRequestTab();
+        console.log(this.requestId, request);
         this.requestService.update(this.requestId, request).subscribe({
           next: resp => {
-            if (resp.stateCode != null) {
-              this.onLoadToast(
-                'error',
-                'Error',
-                `Ocurrio un error al asociar la socitud con el expediente ${resp.message[0]}`
-              );
-            }
-
-            if (resp.id != null) {
-              Swal.fire({
-                title: 'Solicitud asociada al expediente: ' + this.requestId,
-                showDenyButton: false,
-                showCancelButton: false,
-                confirmButtonText: 'Aceptar',
-                denyButtonText: `Don't save`,
-                confirmButtonColor: '#9D2449',
-              }).then(result => {
-                if (result.isConfirmed) {
-                  this.onLoadToast(
-                    'success',
-                    'Expediente asociado a la solicitud correctamente',
-                    ''
-                  );
-                  this.updateStateRequestTab();
-                }
-              });
-            }
+            Swal.fire({
+              title: `Se asoció la solicitud correctamente`,
+              text: `La Solicitud ${request.id} fue asociada al expediente ${request.recordId}. Tiene que subir el reporte de Solicitud de Transferencia`,
+              icon: 'success',
+              showDenyButton: false,
+              showCancelButton: false,
+              confirmButtonText: 'Aceptar',
+              denyButtonText: `Cancelar`,
+              confirmButtonColor: '#9D2449',
+              allowOutsideClick: false,
+            }).then(result => {
+              if (result.isConfirmed) {
+                this.updateStateRequestTab();
+              }
+            });
+          },
+          error: error => {
+            console.log(error);
+            this.onLoadToast(
+              'error',
+              'Error',
+              `Ocurrio un error al asociar la solicitud con el expediente ${error.error.message}`
+            );
           },
         });
       }

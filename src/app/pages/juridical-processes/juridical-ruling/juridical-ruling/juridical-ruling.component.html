@@ -1,23 +1,95 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">DICTAMINACIONES JUR&Iacute;DICAS</h5>
+    <div class="d-flex justify-content-between">
+      <h5 class="title">DICTAMINACIONES JUR&Iacute;DICAS</h5>
+      <div class="d-inline mr-2" *ngIf="!isSearch">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="isSearch = true; clearSearch()">
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="d-inline mx-2" *ngIf="isSearch">
+        <div class="btn-group">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            (click)="searchExp(); isSearch = false">
+            <i class="bx bx-check bx-sm float-icon"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            (click)="clearSearch(); isSearch = false">
+            <i class="bx bx-x bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div body>
+    <div class="row">
+      <!-- <div class="d-inline mx-2"> -->
+      <div class="col-12">
+        <div class="d-inline mx-2">
+          <div class="d-inline mx-2">
+            <button
+              class="btn btn-primary active btn-sm ml-2"
+              (click)="back()"
+              style="float: right"
+              *ngIf="origin">
+              Regresar
+              <i class="fas fa-arrow-circle-left"></i>
+            </button>
+            <button
+              [disabled]="!dictNumber"
+              style="float: right"
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="saveDataForm()">
+              Guardar
+              <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+            <button
+              style="float: right"
+              [disabled]="!moreDictation"
+              type="button"
+              (click)="listDictums()"
+              tooltip="Lista Dictámenes"
+              containerClass="tooltip-style"
+              class="btn btn-primary btn-sm active mr-3">
+              <i class="bx bx-list-plus bx-sm float-icon"></i>
+            </button>
+            <button
+              style="float: right"
+              type="button"
+              (click)="newDictums()"
+              tooltip="Agregar Dictamen"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2">
+              <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- </div> -->
+    </div>
     <form [formGroup]="legalForm" class="container-fluid form-material">
       <div class="row">
         <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
           <div class="row mt-5">
-            <!-- <div class="col-sm-12 col-12 col-md-2 p-2"> -->
-            <!-- <div class="col-md-6"> -->
             <div class="col-md-4">
               <div class="row">
                 <form-field [control]="legalForm.get('tipoDictaminacion')">
                   <ngx-select
                     [searchOnInit]="true"
+                    [searchable]="false"
                     [data]="typesDict"
                     [form]="legalForm"
-                    label="Tipo de dictaminación"
+                    label="Tipo Dictaminación"
+                    value="id"
                     bindLabel="typeDict"
                     control="tipoDictaminacion"
                     (change)="onTypeDictChange($event)"></ngx-select>
@@ -25,14 +97,14 @@
               </div>
               <div class="row mt-3">
                 <form-field
-                  [control]="expedientesForm.get('noExpediente')"
-                  label="No Expediente">
+                  [control]="legalForm.get('noExpediente')"
+                  label="No. Expediente">
                   <input
-                    type="number"
+                    type="text"
+                    oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10)"
+                    [readOnly]="isDisabledExp"
                     class="form-control"
-                    (blur)="changeNumExpediente()"
-                    formControlName="noExpediente"
-                    (keypress)="onKeyPress($event)" />
+                    formControlName="noExpediente" />
                 </form-field>
               </div>
               <div class="row mt-3">
@@ -40,6 +112,8 @@
                   [control]="legalForm.get('preliminaryInquiry')"
                   label="Averiguaci&oacute;n Previa">
                   <input
+                    oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)"
+                    [readOnly]="isDisabledExp"
                     class="form-control"
                     formControlName="preliminaryInquiry" />
                 </form-field>
@@ -48,109 +122,134 @@
                 <form-field
                   [control]="legalForm.get('criminalCase')"
                   label="Causa Penal">
-                  <input class="form-control" formControlName="criminalCase" />
+                  <input
+                    oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)"
+                    [readOnly]="isDisabledExp"
+                    class="form-control"
+                    formControlName="criminalCase" />
                 </form-field>
               </div>
             </div>
 
             <div class="col-md-2">
-              <div class="row ps-4">
+              <div class="row ps-4" [ngClass]="{ 'not-press': !activeRadio }">
                 <form-radio label="Normal">
-                  <input type="radio" formControlName="tipo" value="Normal" />
+                  <input type="radio" formControlName="tipo" value="N" />
                 </form-radio>
                 <form-radio label="Paquete">
-                  <input type="radio" formControlName="tipo" value="Paquete" />
+                  <input type="radio" formControlName="tipo" value="P" />
                 </form-radio>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="col-md-6">
-                <div class="row">
-                  <form-field
-                    [control]="legalForm.get('label')"
-                    label="Etiqueta">
-                    <input
-                      formControlName="label"
-                      class="form-control"
-                      bsDatepicker />
-                  </form-field>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="row">
-                  <form-field
-                    [control]="legalForm.get('fecDicta')"
-                    label="Fec&#46; Dictamina">
-                    <input
-                      formControlName="fecDicta"
-                      class="form-control"
-                      bsDatepicker />
-                  </form-field>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="row">
-                  <form-field
-                    [control]="legalForm.get('fecDicta')"
-                    label="Fec. Notif Aseg">
-                    <input
-                      formControlName="fecDicta"
-                      class="form-control"
-                      bsDatepicker />
-                  </form-field>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="row">
-                  <form-field
-                    [control]="legalForm.get('fecDicta')"
-                    label="Fecha resolución">
-                    <input
-                      formControlName="fecDicta"
-                      class="form-control"
-                      bsDatepicker />
-                  </form-field>
-                </div>
-              </div>
-              <div class="col-md-6 col-md-offset-6 mt-3">
-                <div class="row">
-                  <form-field
-                    [control]="legalForm.get('fecDicta')"
-                    label="Fecha notificación">
-                    <input
-                      formControlName="fecDicta"
-                      class="form-control"
-                      bsDatepicker />
-                  </form-field>
-                </div>
-              </div>
-              <div class="col-md-12 mt-3">
-                <div class="row">
-                  <form-field
-                    [control]="legalForm.get('cveOficio')"
-                    label="Cve&#46; Oficio">
-                    <input
-                      class="form-control"
-                      #cveOficio
-                      formControlName="cveOficio" />
-                  </form-field>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="col-md-12 text-danger text-end">
-                  <b>Estatus </b>
-                  <b> {{ statusDict }}</b>
-                </div>
               </div>
             </div>
 
             <div class="col-md-6">
               <div class="row">
+                <div class="col-md-6">
+                  <form-field
+                    [control]="legalForm.get('fechaPPFF')"
+                    [label]="label">
+                    <input
+                      class="form-control"
+                      [readOnly]="dictNumber"
+                      [ngClass]="{ 'not-press bg-gray': dictNumber }"
+                      formControlName="fechaPPFF"
+                      bsDatepicker
+                      [maxDate]="maxDate" />
+                  </form-field>
+                </div>
+
+                <div class="col-md-6" ngClass="not-press">
+                  <form-field
+                    [control]="legalForm.get('fecDicta')"
+                    label="Fecha Dictaminación">
+                    <input
+                      [readOnly]="true"
+                      formControlName="fecDicta"
+                      class="form-control bg-gray"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+                <div class="col-md-6" *ngIf="!hideForm">
+                  <form-field
+                    [control]="legalForm.get('fecNotiAse')"
+                    label="Fec. Notif Aseg">
+                    <input
+                      formControlName="fecNotiAse"
+                      class="form-control"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+                <div class="col-md-6" *ngIf="!hideForm">
+                  <form-field
+                    [control]="legalForm.get('fecRes')"
+                    label="Fecha Resolución">
+                    <input
+                      formControlName="fecRes"
+                      class="form-control"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+                <div class="col-md-6 col-md-offset-6 mt-3" *ngIf="!hideForm">
+                  <form-field
+                    [control]="legalForm.get('fecNoti')"
+                    label="Fecha Notificación">
+                    <input
+                      formControlName="fecNoti"
+                      class="form-control"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+                <div class="col-md-12">
+                  <form-field [control]="legalForm.get('autoriza_remitente')">
+                    <ngx-select
+                      label="Autoriza Dict."
+                      [form]="legalForm"
+                      [readonly]="dictNumber ? true : false"
+                      [data]="users$"
+                      (fetchItems)="getUsers($event)"
+                      bindLabel="userAndName"
+                      control="autoriza_remitente"
+                      [searchOnInit]="true"
+                      [showTooltip]="true"
+                      termMaxLength="30"
+                      [labelTemplate]="userLabel"
+                      [optionTemplate]="userOption">
+                    </ngx-select>
+                    <ng-template #userLabel let-item="item">
+                      {{ item.id + ' - ' + item.name }}
+                    </ng-template>
+                    <ng-template #userOption let-item="item">
+                      <div [title]="item.id + '-' + item.name">
+                        {{ item.id + ' - ' + item.name }}
+                      </div>
+                    </ng-template>
+                  </form-field>
+                </div>
+
+                <div class="col-md-12 mt-3">
+                  <form-field
+                    [control]="legalForm.get('cveOficio')"
+                    label="Cve&#46; Oficio">
+                    <input
+                      [readOnly]="true"
+                      class="form-control"
+                      #cveOficio
+                      formControlName="cveOficio" />
+                  </form-field>
+                </div>
+                <div class="col-md-12 text-danger text-center">
+                  <div>
+                    <strong>Estatus {{ statusDict }}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="row" [ngClass]="{ 'not-press': isDisabledExp }">
                 <form-check
                   class="col-md-12"
                   label="&#191;El expediente es delito propiedad intelectual&#63;"
-                  for="esPropiedad">
+                  for="esPropiedad-check">
                   <input
                     id="esPropiedad-check"
                     type="checkbox"
@@ -164,89 +263,89 @@
                   label="Observaciones del Dictamen">
                   <textarea
                     rows="3"
+                    oninput="if(this.value.length > 1000) this.value = this.value.slice(0, 1000)"
                     class="form-control"
                     formControlName="observations"></textarea>
                 </form-field>
               </div>
             </div>
-
-            <!-- <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-              <form-field
-                [control]="legalForm.get('autoriza')"
-                label="Autoriza Dict&#46;">
-                <select class="form-control" formControlName="autoriza">
-                  <option [value]="null">Seleccione un valor</option>
-                </select>
-              </form-field>
-            </div> -->
           </div>
         </div>
       </div>
     </form>
-    <form [formGroup]="subtipoForm" class="container-fluid form-material">
+    <form [formGroup]="legalForm" class="container-fluid form-material">
       <div class="row">
         <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
           <div class="row">
-            <div class="col-md-3">
-              <form-field
-                [control]="subtipoForm.get('tipoDictaminacion')"
-                label="Ident&#46;">
-                <select
-                  class="form-control"
-                  formControlName="tipoDictaminacion">
-                  <option [value]="null">Seleccione un valor</option>
-                  <option [value]="'Alta'">Alta</option>
-                  <option [value]="'Normal'">Normal</option>
-                </select>
-              </form-field>
-            </div>
-            <!-- <div class="mb-5 b-block w-100"></div> -->
-            <div class="col-md-9">
-              <form-field [control]="subtipoForm.get('subtype')">
+            <div class="col-md-4">
+              <form-field [control]="legalForm.get('identifier')">
                 <ngx-select
                   [searchOnInit]="true"
-                  (fetchItems)="getSubtypes($event)"
-                  [data]="subtypes"
-                  [form]="subtipoForm"
-                  value="id"
+                  [readonly]="!isIdent"
+                  [data]="typesIdent"
+                  [form]="legalForm"
+                  label="Ident."
+                  [searchable]="false"
+                  bindLabel="identificador"
+                  value="identificador"
+                  control="identifier"></ngx-select>
+              </form-field>
+            </div>
+            <div class="col-md-8">
+              <form-field [control]="legalForm.get('type')">
+                <ngx-select
+                  [data]="typesClass"
+                  searc
+                  [form]="legalForm"
+                  value="no_clasif_bien"
                   label="Subtipo - Ssubtipo - Sssubtipo"
-                  bindLabel="nameSubtypeGood"
-                  control="subtype"
-                  (change)="onSubtypesChange($event)">
+                  bindLabel="nameGoodType"
+                  control="type"
+                  (change)="onTypesChange($event)"
+                  [labelTemplate]="classNo"
+                  [optionTemplate]="classSub"
+                  [searchable]="false">
                 </ngx-select>
+                <ng-template #classNo let-item="item">
+                  <div *ngIf="item.no_clasif_bien == 0">
+                    {{ item.no_clasif_bien }} - {{ item.desc_sssubtipo }}
+                  </div>
+                  <div *ngIf="item.no_clasif_bien > 0">
+                    {{ item.no_clasif_bien }} - {{ item.desc_ssubtipo }} -
+                    {{ item.desc_ssubtipo }} - {{ item.desc_sssubtipo }}
+                  </div>
+                </ng-template>
+                <ng-template #classSub let-item="item">
+                  <div
+                    *ngIf="item.no_clasif_bien == 0"
+                    [title]="
+                      item.no_clasif_bien +
+                      '-' +
+                      item.desc_subtipo +
+                      '-' +
+                      item.desc_ssubtipo +
+                      '-' +
+                      item.desc_sssubtipo
+                    ">
+                    {{ item.no_clasif_bien }} - {{ item.desc_sssubtipo }}
+                  </div>
+                  <div
+                    *ngIf="item.no_clasif_bien > 0"
+                    [title]="
+                      item.no_clasif_bien +
+                      '-' +
+                      item.desc_subtipo +
+                      '-' +
+                      item.desc_ssubtipo +
+                      '-' +
+                      item.desc_sssubtipo
+                    ">
+                    {{ item.no_clasif_bien }} - {{ item.desc_subtipo }} -
+                    {{ item.desc_ssubtipo }} - {{ item.desc_sssubtipo }}
+                  </div>
+                </ng-template>
               </form-field>
             </div>
-            <!-- <div class="col-md-4">
-              <form-field [control]="subtipoForm.get('ssubtype')">
-                <ngx-select
-                  [searchOnInit]="true"
-                  (fetchItems)="getSsubtypes($event)"
-                  [data]="ssubtypes"
-                  [form]="subtipoForm"
-                  value="id"
-                  label="Ssubtipo"
-                  bindLabel="description"
-                  control="ssubtype"
-                  (change)="onSsubtypesChange($event)">
-                </ngx-select>
-              </form-field>
-            </div> -->
-            <!-- <div class="col-md-4">
-              <form-field [control]="subtipoForm.get('sssubtype')">
-                <ngx-select
-                  [searchOnInit]="true"
-                  (fetchItems)="getSssubtypes($event)"
-                  [data]="sssubtypes"
-                  [form]="subtipoForm"
-                  value="id"
-                  label="Sssubtipo"
-                  bindLabel="description"
-                  control="sssubtype"
-                  (change)="onSssubtypesChange($event)"
-                  (change)="onValuesChange($event)">
-                </ngx-select>
-              </form-field>
-            </div> -->
           </div>
         </div>
       </div>
@@ -257,37 +356,51 @@
         <hr class="row" />
         <h5 class="title">BIENES</h5>
         <br />
+        <form-loader *ngIf="formLoading"></form-loader>
         <ng2-smart-table
-          [attr.class]="'table-bordered'"
+          *ngIf="!formLoading"
+          [attr.class]="'table-bordered table-responsive'"
           [settings]="settings1"
-          [source]="goods"></ng2-smart-table>
+          [source]="goods"
+          (rowSelect)="rowSelectedStatus($event.data)"></ng2-smart-table>
+        <p class="text-danger">
+          <strong> {{ di_desc_est }} </strong>
+        </p>
+        <app-pagination
+          *ngIf="isExp"
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+        <app-pagination
+          *ngIf="!isExp"
+          [filterParams]="filter1"
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
     <div class="row pt-2">
       <div class="col-md-12 text-center mt-4 mb-4">
         <button
-          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="addSelect()">
           <!-- Mover uno -->
           <i class="bx bx-chevron-down bx-md"></i>
         </button>
         <button
-          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="addAll()">
           <!-- Mover todos -->
           <i class="bx bx-chevrons-down bx-md"></i>
         </button>
         <button
-          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="removeAll()">
           <!-- Quitar todos -->
           <i class="bx bx-chevrons-up bx-md"></i>
         </button>
         <button
-          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="removeSelect()">
           <!-- Quitar uno -->
@@ -298,33 +411,120 @@
     <div class="row pt-2">
       <div class="col-md-12 mt-4 mb-4">
         <ng2-smart-table
-          [attr.class]="'table-bordered'"
+          [attr.class]="'table-bordered table-responsive'"
           [settings]="settings2"
           [source]="goodsValid"
-          (rowSelect)="rowSelected($event)"></ng2-smart-table>
+          (rowSelect)="rowSelected($event.data)"></ng2-smart-table>
+        <app-pagination
+          *ngIf="dictNumber"
+          [filterParams]="filter2"
+          [totalItems]="totalItems2"></app-pagination>
       </div>
     </div>
-
-    <div class="row pt-2">
-      <div class="col-md-12">
-        <hr class="row" />
-      </div>
-      <div class="col-md-8">
-        <h5 class="title">DOCUMENTOS</h5>
+    <div class="row w-100">
+      <div class="col-lg-8 pt-2">
+        <div class="col-md-12">
+          <hr class="row" />
+        </div>
         <div class="row">
-          <div class="col-md-10">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings3"
-              [source]="documents"></ng2-smart-table>
-          </div>
-          <div class="col-md-2">
-            <p class="text-info h5">No&#46; bien</p>
-            <p class="text-info h5">{{ idGoodSelected }}</p>
+          <div class="col-md-12">
+            <h5 class="title">DOCUMENTOS</h5>
+            <div class="row">
+              <div class="col-md-9">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive'"
+                  [settings]="settings3"
+                  [source]="documents_m1"></ng2-smart-table>
+              </div>
+              <div class="col-md-3">
+                <p class="text-info h5">No&#46; bien</p>
+                <p class="text-info h5">{{ idGoodSelected?.id }}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-md-4">
+
+      <div class="col-lg-4 custom-grid pb-4">
+        <div class="row justify-content-center pb-4">
+          <div class="col-md-6 text-align-center">
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              (click)="btnDocumentos()">
+              Documentos <i class="bx bx-file bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div
+            class="col-6 text-align-center"
+            [ngClass]="{ 'd-flex': loadingDic }">
+            <confirm-button
+              *ngIf="loadingDic"
+              class="ct"
+              [loadingText]="'Aprobando'"
+              [loading]="loadingDic"
+              [btnSmall]="true"
+              text="Aprobar"
+              (confirm)="btnApprove()">
+            </confirm-button>
+            <button
+              *ngIf="!loadingDic"
+              class="btn btn-primary btn-sm active m-3 text-wrap w-100"
+              [disabled]="!buttonAprove"
+              (click)="btnApprove()">
+              Aprobar <i class="fa fa-check" aria-hidden="true"></i>
+            </button>
+          </div>
+          <!-- BOTON QUE MANDA A LLAMAR A FACTGENPARCIALIZA -->
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-danger btn-sm active m-3 text-wrap w-100"
+              (click)="btnDeleteDictation()">
+              Borrar Dictamen <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+            <!-- <button
+                        class="btn btn-danger btn-sm active m-3 text-wrap w-100"
+                        [disabled]="isDocsEmpty()"
+                        (click)="btnDeleteDictation()"
+                        [disabled]="!buttonDeleteDisabled">
+                        Borrar Dictamen
+                      </button> -->
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              type="button"
+              class="btn btn-primary m-3 active btn-sm text-wrap w-100"
+              (click)="btnImprimeOficio()">
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="col-6 text-center">
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              [disabled]="buttonDisabled"
+              (click)="btnVerify()">
+              Parcializar
+            </button>
+          </div>
+          <!-- <div class="col-6 text-align-center">
+            <button class="btn btn-info btn-sm active m-3 text-wrap w-100" [disabled]="!buttonRefuse"
+              (click)="btnRefuse()">
+              Rechazar
+            </button>
+          </div> -->
+
+          <!-- BOTON QUE MANDA A LLAMAR A FACTJURDICTAMOFICIO -->
+
+          <!-- <div class="col-12">
+            <p class="text-info">
+              <strong>Click boton derecho para consultar dictaminaciones
+                anteriores</strong>
+            </p>
+          </div> -->
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="col-md-4">
         <button
           class="btn btn-primary btn-sm active m-3"
           [disabled]="isDocsEmpty()"
@@ -333,15 +533,19 @@
         </button>
         <button
           class="btn btn-danger btn-sm active m-3"
-          (click)="btnDeleteDictation()">
+          (click)="btnDeleteDictation()"
+          [disabled]="buttonDeleteDisabled">
           Borrar Dictamen
         </button>
         <button
           class="btn btn-info btn-sm active m-3"
-          (click)="btnDocumentos()">
+          (click)="btnDocumentos()"> 
           Documentos
         </button>
-        <button class="btn btn-warning btn-sm active m-3" (click)="btnVerify()">
+        <button
+          class="btn btn-warning btn-sm active m-3"
+          (click)="btnVerify()"
+          [disabled]="buttonDisabled">
           Parcializar
         </button>
         <button
@@ -350,38 +554,6 @@
           Limpiar documentos
         </button>
       </div>
-    </div>
-  </div>
-</app-card>
-
-<app-card [header]="true" *ngIf="listadoDocumentos == true">
-  <div class="ch-content" header>
-    <h5 class="title">Fecha de Documentos Asociados al Tr&aacute;mite</h5>
-  </div>
-
-  <div body>
-    <div class="row w-100">
-      <div class="col-sm-12 col-12 col-md-12 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="settings4"
-          [source]="data4"></ng2-smart-table>
-      </div>
-
-      <div class="col-12 flex p-2">
-        <div class="form-group text-right">
-          <button
-            class="btn btn-danger active btn-sm m-3"
-            (click)="btnCloseDocs()">
-            Cerrar Ventana
-          </button>
-          <button
-            class="btn btn-primary active btn-sm m-3"
-            (click)="btnSalir()">
-            Cargar documentos
-          </button>
-        </div>
-      </div>
-    </div>
+     -->
   </div>
 </app-card>

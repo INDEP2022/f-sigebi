@@ -59,4 +59,27 @@ export class EventRelatedService extends HttpService {
   remove(id: number | string): Observable<any> {
     return this.delete(`${EventRelatedEndpoints.Delete}/${id}`);
   }
+
+  getLastWeek(date: string) {
+    return this.get(`${EventRelatedEndpoints.UltimaSem}/${date}`);
+  }
+
+  postCentral(params: any) {
+    return this.post(EventRelatedEndpoints.Central, params);
+  }
+
+  postSegBien() {}
+
+  postBienesEvento(id: any) {
+    return this.post(EventRelatedEndpoints.BienesEvento, id);
+  }
+
+  getByEvent(id: string | number, params: any) {
+    const route = `${EventRelatedEndpoints.FindAll}?filter.eventDadId=$eq:${id}`;
+    return this.get(route, params);
+  }
+
+  delElimina(id: string | number) {
+    return this.delete(EventRelatedEndpoints.Elimina, id);
+  }
 }

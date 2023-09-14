@@ -1,12 +1,14 @@
 export const MEASUREMENTUNITS_COLUMNS = {
-  number: {
+  registryNumber: {
     title: 'Número',
-    width: '10%',
+    width: '30%',
+    type: 'string',
     sort: false,
   },
   description: {
     title: 'Descripción',
-    width: '30%',
+    width: '70%',
+    type: 'string',
     sort: false,
   },
 };

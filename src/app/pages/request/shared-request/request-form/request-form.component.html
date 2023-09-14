@@ -13,6 +13,14 @@
       </div>
 
       <div class="p-2">
+        <button
+          [disabled]="requestForm.invalid"
+          (click)="save()"
+          type="button"
+          class="btn btn-primary btn-sm active">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
         <!-- <confirm-button
           [btnSmall]="true"
           [disabled]="requestForm.invalid"
@@ -21,10 +29,12 @@
       </div>
       <div class="p-2">
         <button
+          [disabled]="requestForm.invalid"
           type="button"
-          class="btn btn-secondary btn-sm active"
+          class="btn btn-primary btn-sm active"
           (click)="turnRequest()">
           Turnar
+          <i aria-hidden="true" class="fa fa-share-square"></i>
         </button>
       </div>
     </div>
@@ -41,7 +51,7 @@
                   (click)="showSearchForm = true"
                   *ngIf="!showSearchForm">
                   <i class="fa fa-angle-right" aria-hidden="true"></i>
-                  Información de la solicitud</a
+                  Información de la Solicitud</a
                 >
               </p>
 
@@ -51,7 +61,7 @@
                   (click)="showSearchForm = false"
                   *ngIf="showSearchForm">
                   <i class="fa fa-angle-down" aria-hidden="true"></i>
-                  Información de la solicitud</a
+                  Informaci&oacute;n de la solicitud</a
                 >
               </p>
             </h5>
@@ -100,7 +110,7 @@
                   [data]="selectEntity"
                   bindLabel="descCondition"
                   [searchable]="false"
-                  label="Entidad"
+                  label="{{ keyStateName }}"
                   value="id"></ngx-select>
               </div>
             </div>
@@ -114,7 +124,8 @@
                   [data]="transferents$"
                   bindLabel="nameAndId"
                   label="Transferente"
-                  value="id"></ngx-select>
+                  value="id"
+                  (change)="changeTransf($event)"></ngx-select>
               </div>
               <div class="col-md-4">
                 <ngx-select
@@ -137,17 +148,6 @@
                   bindLabel="nameAndId"
                   label="Autoridad"
                   value="idAuthority"></ngx-select>
-              </div>
-
-              <div *ngIf="op == 2" class="col-md-3">
-                <ngx-select
-                  [form]="requestForm"
-                  control="keyStateOfRepublic"
-                  (fetchItems)="getState($event)"
-                  [data]="selectState"
-                  bindLabel="descCondition"
-                  label="Estado"
-                  value="id"></ngx-select>
               </div>
             </div>
           </div>
@@ -174,7 +174,7 @@
                     [data]="issues"
                     [form]="requestForm"
                     value="id"
-                    bindLabel="issue"
+                    bindLabel="description"
                     label="Asunto"
                     [control]="'affair'">
                   </ngx-select>
@@ -215,9 +215,12 @@
             </div>
             <div class="col-md-3">
               <button
-                class="btn btn-info active btn-sm ml-3"
+                type="button"
+                data-toggle="tooltip"
+                title="Agregar"
+                class="btn btn-info btn-sm active ml-2 mr-2"
                 (click)="openModalSelectUser()">
-                Seleccionar
+                <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
             </div>
           </div>

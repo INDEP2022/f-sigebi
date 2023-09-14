@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { distinctUntilChanged, Subscription, throttleTime } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';
 import { takeUntil } from 'rxjs/operators';
@@ -22,8 +23,11 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
   columnFilters: any = [];
   // equalFilters: string[] = ['id'];
   ilikeFilters: string[] = ['description'];
+  haveInitialCharge = true;
+  contador = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   service: ServiceGetAll<T>;
+  subscription: Subscription = new Subscription();
   constructor() {
     super();
     this.settings = {
@@ -39,6 +43,7 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
   }
 
   ngOnInit(): void {
+    // debugger;
     this.dinamicFilterUpdate();
     this.searchParams();
   }
@@ -46,9 +51,14 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
   protected dinamicFilterUpdate() {
     this.data
       .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
+      .pipe(
+        distinctUntilChanged(),
+        throttleTime(500),
+        takeUntil(this.$unSubscribe)
+      )
       .subscribe(change => {
         if (change.action === 'filter') {
+          let haveFilter = false;
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
@@ -62,12 +72,21 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
             //   searchFilter = SearchFilter.ILIKE;
             // }
             field = `filter.${filter.field}`;
+            // let search = filter.search;
+            // if (isNaN(+search)) {
+            //   search = search + ''.toUpperCase();
+            // }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              haveFilter = true;
             } else {
               delete this.columnFilters[field];
             }
+            console.log(this.columnFilters);
           });
+          if (haveFilter) {
+            this.params.value.page = 1;
+          }
           this.getData();
         }
       });
@@ -76,39 +95,56 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
   searchParams() {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: resp => {
-        this.getData();
+        if (this.haveInitialCharge || this.contador > 0) {
+          this.getData();
+        }
+        this.contador++;
       },
     });
   }
 
-  getData() {
-    this.loading = true;
-    let params = {
+  getParams() {
+    return {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+  }
+
+  extraOperationsGetData() {}
+
+  getData() {
+    this.loading = true;
+    let params = this.getParams();
     if (this.service) {
-      this.service.getAll(params).subscribe({
-        next: (response: any) => {
-          if (response) {
-            this.totalItems = response.count || 0;
-            this.data.load(response.data);
-            this.data.refresh();
-            this.loading = false;
-          }
-        },
-        error: err => {
-          this.totalItems = 0;
-          this.data.load([]);
-          this.data.refresh();
-          this.loading = false;
-        },
-      });
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+      }
+      this.subscription = this.service
+        .getAll(params)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: (response: any) => {
+            if (response) {
+              this.totalItems = response.count || 0;
+              this.data.load(response.data);
+              this.data.refresh();
+              this.loading = false;
+              this.extraOperationsGetData();
+            }
+          },
+          error: err => {
+            this.dataNotFound();
+          },
+        });
     } else {
-      this.totalItems = 0;
-      this.data.load([]);
-      this.data.refresh();
-      this.loading = false;
+      this.dataNotFound();
     }
+  }
+
+  protected dataNotFound() {
+    this.totalItems = 0;
+    this.data.load([]);
+    this.data.refresh();
+    this.loading = false;
   }
 }

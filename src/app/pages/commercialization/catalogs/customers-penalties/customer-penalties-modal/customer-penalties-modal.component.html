@@ -1,0 +1,292 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field [control]="form.get('clientId')">
+            <ngx-select
+              (fetchItems)="getClient($event)"
+              [data]="selectClient"
+              [form]="form"
+              value="id"
+              bindLabel="reasonName"
+              label="Cliente"
+              control="clientId"
+              (change)="changeClient($event)">
+            </ngx-select>
+          </form-field>
+          <!--<form-field label="Id. Cliente" [control]="form.get('clientId')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="clientId"
+              [readonly]="edit"
+              min="0"
+              oninput="if(this.value.length > 13) this.value = this.value.slice(0, 13);" />
+          </form-field>-->
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="form.get('id')">
+            <ngx-select
+              (fetchItems)="getPenalty($event)"
+              [data]="selectPenalty"
+              [form]="form"
+              value="id"
+              bindLabel="descPenalty"
+              label="Penalización"
+              control="id">
+            </ngx-select>
+          </form-field>
+
+          <!--<form-field label="Id. Penalización" [control]="form.get('id')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="id"
+              oninput="if(this.value.length > 13) this.value = this.value.slice(0, 13);" />
+          </form-field>-->
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="Tipo de Penalización"
+            [control]="form.get('typeProcess')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeProcess"
+              min="0"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field [control]="form.get('eventId')">
+            <ngx-select
+              (fetchItems)="getEvent($event)"
+              [data]="selectEvent"
+              [form]="form"
+              [clearable]="false"
+              value="eventTpId"
+              bindLabel="processKey"
+              label="Evento"
+              control="eventId"
+              (change)="changeEvent($event)">
+            </ngx-select>
+            <!--<input
+              type="text"
+              class="form-control"
+              formControlName="eventId"
+              min="0"
+              oninput="if(this.value.length > 7) this.value = this.value.slice(0, 7);" />-->
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="form.get('lotId')">
+            <ngx-select
+              (fetchItems)="getLot($event)"
+              [data]="selectLot"
+              [form]="form"
+              value="idLot"
+              bindLabel="description"
+              label="Lote"
+              control="lotId"
+              (change)="changeLot($event)">
+            </ngx-select>
+            <!--<input
+              type="text"
+              class="form-control"
+              formControlName="lotId"
+              min="0"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />-->
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field label="Fecha Inicial" [control]="form.get('startDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="startDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+            <i
+              *ngIf="form.get('startDate').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('startDate')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field label="Fecha Final" [control]="form.get('endDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="endDate"
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+            <i
+              *ngIf="form.get('endDate').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('endDate')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
+          </form-field>
+        </div>
+
+        <div class="col-md-8">
+          <form-field
+            label="Referencia/Oficio/Otros"
+            [control]="form.get('refeOfficeOther')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="refeOfficeOther"
+              maxlength="200" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field [control]="form.get('userPenalty')">
+            <ngx-select
+              (fetchItems)="getUser($event)"
+              [data]="selectUser"
+              [form]="form"
+              value="user"
+              bindLabel="name"
+              label="Usuario Penaliza"
+              control="userPenalty">
+            </ngx-select>
+          </form-field>
+
+          <!--<form-field
+            label="Usuario Penaliza"
+            [control]="form.get('userPenalty')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userPenalty"
+              maxlength="30" />
+          </form-field>-->
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="Fecha Penaliza"
+            [control]="form.get('penaltiDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="penaltiDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+            <i
+              *ngIf="form.get('penaltiDate').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('penaltiDate')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field label="Lote Público" [control]="form.get('publicLot')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="publicLot"
+              min="1"
+              oninput="if(this.value.length > 8) this.value = this.value.slice(0, 8);" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field label="Usuario" [control]="form.get('user')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="user"
+              maxlength="30" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field label="Bandera" [control]="form.get('pFlag')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="pFlag"
+              maxlength="30" />
+          </form-field>
+        </div>
+
+        <!--<div class="col-md-4">
+          <form-field
+            label="Número de Registro"
+            [control]="form.get('registernumber')">
+            <input
+              type="text"
+              class="form-control"
+              [readonly]="edit"
+              formControlName="registernumber"
+              maxlength="30" />
+          </form-field>
+        </div>-->
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

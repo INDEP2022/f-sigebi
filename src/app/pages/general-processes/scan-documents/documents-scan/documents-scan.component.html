@@ -9,6 +9,7 @@
         <div class="col-md-12">
           <button class="btn btn-primary active btn-sm" (click)="goBack()">
             Regresar
+            <i class="fas fa-arrow-circle-left"></i>
           </button>
         </div>
       </div>
@@ -36,41 +37,47 @@
             formControlName="folio"
             class="form-control" />
         </form-field>
-        <div class="col">
-          <button
-            class="btn btn-primary btn-sm active"
-            type="button"
-            (click)="openFileUploader()">
-            Subir Archivos
-            <i class="fa fa-upload"></i>
-          </button>
-        </div>
-        <div class="col">
-          <button
-            type="button"
-            class="btn btn-danger btn-sm active"
-            (click)="confirmDelete()">
-            Borrar im&aacute;genes seleccionadas
-          </button>
+        <div class="col-md-8 d-flex justify-content-between text-center">
+          <div>
+            <button
+              class="btn btn-primary btn-sm active"
+              type="button"
+              (click)="openFileUploader()">
+              Subir Archivos
+              <i class="ml-2 fa fa-upload"></i>
+            </button>
+          </div>
+          <div>
+            <button
+              type="button"
+              class="btn btn-red btn-sm active"
+              (click)="confirmDelete()">
+              Eliminar
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+          </div>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-4">
-          <div class="row pt-4">
-            <div class="col-md-12" [class.table-loading]="loading">
-              <ng2-smart-table
-                [settings]="settings"
-                [source]="documents"
-                (userRowSelect)="onSelectFolio($event.data)"></ng2-smart-table>
+          <div body>
+            <div class="row pt-4 table-container">
+              <div class="col-md-12 table-responsive">
+                <div [class]="loading ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [settings]="settings"
+                    [source]="documents"
+                    (userRowSelect)="
+                      onSelectFolio($event.data)
+                    "></ng2-smart-table>
+                </div>
+              </div>
             </div>
-
-            <div class="col-md-12">
-              <app-pagination
-                [filterParams]="documentsParams"
-                [totalItems]="totalDocuments"
-                [maxSize]="2"></app-pagination>
-            </div>
+            <app-pagination
+              [filterParams]="documentsParams"
+              [totalItems]="totalDocuments"
+              [maxSize]="2"></app-pagination>
           </div>
         </div>
         <div class="col-md-8">

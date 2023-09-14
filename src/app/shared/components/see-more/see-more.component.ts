@@ -4,13 +4,13 @@ import { ViewCell } from 'ng2-smart-table';
 @Component({
   selector: 'app-see-more',
   template: `
-    <p>
+    <p class="{{ pClass }}">
       {{ visibleText }}
       <span *ngIf="hiddenText.length > 0 && !readingMore">...</span>
       <span
         *ngIf="hiddenText.length > 0"
         (click)="changeText()"
-        class="see-more btn-link ml-0">
+        class="see-more btn-link ml-0 {{ spanClass }}">
         {{ readingMore ? 'Ver menos' : 'Ver más' }}
       </span>
     </p>
@@ -26,6 +26,8 @@ import { ViewCell } from 'ng2-smart-table';
 export class SeeMoreComponent implements OnInit, ViewCell {
   @Input() value: string | number;
   @Input() rowData: any;
+  @Input() pClass: string = '';
+  @Input() spanClass: string = '';
   fullText: string = '';
   visibleText: string = '';
   hiddenText: string = '';

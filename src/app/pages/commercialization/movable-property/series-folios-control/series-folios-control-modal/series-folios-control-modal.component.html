@@ -6,118 +6,155 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-2">
-          <form-field [control]="form.get('id')" label="idInvoice">
-            <input type="text" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('coord')" label="Coordinación">
-            <input type="text" class="form-control" formControlName="coord" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('regional')" label="Regional">
+          <form-field [control]="form.get('folioinvoiceId')" label="Id Folio">
             <input
+              [readOnly]="true"
               type="text"
               class="form-control"
-              formControlName="regional" />
+              formControlName="folioinvoiceId" />
           </form-field>
         </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('serie')" label="Serie">
-            <input type="text" class="form-control" formControlName="serie" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-2">
-          <form-field [control]="form.get('foInicial')" label="Folio inicial">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="foInicial" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('foFinal')" label="Folio Final">
-            <input type="text" class="form-control" formControlName="foFinal" />
+        <div class="col-md-7">
+          <form-field [control]="form.get('delegationNumber')">
+            <ngx-select
+              [data]="delegations"
+              [searchOnInit]="true"
+              (fetchItems)="getDelegation($event)"
+              [form]="form"
+              value="id"
+              bindLabel="description"
+              label="Coordinación"
+              [control]="'delegationNumber'"
+              [searchable]="false"
+              [labelTemplate]="delg"
+              [optionTemplate]="delgd">
+            </ngx-select>
+            <ng-template #delg let-item="item">
+              {{ item.id }} - {{ item.description }}
+            </ng-template>
+            <ng-template #delgd let-item="item">
+              <div [title]="item.id + '-' + item.description">
+                {{ item.id }} - {{ item.description }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('validez')" label="Validez">
-            <input type="text" class="form-control" formControlName="validez" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('tipo')" label="Tipo">
-            <input type="text" class="form-control" formControlName="tipo" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('estatus')" label="Estatus">
-            <input type="text" class="form-control" formControlName="estatus" />
+          <form-field [control]="form.get('recordDate')" label="Fecha Registro">
+            <input
+              formControlName="recordDate"
+              class="form-control"
+              bsDatepicker
+              [readOnly]="true"
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
-        <div class="col-md-2">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('invoiceStart')"
+            label="Folio Inicial">
+            <input
+              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)"
+              type="number"
+              min="0"
+              class="form-control"
+              formControlName="invoiceStart" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('invoiceEnd')" label="Folio Final">
+            <input
+              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)"
+              type="number"
+              min="0"
+              class="form-control"
+              formControlName="invoiceEnd" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('validity')" label="Validez">
+            <input
+              formControlName="validity"
+              class="form-control"
+              bsDatepicker
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('type')">
+            <ngx-select
+              [data]="types"
+              [form]="form"
+              value="value"
+              bindLabel="label"
+              label="Coordinación"
+              [control]="'type'"
+              [searchable]="false">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('statusfactId')" label="Estatus">
+            <input
+              [readOnly]="true"
+              type="text"
+              class="form-control"
+              formControlName="statusfactId" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
           <form-field
             [control]="form.get('totalFolios')"
-            label="Total de folios">
+            label="Total de Folios">
             <input
-              type="text"
+              type="number"
+              min="0"
               class="form-control"
               formControlName="totalFolios" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field
-            [control]="form.get('folRegistrados')"
-            label="Folios disponibles">
+            [control]="form.get('availableFolios')"
+            label="Folios Disponibles">
             <input
+              [readOnly]="true"
               type="text"
               class="form-control"
-              formControlName="folRegistrados" />
+              formControlName="availableFolios" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field
-            [control]="form.get('folUtilizados')"
-            label="Folio utilizados">
+            [control]="form.get('usedFolios')"
+            label="Folio Utilizados">
             <input
+              [readOnly]="true"
               type="text"
               class="form-control"
-              formControlName="folUtilizados" />
+              formControlName="usedFolios" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="form.get('fecUsuario')"
-            label="Usuarios registrados">
+            [control]="form.get('recordUser')"
+            label="Usuario Registra">
             <input
               type="text"
+              [readOnly]="true"
               class="form-control"
-              formControlName="fecUsuario" />
+              formControlName="recordUser" />
           </form-field>
         </div>
-        <div class="col-md-2">
-          <form-field
-            [control]="form.get('fecRegistro')"
-            label="Fecha registro">
+        <div class="col-md-3">
+          <form-field [control]="form.get('series')" label="Serie">
             <input
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10)"
               type="text"
               class="form-control"
-              formControlName="fecRegistro" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-5">
-          <form-field [control]="form.get('direccion')" label="Dirección">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="direccion" />
+              formControlName="series" />
           </form-field>
         </div>
       </div>
@@ -128,10 +165,15 @@
       <div class="m-3">
         <confirm-button
           [disabled]="!form.valid"
-          [loading]="loading"></confirm-button>
+          [btnSmall]="true"
+          [loading]="loading"
+          (click)="saveData()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

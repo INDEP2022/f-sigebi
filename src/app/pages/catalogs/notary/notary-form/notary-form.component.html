@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar ' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="notaryForm">
@@ -15,26 +15,9 @@
             [control]="notaryForm.get('notaryNumber')"
             label="N&uacute;mero Notaria">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="notaryNumber" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-md-5">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field
-            [control]="notaryForm.get('registryNumber')"
-            label="N&uacute;mero de registro">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="registryNumber" />
-          </form-field>
-        </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field [control]="notaryForm.get('valid')" label="V&aacute;lido">
-            <input type="text" class="form-control" formControlName="valid" />
           </form-field>
         </div>
       </div>
@@ -50,6 +33,20 @@
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field label="V&aacute;lido" [control]="notaryForm.get('valid')">
+            <ng-select
+              formControlName="valid"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="S">Si</ng-option>
+              <ng-option value="N">No</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-5">
+        <div class="col-md-12 pt-sm-5 pt-md-2">
           <form-field [control]="notaryForm.get('domicile')" label="Domicilio">
             <input
               type="text"
@@ -68,7 +65,7 @@
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field [control]="notaryForm.get('email')" label="Correo">
-            <input type="text" class="form-control" formControlName="email" />
+            <input type="email" class="form-control" formControlName="email" />
           </form-field>
         </div>
       </div>

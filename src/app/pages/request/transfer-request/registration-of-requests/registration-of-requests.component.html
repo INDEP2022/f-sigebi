@@ -10,10 +10,10 @@
           class="btn btn-primary btn-sm active"
           [disabled]="registRequestForm.invalid || statusTask == 'FINALIZADA'"
           (click)="saveClarification()">
-          <i class="bx bxs-right-arrow-square"></i> {{ btnSaveTitle }}
+          {{ btnSaveTitle }} <i class="bx bxs-right-arrow-square"></i>
         </button>
       </div>
-      <!-- *ngIf="approvalProcess" -->
+
       <div class="p-2" *ngIf="approvalProcess && haveDictamen == false">
         <button
           type="button"
@@ -35,7 +35,8 @@
           type="button"
           class="btn btn-secondary btn-sm active"
           (click)="finish()">
-          <i class="bx bxs-right-arrow-square"></i> Finalizar
+          Finalizar
+          <i class="bx bxs-right-arrow-square"></i>
         </button>
       </div>
       <div
@@ -50,7 +51,8 @@
           [disabled]="statusTask == 'FINALIZADA'"
           class="btn btn-secondary btn-sm active"
           (click)="returnar()">
-          <i class="bx bxs-right-arrow-square"></i> Returnar
+          Returnar
+          <i class="fa fa-retweet" aria-hidden="true"></i>
         </button>
       </div>
       <div class="p-2" *ngIf="!approvalProcess">
@@ -59,25 +61,36 @@
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="confirm()">
-          <i class="bx bxs-right-arrow-square"></i> {{ btnTitle }}
+          {{ btnTitle }}
+          <i aria-hidden="true" class="fa fa-share-square"></i>
         </button>
       </div>
       <div class="p-2" *ngIf="approvalProcess">
-        <button
-          [disabled]="statusTask == 'FINALIZADA'"
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="approveRequest()">
-          <i class="bx bxs-right-arrow-square"></i> Aprobar
-        </button>
+        <div>
+          <button
+            [disabled]="statusTask == 'FINALIZADA'"
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="approveRequest()">
+            <i class="bx bxs-right-arrow-square"></i> Aprobar
+          </button>
+        </div>
       </div>
       <div class="p-2" *ngIf="approvalProcess">
-        <button
-          [disabled]="statusTask == 'FINALIZADA'"
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="refuseRequest()">
-          <i class="bx bx-minus"></i> Rechazar
+        <div *ngIf="approvalProcess && haveDictamen == false">
+          <button
+            [disabled]="statusTask == 'FINALIZADA'"
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="refuseRequest()">
+            <i class="bx bx-minus"></i> Rechazar
+          </button>
+        </div>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-primary active btn-sm" (click)="close()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>
@@ -171,7 +184,9 @@
                   class="col-md-4"
                   *ngIf="infoRequest?.rejectionComment != null">
                   <div>
-                    <label for="">Motivo de rechazo</label>
+                    <label class="text-danger" for=""
+                      >Solicitud Rechazada por el Siguiente Motivo:
+                    </label>
                     {{ infoRequest?.rejectionComment }}
                   </div>
                 </div>
@@ -188,14 +203,6 @@
                   [pgr]="pgr"
                   [requestForm]="registRequestForm"></app-request-record-tab>
                 <!-- Fin -->
-                <!-- cumplimiento de verificacion y clasificacion de bienes-->
-                <!--//en caso de que no funciones el === false ///
-                complianceVerifi ||
-                  classifyAssets ||
-                  validateDocument ||
-                  notifyClarifiOrImpropriety ||
-                  approvalProcess
-              -->
                 <app-request-detail-tab
                   *ngIf="requestRegistration === false"
                   [requestForm]="registRequestForm"
@@ -241,10 +248,13 @@
                   [process]="process"></app-approval-assets-tabs>
                 <!-- Fin -->
               </tab>
-              <tab heading="{{ tab3 }}">
+              <tab heading="{{ tab3 }}" (selectTab)="onSelect($event)">
                 <!-- Registro de Solicitud o bien  y Aprovacion de la solicitud-->
                 <app-address-transferor-tab
-                  *ngIf="requestRegistration || approvalProcess"
+                  *ngIf="
+                    (requestRegistration || approvalProcess) &&
+                    openAddressTab == true
+                  "
                   [requestObject]="requestData"
                   [process]="process"></app-address-transferor-tab>
                 <!-- fin -->
@@ -284,7 +294,9 @@
               </tab>
               <tab
                 heading="{{ tab5 }}"
-                *ngIf="requestRegistration || approvalProcess">
+                *ngIf="
+                  requestRegistration || (approvalProcess && !hideExpedient)
+                ">
                 <app-expedients-tabs
                   *ngIf="
                     requestRegistration || approvalProcess
@@ -293,25 +305,6 @@
             </tabset>
           </div>
         </form>
-      </div>
-    </div>
-    <div class="d-flex justify-content-center">
-      <!-- <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-primary active"
-          [disabled]="registRequestForm.invalid"
-          (click)="confirm()">
-          <i class="bx bxs-right-arrow-square"></i> {{ btnTitle }}
-        </button>
-      </div> -->
-      <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-danger btn-sm active"
-          (click)="close()">
-          Salir
-        </button>
       </div>
     </div>
   </div>

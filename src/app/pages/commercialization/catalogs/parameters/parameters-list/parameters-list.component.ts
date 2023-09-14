@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -13,6 +13,7 @@ import { COLUMNS } from './columns';
 //Components
 import { ParametersFormComponent } from '../parameters-form/parameters-form.component';
 //Provisional Data
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IParameter } from 'src/app/core/models/ms-parametercomer/parameter';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 
@@ -23,15 +24,9 @@ import { ParameterModService } from 'src/app/core/services/ms-parametercomer/par
 })
 export class ParametersListComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
-  parametersD: any[] = [];
-
+  parametersD: IParameter[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-
-  rowSelected: boolean = false;
-  selectedRow: any = null;
-
-  //Columns
   columns = COLUMNS;
 
   columnFilters: any = [];
@@ -65,76 +60,80 @@ export class ParametersListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-
+            filter.field == 'description' ||
+            filter.field == 'value' ||
+            filter.field == 'typeEventId'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getParameters();
         }
       });
-
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getParameters());
   }
 
-  public getParameters() {
+  getParameters() {
     this.loading = true;
-    this.parameterModService.getAll(this.params.getValue()).subscribe(
-      response => {
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.parameterModService.getAll(params).subscribe({
+      next: response => {
+        console.log(response.data);
         this.parametersD = response.data;
-        this.data.load(this.parametersD);
-        this.totalItems = response.count;
+        this.totalItems = response.count || 0;
+        this.data.load(response.data);
+        this.data.refresh();
         this.loading = false;
       },
-      error => (this.loading = false)
-    );
-  }
-  openModal(parameter?: IParameter) {
-    let config: ModalOptions = {
-      initialState: {
-        parameter,
-        callback: (next: boolean) => {
-          this.params
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.getParameters());
-        },
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(ParametersFormComponent, config);
-  }
-  add() {
-    this.openModal();
+    });
   }
 
-  openForm(parameter: IParameter) {
-    this.openModal(parameter);
+  openForm(parameter?: IParameter) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      parameter,
+      callback: (next: boolean) => {
+        if (next) this.getParameters();
+      },
+    };
+    this.modalService.show(ParametersFormComponent, modalConfig);
   }
 
   delete(parameter: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.parameterModService.newRemove(parameter).subscribe(
-          response => {
-            this.getParameters();
+        this.parameterModService.newRemove(parameter).subscribe({
+          next: (resp: any) => {
+            if (resp) {
+              this.alert('success', 'Borrado Correctamente', '');
+              this.getParameters();
+            }
           },
-          error => (this.loading = false)
-        );
+          error: error => {
+            this.loading = false;
+          },
+        });
       }
     });
-  }
-
-  selectRow(row: any) {
-    this.selectedRow = row;
-    this.rowSelected = true;
   }
 }

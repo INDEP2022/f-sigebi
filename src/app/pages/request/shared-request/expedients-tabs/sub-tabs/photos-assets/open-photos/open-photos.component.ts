@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { TABLE_SETTINGS } from '../../../../../../../common/constants/table-settings';
@@ -18,12 +18,14 @@ import { PHOTOS_TABLE_COLUMNS } from '../columns/photos-table-columns';
 export class OpenPhotosComponent extends BasePage implements OnInit {
   paragraphs: LocalDataSource = new LocalDataSource();
   information: any;
+  request: boolean = true;
   columns = PHOTOS_TABLE_COLUMNS;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   task: any;
   statusTask: any = '';
-
+  documentsSeaData: any[] = [];
+  private data: any[][] = [];
   constructor(
     private bsModalRef: BsModalRef,
     private wContentService: WContentService,
@@ -35,12 +37,15 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     // DISABLED BUTTON - FINALIZED //
-    this.task = JSON.parse(localStorage.getItem('Task'));
-    this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
+    if (this.request) {
+      this.task = JSON.parse(localStorage.getItem('Task'));
+      this.statusTask = this.task.status;
+      console.log('statustask', this.statusTask);
+    }
 
     this.settings = {
       ...TABLE_SETTINGS,
+
       actions: false,
       selectMode: '',
       columns: PHOTOS_TABLE_COLUMNS,
@@ -53,27 +58,59 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
         });
       },
     };
-
-    this.getImagesGood();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getImagesGood());
   }
 
   getImagesGood() {
-    const idReq: Object = {
+    const idGood: Object = {
       xidBien: this.information.id,
     };
+    this.data = [];
+    if (this.data.length == 0) {
+      this.loading = true;
+      this.wContentService.getDocumentos(idGood).subscribe(data => {
+        const _data = data.data.filter((img: any) => {
+          if (img.dDocType == 'DigitalMedia') return img;
+        });
 
-    this.wContentService.getDocumentos(idReq).subscribe(data => {
-      const _data = data.data.filter((img: any) => {
-        if (img.dDocType == 'DigitalMedia') return img;
+        if (_data.length > 0) {
+          this.documentsSeaData =
+            _data.length > 10 ? this.setPaginate([..._data]) : _data;
+          this.totalItems = _data.length;
+          this.loading = false;
+        } else {
+          this.alert(
+            'warning',
+            'Atención',
+            'No hay fotos agregadas a este bien',
+            ''
+          );
+          this.loading = false;
+        }
       });
-
-      if (_data.length > 0) {
-        this.paragraphs.load(_data);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.onLoadToast('info', 'No hay fotos agregadadas a este bien', '');
+    } else {
+      this.selectPage();
+    }
+  }
+  private selectPage() {
+    this.documentsSeaData = [...this.data[this.params.value.page - 1]];
+  }
+  private setPaginate(value: any[]): any[] {
+    let data: any[] = [];
+    let dataActual: any = [];
+    value.forEach((val, i) => {
+      dataActual.push(val);
+      if ((i + 1) % this.params.value.limit === 0) {
+        this.data.push(dataActual);
+        dataActual = [];
+      } else if (i === value.length - 1) {
+        this.data.push(dataActual);
       }
     });
+    data = this.data[this.params.value.page - 1];
+    return data;
   }
 
   updateInfoPhotos() {
@@ -82,6 +119,7 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
     };
 
     this.wContentService.getDocumentos(idReq).subscribe(data => {
+      console.log('updateinfoPhotos');
       const _data = data.data.filter((img: any) => {
         if (img.dDocType == 'DigitalMedia') return img;
       });
@@ -90,7 +128,7 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
         this.paragraphs.load(_data);
         this.totalItems = this.paragraphs.count();
       } else {
-        this.onLoadToast('info', 'No hay fotos agregadadas a este bien', '');
+        this.alert('warning', 'No hay fotos agregadadas a este bien', '');
       }
     });
   }

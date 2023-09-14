@@ -35,7 +35,8 @@ export class CheckVerifyComplianceComponent
     }
   }
 
-  ngAfterViewInit(): void {
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     this.changeState();
   }
 

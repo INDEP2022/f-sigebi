@@ -7,23 +7,23 @@
       <div class="row pt-3">
         <div class="col-md-6">
           <form-field
-            [control]="form.get('senderName')"
-            label="Nombre Remitente">
+            [control]="form.get('managedTo')"
+            label="Nombre Destinatario">
             <input
               type="text"
               class="form-control"
-              maxlength="50"
-              formControlName="senderName" />
+              maxlength="255"
+              formControlName="managedTo" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
-            [control]="form.get('positionSender')"
-            label="Cargo remitente">
+            [control]="form.get('positionAddressee')"
+            label="Cargo Destinatario">
             <input
               class="form-control"
-              maxlength="50"
-              formControlName="positionSender" />
+              maxlength="200"
+              formControlName="positionAddressee" />
           </form-field>
         </div>
       </div>
@@ -63,7 +63,7 @@
           [text]="'Continuar'"
           [disabled]="form.invalid"
           [loading]="loading"
-          [text]="'Aceptar'"
+          [text]="'Continuar'"
           (confirm)="confirm()">
         </confirm-button>
       </div>

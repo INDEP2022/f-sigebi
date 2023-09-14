@@ -1,13 +1,30 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ status }} Modelo</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material" [formGroup]="modelForm">
       <div class="row mb-3 mt-3">
-        <div class="col-md-12">
-          <form-field [control]="form.get('model')" label="Modelo">
-            <input type="text" class="form-control" formControlName="model" />
+        <div class="col-md-3">
+          <form-field [control]="modelForm.get('id')" label="Modelo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="id"
+              maxlength="6"
+              [readonly]="edit" />
+          </form-field>
+        </div>
+
+        <div class="col-md-9">
+          <form-field
+            [control]="modelForm.get('modelComment')"
+            label="Comentario Modelo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="modelComment"
+              maxlength="60" />
           </form-field>
         </div>
       </div>
@@ -17,7 +34,6 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!form.valid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

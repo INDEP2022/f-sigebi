@@ -14,6 +14,7 @@
               label="No. Volante">
               <input
                 type="number"
+                min="1"
                 formControlName="wheelNumber"
                 class="form-control" />
             </form-field>
@@ -34,7 +35,7 @@
           <div class="row pt-4">
             <form-field
               [control]="fileDataUpdateForm.get('consecutiveNumber')"
-              label="Consecutivo diario">
+              label="Consecutivo Diario">
               <input
                 type="number"
                 formControlName="consecutiveNumber"
@@ -116,8 +117,9 @@
             (change)="changeDictum($event)"
             [searchOnInit]="true"
             termMaxLength="80"
-            [showTooltip]="true"
-            [readonly]="layout == 'ABANDONMENT'">
+            [loadingInit]="true"
+            [clearable]="false"
+            [showTooltip]="true">
           </ngx-select>
         </form-field>
       </div>
@@ -128,23 +130,43 @@
             type="button"
             class="ml-3 btn btn-secondary active btn-sm"
             [disabled]="!canViewDocuments"
+            tooltip="Archivos"
             (click)="viewDocuments()">
             <i class="bx bx-file"></i>
           </button>
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="affair == null || dictOffice == ''"
-            (click)="sendToDocumentsManagement()">
-            Oficio de desahogo
+            [disabled]="
+              !wheelNumber ||
+              isLoadingOfficeOfRelief ||
+              !affair ||
+              dictum == 'CONOCIMIENTO'
+            "
+            (click)="onClickOfficeOfRelief()">
+            Oficio de Desahogo
+            <ng-container *ngIf="isLoadingOfficeOfRelief"
+              ><span class="spinner-border"></span
+            ></ng-container>
           </button>
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="dictum == '' || affair == null || dictOffice != 'D'"
+            [disabled]="
+              !wheelNumber ||
+              isLoadingBtnDictationJudgment ||
+              searchMode ||
+              fileDataUpdateForm.get('dictumKey').value?.description ===
+                'CONOCIMIENTO' ||
+              !fileDataUpdateForm.get('dictumKey').value
+            "
             (click)="sendToJuridicalRuling()">
+            <ng-container *ngIf="isLoadingBtnDictationJudgment"
+              ><span class="spinner-border"></span
+            ></ng-container>
             Dictaminaci&oacute;n Jur&iacute;dica
           </button>
+          <!-- [disabled]="!dictum || !affair || dictOffice != 'D'" -->
         </div>
       </div>
     </div>
@@ -152,7 +174,7 @@
   <hr />
   <div class="row">
     <div class="col-md-5">
-      <div class="row" *ngIf="initialCondition != 'T'">
+      <div class="row fer" [hidden]="initialCondition == 'T'">
         <form-field
           [control]="fileDataUpdateForm.get('circumstantialRecord')"
           label="Acta Circusnt.">
@@ -163,7 +185,7 @@
         </form-field>
       </div>
 
-      <div class="row pt-4" *ngIf="initialCondition != 'T'">
+      <div class="row pt-4" [hidden]="initialCondition == 'T'">
         <form-field
           [control]="fileDataUpdateForm.get('preliminaryInquiry')"
           label="Averig. Previa">
@@ -174,7 +196,7 @@
         </form-field>
       </div>
 
-      <div class="row pt-4" *ngIf="initialCondition != 'T'">
+      <div class="row pt-4" [hidden]="initialCondition == 'T'">
         <form-field
           [control]="fileDataUpdateForm.get('criminalCase')"
           label="Causa Penal">
@@ -185,20 +207,40 @@
         </form-field>
       </div>
 
-      <div class="row pt-4" *ngIf="initialCondition == 'T'">
+      <div
+        class="row pt-4"
+        [hidden]="initialCondition == 'AT' || initialCondition == 'A'">
         <form-field
           [control]="fileDataUpdateForm.get('expedientTransferenceNumber')"
-          label="Exp. Transfer">
+          label="Exp. Transferente">
           <input
             type="text"
             formControlName="expedientTransferenceNumber"
             class="form-control" />
         </form-field>
       </div>
+      <div
+        [hidden]="initialCondition == 'A' || initialCondition == 'AT'"
+        class="row mt-2">
+        <form-field [control]="fileDataUpdateForm.get('transference')">
+          <ngx-select
+            [form]="fileDataUpdateForm"
+            (fetchItems)="getTransferors($event, true)"
+            [data]="_transferors"
+            bindLabel="nameAndId"
+            control="transference"
+            label="Transferente"
+            [searchOnInit]="true"
+            termMaxLength="200"
+            [showTooltip]="true">
+          </ngx-select>
+        </form-field>
+      </div>
 
-      <div class="row pt-4">
+      <div
+        [hidden]="initialCondition == 'A' || initialCondition == 'AT'"
+        class="row pt-4">
         <form-field
-          *ngIf="initialCondition == 'T'"
           class="col-md-12"
           [control]="fileDataUpdateForm.get('judgementType')"
           label="Tipo Juicio">
@@ -215,7 +257,7 @@
         </form-field>
       </div>
 
-      <div class="row pt-4">
+      <div class="row pt-4" [hidden]="initialCondition == 'T'">
         <form-field
           [control]="fileDataUpdateForm.get('protectionKey')"
           label="No. Amparo">
@@ -226,7 +268,7 @@
         </form-field>
       </div>
 
-      <div class="row pt-4" *ngIf="initialCondition != 'T'">
+      <div class="row pt-4" [hidden]="initialCondition == 'T'">
         <form-field
           [control]="fileDataUpdateForm.get('touchPenaltyKey')"
           label="Toca Penal">
@@ -313,17 +355,20 @@
       <div class="row pt-4">
         <form-field
           class="col-md-6"
-          [control]="fileDataUpdateForm.get('uniqueKey')">
-          <ngx-select
+          [control]="fileDataUpdateForm.get('uniqueKey')"
+          label="Clave &Uacute;nica 3 Niveles">
+          <!-- <ngx-select
             [form]="fileDataUpdateForm"
             [data]="uniqueKeys"
             (fetchItems)="getUniqueKey($event)"
             bindLabel="uniqueCve"
             control="uniqueKey"
-            label="Clave &uacute;nica 3 niveles"
+            label="Clave &Uacute;nica 3 Niveles"
             (change)="setUniqueKeyData($event, true)"
             termMaxLength="5">
-          </ngx-select>
+          </ngx-select> -->
+
+          <input formControlName="uniqueKey" class="form-control" />
         </form-field>
 
         <form-field
@@ -373,7 +418,6 @@
             bindLabel="nameAndId"
             control="autorityNumber"
             label="Autoridad"
-            [searchOnInit]="true"
             [readonly]="stationLoading || transferorLoading"
             termMaxLength="400"
             [showTooltip]="true">
@@ -392,7 +436,9 @@
             bindLabel="nameAndId"
             control="institutionNumber"
             label="{{
-              initialCondition == 'T' ? 'Solicitante' : 'Autoridad Emisora'
+              initialCondition == 'T' || formControls?.wheelType?.value == 'P'
+                ? 'Solicitante'
+                : 'Autoridad Emisora'
             }}"
             [searchOnInit]="true"
             termMaxLength="200"
@@ -417,7 +463,7 @@
         </form-field>
       </div>
 
-      <div class="row pt-4" *ngIf="initialCondition != 'T'">
+      <div class="row pt-4" [hidden]="initialCondition == 'T'">
         <form-field
           [control]="fileDataUpdateForm.get('minpubNumber')"
           class="col-md-6">
@@ -435,6 +481,7 @@
         </form-field>
 
         <form-field
+          [hidden]="initialCondition == 'T'"
           [control]="fileDataUpdateForm.get('crimeKey')"
           class="col-md-6">
           <ngx-select
@@ -497,17 +544,8 @@
             [title]="departmentName"
             readonly />
         </form-field>
-
-        <!-- <div class="col-md-2">
-          <button
-            type="button"
-            class="btn btn-primary btn-sm active"
-            (click)="openModalAreas()">
-            <i class="bx bx-list-ul bx-sm float-icon"></i>
-          </button>
-        </div> -->
       </div>
-      <div class="row pt-5">
+      <!-- <div class="row pt-5">
         <form-field
           class="col-md-6"
           [control]="fileDataUpdateForm.get('delegationName')"
@@ -531,7 +569,7 @@
             [title]="subDelegationName"
             readonly />
         </form-field>
-      </div>
+      </div>-->
 
       <div class="row pt-4">
         <form-field
@@ -546,10 +584,10 @@
         </form-field>
       </div>
 
-      <div class="row pt-4" *ngIf="dictum == 'CONOCIMIENTO'">
+      <div class="row pt-4" [hidden]="dictum != 'CONOCIMIENTO'">
         <form-field
           [control]="fileDataUpdateForm.get('reserved')"
-          label="Justificaci&oacute;n del conocimiento">
+          label="Justificaci&oacute;n del Conocimiento">
           <textarea
             rows="4"
             formControlName="reserved"
@@ -560,13 +598,25 @@
       <div class="row">
         <div class="d-flex justify-content-center">
           <div>
+            <!-- <button
+              outline
+              type="button"
+              class="mr-3 mt-3 btn btn-sm active btn-primary"
+              [disabled]="
+                wheelNumber == null ||
+                expedientNumber == null ||
+                userRecipient == null
+              "
+              (click)="openToShiftChange()">
+              Reasignaci&oacute;n de Turno
+            </button> -->
             <button
               outline
               type="button"
               class="mr-3 mt-3 btn btn-sm active btn-primary"
-              [disabled]="wheelNumber == null || expedientNumber == null"
+              [disabled]="!wheelNumber || !userRecipient || !expedientNumber"
               (click)="openToShiftChange()">
-              Reasignaci&oacute;n de Turno
+              Reasignaci&oacute;n de Turnos
             </button>
           </div>
           <div *ngIf="layout == 'FILE-UPDATE'">
@@ -579,18 +629,16 @@
               Oficio Relacionado
             </button>
           </div>
+
+          <!-- Agregar esta linea despues adentro del botón -->
+          <!-- [disabled]="userRecipient == null || delDestinyNumber == null || dictum == '' " -->
           <div *ngIf="layout == 'FILE-UPDATE'">
             <button
               outline
               type="button"
               class="mr-3 mt-3 btn btn-sm active btn-primary"
-              [disabled]="
-                userRecipient == null ||
-                delDestinyNumber == null ||
-                dictum != ''
-              "
               (click)="openFlyerCopies()">
-              Captura de copias
+              Captura de Copias
             </button>
           </div>
         </div>

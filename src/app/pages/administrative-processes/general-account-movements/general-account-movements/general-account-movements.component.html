@@ -1,4 +1,4 @@
-<app-card [header]="true">
+<!-- <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">MOVIMIENTOS CUENTAS GENERALES</h5>
   </div>
@@ -99,6 +99,111 @@
             [loading]="loading"
             (confirm)="send()">
           </confirm-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card> -->
+
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">MOVIMIENTOS CUENTAS GENERALES</h5>
+  </div>
+  <div body>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('good')" label="Número de Bien:">
+              <input
+                max="9999999999"
+                type="number"
+                formControlName="good"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('fileFrom')" label="Expediente:">
+              <input
+                max="9999999999"
+                type="number"
+                formControlName="fileFrom"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-6 pt-3">
+            <form-field [control]="form.get('currency')">
+              <ngx-select
+                (fetchItems)="getCurrencies($event)"
+                [searchOnInit]="true"
+                [data]="currencies"
+                [form]="form"
+                value="cve_moneda"
+                bindLabel="desc_moneda"
+                label="Moneda"
+                control="currency">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <app-banks-shared [form]="form"></app-banks-shared>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('from')" label="Fecha Del:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="from"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('to')" label="Al:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="to"
+                class="form-control"
+                [minDate]="form.get('from').value"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('deposito')" label="Depósito:">
+              <input
+                max="999999999999999"
+                type="number"
+                formControlName="deposito"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+      <div footer>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              type="button"
+              [disabled]="form.invalid"
+              class="btn btn-primary active btn-sm"
+              (click)="Generar()">
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <button
+              type="button"
+              class="btn btn-danger active btn-sm"
+              (click)="cleanForm()">
+              Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>

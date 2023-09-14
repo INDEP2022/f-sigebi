@@ -221,7 +221,7 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/vault-consultation',
       },
       {
-        label: 'Registro de mensaje del Bien',
+        label: 'Registro de menaje del Bien',
         link: '/pages/administrative-processes/property-registration',
       },
       {
@@ -241,11 +241,11 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/massive-change-status',
       },
       {
-        label: 'Cambio de status',
+        label: 'Cambio de estatus',
         link: '/pages/administrative-processes/change-of-status',
       },
       {
-        label: 'Cambio de status STI',
+        label: 'Cambio de estatus STI',
         link: '/pages/administrative-processes/change-status-sti',
       },
       {
@@ -293,6 +293,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Servicios para precios unitarios',
             link: '/pages/administrative-processes/services-unit-prices',
+          },
+          {
+            label: 'Servicios de tipo para precios unitarios',
+            link: '/pages/administrative-processes/services-type-unit-prices',
           },
           {
             label: 'Especificaciones para precios unitarios',
@@ -349,8 +353,12 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             link: '/pages/administrative-processes/implementation-report',
           },
           {
-            label: 'Indicador de Desempeño',
+            label: 'Estrategias de Administración',
             link: '/pages/administrative-processes/performance-indicator',
+          },
+          {
+            label: 'Indicador de Desempeño',
+            link: '/pages/administrative-processes/performance-indicator-detail',
           },
           {
             label: 'Reportes de la O.DE S.',
@@ -556,7 +564,7 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             link: '/pages/administrative-processes/numerary/deposit-tokens',
           },
           {
-            label: 'Calculo de numerario',
+            label: 'Cálculo de numerario',
             link: '/pages/administrative-processes/numerary/numerary-calc',
           },
           {

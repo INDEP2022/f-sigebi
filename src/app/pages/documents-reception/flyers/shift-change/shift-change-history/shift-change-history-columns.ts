@@ -1,36 +1,43 @@
+import { DatePipe } from '@angular/common';
+
 export const SHIFT_CHANGE_HISTORY_COLUMNS = {
-  flyerNumber: {
+  numberSteeringwheel: {
     title: 'No. Volante',
     type: 'string',
     sort: false,
   },
-  officialNumber: {
+  numberJob: {
     title: 'No. Oficio',
     type: 'string',
     sort: false,
   },
-  reassignmentDate: {
+  datereassignment: {
     title: 'Fecha Reasignación',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      return formatted;
+    },
   },
-  personPrevious: {
+  personbefore: {
     title: 'Persona Anterior',
     type: 'string',
     sort: false,
   },
-  areaDestinationPrevious: {
+  areaDestinationbefore: {
     title: 'Área Anterior',
     type: 'string',
     sort: false,
   },
-  personNew: {
-    title: 'Persona Nueva',
+  areaDestinationnew: {
+    title: 'Área Nueva',
     type: 'string',
     sort: false,
   },
-  areaDestinationNew: {
-    title: 'Área Nueva',
+  personnew: {
+    title: 'Persona Nueva',
     type: 'string',
     sort: false,
   },

@@ -6,6 +6,7 @@ import {
   Input,
   OnInit,
   Output,
+  TemplateRef,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -36,6 +37,19 @@ import { FormLoaderComponent } from '../../form-loader/form-loader.component';
             }
           }
         }
+        form-loader {
+          ::ng-deep {
+            .loader {
+              height: 30px;
+              &:after {
+                background-size: 100px 30px;
+              }
+            }
+            .loader-msg {
+              margin-top: 3rem;
+            }
+          }
+        }
       }
     `,
   ],
@@ -56,12 +70,16 @@ export class SelectFormComponent implements OnInit {
   @Input() haveTodos = true;
   @Input() readonly: boolean = false;
   @Input() clearable: boolean = true;
+  @Input() labelTemplate: TemplateRef<any>;
+  @Input() optionTemplate: TemplateRef<any>;
+  fetchByListParams = true;
   @Input()
   get paramsFilter(): FilterParams {
     return this._paramsFilter;
   }
   set paramsFilter(value: FilterParams) {
     this._paramsFilter = value;
+    this.fetchByListParams = false;
     // console.log(value);
     this.getData();
   }
@@ -72,19 +90,22 @@ export class SelectFormComponent implements OnInit {
   }
   set params(value: ListParams) {
     this._params = value;
+    this.fetchByListParams = true;
     // console.log(value);
     this.getData();
   }
   @Output() paramsChange = new EventEmitter<ListParams>();
   @Output() loadingData = new EventEmitter<boolean>();
   @Output() selectEvent = new EventEmitter();
-  _paramsFilter: FilterParams;
+  _paramsFilter: FilterParams = new FilterParams();
   _params: ListParams = new ListParams();
-  data: DefaultSelect = new DefaultSelect();
+  dataList: DefaultSelect = new DefaultSelect();
+  dataSearch: DefaultSelect = new DefaultSelect();
   otherData: any[];
   subscription: Subscription;
   loading = false;
   page = 1;
+  // lastValue = false;
   // $unSubscribe = new Subject<void>();
   private _toastrService = inject(ToastrService);
   get select() {
@@ -106,33 +127,93 @@ export class SelectFormComponent implements OnInit {
     }
   }
 
+  private getConcatData(concat: boolean, value: DefaultSelect) {
+    return new DefaultSelect(
+      this.haveTodos
+        ? concat
+          ? [
+              { [this.value]: null, [this.bindLabel]: 'Todos' },
+              ...this.data.data.concat(value.data),
+            ]
+          : [{ [this.value]: null, [this.bindLabel]: 'Todos' }, value.data]
+        : concat
+        ? this.data.data.concat(value.data)
+        : value.data,
+      value.count ? value.count : value.data.length
+    );
+  }
+
+  get data() {
+    const pFilter = this.paramsFilter.getFilterByParam(this.paramFilter);
+    return this.list
+      ? this.dataList
+      : this.fetchByListParams
+      ? this.params.text.trim() === ''
+        ? this.dataList
+        : this.dataSearch
+      : pFilter
+      ? pFilter
+          .replace(`filter.${this.paramFilter}=${this.operator}:`, '')
+          .trim().length > 0
+        ? this.dataSearch
+        : this.dataList
+      : this.dataList;
+  }
+
+  set data(value: DefaultSelect) {
+    if (this.fetchByListParams) {
+      if (this.params.text.trim() === '') {
+        this.dataList = this.getConcatData(true, value);
+      } else {
+        this.dataSearch = this.getConcatData(false, value);
+      }
+    } else {
+      const pFilter = this.paramsFilter.getFilterByParam(this.paramFilter);
+      if (
+        pFilter &&
+        pFilter
+          .replace(`filter.${this.paramFilter}=${this.operator}:`, '')
+          .trim().length > 0
+      ) {
+        this.dataSearch = this.getConcatData(false, value);
+      } else {
+        this.dataList = this.getConcatData(true, value);
+      }
+    }
+  }
+
   setParams(params: ListParams) {
-    console.log(params, this.page++);
-    params.page = +(this.page + '');
-    // console.log(params, this.page + 1);
-    // this._params = params;
-    // this.getData();
-    // params.page = this.page;
+    // console.log(params, this.page);
     this.paramsChange.emit(params);
+    // if (!this.lastValue) {
+    //   this.page++;
+    //   params.page = JSON.parse(JSON.stringify({ page: this.page })).page;
+    //   console.log(params, this.page);
+    //   this.paramsChange.emit(params);
+    // } else {
+    //   this.getData();
+    // }
   }
 
   setFilterParams(params: FilterParams) {
-    console.log(params, this.page++);
-    // this._paramsFilter = params;
-    // this.getData();
-    params.page = +(this.page + '');
     this.paramsFilterChange.emit(params);
+    // if (!this.lastValue) {
+    //   this.page++;
+    //   params.page = JSON.parse(JSON.stringify({ page: this.page })).page;
+    //   console.log(params, this.page);
+    //   this.paramsFilterChange.emit(params);
+    // }
   }
 
   private getDataOfList() {
     if (this.params.text.trim().toLowerCase() === '') {
-      this.data = new DefaultSelect(
+      this.dataList = new DefaultSelect(
         this.haveTodos
           ? [{ [this.value]: 'null', [this.bindLabel]: 'Todos' }, ...this.list]
           : this.list
       );
     } else {
-      this.data = new DefaultSelect(
+      this.dataList = new DefaultSelect(
         this.list.filter(item => {
           return item[this.bindLabel]
             ? (item[this.bindLabel] + '')
@@ -140,7 +221,8 @@ export class SelectFormComponent implements OnInit {
                 .toLowerCase()
                 .includes(this.params.text.trim().toLowerCase())
             : true;
-        })
+        }),
+        this.list.length
       );
     }
   }
@@ -149,27 +231,20 @@ export class SelectFormComponent implements OnInit {
     // if (this.subscription) {
     //   this.subscription.unsubscribe();
     // }
-    console.log('Get Data');
 
-    // this.loadingData.emit(true);
     const oldTypeSearchText = this.typeToSearchText;
     this.typeToSearchText = 'Cargando por favor espere';
     this.loading = true;
     this.subscription = this.getListObservable.subscribe({
       next: data => {
-        console.log(data);
+        // console.log(data, this.form);
         // debugger;
         // this.loadingData.emit(false);
         if (data.data && data.data.length > 0) {
           this.typeToSearchText = oldTypeSearchText;
           this.otherData = data.data;
           this.data = new DefaultSelect(
-            this.haveTodos
-              ? [
-                  { [this.value]: null, [this.bindLabel]: 'Todos' },
-                  ...this.data.data.concat(data.data),
-                ]
-              : this.data.data.concat(data.data),
+            data.data,
             data.count ? data.count : data.data.length
           );
 
@@ -217,7 +292,7 @@ export class SelectFormComponent implements OnInit {
   }
 
   getData() {
-    console.log(this.data);
+    // console.log(this.data);
     if (this.list && this.list.length > 0) {
       this.getDataOfList();
     } else {
@@ -226,7 +301,9 @@ export class SelectFormComponent implements OnInit {
   }
 
   clear() {
-    this.setFilterParams(new FilterParams());
+    this.getData();
+    // this.page = 1;
+    // this.setFilterParams(new FilterParams());
     // this.getData();
     // this.clearing = true;
     // setTimeout(() => {
@@ -241,7 +318,7 @@ export class SelectFormComponent implements OnInit {
   }
 
   onChange(event: any) {
-    console.log(event);
+    // console.log(event);
     // if (event.length == 0) {
     //   return;
     // }

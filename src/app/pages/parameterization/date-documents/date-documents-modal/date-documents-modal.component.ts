@@ -23,7 +23,7 @@ import { DateDocumentsDictumComponent } from '../date-documents-dictum/date-docu
   styles: [],
 })
 export class DateDocumentsModalComponent extends BasePage implements OnInit {
-  title: string = 'DOCUMENTOS POR EXPEDIENTE';
+  title: string = 'Fecha para Documento';
   edit: boolean = false;
   event: IDocumentsForDictum = null;
   dateDocuments: IDateDocuments;
@@ -50,30 +50,57 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
     this.dateDocumentsModalForm = this.fb.group({
       expedientNumber: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       stateNumber: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
-      key: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      key: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(8),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       typeDictum: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(15),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       dateReceipt: [null],
       userReceipt: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       insertionDate: [null, [Validators.required]],
-      userInsertion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      userInsertion: [null],
       numRegister: [null],
-      officialNumber: [null],
-      notificationDate: [null, [Validators.required]],
+      officialNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(20),
+        ],
+      ],
+      notificationDate: [null],
       secureKey: [null],
     });
 
@@ -84,29 +111,44 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
       this.stateNumber = this.dateDocuments.stateNumber as IState;
       this.edit = true;
       this.dateDocumentsModalForm.patchValue(this.dateDocuments);
-      let date = new Date(this.dateDocuments.insertionDate + 'T00:00:00-07:00');
+
+      let date = new Date(this.dateDocuments.insertionDate);
       if (this.dateDocuments.notificationDate) {
-        let dateNoti = new Date(
-          this.dateDocuments.notificationDate + 'T00:00:00-07:00'
+        //let dateNoti = new Date(this.dateDocuments.notificationDate); dateReceipt
+        const dateNotif = this.transformDate(
+          this.dateDocuments.notificationDate
         );
+
         this.dateDocumentsModalForm.controls['notificationDate'].setValue(
-          dateNoti
+          dateNotif
         );
       }
-      this.dateDocumentsModalForm.controls['insertionDate'].setValue(date);
+      const dateInsert = this.transformDate(this.dateDocuments.insertionDate);
+      this.dateDocumentsModalForm.controls['insertionDate'].setValue(
+        dateInsert
+      );
+
+      const dateReceipt = this.transformDate(this.dateDocuments.dateReceipt);
+      this.dateDocumentsModalForm.controls['dateReceipt'].setValue(dateReceipt);
       this.dateDocumentsModalForm.controls['key'].setValue(this.id.key);
-      this.dateDocumentsModalForm.controls['expedientNumber'].setValue(
-        this.expedientNumber.id
-      );
-      this.dateDocumentsModalForm.controls['stateNumber'].setValue(
-        this.stateNumber.id
-      );
+      this.dateDocumentsModalForm.controls['expedientNumber'].disable();
+      this.dateDocumentsModalForm.controls['stateNumber'].disable();
+      this.dateDocumentsModalForm.controls['typeDictum'].disable();
+      this.dateDocumentsModalForm.controls['key'].disable();
     } else {
       this.dateDocumentsModalForm.controls['userInsertion'].setValue(
         this.authService.decodeToken().preferred_username
       );
     }
   }
+
+  transformDate(date: Date) {
+    const date2 = new Date(date);
+    const datePipe = new DatePipe('en-US');
+    const formatTrans1 = datePipe.transform(date2, 'yyyy-MM-dd', 'UTC');
+    return formatTrans1;
+  }
+
   close() {
     this.modalRef.hide();
   }
@@ -132,42 +174,74 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
   }
   create() {
     this.loading = true;
-    this.dateDocumentsModalForm.controls['insertionDate'].setValue(
-      this.datePipe.transform(
-        this.dateDocumentsModalForm.controls['insertionDate'].value,
-        'yyyy-MM-dd'
-      )
-    );
-    this.dateDocumentsModalForm.controls['notificationDate'].setValue(
-      this.datePipe.transform(
-        this.dateDocumentsModalForm.controls['notificationDate'].value,
-        'yyyy-MM-dd'
-      )
-    );
-    console.log(this.dateDocumentsModalForm.value);
+
+    /*const newDateDocument = this.dateDocumentsModalForm.value;
+
+    Object.defineProperties(newDateDocument, {
+      insertionDate: {
+        value: this.datePipe.transform(
+          newDateDocument.insertionDate,
+          'dd-mm-yyyy'
+        ),
+      },
+      notificationDate: {
+        value: this.datePipe.transform(
+          newDateDocument.notificationDate,
+          'dd-mm-yyyy'
+        ),
+      },
+    });*/
+
+    //console.log('PAYLOAD', newDateDocument);
+
     this.dateDocumentsService
-      .create(this.dateDocumentsModalForm.value)
+      .create(this.dateDocumentsModalForm.getRawValue())
       .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        next: data => {
+          console.log('success', data);
+          this.handleSuccess();
+        },
+        error: error => {
+          console.log('success', error);
+          this.loading = false;
+        },
       });
   }
+
+  transformDateUpdate(date: Date) {
+    const date2 = new Date(date);
+    const datePipe = new DatePipe('en-US');
+    const formatTrans1 = datePipe.transform(date2, 'yyyy-MM-dd', 'UTC');
+    return formatTrans1;
+  }
+
+  incognitDateToDate(date: any) {
+    if (date) {
+      // console.log(date);
+      if (date instanceof Date) {
+        return date;
+      }
+      if (date.includes('/')) {
+        const partesFecha = date.split('/');
+        const newDate = new Date(
+          Number(partesFecha[2]),
+          Number(partesFecha[1]) - 1,
+          Number(partesFecha[0])
+        );
+        // console.log(newDate);
+        return newDate;
+      } else {
+        new Date(date);
+      }
+    }
+    return null;
+  }
+
   update() {
     this.loading = true;
-    this.dateDocumentsModalForm.controls['insertionDate'].setValue(
-      this.datePipe.transform(
-        this.dateDocumentsModalForm.controls['insertionDate'].value,
-        'yyyy-MM-dd'
-      )
-    );
-    this.dateDocumentsModalForm.controls['notificationDate'].setValue(
-      this.datePipe.transform(
-        this.dateDocumentsModalForm.controls['notificationDate'].value,
-        'yyyy-MM-dd'
-      )
-    );
+
     this.dateDocumentsService
-      .update3(this.dateDocumentsModalForm.value)
+      .update3(this.dateDocumentsModalForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -175,7 +249,7 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

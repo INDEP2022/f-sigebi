@@ -6,6 +6,7 @@ import { IClaimConclusion } from 'src/app/core/models/catalogs/claim-conclusion.
 import { ClaimConclusionService } from 'src/app/core/services/catalogs/claim-conclusion.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { POSITVE_NUMBERS_PATTERN } from '../../../../core/shared/patterns';
 
 @Component({
   selector: 'app-claim-conclusion-form',
@@ -14,7 +15,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class ClaimConclusionFormComponent extends BasePage implements OnInit {
   ClaimConclusionForm: ModelForm<IClaimConclusion>;
-  title: string = 'Conclusion de siniestros';
+  title: string = 'Conclusión de Siniestro';
   edit: boolean = false;
   claimConclusion: IClaimConclusion;
   constructor(
@@ -31,7 +32,7 @@ export class ClaimConclusionFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.ClaimConclusionForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null],
       description: [
         null,
         [
@@ -43,7 +44,7 @@ export class ClaimConclusionFormComponent extends BasePage implements OnInit {
       flag: [
         null,
         [
-          Validators.pattern(STRING_PATTERN),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
           Validators.required,
           Validators.maxLength(20),
         ],
@@ -63,6 +64,10 @@ export class ClaimConclusionFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.ClaimConclusionForm.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.claimConclusionService
       .create(this.ClaimConclusionForm.getRawValue())
@@ -84,7 +89,8 @@ export class ClaimConclusionFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

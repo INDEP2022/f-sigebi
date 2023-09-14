@@ -3,7 +3,7 @@ import { ITableField } from 'src/app/core/models/ms-audit/table-field.model';
 export function generateColumnsFromFields(fields: ITableField[]) {
   let columns: any = {
     no_registro: {
-      title: 'No Registro',
+      title: 'No. Registro',
       sort: false,
     },
   };

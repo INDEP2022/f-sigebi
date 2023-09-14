@@ -5,7 +5,11 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDocCompesationSat } from 'src/app/core/models/catalogs/doc-compesation-sat.model';
 import { DocCompensationSATService } from 'src/app/core/services/catalogs/doc-compesation-sat.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUMBERS_PATTERN,
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-doc-compensation-sat-form',
@@ -17,7 +21,7 @@ export class DocCompensationSatFormComponent
   implements OnInit
 {
   docCompesationSatForm: ModelForm<IDocCompesationSat>;
-  title: string = 'Tipo de Almacenes';
+  title: string = 'Documento Resarcimiento SAT';
   edit: boolean = false;
   docCompesationSat: IDocCompesationSat;
   constructor(
@@ -34,19 +38,38 @@ export class DocCompensationSatFormComponent
 
   private prepareForm() {
     this.docCompesationSatForm = this.fb.group({
-      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      idcat: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null],
+      officeSatId: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(3),
+        ],
+      ],
       typeDocSat: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(250),
+          Validators.required,
+        ],
       ],
       addressee: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(150),
+          Validators.required,
+        ],
       ],
       subjectCode: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
     });
     if (this.docCompesationSat != null) {
@@ -63,9 +86,16 @@ export class DocCompensationSatFormComponent
   }
 
   create() {
+    if (
+      this.docCompesationSatForm.controls['addressee'].value.trim() === '' ||
+      this.docCompesationSatForm.controls['typeDocSat'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.docCompesationSatService
-      .create(this.docCompesationSatForm.getRawValue())
+      .create(this.docCompesationSatForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -75,10 +105,7 @@ export class DocCompensationSatFormComponent
   update() {
     this.loading = true;
     this.docCompesationSatService
-      .update(
-        this.docCompesationSat.id,
-        this.docCompesationSatForm.getRawValue()
-      )
+      .update(this.docCompesationSat.id, this.docCompesationSatForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -87,7 +114,8 @@ export class DocCompensationSatFormComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

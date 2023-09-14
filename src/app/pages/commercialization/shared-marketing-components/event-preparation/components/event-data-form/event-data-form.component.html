@@ -1,0 +1,224 @@
+<div class="row">
+  <h6>Datos del Evento de Comercialización</h6>
+</div>
+<div class="row pt-2">
+  <div class="col-md-12">
+    <form
+      class="form-material"
+      [formGroup]="eventForm"
+      (ngSubmit)="onSaveEvent()">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="eventForm.get('id')" label="No.">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="eventForm.get('processKey')" label="Clave">
+            <input
+              type="text"
+              [max-length]="60"
+              class="form-control"
+              formControlName="processKey" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="eventForm.get('eventTpId')">
+            <ngx-select
+              (change)="eventTypeChange()"
+              [searchOnInit]="true"
+              [form]="eventForm"
+              [data]="eventTypes"
+              control="eventTpId"
+              value="id"
+              [searchable]="false"
+              bindLabel="description"
+              label="Tipo de Evento"
+              [labelTemplate]="eventTypeLabel"
+              [optionTemplate]="eventTypeDesc">
+            </ngx-select>
+
+            <ng-template #eventTypeLabel let-item="item"
+              >{{ item.id }} - {{ item.description }}</ng-template
+            >
+            <ng-template #eventTypeDesc let-item="item"
+              >{{ item.id }} - {{ item.description }}</ng-template
+            >
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="eventForm.get('place')" label="Lugar">
+            <input
+              type="text"
+              [max-length]="100"
+              class="form-control"
+              formControlName="place" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-2" *ngIf="eventFormVisual.eventDate">
+          <form-field
+            [control]="eventForm.get('eventDate')"
+            label="Fecha del Evento">
+            <input
+              type="text"
+              placeholder=""
+              (bsValueChange)="eventDateChange($event)"
+              class="form-control"
+              bsDatepicker
+              [minDate]="minEventDate"
+              [maxDate]="maxEventDate"
+              formControlName="eventDate"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="eventForm.get('eventClosingDate')"
+            label="Fecha de Cierre">
+            <input
+              type="text"
+              (bsValueChange)="closingDateChange()"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="eventClosingDate"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-2" *ngIf="eventFormVisual.failureDate">
+          <form-field
+            [control]="eventForm.get('failureDate')"
+            label="Fecha del Fallo">
+            <input
+              (bsValueChange)="failureDateChange($event)"
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="failureDate"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="eventForm.get('baseCost')" label="Costo Base">
+            <input
+              type="number"
+              [max-length]="15"
+              class="form-control"
+              formControlName="baseCost" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <button
+            (click)="onApply()"
+            type="button"
+            *ngIf="eventFormVisual.applyButton"
+            class="btn btn-primary btn-sm active mr-3">
+            Aplicar
+          </button>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <form-field
+            [control]="eventForm.get('observations')"
+            label="Descripción">
+            <input
+              type="text"
+              [max-length]="300"
+              class="form-control"
+              formControlName="observations" />
+          </form-field>
+        </div>
+        <div class="col-md-4" *ngIf="parameters.pDirection == 'I'">
+          <form-field [control]="eventForm.get('vatApplies')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="eventForm"
+              [data]="ivaMod"
+              control="vatApplies"
+              value="value"
+              bindLabel="description"
+              label="Aplica IVA"
+              [labelTemplate]="ivaLabel"
+              [optionTemplate]="ivaOption">
+            </ngx-select>
+            <ng-template #ivaLabel let-item="item"
+              >{{ item.value }} - {{ item.description }}</ng-template
+            >
+            <ng-template #ivaOption let-item="item"
+              >{{ item.value }} - {{ item.description }}</ng-template
+            >
+          </form-field>
+        </div>
+        <div
+          class="col-md-4"
+          *ngIf="eventFormVisual.thirdId && parameters.pDirection == 'M'">
+          <form-field [control]="eventForm.get('thirdId')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="eventForm"
+              [data]="thirds"
+              control="thirdId"
+              value="id"
+              bindLabel="nameReason"
+              label="Tercero Comercializa"
+              [labelTemplate]="thirdLabel"
+              [optionTemplate]="thirdOption">
+            </ngx-select>
+            <ng-template #thirdLabel let-item="item"
+              >{{ item.id }} - {{ item.nameReason }}</ng-template
+            >
+            <ng-template #thirdOption let-item="item"
+              >{{ item.id }} - {{ item.nameReason }}</ng-template
+            >
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="eventForm.get('tpsolavalId')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="eventForm"
+              [data]="modParameters"
+              control="tpsolavalId"
+              value="value"
+              bindLabel="description"
+              label="Tipo Solicitud Avalúo"
+              [labelTemplate]="modLabel"
+              [optionTemplate]="modOption">
+            </ngx-select>
+            <ng-template #modLabel let-item="item"
+              >{{ item.value }} - {{ item.description }}</ng-template
+            >
+            <ng-template #modOption let-item="item"
+              >{{ item.value }} - {{ item.description }}</ng-template
+            >
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 d-flex">
+          <div>
+            <confirm-button
+              [loading]="loading"
+              [btnSmall]="true"></confirm-button>
+          </div>
+
+          <div *ngIf="loadFromGoodsTracker">
+            <button
+              (click)="onLoadFromGoodsTracker.emit()"
+              type="button"
+              class="ml-2 btn btn-sm btn-secondary active">
+              Incorporar Bienes desde el Rastreador
+            </button>
+          </div>
+        </div>
+      </div>
+      <br />
+      <hr class="row pt-2" />
+    </form>
+  </div>
+</div>

@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-md-12">
       <h5 class="title">
-        Identificar procedencia de bienes destino documental
+        Identificar Procedencia de Bienes Destino Documental
       </h5>
     </div>
   </div>
@@ -13,81 +13,31 @@
       </div>
     </div>
     <div class="d-flex">
-      <div class="mr-auto p-2">
-        <app-columns-select [(settings)]="goodSetting"></app-columns-select>
+      <div class="mr-auto p-2"></div>
+      <div class="p-2">
+        <button
+          class="btn btn-sm btn-primary active"
+          (click)="saveGoodSaeDescrip()">
+          Guardar <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
+      <div class="p-2">
+        <app-columns-select
+          [leftList]="true"
+          [(settings)]="goodSetting"></app-columns-select>
       </div>
     </div>
   </div>
 
   <div class="row">
     <div class="col-md-12">
-      <!-- <ng-scrollbar track="all" style="min-height: 300px; border: none">
-        <table class="table table-bordered border-primary">
-          <thead>
-            <tr>
-              <th scope="col">
-                <div class="" style="text-align: center">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value=""
-                    id="selectAll"
-                    (change)="selectAll($event)"
-                    style="position: relative" />
-                </div>
-              </th>
-              <th scope="col">No&#46; Gesti&oacute;n</th>
-              <th scope="col">Descripci&oacute;n de Bien Transferente</th>
-              <th scope="col">Descripci&oacute;n Bien INDEP</th>
-              <th scope="col">Tipo Bien</th>
-              <th scope="col">Fracci&oacute;n</th>
-              <th scope="col">Cantidad de la Transferente</th>
-              <th scope="col">Unidad de Medida Ligia</th>
-              <th scope="col">Unidad de Medida Transferente</th>
-              <th scope="col">Clave &Uacute;nica</th>
-              <th scope="col">Estado F&iacute;sico</th>
-              <th scope="col">Estado de Conservaci&oacute;n</th>
-              <th scope="col">Destino Ligie</th>
-              <th scope="col">Destino Transferente</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              *ngFor="let detail of assetsArray; let i = index"
-              (click)="clicked(detail)">
-              <td>
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  value="{{ detail.id }}"
-                  [(ngModel)]="detail.checked"
-                  id="selectOne"
-                  (change)="selectOne($event)" />
-              </td>
-              <td>{{ detail.goodId }}</td>
-              <td>{{ detail.descriptionGoodSae }}</td>
-              <td>{{ detail.goodDescription }}</td>
-              <td>{{ detail.goodTypeId }}</td>
-              <td>{{ detail.fractionId.description }}</td>
-              <td>{{ detail.quantity }}</td>
-              <td>{{ detail.ligieUnit }}</td>
-              <td>{{ detail.unitMeasure }}</td>
-              <td>{{ detail.uniqueKey }}</td>
-              <td>{{ detail.physicalStatus }}</td>
-              <td>{{ detail.stateConservation }}</td>
-              <td>{{ detail.destinyLigie }}</td>
-              <td>{{ detail.transferentDestiny }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </ng-scrollbar> -->
       <div [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table
           [attr.class]="'table-bordered table-responsive'"
           [settings]="goodSetting"
           [source]="assetsArray"
-          (userRowSelect)="selectGoods($event)"
-          ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
+          (rowSelect)="selectGoods($event.data)"
+          ><!-- (userRowSelect)="selectGoods($event)" -->
         </ng2-smart-table>
       </div>
     </div>
@@ -99,9 +49,7 @@
   <div class="row" style="margin-top: 3%">
     <div class="col-md-12">
       <div class="d-flex">
-        <div class="mr-auto p-2">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
-        </div>
+        <div class="mr-auto p-2"></div>
         <div class="p-2">
           <button
             [disabled]="
@@ -133,6 +81,11 @@
             (click)="deleteClarification()">
             Eliminar
           </button>
+        </div>
+        <div class="p-2">
+          <app-columns-select
+            [leftList]="true"
+            [(settings)]="settings"></app-columns-select>
         </div>
       </div>
     </div>

@@ -1,0 +1,143 @@
+<ng-container *ngIf="!onlyBase">
+  <li role="menuitem">
+    <button type="button" (click)="onLoadFromTracker()" class="dropdown-item">
+      Incorporar Bienes desde el Rastreador
+    </button>
+  </li>
+  <li role="menuitem">
+    <button type="button" (click)="onExportExcel()" class="dropdown-item">
+      Exportar a Excel
+    </button>
+  </li>
+  <li role="menuitem" (click)="onLotifyGoodsFromExcel()">
+    <button type="button" class="dropdown-item">
+      Lotificar bienes desde Excel
+    </button>
+  </li>
+  <li role="menuitem">
+    <button type="button" class="dropdown-item" (click)="onCreateCertificate()">
+      Crear Acta Evento Público
+    </button>
+  </li>
+  <li role="menuitem">
+    <button type="button" class="dropdown-item" (click)="onLotifyCustomers()">
+      Carga de Clientes desde Excel
+    </button>
+  </li>
+  <li role="menuitem">
+    <button type="button" class="dropdown-item" (click)="onRejectedGoods()">
+      Bienes no Cargados
+    </button>
+  </li>
+  <li role="menuitem">
+    <button type="button" class="dropdown-item" (click)="onLoadInvoices()">
+      Carga Facturas
+    </button>
+  </li>
+  <li role="menuitem">
+    <button type="button" class="dropdown-item" (click)="onTrasp()">
+      Traspasar Bienes
+    </button>
+  </li>
+  <li role="menuitem">
+    <button type="button" class="dropdown-item" (click)="onInvoiceData()">
+      Datos para Facturación
+    </button>
+  </li>
+  <li role="menuitem">
+    <button
+      type="button"
+      class="dropdown-item"
+      (click)="onLoadCustomersFromThird()">
+      Lotificar / Cargar Clientes desde Tabla Tercero
+    </button>
+  </li>
+  <li role="menuitem">
+    <button type="button" class="dropdown-item" (click)="onValidGoods()">
+      Valida Bienes
+    </button>
+  </li>
+  <li role="menuitem">
+    <button type="button" class="dropdown-item" (click)="onGenerateOffice()">
+      Genera Oficio Avalúo
+    </button>
+  </li>
+  <li role="menuitem">
+    <button
+      type="bulotifyGoodsChangetton"
+      class="dropdown-item"
+      (click)="onVerifyMandate()">
+      Verifica Mandado
+    </button>
+  </li>
+</ng-container>
+
+<ng-container *ngIf="onlyBase">
+  <li role="menuitem">
+    <button type="button" (click)="onBaseExportExcel()" class="dropdown-item">
+      Exportar a Excel
+    </button>
+  </li>
+
+  <li role="menuitem">
+    <button type="button" (click)="onLoadBaseSales()" class="dropdown-item">
+      Carga Venta de Bases
+    </button>
+  </li>
+
+  <li role="menuitem">
+    <button type="button" class="dropdown-item" (click)="onLoadBaseCustomers()">
+      Carga de Clientes desde Excel
+    </button>
+  </li>
+</ng-container>
+
+<input
+  type="file"
+  (change)="lotifyGoodsChange($event)"
+  [formControl]="goodsLotifyControl"
+  [style.display]="'none'"
+  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+  #goodsLotifyInput />
+
+<input
+  type="file"
+  (change)="onCustomersImport($event)"
+  [formControl]="customersImportControl"
+  [style.display]="'none'"
+  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+  #customersImportInput />
+
+<input
+  type="file"
+  (change)="loadInvoiceChange($event)"
+  [formControl]="invoiceControl"
+  [style.display]="'none'"
+  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+  #invoiceInput />
+
+<input
+  type="file"
+  (change)="loadInvoiceDataChange($event)"
+  [formControl]="invoiceDataControl"
+  [style.display]="'none'"
+  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+  #invoiceDataInput />
+
+<!-- ? BASES -->
+
+<input
+  type="file"
+  (change)="loadSaleBases($event)"
+  [formControl]="saleBasesControl"
+  [style.display]="'none'"
+  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+  #saleBaseInput />
+
+<input
+  type="file"
+  [formControl]="customersBasecontrol"
+  (change)="loadCustomersBase($event)"
+  [style.display]="'none'"
+  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+  #customersBaseInput />

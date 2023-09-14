@@ -1,5 +1,5 @@
 export const COLUMNSTABL1 = {
-  noBien: {
+  goodId: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
@@ -9,17 +9,17 @@ export const COLUMNSTABL1 = {
     type: 'string',
     sort: false,
   },
-  proceso: {
+  extDomProcess: {
     title: 'Proceso',
     type: 'string',
     sort: false,
   },
-  cantidad: {
+  quantity: {
     title: 'Cantidad',
     type: 'number',
     sort: false,
   },
-  unidad: {
+  unit: {
     title: 'Unidad',
     type: 'string',
     sort: false,

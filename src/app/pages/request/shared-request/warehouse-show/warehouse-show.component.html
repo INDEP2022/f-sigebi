@@ -1,157 +1,163 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="modal-title">
-      Solicitud de alta almac&eacute;n con folio&#58; 5506
+    <h5 class="modal-title" *ngIf="!programming?.folio">
+      SOLICITUD DE ALTA ALMAC&Eacute;N CON FOLIO&#58; {{ programmingId }}
     </h5>
+
+    <h5 class="modal-title" *ngIf="programming?.folio">
+      SOLICITUD DE ALTA ALMAC&Eacute;N CON FOLIO&#58; {{ programming?.folio }}
+    </h5>
+
+    <div class="row pt-2"></div>
   </div>
   <div body>
     <div class="row">
-      <div class="col-md-6">
+      <div class="d-flex justify-content-end">
+        <div class="p-2">
+          <button
+            *ngIf="infoTask?.State == null"
+            type="button"
+            (click)="confirm()"
+            class="btn btn-primary btn-sm active">
+            Aceptar
+          </button>
+
+          <button
+            *ngIf="infoTask?.State == 'FINALIZADA'"
+            type="button"
+            class="btn btn-primary disabled btn-sm active">
+            Aceptar
+          </button>
+        </div>
+
+        <div class="p-2">
+          <button
+            class="btn btn-primary btn-sm active"
+            (click)="close()"
+            type="button">
+            Regresar <i class="fas fa-arrow-circle-left"></i>
+          </button>
+        </div>
+      </div>
+      <div class="col-md-6 pt-5">
         <form class="form-horizontal" style="margin: 0 auto">
           <div class="form-group">
             <label class="col-lg-4 text-right"
-              >N&#46; Almac&eacute;n&#58;</label
+              >No&#46; Almac&eacute;n&#58;</label
             >
-            <span> Nuevo almacén </span>
+            <span> {{ store?.nbstoresiab }} </span>
           </div>
 
           <div class="form-group">
-            <label class="col-lg-4 text-right">Delegaci&oacute;n&#58;</label>
-            <span> Suroeste </span>
-          </div>
-
-          <div class="form-group">
-            <label class="col-lg-4 text-right">Regional&#58;</label>
-            <span> Regional </span>
+            <label class="col-lg-4 text-right"
+              >Delegaci&oacute;n Regional&#58;</label
+            >
+            <span> {{ regionalDelegation }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-4 text-right">Estado&#58;</label>
-            <span> Oaxaca </span>
+            <span> {{ stateOfRepublicName }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-4 text-right">Municipio&#58;</label>
-            <span> Calihuala </span>
+            <span> {{ municipalityName }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-4 text-right">Ciudad&#58;</label>
-            <span> Ciudad </span>
+            <span>{{ cityName }}</span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-4 text-right">Colonia&#58;</label>
-            <span> Calihuala </span>
+            <span> {{ localityName }} </span>
           </div>
 
           <div class="form-group">
-            <label class="col-lg-4 text-right">C&oacute;digo postal&#58;</label>
-            <span> 68450 </span>
+            <label class="col-lg-4 text-right">C&oacute;digo Postal&#58;</label>
+            <span> {{ store?.nbzipcode }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-4 text-right">Calle&#58;</label>
-            <span> Calle </span>
+            <span> {{ store?.nbstreet }} </span>
           </div>
 
           <div class="form-group">
-            <label class="col-lg-4 text-right"
-              >N&uacute;mero exterior&#58;</label
-            >
-            <span> Número exterior </span>
+            <label class="col-lg-4 text-right">No. Exterior&#58;</label>
+            <span> {{ store?.nbnoexternal }} </span>
           </div>
 
           <div class="form-group">
-            <label class="col-lg-4 text-right">Tipo&#58;</label>
-            <span> Tipo </span>
+            <label class="col-lg-4 text-right">Tipo Almac&eacute;n&#58;</label>
+            <span> {{ typeWarehouseName }} </span>
           </div>
 
           <div class="form-group">
-            <label class="col-lg-4 text-right">Almac&eacute;n&#58;</label>
-            <span> Almacén </span>
-          </div>
-
-          <div class="form-group">
-            <label class="col-lg-4 text-right">Usuario&#58;</label>
-            <span> Gustavo </span>
-          </div>
-
-          <div class="form-group">
-            <label class="col-lg-4 text-right">Responsable&#58;</label>
-            <span> Gustavo </span>
+            <label class="col-lg-4 text-right">Usuario Responsable&#58;</label>
+            <span> {{ store?.nbusername }} </span>
           </div>
         </form>
       </div>
 
-      <div class="col-md-5">
+      <div class="col-md-5 pt-5">
         <form class="form-horizontal" style="margin: 0 auto">
           <div class="form-group">
-            <label class="col-lg-6 text-right">Tipo tercero&#58;</label>
-            <span> INDEP/Transferente </span>
+            <label class="col-lg-6 text-right">Tipo Tercero&#58;</label>
+            <span> {{ store?.tpThird }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-6 text-right">Administrado por&#58;</label>
-            <span> Gustavo </span>
+            <span> {{ store?.nbadmonby }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-6 text-right"
-              >N&#46; gesti&oacute;n inmueble&#58;</label
+              >No&#46; Gesti&oacute;n Inmueble&#58;</label
             >
-            <span> 345345 </span>
+            <span> {{ store?.nbidstore }} </span>
           </div>
 
           <div class="form-group">
-            <label class="col-lg-6 text-right">Con localizador&#58;</label>
-            <span> Si </span>
+            <label class="col-lg-6 text-right">Localizador&#58;</label>
+            <span *ngIf="store?.nbwithlocator"> SI </span>
+            <span *ngIf="!store?.nbwithlocator"> NO </span>
           </div>
 
           <div class="form-group">
-            <label class="col-lg-6 text-right">N&#46; contrato&#58;</label>
-            <span> 45645645 </span>
+            <label class="col-lg-6 text-right">No&#46; Contrato&#58;</label>
+            <span> {{ store?.nbcontract }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-6 text-right">Almac&eacute;n SIAB&#58;</label>
-            <span> almacén </span>
+            <span> {{ store?.nbstoresiab }} </span>
           </div>
 
           <div class="form-group">
-            <label class="col-lg-6 text-right">page de operaciones&#58;</label>
-            <span> 10/10/2022 </span>
+            <label class="col-lg-6 text-right"
+              >Inicio de Operaciones&#58;</label
+            >
+            <span> {{ startDate }} </span>
           </div>
 
           <div class="form-group">
-            <label class="col-lg-6 text-right">Fin de operaciones&#58;</label>
-            <span> 10/11/2022 </span>
+            <label class="col-lg-6 text-right">Fin de Operaciones&#58;</label>
+            <span> {{ endDate }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-6 text-right">Latitud&#58;</label>
-            <span> 453453444 </span>
+            <span> {{ store?.nblatitude }} </span>
           </div>
           <div class="form-group">
             <label class="col-lg-6 text-right">Longitud&#58;</label>
-            <span> 456456246 </span>
+            <span> {{ store?.nblength }} </span>
           </div>
         </form>
-      </div>
-    </div>
-    <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <button
-          type="button"
-          (click)="confirm()"
-          class="btn btn-primary active">
-          Aceptar
-        </button>
-      </div>
-      <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
-        </button>
       </div>
     </div>
   </div>

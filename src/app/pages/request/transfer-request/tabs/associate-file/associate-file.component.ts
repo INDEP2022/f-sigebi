@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { catchError, of } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -15,6 +15,7 @@ import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
 import { RequestHelperService } from '../../../request-helper-services/request-helper.service';
 import { OpenDescriptionComponent } from './open-description/open-description.component';
 
@@ -25,7 +26,8 @@ import { OpenDescriptionComponent } from './open-description/open-description.co
 })
 export class AssociateFileComponent extends BasePage implements OnInit {
   associateFileForm: FormGroup = new FormGroup({});
-  parameter: ModelForm<IRequest>;
+  parameter: any;
+  request: any;
   users: any;
   units: any;
   files: any;
@@ -38,6 +40,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   ddcId: number = null;
   transferentName: string = '';
   regionalDelegacionName: string = '';
+  DscUnidad: string = '';
 
   constructor(
     private modalRef: BsModalRef,
@@ -59,6 +62,11 @@ export class AssociateFileComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    if (this.parameter.value != null || this.parameter.value != undefined) {
+      this.request = this.parameter.getRawValue() as IRequest;
+    } else {
+      this.request = this.parameter as IRequest;
+    }
     this.getUserSelect(new ListParams());
     this.formsChanges();
     this.getTransferent();
@@ -135,14 +143,14 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    let request = this.parameter.getRawValue() as IRequest;
+    let request = this.request;
     if (!request.regionalDelegationId) {
-      this.onLoadToast('error', '', 'No cuenta con una Delegación Regional');
+      this.onLoadToast('error', 'No cuenta con una Delegación Regional', '');
     } else if (!request.transferenceId) {
-      this.onLoadToast('error', '', 'No cuenta con una transferente');
+      this.onLoadToast('error', 'No cuenta con una transferente', '');
     }
     this.alertQuestion(
-      'warning',
+      'question',
       'Generar Carátula',
       '¿Está seguro de querer generar la carátula?'
     ).then(val => {
@@ -153,9 +161,8 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   }
 
   async generateCaratula() {
-    let request = this.parameter.getRawValue();
     this.loader.load = true;
-
+    let request = this.request;
     const expedient: any = await this.saveExpedientSami();
     if (expedient.id) {
       let resevateDate = '';
@@ -232,26 +239,43 @@ export class AssociateFileComponent extends BasePage implements OnInit {
             form,
             file
           );
-          if (contentResult) {
-            const reporteName = contentResult.dDocName;
-            console.log(reporteName);
 
-            const autoridad: any = this.authService.decodeToken();
-            const parameters = {
-              idExpedient: expedient.id,
-              expedientDate: this.setDate(
-                this.associateFileForm.controls['expedientDate'].value
-              ),
-              usrCreation: autoridad.username,
-              dateCreation: this.setDate(new Date()),
-              docName: reporteName,
-            };
+          if (contentResult) {
             this.loader.load = false;
-            this.openModal(OpenDescriptionComponent, parameters);
-            this.close();
-            this.onLoadToast('success', 'Carátula generada correctamente', '');
+            Swal.fire({
+              title: 'Carátula generada correctamente',
+              text: '',
+              icon: 'success',
+              showCancelButton: false,
+              confirmButtonColor: '#AD4766',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Aceptar',
+              allowOutsideClick: false,
+            }).then(result => {
+              if (result.isConfirmed) {
+                const reporteName = contentResult.dDocName;
+
+                const autoridad: any = this.authService.decodeToken();
+                const parameters = {
+                  idExpedient: expedient.id,
+                  expedientDate: this.setDate(
+                    this.associateFileForm.controls['expedientDate'].value
+                  ),
+                  usrCreation: autoridad.username,
+                  dateCreation: this.setDate(new Date()),
+                  docName: reporteName,
+                };
+
+                this.openModal(OpenDescriptionComponent, parameters);
+                this.close();
+              }
+            });
+          } else {
+            this.loader.load = false;
           }
         }
+      } else {
+        this.onLoadToast('error', 'Error', 'No se pudo carga la caratula');
       }
     }
   }
@@ -339,6 +363,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   saveExpedientSami() {
     return new Promise((resolve, reject) => {
       let expedient = this.associateFileForm.getRawValue();
+      expedient.adminUnit = this.DscUnidad;
       this.expedientSamiService.create(expedient).subscribe({
         next: resp => {
           resolve(resp);
@@ -423,12 +448,27 @@ export class AssociateFileComponent extends BasePage implements OnInit {
 
   getUserSelect(params: ListParams) {
     params['sortBy'] = 'Nombre:ASC';
-    this.externalExpedientService.getUsers(params).subscribe({
-      next: (resp: any) => {
-        const data = resp.ObtenUsuarioResult.Usuario;
-        this.users = data; //new DefaultSelect(data, data.length);
-      },
-    });
+    this.externalExpedientService
+      .getUsers(params)
+      .pipe(
+        catchError(e => {
+          if (e.status == 400) {
+            return of({ ObtenUsuarioResult: {} });
+          }
+          this.onLoadToast(
+            'error',
+            'Ocurrió un error al cargar los datos',
+            'Inténtelo más tarde'
+          );
+          throw e;
+        })
+      )
+      .subscribe({
+        next: (resp: any) => {
+          const data = resp.ObtenUsuarioResult?.Usuario;
+          this.users = data; //new DefaultSelect(data, data.length);
+        },
+      });
   }
 
   getUnitSelect(params: ListParams, userId?: number) {
@@ -498,7 +538,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   }
 
   getTransferent() {
-    var id = this.parameter.value.transferenceId;
+    var id = this.request.transferenceId;
     this.transferentService.getById(id).subscribe({
       next: resp => {
         this.transferentName = resp.nameTransferent;
@@ -507,7 +547,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   }
 
   getRegionalDelegation() {
-    var id = this.parameter.value.regionalDelegationId;
+    var id = this.request.regionalDelegationId;
     this.regioinalDelegation.getById(id).subscribe({
       next: resp => {
         this.regionalDelegacionName = resp.description;
@@ -529,7 +569,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
           //if(next) this.getExample();
         },
       },
-      class: 'modal-sm modal-dialog-centered',
+      class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(component, config);
@@ -537,5 +577,26 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     /*this.bsModalRef.content.event.subscribe((res: any) => {
       this.matchLevelFraction(res);
     });*/
+  }
+
+  getUnit(event: any) {
+    this.DscUnidad = event.DscUnidad;
+  }
+
+  confirmationModal() {
+    Swal.fire({
+      title: 'Carátula generada correctamente',
+      text: '',
+      icon: 'success',
+      showCancelButton: false,
+      confirmButtonColor: '#AD4766',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
+    }).then(result => {
+      if (result.isConfirmed) {
+        Swal.fire('Eliminado', 'El archivo fue elminado', 'success');
+      }
+    });
   }
 }

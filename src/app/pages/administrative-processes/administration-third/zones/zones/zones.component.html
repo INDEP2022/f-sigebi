@@ -9,7 +9,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data1">
+            [source]="data1"
+            (rowSelect)="selectRow($event)">
           </ng2-smart-table>
         </div>
       </div>

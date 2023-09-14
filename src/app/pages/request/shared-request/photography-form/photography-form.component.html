@@ -3,149 +3,149 @@
     <h5 class="modal-title">Fotograf&iacute;as</h5>
   </div>
   <div body style="margin-top: -30px">
-    <h5 class="title">
-      <p>
-        <a class="text-color" (click)="showForm = true" *ngIf="!showForm">
-          <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
-          de imag&eacute;nes</a
-        >
-      </p>
+    <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+      <form-loader *ngIf="formLoading"></form-loader>
+    </div>
 
-      <p>
-        <a class="text-color" (click)="showForm = false" *ngIf="showForm">
-          <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda de
-          imag&eacute;nes</a
-        >
-      </p>
-    </h5>
-    <div class="row pt-5" *ngIf="showForm">
-      <form [formGroup]="photographyForm" class="form-material">
-        <div class="row">
-          <div class="col-md-6">
-            <form-field
-              [control]="photographyForm.get('managementNumber')"
-              label="N&uacute;mero de gesti&oacute;n">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="managementNumber"
-                readonly />
-            </form-field>
-          </div>
+    <div *ngIf="!formLoading">
+      <h5 class="title">
+        <p>
+          <a class="text-color" (click)="showForm = true" *ngIf="!showForm">
+            <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
+            de Imágenes</a
+          >
+        </p>
 
-          <div class="col-md-6">
-            <form-field
-              [control]="photographyForm.get('noProgrammation')"
-              label="N&uacute;mero de programaci&oacute;n">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="noProgrammation" />
-            </form-field>
-          </div>
+        <p>
+          <a class="text-color" (click)="showForm = false" *ngIf="showForm">
+            <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
+            de Imágenes</a
+          >
+        </p>
+      </h5>
+      <div class="row pt-5" *ngIf="showForm">
+        <div class="justify-content-end btn-toolbar">
+          <button class="btn btn-primary btn-sm active">
+            Buscar <i class="fa fa-search"></i>
+          </button>
+          <button class="btn btn-danger btn-sm active">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
         </div>
+        <form [formGroup]="photographyForm" class="form-material pt-3">
+          <div class="row">
+            <div class="col-md-6">
+              <form-field
+                [control]="photographyForm.get('managementNumber')"
+                label="N&uacute;mero de Gesti&oacute;n">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="managementNumber"
+                  readonly />
+              </form-field>
+            </div>
 
-        <div class="row pt-4">
-          <div class="col-md-6">
-            <form-field
-              [control]="photographyForm.get('noImage')"
-              label="N&uacute;mero de imagen">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="noPhotography" />
-            </form-field>
+            <div class="col-md-6">
+              <form-field
+                [control]="photographyForm.get('noProgrammation')"
+                label="N&uacute;mero de Programaci&oacute;n">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="noProgrammation" />
+              </form-field>
+            </div>
           </div>
 
-          <div class="col-md-6">
-            <form-field [control]="photographyForm.get('author')" label="Autor">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="author" />
-            </form-field>
-          </div>
-        </div>
+          <div class="row pt-4">
+            <div class="col-md-6">
+              <form-field
+                [control]="photographyForm.get('noImage')"
+                label="N&uacute;mero de Imagen">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="noPhotography" />
+              </form-field>
+            </div>
 
-        <div class="row pt-4">
-          <div class="col-md-6">
-            <form-field
-              [control]="photographyForm.get('titleImage')"
-              label="T&iacute;tulo imagen">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="noPhotography" />
-            </form-field>
+            <div class="col-md-6">
+              <form-field
+                [control]="photographyForm.get('author')"
+                label="Autor">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="author" />
+              </form-field>
+            </div>
           </div>
 
-          <div class="col-md-6">
-            <form-field [control]="photographyForm.get('text')" label="Texto">
-              <input type="text" class="form-control" formControlName="text" />
-            </form-field>
-          </div>
-        </div>
+          <div class="row pt-4">
+            <div class="col-md-6">
+              <form-field
+                [control]="photographyForm.get('titleImage')"
+                label="T&iacute;tulo Imagen">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="noPhotography" />
+              </form-field>
+            </div>
 
-        <div class="row pt-4">
-          <div class="col-md-6">
-            <form-field
-              [control]="photographyForm.get('programmingFolio')"
-              label="Folio de programaci&oacute;n">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="programmingFolio" />
-            </form-field>
+            <div class="col-md-6">
+              <form-field [control]="photographyForm.get('text')" label="Texto">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="text" />
+              </form-field>
+            </div>
           </div>
-        </div>
-      </form>
-      <div class="justify-content-end btn-toolbar">
-        <button class="btn btn-primary btn-sm active">
-          <i class="fa fa-search"></i> Buscar
-        </button>
-        <button class="btn btn-danger btn-sm active">
-          <i class="bx bx-reset"></i> Limpiar
-        </button>
+
+          <div class="row pt-4">
+            <div class="col-md-6">
+              <form-field
+                [control]="photographyForm.get('programmingFolio')"
+                label="Folio de Programaci&oacute;n">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="programmingFolio" />
+              </form-field>
+            </div>
+          </div>
+        </form>
       </div>
-    </div>
 
-    <div class="justify-content-right btn-toolbar pt-5">
-      <app-columns-select [(settings)]="settings"></app-columns-select>
-      <button
-        (click)="file.click()"
-        type="button"
-        class="btn btn-primary btn-sm active">
-        <i class="fa fa-file-image"></i> Adjuntar imagen
-      </button>
+      <div class="justify-content-end btn-toolbar pt-5">
+        <button
+          (click)="loadImages()"
+          type="button"
+          class="btn btn-primary btn-sm active mr-2">
+          Adjuntar imagen <i class="fa fa-file-image"></i>
+        </button>
 
-      <input
-        #file
-        style="display: none"
-        type="file"
-        id="photo"
-        class="inputfile inputfile-3" />
-
-      <button type="button" class="btn btn-info btn-sm active">
-        <i class="fa fa-search"></i> Buscar
-      </button>
-      &nbsp;
-    </div>
-    <div [class]="loading ? 'table-loading' : ''">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings"
-        [source]="photographs"
-        (edit)="viewImage()">
-      </ng2-smart-table>
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+      <div class="row pt-3">
+        <div [class]="loadingTable ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="photographs"
+            (edit)="viewImage($event.data)">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
     </div>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <confirm-button
-          [loading]="loading"
-          (confirm)="confirm()"></confirm-button>
-      </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
           Cancelar

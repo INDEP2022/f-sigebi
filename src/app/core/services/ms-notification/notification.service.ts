@@ -7,11 +7,15 @@ import { Repository } from 'src/app/common/repository/repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from './../../interfaces/list-response.interface';
 
+import { HttpParams } from '@angular/common/http';
+import { INotificationDestruction } from '../../models/ms-notification/notification-destruction';
 import {
   INotification,
   INotificationInquiry,
   INotificationTransferentIndiciadoCityGetData,
+  INotificationUpdate,
   INotificationXProperty,
+  ITransfActaEntrec,
   ItVolanteNotificacionesByNoExpedient,
 } from '../../models/ms-notification/notification.model';
 
@@ -23,10 +27,21 @@ export class NotificationService extends HttpService {
   private readonly endpoint: string = 'notification';
   constructor(
     private notificationRepository: NotificationRepository<INotification>,
+    private notificationUpdateRepository: NotificationRepository<INotificationUpdate>,
     private notificationRepository2: Repository<INotification>
   ) {
     super();
     this.microservice = this.route.Notification;
+  }
+
+  //Trae los objetos de ciudad,delegación,departamento,instituciòn,subdelegacion y transferente
+  getAllNotifications(
+    params?: ListParams
+  ): Observable<IListResponse<INotification>> {
+    return this.notificationRepository.getAll(
+      this.route.NotificationAll,
+      params
+    );
   }
 
   getAll(params?: ListParams): Observable<IListResponse<INotification>> {
@@ -37,6 +52,27 @@ export class NotificationService extends HttpService {
     return this.get<IListResponse<INotification>>(
       `${this.route.Notification}?${params}`
     );
+  }
+  getAllListParams(
+    params: ListParams
+  ): Observable<IListResponse<INotification>> {
+    return this.get<IListResponse<INotification>>(
+      this.route.Notification,
+      params
+    );
+  }
+
+  getAllListParamsColumns(
+    params: ListParams
+  ): Observable<IListResponse<INotification>> {
+    return this.get<IListResponse<INotification>>(
+      this.route.Notification,
+      params
+    );
+  }
+
+  getAllFilterExpedient(params: any) {
+    return this.get<IListResponse<any>>(`${this.route.Notification}`, params);
   }
 
   getAllFilterTmpNotification(
@@ -58,10 +94,19 @@ export class NotificationService extends HttpService {
     return this.put(`${this.route.Notification}/${wheelNumber}`, notification);
   }
 
+  // ! CORRECIÓN NUMERARIO 20/07/23 GENARO
+  // getLastWheelNumber(): Observable<{ nextval: number }> {
+  //   return this.get<{ max: string }>(this.route.LastFlyerId).pipe(
+  //     map(resp => {
+  //       return { nextval: Number(resp.max) };
+  //     })
+  //   );
+  // }
+
   getLastWheelNumber(): Observable<{ nextval: number }> {
-    return this.get<{ max: string }>(this.route.LastFlyerId).pipe(
+    return this.get<{ nextval: string }>(this.route.LastWheelNumber).pipe(
       map(resp => {
-        return { nextval: Number(resp.max) };
+        return { nextval: Number(resp.nextval) };
       })
     );
   }
@@ -216,5 +261,92 @@ export class NotificationService extends HttpService {
       this.endpoint,
       params
     );
+  }
+
+  updateWithBody(
+    wheelNumber: number,
+    body: any
+  ): Observable<{ statusCode: number; message: string[] }> {
+    return this.put(`${this.route.Notification}/${wheelNumber}`, body);
+  }
+
+  getTransferenteentrec(model: ITransfActaEntrec) {
+    const route = 'application/get-fact-ref-acta-entrec';
+    return this.post(route, model);
+  }
+
+  getTransferenteCancel(model: ITransfActaEntrec) {
+    const route = 'application/get-fact-ref-cancelar';
+    return this.post(route, model);
+  }
+
+  getVariableType(numberExp: number) {
+    const route = `application/getVariablesVolType/${numberExp}`;
+    return this.get(route);
+  }
+
+  getMaxFlyer(fileNumber: number) {
+    return this.get(`notification/maxCFlyer/${fileNumber}`);
+  }
+  getCFlyer(fileNumber: number) {
+    return this.get(`notification/cFlyer/${fileNumber}`);
+  }
+
+  applyAllGoddMaintenanceCoverage(body: any) {
+    const route = 'application/updateUnitProgramAll';
+    return this.post(route, body);
+  }
+
+  applySomeGoddMaintenanceCoverage(body: any) {
+    const route = 'application/updateUnitProgram';
+    return this.post(route, body);
+  }
+
+  validateGoodStatus(body: any) {
+    return this.post(this.route.ValidateGoodStatus, body);
+  }
+
+  getDistinct(params: ListParams, body: Object) {
+    /* const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    return this.httpClient.post(
+      `${this.url}${this.microservice}/${this.prefix}notification/get-distinct`,
+      body,
+      { params, headers }
+    ); */
+    return this.post<IListResponse<any>>(
+      'notification/get-distinct',
+      body,
+      params
+    );
+  }
+
+  getByFileNumber(fileNumber: string | number) {
+    const route = this.route.byFileNumber;
+    return this.get(`notification/maxCFlyer/${fileNumber}`);
+  }
+
+  getNotificationDestruction(
+    _params: ListParams
+  ): Observable<IListResponse<INotificationDestruction>> {
+    const params = this.makeParams(_params);
+    const route = this.route.NotificationDestruction;
+    return this.get<IListResponse<INotificationDestruction>>(
+      `${route}?${params}`
+    );
+  }
+
+  createNotificationDestruction(
+    notificationDestruction: INotificationDestruction
+  ) {
+    const route = this.route.NotificationDestruction;
+    return this.post(route, notificationDestruction);
+  }
+
+  private makeParams(params: ListParams): HttpParams {
+    let httpParams: HttpParams = new HttpParams();
+    Object.keys(params).forEach(key => {
+      httpParams = httpParams.append(key, (params as any)[key]);
+    });
+    return httpParams;
   }
 }

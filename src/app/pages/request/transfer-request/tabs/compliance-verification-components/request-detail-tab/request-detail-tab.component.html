@@ -47,102 +47,102 @@
             </div>
           </div>
           <div class="col-md-4">
-            <label class="label">{{ prioridadDateLabel }}</label>
-            {{ infoRequest?.priorityDate | date : 'dd/MM/yyyy' }}
+            <label class="label">{{ prioridadDateLabel }} : </label>
+            {{ infoRequest?.priorityDate | date: 'dd/MM/yyyy' }}
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ fechaRecepcionLabel }}</label>
-            {{ infoRequest?.applicationDate | date : 'dd/MM/yyyy' }}
+            <label class="label">{{ fechaRecepcionLabel }} : </label>
+            {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ fechaOficioLabel }}</label>
-            {{ infoRequest?.paperDate | date : 'dd/MM/yyyy' }}
+            <label class="label">{{ fechaOficioLabel }} : </label>
+            {{ infoRequest?.paperDate | date: 'dd/MM/yyyy' }}
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ tipoExpedienteLabel }}</label>
+            <label class="label">{{ tipoExpedienteLabel }} : </label>
             {{ infoRequest?.typeRecord }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ procedenciaLabel }}</label>
+            <label class="label">{{ procedenciaLabel }} : </label>
             {{ ofiginName || '' }}
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ nombreLabel }}</label>
+            <label class="label">{{ nombreLabel }} : </label>
             {{ infoRequest?.nameOfOwner }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ misterioPublicLabel }}</label>
+            <label class="label">{{ misterioPublicLabel }} : </label>
             {{ infoRequest?.publicMinistry }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ cargoLabel }}</label>
+            <label class="label">{{ cargoLabel }} : </label>
             {{ infoRequest?.holderCharge }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ jusgadoLabel }}</label>
+            <label class="label">{{ jusgadoLabel }} : </label>
             {{ infoRequest?.court }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ telefonoLabel }}</label>
+            <label class="label">{{ telefonoLabel }} : </label>
             {{ infoRequest?.phoneOfOwner }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ delitoLabel }}</label>
+            <label class="label">{{ delitoLabel }} : </label>
             {{ infoRequest?.crime }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ correoLable }}</label>
+            <label class="label">{{ correoLable }} : </label>
             {{ infoRequest?.emailOfOwner }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ viaRecepcionLabel }}</label
+            <label class="label">{{ viaRecepcionLabel }} : </label
             >{{ infoRequest?.receiptRoute }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ contribuyenteLabel }}</label>
+            <label class="label">{{ contribuyenteLabel }} : </label>
             {{ infoRequest?.indicatedTaxpayer }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ gestionDestino }}</label>
+            <label class="label">{{ gestionDestino }} : </label>
             {{ infoRequest?.destinationManagement }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ extincionDomicile }}</label>
-            {{ infoRequest?.transferenceFile }}
+            <label class="label">{{ extincionDomicile }} : </label>
+            {{ infoRequest?.domainExtinction }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ asuntoLabel }}</label>
+            <label class="label">{{ asuntoLabel }} : </label>
             {{ affairName }}
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">Notas Entidad Transferente&#58;</label>
+            <label class="label">Notas Entidad Transferente&#58; </label>
             {{ infoRequest?.transferEntNotes }}
           </div>
           <div class="col-md-8">
-            <label class="label">{{ observaciones }}</label>
+            <label class="label">{{ observaciones }} : </label>
             {{ infoRequest?.observations }}
           </div>
         </div>
@@ -155,7 +155,7 @@
       <form [formGroup]="requestForm" class="form-material">
         <div class="row pt-4">
           <div class="col-md-1">
-            <label class="label">{{ prioridadLabel }}</label>
+            <label class="label">{{ prioridadLabel }} : </label>
           </div>
           <div class="col-md-3" style="padding-left: 30px">
             <div id="checkbox">
@@ -168,98 +168,103 @@
             </div>
           </div>
           <div class="col-md-4">
-            <label class="label">{{ fechaRecepcionLabel }}</label>
+            <label class="label">Fecha Solicitud : </label>
+            {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
+          </div>
+          <!-- <div class="col-md-4">
+            <label class="label">Fecha Prioridad</label>
             {{ infoRequest?.priorityDate | date : 'dd/MM/yyyy' }}
+          </div> -->
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <label class="label">Fecha Recepción : </label>
+            {{ infoRequest?.receptionDate | date: 'dd/MM/yyyy' }}
+          </div>
+
+          <div class="col-md-4">
+            <label class="label">{{ fechaOficioLabel }} : </label>
+            {{ infoRequest?.paperDate | date: 'dd/MM/yyyy' }}
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ fechaRecepcionLabel }}</label>
-            {{ infoRequest?.applicationDate | date : 'dd/MM/yyyy' }}
-          </div>
-          <div class="col-md-4">
-            <label class="label">{{ fechaOficioLabel }}</label>
-            {{ infoRequest?.paperDate | date : 'dd/MM/yyyy' }}
-          </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-4">
-            <label class="label">{{ tipoExpedienteLabel }}</label>
+            <label class="label">{{ tipoExpedienteLabel }} : </label>
             {{ infoRequest?.typeRecord }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ procedenciaLabel }}</label>
+            <label class="label">{{ procedenciaLabel }} : </label>
             {{ ofiginName || '' }}
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ nombreLabel }}</label>
+            <label class="label">{{ nombreLabel }} : </label>
             {{ infoRequest?.nameOfOwner }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ jusgadoLabel }}</label>
+            <label class="label">{{ jusgadoLabel }} : </label>
             {{ infoRequest?.court }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ cargoLabel }}</label>
+            <label class="label">{{ cargoLabel }} : </label>
             {{ infoRequest?.holderCharge }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ delitoLabel }}</label>
+            <label class="label">{{ delitoLabel }} : </label>
             {{ infoRequest?.crime }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ telefonoLabel }}</label>
+            <label class="label">{{ telefonoLabel }} : </label>
             {{ infoRequest?.phoneOfOwner }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ viaRecepcionLabel }}</label
+            <label class="label">{{ viaRecepcionLabel }} : </label
             >{{ infoRequest?.receiptRoute }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ correoLable }}</label>
+            <label class="label">{{ correoLable }} : </label>
             {{ infoRequest?.emailOfOwner }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ gestionDestino }}</label>
+            <label class="label">{{ gestionDestino }} : </label>
             {{ infoRequest?.destinationManagement }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ contribuyenteLabel }}</label>
+            <label class="label">{{ contribuyenteLabel }} : </label>
             {{ infoRequest?.indicatedTaxpayer }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ asuntoLabel }}</label>
+            <label class="label">{{ asuntoLabel }} : </label>
             {{ affairName }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ expedienteTransLabel }}</label>
+            <label class="label">{{ expedienteTransLabel }} : </label>
             {{ infoRequest?.transferenceFile }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ observaciones }}</label>
+            <label class="label">{{ observaciones }} : </label>
             {{ infoRequest?.observations }}
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">Notas Entidad Transferente&#58;</label>
+            <label class="label">Notas Entidad Transferente&#58; </label>
             {{ infoRequest?.transferEntNotes }}
           </div>
         </div>
@@ -276,7 +281,7 @@
       <form [formGroup]="requestForm" class="form-material">
         <div class="row pt-4">
           <div class="col-md-1">
-            <label class="label">{{ prioridadLabel }}</label>
+            <label class="label">{{ prioridadLabel }} : </label>
           </div>
           <div class="col-md-3" style="padding-left: 30px">
             <div id="checkbox">
@@ -289,132 +294,132 @@
             </div>
           </div>
           <div class="col-md-4">
-            <label class="label">{{ prioridadDateLabel }}</label>
-            {{ infoRequest?.priorityDate | date : 'dd/MM/yyyy' }}
+            <label class="label">{{ prioridadDateLabel }} : </label>
+            {{ infoRequest?.priorityDate | date: 'dd/MM/yyyy' }}
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ fechaRecepcionLabel }}</label>
-            {{ infoRequest?.applicationDate | date : 'dd/MM/yyyy' }}
+            <label class="label">{{ fechaRecepcionLabel }} : </label>
+            {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ fechaOficioLabel }}</label>
-            {{ infoRequest?.paperDate | date : 'dd/MM/yyyy' }}
+            <label class="label">{{ fechaOficioLabel }} : </label>
+            {{ infoRequest?.paperDate | date: 'dd/MM/yyyy' }}
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ tipoExpedienteLabel }}</label>
+            <label class="label">{{ tipoExpedienteLabel }} : </label>
             {{ infoRequest?.typeRecord }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ procedenciaLabel }}</label>
+            <label class="label">{{ procedenciaLabel }} : </label>
             {{ ofiginName || '' }}
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ nombreLabel }}</label>
+            <label class="label">{{ nombreLabel }} : </label>
             {{ infoRequest?.nameOfOwner }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ jusgadoLabel }}</label>
+            <label class="label">{{ jusgadoLabel }} : </label>
             {{ infoRequest?.court }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ cargoLabel }}</label>
+            <label class="label">{{ cargoLabel }} : </label>
             {{ infoRequest?.holderCharge }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ delitoLabel }}</label>
+            <label class="label">{{ delitoLabel }} : </label>
             {{ infoRequest?.crime }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ telefonoLabel }}</label>
+            <label class="label">{{ telefonoLabel }} : </label>
             {{ infoRequest?.phoneOfOwner }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ viaRecepcionLabel }}</label
+            <label class="label">{{ viaRecepcionLabel }} : </label
             >{{ infoRequest?.receiptRoute }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ correoLable }}</label>
+            <label class="label">{{ correoLable }} : </label>
             {{ infoRequest?.emailOfOwner }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ gestionDestino }}</label>
+            <label class="label">{{ gestionDestino }} : </label>
             {{ infoRequest?.destinationManagement }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ contribuyenteLabel }}</label>
+            <label class="label">{{ contribuyenteLabel }} : </label>
             {{ infoRequest?.indicatedTaxpayer }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ asuntoLabel }}</label>
+            <label class="label">{{ asuntoLabel }} : </label>
             {{ affairName }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ notasLabel }}</label>
+            <label class="label">{{ notasLabel }} : </label>
             {{ infoRequest?.transferEntNotes }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ misterioPublicLabel }}</label>
+            <label class="label">{{ misterioPublicLabel }} : </label>
             {{ infoRequest?.publicMinistry }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ tocaPenal }}</label>
+            <label class="label">{{ tocaPenal }} : </label>
             {{ infoRequest?.tocaPenal }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ noAmparoLabel }}</label>
+            <label class="label">{{ noAmparoLabel }} : </label>
             {{ infoRequest?.protectNumber }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ actaCircunstacial }}</label>
+            <label class="label">{{ actaCircunstacial }} : </label>
             {{ infoRequest?.circumstantialRecord }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ averiguacionPreviaLabel }}</label>
+            <label class="label">{{ averiguacionPreviaLabel }} : </label>
             {{ infoRequest?.previousInquiry }}
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <label class="label">{{ causaPenal }}</label>
+            <label class="label">{{ causaPenal }} : </label>
             {{ infoRequest?.lawsuit }}
           </div>
           <div class="col-md-4">
-            <label class="label">{{ observaciones }}</label>
+            <label class="label">{{ observaciones }} : </label>
             {{ infoRequest?.observations }}
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
             <label class="label">{{ extincionDomicile }}</label>
-            {{ infoRequest?.transferenceFile }}
+            {{ infoRequest?.domainExtinction }}
           </div>
         </div>
       </form>

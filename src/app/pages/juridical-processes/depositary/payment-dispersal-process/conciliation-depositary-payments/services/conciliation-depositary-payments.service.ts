@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPaymendtDepParamsDep } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { MsDepositaryPaymentService } from 'src/app/core/services/ms-depositarypayment/ms-depositarypayment.service';
@@ -16,10 +17,8 @@ export class ConciliationDepositaryPaymentsService {
     private msGoodprocessService: GoodprocessService
   ) {}
 
-  getGoodAppointmentDepositaryByNoGood(params: string) {
-    return this.msDepositaryService.getGoodAppointmentDepositaryByNoGood(
-      params
-    );
+  getGoodAppointmentDepositaryByNoGood(params: ListParams) {
+    return this.msDepositaryService.getAppointments(params);
   }
   getGoodDataByFilter(body: string) {
     return this.msGoodService.getAllFilter(body);
@@ -46,5 +45,17 @@ export class ConciliationDepositaryPaymentsService {
   }
   getValidBlackListProcess(params: number) {
     return this.msDepositaryService.getValidBlackListAppointment(params);
+  }
+  deletePaymentRefRemove(params: any) {
+    return this.msDepositaryService.deletePaymentRefRemove(params);
+  }
+  getgetAplicationcargaCliente1(no_appointment: number) {
+    return this.msDepositaryService.getAplicationcargaCliente1(no_appointment);
+  }
+  getgetAplicationcargaCliente2(no_appointment: number) {
+    return this.msDepositaryService.getAplicationcargaCliente2(no_appointment);
+  }
+  insertDispersionDB(params: any) {
+    return this.msDepositaryService.insertDispersionDB(params);
   }
 }

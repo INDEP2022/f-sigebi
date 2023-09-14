@@ -3,85 +3,69 @@
     <h5 class="title">Reporte Acumulado de Bienes Mensual</h5>
   </div>
   <div body>
-    <form [formGroup]="accumulatedMonthlyAssetsForm" class="form-material">
-      <div class="row margin-input">
+    <form [formGroup]="form" class="form-material">
+      <div class="row mt-4">
         <div class="col-md-4">
-          <form-field
-            [control]="accumulatedMonthlyAssetsForm.get('delegation')"
-            label="Delegación">
+          <form-field [control]="form.get('year')" label="Año">
             <input
               type="text"
-              class="form-control"
-              formControlName="delegation" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="accumulatedMonthlyAssetsForm.get('subDelegation')"
-            label="Sub Delegación">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="subDelegation" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row margin-input">
-        <div class="col-md-4">
-          <form-field
-            [control]="accumulatedMonthlyAssetsForm.get('year')"
-            label="Año">
-            <input
-              type="number"
               class="form-control"
               formControlName="year"
-              min="1"
-              pattern="^[0-9]+" />
+              [bsConfig]="bsConfig"
+              #dp="bsDatepicker"
+              bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="accumulatedMonthlyAssetsForm.get('ofMonth')"
-            label="Del mes de:">
-            <select class="form-control" formControlName="ofMonth">
-              <option [value]="null">Seleccione un mes</option>
-              <option value="Enero">Enero</option>
-              <option value="Febrero">Febrero</option>
-              <option value="Marzo">Marzo</option>
-              <option value="Abril">Abril</option>
-              <option value="Mayo">Mayo</option>
-              <option value="Junio">Junio</option>
-              <option value="Julio">Julio</option>
-              <option value="Agosto">Agosto</option>
-              <option value="Septiembre">Septiembre</option>
-              <option value="Octubre">Octubre</option>
-              <option value="Noviembre">Noviembre</option>
-              <option value="Diciembre">Diciembre</option>
-            </select>
+          <form-field [control]="form.get('ofMonth')" label="Del mes:">
+            <ng-select
+              addTagText="Agregar Elemento"
+              formControlName="ofMonth"
+              class="form-control scroll-line"
+              bindValue="value"
+              bindLabel="label"
+              (blur)="validateMonthTwo()"
+              [items]="months">
+            </ng-select>
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="accumulatedMonthlyAssetsForm.get('toMonth')"
-            label="Al mes de:">
-            <select class="form-control" formControlName="toMonth">
-              <option [value]="null">Seleccione un mes</option>
-              <option value="Enero">Enero</option>
-              <option value="Febrero">Febrero</option>
-              <option value="Marzo">Marzo</option>
-              <option value="Abril">Abril</option>
-              <option value="Mayo">Mayo</option>
-              <option value="Junio">Junio</option>
-              <option value="Julio">Julio</option>
-              <option value="Agosto">Agosto</option>
-              <option value="Septiembre">Septiembre</option>
-              <option value="Octubre">Octubre</option>
-              <option value="Noviembre">Noviembre</option>
-              <option value="Diciembre">Diciembre</option>
-            </select>
+          <form-field [control]="form.get('toMonth')" label="Al mes:">
+            <ng-select
+              addTagText="Agregar Elemento"
+              formControlName="toMonth"
+              class="form-control scroll-line"
+              bindValue="value"
+              bindLabel="label"
+              (blur)="validateMonth()"
+              [items]="months">
+            </ng-select>
           </form-field>
         </div>
       </div>
+      <app-delegation-shared [form]="form"></app-delegation-shared>
     </form>
+
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button
+            type="button"
+            [disabled]="form.invalid"
+            class="btn btn-primary active btn-sm"
+            (click)="generar()">
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm"
+            (click)="cleanForm()">
+            Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </app-card>

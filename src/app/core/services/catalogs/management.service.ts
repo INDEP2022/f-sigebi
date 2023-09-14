@@ -11,6 +11,7 @@ import { IManagement } from '../../models/catalogs/management.model';
 })
 export class ManagementService implements ICrudMethods<IManagement> {
   private readonly route: string = ENDPOINT_LINKS.Management;
+  private readonly route1: string = ENDPOINT_LINKS.ManagementAll;
   constructor(private managementRepository: Repository<IManagement>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IManagement>> {
@@ -26,10 +27,10 @@ export class ManagementService implements ICrudMethods<IManagement> {
   }
 
   update(id: string | number, model: IManagement): Observable<Object> {
-    return this.managementRepository.update(this.route, id, model);
+    return this.managementRepository.updateManegement(this.route, id, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.managementRepository.remove(this.route, id);
+    return this.managementRepository.remove(`${this.route}/id`, id);
   }
 }

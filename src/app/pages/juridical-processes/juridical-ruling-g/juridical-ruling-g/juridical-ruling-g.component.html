@@ -5,44 +5,113 @@
   </div>
 
   <div body>
-    <form [formGroup]="expedientesForm" class="container-fluid form-material">
-      <div class="row">
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-          <h6>Expedientes</h6>
+    <div>
+      <!-- <div class="row justify-content-end">
+        <div class="">
+          <button class="btn btn-primary active btn-sm m-2" style="float: right" (click)="goBack()">
+            <i class="fas fa-arrow-left"></i>
+            Regresar
+          </button>
         </div>
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-          <div class="row">
-            <div class="col-sm-12 col-12 col-md-2 p-2">
+      </div> -->
+      <div class="row">
+        <!-- <div class="d-inline mx-2"> -->
+        <div class="col-6 btn-group">
+          <button
+            class="btn btn-primary active btn-sm m-2"
+            style="float: left"
+            (click)="goBack()">
+            Regresar
+            <i class="fas fa-arrow-circle-left"></i>
+          </button>
+        </div>
+        <div class="col-6">
+          <div class="d-inline mx-2">
+            <button
+              [disabled]="!dictNumber || !disabledSend"
+              style="float: right"
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="saveDataForm()">
+              Guardar
+              <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+            <button
+              style="float: right"
+              type="button"
+              [disabled]="!disabledListDictums"
+              (click)="listDictums()"
+              tooltip="Dictámenes Disponibles"
+              containerClass="tooltip-style"
+              class="btn btn-primary btn-sm active mr-3">
+              <i class="bx bx-list-plus bx-sm float-icon"></i>
+            </button>
+            <button
+              style="float: right"
+              type="button"
+              (click)="newDictums()"
+              tooltip="Agregar Dictamen"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2">
+              <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+        <!-- </div> -->
+      </div>
+      <div class="row">
+        <!-- INICIA FORM #1 -->
+        <form
+          [formGroup]="expedientesForm"
+          class="container-fluid form-material col-md-5 p-4">
+          <div class="row p-4">
+            <!-- No. Expediente -->
+            <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
+              <form-field
+                [control]="expedientesForm.get('noDictaminacion')"
+                label="No. Dictaminación">
+                <input class="form-control" formControlName="noDictaminacion" />
+              </form-field>
+            </div> -->
+
+            <div class="col-12 p-2">
+              <form-field [control]="expedientesForm.get('tipoDictaminacion')">
+                <!-- <input
+                  class="form-control"
+                  #cveOficio
+                  formControlName="tipoDictaminacion"
+                  readonly
+                  [disabled]="true" /> -->
+                <ngx-select
+                  [readonly]="disabledD"
+                  [searchOnInit]="true"
+                  [data]="typesDict"
+                  [searchable]="false"
+                  [form]="expedientesForm"
+                  label="Tipo Dictaminación"
+                  bindLabel="typeDict"
+                  value="id"
+                  control="tipoDictaminacion"
+                  (change)="onTypeDictChange($event)"></ngx-select>
+              </form-field>
+            </div>
+
+            <div class="col-12 p-2">
               <form-field
                 [control]="expedientesForm.get('noExpediente')"
-                label="No Expediente">
+                label="No. Expediente">
                 <input
+                  readonly
+                  type="text"
                   class="form-control"
-                  (blur)="onLoadGoodList()"
+                  (keypress)="onKeyPress($event)"
                   formControlName="noExpediente" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-4 p-2">
+
+            <div class="col-sm-12 col-12 col-md-12 p-2">
               <form-field
-                [control]="expedientesForm.get('tipoDictaminacion')"
-                label="Tipo de dictaminaci&oacute;n">
-                <select
-                  class="form-control"
-                  formControlName="tipoDictaminacion">
-                  <option [value]="null" disabled>Seleccione un valor</option>
-                  <option [value]="null">Destrucción</option>
-                  <option [value]="null">Donación</option>
-                  <option [value]="null">Enajenación</option>
-                  <option [value]="null">Transferente</option>
-                  <option [value]="null">Procedencia</option>
-                  <option [value]="null">Devolución</option>
-                  <option [value]="null">Abandono</option>
-                  <option [value]="null">Resarcimiento</option>
-                </select>
-              </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-3 p-2">
-              <form-field
+                *ngIf="!inputsVisuales"
                 [control]="expedientesForm.get('averiguacionPrevia')"
                 label="Averiguaci&oacute;n Previa">
                 <input
@@ -50,262 +119,424 @@
                   formControlName="averiguacionPrevia" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-3 p-2">
+
+            <div class="col-12 p-2" *ngIf="showCriminalCase">
+              <form-field
+                [control]="expedientesForm.get('criminalCase')"
+                label="Causa Penal">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="criminalCase" />
+              </form-field>
+
+              <!-- <form-field
+                [control]="expedientesForm.get('delito')"
+                *ngIf="isDelit">
+                <form-check label="¿Es delito?" for="delito">
+                  <input
+                    id="delito"
+                    type="checkbox"
+                    class="form-control"
+                    formControlName="delito" />
+                </form-check>
+              </form-field> -->
+            </div>
+            <!-- Averiguación Previa -->
+            <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
+              <form-field
+                [control]="expedientesForm.get('averiguacionPrevia')"
+                label="Averiguaci&oacute;n Previa">
+                <input
+                  class="form-control"
+                  formControlName="averiguacionPrevia" />
+              </form-field>
+            </div> -->
+            <!-- Causa Penal -->
+            <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
                 [control]="expedientesForm.get('causaPenal')"
                 label="Causa Penal">
                 <input class="form-control" formControlName="causaPenal" />
               </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-2 p-2">
-              <form-check label="Delito" for="delito">
-                <input id="delito" type="checkbox" formControlName="delito" />
-              </form-check>
-            </div>
-            <div class="col-sm-12 col-12 col-md-4 p-2">
-              <form-field
-                [control]="expedientesForm.get('observaciones')"
-                label="Observaciones">
-                <textarea
-                  class="form-control"
-                  formControlName="observaciones"></textarea>
+            </div> -->
+
+            <!-- Check Delito -->
+            <!-- <div class="col-sm-12 col-12 col-md-12 p-2">
+              <form-field [control]="expedientesForm.get('delito')">
+                <form-check label="¿Es delito?" for="delito">
+                  <input
+                    id="delito"
+                    type="checkbox"
+                    class="form-control"
+                    formControlName="delito" />
+                </form-check>
               </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-4 p-2">
-              <div class="col-md-12 text-center text-danger">
-                <b>Observaciones</b>
-              </div>
+            </div> -->
+            <!-- Observaciones -->
+            <!-- <div class="col-12 text-danger p-2">
+              <b>Observaciones</b>
+              {{ expedientesForm.get('observaciones').value }}
+            </div> -->
+          </div>
+
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <form-field
+                *ngIf="showCriminalCase"
+                label="¿Es delito?"
+                [control]="expedientesForm.get('delito')">
+                <ng-select
+                  formControlName="delito"
+                  [searchable]="false"
+                  class="form-control"
+                  [clearable]="false">
+                  <ng-option value=""></ng-option>
+                  <ng-option value="S">Si</ng-option>
+                  <ng-option value="N">No</ng-option>
+                </ng-select>
+              </form-field>
             </div>
           </div>
-        </div>
-      </div>
-    </form>
-
-    <form
-      [formGroup]="dictaminacionesForm"
-      class="container-fluid form-material">
-      <div class="row">
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-          <h6>Dictaminaciones</h6>
-        </div>
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-          <div class="row">
-            <div class="col-sm-12 col-12 col-md-3 p-2">
+        </form>
+        <!-- INICIA FORM #2 -->
+        <form
+          [formGroup]="dictaminacionesForm"
+          class="container-fluid form-material col-md-7 p-4">
+          <div class="row p-4">
+            <!-- Fecha Instructora -->
+            <!-- <div class="col-sm-12 col-12 col-md-4 p-2">
               <form-field
-                [control]="dictaminacionesForm.get('etiqueta')"
-                label="Etiqueta">
-                <input class="form-control" formControlName="etiqueta" />
+                [control]="dictaminacionesForm.get('fechaInstructora')"
+                label="Fecha Instructora">
+                <input
+                  class="form-control"
+                  formControlName="fechaInstructora"
+                  bsDatepicker />
+              </form-field>
+            </div> -->
+
+            <div class="col-sm-12 col-12 col-md-4 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('fechaPPFF')"
+                [label]="label">
+                <input
+                  [ngClass]="{ 'not-press bg-gray': !disabledSend }"
+                  #datepickerElement
+                  class="form-control"
+                  formControlName="fechaPPFF"
+                  bsDatepicker
+                  [maxDate]="maxDate" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-2 p-2">
+
+            <div class="col-sm-12 col-12 col-md-4 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('wheelNumber')"
+                label="Volante">
+                <input
+                  class="form-control"
+                  formControlName="wheelNumber"
+                  readonly
+                  [disabled]="true" />
+              </form-field>
+            </div>
+
+            <div class="col-sm-12 col-12 col-md-4 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('fechaDictaminacion')"
+                label="Fecha Dictaminación">
+                <input
+                  class="form-control"
+                  formControlName="fechaDictaminacion"
+                  readonly />
+              </form-field>
+            </div>
+
+            <!-- Fecha Resolución -->
+            <!-- <div class="col-md-offset-8 col-md-4 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('fechaResolucion')"
-                label="Fecha Resoluci&oacute;n">
+                label="Fecha Resolución">
                 <input
                   class="form-control"
                   formControlName="fechaResolucion"
                   bsDatepicker />
               </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-2 p-2">
-              <form-field
-                [control]="dictaminacionesForm.get('fechaNotificacion')"
-                label="Fecha Notificaci&oacute;n">
-                <input
-                  class="form-control"
-                  formControlName="fechaNotificacion"
-                  bsDatepicker />
-              </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-2 p-2">
+            </div> -->
+            <!-- <div class="col-md-offset-4 col-md-4 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('fechaNotificacionAseg')"
-                label="Fecha Notificaci&oacute;n Aseg">
+                label="Fecha Notificaci&oacute;n Aseg.">
                 <input
                   class="form-control"
                   formControlName="fechaNotificacionAseg"
                   bsDatepicker />
               </form-field>
+            </div> -->
+
+            <!-- <div class="col-md-4 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('fechaNotificacion')"
+                label="Fecha Notificación">
+                <input
+                  class="form-control"
+                  formControlName="fechaNotificacion"
+                  bsDatepicker />
+              </form-field>
+            </div> -->
+            <!--  -->
+            <div class="col-md-4 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('autoriza_remitente')">
+                <!-- <input
+                  class="form-control"
+                  formControlName="autoriza_remitente" /> -->
+                <ngx-select
+                  label="Autoriza Dict."
+                  value="id"
+                  [form]="dictaminacionesForm"
+                  [data]="users$"
+                  (change)="userChange($event)"
+                  [readonly]="!disabledSend"
+                  (fetchItems)="getUsers($event)"
+                  bindLabel="userAndName"
+                  control="autoriza_remitente"
+                  [searchOnInit]="true"
+                  [showTooltip]="true"
+                  termMaxLength="30"
+                  [labelTemplate]="userLabel"
+                  [optionTemplate]="userOption">
+                </ngx-select>
+                <ng-template #userLabel let-item="item">
+                  <!-- {{ item.name }} -->
+                  {{ item.id }}
+                </ng-template>
+                <ng-template #userOption let-item="item">
+                  <div [title]="item.id + '-' + item.name">
+                    {{ item.id }}
+                  </div>
+                </ng-template>
+              </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-3 p-2">
+
+            <div class="col-md-8 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('autoriza_nombre')"
+                label="">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="autoriza_nombre" />
+              </form-field>
+            </div>
+
+            <div class="col-12 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('cveOficio')"
-                label="Clave Oficio">
-                <input class="form-control" formControlName="cveOficio" />
+                label="Cve. Oficio">
+                <input
+                  class="form-control"
+                  #cveOficio
+                  formControlName="cveOficio"
+                  readonly
+                  [disabled]="true" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-3 p-2">
-              <form-field
-                [control]="dictaminacionesForm.get('estatus')"
-                label="Estatus">
-                <input class="form-control" formControlName="estatus" />
-              </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-3 p-2">
-              <div class="col-md-12 text-center text-danger">
-                <b>Estatus</b>
+            <div class="col-12 p-2">
+              <div class="col-md-12 text-danger text-center">
+                <b>Estatus </b>
+                <b> {{ statusDict }}</b>
               </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
-    </form>
+    </div>
 
-    <form [formGroup]="subtipoForm" class="container-fluid form-material">
+    <hr class="row" />
+
+    <!-- INICIA FORM #3 TODO: -->
+    <form
+      [formGroup]="expedientesForm"
+      class="container-fluid form-material col-12 px-2 pt-4">
       <div class="row">
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-          <div class="row">
-            <div class="col-md-4">
-              <form-field
-                [control]="subtipoForm.get('tipoDictaminacion')"
-                label="Ident&#46;">
-                <select
-                  class="form-control"
-                  formControlName="tipoDictaminacion">
-                  <option [value]="null">Seleccione un valor</option>
-                  <option [value]="'Alta'">Alta</option>
-                  <option [value]="'Normal'">Normal</option>
-                </select>
-              </form-field>
-            </div>
-            <!-- <div class="col-md-8">
-              <form-field
-                [control]="subtipoForm.get('noExpediente')"
-                label="Subtipo &#45; Ssubtipo &#45; Sssubtipo">
-                <select class="form-control" formControlName="noExpediente">
-                  <option [value]="null">Seleccione un valor</option>
-                  <option [value]="'Alta'">Alta</option>
-                  <option [value]="'Normal'">Normal</option>
-                </select>
-              </form-field>
-            </div> -->
-            <div class="mb-5 b-block w-100"></div>
-            <!-- <div class="col-md-3">
-              <form-field [control]="subtipoForm.get('type')">
-                <ngx-select
-                  class="form-control"
-                  [searchOnInit]="true"
-                  (fetchItems)="getTypes($event)"
-                  [data]="types"
-                  [form]="subtipoForm"
-                  value="id"
-                  label="Tipo de bien"
-                  bindLabel="nameGoodType"
-                  control="type"
-                  (change)="onTypesChange($event)">
-                </ngx-select>
-              </form-field>
-            </div> -->
+        <div class="col-md-4">
+          <form-field [control]="expedientesForm.get('identifier')">
+            <!-- <select class="form-control" formControlName="tipoDictaminacion">
+              <option [value]="null"></option>
+              <option [value]="'Alta'">Alta</option>
+              <option [value]="'Normal'">Normal</option>
+            </select> -->
+            <ngx-select
+              [searchOnInit]="true"
+              [readonly]="!isIdent"
+              [data]="typesIdent"
+              [form]="expedientesForm"
+              label="Ident."
+              bindLabel="identificador"
+              value="identificador"
+              control="identifier"></ngx-select>
+          </form-field>
+        </div>
 
-            <!--  -->
-            <div class="col-md-4">
-              <form-field [control]="subtipoForm.get('subtype')">
-                <ngx-select
-                  class="form-control"
-                  [searchOnInit]="true"
-                  (fetchItems)="getSubtypes($event)"
-                  [data]="subtypes"
-                  [form]="subtipoForm"
-                  value="id"
-                  label="Subtipo"
-                  bindLabel="nameGoodType"
-                  control="subtype"
-                  (change)="onSubtypesChange($event)">
-                </ngx-select>
-              </form-field>
-            </div>
-            <!--  -->
+        <div class="col-md-8">
+          <form-field [control]="expedientesForm.get('type')">
+            <ngx-select
+              [data]="typesClass"
+              [form]="expedientesForm"
+              value="no_clasif_bien"
+              label="Subtipo - Ssubtipo - Sssubtipo"
+              bindLabel="nameGoodType"
+              control="type"
+              (change)="onTypesChange($event)"
+              [labelTemplate]="classNo"
+              [optionTemplate]="classSub"
+              [searchable]="false">
+            </ngx-select>
+            <ng-template #classNo let-item="item">
+              <div *ngIf="item.no_clasif_bien == 0">
+                {{ item.no_clasif_bien }} - {{ item.desc_sssubtipo }}
+              </div>
+              <div *ngIf="item.no_clasif_bien > 0">
+                {{ item.no_clasif_bien }} - {{ item.desc_subtipo }} -
+                {{ item.desc_ssubtipo }} - {{ item.desc_sssubtipo }}
+              </div>
+            </ng-template>
+            <ng-template #classSub let-item="item">
+              <div
+                *ngIf="item.no_clasif_bien == 0"
+                [title]="
+                  item.no_clasif_bien +
+                  '-' +
+                  item.desc_subtipo +
+                  '-' +
+                  item.desc_ssubtipo +
+                  '-' +
+                  item.desc_sssubtipo
+                ">
+                {{ item.no_clasif_bien }} - {{ item.desc_sssubtipo }}
+              </div>
+              <div
+                *ngIf="item.no_clasif_bien > 0"
+                [title]="
+                  item.no_clasif_bien +
+                  '-' +
+                  item.desc_subtipo +
+                  '-' +
+                  item.desc_ssubtipo +
+                  '-' +
+                  item.desc_sssubtipo
+                ">
+                {{ item.no_clasif_bien }} - {{ item.desc_subtipo }} -
+                {{ item.desc_ssubtipo }} - {{ item.desc_sssubtipo }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
 
-            <div class="col-md-4">
-              <form-field [control]="subtipoForm.get('ssubtype')">
-                <ngx-select
-                  [searchOnInit]="true"
-                  (fetchItems)="getSsubtypes($event)"
-                  [data]="ssubtypes"
-                  [form]="subtipoForm"
-                  value="id"
-                  label="Ssubtipo"
-                  bindLabel="description"
-                  control="ssubtype"
-                  (change)="onSsubtypesChange($event)">
-                </ngx-select>
-              </form-field>
-            </div>
-
-            <div class="col-md-4">
-              <form-field [control]="subtipoForm.get('sssubtype')">
-                <ngx-select
-                  [searchOnInit]="true"
-                  (fetchItems)="getSssubtypes($event)"
-                  [data]="sssubtypes"
-                  [form]="subtipoForm"
-                  value="id"
-                  label="Sssubtipo"
-                  bindLabel="description"
-                  control="sssubtype"
-                  (change)="onSssubtypesChange($event)"
-                  (change)="onValuesChange($event)">
-                </ngx-select>
-              </form-field>
-            </div>
-
-            <!-- <div class="col-md-3">
-              <form-field [control]="subtipoForm.get('subtype')">
-                <ngx-select
-                  class="form-control"
-                  [searchOnInit]="true"
-                  (fetchItems)="getSubtypes($event)"
-                  [data]="subtypes"
-                  [form]="subtipoForm"
-                  value="id"
-                  bindLabel="nameSubtypeGood"
-                  control="subtype"
-                  (change)="onSubtypesChange($event)">
-                </ngx-select>
-              </form-field>
-            </div> -->
-          </div>
+        <div class="col-md-8">
+          <!-- <form-field [control]="subtipoForm.get('sssubtype')">
+            <ngx-select [searchOnInit]="true" (fetchItems)="getSssubtypes($event)" [data]="sssubtypes"
+              [form]="subtipoForm" value="no_clasif_bien" label="Subtipo - Ssubtipo - Sssubtipo" bindLabel="description"
+              control="sssubtype" (change)="onValuesChange($event)" [labelTemplate]="sssubtypeLabel"
+              [optionTemplate]="sssubtypeOption">
+         
+            </ngx-select>
+          </form-field> -->
+          <!-- (change)="onSssubtypesChange($event)" -->
         </div>
       </div>
     </form>
 
     <div class="row pt-2">
       <div class="col-md-12 mt-4 mb-4">
-        <hr class="row" />
         <h5 class="title">BIENES</h5>
         <br />
-        <ng2-smart-table
-          (rowSelect)="onSelectedRow($event)"
-          [attr.class]="'table-bordered'"
-          [settings]="settings1"
-          [source]="goods"></ng2-smart-table>
+        <form-loader *ngIf="formLoading"></form-loader>
+
+        <div class="row pt-2 mb-2">
+          <div class="col-sm-12 col-12 col-md-12 pr-3">
+            <div *ngIf="!formLoading" [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                id="bienesJuridicos"
+                (rowSelect)="onSelectedRow($event)"
+                (userRowSelect)="onSelectedRow2($event)"
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings1"
+                [source]="goods"></ng2-smart-table>
+              <br />
+              <div class="d-flex justify-content-between">
+                <p class="text-danger mt-2 ml-3">
+                  <strong>{{ desc_estatus_good }}</strong>
+                </p>
+                <p class="text-primary mt-2 ml-3">
+                  <!-- <strong>{{ consult }}</strong> -->
+                </p>
+              </div>
+            </div>
+            <div>
+              <app-pagination
+                *ngIf="isExp"
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
+              <app-pagination
+                *ngIf="!isExp"
+                [filterParams]="filter1"
+                [totalItems]="totalItems"></app-pagination>
+              <!-- <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination> -->
+            </div>
+          </div>
+        </div>
+
+        <!-- <div>
+          <ng2-smart-table
+            *ngIf="!formLoading"
+            id="bienesJuridicos"
+            (rowSelect)="onSelectedRow($event)"
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings1"
+            [source]="goods"></ng2-smart-table>
+        </div>
+        <div class="d-flex justify-content-between">
+          <p class="text-danger mt-2 ml-3">
+            <strong>{{ desc_estatus_good }}</strong>
+          </p>
+          <p class="text-primary mt-2 ml-3">
+            <strong>{{ consult }}</strong>
+          </p>
+        </div>
+
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination> -->
       </div>
     </div>
     <div class="row pt-2">
       <div class="col-md-12 text-center mt-4 mb-4">
         <button
-          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="addSelect()">
           <!-- Mover uno -->
           <i class="bx bx-chevron-down bx-md"></i>
         </button>
         <button
-          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="addAll()">
           <!-- Mover todos -->
           <i class="bx bx-chevrons-down bx-md"></i>
         </button>
         <button
-          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="removeAll()">
           <!-- Quitar todos -->
           <i class="bx bx-chevrons-up bx-md"></i>
         </button>
         <button
-          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
           type="button"
           (click)="removeSelect()">
           <!-- Quitar uno -->
@@ -313,122 +544,158 @@
         </button>
       </div>
     </div>
-    <div class="row pt-2">
-      <div class="col-md-12 mt-4 mb-4">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="settings2"
-          (rowSelect)="rowSelected($event)"
-          [source]="goodsValid"></ng2-smart-table>
-      </div>
-    </div>
-
-    <div class="row pt-2">
-      <div class="col-md-12">
-        <hr class="row" />
-      </div>
-      <div class="col-md-12">
-        <h5 class="title">DOCUMENTOS</h5>
-        <div class="row">
-          <div class="col-md-10">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings3"
-              [source]="documents"></ng2-smart-table>
-          </div>
-          <div class="col-md-2">
-            <p class="text-info h5">No&#46; bien</p>
-            <p class="text-info h5">{{ idGoodSelected }}</p>
-          </div>
+    <div class="col-12">
+      <!-- <form-loader *ngIf="formLoading2"></form-loader> -->
+      <div class="row pt-2">
+        <div class="col-md-12 mt-4 mb-4" *ngIf="!formLoading2">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings2"
+            (userRowSelect)="rowsSelected($event)"
+            [source]="goodsValid"></ng2-smart-table>
+        </div>
+        <div>
+          <app-pagination
+            [filterParams]="filter3"
+            [totalItems]="totalItems3"></app-pagination>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- 
+    --
+   -->
   <div footer>
-    <form
-      [formGroup]="gestionDestinoForm"
-      class="container-fluid form-material">
-      <div class="row">
-        <div class="col-sm-12 col-12 col-md-6 p-2">
-          <form-field
-            [control]="gestionDestinoForm.get('estatus')"
-            label="Estatus">
-            <input class="form-control" formControlName="estatus" />
-          </form-field>
+    <div class="row w-100">
+      <!--  -->
+      <!-- <form
+        [formGroup]="gestionDestinoForm"
+        class="container-fluid form-material col-7">
+        <div class="row">
+          <div class="col-sm-12 col-12 col-md-6 p-2">
+            <form-field
+              [control]="gestionDestinoForm.get('estatus')"
+              label="Estatus">
+              <input class="form-control" formControlName="estatus" />
+            </form-field>
+          </div>
+        </div>
+      </form> -->
+      <!--  -->
+
+      <!-- Henry  -->
+      <div class="col-8 pt-2">
+        <div class="col-md-12">
+          <hr class="row" />
+        </div>
+        <div class="col-md-12">
+          <h5 class="title">DOCUMENTOS</h5>
+          <div class="row">
+            <div class="col-md-10">
+              <ng2-smart-table
+                id="juridicasSelect"
+                [attr.class]="'table-bordered'"
+                [settings]="settings3"
+                [source]="documentsDictumXStateMList"></ng2-smart-table>
+              <div>
+                <app-pagination
+                  [params]="params2"
+                  [totalItems]="totalItems2"></app-pagination>
+              </div>
+            </div>
+
+            <div class="col-md-2 text-center">
+              <p class="text-info h5">No. Bien</p>
+              <p class="text-info h5">{{ idGoodSelected }}</p>
+            </div>
+          </div>
         </div>
       </div>
-    </form>
-    <div class="row w-100">
-      <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
-        <button
-          class="btn btn-primary btn-sm active m-3 text-wrap"
-          (click)="btnAprobar()"
-          [routerLink]="rutaAprobado">
-          Aprobar
-        </button>
-        <button
-          class="btn btn-danger btn-sm active m-3 text-wrap"
-          (click)="btnRechazar()">
-          Rechazar
-        </button>
-      </div>
-      <div class="col-sm-12 col-12 col-md-8 p-2 text-center">
-        <button
-          class="btn btn-info btn-sm active m-3 text-wrap"
-          (click)="btnOficioSubstanciacion()">
-          Oficio Substanciaci&oacute;n
-        </button>
-        <button
-          class="btn btn-info btn-sm active m-3 text-wrap"
-          (click)="btnOficioRelacionado()">
-          Oficio Relacionado
-        </button>
-      </div>
-      <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
-        <button
-          class="btn btn-info btn-sm active m-3 text-wrap"
-          (click)="btnDocumentos()">
-          Documentos
-        </button>
-        <button
-          class="btn btn-info btn-sm active m-3 text-wrap"
-          (click)="btnParcializar()">
-          Parcializar
-        </button>
-        <button
-          class="btn btn-danger btn-sm active m-3 text-wrap"
-          (click)="btnBorrarDictamen()">
-          Borrar Dictamen
-        </button>
-        <button
-          class="btn btn-primary btn-sm active m-3 text-wrap"
-          (click)="btnImprimeOficio()">
-          Imprime Oficio
-        </button>
-      </div>
-    </div>
-  </div>
-</app-card>
+      <!--  -->
 
-<app-card [header]="true" *ngIf="listadoDocumentos == true">
-  <div class="ch-content" header>
-    <h5 class="title">Fecha de Documentos Asociados al Tr&aacute;mite</h5>
-  </div>
+      <div class="col-4">
+        <div class="row justify-content-center">
+          <div class="col-md-6 text-align-center">
+            <button
+              [disabled]="statusDict == 'DICTAMINADO'"
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              (click)="btnDocumentos()">
+              Documentos
+              <i class="bx bx-file bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              [disabled]="!buttonApr"
+              class="btn btn-primary btn-sm active m-3 text-wrap w-100"
+              (click)="btnApprove()">
+              <!-- [routerLink]="rutaAprobado" -->
+              Aprobar <i class="fa fa-check" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-danger btn-sm active m-3 text-wrap w-100"
+              (click)="btnBorrarDictamen()"
+              [disabled]="!buttonDeleteDisabled">
+              Borrar Dictamen <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-primary btn-sm active m-3 text-wrap w-100"
+              (click)="btnImprimeOficio()">
+              <!-- [routerLink]="returnRoute" -->
+              <!-- Imprime Oficio -->
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              (click)="btnParcializar()"
+              [disabled]="!buttonDisabled">
+              Parcializar
+            </button>
+          </div>
+          <!-- <div class="col-6 text-align-center">
+            <button disabled class="btn btn-danger btn-sm active m-3 text-wrap w-100" (click)="btnRechazar()">
+              Rechazar
+            </button>
+          </div> -->
+          <!-- <div class="col-6 text-align-center">
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              (click)="btnOficioSubstanciacion()">
+              Oficio Substanciaci&oacute;n
+            </button>
+          </div>
+          <div class="col-6 text-align-center">
+            <button
+              class="btn btn-info btn-sm active m-3 text-wrap w-100"
+              (click)="btnOficioRelacionado()">
+              Oficio Relacionado
+            </button>
+          </div> -->
 
-  <div body>
-    <div class="row w-100">
-      <div class="col-sm-12 col-12 col-md-12 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="settings4"
-          [source]="data4"></ng2-smart-table>
-      </div>
-      <div class="col-sm-12 col-12 col-md-12 text-right p-2">
-        <div class="form-group">
-          <button class="btn btn-danger btn-sm active m-3" (click)="btnSalir()">
-            Cerrar Ventana
+          <!-- [disabled]="isDocsEmpty()" -->
+        </div>
+
+        <!-- <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button> -->
+
+        <!-- <div class="col-sm-12 col-12 col-md-8 p-2 text-center">
+          <button class="btn btn-info btn-sm active m-3 text-wrap" (click)="btnOficioSubstanciacion()">
+            Oficio Substanciaci&oacute;n
           </button>
-        </div>
+
+          <button class="btn btn-info btn-sm active m-3 text-wrap" (click)="btnOficioRelacionado()">
+            Oficio Relacionado
+          </button>
+        </div> -->
       </div>
     </div>
   </div>

@@ -1,19 +1,31 @@
 <div>
   <div>
-    <div class="row">
-      <!--CAN WORK1 TABLE-->
-      <div class="row pt-4">
-        <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="data"
-              (delete)="deleteGood($event.data)">
-            </ng2-smart-table>
-          </div>
-        </div>
+    <div class="d-flex justify-content-end">
+      <div class="d-inline mr-2">
+        <button
+          class="btn btn-info active btn-sm m-2"
+          (click)="goToGoodTracker()">
+          Rastreador de bienes&nbsp;
+          <i class="fas fa-map-marker bx-sm float-icon"></i>
+        </button>
       </div>
+    </div>
+    <div body>
+      <div class="table-padding"></div>
+      <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            class="table-responsive"
+            [attr.class]="'table-responsive table-bordered'"
+            [settings]="settings"
+            [source]="allGoods"
+            (userRowSelect)="selectData($event)">
+          </ng2-smart-table>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
+          <div class="table-padding"></div>
+        </div>
+      </ng-scrollbar>
     </div>
 
     <div class="row" *ngIf="goodsNotChange.length > 0">
@@ -22,17 +34,20 @@
         un almacen
       </p>
     </div>
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-md-12 col-sm-12 col-xs-12 mt-3">
         <div class="d-flex justify-content-center">
           <div class="m-3">
+            <button class="btn btn-primary btn-sm active" (click)="goToGoodTracker()">
+              Rastreador de bienes&nbsp;<i class="fas fa-map-marker bx-sm float-icon"></i>
+            </button>
             <button (click)="goToGoodTracker()" class="btn btn-success active">
               Rastreador de bienes
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+            </button> 
+  </div>
+</div>
+</div>
+</div> -->
     <hr />
     <div class="row">
       <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
@@ -49,31 +64,59 @@
         </form>
       </div>
       <div class="col-md-8 col-sm-12 col-xs-12">
-        <form
-          [formGroup]="form"
-          class="form-material"
-          *ngIf="radio.value != null">
+        <form [formGroup]="form" class="form-material">
           <div class="row" *ngIf="radio.value === 'A'">
             <app-warehouse-shared
               [form]="form"
               [showWarehouseType]="false"></app-warehouse-shared>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <button
+                    *ngIf="radio.value === 'A'"
+                    class="btn btn-info btn-sm active"
+                    (click)="updateGoodsWareHouse()"
+                    [disabled]="form.invalid">
+                    Asignar Almacén&nbsp;<i
+                      class="fas fa-sync bx-sm float-icon"></i>
+                  </button>
+                  <!-- <button *ngIf="radio.value === 'A'" class="btn btn-info active" (click)="updateGoodsWareHouse()">
+                    Asignar Ubicación<i class="fas fa-fa-info bx-sm float-icon"></i>
+                  </button> -->
+                </div>
+              </div>
+            </div>
           </div>
           <div class="row" *ngIf="radio.value === 'B'">
-            <app-safe-shared [form]="form"></app-safe-shared>
+            <app-safe-shared [form]="formSafe"></app-safe-shared>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <button
+                    *ngIf="radio.value === 'B'"
+                    class="btn btn-info btn-sm active"
+                    (click)="updateGoodsVault()"
+                    [disabled]="formSafe.invalid">
+                    Asignar Bóveda&nbsp;<i
+                      class="fas fa-sync bx-sm float-icon"></i>
+                  </button>
+                  <!-- <button *ngIf="radio.value === 'B'" class="btn btn-info active" (click)="updateGoodsVault()">
+                    Asignar Ubicación<i class="fas fa-fa-info bx-sm float-icon"></i>
+                  </button> -->
+                </div>
+              </div>
+            </div>
           </div>
         </form>
-        <div class="col-md-12 col-sm-12 col-xs-12">
+        <!-- <div class="col-md-12 col-sm-12 col-xs-12">
           <div class="d-flex justify-content-center">
             <div class="m-3">
-              <button
-                [disabled]="goods.length === 0"
-                class="btn btn-info active"
-                (click)="asigLocation()">
-                Asignar Ubicación
+              <button [disabled]="goods.length === 0" class="btn btn-info active" (click)="asigLocation()">
+                Asignar Ubicación<i class="fas fa-fa-info bx-sm float-icon"></i>
               </button>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

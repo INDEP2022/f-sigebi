@@ -10,19 +10,19 @@
         <tabset>
           <tab heading="Orígenes" id="originsTab">
             <div class="row mt-3">
-              <div class="col-sm-12 col-md-6 col-lg-6">
-                <div class="form-material">
-                  <search-bar [params]="reportParams"></search-bar>
-                </div>
+              <div class="col-sm-12 col-md-8">
+                <h6>Comercializaci&oacute;n Origenes</h6>
               </div>
-              <div class="col-sm-12 col-md-6 col-lg-6">
+              <div class="col-sm-12 col-md-4">
                 <div class="d-flex flex-row-reverse">
                   <div>
                     <button
-                      class="btn btn-sm btn-danger active font-size-13"
-                      (click)="openReportModal()"
-                      [disabled]="selectedReport.length == 0">
-                      Editar Título
+                      type="button"
+                      tooltip="Nuevo"
+                      (click)="openCommercializationOrigin()"
+                      containerClass="tooltip-style"
+                      class="btn btn-info btn-sm active ml-2 mr-2">
+                      Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
                     </button>
                   </div>
                 </div>
@@ -32,23 +32,36 @@
               [track]="'horizontal'"
               [autoHeightDisabled]="false"
               class="table-scrollbar">
-              <div [class]="loading ? 'table-loading' : ''">
+              <div [class]="loadingReport ? 'table-loading' : ''">
                 <ng2-smart-table
                   id="reportTable"
                   [settings]="reportSettings"
-                  [source]="reportColumns"
-                  (userRowSelect)="selectReport($event.selected)">
+                  [source]="dataTableReport"
+                  (userRowSelect)="selectReport($event)"
+                  (edit)="editCommercializationOrigin($event)">
                 </ng2-smart-table>
               </div>
             </ng-scrollbar>
             <app-pagination
-              [params]="reportParams"
-              [totalItems]="reportTotalItems">
+              [params]="dataTableParamsReport"
+              [totalItems]="totalReport">
             </app-pagination>
-            <div class="row mt-5">
-              <div class="col-sm-12 col-md-12 col-lg-6">
-                <div class="form-material">
-                  <search-bar [params]="addresseeParams"></search-bar>
+            <div class="row mt-3">
+              <div class="col-sm-12 col-md-8">
+                <h6>Comercializaci&oacute;n Destino XML</h6>
+              </div>
+              <div class="col-sm-12 col-md-4">
+                <div class="d-flex flex-row-reverse">
+                  <div>
+                    <button
+                      type="button"
+                      tooltip="Nuevo"
+                      (click)="openCommercializationDestination()"
+                      containerClass="tooltip-style"
+                      class="btn btn-info btn-sm active ml-2 mr-2">
+                      Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -56,33 +69,35 @@
               [track]="'horizontal'"
               [autoHeightDisabled]="false"
               class="table-scrollbar">
-              <div [class]="loading ? 'table-loading' : ''">
+              <div [class]="loadingAddresee ? 'table-loading' : ''">
                 <ng2-smart-table
                   id="addresseeTable"
                   [settings]="addresseeSettings"
-                  [source]="addresseeColumns">
+                  [source]="dataTableAddresee"
+                  (edit)="editCommercializationDestination($event)">
                 </ng2-smart-table>
               </div>
             </ng-scrollbar>
             <app-pagination
-              [params]="reportParams"
-              [totalItems]="reportTotalItems">
+              [params]="dataTableParamsAddresee"
+              [totalItems]="totalAddresee">
             </app-pagination>
           </tab>
           <tab heading="Tipos de Firmantes" id="typesTab">
             <div class="row mt-3">
-              <div class="col-sm-12 col-md-6 col-lg-6">
-                <div class="form-material">
-                  <search-bar [params]="typeParams"></search-bar>
-                </div>
+              <div class="col-sm-12 col-md-8">
+                <h6>Tipo de Firmantes</h6>
               </div>
-              <div class="col-sm-12 col-md-6 col-lg-6">
+              <div class="col-sm-12 col-md-4">
                 <div class="d-flex flex-row-reverse">
                   <div>
                     <button
-                      class="btn btn-sm btn-success active font-size-13"
-                      (click)="openModalType()">
-                      Agregar Tipo
+                      type="button"
+                      tooltip="Nuevo"
+                      (click)="openCommercializationType()"
+                      containerClass="tooltip-style"
+                      class="btn btn-info btn-sm active ml-2 mr-2">
+                      Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
                     </button>
                   </div>
                 </div>
@@ -92,64 +107,74 @@
               [track]="'horizontal'"
               [autoHeightDisabled]="false"
               class="table-scrollbar">
-              <div [class]="loading ? 'table-loading' : ''">
+              <div [class]="loadingType ? 'table-loading' : ''">
                 <ng2-smart-table
                   id="typeTable"
                   [settings]="typeSettings"
-                  [source]="typeColumns"
-                  (edit)="openFormType($event.data)"
-                  (delete)="deleteType($event.data)">
+                  [source]="dataTableType"
+                  (edit)="editCommercializationType($event)">
                 </ng2-smart-table>
               </div>
             </ng-scrollbar>
-            <app-pagination [params]="typeParams" [totalItems]="typeTotalItems">
+            <app-pagination
+              [params]="dataTableParamsType"
+              [totalItems]="totalType">
             </app-pagination>
           </tab>
           <tab heading="Firmas por Reporte" id="signaturesTab">
             <div class="row mt-3">
-              <div class="col-sm-12 col-md-12 col-lg-6">
-                <div class="form-material">
-                  <search-bar [params]="eventParams"></search-bar>
-                </div>
+              <div class="col-sm-12 col-md-12">
+                <h6>Eventos</h6>
               </div>
-              <div class="col-sm-12 col-md-12 col-lg-6">
+              <!-- <div class="col-sm-12 col-md-4">
                 <div class="d-flex flex-row-reverse">
-                  <div class="">
-                    <app-columns-select
-                      [(settings)]="eventSettings"></app-columns-select>
+                  <div>
+                    <button
+                      type="button"
+                      tooltip="Nuevo"
+                      (click)="openCommercializationEvent()"
+                      containerClass="tooltip-style"
+                      class="btn btn-info btn-sm active ml-2 mr-2">
+                      Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+                    </button>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
             <ng-scrollbar
               [track]="'horizontal'"
               [autoHeightDisabled]="false"
               class="table-scrollbar">
-              <div [class]="loading ? 'table-loading' : ''">
+              <div [class]="loadingEvent ? 'table-loading' : ''">
                 <ng2-smart-table
                   id="eventTable"
                   [settings]="eventSettings"
-                  [source]="eventColumns"
-                  (userRowSelect)="selectEvent($event.selected)">
+                  [source]="dataTableEvent"
+                  (userRowSelect)="selectEvent($event)"
+                  (delete)="deleteCommercializationEvent($event)">
                 </ng2-smart-table>
               </div>
               <div class="table-padding"></div>
             </ng-scrollbar>
             <app-pagination
-              [params]="eventParams"
-              [totalItems]="eventTotalItems">
+              [params]="dataTableParamsEvent"
+              [totalItems]="totalEvent">
             </app-pagination>
-            <div class="row mt-5">
-              <div class="col-sm-12 col-md-12 col-lg-6">
-                <div class="form-material">
-                  <search-bar [params]="signatureParams"></search-bar>
-                </div>
+            <div class="row mt-3">
+              <div class="col-sm-12 col-md-8">
+                <h6>Firmantes</h6>
               </div>
-              <div class="col-sm-12 col-md-12 col-lg-6">
+              <div class="col-sm-12 col-md-4">
                 <div class="d-flex flex-row-reverse">
-                  <div class="">
-                    <app-columns-select
-                      [(settings)]="signatureSettings"></app-columns-select>
+                  <div>
+                    <button
+                      type="button"
+                      tooltip="Nuevo"
+                      (click)="openCommercializationSignature()"
+                      containerClass="tooltip-style"
+                      class="btn btn-info btn-sm active ml-2 mr-2">
+                      Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -158,18 +183,19 @@
               [track]="'horizontal'"
               [autoHeightDisabled]="false"
               class="table-scrollbar">
-              <div [class]="loading ? 'table-loading' : ''">
+              <div [class]="loadingSignature ? 'table-loading' : ''">
                 <ng2-smart-table
                   id="acsignatureTable"
                   [settings]="signatureSettings"
-                  [source]="signatureColumns">
+                  [source]="dataTableSignature"
+                  (edit)="editCommercializationSignature($event)">
                 </ng2-smart-table>
               </div>
               <div class="table-padding"></div>
             </ng-scrollbar>
             <app-pagination
-              [params]="signatureParams"
-              [totalItems]="signatureTotalItems">
+              [params]="dataTableParamsSignature"
+              [totalItems]="totalSignature">
             </app-pagination>
           </tab>
         </tabset>

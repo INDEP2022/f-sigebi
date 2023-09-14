@@ -1,13 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { IWContent } from 'src/app/core/models/ms-wcontent/wcontent.model';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../common/repository/interfaces/list-params';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
+import { UploadImgFieldModalComponent } from '../upload-img-field-modal/upload-img-field-modal.component';
 import { LIST_IMAGES_COLUMNS } from './columns/list-images-columns';
 
 var data = [
@@ -38,7 +41,10 @@ export class UploadImagesFormComponent extends BasePage implements OnInit {
   displayUploadPhoto: boolean = false;
 
   //datos pasados desde el modal
-  data: any[] = [];
+  good: any[] = [];
+
+  private modalService = inject(BsModalService);
+  private wcontentService = inject(WContentService);
 
   constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
@@ -65,18 +71,36 @@ export class UploadImagesFormComponent extends BasePage implements OnInit {
 
   initForm(): void {
     this.searchPhotoForm = this.fb.group({
-      noManagement: [{ value: 0.0, disabled: true }],
-      noProgramming: [null],
-      noPhoto: [null],
-      author: [null, [Validators.pattern(STRING_PATTERN)]],
-      titleImage: [null, [Validators.pattern(STRING_PATTERN)]],
-      text: [null, [Validators.pattern(STRING_PATTERN)]],
-      folioProgramming: [null],
+      xidBien: [{ value: 0.0, disabled: true }],
+      xNoProgramacion: [null],
+      dDocName: [null, [Validators.pattern(STRING_PATTERN)]],
+      dDocAuthor: [null, [Validators.pattern(STRING_PATTERN)]],
+      dDocTitle: [null, [Validators.pattern(STRING_PATTERN)]],
+      texto: [null, [Validators.pattern(STRING_PATTERN)]],
+      xFolioProgramacion: [null],
     });
   }
 
   getData() {
-    this.paragraphs = data;
+    this.loading = true;
+    let body: IWContent = {};
+    body.xidBien = this.good[0].id; //'9549189'
+    this.wcontentService.getDocumentos(body).subscribe({
+      next: resp => {
+        const result = resp.data.filter(x => x.dDocType == 'DigitalMedia');
+
+        const data = result.map(async (item: any) => {
+          const xtipoDoc = await this.getTypeDocuments(item.xtipoDocumento);
+          item['xTipoDoc'] = xtipoDoc;
+        });
+
+        Promise.all(data).then(item => {
+          this.paragraphs = result;
+          this.totalItems = result.length;
+          this.loading = false;
+        });
+      },
+    });
   }
 
   addImage(event: any): void {
@@ -94,12 +118,47 @@ export class UploadImagesFormComponent extends BasePage implements OnInit {
   messageSuccess() {
     const message = 'La(s) fotografías se han cargado correctamente';
     Swal.fire({
-      icon: undefined,
-      title: 'Información',
+      icon: 'success',
+      title: '',
       text: message,
       confirmButtonColor: '#9D2449',
       confirmButtonText: 'Aceptar',
       footer: '',
+      allowOutsideClick: false,
+    });
+  }
+
+  uploadImage() {
+    let config: ModalOptions = {
+      initialState: {
+        data: this.good,
+        process: 'sampling-assets',
+        callback: (next?: boolean) => {
+          if (next) {
+            setTimeout(() => {
+              this.messageSuccess();
+              this.getData();
+            }, 300);
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(UploadImgFieldModalComponent, config);
+  }
+
+  getTypeDocuments(id: number | string) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      this.wcontentService.getDocumentTypes(params).subscribe({
+        next: resp => {
+          const result: any = resp.data.filter(x => x.ddocType == id);
+          const descrip = result.length > 0 ? result[0].ddescription : '';
+
+          resolve(descrip);
+        },
+      });
     });
   }
 }

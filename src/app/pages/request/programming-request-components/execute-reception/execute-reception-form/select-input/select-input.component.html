@@ -1,0 +1,13 @@
+<form class="form-material">
+  <ngx-select
+    [form]="detailAssets"
+    control="unitLigie"
+    (fetchItems)="getTransferentUnit($event)"
+    [data]="selectTansferUnitMeasure"
+    label=""
+    [searchable]="false"
+    bindLabel="measureTlUnit"
+    value="uomCode"
+    [readonly]="false"
+    (change)="chageUnit($event)"></ngx-select>
+</form>

@@ -1,0 +1,71 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar' : 'Nuevo' }} Comercializaci&oacute;n Origenes
+    </h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="formGroup">
+      <div class="row">
+        <div class="col-sm-12 col-md-4">
+          <form-field [control]="formGroup.get('screenKey')" label="Pantalla">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="30"
+              formControlName="screenKey" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-4">
+          <form-field
+            [control]="formGroup.get('reportKey')"
+            label="Reporte Asociado (XML)">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="30"
+              formControlName="reportKey" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-4">
+          <form-field
+            [control]="formGroup.get('signatoriesNumber')"
+            label="N&uacute;mero de Firmantes">
+            <input
+              type="number"
+              class="form-control"
+              maxlength="2"
+              formControlName="signatoriesNumber" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-12">
+          <form-field
+            [control]="formGroup.get('description')"
+            label="T&iacute;tulo del Reporte (XML)">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="description" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="formGroup.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -12,6 +12,10 @@ export const GENERAL_PROCESSES_ROUTES = [
         link: '/pages/general-processes/goods-characteristics',
       },
       {
+        label: 'Agregar Fotos por Bien',
+        link: '/pages/general-processes/good-photos',
+      },
+      {
         label: 'Historico Situación del Bien',
         link: '/pages/general-processes/historical-good-situation',
       },

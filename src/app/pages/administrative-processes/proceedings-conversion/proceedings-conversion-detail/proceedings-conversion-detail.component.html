@@ -1,8 +1,4 @@
 <app-card [header]="true" [footer]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Detalles del Acta</h5>
-  </div>
-
   <div body *ngIf="!antecedentThreeEnable">
     <div class="row">
       <div class="form-material col-md-5">
@@ -13,17 +9,23 @@
       <div class="row margin-input">
         <div class="col-md-4">
           <form-field [control]="header.get('destiny')" label="Destino">
-            <select class="form-control" formControlName="destiny">
-              <option value="NO">Donación</option>
-            </select>
+            <ng-select
+              [maxlength]="8"
+              class="form-control"
+              formControlName="destiny">
+              <ng-option value="DONACION">Donación</ng-option>
+              <ng-option value="VENTA">Venta</ng-option>
+            </ng-select>
           </form-field>
         </div>
         <div class="col-md-4"></div>
         <div class="col-md-4">
           <form-field
             [control]="header.get('idConversion')"
-            label="Id conversión">
+            label="Id Conversión">
             <input
+              #inputValue
+              readonly
               type="number"
               class="form-control"
               formControlName="idConversion"
@@ -35,17 +37,33 @@
       <div class="row margin-input">
         <div class="col-md-4">
           <form-field [control]="header.get('city')" label="Ciudad">
-            <input type="text" class="form-control" formControlName="city" />
+            <!-- <ngx-select [form]="header" [data]="cities" (fetchItems)="getCities($event)" bindLabel="nameAndId"
+              control="city" label="Ciudad" [searchOnInit]="false" [showTooltip]="true" termMaxLength="30">
+            </ngx-select> -->
+            <input
+              maxlength="35"
+              type="text"
+              class="form-control"
+              formControlName="city" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="header.get('status')" label="Estado">
-            <input type="text" class="form-control" formControlName="status" />
+            <input
+              maxlength="35"
+              type="text"
+              class="form-control"
+              formControlName="status" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="header.get('hour')" label="Hora">
-            <input type="text" class="form-control" formControlName="hour" />
+            <input
+              maxlength="5"
+              type="text"
+              bsHourPicker
+              class="form-control"
+              formControlName="hour" />
           </form-field>
         </div>
       </div>
@@ -55,7 +73,6 @@
             <input
               type="text"
               formControlName="date"
-              placeholder="Fecha"
               class="form-control"
               bsDatepicker />
           </form-field>
@@ -64,7 +81,11 @@
           <form-field
             [control]="header.get('appointedBy')"
             label="Designado por">
+            <!-- <ngx-select [form]="header" [data]="appointedBy" (fetchItems)="getSenders($event)" bindLabel="userAndName"
+              control="appointedBy" label="Designado por" [searchOnInit]="true" [showTooltip]="true" termMaxLength="30">
+            </ngx-select> -->
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="appointedBy" />
@@ -72,7 +93,11 @@
         </div>
         <div class="col-md-4">
           <form-field [control]="header.get('titleOf')" label="Titular de">
-            <input type="text" class="form-control" formControlName="titleOf" />
+            <input
+              maxlength="60"
+              type="text"
+              class="form-control"
+              formControlName="titleOf" />
           </form-field>
         </div>
       </div>
@@ -82,6 +107,7 @@
             [control]="header.get('officeNumber')"
             label="Número Oficio">
             <input
+              maxlength="32"
               type="text"
               class="form-control"
               formControlName="officeNumber" />
@@ -94,7 +120,6 @@
             <input
               type="text"
               formControlName="dateOfOffice"
-              placeholder="Fecha del Oficio"
               class="form-control"
               bsDatepicker />
           </form-field>
@@ -113,6 +138,7 @@
             [control]="antecedent.get('tradeEntity')"
             label="Oficio Entidad">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="tradeEntity" />
@@ -125,7 +151,6 @@
             <input
               type="text"
               formControlName="officialDate"
-              placeholder="Fecha Oficio"
               class="form-control"
               bsDatepicker />
           </form-field>
@@ -135,6 +160,7 @@
             [control]="antecedent.get('signedBy')"
             label="Suscrito por">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="signedBy" />
@@ -145,6 +171,7 @@
         <div class="col-md-4">
           <form-field [control]="antecedent.get('position')" label="Cargo">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="position" />
@@ -155,6 +182,7 @@
             [control]="antecedent.get('dependence')"
             label="Dependencia">
             <input
+              maxlength="80"
               type="text"
               class="form-control"
               formControlName="dependence" />
@@ -162,7 +190,11 @@
         </div>
         <div class="col-md-4">
           <form-field [control]="antecedent.get('customs')" label="Aduana">
-            <input type="text" class="form-control" formControlName="customs" />
+            <input
+              maxlength="60"
+              type="text"
+              class="form-control"
+              formControlName="customs" />
           </form-field>
         </div>
       </div>
@@ -172,6 +204,7 @@
             [control]="antecedent.get('container')"
             label="Contenedor">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="container" />
@@ -180,8 +213,9 @@
         <div class="col-md-4">
           <form-field
             [control]="antecedent.get('noContainer')"
-            label="No.Contenedor">
+            label="No. Contenedor">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="noContainer" />
@@ -198,7 +232,11 @@
       <div class="row margin-input">
         <div class="col-md-4">
           <form-field [control]="antecedentTwo.get('job')" label="Oficio">
-            <input type="text" class="form-control" formControlName="job" />
+            <input
+              maxlength="60"
+              type="text"
+              class="form-control"
+              formControlName="job" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -208,7 +246,6 @@
             <input
               type="text"
               formControlName="officialDate"
-              placeholder="Fecha Oficio"
               class="form-control"
               bsDatepicker />
           </form-field>
@@ -218,6 +255,7 @@
             [control]="antecedentTwo.get('signedBy')"
             label="Suscrito por">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="signedBy" />
@@ -228,6 +266,7 @@
         <div class="col-md-4">
           <form-field [control]="antecedentTwo.get('position')" label="Cargo">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="position" />
@@ -238,6 +277,7 @@
             [control]="antecedentTwo.get('propertyOf')"
             label="Propiedad de">
             <input
+              maxlength="30"
               type="text"
               class="form-control"
               formControlName="propertyOf" />
@@ -259,7 +299,6 @@
             <input
               type="text"
               formControlName="date"
-              placeholder="Fecha"
               class="form-control"
               bsDatepicker />
           </form-field>
@@ -269,6 +308,7 @@
             [control]="antecedentThree.get('subscribe1')"
             label="Suscribe 1">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="subscribe1" />
@@ -279,6 +319,7 @@
             [control]="antecedentThree.get('position1')"
             label="Cargo">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="position1" />
@@ -291,6 +332,7 @@
             [control]="antecedentThree.get('attachedA')"
             label="Adscrito a">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="attachedA" />
@@ -301,6 +343,7 @@
             [control]="antecedentThree.get('subscribe2')"
             label="Suscribe 2">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="subscribe2" />
@@ -311,6 +354,7 @@
             [control]="antecedentThree.get('position2')"
             label="Cargo">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="position2" />
@@ -323,6 +367,7 @@
             [control]="antecedentThree.get('attachedB')"
             label="Adscrito a">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="attachedB" />
@@ -331,8 +376,9 @@
         <div class="col-md-4">
           <form-field
             [control]="antecedentThree.get('wineriesSAE')"
-            label="Bodega SAE">
+            label="Bodega INDEP">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="wineriesSAE" />
@@ -345,6 +391,7 @@
             [control]="antecedentThree.get('verificationOf')"
             label="Verificación de">
             <input
+              maxlength="30"
               type="text"
               class="form-control"
               formControlName="verificationOf" />
@@ -355,6 +402,7 @@
             [control]="antecedentThree.get('consistsIn')"
             label="Consiste en">
             <input
+              maxlength="120"
               type="text"
               class="form-control"
               formControlName="consistsIn" />
@@ -365,6 +413,7 @@
             [control]="antecedentThree.get('correspondentA')"
             label="Correspondientes a">
             <input
+              maxlength="80"
               type="text"
               class="form-control"
               formControlName="correspondentA" />
@@ -377,6 +426,7 @@
             [control]="antecedentThree.get('description')"
             label="Descripción">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="description" />
@@ -385,10 +435,13 @@
         <div class="col-md-4">
           <form-field
             [control]="antecedentThree.get('status')"
-            label="Antec3 Estado">
-            <select class="form-control" formControlName="status">
-              <option value="NO">Bueno</option>
-            </select>
+            label="Antec. Estado">
+            <ng-select class="form-control" formControlName="status">
+              <ng-option value="Excelente">Excelente</ng-option>
+              <ng-option value="Bueno">Bueno</ng-option>
+              <ng-option value="Regular">Regular</ng-option>
+              <ng-option value="Mal">Mal</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>
@@ -405,6 +458,7 @@
             [control]="first.get('authorizedBy')"
             label="Autorizado por">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="authorizedBy" />
@@ -413,6 +467,7 @@
         <div class="col-md-4">
           <form-field [control]="first.get('addressee')" label="Destinatario">
             <input
+              maxlength="60"
               type="text"
               class="form-control"
               formControlName="addressee" />
@@ -432,14 +487,17 @@
             <input
               type="text"
               formControlName="date"
-              placeholder="Fecha"
               class="form-control"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="closureOfMinutes.get('hour')" label="Hora">
-            <input type="text" class="form-control" formControlName="hour" />
+            <input
+              maxlength="60"
+              type="text"
+              class="form-control"
+              formControlName="hour" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -447,6 +505,7 @@
             [control]="closureOfMinutes.get('closePages')"
             label="Cierre Fojas">
             <input
+              maxlength="5"
               type="text"
               class="form-control"
               formControlName="closePages" />
@@ -457,22 +516,32 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-end">
-      <div class="m-3" *ngIf="!antecedentThreeEnable">
+      <!-- <div class="m-3" *ngIf="!antecedentThreeEnable">
         <button class="btn btn-primary btn-sm active" (click)="close()">
           Cerrar
         </button>
-      </div>
+      </div> -->
       <div class="m-3" *ngIf="antecedentThreeEnable">
-        <button class="btn btn-primary btn-sm active" (click)="previous()">
-          << Anterior
+        <button
+          class="btn btn-info btn-sm active"
+          (click)="previous()"
+          style="display: flex; align-items: center; justify-content: center">
+          <i class="bx bx-chevrons-left bx-md"></i> <span>Anterior</span>
         </button>
       </div>
       <div class="m-3">
-        <button class="btn btn-success btn-sm active">Salvar</button>
+        <button (click)="salvar()" class="btn btn-primary btn-sm active">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
       </div>
       <div class="m-3">
-        <button class="btn btn-primary btn-sm active" (click)="next()">
-          Siguiente>>
+        <button
+          *ngIf="!antecedentThreeEnable"
+          class="btn btn-info btn-sm active"
+          (click)="next()"
+          style="display: flex; align-items: center; justify-content: center">
+          <span>Siguiente</span> <i class="bx bx-chevrons-right bx-md"></i>
         </button>
       </div>
     </div>

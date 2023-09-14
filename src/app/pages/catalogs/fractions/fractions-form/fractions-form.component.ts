@@ -10,11 +10,7 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { NormService } from 'src/app/core/services/catalogs/norm.service';
 import { SIABClasificationService } from 'src/app/core/services/catalogs/siab-clasification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  DOUBLE_PATTERN,
-  NUMBERS_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -28,6 +24,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   norms = new DefaultSelect<INorm>();
   clasifications = new DefaultSelect<ISiabClasification>();
   edit: boolean = false;
+  title: string = 'Fracción';
 
   constructor(
     private modalRef: BsModalRef,
@@ -45,51 +42,95 @@ export class FractionsFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.fractionForm = this.fb.group({
-      id: [null, [Validators.required]],
-      code: [null, [Validators.required]],
-      level: ['0', [Validators.required]],
+      id: [null],
+      code: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(20),
+        ],
+      ],
+      level: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(20),
+        ],
+      ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
       ],
       normId: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
-      unit: [null, [Validators.required]],
+      unit: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(30)],
+      ],
       clasificationId: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
-      version: [1, [Validators.required]],
+      version: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
+      ],
       relevantTypeId: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
       codeErp1: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
       ],
       codeErp2: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
       ],
       codeErp3: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
       ],
       decimalAmount: [
         null,
         [
           Validators.required,
-          Validators.pattern(DOUBLE_PATTERN),
+          Validators.pattern(NUMBERS_PATTERN),
           Validators.maxLength(1),
         ],
       ],
-      status: [null],
+      status: [null, [Validators.maxLength(1)]],
       fractionCode: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
       parentId: [null],
     });
@@ -103,11 +144,9 @@ export class FractionsFormComponent extends BasePage implements OnInit {
         normId: norm?.id,
         clasificationId: classification?.id,
       });
-
       this.fractionForm
         .get('level')
         .setValue(parseInt(this.fraction.level) + 1);
-
       this.fractionForm.get('parentId').setValue(this.fraction.id);
 
       this.clasifications = new DefaultSelect(
@@ -118,6 +157,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
 
       this.getClasificationSelect({ page: 1, text: '' });
       this.getFractionSelect({ page: 1, text: '' });
+      this.fractionForm.patchValue(this.fraction);
     } else {
       this.getClasificationSelect({ page: 1, text: '' });
       this.getFractionSelect({ page: 1, text: '' });
@@ -137,11 +177,14 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    /* this.edit ? this.update() : this.create(); */
-    this.create();
+    this.edit ? this.update() : this.create();
   }
 
   create() {
+    if (this.fractionForm.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     console.log(this.fractionForm.value);
     this.fractionService.create(this.fractionForm.value).subscribe({
@@ -151,7 +194,6 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   }
 
   update() {
-    console.log(this.fractionForm.value);
     this.fractionService.newUpdate(this.fractionForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
@@ -163,6 +205,9 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    this.alert('success', this.title, `${message} Correctamente`);
+
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

@@ -29,7 +29,7 @@ export const TRANSPORTABLE_GOODS = {
   },
 
   transferenceQuantity: {
-    title: 'Cantidad transferente',
+    title: 'Cantidad Transferente',
     type: 'string',
     sort: false,
   },
@@ -47,7 +47,7 @@ export const TRANSPORTABLE_GOODS = {
   },
 
   unitMeasure: {
-    title: 'Unidad medida INDEP',
+    title: 'Unidad Medida INDEP',
     type: 'string',
     sort: false,
   },
@@ -78,8 +78,8 @@ export const TRANSPORTABLE_GOODS = {
 };
 
 export const TRANSPORTABLE_GOODS_FORMALIZE = {
-  gestionNumber: {
-    title: 'No gestión',
+  goodId: {
+    title: 'Número gestión',
     type: 'string',
     sort: false,
   },
@@ -90,73 +90,66 @@ export const TRANSPORTABLE_GOODS_FORMALIZE = {
     sort: false,
   },
 
-  record: {
+  fileNumber: {
     title: 'Expediente',
     type: 'string',
     sort: false,
   },
 
-  descriptionTransferent: {
-    title: 'Descripción transferente',
+  goodDescription: {
+    title: 'Descripción Transferente',
     sort: false,
   },
 
-  descriptionSae: {
+  descriptionGoodSae: {
     title: 'Descripción INDEP',
     type: 'string',
     sort: false,
   },
 
-  transerAmount: {
-    title: 'Cantidad transferente',
+  quantity: {
+    title: 'Cantidad Transferente',
     type: 'string',
     sort: false,
   },
 
-  saeAmmount: {
+  quantitySae: {
     title: 'Cantidad INDEP',
     type: 'string',
     sort: false,
   },
 
-  transerUnit: {
-    title: 'Unidad transferente',
+  unitMeasure: {
+    title: 'Unidad Medida transferente',
+    type: 'string',
+    sort: false,
+  },
+  saeMeasureUnit: {
+    title: 'Unidad Medida INDEP',
     type: 'string',
     sort: false,
   },
 
-  unitMedidSae: {
-    title: 'Unidad medida INDEP',
-    type: 'string',
-    sort: false,
-  },
-
-  stateTransference: {
+  physicalStatusName: {
     title: 'Estado Físico transferente',
     type: 'string',
     sort: false,
   },
 
-  stateSae: {
+  saePhysicalState: {
     title: 'Estado Físico INDEP',
     type: 'string',
     sort: false,
   },
 
-  state: {
-    title: 'Estado',
+  stateConservationName: {
+    title: 'Conservación transferente',
     type: 'string',
     sort: false,
   },
 
-  description: {
-    title: 'Descripción',
-    type: 'string',
-    sort: false,
-  },
-
-  destiny: {
-    title: 'Destino',
+  stateConservationSae: {
+    title: 'Estado conservación INDEP',
     type: 'string',
     sort: false,
   },

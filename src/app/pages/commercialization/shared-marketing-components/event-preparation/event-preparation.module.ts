@@ -10,28 +10,53 @@ import { ExcelService } from 'src/app/common/services/excel.service';
 import { EventTypeSharedComponent } from 'src/app/@standalone/shared-forms/event-type-shared/event-type-shared.component';
 import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-shared/events-shared.component';
 
-import { AddEditLoteModalComponent } from './add-edit-lote-modal/add-edit-lote-modal.component';
-import { AvailableGoodsTableComponent } from './available-goods-table/available-goods-table.component';
-import { CreateNewEventModalComponent } from './create-new-event-modal/create-new-event-modal.component';
-import { CustomerCatalogsTableComponent } from './customer-catalogs-table/customer-catalogs-table.component';
+import { StoreModule } from '@ngrx/store';
+import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
+import { ComerEventTraspComponent } from './components/comer-event-trasp/comer-event-trasp.component';
+import { CommerEventCustomersComponent } from './components/commer-event-customers/commer-event-customers.component';
+import { CommerEventsListComponent } from './components/commer-events-list/commer-events-list.component';
+import { CommerPackagesLotsComponent } from './components/commer-packages-lots/commer-packages-lots.component';
+import { EventDataFormComponent } from './components/event-data-form/event-data-form.component';
+import { EventGoodsLotsListActionsComponent } from './components/event-goods-lots-list-actions/event-goods-lots-list-actions.component';
+import { EventGoodsLotsListComponent } from './components/event-goods-lots-list/event-goods-lots-list.component';
+import { EventLotFormComponent } from './components/event-lot-form/event-lot-form.component';
+import { EventLotsListComponent } from './components/event-lots-list/event-lots-list.component';
+import { EventPreparationStadisticsComponent } from './components/event-preparation-stadistics/event-preparation-stadistics.component';
+import { JuridicalCellComponent } from './components/juridical-cell/juridical-cell.component';
+import { RejectedGoodsListComponent } from './components/rejected-goods-list/rejected-goods-list.component';
+import { ReservedGoodsComponent } from './components/reserved-goods/reserved-goods.component';
+import { ConsigmentsContainerComponent } from './consigments/componets/consigments-container/consigments-container.component';
+import { ConsigmentsEventsComponent } from './consigments/componets/consigments-events/consigments-events.component';
+import { ConsigmentsGoodsComponent } from './consigments/componets/consigments-goods/consigments-goods.component';
+import { ConsigmentsLotsComponent } from './consigments/componets/consigments-lots/consigments-lots.component';
 import { EventPreparationRoutingModule } from './event-preparation-routing.module';
 import { EventPreparationComponent } from './event-preparation/event-preparation.component';
 import { GroundsStatusModalComponent } from './grounds-status-modal/grounds-status-modal.component';
 import { ReasonsModelComponent } from './reasons-model/reasons-model.component';
-import { RejectedGoodsTableComponent } from './rejected-goods-table/rejected-goods-table.component';
-import { SelectEventModalComponent } from './select-event-modal/select-event-modal.component';
+import { eventPreparationReducer } from './store/event-preparation.reducer';
 
 @NgModule({
   declarations: [
-    EventPreparationComponent,
-    SelectEventModalComponent,
-    CreateNewEventModalComponent,
-    AddEditLoteModalComponent,
-    CustomerCatalogsTableComponent,
-    AvailableGoodsTableComponent,
-    RejectedGoodsTableComponent,
     GroundsStatusModalComponent,
+    EventDataFormComponent,
+    CommerEventsListComponent,
+    CommerPackagesLotsComponent,
+    CommerEventCustomersComponent,
+    ReservedGoodsComponent,
+    EventPreparationStadisticsComponent,
+    EventLotsListComponent,
+    EventGoodsLotsListComponent,
+    EventLotFormComponent,
+    EventGoodsLotsListActionsComponent,
+    RejectedGoodsListComponent,
+    ComerEventTraspComponent,
+    ConsigmentsEventsComponent,
+    ConsigmentsLotsComponent,
+    ConsigmentsGoodsComponent,
+    ConsigmentsContainerComponent,
     ReasonsModelComponent,
+    EventPreparationComponent,
+    JuridicalCellComponent,
   ],
   imports: [
     CommonModule,
@@ -41,11 +66,9 @@ import { SelectEventModalComponent } from './select-event-modal/select-event-mod
     EventsSharedComponent,
     EventTypeSharedComponent,
     TabsModule,
-  ],
-  exports: [
-    CustomerCatalogsTableComponent,
-    AvailableGoodsTableComponent,
-    RejectedGoodsTableComponent,
+    ModalModule,
+    StoreModule.forFeature('eventPreparation', eventPreparationReducer),
+    LinkCellComponent,
   ],
   providers: [ExcelService],
 })

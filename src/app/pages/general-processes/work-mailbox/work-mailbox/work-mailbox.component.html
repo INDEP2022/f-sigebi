@@ -12,42 +12,65 @@
               <div>
                 <button
                   [disabled]="managementAreaF.value == null"
-                  [ngClass]="priority$ === 'toDo' ? 'btn-primary' : 'btn-light'"
+                  [ngClass]="
+                    priority$ === 'toDo' ? 'btn-primary' : 'btn-primary'
+                  "
                   class="btn btn-sm active"
                   (click)="priority$ = 'toDo'; buildFilters()">
                   Ingresados
                 </button>
+                <div
+                  *ngIf="priority$ === 'toDo'"
+                  class="row mt-3 w-100 ml-0"
+                  style="
+                    height: 5px !important;
+                    background-color: #9d2449 !important;
+                  "></div>
               </div>
               <div>
                 <button
                   [disabled]="managementAreaF.value == null"
                   [ngClass]="
-                    priority$ === 'inProgress' ? 'btn-info' : 'btn-light'
+                    priority$ === 'inProgress' ? 'btn-info' : 'btn-info'
                   "
                   class="btn btn-sm active"
                   (click)="priority$ = 'inProgress'; buildFilters()">
                   En Proceso
                 </button>
-              </div>
-              <div>
-                <button
-                  [disabled]="managementAreaF.value == null"
-                  [ngClass]="priority$ === 'done' ? 'btn-success' : 'btn-light'"
-                  class="btn btn-sm active"
-                  (click)="priority$ = 'done'; buildFilters()">
-                  Salida
-                </button>
+                <div
+                  *ngIf="priority$ === 'inProgress'"
+                  class="row mt-3 bg-info w-100 ml-0"
+                  style="height: 5px !important"></div>
               </div>
               <div>
                 <button
                   [disabled]="managementAreaF.value == null"
                   [ngClass]="
-                    priority$ === 'delayed' ? 'btn-warning' : 'btn-light'
+                    priority$ === 'done' ? 'btn-success' : 'btn-success'
+                  "
+                  class="btn btn-sm active"
+                  (click)="priority$ = 'done'; buildFilters()">
+                  Salida
+                </button>
+                <div
+                  *ngIf="priority$ === 'done'"
+                  class="row mt-3 bg-success w-100 ml-0"
+                  style="height: 5px !important"></div>
+              </div>
+              <div>
+                <button
+                  [disabled]="managementAreaF.value == null"
+                  [ngClass]="
+                    priority$ === 'delayed' ? 'btn-warning' : 'btn-warning'
                   "
                   class="btn btn-sm active"
                   (click)="priority$ = 'delayed'; buildFilters()">
                   Destiempo
                 </button>
+                <div
+                  *ngIf="priority$ === 'delayed'"
+                  class="row mt-3 bg-warning w-100 ml-0"
+                  style="height: 5px !important"></div>
               </div>
               <div>
                 <button
@@ -55,6 +78,10 @@
                   (click)="priority$ = null; buildFilters()">
                   Todos
                 </button>
+                <div
+                  *ngIf="priority$ === null"
+                  class="row mt-3 bg-secondary w-100 ml-0"
+                  style="height: 5px !important"></div>
               </div>
             </div>
           </div>
@@ -185,10 +212,16 @@
               </div>
               <div class="d-flex justify-content-between">
                 <div>
-                  <button
+                  <!-- <button
                     class="btn btn-danger btn-sm active"
                     (click)="resetFilters()">
                     Borrar Filtros
+                  </button> -->
+                  <button
+                    class="btn btn-danger active btn-sm m-2"
+                    (click)="resetFilters()">
+                    Limpiar
+                    <i class="fa fa-eraser ml-1"></i>
                   </button>
                 </div>
                 <div>
@@ -196,6 +229,7 @@
                     class="btn btn-primary btn-sm active"
                     (click)="buildFilters()">
                     Filtrar
+                    <i class="fa fa-filter" aria-hidden="true"></i>
                   </button>
                 </div>
               </div>
@@ -335,9 +369,10 @@
           </ul>
         </div>
       </div>
-      <div class="col-3 text-end">
+      <div class="col-3 text-end d-flex flex-row-reverse">
         <app-columns-select
           [(settings)]="settings"
+          [leftList]="true"
           [defaultColumns]="6"></app-columns-select>
       </div>
     </div>

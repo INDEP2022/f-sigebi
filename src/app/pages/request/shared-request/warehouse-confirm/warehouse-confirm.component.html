@@ -5,18 +5,21 @@
   <div body>
     <form [formGroup]="responseForm" class="form-material">
       <form-field
-        [control]="responseForm.get('idWarehouse')"
-        label="Id almac&eacute;n">
-        <input type="text" class="form-control" formControlName="idWarehouse" />
+        [control]="responseForm.get('nbidnewstore')"
+        label="Id Almac&eacute;n">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="nbidnewstore" />
       </form-field>
       <div class="row pt-4">
         <form-field
-          [control]="responseForm.get('observation')"
+          [control]="responseForm.get('nbobservation')"
           label="Observaci&oacute;n">
           <input
             type="text"
             class="form-control"
-            formControlName="observation" />
+            formControlName="nbobservation" />
         </form-field>
       </div>
     </form>
@@ -27,11 +30,16 @@
         <confirm-button
           [disabled]="!responseForm.valid"
           [loading]="loading"
+          [className]="'btn-primary'"
+          [btnSmall]="true"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
+        <button
+          (click)="close()"
+          type="button"
+          class="btn btn-primary btn-sm active">
+          Regresar <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>

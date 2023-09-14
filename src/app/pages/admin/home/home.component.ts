@@ -19,8 +19,17 @@ import { JSON_TO_CSV } from './constants/json-to-csv';
 import { ExampleModalComponent } from './example-modal.component';
 import { HomeService } from './home.service';
 /*Redux NgRX Global Vars Service*/
+import { BehaviorSubject } from 'rxjs';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { IGlobalVars } from '../../../shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from '../../../shared/global-vars/services/global-vars.service';
+import { ListDataComponent } from './list-data/list-data.component';
+import { BASIC_BUTTONS } from './utils/basic-buttons';
 
 interface IExcelToJson {
   id: number;
@@ -39,6 +48,7 @@ interface IUser {
   username: string;
   person: IPerson;
   roles: IRole[];
+  currency: string;
 }
 
 interface IRole {
@@ -63,6 +73,14 @@ export class HomeComponent extends BasePage implements OnInit {
   parentModal: BsModalRef;
   /*Redux NgRX Global Vars Model*/
   globalVars: IGlobalVars;
+  buttons = BASIC_BUTTONS;
+
+  // ----------- PAGINACION
+  params = new BehaviorSubject(new ListParams());
+
+  filterParams = new BehaviorSubject(new FilterParams());
+
+  totalItems = 0;
 
   constructor(
     private modalService: BsModalService,
@@ -71,7 +89,9 @@ export class HomeComponent extends BasePage implements OnInit {
     private excelService: ExcelService,
     private store: Store<AppState>,
     private homeService: HomeService,
-    private globalVarsService: GlobalVarsService
+    private globalVarsService: GlobalVarsService,
+    private sanitized: DomSanitizer,
+    private authService: AuthService
   ) {
     super();
     this.settings = {
@@ -79,6 +99,10 @@ export class HomeComponent extends BasePage implements OnInit {
       actions: false,
       columns: EXCEL_TO_JSON_COLUMNS,
     };
+  }
+
+  getElement(html: string) {
+    return this.sanitized.bypassSecurityTrustHtml(html);
   }
 
   testFiles(uploadEvent: IUploadEvent) {
@@ -115,7 +139,11 @@ export class HomeComponent extends BasePage implements OnInit {
     });
   }
 
+  token: TokenInfoModel;
   ngOnInit(): void {
+    this.token = this.authService.decodeToken();
+
+    console.log('Información del usuario logeado: ', this.token);
     this.prepareForm();
     this.store.select('count').subscribe({
       next: data => {
@@ -150,6 +178,7 @@ export class HomeComponent extends BasePage implements OnInit {
       person: this.personForm,
       roles: this.fb.array([this.roleForm]),
       username: [''],
+      currency: [null, []],
     });
   }
 
@@ -182,6 +211,24 @@ export class HomeComponent extends BasePage implements OnInit {
     this.user = this.userExample.getRawValue();
   }
 
+  deleteAlert() {
+    this.alertQuestion('warning', 'Eliminar', '¿Desea Eliminar este registro?');
+  }
+
+  questionAlert() {
+    this.alertQuestion('question', '¿Quiere Continuar con el Proceso?', '');
+  }
+  errorAlert() {
+    this.alert('error', 'Error', 'Descripción del Error');
+  }
+
+  warningAlert() {
+    this.alert('warning', 'No se Encontraron Bienes', '');
+  }
+
+  successAlert() {
+    this.alert('success', 'El Registro se ha Guardado', '');
+  }
   openModal() {
     let config: ModalOptions = {
       initialState: {
@@ -284,6 +331,16 @@ export class HomeComponent extends BasePage implements OnInit {
           noTransferente: null,
           gNoVolante: null,
           varDic: null,
+          bienes_foto: 0,
+          EXPEDIENTE: null,
+          TIPO_DIC: null,
+          VOLANTE: null,
+          CONSULTA: null,
+          TIPO_VO: null,
+          P_GEST_OK: null,
+          P_NO_TRAMITE: null,
+          IMP_OF: null,
+          REL_BIENES: null,
         };
 
         this.globalVarsService.updateGlobalVars(newState);
@@ -307,5 +364,30 @@ export class HomeComponent extends BasePage implements OnInit {
         this.globalVarsService.updateGlobalVars(newState);
         break;
     }
+  }
+
+  showData() {
+    //descomentar si usan FilterParams ejemplo de consulta
+    //this.filterParams.getValue().addFilter('id', 3429640, SearchFilter.EQ)
+    //this.filterParams.getValue().addFilter('keyTypeDocument', 'ENTRE', SearchFilter.ILIKE)
+
+    //ejemplo de uso con ListParams
+    //this.params.getValue()['filter.id'] = '$eq:3429640'
+
+    let config: ModalOptions = {
+      initialState: {
+        //filtros
+        paramsList: this.params,
+        filterParams: this.filterParams, // en caso de no usar FilterParams no enviar
+        callback: (next: boolean, data: any /*Modelado de datos*/) => {
+          if (next) {
+            //mostrar datos de la búsqueda
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ListDataComponent, config);
   }
 }

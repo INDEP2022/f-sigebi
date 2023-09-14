@@ -1,5 +1,5 @@
 export const ZONES_COLUMNS = {
-  number: {
+  id: {
     title: 'Número',
     width: '10%',
     sort: false,
@@ -9,21 +9,27 @@ export const ZONES_COLUMNS = {
     width: '30%',
     sort: false,
   },
-  valid: {
+  vigente: {
     title: 'Vigente',
     width: '5%',
     sort: false,
   },
 };
 export const COORDINATIONSZONES_COLUMNS = {
-  coordinations: {
-    title: 'Coordinación',
+  zoneContractKey: {
+    title: 'Coordinación ',
     width: '10%',
     sort: false,
   },
-  description: {
+  descripcion: {
     title: 'Descripción',
     width: '30%',
     sort: false,
   },
 };
+
+export interface IDataZones {
+  id: number;
+  description: string;
+  statusZone: string;
+}

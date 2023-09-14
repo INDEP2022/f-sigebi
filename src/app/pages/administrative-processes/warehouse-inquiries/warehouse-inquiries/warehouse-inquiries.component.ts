@@ -1,11 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModalListGoodsComponent } from '../modal-list-goods/modal-list-goods.component';
+import { COUNT_WAREHOUSE_COLUMNS } from '../warehouse-columns';
 
 export interface ExampleWarehouse {
   number: number;
@@ -36,61 +42,106 @@ export class WarehouseInquiriesComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   //Data Table
   warehouses: any[] = [];
+  origin: string = '';
+  dataFactGen: LocalDataSource = new LocalDataSource();
+  origin2: string = '';
+  origin3: string = '';
+  origin4: string = '';
+  screenKey = 'FGERADBALMACENES';
+  paramsScreen: IParamsWare = {
+    origin: '',
+    PAR_MASIVO: '', // PAQUETE
+  };
+  columnFilters: any = [];
+  @Input() PAR_MASIVO: string;
+  @ViewChild('goodNumber') goodNumber: ElementRef;
 
   constructor(
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
     private modalService: BsModalService,
     private warehouseService: WarehouseService
   ) {
     super();
+
     this.settings = {
       ...this.settings,
-      actions: false,
-      columns: {
-        idWarehouse: {
-          title: 'No',
-          width: '10%',
-          sort: false,
-        },
-        description: {
-          title: 'Descripcion',
-          width: '20%',
-          sort: false,
-        },
-        ubication: {
-          title: 'Ubicacion',
-          width: '20%',
-          sort: false,
-        },
-        manager: {
-          title: 'Responsable',
-          width: '10%',
-          sort: false,
-        },
-        stateCode: {
-          title: 'Entidad',
-          width: '10%',
-          sort: false,
-        },
-        municipalityCode: {
-          title: 'Municipio',
-          width: '10%',
-          sort: false,
-        },
-        cityCode: {
-          title: 'Ciudad',
-          width: '10%',
-          sort: false,
-        },
-        localityCode: {
-          title: 'Localidad',
-          width: '10%',
-          sort: false,
-        },
+      hideSubHeader: false,
+      actions: {
+        edit: false,
+        delete: false,
+        add: false,
+        position: 'right',
       },
+      columns: { ...COUNT_WAREHOUSE_COLUMNS },
+      noDataMessage: 'No se encontrarón registros',
     };
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params: any) => {
+        console.log(params);
+        console.log(this.paramsScreen);
+        for (const key in this.paramsScreen) {
+          if (Object.prototype.hasOwnProperty.call(params, key)) {
+            this.paramsScreen[key as keyof typeof this.paramsScreen] =
+              params[key] ?? null;
+          }
+        }
+        this.origin = params['origin2']
+          ? params['origin2']
+          : params['origin'] ?? null;
+        this.origin2 = params['origin3'] ?? null;
+        this.origin3 = params['origin4'] ?? null;
+        this.origin4 = params['origin5'] ?? null;
+        this.PAR_MASIVO = params['PAR_MASIVO'] ?? null;
+        if (this.origin && this.paramsScreen.PAR_MASIVO != null) {
+          // this.btnSearchAppointment();
+        }
+        console.log(params, this.paramsScreen);
+      });
+    if (this.paramsScreen) {
+      if (this.paramsScreen.PAR_MASIVO) {
+        this.getWarehouses();
+      } else {
+        console.log('SIN PARAMETROS');
+        if (!this.origin) {
+          console.log(this.origin);
+        }
+      }
+    }
+    this.dataFactGen
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            filter.field == 'idWarehouse' ||
+            filter.field == 'description' ||
+            filter.field == 'ubication' ||
+            filter.field == 'manager' ||
+            filter.field == 'stateCode' ||
+            filter.field == 'municipalityCode' ||
+            filter.field == 'cityCode' ||
+            filter.field == ' localityCode'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getWarehouses();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getWarehouses());
@@ -99,7 +150,7 @@ export class WarehouseInquiriesComponent extends BasePage implements OnInit {
   select(event: IWarehouse) {
     event
       ? this.openModal(event.idWarehouse)
-      : this.alert('info', 'Ooop...', 'Este Almacen no contiene Bines');
+      : this.alert('info', 'Ooop...', 'Éste Almacén no contiene Bienes');
   }
 
   openModal(idWarehouse: any): void {
@@ -111,9 +162,12 @@ export class WarehouseInquiriesComponent extends BasePage implements OnInit {
   }
   getWarehouses() {
     this.loading = true;
-    this.warehouseService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.warehouseService.getAll(params).subscribe({
       next: response => {
-        console.log(response);
         this.warehouses = response.data.map(ware => {
           return {
             idWarehouse: ware.idWarehouse,
@@ -134,12 +188,28 @@ export class WarehouseInquiriesComponent extends BasePage implements OnInit {
             ubication: ware.ubication,
           };
         });
-
+        this.dataFactGen.load(this.warehouses);
+        this.dataFactGen.refresh();
         this.totalItems = response.count;
         this.loading = false;
-        console.log(this.warehouses);
       },
       error: error => (this.loading = false),
     });
   }
+  goBack() {
+    this.router.navigate(['/pages/administrative-processes/location-goods'], {
+      queryParams: {
+        origin2: this.screenKey,
+        PAR_MASIVO: this.goodNumber,
+        origin: 'FACTADBUBICABIEN',
+        origin3: 'FACTGENACTDATEX',
+        origin4: 'FCONADBALMACENES',
+        ...this.paramsScreen,
+      },
+    });
+  }
+}
+export interface IParamsWare {
+  origin: string;
+  PAR_MASIVO: string;
 }

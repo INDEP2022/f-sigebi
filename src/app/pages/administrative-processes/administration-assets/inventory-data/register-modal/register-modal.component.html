@@ -1,0 +1,63 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">AGREGAR INVENTARIO</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="inventoryDataForm">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="inventoryDataForm.get('noInventario')"
+            label="No. Inventario">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noInventario" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="inventoryDataForm.get('fechaInventario')"
+            label="Fecha Inventario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fechaInventario"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="inventoryDataForm.get('responsable')"
+            label="Responsable">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="responsable" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          [disabled]="!inventoryDataForm.valid"
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="create()">
+          Guardar <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

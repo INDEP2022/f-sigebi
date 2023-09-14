@@ -1,9 +1,26 @@
-<div class="row">
+<!-- <div class="row">
   <ng2-smart-table
     [settings]="settings"
     [source]="registers"
     (userRowSelect)="onSelectTable($event.data)"></ng2-smart-table>
 
+  <app-pagination
+    [filterParams]="params"
+    [totalItems]="totalItems"></app-pagination>
+</div> -->
+<div class="row">
+  <div class="col-md-12 table-responsive">
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered table-responsive'"
+        (userRowSelect)="onSelectTable($event.data)"
+        [settings]="settings"
+        [source]="dataFactRegister">
+      </ng2-smart-table>
+    </div>
+  </div>
+</div>
+<div class="row">
   <app-pagination
     [filterParams]="params"
     [totalItems]="totalItems"></app-pagination>

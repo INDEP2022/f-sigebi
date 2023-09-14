@@ -14,9 +14,12 @@ export const THIRDPARTYCOMPANY_COLUMS = {
     type: 'string',
     sort: false,
   },
-  cveZoneContract: {
-    title: 'Clave zona contrato',
+  keyZoneContract: {
+    title: 'Clave Zona Contrato',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.description : '';
+    },
   },
 };

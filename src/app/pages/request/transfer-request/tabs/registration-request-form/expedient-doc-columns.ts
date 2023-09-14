@@ -319,7 +319,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
   },
 
   addressId: {
-    title: 'idDireccion',
+    title: 'Dirección',
     type: 'string',
     sort: false,
   },
@@ -426,19 +426,19 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
   },
 
   exteriorNumber: {
-    title: 'Num. Ext.',
+    title: 'No. Ext.',
     type: 'number',
     sort: false,
   },
 
   interiorNumber: {
-    title: 'Número Interior',
+    title: 'No. Interior',
     type: 'number',
     sort: false,
   },
 
   code: {
-    title: 'C.P',
+    title: 'C.P.',
     type: 'number',
     sort: false,
   },

@@ -1,0 +1,85 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Seleccione un usuario para remitente</h5>
+  </div>
+  <div body>
+    <form action="" class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-12">
+          <div class="row mt-3">
+            <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
+              <form-field
+                [control]="form.get('typePerson_I')"
+                label="Tipo Persona">
+                <select class="form-control" formControlName="typePerson_I">
+                  <option *ngFor="let option of options" [value]="option.value">
+                    {{ option.label }}
+                  </option>
+                </select>
+              </form-field>
+            </div>
+            <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
+              <form-field [control]="form.get('senderUser_I')">
+                <ngx-select
+                  [form]="form"
+                  [data]="users$"
+                  (change)="getDescUser('control_I', $event)"
+                  [readonly]="form.get('typePerson_I').value === 'E'"
+                  (fetchItems)="getUsers($event)"
+                  bindLabel="userAndName"
+                  value="id"
+                  control="senderUser_I"
+                  label="Usuario"
+                  [searchOnInit]="true"
+                  [showTooltip]="true"
+                  termMaxLength="30"
+                  [labelTemplate]="userLabel"
+                  [optionTemplate]="userOption">
+                </ngx-select>
+                <ng-template #userLabel let-item="item">
+                  {{ item.id }}
+                  <!-- {{ item.name }}-->
+                </ng-template>
+                <ng-template #userOption let-item="item">
+                  <div [title]="item.id + '-' + item.name">
+                    {{ item.id }}
+                    <!--  {{ item.name }}-->
+                  </div>
+                </ng-template>
+              </form-field>
+            </div>
+            <div class="col-md-12 col-sm-12 col-xs-12 mt-3">
+              <form-field
+                [control]="form.get('personaExt_I')"
+                label="Nombre de la Persona">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="personaExt_I"
+                  [readonly]="!(form.get('typePerson_I').value === 'E')" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-info active"
+          [disabled]="!form.valid"
+          (click)="agregarExterno()">
+          Agregar
+        </button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -44,16 +44,16 @@
             <button
               type="button"
               (click)="search()"
-              class="btn btn-primary bt-sm active">
-              <i class="bx bx-search-alt-2"></i> Buscar
+              class="btn btn-primary btn-sm active">
+              Buscar <i class="bx bx-search-alt-2"></i>
             </button>
           </div>
           <div class="m-3">
             <button
               type="button"
               (click)="clean()"
-              class="btn btn-danger bt-sm active">
-              <i class="bx bx-reset"></i> Limpiar
+              class="btn btn-danger btn-sm active">
+              Limpiar <i class="fa fa-eraser" aria-hidden="true"></i>
             </button>
           </div>
         </div>
@@ -74,6 +74,11 @@
           [source]="paragraphs">
         </ng2-smart-table>
       </div>
+      <div class="row pt-3" *ngIf="complaince?.code.length != 10">
+        <span class="ms-1 text-danger"
+          ><strong>Nota:</strong> Seleccione un código de 8 dígitos.</span
+        >
+      </div>
       <!--  </ng-scrollbar> -->
       <app-pagination
         [params]="params"
@@ -84,10 +89,11 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
+          [disabled]="complaince?.code.length != 10"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="complianceSelected()">
-          Seleccionar</button
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i></button
         ><!-- [disabled]="requestForm.invalid" -->
       </div>
       <div class="m-3">

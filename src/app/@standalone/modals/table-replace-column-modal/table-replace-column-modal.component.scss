@@ -1,0 +1,21 @@
+.messageResult {
+  background: #c71a4f;
+  border-radius: 3px;
+  padding: 10px;
+  text-align: center;
+  height: 35px;
+  line-height: 16px;
+  color: white;
+  font-weight: bold;
+  &.success {
+    background: #137f2cad;
+  }
+}
+
+.replaceButtons {
+  @media screen and (max-width: 576px) {
+    justify-content: space-between;
+    display: flex;
+    margin-bottom: 10px;
+  }
+}

@@ -53,6 +53,14 @@ export class CopyAddressComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getAddress());
+
+    this.form.controls['correspondence'].valueChanges.subscribe(data => {
+      if (data == 'TODO') {
+        this.form.controls['requestId'].setValue(null);
+        this.form.controls['warehouseAlias'].setValue(null);
+        this.form.controls['wayOrigin'].setValue(null);
+      }
+    });
   }
 
   prepareForm() {
@@ -60,7 +68,7 @@ export class CopyAddressComponent extends BasePage implements OnInit {
       requestId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       warehouseAlias: [null, [Validators.pattern(STRING_PATTERN)]],
       correspondence: ['TODO', [Validators.pattern(STRING_PATTERN)]],
-      typeAddress: [null, [Validators.pattern(STRING_PATTERN)]],
+      wayOrigin: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -164,39 +172,47 @@ export class CopyAddressComponent extends BasePage implements OnInit {
   }
 
   searchAddress() {
+    this.paramsSearch = new BehaviorSubject<ListParams>(new ListParams());
     const request = this.form.get('requestId').value;
     const akaWarehouse = this.form.get('warehouseAlias').value;
     const correspondence = this.form.get('correspondence').value;
-    const typeAddress = this.form.get('typeAddress').value;
+    const wayOrigin = this.form.get('wayOrigin').value;
+    if (correspondence == 'CUALQUIERA') {
+      if (request) {
+        console.log('solicitud', request);
+        this.paramsSearch.getValue()['filter.requestId'] = `$eq:${request}`;
+      }
 
-    if (request) {
-      console.log('solicitud', request);
-      this.paramsSearch.getValue()['filter.requestId'] = request;
-    }
+      if (akaWarehouse) {
+        console.log('alias', akaWarehouse);
+        this.paramsSearch.getValue()[
+          'filter.warehouseAlias'
+        ] = `$ilike:${akaWarehouse}`;
+      }
 
-    if (akaWarehouse) {
-      console.log('alias', akaWarehouse);
-      //this.paramsSearch.getValue()['filter.aliasWarehouse'] = akaWarehouse;
-    }
-
-    if (correspondence) {
+      /*if (correspondence) {
       console.log('correspondence', correspondence);
-      //this.paramsSearch.getValue()['filter.correspondence'] = correspondence;
-    }
+      this.paramsSearch.getValue()['filter.correspondence'] = correspondence;
+    }*/
 
-    if (typeAddress) {
-      console.log('typeAddress', typeAddress);
-      //this.paramsSearch.getValue()['filter.typeAddress'] = typeAddress;
-    }
-
-    if (request || akaWarehouse || correspondence || typeAddress) {
+      if (wayOrigin) {
+        console.log('wayOrigin', wayOrigin);
+        this.paramsSearch.getValue()[
+          'filter.wayOrigin'
+        ] = `$ilike:${wayOrigin}`;
+      }
+      //request || akaWarehouse || correspondence || wayOrigin
+      /*if (correspondence == 'CUALQUIERA') {*/
       this.getSearchAddress();
-    } else {
+      /*} else {
       this.onLoadToast(
         'info',
         'Acción no permitida',
         'Debes realizar al menos un filtro de búsqueda'
       );
+    }*/
+    } else {
+      this.getSearchAddress();
     }
   }
 
@@ -211,8 +227,8 @@ export class CopyAddressComponent extends BasePage implements OnInit {
     this.paramsSearch.getValue()['filter.regionalDelegationId'] =
       this.idDelegation;
     this.paramsSearch.getValue()['filter.municipalityKey'] = '$not:$null';
-    this.paramsSearch.getValue()['filter.localityKey'] = '$not:$null';
-    this.paramsSearch.getValue()['filter.code'] = '$not:$null';
+    /*this.paramsSearch.getValue()['filter.localityKey'] = '$not:$null';
+    this.paramsSearch.getValue()['filter.code'] = '$not:$null';*/
     this.goodService
       .getGoodsDomicilies(this.paramsSearch.getValue())
       .subscribe({

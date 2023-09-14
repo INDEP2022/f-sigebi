@@ -5,104 +5,130 @@
   <div body>
     <form class="form-material" [formGroup]="representativeForm">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field label="ID" [control]="representativeForm.get('id')">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="id"
-              readonly />
+              min="0"
+              oninput="if(this.value.length > 7) this.value = this.value.slice(0, 7);" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-8">
           <form-field
-            label="Nombre Razón"
+            label="Nombre o Razón Social"
             [control]="representativeForm.get('reasonName')">
             <input
               type="text"
+              maxlength="200"
               class="form-control"
               formControlName="reasonName" />
           </form-field>
         </div>
+      </div>
+
+      <div class="row mt-3">
         <div class="col-md-3">
           <form-field
-            label="Apellido paterno"
+            label="Apellido Paterno"
             [control]="representativeForm.get('paternalSurname')">
             <input
               type="text"
+              maxlength="200"
               class="form-control"
               formControlName="paternalSurname" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
-            label="Apellido materno"
+            label="Apellido Materno"
             [control]="representativeForm.get('maternalSurname')">
             <input
               type="text"
+              maxlength="200"
               class="form-control"
               formControlName="maternalSurname" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
         <div class="col-md-3">
           <form-field
-            label="Fecha de nacimiento"
+            label="Fecha de Nacimiento"
             [control]="representativeForm.get('dateBorn')">
             <input
               type="text"
+              style="position: relative"
               class="form-control"
               formControlName="dateBorn"
               bsDatepicker
               [maxDate]="today"
               [bsConfig]="{
-                dateInputFormat: 'YYYY-MM-DD'
+                dateInputFormat: 'DD/MM/YYYY'
               }" />
+            <i
+              *ngIf="representativeForm.get('dateBorn').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('dateBorn')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
           </form-field>
         </div>
+
         <div class="col-md-3">
           <form-field label="RFC" [control]="representativeForm.get('rfc')">
-            <input type="text" class="form-control" formControlName="rfc" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field label="CURP" [control]="representativeForm.get('curp')">
-            <input type="text" class="form-control" formControlName="curp" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            label="Tipo de persona"
-            [control]="representativeForm.get('personType')">
             <input
               type="text"
               class="form-control"
-              formControlName="personType" />
+              formControlName="rfc"
+              maxlength="13" />
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
+
+      <div class="row mt-3">
+        <div class="col-md-3">
+          <form-field label="CURP" [control]="representativeForm.get('curp')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="curp"
+              maxlength="18" />
+          </form-field>
+        </div>
+
         <div class="col-md-3">
           <form-field
-            label="Tipo de identificación"
+            label="Tipo de Persona"
+            [control]="representativeForm.get('personType')">
+            <ng-select
+              formControlName="personType"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="M">Hombre</ng-option>
+              <ng-option value="F">Mujer</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            label="Tipo de Identificación"
             [control]="representativeForm.get('identificationType')">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="identificationType" />
+              formControlName="identificationType"
+              min="0"
+              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
           </form-field>
         </div>
-        <div class="col-md-3">
-          <form-field
-            label="Aut. Emisión Identif."
-            [control]="representativeForm.get('autEmiIndentify')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="autEmiIndentify" />
-          </form-field>
-        </div>
+
         <div class="col-md-3">
           <form-field
             label="No. Identificación"
@@ -110,82 +136,123 @@
             <input
               type="text"
               class="form-control"
-              formControlName="identificationNumber" />
+              formControlName="identificationNumber"
+              min="0"
+              oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40);" />
           </form-field>
         </div>
-        <div class="col-md-3">
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field
+            label="Aut. Emisión Identif."
+            [control]="representativeForm.get('autEmiIndentify')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="autEmiIndentify"
+              maxlength="200" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
           <form-field
             label="No. Fideicomiso"
             [control]="representativeForm.get('escrowNumber')">
             <input
               type="text"
               class="form-control"
-              formControlName="escrowNumber" />
+              formControlName="escrowNumber"
+              maxlength="40" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
+
         <div class="col-md-2">
           <form-field
-            label="Cve Nacionalidad"
+            label="Cve. Nacionalidad"
             [control]="representativeForm.get('nationalityKey')">
             <input
               type="text"
               class="form-control"
-              formControlName="nationalityKey" />
+              formControlName="nationalityKey"
+              maxlength="2" />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
-            label="Cve País"
+            label="Cve. País"
             [control]="representativeForm.get('countryOriginKey')">
             <input
               type="text"
               class="form-control"
-              formControlName="countryOriginKey" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            label="Calle"
-            [control]="representativeForm.get('street')">
-            <input type="text" class="form-control" formControlName="street" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field
-            label="No. Ext"
-            [control]="representativeForm.get('outsideNumber')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="outsideNumber" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field
-            label="No. Int"
-            [control]="representativeForm.get('insisdeNumber')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="insisdeNumber" />
+              formControlName="countryOriginKey"
+              maxlength="2" />
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
+
+      <div class="row mt-3">
         <div class="col-md-3">
-          <form-field label="Ciudad" [control]="representativeForm.get('city')">
-            <input type="text" class="form-control" formControlName="city" />
+          <form-field
+            label="Estado"
+            [control]="representativeForm.get('state')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="state"
+              maxlength="20" />
           </form-field>
         </div>
+
+        <div class="col-md-3">
+          <form-field label="Ciudad" [control]="representativeForm.get('city')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="city"
+              maxlength="60" />
+          </form-field>
+        </div>
+
         <div class="col-md-3">
           <form-field
             label="Colonia"
             [control]="representativeForm.get('suburb')">
-            <input type="text" class="form-control" formControlName="suburb" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="suburb"
+              maxlength="50" />
           </form-field>
         </div>
+
+        <div class="col-md-3">
+          <form-field
+            label="Calle"
+            [control]="representativeForm.get('street')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="street"
+              maxlength="100" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-3">
+          <form-field
+            label="Código Postal"
+            [control]="representativeForm.get('zipCode')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="zipCode"
+              maxlength="12" />
+          </form-field>
+        </div>
+
         <div class="col-md-3">
           <form-field
             label="Estado"
@@ -193,23 +260,11 @@
             <input
               type="text"
               class="form-control"
-              formControlName="delegation" />
+              formControlName="delegation"
+              maxlength="30" />
           </form-field>
         </div>
-        <div class="col-md-3">
-          <form-field label="CP" [control]="representativeForm.get('zipCode')">
-            <input type="text" class="form-control" formControlName="zipCode" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-3">
-          <form-field
-            label="Estado"
-            [control]="representativeForm.get('state')">
-            <input type="text" class="form-control" formControlName="state" />
-          </form-field>
-        </div>
+
         <div class="col-md-3">
           <form-field
             label="Cve. País"
@@ -217,63 +272,128 @@
             <input
               type="text"
               class="form-control"
-              formControlName="homeCountryKey" />
+              formControlName="homeCountryKey"
+              maxlength="20" />
           </form-field>
         </div>
-        <div class="col-md-3">
-          <form-field label="Fax" [control]="representativeForm.get('fax')">
-            <input type="text" class="form-control" formControlName="fax" />
-          </form-field>
-        </div>
+
         <div class="col-md-3">
           <form-field
-            label="Cve Teléfono"
+            label="Cve. Teléfono"
             [control]="representativeForm.get('countryPhoneKey')">
             <input
               type="text"
               class="form-control"
-              formControlName="countryPhoneKey" />
+              formControlName="countryPhoneKey"
+              maxlength="2" />
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
-        <div class="col-md-2">
+
+      <div class="row mt-3">
+        <div class="col-md-3">
           <form-field
             label="Teléfono"
             [control]="representativeForm.get('phone')">
-            <input type="text" class="form-control" formControlName="phone" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="phone"
+              maxlength="12" />
           </form-field>
         </div>
+
+        <div class="col-md-3">
+          <form-field label="Fax" [control]="representativeForm.get('fax')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fax"
+              maxlength="20" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            label="No. Ext."
+            [control]="representativeForm.get('outsideNumber')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="outsideNumber"
+              maxlength="56" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            label="No. Int."
+            [control]="representativeForm.get('insisdeNumber')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="insisdeNumber"
+              maxlength="40" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
         <div class="col-md-4">
           <form-field
             label="E-mail"
             [control]="representativeForm.get('mailWeb')">
-            <input type="text" class="form-control" formControlName="mailWeb" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="mailWeb"
+              maxlength="60" />
           </form-field>
         </div>
-        <div class="col-md-3">
+
+        <div class="col-md-4">
           <form-field
             label="Cve. Act. Económica"
             [control]="representativeForm.get('ecoActivityKey')">
             <input
               type="text"
               class="form-control"
-              formControlName="ecoActivityKey" />
+              formControlName="ecoActivityKey"
+              maxlength="20" />
           </form-field>
         </div>
-        <div class="col-md-3">
+
+        <div class="col-md-4">
           <form-field
-            label="Cve Representante"
+            label="Cve. Representante"
             [control]="representativeForm.get('repAssociatedId')">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="repAssociatedId" />
+              formControlName="repAssociatedId"
+              min="0"
+              oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field
+            label="No. Registro"
+            [control]="representativeForm.get('registerNumber')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="registerNumber"
+              min="0"
+              oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20);" />
           </form-field>
         </div>
       </div>
     </form>
   </div>
+
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">

@@ -1,0 +1,33 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Detalle</h5>
+  </div>
+  <div body>
+    <div class="mb-2">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered table-responsive'"
+        [settings]="settings"
+        [source]="source"
+        (userRowSelect)="selectItem($event.data)">
+      </ng2-smart-table>
+    </div>
+    <app-pagination [filterParams]="filterParams" [totalItems]="total">
+    </app-pagination>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Regresar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

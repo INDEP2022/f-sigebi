@@ -2,27 +2,28 @@
   <div header>
     <div class="ch-content">
       <h5 class="title">
-        Cat&aacute;logo de relaci&oacute;n y de asunto dictamen
+        Cat&aacute;logo de relaci&oacute;n de asuntos dictamen
       </h5>
     </div>
   </div>
   <div body>
     <div class="row">
-      <div class="ch-content">
-        <h5 class="title">Asuntos</h5>
-        <div class="row justify-content-end mr-1">
-          <div class="col-12">
-            <app-columns-select
-              [(settings)]="settings"
-              class="row justify-content-end">
-            </app-columns-select>
-          </div>
+      <div class="row">
+        <div class="ch-content">
+          <h5 class="title">Asuntos</h5>
+        </div>
+        <div class="col-md-8 mt-3 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+          <app-columns-select
+            [(settings)]="settings"
+            [leftList]="true"></app-columns-select>
         </div>
       </div>
-      <div class="row pt-4">
+
+      <div class="row">
         <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
-            <div class="table-responsive">
+          <div class="table-responsive">
+            <div [class]="loading ? 'table-loading' : ''">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settings"
@@ -39,19 +40,19 @@
       </div>
     </div>
 
-    <div class="row pt-5" *ngIf="totalItems2 >= 1">
-      <div class="ch-content">
-        <h5 class="title">Tipo de asuntos</h5>
-        <div class="row justify-content-end mr-1">
-          <div class="col-12">
-            <app-columns-select
-              [(settings)]="settings2"
-              class="row justify-content-end">
-            </app-columns-select>
-          </div>
+    <div class="row" *ngIf="totalItems2 >= 1">
+      <div class="row">
+        <div class="ch-content">
+          <h5 class="title">Tipo de Asuntos</h5>
+        </div>
+        <div class="col-md-8 mt-3 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+          <app-columns-select
+            [(settings)]="settings2"
+            [leftList]="true"></app-columns-select>
         </div>
       </div>
-      <div class="row pt-4">
+      <div class="row">
         <div class="col-md-12">
           <div [class]="loading ? 'table-loading' : ''">
             <div class="table-responsive">
@@ -68,31 +69,36 @@
         </div>
       </div>
     </div>
-    <div class="row pt-5" *ngIf="totalItems3 >= 1">
-      <div class="ch-content">
-        <h5 class="title">Dictamen</h5>
-        <div class="col-md-5 buttons">
-          <app-columns-select
-            [(settings)]="settings2"
-            class="row justify-content-end">
-          </app-columns-select>
+    <div class="row" *ngIf="totalItems3 >= 1">
+      <div class="row">
+        <div class="ch-content">
+          <h5 class="title">Dictamen</h5>
+        </div>
+        <div class="col-md-8 mt-3 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
           <div>
             <button
-              class="btn btn-primary active btn-sm ml-3"
+              type="button"
+              tooltip="Nuevo"
+              containerclass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2"
               (click)="openForm()">
-              Nuevo
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
           </div>
+          <app-columns-select
+            [(settings)]="settings3"
+            [leftList]="true"></app-columns-select>
         </div>
       </div>
-      <div class="row pt-4">
+      <div class="row">
         <div class="col-md-12">
           <div [class]="loading ? 'table-loading' : ''">
             <div class="table-responsive">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settings3"
-                [source]="rAsuntDicList"
+                [source]="data2"
                 (edit)="openForm($event.data)"
                 (delete)="showDeleteAlert($event.data)">
               </ng2-smart-table>
@@ -109,12 +115,14 @@
         <button
           class="btn btn-sm btn-secondary btn-block active"
           (click)="openDictum()">
-          Catálogo de dictamen
+          Catálogo de Dictamen
         </button>
       </div>
       <div class="col-md-3">
-        <button class="btn btn-sm btn-secondary btn-block active">
-          impresión
+        <button
+          class="btn btn-sm btn-primary btn-block active"
+          (click)="report()">
+          Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
         </button>
       </div>
     </div>

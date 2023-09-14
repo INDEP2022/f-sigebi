@@ -2,7 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { LocalDataSource } from 'ng2-smart-table';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -18,6 +22,8 @@ export class StationListComponent extends BasePage implements OnInit {
   paragraphs: IStation[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  columnFilters: any = [];
+  data: LocalDataSource = new LocalDataSource();
 
   constructor(
     private stationService: StationService,
@@ -25,10 +31,55 @@ export class StationListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = STATION_COLUMS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
+    this.totalItems = 0;
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'transferent':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.nameTransferent`;
+                break;
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'keyState':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'status':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getExample();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getExample());
@@ -36,11 +87,16 @@ export class StationListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.stationService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.stationService.getAll(params).subscribe({
       next: response => {
         this.paragraphs = response.data;
-        console.log(this.paragraphs);
         this.totalItems = response.count;
+        this.data.load(response.data);
+        this.data.refresh();
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -69,7 +125,24 @@ export class StationListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(station.id);
       }
+    });
+  }
+
+  remove(id: number) {
+    this.stationService.remove(id).subscribe({
+      next: () => {
+        this.alert('success', 'Emisora', 'Borrada Correctamente');
+        this.getExample();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Emisora',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

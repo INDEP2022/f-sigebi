@@ -1,13 +1,15 @@
+import { IGood } from '../ms-good/good';
+
 export interface IComerEvent {
   id?: number;
   tpeventoId?: number;
-  StatusvtaId?: string;
+  statusVtaId?: string;
   processKey?: string;
   observations?: string;
   address?: string;
   failedDate?: Date;
   place?: string;
-  eventDate?: Date;
+  eventDate?: Date | string;
   text1?: string;
   text2?: string;
   signatory?: string;
@@ -23,10 +25,14 @@ export interface IComerEvent {
   delegationNumber?: number;
   phaseInmu?: number;
   thirdEatId?: number;
-  notificationDate?: Date;
-  closingEventDate?: Date;
+  notificationDate?: Date | string;
+  closingEventDate?: Date | string;
   tpsolavalId?: number;
   applyIva?: string;
+  eventClosingDate?: string;
+  failureDate?: string;
+  thirdId?: string;
+  eventTpId?: string;
 }
 
 export interface IComerEventRl {
@@ -147,4 +153,93 @@ export interface IComerLotEvent {
   eventDad: number;
   idEvent: number;
   processKey: string;
+}
+
+export interface EventXSerie {
+  idInvoiceFolio: string;
+  idTpevent: IdTpevent;
+  commentary: any;
+}
+
+export interface IdTpevent {
+  id: string;
+  description: string;
+  descReceipt: string;
+  use: string;
+  typeDispId: string;
+  typeFailedpId: string;
+}
+
+export interface IFindAllComerGoodXlotTotal {
+  items: IFindAllComerGoodXlotTotal_Items[];
+  totFinalPrice: number;
+  totFinalVat: number;
+  count: number;
+}
+
+export interface IFindAllComerGoodXlotTotal_Items {
+  goodNumber: number;
+  lotId: number;
+  propertyByLotId: number;
+  baseValue: string;
+  appraisalPriceRef: string;
+  finalPrice: string;
+  baseVat: string;
+  finalVat: string;
+  vatPercent: string;
+  camp1: string;
+  camp2: string;
+  camp3: string;
+  camp4: string;
+  camp5: string;
+  camp6: string;
+  camp7: string;
+  camp8: string;
+  camp9: string;
+  quantity: string;
+  storeNumber: string;
+  surveyJurKey: string;
+  appraiserCompany: string;
+  inventoryNumber: string;
+  priceWithoutVat: string;
+  amountAppVat: string;
+  amountNoAppVat: string;
+  previousStatus: string;
+  appraiserDate: string;
+  calcStatus: string;
+  warrantyPrice: string;
+  status: string;
+  transferenceNumber: string;
+  advance: string;
+  lotPcts: string;
+  creationDate: Date;
+  comerLotId: string;
+  comerEventId: string;
+  consignmentEventId: string;
+  consignmentLotId: string;
+  consignmentGoodsId: string;
+  sold: string;
+  observation: string;
+  billNumber: string;
+  billDate: string;
+  selected: string;
+  annex: string;
+  cylindersNumber: string;
+  origin: string;
+  originCountry: string;
+  lotDescription: string;
+  delegationNumber: string;
+  observations2: string;
+  appraisalId: string;
+  vatA: string;
+  good: IGood;
+}
+
+export interface IGraceDate {
+  param: string;
+  typeEvent: string;
+  address: string;
+  closeEventDate: string;
+  faildDate: string;
+  notificationDate: string | Date;
 }

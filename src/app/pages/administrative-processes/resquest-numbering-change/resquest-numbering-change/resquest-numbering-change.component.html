@@ -6,57 +6,112 @@
     <div body>
       <div class="row">
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <div class="col-md-full col-sm-12 col-xs-12">
-            <form-field
-              [control]="form.get('legalStatus')"
-              label="Situación Juridica">
-              <select class="form-control" formControlName="legalStatus">
-                <option [value]="null">Seleccione un valor</option>
-                <option value="asegurado">Asegurado</option>
-                <option value="decomisado">Decomisado</option>
-                <option value="abandonado">Abandonado</option>
-              </select>
-            </form-field>
-          </div>
+          <form-field
+            [control]="form.get('legalStatus')"
+            label="Situación Jurídica">
+            <ng-select
+              formControlName="legalStatus"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="AS">ASEGURADO</ng-option>
+              <ng-option value="DE">DECOMISADO</ng-option>
+              <ng-option value="AB">ABANDONADO</ng-option>
+            </ng-select>
+          </form-field>
+          <ng-container *ngIf="form.get('legalStatus').value">
+            <ng-container *ngIf="form.get('legalStatus').value === 'AS'">
+              <ng-container *ngIf="true">
+                {{ esta }}
+                {{ es }}
+              </ng-container>
+            </ng-container>
+
+            <ng-container *ngIf="form.get('legalStatus').value === 'DE'">
+              <ng-container *ngIf="true">
+                {{ esta }}
+                {{ es }}
+              </ng-container>
+            </ng-container>
+
+            <ng-container *ngIf="form.get('legalStatus').value === 'AB'">
+              <ng-container *ngIf="true">
+                {{ esta }}
+                {{ es }}
+              </ng-container>
+            </ng-container>
+          </ng-container>
         </div>
-        <div class="col-md-8 col-sm-12 col-xs-12"></div>
+        <div class="col-md-9 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('type')">
+            <ngx-select
+              [form]="form"
+              [data]="tiposData"
+              label="Tipo &#45; Subtipo &#45; Descripci&oacute;n"
+              value="clasifGoodNumber"
+              bindLabel="tipoSupbtipoDescription"
+              (fetchItems)="getTodos($event)"
+              control="type"
+              [multiple]="true">
+            </ngx-select>
+          </form-field>
+        </div>
       </div>
       <div class="row mt-5">
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('delegation')" label="Delegación">
-            <select class="form-control" formControlName="delegation">
-              <option [value]="null">Seleccione un valor</option>
-              <option
-                value="{{ delegation.number }}"
-                *ngFor="let delegation of delegationArray">
-                {{ delegation.number }} {{ delegation.description }}
-              </option>
-            </select>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [form]="form"
+              [data]="itemsDelegation"
+              label="Delegación"
+              value="id"
+              bindLabel="description"
+              (fetchItems)="getDelegations($event)"
+              control="delegation">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('warehouse')" label="Almacén">
-            <select class="form-control" formControlName="warehouse">
-              <option [value]="null">Seleccione un valor</option>
-              <option
-                value="{{ delegation.number }}"
-                *ngFor="let delegation of warehouseArray">
-                {{ delegation.number }} {{ delegation.description }}
-              </option>
-            </select>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('warehouse')">
+            <ngx-select
+              [form]="form"
+              [data]="itemsAlmacen"
+              label="Almacén"
+              bindLabel="description"
+              value="idWarehouse"
+              (fetchItems)="getAlmacen($event)"
+              control="warehouse">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('vault')" label="Bóveda">
-            <select class="form-control" formControlName="vault">
-              <option [value]="null">Seleccione un valor</option>
-              <option
-                value="{{ delegation.number }}"
-                *ngFor="let delegation of vaultArray">
-                {{ delegation.number }} {{ delegation.description }}
-              </option>
-            </select>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('vault')">
+            <ngx-select
+              [form]="form"
+              [data]="itemsBoveda"
+              label="Bóveda"
+              bindLabel="description"
+              value="idSafe"
+              (fetchItems)="getBoveda($event)"
+              control="vault">
+            </ngx-select>
           </form-field>
+        </div>
+        <div #scrollContainer class="col-md-3 col-sm-12 col-xs-12">
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm active"
+            (click)="getDataTable('si')"
+            [disabled]="!form.valid">
+            Ejecutar
+          </button>
+          <button
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="cleanFilter()"
+            [disabled]="!form.valid"
+            style="margin: 1vh">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
         </div>
       </div>
     </div>
@@ -69,14 +124,33 @@
   </div>
   <div body>
     <div class="row">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings"
-        [source]="data">
+      <div class="d-flex justify-content-end mb-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+      <form-loader *ngIf="loading"></form-loader>
+      <div class="col-md-12">
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '400px' }">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [source]="data"
+            [settings]="settings"
+            (userRowSelect)="selectData($event)"
+            (edit)="showReceipt($event.data)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+        <br />
+        <div>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+
+      <!-- <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data">
       </ng2-smart-table>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
+      <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination> -->
     </div>
   </div>
 </app-card>
@@ -84,144 +158,275 @@
 <form [formGroup]="formaplicationData" class="form-material">
   <app-card [header]="true" [footer]="true">
     <div class="ch-content" header>
-      <h5 class="title">Datos de la Solicitud y sus Bienes</h5>
+      <h5 class="title">Datos de la solicitud y sus bienes</h5>
     </div>
     <div body>
       <div class="row">
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-3 col-sm-12 col-xs-12" style="display: flex">
           <form-field
-            [control]="formaplicationData.get('dateRequest')"
+            [control]="formaplicationData.get('applicationChangeCashNumber')"
+            label="No. Solicitud"
+            style="top: -20px">
+            <input
+              type="number"
+              class="form-control"
+              [max]="9999999"
+              [min]="1"
+              formControlName="applicationChangeCashNumber"
+              [max-length]="7"
+              pattern="^[0-9]+" />
+          </form-field>
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            style="margin-left: 5vh"
+            (click)="search()"
+            [disabled]="
+              !formaplicationData.get('applicationChangeCashNumber').value
+            ">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+      <br />
+      <div #scrollContainer2 class="row">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('dateRequestChangeNumerary')"
             label="Fecha Solicitud">
             <input
               type="text"
-              class="form-control"
-              formControlName="dateRequest"
-              bsDatepicker />
+              class="form-control mt-2"
+              formControlName="dateRequestChangeNumerary"
+              bsDatepicker
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
-            [control]="formaplicationData.get('numberRequest')"
-            label="No. Solicitud">
+            [control]="formaplicationData.get('userRequestChangeNumber')">
+            <ngx-select
+              [form]="formaplicationData"
+              [data]="itemsUser"
+              label="Usuario Solicita"
+              value="usuario"
+              bindLabel="usuario"
+              [searchOnInit]="true"
+              (fetchItems)="getUsuario($event)"
+              (change)="searchUsuario($event)"
+              control="userRequestChangeNumber"
+              class="form-control mt-2">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-5 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('postUserRequestCamnum')"
+            label="Cargo">
             <input
               type="text"
-              class="form-control"
-              formControlName="numberRequest" />
+              class="form-control mt-2"
+              formControlName="postUserRequestCamnum"
+              maxlength="200" />
           </form-field>
         </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <div class="row">
-            <div class="col-md-6 col-sm-12 col-xs-12">
-              <form-field
-                [control]="formaplicationData.get('usrRequest')"
-                label="Usr. Solicita">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="usrRequest"
-                  placeholder="Rol" />
-              </form-field>
-            </div>
-            <div class="col-md-6 col-sm-12 col-xs-12">
-              <form-field
-                [control]="formaplicationData.get('nameRequest')"
-                label="Nombre">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="nameRequest"
-                  placeholder="Nombre" />
-              </form-field>
-            </div>
-          </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('delegationRequestcamnum')"
+            label="No. Delegacion Solicitante">
+            <input
+              type="text"
+              class="form-control mt-2"
+              formControlName="delegationRequestcamnum"
+              maxlength="200"
+              readonly />
+          </form-field>
         </div>
       </div>
-      <div class="row mt-5">
-        <div class="col-md-6 col-sm-12 col-xs-12">
+      <br />
+      <div class="row">
+        <div class="col-md-5 col-sm-12 col-xs-12">
           <form-field
-            [control]="formaplicationData.get('charge')"
-            label="Cargo">
-            <input type="text" class="form-control" formControlName="charge" />
-          </form-field>
-        </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field
-            [control]="formaplicationData.get('proposedProcedure')"
+            [control]="formaplicationData.get('procedureProposal')"
             label="Procedimiento Propuesto">
-            <select class="form-control" formControlName="proposedProcedure">
-              <option [value]="null">Seleccione un valor</option>
-              <option value="asegurado">Procedimiento 1</option>
-              <option value="decomisado">Procedimiento 2</option>
-              <option value="abandonado">Procedimiento 3</option>
-            </select>
+            <ng-select
+              class="form-control mt-2"
+              formControlName="procedureProposal">
+              <!-- <ng- [value]="null">Seleccione un valor</ng-option> -->
+              <ng-option value="LICITACION PUBLICA"
+                >LICITACION PUBLICA</ng-option
+              >
+              <ng-option value="INVITACION">INVITACION</ng-option>
+              <ng-option value="LICITACION DIRECTA"
+                >ADJUDICACION DIRECTA</ng-option
+              >
+              <ng-option value="SUBASTA">SUBASTA</ng-option>
+              <ng-option value="REMATE">REMATE</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>
-      <div class="row mt-5">
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <div class="row">
-            <div class="col-md-6 col-sm-12 col-xs-12">
-              <form-field
-                [control]="formaplicationData.get('usrAuthorized')"
-                label="Usr. Autoriza">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="usrAuthorized" />
-              </form-field>
-            </div>
-            <div class="col-md-6 col-sm-12 col-xs-12">
-              <form-field
-                [control]="formaplicationData.get('nameAuthorized')"
-                label="Nombre">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="nameAuthorized" />
-              </form-field>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
+      <br />
+      <div class="row">
+        <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
-            [control]="formaplicationData.get('causeAuthorized')"
-            label="Cargo">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="causeAuthorized" />
-          </form-field>
-        </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field
-            [control]="formaplicationData.get('dateAutorized')"
+            [control]="formaplicationData.get('authorizeDate')"
             label="Fecha Autoriza">
             <input
               type="text"
-              class="form-control"
-              formControlName="dateAutorized"
-              bsDatepicker />
+              class="form-control mt-2"
+              formControlName="authorizeDate"
+              bsDatepicker
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+              readonly />
           </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="formaplicationData.get('authorizeUser')">
+            <ngx-select
+              [form]="formaplicationData"
+              [data]="itemsUser1"
+              label="Usuario Autoriza"
+              value="usuario"
+              bindLabel="usuario"
+              [searchOnInit]="true"
+              (fetchItems)="getUsuario1($event)"
+              (change)="searchUsuario1($event)"
+              control="authorizeUser"
+              class="form-control mt-2">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-5 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('authorizePostUser')"
+            label="Cargo">
+            <input
+              type="text"
+              class="form-control mt-2"
+              formControlName="authorizePostUser"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('authorizeDelegation')"
+            label="No. Delegacion Autoriza">
+            <input
+              type="text"
+              class="form-control mt-2"
+              formControlName="authorizeDelegation"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div footer>
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="guardarSolicitud()"
+                [disabled]="
+                  (!formaplicationData.valid &&
+                    formaplicationData.get('applicationChangeCashNumber')) ||
+                  !disabledSave
+                "
+                style="margin: 1vh">
+                Guardar
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+              <button
+                class="btn btn-danger btn-sm active mr-3"
+                (click)="clean()"
+                style="margin: 1vh">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <hr />
       <div class="row">
-        <div class="container">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings1"
-            [source]="data1">
-          </ng2-smart-table>
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"></app-pagination>
+        <div class="col-md-12">
+          <div class="row pt-2">
+            <div class="col-md-12 text-center mt-4 mb-4">
+              <button
+                tooltip="Agregar Bien"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="pasar()">
+                <!-- Mover uno -->
+                <i class="bx bx-chevron-down bx-md"></i>
+              </button>
+              <button
+                tooltip="Agregar Bienes"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="pasarTodo()">
+                <!-- Mover todos -->
+                <i class="bx bx-chevrons-down bx-md"></i>
+              </button>
+              <button
+                tooltip="Quitar Bienes"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="quitarTodo()">
+                <i class="bx bx-chevrons-up bx-md"></i>
+              </button>
+              <button
+                tooltip="Quitar Bien"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="quitar()">
+                <!-- Quitar uno -->
+                <i class="bx bx-chevron-up bx-md"></i>
+              </button>
+            </div>
+          </div>
         </div>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+          <form-loader *ngIf="loading2"></form-loader>
+          <div class="col-md-12">
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loading2 ? '0px' : '300px' }">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings1"
+                [source]="data1"
+                (userRowSelect)="selectDataCamNum($event)">
+              </ng2-smart-table>
+            </ng-scrollbar>
+            <br />
+            <div>
+              <app-pagination
+                [params]="params1"
+                [totalItems]="totalItems1"></app-pagination>
+            </div>
+          </div>
 
+          <!-- </div> -->
+        </div>
+      </div>
+      <div class="row">
+        <div class="container"></div>
         <div footer>
           <div class="d-flex justify-content-center">
             <div class="m-3">
-              <button type="button" class="btn btn-danger btn-sm active">
-                Imprimir Cedula
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm"
+                (click)="printScanFile()">
+                Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
               </button>
             </div>
           </div>
@@ -230,3 +435,62 @@
     </div>
   </app-card>
 </form>
+
+<div
+  #modal="bs-modal"
+  [config]="{ ignoreBackdropClick: true }"
+  bsModal
+  class="modal fade w-100">
+  <app-modal class="modal-dialog modalSizeXL modal-dialog-centered">
+    <div header>
+      <h5 class="modal-title">GASTOS DEL BIEN</h5>
+    </div>
+    <div body>
+      <div class="row mt-n3">
+        <div class="col-md-12 heigth-limit">
+          <div class="d-flex justify-content-end mb-2">
+            <app-columns-select [(settings)]="settings2"></app-columns-select>
+          </div>
+
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="data2">
+            </ng2-smart-table>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems2"></app-pagination>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-2 text-center">
+          <form [formGroup]="formTotal">
+            <form-field [control]="formTotal.get('total')">
+              <label for="">Total de Gastos</label>
+              <input
+                type="text"
+                class="form-control mt-2"
+                formControlName="formTotal"
+                readonly />
+            </form-field>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger active"
+            (click)="cerrarModal()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </app-modal>
+</div>

@@ -8,125 +8,123 @@
       <form [formGroup]="goodForm" class="form-material">
         <div class="row">
           <div class="col-md-5">
-            <label>No. Gesti&oacute;n</label>
+            <label>No. Gesti&oacute;n: </label>
             <span class="fs-4">{{ goodData?.id }}</span>
           </div>
           <div class="col-md-5">
-            <label>Destino Ligie </label>
+            <label>Destino Ligie: </label>
             <span class="fs-4">{{ destinyLigie }}</span>
           </div>
         </div>
 
+        <!-- Corregir tipo bien SAT -->
         <div class="row pt-4">
           <div class="col-md-5">
-            <label>Tipo Bien</label>
+            <label>Tipo Bien: </label>
             <span class="fs-4">{{ goodType }}</span>
           </div>
           <div class="col-md-5">
-            <!--  <div class="form-group"> -->
-            <label>Destino de la Transferente&#58;</label>
+            <label>Destino de la Transferente&#58; </label>
             <span class="fs-4">{{ transferentDestiny }}</span>
-            <!--  </div> -->
           </div>
         </div>
 
+        <!-- Corregir tipo de bien SAT -->
         <div class="row pt-4">
           <div class="col-md-5">
-            <label>Tipo de Bien</label>
+            <label>Tipo de Bien: </label>
             <span class="fs-4">{{ relevantTypeName }}</span>
           </div>
           <div class="col-md-5">
-            <label>Destino INDEP</label>
-            <span class="fs-4">{{ goodData?.saeDestiny }}</span>
+            <label>Descripci&oacute;n de Bien Transferente: </label>
+            <span class="fs-4">{{ goodData?.goodDescription }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-5">
-            <label>Descripci&oacute;n de Bien Transferente</label>
-            <span class="fs-4">{{ goodData?.goodDescription }}</span>
+            <label>Destino INDEP: </label>
+            <span class="fs-4">{{ destinySAE }}</span>
           </div>
           <div class="col-md-5">
-            <label>Color </label>
+            <label>Color: </label>
             <span class="fs-4">{{ goodData?.color }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-5">
-            <label>Descripción Bien INDEP</label>
+            <label>Descripci&oacute;n Bien INDEP: </label>
             <span class="fs-4">{{ goodData?.descriptionGoodSae }}</span>
           </div>
           <div class="col-md-5">
-            <label>Capacidad</label>
+            <label>Capacidad: </label>
             <span class="fs-4">{{ goodData?.capacity }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-5">
-            <label>No. Expediente de la Transferente</label>
+            <label>No. Expediente de la Transferente: </label>
             <span class="fs-4">{{ goodData?.fileeNumber }}</span>
           </div>
           <div class="col-md-5">
-            <label>Volumen (m3)</label>
+            <label>Volumen (m3): </label>
             <span class="fs-4">{{ goodData?.volume }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-5">
-            <label>Estado F&iacute;sico</label>
+            <label>Estado F&iacute;sico: </label>
             <span class="fs-4">{{ physicalStatus }}</span>
           </div>
           <div class="col-md-5">
-            <label>Tipo de Uso </label>
+            <label>Tipo de Uso: </label>
             <span class="fs-4">{{ goodData?.useType }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-5">
-            <label>Unidad de Medida Ligie</label>
+            <label>Unidad de Medida Ligie: </label>
             <span class="fs-4">{{ unitMeasureLigie }}</span>
           </div>
           <div class="col-md-5">
-            <label>Procedencia</label>
+            <label>Procedencia: </label>
             <span class="fs-4">{{ goodData?.origin }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-5">
-            <label>Estado de Conservaci&oacute;n</label>
+            <label>Estado de Conservaci&oacute;n: </label>
             <span class="fs-4">{{ conservationState }}</span>
           </div>
           <div class="col-md-5">
-            <div class="form-group">
-              <label>Aval&uacute;o</label>
-              <span class="fs-4">{{ avaluo }}</span>
-            </div>
+            <label>Aval&uacute;o: </label>
+            <span class="fs-4">{{ avaluo }}</span>
           </div>
         </div>
 
         <div class="row pt-3">
           <div class="col-md-5">
-            <label>Unidad de Medida Transferente</label>
+            <label>Unidad de Medida Transferente: </label>
             <span class="fs-4">{{ unitMeasureTransferent }}</span>
           </div>
           <div class="col-md-5">
-            <label>No. Norma</label>
-            <span class="fs-4"> {{ goodData?.compliesNorm }}</span>
+            <label>No. Norma: </label>
+            <span class="fs-4"> {{ norm }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-5">
-            <label>Duplicidad</label>
+            <label>Duplicidad: </label>
             <span class="fs-4">{{ duplicity }}</span>
           </div>
           <div class="col-md-5">
-            <label>Menaje</label>
+            <label>Menaje: </label>
             <span class="fs-4"></span>
           </div>
         </div>
@@ -134,24 +132,24 @@
         <!-- para ponerlo  sat -->
         <div class="row pt-4">
           <div class="col-md-5">
-            <label>Cantidad de la Transferente</label>
+            <label>Cantidad de la Transferente: </label>
             <span class="fs-4">{{ goodData?.quantity | number }}</span>
           </div>
           <div class="col-md-5" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <label>Clave Única</label>
+            <label>Clave &Uacute;nica: </label>
             <span class="fs-4">{{ goodData?.uniqueKey }}</span>
           </div>
         </div>
         <div class="row pt-4" *ngIf="typeOfRequest == 'SAT_SAE'">
           <div class="col-md-5">
-            <label>Folio de Solicitud</label>
+            <label>Folio de Solicitud: </label>
             <span class="fs-4">{{ goodData?.requestFolio }}</span>
           </div>
         </div>
         <div class="row pt-4" *ngIf="typeOfRequest == 'PGR_SAE'">
           <div class="col-md-5">
             <div style="width: 20rem">
-              <label>Unidad Medida INDEP</label>
+              <label>Unidad Medida INDEP: </label>
               <span class="fs-4"> {{ saeMeasureUnit }}</span>
             </div>
           </div>
@@ -167,150 +165,146 @@
       <form [formGroup]="goodForm" class="form-material">
         <div class="row">
           <div class="col-md-6">
-            <label>No&#46; Gesti&oacute;n</label>
+            <label>No&#46; Gesti&oacute;n: </label>
             <span class="fs-4">{{ goodData?.id }}</span>
           </div>
           <div class="col-md-6">
-            <label>Cantidad de la Transferente</label>
+            <label>Cantidad de la Transferente: </label>
             <span class="fs-4">{{ goodData?.quantity | number }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Tipo Bien</label>
+            <label>Tipo Bien: </label>
             <span class="fs-4">{{ goodType }}</span>
           </div>
           <div class="col-md-6">
-            <label>Destino de la Transferente&#58;</label>
+            <label>Destino de la Transferente&#58; </label>
             <span class="fs-4">{{ transferentDestiny }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Tipo de Bien</label>
+            <label>Tipo de Bien: </label>
             <span class="fs-4">{{ relevantTypeName }}</span>
           </div>
           <div class="col-md-6">
-            <label>Destino INDEP</label>
+            <label>Destino INDEP: </label>
             <span class="fs-4">{{ destinySAE }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Descripci&oacute;n de Bien Transferente</label>
+            <label>Descripci&oacute;n de Bien Transferente: </label>
             <span class="fs-4">{{ goodData?.goodDescription }}</span>
           </div>
           <div class="col-md-6">
-            <label>Color </label>
+            <label>Color: </label>
             <span class="fs-4">{{ goodData?.color }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Descripci&oacute;n Bien INDEP</label>
+            <label>Descripci&oacute;n Bien INDEP: </label>
             <span class="fs-4">{{ goodData?.descriptionGoodSae }}</span>
           </div>
           <div class="col-md-6">
-            <label>Capacidad (lts)</label>
+            <label>Capacidad (lts): </label>
             <span class="fs-4">{{ goodData?.capacity }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>No&#46; Expediente de la Transferente</label>
+            <label>No&#46; Expediente de la Transferente: </label>
             <span class="fs-4">{{ goodData?.fileeNumber }}</span>
           </div>
           <div class="col-md-6">
-            <label>Volumen (m3)</label>
+            <label>Volumen (m3): </label>
             <span class="fs-4">{{ goodData?.volume }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Estado F&iacute;sico</label>
+            <label>Estado F&iacute;sico: </label>
             <span class="fs-4">{{ physicalStatus }}</span>
           </div>
           <div class="col-md-6">
-            <label>Tipo de Uso </label>
+            <label>Tipo de Uso: </label>
             <span class="fs-4">{{ goodData?.useType }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Unidad de Medida Ligie</label>
+            <label>Unidad de Medida Ligie: </label>
             <span class="fs-4">{{ unitMeasureLigie }}</span>
           </div>
           <div class="col-md-6">
-            <label>Procedencia</label>
+            <label>Procedencia: </label>
             <span class="fs-4">{{ goodData?.origin }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Unidad de Medida Transferente</label>
+            <label>Unidad de Medida Transferente: </label>
             <span class="fs-4">{{ unitMeasureTransferent }}</span>
           </div>
           <div class="col-md-6">
-            <div class="form-group">
-              <label>Aval&uacute;o</label>
-              <span class="fs-4">{{ avaluo }}</span>
-            </div>
+            <label>Aval&uacute;o: </label>
+            <span class="fs-4">{{ avaluo }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Estado de Conservaci&oacute;n</label>
+            <label>Estado de Conservaci&oacute;n: </label>
             <span class="fs-4">{{ conservationState }}</span>
           </div>
           <div class="col-md-6">
-            <label>No. Norma</label>
-            <span class="fs-4"> {{ cumplyNorma }}</span>
+            <label>No. Norma: </label>
+            <span class="fs-4"> {{ norm }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
-          <div
-            class="col-md-6"
-            *ngIf="typeOfRequest == 'MANUAL' || typeOfRequest == 'SAT_SAE'">
-            <div style="width: 20rem">
-              <label>Unidad medida INDEP</label>
+          <div class="col-md-6">
+            <div>
+              <label>Unidad Medida INDEP: </label>
               <span class="fs-4"> {{ saeMeasureUnit }}</span>
             </div>
           </div>
           <div class="col-md-6">
-            <label>Menaje</label>
+            <label>Menaje: </label>
             <span class="fs-4"></span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Duplicidad</label>
+            <label>Duplicidad: </label>
             <span class="fs-4">{{ duplicity }}</span>
           </div>
           <div
             class="col-md-6"
             *ngIf="typeOfRequest == 'MANUAL' || typeOfRequest == 'SAT_SAE'">
-            <label>Folio de solicitud&#58;</label>
+            <label>Folio de Solicitud&#58; </label>
             <span class="fs-4">{{ goodData?.requestFolio }}</span>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <label>Clave Única</label>
-            <span class="fs-4">{{ goodData?.uniqueKey }}</span>
+            <label>Clave &Uacute;nica: </label>
+            <span class="fs-4">{{ uniqueKey }}</span>
           </div>
           <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <label>Destino Ligie</label>
+            <label>Destino Ligie: </label>
             <span class="fs-4">{{ destinyLigie }}</span>
           </div>
         </div>
@@ -326,7 +320,7 @@
       <div class="d-flex justify-content-end">
         <div class="p-2">
           <button class="btn btn-primary btn-sm active" (click)="save()">
-            Guardar
+            Guardar <i aria-hidden="true" class="fa fa-save"></i>
           </button>
         </div>
       </div>
@@ -335,55 +329,55 @@
       <form [formGroup]="goodForm" class="form-material">
         <div class="row">
           <div class="col-md-6">
-            <label>No. Gesti&oacute;n</label>
+            <label>No. Gesti&oacute;n: </label>
             <span class="fs-4">{{ goodData?.id }}</span>
           </div>
           <div class="col-md-6">
-            <label>Unidad de Medida Transferente</label>
+            <label>Unidad de Medida Transferente: </label>
             <span class="fs-4">{{ unitMeasureTransferent }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Tipo Bien</label>
+            <label>Tipo Bien: </label>
             <span class="fs-4">{{ goodType }}</span>
           </div>
           <div class="col-md-6">
-            <label>Cantidad de la Transferente</label>
+            <label>Cantidad de la Transferente: </label>
             <span class="fs-4">{{ goodData?.quantity | number }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
-          <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <label>Folio de solicitud</label>
-            <span class="fs-4">{{ goodData?.requestFolio }}</span>
+          <div class="col-md-6">
+            <label>Tipo de Bien: </label>
+            <span class="fs-4">{{ relevantTypeName }}</span>
           </div>
           <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <label>Destino Ligie</label>
+            <label>Folio de solicitud: </label>
+            <span class="fs-4">{{ goodData?.requestFolio }}</span>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label>Destino de la Transferente&#58; </label>
+            <span class="fs-4">{{ transferentDestiny }}</span>
+          </div>
+          <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
+            <label>Destino Ligie: </label>
             <span class="fs-4">{{ destinyLigie }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Tipo de Bien</label>
-            <span class="fs-4">{{ relevantTypeName }}</span>
-          </div>
-          <div class="col-md-6">
-            <label>Destino de la Transferente&#58;</label>
-            <span class="fs-4">{{ transferentDestiny }}</span>
-          </div>
-        </div>
-
-        <div class="row pt-4">
-          <div class="col-md-6">
-            <label>Cumple Norma</label>
+            <label>Cumple Norma: </label>
             <span class="fs-4">{{ cumplyNorma }}</span>
           </div>
           <div class="col-md-6">
-            <label>Duplicidad</label>
+            <label>Duplicidad: </label>
             <span class="fs-4">{{ duplicity }}</span>
           </div>
         </div>
@@ -395,11 +389,11 @@
             <span class="fs-4">{{ goodData?.type }}</span>
           </div> -->
           <div class="col-md-6">
-            <label>No. Norma</label>
-            <span class="fs-4"> {{ goodData?.compliesNorm }}</span>
+            <label>No. Norma: </label>
+            <span class="fs-4"> {{ norm }}</span>
           </div>
           <div class="col-md-6">
-            <label>Destino INDEP</label>
+            <label>Destino INDEP: </label>
             <div style="width: 20rem">
               <ngx-select
                 [form]="goodForm"
@@ -417,65 +411,63 @@
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Color </label>
+            <label>Color: </label>
             <span class="fs-4">{{ goodData?.color }}</span>
           </div>
           <div class="col-md-6">
-            <label>Capacidad (lts)</label>
+            <label>Capacidad (lts): </label>
             <span class="fs-4">{{ goodData?.capacity }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <label>Clave Única</label>
+            <label>Clave &Uacute;nica: </label>
             <span class="fs-4">{{ goodData?.uniqueKey }}</span>
           </div>
           <div class="col-md-6">
-            <label>Volumen (m3)</label>
+            <label>Volumen &#40;m&#179;&#41;: </label>
             <span class="fs-4">{{ goodData?.volume }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Descripci&oacute;n de Bien Transferente</label>
+            <label>Descripci&oacute;n de Bien Transferente: </label>
             <span class="fs-4">{{ goodData?.goodDescription }}</span>
           </div>
           <div class="col-md-6">
-            <label>Tipo de Uso </label>
+            <label>Tipo de Uso: </label>
             <span class="fs-4">{{ goodData?.useType }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Descripción Bien INDEP</label>
+            <label>Descripci&oacute;n Bien INDEP: </label>
             <span class="fs-4">{{ goodData?.descriptionGoodSae }}</span>
           </div>
           <div class="col-md-6">
-            <label>Procedencia</label>
+            <label>Procedencia: </label>
             <span class="fs-4">{{ goodData?.origin }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>No. Expediente de la Transferente</label>
+            <label>No. Expediente de la Transferente: </label>
             <span class="fs-4">{{ goodData?.fileeNumber }}</span>
           </div>
 
           <div class="col-md-6">
-            <div class="form-group">
-              <label>Aval&uacute;o</label>
-              <span class="fs-4">{{ avaluo }}</span>
-            </div>
+            <label>Aval&uacute;o: </label>
+            <span class="fs-4">{{ avaluo }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Estado F&iacute;sico</label>
+            <label>Estado F&iacute;sico: </label>
             <div style="width: 20rem">
               <ngx-select
                 style="width: 20rem"
@@ -492,7 +484,7 @@
             </div>
           </div>
           <div class="col-md-6">
-            <label>Estado de Conservaci&oacute;n</label>
+            <label>Estado de Conservaci&oacute;n: </label>
             <div style="width: 20rem">
               <ngx-select
                 style="width: 20rem"
@@ -512,11 +504,11 @@
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Unidad de Medida Ligie</label>
+            <label>Unidad de Medida Ligie: </label>
             <span class="fs-4">{{ unitMeasureLigie }}</span>
           </div>
           <div class="col-md-6">
-            <label>Menaje</label>
+            <label>Menaje: </label>
             <span class="fs-4"></span>
           </div>
         </div>
@@ -524,24 +516,24 @@
         <div class="row pt-4">
           <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
             <div style="width: 20rem">
-              <label>Unidad Medida INDEP</label>
+              <label>Unidad Medida INDEP: </label>
               <ngx-select
                 [form]="goodForm"
                 control="saeMeasureUnit"
                 (fetchItems)="getUnitMeasureSae($event)"
                 [data]="selectMeasureUnitSae"
                 label=""
-                [searchable]="false"
+                [searchable]="true"
                 bindLabel="measureTlUnit"
                 value="uomCode"
                 [readonly]="false"
                 (change)="unidMediIndep($event)"></ngx-select>
             </div>
           </div>
-          <div class="col-md-5" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <label>Clave &Uacute;nica</label>
+          <!-- <div class="col-md-5" *ngIf="typeOfRequest == 'SAT_SAE'">
+            <label>Clave &Uacute;nica: </label>
             <span class="fs-4">{{ goodData?.uniqueKey }}</span>
-          </div>
+          </div> -->
         </div>
       </form>
     </div>
@@ -553,126 +545,126 @@
       <form [formGroup]="goodForm" class="form-material">
         <div class="row">
           <div class="col-md-6">
-            <label>No&#46; Gesti&oacute;n</label>
+            <label>No&#46; Gesti&oacute;n: </label>
             <span class="fs-4">{{ goodData?.id }}</span>
           </div>
           <div class="col-md-6">
-            <label>Cantidad de la Transferente</label>
+            <label>Cantidad de la Transferente: </label>
             <span class="fs-4">{{ goodData?.quantity | number }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Tipo Bien</label>
+            <label>Tipo Bien: </label>
             <span class="fs-4">{{ goodType }}</span>
           </div>
           <div class="col-md-6">
-            <label>Destino de la Transferente&#58;</label>
+            <label>Destino de la Transferente&#58; </label>
             <span class="fs-4">{{ transferentDestiny }}</span>
           </div>
         </div>
+
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Descripci&oacute;n de Bien Transferente</label>
+            <label>Tipo de Bien: </label>
+            <span class="fs-4">{{ relevantTypeName }}</span>
+          </div>
+
+          <div class="col-md-6">
+            <label>Descripci&oacute;n de Bien Transferente: </label>
             <span class="fs-4">{{ goodData?.goodDescription }}</span>
           </div>
+        </div>
+
+        <div class="row pt-4">
           <div class="col-md-6">
-            <label>Capacidad (lts)</label>
+            <label>No&#46; Expediente de la Transferente: </label>
+            <span class="fs-4">{{ goodData?.fileNumber }}</span>
+          </div>
+          <div class="col-md-6">
+            <label>Capacidad (lts):</label>
             <span class="fs-4">{{ goodData?.capacity }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>No&#46; Expediente de la Transferente</label>
-            <span class="fs-4">{{ goodData?.fileNumber }}</span>
-          </div>
-          <div class="col-md-6">
-            <label>Tipo de Bien</label>
-            <span class="fs-4">{{ relevantTypeName }}</span>
-          </div>
-        </div>
-
-        <div class="row pt-4">
-          <div class="col-md-6">
-            <label>Unidad de Medida Ligie</label>
+            <label>Unidad de Medida Ligie: </label>
             <span class="fs-4">{{ unitMeasureLigie }}</span>
           </div>
           <div class="col-md-6">
-            <label>Duplicidad</label>
+            <label>Duplicidad: </label>
             <span class="fs-4">{{ duplicity }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Unidad de Medida Transferente</label>
+            <label>Unidad de Medida Transferente: </label>
             <span class="fs-4">{{ unitMeasureTransferent }}</span>
           </div>
           <div class="col-md-6">
-            <div class="form-group">
-              <label>Aval&uacute;o</label>
-              <span class="fs-4">{{ avaluo }}</span>
-            </div>
+            <label>Aval&uacute;o: </label>
+            <span class="fs-4">{{ avaluo }}</span>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Estado de Conservaci&oacute;n</label>
+            <label>Estado de Conservaci&oacute;n: </label>
             <span class="fs-4">{{ conservationState }}</span>
           </div>
           <div class="col-md-6">
-            <label>No. Norma</label>
-            <span class="fs-4"> {{ goodData?.compliesNorm }}</span>
+            <label>No. Norma: </label>
+            <span class="fs-4"> {{ norm }}</span>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Clave Única</label>
-            <span class="fs-4">{{ goodData?.uniqueKey }}</span>
+            <label>Clave &Uacute;nica: </label>
+            <span class="fs-4">{{ uniqueKey }}</span>
           </div>
           <div class="col-md-6">
-            <label>Destino Ligie</label>
+            <label>Destino Ligie: </label>
             <span class="fs-4">{{ destinyLigie }}</span>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Fracci&oacute;n</label>
+            <label>Fracci&oacute;n: </label>
             <span class="fs-4">{{ fraction }}</span>
           </div>
           <div class="col-md-6">
-            <label>Bien Duplicado</label>
+            <label>Bien Duplicado: </label>
             <span class="fs-4"> {{ goodData?.duplicatedGood }} </span>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Fecha ingreso</label>
+            <label>Fecha ingreso: </label>
             <span class="fs-4">
               {{ goodData?.admissionDate | date: 'dd/MM/yyyy' }}
             </span>
           </div>
           <div class="col-md-6">
-            <label>Notas</label>
+            <label>Notas: </label>
             <span class="fs-4"> {{ goodData?.notesTransferringEntity }} </span>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Entidad Federativa</label>
+            <label>Entidad Federativa: </label>
             <span class="fs-4"> {{ goodData?.federalEntity }} </span>
           </div>
           <div class="col-md-6">
-            <label>Cumple Norma</label>
+            <label>Cumple Norma: </label>
             <span class="fs-4">{{ cumplyNorma }}</span>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Estado F&iacute;sico</label>
+            <label>Estado F&iacute;sico: </label>
             <span class="fs-4">{{ physicalStatus }}</span>
           </div>
         </div>

@@ -4,64 +4,132 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row">
+      <div class="row mb-4">
         <div class="col-md-4">
           <div class="row">
+            <div class="col">
+              <button
+                *ngIf="returnToTracker"
+                class="btn btn-primary active btn-sm mr-2 mb-2"
+                (click)="gotoTracker()">
+                Regresar
+                <i class="fas fa-arrow-circle-left"></i>
+              </button>
+              <button
+                id="expedient-number"
+                [class]="loading ? 'disabled' : ''"
+                class="btn btn-primary btn-sm disabled mr-2 active"
+                (click)="goodsByExpediente()">
+                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                [class]="loading ? 'disabled' : ''"
+                class="btn btn-danger btn-sm active"
+                (click)="clearAll()">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div *ngIf="searchByOtherData" class="row">
+            <div class="row mt-3">
+              <ngx-select
+                control="listExpedients"
+                label="Expedientes"
+                bindLabel="id"
+                [class]="loading ? 'disabled' : ''"
+                (change)="selectExpedient($event)"
+                [data]="dataExpedients"
+                [searchable]="false"
+                [form]="form"></ngx-select>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="navigateProceedings" class="col-md-4">
+          <span>Navegación de actas</span>
+          <div class="row">
             <div class="col-md-9">
+              <div class="d-flex justify-content-center align-items-center">
+                <app-pagination
+                  [params]="paramsActNavigate"
+                  [totalItems]="proceedingData.length"
+                  [limit]="newLimitparamsActNavigate"
+                  [paginatorPageSize]="false"
+                  [paginatorRangeLabel]="false"
+                  [maxSize]="1"></app-pagination>
+                <div class="col">
+                  <button
+                    *ngIf="newAct"
+                    id="expedient-number"
+                    class="btn btn-info btn-sm active ml-4"
+                    [class]="loading ? 'disabled' : ''"
+                    (click)="newProceeding()">
+                    Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr class="row" />
+      <div class="row mb-3 mt-3">
+        <div class="col-md-4">
+          <div class="row">
+            <div class="col">
               <form-field [control]="form.get('expediente')" label="Expediente">
                 <input
+                  (ngModelChange)="
+                    toggleByLength('expedient-number', 'expediente')
+                  "
+                  [min]="0"
                   type="number"
+                  [max-length]="10"
+                  [readOnly]="blockExpedient || loading"
                   class="form-control"
                   formControlName="expediente" />
               </form-field>
             </div>
-            <div class="col-md-3">
-              <button
-                [disabled]="
-                  form.get('expediente').value == null ||
-                  form.get('expediente').value < 0
-                "
-                id="expedient-number"
-                class="btn btn-primary btn-sm active"
-                (click)="getGoodsByExpedient()">
-                Buscar
-              </button>
+            <div *ngIf="form.get('statusProceeding').value != null" class="col">
+              <form-field
+                [control]="form.get('statusProceeding')"
+                label="Estatus del acta">
+                <input
+                  type="text"
+                  readOnly="true"
+                  class="form-control"
+                  formControlName="statusProceeding" />
+              </form-field>
             </div>
           </div>
         </div>
         <div class="col-md-4">
           <div class="row">
-            <span>{{ statusProceeding }}</span>
-            <!--  <div class="col-md-9">
-              <form-field
-                [control]="form.get('averPrev')"
-                label="Averiguaci&oacute;n Previa">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="averPrev" />
-              </form-field>
-            </div> -->
+            <form-field
+              [control]="form.get('averPrev')"
+              label="Averiguaci&oacute;n Previa">
+              <input
+                (ngModelChange)="toggleByLength('expedient-number', 'averPrev')"
+                [max-length]="40"
+                type="string"
+                class="form-control"
+                formControlName="averPrev" />
+            </form-field>
           </div>
         </div>
-        <div *ngIf="navigateProceedings" class="col-md-4">
+        <div class="col-md-4">
           <div class="row">
-            <div class="col-md-9">
-              <button
-                id="expedient-number"
-                [disabled]="!prevProce"
-                class="btn btn-secondary btn-sm active mr-2"
-                (click)="prevProceeding()">
-                Anterior
-              </button>
-              <button
-                id="expedient-number"
-                class="btn btn-secondary btn-sm active"
-                [disabled]="!nextProce"
-                (click)="nextProceeding()">
-                Siguiente
-              </button>
-            </div>
+            <form-field [control]="form.get('causaPenal')" label="Causa penal">
+              <input
+                (ngModelChange)="
+                  toggleByLength('expedient-number', 'causaPenal')
+                "
+                [max-length]="40"
+                type="string"
+                class="form-control"
+                formControlName="causaPenal" />
+            </form-field>
           </div>
         </div>
       </div>
@@ -69,39 +137,35 @@
       <div class="row">
         <div class="col-md-12">
           <div class="row">
-            <div class="col">
-              <form-field [control]="form.get('acta')" label="Acta 1">
-                <select
+            <div class="col-md">
+              <form-field [control]="form.get('acta')">
+                <ngx-select
                   id="acta"
-                  class="form-control"
-                  formControlName="acta"
+                  (change)="changeAct()"
                   [class]="initialBool ? 'disabled' : ''"
-                  (change)="changeAct()">
-                  <option *ngFor="let record of records" [value]="record">
-                    {{ record }}
-                  </option>
-                </select>
-                <!--   <ngx-select
                   control="acta"
-                  [form]="form"
-                  [data]="itemsSelect"></ngx-select> -->
+                  label="Tipo Acta"
+                  bindLabel=""
+                  [data]="records"
+                  [searchable]="false"
+                  [form]="form"></ngx-select>
               </form-field>
             </div>
             <div class="col-md-2">
               <form-field [control]="form.get('autoridad')">
                 <ngx-select
-                  (fetchItems)="fetchTransfer($event)"
                   id="transfer"
                   [class]="initialBool ? 'disabled' : ''"
                   control="autoridad"
                   label="Autoridad"
-                  bindLabel="transferentkey"
+                  bindLabel="clave_transferente"
+                  [searchable]="false"
                   [data]="transferSelect"
                   [form]="form"></ngx-select>
               </form-field>
             </div>
-            <div class="col">
-              <form-field [control]="form.get('ident')" label="Ident">
+            <div class="col-md-1">
+              <form-field [control]="form.get('ident')" label="Identificador">
                 <input
                   type="text"
                   [class]="initialBool ? 'disabled' : ''"
@@ -110,19 +174,17 @@
               </form-field>
             </div>
             <div class="col-md-2">
-              <div class="col">
-                <form-field [control]="form.get('recibe')">
-                  <ngx-select
-                    (fetchItems)="getRecibe($event)"
-                    id="transfer"
-                    [class]="initialBool ? 'disabled' : ''"
-                    control="recibe"
-                    label="Recibe"
-                    bindLabel="delegation"
-                    [data]="recibeSelect"
-                    [form]="form"></ngx-select>
-                </form-field>
-              </div>
+              <form-field [control]="form.get('recibe')">
+                <ngx-select
+                  (fetchItems)="getRecibe($event)"
+                  id="transfer"
+                  [class]="initialBool ? 'disabled' : ''"
+                  control="recibe"
+                  label="Recibe"
+                  bindLabel="delegation"
+                  [data]="recibeSelect"
+                  [form]="form"></ngx-select>
+              </form-field>
             </div>
             <div class="col-md-2">
               <form-field [control]="form.get('admin')">
@@ -131,13 +193,13 @@
                   id="transfer"
                   [class]="initialBool ? 'disabled' : ''"
                   control="admin"
-                  label="Admin"
+                  label="Administra"
                   bindLabel="delegation"
                   [data]="adminSelect"
                   [form]="form"></ngx-select>
               </form-field>
             </div>
-            <div class="col-md-2">
+            <div class="col-md">
               <form-field [control]="form.get('folio')" label="Folio">
                 <input
                   type="number"
@@ -166,33 +228,17 @@
                   formControlName="mes" />
               </form-field>
             </div>
-            <!--  <div class="col">
-              <form-field [control]="form.get('status')" label="Status">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="status" />
-              </form-field>
-            </div>
-            <div class="col">
-              <form-field [control]="form.get('nombre')" label="Nombre">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="nombre" />
-              </form-field>
-            </div> -->
           </div>
         </div>
       </div>
 
       <hr class="row" />
 
-      <div class="row">
+      <div [class]="loading ? 'disabled' : ''" class="row">
         <div class="col-md-12">
           <div class="row">
             <div class="col">
-              <form-field [control]="form.get('acta2')" label="Acta 2">
+              <form-field [control]="form.get('acta2')" label="Acta">
                 <input
                   type="text"
                   class="form-control"
@@ -205,8 +251,16 @@
                 [control]="form.get('fecElab')"
                 label="Fecha Elaboraci&oacute;n">
                 <input
+                  (ngModelChange)="fecElab()"
                   bsDatepicker
+                  [bsConfig]="{
+                    dateInputFormat: 'DD/MM/YYYY hh:mm',
+                    displayOneMonthRange: true,
+                    withTimepicker: true
+                  }"
                   class="form-control"
+                  [max-length]="10"
+                  [class]="!isEnableFecElab ? 'disabled' : ''"
                   [maxDate]="maxDate"
                   formControlName="fecElab" />
               </form-field>
@@ -243,6 +297,8 @@
             <textarea
               rows="3"
               class="form-control"
+              [maxlength]="1000"
+              [class]="!isEnableDireccion ? 'disabled' : ''"
               formControlName="direccion"></textarea>
           </form-field>
         </div>
@@ -253,7 +309,9 @@
             label="Observaciones">
             <textarea
               rows="3"
+              [maxlength]="1000"
               class="form-control"
+              [class]="!isEnableObservaciones ? 'disabled' : ''"
               formControlName="observaciones"></textarea>
           </form-field>
         </div>
@@ -261,13 +319,15 @@
       <hr class="row" />
       <div class="col-md-12">
         <div class="row">
-          <div class="col-6">
+          <div class="col">
             <form-field
               [control]="form.get('autoridadCancela')"
               label="Autoridad Cancela&#47;Suspende">
               <input
                 type="text"
                 class="form-control"
+                [maxlength]="100"
+                [class]="!isEnableAutoridadCancela ? 'disabled' : ''"
                 formControlName="autoridadCancela" />
             </form-field>
           </div>
@@ -275,26 +335,50 @@
             <form-field [control]="form.get('elabora')" label="Elabora C&#47;S">
               <input
                 type="text"
+                [maxlength]="100"
                 class="form-control"
+                [class]="!isEnableElabora ? 'disabled' : ''"
                 formControlName="elabora" />
             </form-field>
           </div>
           <div class="col">
             <form-field
               [control]="form.get('testigo')"
-              label="Testigo de la Contrataci&oacute;n">
+              label="Testigo de la Contralor&iacute;a">
               <input
                 type="text"
+                [maxlength]="100"
                 class="form-control"
+                [class]="!isEnableTestigo ? 'disabled' : ''"
                 formControlName="testigo" />
             </form-field>
           </div>
         </div>
       </div>
+
       <hr class="row" />
-      <div class="row mb-4">
+
+      <app-scan-file-shared
+        [form]="form"
+        [formControlName]="folioEscaneo"
+        [cveDocument]="form.get('acta2').value"
+        [noExpedient]="form.get('expediente').value"
+        [statusProceeding]="form.get('statusProceeding').value"
+        [cveScreen]="cveScreen"
+        [reportPrint]="nameReport"></app-scan-file-shared>
+
+      <hr class="row" />
+      <div [class]="loading ? 'disabled' : ''" class="row mb-5">
         <div class="d-flex justify-content-center">
           <div>
+            <button
+              type="button"
+              [class]="btnCSSAct"
+              class="btn btn-primary btn-sm active mr-2 ml-2"
+              (click)="saveButton()"
+              size="small">
+              Guardar <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
             <button
               type="button"
               [class]="btnCSSAct"
@@ -311,58 +395,47 @@
             </button> -->
             <a
               class="my-1 mx-2 btn btn-warning active btn-sm"
+              [class]="
+                form.get('statusProceeding').value != null &&
+                this.dataGoods['data'].length > 0
+                  ? ''
+                  : 'disabled'
+              "
               size="small"
               (click)="goParcializacion()"
               >Parcializaci&oacute;n
             </a>
             <button
               type="button"
-              class="my-1 mx-2 btn btn-danger active btn-sm"
+              [class]="
+                form.get('statusProceeding').value != null ? '' : 'disabled'
+              "
+              class="my-1 mx-2 btn btn-red active btn-sm"
               size="small"
               (click)="deleteProceeding()">
-              Eliminar Acta
+              Eliminar Acta <i class="fa fa-trash" aria-hidden="true"></i>
             </button>
             <button
               type="button"
               class="btn btn-secondary btn-sm active mr-2 ml-2"
-              size="small">
+              [class]="
+                ['CERRADO', 'CERRADA'].includes(
+                  form.get('statusProceeding').value
+                )
+                  ? ''
+                  : 'disabled'
+              "
+              size="small"
+              (click)="goCargaMasiva()">
               Carga Masiva
             </button>
           </div>
         </div>
       </div>
-      <hr class="row" />
-
-      <div class="row">
-        <div class="col-md-12">
-          <div class="row">
-            <div class="col">
-              <form-field
-                [control]="form.get('folioEscaneo')"
-                label="Folio de Escaneo">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="folioEscaneo" />
-              </form-field>
-            </div>
-
-            <div class="col">
-              <button
-                type="button"
-                class="btn btn-primary btn-sm active mr-2 ml-2"
-                [disabled]="form.get('folioEscaneo').value == null"
-                size="small">
-                Replicar Folio
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <hr class="row" />
 
-      <div class="row pt-2 scroll-table">
+      <div [class]="loading ? 'table-loading' : 'row pt-2 scroll-table'">
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings1"
@@ -370,17 +443,24 @@
           (rowSelect)="rowSelect($event)"
           (rowDeselect)="deselectRow()"></ng2-smart-table>
       </div>
+      <app-pagination
+        *ngIf="!loading"
+        [params]="paramsDataGoods"
+        [pageSizeOptions]="[5, 10, 20]"
+        [limit]="limitDataGoods"
+        [totalItems]="totalItemsDataGoods"></app-pagination>
 
-      <hr class="row" />
       <div class="row">
         <div class="d-flex justify-content-center">
           <form-field
             class="col-md-3"
             [control]="form.get('estatusPrueba')"
-            label="Status ">
+            label="Estatus ">
             <input
               type="text"
+              (dblclick)="goToHistorico('generalGood')"
               class="form-control"
+              [readOnly]="true"
               formControlName="estatusPrueba" />
           </form-field>
 
@@ -388,31 +468,41 @@
             <span class="text-success mr-5"
               ><i class="fa fa-square"></i> Disponibles</span
             >
-            <span class="text-danger"
+            <span class="text-dark"
               ><i class="fa fa-square"></i> No disponibles</span
             >
           </p>
         </div>
       </div>
-
-      <div class="row pt-2">
-        <div class="col-md-12 text-center">
-          <button
-            type="button"
-            class="mx-2 btn btn-secondary btn-sm active"
-            (click)="deleteGoods()">
-            <i class="fa fa-angle-up"></i>
-          </button>
-          <button
-            type="button"
-            class="mx-2 btn btn-secondary btn-sm active"
-            (click)="addGood()">
-            <i class="fa fa-angle-down"></i>
-          </button>
+      <hr class="row" />
+      <div class="row pt-2 pb-4">
+        <div class="col-md-12 d-flex justify-content-center">
+          <div class="d-flex justify-content-center align-items-sm-center">
+            <div class="col-md-3">
+              <label for="">Eliminar</label>
+              <button
+                type="button"
+                class="mx-2 btn btn-secondary btn-sm active"
+                [disabled]="!dataGoodAct"
+                (click)="deleteGoods()">
+                <i class="fa fa-angle-up"></i>
+              </button>
+            </div>
+            <div class="col-md-3">
+              <label for="">Agregar</label>
+              <button
+                type="button"
+                class="mx-2 btn btn-secondary btn-sm active"
+                [disabled]="!act2Valid"
+                (click)="addGood()">
+                <i class="fa fa-angle-down"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div class="row pt-2 scroll-table">
+      <hr class="row" />
+      <div [class]="loading ? 'table-loading' : 'row pt-2 scroll-table'">
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings2"
@@ -420,7 +510,12 @@
           (rowSelect)="selectRowGoodActa($event)"
           (rowDeselect)="deselectRowGoodActa()"></ng2-smart-table>
       </div>
-      <hr class="row" />
+      <app-pagination
+        *ngIf="!loading"
+        [params]="paramsDataGoodsAct"
+        [pageSizeOptions]="[5, 10, 20]"
+        [limit]="limitDataGoodsAct"
+        [totalItems]="totalItemsDataGoodsAct"></app-pagination>
       <div class="d-flex justify-content-center">
         <form-field
           class="col-md-3"
@@ -429,11 +524,15 @@
           <input
             type="text"
             class="form-control"
+            ngbTooltip="Prueba"
+            triggers="hover focus"
+            (dblclick)="goToHistorico('goodActa')"
+            [readOnly]="true"
             formControlName="estatusBienActa" />
         </form-field>
       </div>
 
-      <hr class="row" />
+      <!-- <hr class="row" />
       <div class="row">
         <div class="col-md-6">
           <a
@@ -444,7 +543,7 @@
             Exportar Datos
           </a>
         </div>
-      </div>
+      </div> -->
     </form>
   </div>
 </app-card>

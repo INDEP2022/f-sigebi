@@ -34,15 +34,20 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
     private modalService: BsModalService
   ) {
     super();
-    this.settings = {
+    /*this.settings = {
       ...this.settings,
       columns: DATEDOCUMENTS_COLUMNS,
     };
     this.settings.actions.add = false;
+    this.settings.actions.delet = true;
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
-    };
+    };*/
+    this.settings.columns = DATEDOCUMENTS_COLUMNS;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -55,16 +60,50 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'expedientNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'stateNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'typeDictum':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'key':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
+                break;
+              case 'dateReceipt':
+                console.log('dddd', filter.search);
+                if (filter.search != null) {
+                  filter.search = this.returnParseDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
+                console.log('ddddccc', filter.search);
+                break;
+              case 'notificationDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'insertionDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getAllDateDocuments();
         }
       });
@@ -96,7 +135,13 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        //this.totalItems = 0;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
   private getDateDocuments() {
@@ -136,5 +181,44 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(DateDocumentsModalComponent, config);
+  }
+
+  delete1(typeService: IDateDocuments) {
+    let key: any = typeService.key;
+    const key1 = key.key;
+    let body = {
+      expedientNumber: Number(typeService.expedientNumber),
+      stateNumber: Number(typeService.stateNumber),
+      key: String(key1),
+      typeDictum: typeService.typeDictum,
+    };
+    console.log(body);
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.remove(body);
+      }
+    });
+  }
+
+  remove(body: any) {
+    console.log(body);
+    this.dateDocumentsService.removeDateDocuments(body).subscribe({
+      next: () => {
+        this.alert('success', 'Fecha para Documento', 'Borrado Correctamente'),
+          this.getAllDateDocuments();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Tipo Servicio',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
+    });
   }
 }

@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -23,7 +29,8 @@ import { ShowDocumentsGoodComponent } from './show-documents-good/show-documents
   templateUrl: './good-doc-tab.component.html',
   styleUrls: ['./good-doc-tab.component.scss'],
 })
-export class GoodDocTabComponent extends BasePage implements OnInit {
+export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
+  @Input() typeModule: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsSearch = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: LocalDataSource = new LocalDataSource();
@@ -31,6 +38,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
   idRequest: number = 0;
   @Input() typeDoc = '';
   @Input() screen = 'doc-goods';
+  @Input() requestId: number = null;
   goodSelect: IGood[] = [];
   allGooods: IGood[] = [];
   showSearchForm: boolean = false;
@@ -46,19 +54,34 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
     private fb: FormBuilder
   ) {
     super();
-    this.idRequest = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as unknown as number;
+    this.idRequest = this.idRequest
+      ? this.idRequest
+      : (this.activatedRoute.snapshot.paramMap.get('id') as unknown as number);
     this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
     this.settings.columns = GOOD_DOCUMENTES_COLUMNS;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.idRequest = this.idRequest || this.requestId;
+    if (
+      this.typeModule != '' &&
+      this.typeModule == 'doc-complementary' &&
+      !this.idRequest
+    ) {
+      this.idRequest = this.activatedRoute.snapshot.paramMap.get(
+        'request'
+      ) as unknown as number;
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getGoodsRequest());
+    }
   }
 
   ngOnInit(): void {
     // DISABLED BUTTON - FINALIZED //
     this.task = JSON.parse(localStorage.getItem('Task'));
-    this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
-
+    this.statusTask = this.task?.status;
     this.getGoodTypeSelect(new ListParams());
     this.initForm();
     this.params
@@ -73,7 +96,10 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
         [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(30)],
       ],
       goodTypeId: [null],
-      requestId: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      requestId: [
+        this.idRequest,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       goodDescription: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
@@ -85,7 +111,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
       this.loading = true;
       this.params.getValue()['search'] = this.params.getValue().text;
       this.params.getValue()['filter.requestId'] = this.idRequest;
-      this.searchForm.get('requestId').setValue(this.idRequest);
+      //this.searchForm.get('requestId').setValue(this.idRequest);
       this.goodService.getAll(this.params.getValue()).subscribe({
         next: async (data: any) => {
           const filterGoodType = data.data.map(async (item: any) => {
@@ -231,7 +257,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
     if (this.goodSelect.length == 0 || this.goodSelect.length >= 2) {
       this.onLoadToast(
         'warning',
-        'Debes de tener minimo un bien seleccionado',
+        'Debes de tener mínimo un Bien seleccionado',
         ''
       );
     } else {

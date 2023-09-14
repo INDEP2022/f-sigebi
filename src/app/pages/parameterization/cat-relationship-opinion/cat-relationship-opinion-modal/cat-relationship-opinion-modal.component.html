@@ -5,7 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="rAsuntDicForm">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
           <form-field label="Code" [control]="rAsuntDicForm.get('code')">
             <input
               type="text"
@@ -14,10 +14,9 @@
               readonly />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-7">
           <form-field [control]="rAsuntDicForm.get('dictumData')">
             <ngx-select
-              [searchOnInit]="true"
               [form]="rAsuntDicForm"
               control="dictumData"
               [data]="dictums"
@@ -44,6 +43,8 @@
             </ng-select>
           </form-field>
         </div>
+      </div>
+      <div class="row pt-5">
         <div class="col-md-3">
           <form-field label="Documentos" [control]="rAsuntDicForm.get('doc')">
             <ng-select
@@ -56,8 +57,6 @@
             </ng-select>
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
         <div class="col-md-3">
           <form-field label="Bien" [control]="rAsuntDicForm.get('property')">
             <ng-select
@@ -70,7 +69,7 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <form-field label="g_of" [control]="rAsuntDicForm.get('g_of')">
             <ng-select
               formControlName="g_of"
@@ -82,7 +81,7 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <form-field label="i" [control]="rAsuntDicForm.get('i')">
             <ng-select
               formControlName="i"
@@ -94,7 +93,7 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <form-field label="e" [control]="rAsuntDicForm.get('e')">
             <ng-select
               formControlName="e"
@@ -114,7 +113,7 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
-          [disabled]="!rAsuntDicForm.valid"
+          [disabled]="rAsuntDicForm.invalid"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

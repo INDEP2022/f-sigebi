@@ -6,8 +6,10 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { addDays } from 'date-fns';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
@@ -56,15 +58,19 @@ export class RequestRecordTabComponent
   paperDateLabel: any = '';
   rem: string = 'del Remitente';
   maxDate = new Date();
+  minDate = new Date();
+  today = new Date();
   constructor(
     public fb: FormBuilder,
     private affairService: AffairService,
     private genericsService: GenericService,
     private requestService: RequestService,
     private minPub: MinPubService,
-    private transferenteService: TransferenteService
+    private transferenteService: TransferenteService,
+    private authService: AuthService
   ) {
     super();
+    this.minDate = addDays(new Date(), 1);
   }
   ngOnChanges(changes: SimpleChanges): void {
     /*this.requestForm.valueChanges.subscribe({
@@ -72,7 +78,13 @@ export class RequestRecordTabComponent
     });*/
   }
 
+  siglasNivel1: string = '';
+
   ngOnInit(): void {
+    const token = this.authService.decodeToken();
+    this.siglasNivel1 = token.siglasnivel1;
+    //const min = addDays(new Date(), 1);
+    console.log('Activando tab: request-record-tab');
     this.getOriginInfo(new ListParams());
     this.getTypeExpedient(new ListParams());
     this.getPublicMinister(new ListParams());
@@ -87,15 +99,25 @@ export class RequestRecordTabComponent
       this.typeOfTransfer = this.requestForm.controls['typeOfTransfer'].value;
       this.getTrans(this.typeOfTransfer);
     }
+    //debugger;
     //this.prepareForm();
     if (this.requestForm.controls['paperDate'].value != null) {
-      const paperDate = this.requestForm.controls['paperDate'].value;
-      this.bsPaperValue = new Date(paperDate);
+      const paperDate = this.parseDateNoOffset(
+        this.requestForm.controls['paperDate'].value
+      );
+      this.bsPaperValue = paperDate;
     }
 
-    // if (this.requestForm.controls['receptionDate'].value != null) {
-    //    this.bsPaperValue = new Date();
-    // }
+    if (this.requestForm.controls['receptionDate'].value == null) {
+      //this.bsPaperValue = new Date();
+      this.requestForm.controls['receptionDate'].setValue(
+        this.bsReceptionValue.toISOString()
+      );
+    } else {
+      this.bsReceptionValue = this.parseDateNoOffset(
+        this.requestForm.controls['receptionDate'].value
+      );
+    }
 
     //establecer el asunto
     if (this.requestForm.controls['affair'].value != null) {
@@ -122,7 +144,16 @@ export class RequestRecordTabComponent
     if (this.requestForm.controls['affair'].value != null) {
       this.getAffair(this.requestForm.controls['affair'].value);
     }
+
+    /* COPIA EL REGISTRO DEL CAMPO PAMA A AVERIGUACION PREVIA */
+    if (this.typeOfTransfer == 'PGR_SAE') {
+      if (this.requestForm.controls['transferenceFile'].value) {
+        const value = this.requestForm.controls['transferenceFile'].value;
+        this.requestForm.controls['previousInquiry'].setValue(value);
+      }
+    }
   }
+
   prepareForm() {
     //formulario de solicitudes
     this.requestForm = this.fb.group({
@@ -157,7 +188,7 @@ export class RequestRecordTabComponent
       ], //cargo remitente
       phoneOfOwner: [
         null,
-        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(13)],
+        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(103)],
       ], //telefono remitente
       emailOfOwner: [
         null,
@@ -178,7 +209,11 @@ export class RequestRecordTabComponent
       ],
       indicatedTaxpayer: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+          Validators.required,
+        ],
       ],
       affair: [null],
       transferEntNotes: [
@@ -193,7 +228,10 @@ export class RequestRecordTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
       ],
-      previousInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
+      previousInquiry: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
       trialType: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
@@ -212,6 +250,7 @@ export class RequestRecordTabComponent
       ],
       protectNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
+      domainExtinction: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.requestForm.get('receptionDate').disable();
   }
@@ -332,8 +371,8 @@ export class RequestRecordTabComponent
         this.requestForm.get('circumstantialRecord').value === ''
       ) {
         this.message(
-          'info',
-          'Campos requeridos',
+          'warning',
+          'Campos Requeridos',
           'Recuerde llenar los campos obligatorios'
         );
         this.requestForm.markAllAsTouched();
@@ -345,9 +384,9 @@ export class RequestRecordTabComponent
         this.requestForm.get('paperDate').value === ''
       ) {
         this.message(
-          'info',
-          'Campos requeridos',
-          'Recuerde llenar los campos obligatorios'
+          'warning',
+          'Fecha de Oficio',
+          'Es obligatorio ingresar una fecha'
         );
         this.requestForm.markAllAsTouched();
         return;
@@ -367,6 +406,10 @@ export class RequestRecordTabComponent
     request.transferEntNotes = request.transferEntNotes
       ? request.transferEntNotes
       : null;
+
+    //copia el contenido de nameOfOwner a sender
+    request.sender = request.nameOfOwner;
+
     //request.court = request.court ? request.court : null;
     this.formLoading = true;
     const requestResult = await this.updateRequest(request);
@@ -419,5 +462,12 @@ export class RequestRecordTabComponent
       field = null;
     });
     this.requestForm.updateValueAndValidity();
+  }
+
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() + dateLocal.getTimezoneOffset() * 60 * 1000
+    );
   }
 }

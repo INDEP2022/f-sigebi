@@ -15,6 +15,7 @@
 
   <div body>
     <app-goods
+      [dictation]="dictation"
       (loadingDialog)="loadGood($event)"
       [loadingData]="loading1"
       [data]="dataDictationXGood1"></app-goods>
@@ -28,6 +29,7 @@
 
   <div body>
     <app-documentation-goods
+      [dictation]="dictation"
       (loadingDialog)="loadDocumentGood($event)"
       [data]="dataDocumentDictumStateM"
       [loadingData]="loading2"></app-documentation-goods>
@@ -65,6 +67,7 @@
 
   <div body>
     <app-copy-documentation-goods
+      [dictation]="dictation"
       (loadingDialog)="loadCopy($event)"
       [data]="dataCopiesOfficialOpinion"
       [loadingData]="loading3"></app-copy-documentation-goods>
@@ -91,10 +94,12 @@
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2">
           <button
-            [disabled]="form.invalid"
-            class="btn active btn-primary btn-sm"
-            type="submit">
-            Enviar
+            [disabled]="form.invalid || loading"
+            type="submit"
+            class="btn btn-primary btn-sm active"
+            tooltip="Enviar"
+            containerClass="tooltip-style">
+            Enviar <i class="bx bx-send"></i>
           </button>
         </div>
       </div>

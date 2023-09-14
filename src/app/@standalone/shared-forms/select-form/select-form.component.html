@@ -1,6 +1,6 @@
 <ng-container>
   <div class="row" id="select-form">
-    <div class="row" *ngIf="loading" style="margin-bottom: 5rem">
+    <div class="row" *ngIf="loading" style="margin-bottom: 3rem">
       <form-loader></form-loader>
     </div>
     <div class="col-md-12" *ngIf="!loading">
@@ -11,6 +11,7 @@
           (fetchByParamsItems)="setFilterParams($event)"
           [data]="data"
           [form]="form"
+          [fetchByList]="fetchByListParams"
           [value]="value"
           [bindLabel]="bindLabel"
           [label]="label"
@@ -21,6 +22,8 @@
           [clearable]="clearable"
           [operator]="operator"
           [typeToSearchText]="typeToSearchText"
+          [labelTemplate]="labelTemplate"
+          [optionTemplate]="optionTemplate"
           (change)="onChange($event)"
           [closeOnSelect]="false"
           (clear)="clear()">

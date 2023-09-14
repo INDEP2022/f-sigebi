@@ -4,10 +4,15 @@
     <div class="col-md-5 buttons">
       <app-columns-select
         [defaultColumns]="11"
-        [(settings)]="settings"></app-columns-select>
+        [(settings)]="tableSettings"></app-columns-select>
       <div>
-        <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
-          Nuevo
+        <button
+          (click)="openForm()"
+          type="button"
+          tooltip="Nuevo"
+          containerClass="tooltip-style"
+          class="btn btn-info btn-sm active ml-2 mr-2">
+          Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
       </div>
     </div>

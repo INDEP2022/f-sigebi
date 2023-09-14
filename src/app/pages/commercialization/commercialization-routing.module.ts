@@ -11,7 +11,20 @@ const routes: Routes = [
           './shared-marketing-components/event-preparation/event-preparation.module'
         )
       ).EventPreparationModule,
-    data: { title: 'Preparación del evento', screen: 'FCOMEREVENTOS' },
+    data: { title: 'Preparación de Eventos Muebles', screen: 'FCOMEREVENTOS' },
+  },
+  {
+    path: 'event-preparation-i',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/event-preparation/event-preparation.module'
+        )
+      ).EventPreparationModule,
+    data: {
+      title: 'Preparación de Eventos Inmuebles',
+      screen: 'FCOMEREVENTOS_I',
+    },
   },
   {
     path: 'payment-dispersion-validation',
@@ -153,7 +166,7 @@ const routes: Routes = [
           './shared-marketing-components/expense-concepts/expense-concepts.module'
         )
       ).ExpenseConceptsModule,
-    data: { title: 'Conceptos de Gasto' },
+    data: { title: 'Conceptos de Gasto', screen: 'FCOMER083' },
   },
   {
     path: 'referenced-payment',
@@ -163,7 +176,7 @@ const routes: Routes = [
           './shared-marketing-components/referenced-payment/referenced-payment.module'
         )
       ).ReferencedPaymentModule,
-    data: { title: 'Pagos Referenciados' },
+    data: { title: 'Pagos Referenciados', screen: 'FCOMER111' },
   },
   {
     path: 'unreconciled-payment',
@@ -173,7 +186,7 @@ const routes: Routes = [
           './shared-marketing-components/unreconciled-payment/unreconciled-payment.module'
         )
       ).UnreconciledPaymentModule,
-    data: { title: 'Pagos no Conciliados' },
+    data: { title: 'Pagos no Conciliados', screen: 'FCOMER113' },
   },
   {
     path: 'payment-dispersion-monitor',
@@ -190,7 +203,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./shared-marketing-components/events/events.module'))
         .EventsModule,
-    data: { title: 'Delegar Permisos a Eventos', screen: 'EventsModule' },
+    data: { title: 'Delegar Permisos a Eventos', screen: 'FCOMER079' },
   },
   {
     path: 'numeraire-exchange',
@@ -328,6 +341,19 @@ const routes: Routes = [
     data: { title: 'Reporte de Ing. por Mandato' },
   },
   {
+    path: 'mandate-income-reports-i',
+    loadChildren: async () =>
+      (
+        await import(
+          './mandate-income-reports-i/mandate-income-reports-i.module'
+        )
+      ).MandateIncomeReportsIModule,
+    data: {
+      title: 'Reporte de Ing. por Mandato I',
+      screen: 'FCOMEREPINGXMAND_I',
+    },
+  },
+  {
     path: 'remittances-recorded-region',
     loadChildren: async () =>
       (
@@ -378,7 +404,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./penalty-billing/penalty-billing.module'))
         .CFpMPenaltyBillingModule,
-    data: { title: 'Facturación', screen: 'FCOMER089' },
+    data: { title: 'Facturación', screen: 'FCOMER099' },
   },
   {
     path: 'sirsae-movement-sending',

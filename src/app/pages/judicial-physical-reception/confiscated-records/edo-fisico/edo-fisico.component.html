@@ -1,0 +1,29 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Estado físico de bienes</h5>
+  </div>
+  <div body>
+    <div class="row pt-2 scroll-table">
+      <ng2-smart-table
+        class="col-md-12"
+        [settings]="settings1"
+        (userRowSelect)="selectRow($event)"
+        [source]="dataGoods"></ng2-smart-table>
+    </div>
+    <div class="row pt-4 mt-4">
+      <div class="col">
+        <div class="col-md-12">
+          <button
+            class="btn btn-primary btn-sm active mr-4"
+            [class]="dataGoods['data'].length != 0 ? '' : 'disabled'"
+            (click)="changeAll()">
+            Cambiar estado
+          </button>
+          <button class="btn btn-danger btn-sm active" (click)="close()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal>

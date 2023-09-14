@@ -6,6 +6,7 @@ import { JwtInterceptor, JwtModule } from '@auth0/angular-jwt';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { DateFnsModule } from 'ngx-date-fns';
+import { SocketIoModule } from 'ngx-socket-io';
 import { ToastrModule } from 'ngx-toastr';
 import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
@@ -25,8 +26,8 @@ import { AuthorizationKeysModule } from './pages/commercialization/catalogs/auth
 import { CatTransferentModule } from './pages/parameterization/cat-transferent/cat-transferent.module';
 import { MailModule } from './pages/parameterization/mail/mail.module';
 import { DatePickerModule } from './shared/components/datepicker-element-smarttable/datapicker.module';
+import { LoadingPercentComponent } from './shared/components/loading-percent/loading-percent.component';
 import { LoadingComponent } from './shared/components/loading/loading.component';
-
 export function tokenGetter() {
   return localStorage.getItem('token');
 }
@@ -42,6 +43,7 @@ export function servicesOnRun(app: AppInitializer) {
     InputFormDirective,
     LoadingComponent,
     ToastrComponent,
+    LoadingPercentComponent,
   ],
   imports: [
     BrowserModule,
@@ -80,6 +82,7 @@ export function servicesOnRun(app: AppInitializer) {
       timeOut: 6000,
       preventDuplicates: true,
     }),
+    SocketIoModule.forRoot({ url: environment.SOCKET_URL }),
   ],
   providers: [
     {

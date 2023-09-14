@@ -7,13 +7,13 @@ export const COLUMNS = {
     title: 'No. Volante',
     sort: false,
   },
-  receiptDate: {
-    title: 'Fecha Recepción Volante',
-    sort: false,
-    valuePrepareFunction: (value: string) => {
-      return value ? value.split('T')[0].split('-').reverse().join('-') : value;
-    },
-  },
+  // receiptDate: {
+  //   title: 'Fecha Recepción Volante',
+  //   sort: false,
+  //   valuePrepareFunction: (value: string) => {
+  //     return value ? value.split('T')[0].split('-').reverse().join('-') : value;
+  //   },
+  // },
   preliminaryInquiry: {
     title: 'Averiguación Previa',
     sort: false,

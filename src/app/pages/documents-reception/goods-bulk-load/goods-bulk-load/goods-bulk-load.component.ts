@@ -745,9 +745,10 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index];
             if (element) {
-              if (element.pgrTypeGoodNum || element.pgrTypeGoodNum == 0) {
-                this.pgrData.push(element);
-              }
+              // if (element.pgrTypeGoodNum || element.pgrTypeGoodNum == 0) {
+              //   this.pgrData.push(element);
+              // }
+              this.pgrData.push(element);
             }
           }
           if (this.pgrData.length > 0) {
@@ -884,6 +885,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       data['col' + index] = null;
     }
     data['FGR_NO_BIEN'] = dataPgr.pgrGoodNumber; // SET CLAVE UNICA
+    console.log('REVISAR TIPO ######### ', dataPgr);
     if (dataPgr.pgrTypeGoodVeh) {
       // CONDICION VEH
       data.clasif = dataPgr.pgrTypeGoodVeh;
@@ -1044,6 +1046,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       dataInfo['moneda'] = 'MONEDA';
       dataInfo['ficha'] = 'FICHA';
       dataInfo['banco'] = 'BANCO';
+      dataInfo['fecha'] = 'FECHA';
       dataInfo['edofisico'] = 'ESTADO FISICO';
       dataInfo['clasif'] = dataPgr.pgrTypeGoodNum;
       let dataInfoRow: any = {};
@@ -1052,6 +1055,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       dataInfoRow['moneda'] = dataPgr.pgrNueTypemon;
       dataInfoRow['ficha'] = dataPgr.pgrNuefolficdep;
       dataInfoRow['banco'] = dataPgr.pgrNumofictransf;
+      dataInfoRow['fecha'] = dataPgr.pgrNuefedepos;
       dataInfoRow['edofisico'] = dataPgr.pgrEdoPhysicalNum;
       this.getValData(this.pgrData[count], count, data, dataInfo, dataInfoRow); // Siguiente registro
     } else if (dataPgr.pgrTypeGoodJoy) {
@@ -1141,6 +1145,11 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             const element = dataResponse[key];
             if (element) {
               response['col' + element] = dataInfo[key];
+              console.log(
+                'DATA COLUMNA ### "col' + element + '"### ',
+                response['col' + element],
+                dataInfo[key]
+              );
             }
           }
         }
@@ -3513,6 +3522,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         labelNumber: infoData.objInsertResponse['vno_etiqueta'], // Numero de etiqueta
         flyerNumber: this.paramsGeneral.p_no_volante, // No volante
         observations: infoData.dataRow.observaciones, // Observaciones
+        extDomProcess: 'ASEGURADO', // Va como NULL
       };
       // Lenar la data de los valores para el bien
       let contadorCol = 10;
@@ -3696,7 +3706,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       statusChangeProgram: this.idPantalla, // Clave de la pantalla
       reasonForChange: 'Automatico masivo', // Razon del cambio
       registryNum: 1, // No se toma en el ms
-      extDomProcess: '', // No se toma en el ms
+      extDomProcess: 'ASEGURADO', // No se toma en el ms
     };
     let messageExtra = '';
     if (!goodHistory.propertyNum) {
@@ -4648,7 +4658,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           });
           if (validCreateMenaje) {
             this.alertInfo(
-              'info',
+              'warning',
               'Actualización de menaje',
               'Es un bien inmueble con Menaje, se van a asociar los bienes hijos al bien padre'
             ).then(() => {
@@ -4755,7 +4765,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             // this.validDataUploadMassivePgr(); // Comenzar la cargar de la información
           }
           this.alertInfo(
-            'info',
+            'warning',
             'Datos del Volante',
             'Ya existe un registro del Volante. Se va a actualizar el registro para el Volante: ' +
               this.paramsGeneral.p_no_volante
@@ -4860,7 +4870,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           console.log('DATA VOLANTE UPDATE', res);
           this.paramsGeneral.p_no_volante = bodyData.wheelNumber.toString();
           this.alertInfo(
-            'info',
+            'success',
             'Datos del Volante',
             'Se actualizó correctamente el Volante: ' +
               this.paramsGeneral.p_no_volante
@@ -4898,7 +4908,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           // this.getTempPgrExpedientByFilter(onlyCreate);
           this.wheelCount++;
           this.alertInfo(
-            'info',
+            'success',
             'Datos del Volante',
             'Se creó correctamente el Volante: ' +
               this.paramsGeneral.p_no_volante
@@ -4957,7 +4967,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       next: res => {
         console.log('DATA EXPEDIENTE', res);
         this.alertInfo(
-          'info',
+          'warning',
           'Datos del Expediente',
           'Ya existe un registro del expediente. Se va a actualizar el registro para el Expediente: ' +
             this.paramsGeneral.p_no_expediente
@@ -5056,7 +5066,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         if (update == false) {
           this.fileNumberCount++;
           this.alertInfo(
-            'info',
+            'success',
             'Datos del Expediente',
             'Se creó correctamente el Expediente: ' +
               this.paramsGeneral.p_no_expediente
@@ -5065,7 +5075,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           });
         } else {
           this.alertInfo(
-            'info',
+            'success',
             'Datos del Expediente',
             'Se actualizó correctamente el Expediente: ' +
               this.paramsGeneral.p_no_expediente

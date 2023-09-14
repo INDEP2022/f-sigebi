@@ -28,7 +28,11 @@ export class ClaimConclusionService implements ICrudMethods<IClaimConclusion> {
   }
 
   update(id: string | number, model: IClaimConclusion): Observable<Object> {
-    return this.claimConclusionRepository.update(this.route, id, model);
+    return this.claimConclusionRepository.updateClaimConclusion(
+      this.route,
+      id,
+      model
+    );
   }
 
   remove(id: string | number): Observable<Object> {

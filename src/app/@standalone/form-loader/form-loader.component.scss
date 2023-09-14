@@ -1,0 +1,39 @@
+.greater {
+  .loader {
+    background: #eaeaea;
+    opacity: 0.4;
+  }
+
+  .loader:after {
+    background-size: 200px 200px;
+  }
+
+  .loader-msg {
+    z-index: 101;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    right: 0;
+    bottom: 0;
+    margin: 70px 70px 0px -120px;
+  }
+}
+
+.loader {
+  /* height: 8rem; */
+  position: absolute;
+  top: 12px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100px 100px;
+  z-index: 100;
+  content: '';
+}
+
+.loader-msg {
+  margin-top: 12rem;
+  padding-top: 4rem !important;
+}

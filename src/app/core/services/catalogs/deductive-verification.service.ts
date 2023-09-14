@@ -13,6 +13,7 @@ export class DeductiveVerificationService
   implements ICrudMethods<IDeductiveVerification>
 {
   private readonly route: string = ENDPOINT_LINKS.DeductiveVerification;
+  private readonly route2: string = 'catalog/deductive-verification/id';
   constructor(
     private deductiveVerificationRepository: Repository<IDeductiveVerification>
   ) {}
@@ -38,10 +39,10 @@ export class DeductiveVerificationService
     id: string | number,
     model: IDeductiveVerification
   ): Observable<Object> {
-    return this.deductiveVerificationRepository.update(this.route, id, model);
+    return this.deductiveVerificationRepository.update(this.route2, id, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.deductiveVerificationRepository.remove(this.route, id);
+    return this.deductiveVerificationRepository.remove(this.route2, id);
   }
 }

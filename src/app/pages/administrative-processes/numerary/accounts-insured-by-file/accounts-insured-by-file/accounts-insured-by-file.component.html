@@ -1,97 +1,73 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">CUENTAS ASEGURADAS POR EXPEDIENTE</h5>
+    <h5 class="title">REPORTE DE CUENTAS CONCILIADAS POR EXPEDIENTE</h5>
   </div>
   <div body>
     <div class="row mt-3 mb-3">
       <form action="" class="form-material" [formGroup]="form">
-        <!-- <div class="row mt-4">
-          <div class="col-md-6">
-            <form-field [control]="form.get('delegation')" label="Delegación">
-              <input formControlName="delegation" class="form-control" />
-            </form-field>
-          </div>
-          <div class="col-md-6">
-            <form-field
-              [control]="form.get('subdelegation')"
-              label="Subdelegación">
-              <input formControlName="subdelegation" class="form-control" />
-            </form-field>
-          </div>
-        </div> -->
         <app-delegation-shared [form]="form"></app-delegation-shared>
-        <div class="row mt-4">
-          <div class="col-md-6">
-            <!-- <form-field [control]="form.get('currency')" label="Moneda:">
-              <input formControlName="currency" class="form-control" />
-            </form-field> -->
-            <app-currency-shared
-              [form]="form"
-              currencyField="currency"></app-currency-shared>
-          </div>
-          <div class="col-md-6">
-            <!-- <form-field [control]="form.get('bank')" label="Banco:">
-              <input formControlName="bank" class="form-control" />
-            </form-field> -->
-            <app-banks-shared [form]="form"></app-banks-shared>
-          </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-md-6">
-            <form-field
-              [control]="form.get('depositFrom')"
-              label="Deposito del:">
-              <input
-                [maxDate]="maxDate"
-                formControlName="depositFrom"
-                class="form-control"
-                bsDatepicker />
-            </form-field>
-          </div>
-          <div class="col-md-6">
-            <form-field [control]="form.get('depositTo')" label="Al:">
-              <input
-                [maxDate]="maxDate"
-                formControlName="depositTo"
-                class="form-control"
-                [minDate]="form.get('depositFrom').value"
-                bsDatepicker />
-            </form-field>
-          </div>
-        </div>
 
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('from')" label="Depósitos del:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="from"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('to')" label="al:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="to"
+                class="form-control"
+                [minDate]="form.get('from').value"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
         <div class="row mt-4">
           <div class="col-md-6">
             <form-field
               [control]="form.get('fileFrom')"
-              label="Expediente del:">
+              label="Del Expediente:">
               <input
-                [maxDate]="maxDate"
+                type="number"
                 formControlName="fileFrom"
                 class="form-control"
-                bsDatepicker />
+                max="9999999999" />
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('fileTo')" label="Al:">
+            <form-field [control]="form.get('fileTo')" label="Al Expediente:">
               <input
+                type="number"
                 formControlName="fileTo"
                 class="form-control"
-                [maxDate]="maxDate"
-                [minDate]="form.get('fileFrom').value"
-                bsDatepicker />
+                max="9999999999" />
             </form-field>
           </div>
         </div>
       </form>
-      <div class="d-flex justify-content-center">
-        <div class="m-3">
-          <div>
+      <div footer>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
             <button
-              (click)="print()"
               type="button"
-              class="btn btn-sm btn-primary active m-3">
-              IMPRIMIR
+              [disabled]="form.invalid"
+              class="btn btn-primary active btn-sm"
+              (click)="Generar()">
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <button
+              type="button"
+              class="btn btn-danger active btn-sm"
+              (click)="cleanForm()">
+              Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
             </button>
           </div>
         </div>

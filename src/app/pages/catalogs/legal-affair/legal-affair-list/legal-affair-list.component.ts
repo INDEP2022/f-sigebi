@@ -9,7 +9,6 @@ import {
 import { ILegalAffair } from 'src/app/core/models/catalogs/legal-affair-model';
 import { LegalAffairService } from 'src/app/core/services/catalogs/legal-affair.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { LegalAffairDetailComponent } from '../legal-affair-detail/legal-affair-detail.component';
 import { LEGAL_AFFAIR_COLUMNS } from './columns';
 
@@ -59,18 +58,36 @@ export class LegalAffairListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
-            filter.field == 'city'
-              ? (field = `filter.${filter.field}.nameCity`)
-              : (field = `filter.${filter.field}`);
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            // filter.field == 'status'
+            //   ? (field = `filter.${filter.field}`)
+            //   : (field = `filter.${filter.field}`);
+            // filter.field == 'id'
+            //   ? (searchFilter = SearchFilter.EQ)
+            //   : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'legalAffair':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'status':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.LIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getLegalAffairAll();
         }
       });
@@ -92,7 +109,7 @@ export class LegalAffairListComponent extends BasePage implements OnInit {
         this.columns = response.data;
         this.totalItems = response.count || 0;
 
-        this.data.load(this.columns);
+        this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
       },
@@ -126,14 +143,23 @@ export class LegalAffairListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(legalAffair.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
-    this.legalAffairService.remove(id).subscribe({
-      next: () => this.getLegalAffairAll(),
-    });
+    this.legalAffairService.remove(id).subscribe(
+      res => {
+        this.alert('success', 'Asunto Jurídico', 'Borrado Correctamente');
+        this.getLegalAffairAll();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Asuntos Jurídicos',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }

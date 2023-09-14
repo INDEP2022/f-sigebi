@@ -1,19 +1,30 @@
 //Components
 
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
+
 export const COLUMNS = {
-  number: {
+  goodId: {
     title: 'No. Bien',
     sort: false,
   },
   description: {
     title: 'Descripcion',
     sort: false,
+    type: 'custom',
+    renderComponent: SeeMoreComponent,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'null' || value == 'undefined') {
+        return '';
+      }
+
+      return value ? value : '';
+    },
   },
-  kitchenware: {
+  menaje: {
     title: 'Menaje',
     sort: false,
   },
-  quantityDict: {
+  amountDict: {
     title: 'Cant. Dict.',
     sort: false,
   },
@@ -21,12 +32,12 @@ export const COLUMNS = {
     title: 'Estatus',
     sort: false,
   },
-  ident: {
+  identifier: {
     title: 'Ident',
     sort: false,
   },
-  processes: {
-    title: 'Procesos',
+  extDomProcess: {
+    title: 'Proceso',
     sort: false,
   },
 };
@@ -81,3 +92,46 @@ export const officeTypeOption = [
     value: 'E-D',
   },
 ];
+export const RELATED_FOLIO_COLUMNS = {
+  id: {
+    title: 'Folio',
+    sort: false,
+  },
+  sheets: {
+    title: 'Documentos',
+    sort: false,
+  },
+  descriptionDocument: {
+    title: 'Descripción del Documento',
+    sort: false,
+  },
+};
+
+export const CCP_COLUMS_OFICIO = {
+  personExtInt_: {
+    title: 'Tipo Persona',
+    type: 'string',
+    sort: false,
+    // valuePrepareFunction: (value: any) => {
+    //   console.log(value);
+    //   if (value !== null) {
+    //     switch (value) {
+    //       case 'I':
+    //         value = `INTERNA`;
+    //         return value;
+    //       case 'E':
+    //         value = `EXTERNA`;
+    //         return value;
+    //       default:
+    //         value = '';
+    //         return value;
+    //     }
+    //   }
+    // },
+  },
+  userOrPerson: {
+    title: 'Nombre de la Persona',
+    type: 'string',
+    sort: false,
+  },
+};

@@ -1,11 +1,13 @@
+import { DatePipe } from '@angular/common';
+
 export const PAY_BANK_COLUMNS = {
-  payId: {
-    title: 'No. Pago',
+  movementNumber: {
+    title: 'No. Movimiento',
     sort: false,
     editable: false,
   },
-  movementNumber: {
-    title: 'No. Movimiento',
+  cve_bank: {
+    title: 'Banco',
     sort: false,
     editable: false,
   },
@@ -13,6 +15,12 @@ export const PAY_BANK_COLUMNS = {
     title: 'Fecha',
     sort: false,
     editable: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    },
   },
   reference: {
     title: 'Referencia',
@@ -24,11 +32,13 @@ export const PAY_BANK_COLUMNS = {
     sort: false,
     editable: false,
     class: 'bg-info text-light',
-  },
-  cve_bank: {
-    title: 'Banco',
-    sort: false,
-    editable: false,
+    valuePrepareFunction: (value: any) => {
+      if (!isNaN(parseFloat(value))) {
+        return new Intl.NumberFormat('es-MX').format(value);
+      } else {
+        return '0.00';
+      }
+    },
   },
   entryorderid: {
     title: 'No. Orden Ingreso',
@@ -36,7 +46,18 @@ export const PAY_BANK_COLUMNS = {
     editable: false,
   },
   system_val_date: {
-    title: 'Fecha IO',
+    title: 'Fecha OI',
+    sort: false,
+    editable: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    },
+  },
+  payId: {
+    title: 'No. Pago',
     sort: false,
     editable: false,
   },
@@ -57,6 +78,13 @@ export const RECEIVED_PAYS_COLUMNS = {
     title: 'Monto Mensual',
     sort: false,
     editable: false,
+    valuePrepareFunction: (value: any) => {
+      if (!isNaN(parseFloat(value))) {
+        return new Intl.NumberFormat('es-MX').format(value);
+      } else {
+        return '0.00';
+      }
+    },
   },
   reference: {
     title: 'Referencia',
@@ -68,6 +96,13 @@ export const RECEIVED_PAYS_COLUMNS = {
     sort: false,
     editable: false,
     class: 'bg-info text-light',
+    valuePrepareFunction: (value: any) => {
+      if (!isNaN(parseFloat(value))) {
+        return new Intl.NumberFormat('es-MX').format(value);
+      } else {
+        return '0.00';
+      }
+    },
   },
   iva: {
     title: 'Iva',
@@ -79,6 +114,13 @@ export const RECEIVED_PAYS_COLUMNS = {
     sort: false,
     editable: false,
     class: 'bg-warning text-light',
+    valuePrepareFunction: (value: any) => {
+      if (!isNaN(parseFloat(value))) {
+        return new Intl.NumberFormat('es-MX').format(value);
+      } else {
+        return '0.00';
+      }
+    },
   },
   abonoComp: {
     title: 'Abono / Comp.',
@@ -90,6 +132,13 @@ export const RECEIVED_PAYS_COLUMNS = {
     sort: false,
     editable: false,
     class: 'bg-success text-light',
+    valuePrepareFunction: (value: any) => {
+      if (!isNaN(parseFloat(value))) {
+        return new Intl.NumberFormat('es-MX').format(value);
+      } else {
+        return '0.00';
+      }
+    },
   },
   deduxcent: {
     title: 'Rec. Gast. (%)',
@@ -97,7 +146,7 @@ export const RECEIVED_PAYS_COLUMNS = {
     editable: false,
   },
   deduvalue: {
-    title: 'Rec. Gast.',
+    title: 'Rec. Gast. Valor',
     sort: false,
     editable: false,
   },
@@ -105,6 +154,12 @@ export const RECEIVED_PAYS_COLUMNS = {
     title: 'Fecha Proceso',
     sort: false,
     editable: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    },
   },
   status: {
     title: 'Estatus',
@@ -134,7 +189,7 @@ export const RECEIVED_PAYS_COLUMNS = {
     },
   },
   payObserv: {
-    title: 'Observaciones Pago',
+    title: 'Observaciones del Pago',
     sort: false,
     editable: false,
   },

@@ -2,16 +2,32 @@
   <div class="ch-content" header>
     <h5 class="title">Programar Recepci&oacute;n</h5>
   </div>
+
   <div body>
     <div class="row">
-      <div class="d-flex justify-content-end pt-3">
-        <label class="title">Usuario&#58; {{ nameUser }}</label>
+      <div class="d-flex justify-content-end">
+        <div class="m-2">
+          <confirm-button
+            [disabled]="!userName"
+            [loading]="loading"
+            [text]="'Turnar'"
+            [loadingText]="'Turnando'"
+            [btnSmall]="true"
+            [icon]="'fa fa-share-square'"
+            (confirm)="confirm()"></confirm-button>
+        </div>
+        <div class="m-2">
+          <button (click)="close()" class="btn btn-danger btn-sm active">
+            Cancelar
+          </button>
+        </div>
       </div>
     </div>
+
     <form [formGroup]="requestForm" class="form-horizontal form-material">
       <div class="row pt-5">
         <label class="control-label col-sm-2" for="pwd"
-          >Tipo de usuario&#58;</label
+          >Tipo de Usuario&#58;</label
         >
         <div class="col-sm-1">
           <form-radio label="T.E">
@@ -38,7 +54,7 @@
         <label class="control-label col-sm-2" for="pwd"
           >Usuario Recepci&oacute;n&#58;</label
         >
-        <div class="col-md-3">
+        <div class="col-md-4">
           <input
             type="text"
             class="form-control"
@@ -48,19 +64,21 @@
         </div>
         <div class="col-md-1">
           <button
-            class="btn btn-info active btn-sm ml-3"
-            (click)="openModalSelectUser()">
+            (click)="openModalSelectUser()"
+            type="button"
+            class="btn btn-primary active btn-sm ml-3">
             Seleccionar
+            <i class="fas fa-edit bx-sm float-icon"></i>
           </button>
         </div>
       </div>
 
       <div class="form-group pt-2">
         <label class="control-label col-sm-2" for="pwd"
-          >Tipo de evento&#58;</label
+          >Tipo de Evento&#58;</label
         >
         <div class="col-sm-6">
-          <label class="control-label">Recepci&oacute;n F&iacute;sica</label>
+          <label class="control-label">{{ typeEvent }}</label>
         </div>
       </div>
 
@@ -71,20 +89,5 @@
         </div>
       </div>
     </form>
-
-    <div class="d-flex justify-content-center">
-      <div class="m-2">
-        <confirm-button
-          [disabled]="!userName"
-          [loading]="loading"
-          [text]="'Turnar'"
-          [loadingText]="'Turnando'"
-          [btnSmall]="true"
-          (confirm)="confirm()"></confirm-button>
-      </div>
-      <div class="m-2">
-        <button class="btn btn-danger btn-sm active">Cancelar</button>
-      </div>
-    </div>
   </div>
 </app-card>

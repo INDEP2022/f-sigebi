@@ -6,16 +6,11 @@
     <form [formGroup]="deductiveForm" class="form-material">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="deductiveForm.get('id')" label="ID">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
           <form-field
             [control]="deductiveForm.get('percentagePena')"
             label="Porcentaje Pena">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="percentagePena" />
           </form-field>
@@ -23,7 +18,7 @@
         <div class="col-md-4">
           <form-field
             [control]="deductiveForm.get('verificationType')"
-            label="Tipo Verificaci&oacute;n">
+            label="Tipo de Verificaci&oacute;n">
             <input
               type="text"
               class="form-control"

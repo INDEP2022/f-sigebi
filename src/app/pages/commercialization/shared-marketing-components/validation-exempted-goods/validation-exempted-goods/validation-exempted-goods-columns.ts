@@ -1,6 +1,6 @@
 export const GOODS_COLUMS = {
   id: {
-    title: 'Unidad',
+    title: 'No. Bien',
     type: 'string',
     sort: false,
   },
@@ -10,7 +10,7 @@ export const GOODS_COLUMS = {
     sort: false,
   },
   quantity: {
-    title: 'Unidad',
+    title: 'Cantidad',
     type: 'string',
     sort: false,
   },
@@ -18,12 +18,17 @@ export const GOODS_COLUMS = {
 
 export const PROCCESS_COLUMNS = {
   goodNumber: {
-    title: 'No Bien',
+    title: 'No. Bien',
     type: 'string',
     sort: false,
   },
   process: {
     title: 'Proceso',
+    type: 'string',
+    sort: false,
+  },
+  registryNumber: {
+    title: 'No. de Registro',
     type: 'string',
     sort: false,
   },

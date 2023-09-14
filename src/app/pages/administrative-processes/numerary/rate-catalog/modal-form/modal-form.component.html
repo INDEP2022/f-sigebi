@@ -1,0 +1,92 @@
+<app-modal>
+  <div class="w-100" header>
+    <div class="d-flex flex-wrap justify-content-between aling-items-center">
+      <h5 class="modal-title">Actualización Tasa Interés</h5>
+    </div>
+  </div>
+
+  <div body class="p-0">
+    <div class="row">
+      <form class="form-material" [formGroup]="form">
+        <div class="row">
+          <div class="col-md-6">
+            <form-field [control]="form.get('month')" label="Mes">
+              <ng-select
+                #selected
+                class="form-control"
+                [items]="months"
+                bindLabel="mes"
+                bindValue="value"
+                [multiple]="false"
+                [readonly]="true"
+                [closeOnSelect]="true"
+                [searchable]="false"
+                formControlName="month">
+              </ng-select>
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('year')" label="Año">
+              <input
+                type="text"
+                [isDisabled]="true"
+                class="form-control"
+                [minDate]="minDate"
+                [bsConfig]="bsConfigFromYear"
+                #dp="bsDatepicker"
+                bsDatepicker
+                formControlName="year" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('pesos')" label="Tasa Pesos">
+              <input
+                type="number"
+                class="form-control"
+                [min]="0"
+                oninput="if(this.value.length > 21) this.value = this.value.slice(0, 21)"
+                formControlName="pesos" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('dollars')" label="Tasa Dólares">
+              <input
+                type="number"
+                class="form-control"
+                [min]="0"
+                formControlName="dollars"
+                oninput="if(this.value.length > 21) this.value = this.value.slice(0, 21)" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('euro')" label="Tasa Euros">
+              <input
+                type="number"
+                class="form-control"
+                [min]="0"
+                formControlName="euro"
+                oninput="if(this.value.length > 21) this.value = this.value.slice(0, 21)" />
+            </form-field>
+          </div>
+        </div>
+        <div class="d-flex justify-content-center">
+          <div class="d-inline">
+            <button
+              type="button"
+              [disabled]="form.invalid"
+              class="btn btn-primary btn-sm active mr-2"
+              (click)="updateNumerary()">
+              Guardar
+              <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+            <button
+              class="btn btn-primary active btn-sm ml-3"
+              (click)="close()">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-modal>

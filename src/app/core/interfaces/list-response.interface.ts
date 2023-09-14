@@ -20,6 +20,7 @@ export interface IListResponseMessage<T = any> {
   [x: string]: any;
   data: T[];
   count: number;
+  total?: number;
   message: string[];
   statusCode?: number;
 }

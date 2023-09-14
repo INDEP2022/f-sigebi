@@ -9,9 +9,9 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
 //Models
+import { debounceTime } from 'rxjs';
 import { ISafe } from 'src/app/core/models/catalogs/safe.model';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
-
 @Component({
   selector: 'app-safe-shared',
   standalone: true,
@@ -34,23 +34,31 @@ export class SafeSharedComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.form
+      .get(this.safeField)
+      .valueChanges.pipe(
+        debounceTime(300) // Retraso de 300 ms antes de realizar la búsqueda
+      )
+      .subscribe(value => {
+        const newParams = new ListParams();
+        newParams['filter.idSafe'] = value;
+        this.getSafes(newParams);
+      });
+  }
 
   getSafes(params: ListParams) {
     /*{ type: this.warehouseType.value, ...params }*/
     this.safeService.getAll(params).subscribe(
       data => {
+        data.data.map(data => {
+          data.description = `${data.idSafe}- ${data.description}`;
+          return data;
+        });
         this.safes = new DefaultSelect(data.data, data.count);
-        console.log(data.data);
       },
       err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
+        this.safes = new DefaultSelect();
       },
       () => {}
     );

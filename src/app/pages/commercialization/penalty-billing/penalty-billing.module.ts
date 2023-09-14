@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CancelModalComponent } from './cancel-modal/cancel-modal.component';
 import { FolioModalComponent } from './folio-modal/folio-modal.component';
@@ -23,6 +24,7 @@ import { PenaltyBillingRoutingModule } from './penalty-billing-routing.module';
     NgScrollbarModule,
     ModalModule.forChild(),
     BsDatepickerModule,
+    FormLoaderComponent,
   ],
 })
 export class CFpMPenaltyBillingModule {}

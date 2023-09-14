@@ -1,5 +1,5 @@
 export interface IStateRepuve {
-  cve?: string;
+  key?: number;
   description?: string;
   procedure?: string;
 }

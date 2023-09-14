@@ -27,11 +27,21 @@ export class PhotographMediaService implements ICrudMethods<IPhotographMedia> {
     return this.mediumPhotographyRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IPhotographMedia): Observable<Object> {
-    return this.mediumPhotographyRepository.update(this.route, id, model);
+  updateCatalogPhotographMedia(
+    id: string | number,
+    model: IPhotographMedia
+  ): Observable<Object> {
+    return this.mediumPhotographyRepository.updateCatalogPhotographMedia(
+      this.route,
+      id,
+      model
+    );
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.mediumPhotographyRepository.remove(this.route, id);
+  removeCatalogPhotographMedia(id: string | number): Observable<Object> {
+    return this.mediumPhotographyRepository.removeCatalogPhotographMedia(
+      this.route,
+      id
+    );
   }
 }

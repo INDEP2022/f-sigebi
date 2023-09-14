@@ -49,25 +49,59 @@ export class ListDonationComponent extends BasePage implements OnInit {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
+            let searchFilter = SearchFilter.EQ;
             field = `filter.${filter.field}`;
-            /*SPECIFIC CASES*/
-            // filter.field == 'requestId'
-            //   ? (field = `filter.${filter.field}.id`)
-            //   : (field = `filter.${filter.field}`);
-            // filter.field == 'doneeId'
-            //   ? (searchFilter = SearchFilter.EQ)
-            //   : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'requestId':
+                field = 'filter.requestId.id';
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'doneeId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'donee':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'authorizeType':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'requestDate':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'authorizeCve':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'authorizeDate':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'justification':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'state':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'municipality':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'direction':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getDonationRequest();
+          let i = 0;
+          console.log('entra ', i++);
         }
       });
-
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDonationRequest());

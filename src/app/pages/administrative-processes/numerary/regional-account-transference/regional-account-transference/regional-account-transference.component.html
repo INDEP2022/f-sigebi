@@ -4,88 +4,169 @@
   </div>
   <div body>
     <div class="row mt-3 mb-3">
-      <form action="" class="form-material" [formGroup]="form">
+      <form class="form-material" [formGroup]="form">
         <div class="row mt-4">
-          <div class="col-md-4">
-            <form-field [control]="form.get('noBien')" label="No Bien">
+          <div class="col-md-4 d-flex">
+            <form-field
+              [control]="form.get('noBien')"
+              class="w-100"
+              label="No. Bien">
               <input
                 type="number"
                 class="form-control"
                 formControlName="noBien"
                 min="1"
-                pattern="^[0-9]+" />
+                oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
+            </form-field>
+            <div class="d-inline">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active ml-2"
+                (click)="getIdSolum()">
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('idRequest')" label="Id Solicitud">
+              <input
+                formControlName="idRequest"
+                class="form-control"
+                type="number"
+                min="1"
+                oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
             </form-field>
           </div>
           <div class="col-md-4">
-            <form-field
-              [control]="form.get('idRequest')"
-              label="Id de solicitud">
-              <input formControlName="idRequest" class="form-control" />
-            </form-field>
+            <div class="d-inline">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-2"
+                (click)="getDataPreview()">
+                Consultar
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-success active m-3"
+                (click)="files.nativeElement.click()">
+                Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
+              </button>
+              <input
+                type="file"
+                name="file"
+                #file
+                class="d-none"
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                (change)="onFileChange($event)" />
+            </div>
           </div>
-          <div
-            class="col-md-4"
-            style="display: flex; justify-content: start; align-items: center">
-            <button type="button" class="btn btn-sm btn-secondary active m-3">
-              CONSULTAR
-            </button>
-            <button type="button" class="btn btn-sm btn-success active m-3">
-              IMPORTAR
-            </button>
-          </div>
-        </div>
-
-        <div class="row mt-4">
-          <div class="col-md-4">
+          <div class="col-md-3 mt-4">
             <form-field
               [control]="form.get('transferenceReport')"
-              label="Reporte de transferencia">
+              label="Reporte Transferencia">
               <input
+                [readOnly]="isNew"
                 type="number"
                 class="form-control"
                 formControlName="transferenceReport"
                 min="1"
-                pattern="^[0-9]+" />
+                oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3 mt-4">
             <form-field
               [control]="form.get('dateReport')"
-              label="Fecha de reporte">
+              label="Fecha Reporte">
               <input
                 formControlName="dateReport"
                 class="form-control"
-                bsDatepicker />
+                bsDatepicker
+                [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
             </form-field>
           </div>
-          <div
-            class="col-md-4"
-            style="display: flex; justify-content: start; align-items: center">
-            <button type="button" class="btn btn-sm btn-secondary active m-3">
-              CONSULTAR
-            </button>
+          <div class="col-md-6 d-flex mt-4">
+            <form-check label="Marcar como Histórico" for="histo">
+              <input
+                id="histo"
+                type="checkbox"
+                formControlName="historicCheck"
+                [value]="false" />
+            </form-check>
+            <div class="d-inline">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                tooltip="Enviar"
+                (click)="sendEmail()"
+                containerClass="tooltip-style">
+                Enviar <i class="bx bx-send"></i>
+              </button>
+            </div>
+          </div>
+          <div class="col-md-12 text-center mt-4">
+            <div class="d-inline">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="searchRegional()">
+                Buscar
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-info btn-sm active mr-3"
+                (click)="clear(); isNew = true">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="save()">
+                Guardar
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger btn-sm active"
+                (click)="clear(); isNew = false">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+            </div>
           </div>
         </div>
-        <form-check label="Marcar como historico">
-          <input
-            type="checkbox"
-            formControlName="historicCheck"
-            value="value" />
-        </form-check>
+
+        <hr class="row mt-5" />
 
         <div class="row pt-4">
           <div class="col-md-12">
-            <div [class]="loading ? 'table-loading' : ''">
+            <form-loader *ngIf="loading"></form-loader>
+            <div *ngIf="!loading">
               <ng2-smart-table
-                [attr.class]="'table-bordered'"
+                [attr.class]="'table-bordered table-responsive mb-4'"
                 [settings]="settings"
-                [source]="data1">
+                [source]="dataTable">
               </ng2-smart-table>
             </div>
           </div>
-          <app-pagination [params]="params" [totalItems]="totalItems">
+          <div class="col-md-12 d-flex justify-content-end pt-3">
+            <form-field [control]="form.get('monto2')" label="Monto Total">
+              <input
+                [readOnly]="true"
+                type="number"
+                class="form-control pl-2"
+                formControlName="monto2"
+                min="1" />
+            </form-field>
+          </div>
+          <app-pagination
+            *ngIf="totalItems > 0 && form.get('transferenceReport').value"
+            [filterParams]="filterParams"
+            [totalItems]="totalItems">
           </app-pagination>
         </div>
+
+        <hr class="row mt-5" />
 
         <div class="ch-content">
           <h5 class="title">DATOS A TURNAR</h5>
@@ -95,40 +176,66 @@
             <div>
               <form-field
                 [control]="form.get('currencyType')"
-                label="Tipo moneda de cuenta">
-                <input
-                  type="number"
-                  class="form-control"
+                label="Tipo Moneda de Cuenta">
+                <ng-select
                   formControlName="currencyType"
-                  min="1"
-                  pattern="^[0-9]+" />
+                  (change)="changeSelect()"
+                  [items]="moneda"
+                  bindValue="value"
+                  class="form-control"
+                  [searchable]="false"
+                  bindLabel="label"></ng-select>
               </form-field>
             </div>
             <div style="margin-top: 30px">
+              <form-field [control]="form.get('delegation')">
+                <ngx-select
+                  [data]="delegations"
+                  [form]="form"
+                  value="id"
+                  bindLabel="description"
+                  label="Delegación"
+                  [control]="'delegation'"
+                  [searchable]="false"
+                  (change)="changeSelect($event)"
+                  [labelTemplate]="delg"
+                  [optionTemplate]="delgd">
+                </ngx-select>
+                <ng-template #delg let-item="item">
+                  {{ item.id }} - {{ item.description }}
+                </ng-template>
+                <ng-template #delgd let-item="item">
+                  <div [title]="item.id + '-' + item.description">
+                    {{ item.id }} - {{ item.description }}
+                  </div>
+                </ng-template>
+              </form-field>
+              <!-- 
               <form-field [control]="form.get('delegation')" label="Delegación">
                 <input formControlName="delegation" class="form-control" />
-              </form-field>
+              </form-field> -->
             </div>
             <div style="margin-top: 30px">
               <form-field
                 [control]="form.get('folioCash')"
-                label="No Folio CashWindows">
+                label="No. Folio CashWindows">
                 <input
-                  type="number"
+                  type="text"
                   class="form-control"
                   formControlName="folioCash"
-                  min="1"
-                  pattern="^[0-9]+" />
+                  oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
               <form-field
                 [control]="form.get('transactionDate')"
-                label="Fecha transacción CashWindows">
+                label="Fecha Transacción CashWindows">
                 <input
+                  (onHidden)="changeSelect()"
                   formControlName="transactionDate"
                   class="form-control"
-                  bsDatepicker />
+                  bsDatepicker
+                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
               </form-field>
             </div>
           </div>
@@ -136,43 +243,54 @@
             <div>
               <form-field
                 [control]="form.get('cveAccount')"
-                label="Clave cuenta">
+                label="Clave Cuenta">
                 <input
                   type="number"
                   class="form-control"
                   formControlName="cveAccount"
                   min="1"
-                  pattern="^[0-9]+" />
+                  oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16)" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
               <form-field
                 [control]="form.get('accountType')"
-                label="Tipo de cuenta">
-                <input formControlName="accountType" class="form-control" />
+                label="Tipo de Cuenta">
+                <input
+                  formControlName="accountType"
+                  class="form-control"
+                  oninput="if(this.value.length > 13) this.value = this.value.slice(0, 13)" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
               <form-field
                 [control]="form.get('cveBank')"
                 label="Clave de Banco">
-                <input formControlName="cveBank" class="form-control" />
+                <input
+                  formControlName="cveBank"
+                  class="form-control"
+                  oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10)" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
               <form-field
                 [control]="form.get('cveCurrency')"
                 label="Clave de Moneda">
-                <input formControlName="cveCurrency" class="form-control" />
+                <input
+                  formControlName="cveCurrency"
+                  class="form-control"
+                  oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15)" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
-              <p>
-                <span style="font-weight: bold; margin-right: 5px"
-                  >Monto total:</span
-                >
-                $ {{ total }}
-              </p>
+              <form-field [control]="form.get('total')" label="Monto Total">
+                <input
+                  type="number"
+                  formControlName="total"
+                  class="form-control"
+                  min="0"
+                  oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
+              </form-field>
             </div>
           </div>
         </div>

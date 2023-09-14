@@ -4,232 +4,364 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row mb-3 mt-3">
-        <!--Packages Component-->
-        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-          <app-packages-shared [form]="form"></app-packages-shared>
-        </div>
-        <!--Package type-->
-        <div
-          class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3 align-self-center">
-          <div class="row justify-content-between">
-            <div class="col-md-4">
-              <form-radio label="Destrucción">
-                <input
-                  type="radio"
-                  formControlName="packageType"
-                  value="destruction" />
-              </form-radio>
-            </div>
-            <div class="col-md-4">
-              <form-radio label="Donación">
-                <input
-                  type="radio"
-                  formControlName="packageType"
-                  value="donation" />
-              </form-radio>
-            </div>
-            <div class="col-md-4">
-              <form-radio label="Chatarra">
-                <input
-                  type="radio"
-                  formControlName="packageType"
-                  value="junk" />
-              </form-radio>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 col-12 mb-3 mt-3">
-          <form-field [control]="form.get('amountKg')" label="Cantidad en KG.">
-            <input formControlName="amountKg" class="form-control" />
+      <div class="row mb-3">
+        <div class="col-md-2 col-sm-12">
+          <form-field [control]="form.get('noPackage')">
+            <ngx-select
+              (fetchItems)="searchNoPackage($event)"
+              control="noPackage"
+              label="No. Paquete"
+              bindLabel="numberPackage"
+              [data]="dataPackage"
+              [form]="form"></ngx-select>
           </form-field>
         </div>
-        <div
-          class="col-lg-3 col-md-6 col-sm-6 col-12 mb-3 mt-3 align-self-baseline">
+        <!-- <div class="col-md-5 col-sm-12"> -->
+        <form-field
+          [control]="form.get('cvePackage')"
+          label="Clave del Paquete"
+          class="col-md-5 col-sm-12">
+          <input
+            type="text"
+            [readOnly]="true"
+            class="form-control"
+            formControlName="cvePackage" />
+        </form-field>
+        <!-- </div> -->
+        <div class="col-md-5 col-sm-12">
           <form-field
-            [control]="form.get('status')"
-            label="Estatus del Paquete">
-            <select class="form-control" formControlName="status">
-              <option [value]="null">Seleccione un valor</option>
-              <option value="project">P-Proyecto</option>
-              <option value="validation">V-Validado</option>
-              <option value="authorized">A-Autorizado</option>
-              <option value="closed">C-Cerrado</option>
-              <option value="successful">L-Aplicado</option>
-            </select>
+            [control]="form.get('descriptionPackage')"
+            label="Descripción">
+            <input
+              [readOnly]="true"
+              class="form-control"
+              formControlName="descriptionPackage" />
           </form-field>
         </div>
       </div>
-      <div class="row mb-3 mt-3 justify-content-between">
-        <!--Actions-->
-        <div
-          class="col-lg-3 col-md-4 col-sm-4 col-12 align-self-center mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">
-            Validado
-          </button>
+      <div class="row">
+        <div class="col-md-2 col-sm-12">
+          <form-field [control]="form.get('packageType')">
+            <label class="text-center">Tipo</label>
+            <div class="row">
+              <div class="col">
+                <div class="col">
+                  <form-radio label="Destrucción">
+                    <input
+                      type="radio"
+                      formControlName="packageType"
+                      value="1" />
+                  </form-radio>
+                </div>
+                <div class="col">
+                  <form-radio label="Donación">
+                    <input
+                      type="radio"
+                      formControlName="packageType"
+                      value="2" />
+                  </form-radio>
+                </div>
+                <div class="col">
+                  <form-radio label="Chatarra">
+                    <input
+                      type="radio"
+                      formControlName="packageType"
+                      value="3" />
+                  </form-radio>
+                </div>
+              </div>
+            </div>
+          </form-field>
         </div>
-        <div
-          class="col-lg-3 col-md-4 col-sm-4 col-12 align-self-center mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">
+        <div class="col-md-5 col-sm-12 mt-3">
+          <form-field
+            [control]="form.get('amountKg')"
+            label="Cantidad en Kilos">
+            <input
+              formControlName="amountKg"
+              class="form-control"
+              type="number"
+              min="0"
+              max="500"
+              oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16);" />
+          </form-field>
+        </div>
+        <div class="col-md-5 col-sm-12 mt-3">
+          <form-field [control]="form.get('status')">
+            <ngx-select
+              control="status"
+              label="Estatus del Paquete"
+              bindLabel="name"
+              value="value"
+              [searchable]="false"
+              [data]="statusPackage"
+              [form]="form"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <!--Actions-->
+        <div class="col text-center">
+          <button class="btn btn-danger btn-sm active mr-3" (click)="clear()">
+            Limpiar <i class="fas fa-eraser"></i>
+          </button>
+          <button
+            [disabled]="!validaButton.PB_VALIDA"
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="showConfirmAlert()">
+            Validado <i class="fa fa-check" aria-hidden="true"></i>
+          </button>
+          <button
+            [disabled]="!validaButton.PB_AUTORIZA"
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="showAutorizateAlert()">
             Autorizado
           </button>
-        </div>
-        <div
-          class="col-lg-3 col-md-4 col-sm-4 col-12 align-self-center mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">Cierre</button>
+          <button
+            [disabled]="!validaButton.PB_CERRAR"
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="showCloseAlert()">
+            Cierre
+          </button>
+          <button
+            *ngIf="!newDataFilled"
+            type="button"
+            tooltip="Agregar"
+            (click)="addNewPack()"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+          <button
+            *ngIf="newDataFilled"
+            type="submit"
+            [disabled]="loadingNewBtn"
+            (click)="newPackage()"
+            class="btn btn-primary active btn-sm mr-3">
+            Guardar Nuevo
+            <i *ngIf="!loadingNewBtn" class="bx bx-save bx-sm float-icon"></i>
+            <i
+              *ngIf="loadingNewBtn"
+              class="spinner-border spinner-border-sm"></i>
+          </button>
         </div>
       </div>
-      <!--Process dates-->
+
       <!--Process Users-->
-      <div class="row mt-3">
-        <div class="col-md-12">
-          <div class="mt-4">
-            <h5 class="font-size-14">Fechas del Proceso</h5>
-          </div>
-        </div>
+      <div class="row mt-5 mb-3 pl-3 pr-3">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Proyecto</th>
+              <th>Validación</th>
+              <th>Autorización</th>
+              <th>Cierre/Modificación</th>
+              <th>Cancelación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ml-3">
+                <i class="bx bx-calendar me-1 text-primary"></i> Fecha
+              </td>
+              <td>
+                <form-field [control]="form.get('fecElab')">
+                  <span>{{
+                    form.get('fecElab').value | date: 'dd/MM/yyyy'
+                  }}</span>
+                </form-field>
+              </td>
+              <td>
+                <form-field [control]="form.get('fecValida')">
+                  <span>{{
+                    form.get('fecValida').value | date: 'dd/MM/yyyy'
+                  }}</span>
+                </form-field>
+              </td>
+              <td>
+                <form-field [control]="form.get('fecAutoriza')">
+                  <span>{{
+                    form.get('fecAutoriza').value | date: 'dd/MM/yyyy'
+                  }}</span>
+                </form-field>
+              </td>
+              <td>
+                <form-field [control]="form.get('fecCerrado')">
+                  <span>{{
+                    form.get('fecCerrado').value | date: 'dd/MM/yyyy'
+                  }}</span>
+                </form-field>
+              </td>
+              <td>
+                <form-field [control]="form.get('fecCancelado')">
+                  <span>{{
+                    form.get('fecCancelado').value | date: 'dd/MM/yyyy'
+                  }}</span>
+                </form-field>
+              </td>
+            </tr>
+            <tr>
+              <td class="ml-3">
+                <i class="bx bx-user me-1 text-primary"></i> Usuario
+              </td>
+              <td>
+                <form-field [control]="form.get('userElab')">
+                  <span>{{ form.get('userElab').value }}</span>
+                </form-field>
+              </td>
+              <td>
+                <form-field [control]="form.get('userValida')">
+                  <span>{{ form.get('userValida').value }}</span>
+                </form-field>
+              </td>
+              <td>
+                <form-field [control]="form.get('userAutoriza')">
+                  <span>{{ form.get('userAutoriza').value }}</span>
+                </form-field>
+              </td>
+              <td>
+                <form-field [control]="form.get('userCerrado')">
+                  <span>{{ form.get('userCerrado').value }}</span>
+                </form-field>
+              </td>
+              <td>
+                <form-field [control]="form.get('userCancelado')">
+                  <span>{{ form.get('userCancelado').value }}</span>
+                </form-field>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div class="row justify-content-between mb-3 mt-3">
-        <div class="col-lg-2 col-md-2 col-sm-4 col-12 mb-3 mt-3">
-          <div class="mt-4">
-            <h5 class="font-size-14">
-              <i class="bx bx-calendar me-1 text-primary"></i>
-              Proyecto
-            </h5>
-            <p class="text-muted mb-0">08 Sept, 2019</p>
-          </div>
-          <div class="mt-4">
-            <h5 class="font-size-14">
-              <i class="bx bx-user me-1 text-primary"></i>
-              Usuario
-            </h5>
-            <p class="text-muted mb-0">User123</p>
-          </div>
-        </div>
-        <div class="col-lg-2 col-md-2 col-sm-4 col-12 mb-3 mt-3">
-          <div class="mt-4">
-            <h5 class="font-size-14">
-              <i class="bx bx-calendar me-1 text-primary"></i>
-              Validación
-            </h5>
-            <p class="text-muted mb-0">08 Sept, 2019</p>
-          </div>
-          <div class="mt-4">
-            <h5 class="font-size-14">
-              <i class="bx bx-user me-1 text-primary"></i>
-              Usuario
-            </h5>
-            <p class="text-muted mb-0">User123</p>
-          </div>
-        </div>
-        <div class="col-lg-2 col-md-2 col-sm-4 col-12 mb-3 mt-3">
-          <div class="mt-4">
-            <h5 class="font-size-14">
-              <i class="bx bx-calendar me-1 text-primary"></i>
-              Autorización
-            </h5>
-            <p class="text-muted mb-0">08 Sept, 2019</p>
-          </div>
-          <div class="mt-4">
-            <h5 class="font-size-14">
-              <i class="bx bx-user me-1 text-primary"></i>
-              Usuario
-            </h5>
-            <p class="text-muted mb-0">User123</p>
-          </div>
-        </div>
-        <div class="col-lg-2 col-md-2 col-sm-4 col-12 mb-3 mt-3">
-          <div class="mt-4">
-            <h5 class="font-size-14">
-              <i class="bx bx-calendar me-1 text-primary"></i>
-              Cierre/Modificación
-            </h5>
-            <p class="text-muted mb-0">08 Sept, 2019</p>
-          </div>
-          <div class="mt-4">
-            <h5 class="font-size-14">
-              <i class="bx bx-user me-1 text-primary"></i>
-              Usuario
-            </h5>
-            <p class="text-muted mb-0">User123</p>
-          </div>
-        </div>
-        <div class="col-lg-2 col-md-2 col-sm-4 col-12 mb-3 mt-3">
-          <div class="mt-4">
-            <h5 class="font-size-14">
-              <i class="bx bx-calendar me-1 text-primary"></i>
-              Cancelación
-            </h5>
-            <p class="text-muted mb-0">08 Sept, 2019</p>
-          </div>
-          <div class="mt-4">
-            <h5 class="font-size-14">
-              <i class="bx bx-user me-1 text-primary"></i>
-              Usuario
-            </h5>
-            <p class="text-muted mb-0">User123</p>
-          </div>
-        </div>
-      </div>
+    </form>
+  </div>
+</app-card>
+
+<app-card [footer]="true">
+  <div body>
+    <form class="form-material" [formGroup]="form">
       <!--Options Menu-->
-      <div class="row mb-3 mt-3">
+      <div class="row mt-3">
         <!--Delegation Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-delegation-shared
-            [form]="form"
-            [showSubdelegation]="false"></app-delegation-shared>
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              (fetchItems)="getCatalogDelegation($event)"
+              control="delegation"
+              label="Coordinación"
+              bindLabel="labelValue"
+              [data]="dataDelegation"
+              [form]="form"></ngx-select>
+          </form-field>
         </div>
         <!--Goods Classification Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-goods-classification-shared
-            [form]="form"></app-goods-classification-shared>
+          <form-field [control]="form.get('goodClassification')">
+            <ngx-select
+              (fetchItems)="getCatalogClassGood($event)"
+              control="goodClassification"
+              label="Clasificación de Bienes"
+              bindLabel="labelValue"
+              [data]="dataGoodClass"
+              [form]="form"></ngx-select>
+          </form-field>
+          <!-- <app-goods-classification-shared
+            [form]="form"></app-goods-classification-shared> -->
         </div>
         <!--Target Tags Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-target-tags-shared [form]="form"></app-target-tags-shared>
+          <form-field [control]="form.get('targetTag')">
+            <ngx-select
+              (fetchItems)="getCatalogTag($event)"
+              control="targetTag"
+              label="Etiqueta de Destino"
+              bindLabel="labelValue"
+              [data]="dataTag"
+              [form]="form"></ngx-select>
+          </form-field>
         </div>
         <!--Goods Status Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-goods-status-shared [form]="form"></app-goods-status-shared>
+          <form-field [control]="form.get('goodStatus')">
+            <ngx-select
+              (fetchItems)="getCatalogGoodStatus($event)"
+              control="goodStatus"
+              label="Estatus Bienes"
+              bindLabel="labelValue"
+              [data]="dataGoodStatus"
+              [form]="form"></ngx-select>
+          </form-field>
         </div>
         <!--Measurement Units Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-measurement-units-shared
-            [form]="form"></app-measurement-units-shared>
+          <form-field [control]="form.get('measurementUnit')">
+            <ngx-select
+              (fetchItems)="getCatalogUnit($event)"
+              control="measurementUnit"
+              label="Unidad de medida"
+              bindLabel="description"
+              [data]="dataUnit"
+              [form]="form"></ngx-select>
+          </form-field>
         </div>
         <!--Transference Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-transferente-shared [form]="form"></app-transferente-shared>
+          <form-field [control]="form.get('transferent')">
+            <ngx-select
+              (fetchItems)="getCatalogTransferent($event)"
+              control="transferent"
+              label="Transferente"
+              bindLabel="labelValue"
+              [data]="dataTransferent"
+              [form]="form"></ngx-select>
+          </form-field>
         </div>
         <!--warehouse Component-->
-        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-warehouse-shared
-            [form]="form"
-            [showWarehouseType]="false"></app-warehouse-shared>
+        <div class="col-md-12 col-sm-12 col-xs-12 mt-3">
+          <form-field [control]="form.get('warehouse')">
+            <ngx-select
+              (fetchItems)="getCatalogWareHouse($event)"
+              control="warehouse"
+              label="Almacén"
+              bindLabel="labelValue"
+              [data]="dataWarehouse"
+              [form]="form"></ngx-select>
+          </form-field>
         </div>
       </div>
     </form>
   </div>
-  <div footer class="row justify-content-end">
-    <div class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-center mb-3 mt-3">
+  <div footer class="row mb-3 mt-3">
+    <div
+      class="text-center"
+      style="display: flex; column-gap: 10px; justify-content: center">
       <button
+        *ngIf="validaButton.PB_PERMISOS"
         type="button"
-        class="btn btn-primary btn-sm active w-100"
+        [disabled]="!validaButton.PB_PERMISOS"
+        class="btn btn-primary btn-sm active mr-3"
         (click)="openPermissions('')">
         Permisos
       </button>
-    </div>
-    <div class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-center mb-3 mt-3">
-      <button type="button" class="btn btn-danger btn-sm active w-100">
+      <button
+        (click)="cancelPackFunction()"
+        [disabled]="!validaButton.PB_CANCELA"
+        type="button"
+        class="btn btn-danger btn-sm active">
         Cancelar
       </button>
-    </div>
-    <div class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-center mb-3 mt-3">
-      <button type="button" class="btn btn-primary btn-sm active w-100">
+      <!--  <button
+        (click)="pbCorreo()"
+        [disabled]="!cvePackage.value"
+        type="button"
+        class="btn btn-primary btn-sm active">
         Correo
-      </button>
+      </button> -->
     </div>
   </div>
 </app-card>
+
 <!--Add New Good-->
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
@@ -239,152 +371,192 @@
     <form class="form-material" [formGroup]="form2">
       <div class="row mb-3 mt-3">
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
-          <form-field [control]="form2.get('numberGood')" label="No. Bien">
+          <form-field
+            [control]="form2.get('numberGoodFather')"
+            label="No. Bien">
             <input
-              formControlName="numberGood"
+              formControlName="numberGoodFather"
+              [readOnly]="true"
               type="text"
-              class="form-control" />
+              class="form-control"
+              type="number"
+              min="0"
+              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
           <form-field label="Expediente" [control]="form2.get('record')">
-            <input formControlName="record" type="text" class="form-control" />
+            <input
+              formControlName="record"
+              [readOnly]="true"
+              class="form-control"
+              type="number"
+              min="0"
+              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
           </form-field>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-12 mb-3 mt-3">
           <form-field label="Descripción" [control]="form2.get('description')">
             <input
               formControlName="description"
+              [readOnly]="true"
+              class="form-control"
               type="text"
-              class="form-control" />
+              maxlength="1250" />
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
           <form-field label="Cantidad" [control]="form2.get('amount')">
-            <input formControlName="amount" type="text" class="form-control" />
-          </form-field>
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
-          <form-field label="Unidad" [control]="form2.get('unit')">
-            <input formControlName="unit" type="text" class="form-control" />
-          </form-field>
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
-          <form-field label="Estatus" [control]="form2.get('status')">
-            <input formControlName="status" type="text" class="form-control" />
-          </form-field>
-        </div>
-      </div>
-      <!--Actions-->
-      <div class="row justify-content-between mb-3 mt-3">
-        <div
-          class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-baseline mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">
-            Seleccionar Bienes
-          </button>
-        </div>
-        <div
-          class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-baseline mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">
-            Verificar Bienes
-          </button>
-        </div>
-        <div
-          class="col-lg-2 col-md-2 col-sm-6 col-12 align-self-baseline mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">
-            Ver Error
-          </button>
-        </div>
-        <div
-          class="col-lg-2 col-md-2 col-sm-6 col-12 align-self-baseline mb-3 mt-3">
-          <button class="btn btn btn-success active btn-sm w-100">
-            Exportar
-          </button>
-        </div>
-        <div
-          class="col-lg-2 col-md-2 col-sm-6 col-12 align-self-baseline mb-3 mt-3">
-          <form-check label="Bienes Correctos" for="label">
-            <input id="label" type="checkbox" formControlName="check" />
-          </form-check>
-        </div>
-      </div>
-    </form>
-  </div>
-</app-card>
-<!--Data Previsualization-->
-<app-card [header]="true" [footer]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Previsualización de Datos</h5>
-    <div class="col-md-5 buttons">
-      <app-columns-select
-        (settingsChange)="settingsChange($event)"
-        [settings]="settings"></app-columns-select>
-    </div>
-  </div>
-  <div body>
-    <div class="row pt-4">
-      <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data"
-            (edit)="edit($event.data)"
-            (delete)="delete($event.data)">
-          </ng2-smart-table>
-        </div>
-      </div>
-    </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
-  </div>
-</app-card>
-<!--Scan Folio-->
-<app-card [header]="true" [footer]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Escaneo</h5>
-  </div>
-  <div body>
-    <form class="form-material" [formGroup]="form">
-      <div class="row mb-3 mt-3">
-        <div class="col-lg-3 col-md-6 col-sm-6 col-6 mb-3 mt-3">
-          <form-field [control]="form.get('scanFolio')" label="Folio Escaneo">
             <input
-              formControlName="scanFolio"
+              formControlName="amount"
+              [readOnly]="true"
+              class="form-control"
               type="number"
-              class="form-control" />
+              min="0"
+              oninput="if(this.value.length > 19) this.value = this.value.slice(0, 19);" />
           </form-field>
         </div>
-        <div
-          class="col-lg-3 col-md-6 col-sm-6 col-6 mb-3 mt-3 align-self-center">
-          <button class="btn btn-primary btn-sm active w-100">Escanear</button>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
+          <form-field label="Unidad" [control]="form2.get('unitGood')">
+            <input
+              formControlName="unitGood"
+              [readOnly]="true"
+              type="text"
+              class="form-control"
+              maxlength="25" />
+          </form-field>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
+          <form-field label="Estatus" [control]="form2.get('statusGood')">
+            <input
+              formControlName="statusGood"
+              [readOnly]="true"
+              type="text"
+              class="form-control"
+              maxlength="25" />
+          </form-field>
         </div>
       </div>
     </form>
   </div>
 </app-card>
+
+<app-card>
+  <!--Actions-->
+  <div body>
+    <div class="row mb-3 mt-3">
+      <div class="col text-center">
+        <button
+          (click)="selectGoods()"
+          class="btn btn-primary btn-sm active mr-3">
+          Seleccionar Bienes <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
+        <button
+          (click)="verifyGoods()"
+          class="btn btn-primary btn-sm active m-3">
+          Verificar Bienes <i class="fa fa-check" aria-hidden="true"></i>
+        </button>
+        <button
+          (click)="viewModal('error')"
+          [disabled]="widthErrors || dataErrors.length === 0"
+          class="btn btn-primary btn-sm active mr-3">
+          Ver Error <i class="fa fa-eye" aria-hidden="true"></i>
+        </button>
+        <button
+          (click)="exportToExcel()"
+          class="btn btn-sm btn-success active mr-3">
+          Exportar a Excel
+          <i class="bx bx-download float-icon"></i>
+        </button>
+      </div>
+      <div class="col-md-3 mt-3 disabled">
+        <form-check label="Bienes Correctos" for="checkGood">
+          <input
+            id="checkGood"
+            type="checkbox"
+            formControlName="check"
+            [readOnly]="true" />
+        </form-check>
+      </div>
+    </div>
+  </div>
+</app-card>
+
+<!--Data Previsualization-->
+<app-paq-destion-det
+  [packageType]="packageType"
+  [noPackage]="noPackage"
+  (dataEmit)="handleOutPut($event)"></app-paq-destion-det>
+
+<app-card>
+  <div body>
+    <app-scan-file-massive-conversion
+      [form]="form"
+      [package]="form.get('noPackage').value"
+      [formControlName]="scanFolioString">
+    </app-scan-file-massive-conversion>
+  </div>
+</app-card>
+
 <!--Paragraphs-->
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Párrafos</h5>
   </div>
   <div body>
+    <div class="row">
+      <div class="col-md-12 buttons">
+        <button
+          type="button"
+          (click)="insertParagraph()"
+          class="btn btn-primary active btn-sm mr-3">
+          Insertar Párrafos
+        </button>
+        <button
+          (click)="downloadReport()"
+          type="button"
+          class="btn btn-primary active btn-sm mr-3">
+          Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm mr-3"
+          (click)="updatePackage()">
+          Guardar Párrafos <i class="bx bx-save bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
         <div class="col-12 mb-3 mt-3">
-          <form-field [control]="form.get('paragraphF')" label="Párafo Inicial">
+          <form-field
+            [control]="form.get('paragraph1')"
+            label="Párrafo Inicial">
             <textarea
               rows="3"
+              [max-length]="4000"
               class="form-control"
-              formControlName="paragraphF"></textarea>
+              formControlName="paragraph1"></textarea>
           </form-field>
         </div>
         <div class="col-12 mb-3 mt-3">
-          <form-field [control]="form.get('paragraphL')" label="Párafo Final">
+          <form-field
+            [control]="form.get('paragraph2')"
+            label="Párrafo Intermedio">
             <textarea
               rows="3"
+              [max-length]="4000"
               class="form-control"
-              formControlName="paragraphL"></textarea>
+              formControlName="paragraph2"></textarea>
+          </form-field>
+        </div>
+        <div class="col-12 mb-3 mt-3">
+          <form-field [control]="form.get('paragraph3')" label="Párrafo Final">
+            <textarea
+              rows="3"
+              [max-length]="4000"
+              class="form-control"
+              formControlName="paragraph3"></textarea>
           </form-field>
         </div>
       </div>

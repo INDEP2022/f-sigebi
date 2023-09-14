@@ -1,0 +1,63 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <h6 class="mb-5">
+      &#191;Est&#225; seguro de validar la respuesta del contribuyente&#63; una
+      vez que acepte no es posible deshacer la acción
+    </h6>
+    <br /><br />
+    <form class="form-material pt-0 mt-n5" [formGroup]="confirmForm">
+      <div class="">
+        <div class="row">
+          <div class="col-md-12">
+            <ngx-select
+              [form]="confirmForm"
+              control="resultTaxpayer"
+              (fetchItems)="getResultTax($event)"
+              [data]="selectResultTaxpayer"
+              label="Resultado Contribuyente"
+              [searchable]="false"
+              bindLabel="description"
+              value="id"></ngx-select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <form-field
+              [control]="confirmForm.get('observationsResult')"
+              label="Observaciones Visita Ocular">
+              <textarea
+                rows="4"
+                formControlName="observationsResult"
+                maxlength="1000"
+                class="form-control"></textarea>
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          [disabled]="confirmForm.invalid"
+          (click)="confirm()">
+          Aceptar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

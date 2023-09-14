@@ -6,17 +6,23 @@
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
-        <form-field [control]="form.get('bien')" class="col-md-4">
+        <form-field [control]="form.get('goodNumber')" class="col-md-4">
           <ngx-select
             [form]="form"
-            control="bien"
-            [data]="select"
-            label="Separador"></ngx-select>
+            control="goodNumber"
+            (fetchItems)="getTmptracker($event)"
+            [data]="tmptrackerSelected"
+            bindLabel="goodNumber"
+            label="No.Bien"
+            value="goodNumber"
+            [readonly]="false"
+            (change)="tmptrackerState($event)">
+          </ngx-select>
         </form-field>
 
         <div class="col-md-4">
           <form-check for="goods-list" label="Listado de Bienes">
-            <input type="checkbox" formControlName="listado" id="goods-list" />
+            <input type="checkbox" formControlName="validate" id="goods-list" />
           </form-check>
         </div>
 
@@ -26,7 +32,9 @@
       </div>
       <div class="row">
         <div class="col-md-12">
-          <button class="btn btn-primary active">Guardar</button>
+          <button class="btn btn-primary active" (click)="repSave()">
+            Guardar
+          </button>
         </div>
       </div>
     </form>

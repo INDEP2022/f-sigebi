@@ -1,8 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IConfigvtadmun } from 'src/app/core/models/ms-parametercomer/configvtadmum.model';
+import { MsDirectawardService } from 'src/app/core/services/ms-directaward/ms-directaward.service';
+import { MunicipalityControlMainService } from 'src/app/core/services/ms-directsale/municipality-control-main.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ApplicantsModalComponent } from '../applicants-modal/applicants-modal.component';
 import { AssignedGoodsModalComponent } from '../assigned-goods-modal/assigned-goods-modal.component';
@@ -22,16 +30,22 @@ export class MunicipalityControlMainComponent
 {
   applicantParams = new BehaviorSubject<ListParams>(new ListParams());
   assignedGoodParams = new BehaviorSubject<ListParams>(new ListParams());
+  dataFactGen: LocalDataSource = new LocalDataSource();
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
   applicantTotalItems: number = 0;
+  totalItems: number = 0;
   assignedGoodTotalItems: number = 0;
   applicantColumns: any[] = [];
+  data: IConfigvtadmun[] = [];
+  columnFilters: any = [];
   assignedGoodColumns: any[] = [];
+  idGood: any;
   applicantSettings = {
     ...TABLE_SETTINGS,
     actions: {
       columnTitle: 'Acciones',
       position: 'right',
-      add: true,
+      add: false,
       edit: true,
       delete: true,
     },
@@ -41,131 +55,157 @@ export class MunicipalityControlMainComponent
     actions: {
       columnTitle: 'Acciones',
       position: 'right',
-      add: true,
+      add: false,
       edit: true,
       delete: true,
     },
   };
+  paramsScreen: IParamsVault = {
+    PAR_MASIVO: '', // PAQUETE
+  };
+  origin: string = '';
 
-  applicantTestData = [
-    {
-      applicationId: 136,
-      entityId: 'M63',
-      applicant: 'EJEMPLO SOLICITANTE 1',
-      position: 'ALCALDE',
-      municipality: 'EJEMPLO MUNICIPIO',
-      state: 'EJEMPLO ESTAOD',
-      applicationDate: '17/05/2021',
-      applicationQuantity: 4,
-      description: 'EJEMPLO DESCRIPTION DE APLCIANTE',
-      phone: '+52 111 111 1111',
-      adjudication: 'EJEMPLO ADJUDICACION',
-      email: 'correo123@ejemplo.com',
-    },
-    {
-      applicationId: 137,
-      entityId: 'M74',
-      applicant: 'EJEMPLO SOLICITANTE 2',
-      position: 'ALCALDE',
-      municipality: 'EJEMPLO MUNICIPIO',
-      state: 'EJEMPLO ESTAOD',
-      applicationDate: '17/05/2021',
-      applicationQuantity: 3,
-      description: 'EJEMPLO DESCRIPTION DE APLCIANTE',
-      phone: '+52 111 111 1111',
-      adjudication: 'EJEMPLO ADJUDICACION',
-      email: 'correo123@ejemplo.com',
-    },
-    {
-      applicationId: 138,
-      entityId: 'M95',
-      applicant: 'EJEMPLO SOLICITANTE 2',
-      position: 'ALCALDE',
-      municipality: 'EJEMPLO MUNICIPIO',
-      state: 'EJEMPLO ESTAOD',
-      applicationDate: '17/05/2021',
-      applicationQuantity: 5,
-      description: 'EJEMPLO DESCRIPTION DE APLCIANTE',
-      phone: '+52 111 111 1111',
-      adjudication: 'EJEMPLO ADJUDICACION',
-      email: 'correo123@ejemplo.com',
-    },
-  ];
-
-  assignedGoodTestData = [
-    {
-      goodId: 466,
-      appraisal: 17000,
-      appraisalDate: '18/06/2021',
-      sessionNumber: 468,
-      goodClasification: 'EJEMPLO CLAS.',
-      description: 'EJEMPLO DESCRICION DE BIEN ASIGNADO',
-      delegation: 'EJEMPLO DELEGACION',
-      location: 'EJEMPLO UBICACION',
-      mandate: 'EJEMPLO MANDATO',
-      siabClassification: 'EJEMPLO CLAS.',
-      commentary: 'EJEMPLO COMENTARIO',
-    },
-    {
-      goodId: 467,
-      appraisal: 14000,
-      appraisalDate: '18/06/2021',
-      sessionNumber: 469,
-      goodClasification: 'EJEMPLO CLAS.',
-      description: 'EJEMPLO DESCRICION DE BIEN ASIGNADO',
-      delegation: 'EJEMPLO DELEGACION',
-      location: 'EJEMPLO UBICACION',
-      mandate: 'EJEMPLO MANDATO',
-      siabClassification: 'EJEMPLO CLAS.',
-      commentary: 'EJEMPLO COMENTARIO',
-    },
-    {
-      goodId: 468,
-      appraisal: 24000,
-      appraisalDate: '18/06/2021',
-      sessionNumber: 470,
-      goodClasification: 'EJEMPLO CLAS.',
-      description: 'EJEMPLO DESCRICION DE BIEN ASIGNADO',
-      delegation: 'EJEMPLO DELEGACION',
-      location: 'EJEMPLO UBICACION',
-      mandate: 'EJEMPLO MANDATO',
-      siabClassification: 'EJEMPLO CLAS.',
-      commentary: 'EJEMPLO COMENTARIO',
-    },
-  ];
-
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private municipalityControlMainService: MunicipalityControlMainService,
+    private activatedRoute: ActivatedRoute,
+    private msDirectawardService: MsDirectawardService
+  ) {
     super();
+    this.applicantSettings.hideSubHeader = false;
+    this.assignedGoodSettings.hideSubHeader = false;
     this.applicantSettings.columns = MUNICIPALITY_CONTROL_APPLICANT_COLUMNS;
     this.assignedGoodSettings.columns =
       MUNICIPALITY_CONTROL_ASSIGNED_GOOD_COLUMNS;
   }
 
   ngOnInit(): void {
-    this.getData();
+    //this.getData();
+
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params2: any) => {
+        for (const key in this.paramsScreen) {
+          if (Object.prototype.hasOwnProperty.call(params2, key)) {
+            this.paramsScreen[key as keyof typeof this.paramsScreen] =
+              params2[key] ?? null;
+          }
+        }
+      });
+    if (this.paramsScreen) {
+      if (this.paramsScreen.PAR_MASIVO) {
+        this.getData();
+      }
+    }
+    this.dataFactGen
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            // console.log('loooool');
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'soladjinstgobId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'amount':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'applicant':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'applicationDate':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'award':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'municipality':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'phone':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'position':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'state':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params2 = this.pageFilter(this.params2);
+          this.getData();
+        }
+      });
+
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getData());
   }
 
   getData() {
+    this.loading = true;
+    let params = {
+      ...this.params2.getValue(),
+      ...this.columnFilters,
+    };
     this.assignedGoodColumns = [];
     this.assignedGoodTotalItems = 0;
-    this.applicantColumns = this.applicantTestData;
-    this.applicantTotalItems = this.applicantColumns.length;
+    this.municipalityControlMainService.getSolicitantes(params).subscribe({
+      next: response => {
+        this.loading = false;
+        this.data = response.data;
+        console.log(this.data);
+        this.totalItems = response.count;
+        this.dataFactGen.load(response.data);
+        this.dataFactGen.refresh();
+      },
+      error: error => (this.loading = false),
+    });
+  }
+  onClick(data: any) {
+    // console.log(data);
+  }
+  getDataGoods(id?: any) {
+    this.idGood = id;
+    this.msDirectawardService.getGoodsByApplicant(id).subscribe({
+      next: data => {
+        this.assignedGoodColumns = data.data;
+        this.assignedGoodTotalItems = this.assignedGoodColumns.length;
+        console.log(this.assignedGoodColumns);
+      },
+      error: err => {
+        this.onLoadToast(
+          'warning',
+          'Advertencia',
+          'No se han Encontrado Bienes para el Solicitante Seleccionado'
+        );
+      },
+    });
   }
 
   refreshGoods() {
     this.assignedGoodColumns = [...this.assignedGoodColumns];
     this.assignedGoodTotalItems = this.assignedGoodColumns.length;
   }
-
-  selectApplicant(row: any[]) {
-    this.assignedGoodColumns = this.assignedGoodTestData;
-    this.assignedGoodTotalItems = this.assignedGoodColumns.length;
-  }
-
   askDelete(row: any, type: string) {
+    //console.log(row, type);
     this.alertQuestion(
       'question',
-      '¿Desea eliminar este registro?',
+      '¿Desea Eliminar este Registro?',
       '',
       'Eliminar'
     ).then(question => {
@@ -183,26 +223,58 @@ export class MunicipalityControlMainComponent
       }
     });
   }
-
   deleteApplicant(row: any) {
-    // Llamar servicio para eliminar
+    let body = {
+      typeentgobId: row.typeentgobId.typeentgobId,
+      soladjinstgobId: row.soladjinstgobId,
+    };
+    this.municipalityControlMainService.deleteSolicitante(body).subscribe({
+      next: data => {
+        this.onLoadToast('success', 'Solicitante', 'Eliminado Correctamente');
+        this.getData();
+        // location.reload();
+      },
+      error: err => {
+        this.onLoadToast(
+          'warning',
+          'Advertencia',
+          'El Solicitante no se ha Eliminado Correctamente'
+        );
+      },
+    });
   }
 
   deleteAssignedGood(row: any) {
-    // Llamar servicio para eliminar
+    // console.log(row);
+    this.msDirectawardService.deleteGoodsById(row.detbienesadjId).subscribe({
+      next: data => {
+        this.onLoadToast('success', 'Bien', 'Eliminado Correctamente');
+        // location.reload();
+        this.getData();
+      },
+      error: err => {
+        this.onLoadToast(
+          'warning',
+          'Advertencia',
+          'El bien no se ha Eliminado Correctamente'
+        );
+      },
+    });
   }
 
   openFormApplicant(applicant?: any) {
+    //console.log(applicant);
     this.openModalApplicant({ applicant });
   }
 
   openModalApplicant(context?: Partial<ApplicantsModalComponent>) {
+    //console.log(context);
     const modalRef = this.modalService.show(ApplicantsModalComponent, {
       initialState: { ...context },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.onConfirm.subscribe(data => {
+    modalRef.content.refresh.subscribe(data => {
       if (data) this.getData();
     });
   }
@@ -213,12 +285,16 @@ export class MunicipalityControlMainComponent
 
   openModalAssignedGood(context?: Partial<AssignedGoodsModalComponent>) {
     const modalRef = this.modalService.show(AssignedGoodsModalComponent, {
-      initialState: { ...context },
+      initialState: { ...context, ...this.assignedGoodColumns },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.onConfirm.subscribe(data => {
-      if (data) this.refreshGoods();
+    modalRef.content.refresh.subscribe(data => {
+      if (data) this.getDataGoods(this.idGood);
     });
   }
+}
+
+export interface IParamsVault {
+  PAR_MASIVO: string;
 }

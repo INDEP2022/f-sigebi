@@ -31,7 +31,7 @@ export class PenaltyListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = PENALTY_COLUMNS;
-    this.settings.actions.delete = false;
+    this.settings.actions.delete = true;
     this.settings.actions.add = false;
     this.settings = {
       ...this.settings,
@@ -44,14 +44,17 @@ export class PenaltyListComponent extends BasePage implements OnInit {
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
+        console.info(change);
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
             field = `filter.${filter.field}`;
-            filter.field == 'id'
+            filter.field == 'id' ||
+            filter.field == 'penaltyPercentage' ||
+            filter.field == 'equivalentDays' ||
+            filter.field == 'contractNumber'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -60,6 +63,8 @@ export class PenaltyListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
+          console.info('AQUI', this.params);
           this.getExample();
         }
       });
@@ -75,14 +80,15 @@ export class PenaltyListComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     this.penaltyService.getAll(params).subscribe({
-      next: response => {
+      next: (response: any) => {
         this.paragraphs = response.data;
         this.totalItems = response.count || 0;
         this.data.load(this.paragraphs);
         this.data.refresh();
         this.loading = false;
+        //console.log('ALL', response)
       },
-      error: error => (this.loading = false),
+      error: error => ((this.loading = false), console.log(error)),
     });
   }
 
@@ -100,15 +106,30 @@ export class PenaltyListComponent extends BasePage implements OnInit {
     this.modalService.show(PenaltyFormComponent, config);
   }
 
-  delete(penalty: IPenalty) {
+  showDeleteAlert(penalty: IPenalty) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(penalty.id);
       }
+    });
+  }
+  delete(id: number) {
+    this.penaltyService.remove(id).subscribe({
+      next: () => {
+        this.getExample(),
+          this.alert('success', 'Penalización', 'Borrada Correctamente');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Penalización',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

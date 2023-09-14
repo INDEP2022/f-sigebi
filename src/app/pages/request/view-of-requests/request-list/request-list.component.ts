@@ -241,6 +241,115 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'Notification_Taxpayer',
   },
+  {
+    title:
+      'BIENES SIMILARES: Registro de Documentación Complementaria, No. Solicitud: 56820',
+    noRequest: 56820,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'register-request',
+  },
+  {
+    title:
+      'BIENES SIMILARES: Notificar a Transferente, No. Solicitud: 56820, Contribuyente USARIO CARGIA, PAMA 159743CV',
+    noRequest: 56820,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'BSNotificarTransferente',
+  },
+  {
+    title:
+      'BIENES SIMILARES: Programar Visita Ocular, No. Solicitud: 56820, Contribuyente USARIO CARGIA, PAMA 159743CV',
+    noRequest: 56820,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'BSVisitaOcular',
+  },
+  {
+    title:
+      'BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: 56820, Contribuyente USARIO CARGIA, PAMA 159743CV',
+    noRequest: 56820,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'BSValidarVisitaOcular',
+  },
+  {
+    title:
+      'BIENES SIMILARES: Elaborar Oficio de Respuesta, No. Solicitud: 56820, Contribuyente USARIO CARGIA, PAMA 159743CV',
+    noRequest: 56820,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'BSElaborarOficioRespuesta',
+  },
+  {
+    title:
+      'RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria, No. Solicitud: 44907',
+    noRequest: 44907,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'RERegistroDocComplementaria',
+  },
+  {
+    title:
+      'Revisión de lineamientos resarcimiento (EN ESPECIE), No. Solicitud: 44907',
+    noRequest: 44907,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'RevisonLineamientos',
+  },
+  {
+    title:
+      'Generar Resultado de Análisis Resarcimiento(EN ESPECIE), No. Solicitud: 44907',
+    noRequest: 44907,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'GRAnalisisResarcimiento',
+  },
+  //Verificacion Incumplimiento
+  {
+    title: 'Muestreo Bienes: Verificacion Incumplimiento 539',
+    noRequest: 539,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'MBVerificacionIncumpliento',
+  },
+  //gestionar resarcimiento economico
+  {
+    title:
+      'RESARCIMIENTO NUMERARIO: Registro de Documentacion Complementaria. No. Solicitud: 56820',
+    noRequest: 56820,
+    numTask: 56820,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'register-request',
+  },
+  {
+    title:
+      'Solicitar Recursos Económicos, No. Solicitud 56820, Contribuyente Carlos G,PAMA',
+    noRequest: 56820,
+    numTask: 56820,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'RNSolicitudRecursosEcono',
+  },
+  {
+    title:
+      'Revición de Liniamiento Resarcimiento(EN ESPECIES), No. Solicitud 56820, Contribuyente Carlos G,PAMA',
+    noRequest: 56820,
+    numTask: 56820,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'RevisonLineamientos',
+  },
 ];
 
 //AP_Amparo
@@ -482,6 +591,101 @@ export class RequestListComponent extends BasePage implements OnInit {
       case 'Notification_Taxpayer':
         //En el caso que sea recibir la notificación del contibuyente resarcimiento (especie)
         this.router.navigate(['pages/request/notification-request-delivery/']);
+        break;
+      case 'register-request':
+        //Doc. Complementaria Gestionar Bienes Similares
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'BSNotificarTransferente':
+        //Doc. Complementaria Gestionar Bienes Similares
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'BSVisitaOcular':
+        //Doc. Complementaria Gestionar Bienes Similares
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'BSValidarVisitaOcular':
+        //Doc. Complementaria Gestionar Bienes Similares
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RERegistroDocComplementaria':
+        //Doc. Complementaria Gestionar Bienes Similares
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RERegistroDocComplementaria':
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RevisonLineamientos':
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'GRAnalisisResarcimiento':
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'BSElaborarOficioRespuesta':
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'MBVerificacionIncumpliento':
+        this.router.navigate([
+          'pages/request/generate-monitoring-sampling/verify-noncompliance',
+        ]);
+        break;
+      //NUMERARIO DECOMISO DEVUELTO
+      case 'register-request':
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RNSolicitudRecursosEcono':
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RevisonLineamientos':
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
         break;
       default:
         break;

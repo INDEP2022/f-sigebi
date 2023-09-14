@@ -1,5 +1,7 @@
+import { InputCellComponent } from 'src/app/@standalone/smart-table/input-cell/input-cell.component';
+
 export const REGULAR_GOODS_COLUMN = {
-  noBien: {
+  goodNot: {
     title: 'No. Bien',
     sort: false,
   },
@@ -11,17 +13,41 @@ export const REGULAR_GOODS_COLUMN = {
     title: 'Descripción',
     sort: false,
   },
-  sum: {
+  price: {
     title: 'Importe',
     sort: false,
+    valuePrepareFunction: (val: string) => {
+      const formatter = new Intl.NumberFormat('en-US', {
+        currency: 'USD',
+        minimumFractionDigits: 2,
+      });
+
+      return formatter.format(Number(val));
+    },
   },
-  iva: {
-    title: 'IVA',
+  vat: {
+    title: 'Iva',
     sort: false,
+    valuePrepareFunction: (val: string) => {
+      const formatter = new Intl.NumberFormat('en-US', {
+        currency: 'USD',
+        minimumFractionDigits: 2,
+      });
+
+      return formatter.format(Number(val));
+    },
   },
   total: {
     title: 'Total',
     sort: false,
+    valuePrepareFunction: (val: string) => {
+      const formatter = new Intl.NumberFormat('en-US', {
+        currency: 'USD',
+        minimumFractionDigits: 2,
+      });
+
+      return formatter.format(Number(val));
+    },
   },
   brand: {
     title: 'Marca',
@@ -35,24 +61,33 @@ export const REGULAR_GOODS_COLUMN = {
     title: 'Modelo',
     sort: false,
   },
-  serie: {
+  series: {
     title: 'Serie',
     sort: false,
   },
-  mandate: {
+  downloadcvman: {
     title: 'Mandato',
     sort: false,
   },
-  registration: {
+  modmandato: {
     title: 'Matrícula',
     sort: false,
+    type: 'custom',
+    renderComponent: InputCellComponent,
+    onComponentInitFunction: (instance: any) => {
+      instance.inputChange.subscribe({
+        next: (resp: any) => {
+          resp.row.modmandato = resp.value;
+        },
+      });
+    },
   },
-  unit: {
+  desc_unidad_det: {
     title: 'Unidad',
     sort: false,
   },
-  prod: {
-    title: 'Producción',
+  desc_producto_det: {
+    title: 'Prod./Serv.',
     sort: false,
   },
 };

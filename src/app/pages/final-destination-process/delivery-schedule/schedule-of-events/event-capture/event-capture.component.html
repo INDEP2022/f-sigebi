@@ -1,312 +1,433 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Captura de Programaci&oacute;n de Eventos</h5>
+    <h5 class="title">
+      <span class="title">Captura de Programaci&oacute;n de Eventos</span>
+    </h5>
   </div>
 
   <div body>
     <div class="row">
-      <div class="col-12">
-        <h5 class="">Registro</h5>
-      </div>
+      <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-12 d-flex justify-content-between">
+            <div>
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm"
+                (click)="back()">
+                Regresar
+                <i class="fas fa-arrow-circle-left"></i>
+              </button>
+            </div>
+            <div>
+              <confirm-button
+                [btnSmall]="true"
+                [loading]="saveLoading"
+                (confirm)="saveProceeding()"></confirm-button>
+            </div>
+          </div>
+        </div>
+        <div class="row pt-3">
+          <h6>Registro</h6>
+        </div>
+        <div class="row pt-3">
+          <form-field
+            class="col-md-3"
+            [control]="form.get('captureDate')"
+            label="Fecha Captura">
+            <input
+              [minDate]="_today"
+              type="text"
+              class="form-control"
+              bsDatepicker
+              formControlName="captureDate" />
+          </form-field>
+
+          <div class="col-md-3">
+            <div class="row">
+              <small class="label text-secondary r-label">Responsable</small>
+            </div>
+            <div class="row">
+              <div class="d-flex justify-content-around">
+                <form-radio label="TLP">
+                  <input
+                    type="radio"
+                    formControlName="responsible"
+                    value="TLP" />
+                </form-radio>
+                <form-radio label="INDEP">
+                  <input
+                    type="radio"
+                    formControlName="responsible"
+                    value="SAE" />
+                </form-radio>
+              </div>
+            </div>
+          </div>
+
+          <form-field class="col-md-3" [control]="form.get('typeEvent')">
+            <ngx-select
+              [data]="eventTypes"
+              [form]="form"
+              [readonly]="true"
+              value="area_tramite"
+              label="Tipo de Evento"
+              control="typeEvent"
+              [labelTemplate]="eventTypeLabel"
+              [optionTemplate]="eventTypeOption">
+            </ngx-select>
+
+            <ng-template #eventTypeLabel let-item="item"
+              >{{ item.area_tramite }} - {{ item.descripcion }}</ng-template
+            >
+            <ng-template #eventTypeOption let-item="item"
+              >{{ item.area_tramite }} - {{ item.descripcion }}</ng-template
+            >
+          </form-field>
+
+          <div class="col-md-3 text-center">
+            <h5
+              [attr.class]="
+                proceeding.statusProceedings?.includes('ABIERT')
+                  ? 'text-info'
+                  : 'text-danger'
+              ">
+              {{ proceeding.statusProceedings }}
+            </h5>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <form-field class="col-md-1" [control]="form.get('type')">
+            <ngx-select
+              (change)="generateCve()"
+              [data]="typeOtions"
+              [form]="form"
+              [searchable]="false"
+              [clearable]="false"
+              value="value"
+              bindLabel="label"
+              label="Tipo"
+              control="type">
+            </ngx-select>
+          </form-field>
+
+          <form-field class="col-md-1" [control]="form.get('prog')">
+            <ngx-select
+              [data]="progOptions"
+              [searchable]="false"
+              [form]="form"
+              [clearable]="false"
+              value="value"
+              bindLabel="label"
+              label="Prog."
+              control="prog">
+            </ngx-select>
+          </form-field>
+
+          <form-field class="col-md-4" [control]="form.get('transference')">
+            <ngx-select
+              (click)="transferClick()"
+              [data]="transfers"
+              [form]="form"
+              value="value"
+              bindLabel="label"
+              label="Transferente"
+              control="transference">
+            </ngx-select>
+          </form-field>
+
+          <form-field class="col-md-3" [control]="form.get('area')">
+            <ngx-select
+              [data]="areas"
+              (change)="generateCve()"
+              (fetchByParamsItems)="getAreas($event)"
+              [fetchByList]="false"
+              [searchOnInit]="true"
+              [form]="form"
+              value="delegation"
+              bindLabel="delegation"
+              label="Área"
+              control="area">
+            </ngx-select>
+          </form-field>
+
+          <form-field class="col-md-3" [control]="form.get('user')">
+            <ngx-select
+              [data]="users"
+              [form]="form"
+              value="value"
+              bindLabel="value"
+              label="Usuario"
+              control="user">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <div class="row pt-4">
+          <form-field class="col-3" [control]="form.get('folio')" label="Folio">
+            <input type="text" class="form-control" formControlName="folio" />
+          </form-field>
+
+          <form-field class="col-1" [control]="form.get('year')" label="Año">
+            <input type="text" class="form-control" formControlName="year" />
+          </form-field>
+
+          <form-field class="col-1" [control]="form.get('month')" label="Mes">
+            <input type="text" class="form-control" formControlName="month" />
+          </form-field>
+
+          <form-field
+            class="col-7"
+            [control]="form.get('keysProceedings')"
+            label="Cve. Acta">
+            <input
+              [max-length]="60"
+              type="text"
+              class="form-control"
+              formControlName="keysProceedings" />
+          </form-field>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            {{ this.blkCtrl.txtDirSatLabel }} : {{ this.blkCtrl.txtDirSat }}
+          </div>
+        </div>
+
+        <div class="row pt-2">
+          <div class="col-md-12 d-flex">
+            <div *ngIf="ctrlButtons.signOffice.visible">
+              <button
+                (click)="signOffice()"
+                class="btn btn-sm btn-secondary active mr-2"
+                [disabled]="!ctrlButtons.signOffice.enabled">
+                {{ ctrlButtons.signOffice.label }}
+              </button>
+            </div>
+            <div *ngIf="ctrlButtons.printOffice.visible">
+              <button
+                class="btn btn-sm btn-info active mr-2"
+                [disabled]="!ctrlButtons.printOffice.enabled">
+                {{ ctrlButtons.printOffice.label }}
+              </button>
+            </div>
+            <div *ngIf="ctrlButtons.notificationDest.visible">
+              <button
+                class="btn btn-sm btn-secondary active mr-2"
+                [disabled]="!ctrlButtons.notificationDest.enabled"
+                (click)="notificationBtn()">
+                {{ ctrlButtons.notificationDest.label }}
+              </button>
+            </div>
+            <div *ngIf="ctrlButtons.closeProg.visible">
+              <button
+                class="btn btn-sm btn-danger active mr-2"
+                [disabled]="!ctrlButtons.closeProg.enabled"
+                (click)="closeProg()">
+                {{ ctrlButtons.closeProg.label }}
+              </button>
+            </div>
+            <div *ngIf="ctrlButtons.sendSise.visible">
+              <confirm-button
+                type="button"
+                [btnSmall]="true"
+                [disabled]="!ctrlButtons.sendSise.enabled"
+                (confirm)="sendSISE()"
+                [loading]="siseLoading"
+                [text]="ctrlButtons.sendSise.label"
+                loadingText="Cargando"
+                icon="bx bx-send"></confirm-button>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
+  </div>
+</app-card>
 
-    <form
-      class="form-material form-horizontal"
-      [formGroup]="form"
-      (ngSubmit)="onSubmit()">
-      <div class="row mt-5">
-        <div class="col-md-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="form.get('typeEvent')"
-              label="Tipo de Evento">
-              <select class="form-control" formControlName="typeEvent">
-                <option [value]="item.id" *ngFor="let item of eventTypeOptions">
-                  {{ item.name }}
-                </option>
-              </select>
-            </form-field>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="form.get('captureDate')"
-              label="Fecha Captura">
-              <input
-                type="text"
-                class="form-control"
-                bsDatepicker
-                formControlName="captureDate" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-md-3 text-center">
-          <div class="text-center">
-            <label class="label text-secondary">Responsable</label>
-          </div>
-          <div class="d-flex justify-content-around pl-4 pr-4">
-            <form-radio label="TLP">
-              <input
-                type="radio"
-                formControlName="responsible"
-                value="Administrativo" />
-            </form-radio>
-            <form-radio label="SAE">
-              <input
-                type="radio"
-                formControlName="responsible"
-                value="Procesal" />
-            </form-radio>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="form.get('type')" label="Tipo">
-              <select class="form-control" formControlName="type">
-                <option value="rt">RT</option>
-                <option value="a">A</option>
-                <option value="d">D</option>
-              </select>
-            </form-field>
-          </div>
-        </div>
-      </div>
-      <div class="row mt-5">
-        <div class="col-md-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="form.get('prog')" label="Prog.">
-              <select class="form-control" formControlName="prog">
-                <option value="prog">Prog</option>
-              </select>
-            </form-field>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="form.get('transference')"
-              label="Transferente">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="transference" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="form.get('area')" label="&Aacute;rea">
-              <input type="text" class="form-control" formControlName="area" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="form.get('user')" label="Usuario">
-              <input type="text" class="form-control" formControlName="user" />
-            </form-field>
-          </div>
-        </div>
-      </div>
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Parámetros para traer información de SIGEBI</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="formSiab" (ngSubmit)="onSubmit2()">
+      <app-capture-event-parameters
+        [form]="form"
+        [formSiab]="formSiab"></app-capture-event-parameters>
 
-      <div class="row mt-5">
-        <div class="col-md-6">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="form.get('folio')" label="Folio">
-              <input type="text" class="form-control" formControlName="folio" />
-            </form-field>
+      <div class="row">
+        <div class="col-md-12 d-flex">
+          <div class="mr-3" *ngIf="ctrlButtons.loadGoods.visible">
+            <button
+              (click)="loadGoods()"
+              class="btn btn-sm btn-secondary active"
+              [disabled]="!ctrlButtons.loadGoods.enabled">
+              {{ ctrlButtons.loadGoods.label }}
+            </button>
           </div>
-        </div>
-        <div class="col-md-6">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="form.get('date')" label="Fecha">
-              <input type="text" class="form-control" formControlName="date" />
-            </form-field>
+
+          <div *ngIf="ctrlButtons.convPack.visible">
+            <button
+              (click)="paqConv()"
+              class="btn btn-sm btn-danger active"
+              [disabled]="!ctrlButtons.convPack.enabled">
+              {{ ctrlButtons.convPack.label }}
+            </button>
           </div>
         </div>
       </div>
-      <div class="row mt-5 justify-content-end">
-        <div class="col-12 col-sm-3 text-center text-sm-right">
-          <button class="btn btn-primary active btn-sm">Cerrar Prog.</button>
-        </div>
-        <div class="col-12 col-sm-3 text-center text-sm-right mt-3 mt-sm-0">
-          <button class="btn btn-success active btn-sm">
-            Exportar a Excel
+    </form>
+
+    <br />
+    <hr class="row" />
+    <br />
+
+    <div class="row">
+      <form class="form-material d-flex">
+        <form-field
+          class="col-md-3"
+          [control]="startDateCtrl"
+          label="Fecha de Inicio">
+          <input
+            [minDate]="_minDate ?? _today"
+            (bsValueChange)="changeStartDate($event)"
+            class="form-control"
+            bsDatepicker
+            [formControl]="startDateCtrl" />
+        </form-field>
+        <form-field
+          class="col-md-3"
+          [control]="endDateCtrl"
+          label="Fecha de Fin">
+          <input
+            [minDate]="_minDate ?? _today"
+            (bsValueChange)="changeEndDate($event)"
+            class="form-control"
+            bsDatepicker
+            [formControl]="endDateCtrl" />
+        </form-field>
+        <div class="col-md-2" *ngIf="ctrlButtons.apply.visible">
+          <button
+            (click)="validateDates()"
+            class="btn btn-primary btn-sm active"
+            [disabled]="!ctrlButtons.apply.enabled">
+            {{ ctrlButtons.apply.label }}
+            <i class="fa fa-save"></i>
           </button>
         </div>
-      </div>
-    </form>
-
-    <app-divider></app-divider>
-
-    <div class="row mt-5">
-      <div class="col-12">
-        <h5 class="">
-          Par&aacute;metros para Traer Informaci&oacute;n de SIAB
-        </h5>
-      </div>
+      </form>
     </div>
 
-    <form
-      class="form-material form-horizontal"
-      [formGroup]="formSiab"
-      (ngSubmit)="onSubmit2()">
-      <div class="row mt-5">
-        <div class="col-md-4">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formSiab.get('dateSiab')"
-              label="Rango de Fecha">
-              <input
-                type="text"
-                class="form-control"
-                bsDaterangepicker
-                formControlName="dateSiab" />
-            </form-field>
-          </div>
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-end">
+        <div
+          class="mr-4"
+          *ngIf="
+            showPackNumCtrl ||
+            ctrlButtons.apply.visible ||
+            registerControls.typeEvent.value == 'DN'
+          ">
+          <form-field
+            *ngIf="showPackNumCtrl"
+            [control]="packNumCtrl"
+            label="No. Paquete">
+            <input
+              type="text"
+              class="form-control"
+              bsDaterangepicker
+              [formControl]="packNumCtrl" />
+          </form-field>
+          <button
+            *ngIf="ctrlButtons.deletePack.visible"
+            class="btn btn-primary btn-sm active"
+            [disabled]="!ctrlButtons.deletePack.enabled">
+            {{ ctrlButtons.deletePack.label }}
+          </button>
         </div>
-        <div class="col-md-4">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formSiab.get('proceedings')"
-              label="No. Expediente">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="proceedings" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="formSiab.get('delegation')" label="Deleg.">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="delegation" />
-            </form-field>
-          </div>
-        </div>
-      </div>
-      <div class="row mt-5">
-        <div class="col-md-4">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field
-              [control]="formSiab.get('transferenceSiab')"
-              label="Transf.">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="transferenceSiab" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="formSiab.get('transmitter')" label="Emisora">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="transmitter" />
-            </form-field>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="formSiab.get('authority')" label="Autoridad">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="authority" />
-            </form-field>
-          </div>
-        </div>
-      </div>
 
-      <div class="row mt-5 justify-content-end">
-        <div class="col-12 col-md-3 text-center text-md-right">
-          <button class="btn btn-primary btn-sm active">Cargar Bienes</button>
+        <div class="mr-4" *ngIf="ctrlButtons.goodsTracker.visible">
+          <button
+            (click)="goToGoodsTracker()"
+            class="btn btn-sm btn-primary active"
+            [disabled]="!ctrlButtons.goodsTracker.enabled">
+            {{ ctrlButtons.goodsTracker.label }}
+            <i class="fa fa-search"></i>
+          </button>
         </div>
-        <div class="col-12 col-md-3 mt-3 mt-md-0 text-center text-md-right">
-          <button class="btn btn-primary btn-sm active">Rastreador</button>
-        </div>
-        <div class="col-12 col-md-3 mt-3 mt-md-0 text-center text-md-right">
-          <button class="btn btn-primary btn-sm active">Paq. Conv.</button>
-        </div>
-      </div>
-    </form>
 
-    <app-divider class="mt-5"></app-divider>
-
-    <div class="row mt-5">
-      <div class="col-6">
-        <div class="d-flex align-items-center">
-          <div>
-            <h5 class="font-size-14">Cantidad de Bienes:</h5>
-          </div>
-          <div class="ml-2">
-            <span class="badge rounded-pill badge-soft-success">1</span>
-          </div>
+        <div class="mr-4" *ngIf="ctrlButtons.expExcel.visible">
+          <button
+            (click)="excelExport()"
+            class="btn btn-sm btn-success active"
+            [disabled]="!ctrlButtons.expExcel.enabled">
+            {{ ctrlButtons.expExcel.label }}
+            <i class="bx bx-download float-icon"></i>
+          </button>
         </div>
-      </div>
-      <div class="col-6">
-        <div class="d-flex align-items-center">
-          <div>
-            <h5 class="font-size-14">Cantidad de Registros:</h5>
-          </div>
-          <div class="ml-2">
-            <span class="badge rounded-pill badge-soft-success">1</span>
-          </div>
+        <div class="mr-4" *ngIf="ctrlButtons.xml.visible">
+          <button
+            class="btn btn-success btn-sm active"
+            [disabled]="!ctrlButtons.xml.enabled">
+            {{ ctrlButtons.xml.label }}
+          </button>
         </div>
-      </div>
-      <div class="col-6">
-        <div class="d-flex align-items-center">
-          <div>
-            <h5 class="font-size-14">Cantidad de Expedientes:</h5>
-          </div>
-          <div class="ml-2">
-            <span class="badge rounded-pill badge-soft-success">1</span>
-          </div>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="d-flex align-items-center">
-          <div>
-            <h5 class="font-size-14">Cantidad de Dict&aacute;menes:</h5>
-          </div>
-          <div class="ml-2">
-            <span class="badge rounded-pill badge-soft-success">1</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row justify-content-end mt-3">
-      <div class="col-md-5 buttons pt-3 text-right">
-        <app-columns-select
-          (settingsChange)="settingsChange($event)"
-          [settings]="settings">
+        <!-- <div class="mr-4" *ngIf="ctrlButtons.generateStrategy.visible">
+          <button
+            (click)="generateStrategy()"
+            [disabled]="!ctrlButtons.generateStrategy.enabled"
+            class="btn btn-primary btn-sm active"
+            routerLink="generate-estrategy">
+            {{ ctrlButtons.generateStrategy.label }}
+          </button>
+        </div> -->
+        <app-columns-select [defaultColumns]="5" [(settings)]="settings">
         </app-columns-select>
       </div>
     </div>
 
-    <div class="row mt-5">
-      <ng2-smart-table [settings]="settings" [source]="data"> </ng2-smart-table>
-    </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
+    <div class="row mt-5 justify-content-center justify-content-sm-end"></div>
+    <div class="row mt-1">
+      <div class="col-md-12 table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="detail"
+            (delete)="removeDetail($event.data)">
+          </ng2-smart-table>
 
-    <div class="row mt-5 justify-content-center justify-content-sm-end">
-      <div class="col-12 col-sm-3 text-center text-sm-right">
-        <button class="btn btn-primary btn-sm active">Aplica</button>
+          <app-pagination
+            [filterParams]="params"
+            [limit]="limit"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
       </div>
-      <div class="col-12 col-sm-3 mt-3 mt-sm-0 text-center text-sm-right">
-        <button
-          class="btn btn-primary btn-sm active"
-          routerLink="generate-estrategy">
-          Generar Estrategia
-        </button>
+    </div>
+
+    <div class="row pt-5">
+      <div class="col-md-3">
+        <div class="cantidad">
+          <label for="">Cantidad de Bienes</label>
+          <div>{{ blkQuantities.goods }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="cantidad">
+          <label for="">Cantidad de Registros</label>
+          <div>{{ blkQuantities.registers }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="cantidad">
+          <label for="">Cantidad de Expedientes</label>
+          <div>{{ blkQuantities.expedients }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="cantidad">
+          <label for="">Cantidad de Dict&aacute;menes</label>
+          <div>{{ blkQuantities.dictums }}</div>
+        </div>
       </div>
     </div>
   </div>

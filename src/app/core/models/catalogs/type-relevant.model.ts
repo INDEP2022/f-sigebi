@@ -6,6 +6,6 @@ export interface ITypeRelevant {
   userModificatio?: string;
   modificatioDate?: Date;
   version?: number;
-  noPhotography?: number;
+  numberPhotography?: number;
   detailsPhotography?: string;
 }

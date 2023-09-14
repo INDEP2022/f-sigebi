@@ -7,7 +7,15 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 import { data } from './data';
 //XLSX
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-mandate-income-reports',
@@ -30,7 +38,21 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
   maxDate = new Date(new Date().getFullYear(), 11);
   minDate = new Date(new Date().getFullYear(), 0);
 
-  constructor(private fb: FormBuilder, private excelService: ExcelService) {
+  eventSelect = new DefaultSelect();
+  user1 = new DefaultSelect();
+  user2 = new DefaultSelect();
+  user3 = new DefaultSelect();
+
+  constructor(
+    private fb: FormBuilder,
+    private excelService: ExcelService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService,
+    private comerEventService: ComerEventService,
+    private securityService: SecurityService,
+    private usersService: UsersService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -57,6 +79,10 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
       incomeOrder: [null, [Validators.required]],
       reportNumber: [null, [Validators.required]],
     });
+    this.getEvent(new ListParams());
+    this.getAllSegUser1(new ListParams());
+    this.getAllSegUser2(new ListParams());
+    this.getAllSegUser3(new ListParams());
   }
 
   settingsChange($event: any): void {
@@ -69,5 +95,103 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
 
   exportAsXLSX(name: string): void {
     this.excelService.exportAsExcelFile(this.selectedRows, name);
+  }
+
+  getEvent(params: ListParams) {
+    this.comerEventService.getAllEvent(params).subscribe({
+      next: data => {
+        this.eventSelect = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.eventSelect = new DefaultSelect();
+      },
+    });
+  }
+  changeEvent(event: any) {
+    console.log(event);
+  }
+
+  report() {
+    let params = {
+      //PN_DEVOLUCION: this.data,
+    };
+    this.siabService.fetchReport('blank', params).subscribe(response => {
+      if (response !== null) {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      } else {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      }
+    });
+  }
+
+  getAllSegUser1(params: ListParams) {
+    this.usersService.getAllSegUsers2(params).subscribe({
+      next: resp => {
+        this.user1 = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.user1 = new DefaultSelect();
+      },
+    });
+  }
+
+  changeUser1(event: any) {
+    console.log(event);
+  }
+
+  getAllSegUser2(params: ListParams) {
+    this.usersService.getAllSegUsers2(params).subscribe({
+      next: resp => {
+        this.user2 = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.user2 = new DefaultSelect();
+      },
+    });
+  }
+
+  changeUser2(event: any) {
+    console.log(event);
+  }
+
+  getAllSegUser3(params: ListParams) {
+    this.usersService.getAllSegUsers2(params).subscribe({
+      next: resp => {
+        this.user3 = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.user3 = new DefaultSelect();
+      },
+    });
+  }
+
+  changeUser3(event: any) {
+    console.log(event);
   }
 }

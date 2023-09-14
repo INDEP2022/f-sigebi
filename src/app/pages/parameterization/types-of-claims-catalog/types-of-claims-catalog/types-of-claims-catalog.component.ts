@@ -1,25 +1,28 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { ITypeSiniesters } from 'src/app/core/models/catalogs/types-of-claims.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { TypesOfClaimsService } from '../../../../core/services/catalogs/types-of-claims.service';
 import { ModalTypeOfClaimsComponent } from '../modal-type-of-claims/modal-type-of-claims.component';
-import { TypesOfClaimsService } from '../types-of-claims.service';
-
+import { SINIESTER_COLUMNS } from './columns';
 @Component({
   selector: 'app-types-of-claims-catalog',
   templateUrl: './types-of-claims-catalog.component.html',
   styles: [],
 })
 export class TypesOfClaimsCatalogComponent extends BasePage implements OnInit {
-  columns: any[] = [];
+  siniester: ITypeSiniesters[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-
-  dataTable: LocalDataSource = new LocalDataSource();
-
-  data: any = [];
+  columnFilters: any = [];
+  data: LocalDataSource = new LocalDataSource();
 
   constructor(
     private modalService: BsModalService,
@@ -30,91 +33,106 @@ export class TypesOfClaimsCatalogComponent extends BasePage implements OnInit {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
+        add: false,
         edit: true,
         delete: true,
         position: 'right',
       },
-      columns: {
-        keyClaims: {
-          title: 'Cve Siniestro',
-          sort: false,
-        },
-        description: {
-          title: 'Descripción',
-          sort: false,
-        },
-      },
+      columns: SINIESTER_COLUMNS,
+      hideSubHeader: false,
     };
   }
 
   ngOnInit(): void {
-    this.getPagination();
-    this.getClaims();
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'flag':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getClaims();
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getClaims());
   }
 
   getClaims() {
-    this.data = [];
-    this.claimServices.getClaims().subscribe({
-      next: (resp: any) => {
-        if (resp.data) {
-          resp.data.forEach((item: any) => {
-            this.data.push({
-              keyClaims: item.flag,
-              description: item.description,
-              id: item.id,
-            });
-            this.dataTable.load(this.data);
-          });
-        }
-      },
-    });
-  }
-
-  openModal(context?: Partial<ModalTypeOfClaimsComponent>) {
-    const modalRef = this.modalService.show(ModalTypeOfClaimsComponent, {
-      initialState: { ...context, lengthData: this.data.length + 1 },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) {
-        this.getClaims();
-      }
-    });
-  }
-
-  openForm(allotment?: any) {
-    this.openModal({ allotment });
-  }
-
-  getData() {
     this.loading = true;
-    this.columns = this.data;
-    this.totalItems = this.data.length;
-    this.loading = false;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.claimServices.getAll(params).subscribe({
+      next: response => {
+        this.siniester = response.data;
+        this.totalItems = response.count || 0;
+        this.data.load(response.data);
+        this.data.refresh();
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
 
-  getPagination() {
-    this.columns = this.data;
-    this.totalItems = this.columns.length;
+  openForm(claims?: ITypeSiniesters) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      claims,
+      callback: (next: boolean) => {
+        if (next) this.getClaims();
+      },
+    };
+    this.modalService.show(ModalTypeOfClaimsComponent, modalConfig);
   }
 
-  delete(event: any) {
-    console.log(event);
+  showDeleteAlert(claims: ITypeSiniesters) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
-        this.claimServices.deleteClaims(event.id).subscribe({
-          next: (resp: any) => {
-            this.onLoadToast('success', 'Eliminado correctamente', '');
-            this.getClaims();
-          },
-        });
+        this.delete(claims.id);
       }
+    });
+  }
+
+  delete(id: any) {
+    this.claimServices.remove(id).subscribe({
+      next: () => {
+        this.getClaims(), this.alert('success', 'Tipo Siniestros', 'Borrado');
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Sub-tipo',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

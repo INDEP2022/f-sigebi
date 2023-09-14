@@ -9,4 +9,16 @@ export enum IGoodsinvEndpoint {
   GetCodePostalByParams = 'views/cat-postal-codes-view-sb-one',
   GetCatBrandWithFilter = 'views/cat-auto-brands-view-sb',
   GetCatSubBrandWithFilter = 'views/cat-auto-sub-brands-view-sb',
+  GetDescription = 'application/query-description',
+  GetGoodResDevInvVew = 'views/goods-res-dev-inv-view',
+  GetGoodInvView = 'views/xxsae-inv-available-view',
+  GetClients = 'views/xxsae-clients-view',
+  GetGoodDestView = 'views/destruction-view-criteria-v2',
+
+  //Muestreo de bienes
+  getSamplingGoodView = 'views/sampling-goods-view-v2',
+
+  getStoresProgramming = 'views/cat-stores-programming-view',
+
+  GetCatServiceCostWiew = 'views/cat-services-cost-view-one',
 }

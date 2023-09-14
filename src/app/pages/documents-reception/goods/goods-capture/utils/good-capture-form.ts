@@ -19,9 +19,9 @@ export class GOOD_CAPTURE_FORM {
   ssubpartida = new FormControl('');
   noClasifBien = new FormControl<number>(null, [Validators.required]);
   type = new FormControl<string | number>(null, [Validators.required]);
-  subtype = new FormControl<string | number>('', [Validators.required]);
-  ssubtype = new FormControl<string | number>('', [Validators.required]);
-  sssubtype = new FormControl<string | number>('', [Validators.required]);
+  subtype = new FormControl<string | number>(null, [Validators.required]);
+  ssubtype = new FormControl<string | number>(null, [Validators.required]);
+  sssubtype = new FormControl<string | number>(null, [Validators.required]);
   unidadLigie = new FormControl({ value: null, disabled: true });
   unidadMedida = new FormControl(null, [Validators.required]);
   cantidad = new FormControl<number>(null, [
@@ -206,6 +206,9 @@ export class GOOD_TO_SAVE {
   stateConservation: string;
   fileNumber: string;
   flyerNumber: string | number;
+  extDomProcess?: string;
+  subDelegationNumber?: string | number;
+  delegationNumber?: string | number;
   val1: string;
   val2: string;
   val3: string;

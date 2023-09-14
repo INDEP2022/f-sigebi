@@ -1,32 +1,23 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="storeHouseForm">
       <div class="row">
         <div class="col-md-6">
-          <form-field
-            [control]="storeHouseForm.get('idStorehouse')"
-            label="ID Bodega">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="idStorehouse"
-              min="1"
-              pattern="^[0-9]+" />
+          <form-field [control]="storeHouseForm.get('id')" label="No.Bodega">
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="storeHouseForm.get('idEntity')">
-            <ngx-select
-              [form]="storeHouseForm"
-              [data]="states"
-              bindLabel="descCondition"
-              label="Estado"
-              value="id"
-              (fetchItems)="getStates($event)"
-              control="idEntity"></ngx-select>
+          <form-field
+            [control]="storeHouseForm.get('idEntity')"
+            label="Entidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idEntity" />
           </form-field>
         </div>
       </div>
@@ -47,9 +38,11 @@
               [data]="municipalities"
               bindLabel="description"
               label="Municipio"
-              value="codeMunicipalityId"
+              value="nameMunicipality"
               (fetchItems)="getMunicipalities($event)"
-              control="municipality"></ngx-select>
+              (change)="getLocalitie($event)"
+              control="municipality"
+              [readonly]="false"></ngx-select>
           </form-field>
         </div>
         <div class="col-md-6">
@@ -58,15 +51,15 @@
               [form]="storeHouseForm"
               [data]="localities"
               label="Localidad"
-              bindLabel="localityName"
-              value="key"
+              bindLabel="description"
+              value="nameLocation"
               (fetchItems)="getLocalities($event)"
               control="locality"></ngx-select>
           </form-field>
         </div>
       </div>
       <div class="row mt-4">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <form-field
             [control]="storeHouseForm.get('description')"
             label="Descripci&oacute;n">
@@ -76,7 +69,9 @@
               formControlName="description"></textarea>
           </form-field>
         </div>
-        <div class="col-md-6">
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-12">
           <form-field
             [control]="storeHouseForm.get('ubication')"
             label="Ubicaci&oacute;n">
@@ -94,7 +89,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!storeHouseForm.valid"
+          [disabled]="storeHouseForm.invalid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

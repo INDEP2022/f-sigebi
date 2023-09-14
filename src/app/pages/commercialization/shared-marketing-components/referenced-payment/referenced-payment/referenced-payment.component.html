@@ -2,39 +2,301 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">CARGA DE PAGOS REFERENCIADOS</h5>
-    <div class="col-md-5 buttons">
-      <app-columns-select
-        (settingsChange)="settingsChange($event)"
-        [settings]="settings"></app-columns-select>
-    </div>
   </div>
   <div body>
+    <div *ngIf="backVal" class="row justify-content-between mb-5">
+      <div>
+        <button (click)="goBack()" class="btn btn-primary active btn-sm m-2">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+    </div>
     <form class="form-material" [formGroup]="form">
-      <div class="row mb-3 mt-3">
-        <!--Events Component-->
-        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-events-shared [form]="form"></app-events-shared>
+      <div class="row justify-content-center">
+        <div class="col-sm-2 col-lg-2">
+          <form-field [control]="form.get('event')">
+            <ngx-select
+              [searchOnInit]="true"
+              (change)="setValuesFormEvent($event)"
+              [form]="form"
+              control="event"
+              [data]="comerEventSelect"
+              value="id"
+              bindLabel="id"
+              label="Evento"
+              (fetchItems)="getComerEvents($event)">
+            </ngx-select>
+          </form-field>
         </div>
-        <!--Banks Component-->
-        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-banks-shared [form]="form"></app-banks-shared>
+        <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+          <button
+            [disabled]="!eventSelected"
+            (click)="search()"
+            class="btn btn-sm btn-block btn-primary active">
+            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+          <button
+            (click)="clear()"
+            class="btn btn-sm btn-block btn-danger active">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+        </div>
+        <div class="col-sm-4 col-md-4">
+          <form-field [control]="form.get('bank')">
+            <ngx-select
+              [searchOnInit]="true"
+              (change)="setValuesFormBank($event)"
+              [form]="form"
+              control="bank"
+              [data]="banks"
+              value="bankCode"
+              bindLabel="bankAndCode"
+              label="Banco"
+              (fetchItems)="getBanks($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+          <button
+            [disabled]="loading || loadingBtn"
+            [ngClass]="{ loading: loadingBtn }"
+            (click)="carga()"
+            class="btn btn-sm btn-block btn-success active">
+            Carga Pagos
+            <i *ngIf="!loadingBtn" class="bx bx-download float-icon"></i>
+          </button>
+          <input
+            type="file"
+            name="file"
+            #file
+            class="d-none"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            (change)="onFileChange($event)" />
+        </div>
+      </div>
+      <div #scrollContainer class="row">
+        <div class="col-6">
+          <div style="padding-top: 6px" class="mr-2">
+            <span>
+              <i
+                tooltip=""
+                containerClass="tooltip-style"
+                class="fas fa-info-circle text-warning mr-1">
+              </i>
+            </span>
+            <span>
+              <label
+                for=""
+                style="font-size: 10px; font-weight: 600; color: #74788d"
+                >Si desea consultar un Evento en particular, selecciónelo</label
+              >
+            </span>
+          </div>
         </div>
       </div>
     </form>
-    <div class="row pt-4">
-      <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data"
-            (edit)="edit($event.data)"
-            (delete)="delete($event.data)">
-          </ng2-smart-table>
+  </div>
+</app-card>
+<app-card *ngIf="cargado2" [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">PAGOS REFERENCIADOS CARGADOS</h5>
+  </div>
+  <div body>
+    <!-- <accordion [isAnimated]="true">
+      <accordion-group [isOpen]="cargado">
+        <div accordion-heading class="d-flex justify-content-between">
+          <h5>PAGOS REFERENCIADOS CARGADOS</h5>
+        </div> -->
+    <div class="row text-end justify-content-end">
+      <div
+        *ngIf="cargado"
+        class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+        <app-columns-select
+          [defaultColumns]="7"
+          [(settings)]="settings2"
+          [leftList]="true"></app-columns-select>
+        <div>
+          <button
+            (click)="addCargado()"
+            type="button"
+            class="btn btn-info btn-sm active mb-3 mr-3">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div>
+          <button
+            (click)="saveCarga()"
+            type="button"
+            class="btn btn-primary btn-sm active mb-3 mr-3">
+            Guardar <span><i aria-hidden="true" class="fa fa-save"></i></span>
+          </button>
         </div>
       </div>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
+    <ng-scrollbar
+      *ngIf="cargado"
+      [track]="'all'"
+      [ngStyle]="{ height: loading2 ? '0px' : '300px' }">
+      <ng2-smart-table
+        [attr.class]="'table-bordered table-responsive'"
+        class="table-responsive"
+        [settings]="settings2"
+        [source]="dataCargada"
+        (edit)="editCargado($event.data)"
+        (delete)="questionDeleteCargada($event.data)"
+        (userRowSelect)="rowsSelectedCargado($event)">
+      </ng2-smart-table>
+    </ng-scrollbar>
+    <!-- <div *ngIf="cargado" class="col-6 mt-3"> -->
+    <form [formGroup]="form2">
+      <div class="row mt-2 justify-content-center text-center">
+        <div class="col-md-2 text-center">
+          <form-field [control]="form2.get('BLK_CTRL_CUANTOS')">
+            <label for="">Registros Cargados</label>
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="BLK_CTRL_CUANTOS" />
+          </form-field>
+        </div>
+        <div class="col-md-2 text-center">
+          <form-field [control]="form2.get('BLK_CTRL_MONTO')">
+            <label for="">Monto Cargado</label>
+            <input
+              currencyMask
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="BLK_CTRL_MONTO" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row justify-content-center mt-5">
+      <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+        <button
+          [disabled]="!valAccCargado"
+          (click)="referenciaCargado()"
+          class="btn btn-sm btn-block btn-info active">
+          Referencia
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+        <button
+          [disabled]="!valAccCargado"
+          (click)="ratificarCargado()"
+          class="btn btn-sm btn-block btn-primary active">
+          Ratificar
+          <i class="bx bx-edit-alt"></i>
+        </button>
+      </div>
+      <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+        <button
+          [disabled]="!valAccCargado"
+          (click)="pagoCargado()"
+          class="btn btn-sm btn-block btn-danger active">
+          Pago
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
+    <!-- </div> -->
+    <!-- </accordion-group>
+    </accordion> -->
+  </div>
+</app-card>
+
+<app-card *ngIf="!cargado2" [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">{{ title }}</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-12 text-end">
+        <div class="row">
+          <div class="col-md-12 text-end d-flex flex-row-reverse mt-3 mb-3">
+            <app-columns-select
+              [defaultColumns]="7"
+              [(settings)]="settings"
+              [leftList]="true"></app-columns-select>
+            <div>
+              <button
+                [disabled]="loading || loadingBtn"
+                (click)="add()"
+                type="button"
+                class="btn btn-info btn-sm active mb-3 mr-3">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+            </div>
+            <div>
+              <button
+                [disabled]="loading || loadingBtn2"
+                (click)="refresh()"
+                type="button"
+                tooltip="Limpiar Filtros y Actualizar Tabla"
+                containerClass="tooltip-style"
+                class="btn btn-primary btn-sm active mb-3 mr-3">
+                Actualizar <i class="fas fa-sync-alt"> </i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form-loader *ngIf="loading"></form-loader>
+    <ng-scrollbar
+      [track]="'all'"
+      [ngStyle]="{ height: loading ? '0px' : '400px' }">
+      <ng2-smart-table
+        #myTable
+        [attr.class]="'table-bordered table-responsive'"
+        class="table-responsive"
+        [settings]="settings"
+        [source]="data"
+        (edit)="edit($event.data)"
+        (userRowSelect)="rowsSelected($event)"
+        (delete)="questionDelete($event.data)">
+      </ng2-smart-table>
+    </ng-scrollbar>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+    <!-- <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination> -->
+
+    <div class="row justify-content-center mt-5">
+      <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+        <button
+          [disabled]="!valAcc || loadingBtn"
+          (click)="referencia()"
+          class="btn btn-sm btn-block btn-info active">
+          Referencia
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+        <button
+          [disabled]="!valAcc || loadingBtn"
+          (click)="ratificar()"
+          class="btn btn-sm btn-block btn-primary active">
+          Ratificar
+          <i class="bx bx-edit-alt"></i>
+        </button>
+      </div>
+      <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+        <button
+          [disabled]="!valAcc || loadingBtn"
+          (click)="pago()"
+          class="btn btn-sm btn-block btn-danger active">
+          Pago
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
   </div>
 </app-card>

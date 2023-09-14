@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ExcelService } from 'src/app/common/services/excel.service';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { ICaptureLinesMain } from 'src/app/core/models/catalogs/capture-lines-main.model';
+import { CapturelineService } from 'src/app/core/services/ms-capture-line/captureline.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { CAPTURE_LINES_COLUMNS, EVENT_COLUMNS } from './capture-lines-columns';
+import { EVENT_COLUMNS } from './capture-lines-columns';
 
 @Component({
   selector: 'app-capture-lines-main',
@@ -12,111 +16,137 @@ import { CAPTURE_LINES_COLUMNS, EVENT_COLUMNS } from './capture-lines-columns';
   styles: [],
 })
 export class CaptureLinesMainComponent extends BasePage implements OnInit {
-  selectedEvent: any[] = [];
-  eventParams = new BehaviorSubject<ListParams>(new ListParams());
-  clParams = new BehaviorSubject<ListParams>(new ListParams());
-  eventTotalItems: number = 0;
-  clTotalItems: number = 0;
-  eventColumns: any[] = [];
-  clColumns: any[] = [];
-  eventSettings = {
-    ...TABLE_SETTINGS,
-    hideSubHeader: false,
-    actions: false,
-  };
-  clSettings = {
-    ...TABLE_SETTINGS,
-    hideSubHeader: false,
-    actions: false,
-  };
+  captureLinesMain: ICaptureLinesMain[] = [];
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+  capture: ICaptureLinesMain;
 
-  eventTestData = [
-    {
-      event: 1010,
-      cve: 'GR1261O',
-      bmxClient: 'GTE884',
-      userCreate: 'AMORALES',
-      date: '14/09/2021',
-    },
-    {
-      event: 2020,
-      cve: 'GR1261O',
-      bmxClient: 'GTE884',
-      userCreate: 'RVILLEDA',
-      date: '14/09/2021',
-    },
-    {
-      event: 3030,
-      cve: 'GR1261O',
-      bmxClient: 'GTE884',
-      userCreate: 'VMENDOZA',
-      date: '14/09/2021',
-    },
-    {
-      event: 4040,
-      cve: 'GR1261O',
-      bmxClient: 'GTE884',
-      userCreate: 'PALVAREZ',
-      date: '14/09/2021',
-    },
-    {
-      event: 5050,
-      cve: 'GR1261O',
-      bmxClient: 'GTE884',
-      userCreate: 'JMONCADA',
-      date: '14/09/2021',
-    },
-  ];
-
-  clTestData = [
-    {
-      palette: 1,
-      captureLine: 'GSG5189Q9HIPB04',
-    },
-    {
-      palette: 2,
-      captureLine: 'LBNGEG61648HT21',
-    },
-    {
-      palette: 3,
-      captureLine: 'IBMS9213RSBN44HT',
-    },
-    {
-      palette: 4,
-      captureLine: 'MINEW842RSBN914E',
-    },
-    {
-      palette: 5,
-      captureLine: 'PANU9341BRAH6574',
-    },
-  ];
-
-  constructor(private excelService: ExcelService) {
+  constructor(private capturelineService: CapturelineService) {
     super();
-    this.eventSettings.columns = EVENT_COLUMNS;
-    this.clSettings.columns = CAPTURE_LINES_COLUMNS;
+    this.settings.columns = EVENT_COLUMNS;
+    this.settings.hideSubHeader = false;
+    this.settings.actions = false;
   }
 
   ngOnInit(): void {
-    this.getData();
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'eventId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'eatEventDetail':
+                field = `filter.${filter.field}.processKey`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'customerBmx':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'userCreated':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'eatEventDetail':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.processKey`;
+                break;
+              case 'creationDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                /*if (filter.search != null) {
+                  filter.search = this.formatDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }*/
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
+            } else {
+              delete this.columnFilters[field];
+            }
+            /*if (filter.search !== '') {
+              if (filter.field === 'eatEventDetail') {
+                this.columnFilters[
+                  'filter.eatEventDetail.processKey'
+                ] = `${searchFilter}:${filter.search}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
+            } else {
+              delete this.columnFilters[field];
+            }*/
+          });
+          this.params = this.pageFilter(this.params);
+          this.getDeductives();
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDeductives());
   }
 
-  getData() {
-    this.eventColumns = this.eventTestData;
-    this.eventTotalItems = this.eventColumns.length;
+  formatDate(dateString: string): string {
+    if (dateString === '') {
+      return '';
+    }
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    return `${year}-${month}-${day}`;
   }
 
-  selectEvent(event: any[]) {
-    this.selectedEvent = event;
+  rowsSelected(event: any) {
+    this.capture = event.data;
   }
 
-  execute() {
-    this.clColumns = this.clTestData;
-    this.clTotalItems = this.clColumns.length;
-  }
-
-  exportToExcel() {
-    const filename: string = 'Líneas_de_Captura';
-    this.excelService.export(this.clColumns, { filename });
+  getDeductives() {
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.capturelineService.getAll2(params).subscribe({
+      next: response => {
+        if (response.count > 0) {
+          this.captureLinesMain = response.data;
+          this.data.load(response.data);
+          console.log(this.data);
+          this.data.refresh();
+          this.totalItems = response.count;
+          this.loading = false;
+        } else {
+          this.loading = false;
+          this.data.load([]);
+          this.data.refresh();
+          this.totalItems = 0;
+        }
+      },
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+        //this.loading = false
+      },
+    });
   }
 }

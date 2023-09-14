@@ -1,10 +1,10 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="tdescCveForm">
-      <div class="row">
+      <div class="row" style="display: none">
         <div class="col-md-3">
           <form-field [control]="tdescCveForm.get('id')" label="ID">
             <input type="number" class="form-control" formControlName="id" />
@@ -14,7 +14,13 @@
       <div class="row pt-5">
         <div class="col-md-3">
           <form-field [control]="tdescCveForm.get('dsKey1')" label="Clave">
-            <input type="text" class="form-control" formControlName="dsKey1" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dsKey1"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 8) this.value = this.value.slice(0, 8);" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -38,7 +44,10 @@
             <input
               type="number"
               class="form-control"
-              formControlName="longMin1" />
+              formControlName="longMin1"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -48,7 +57,10 @@
             <input
               type="number"
               class="form-control"
-              formControlName="longMax1" />
+              formControlName="longMax1"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
           </form-field>
         </div>
       </div>

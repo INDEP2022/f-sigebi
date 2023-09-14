@@ -1,0 +1,25 @@
+<div class="row">
+  <!--CAN WORK1 TABLE-->
+  <div>
+    <div class="d-flex justify-content-end pr-2">
+      <app-columns-select
+        [leftList]="true"
+        [(settings)]="settings"
+        class="row justify-content-end"></app-columns-select>
+    </div>
+  </div>
+  <div class="row pt-4 pr-0">
+    <div class="col-md-12 pr-0">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          #table
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings"
+          [source]="data"
+          (userRowSelect)="selectGood($event)">
+        </ng2-smart-table>
+      </div>
+    </div>
+  </div>
+  <app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>
+</div>

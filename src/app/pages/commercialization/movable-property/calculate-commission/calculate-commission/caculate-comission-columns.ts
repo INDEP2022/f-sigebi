@@ -1,80 +1,104 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const COMCALCULATED_COLUMS = {
   comCalculatedId: {
-    title: 'ID Calcular',
+    title: 'Id',
     type: 'string',
     sort: false,
+    width: '8%',
   },
-  thirdComerId: {
-    title: 'iD Tercero comer',
+  thirdComerId_Id: {
+    title: 'Tercero',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return 'ID: ' + value.thirdComerId + ' | ' + 'Nombre:' + value.nameReason;
-    },
+    // valuePrepareFunction: (value: any) => {
+    //   return value.thirdComerId;
+    // },
+    width: '8%',
+  },
+  nameReason: {
+    title: 'Nombre',
+    type: 'string',
+    sort: false,
+    width: '25%',
   },
   startDate: {
-    title: 'Fecha inicio',
-    type: 'string',
+    title: 'Fecha Inicio',
+    // type: 'string',
     sort: false,
+    width: '12%',
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      console.log('text', text);
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   endDate: {
-    title: 'Fecha final',
-    type: 'string',
+    title: 'Fecha Fin',
+    // type: 'string',
     sort: false,
+    width: '12%',
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      console.log('text', text);
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   eventId: {
-    title: 'ID Event',
+    title: 'Evento',
     type: 'string',
     sort: false,
+    width: '10%',
+  },
+  processKey: {
+    title: 'Cve. Proceso',
+    type: 'string',
+    sort: false,
+    width: '25%',
   },
   changeType: {
-    title: 'Tipo de cambio',
+    title: 'Tipo de Cambio',
     type: 'string',
     sort: false,
-  },
-  userBelieve: {
-    title: 'Usuario creador',
-    type: 'string',
-    sort: false,
-  },
-  believeDate: {
-    title: 'Fecha de creación',
-    type: 'string',
-    sort: false,
+    width: '10%',
   },
 };
 
 export const COMISIONESXBIEN_COLUMNS = {
-  comCalculatedId: {
-    title: 'ID Calcula',
+  // comCalculatedId: {
+  //   title: 'Id. Calcula',
+  //   type: 'string',
+  //   sort: false,
+  //   width: '10%'
+  // },
+  event: {
+    title: 'Id. Evento',
     type: 'string',
     sort: false,
-  },
-  goodNumber: {
-    title: 'ID Bien',
-    type: 'string',
-    sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value.id;
-    },
-  },
-  eventId: {
-    title: 'ID Evento',
-    type: 'string',
-    sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value.eventId;
-    },
-  },
-  amountCommission: {
-    title: 'monto comisión',
-    type: 'string',
-    sort: false,
+    width: '10%',
   },
   batch: {
     title: 'Lote',
     type: 'string',
     sort: false,
+    width: '10%',
+  },
+  good: {
+    title: 'No. Bien',
+    type: 'string',
+    sort: false,
+    // valuePrepareFunction: (value: any) => {
+    //   return value.id;
+    // },
+    width: '10%',
   },
   cvman: {
     title: 'Cvman',
@@ -85,20 +109,54 @@ export const COMISIONESXBIEN_COLUMNS = {
     title: 'Venta',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        return numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      } else {
+        return amount;
+      }
+    },
   },
-  comments: {
-    title: 'Comentarios',
+  amountCommission: {
+    title: 'Monto Comisión',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        return numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      } else {
+        return amount;
+      }
+    },
   },
   processIt: {
     title: 'Procesa',
     type: 'string',
     sort: false,
   },
-  saleTc: {
-    title: 'Sale TC',
+  comments: {
+    title: 'Comentarios',
     type: 'string',
     sort: false,
   },
+
+  // saleTc: {
+  //   title: 'Sale TC',
+  //   type: 'string',
+  //   sort: false,
+  // },
 };

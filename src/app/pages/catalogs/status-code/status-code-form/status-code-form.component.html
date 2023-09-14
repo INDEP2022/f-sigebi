@@ -1,21 +1,32 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form [formGroup]="statusCodeForm">
+    <form [formGroup]="statusCodeForm" class="form-material">
       <div class="row">
         <div class="col-md-4">
           <form-field [control]="statusCodeForm.get('id')" label="Clave">
-            <input type="text" class="form-control" formControlName="id" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="id"
+              maxlength="5" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="statusCodeForm.get('order')" label="Orden">
-            <input type="number" class="form-control" formControlName="order" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="order"
+              maxlength="3"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3);" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="pt-4 col-md-12">
           <form-field
             [control]="statusCodeForm.get('descCode')"
             label="Descripci&oacute;n">
@@ -23,7 +34,8 @@
               class="form-control"
               type="text"
               rows="2"
-              formControlName="descCode"></textarea>
+              formControlName="descCode"
+              maxlength="50"></textarea>
           </form-field>
         </div>
       </div>

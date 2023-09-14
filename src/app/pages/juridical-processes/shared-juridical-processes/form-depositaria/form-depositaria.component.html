@@ -1,31 +1,67 @@
-<div class="row w-100">
+<div class="row">
   <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
     <form [formGroup]="form" class="container-fluid form-material">
       <div class="card">
         <form [formGroup]="form" class="container-fluid form-material p-0">
           <div class="card-header text-dark">
-            <div class="col-12 col-sm-4 col-md-8 p-2">
+            <div class="col-12 col-sm-12 col-md-12 p-2">
               Ejecutar la conciliacion de pagos recibidos
             </div>
-            <div class="col-12 col-sm-8 col-md-4 p-2">
-              <form-field
-                class="col-sm-12 col-12 col-md-8 p-2"
+          </div>
+          <div class="card-body">
+            <div class="col-12 col-sm-12 col-md-12 p-2">
+              <!-- <form-field
                 [control]="form.get('noBien')"
-                label="No&#46; Bien">
-                <input class="form-control" formControlName="noBien" />
-              </form-field>
-              <div class="col-sm-12 col-12 col-md-4 p-2">
-                <button
+                label="No&#46; Bien"
+                class="col-sm-12 col-12 col-md-4 p-2">
+                <input
+                  class="form-control"
+                  maxlength="11"
+                  formControlName="noBien" />
+              </form-field> -->
+              <div class="form-group col-sm-12 col-12 col-md-10 p-2">
+                <form-field [control]="form.get('noBien')">
+                  <ngx-select
+                    (fetchItems)="getGoodsSheard($event)"
+                    [data]="goods"
+                    [form]="form"
+                    value="id"
+                    bindLabel="description"
+                    label="No&#46; Bien"
+                    control="noBien"
+                    [showTooltip]="true"
+                    termMaxLength="400"
+                    (change)="onChangeGood($event)"
+                    [labelTemplate]="userLabel"
+                    [optionTemplate]="userOption">
+                  </ngx-select>
+                </form-field>
+                <ng-template #userLabel let-item="item"
+                  >{{ item.id }} - {{ item.description }}</ng-template
+                >
+                <ng-template #userOption let-item="item"
+                  >{{ item.id }} - {{ item.description }}</ng-template
+                >
+              </div>
+              <div class="col-sm-12 col-12 col-md-2 p-2 text-center">
+                <!-- <button
+                  [disabled]="loading"
                   type="button"
                   class="btn btn-primary btn-sm active"
                   (click)="btnSearchGood()">
                   Buscar
-                  <i aria-hidden="true" class="fa fa-search text-pink"></i>
+                  <i class="bx bx-search-alt bx-sm float-icon"></i>
+                </button> -->
+                <button
+                  [disabled]="loading"
+                  type="button"
+                  class="btn btn-danger active btn-sm m-3"
+                  (click)="cleanScreenFields()">
+                  Limpiar
+                  <i class="fa fa-eraser ml-1"></i>
                 </button>
               </div>
             </div>
-          </div>
-          <div class="card-body">
             <form-field
               class="col-sm-12 col-12 col-md-12 p-2"
               [control]="form.get('descripcion')"
@@ -34,43 +70,69 @@
                 rows="5"
                 [readonly]="true"
                 class="form-control"
+                maxlength="1250"
                 formControlName="descripcion"></textarea>
             </form-field>
             <form-field
-              class="col-sm-12 col-12 col-md-8 p-2"
+              class="col-sm-12 col-12 col-md-3 p-2"
               [control]="form.get('nombramiento')"
               label="Nombramiento">
               <input
                 class="form-control"
                 formControlName="nombramiento"
+                maxlength="10"
                 [readonly]="true" />
             </form-field>
             <form-field
-              class="col-sm-12 col-12 col-md-4 p-2"
+              class="col-sm-12 col-12 col-md-6 p-2"
+              [control]="form.get('nombramientoDescription')"
+              label="Nombramiento Descripci&oacute;n">
+              <textarea
+                class="form-control"
+                formControlName="nombramientoDescription"
+                maxlength="200"
+                [readonly]="true"></textarea>
+            </form-field>
+            <form-field
+              class="col-sm-12 col-12 col-md-3 p-2"
               [control]="form.get('fecha')"
               label="Fecha">
               <input
                 class="form-control"
                 formControlName="fecha"
                 bsDatapicker
+                maxlength="11"
                 [readonly]="true" />
             </form-field>
           </div>
           <div class="card-footer">
             <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
               <button
+                [disabled]="loading"
+                *ngIf="!deleteDateOption"
                 type="button"
                 class="btn btn-primary btn-sm active m-2"
                 (click)="btnEjecutar()">
                 Ejecutar Conciliaci&oacute;n de Pagos
+                <i class="fa fa-check" aria-hidden="true"></i>
               </button>
               <button
+                [disabled]="loading"
+                *ngIf="!deleteDateOption"
+                type="button"
+                class="btn btn-red btn-sm active m-3"
+                (click)="btnDeshacer()">
+                Eliminar Dispersi&oacute;n de Pagos
+                <i class="fa fa-trash" aria-hidden="true"></i>
+              </button>
+              <!-- <button
+                [disabled]="loading"
                 *ngIf="!deleteDateOption"
                 type="button"
                 class="btn btn-danger btn-sm active m-2"
                 (click)="btnDeshacer()">
                 Elimina Dispersi&oacute;n
-              </button>
+              </button> -->
             </div>
             <ng-container *ngIf="deleteDateOption">
               <div class="col-12 col-sm-12 col-md-12 p-2 mb-4 text-center">
@@ -89,7 +151,7 @@
                   formControlName="fechaEliminarDispersion">
                   <option value="">Seleccione una Fecha</option>
                   <ng-container *ngFor="let optionDate of listDateOptions">
-                    <option [value]="optionDate.payIdGens">
+                    <option [value]="optionDate.processDate">
                       {{
                         '#PAGO_DESTINO: ' + optionDate.payIdGens
                       }}&nbsp;---&nbsp;{{
@@ -105,12 +167,22 @@
               </form-field>
               <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
                 <button
+                  [disabled]="loading"
+                  type="button"
+                  class="btn btn-red btn-sm active m-3"
+                  (click)="btnDeleteDispersalPay()">
+                  Eliminar Dispersi&oacute;n de Pagos
+                  <i class="fa fa-trash" aria-hidden="true"></i>
+                </button>
+                <!-- <button
+                  [disabled]="loading"
                   type="button"
                   class="btn btn-primary btn-sm active m-2"
                   (click)="btnDeleteDispersalPay()">
                   Eliminar Dispersi&oacute;n de Pagos
-                </button>
+                </button> -->
                 <button
+                  [disabled]="loading"
                   type="button"
                   class="btn btn-danger btn-sm active m-2"
                   (click)="btnExit()">
@@ -129,25 +201,17 @@
         [formGroup]="formDepositario"
         class="container-fluid form-material p-0">
         <div class="card-header text-dark">
-          <div class="col-12 col-sm-4 col-md-4 p-2">Depositario</div>
+          <div class="col-12 col-sm-12 col-md-12 p-2">Depositario</div>
+        </div>
+        <div class="card-body">
           <form-field
-            class="col-sm-12 col-12 col-md-offset-4 col-md-4 p-2"
+            class="col-sm-12 col-12 col-md-4 p-2"
             [control]="formDepositario.get('idDepositario')"
             label="Id Depositario">
             <input
               class="form-control"
+              maxlength="30"
               formControlName="idDepositario"
-              [readonly]="true" />
-          </form-field>
-        </div>
-        <div class="card-body">
-          <form-field
-            class="col-sm-12 col-12 col-md-6 p-2"
-            [control]="formDepositario.get('depositario')"
-            label="Depositario">
-            <input
-              class="form-control"
-              formControlName="depositario"
               [readonly]="true" />
           </form-field>
           <form-field
@@ -158,26 +222,47 @@
               class="form-control"
               formControlName="fechaEjecucion"
               bsDatapicker
+              maxlength="11"
               [readonly]="true" />
           </form-field>
-          <div class="col-sm-12 col-12 col-md-2 p-2">
+          <div class="col-sm-12 col-12 col-md-4 p-2">
             <form-check label="Procesar" for="procesar">
               <input id="procesar" type="checkbox" formControlName="procesar" />
             </form-check>
           </div>
+          <form-field
+            class="col-sm-12 col-12 col-md-12 p-2"
+            maxlength="400"
+            [control]="formDepositario.get('depositario')"
+            label="Depositario">
+            <input
+              class="form-control"
+              formControlName="depositario"
+              [readonly]="true" />
+          </form-field>
         </div>
         <div class="card-footer">
           <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
             <button
-              class="btn btn-info btn-sm active text-wrap m-2"
+              [disabled]="loading"
+              class="btn btn-primary btn-sm active m-2"
               (click)="btnRecargaDepositario()">
               Recarga Depositario
+              <i class="fas fa-sync-alt" aria-hidden="true"></i>
             </button>
             <button
+              [disabled]="loading"
+              class="btn btn-primary btn-sm active m-3"
+              (click)="btnValidacionPagos()">
+              Validaci&oacute;n de Pagos
+              <i class="fa fa-check" aria-hidden="true"></i>
+            </button>
+            <!-- <button
+              [disabled]="loading"
               class="btn btn-primary btn-sm active text-wrap m-2"
               (click)="btnValidacionPagos()">
               Validaci&oacute;n de Pagos
-            </button>
+            </button> -->
           </div>
         </div>
       </form>

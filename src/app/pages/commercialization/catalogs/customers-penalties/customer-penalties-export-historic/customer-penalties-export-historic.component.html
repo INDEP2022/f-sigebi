@@ -1,0 +1,223 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="iHistoryCustomersPenaltiesForm">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            label="Tipo de Penalización"
+            [control]="iHistoryCustomersPenaltiesForm.get('processType')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="processType"
+              min="0"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="Clave Evento"
+            [control]="iHistoryCustomersPenaltiesForm.get('eventId')">
+            <input
+              type="number"
+              formControlName="eventId"
+              class="form-control"
+              min="0"
+              oninput="if(this.value.length > 7) this.value = this.value.slice(0, 7);" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="Lote"
+            [control]="iHistoryCustomersPenaltiesForm.get('batchPublic')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="batchPublic"
+              min="0"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            label="Fecha Inicial"
+            [control]="iHistoryCustomersPenaltiesForm.get('initialDate')">
+            <input
+              type="text"
+              style="position: relative"
+              class="form-control"
+              formControlName="initialDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+            <i
+              *ngIf="iHistoryCustomersPenaltiesForm.get('initialDate').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('initialDate')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            label="Fecha Final"
+            [control]="iHistoryCustomersPenaltiesForm.get('finalDate')">
+            <input
+              type="text"
+              style="position: relative"
+              class="form-control"
+              formControlName="finalDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+            <i
+              *ngIf="iHistoryCustomersPenaltiesForm.get('finalDate').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('finalDate')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            label="Motivo Penalización"
+            [control]="iHistoryCustomersPenaltiesForm.get('referenceJobOther')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="referenceJobOther"
+              maxlength="200" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            label="Motivo Liberación"
+            [control]="iHistoryCustomersPenaltiesForm.get('causefree')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="causefree"
+              maxlength="200" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            label="Usuario Penaliza"
+            [control]="iHistoryCustomersPenaltiesForm.get('usrPenalize')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="usrPenalize"
+              maxlength="30" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            label="Fecha Penaliza"
+            [control]="iHistoryCustomersPenaltiesForm.get('penalizesDate')">
+            <input
+              type="text"
+              style="position: relative"
+              class="form-control"
+              formControlName="penalizesDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+            <i
+              *ngIf="iHistoryCustomersPenaltiesForm.get('penalizesDate').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('penalizesDate')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            label="Usuario Libera"
+            [control]="iHistoryCustomersPenaltiesForm.get('usrfree')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="usrfree"
+              maxlength="30" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            label="Fecha Libera"
+            [control]="iHistoryCustomersPenaltiesForm.get('releasesDate')">
+            <input
+              type="text"
+              style="position: relative"
+              class="form-control"
+              formControlName="releasesDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+            <i
+              *ngIf="iHistoryCustomersPenaltiesForm.get('releasesDate').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('releasesDate')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

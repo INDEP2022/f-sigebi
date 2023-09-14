@@ -62,6 +62,7 @@ export class CurrencySharedComponent extends BasePage implements OnInit {
           });
       }
     });
+    this.getCurrency(new ListParams());
   }
 
   getCurrency(params: ListParams) {

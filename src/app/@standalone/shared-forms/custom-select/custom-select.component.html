@@ -10,6 +10,7 @@
   (change)="onSelectChange($event)"
   (scrollToEnd)="fetchMore(select.searchTerm)"
   [typeahead]="input$"
+  [readonly]="readonly"
   [placeholder]="placeholder"
   [closeOnSelect]="true"
   [(ngModel)]="selectedItem">

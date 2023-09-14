@@ -1,0 +1,66 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('emailSend')"
+            label="Correo Electr&oacute;nico">
+            <input
+              type="text"
+              formControlName="emailSend"
+              class="form-control" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="form.get('nameSend')" label="Nombre">
+            <input
+              type="text"
+              formControlName="nameSend"
+              class="form-control" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field [control]="form.get('postSend')" label="Puesto">
+            <input
+              type="text"
+              pattern="[A-Za-z ]+"
+              required
+              formControlName="postSend"
+              class="form-control" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field [control]="form.get('status')" label="Estatus">
+            <select class="form-control" formControlName="status">
+              <option [value]="1">Activo</option>
+              <option [value]="0">Inactivo</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <confirm-button
+            [disabled]="!form.valid"
+            [loading]="loading"
+            (confirm)="confirm()">
+          </confirm-button>
+        </div>
+        <div class="m-3">
+          <button type="button" class="btn btn-danger active" (click)="close()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal>

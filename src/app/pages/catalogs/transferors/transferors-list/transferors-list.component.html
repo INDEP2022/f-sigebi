@@ -5,6 +5,24 @@
   </div>
   <div body>
     <div class="row">
+      <div class="col-md-8 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <!--<div>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>-->
+        <app-columns-select
+          [(settings)]="settings"
+          [leftList]="true"></app-columns-select>
+      </div>
+    </div>
+    <div class="row">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <div class="table-responsive">
@@ -23,27 +41,35 @@
       </div>
     </div>
 
-    <div class="row pt-5" *ngIf="rowSelected">
-      <div class="ch-content">
-        <h5 class="title">Estados</h5>
-        <div class="col-md-5 buttons">
-          <div>
-            <button
-              class="btn btn-primary active btn-sm ml-3"
-              (click)="openForm2()">
-              Nuevo
-            </button>
+    <div class="row" *ngIf="rowSelected">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="ch-content">
+            <h5 class="title">Estados</h5>
+          </div>
+          <div class="col-md-8 mb-3"></div>
+          <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+            <div>
+              <button
+                type="button"
+                tooltip="Nuevo"
+                containerclass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2"
+                (click)="openForm2()">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+            </div>
+            <!--<app-columns-select [(settings)]="settings"></app-columns-select>-->
           </div>
         </div>
-      </div>
-      <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <div class="table-responsive">
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings2"
-              [source]="stateList"
-              (edit)="openForm2($event.data)"></ng2-smart-table>
+              [source]="data1"
+              (edit)="openForm2($event.data)"
+              (delete)="showDelet($event.data)"></ng2-smart-table>
           </div>
           <app-pagination
             [params]="params2"

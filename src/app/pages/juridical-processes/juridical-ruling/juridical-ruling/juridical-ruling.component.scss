@@ -2,3 +2,22 @@
   background-color: gray !important;
   border: gray;
 }
+
+.bg-gray {
+  background-color: #eee !important;
+}
+
+.bg-info {
+  background-color: #17a2b8 !important;
+}
+
+.ct {
+  width: 100% !important;
+  display: grid;
+  padding: 10px 0px 0px 0px;
+  margin-left: 10px;
+}
+
+::ng-deep .k {
+  color: #495057 !important;
+}

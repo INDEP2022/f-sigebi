@@ -1,46 +1,57 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">CONTROL DE NUMERARIO OPERADO</h5>
   </div>
-
   <div body>
-    <form [formGroup]="numeraryForm" class="form-material">
-      <div class="form-controls">
-        <div class="col-md-3 form-group mb-3">
-          <form-field
-            [control]="numeraryForm.get('startedDate')"
-            label="Deal día">
-            <input
-              type="text"
-              formControlName="startedDate"
-              placeholder="Del día"
-              class="form-control"
-              bsDatepicker />
-          </form-field>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('from')" label="Del Día:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="from"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('to')" label="al día:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="to"
+                [ngModel]="
+                  form.get('to').value < form.get('from').value
+                    ? form.get('from').value
+                    : form.get('to').value
+                "
+                class="form-control"
+                [min]="form.get('from').value"
+                [minDate]="form.get('from').value"
+                bsDatepicker />
+            </form-field>
+          </div>
         </div>
-        <div class="col-md-3 form-group mb-3">
-          <form-field
-            [control]="numeraryForm.get('finishedDate')"
-            label="Al día">
-            <input
-              type="text"
-              formControlName="finishedDate"
-              placeholder="Al día"
-              class="form-control"
-              bsDatepicker />
-          </form-field>
-        </div>
-      </div>
-    </form>
-    <div footer>
-      <div class="d-flex justify-content-center">
-        <div class="m-3">
-          <confirm-button
-            text="IMPRIMIR REPORTE"
-            [disabled]="numeraryForm.invalid"
-            [loading]="loading"
-            (confirm)="send()">
-          </confirm-button>
+      </form>
+      <div footer>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              type="button"
+              [disabled]="form.invalid"
+              class="btn btn-primary active btn-sm"
+              (click)="Generar()">
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <button
+              type="button"
+              class="btn btn-danger active btn-sm"
+              (click)="cleanForm()">
+              Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>

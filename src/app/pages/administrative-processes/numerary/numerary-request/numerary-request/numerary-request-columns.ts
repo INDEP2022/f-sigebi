@@ -1,27 +1,57 @@
+import { DateCellComponent } from 'src/app/@standalone/smart-table/date-cell/date-cell.component';
 export const REQUEST_NUMERARY_COLUMNS = {
-  good: {
-    title: 'Bien',
+  goodNumber: {
+    title: 'No. Bien',
     type: 'string',
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  amount: {
-    title: 'mONTO',
+  commission: {
+    title: 'Monto',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (val: string) => {
+      const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+      });
+
+      return formatter.format(Number(val));
+    },
   },
   bankDate: {
-    title: 'Fecha banco',
+    title: 'Fecha Banco',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      console.log(value);
+
+      return value
+        ? value.includes('T')
+          ? value.split('T')[0].split('-').reverse().join('/')
+          : value.split('-').join('/')
+        : value;
+    },
   },
-  tesofeDate: {
-    title: 'Fecha tesofe',
-    type: 'string',
+  dateCalculationInterests: {
+    title: 'Fecha Tesofe',
+    type: 'custom',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      return value ? value.split('-').join('/') : '';
+    },
+    renderComponent: DateCellComponent,
+    onComponentInitFunction(instance?: any) {
+      instance.inputChange.subscribe({
+        next: (data: any) => {
+          data.row.dateCalculationInterests = data.value;
+        },
+      });
+    },
   },
 };

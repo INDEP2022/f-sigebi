@@ -1,5 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { map } from 'rxjs';
 import {
   FilterParams,
@@ -10,6 +18,7 @@ import { CourtService } from 'src/app/core/services/catalogs/court.service';
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   COURTS,
@@ -23,26 +32,104 @@ import {
 } from '../../utils/constants/filter-match';
 import { GoodTrackerForm } from '../../utils/goods-tracker-form';
 
+const ALLOWED_EXTENSIONS = ['txt'];
+
 @Component({
   selector: 'record-notification-filter',
   templateUrl: './record-notification-filter.component.html',
   styles: [],
 })
-export class RecordNotificationFilterComponent implements OnInit {
+export class RecordNotificationFilterComponent
+  extends BasePage
+  implements OnInit
+{
   @Output() onSubmit = new EventEmitter<any>();
   @Input() form: FormGroup<GoodTrackerForm>;
   @Input() subloading: boolean = false;
   @Output() subloadingChange = new EventEmitter<boolean>();
   courts = new DefaultSelect();
   publicMins = new DefaultSelect();
+  @Output() cleanFilters = new EventEmitter<void>();
+  @ViewChild('goodNumbersInput', { static: true })
+  goodNumbersInput: ElementRef<HTMLInputElement>;
+  goodNumbersControl = new FormControl(null);
   constructor(
     private courtService: CourtService,
     private minPubService: MinPubService,
     private notificationService: NotificationService,
     private expedientService: ExpedientService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {}
+
+  goodNumbersFileChange(event: Event) {
+    if (!this.isValidFile(event)) {
+      this.goodNumbersControl.reset();
+      return;
+    }
+    const file = this.getFileFromEvent(event);
+    const fileReader = new FileReader();
+    fileReader.onload = e => {
+      this.readTxt(e.target.result);
+    };
+    this.goodNumbersControl.reset();
+    fileReader.readAsText(file);
+  }
+
+  readTxt(txt: string | ArrayBuffer) {
+    if (typeof txt != 'string') {
+      this.alert('error', 'Error', 'Archivo Inválido');
+      return;
+    }
+    const goodNumbersArrPlain = txt.split(',');
+
+    const goodNumbers = goodNumbersArrPlain
+      .map(goodNum => Number(goodNum.trim()))
+      .filter(goodNum => goodNum > 0)
+      .map(goodNum => `${goodNum}`);
+    if (!goodNumbers.length) {
+      this.alert(
+        'error',
+        'Error',
+        'El Archivo esta vació o tiene elementos inválidos'
+      );
+      return;
+    }
+
+    this.form.get('expedientNum').setValue(goodNumbers);
+  }
+
+  private getFileFromEvent(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files[0];
+    const filename = file.name;
+    return file;
+  }
+
+  isValidFile(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (!target.files.length) {
+      return false;
+    }
+    if (target.files.length > 1) {
+      this.alert('error', 'Error', 'Solo puede seleccionar un Archivo');
+      return false;
+    }
+    const file = target.files[0];
+    const filename = file.name;
+    const extension = filename.split('.').at(-1);
+    if (!extension) {
+      this.alert('error', 'Error', 'Archivo Inválido');
+      return false;
+    }
+    if (!ALLOWED_EXTENSIONS.includes(extension.toLowerCase())) {
+      this.alert('error', 'Error', 'Archivo Inválido');
+      return false;
+    }
+    return true;
+  }
 
   changeSubloading(value: boolean) {
     this.subloading = value;
@@ -54,24 +141,47 @@ export class RecordNotificationFilterComponent implements OnInit {
   }
 
   getMinPubs(params: ListParams) {
+    const _params = new FilterParams();
+    _params.page = params.page;
+    _params.limit = params.limit;
+    const search = params?.text ?? '';
+    if (Number(search)) {
+      _params.addFilter('id', search);
+    } else {
+      _params.addFilter('description', search, SearchFilter.ILIKE);
+    }
     this.changeSubloading(true);
-    this.minPubService.getAll(params).subscribe({
+    this.minPubService.getAllWithFilters(_params.getParams()).subscribe({
       next: res => {
         this.changeSubloading(false);
         this.publicMins = new DefaultSelect(res.data, res.count);
       },
-      error: () => this.changeSubloading(false),
+      error: () => {
+        this.changeSubloading(false);
+        this.publicMins = new DefaultSelect([], 0);
+      },
     });
   }
 
   getCourts(params: ListParams) {
+    const search = params?.text ?? '';
+    if (Number(search)) {
+      params['filter.id'] = search;
+    } else {
+      params['filter.description'] = '$ilike:' + search;
+    }
+    params.text = '';
+    params['search'] = '';
     this.changeSubloading(true);
     this.courtService.getAll(params).subscribe({
       next: res => {
         this.changeSubloading(false);
         this.courts = new DefaultSelect(res.data, res.count);
       },
-      error: () => this.changeSubloading(false),
+      error: () => {
+        this.changeSubloading(false);
+        this.courts = new DefaultSelect([], 0);
+      },
     });
   }
 

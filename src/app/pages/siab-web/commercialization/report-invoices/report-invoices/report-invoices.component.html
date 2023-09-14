@@ -8,7 +8,35 @@
     <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="row">
         <div class="col-md-2">
-          <form-field [control]="form.get('rangeDate')" label="Rango de fechas">
+          <form-field [control]="form.get('valid')" label="Filtrar Por">
+            <ng-select
+              formControlName="valid"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
+              (change)="changeValid($event)">
+              <ng-option value="A">Año</ng-option>
+              <ng-option value="R">Rango de Fechas</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('year')" label="Año">
+            <ng-select
+              [(ngModel)]="ddlAnio"
+              formControlName="year"
+              [searchable]="false"
+              class="form-control"
+              (change)="changeValue($event)"
+              [clearable]="false">
+              <ng-option *ngFor="let anio of anios" [value]="anio">{{
+                anio
+              }}</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('rangeDate')" label="Rango de Fechas">
             <input
               class="form-control"
               formControlName="rangeDate"
@@ -22,6 +50,23 @@
               }" />
           </form-field>
         </div>
+
+        <div class="col-md-3">
+          <form-field [control]="form.get('event')">
+            <ngx-select
+              [form]="form"
+              control="event"
+              (fetchItems)="getEvent($event)"
+              label="Evento"
+              [data]="event"
+              bindLabel="processKey"
+              [searchOnInit]="true"
+              value="id"
+              (change)="changeEvent($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+
         <div class="col-md-2">
           <form-field [control]="form.get('typeCFDI')" label="Tipo de CFDI">
             <ng-select
@@ -29,22 +74,26 @@
               [searchable]="false"
               class="form-control"
               [clearable]="false">
-              <ng-option value="Y">Ingreso</ng-option>
-              <ng-option value="N">Egreso</ng-option>
+              <ng-option value="I">Ingreso</ng-option>
+              <ng-option value="E">Egreso</ng-option>
             </ng-select>
           </form-field>
         </div>
+      </div>
+
+      <div class="row pt-4">
         <div class="col-md-2">
           <form-field
             [control]="form.get('statusInvoice')"
-            label="Estatus de factura">
+            label="Estatus Factura">
             <ng-select
               formControlName="statusInvoice"
               [searchable]="false"
               class="form-control"
               [clearable]="false">
-              <ng-option value="Y">CFDI</ng-option>
-              <ng-option value="N">IMP</ng-option>
+              <ng-option value="CFDI">CFDI</ng-option>
+              <ng-option value="IMP">IMP</ng-option>
+              <ng-option value="CAN">CAN</ng-option>
             </ng-select>
           </form-field>
         </div>
@@ -60,42 +109,97 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-4">
           <div class="justify-content-center">
             <button
               type="button"
-              class="btn btn-primary btn-sm active"
+              class="btn btn-primary btn-sm active mr-3"
               [disabled]="!form.valid"
-              (click)="show = !show">
+              (click)="consult()">
               Consultar
+            </button>
+            <button
+              class="btn btn-danger btn-sm active"
+              [disabled]="!form.valid"
+              (click)="clean()">
+              Limpiar <i class="fas fa-eraser"></i>
             </button>
           </div>
         </div>
-        <div class="col-md-1">
+        <!--<div class="col-md-1">
           <div class="justify-content-center">
             <button
               type="submit"
               class="btn btn-secondary btn-sm active"
               [disabled]="!form.valid">
               Limpiar filtros
+            </button>  
+          </div>
+        </div>-->
+      </div>
+      <hr />
+    </form>
+    <div *ngIf="show">
+      <div class="ch-content mt-5" header>
+        <h5 class="title">Detalle de Facturas</h5>
+        <app-columns-select
+          [(settings)]="settings"
+          [leftList]="true"></app-columns-select>
+        <!--<div class="col-md-5 text-end d-flex flex-row-reverse mb-3">
+          <div>
+            <button
+              class="btn btn-success active btn-sm ml-3"
+              (click)="exportAll()">
+              Exportar a Excel <i class="bx bx-download float-icon"></i>
             </button>
           </div>
+        </div>-->
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="data1"
+              (rowSelect)="rowSelect($event)">
+            </ng2-smart-table>
+            <app-pagination [params]="params" [totalItems]="totalItems">
+            </app-pagination>
+          </div>
+          <hr />
         </div>
       </div>
-    </form>
-    <div class="row pt-5" *ngIf="show">
-      <div class="ch-content" header>
-        <h5 class="title">Detalle de facturas</h5>
-        <div class="col-md-5 buttons">
-          <button type="button" class="btn btn-success btn-sm active" disabled>
-            Descargar
-          </button>
+
+      <div class="row pt-5">
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <div>
+            <button
+              class="btn btn-success active btn-sm ml-3"
+              (click)="getDetailInvoicesExcel()"
+              [disabled]="validateExcel">
+              Exportar a Excel <i class="bx bx-download float-icon"></i>
+            </button>
+          </div>
+          <app-columns-select
+            [(settings)]="settings1"
+            [leftList]="true"></app-columns-select>
         </div>
       </div>
-      <div class="table-responsive">
-        <ng2-smart-table
-          [settings]="settings"
-          [source]="data"></ng2-smart-table>
+
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings1"
+              [source]="data2">
+            </ng2-smart-table>
+            <app-pagination [params]="params2" [totalItems]="totalItems2">
+            </app-pagination>
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -1,22 +1,39 @@
-<button class="btn btn-sm btn-return" (click)="return()">
-  <i class="bx bx-chevron-left float-icon"></i> Regresar
-</button>
+<div id="detailActMaintenance">
+  <form-loader
+    *ngIf="pageLoading"
+    [greater]="true"
+    text="Cerrando Acta... por favor espere"></form-loader>
 
-<app-card [header]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Mantenimiento de Acta Entrega Recepci&oacute;n</h5>
-  </div>
-  <div body>
-    <form class="form-material" [formGroup]="form">
-      <div class="row mr-0">
-        <div class="col-md-2">
-          <form-field [control]="form.get('statusActa')" label="Status Acta">
-            <select class="form-control" formControlName="statusActa">
-              <option value="ABIERTA">Abierto</option>
-              <option value="CERRADA">Cerrado</option>
-            </select>
-          </form-field>
-          <!-- <app-select-form
+  <app-card [header]="true">
+    <div class="ch-content returnMaintenance" header>
+      <h5 class="title">Mantenimiento de Programaciones</h5>
+    </div>
+    <div body>
+      <form class="form-material" [formGroup]="form" *ngIf="form">
+        <div class="row pb-5">
+          <div>
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="back()">
+              Regresar
+              <i class="fas fa-arrow-circle-left"></i>
+            </button>
+          </div>
+        </div>
+        <div class="row mr-0">
+          <div class="col-md-2 pr-0">
+            <form-field [control]="statusActa" label="Estatus Acta"
+              ><ng-select
+                formControlName="statusActa"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="ABIERTA">Abierto</ng-option>
+                <ng-option value="CERRADA">Cerrado</ng-option>
+              </ng-select>
+            </form-field>
+            <!-- <app-select-form
             [form]="form"
             formField="statusActa"
             label="Status Acta"
@@ -24,41 +41,43 @@
             [clearable]="false"
             [list]="statusList"
             [(params)]="paramsStatus"></app-select-form> -->
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('acta')" label="No&#46; Acta">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="acta"
-              readonly />
-          </form-field>
-        </div>
+          </div>
+          <div class="col-md-2 pr-0">
+            <form-field [control]="form.get('acta')" label="No&#46; Acta">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="acta"
+                readonly />
+            </form-field>
+          </div>
 
-        <div class="col-md-2">
-          <form-field
-            [control]="form.get('fechaCaptura')"
-            label="Fecha Captura">
-            <input
-              [class]="'disabled'"
-              bsDatepicker
-              class="form-control"
-              formControlName="fechaCaptura"
-              readonly />
-          </form-field>
-        </div>
+          <div class="col-md-2 pr-0">
+            <form-field
+              [control]="form.get('fechaCaptura')"
+              label="Fecha Captura">
+              <input
+                style="background: white"
+                bsDatepicker
+                class="form-control"
+                formControlName="fechaCaptura"
+                readonly />
+            </form-field>
+          </div>
 
-        <div class="col-md-6">
-          <app-proceeding-types-shared
-            [form]="form"
-            [readonly]="true"></app-proceeding-types-shared>
+          <div class="col-md-6 pr-0">
+            <app-proceeding-types-shared
+              [form]="form"
+              [readonly]="true"></app-proceeding-types-shared>
+          </div>
         </div>
-      </div>
-      <app-key-proceedings-form
-        [form]="form"
-        [statusActaValue]="statusActaValue"></app-key-proceedings-form>
-      <div class="action-buttons mr-4">
-        <div class="col-sm-4">
+        <app-key-proceedings-form
+          [formInput]="form"
+          [numFile]="numFile"
+          [statusActaValue]="statusActaValue"
+          [typeProceeding]="typeProceeding"></app-key-proceedings-form>
+        <!-- <div class="mr-4">
+        <div class="col-sm-4 pl-0">
           <button
             class="btn btn-primary btn-sm active"
             type="submit"
@@ -68,14 +87,47 @@
             Refrescar Informaci&oacute;n
           </button>
         </div>
-        <div class="col-sm-4">
+      </div> -->
+      </form>
+    </div>
+  </app-card>
+
+  <app-card [header]="true">
+    <div class="ch-content" header>
+      <h5 class="title">Bienes</h5>
+      <!-- <div class="buttons mt-2" style="column-gap: 10px">
+        <app-columns-select
+          *ngIf="data && data.length > 0"
+          [(settings)]="settingsGoods"
+          [defaultColumns]="6"></app-columns-select>
+      </div> -->
+    </div>
+    <div body>
+      <div class="row">
+        <div class="col-12">
+          <app-update-dates-goods
+            [form]="formDate"
+            [disabled]="
+              statusActaValue !== 'ABIERTA' && data && data.length > 0
+            "
+            [data]="data"
+            inicioColumn="fec_aprobacion_x_admon"
+            finColumn="fec_indica_usuario_aprobacion"
+            (updateGoodEvent)="
+              updateDatesTable($event)
+            "></app-update-dates-goods>
+        </div>
+        <div class="col-md-6 goodTracker mt-4">
           <app-goodtracker-button
-            [disabled]="statusActaValue === 'CERRADA'"
+            [disabled]="true"
             [data]="data"
             [origin]="origin"></app-goodtracker-button>
+          <app-excel-button
+            [form]="form"
+            [loading]="loading"
+            [goodsCant]="data.length"></app-excel-button>
         </div>
-
-        <div class="col-sm-4">
+        <div class="col-md-6 massiveDelete mt-4 mb-2">
           <app-massive-delete-button
             [disabled]="
               !(
@@ -86,74 +138,81 @@
             "
             [actaId]="actaId"
             [selecteds]="selecteds"
-            (finishDelete)="getData()">
+            (finishDelete)="getData($event)">
           </app-massive-delete-button>
-        </div>
-      </div>
-    </form>
-  </div>
-</app-card>
-
-<app-card [header]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Bienes</h5>
-    <div class="buttons mt-2">
-      <!-- <app-columns-select
-        [(settings)]="settingsGoods"
-        [defaultColumns]="6"></app-columns-select> -->
-      <app-excel-button
-        [form]="form"
-        [loading]="loading"
-        [goodsCant]="data.length"></app-excel-button>
-    </div>
-  </div>
-  <div body>
-    <div class="row">
-      <div class="col-md-6">
-        <app-update-dates-goods
-          [disabled]="statusActaValue !== 'ABIERTA' && data && data.length > 0"
-          [data]="data"
-          inicioColumn="fec_aprobacion_x_admon"
-          finColumn="fec_indica_usuario_aprobacion"
-          (updateGoodEvent)="
-            data = $event; updateDatesTable()
-          "></app-update-dates-goods>
-      </div>
-    </div>
-    <div *ngIf="dataForAdd && dataForAdd.length > 0">
-      <h5>Bienes agregados</h5>
-      <div class="row pt-4 table-container">
-        <div class="col-md-12 table-responsive">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              class="col-md-12"
-              [settings]="settingsGoodsForAdd"
-              [source]="dataForAdd"
-              (userRowSelect)="
-                selectedsNews = $event.selected
-              "></ng2-smart-table>
+          <div>
+            <app-columns-select
+              *ngIf="data && data.length > 0"
+              [(settings)]="settingsGoods"
+              [defaultColumns]="6"></app-columns-select>
           </div>
         </div>
       </div>
-      <app-pagination
-        [params]="paramsForAdd"
-        [totalItems]="dataForAdd.length"></app-pagination>
+      <!-- <div class="row" *ngIf="loadingRastrerGoods" style="margin-bottom: 5rem">
+        <form-loader
+          text="Cargando Bienes de Rastreador... por favor espere"></form-loader>
+      </div> -->
+      <!-- <accordion
+        *ngIf="dataForAdd && dataForAdd.length > 0"
+        [isAnimated]="true">
+        <accordion-group
+          [isOpen]="true"
+          (isOpenChange)="toggleInformation = $event">
+          <div accordion-heading class="row mt-3">
+            <h5 class="title">
+              Bienes agregados por Rastreador
+              <i
+                class="bx bx-chevron-down bx-md float-icon-md"
+                style="float: right"
+                [ngClass]="{
+                  'rotate-down': toggleInformation,
+                  'rotate-up': !toggleInformation
+                }"></i>
+            </h5>
+          </div>
+          <div class="row pt-0 table-container">
+            <div class="col-md-12 table-responsive">
+              <div [class]="loadingRastrerGoods ? 'table-loading' : ''">
+                <ng2-smart-table
+                  class="col-md-12"
+                  [settings]="settingsGoodsForAdd"
+                  [source]="dataForAdd"
+                  (userRowSelect)="
+                    selectedsNews = $event.selected
+                  "></ng2-smart-table>
+              </div>
+            </div>
+          </div>
+          <app-pagination
+            [params]="paramsForAdd"
+            [totalItems]="dataForAdd.length"></app-pagination>
+        </accordion-group>
+      </accordion> -->
+
+      <app-table-goods
+        *ngIf="form"
+        [haveServerPagination]="false"
+        [settingsTable]="settingsGoods"
+        [loading]="loading"
+        [data]="data"
+        [totalItems]="totalItems"
+        [statusActaValue]="statusActaValue"
+        (updateGoodsRow)="updateGoodsRow($event)"
+        (updateData)="updateData($event)"
+        (rowsSelected)="rowsSelected($event)"
+        (showDeleteAlert)="showDeleteAlert($event)"></app-table-goods>
+
+      <!-- <hr class="row" /> -->
+      <div class="mt-5">
+        <app-cants
+          [id]="actaId"
+          [bienesRas]="bienesRas"
+          [expedientesRas]="expedientesRas"
+          [dictamenesRas]="dictamenesRas"
+          [typeProceeding]="typeProceeding"
+          [goodsCant]="goodsCant"
+          [updateData]="data"></app-cants>
+      </div>
     </div>
-
-    <app-table-goods
-      [settingsTable]="settingsGoods"
-      [data]="data"
-      [totalItems]="totalItems"
-      [statusActaValue]="statusActaValue"
-      (updateGoodsRow)="updateGoodsRow($event)"
-      (updateData)="this.params = $event; getData()"
-      (rowsSelected)="rowsSelected($event)"
-      (showDeleteAlert)="showDeleteAlert($event)"></app-table-goods>
-
-    <hr class="row" />
-    <app-cants
-      [id]="actaId"
-      [typeProceeding]="typeProceeding"
-      [updateData]="data"></app-cants>
-  </div>
-</app-card>
+  </app-card>
+</div>

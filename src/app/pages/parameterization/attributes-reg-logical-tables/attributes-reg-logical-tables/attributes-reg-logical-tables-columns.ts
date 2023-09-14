@@ -40,11 +40,11 @@ export const LOG_TAB_COLUMNS = {
   //   width: '1%',
   // },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     sort: false,
   },
   tableType: {
-    title: 'Tipo de tabla',
+    title: 'Tipo de Tabla',
     sort: false,
   },
 };

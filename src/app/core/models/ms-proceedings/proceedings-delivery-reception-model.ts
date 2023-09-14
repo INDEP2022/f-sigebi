@@ -1,8 +1,8 @@
 export interface IProccedingsDeliveryReception {
   id?: number;
   keysProceedings?: string;
-  elaborationDate?: string;
-  datePhysicalReception?: string;
+  elaborationDate?: number;
+  datePhysicalReception?: number;
   address?: string;
   statusProceedings?: string;
   elaborate?: string;
@@ -10,18 +10,18 @@ export interface IProccedingsDeliveryReception {
   witness1?: string;
   witness2?: string;
   typeProceedings?: string;
-  dateElaborationReceipt?: Date | string;
-  dateDeliveryGood?: Date | string;
+  dateElaborationReceipt?: number;
+  dateDeliveryGood?: number;
   responsible?: string;
   destructionMethod?: string;
   observations?: string;
   approvedXAdmon?: string;
-  approvalDateXAdmon?: Date | string;
+  approvalDateXAdmon?: number;
   approvalUserXAdmon?: string;
   numRegister?: number;
-  captureDate?: string;
-  numDelegation1?: number;
-  numDelegation2?: number;
+  captureDate?: number;
+  numDelegation1?: number | string;
+  numDelegation2?: number | string;
   identifier?: string;
   label?: string;
   universalFolio?: number;
@@ -31,12 +31,12 @@ export interface IProccedingsDeliveryReception {
   receiptKey?: string;
   comptrollerWitness?: string;
   numRequest?: number;
-  closeDate?: Date | string;
-  maxDate?: Date | string;
+  closeDate?: string;
+  maxDate?: string;
   indFulfilled?: number;
-  dateCaptureHc?: Date | string;
-  dateCloseHc?: Date | string;
-  dateMaxHc?: Date | string;
+  dateCaptureHc?: number;
+  dateCloseHc?: number;
+  dateMaxHc?: number;
   receiveBy?: string;
   affair?: string;
 }

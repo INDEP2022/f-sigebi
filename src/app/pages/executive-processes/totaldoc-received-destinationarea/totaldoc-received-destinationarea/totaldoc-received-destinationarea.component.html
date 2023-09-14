@@ -88,18 +88,18 @@
       <div class="m-3">
         <button
           type="button"
-          class="btn btn-primary active"
+          class="btn btn-primary active btn-sm"
           [disabled]="!form.valid"
           (click)="confirm()">
-          Imprimir
+          Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
         </button>
       </div>
       <div class="m-3">
         <button
           (click)="cleanForm()"
           type="button"
-          class="btn btn-danger active">
-          Limpiar
+          class="btn btn-danger active btn-sm">
+          Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
         </button>
       </div>
     </div>

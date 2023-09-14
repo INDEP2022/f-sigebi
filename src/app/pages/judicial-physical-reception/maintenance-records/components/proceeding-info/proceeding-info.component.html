@@ -1,95 +1,143 @@
-<form class="form-material" [formGroup]="form">
-  <div class="row border border-dark">
-    <div class="row header-proceeding-info">
-      <h5 class="title col-md-6">Informaci&oacute;n del Acta</h5>
-      <div class="col-md-6 buttons">
-        <div class="col-md-6">
-          <app-clean-filters-shared
-            [form]="form"
-            (cleanFiltersEvent)="
-              deleteProceedings()
-            "></app-clean-filters-shared>
-        </div>
-        <div class="col-md-6">
+<form class="form-material" [formGroup]="form" id="proceeding-info">
+  <div class="row">
+    <div class="header-proceeding-info">
+      <div class="title">
+        <h5>Informaci&oacute;n del Acta</h5>
+      </div>
+      <div class="paginator">
+        <ng-content></ng-content>
+
+        <!-- <div class="col-md-6">
           <button
-            [class]="disabled ? 'disabled' : ''"
+            [class]="disabled || form.invalid || !registro ? 'disabled' : ''"
             class="btn btn-primary btn-sm active"
             (click)="filter()">
-            <i class="fa fa-search"></i> Filtrar
+            <i class="fa fa-trash"></i> Eliminar
           </button>
-        </div>
+        </div> -->
       </div>
+    </div>
+    <div class="buttons">
+      <button
+        [class]="disabled || form.invalid || registro ? 'disabled' : ''"
+        class="btn btn-primary btn-sm active"
+        (click)="filter()">
+        Buscar
+        <i class="bx bx-search-alt bx-sm float-icon"></i>
+      </button>
+      <app-clean-filters-shared
+        [form]="form"
+        (cleanFiltersEvent)="deleteProceedings()"></app-clean-filters-shared>
     </div>
     <div class="col-md-6 mt-5">
       <div class="row mb-4">
         <div class="col-md-4">
-          <form-field [control]="form.get('id')" label="No&#46; Acta">
+          <!-- <ng-custom-select-loading
+            [form]="form"
+            [readonly]="loading"
+            formControlName="id"
+            label="No&#46; Acta"
+            value="id"
+            bindLabel="id"
+            paramSearch="filter.id"
+            prefixSearch="$eq"
+            path="proceeding/api/v1/proceedings-delivery-reception"
+            (valueChange)="update($event)">
+          </ng-custom-select-loading> -->
+
+          <form-field [control]="form.get('id')" label="No. Acta">
             <input
-              type="number"
               class="form-control"
               formControlName="id"
-              min="1"
+              maxlength="10"
               [readonly]="loading" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('numFile')" label="No Expediente">
+          <form-field [control]="form.get('numFile')" label="No. Expediente">
             <input
-              type="number"
               class="form-control"
               formControlName="numFile"
+              maxlength="10"
               [readonly]="disabled" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('statusActa')" label="Estatus Acta">
-            <select
-              class="form-control"
+            <ng-select
               formControlName="statusActa"
-              [class]="disabled ? 'disabled' : ''">
-              <option value="ABIERTA">Abierta</option>
-              <option value="CERRADA">Cerrada</option>
-              <option value="Todos">Todos</option>
-            </select>
+              class="form-control"
+              [searchable]="false"
+              [class]="disabled ? 'disabled' : ''"
+              [clearable]="false">
+              <ng-option value="TODOS">Todos</ng-option>
+              <ng-option value="ABIERTA">Abierta</ng-option>
+              <ng-option value="CERRADA">Cerrada</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>
       <div class="row mb-4">
         <div class="col-md-9">
-          <form-field [control]="form.get('cveActa')" label="Cve Acta">
+          <form-field [control]="form.get('cveActa')" label="Clave de Acta">
             <input
               type="text"
               class="form-control"
               formControlName="cveActa"
+              maxlength="60"
               [readonly]="loading" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="form.get('receiptKey')"
-            label="Clave Del Recibe">
+            label="Clave del Recibe">
             <input
               type="text"
               class="form-control"
               formControlName="receiptKey"
+              maxlength="10"
               [readonly]="disabled" />
           </form-field>
         </div>
       </div>
       <div class="row mb-4">
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <app-proceeding-types-shared
             [form]="form"
             formField="tipoActa"
             label="Tipo Acta"
             [readonly]="disabled"></app-proceeding-types-shared>
+        </div> -->
+        <div class="col-12">
+          <form-field [control]="form.get('tipoActa')" label="Tipo de Acta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tipoActa"
+              maxlength="30"
+              [readonly]="disabled" />
+          </form-field>
+          <!-- <ng-custom-select-loading
+            [form]="form"
+            formControlName="tipoActa"
+            label="Tipo de Acta"
+            value="id"
+            bindLabel="description"
+            [searchable]="false"
+            loadingText="Cargando tipos de acta..."
+            path="proceeding/api/v1/proceedings-delivery-reception/get-types">
+          </ng-custom-select-loading> -->
         </div>
-        <div class="col-md-6">
+      </div>
+      <div class="row mb-4">
+        <div class="col-12">
           <form-field [control]="form.get('labelActa')" label="Etiqueta">
             <input
               type="text"
               class="form-control"
               formControlName="labelActa"
+              maxlength="30"
               [readonly]="disabled" />
           </form-field>
         </div>
@@ -97,90 +145,126 @@
       <div class="row mb-3">
         <form-field [control]="form.get('address')" label="Direcci&oacute;n">
           <textarea
-            rows="3"
+            rows="2"
             class="form-control"
             formControlName="address"
+            maxlength="600"
             [readonly]="disabled"></textarea>
         </form-field>
       </div>
-      <div class="row" style="margin-bottom: 1.25rem">
+      <div class="row mb-1">
         <form-field [control]="form.get('observations')" label="Observaciones">
           <textarea
-            rows="3"
+            rows="2"
             class="form-control"
             formControlName="observations"
+            maxlength="600"
             [readonly]="disabled"></textarea>
         </form-field>
       </div>
-      <div class="row">
-        <app-recibe-form
-          [form]="form"
-          [disabled]="disabled"
-          label="Recibe"
-          formField="numDelegation1"
-          formFieldName="numDelegation1Description"></app-recibe-form>
-        <app-recibe-form
-          [form]="form"
-          [disabled]="disabled"
-          label="Administra"
-          formField="numDelegation2"
-          formFieldName="numDelegation2Description"></app-recibe-form>
-        <!-- <div class="col-md-6">
-          <form-field [control]="form.get('numDelegation1')" label="Recibe">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="numDelegation1"
-              [readonly]="loading" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('numDelegation2')" label="Administra">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="numDelegation2"
-              [readonly]="loading" />
-          </form-field>
-        </div> -->
-      </div>
-    </div>
-    <div class="col-md-6 mt-5">
       <div class="row mb-4">
+        <form-field
+          [control]="form.get('numDelegation1')"
+          label="Delegación Recibe">
+          <ng-select formControlName="numDelegation1" class="form-control">
+            <ng-option
+              [value]="delegation.delegationId"
+              *ngFor="let delegation of delegations">
+              {{ delegation.delegationId }} - {{ delegation.description }}
+            </ng-option>
+          </ng-select>
+        </form-field>
+
+        <!-- <ng-custom-select-loading
+          [form]="form"
+          [readonly]="loading"
+          formControlName="numDelegation1Description"
+          label="Delegación Recibe"
+          value="description"
+          bindLabel="description"
+          paramSearch="filter.description"
+          prefixSearch="$ilike"
+          path="catalog/api/v1/apps/getDelegations"
+          [updateValues]="true"
+          [labelTemplate]="delegationLabel"
+          [optionTemplate]="delegationOption"
+          (getObject)="updateDelegationRecibe($event)">
+        </ng-custom-select-loading> -->
+      </div>
+      <div class="mb-3">
+        <form-field
+          [control]="form.get('numDelegation2')"
+          label="Delegación Administra">
+          <ng-select formControlName="numDelegation2" class="form-control">
+            <ng-option
+              [value]="delegation.delegationId"
+              *ngFor="let delegation of delegations">
+              {{ delegation.delegationId }} - {{ delegation.description }}
+            </ng-option>
+          </ng-select>
+        </form-field>
+        <!-- <ng-custom-select-loading
+          [form]="form"
+          [readonly]="loading"
+          formControlName="numDelegation2Description"
+          label="Delegación Administra "
+          value="description"
+          bindLabel="description"
+          paramSearch="filter.description"
+          prefixSearch="$ilike"
+          path="catalog/api/v1/apps/getDelegations"
+          [updateValues]="true"
+          [labelTemplate]="delegationLabel"
+          [optionTemplate]="delegationOption"
+          (getObject)="updateDelegationAdministra($event)">
+        </ng-custom-select-loading> -->
+      </div>
+
+      <ng-template #delegationLabel let-item="item">
+        <div>{{ item.delegationId }} - {{ item.description }}</div>
+      </ng-template>
+      <ng-template #delegationOption let-item="item">
+        <div [title]="item.id + '-' + item.description">
+          {{ item.delegationId }} - {{ item.description }}
+        </div>
+      </ng-template>
+    </div>
+    <div class="col-md-6 secondColumn">
+      <div class="row mb-4 notInputs">
         <div class="col-md-6">
           <form-field
             [control]="form.get('elaborationDate')"
             label="Fecha Elaboraci&oacute;n">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="elaborationDate"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('closeDate')" label="Fecha Cierre">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="closeDate"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
       </div>
-      <div class="row mb-4">
+      <div class="row mb-4 notInputs">
         <div class="col-md-6">
           <form-field
             [control]="form.get('datePhysicalReception')"
             label="Fecha Recepci&oacute;n F&iacute;sica">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="datePhysicalReception"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -189,24 +273,24 @@
             label="Fecha M&aacute;xima">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="maxDate"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
       </div>
-      <div class="row mb-4">
+      <div class="row mb-4 notInputs">
         <div class="col-md-6">
           <form-field
             [control]="form.get('dateElaborationReceipt')"
             label="Fecha Elaboraci&oacute;n Recibo">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="dateElaborationReceipt"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -215,24 +299,24 @@
             label="Fecha Captura Hc">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="dateCaptureHc"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
       </div>
-      <div class="row mb-4">
+      <div class="row mb-4 notInputs">
         <div class="col-md-6">
           <form-field
             [control]="form.get('dateDeliveryGood')"
             label="Fecha Entrega de bienes">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="dateDeliveryGood"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -241,22 +325,22 @@
             label="Fecha Cierre Hc">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="dateCloseHc"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
       </div>
-      <div class="row mb-4">
+      <div class="row mb-4 notInputs">
         <div class="col-md-6">
           <form-field [control]="form.get('captureDate')" label="Fecha Captura">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="captureDate"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -265,19 +349,20 @@
             label="Fecha M&aacute;xima Hc">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="dateMaxHc"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
       </div>
-      <div class="row mb-4">
+      <div class="row mb-4 mt-3">
         <form-field [control]="form.get('witness1')" label="Testigo 1">
           <input
             type="text"
             class="form-control"
             formControlName="witness1"
+            maxlength="100"
             [readonly]="disabled" />
         </form-field>
       </div>
@@ -287,17 +372,19 @@
             type="text"
             class="form-control"
             formControlName="witness2"
+            maxlength="100"
             [readonly]="disabled" />
         </form-field>
       </div>
       <div class="row">
         <form-field
           [control]="form.get('comptrollerWitness')"
-          label="Testigo Contraloria">
+          label="Testigo Contraloría">
           <input
             type="text"
             class="form-control"
             formControlName="comptrollerWitness"
+            maxlength="100"
             [readonly]="disabled" />
         </form-field>
       </div>

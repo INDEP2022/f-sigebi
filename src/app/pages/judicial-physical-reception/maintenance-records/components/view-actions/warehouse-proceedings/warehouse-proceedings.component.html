@@ -1,26 +1,30 @@
 <form class="form-material" [formGroup]="form" id="warehouseProceedings">
   <div class="row mb-4">
-    <div class="col-md-6 asignButton">
-      <form-check label="Asignar almacén o boveda(masiv)" for="label">
+    <div class="asignButton">
+      <form-check
+        label="Asignar almacén o bóveda (masivo)"
+        for="label"
+        [class]="disabled ? 'disabled' : ''">
         <input id="label" type="checkbox" formControlName="massive" />
       </form-check>
       <button
-        [class]="disabledForm ? 'disabled' : ''"
+        [class]="disabled || disabledForm ? 'disabled' : ''"
         class="btn btn-sm btn-primary"
         (click)="update()">
-        Ok
+        Guardar
+        <i aria-hidden="true" class="fa fa-save"></i>
       </button>
     </div>
-    <p class="col-md-6 advice">Solo actualiza actas cerradas</p>
+    <!-- <p class="col-md-6 advice">Solo actualiza actas cerradas</p> -->
   </div>
   <div class="row mb-4">
     <app-warehouse-table-shared
       [form]="form"
-      [disabled]="statusActa === 'ABIERTA'"></app-warehouse-table-shared>
+      [disabled]="disabled"></app-warehouse-table-shared>
   </div>
   <div class="row">
     <app-safe-table-shared
       [form]="form"
-      [disabled]="statusActa === 'ABIERTA'"></app-safe-table-shared>
+      [disabled]="disabled"></app-safe-table-shared>
   </div>
 </form>

@@ -72,7 +72,7 @@
                   type="number"
                   class="form-control"
                   formControlName="quantity"
-                  min="0"
+                  min="1"
                   oninput="if(this.value.length > 13) this.value = this.value.slice(0, 13);"
                   [readOnly]="isGoodInfReadOnly" />
               </form-field>
@@ -121,7 +121,7 @@
             <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('volume')"
-                label="Volumen (m3)">
+                label="Volumen &#40;m&#179;&#41;">
                 <input
                   type="text"
                   class="form-control"
@@ -205,9 +205,10 @@
                 [data]="selectTansferUnitMeasure"
                 label="Unid&#46; Medida Transferente"
                 [searchable]="true"
-                bindLabel="measureTlUnit"
-                value="uomCode"
-                [readonly]="isGoodInfReadOnly"></ngx-select>
+                bindLabel="idUnitDestine"
+                value="nbCode"
+                [readonly]="isGoodInfReadOnly"
+                (change)="unitChange($event)"></ngx-select>
             </div>
           </div>
           <div class="row pt-4">
@@ -233,7 +234,8 @@
                 [searchable]="false"
                 bindLabel="description"
                 value="keyId"
-                [readonly]="isGoodInfReadOnly"></ngx-select>
+                [readonly]="isGoodInfReadOnly"
+                (change)="destinySae($event)"></ngx-select>
             </div>
           </div>
           <div class="row pt-4">
@@ -250,20 +252,20 @@
               </form-field>
             </div>
             <div class="col-md-5">
-              <form-check label="Aval&uacute;o" for="appraisal">
+              <form-field
+                [control]="detailAssets?.get('uniqueKey')"
+                label="Clave Única">
                 <input
-                  id="appraisal"
-                  type="checkbox"
-                  [ngModelOptions]="{ standalone: true }"
-                  [(ngModel)]="appraisal"
-                  (change)="handleAppraisalEvent($event)"
-                  [disabled]="disableDuplicity" />
-              </form-check>
+                  type="text"
+                  class="form-control"
+                  formControlName="uniqueKey"
+                  [readOnly]="true" />
+              </form-field>
             </div>
           </div>
           <div class="row pt-4">
             <div
-              class="col-md-3"
+              class="col-md-5"
               *ngIf="otherAssets === true || manejeAssets === true">
               <form-check label="Cumple Norma" for="compliesNorm">
                 <input
@@ -273,6 +275,17 @@
                   [(ngModel)]="complyNorm"
                   (change)="handleCumpliesNormEvent($event)"
                   [disabled]="isGoodInfReadOnly" />
+              </form-check>
+            </div>
+            <div class="col-md-5">
+              <form-check label="Aval&uacute;o" for="appraisal">
+                <input
+                  id="appraisal"
+                  type="checkbox"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="appraisal"
+                  (change)="handleAppraisalEvent($event)"
+                  [disabled]="disableDuplicity" />
               </form-check>
             </div>
           </div>
@@ -313,7 +326,7 @@
               class="btn btn-primary btn-sm active"
               style="margin-right: 2px"
               (click)="openSelectAddressModal()">
-              <i class="bx bx-home"></i> Seleccionar Domicilio
+              Seleccionar Domicilio <i class="bx bx-home"></i>
             </button>
             <button
               class="btn btn-secondary btn-sm active"
@@ -477,7 +490,7 @@
           <div class="col-md-4">
             <form-field
               [control]="domicileForm.get('exteriorNumber')"
-              label="Num&#46; Ext&#46;">
+              label="No. Ext&#46;">
               <input
                 type="text"
                 maxlength="10"
@@ -489,7 +502,7 @@
           <div class="col-md-4">
             <form-field
               [control]="domicileForm.get('interiorNumber')"
-              label="Num&#46; Int&#46;">
+              label="No. Int&#46;">
               <input
                 type="text"
                 maxlength="10"
@@ -551,10 +564,14 @@
       <i class="bx bxs-car"></i> Informaci&oacute;n de Veh&iacute;culo
     </ng-template>
     <ng-template tabHeading *ngIf="process == 'classify-assets'">
-      <i class="bx bxs-car"></i> Ficha t&eacute;cnica vehiculos
+      <i class="bx bxs-car"></i> Ficha T&eacute;cnica Vehículos
     </ng-template>
     <form [formGroup]="detailAssets" class="form-material">
-      <div *ngIf="process == 'registration-request'" class="vehicleDateSheet">
+      <div
+        *ngIf="
+          process == 'registration-request' || process == 'classify-assets'
+        "
+        class="vehicleDateSheet">
         <p class="msg-required">Los campos con <span>*</span> son requeridos</p>
         <div class="row pt-5">
           <div class="col-md-4">
@@ -600,7 +617,8 @@
               label="Sub Marca"
               value="flexValueDependent"
               bindLabel="flexValueMeaningDependent"
-              [readonly]="isGoodTypeReadOnly"></ngx-select>
+              [readonly]="isGoodTypeReadOnly"
+              (change)="onSubBranchChange($event)"></ngx-select>
             <!-- <ngx-select *ngIf="process == 'classify-assets'" [form]="detailAssets" control="subBrand"
               (fetchItems)="getSubBrand($event)" [data]="selectSubBrand" label="Sub Marca" value="flexValueDependent"
               [readonly]="isDisabled" bindLabel="flexValueMeaningDependent"></ngx-select> -->
@@ -686,7 +704,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('doorsNumber')"
-              label="Num&#46; Puertas">
+              label="No. Puertas">
               <input
                 type="number"
                 class="form-control"
@@ -721,7 +739,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('axesNumber')"
-              label="Num&#46; Ejes">
+              label="No. Ejes">
               <input
                 type="number"
                 class="form-control"
@@ -757,7 +775,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor">
+              label="No. Motor">
               <input
                 type="text"
                 class="form-control"
@@ -789,7 +807,7 @@
       </div>
     </form>
     <app-read-info-vehicle
-      *ngIf="process != 'registration-request'"
+      *ngIf="process != 'registration-request' && process != 'classify-assets'"
       [vehicleObject]="detailAssetsInfo"></app-read-info-vehicle>
   </tab>
 
@@ -829,7 +847,7 @@
                 type="checkbox"
                 [ngModelOptions]="{ standalone: true }"
                 [(ngModel)]="armor"
-                [disabled]="true"
+                [disabled]="false"
                 (change)="handleArmor($event)" />
             </form-check>
           </div>
@@ -852,7 +870,7 @@
                 type="text"
                 class="form-control"
                 formControlName="operationalState"
-                [readOnly]="true" />
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
           </div>
         </div>
@@ -860,7 +878,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor"
+              label="No. Motor"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
@@ -871,12 +889,12 @@
             </form-field>
             <form-field
               [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor"
+              label="No. Motor"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="40"
                 formControlName="engineNumber" />
             </form-field>
@@ -884,7 +902,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('enginesNumber')"
-              label="Num&#46; Motores"
+              label="No. Motores"
               *ngIf="process != 'classify-assets'">
               <input
                 type="number"
@@ -895,12 +913,12 @@
             </form-field>
             <form-field
               [control]="detailAssets.get('enginesNumber')"
-              label="Num&#46; Motores"
+              label="No. Motores"
               *ngIf="process == 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="enginesNumber" />
             </form-field>
           </div>
@@ -927,7 +945,7 @@
                 type="string"
                 class="form-control"
                 maxlength="40"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="tuition" />
             </form-field>
           </div>
@@ -950,7 +968,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="5"
                 formControlName="flag" />
             </form-field>
@@ -977,7 +995,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="cabin" />
             </form-field>
           </div>
@@ -1000,7 +1018,7 @@
               <input
                 type="string"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="40"
                 formControlName="openwork" />
             </form-field>
@@ -1011,7 +1029,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('volume')"
-              label="Volumen&#40;m3&#41;"
+              label="Volumen &#40;m&#179;&#41;"
               *ngIf="process != 'classify-assets'">
               <input
                 type="number"
@@ -1022,12 +1040,12 @@
             </form-field>
             <form-field
               [control]="detailAssets.get('volume')"
-              label="Volumen&#40;m3&#41;"
+              label="Volumen &#40;m&#179;&#41;"
               *ngIf="process == 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="volume" />
             </form-field>
           </div>
@@ -1051,7 +1069,7 @@
                 type="string"
                 class="form-control"
                 maxlenght="40"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="length" />
             </form-field>
           </div>
@@ -1077,7 +1095,7 @@
               <input
                 type="string"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="40"
                 formControlName="origin" />
             </form-field>
@@ -1101,7 +1119,7 @@
               <input
                 type="string"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="40"
                 formControlName="sleeve" />
             </form-field>
@@ -1128,7 +1146,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="40"
                 formControlName="useType" />
             </form-field>
@@ -1152,7 +1170,7 @@
               <input
                 type="string"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="70"
                 formControlName="shipName" />
             </form-field>
@@ -1179,7 +1197,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="manufacturingYear" />
             </form-field>
           </div>
@@ -1203,7 +1221,7 @@
                 type="text"
                 class="form-control"
                 maxlength="40"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="publicRegistry" />
             </form-field>
           </div>
@@ -1230,7 +1248,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="capacity"
                 oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
@@ -1254,7 +1272,7 @@
               <input
                 type="string"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="40"
                 formControlName="ships" />
             </form-field>
@@ -1296,7 +1314,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="caratage" />
             </form-field>
           </div>
@@ -1318,14 +1336,14 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="material" />
             </form-field>
           </div>
           <div class="col-md-3">
             <form-field
               [control]="detailAssets.get('weight')"
-              label="Peso&#40;Kgs&#41;"
+              label="Peso &#40;Kgs&#41;"
               *ngIf="process != 'classify-assets'">
               <input
                 type="number"
@@ -1336,12 +1354,12 @@
             </form-field>
             <form-field
               [control]="detailAssets.get('weight')"
-              label="Peso&#40;Kgs&#41;"
+              label="Peso &#40;Kgs&#41;"
               *ngIf="process == 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="weight" />
             </form-field>
           </div>
@@ -1356,7 +1374,7 @@
       <i class="bx bx-flag"></i> Informaci&oacute;n de Aeronave
     </ng-template>
     <ng-template tabHeading *ngIf="process == 'classify-assets'">
-      <i class="bx bx-flag"></i> Ficha t&eacute;cnica aeronaves
+      <i class="bx bx-flag"></i> Ficha t&eacute;cnica Aeronaves
     </ng-template>
     <form [formGroup]="detailAssets" class="form-material">
       <div class="aircraftInformation">
@@ -1386,7 +1404,7 @@
                 type="checkbox"
                 [ngModelOptions]="{ standalone: true }"
                 [(ngModel)]="armor"
-                [disabled]="true"
+                [disabled]="isGoodTypeReadOnly"
                 (change)="handleArmor($event)" />
             </form-check>
           </div>
@@ -1409,7 +1427,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="manufacturingYear" />
             </form-field>
           </div>
@@ -1435,7 +1453,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="model" />
             </form-field>
           </div>
@@ -1457,7 +1475,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="operationalState" />
             </form-field>
           </div>
@@ -1467,7 +1485,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor"
+              label="No. Motor"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
@@ -1478,20 +1496,20 @@
             </form-field>
             <form-field
               [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor"
+              label="No. Motor"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
                 maxlength="40"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="engineNumber" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('enginesNumber')"
-              label="Num&#46; Motores"
+              label="No. Motores"
               *ngIf="process != 'classify-assets'">
               <input
                 type="number"
@@ -1502,12 +1520,12 @@
             </form-field>
             <form-field
               [control]="detailAssets.get('enginesNumber')"
-              label="Num&#46; Motores"
+              label="No. Motores"
               *ngIf="process == 'classify-assets'">
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="enginesNumber" />
             </form-field>
           </div>
@@ -1534,7 +1552,7 @@
                 type="text"
                 class="form-control"
                 maxlength="40"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="tuition" />
             </form-field>
           </div>
@@ -1556,7 +1574,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="dgacRegistry" />
             </form-field>
           </div>
@@ -1581,7 +1599,7 @@
                 type="text"
                 class="form-control"
                 formControlName="serie"
-                [readOnly]="true" />
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
           </div>
           <div class="col-md-4">
@@ -1602,7 +1620,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="airplaneType" />
             </form-field>
           </div>
@@ -1629,7 +1647,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="40"
                 formControlName="origin" />
             </form-field>
@@ -1655,7 +1673,7 @@
                 class="form-control"
                 formControlName="flag"
                 maxlength="5"
-                [readOnly]="true" />
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
           </div>
         </div>
@@ -1679,7 +1697,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="40"
                 formControlName="useType" />
             </form-field>
@@ -1721,7 +1739,7 @@
               <textarea
                 class="form-control"
                 formControlName="description"
-                [readOnly]="true"></textarea>
+                [readOnly]="isGoodTypeReadOnly"></textarea>
             </form-field>
           </div>
           <div class="col-md-5">
@@ -1742,7 +1760,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="guardCustody" />
             </form-field>
           </div>
@@ -1767,7 +1785,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="status" />
             </form-field>
           </div>
@@ -1789,7 +1807,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="vigilanceRequired" />
             </form-field>
           </div>
@@ -1814,7 +1832,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="propertyType" />
             </form-field>
           </div>
@@ -1836,7 +1854,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="vigilanceLevel" />
             </form-field>
           </div>
@@ -1862,7 +1880,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="surfaceMts" />
             </form-field>
           </div>
@@ -1884,7 +1902,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="mtsOfiWarehouse" />
             </form-field>
           </div>
@@ -1910,7 +1928,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="consSurfaceMts" />
             </form-field>
           </div>
@@ -1932,7 +1950,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="bedrooms" />
             </form-field>
           </div>
@@ -1942,7 +1960,7 @@
           <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('publicDeed')"
-              label="Escritura p&uacute;blica"
+              label="Escritura P&uacute;blica"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
@@ -1952,12 +1970,12 @@
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('publicDeed')"
-              label="Escritura p&uacute;blica"
+              label="Escritura P&uacute;blica"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="publicDeed" />
             </form-field>
           </div>
@@ -1979,7 +1997,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="bathroom" />
             </form-field>
           </div>
@@ -1989,7 +2007,7 @@
           <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('pubRegProperty')"
-              label="Registro Público de Propiedad"
+              label="Registro P&uacute;blico de Propiedad"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
@@ -1999,12 +2017,12 @@
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('pubRegProperty')"
-              label="Registro Público de Propiedad"
+              label="Registro P&uacute;blico de Propiedad"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="pubRegProperty" />
             </form-field>
           </div>
@@ -2026,7 +2044,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="kitchen" />
             </form-field>
           </div>
@@ -2052,7 +2070,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="appraisalValue" />
             </form-field>
           </div>
@@ -2074,7 +2092,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="livingRoom" />
             </form-field>
           </div>
@@ -2097,14 +2115,14 @@
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('appraisalDate')"
-              label="Fecha de Avaluo"
+              label="Fecha de Aval&uacute;o"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
                 [bsValue]="bsEvaluoDate"
                 #dp="bsDatepicker"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 bsDatepicker
                 (bsValueChange)="changeDateEvaluoEvent($event)" />
             </form-field>
@@ -2127,7 +2145,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="diningRoom" />
             </form-field>
           </div>
@@ -2152,7 +2170,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="certLibLien" />
             </form-field>
           </div>
@@ -2174,7 +2192,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="study" />
             </form-field>
           </div>
@@ -2199,7 +2217,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="espPark" />
             </form-field>
           </div>
@@ -2225,7 +2243,7 @@
                 type="text"
                 class="form-control"
                 [bsValue]="bsPffDate"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 #dp="bsDatepicker"
                 bsDatepicker
                 (bsValueChange)="changeCertiviffDateEvent($event)" />
@@ -2257,7 +2275,7 @@
                 class="form-control"
                 [bsValue]="bsCertifiDate"
                 #dp="bsDatepicker"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 bsDatepicker
                 (bsValueChange)="changeCertiviDateEvent($event)" />
             </form-field>
@@ -2280,7 +2298,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="attachment" />
             </form-field>
           </div>
@@ -2305,7 +2323,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="gravFavorThird" />
             </form-field>
           </div>
@@ -2327,7 +2345,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="coOwnership" />
             </form-field>
           </div>
@@ -2352,7 +2370,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="lien" />
             </form-field>
           </div>
@@ -2374,7 +2392,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="gravPleaseTrans" />
             </form-field>
           </div>
@@ -2399,7 +2417,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="embFavorThird" />
             </form-field>
           </div>
@@ -2421,7 +2439,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="decreeExproProc" />
             </form-field>
           </div>
@@ -2430,7 +2448,7 @@
           <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('ownershipPercentage')"
-              label="% de Copropietario"
+              label="&#37; de Copropietario"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
@@ -2438,14 +2456,15 @@
                 formControlName="ownershipPercentage"
                 [readOnly]="isGoodTypeReadOnly" />
             </form-field>
+            <!-- % = &#37; -->
             <form-field
               [control]="goodDomicilieForm.get('ownershipPercentage')"
-              label="% de Copropietario"
+              label="&#37; de Copropietario"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="ownershipPercentage" />
             </form-field>
           </div>
@@ -2467,7 +2486,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="declareRemediation" />
             </form-field>
           </div>
@@ -2491,7 +2510,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="decreeExproSupe" />
             </form-field>
           </div>
@@ -2513,7 +2532,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="assurance" />
             </form-field>
           </div>
@@ -2537,7 +2556,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="heritage" />
             </form-field>
           </div>
@@ -2559,7 +2578,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="propTitleFolio" />
             </form-field>
           </div>
@@ -2584,7 +2603,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="echoForecast" />
             </form-field>
           </div>
@@ -2592,7 +2611,7 @@
           <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('echoForecastPercentage')"
-              label="% Previsi&oacute;n Ecol&oacute;gica"
+              label="&#37; Previsi&oacute;n Ecol&oacute;gica"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
@@ -2602,12 +2621,12 @@
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('echoForecastPercentage')"
-              label="% Previsi&oacute;n Ecol&oacute;gica"
+              label="&#37; Previsi&oacute;n Ecol&oacute;gica"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="echoForecastPercentage" />
             </form-field>
           </div>
@@ -2640,12 +2659,12 @@
                 rows="2"
                 formControlName="measuresAdjacent"
                 class="form-control"
-                readonly>
+                [readOnly]="isGoodTypeReadOnly">
               </textarea>
               <!-- <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="false"
                 formControlName="measuresAdjacent" /> -->
             </form-field>
           </div>
@@ -2667,7 +2686,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="vouchersWater" />
             </form-field>
           </div>
@@ -2691,7 +2710,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="debts" />
             </form-field>
           </div>
@@ -2713,7 +2732,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="physicalPossession" />
             </form-field>
           </div>
@@ -2737,7 +2756,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="closed" />
             </form-field>
           </div>
@@ -2759,7 +2778,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="familyHeritage" />
             </form-field>
           </div>
@@ -2783,7 +2802,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="problemDesc" />
             </form-field>
           </div>
@@ -2805,7 +2824,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="forProblems" />
             </form-field>
           </div>
@@ -2829,7 +2848,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="true"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="photosAttached" />
             </form-field>
           </div>

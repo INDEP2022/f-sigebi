@@ -3,50 +3,36 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
+    <form-loader *ngIf="loading"></form-loader>
     <form [formGroup]="clarificationForm" class="form-material">
       <div class="">
         <div class="row pt-5">
           <div class="col-md-12">
-            <!-- <form-field
+            <form-field
               [control]="clarificationForm.get('clarificationType')"
-              label="Tipo Aclaraci&oacute;n">
-              <select class="form-control" formControlName="clarificationType">
-                <option
-                  *ngFor="let item of clarificationTypes"
-                  [value]="item.value">
-                  {{ item.description }}
-                </option>
-              </select>
-            </form-field> -->
-            <div
-              [formGroup]="clarificationForm"
-              class="form-group form-secondary form-static-label">
+              label="Tipo Aclaración">
               <ng-select
-                class="form-control"
                 formControlName="clarificationType"
-                [clearable]="false"
-                [items]="clarificationTypes"
-                [virtualScroll]="true"
-                [loading]="loading"
-                bindLabel="description"
-                bindValue="value">
-                <ng-template ng-option-tmp let-item="item" let-index="index">
-                  <div [title]="item.description">
-                    {{ item.description }}
-                  </div>
-                </ng-template>
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="SOLICITAR_IMPROCEDENCIA"
+                  >Improcedente</ng-option
+                >
+                <ng-option value="SOLICITAR_ACLARACION">Aclaración</ng-option>
               </ng-select>
-              <span class="form-bar"></span>
-              <label class="float-label"
-                >Tipo Aclaraci&oacute;n
-                <span style="color: rgb(157, 36, 73)">*</span></label
-              >
-            </div>
+            </form-field>
           </div>
         </div>
-        <div class="row pt-4">
+        <div
+          class="row pt-4"
+          *ngIf="
+            this.clarificationForm.controls['clarificationType'].value ==
+            'SOLICITAR_ACLARACION'
+          ">
           <div class="col-md-12">
             <ngx-select
+              [searchOnInit]="true"
               [form]="clarificationForm"
               control="clarificationId"
               (fetchItems)="getClarification($event)"
@@ -82,7 +68,7 @@
           class="btn btn-primary btn-sm active"
           (click)="confirm()"
           [disabled]="clarificationForm.invalid || statusTask == 'FINALIZADA'">
-          <i class="bx bx-save"></i> Guardar
+          Guardar <i class="bx bx-save"></i>
         </button>
       </div>
       <div class="m-3">

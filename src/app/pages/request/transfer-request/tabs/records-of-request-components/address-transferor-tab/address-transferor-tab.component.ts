@@ -24,8 +24,8 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { StoreAliasStockService } from 'src/app/core/services/ms-store/store-alias-stock.service';
 import {
+  LATITUDE_LONGITUDE_PATTERN,
   NUMBERS_PATTERN,
-  NUMBERS_POINT_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -73,6 +73,7 @@ export class AddressTransferorTabComponent
   stateKey: string = '';
   isAddress: boolean = false;
   haveData: boolean = false;
+  isCopyData: boolean = false;
 
   stateOfRepublicService = inject(StateOfRepublicService);
   municipalySeraService = inject(MunicipalityService);
@@ -101,6 +102,7 @@ export class AddressTransferorTabComponent
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: address-transferor');
     this.initForm();
     if (this.isNewAddress != true) {
       this.container.createEmbeddedView(this.template);
@@ -119,10 +121,10 @@ export class AddressTransferorTabComponent
       );
     }
 
-    this.domicileForm.get('municipalityKey').valueChanges.subscribe(res => {
+    /*this.domicileForm.get('municipalityKey').valueChanges.subscribe(res => {
       if (res === null) {
       }
-    });
+    });*/
   }
 
   initForm() {
@@ -149,11 +151,17 @@ export class AddressTransferorTabComponent
       ],
       latitude: [
         null,
-        [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.maxLength(30)],
+        [
+          Validators.pattern(LATITUDE_LONGITUDE_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
       length: [
         null,
-        [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.maxLength(30)],
+        [
+          Validators.pattern(LATITUDE_LONGITUDE_PATTERN),
+          Validators.maxLength(30),
+        ],
       ], //por cambiar
       wayName: [
         null,
@@ -227,6 +235,7 @@ export class AddressTransferorTabComponent
       }
     } else {
       if (this.isNewAddress === true) {
+        params['sortBy'] = `descCondition:ASC`;
         this.stateOfRepublicService.getAll(params).subscribe({
           next: data => {
             this.selectState = new DefaultSelect(data.data, data.count);
@@ -500,11 +509,7 @@ export class AddressTransferorTabComponent
       (data: any) => {
         if (data.id != null) {
           this.domicileForm.controls['id'].setValue(data.id);
-          this.message(
-            'success',
-            'Guadado',
-            'El domicilio se guardó correctamente'
-          );
+          this.message('success', 'El Domicilio se ha Guardado', '');
 
           if (this.isNewAddress === true) {
             this.modelRef.content.callback(true);
@@ -514,13 +519,13 @@ export class AddressTransferorTabComponent
           this.message(
             'error',
             'Error al guardar',
-            'no se puedo guardar el domicilio'
+            'No se puede guardar el domicilio'
           );
           return;
         }
       },
       error => {
-        this.onLoadToast('error', 'Alias Almacen', `${error.error.message}`);
+        //this.onLoadToast('error', 'Alias Almacén', `${error.error.message}`);
         this.message('error', 'Error', error.getMessage());
       }
     );
@@ -532,7 +537,7 @@ export class AddressTransferorTabComponent
         if (data.id != null) {
           this.message(
             'success',
-            'Guadado',
+            'Guardado',
             'El domicilio se actualizó correctamente'
           );
 
@@ -543,8 +548,8 @@ export class AddressTransferorTabComponent
         } else {
           this.message(
             'error',
-            'Error al actualizár',
-            'no se puedo actualizár el domicilio'
+            'Error al actualizar',
+            'No se puede actualizar el domicilio'
           );
           return;
         }
@@ -565,7 +570,7 @@ export class AddressTransferorTabComponent
         error: error => {
           resolve(false);
           console.log(error);
-          this.onLoadToast('error', 'Alias Almacen', `${error.error.message}`);
+          //this.onLoadToast('error', 'Alias Almacén', `${error.error.message}`);
         },
       });
     });
@@ -575,39 +580,50 @@ export class AddressTransferorTabComponent
     this.getCountMunicipaly(new ListParams());
     this.domicileForm.controls['statusKey'].valueChanges.subscribe(
       (data: any) => {
-        this.keyStateOfRepublic = Number(data);
-        this.selectMunicipe = new DefaultSelect([]);
-        this.domicileForm.get('municipalityKey').setValue(null);
-        this.getMunicipaly(new ListParams(), data);
+        if ((this.isCopyData = false)) {
+          this.keyStateOfRepublic = Number(data);
+          this.selectMunicipe = new DefaultSelect([]);
+          this.domicileForm.get('municipalityKey').setValue(null);
+          this.getMunicipaly(new ListParams(), data);
+        } else {
+          this.keyStateOfRepublic = Number(data);
+          this.getMunicipaly(new ListParams(), data);
+        }
       }
     );
 
     this.domicileForm.controls['municipalityKey'].valueChanges.subscribe(
       (data: any) => {
-        // debugger;
-        // console.log(data);
-        if (data === null) {
-          this.combineMunicipalityId = true;
+        if ((this.isCopyData = false)) {
+          if (data === null) {
+            this.combineMunicipalityId = true;
+          }
+          this.municipalityId = data;
+          this.selectLocality = new DefaultSelect([]);
+          this.domicileForm.get('localityKey').setValue(null);
+          this.getLocality(new ListParams(), data);
+        } else {
+          this.municipalityId = data;
+          this.getLocality(new ListParams(), data);
         }
-        this.municipalityId = data;
-        this.selectLocality = new DefaultSelect([]);
-        this.domicileForm.get('localityKey').setValue(null);
-        // if (this.isAddress === false) {
-        this.getLocality(new ListParams(), data);
-        // }
       }
     );
     this.domicileForm.controls['localityKey'].valueChanges.subscribe(
       (data: any) => {
-        if (data === null) {
-          this.combineLocalityId = true;
-          this.domicileForm.get('code').setValue(null);
+        if (this.isCopyData == true) {
+          if (data === null) {
+            this.combineLocalityId = true;
+            this.domicileForm.get('code').setValue(null);
+          }
+          this.localityId = data;
+          /* this.selectCP = new DefaultSelect([]); */
+          /* this.domicileForm.get('code').setValue(null); */
+          // console.log(this.localityId);
+          this.getCP(new ListParams());
+        } else {
+          this.localityId = data;
+          this.getCP(new ListParams());
         }
-        this.localityId = data;
-        /* this.selectCP = new DefaultSelect([]); */
-        /* this.domicileForm.get('code').setValue(null); */
-        // console.log(this.localityId);
-        this.getCP(new ListParams());
       }
     );
     this.domicileForm.controls['code'].valueChanges.subscribe((data: any) => {
@@ -638,11 +654,65 @@ export class AddressTransferorTabComponent
   }
 
   setInformation(data: IGoodAddress) {
-    this.domicileForm.get('warehouseAlias').setValue(data?.warehouseAliasName);
-    this.domicileForm.get('statusKey').setValue(data?.statusKey);
-    this.domicileForm.get('municipalityKey').setValue(data?.municipalityKey);
-    this.domicileForm.get('localityKey').setValue(Number(data?.localityKey));
-    this.domicileForm.get('code').setValue(data?.code);
+    this.isCopyData = true;
+    new Promise(async (resolve, reject) => {
+      this.domicileForm
+        .get('warehouseAlias')
+        .setValue(data?.warehouseAliasName);
+      this.domicileForm.get('statusKey').setValue(data?.statusKey);
+      const idxState = this.selectState.data.filter(
+        x => x.statusKey == data.statusKey
+      );
+      if (idxState.length == 0) {
+        const value = await this.getStateById(data.statusKey);
+        const count = this.selectState.count;
+        let list = this.selectState.data;
+        list = [value, ...list];
+        this.selectState = new DefaultSelect(null);
+        this.selectState = new DefaultSelect(list, count);
+      }
+      setTimeout(() => {
+        resolve(true);
+      }, 200);
+    }).then(resp => {
+      new Promise(async (resolve, reject) => {
+        this.domicileForm
+          .get('municipalityKey')
+          .setValue(data?.municipalityKey);
+        const idxMunicipe = this.selectMunicipe.data.filter(
+          x => x.municipalityKey == data.municipalityKey
+        );
+        if (idxMunicipe.length == 0) {
+          const value = await this.getMunicipalityById(data.municipalityKey);
+          const count = this.selectMunicipe.count;
+          let list = this.selectMunicipe.data;
+          list = [value, ...list];
+          this.selectMunicipe = new DefaultSelect(null);
+          this.selectMunicipe = new DefaultSelect(list, count);
+        }
+        setTimeout(() => {
+          resolve(true);
+        }, 200);
+      }).then(async resp => {
+        this.domicileForm
+          .get('localityKey')
+          .setValue(Number(data?.localityKey));
+        this.domicileForm.get('code').setValue(data?.code);
+        const idxLocality = this.selectLocality.data.filter(
+          x => x.townshipKey == data.localityKey
+        );
+        const idxCode = this.selectCP.data.filter(x => x.code == data.code);
+        if (idxLocality.length == 0) {
+          const value = await this.getLocalityById(data.localityKey);
+          const count = this.selectLocality.count;
+          let list = this.selectLocality.data;
+          list = [value, ...list];
+          this.selectLocality = new DefaultSelect(null);
+          this.selectLocality = new DefaultSelect(list, count);
+        }
+      });
+    });
+
     this.domicileForm.get('latitude').setValue(data?.latitude);
     this.domicileForm.get('length').setValue(data?.latitude);
     this.domicileForm.get('wayName').setValue(data?.wayName);
@@ -667,5 +737,42 @@ export class AddressTransferorTabComponent
 
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
+  }
+
+  getMunicipalityById(id: any) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.stateKey'] = `$eq:${this.keyStateOfRepublic}`;
+      params['filter.municipalityKey'] = `$eq:${id}`;
+      this.goodsinvService.getAllMunipalitiesByFilter(params).subscribe({
+        next: resp => {
+          resolve(resp.data[0]);
+        },
+      });
+    });
+  }
+
+  getLocalityById(id: any) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.municipalityKey'] = `$eq:${Number(this.municipalityId)}`;
+      params['filter.stateKey'] = `$eq:${Number(this.keyStateOfRepublic)}`;
+      params['filter.townshipKey'] = `$eq:${id}`;
+      this.goodsinvService.getAllTownshipByFilter(params).subscribe({
+        next: resp => {
+          resolve(resp.data[0]);
+        },
+      });
+    });
+  }
+
+  getStateById(id: any) {
+    return new Promise((resolve, reject) => {
+      this.stateOfRepublicService.getById(id).subscribe({
+        next: data => {
+          resolve(data);
+        },
+      });
+    });
   }
 }

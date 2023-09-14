@@ -5,7 +5,10 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IAppraisers } from '../../models/catalogs/appraisers.model';
+import {
+  IAppraisers,
+  IAppraisersXGood,
+} from '../../models/catalogs/appraisers.model';
 import { IViewComerAvaluo } from '../../models/ms-appraise/appraise-model';
 
 @Injectable({
@@ -33,7 +36,24 @@ export class AppraiseService extends HttpService {
     );
   }
 
+  getAllAvaluoXGood(
+    params?: ListParams | string
+  ): Observable<IListResponse<IAppraisersXGood>> {
+    return this.get<IListResponse<IAppraisersXGood>>(
+      'appraisal-x-good',
+      params
+    );
+  }
+
   getPerito(params?: string): Observable<IListResponse<any>> {
     return this.get<IListResponse<any>>('proficient?limit=5&page=1', params);
+  }
+
+  postGetAppraise(body: any) {
+    return this.post(AppraiseEndpoints.PostAppraise, body);
+  }
+
+  getDelegation(coordination: number) {
+    return this.get(`${AppraiseEndpoints.Delegation}/${coordination}`);
   }
 }

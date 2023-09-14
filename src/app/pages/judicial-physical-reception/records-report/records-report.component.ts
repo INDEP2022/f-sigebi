@@ -26,13 +26,14 @@ enum REPORT_TYPE {
 @Component({
   selector: 'app-records-report',
   templateUrl: './records-report.component.html',
-  styles: [],
+  styleUrls: ['records-report.component.css'],
 })
 export class RecordsReportComponent extends BasePage implements OnInit {
   REPORT_TYPES = REPORT_TYPE;
   type: FormControl = new FormControl(REPORT_TYPE.Reception);
   form: FormGroup = this.fb.group({});
   itemsSelect = new DefaultSelect();
+  estatusData = new DefaultSelect(['Abierta', 'Cerrada', 'Todos']);
   initialProceeding = new DefaultSelect();
   finalProceeding = new DefaultSelect();
   delegacionRecibe: string = 'delegacionRecibe';
@@ -44,6 +45,9 @@ export class RecordsReportComponent extends BasePage implements OnInit {
   initialProceedingBool: boolean = false;
   finalProceedingBool: boolean = false;
   loadingText = 'Cargando ...';
+  keyProceedingInitial = '';
+  keyProceedingFinal = '';
+  title = 'Entrega Recepción';
 
   get initialRecord() {
     return this.form.get('actaInicial');
@@ -89,6 +93,15 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       this.activeProceedings();
     });
 
+    this.form.get('actaInicial').valueChanges.subscribe(res => {
+      console.log(res);
+      this.keyProceedingInitial = res.proceedingskey;
+    });
+
+    this.form.get('actaFinal').valueChanges.subscribe(res => {
+      this.keyProceedingFinal = res.proceedingskey;
+    });
+
     this.form.get('subdelegation').valueChanges.subscribe(res => {
       const initial = document.getElementById('actaI');
       const final = document.getElementById('actaF');
@@ -107,12 +120,63 @@ export class RecordsReportComponent extends BasePage implements OnInit {
         this.r2.addClass(final, 'disabled');
       }
     });
+
+    if (this.type.value === 'RECEPTION') {
+      this.title = 'Entrega Recepción';
+      this.form.get('delegacionRecibe').setValidators([Validators.required]);
+      this.form.get('subdelegation').setValidators([Validators.required]);
+    } else {
+      this.title = 'Decomiso';
+      this.form.get('delegacionRecibe').clearValidators();
+      this.form.get('subdelegation').clearValidators();
+    }
+
+    this.type.valueChanges.subscribe(res => {
+      this.form.get('delegacionRecibe').reset();
+      this.form.get('subdelegation').reset();
+      this.form.get('estatusActa').reset();
+      this.form.get('actaInicial').reset();
+      this.form.get('actaFinal').reset();
+      this.form.get('desde').reset();
+      this.form.get('hasta').reset();
+      this.form.get('fechaDesde').reset();
+      this.form.get('fechaHasta').reset();
+      this.keyProceedingFinal = '';
+      this.keyProceedingInitial = '';
+      this.initialProceedingBool = false;
+      this.finalProceedingBool = false;
+      this.finalProceeding = new DefaultSelect();
+      this.initialProceeding = new DefaultSelect();
+      if (res === 'RECEPTION') {
+        this.title = 'Entrega Recepción';
+        this.form.get('delegacionRecibe').setValidators([Validators.required]);
+        this.form.get('subdelegation').setValidators([Validators.required]);
+      } else {
+        this.title = 'Decomiso';
+        this.form.get('delegacionRecibe').clearValidators();
+        this.form.get('delegacionRecibe').updateValueAndValidity();
+        this.form.get('subdelegation').clearValidators();
+        this.form.get('subdelegation').updateValueAndValidity();
+      }
+    });
+
+    this.form.get('actaInicial').valueChanges.subscribe(res => {
+      if (res === null) {
+        this.keyProceedingInitial = '';
+      }
+    });
+
+    this.form.get('actaFinal').valueChanges.subscribe(res => {
+      if (res === null) {
+        this.keyProceedingFinal = '';
+      }
+    });
   }
 
   prepareForm() {
     this.form = this.fb.group({
-      delegacionRecibe: [null, [Validators.required]],
-      subdelegation: [null, [Validators.required]],
+      delegacionRecibe: [null, []],
+      subdelegation: [null, []],
       estatusActa: [null, [Validators.required]],
       actaInicial: [null, [Validators.required]],
       actaFinal: [null, [Validators.required]],
@@ -136,12 +200,37 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       this.form.get('fechaDesde').value != null &&
       this.form.get('fechaHasta').value != null
     ) {
-      return true;
+      if (
+        this.form.get('fechaDesde').value <= this.form.get('fechaHasta').value
+      ) {
+        if (
+          this.form.get('desde').valid &&
+          this.form.get('hasta').valid &&
+          this.form.get('fechaDesde').valid &&
+          this.form.get('fechaHasta').valid
+        ) {
+          return true;
+        } else {
+          this.alert(
+            'warning',
+            'Debe Registrar Datos Válidos',
+            'Alguno de los Campos que Lleno no son Válidos'
+          );
+          return false;
+        }
+      } else {
+        this.alert(
+          'warning',
+          'Debe Registrar Datos Válidos',
+          'La Fecha Inicial no Puede ser Mayor a la Final'
+        );
+        return false;
+      }
     } else {
       this.alert(
         'warning',
-        'Debe registrar todos los datos',
-        'Faltan llenar campos que son obligatorios para imprimir el acta'
+        'Debe Registrar Todos los Datos',
+        'Faltan Llenar Campos que son Obligatorios para Imprimir el Acta'
       );
       return false;
     }
@@ -149,8 +238,6 @@ export class RecordsReportComponent extends BasePage implements OnInit {
 
   validateDecomiso() {
     if (
-      this.form.get('delegacionRecibe').value != null &&
-      this.form.get('subdelegation').value != null &&
       this.form.get('estatusActa').value != null &&
       this.form.get('desde').value != null &&
       this.form.get('hasta').value != null &&
@@ -158,23 +245,36 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       this.form.get('fechaHasta').value != null
     ) {
       if (
-        this.form.get('desde').value < this.form.get('hasta').value &&
-        this.form.get('fechaDesde').valid <= this.form.get('fechaHasta').valid
+        this.form.get('fechaDesde').value <= this.form.get('fechaHasta').value
       ) {
-        return true;
+        if (
+          this.form.get('desde').valid &&
+          this.form.get('hasta').valid &&
+          this.form.get('fechaDesde').valid &&
+          this.form.get('fechaHasta').valid
+        ) {
+          return true;
+        } else {
+          this.alert(
+            'warning',
+            'Debe Registrar Datos Validos',
+            'Alguno de los Campos que Lleno no son Válidos'
+          );
+          return false;
+        }
       } else {
         this.alert(
           'warning',
-          'Debe registrar datos validos',
-          'Alguno de los campos que lleno no son válidos'
+          'Debe Registrar Datos Validos',
+          'La Fecha Inicial no Puede ser Mayor a la Final'
         );
         return false;
       }
     } else {
       this.alert(
         'warning',
-        'Debe registrar todos los datos',
-        'Faltan llenar campos que son obligatorios para imprimir el acta'
+        'Debe Registrar Todos los Datos',
+        'Faltan Llenar Campos que son Obligatorios para Imprimir el Acta'
       );
       return false;
     }
@@ -217,15 +317,19 @@ export class RecordsReportComponent extends BasePage implements OnInit {
 
   generateDecomiso() {
     const params = {
-      PN_DELEG: this.form.get('delegacionRecibe').value,
-      PN_SUBDEL: this.form.get('subdelegation').value.id,
+      PN_DELEG:
+        this.form.get('delegacionRecibe').value != null
+          ? this.form.get('delegacionRecibe').value
+          : '',
+      PN_SUBDEL:
+        this.form.get('subdelegation').value != null
+          ? this.form.get('subdelegation').value.id
+          : '',
       PN_EXPEDI_INICIAL: this.form.get('desde').value,
       PN_EXPEDI_FINAL: this.form.get('hasta').value,
       PC_ESTATUS_ACTA1: this.form.get('estatusActa').value,
       PF_F_RECEP_INI: format(this.form.get('fechaDesde').value, 'dd-MM-yyyy'),
       PF_F_RECEP_FIN: format(this.form.get('fechaHasta').value, 'dd-MM-yyyy'),
-      PN_ACTA_INICIAL: this.form.get('actaInicial').value,
-      PN_ACTA_FINAL: this.form.get('actaFinal').value,
     };
     console.log(params);
     this.downloadReport('blank', params);
@@ -254,38 +358,74 @@ export class RecordsReportComponent extends BasePage implements OnInit {
     });
   }
 
-  getInitialProceedings(params: any) {
-    const model: IGoodAndDetailProceeding = {
-      pTiNumberDeleg: this.form.get('delegacionRecibe').value,
-      pTiNumberSubdel: this.form.get('subdelegation').value.id,
-    };
-    console.log(model);
-    this.serviceGoodProcess.getDetailProceedginGood(model).subscribe(
-      res => {
-        console.log(res.data);
-        this.initialProceeding = new DefaultSelect(res.data);
-      },
-      err => {
-        console.log(err);
-      }
-    );
+  validateString(params: string) {
+    return /[a-zA-Z]/.test(params);
+  }
+
+  validateSpecialCharacters(params: string) {
+    return /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(params);
+  }
+
+  getInitialProceedings(params: ListParams) {
+    if (
+      this.validateString(params.text) ||
+      this.validateSpecialCharacters(params.text)
+    ) {
+      this.alert(
+        'warning',
+        'Datos Inválidos',
+        'Este Campo Solo Acepta Campos Númericos y Está Introduciendo Alguno Diferente.'
+      );
+      this.form.get('actaInicial').reset();
+    } else {
+      const model: IGoodAndDetailProceeding = {
+        pTiNumberDeleg: this.form.get('delegacionRecibe').value,
+        pTiNumberSubdel: this.form.get('subdelegation').value,
+      };
+
+      this.serviceGoodProcess
+        .getDetailProceedingGoodFilterNumber(model, params.text)
+        .subscribe(
+          res => {
+            console.log(res.data);
+            this.initialProceeding = new DefaultSelect(res.data);
+          },
+          err => {
+            console.log(err);
+          }
+        );
+    }
   }
 
   getFinalProceedings(params: ListParams) {
-    const model: IGoodAndDetailProceeding = {
-      pTiNumberDeleg: this.form.get('delegacionRecibe').value,
-      pTiNumberSubdel: this.form.get('subdelegation').value.id,
-    };
-    console.log(model);
-    this.serviceGoodProcess.getDetailProceedginGood(model).subscribe(
-      res => {
-        console.log(res.data);
-        this.finalProceeding = new DefaultSelect(res.data);
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    if (
+      this.validateString(params.text) ||
+      this.validateSpecialCharacters(params.text)
+    ) {
+      this.alert(
+        'warning',
+        'Datos Inválidos',
+        'Este Campo Solo Acepta Campos Númericos y Está Introduciendo Alguno Diferente.'
+      );
+      this.form.get('actaFinal').reset();
+    } else {
+      const model: IGoodAndDetailProceeding = {
+        pTiNumberDeleg: this.form.get('delegacionRecibe').value,
+        pTiNumberSubdel: this.form.get('subdelegation').value,
+      };
+      console.log(model);
+      this.serviceGoodProcess
+        .getDetailProceedingGoodFilterNumber(model, params.text)
+        .subscribe(
+          res => {
+            console.log(res.data);
+            this.finalProceeding = new DefaultSelect(res.data);
+          },
+          err => {
+            console.log(err);
+          }
+        );
+    }
   }
 
   print() {
@@ -305,19 +445,5 @@ export class RecordsReportComponent extends BasePage implements OnInit {
     //let newWin = window.open(pdfurl, 'test.pdf');
     this.onLoadToast('success', '', 'Reporte generado');
     this.loading = false;
-  }
-
-  onTypeChange() {
-    const controls = [this.initialRecord, this.finalRecord];
-    const type = this.type.value;
-    if (type === REPORT_TYPE.Confiscation) {
-      controls.forEach(control => control.clearValidators());
-    } else {
-      controls.forEach(control => control.setValidators(Validators.required));
-    }
-    controls.forEach(control => {
-      control.reset();
-      control.updateValueAndValidity();
-    });
   }
 }

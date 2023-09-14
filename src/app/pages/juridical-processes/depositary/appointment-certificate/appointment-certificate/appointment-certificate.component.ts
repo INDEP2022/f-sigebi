@@ -16,8 +16,6 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AppointmentCertificateService } from './services/appointment-certificate.service';
 import {
   ERROR_GOOD_NULL,
-  ERROR_GOOD_REPORT,
-  ERROR_REPORT,
   NOT_FOUND_GOOD,
 } from './utils/appointment-certificate.message';
 /** LIBRERÍAS EXTERNAS IMPORTS */
@@ -78,60 +76,105 @@ export class AppointmentCertificateComponent
     });
   }
 
-  btnReportGenerate(): any {
-    console.log(this.form.value);
-    if (this.good) {
-      if (this.good.goodId) {
-        let params = {
-          PARAMFORM: 'NO',
-          P_BIEN: this.form.get('noBien').value,
-          P_ADMINISTRADOR: this.form.get('tipoAdministrador').value,
-          P_DEPOSITARIA: this.form.get('tipoDepositaria').value,
-        };
+  btnReportGenerate() {
+    // console.log(this.form.value);
+    // if (this.good) {
+    //   if (this.good.goodId) {
+    //     let params = {
+    //       PARAMFORM: 'NO',
+    //       P_BIEN: this.form.value.noBien,
+    //       P_ADMINISTRADOR: this.form.value.tipoAdministrador,
+    //       P_DEPOSITARIA: this.form.value.tipoDepositaria
+    //     };
 
-        // if (!params.P_ADMINISTRADOR) {
-        //   delete params.P_ADMINISTRADOR;
-        // }
-        // if (!params.P_DEPOSITARIA) {
-        //   delete params.P_DEPOSITARIA;
-        // }
+    //     // if (!params.P_ADMINISTRADOR) {
+    //     //   delete params.P_ADMINISTRADOR;
+    //     // }
+    //     // if (!params.P_DEPOSITARIA) {
+    //     //   delete params.P_DEPOSITARIA;
+    //     // }
 
-        this.siabService
-          .fetchReport('RGERDIRNOMBRADEPO', params)
-          .subscribe(response => {
-            if (response !== null) {
-              const blob = new Blob([response], { type: 'application/pdf' });
-              const url = URL.createObjectURL(blob);
-              let config = {
-                initialState: {
-                  documento: {
-                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                    type: 'pdf',
-                  },
-                  callback: (data: any) => {},
-                }, //pasar datos por aca
-                class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-                ignoreBackdropClick: true, //ignora el click fuera del modal
-              };
-              this.modalService.show(PreviewDocumentsComponent, config);
-            } else {
-              this.alert('warning', ERROR_REPORT, '');
-            }
-          });
-      } else {
-        this.alert(
-          'warning',
-          'Número de Bien Requerido para el Reporte',
-          ERROR_GOOD_REPORT
-        );
-      }
-    } else {
-      this.alert(
-        'warning',
-        'Número de Bien Requerido para el Reporte',
-        ERROR_GOOD_NULL
-      );
-    }
+    //     // 'RGERDIRNOMBRADEPO' --- REMPLAZAR CUANDO ESTE LISTO EL REPORTE
+
+    //     this.siabService.fetchReport('blank', {}).subscribe(response => {
+    //       console.log(response);
+    //       if (response !== null) {
+    //         const blob = new Blob([response], { type: 'application/pdf' });
+    //         const url = URL.createObjectURL(blob);
+    //         let config = {
+    //           initialState: {
+    //             documento: {
+    //               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+    //               type: 'pdf',
+    //             },
+    //             callback: (data: any) => { },
+    //           }, //pasar datos por aca
+    //           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+    //           ignoreBackdropClick: true, //ignora el click fuera del modal
+    //         };
+    //         this.modalService.show(PreviewDocumentsComponent, config);
+    //       } else {
+    //         this.alert('warning', ERROR_REPORT, '');
+    //       }
+    //     });
+    //   } else {
+    //     this.alert(
+    //       'warning',
+    //       'Número de Bien Requerido para el Reporte',
+    //       ERROR_GOOD_REPORT
+    //     );
+    //   }
+    // } else {
+    //   this.alert(
+    //     'warning',
+    //     'Número de Bien Requerido para el Reporte',
+    //     ERROR_GOOD_NULL
+    //   );
+    // }
+    let params = {
+      PARAMFORM: 'NO',
+      P_BIEN: this.form.value.noBien,
+      P_ADMINISTRADOR: this.form.value.tipoAdministrador,
+      P_DEPOSITARIA: this.form.value.tipoDepositaria,
+    };
+    console.log(params);
+
+    this.siabService
+      // .fetchReport('RGERDIRNOMBRADEPO', params)
+      .fetchReportBlank('blank')
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
   }
 
   async getGoodData() {
@@ -162,5 +205,8 @@ export class AppointmentCertificateComponent
     } else {
       this.alert('warning', 'Número de Bien', ERROR_GOOD_NULL);
     }
+  }
+  clearFilter() {
+    this.form.reset();
   }
 }

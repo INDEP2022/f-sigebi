@@ -7,18 +7,35 @@
     <!-- TABLA----NOTIFICACIONES RELACIONADAS CON EL EXPEDIENTE -->
     <div class="row w-100 alert alert-info">
       <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
-        <form [formGroup]="noExpediente" class="form-material">
+        <form class="form-material">
           <div class="row w-100">
             <div class="col-sm-12 col-12 col-md-4 p-2">
-              <form-field [control]="noExpediente.get('noExpediente')">
-                <div class="d-flex">
+              <div class="d-flex align-item-center gap-2">
+                <form-field [control]="noExpediente" label="No. Expediente">
                   <input
                     placeholder="No. Expediente"
                     type="number"
+                    min="1"
                     class="form-control"
-                    formControlName="noExpediente" />
+                    (keyup.enter)="searchInput()"
+                    [formControl]="noExpediente" />
+                </form-field>
+                <div>
+                  <button
+                    [disabled]="loading"
+                    (click)="searchInput()"
+                    class="btn btn-sm btn-primary active">
+                    <i class="fas fa-search"></i>
+                  </button>
+                  <button
+                    tooltip="Limpiar formulario"
+                    (click)="clearForm()"
+                    [disabled]="loading"
+                    class="ml-2 btn btn-sm btn-secondary active">
+                    <i class="fas fa-eraser"></i>
+                  </button>
                 </div>
-              </form-field>
+              </div>
             </div>
             <div class="col-sm-12 col-12 col-md-8 p-2">
               <h6>NOTIFICACIONES RELACIONADAS CON EL EXPEDIENTE</h6>
@@ -27,27 +44,40 @@
         </form>
       </div>
       <div class="col-sm-12 col-12 col-md-12 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettingsNotificaciones"
-          [source]="dataTableNotifications">
-        </ng2-smart-table>
+        <div [class]="loading ? 'table-loading' : ''" class="overflow-auto">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="tableSettingsNotificaciones"
+            (userRowSelect)="selectRowNotification($event)"
+            [source]="dataTableNotifications">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsNotifications"
+            [totalItems]="totalItemsNotificaciones"></app-pagination>
+        </div>
       </div>
     </div>
     <!-- TABLA----NOTIFICACIONES RELACIONADAS CON EL EXPEDIENTE -->
 
     <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
     <div class="row w-100">
-      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-info">
+      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
         <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettingsBienes"
-          [source]="dataTableBienes"
-          (userRowSelect)="rowSelected($event)">
-        </ng2-smart-table>
+        <div
+          [class]="isLoadingGood ? 'table-loading' : ''"
+          class="overflow-auto">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="tableSettingsBienes"
+            [source]="dataTableBienes"
+            (userRowSelect)="rowSelected($event)">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsGood"
+            [totalItems]="totalItemsGood"></app-pagination>
+        </div>
         <br />
-        <span class="badge m-2 badge-pill bg-primary"
+        <span class="badge m-2 badge-pill bg-success"
           >&#42;&#42;Disponibles</span
         >
         <span class="badge m-2 badge-pill bg-dark"
@@ -56,24 +86,30 @@
       </div>
       <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
       <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2 text-center">
-        <button
-          (click)="addGoodOffice()"
-          class="btn btn-secondary btn-sm bg-success active m-3 p-3"
-          type="button">
-          <!-- Mover uno -->
-          <i class="bx bxs-right-arrow-circle bx-md"></i>
-        </button>
-        <br />
-        <button
-          (click)="deleteGoodOffice()"
-          class="btn btn-secondary btn-sm active bg-danger m-3 p-3"
-          type="button">
-          <!-- Mover uno -->
-          <i class="bx bxs-left-arrow-circle bx-md"></i>
-        </button>
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <div>
+            <button
+              (click)="addGoodOffice()"
+              [disabled]="isAllDisabled"
+              class="btn btn-secondary btn-sm bg-success active m-3 p-3"
+              type="button">
+              <!-- Mover uno -->
+              <i class="bx bxs-right-arrow-circle bx-md"></i>
+            </button>
+            <br />
+            <button
+              (click)="deleteGoodOffice()"
+              [disabled]="isAllDisabled"
+              class="btn btn-secondary btn-sm active bg-danger m-3 p-3"
+              type="button">
+              <!-- Mover uno -->
+              <i class="bx bxs-left-arrow-circle bx-md"></i>
+            </button>
+          </div>
+        </div>
       </div>
       <!-- TABLA----BIENES RELACIONADOS CON EL OFICIO -->
-      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-info">
+      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
         <h6>BIENES RELACIONADOS CON EL OFICIO</h6>
         <ng2-smart-table
           [attr.class]="'table-bordered'"
@@ -85,28 +121,48 @@
     </div>
     <br />
     <!-- TABLA----BIENES RELACIONADOS CON EL OFICIO -->
-    <form [formGroup]="form" class="form-material">
+    <form [formGroup]="formPositionThirdParty" class="form-material">
       <div class="row w-100">
         <div class="col-sm-12 col-12 col-md-12 p-2">
           <h6>Datos del Volante</h6>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
-            [control]="form.get('wheelNumber')"
+            [control]="formPositionThirdParty.get('steeringwheelNumber')"
             label="No&#46; Volante">
-            <input class="form-control" formControlName="wheelNumber" />
+            <input
+              readonly
+              class="form-control"
+              formControlName="steeringwheelNumber" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
-            [control]="form.get('officeExternalKey')"
+            [control]="formPositionThirdParty.get('jobKey')"
             label="Clave de Oficio">
-            <input class="form-control" formControlName="officeExternalKey" />
+            <input readonly class="form-control" formControlName="jobKey" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
-          <form-field [control]="form.get('addressee')" label="Destinatario">
+          <!-- <form-field [control]="form.get('addressee')" label="Destinatario">
             <input class="form-control" formControlName="addressee" />
+          </form-field> -->
+
+          <!-- [form]="formPositionThirdParty" -->
+          <form-field [control]="formPositionThirdParty.get('usrAddressee')">
+            <ngx-select
+              [form]="formPositionThirdParty"
+              [data]="addressee"
+              (fetchItems)="getUserName($event)"
+              bindLabel="nameUser"
+              control="usrAddressee"
+              label="Destinatario"
+              [searchOnInit]="true"
+              [clearable]="false"
+              [showTooltip]="true">
+              <!-- [readonly]="layout == 'ABANDONMENT'" -->
+            </ngx-select>
+            <!-- (change)="changeAddressee($event)" -->
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
@@ -114,6 +170,7 @@
             <button
               type="button"
               class="btn btn-primary btn-sm active text-wrap"
+              [disabled]="isAllDisabled"
               (click)="btnInsertarTextoPredefinido()">
               Insertar Texto Predefinido
             </button>
@@ -123,6 +180,10 @@
           <div class="form-group">
             <button
               type="button"
+              [disabled]="
+                !formPositionThirdParty.get('steeringwheelNumber').value ||
+                isAllDisabled
+              "
               class="btn btn-primary btn-sm active text-wrap"
               (click)="btnReemplazarMarcadores()">
               Reemplazar Marcadores
@@ -134,40 +195,84 @@
             <button
               type="button"
               class="btn btn-primary btn-sm active text-wrap"
-              (click)="btnImprimir()">
+              (click)="onClickPrint()">
               Imprimir
             </button>
           </div>
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
-          <form-field [control]="form.get('texto')" label="Texto">
+          <form-field
+            [control]="formPositionThirdParty.get('text')"
+            label="Texto">
             <textarea
               maxlength="4000"
               rows="12"
               class="form-control"
-              formControlName="texto"></textarea>
+              formControlName="text"></textarea>
           </form-field>
         </div>
         <!-- Form CON COPIA PARA -->
-        <form [formGroup]="formCcpOficio" class="form-material">
+        <form [formGroup]="formPositionThirdParty" class="form-material">
           <div class="row tp-2 mb-2">
             <div class="col-sm-12 col-12 col-md-6 p-2">
-              <form-field
-                [control]="formCcpOficio.get('ccp1')"
+              <!-- <form-field
+                [control]="formPositionThirdParty.get('usrCcp1')"
                 label="C&#46;P&#46;P 1">
-                <input class="form-control" formControlName="ccp1" />
+                <input class="form-control" formControlName="usrCcp1" />
+              </form-field> -->
+              <form-field [control]="formPositionThirdParty.get('usrCcp1')">
+                <ngx-select
+                  [form]="formPositionThirdParty"
+                  [data]="userCcp1"
+                  (fetchItems)="getUserName($event, 'ccp1')"
+                  bindLabel="nameUser"
+                  control="usrCcp1"
+                  label="C&#46;P&#46;P 1"
+                  [searchOnInit]="true"
+                  [clearable]="false"
+                  [showTooltip]="true">
+                </ngx-select>
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-6 p-2">
-              <form-field
-                [control]="formCcpOficio.get('ccp2')"
+              <!-- <form-field
+                [control]="formPositionThirdParty.get('usrCcp2')"
                 label="C&#46;P&#46;P 2">
-                <input class="form-control" formControlName="ccp2" />
+                <input class="form-control" formControlName="usrCcp2" />
+              </form-field> -->
+              <form-field [control]="formPositionThirdParty.get('usrCcp2')">
+                <ngx-select
+                  [form]="formPositionThirdParty"
+                  [data]="userCcp2"
+                  (fetchItems)="getUserName($event, 'ccp2')"
+                  bindLabel="nameUser"
+                  control="usrCcp2"
+                  label="C&#46;P&#46;P 2"
+                  [searchOnInit]="true"
+                  [clearable]="false"
+                  [showTooltip]="true">
+                </ngx-select>
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-6 p-2">
-              <form-field [control]="formCcpOficio.get('firma')" label="Firma">
-                <input class="form-control" formControlName="firma" />
+              <!-- <form-field
+                [control]="formPositionThirdParty.get('usrResponsible')"
+                label="Firma">
+                <input class="form-control" formControlName="usrResponsible" />
+              </form-field> -->
+              <form-field
+                [control]="formPositionThirdParty.get('usrResponsible')">
+                <ngx-select
+                  [form]="formPositionThirdParty"
+                  [data]="userResponsible"
+                  (fetchItems)="getUserName($event, 'responsible')"
+                  bindLabel="nameUser"
+                  control="usrResponsible"
+                  label="Firma"
+                  [searchOnInit]="true"
+                  [clearable]="false"
+                  [showTooltip]="true">
+                </ngx-select>
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
@@ -183,14 +288,15 @@
           </div>
         </form>
         <!-- Form CON COPIA PARA -->
-        <form [formGroup]="formGood" class="form-material">
-          <div class="row tp-2 mb-2">
+        <form [formGroup]="formPositionThirdParty" class="form-material">
+          <!-- <div class="row tp-2 mb-2">
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
-                [control]="formGood.get('delegationCloseNumber')"
+                [control]="formPositionThirdParty.get('delegationCloseNumber')"
                 label="Delegación Cierre">
                 <input
                   type="text"
+                  readonly
                   maxlength="40"
                   class="form-control"
                   formControlName="delegationCloseNumber" />
@@ -199,23 +305,27 @@
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
                 maxlength="40"
-                [control]="formGood.get('numClueNavy')"
+                [control]="formPositionThirdParty.get('numClueNavy')"
                 label="Clave Armada">
-                <input class="form-control" formControlName="numClueNavy" />
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="numClueNavy" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
+                []
                 maxlength="40"
-                [control]="formGood.get('closingDate')"
+                [control]="formPositionThirdParty.get('closingDate')"
                 label="Fecha de Cierre">
                 <input
                   class="form-control"
                   bsDatepicker
                   formControlName="closingDate" />
-              </form-field>
+              </form-field> 
             </div>
-          </div>
+          </div>-->
         </form>
       </div>
     </form>

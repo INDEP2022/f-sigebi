@@ -1,14 +1,47 @@
 <form class="form-material" [formGroup]="depositaryDataForm">
   <div class="row">
-    <div class="col-12">
+    <div class="d-flex justify-content-end">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="updateInfoDepositary()"
+          [disabled]="disableButton">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 col-sm-12 col-xs-12">
       <form-field
         [control]="depositaryDataForm.get('reportDate')"
         label="Fecha Informe">
-        <input type="text" class="form-control" formControlName="reportDate" />
+        <input
+          id="disabled"
+          type="text"
+          class="form-control"
+          formControlName="reportDate"
+          bsDatepicker />
       </form-field>
     </div>
-    <div class="col">
-      <label>Informe</label>
+    <div class="col-md-8 col-sm-12 col-xs-12">
+      <form-field
+        [control]="depositaryDataForm.get('personNum')"
+        label="Persona">
+        <input type="text" class="form-control" formControlName="personNum" />
+      </form-field>
     </div>
+  </div>
+  <div class="row mt-3">
+    <form-field [control]="depositaryDataForm.get('report')" label="Informe">
+      <textarea
+        rows="5"
+        type="text"
+        class="form-control"
+        formControlName="report"
+        [max-length]="4000"></textarea>
+    </form-field>
   </div>
 </form>

@@ -74,14 +74,16 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
       if (timeNow <= this.timeOut && timeNow > 0) {
         this.refreshToken(newReq, next).subscribe();
       }
+      if (request.url.indexOf('firebase') < 0) {
+        newReq = request.clone({
+          headers: request.headers.set(
+            'Authorization',
+            'Bearer ' + this.authService.accessToken()
+          ),
+        });
+      }
 
       //Set Bearer Token
-      newReq = request.clone({
-        headers: request.headers.set(
-          'Authorization',
-          'Bearer ' + this.authService.accessToken()
-        ),
-      });
     }
     // Response
     return next.handle(newReq).pipe(
@@ -105,7 +107,7 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
       return;
     }
 
-    if (status === 401) {
+    if (status === 401 && error.url.indexOf('firebase') < 0) {
       localStorage.clear();
       sessionStorage.clear();
       let message = 'La sesión expiró';
@@ -119,6 +121,10 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
         this.onLoadToast('error', 'No autorizado', message);
       }
       this.router.navigate(['/auth/login']);
+      return;
+    } else if (status === 401 && error.url.indexOf('firebase') >= 0) {
+      console.log('ERROR FIREBASE');
+
       return;
     }
     if (status === 403) {

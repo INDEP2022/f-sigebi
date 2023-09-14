@@ -6,19 +6,25 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { ITiieV1 } from 'src/app/core/models/ms-parametercomer/parameter';
 import { ParameterTiieService } from 'src/app/core/services/ms-parametercomer/parameter-tiie.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { FilterDatePickerComponent } from '../filter-date-picker/filter-date-picker.component';
 import { RegistrationOfInterestComponent } from '../registration-of-interest.component';
+import { COUNT_TIIE_COLUMNS } from './registration-of-interest-columns';
 
 @Injectable({
   providedIn: 'root',
@@ -42,9 +48,13 @@ export class RegistrationOfInterestModalComponent
   id: number = 0;
   tiie: ITiieV1;
   selectUser = new DefaultSelect<IUser>();
+  editUser: any;
   tiiesList: ITiieV1[] = [];
   @Input() registration: RegistrationOfInterestComponent;
   @Output() onConfirm = new EventEmitter<any>();
+
+  columnFilters: any = [];
+  data: LocalDataSource = new LocalDataSource();
 
   constructor(
     private modalRef: BsModalRef,
@@ -52,35 +62,122 @@ export class RegistrationOfInterestModalComponent
     private parameterTiieService: ParameterTiieService,
     private programmingRequestService: ProgrammingRequestService,
     private modalService: BsModalService,
-    private usersService: UsersService
+    private usersService: UsersService //private parameterTiieService: ParameterTiieService
   ) {
     super();
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: true,
+        add: false,
+        position: 'right',
+      },
+      columns: { ...COUNT_TIIE_COLUMNS },
+      //noDataMessage: 'No se encontrarón registros',
+    };
   }
   ngOnInit(): void {
-    this.prepareForm();
+    /*this.prepareForm();
     this.getUserInfo();
-    this.getUserSelect(new ListParams());
+    this.getUserSelect(new ListParams());*/
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'tiieDays':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'tiieAverage':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'tiieMonth':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'tiieYear':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'registryDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            /*filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);*/
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getExample();
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getExample());
   }
 
-  private prepareForm(): void {
+  /*private prepareForm(): void {
     this.providerForm = this.fb.group({
       id: [null],
       tiieDays: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.pattern(NUM_POSITIVE),
+          Validators.min(1),
+          Validators.max(31),
+        ],
       ],
       tiieMonth: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.pattern(NUM_POSITIVE),
+          Validators.min(1),
+          Validators.max(12),
+        ],
       ],
       // mes: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      tiieYear: [null, [Validators.required]],
+      tiieYear: [
+        null,
+        [Validators.pattern(NUM_POSITIVE), Validators.max(9999)],
+      ],
       registryDate: [new Date()],
-      tiieAverage: [null, [Validators.required]],
-      user: [null, [Validators.required]],
+      tiieAverage: [
+        null,
+        [
+          Validators.pattern(NUM_POSITIVE),
+          Validators.min(1),
+          Validators.max(99),
+        ],
+      ],
+      user: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     if (this.provider !== undefined) {
       this.edit = true;
+      console.log(this.provider);
+      this.provider.tiieDays = Math.trunc(this.provider.tiieDays);
+      this.provider.tiieAverage = Math.trunc(this.provider.tiieAverage);
+      //Set select value
+      this.searchUser({ text: this.provider.user });
       this.providerForm.patchValue(this.provider);
     } else {
       this.edit = false;
@@ -121,7 +218,9 @@ export class RegistrationOfInterestModalComponent
   //   const searchUser = this.modalService.show(SearchUserFormComponent, config);
   // }
 
-  searchUser() {
+  searchUser(event: any) {
+    console.log('search' + JSON.stringify(event));
+    this.params.getValue()['search'] = event.text;
     this.usersService.getAllSegUsers(this.params.getValue()).subscribe({
       next: data => {
         data.data.map(data => {
@@ -141,7 +240,21 @@ export class RegistrationOfInterestModalComponent
       next: data => this.handleSuccess(),
       error: error => {
         this.loading = false;
-        this.onLoadToast('error', 'Ya existe mes y año tiie!!', '');
+        let errorFixed = '';
+        if (
+          error.error.message.includes(
+            'duplicate key value violates unique constraint'
+          )
+        ) {
+          errorFixed = 'Mes y Año TIIE Duplicado';
+        } else {
+          if (Array.isArray(error.error.message)) {
+            errorFixed = error.error.message[0];
+          } else {
+            errorFixed = error.error.message;
+          }
+        }
+        this.onLoadToast('error', errorFixed, '');
         return;
       },
     });
@@ -151,7 +264,7 @@ export class RegistrationOfInterestModalComponent
     this.alertQuestion(
       'warning',
       'Actualizar',
-      'Desea actualizar este registro?'
+      '¿Desea Actualizar Este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.parameterTiieService
@@ -159,8 +272,22 @@ export class RegistrationOfInterestModalComponent
           .subscribe({
             next: data => this.handleSuccess(),
             error: error => {
-              this.onLoadToast('error', 'Mes y año tiie duplicado', '');
               this.loading = false;
+              let errorFixed = '';
+              if (
+                error.error.message.includes(
+                  'duplicate key value violates unique constraint'
+                )
+              ) {
+                errorFixed = 'Mes y Año TIIE Duplicado';
+              } else {
+                if (Array.isArray(error.error.message)) {
+                  errorFixed = error.error.message[0];
+                } else {
+                  errorFixed = error.error.message;
+                }
+              }
+              this.onLoadToast('error', errorFixed, '');
             },
           });
       }
@@ -173,5 +300,89 @@ export class RegistrationOfInterestModalComponent
     this.onConfirm.emit(true);
     this.modalRef.content.callback(true);
     this.close();
+  }*/
+
+  openForm(provider?: ITiieV1) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      provider,
+      callback: (next: boolean) => {
+        if (next) this.getExample();
+      },
+    };
+    this.modalService.show(FilterDatePickerComponent, modalConfig);
   }
+
+  getExample() {
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.parameterTiieService.getAll(params).subscribe({
+      next: response => {
+        console.log(response);
+        //this.paragraphs = response.data;
+        this.data.load(response.data);
+        this.data.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
+    });
+  }
+
+  /* openModal(context?: Partial<RegistrationOfInterestModalComponent>) {
+    const modalRef = this.modalService.show(
+      RegistrationOfInterestModalComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+  }*/
+
+  showDeleteAlert(tiie: ITiieV1) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea Eliminar este Registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.parameterTiieService.remove(tiie.id).subscribe({
+          next: data => {
+            this.loading = false;
+            this.onLoadToast(
+              'success',
+              'Registro de Interés',
+              'Borrado Correctamente'
+            );
+            this.getExample();
+          },
+          error: error => {
+            //this.onLoadToast('error', 'Registro de Interes', 'No Se Puede Eliminar');
+            this.loading = false;
+          },
+        });
+      }
+    });
+  }
+
+  /*search() {
+    this.parameterTiieService.getAll().subscribe({
+      next: (data: any) => {
+        if (data) {
+          data.map((item: any) => {
+            this.tiiesList = data;
+          });
+        }
+      },
+    });
+  } */
 }

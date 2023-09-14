@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -8,7 +9,8 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -17,12 +19,16 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -38,7 +44,7 @@ import { CLARIFICATION_COLUMNS } from './clarifications-columns';
 @Component({
   selector: 'app-clarifications',
   templateUrl: './clarifications.component.html',
-  styles: [],
+  styleUrls: ['./clarifications.component.scss'],
 })
 export class ClarificationsComponent
   extends BasePage
@@ -50,9 +56,10 @@ export class ClarificationsComponent
   goodForm: ModelForm<IGood>;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   @Output() response = new EventEmitter<string>();
+  bsModalRef: BsModalRef;
   paragraphs: any[] = [];
   goodSetting: any;
-  assetsArray: any[] = [];
+  assetsArray = new LocalDataSource();
   assetsSelected: any[] = [];
   //dataSelected: any[] = [];
   // clarifiArray: any[] = [];
@@ -60,7 +67,7 @@ export class ClarificationsComponent
   rowSelected: any;
   detailArray: any;
   typeDoc: string = 'clarification';
-  good: any;
+  good: IGood[] = [];
   totalItems: number = 0;
   showClarificationButtons: boolean = true;
 
@@ -70,6 +77,9 @@ export class ClarificationsComponent
   isLoadingTable2 = false;
   task: any;
   statusTask: any = '';
+  columns = ASSETS_COLUMNS;
+  goodsSelected: IGood[] = [];
+  goodSaeModified: any = [];
 
   constructor(
     private modalService: BsModalService,
@@ -80,7 +90,10 @@ export class ClarificationsComponent
     private readonly typeRelevantService: TypeRelevantService,
     private readonly genericService: GenericService,
     private readonly goodResDevService: GetGoodResVeService,
-    private readonly chatClarificationService: ChatClarificationsService
+    private readonly chatClarificationService: ChatClarificationsService,
+    private readonly goodFinderService: GoodFinderService,
+    private readonly authService: AuthService,
+    private readonly historyGoodService: HistoryGoodService
   ) {
     super();
   }
@@ -94,12 +107,12 @@ export class ClarificationsComponent
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: clarifications');
     this.task = JSON.parse(localStorage.getItem('Task'));
     console.log('task', this.task);
 
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
 
     this.settings = {
       ...TABLE_SETTINGS,
@@ -111,10 +124,22 @@ export class ClarificationsComponent
     this.goodSetting = {
       ...TABLE_SETTINGS,
       actions: false,
-      selectMode: 'multi',
       columns: ASSETS_COLUMNS,
     };
 
+    /*this.columns.selected = {
+      ...this.columns.selected,
+      onComponentInitFunction: this.selectGoods.bind(this),
+    };*/
+
+    this.columns.descriptionGoodSae = {
+      ...this.columns.descriptionGoodSae,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          this.setDescriptionGoodSae(data);
+        });
+      },
+    };
     this.prepareForm();
   }
   private prepareForm() {
@@ -175,11 +200,7 @@ export class ClarificationsComponent
       ],
       origin: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       ligieUnit: [
@@ -239,11 +260,7 @@ export class ClarificationsComponent
       ],
       axesNumber: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(POSITVE_NUMBERS_PATTERN),
-          Validators.maxLength(5),
-        ],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
       ],
       engineNumber: [
         null,
@@ -255,11 +272,7 @@ export class ClarificationsComponent
       ], //numero motor
       tuition: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       serie: [
         null,
@@ -407,6 +420,8 @@ export class ClarificationsComponent
         ],
       ],
       fractionId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      descriptionGoodSae: [null],
+      saeMeasureUnit: [null],
     });
   }
 
@@ -419,102 +434,61 @@ export class ClarificationsComponent
       SearchFilter.IN
     );
     const filter = this.params.getValue().getParams();
-    this.goodService.getAll(filter).subscribe({
-      next: resp => {
-        let result = resp.data.map(async (item: any) => {
-          const goodTypeName = await this.getTypeGood(item.goodTypeId);
-          item['goodTypeName'] = goodTypeName;
-
-          item['fraction'] = item.fractionId ? item.fractionId.description : '';
-
-          item['quantity'] = Number(item.quantity);
-
-          const physicalStatus = await this.getByTheirStatus(
-            item.physicalStatus,
-            'Estado Fisico'
-          );
-          item['physicstateName'] = physicalStatus;
-
-          const stateConservation = await this.getByTheirStatus(
-            item.stateConservation,
-            'Estado Conservacion'
-          );
-          item['stateConservationName'] = stateConservation;
-
-          const transferentDestiny = await this.getByTheirStatus(
-            item.transferentDestiny,
-            'Destino'
-          );
-          item['transferentDestinyName'] = transferentDestiny;
-
-          const destiny = await this.getByTheirStatus(item.destiny, 'Destino');
-          item['destinyName'] = destiny;
-        });
-
-        Promise.all(result).then(data => {
-          this.assetsArray = resp.data;
-          this.loading = false;
-          this.totalItems = resp.count;
-        });
+    this.goodFinderService.goodFinder(filter).subscribe({
+      next: async (resp: any) => {
+        this.assetsArray.load(resp.data);
+        this.loading = false;
+        this.totalItems = resp.count;
       },
       error: error => {
         this.loading = false;
+        this.onLoadToast('error', 'No se encontraron registros', '');
+        console.log('no se encontraron registros del bien ', error);
       },
-    });
-  }
-
-  getTypeGood(id: number) {
-    return new Promise((resolve, reject) => {
-      if (id) {
-        this.typeRelevantService.getById(id).subscribe({
-          next: resp => {
-            resolve(resp.description);
-          },
-        });
-      } else {
-        resolve(null);
-      }
-    });
-  }
-
-  getByTheirStatus(id: number | string, typeName: string) {
-    return new Promise((resolve, reject) => {
-      if (id) {
-        var params = new ListParams();
-        params['filter.name'] = `$eq:${typeName}`;
-        params['filter.keyId'] = `$eq:${id}`;
-        this.genericService.getAll(params).subscribe({
-          next: resp => {
-            resolve(resp.data.length > 0 ? resp.data[0].description : '');
-          },
-        });
-      } else {
-        resolve(null);
-      }
     });
   }
 
   selectGoods(event: any) {
-    if (event.selected.length === 1) {
-      this.showClarificationButtons =
-        event.data.processStatus != 'SOLICITAR_ACLARACION' ? true : false;
-      this.good = event.data;
+    /* event.toggle.subscribe((data: any) => { */
+    /* const index = this.goodsSelected.indexOf(data.row);
+      if (index == -1 && data.toggle == true) {
+        this.goodsSelected.push(data.row);
+      } else if (index != -1 && data.toggle == false) {
+        this.goodsSelected.splice(index, 1);
+      } */
+    this.goodsSelected = [];
+    this.goodsSelected.push(event);
+    if (this.goodsSelected.length === 1) {
+      this.rowSelected = null;
+      this.paragraphs = [];
       this.goodForm.reset();
-      this.goodForm.patchValue({ ...this.good });
-      this.rowSelected = this.good;
+      setTimeout(() => {
+        this.showClarificationButtons =
+          this.goodsSelected[0].processStatus != 'SOLICITAR_ACLARACION'
+            ? true
+            : false;
+        this.good = this.goodsSelected;
 
-      this.getClarifications();
+        this.goodForm.patchValue({ ...this.good[0] });
+        this.rowSelected = this.good;
+        this.getClarifications();
+      }, 1000);
+    } else if (this.goodsSelected.length > 1) {
+      this.rowSelected = null;
+      this.paragraphs = [];
+      this.onLoadToast('warning', 'Solo se puede seleccionar un Bien');
     } else {
       this.rowSelected = null;
       this.paragraphs = [];
     }
+    /* }); */
   }
 
   getClarifications() {
     this.paragraphs = [];
     this.isLoadingTable2 = true;
     const params = new ListParams();
-    params['filter.goodId'] = `$eq:${this.good.id}`;
+    params['filter.goodId'] = `$eq:${this.good[0].id}`;
 
     this.rejectGoodService.getAllFilter(params).subscribe({
       next: resp => {
@@ -523,6 +497,9 @@ export class ClarificationsComponent
         const clarification = resp.data.map(async (item: any) => {
           const clarifi = await this.getCatClarification(item.clarificationId);
           item['clarificationName'] = clarifi;
+          const date = new Date(item.rejectionDate);
+          const datePipe = new DatePipe('en-US');
+          item['rejectionDate'] = datePipe.transform(date, 'dd/MM/yyyy', 'UTC');
         });
 
         Promise.all(clarification).then(data => {
@@ -560,7 +537,7 @@ export class ClarificationsComponent
     this.rowSelected = event;
   }
 
-  selectAll(event?: any) {
+  /*selectAll(event?: any) {
     this.assetsSelected = [];
     if (event.target.checked) {
       this.assetsArray.forEach(x => {
@@ -574,7 +551,7 @@ export class ClarificationsComponent
       });
     }
     console.log(this.assetsSelected);
-  }
+  }*/
 
   /*   selectOne(event: any) {
     if (event.target.checked == true) {
@@ -593,7 +570,6 @@ export class ClarificationsComponent
   } */
 
   clarifiRowSelected(event: any) {
-    console.log(event);
     if (event.isSelected == true) {
       this.showClarificationButtons =
         event.data.answered == 'ACLARADA' ? false : true;
@@ -606,7 +582,7 @@ export class ClarificationsComponent
   newClarification() {
     let data = this.clariArraySelected[0];
     if (data === 0) {
-      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      this.onLoadToast('warning', 'Información', `Seleccione uno o mas Bienes`);
       return;
     }
     this.openForm();
@@ -615,15 +591,15 @@ export class ClarificationsComponent
   deleteClarification() {
     let data = this.clariArraySelected[0];
     if (data === 0) {
-      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      this.onLoadToast('warning', 'Información', `Seleccione uno o mas Bienes`);
       return;
     }
 
     const clarifycationLength = this.paragraphs.length;
     this.alertQuestion(
-      'warning',
-      'Eliminar',
-      'Desea eliminar el registro?'
+      'question',
+      'Atención',
+      '¿Desea eliminar el registro?'
     ).then(async val => {
       if (val.isConfirmed) {
         const idChatClarification = data.chatClarification.idClarification;
@@ -633,18 +609,37 @@ export class ClarificationsComponent
           next: async val => {
             this.onLoadToast(
               'success',
-              'Eliminada con exito',
+              'Eliminada',
               'La aclaración fue eliminada con éxito'
             );
 
+            let body: any = {};
             if (clarifycationLength === 1) {
-              const goodResDev: any = await this.getGoodResDev(this.good.id);
+              const goodResDev: any = await this.getGoodResDev(this.good[0].id);
               await this.removeDevGood(Number(goodResDev));
-              await this.updateGood(this.good.id);
+              body['id'] = this.good[0].id;
+              body['goodId'] = this.good[0].goodId;
+              body.processStatus = 'DESTINO_DOCUMENTAL';
+              body.goodStatus = 'DESTINO_DOCUMENTAL';
+              body.status = 'ROP';
+              await this.updateGood(body);
+            } else {
+              body['id'] = this.good[0].id;
+              body['goodId'] = this.good[0].goodId;
+              body.goodStatus =
+                this.good[0].goodStatus != 'ACLARADO'
+                  ? 'ACLARADO'
+                  : 'DESTINO_DOCUMENTAL';
+              body.processStatus = 'DESTINO_DOCUMENTAL';
+              body.status = 'ROP';
+              await this.updateGood(body);
             }
+            //const update = await this.createHistoricGood('ROP', body.id);
+            this.updateStatusTable(body);
           },
           complete: () => {
             this.getClarifications();
+            this.getData();
           },
           error: error => {
             console.log(error);
@@ -658,20 +653,35 @@ export class ClarificationsComponent
       }
     });
   }
+
+  updateStatusTable(body: any) {
+    this.assetsArray.getElements().then(data => {
+      data.map((item: any) => {
+        //debugger;
+        if (item.id === body.id) {
+          item.processStatus = body.processStatus;
+          item.goodStatus = body.goodStatus;
+        }
+      });
+      this.assetsArray.load(data);
+    });
+  }
+
   editForm() {
     let data = this.clariArraySelected;
     if (data.length === 1) {
       this.openForm(this.clariArraySelected[0]);
     } else {
-      this.alert('warning', 'Error', '¡Seleccione solo una aclaración!');
+      this.alert('warning', 'Error', 'Seleccione solo una Aclaración');
     }
   }
 
   openForm(event?: any): void {
     let docClarification = event;
     let config: ModalOptions = {
+      //this.goodForm.value
       initialState: {
-        goodTransfer: this.goodForm.value,
+        goodTransfer: this.good,
         docClarification,
         request: this.requestObject,
         callback: (next: boolean) => {
@@ -681,7 +691,23 @@ export class ClarificationsComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(ClarificationFormTabComponent, config);
+    this.bsModalRef = this.modalService.show(
+      ClarificationFormTabComponent,
+      config
+    );
+
+    this.bsModalRef.content.event.subscribe((res: any) => {
+      if (res === 'UPDATE-GOOD') {
+        this.assetsArray.getElements().then(data => {
+          data.map((item: any) => {
+            if (item.id === res.id) {
+              item.processStatus = 'SOLICITAR_ACLARACION';
+              item.goodStatus = 'SOLICITUD DE ACLARACION';
+            }
+          });
+        });
+      }
+    });
   }
 
   removeDevGood(id: number) {
@@ -696,32 +722,28 @@ export class ClarificationsComponent
           this.onLoadToast(
             'error',
             'Error interno',
-            'No se pudo eliminar el bien-res-deb'
+            'No se pudo eliminar el Bien'
           );
         },
       });
     });
   }
 
-  updateGood(id: number) {
+  updateGood(body: any) {
     return new Promise((resolve, reject) => {
-      let body: any = {};
-      body.id = this.good.id;
-      body.goodId = this.good.goodId;
-      //body.goodResdevId = Number(id);
-      body.processStatus = 'DESTINO_DOCUMENTAL';
-      body.goodStatus = 'DESTINO_DOCUMENTAL';
       this.goodService.update(body).subscribe({
         next: resp => {
           console.log('good updated', resp);
+          resolve(true);
         },
         error: error => {
           console.log('good updated', error);
           this.onLoadToast(
             'error',
             'Erro Interno',
-            'No se actualizo el campo bien-res-dev en bien'
+            'No se actualizó el campo bien en bien'
           );
+          reject(false);
         },
       });
     });
@@ -763,7 +785,7 @@ export class ClarificationsComponent
           this.onLoadToast(
             'error',
             'Error interno',
-            'No se pudo obtener el bien-res-dev'
+            'No se pudo obtener el Bien'
           );
         },
       });
@@ -786,8 +808,75 @@ export class ClarificationsComponent
           this.onLoadToast(
             'error',
             'Error interno',
-            'No se pudo obtener el bien-res-dev'
+            'No se pudo obtener el Bien'
           );
+        },
+      });
+    });
+  }
+
+  setDescriptionGoodSae(descriptionInput: any) {
+    this.assetsArray['data'].map((item: any) => {
+      if (item.id === descriptionInput.data.id) {
+        item.descriptionGoodSae = descriptionInput.text;
+
+        this.addGoodModified(item);
+      }
+    });
+  }
+
+  addGoodModified(good: any) {
+    const index = this.goodSaeModified.indexOf(good);
+    if (index != -1) {
+      this.goodSaeModified[index] = good;
+      if (this.goodSaeModified[index].descriptionGoodSae == '') {
+        this.goodSaeModified[index].descriptionGoodSae = null;
+      }
+    } else {
+      this.goodSaeModified.push(good);
+    }
+  }
+
+  saveGoodSaeDescrip() {
+    if (this.goodSaeModified.length == 0) {
+      return;
+    }
+    this.loading = true;
+    this.goodSaeModified.map(async (item: any, _i: number) => {
+      const index = _i + 1;
+      const body: any = {
+        id: item.id,
+        goodId: item.goodId,
+        descriptionGoodSae: item.descriptionGoodSae,
+      };
+      //debugger;
+      const updateResult: any = await this.updateGood(body);
+      if (this.goodSaeModified.length == index) {
+        this.loading = false;
+        this.goodSaeModified = [];
+        this.onLoadToast('success', 'Bienes Actualizados');
+      }
+    });
+  }
+
+  createHistoricGood(status: string, good: number) {
+    return new Promise((resolve, reject) => {
+      const user: any = this.authService.decodeToken();
+      let body: IHistoryGood = {
+        propertyNum: good,
+        status: status,
+        changeDate: new Date(),
+        userChange: user.username,
+        statusChangeProgram: 'SOLICITUD_TRANSFERENCIA',
+        reasonForChange: 'N/A',
+      };
+      this.historyGoodService.create(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(error);
+          this.onLoadToast('error', 'No se pudo crear el historico del bien');
         },
       });
     });

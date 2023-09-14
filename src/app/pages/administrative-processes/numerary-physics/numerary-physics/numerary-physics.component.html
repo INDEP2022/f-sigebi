@@ -1,74 +1,73 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">NUMERARIO FÍSICO POR TÍPO</h5>
+    <h5 class="title">NUMERARIO FÍSICO POR TIPO</h5>
   </div>
-
   <div body>
-    <form [formGroup]="physicsForm" class="form-material">
-      <div class="row">
-        <div class="col-md-3">
-          <form-field [control]="physicsForm.get('delegation')">
-            <ngx-select
-              [form]="physicsForm"
-              (fetchItems)="getDelegations($event)"
-              [data]="delegations"
-              value="id"
-              bindLabel="description"
-              label="Delegaci&oacute;n"
-              [control]="'delegation'"
-              (change)="getDelegations($event)">
-            </ngx-select>
-          </form-field>
-        </div>
-      </div>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <app-delegation-shared
+          [showSubdelegation]="false"
+          [form]="form"></app-delegation-shared>
 
-      <div class="row mt-4">
-        <div class="col-md-3 mb-3">
-          <form-field
-            [control]="physicsForm.get('startedDate')"
-            label="Fecha de Recepción">
-            <input
-              type="text"
-              formControlName="startedDate"
-              placeholder="Fecha de Recepción"
-              class="form-control"
-              bsDatepicker />
-          </form-field>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('from')"
+              label="Fecha de Recepción:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="from"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('to')" label="al:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="to"
+                class="form-control"
+                [minDate]="form.get('from').value"
+                bsDatepicker />
+            </form-field>
+          </div>
         </div>
-        <div class="col-md-3 mb-3">
-          <form-field
-            [control]="physicsForm.get('finishedDate')"
-            label="Al día">
-            <input
-              type="text"
-              formControlName="finishedDate"
-              placeholder="Al día"
-              class="form-control"
-              bsDatepicker />
-          </form-field>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('type')">
+              <ngx-select
+                (fetchItems)="getTvalTable1Service($event)"
+                [searchOnInit]="true"
+                [data]="types"
+                [form]="form"
+                value="otvalor"
+                bindLabel="otvalor"
+                label="Tipo:"
+                control="type">
+              </ngx-select>
+            </form-field>
+          </div>
         </div>
-      </div>
-      <div class="row mt-4">
-        <div class="col-md-3">
-          <form-field [control]="physicsForm.get('type')" label="Tipo">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="type"
-              placeholder="Tipo" />
-          </form-field>
-        </div>
-      </div>
-    </form>
-    <div>
-      <div class="d-flex justify-content-center">
-        <div class="m-3">
-          <confirm-button
-            text="IMPRIMIR REPORTE"
-            [disabled]="physicsForm.invalid"
-            [loading]="loading"
-            (confirm)="send()">
-          </confirm-button>
+      </form>
+      <div footer>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              type="button"
+              [disabled]="form.invalid"
+              class="btn btn-primary active btn-sm"
+              (click)="Generar()">
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <button
+              type="button"
+              class="btn btn-danger active btn-sm"
+              (click)="cleanForm()">
+              Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,11 +1,11 @@
 export const CENTRAL_ACCOUNT_COLUMNS = {
   file: {
-    title: 'No Expediente',
+    title: 'No. Expediente',
     type: 'string',
     sort: false,
   },
   good: {
-    title: 'No Bien',
+    title: 'No. Bien',
     type: 'string',
     sort: false,
   },
@@ -15,7 +15,7 @@ export const CENTRAL_ACCOUNT_COLUMNS = {
     sort: false,
   },
   status: {
-    title: 'Status',
+    title: 'Estatus',
     type: 'string',
     sort: false,
   },
@@ -35,7 +35,7 @@ export const CENTRAL_ACCOUNT_COLUMNS = {
     sort: false,
   },
   currency: {
-    title: '',
+    title: 'Moneda',
     type: 'string',
     sort: false,
   },

@@ -36,7 +36,7 @@ export const BANKS_COLUMNS = {
   },
 
   tasa_calculo: {
-    title: 'Tasa Calculo',
+    title: 'Tasa Cálculo',
     type: 'string',
     sort: false,
   },

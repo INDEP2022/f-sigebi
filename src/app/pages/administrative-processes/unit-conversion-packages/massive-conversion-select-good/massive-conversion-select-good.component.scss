@@ -1,0 +1,31 @@
+:host ::ng-deep form-field {
+  .form-bar {
+    display: none;
+  }
+  .form-control[readonly] {
+    background-color: white !important;
+  }
+}
+
+:host ::ng-deep app-modal {
+  .modal-body {
+    padding: 0px 20px;
+  }
+}
+
+.table-responsive {
+  padding: 15px 0px 0px;
+}
+
+button {
+  margin: 0 10px 10px;
+}
+
+.upload-button {
+  display: flex;
+  column-gap: 5px;
+  align-items: center;
+  i {
+    font-size: 20px;
+  }
+}

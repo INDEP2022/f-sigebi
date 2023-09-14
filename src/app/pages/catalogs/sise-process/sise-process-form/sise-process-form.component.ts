@@ -16,7 +16,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class SiseProcessFormComponent extends BasePage implements OnInit {
   form: ModelForm<ISiseProcess>;
-  title: string = 'Proceso Sise';
+  title: string = 'Proceso SISE';
   edit: boolean = false;
   sisi: ISiseProcess;
   siseProcess = new DefaultSelect<ISiseProcess>();
@@ -37,7 +37,11 @@ export class SiseProcessFormComponent extends BasePage implements OnInit {
       id: [null],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(50),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
     });
     if (this.sisi != null) {
@@ -60,6 +64,10 @@ export class SiseProcessFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.form.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.siseProcessService.create(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
@@ -69,17 +77,16 @@ export class SiseProcessFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.siseProcessService
-      .update(this.sisi.id, this.form.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.siseProcessService.newUpdate(this.form.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

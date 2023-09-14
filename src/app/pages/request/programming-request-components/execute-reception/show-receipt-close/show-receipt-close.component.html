@@ -1,0 +1,36 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">RECIBOS CERRADOS</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="justify-content-end btn-toolbar">
+        <app-columns-select
+          [(settings)]="settingsReceiptClose"></app-columns-select>
+
+        <button (click)="openReceipt()" class="btn btn-primary btn-sm active">
+          Abrir recibo <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+      <ng2-smart-table
+        [attr.class]="'table-bordered pt-3'"
+        [settings]="settingsReceiptClose"
+        [source]="receiptsClose"
+        (userRowSelect)="receiptSelect($event.data)"
+        (edit)="showReceipt($event.data)">
+      </ng2-smart-table>
+      <app-pagination
+        [params]="paramsReceipts"
+        [totalItems]="totalItemsReceipt"></app-pagination>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

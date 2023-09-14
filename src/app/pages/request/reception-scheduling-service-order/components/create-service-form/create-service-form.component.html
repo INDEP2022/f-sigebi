@@ -25,13 +25,28 @@
     </h5>
 
     <div class="row pt-3 form-material">
-      <search-bar *ngIf="showSearchForm" [params]="params"></search-bar>
+      <!-- <search-bar *ngIf="showSearchForm" [params]="params"></search-bar> -->
+      <div class="row">
+        <form [formGroup]="form" class="form-material">
+          <div class="col-md-6">
+            <form-field [control]="form.get('description')" label="Descripción">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="description" />
+            </form-field>
+          </div>
+        </form>
+      </div>
 
       <div class="justify-content-end btn-toolbar pt-2">
-        <button class="btn btn-primary btn-sm active">
+        <button class="btn btn-primary btn-sm active" (click)="search()">
           <i class="fa fa-search"></i> Buscar
         </button>
-        <button *ngIf="showSearchForm" class="btn btn-danger btn-sm active">
+        <button
+          *ngIf="showSearchForm"
+          class="btn btn-danger btn-sm active"
+          (click)="clean()">
           <i class="fa fa-reload"></i> Limpiar
         </button>
       </div>
@@ -41,7 +56,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data">
+            [source]="data"
+            (userRowSelect)="selectServices($event)">
           </ng2-smart-table>
         </div>
         <app-pagination
@@ -53,12 +69,15 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button class="btn btn-primary active" (click)="confirm()">
+        <button class="btn btn-primary btn-sm active" (click)="confirm()">
           Seleccionar
         </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

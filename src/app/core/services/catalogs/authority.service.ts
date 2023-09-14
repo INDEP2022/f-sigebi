@@ -8,7 +8,10 @@ import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IResponse,
+} from '../../interfaces/list-response.interface';
 import {
   IAuthority,
   IAuthority2,
@@ -119,6 +122,14 @@ export class AuthorityService
     return this.get(route, params);
   }
 
+  getAppsDescAuthory(params?: ListParams) {
+    return this.get<IResponse>(AuthorityEndpoints.Apps, params);
+  }
+
+  /*getGoodAppraise(params?: ListParams) {
+    return this.get<IResponse>(AuthorityEndpoints.Apps, params);
+  }*/
+
   create2(model: IAuthority) {
     return this.post(AuthorityEndpoints.Authority, model);
   }
@@ -128,8 +139,47 @@ export class AuthorityService
     return this.put(route, model);
   }
 
+  update3(id: string | number, model: IAuthority) {
+    const route = `${AuthorityEndpoints.Authority}/id/${id}`;
+    return this.put(route, model);
+  }
+
   remove2(id: number | string, model: Object) {
-    const route = `${AuthorityEndpoints.Authority}/${id}`;
+    const route = `${AuthorityEndpoints.Authority}/id/${id}`;
     return this.delete(route, model);
+  }
+
+  getDescription(id: number) {
+    const route = `${AuthorityEndpoints.Sssubtipe}?filter.numClasifGoods=$eq:${id}`;
+    return this.get(route);
+  }
+
+  getTranfer(params?: ListParams | string): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.transferent}`;
+    return this.get(route, params);
+  }
+
+  getTranferId(id: number) {
+    const route = `${AuthorityEndpoints.transferent}?filter.id=$eq:${id}`;
+    return this.get(route);
+  }
+
+  getTranferIdandEmisora(
+    params?: ListParams | string
+  ): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.station}`;
+    return this.get(route, params);
+  }
+
+  getstationId(trasnfer: any, emisora: any) {
+    const route = `${AuthorityEndpoints.transferent}?filter.idTransferent=$eq:${trasnfer}&filter.id=$eq:${emisora}`;
+    return this.get(route);
+  }
+
+  getStrategyFormat(
+    params?: ListParams | string
+  ): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.getTdsau}`;
+    return this.get(route, params);
   }
 }
