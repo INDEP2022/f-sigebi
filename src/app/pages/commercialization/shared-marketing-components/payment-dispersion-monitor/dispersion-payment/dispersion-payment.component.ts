@@ -1623,7 +1623,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
           PROCESO: '',
           COMER_EVENTOS_ID_EVENTO: '',
           ID_TPEVENTO: '',
-          ID_TIPO_DISP: ''
+          ID_TIPO_DISP: '',
         };
         //TODO
         this.interfaceSirsaeService.sendSirsaeLot(body).subscribe(
@@ -1658,27 +1658,27 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
       this.comerLotsService.pupValidaMandatoNfac(model).subscribe(
         res => {
-          this.alert('success','Se realizó la prueba','')
+          this.alert('success', 'Se realizó la prueba', '');
           console.log(res);
         },
         err => {
           console.log(err);
-          this.alert('error','Se presentó un error inesperado','')
+          this.alert('error', 'Se presentó un error inesperado', '');
         }
       );
     }
   }
 
-  userWithoutBill(){
-    const paramsF = new FilterParams()
+  userWithoutBill() {
+    const paramsF = new FilterParams();
     // paramsF.addFilter()
     this.paymentService.getComerRelUsuCanc().subscribe(
       res => {
-        console.log(res)
+        console.log(res);
       },
       err => {
-        console.log(err)
+        console.log(err);
       }
-    )
+    );
   }
 }
