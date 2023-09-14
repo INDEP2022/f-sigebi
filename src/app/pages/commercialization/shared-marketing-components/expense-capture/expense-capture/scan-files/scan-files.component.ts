@@ -80,6 +80,7 @@ export class ScanFilesComponent extends BasePage implements OnInit {
           next: response => {
             if (response && response.data) {
               console.log(response);
+              this.dataService.FOLIO_UNIVERSAL = response.data[0].id;
               this.folioUniversal.setValue(response.data[0].id);
             }
           },
@@ -115,9 +116,9 @@ export class ScanFilesComponent extends BasePage implements OnInit {
       this.expenseNumber +
       ' CANCELACION DE VENTA POR SOLICITUD DE AUTORIDAD';
     this.dataService.dataCompositionExpenses
-      .filter(row => row.goods)
+      .filter(row => row.expendientNumber)
       .forEach(async (x, index) => {
-        const route = `notification?filter.wheelNumber=$not:$null&filter.expedientNumber=$eq:${x.goods.fileNumber}&sortBy=wheelNumber:DESC`;
+        const route = `notification?filter.wheelNumber=$not:$null&filter.expedientNumber=$eq:${x.expendientNumber}&sortBy=wheelNumber:DESC`;
         const notifications = await firstValueFrom(
           this.serviceNotification
             .getAllFilter(route)
@@ -142,7 +143,7 @@ export class ScanFilesComponent extends BasePage implements OnInit {
               dateReceivesFile: undefined,
               keyTypeDocument: 'ENTRE',
               keySeparator: '60',
-              numberProceedings: x.goods.fileNumber,
+              numberProceedings: x.expendientNumber,
               sheets: '',
               numberDelegationRequested: this.userData.usuario.delegationNumber,
               numberSubdelegationRequests:

@@ -151,7 +151,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
       valid = true;
     } else {
       if (!start) {
-        this.onLoadToast('warning', '¡Advertencia!', ERROR_FORM_NOT_INSERT);
+        this.onLoadToast('warning', 'Atención', ERROR_FORM_NOT_INSERT);
       }
     }
     return valid;
@@ -168,7 +168,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
       valid = true;
     } else {
       if (!start) {
-        this.onLoadToast('warning', '¡Advertencia!', ERROR_FORM_NOT_INSERT);
+        this.onLoadToast('warning', 'Atención', ERROR_FORM_NOT_INSERT);
       }
     }
     return valid;
@@ -199,7 +199,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
         this.onLoadToast('warning', 'Fechas incorrectas', ERROR_FORM_FECHA);
       }
     } else {
-      this.onLoadToast('error', 'Error', ERROR_FORM);
+      this.onLoadToast('warning', 'Atención', ERROR_FORM);
     }
   }
 
@@ -365,9 +365,9 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
    */
   errorGet(err: any) {
     this.onLoadToast(
-      'error',
-      'Error',
-      err.status === 0 ? ERROR_INTERNET : err.error.message
+      'warning',
+      'Atención',
+      err.status === 0 ? ERROR_INTERNET : 'No se encontraron registros'
     );
   }
 
@@ -440,7 +440,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'Error',
-            err.status === 0 ? ERROR_INTERNET : err.error.message
+            err.status === 0 ? ERROR_INTERNET : 'No se encontraron registros'
           );
           subscription.unsubscribe();
         },
@@ -478,9 +478,9 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
         error: err => {
           this.processStatus = new DefaultSelect();
           this.onLoadToast(
-            'error',
-            'Error',
-            err.status === 0 ? ERROR_INTERNET : err.error.message
+            'warning',
+            'Atención',
+            err.status === 0 ? ERROR_INTERNET : 'No se encontraron registros'
           );
           subscription.unsubscribe();
         },
@@ -549,8 +549,8 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
       this.satTransferForm.get('job').setValue(row.officeNumber);
       this.satTransferForm.updateValueAndValidity();
       this.onLoadToast(
-        'info',
-        '¡Búsqueda!',
+        'warning',
+        'Búsqueda',
         ERROR_FORM_SEARCH_OFICIO_EXPEDIENTE_SAT
       );
     } else {
@@ -558,15 +558,15 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
         this.satTransferForm.get('satProceedings').setValue(row.issue);
         this.satTransferForm.updateValueAndValidity();
         this.onLoadToast(
-          'info',
-          '¡Búsqueda!',
+          'warning',
+          'Búsqueda',
           ERROR_FORM_SEARCH_EXPEDIENTE_SAT
         );
       }
       if (row.officeNumber) {
         this.satTransferForm.get('job').setValue(row.officeNumber);
         this.satTransferForm.updateValueAndValidity();
-        this.onLoadToast('info', '¡Búsqueda!', ERROR_FORM_SEARCH_OFICIO_SAT);
+        this.onLoadToast('warning', 'Búsqueda', ERROR_FORM_SEARCH_OFICIO_SAT);
       }
     }
     setTimeout(() => {

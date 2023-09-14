@@ -1,4 +1,5 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { CheckboxReportDelitComponent } from './checkbox-report-delit';
 
 export const COLUMNS = {
   changeStatus: {
@@ -24,10 +25,27 @@ export const COLUMNS = {
     title: 'Reporte Robo',
     sort: false,
     type: 'custom',
-    renderComponent: CheckboxElementComponent,
+    renderComponent: CheckboxReportDelitComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
+        console.log(instance, data);
         data.row.reportDelit = data.toggle;
+        if (data.row.V_VALCON_ROBO > 0) {
+          if (
+            data.row.vehiculoCount === 0 &&
+            data.row.reportDelit &&
+            data.row.clasifGoodNumber + '' !== '1606'
+          ) {
+            data.row.reportDelit = false;
+          } else if (
+            data.row.vehiculoCount === 0 &&
+            !data.row.reportDelit &&
+            data.row.clasifGoodNumber + '' === '1606'
+          ) {
+            data.row.reportDelit = true;
+          }
+        }
+        console.log(data);
       });
     },
     filter: {
@@ -39,19 +57,23 @@ export const COLUMNS = {
       },
     },
   },
-  budgetItem: {
+  departure: {
     title: 'Partida',
     sort: false,
   },
-  cvman: {
+  manCV: {
     title: 'Transferente',
+    sort: false,
+  },
+  mandato: {
+    title: 'Ur',
     sort: false,
   },
   goodNumber: {
     title: 'No. Bien',
     sort: false,
   },
-  goodDescription: {
+  description: {
     title: 'Descripción',
     sort: false,
   },
@@ -59,15 +81,15 @@ export const COLUMNS = {
     title: 'Monto',
     sort: false,
   },
-  vat: {
+  iva: {
     title: 'IVA',
     sort: false,
   },
-  isrWithholding: {
+  retencionIsr: {
     title: 'Retención ISR',
     sort: false,
   },
-  vatWithholding: {
+  retencionIva: {
     title: 'Retención IVA',
     sort: false,
   },

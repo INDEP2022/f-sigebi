@@ -10,8 +10,9 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
 import { TranfergoodService } from 'src/app/core/services/ms-transfergood/transfergood.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared';
-import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -41,7 +42,8 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
     private user: AuthService,
     private segUserService: SegAcessXAreasService,
     private receptionService: DocReceptionRegisterService,
-    private transferGoodService: TranfergoodService
+    private transferGoodService: TranfergoodService,
+    private msUsersService: UsersService
   ) {
     super();
   }
@@ -72,7 +74,8 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      CC: [null, [Validators.maxLength(50), Validators.pattern(EMAIL_PATTERN)]],
+      // CC: [null, [Validators.maxLength(50), Validators.pattern(EMAIL_PATTERN)]],
+      CC: [null, [Validators.maxLength(500)]],
       // FECHA_ENV: [null],
       MENSAJE: [
         null,
@@ -86,7 +89,7 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
         null,
         [
           Validators.required,
-          // Validators.maxLength(50),
+          Validators.maxLength(500),
           // Validators.pattern(STRING_PATTERN),
         ],
       ],
@@ -112,7 +115,7 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
             : null
           : null
       );
-    console.log(this.form.get('PARA').value, this.userSelected);
+    // console.log(this.form.get('PARA').value, this.userSelected);
     // this.form
     //   .get('FECHA_ENV')
     //   .patchValue(
@@ -126,37 +129,44 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
     this.form.get('REMITENTE').patchValue(user.username.toUpperCase());
     this.form.get('MENSAJE').patchValue(this.message);
     this.form.get('ASUNTO').patchValue(this.asunto);
-    console.log(this.asunto, this.message, this.userSelected);
+    // console.log(this.asunto, this.message, this.userSelected);
   }
 
   close() {
     this.modalRef.hide();
   }
 
-  // getNameRemit(params: ListParams) {
-  //   params['delegationNumber'] = this.delegation;
+  getNameRemit(params: ListParams) {
+    params['delegationNumber'] = this.delegation;
+    params['filter.email'] = '$ilike:' + params.text;
 
-  //   this.segUserService.getNameEmail(params).subscribe({
-  //     next: resp => {
-  //       this.list = new DefaultSelect(resp.data, resp.count);
-  //     },
-  //     error: () => {},
-  //   });
-  // }
+    // this.segUserService.getNameEmail(params).subscribe({
+    this.msUsersService.getAllSegUsers(params).subscribe({
+      next: resp => {
+        this.list = new DefaultSelect(resp.data, resp.count);
+      },
+      error: () => {
+        this.list = new DefaultSelect();
+      },
+    });
+  }
 
   getNameDist(params: ListParams) {
     params['delegationNumber'] = this.delegation;
     // if (this.form.get('PARA').value) {
     //   params['search'] = this.form.get('PARA').value;
     // }
-
-    this.segUserService.getDisNameEmail(params).subscribe({
-      // this.segUserService.getAll(params).subscribe({
+    // console.log(params);
+    params['filter.email'] = '$ilike:' + params.text;
+    // this.segUserService.getDisNameEmail(params).subscribe({
+    this.msUsersService.getAllSegUsers(params).subscribe({
       next: resp => {
         this.list2 = new DefaultSelect(resp.data, resp.count);
         // console.log(this.list2, this.form.get('PARA').value);
       },
-      error: () => {},
+      error: () => {
+        this.list2 = new DefaultSelect();
+      },
     });
   }
 
@@ -179,9 +189,6 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
     // const del = this.delegations.data.filter(
     //   (del: any) => del.id == delegation
     // )[0].description;
-
-    console.log(PARA);
-
     // const body = {
     //   to: PARA.join(','),
     //   subject: ASUNTO,
@@ -203,17 +210,17 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
     };
     this.transferGoodService.sendEmail(bodyMail).subscribe({
       next: resp => {
-        console.log(resp);
+        // console.log(resp);
         this.modalRef.hide();
         // this.form.get('MENSAJE').patchValue(resp.message);
-        this.alert('success', 'Correo Enviado Correctamente', '');
+        this.alert('success', 'Correo enviado correctamente', '');
       },
       error: err => {
-        console.log(err);
+        // console.log(err);
         this.alert(
           'warning',
-          'Error al Enviar',
-          'Ocurrió un Error al Enviar el Correo, Intente Nuevamente'
+          'Error al enviar',
+          'Ocurrió un error al enviar el correo, intente nuevamente'
         );
       },
     });

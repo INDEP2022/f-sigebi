@@ -169,9 +169,9 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
         error: err => {
           this.cordinators = new DefaultSelect();
           this.onLoadToast(
-            'error',
-            'Error',
-            err.status === 0 ? ERROR_INTERNET : err.error.message
+            'warning',
+            'Atención',
+            err.status === 0 ? ERROR_INTERNET : 'No se encontraron registros'
           );
           subscription.unsubscribe();
         },
@@ -209,9 +209,9 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
         error: err => {
           this.processStatus = new DefaultSelect();
           this.onLoadToast(
-            'error',
-            'Error',
-            err.status === 0 ? ERROR_INTERNET : err.error.message
+            'warning',
+            'Atención',
+            err.status === 0 ? ERROR_INTERNET : 'No se encontraron registros'
           );
           subscription.unsubscribe();
         },
@@ -246,7 +246,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
       valid = true;
     } else {
       if (!start) {
-        this.onLoadToast('warning', '¡Advertencia!', ERROR_FORM_NOT_INSERT);
+        this.onLoadToast('warning', 'Atención', ERROR_FORM_NOT_INSERT);
       }
     }
     return valid;
@@ -263,7 +263,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
       valid = true;
     } else {
       if (!start) {
-        this.onLoadToast('warning', '¡Advertencia!', ERROR_FORM_NOT_INSERT);
+        this.onLoadToast('warning', 'Atención', ERROR_FORM_NOT_INSERT);
       }
     }
     return valid;
@@ -294,7 +294,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
         this.onLoadToast('warning', 'Fechas incorrectas', ERROR_FORM_FECHA);
       }
     } else {
-      this.onLoadToast('error', 'Error', ERROR_FORM);
+      this.onLoadToast('warning', 'Atención', ERROR_FORM);
     }
   }
 
@@ -393,9 +393,9 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
    */
   errorGet(err: any) {
     this.onLoadToast(
-      'error',
-      'Error',
-      err.status === 0 ? ERROR_INTERNET : err.error.message
+      'warning',
+      'Atención',
+      err.status === 0 ? ERROR_INTERNET : 'No se encontraron registros'
     );
   }
 
@@ -550,8 +550,8 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
       this.pgrTransferForm.get('office').setValue(row.officeNumber);
       this.pgrTransferForm.updateValueAndValidity();
       this.onLoadToast(
-        'info',
-        '¡Búsqueda!',
+        'warning',
+        'Búsqueda',
         ERROR_FORM_SEARCH_OFICIO_AVERIGUACION_PREVIA
       );
     } else {
@@ -559,15 +559,15 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
         this.pgrTransferForm.get('aveprev').setValue(row.issue);
         this.pgrTransferForm.updateValueAndValidity();
         this.onLoadToast(
-          'info',
-          '¡Búsqueda!',
+          'warning',
+          'Búsqueda',
           ERROR_FORM_SEARCH_AVERIGUACION_PREVIA
         );
       }
       if (row.officeNumber) {
         this.pgrTransferForm.get('office').setValue(row.officeNumber);
         this.pgrTransferForm.updateValueAndValidity();
-        this.onLoadToast('info', '¡Búsqueda!', ERROR_FORM_SEARCH_OFICIO_PGR);
+        this.onLoadToast('warning', 'Búsqueda', ERROR_FORM_SEARCH_OFICIO_PGR);
       }
     }
     setTimeout(() => {

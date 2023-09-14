@@ -417,7 +417,7 @@ export class ChangeOfGoodClassificationComponent
       }
     } else {
       this.loading = false;
-      this.alert('error', 'Error', 'Bien no encontrado');
+      this.alert('warning', 'Bien no encontrado', '');
       this.numberGood.setValue(null);
       this.descriptionGood.setValue(null);
       this.clasification.setValue(null);

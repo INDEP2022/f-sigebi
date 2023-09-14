@@ -1,6 +1,6 @@
 export const COLUMNS = {
   numberGood: {
-    title: 'Bien',
+    title: 'No. Bien',
     sort: false,
     editable: false,
   },
