@@ -17,6 +17,7 @@ export class PartialityDirectAdjudicationMainComponent
 {
   paramsForm: FormGroup = new FormGroup({});
   adjudicationForm: FormGroup = new FormGroup({});
+  licitacionForm: FormGroup = new FormGroup({});
   @ViewChild('directAdjudicationTabs', { static: false })
   directAdjudicationTabs?: TabsetComponent;
   eventItems = new DefaultSelect();
@@ -194,6 +195,9 @@ export class PartialityDirectAdjudicationMainComponent
       totalAdv: [null, [Validators.required]],
       totalBal: [null, [Validators.required]],
     });
+    this.licitacionForm = this.fb.group({
+      licitacionNumber: [0, [Validators.required]],
+    });
   }
 
   getEvents(params: ListParams) {
@@ -270,5 +274,25 @@ export class PartialityDirectAdjudicationMainComponent
         this.cleanForm();
       }
     });
+  }
+
+  generarAdjudicacion() {
+    console.log(this.paramsForm.value);
+    let valores = [];
+    for (let valor in this.paramsForm.value) {
+      valores.push(this.paramsForm.value[valor]);
+    }
+
+    let vacios = valores.some(item => item === null);
+    console.log(vacios);
+
+    if (vacios) {
+      this.alert(
+        'warning',
+        'Verifique',
+        'Todos los valores de los parámetros son obligatorios'
+      );
+      return;
+    }
   }
 }
