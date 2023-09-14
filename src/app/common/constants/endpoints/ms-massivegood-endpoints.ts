@@ -18,4 +18,5 @@ export enum MassiveGoodEndpoints {
   PorGoodReasonRev = 'application/por-good-reason-rev',
   UdateInventory = 'application/update-inventory',
   ObtnGoodPag = 'application/obtn-good-pag',
+  ExportDataExcel = 'application/exportDataExcel',
 }

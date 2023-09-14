@@ -92,4 +92,9 @@ export class StrategyProcessService extends HttpService {
     const route = `${StrategyEndpoints.strategyIndicator}`;
     return this.put(route, params);
   }
+
+  getStrategyRepImplementation(noFormat: any) {
+    const route = `${StrategyEndpoints.StrategyRepIm}?filter.formatNumber=$eq:${noFormat}`;
+    return this.get(route);
+  }
 }
