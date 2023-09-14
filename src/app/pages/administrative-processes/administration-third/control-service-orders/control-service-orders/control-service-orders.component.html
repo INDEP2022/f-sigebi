@@ -76,7 +76,7 @@
       </div>
     </form>
     <div class="mt-5">
-      <div class="d-flex justify-content-between">
+      <div class="d-flex justify-content-end">
         <div>
           <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
@@ -85,13 +85,17 @@
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="tableSource"
-            (userRowSelect)="onRowSelect($event)"
-            (dblclick)="loadForm()">
-          </ng2-smart-table>
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading ? '0px' : '400px' }">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="tableSource"
+              (userRowSelect)="onRowSelect($event)"
+              (dblclick)="loadForm()">
+            </ng2-smart-table>
+          </ng-scrollbar>
         </div>
       </div>
       <app-pagination
