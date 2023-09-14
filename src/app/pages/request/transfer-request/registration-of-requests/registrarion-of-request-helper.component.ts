@@ -176,9 +176,9 @@ export class RegistrationHelper extends BasePage {
           'Falta Documento: Solicitud de Transferencia', //Validar documento SAT y PGR
           'Se requiere subir el documento'
         );
+        //validoOk = false;
+        return allOk;
       }
-    } else {
-      validoOk = true;
     }
     if (!lisDocument || lisDocument < 1) {
       this.message(
