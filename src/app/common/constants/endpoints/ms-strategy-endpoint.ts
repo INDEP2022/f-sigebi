@@ -23,6 +23,8 @@ export enum StrategyEndpoints {
   StrategyType = 'aplication/get-bills-service-type',
   StrategySer = 'aplication/get-bills-service',
   StrategyPro = 'strategy-process',
+  StrategyTurn = 'aplication/get-bills-turn',
+  StrategyCost = 'aplication/get-bills-variable-bills',
   StrategyRepIm = 'strategy-rep-implementation',
   paEstGoodsProgTrans = 'aplication/pa-est-goods-prog-trans',
   paEstGoodIncor = 'aplication/pa-est-goods-incor',
