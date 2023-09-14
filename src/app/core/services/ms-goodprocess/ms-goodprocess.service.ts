@@ -279,10 +279,11 @@ export class GoodprocessService extends HttpService {
     return this.get<IListResponse<any>>(route, params);
   }
 
-  getTypesGoods() {
-    return this.post(GoodprocessEndpoints.GetTypesGoods, {
-      onlyType: 1,
-      pType: 0,
-    });
+  getTypesGoods(params: any, paramsPaginated?: any) {
+    return this.post(
+      GoodprocessEndpoints.GetTypesGoods,
+      params,
+      paramsPaginated
+    );
   }
 }

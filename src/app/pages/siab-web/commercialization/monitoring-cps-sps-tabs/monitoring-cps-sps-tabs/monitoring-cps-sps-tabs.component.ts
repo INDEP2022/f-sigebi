@@ -4,6 +4,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
+import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
@@ -42,17 +43,30 @@ export class MonitoringCpsSpsTabsComponent extends BasePage implements OnInit {
   // Data Table
   dataSiab: LocalDataSource = new LocalDataSource();
   columnsSiab: any[] = [];
+  //
+  dataSirsae: LocalDataSource = new LocalDataSource();
+  columnsSirsae: any[] = [];
+  //
+  dataExpenses: LocalDataSource = new LocalDataSource();
+  columnsExpenses: any[] = [];
 
   // Paginador
   paramsFilter: any;
   paramsSiab = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsSiab: number = 0;
+  //
+  paramsSirsae = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsSirsae: number = 0;
+  //
+  paramsExpenses = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsExpenses: number = 0;
 
   //
 
   constructor(
     private servicePayment: PaymentService,
-    private subdelegationService: SubdelegationService
+    private subdelegationService: SubdelegationService,
+    private serviceSpent: ComerDetexpensesService
   ) {
     super();
 
@@ -67,25 +81,91 @@ export class MonitoringCpsSpsTabsComponent extends BasePage implements OnInit {
     this.fullYear();
     this.paramsSiab
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.fullDataTableSiab(this.paramsFilter));
+      .subscribe(() => this.fullDataTableSiabOrSirsae(this.paramsFilter));
+    this.paramsSirsae
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.fullDataTableSiabOrSirsae(this.paramsFilter));
+    // this.paramsExpenses
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() => this.fullExpenses());
   }
 
   //
 
   fullYear() {}
 
-  fullDataTableSiab(event: ListParams) {
-    this.paramsFilter = event;
-    this.servicePayment.postIdentifiesPaymentsInconsistency(event).subscribe({
+  fullDataTableSiabOrSirsae(event: any) {
+    console.log(
+      'El tipo de evento de los parametros -  el sistema: ',
+      event?.updates[3].value
+    );
+    if (event?.updates[3].value == 'SIAB') {
+      this.dataSirsae.load([]);
+      this.dataSirsae.refresh();
+      this.totalItemsSirsae = 0;
+      this.dataExpenses.load([]);
+      this.dataExpenses.refresh();
+      this.totalItemsExpenses = 0;
+
+      this.paramsFilter = event;
+      this.servicePayment.postIdentifiesPaymentsInconsistency(event).subscribe({
+        next: response => {
+          this.columnsSiab = [];
+          this.columnsSiab = response.data;
+          this.totalItemsSiab = response.count || 0;
+          this.dataSiab.load(this.columnsSiab);
+          this.dataSiab.refresh();
+        },
+        error: error => {
+          this.dataSiab.load([]);
+          this.dataSiab.refresh();
+        },
+      });
+    } else if (event?.updates[3].value == 'SIRSAE') {
+      this.dataSiab.load([]);
+      this.dataSiab.refresh();
+      this.totalItemsSiab = 0;
+      this.dataExpenses.load([]);
+      this.dataExpenses.refresh();
+      this.totalItemsExpenses = 0;
+
+      this.paramsFilter = event;
+      this.servicePayment.postIdentifiesPaymentsInconsistency(event).subscribe({
+        next: response => {
+          this.columnsSiab = [];
+          this.columnsSiab = response.data;
+          this.totalItemsSirsae = response.count || 0;
+          this.dataSirsae.load(this.columnsSiab);
+          this.dataSirsae.refresh();
+        },
+        error: error => {
+          this.dataSirsae.load([]);
+          this.dataSirsae.refresh();
+        },
+      });
+    }
+  }
+
+  fullExpenses(event?: any) {
+    this.dataSiab.load([]);
+    this.dataSiab.refresh();
+    this.totalItemsSiab = 0;
+    this.dataSirsae.load([]);
+    this.dataSirsae.refresh();
+    this.totalItemsSirsae = 0;
+
+    let params: ListParams = new ListParams();
+    this.serviceSpent.getExpenses(params).subscribe({
       next: response => {
+        this.columnsSiab = [];
         this.columnsSiab = response.data;
-        this.totalItemsSiab = response.count || 0;
-        this.dataSiab.load(this.columnsSiab);
-        this.dataSiab.refresh();
+        this.totalItemsExpenses = response.count || 0;
+        this.dataExpenses.load(this.columnsSiab);
+        this.dataExpenses.refresh();
       },
-      error: response => {
-        this.dataSiab.load([]);
-        this.dataSiab.refresh();
+      error: error => {
+        this.dataExpenses.load([]);
+        this.dataExpenses.refresh();
       },
     });
   }

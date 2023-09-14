@@ -92,12 +92,12 @@ export const GOODS_COLUMNS = {
 };
 
 export const SUBTYPE_COLUMNS_REPORT = {
-  noSubtype: {
+  no_subtipo: {
     title: 'No. Subtipo',
     sort: false,
     type: 'string',
   },
-  description: {
+  nombre_subtipo_bien: {
     title: 'Descripción',
     sort: false,
     type: 'string',
@@ -118,7 +118,7 @@ export const DELEGATION_COLUMNS_REPORT = {
 };
 
 export const STATUS_COLUMNS_REPORT = {
-  id: {
+  status: {
     title: 'Estatus',
     sort: false,
     type: 'string',

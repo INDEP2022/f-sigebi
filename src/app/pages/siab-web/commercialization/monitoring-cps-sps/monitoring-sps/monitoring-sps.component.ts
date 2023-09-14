@@ -1,5 +1,6 @@
+import { DatePipe } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsDatepickerViewMode } from 'ngx-bootstrap/datepicker';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -30,12 +31,16 @@ export class monitoringSpsComponent extends BasePage implements OnInit {
   concepts = new DefaultSelect();
   eventsExpenses = new DefaultSelect();
 
+  // Emit
+  @Output() fullExpensesEmit = new EventEmitter<any>();
+
   //
 
   constructor(
     private fb: FormBuilder,
     private serviceConcepts: ParametersConceptsService,
-    private serviceEvents: ComerEventosService
+    private serviceEvents: ComerEventosService,
+    private servicePipe: DatePipe
   ) {
     super();
     this.today = new Date();
@@ -102,10 +107,32 @@ export class monitoringSpsComponent extends BasePage implements OnInit {
     });
   }
 
-  onSubmit() {
-    if (this.form.valid) {
-      this.form.reset();
-    }
-    console.warn('Your order has been submitted');
+  fullQueryExpenses() {
+    this.fullExpenses();
   }
+
+  fullExpenses() {
+    let params = new HttpParams();
+    params = params.append(
+      'eventId',
+      this.form.controls['event'].value?.idevento
+    );
+    params = params.append(
+      'startDate',
+      this.servicePipe.transform(this.form.controls['from'].value, 'dd/MM/yyyy')
+    );
+    params = params.append(
+      'endDate',
+      this.servicePipe.transform(this.form.controls['to'].value, 'dd/MM/yyyy')
+    );
+    params = params.append('concepts', this.formTwo.controls['concepts'].value);
+    this.fullExpensesEmit.emit(params);
+  }
+
+  resetForm() {
+    this.form.reset();
+    this.formTwo.reset();
+  }
+
+  //
 }

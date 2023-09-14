@@ -97,102 +97,102 @@ export const INCONSINTENCIES_COLUMNS_MONITORING = {
 };
 
 export const INCONSINTENCIES_SIRSAE_COLUMNS_MONITORING = {
-  noMovto: {
+  no_movto: {
     title: 'No. Motivo',
     sort: false,
     type: 'string',
   },
-  fecha: {
+  date: {
     title: 'Fecha Pago',
     sort: false,
     type: 'string',
   },
-  referenciaori: {
+  referenceori: {
     title: 'Referencia Origen',
     sort: false,
     type: 'string',
   },
-  referencia: {
+  reference: {
     title: 'Referencia',
     sort: false,
     type: 'string',
   },
-  monto: {
+  amount: {
     title: 'Monto Pago',
     sort: false,
     type: 'string',
   },
-  cveBanco: {
+  bankkey: {
     title: 'Cvc. Banco',
     sort: false,
     type: 'string',
   },
-  codigo: {
+  code: {
     title: 'Codigo',
     sort: false,
     type: 'string',
   },
-  lotePublico: {
+  publiclot: {
     title: 'Lote Publico',
     sort: false,
     type: 'string',
   },
-  idEvento: {
+  eventid: {
     title: 'Id. Evento',
     sort: false,
     type: 'string',
   },
-  validoSistema: {
+  validsistem: {
     title: 'Valido Sistema',
     sort: false,
     type: 'string',
   },
-  resultado: {
+  result: {
     title: 'Resultado',
     sort: false,
     type: 'string',
   },
-  idPago: {
+  paymentid: {
     title: 'Id. Pago',
     sort: false,
     type: 'string',
   },
-  idLote: {
+  lotid: {
     title: 'Id. Lote',
     sort: false,
     type: 'string',
   },
-  idOrdenIngreso: {
+  entryorderid: {
     title: 'Orden de Ingreso',
     sort: false,
     type: 'string',
   },
-  idTipoSat: {
+  typesatid: {
     title: 'Id. Tipo Pago',
     sort: false,
     type: 'string',
   },
-  descPago: {
+  paymentdescription: {
     title: 'Pago',
     sort: false,
     type: 'string',
   },
-  tipo: {
+  type: {
     title: 'Tipo Referencia',
     sort: false,
     type: 'string',
   },
-  idSelec: {
+  selectid: {
     title: 'ID_SELEC',
     sort: false,
     type: 'string',
   },
-  descInconsis: {
+  inconcistencyid: {
     title: 'Inconsistencia',
     sort: false,
     type: 'string',
   },
-  inconsistenciaDuplicado: {
+  inconcistencyduplicated: {
     title: 'Inconsistencia Duplicado',
     sort: false,
     type: 'string',
@@ -200,52 +200,52 @@ export const INCONSINTENCIES_SIRSAE_COLUMNS_MONITORING = {
 };
 
 export const EXPENSES_COLUMNS_MONITORING = {
-  idGasto: {
+  id_gasto: {
     title: 'Id. Gasto',
     sort: false,
     type: 'string',
   },
-  idSolicitudPago: {
+  id_solicitudpago: {
     title: 'Id. Solicitud',
     sort: false,
     type: 'string',
   },
-  idConcepto: {
+  id_concepto: {
     title: 'Id. Concepto',
     sort: false,
     type: 'string',
   },
-  descConcepto: {
+  desc_concepto: {
     title: 'Concepto',
     sort: false,
     type: 'string',
   },
-  idEvento: {
+  id_evento: {
     title: 'Id. Evento',
     sort: false,
     type: 'string',
   },
-  descEvento: {
+  desc_evento: {
     title: 'Evento',
     sort: false,
     type: 'string',
   },
-  idLote: {
+  id_lote: {
     title: 'Id. Lote',
     sort: false,
     type: 'string',
   },
-  descLote: {
+  desc_lote: {
     title: 'Lote',
     sort: false,
     type: 'string',
   },
-  totDocumento: {
+  tot_documento: {
     title: 'Total Doc.',
     sort: false,
     type: 'string',
   },
-  fechaSp: {
+  fecha_sp: {
     title: 'Fecha SP.',
     sort: false,
     type: 'string',

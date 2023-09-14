@@ -50,7 +50,8 @@
                 [data]="fullGoods"
                 [form]="form"
                 bindLabel="nombre_tipo_bien"
-                control="typeGood">
+                control="typeGood"
+                (change)="querySubtypeGoods()">
               </ngx-select>
             </form-field>
           </div>
@@ -60,7 +61,10 @@
             <!-- <form-field [control]="form.get('subtype')" label="Sub Tipo">
               <input type="text" class="form-control" formControlName="subtype" />
             </form-field> -->
-            <button type="button" class="btn btn-primary active btn-sm">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="openModalSubtype('S')">
               Selecciona Subtipo(s) de Bien
             </button>
             <!-- <form-field [control]="form.get('delegation')" label="Delegaci&oacute;n Regional">
@@ -68,13 +72,17 @@
             </form-field> -->
             <button
               type="button"
-              class="btn btn-primary active btn-sm ml-3 mr-3">
+              class="btn btn-primary active btn-sm ml-3 mr-3"
+              (click)="openModalSubtype('D')">
               Selecciona la(s) Delegaciones
             </button>
             <!-- <form-field [control]="form.get('status')" label="Estatus">
               <input type="text" class="form-control" formControlName="status" />
             </form-field> -->
-            <button type="button" class="btn btn-primary active btn-sm">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="openModalSubtype('G')">
               Selecciona Estatus Bienes
             </button>
           </div>
@@ -114,7 +122,7 @@
       <div>
         <div>
           <form class="form-material" [formGroup]="formTwo">
-            <div class="row">
+            <!-- <div class="row">
               <div class="col-md-6">
                 <form-radio label="Oficio de Respuesta">
                   <input
@@ -131,7 +139,7 @@
                     [value]="true" />
                 </form-radio>
               </div>
-            </div>
+            </div> -->
 
             <div class="mb-5">
               <div class="col-md-6">
@@ -175,51 +183,100 @@
           [settings]="settings"
           [source]="data"></ng2-smart-table>
       </div>
+
+      <!-- ModalSubtype -->
+      <ng-template #myModalSubtype>
+        <div body class="row mt-5">
+          <div style="width: 100%" *ngIf="isSubTypeGoodsVisible">
+            <p class="col-md-4">
+              <strong>Selecciona el Subtipo de Bien</strong>
+            </p>
+            <div class="m-3">
+              <ng2-smart-table [settings]="settingsOne" [source]="dataTwo">
+              </ng2-smart-table>
+              <!--  -->
+              <app-pagination
+                [params]="paramsSubtype"
+                [totalItems]="totalItemsSubtype"></app-pagination>
+              <div class="d-flex mb-1 mt-2">
+                <div class="ml-auto">
+                  <div>
+                    <!--  -->
+                    <button
+                      class="btn btn-primary btn-sm active mr-3"
+                      (click)="closeModalSubtype()">
+                      Cerrar
+                    </button>
+                    <!--  -->
+                    <button class="btn btn-primary btn-sm active">
+                      Aceptar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-1" *ngIf="isDelegationsVisible">
+            <p class="col-md-4"><strong>Selecciona la Delegación</strong></p>
+            <div class="m-3">
+              <ng2-smart-table
+                [settings]="settingsTwo"
+                [source]="dataThree"></ng2-smart-table>
+              <!--  -->
+              <app-pagination
+                [params]="paramsDelegation"
+                [totalItems]="totalItemsDelegation"></app-pagination>
+              <div class="d-flex mb-1 mt-2">
+                <div class="ml-auto">
+                  <div>
+                    <!--  -->
+                    <button
+                      class="btn btn-primary btn-sm active mr-3"
+                      (click)="closeModalSubtype()">
+                      Cerrar
+                    </button>
+                    <!--  -->
+                    <button class="btn btn-primary btn-sm active">
+                      Aceptar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-1" *ngIf="isGoodsStatusVisible">
+            <p class="col-md-4">
+              <strong>Selecciona el Estatus del Bien</strong>
+            </p>
+            <div class="m-3">
+              <ng2-smart-table [settings]="settingsThree" [source]="dataFour">
+              </ng2-smart-table>
+              <!--  -->
+              <app-pagination
+                [params]="paramsStatusGood"
+                [totalItems]="totalItemsStatusGood"></app-pagination>
+              <div class="d-flex mb-1 mt-2">
+                <div class="ml-auto">
+                  <div>
+                    <!--  -->
+                    <button
+                      class="btn btn-primary btn-sm active mr-3"
+                      (click)="closeModalSubtype()">
+                      Cerrar
+                    </button>
+                    <!--  -->
+                    <button class="btn btn-primary btn-sm active">
+                      Aceptar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
       <!--  -->
-      <div class="row mt-5">
-        <div>
-          <p class="col-md-4"><strong>Selecciona el Subtipo de Bien</strong></p>
-          <ng2-smart-table [settings]="settingsOne" [source]="dataTwo">
-          </ng2-smart-table>
-          <div class="d-flex mb-1 mt-2">
-            <div class="ml-auto">
-              <div>
-                <!--  -->
-                <button class="btn btn-primary btn-sm active">Aceptar</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="mt-1">
-          <p class="col-md-4"><strong>Selecciona la Delegación</strong></p>
-          <ng2-smart-table
-            [settings]="settingsTwo"
-            [source]="dataThree"></ng2-smart-table>
-          <div class="d-flex mb-1 mt-2">
-            <div class="ml-auto">
-              <div>
-                <!--  -->
-                <button class="btn btn-primary btn-sm active">Aceptar</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="mt-1">
-          <p class="col-md-4">
-            <strong>Selecciona el Estatus del Bien</strong>
-          </p>
-          <ng2-smart-table [settings]="settingsThree" [source]="dataFour">
-          </ng2-smart-table>
-          <div class="d-flex mb-1 mt-2">
-            <div class="ml-auto">
-              <div>
-                <!--  -->
-                <button class="btn btn-primary btn-sm active">Aceptar</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
       <div class="mt-3">
         <div class="d-flex">
           <div>

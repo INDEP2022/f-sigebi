@@ -37,6 +37,7 @@ export class monitoringCpsComponent extends BasePage implements OnInit {
 
   // Data Table
   @Output() dataSiabParamsFilter = new EventEmitter<any>();
+  @Output() dataSirsaeParamsFilter = new EventEmitter<any>();
 
   //
 
@@ -138,7 +139,20 @@ export class monitoringCpsComponent extends BasePage implements OnInit {
     this.dataSiabParamsFilter.emit(params);
   }
 
-  fullSirsae() {}
+  fullSirsae() {
+    let params = new HttpParams();
+    params = params.append('eventId', 0);
+    params = params.append('startDate', '');
+    params = params.append('endDate', '');
+    params = params.append('system', 'SIRSAE');
+    this.dataSiabParamsFilter.emit(params);
+  }
+
+  resetForm() {
+    this.form.get('year').enable();
+    this.form.get('event').enable();
+    this.form.reset();
+  }
 
   //
 }
