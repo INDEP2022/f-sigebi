@@ -141,7 +141,7 @@
                 <button
                   class="btn btn-secondary btn-sm active"
                   (click)="authorize()"
-                  [ngClass]="{ disabled: !PB_CONFIRMAR }">
+                  [disabled]="!flagConf">
                   Autorizar
                 </button>
               </div>
@@ -151,6 +151,7 @@
                   <div class="col-auto">
                     <button
                       class="btn btn-secondary btn-sm active mb-2"
+                      [disabled]="!flagFilter"
                       (click)="callFilterDonation()">
                       Definir Filtro
                     </button>
@@ -159,7 +160,7 @@
                     <confirm-button
                       [btnSmall]="true"
                       loadingText="Bienes"
-                      [disabled]="false"
+                      [disabled]="!flagGoods"
                       [loading]="loadingGood"
                       text="Bienes"
                       (confirm)="listGoods()">
@@ -168,6 +169,7 @@
                   <div class="col-auto">
                     <button
                       class="btn btn-secondary btn-sm active mb-2"
+                      [disabled]="!flagTracker"
                       (click)="callRastreador()">
                       Por Rastreador
                     </button>
@@ -214,13 +216,9 @@
         <div class="col-12 col-md-6">
           <form class="form-material" [formGroup]="formTable">
             <div class="row mt-5">
-              <div class="col-6">
+              <div class="col-2">
                 <div class="mb-3 pl-4 pr-4">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="totalGoods"
-                    readonly />
+                  {{ totalItems2 }}
                 </div>
               </div>
               <div class="col-6">
@@ -235,13 +233,14 @@
               <button
                 class="btn btn-secondary btn-sm active"
                 (click)="generateRequest()"
-                [disabled]="!flag">
+                [disabled]="!flagGenera">
                 Generar/Modifica Solicitud
               </button>
             </div>
             <button
               class="btn btn-secondary btn-sm active"
-              [ngClass]="{ disabled: !PB_REGISTRAR }">
+              (click)="register()"
+              [disabled]="!flagTrigger">
               Registrar
             </button>
           </div>
