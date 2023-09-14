@@ -71,4 +71,15 @@ export const COLUMNS_OTHER_TRANS = {
     },
     sort: false,
   },
+  /* null: {
+    title: '',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+    sort: false,
+  },*/
 };
