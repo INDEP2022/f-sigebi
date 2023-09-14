@@ -354,7 +354,7 @@ export class SirsaeMovementSendingMainComponent
     } else if (this.layout == 'I') {
       if (lparams.text) params.addFilter('id', lparams.text, SearchFilter.EQ);
       params.addFilter('address', this.layout, SearchFilter.EQ);
-      params.addFilter('eventTpId', `6,7,8,9,10,11,12`, SearchFilter.NOTIN);
+      params.addFilter('eventTpId', `1,2,3,4,5`, SearchFilter.IN);
       params.addFilter('statusVtaId', `CNE`, SearchFilter.NOT);
 
       this.comerEventService.getAllFilter(params.getParams()).subscribe({
@@ -1043,7 +1043,7 @@ export class SirsaeMovementSendingMainComponent
 
     if (lparams.text) params.addFilter('id', lparams.text, SearchFilter.EQ);
     params.addFilter('address', this.layout, SearchFilter.EQ);
-    params.addFilter('eventTpId', `6,7,8,9,10,11,12`, SearchFilter.NOTIN);
+    params.addFilter('eventTpId', `1,2,3,4,5`, SearchFilter.NOTIN);
     params.addFilter('statusVtaId', `CNE`, SearchFilter.NOT);
 
     this.comerEventService.getAllFilter(params.getParams()).subscribe({

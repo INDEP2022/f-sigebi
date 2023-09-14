@@ -1,17 +1,17 @@
 export const SERVICE_COLUMNS = {
-  description: {
+  detServiceConter: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
 
-  typeService: {
+  detuomConter: {
     title: 'Tipo de servicio',
     type: 'string',
     sort: false,
   },
 
-  cost: {
+  costConter: {
     title: 'Costo',
     type: 'number',
     sort: false,

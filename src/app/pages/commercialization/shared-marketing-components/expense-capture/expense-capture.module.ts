@@ -14,6 +14,8 @@ import { ExpenseCaptureComponent } from './expense-capture/expense-capture.compo
 import { DataReceiptComponent } from './expense-capture/expense-comercial/data-receipt/data-receipt.component';
 import { ExpenseComercialComponent } from './expense-capture/expense-comercial/expense-comercial.component';
 import { NotLoadedsModalComponent } from './expense-capture/expense-comercial/not-loadeds-modal/not-loadeds-modal.component';
+import { CheckboxReportDelitComponent } from './expense-capture/expense-composition/checkbox-report-delit';
+import { ExpenseCompositionModalComponent } from './expense-capture/expense-composition/expense-composition-modal/expense-composition-modal.component';
 import { ExpenseCompositionComponent } from './expense-capture/expense-composition/expense-composition.component';
 import { NotifyComponent } from './expense-capture/notify/notify.component';
 import { ScanFilesComponent } from './expense-capture/scan-files/scan-files.component';
@@ -28,6 +30,8 @@ import { ScanFilesComponent } from './expense-capture/scan-files/scan-files.comp
     EntryOrdersComponent,
     ScanFilesComponent,
     NotLoadedsModalComponent,
+    ExpenseCompositionModalComponent,
+    CheckboxReportDelitComponent,
   ],
   imports: [
     CommonModule,

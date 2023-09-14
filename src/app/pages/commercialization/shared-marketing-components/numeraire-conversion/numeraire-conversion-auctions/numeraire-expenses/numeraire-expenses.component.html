@@ -31,7 +31,8 @@
                   #table
                   [attr.class]="'table-bordered'"
                   [settings]="settings"
-                  [source]="dataPaginated">
+                  [source]="dataPaginated"
+                  (userRowSelect)="selectExpense($event.data)">
                 </ng2-smart-table>
               </div>
             </div>
@@ -39,6 +40,14 @@
         </div>
         <app-pagination [params]="params" [totalItems]="totalItems">
         </app-pagination>
+        <div class="row">
+          <div class="col-md-3 mt-4">
+            <div class="cantidad">
+              <label for="">Total</label>
+              <div>{{ total }}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </app-card>
   </accordion-group>
