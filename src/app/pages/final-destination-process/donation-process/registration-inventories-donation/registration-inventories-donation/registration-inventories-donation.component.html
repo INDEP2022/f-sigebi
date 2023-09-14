@@ -141,8 +141,7 @@
                 <button
                   class="btn btn-secondary btn-sm active"
                   (click)="authorize()"
-                  [disabled]="!flagConf"
-                  [ngClass]="{ disabled: !PB_CONFIRMAR }">
+                  [disabled]="!flagConf">
                   Autorizar
                 </button>
               </div>
@@ -217,13 +216,9 @@
         <div class="col-12 col-md-6">
           <form class="form-material" [formGroup]="formTable">
             <div class="row mt-5">
-              <div class="col-6">
+              <div class="col-2">
                 <div class="mb-3 pl-4 pr-4">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="totalGoods"
-                    readonly />
+                  {{ totalItems2 }}
                 </div>
               </div>
               <div class="col-6">
@@ -244,7 +239,8 @@
             </div>
             <button
               class="btn btn-secondary btn-sm active"
-              (click)="register()">
+              (click)="register()"
+              [disabled]="!flagTrigger">
               Registrar
             </button>
           </div>

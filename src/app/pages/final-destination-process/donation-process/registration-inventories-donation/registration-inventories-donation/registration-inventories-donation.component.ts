@@ -52,6 +52,7 @@ export class RegistrationInventoriesDonationComponent
   columnFilters: any = [];
   goods: any[] = [];
   ngGlobal: IGlobalVars = null;
+  totalItems2: number = 0;
 
   rel_bienes: any;
   total: any;
@@ -63,15 +64,13 @@ export class RegistrationInventoriesDonationComponent
   flagFilter: boolean = false;
   flagGoods: boolean = false;
   flagTracker: boolean = false;
+  flagTrigger: boolean = false;
 
   V_PANTALLA = 'FDONAC_DIRECT';
   V_ESTATUS_FINAL: string;
 
   V_CONT: number;
 
-  //butons y campos enabled
-  PB_CONFIRMAR: boolean = true;
-  PB_REGISTRAR: boolean = false;
   constructor(
     private fb: FormBuilder,
     private goodService: GoodService,
@@ -225,7 +224,7 @@ export class RegistrationInventoriesDonationComponent
 
     this.form.get('authorizeCve').disable();
     this.form.get('authorizeDate').disable();
-    //this.form.get('authorizeType').disable();
+    this.form.get('authorizeType').disable();
 
     this.form.get('authorizeDate').valueChanges.subscribe({
       next: () => this.validateDateAuthorize(),
@@ -341,6 +340,14 @@ export class RegistrationInventoriesDonationComponent
       console.log('thisParams-selectedRows->', this.selectedRows);
       this.statusXPantalla(_params._value);
     }
+
+    this.flagConf = false;
+    this.flagFilter = false;
+    this.flagGoods = false;
+    this.flagTracker = false;
+    this.flagGenera = false;
+    this.flagTrigger = false;
+    this.alert('success', '', 'La Solicitud ha Sido Autorizada.');
   }
 
   getBienes() {
@@ -455,6 +462,7 @@ export class RegistrationInventoriesDonationComponent
       this.flagGenera = false;
       this.selectedRows = [];
     }
+    this.totalItems2 = this.selectedRows.length;
   }
 
   generateRequest() {
@@ -631,6 +639,9 @@ export class RegistrationInventoriesDonationComponent
         this.flagGoods = false;
         this.flagTracker = false;
         this.flagGenera = false;
+        this.form.get('authorizeType').enable();
+        this.form.get('authorizeCve').enable();
+        this.form.get('authorizeDate').enable();
       } else {
         this.alert(
           'warning',
