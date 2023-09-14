@@ -86,4 +86,8 @@ export class DonationService
   getTempGood(params: ListParams) {
     return this.get(DonationEndPoint.TempDonationGood, params);
   }
+
+  getDonationRequest(requestId: number) {
+    return this.get(`/donac-request-good?filter.requestId.id=$eq:${requestId}`);
+  }
 }
