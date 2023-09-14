@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
@@ -8,25 +7,24 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { SERVICEORDERSFORMATHISTORIC_COLUMNS } from './service-orders-format-historic-columns';
+import { BasePage } from 'src/app/core/shared';
+import { SERVICEORDERSFORMASELECT_COLUMNS } from './service-orders-format-historic-columns';
 
 @Component({
-  selector: 'app-service-orders-format-historic',
-  templateUrl: './service-orders-format-historic.component.html',
+  selector: 'app-service-orders-select-modal',
+  templateUrl: './service-orders-select-modal.component.html',
   styles: [],
 })
-export class ServiceOrdersFormatHistoricComponent
+export class ServiceOrdersSelectModalComponent
   extends BasePage
   implements OnInit
 {
-  localData: LocalDataSource = new LocalDataSource();
+  datalocal: LocalDataSource = new LocalDataSource();
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  Noformat: any;
   columnFilters: any = [];
-
+  selectedRow: any;
   constructor(
     private modalRef: BsModalRef,
     private goodPosessionThirdpartyService: GoodPosessionThirdpartyService
@@ -36,46 +34,46 @@ export class ServiceOrdersFormatHistoricComponent
       ...this.settings,
       actions: false,
       hideSubHeader: false,
-      columns: SERVICEORDERSFORMATHISTORIC_COLUMNS,
+      columns: SERVICEORDERSFORMASELECT_COLUMNS,
     };
   }
 
   ngOnInit(): void {
-    console.log('Noformat ', this.Noformat);
-    this.filter();
+    this.filterA();
   }
+
   close() {
     this.modalRef.hide();
   }
-  getAllByNoFormat(id: any) {
+
+  getAll() {
     this.data1 = [];
-    this.localData.load(this.data1);
+    this.datalocal.load([]);
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.goodPosessionThirdpartyService
-      .getAllStrategyLogById(id, params)
-      .subscribe({
-        next: response => {
-          for (let i = 0; i < response.data.length; i++) {
-            let paramsLog = {
-              changeDate: response.data[i].changeDate,
-              justification: response.data[i].justification,
-              status: response.data[i].status,
-              user: response.data[i].usrRegister.name,
-            };
-            this.data1.push(paramsLog);
-            this.localData.load(this.data1);
-            this.localData.refresh();
-            this.totalItems = response.count;
-          }
-        },
-      });
+    this.goodPosessionThirdpartyService.getAllStrategyFormat(params).subscribe({
+      next: response => {
+        console.log('respuesta modal ', response);
+        for (let i = 0; i < response.data.length; i++) {
+          let paramstable = {
+            id: response.data[i].id,
+            processNumber: response.data[i].processNumber,
+            status: response.data[i].status,
+            formatKey: response.data[i].formatKey,
+            recordNumber: response.data[i].recordNumber,
+          };
+          this.data1.push(paramstable);
+          this.datalocal.load(this.data1);
+          this.totalItems = response.count;
+        }
+      },
+    });
   }
 
-  filter() {
-    this.localData
+  filterA() {
+    this.datalocal
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
@@ -87,25 +85,20 @@ export class ServiceOrdersFormatHistoricComponent
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
-              case 'changeDate':
-                var raw = filter.search;
-                var formatted = new DatePipe('en-EN').transform(
-                  raw,
-                  'yyyy-MM-dd',
-                  'UTC'
-                );
-                filter.search = formatted;
-                searchFilter = SearchFilter.ILIKE;
+              case 'id':
+                searchFilter = SearchFilter.EQ;
                 break;
-              case 'justification':
-                searchFilter = SearchFilter.ILIKE;
+              case 'processNumber':
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'status':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'user':
-                field = 'filter.usrRegister.name';
+              case 'formatKey':
                 searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'recordNumber':
+                searchFilter = SearchFilter.EQ;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -118,11 +111,29 @@ export class ServiceOrdersFormatHistoricComponent
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getAllByNoFormat(this.Noformat);
+          this.getAll();
         }
       });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAllByNoFormat(this.Noformat));
+      .subscribe(() => this.getAll());
+  }
+
+  onRowSelect(event: any) {
+    this.selectedRow = event.data;
+    console.log('this.selectedRow ', this.selectedRow);
+  }
+
+  selected() {
+    if (this.selectedRow == null) {
+      this.alert('warning', 'Es Necesario Seleccionar un Registro', '');
+    } else {
+      this.modalRef.content.callback(
+        true,
+        this.selectedRow.formatKey,
+        this.selectedRow.id
+      );
+      this.modalRef.hide();
+    }
   }
 }

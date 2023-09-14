@@ -100,7 +100,7 @@ export class CanTimesComponent extends BasePage implements OnInit {
               payvirtueId: null,
               typereference: n_tipo_ref,
               penalty,
-              position: i
+              position: i,
             });
           }
         }
