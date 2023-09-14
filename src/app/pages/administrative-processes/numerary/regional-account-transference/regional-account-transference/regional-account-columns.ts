@@ -27,9 +27,8 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
     sort: false,
     valuePrepareFunction: (val: string) => {
       const formatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
         currency: 'USD',
-        minimumFractionDigits: 0,
+        minimumFractionDigits: 2,
       });
 
       return formatter.format(Number(val));
@@ -62,9 +61,8 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
     sort: false,
     valuePrepareFunction: (val: string) => {
       const formatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
         currency: 'USD',
-        minimumFractionDigits: 0,
+        minimumFractionDigits: 2,
       });
 
       return formatter.format(Number(val));
