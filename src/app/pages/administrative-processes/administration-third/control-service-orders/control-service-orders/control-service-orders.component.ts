@@ -11,6 +11,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { StrategyProcessService } from 'src/app/core/services/ms-strategy/strategy-process.service';
 import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CONTROLSERVICEORDERS_COLUMNS } from './control-service-orders-columns';
@@ -36,7 +37,8 @@ export class ControlServiceOrdersComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private goodPosessionThirdpartyService: GoodPosessionThirdpartyService,
-    private router: Router
+    private router: Router,
+    private strategyProcessService: StrategyProcessService
   ) {
     super();
     this.settings = {
@@ -165,22 +167,46 @@ export class ControlServiceOrdersComponent extends BasePage implements OnInit {
         this.tableSource.load(this.dataT);
         console.log('11');
         for (let i = 0; i < response.data.length; i++) {
-          let paramsData = {
-            noFormat: response.data[i].id,
-            serviceOrder: response.data[i].formatKey,
-            captureDate: response.data[i].captureDate,
-            status: response.data[i].status,
-            noProcess: response.data[i].processNumber,
-            process: response.data[i].StrategyProcess.description,
-            noRegionalDelegation: response.data[i].delegation1Number,
-            regionalDelegation: response.data[i].delegationNumber.description,
-            implementationReport: response.data[i].delegation1Number,
-          };
-          this.dataT.push(paramsData);
-          this.totalItems = response.count;
+          this.strategyProcessService
+            .getStrategyRepImplementation(response.data[i].id)
+            .subscribe({
+              next: resp => {
+                let paramsData = {
+                  noFormat: response.data[i].id,
+                  serviceOrder: response.data[i].formatKey,
+                  captureDate: response.data[i].captureDate,
+                  status: response.data[i].status,
+                  noProcess: response.data[i].processNumber,
+                  process: response.data[i].StrategyProcess.description,
+                  noRegionalDelegation: response.data[i].delegation1Number,
+                  regionalDelegation:
+                    response.data[i].delegationNumber.description,
+                  implementationReport: resp.count,
+                };
+                this.dataT.push(paramsData);
+                this.totalItems = response.count;
+                this.tableSource.load(this.dataT);
+              },
+              error: err => {
+                let paramsData = {
+                  noFormat: response.data[i].id,
+                  serviceOrder: response.data[i].formatKey,
+                  captureDate: response.data[i].captureDate,
+                  status: response.data[i].status,
+                  noProcess: response.data[i].processNumber,
+                  process: response.data[i].StrategyProcess.description,
+                  noRegionalDelegation: response.data[i].delegation1Number,
+                  regionalDelegation:
+                    response.data[i].delegationNumber.description,
+                  implementationReport: '0',
+                };
+                this.dataT.push(paramsData);
+                this.totalItems = response.count;
+                this.tableSource.load(this.dataT);
+              },
+            });
         }
         console.log('data1 ', this.dataT);
-        this.tableSource.load(this.dataT);
         this.loading = false;
         console.log('Fin');
       },
