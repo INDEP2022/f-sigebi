@@ -39,7 +39,7 @@ export class ServiceOrderRequestCaptureFormComponent
   form: FormGroup = new FormGroup({});
   ordServform: FormGroup = new FormGroup({});
   parentModal: BsModalRef;
-  op: number = 1;
+  op: number = 4;
   showForm: boolean = true;
   orderServiceId: number = null;
   lsProgramming: string = null;
