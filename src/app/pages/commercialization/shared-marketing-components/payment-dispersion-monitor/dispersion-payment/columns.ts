@@ -3,7 +3,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 
 //Arrays
 export let goodCheckCustomer: any[] = [];
-export let batchEventCheck: any[] = []
+export let batchEventCheck: any[] = [];
 
 //COLUMNAS
 export const COLUMNSCUSTOMER = {
@@ -107,9 +107,7 @@ export const COLUMNS_LOT_EVENT_TRUE = {
     hide: false,
     renderComponent: CheckboxElementComponent,
     valuePrepareFunction: (isSelected: any, row: any) => {
-      return batchEventCheck.find(
-        (e: any) => e.row.lotId == row.lotId
-      )
+      return batchEventCheck.find((e: any) => e.row.lotId == row.lotId)
         ? true
         : false;
     },
@@ -120,11 +118,9 @@ export const COLUMNS_LOT_EVENT_TRUE = {
             console.log(batchEventCheck);
             batchEventCheck.push(data.row.lotId);
           } else {
-            batchEventCheck = batchEventCheck.filter(
-              valor => {
-                return valor != data.row.lotId
-              }
-            );
+            batchEventCheck = batchEventCheck.filter(valor => {
+              return valor != data.row.lotId;
+            });
             console.log(batchEventCheck);
           }
         } else {
@@ -133,7 +129,7 @@ export const COLUMNS_LOT_EVENT_TRUE = {
       });
     },
   },
-}
+};
 
 export const COLUMNS_DESERT_LOTS = {
   lotPublic: {
@@ -164,7 +160,7 @@ export const COLUMNS_CUSTOMER_BANKS = {
     type: 'number',
     sort: false,
   },
-  date:{
+  date: {
     title: 'Fecha',
     type: 'text',
     sort: false,
@@ -176,7 +172,7 @@ export const COLUMNS_CUSTOMER_BANKS = {
     title: 'Banco',
     type: 'text',
     sort: false,
-  }, 
+  },
   reference: {
     title: 'Referencia',
     type: 'text',
