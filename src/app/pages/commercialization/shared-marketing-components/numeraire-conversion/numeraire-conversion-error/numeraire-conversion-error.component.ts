@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { BasePage } from 'src/app/core/shared/base-page';
 
+import { IncosConvNumeraryService } from 'src/app/core/services/ms-conv-numerary/incos-conv-numerary.service';
+import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { EVENTO_ERROR_COLUMNS } from './numeraire-conversion-error-columns';
 
 @Component({
@@ -9,19 +10,17 @@ import { EVENTO_ERROR_COLUMNS } from './numeraire-conversion-error-columns';
   styles: [],
 })
 export class NumeraireConversionErrorComponent
-  extends BasePage
+  extends BasePageWidhtDinamicFiltersExtra
   implements OnInit
 {
-  list: any;
-
-  constructor() {
+  constructor(private dataService: IncosConvNumeraryService) {
     super();
+    this.service = this.dataService;
+    this.ilikeFilters = ['inconsistency'];
     this.settings = {
       ...this.settings,
       actions: false,
       columns: { ...EVENTO_ERROR_COLUMNS },
     };
   }
-
-  ngOnInit(): void {}
 }

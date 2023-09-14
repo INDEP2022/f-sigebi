@@ -12,15 +12,23 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IParameterMod } from 'src/app/core/models/ms-comer-concepts/parameter-mod.model';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
+import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared';
 import { secondFormatDateToDate } from 'src/app/shared/utils/date';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
+import { ExpenseGoodProcessService } from '../../services/expense-good-process.service';
 import { ExpenseModalService } from '../../services/expense-modal.service';
 import { ExpenseScreenService } from '../../services/expense-screen.service';
 import { SpentIService } from '../../services/spentI.service';
@@ -38,6 +46,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   // params
   @Input() address: string;
   errorsClasification: any[] = [];
+  delegation: number;
+  subDelegation: number;
+  noDepartamento: number;
+  provider: string;
   //
   toggleInformation = true;
   reloadLote = false;
@@ -61,6 +73,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     'dateOfResolution',
   ];
   columns: any;
+  user: any;
   constructor(
     private dataService: ExpenseCaptureDataService,
     private spentMService: SpentMService,
@@ -70,10 +83,33 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private parameterModService: ParametersModService,
     private sirsaeService: InterfacesirsaeService,
+    private documentService: DocumentsService,
+    private expenseGoodProcessService: ExpenseGoodProcessService,
+    private authService: AuthService,
+    private segAccessAreaService: SegAcessXAreasService,
     private expenseModalService: ExpenseModalService,
     private parameterService: ParametersConceptsService
   ) {
     super();
+    this.user = this.authService.decodeToken();
+    const filterParams = new FilterParams();
+    filterParams.addFilter('user', this.user.preferred_username);
+    this.segAccessAreaService
+      .getAll(filterParams.getParams())
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response) {
+            const data = response.data;
+            if (data && data.length > 0) {
+              this.delegation = data[0].delegationNumber;
+              this.subDelegation = data[0].subdelegationNumber;
+              this.noDepartamento = data[0].departamentNumber;
+            }
+          }
+        },
+      });
+    // console.log(user);
     this.prepareForm();
   }
 
@@ -151,6 +187,22 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.form.get('dateOfResolution');
   }
 
+  get payDay() {
+    return this.form.get('payDay');
+  }
+
+  get fecha_contrarecibo() {
+    return this.form.get('fecha_contrarecibo');
+  }
+
+  get formPayment() {
+    return this.form.get('formPayment');
+  }
+
+  get comproafmandsae() {
+    return this.form.get('comproafmandsae');
+  }
+
   get clkpv() {
     return this.form.get('clkpv');
   }
@@ -161,6 +213,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   get comment() {
     return this.form.get('comment');
+  }
+
+  get invoiceRecNumber() {
+    return this.form.get('invoiceRecNumber');
   }
 
   ngOnInit() {
@@ -176,6 +232,11 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     //     console.log(response);
     //   },
     // });
+  }
+
+  updateProvider(event: any) {
+    console.log(event);
+    this.provider = event.pvName;
   }
 
   reloadLoteEvent(event: any) {
@@ -207,24 +268,101 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.dataService.readParams(id);
   }
 
-  notify() {
+  async notify() {
     // console.log('Notificar');
-    let config: ModalOptions = {
-      initialState: {
-        // message,
-        // action,
-        // proceeding: this.proceedingForm.value,
-        callback: (next: boolean) => {
-          if (next) {
-            // const id = this.controls.keysProceedings.value;
-            // this.findProceeding(id).subscribe();
+    if (!this.expenseNumber) {
+      this.alert(
+        'warning',
+        'No puede mandar correo si no a guardado el gasto',
+        ''
+      );
+      return;
+    }
+    // const firstValidation =
+    //   !this.conceptNumber.value &&
+    //   !this.eventNumber.value &&
+    //   !this.clkpv.value &&
+    //   !this.dataService.dataCompositionExpenses[0].goodNumber &&
+    //   !this.dataService.data.providerName;
+    if (
+      !this.conceptNumber.value &&
+      !this.eventNumber.value &&
+      !this.clkpv.value &&
+      !this.dataService.dataCompositionExpenses[0].goodNumber &&
+      !this.dataService.data.providerName
+    ) {
+      this.alert('warning', 'Tiene que llenar alguno de los campos', '');
+      return;
+    }
+    if (!this.dataService.FOLIO_UNIVERSAL) {
+      this.alert('error', 'No a escaneado los documentos', '');
+      return;
+    }
+    let filterParams = new FilterParams();
+    filterParams.addFilter(
+      'id',
+      this.dataService.FOLIO_UNIVERSAL,
+      SearchFilter.EQ
+    );
+    filterParams.addFilter(
+      'associateUniversalFolio',
+      this.dataService.FOLIO_UNIVERSAL,
+      SearchFilter.OR
+    );
+    filterParams.addFilter('sheets', 0, SearchFilter.GT);
+    filterParams.addFilter('scanStatus', 'ESCANEADO', SearchFilter.ILIKE);
+    let documents = await firstValueFrom(
+      this.documentService.getAll().pipe(
+        take(1),
+        catchError(x => of({ data: null, message: x })),
+        map(x => {
+          if (!x.data) {
+            this.alert('error', 'No a escaneado los documentos', '');
           }
+          return x.data;
+        })
+      )
+    );
+    if (!documents) {
+      return;
+    }
+    this.expenseGoodProcessService
+      .NOTIFICAR({
+        goodArray: this.dataService.dataCompositionExpenses
+          .filter(x => x.goodNumber)
+          .map(x => {
+            return { goodNumber: +x.goodNumber };
+          }),
+        delegationNumber: this.delegation,
+        subdelegationNumber: this.subDelegation,
+        departamentNumber: this.noDepartamento,
+        universalFolio: this.dataService.FOLIO_UNIVERSAL,
+      })
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          let config: ModalOptions = {
+            initialState: {
+              asunto: 'Cancelación de Venta ' + this.provider,
+              // message,
+              // action,
+              // proceeding: this.proceedingForm.value,
+              callback: (next: boolean) => {
+                if (next) {
+                  // const id = this.controls.keysProceedings.value;
+                  // this.findProceeding(id).subscribe();
+                }
+              },
+            },
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(NotifyComponent, config);
         },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(NotifyComponent, config);
+        error: err => {
+          this.alert('error', 'No se ha guardado el folio de escaneo', '');
+        },
+      });
   }
 
   private getParamValConcept(conceptNumber: number) {
@@ -294,6 +432,35 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
   }
 
+  private async fillOthersParameters() {
+    const filterParams = new FilterParams();
+    filterParams.addFilter('parameter', 'CHCONIVA,IVA', SearchFilter.IN);
+    return firstValueFrom(
+      this.parameterModService.getAll(filterParams.getParams()).pipe(
+        take(1),
+        catchError(x => of({ data: [] as IParameterMod[], message: x })),
+        map(response => {
+          let data = response.data;
+          let success;
+          if (data.length > 0) {
+            this.dataService.CHCONIVA = data[0].value;
+            this.dataService.IVA = data[1].value ? +data[1].value / 100 : 0;
+            success = true;
+          } else {
+            this.dataService.CHCONIVA = null;
+            this.dataService.IVA = 0;
+            success = false;
+          }
+          if (this.dataService.CHCONIVA === null)
+            this.alert('warning', 'No tiene parámetro CHCONIVA', '');
+          if (this.dataService.IVA === 0)
+            this.alert('warning', 'No tiene parámetro IVA', '');
+          return success;
+        })
+      )
+    );
+  }
+
   async fillForm(event: IComerExpense) {
     // console.log(event);
     this.data = event;
@@ -308,16 +475,21 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       this.alert('error', responsePayments.message[0], '');
       return;
     }
+    this.dataService.V_VALCON_ROBO = await firstValueFrom(
+      this.screenService.PUF_VAL_CONCEP_ROBO(event.conceptNumber)
+    );
     if (!event.eventNumber) {
       this.alert('warning', 'No cuenta con un número de evento', '');
     }
     this.eventNumber.setValue(event.eventNumber);
-    const responseParams = await firstValueFrom(
-      this.getParams(event.conceptNumber)
-    );
+    const responseParams = await this.getParams(event.conceptNumber);
     if (!responseParams) {
       return;
     }
+    const otherParams = await this.fillOthersParameters();
+    // if (!otherParams) {
+    //   return;
+    // }
     if (!event.lotNumber) {
       this.alert('warning', 'No cuenta con un número de lote', '');
     }

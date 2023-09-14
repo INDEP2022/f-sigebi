@@ -211,7 +211,7 @@ export class ExpenseConceptsListComponent
                   this.alert(
                     'success',
                     'Copiado de Parámetros',
-                    'Realizado Correctamente'
+                    'Realizado correctamente'
                   );
                   // this.filesToDelete = [];
                   this.selectedConcept = body;
@@ -308,7 +308,7 @@ export class ExpenseConceptsListComponent
               this.alert(
                 'success',
                 'Eliminación de Concepto de Pago ' + event.data.id,
-                'Eliminado Correctamente'
+                'Eliminado correctamente'
               );
               this.getData();
             },
