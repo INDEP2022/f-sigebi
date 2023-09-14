@@ -61,10 +61,11 @@
 
         <div class="col-md-6 mt-2">
           <form-field [control]="form.get('lotId')">
+            <!-- [readonly]="!valEvent" -->
+            <!-- [searchOnInit]="true" -->
             <ngx-select
-              [searchOnInit]="true"
-              [readonly]="!valEvent"
               [form]="form"
+              [readonly]="!valEvent"
               control="lotId"
               [data]="lotes"
               value="idLot"

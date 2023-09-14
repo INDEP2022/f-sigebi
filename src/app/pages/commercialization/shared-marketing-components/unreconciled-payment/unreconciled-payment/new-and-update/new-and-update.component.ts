@@ -77,7 +77,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
-  private prepareForm() {
+  private async prepareForm() {
     this.form = this.fb.group({
       paymentId: [null, Validators.required],
       reference: [
@@ -143,6 +143,10 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         lotId: this.data.lotId,
       });
 
+      const paramsSender = new ListParams();
+      paramsSender.text = this.data.lotId;
+
+      await this.getLotes(paramsSender);
       // this.getLotes(new ListParams())
       this.form.get('clientId').setValue(this.data.idAndName);
       // if (!this.valEvent)
@@ -158,7 +162,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       //   this.getClientsById(params)
       // }
     } else {
-      // this.getLotes(new ListParams())
+      this.getLotes(new ListParams());
       this.valInitClient = true;
     }
   }
@@ -325,8 +329,8 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
     });
   }
 
-  // NO
-  getLotes(lparams: ListParams) {
+  // SI
+  async getLotes(lparams: ListParams) {
     const params = new FilterParams();
 
     params.page = lparams.page;
@@ -343,10 +347,10 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         params.addFilter('description', lparams.text, SearchFilter.ILIKE);
         // params.addFilter('cve_banco', lparams.text);
       }
-    params.sortBy = `idLot:ASC`;
-    if (this.valEvent) {
-      params.addFilter('eat_events.address', this.layout, SearchFilter.EQ);
-    }
+    params.sortBy = `idLot:DESC`;
+    // if (this.valEvent) {
+    //   params.addFilter('eat_events.address', this.layout, SearchFilter.EQ);
+    // }
 
     this.lotService.getLotbyEvent_(params.getParams()).subscribe({
       next: data => {
