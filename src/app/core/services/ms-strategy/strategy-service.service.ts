@@ -11,8 +11,10 @@ import { IMeasurementUnits } from '../../models/catalogs/measurement-units.model
 import {
   IStrategyLovSer,
   IStrategyService,
+  IStrategyTurn,
   IStrategyType,
   IStrategyTypeService,
+  IStrateyCost,
 } from '../../models/ms-strategy-service/strategy-service.model';
 
 @Injectable({
@@ -157,5 +159,11 @@ export class StrategyServiceService extends HttpService {
   }
   getProcess(params: _Params) {
     return this.get(StrategyEndpoints.StrategyPro, params);
+  }
+  getTurn(ser: IStrategyTurn) {
+    return this.post(StrategyEndpoints.StrategyTurn, ser);
+  }
+  getCosts(costo: IStrateyCost) {
+    return this.post(StrategyEndpoints.StrategyCost, costo);
   }
 }
