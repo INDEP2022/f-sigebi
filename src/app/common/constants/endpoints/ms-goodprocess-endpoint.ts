@@ -37,4 +37,5 @@ export enum GoodprocessEndpoints {
   //Classification View
   GetVsigLigie = 'application/vsigLigie',
   GetUniRegister = 'application/get-lnu-register',
+  ChangeStatusGood = 'application/changeStatusGood',
 }

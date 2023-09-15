@@ -286,4 +286,7 @@ export class GoodprocessService extends HttpService {
   getUniRegister() {
     return this.get(GoodprocessEndpoints.GetUniRegister);
   }
+  getChangeStatusGood(event: any) {
+    return this.get(`${GoodprocessEndpoints.ChangeStatusGood}/${event}`);
+  }
 }
