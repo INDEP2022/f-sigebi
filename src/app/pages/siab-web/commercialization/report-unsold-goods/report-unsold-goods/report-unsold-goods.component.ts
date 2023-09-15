@@ -72,6 +72,10 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
   // Any
   fullGoods: any;
   fullDelegations: any;
+  // Arreglos Check Filter
+  dataCheckSubtypeGood: any[] = [];
+  dataCheckDelegation: any[] = [];
+  dataCheckStatusGood: any[] = [];
 
   //Array
   columns: any[] = [];
@@ -317,6 +321,53 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
 
   closeModalSubtype() {
     this.modalService.hide();
+  }
+  //#endregion
+
+  //#region Valid check or not check
+  checkAcceptSubtypeGood(event: any) {
+    if (event.isSelected) {
+      this.dataCheckSubtypeGood.push(event);
+    } else {
+      this.dataCheckSubtypeGood = this.removeRow(
+        this.dataCheckSubtypeGood,
+        event,
+        'id'
+      );
+    }
+  }
+  //
+  checkAcceptDelegations(event: any) {
+    if (event.isSelected) {
+      this.dataCheckDelegation.push(event);
+    } else {
+      this.dataCheckDelegation = this.removeRow(
+        this.dataCheckDelegation,
+        event,
+        'id'
+      );
+    }
+  }
+  //
+  checkAcceptStatusGood(event: any) {
+    console.log('Arreglo status: ', event);
+    if (event.isSelected) {
+      this.dataCheckStatusGood.push(event);
+    } else {
+      this.dataCheckStatusGood = this.removeRow(
+        this.dataCheckStatusGood,
+        event,
+        'description'
+      );
+      console.log('El array actualmente: ', this.dataCheckStatusGood);
+    }
+  }
+  //#endregion
+
+  //#region Utils
+  removeRow(array: any[], register: any, id: any) {
+    console.log('El array aca abajo: ', array[0]?.data);
+    return array.filter(item => item?.data[id] !== register?.data[id]);
   }
   //#endregion
 

@@ -192,7 +192,10 @@
               <strong>Selecciona el Subtipo de Bien</strong>
             </p>
             <div class="m-3">
-              <ng2-smart-table [settings]="settingsOne" [source]="dataTwo">
+              <ng2-smart-table
+                [settings]="settingsOne"
+                [source]="dataTwo"
+                (userRowSelect)="checkAcceptSubtypeGood($event)">
               </ng2-smart-table>
               <!--  -->
               <app-pagination
@@ -221,7 +224,10 @@
             <div class="m-3">
               <ng2-smart-table
                 [settings]="settingsTwo"
-                [source]="dataThree"></ng2-smart-table>
+                [source]="dataThree"
+                (userRowSelect)="
+                  checkAcceptDelegations($event)
+                "></ng2-smart-table>
               <!--  -->
               <app-pagination
                 [params]="paramsDelegation"
@@ -249,7 +255,10 @@
               <strong>Selecciona el Estatus del Bien</strong>
             </p>
             <div class="m-3">
-              <ng2-smart-table [settings]="settingsThree" [source]="dataFour">
+              <ng2-smart-table
+                [settings]="settingsThree"
+                [source]="dataFour"
+                (userRowSelect)="checkAcceptStatusGood($event)">
               </ng2-smart-table>
               <!--  -->
               <app-pagination
