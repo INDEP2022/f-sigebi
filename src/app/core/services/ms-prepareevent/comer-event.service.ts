@@ -104,4 +104,30 @@ export class ComerEventService extends HttpService {
       `${PrepareEventEndpoints.ShowNotification}?pEvent=${idEvent}&pBatch=${idLote}`
     );
   }
+
+  getProcessPhaseAnt(idEvent: any) {
+    return this.get(
+      `${PrepareEventEndpoints.GetProcessPhaseAnt}?event=${idEvent}`
+    );
+  }
+  updatePhase(body: any) {
+    return this.patch(`${PrepareEventEndpoints.UpdatePhase}`, body);
+  }
+
+  getComerLotes(params: _Params) {
+    return this.get<IListResponse<any>>(
+      `${PrepareEventEndpoints.ComerLot}`,
+      params
+    );
+  }
+  getProcessPhase3Ant(event: any, batch: any) {
+    return this.get<IListResponse<any>>(
+      `${PrepareEventEndpoints.GetProcessPhase3Ant}?event=${event}&batch=${batch}`
+    );
+  }
+  getValidLiquidation(event: any, batchPublic: any) {
+    return this.get<IListResponse<any>>(
+      `${PrepareEventEndpoints.GetValidLiquidation}?eventId=${event}&batchPublic=${batchPublic}`
+    );
+  }
 }

@@ -1,8 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { maxDate } from 'src/app/common/validations/date.validators';
+import { DatePipe } from '@angular/common';
+import { HttpParams } from '@angular/common/http';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { BsDatepickerViewMode } from 'ngx-bootstrap/datepicker';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { MONITORING_CPS_BILLS } from './monitoring-sps-columns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-monitoring-sps',
@@ -10,45 +15,124 @@ import { MONITORING_CPS_BILLS } from './monitoring-sps-columns';
   styles: [],
 })
 export class monitoringSpsComponent extends BasePage implements OnInit {
-  form: FormGroup = new FormGroup({});
+  //
 
+  override minMode: BsDatepickerViewMode = 'year'; // change for month:year
+
+  form: FormGroup;
+  formTwo: FormGroup;
   today: Date;
   maxDate: Date;
   minDate: Date;
 
   show: boolean = false;
 
-  constructor(private fb: FormBuilder) {
-    super();
+  // Array Ngx-Select
+  concepts = new DefaultSelect();
+  eventsExpenses = new DefaultSelect();
 
+  // Emit
+  @Output() fullExpensesEmit = new EventEmitter<any>();
+
+  //
+
+  constructor(
+    private fb: FormBuilder,
+    private serviceConcepts: ParametersConceptsService,
+    private serviceEvents: ComerEventosService,
+    private servicePipe: DatePipe
+  ) {
+    super();
     this.today = new Date();
     this.minDate = new Date(this.today.getFullYear(), this.today.getMonth(), 2);
-
-    this.settings = {
-      ...this.settings,
-      actions: false,
-      columns: { ...MONITORING_CPS_BILLS },
-    };
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.bsConfig = Object.assign(
+      {},
+      {
+        minMode: this.minMode,
+      }
+    );
+    this.fullConcepts();
+    this.fullEventsExpenses();
   }
+
+  //
 
   private prepareForm() {
     this.form = this.fb.group({
-      event: [null, [Validators.required]],
-      radio: [null, [Validators.required]],
-      rangeDate: [null, [Validators.required, maxDate(new Date())]],
+      from: [null],
+      to: [null],
+      year: [null],
+      event: [null],
+    });
+    this.formTwo = this.fb.group({
+      concepts: [null],
     });
   }
 
-  onSubmit() {
-    if (this.form.valid) {
-      this.form.reset();
-    }
-    console.warn('Your order has been submitted');
+  fullConcepts(params?: ListParams) {
+    this.serviceConcepts.getConcepts(params).subscribe({
+      next: response => {
+        this.concepts = new DefaultSelect(response.data, response.count | 0);
+      },
+      error: response => {
+        this.concepts = new DefaultSelect([], 0);
+      },
+    });
   }
 
-  data: any;
+  fullEventsExpenses(params?: ListParams) {
+    let paramsLocal = new HttpParams();
+    paramsLocal = paramsLocal.append('limit', params?.limit);
+    paramsLocal = paramsLocal.append('page', params?.page);
+    if (params?.text != '') {
+      paramsLocal = paramsLocal.append(
+        'filter.idevento',
+        '$eq:' + params?.text
+      );
+    }
+    this.serviceEvents.getEventsExpenses(paramsLocal).subscribe({
+      next: response => {
+        this.eventsExpenses = new DefaultSelect(
+          response.data,
+          response.count | 0
+        );
+      },
+      error: response => {
+        this.concepts = new DefaultSelect([], 0);
+      },
+    });
+  }
+
+  fullQueryExpenses() {
+    this.fullExpenses();
+  }
+
+  fullExpenses() {
+    let params = new HttpParams();
+    params = params.append(
+      'eventId',
+      this.form.controls['event'].value?.idevento
+    );
+    params = params.append(
+      'startDate',
+      this.servicePipe.transform(this.form.controls['from'].value, 'dd/MM/yyyy')
+    );
+    params = params.append(
+      'endDate',
+      this.servicePipe.transform(this.form.controls['to'].value, 'dd/MM/yyyy')
+    );
+    params = params.append('concepts', this.formTwo.controls['concepts'].value);
+    this.fullExpensesEmit.emit(params);
+  }
+
+  resetForm() {
+    this.form.reset();
+    this.formTwo.reset();
+  }
+
+  //
 }
