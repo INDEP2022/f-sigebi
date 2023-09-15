@@ -9,4 +9,5 @@ export enum DonationEndPoint {
   eventComDonationExcel = 'detail-event-com-don/find-all-detail-event-com-don-excel-export',
   TempDonationGood = 'donate-invent-rel',
   ApproveDonation = 'r-approve-donation',
+  fdonacDocumAdm1 = 'fdonacDocumAdm1',
 }

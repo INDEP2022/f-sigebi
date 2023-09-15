@@ -282,4 +282,11 @@ export class GoodprocessService extends HttpService {
     debugger;
     return this.get<IListResponse<any>>(route, params);
   }
+
+  getUniRegister() {
+    return this.get(GoodprocessEndpoints.GetUniRegister);
+  }
+  getChangeStatusGood(event: any) {
+    return this.get(`${GoodprocessEndpoints.ChangeStatusGood}/${event}`);
+  }
 }

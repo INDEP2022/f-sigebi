@@ -219,10 +219,15 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
   clearAll() {
     this.form.reset();
     this.dataComerDetails.load([]);
+    this.totalItems = 0;
   }
 
   //Enviar SIRSAE
   sendSIRSAE() {
+    if (!this.form.get('idOI').value) {
+      this.alert('warning', 'No ingresó ningún OI', '');
+      return;
+    }
     let motivo_reclap: string = null;
     let enviar: number = null;
     if (this.refe_ori != this.referenceOriDat) {
