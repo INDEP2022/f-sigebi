@@ -34,6 +34,8 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
   // Modal
   @ViewChild('myModalSubtype', { static: true })
   miModalTemplate: TemplateRef<any>;
+  @ViewChild('myModalHistory', { static: true })
+  miModalHistory: TemplateRef<any>;
 
   //Class Variables
   dataSubtypesGood: any;
@@ -62,12 +64,16 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
   // Boolean
   // SubTypeGoods
   isSubTypeGoodsVisible: boolean = true;
+  isStatus: boolean = false;
 
   // GoodsStatus
   isGoodsStatusVisible: boolean = true;
 
   // Delegations
   isDelegationsVisible: boolean = true;
+
+  // Events
+  isEvents: boolean = false;
 
   // Any
   fullGoods: any;
@@ -304,16 +310,21 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
       this.isGoodsStatusVisible = true;
       this.isDelegationsVisible = false;
     }
-    // gvSubTipoBien.Visible = true;
-    // btnAceptarSubTipoBien.Visible = true;
-    // H4SubTipoBien.Visible = true;
-    // gvEstatusBien.Visible = false;
-    // btnAceptarEstatus.Visible = false;
-    // H4Estatusbienes.Visible = false;
-    // gvDelegaciones.Visible = false;
-    // btnAceptarDelegaciones.Visible = false;
-    // H4Delegaciones.Visible = false;
     this.modalService.show(this.miModalTemplate, {
+      ...MODAL_CONFIG,
+      class: 'modal-xl modal-dialog-centered',
+    });
+  }
+
+  openModalHistory(id: any) {
+    if (id === 'S') {
+      this.isEvents = false;
+      this.isStatus = true;
+    } else {
+      this.isStatus = false;
+      this.isEvents = true;
+    }
+    this.modalService.show(this.miModalHistory, {
       ...MODAL_CONFIG,
       class: 'modal-xl modal-dialog-centered',
     });
