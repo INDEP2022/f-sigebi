@@ -1,4 +1,16 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+
+export let goodCheck: any[] = [];
+export let goodCheck2: { [key: string]: any } = {};
+
+export function clearGoodCheck() {
+  goodCheck = [];
+}
+
+export function newGoodCheck(data: any[]) {
+  goodCheck = data;
+}
+
 export const COLUMNS_EXPORT_GOODS = {
   numberGood: {
     title: 'No. Bien',
@@ -50,35 +62,59 @@ export const COLUMNS_EXPORT_GOODS = {
     type: 'number',
     sort: false,
   },
+
   cpd: {
     title: 'CPD',
     type: 'custom',
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
+      instance.toggle.subscribe((event: { row: any; toggle: boolean }) => {
+        // Manejar el evento del checkbox CPD aquí
+        const rowData = event.row;
+        const isChecked = event.toggle;
+
+        // Verificar si el checkbox se ha seleccionado
+        if (isChecked) {
+          // Si el checkbox se selecciona, establecer el valor en true
+          rowData.cpd = true; // Asume que rowData.cpd representa el valor de la columna 'CPD'
+        } else {
+          // Si el checkbox se deselecciona, puedes hacer algo aquí si es necesario
+        }
+
+        console.log(
+          'Evento del checkbox CPD. Fila:',
+          rowData,
+          'Estado:',
+          isChecked
+        );
       });
     },
     sort: false,
   },
-  /*cpd: {
-    title: 'CPD',
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    valuePrepareFunction: (cell: any, row: any) => {
-      // Usar el valor de "row.cpd" para determinar el estado del checkbox
-      return row.cpd ? '<input type="checkbox" checked>' : '<input type="checkbox">';
-    },
-    filter: false,
-    sort: false,
-  },*/
   adm: {
     title: 'ADM',
     type: 'custom',
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
+      instance.toggle.subscribe((event: { row: any; toggle: boolean }) => {
+        // Manejar el evento del checkbox CPD aquí
+        const rowData = event.row;
+        const isChecked = event.toggle;
+
+        // Verificar si el checkbox se ha seleccionado
+        if (isChecked) {
+          // Si el checkbox se selecciona, establecer el valor en true
+          rowData.adm = true; // Asume que rowData.cpd representa el valor de la columna 'CPD'
+        } else {
+          // Si el checkbox se deselecciona, puedes hacer algo aquí si es necesario
+        }
+
+        console.log(
+          'Evento del checkbox CPD. Fila:',
+          rowData,
+          'Estado:',
+          isChecked
+        );
       });
     },
     sort: false,
@@ -88,11 +124,27 @@ export const COLUMNS_EXPORT_GOODS = {
     type: 'custom',
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
+      instance.toggle.subscribe((event: { row: any; toggle: boolean }) => {
+        // Manejar el evento del checkbox CPD aquí
+        const rowData = event.row;
+        const isChecked = event.toggle;
+
+        // Verificar si el checkbox se ha seleccionado
+        if (isChecked) {
+          // Si el checkbox se selecciona, establecer el valor en true
+          rowData.rda = true; // Asume que rowData.cpd representa el valor de la columna 'CPD'
+        } else {
+          // Si el checkbox se deselecciona, puedes hacer algo aquí si es necesario
+        }
+
+        console.log(
+          'Evento del checkbox CPD. Fila:',
+          rowData,
+          'Estado:',
+          isChecked
+        );
       });
     },
     sort: false,
   },
 };
-

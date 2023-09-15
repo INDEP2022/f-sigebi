@@ -97,14 +97,6 @@ export class ProgrammingRequestService {
     return this.http.post(`${environment.API_URL}/${route}`, formData);
   }
 
-  private makeParams(params: ListParams): HttpParams {
-    let httpParams: HttpParams = new HttpParams();
-    Object.keys(params).forEach(key => {
-      httpParams = httpParams.append(key, (params as any)[key]);
-    });
-    return httpParams;
-  }
-
   reportProgrammingGoods(programmingId: number, status: string) {
     return this.http.get<IListResponse<IGoodProgramming>>(
       `${environment.API_URL}programminggood/api/v1/programmed-good/goods-excel/${status}/${programmingId}`
@@ -208,10 +200,12 @@ export class ProgrammingRequestService {
     return this.http.put(`${environment.API_URL}/${route}`, formData);
   }
 
-  getGoodsProgrammingDelivery(_params: ListParams) {
+  getGoodsProgrammingDelivery(
+    _params: ListParams
+  ): Observable<IListResponse<IGoodDelivery>> {
     const params = this.makeParams(_params);
     const route = `programminggood/api/v1/programming-delivery-good`;
-    return this.http.get<IListResponse<IGoodProgramming>>(
+    return this.http.get<IListResponse<IGoodDelivery>>(
       `${environment.API_URL}${route}`,
       { params }
     );
@@ -225,5 +219,13 @@ export class ProgrammingRequestService {
   sendEmailProgrammingDelivery(data: Object) {
     const route = `programminggood/api/v1/programminggood/apps/generate-send-email`;
     return this.http.post(`${environment.API_URL}${route}`, data);
+  }
+
+  private makeParams(params: ListParams): HttpParams {
+    let httpParams: HttpParams = new HttpParams();
+    Object.keys(params).forEach(key => {
+      httpParams = httpParams.append(key, (params as any)[key]);
+    });
+    return httpParams;
   }
 }

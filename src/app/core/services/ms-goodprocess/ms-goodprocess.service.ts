@@ -257,4 +257,29 @@ export class GoodprocessService extends HttpService {
     const route = `${GoodprocessEndpoints.getStatusCveScreem}?filter.goodId=$eq:${good}`;
     return this.post(route, cveScreem);
   }
+
+  getAvailableGoods(params: any) {
+    return this.get(GoodprocessEndpoints.GoodsDetActaRecep, params);
+  }
+
+  getCount(good: number) {
+    return this.get(`${GoodprocessEndpoints.GetCount}?noGood=${good}`);
+  }
+
+  updateVal5(data: { val5: string }, good: number) {
+    return this.put(
+      `${GoodprocessEndpoints.UpdateGoodStatusVal5}/${good}`,
+      data
+    );
+  }
+
+  getBlkCtrlGood(cve: string, good: number) {
+    return this.get(`${GoodprocessEndpoints.GetBlkCtrlGood}/${cve}/${good}`);
+  }
+
+  getVsigLigie(params: ListParams | string): Observable<IListResponse<any>> {
+    const route = GoodprocessEndpoints.GetVsigLigie;
+    debugger;
+    return this.get<IListResponse<any>>(route, params);
+  }
 }

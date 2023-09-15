@@ -302,6 +302,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           this.closeCreateGoodWIndows();
         },
         error: error => {
+          console.log(error);
+
           this.loaderProgress.load = false;
           this.message(
             'error',
@@ -1140,8 +1142,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         next: resp => {
           this.onLoadToast(
             'success',
-            'Asignación exitosa',
-            `Se asignó un domicilio a todos los Bienes`
+            'Se asignó un domicilio a todos los Bienes',
+            ``
           );
           this.loading = true;
           this.closeCreateGoodWIndows();

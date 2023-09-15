@@ -9,6 +9,7 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
+import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
@@ -31,6 +32,7 @@ import { CustomdbclickComponent } from '../customdbclick/customdbclick.component
 import { CustomdbclickdepositComponent } from '../customdbclickdeposit/customdbclickdeposit.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
 import { CustomMultiSelectFilterComponent } from './filterAccount';
+import { CustomDateFilterComponent_ } from './searchDate';
 
 @Component({
   selector: 'app-deposit-tokens',
@@ -87,6 +89,8 @@ export class DepositTokensComponent
   validExcel: boolean = true;
   settings2 = { ...this.settings };
   loadingBtn2: boolean = false;
+  value: number = 0;
+  @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -104,13 +108,17 @@ export class DepositTokensComponent
       actions: {
         columnTitle: 'Acciones',
         delete: true,
-        edit: false,
+        edit: true,
         add: false,
+        position: 'right',
       },
       delete: {
-        deleteButtonContent:
-          '<i class="pl-4 fa fa-trash text-danger mx-2"></i>',
+        deleteButtonContent: '<i class="fa fa-trash text-danger mx-2"></i>',
         confirmDelete: true,
+      },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-black mx-2 pl-3"></i>',
       },
       hideSubHeader: false,
       columns: {
@@ -121,27 +129,26 @@ export class DepositTokensComponent
         },
         accountkey: {
           title: 'Cuenta',
-          // type: 'string',
           filter: {
             type: 'custom',
             component: CustomMultiSelectFilterComponent,
             config: {
-              options: this.getUniqueValues('cveAccount'),
+              options: this.getUniqueValues('accountkey'),
             },
           },
           valuePrepareFunction: (value: any) => {
+            console.log('value', value);
             return value != null ? value : '';
           },
           filterFunction(cell?: any, search?: string): boolean {
             let column = cell;
-            if (
-              column?.toUpperCase() >= search.toUpperCase() ||
-              search === ''
-            ) {
-              return true;
-            } else {
-              return false;
-            }
+            console.log(column, '==', search);
+            // if (column?.toUpperCase() >= search.toUpperCase() || search === ''
+            // ) {
+            return true;
+            // } else {
+            //   return false;
+            // }
           },
           sort: false,
         },
@@ -150,7 +157,7 @@ export class DepositTokensComponent
           // type: 'string',
           sort: false,
           // width: '13%',
-          type: 'html',
+          // type: 'html',
           valuePrepareFunction: (text: string) => {
             return `${
               text ? text.split('T')[0].split('-').reverse().join('/') : ''
@@ -158,37 +165,31 @@ export class DepositTokensComponent
           },
           filter: {
             type: 'custom',
-            component: CustomDateFilterComponent,
+            component: CustomDateFilterComponent_,
+            // component: CustomDateFilterComponent,
+          },
+          filterFunction(cell?: any, search?: string): boolean {
+            let column = cell;
+            console.log(column, '==', search);
+            // if (column?.toUpperCase() >= search.toUpperCase() || search === ''
+            // ) {
+            return true;
+            // } else {
+            //   return false;
+            // }
           },
         },
         calculationInterestsDate_: {
-          title: 'Fecha Transferencia',
+          title: 'Fecha TESOFE',
           // type: 'string',
           sort: false,
           // width: '13%',
           type: 'html',
           valuePrepareFunction: (text: string) => {
-            console.log('text', text);
+            // console.log('text', text);
             return `${
               text ? text.split('T')[0].split('-').reverse().join('/') : ''
             }`;
-
-            // let date = new Date((Number(text) - 25569) * 86400 * 1000);
-            // let fechaString = date.toString();
-
-            // let fecha = new Date(fechaString);
-
-            // let dia = fecha.getDate();
-            // let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
-            // let año = fecha.getFullYear();
-
-            // // Asegurarse de que el día y el mes tengan dos dígitos
-            // let diaString = dia < 10 ? '0' + dia : dia;
-            // let mesString = mes < 10 ? '0' + mes : mes;
-
-            // let fechaFormateada = `${diaString}/${mesString}/${año}`;
-
-            // return `${fechaFormateada}`;
           },
           filter: {
             type: 'custom',
@@ -204,7 +205,7 @@ export class DepositTokensComponent
           },
         },
         deposit: {
-          title: 'Depósito',
+          title: 'Cantidad',
           type: 'custom',
           sort: false,
           renderComponent: CustomdbclickdepositComponent,
@@ -218,7 +219,7 @@ export class DepositTokensComponent
           },
         },
         goodnumber: {
-          title: 'Bien',
+          title: 'No. Bien',
           type: 'custom',
           sort: false,
           renderComponent: CustomdbclickComponent,
@@ -259,6 +260,7 @@ export class DepositTokensComponent
         },
       },
       rowClassFunction: (row: any) => {
+        // console.log("ROWWWW", row)
         if (row.data.goodnumber != null) {
           return 'bg-warning text-black';
         } else {
@@ -349,7 +351,7 @@ export class DepositTokensComponent
           sort: false,
         },
         FEC_CALCULO_INTERESES: {
-          title: 'Fecha Transferencia',
+          title: 'Fecha TESOFE',
           // type: 'string',
           sort: false,
           // width: '13%',
@@ -403,7 +405,7 @@ export class DepositTokensComponent
           },
         },
         DEPOSITO: {
-          title: 'Depósito',
+          title: 'Cantidad',
           type: 'string',
           sort: false,
           // renderComponent: CustomdbclickdepositComponent,
@@ -419,7 +421,7 @@ export class DepositTokensComponent
           sort: false,
         },
         no_bien: {
-          title: 'Bien',
+          title: 'No. Bien',
           type: 'string',
           sort: false,
           // renderComponent: CustomdbclickComponent,
@@ -479,7 +481,7 @@ export class DepositTokensComponent
               proceedingsnumber: () => (searchFilter = SearchFilter.EQ),
               goodnumber: () => (searchFilter = SearchFilter.EQ),
               category: () => (searchFilter = SearchFilter.ILIKE),
-              ispartialization: () => (searchFilter = SearchFilter.EQ),
+              ispartialization: () => (searchFilter = SearchFilter.ILIKE),
             };
 
             search[filter.field]();
@@ -570,25 +572,54 @@ export class DepositTokensComponent
 
   getAccount() {
     this.loading = true;
+
+    this.data1.load([]);
+    this.data1.refresh();
+    this.totalItems = 0;
+
     let params: any = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
 
-    console.log('params1', params);
+    console.log('params1', params['filter.motionDate_']);
+    // CON RANGE //
     if (params['filter.motionDate_']) {
-      var fecha = new Date(params['filter.motionDate_']);
+      const fechas = params['filter.motionDate_'].split(',');
+      console.log('fechas', fechas);
+      var fecha1 = new Date(fechas[0]);
+      var fecha2 = new Date(fechas[1]);
 
       // Obtener los componentes de la fecha (año, mes y día)
-      var año = fecha.getFullYear();
-      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
-      var día = ('0' + fecha.getDate()).slice(-2);
+      var ano1 = fecha1.getFullYear();
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var ano2 = fecha2.getFullYear();
+      var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia2 = ('0' + fecha2.getDate()).slice(-2);
 
       // Crear la cadena de fecha en el formato yyyy-mm-dd
-      var fechaFormateada = año + '-' + mes + '-' + día;
-      params['motionDate'] = fechaFormateada;
+      var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+      var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
+      params['motiondate'] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
       delete params['filter.motionDate_'];
     }
+    // SIN RANGE //
+    // if (params['filter.motionDate_']) {
+    //   var fecha = new Date(params['filter.motionDate_']);
+
+    //   // Obtener los componentes de la fecha (año, mes y día)
+    //   var año = fecha.getFullYear();
+    //   var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+    //   var día = ('0' + fecha.getDate()).slice(-2);
+
+    //   // Crear la cadena de fecha en el formato yyyy-mm-dd
+    //   var fechaFormateada = año + '-' + mes + '-' + día;
+    //   params['motionDate'] = fechaFormateada;
+    //   delete params['filter.motionDate_'];
+    // }
     if (params['filter.deposit']) {
       params['deposit'] = params['filter.deposit'];
       delete params['filter.deposit'];
@@ -664,15 +695,25 @@ export class DepositTokensComponent
             // ? this.returnParseDate_(item.calculationinterestsdate)
             //   : null;
             item['bancoDetails'] = detailsBank ? detailsBank : null;
+            item['bankAndNumber'] = detailsBank
+              ? detailsBank.cveAccount +
+                ' - ' +
+                detailsBank.cveBank +
+                ' - ' +
+                detailsBank.banco.name
+              : null;
           });
-
+          console.log('Nop');
           Promise.all(result).then((resp: any) => {
+            console.log('Sip');
             this.showPagination = true;
-            this.totalItems = response.count;
+
             this.data1.load(response.data);
             this.data1.refresh();
+
+            this.totalItems = response.count;
             console.log('AQUI', response);
-            console.log('this.data1 ', this.data1);
+            // console.log('this.data1 ', this.data1);
             this.validExcel = false;
             this.loading = false;
           });
@@ -805,7 +846,7 @@ export class DepositTokensComponent
         if (this.dataMovements.goodnumber == null) {
           this.alert(
             'warning',
-            'No Existe un Bien Asociado a este Depósito.',
+            'No existe un Bien asociado a este depósito.',
             ''
           );
         } else {
@@ -820,13 +861,13 @@ export class DepositTokensComponent
               this.getAccount();
               this.alert(
                 'success',
-                `El Bien ${this.dataMovements.goodnumber} ha sido Desconciliado`,
+                `El Bien ${this.dataMovements.goodnumber} ha sido desconciliado`,
                 ''
               );
               this.form.get('descriptionGood').setValue('');
             },
             error: err => {
-              this.alert('error', `Error al Desconciliar`, err.error.message);
+              this.alert('error', `Error al desconciliar`, err.error.message);
               // this.loading = false;
             },
           });
@@ -836,6 +877,8 @@ export class DepositTokensComponent
 
   async actualizarFunc() {
     this.showPagination = true;
+    // await this.clearSubheaderFields();
+
     this.paramsList.getValue().limit = 10;
     this.paramsList.getValue().page = 1;
     this.paramsList2.getValue().limit = 10;
@@ -853,6 +896,12 @@ export class DepositTokensComponent
     }
   }
 
+  async clearSubheaderFields() {
+    const subheaderFields: any = this.table.grid.source;
+    const filterConf = subheaderFields.filterConf;
+    filterConf.filters = [];
+    this.columnFilters = [];
+  }
   async importar() {}
 
   onFileChange(event: Event) {
@@ -883,7 +932,7 @@ export class DepositTokensComponent
       }
       this.clearInput();
     } catch (error) {
-      this.alert('warning', 'Ocurrió un Error al Leer el Archivo', '');
+      this.alert('warning', 'Ocurrió un error al leer el archivo', '');
       this.clearInput();
     }
   }
@@ -970,13 +1019,13 @@ export class DepositTokensComponent
           if (err.error.message == 'No es el excel correcto') {
             this.alert(
               'error',
-              'El Archivo no cumple con las condiciones de inserción',
+              'El archivo no cumple con las condiciones de inserción',
               ''
             );
           } else {
             this.alert(
               'error',
-              'Ha Ocurrido un error al intentar cargar el archivo',
+              'Ha ocurrido un error al intentar cargar el archivo',
               'Verifique el archivo e intente nuevamente'
             );
           }
@@ -994,21 +1043,6 @@ export class DepositTokensComponent
 
       let arr: any = [];
       let result = jsonToCsv.map(async (item: any) => {
-        // if (!this.validExcel) {
-        //   let obj1 = {
-        //     TI_BANCO: item.bank,
-        //     DI_CUENTA: item.accountkey,
-        //     NO_CUENTA: item.accountnumber,
-        //     DI_MONEDA: item.currency,
-        //     FEC_MOVIMIENTO: item.motiondate,
-        //     FOLIO_FICHA: item.isfiledeposit,
-        //     FEC_CALCULO_INTERESES: item.calculationinterestsdate,
-        //     DEPOSITO: item.deposit,
-        //     no_bien: item.goodnumber,
-        //     di_expediente2: item.proceedingsnumber,
-        //   };
-        //   arr.push(obj1);
-        // } else {
         let obj2 = {
           BANCO: item.TI_BANCO,
           CUENTA: item.DI_CUENTA,
@@ -1016,24 +1050,23 @@ export class DepositTokensComponent
           MONEDA: item.DI_MONEDA,
           FECHA_DEPOSITO: item.FEC_MOVIMIENTO,
           FOLIO: item.FOLIO_FICHA,
-          FECHA_TRANSF: item.FEC_CALCULO_INTERESES,
-          DEPOSITO: item.DEPOSITO,
+          FECHA_TESOFE: item.FEC_CALCULO_INTERESES,
+          CANTIDAD: item.DEPOSITO,
           BIEN: item.no_bien,
           EXPEDIENTE: item.di_expediente2,
           DESCRIPCION: await this.getDetailsGoodForExcel(item.no_bien),
           CATEGORIA: '',
-          PARCIAL: 'N',
+          PARCIAL: '',
         };
 
         arr.push(obj2);
-        // }
       });
 
       Promise.all(result).then(i => {
         console.log('jsonToCsv', arr);
         this.jsonToCsv = arr;
         this.excelService.export(this.jsonToCsv, { type: 'xlsx', filename });
-        this.alert('success', 'Archivo Descargado Correctamente', '');
+        this.alert('success', 'Archivo descargado correctamente', '');
         this.loadingBtn2 = false;
       });
     }
@@ -1088,8 +1121,13 @@ export class DepositTokensComponent
       delete params['filter.bank'];
     }
 
+    // if (params['filter.accountkey']) {
+    //   params['accountkey'] = params['filter.accountkey'];
+    //   delete params['filter.accountkey'];
+    // }
+
     if (params['filter.accountkey']) {
-      params['accountkey'] = params['filter.accountkey'];
+      params['accountkey'] = `$in:${params['filter.accountkey']}`;
       delete params['filter.accountkey'];
     }
 
@@ -1097,20 +1135,41 @@ export class DepositTokensComponent
       params['numberMotion'] = params['filter.motionnumber'];
       delete params['filter.motionnumber'];
     }
-
     if (params['filter.motionDate_']) {
-      var fecha = new Date(params['filter.motionDate_']);
+      const fechas = params['filter.motionDate_'].split(',');
+      console.log('fechas', fechas);
+      var fecha1 = new Date(fechas[0]);
+      var fecha2 = new Date(fechas[1]);
 
       // Obtener los componentes de la fecha (año, mes y día)
-      var año = fecha.getFullYear();
-      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
-      var día = ('0' + fecha.getDate()).slice(-2);
+      var ano1 = fecha1.getFullYear();
+      var mes1 = ('0' + (fecha1.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia1 = ('0' + fecha1.getDate()).slice(-2);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var ano2 = fecha2.getFullYear();
+      var mes2 = ('0' + (fecha2.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var dia2 = ('0' + fecha2.getDate()).slice(-2);
 
       // Crear la cadena de fecha en el formato yyyy-mm-dd
-      var fechaFormateada = año + '-' + mes + '-' + día;
-      params['motionDate'] = fechaFormateada;
+      var fechaFormateada1 = ano1 + '-' + mes1 + '-' + dia1;
+      var fechaFormateada2 = ano2 + '-' + mes2 + '-' + dia2;
+      params['motiondate'] = `$btw:${fechaFormateada1},${fechaFormateada2}`;
       delete params['filter.motionDate_'];
     }
+    // if (params['filter.motionDate_']) {
+    //   var fecha = new Date(params['filter.motionDate_']);
+
+    //   // Obtener los componentes de la fecha (año, mes y día)
+    //   var año = fecha.getFullYear();
+    //   var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+    //   var día = ('0' + fecha.getDate()).slice(-2);
+
+    //   // Crear la cadena de fecha en el formato yyyy-mm-dd
+    //   var fechaFormateada = año + '-' + mes + '-' + día;
+    //   params['motionDate'] = fechaFormateada;
+    //   delete params['filter.motionDate_'];
+    // }
     if (params['filter.deposit']) {
       params['deposit'] = params['filter.deposit'];
       delete params['filter.deposit'];
@@ -1154,7 +1213,7 @@ export class DepositTokensComponent
               ''
             );
           } else {
-            this.alert('error', 'Error al Descargar el Archivo', '');
+            this.alert('error', 'Error al descargar el archivo', '');
           }
 
           this.loadingBtn2 = false;
@@ -1171,7 +1230,7 @@ export class DepositTokensComponent
     link.download = 'CARINSFICHDEPO.xlsx';
     link.click();
     link.remove();
-    this.alert('success', 'Archivo Descargado Correctamente', '');
+    this.alert('success', 'Archivo descargado correctamente', '');
     this.loadingBtn2 = false;
   }
 
@@ -1231,14 +1290,20 @@ export class DepositTokensComponent
   }
 
   addMovement() {
-    let data = 1;
-    this.openFormAdd(data);
+    let data = null;
+    this.openFormAdd(data, false);
   }
 
-  openFormAdd(data?: any) {
+  editMovement(event: any) {
+    let data = event;
+    this.openFormAdd(data, true);
+  }
+
+  openFormAdd(data?: any, valEdit?: boolean) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       data,
+      valEdit,
       callback: (next: boolean) => {
         this.getAccount();
         console.log('AQUI', next);
@@ -1254,7 +1319,7 @@ export class DepositTokensComponent
     if (data.goodnumber != null) {
       this.alert(
         'warning',
-        'No Puede Eliminar un Movimiento que ya está Asociado a un Expediente',
+        'No puede eliminar un movimiento que ya está asociado a un expediente',
         ''
       );
     } else {
@@ -1265,13 +1330,13 @@ export class DepositTokensComponent
       if (vb_hay_hijos) {
         this.alert(
           'warning',
-          'No se Puede Eliminar una Ficha Mientras Tenga Devoluciones Registradas',
+          'No se puede eliminar una ficha mientras tenga devoluciones registradas',
           ''
         );
       } else {
         this.alertQuestion(
           'question',
-          'Se Eliminará el Movimiento',
+          'Se eliminará el Movimiento',
           '¿Desea Continuar?'
         ).then(async question => {
           if (question.isConfirmed) {
@@ -1283,11 +1348,11 @@ export class DepositTokensComponent
               next: response => {
                 this.getAccount();
                 this.form.reset();
-                this.alert('success', 'Movimiento Eliminado Correctamente', '');
+                this.alert('success', 'Movimiento eliminado correctamente', '');
                 console.log('res', response);
               },
               error: err => {
-                this.alert('error', 'Error al Eliminar el Movimiento', '');
+                this.alert('error', 'Error al eliminar el movimiento', '');
               },
             });
           }

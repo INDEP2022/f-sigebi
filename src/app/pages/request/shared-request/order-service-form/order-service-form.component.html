@@ -47,7 +47,7 @@
         label="Razones no Realizaci&oacute;n">
         <input
           class="form-control"
-          formControlName="razonsNoRealization"
+          formControlName="reasonsNotPerform"
           *ngIf="
             (!showForm && op == 9) ||
             (!showForm && op == 13) ||
@@ -117,7 +117,9 @@
         <input
           id="checkGood"
           type="checkbox"
-          formControlName="userContainers" />
+          [(ngModel)]="consolideContainer"
+          [ngModelOptions]="{ standalone: true }"
+          (change)="changeConsolidate($event)" />
       </form-check>
     </div>
 
@@ -132,7 +134,9 @@
         <input
           id="checkGood"
           type="checkbox"
-          formControlName="userContainers"
+          [(ngModel)]="consolideContainer"
+          [ngModelOptions]="{ standalone: true }"
+          (change)="changeConsolidate($event)"
           [readOnly]="true" />
       </form-check>
     </div>
@@ -195,7 +199,12 @@
         (showForm && op != 9)
       ">
       <form-check label="Visita Ocular" for="checkGoodVisit">
-        <input id="checkGoodVisit" type="checkbox" formControlName="eyeVisit" />
+        <input
+          id="checkGoodVisit"
+          type="checkbox"
+          [(ngModel)]="visitEye"
+          [ngModelOptions]="{ standalone: true }"
+          (change)="changeVisitEye($event)" />
       </form-check>
     </div>
 
@@ -210,7 +219,8 @@
         <input
           id="checkGood"
           type="checkbox"
-          formControlName="eyeVisit"
+          [(ngModel)]="visitEye"
+          [ngModelOptions]="{ standalone: true }"
           [readOnly]="true" />
       </form-check>
     </div>
@@ -245,7 +255,9 @@
       <div class="justify-content-end">
         <div class="font-size-45">
           <label class="col-lg-8 text-right"><b>Total&#58;</b></label>
-          <span> <b>$2,973.11</b></span>
+          <span>
+            <b>{{ total }}</b></span
+          >
         </div>
       </div>
     </div>

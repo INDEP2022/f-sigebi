@@ -1,91 +1,98 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar' : 'Agregar' }} {{ title }} del Cálculo No.
+      {{ comerComCalculated.comCalculatedId }}
+    </h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="commissionsForm">
       <div class="row">
+        <!-- <div class="col-md-2">
+          <form-field label="Id. Calculada" [control]="commissionsForm.get('comCalculatedId')">
+            <input readonly type="text" class="form-control" formControlName="comCalculatedId" />
+          </form-field>
+        </div> -->
         <div class="col-md-3">
-          <form-field
-            label="id_comcalculada"
-            [control]="commissionsForm.get('comCalculatedId')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="comCalculatedId" />
+          <form-field label="Lote" [control]="commissionsForm.get('batch')">
+            <input type="number" class="form-control" formControlName="batch" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
-            label="id_evento"
+            label="Id. Evento"
             [control]="commissionsForm.get('eventId')">
-            <input type="text" class="form-control" formControlName="eventId" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="eventId" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
-            label="no_bien"
+            label="No. Bien"
             [control]="commissionsForm.get('goodNumber')">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="goodNumber" />
           </form-field>
         </div>
         <div class="col-md-3">
+          <form-field label="Cvman" [control]="commissionsForm.get('cvman')">
+            <input
+              maxlength="8"
+              type="text"
+              class="form-control"
+              formControlName="cvman" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-5">
+          <form-field label="Venta" [control]="commissionsForm.get('sale')">
+            <input
+              currencyMask
+              type="text"
+              class="form-control"
+              formControlName="sale" />
+          </form-field>
+        </div>
+        <div class="col-md-5">
           <form-field
-            label="monto_comision"
+            label="Monto Comisión"
             [control]="commissionsForm.get('amountCommission')">
             <input
+              currencyMask
               type="text"
               class="form-control"
               formControlName="amountCommission" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-3">
-          <form-field label="lote" [control]="commissionsForm.get('batch')">
-            <input type="text" class="form-control" formControlName="batch" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field label="cvman" [control]="commissionsForm.get('cvman')">
-            <input type="text" class="form-control" formControlName="cvman" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field label="venta" [control]="commissionsForm.get('sale')">
-            <input type="text" class="form-control" formControlName="sale" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <form-field
-            label="comentarios"
-            [control]="commissionsForm.get('comments')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="comments" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-3">
-          <form-field
-            label="seprocesa"
+            label="Procesa"
             [control]="commissionsForm.get('processIt')">
             <input
+              maxlength="1"
               type="text"
               class="form-control"
               formControlName="processIt" />
           </form-field>
         </div>
-        <div class="col-md-3">
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
           <form-field
-            label="venta_tc"
-            [control]="commissionsForm.get('saleTc')">
-            <input type="text" class="form-control" formControlName="saleTc" />
+            label="Comentarios"
+            [control]="commissionsForm.get('comments')">
+            <textarea
+              maxlength="1000"
+              type="text"
+              class="form-control"
+              cols="4"
+              rows="4"
+              formControlName="comments"></textarea>
           </form-field>
         </div>
       </div>
@@ -94,13 +101,24 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          (confirm)="confirm()"
-          [disabled]="!commissionsForm.valid">
-        </confirm-button>
+        <button
+          type="button"
+          [disabled]="!commissionsForm.valid"
+          class="btn btn-primary active btn-sm"
+          (click)="confirm()">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
       </div>
+      <!-- <div class="m-3">
+        <confirm-button (confirm)="confirm()" [disabled]="!commissionsForm.valid">
+        </confirm-button>
+      </div> -->
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
           Cancelar
         </button>
       </div>

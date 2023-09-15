@@ -81,11 +81,10 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       },
 
       edit: {
-        editButtonContent:
-          '<i class="fa fa-file text-primary mx-2" > Detalle</i>',
+        editButtonContent: '<i class="fa fa-file text-primary mx-2 ml-2" ></i>',
       },
       delete: {
-        deleteButtonContent: '<i  class="fa fa-eye text-info mx-2" > Ver</i>',
+        deleteButtonContent: '<i  class="fa fa-eye text-info mx-2" ></i>',
       },
       columns: DOC_GOODS_COLUMNS,
     };
@@ -104,6 +103,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('idGood', this.idGood);
     this.prepareForm();
     this.getDocType(new ListParams());
     this.getDocuemntByGood();

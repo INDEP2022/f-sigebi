@@ -23,11 +23,13 @@ import {
 } from 'src/app/core/models/ms-depositarypayment/ms-depositarypayment.interface';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { PersonService } from 'src/app/core/services/catalogs/person.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { QueryRelatedPaymentsService } from '../services/query-related-payments.service';
 import {
   PAY_BANK_COLUMNS,
@@ -105,6 +107,10 @@ export class QueryRelatedPaymentsDepositoriesComponent
   origin: string = null;
   noBienParams: number = null;
 
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  goods = new DefaultSelect<IGood>();
+  goodSelect: IGood;
+
   constructor(
     private fb: FormBuilder,
     private svQueryRelatedPaymentsService: QueryRelatedPaymentsService,
@@ -112,7 +118,8 @@ export class QueryRelatedPaymentsDepositoriesComponent
     private excelService: ExcelService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private personService: PersonService
+    private personService: PersonService,
+    private service: GoodFinderService
   ) {
     super();
   }
@@ -136,9 +143,12 @@ export class QueryRelatedPaymentsDepositoriesComponent
       if (!isNaN(Number(id))) {
         this.noBienReadOnly = Number(id);
         this.form.get('noBien').setValue(this.noBienReadOnly);
-        this.validGoodNumberInDepositaryAppointment();
+        // this.validGoodNumberInDepositaryAppointment();
+        let param = new ListParams();
+        param.text = this.form.value.noBien;
+        this.getGoodsSheard(param, true);
       } else {
-        this.alert('warning', 'Número de Bien', ERROR_GOOD_PARAM);
+        this.alert('warning', 'No. de bien', ERROR_GOOD_PARAM);
       }
     }
     // Pagos Bancos
@@ -186,7 +196,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
   private prepareForm() {
     this.form = this.fb.group({
       noBien: [
-        { value: '', disabled: false },
+        { value: null, disabled: false },
         [
           Validators.required,
           Validators.maxLength(11),
@@ -239,8 +249,8 @@ export class QueryRelatedPaymentsDepositoriesComponent
       if (!this.noBienReadOnly) {
         this.alert(
           'warning',
-          'Número de Bien',
-          'Carga la Información del Bien primero para Continuar'
+          'No. de bien',
+          'Carga la información del bien primero para continuar'
         );
         return;
       }
@@ -260,15 +270,17 @@ export class QueryRelatedPaymentsDepositoriesComponent
             this.loadingGoodAccount = false;
             this.alert(
               'warning',
-              'Número de Bien',
+              'No. de bien',
               NOT_FOUND_GOOD(
-                err.error.message ? err.error.message : 'Error en el Servidor'
+                err.error.message && err.status != 400
+                  ? err.error.message
+                  : 'Error en el servidor'
               )
             );
           },
         });
     } else {
-      this.alert('warning', 'Número de Bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -296,6 +308,11 @@ export class QueryRelatedPaymentsDepositoriesComponent
     this.sendSirsaeGetPayDepositories();
   }
 
+  closeSendSirsae() {
+    this.startSirsaeValues();
+    this.loadingSirsaeProcess = false;
+  }
+
   startSirsaeValues() {
     this.errorsSirsae = [];
     this.loadingSirsaeProcess = true;
@@ -308,14 +325,14 @@ export class QueryRelatedPaymentsDepositoriesComponent
   btnImprimir(): any {
     console.log('Imprimir');
     // LLAMAR PANTALLA FCONDEPOREPINGXBIEN - ordenes de ingreso x bien en depositaria
-    // PASAR SOLO EL NÚMERO DE BIEN
+    // PASAR SOLO EL NO. DE bIEN
     // this.alert('info', 'LLAMAR PANTALLA FCONDEPOREPINGXBIEN', '');
     if (this.form.get('noBien').valid) {
       if (!this.noBienReadOnly) {
         this.alert(
           'warning',
-          'Número de Bien',
-          'Carga la Información del Bien primero para Continuar'
+          'No. de bien',
+          'Carga la información del bien primero para continuar'
         );
         return;
       }
@@ -337,7 +354,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
         }
       );
     } else {
-      this.alert('warning', 'Número de Bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -399,15 +416,17 @@ export class QueryRelatedPaymentsDepositoriesComponent
             this.loadingAppointment = false;
             this.alert(
               'warning',
-              'Número de Bien',
+              'No. de bien',
               NOT_FOUND_GOOD_APPOINTMENT(
-                err.error.message ? err.error.message : 'Error en el Servidor'
+                err.error.message && err.status != 400
+                  ? err.error.message
+                  : 'Error en el servidor'
               )
             );
           },
         });
     } else {
-      this.alert('warning', 'Número de Bien', ERROR_GOOD_NULL);
+      this.alert('warning', 'No. de bien', ERROR_GOOD_NULL);
     }
   }
 
@@ -433,13 +452,67 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.loadingGood = false;
           this.alert(
             'warning',
-            'Número de Bien',
+            'No. de bien',
             NOT_FOUND_GOOD(
-              err.error.message ? err.error.message : 'Error en el Servidor'
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
             )
           );
         },
       });
+  }
+
+  getGoodsSheard(params: ListParams, getByValue: boolean = false) {
+    //Provisional data
+    console.log(params);
+    // this.searchTabForm.controls['noBien'].disable();
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    this.loading = true;
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+    if (!isNaN(parseFloat(params.text)) && isFinite(+params.text)) {
+      if (params.text != undefined && params.text != '') {
+        data.addFilter('id', params.text, SearchFilter.EQ);
+      }
+    } else {
+      if (params.text != undefined && params.text != '') {
+        data.addFilter('description', params.text, SearchFilter.ILIKE);
+      }
+    }
+    this.service.getAll2(data.getParams()).subscribe({
+      next: data => {
+        this.goods = new DefaultSelect(data.data, data.count);
+        this.loading = false;
+        console.log('DATA GOOD ', this.goods);
+        if (getByValue == true) {
+          // this.onChangeGood(this.goods.data[0]);
+          this.form.get('noBien').setValue(this.goods.data[0].id);
+          this.validGoodNumberInDepositaryAppointment();
+        }
+      },
+      error: err => {
+        this.goods = new DefaultSelect([], 0, true);
+        this.loading = false;
+      },
+    });
+  }
+  onChangeGood(event: IGood) {
+    console.log(event);
+    this.goodSelect = event;
+    this.goods = new DefaultSelect([event], 1, true);
+    if (event) {
+      this.validGoodNumberInDepositaryAppointment();
+    } else {
+      this.depositaryAppointment = null;
+      this.form.reset();
+      this.formDepositario.reset();
+      this.formBienDetalle.reset();
+      this.startTablePaymentBank();
+      this.startTablePaymentReceive();
+      this.closeSendSirsae();
+    }
   }
 
   async getStatusGoodByNoGood() {
@@ -460,9 +533,11 @@ export class QueryRelatedPaymentsDepositoriesComponent
         error: err => {
           this.onLoadToast(
             'warning',
-            'Descripción del Bien',
+            'Descripción del bien',
             NOT_FOUND_GOOD_DESCRIPTION(
-              err.error.message ? err.error.message : 'Error en el Servidor'
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
             )
           );
         },
@@ -533,9 +608,11 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.loadingTablePayBanks = false;
           this.alert(
             'warning',
-            'Pagos Recibidos en el Banco',
+            'Pagos recibidos en el banco',
             NOT_FOUND_PAYMENTS_BANK(
-              err.error.message ? err.error.message : 'Error en el Servidor'
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
             )
           );
         },
@@ -556,9 +633,11 @@ export class QueryRelatedPaymentsDepositoriesComponent
         error: err => {
           this.onLoadToast(
             'warning',
-            'Suma del Depósito de los Pagos Recibidos en el Banco',
+            'Suma del depósito de los pagos recibidos en el banco',
             NOT_FOUND_PAYMENTS_BANK_TOTALS(
-              err.error.message ? err.error.message : 'Error en el Servidor'
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
             )
           );
         },
@@ -614,9 +693,11 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.loadingTableReceivedPays = false;
           this.alert(
             'warning',
-            'Composición de Pagos Recibidos',
+            'Composición de pagos recibidos',
             NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS(
-              err.error.message ? err.error.message : 'Error en el Servidor'
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
             )
           );
         },
@@ -639,9 +720,11 @@ export class QueryRelatedPaymentsDepositoriesComponent
         error: err => {
           this.onLoadToast(
             'warning',
-            'Sumas del Monto SIN Iva, Monto CON Iva y el Pago Actual de la Composición de Pagos Recibidos',
+            'Sumas del monto sin iva, monto con iva y el pago actual de la composición de pagos recibidos',
             NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS_TOTALS(
-              err.error.message ? err.error.message : 'Error en el Servidor'
+              err.error.message && err.status != 400
+                ? err.error.message
+                : 'Error en el servidor'
             )
           );
         },
@@ -717,7 +800,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
             'Se mostrará un excel con detalles de los errores por cada registro procesado'
           );
         } else {
-          this.alert('success', 'Proceso Terminado ', '');
+          this.alert('success', 'Proceso terminado ', '');
         }
       }
     }
@@ -764,10 +847,14 @@ export class QueryRelatedPaymentsDepositoriesComponent
           obj['lstLot'] = 'Realice el proceso nuevamente de envio SIRSAE';
         } else {
           obj['errores'] = err.error.message
-            ? err.error.message
+            ? err.error.message.includes('duplicate key')
+              ? 'Ya existe un registro en Sirsae de este pago'
+              : 'Error en el Servidor'
             : 'Error en el Servidor';
           obj['lstLot'] = err.error.message
-            ? err.error.message
+            ? err.error.message.includes('duplicate key')
+              ? 'Ya existe un registro en Sirsae de este pago'
+              : 'Error en el Servidor'
             : 'Error en el Servidor';
         }
         this.errorsSirsae.push(obj);

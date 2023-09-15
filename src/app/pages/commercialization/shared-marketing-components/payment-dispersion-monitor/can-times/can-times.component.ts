@@ -51,12 +51,12 @@ export class CanTimesComponent extends BasePage implements OnInit {
   //Aceptar
   apply() {
     console.log(this.times.value);
-    if (this.times.value < 1) {
-      this.alert('warning', 'El Número Debe ser Mayor a Cero', '');
+    if (this.times.value < 2) {
+      this.alert('warning', 'Número inválido, favor de rectificar', '');
     } else {
       if (this.incomeData.payId != null) {
         let n_monto = this.incomeData.amount;
-        let n_pena = 15;
+        let n_pena = this.incomeData.amountGrief;
         let n_mdiv = n_monto / this.times.value;
         let n_pdiv = n_pena / this.times.value;
         let n_sum = n_mdiv;
@@ -92,19 +92,27 @@ export class CanTimesComponent extends BasePage implements OnInit {
               ...this.incomeData,
               amount:
                 i == this.times.value
-                  ? (n_monto - n_sum).toFixed(2)
+                  ? (n_monto - n_sum < 0 ? 0 : n_monto - n_sum).toFixed(2)
                   : n_mdiv.toFixed(2),
               publicBatch: null,
-              description: this.incomeData.description,
+              batchId: null,
+              description: null,
+              payvirtueId: null,
               typereference: n_tipo_ref,
               penalty,
+              position: i,
             });
           }
         }
 
         console.log(this.newData);
 
-        this.modalRef.content.callback(this.newData);
+        this.modalRef.content.callback({
+          data: this.newData,
+          n_mdiv,
+          n_pdiv,
+          id: this.incomeData.batchId,
+        });
         this.modalRef.hide();
       }
     }

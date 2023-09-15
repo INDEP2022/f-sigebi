@@ -951,7 +951,7 @@ export class MassiveConversionSelectGoodComponent
     if (goodCheck.length > 0) {
       this.clearPrevisualizationData();
     } else {
-      this.alert('warning', 'No Seleccionó Ningún Bien', '');
+      this.alert('warning', 'No seleccionó ningún Bien', '');
     }
   }
 }

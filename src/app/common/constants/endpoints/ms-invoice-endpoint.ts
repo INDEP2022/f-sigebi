@@ -32,4 +32,7 @@ export enum ENDPOINT_INVOICE {
   ComerFactInvoiceI = 'comer-fact-inconsistencies/get-data-custom',
   ComerValidUser = 'procedure-sera/validate-user-fcomer086',
   ComerCount = 'comer-invoices/get-count-like-description',
+  ComerEleBill = 'comer-elec-bill',
+  ApplicationFolioSP = 'application/puf-valid-invoice-sp',
+  ApplicationEats = 'application/get-data-eats',
 }

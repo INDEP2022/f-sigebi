@@ -44,7 +44,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       },
       columns: {
         officeMail: {
-          title: 'Ver Oficio Correo',
+          title: 'Oficio Correo',
           width: '5%',
           type: 'custom',
           sort: false,
@@ -57,7 +57,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           },
         },
         seeClaimLetter: {
-          title: 'Ver Carta Reclamación',
+          title: 'Carta Reclamación',
           width: '5%',
           type: 'custom',
           sort: false,
@@ -70,7 +70,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           },
         },
         officialConclusion: {
-          title: 'Ver Oficio Conclusión',
+          title: 'Oficio Conclusión',
           width: '5%',
           type: 'custom',
           sort: false,
@@ -109,7 +109,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           sort: false,
         },
         detallebienoafectadas: {
-          title: 'Det. Bien o Afectadas',
+          title: 'Detalle Bien o Partes Afectadas',
           type: 'string',
           sort: false,
         },
@@ -119,12 +119,12 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           sort: false,
         },
         fechareporteaseguradora: {
-          title: 'Fec. Rep. Aseguradora',
+          title: 'Fecha Reporte Aseguradora',
           type: 'string',
           sort: false,
         },
         fechareportecabi: {
-          title: 'Fec. Rep. CAB',
+          title: 'Fecha Reporte CAB',
           type: 'string',
           sort: false,
         },
@@ -136,11 +136,39 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
         montoreclamado: {
           title: 'Monto Reclamado',
           sort: false,
+          valuePrepareFunction: (amount: string) => {
+            const numericAmount = parseFloat(amount);
+
+            if (!isNaN(numericAmount)) {
+              return numericAmount.toLocaleString('en-US', {
+                // style: 'currency',
+                // currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
+            } else {
+              return amount;
+            }
+          },
         },
         montoajustado: {
           title: 'Monto Ajustado',
           type: 'string',
           sort: false,
+          valuePrepareFunction: (amount: string) => {
+            const numericAmount = parseFloat(amount);
+
+            if (!isNaN(numericAmount)) {
+              return numericAmount.toLocaleString('en-US', {
+                // style: 'currency',
+                // currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
+            } else {
+              return amount;
+            }
+          },
         },
         deducible: {
           title: 'Deducible',
@@ -156,6 +184,20 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           title: 'Monto Indemnización',
           type: 'string',
           sort: false,
+          valuePrepareFunction: (amount: string) => {
+            const numericAmount = parseFloat(amount);
+
+            if (!isNaN(numericAmount)) {
+              return numericAmount.toLocaleString('en-US', {
+                // style: 'currency',
+                // currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
+            } else {
+              return amount;
+            }
+          },
         },
         formaconclusion: {
           title: 'Forma Conclusión',
@@ -336,11 +378,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       };
       this.vewReport(res);
     } else {
-      this.alert(
-        'warning',
-        'Siniestros Seguimiento',
-        'No se encontró documento oficio conclusión.'
-      );
+      this.alert('warning', 'Sin archivo seleccionado', '');
     }
   }
   seeOfficeMail(data: any) {
@@ -359,11 +397,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       };
       this.vewReport(res);
     } else {
-      this.alert(
-        'warning',
-        'Siniestros Seguimiento',
-        'No se encontró documento oficio correo.'
-      );
+      this.alert('warning', 'Sin archivo seleccionado', '');
     }
   }
   seeClaimLetter(data: any) {
@@ -383,11 +417,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       };
       this.vewReport(res);
     } else {
-      this.alert(
-        'warning',
-        'Siniestros Seguimiento',
-        'No se encontró documento oficio reclamación.'
-      );
+      this.alert('warning', 'Sin archivo seleccionado', '');
     }
   }
   vewReport(res: any) {

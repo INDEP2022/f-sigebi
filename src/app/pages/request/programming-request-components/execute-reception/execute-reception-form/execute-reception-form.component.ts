@@ -17,8 +17,8 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
+import { IUnitsMedConv } from 'src/app/core/models/administrative-processes/siab-sami-interaction/measurement-units';
 import {
-  IMeasureUnit,
   IPhysicalStatus,
   IStateConservation,
 } from 'src/app/core/models/catalogs/generic.model';
@@ -47,6 +47,7 @@ import { HistoryGoodService } from 'src/app/core/services/ms-history-good/histor
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
@@ -79,7 +80,6 @@ import {
   RECEIPT_GUARD_COLUMNS,
 } from './columns/minute-columns';
 import { tranGoods } from './execute-reception-data';
-import { SelectInputComponent } from './select-input/select-input.component';
 
 @Component({
   selector: 'app-execute-reception-form',
@@ -98,7 +98,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   goodsProgramming: IGoodProgramming[] = [];
   stateConservation: IStateConservation[] = [];
   statusPhysical: IPhysicalStatus[] = [];
-  measureUnits: IMeasureUnit[] = [];
+  measureUnits: IUnitsMedConv[] = [];
   executeForm: FormGroup = new FormGroup({});
   receptionForm: FormGroup = new FormGroup({});
   goodsGuardForm: FormGroup = new FormGroup({});
@@ -168,6 +168,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   showTransportable: boolean = false;
   showGuard: boolean = false;
   showWarehouse: boolean = false;
+  loadingTransportable: boolean = false;
   showReprog: boolean = false;
   showCancel: boolean = false;
   checkSeleccionado: boolean = false;
@@ -175,6 +176,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   receiptGuardClose: boolean = true;
   receiptWarehouseClose: boolean = true;
   formLoadingTransportable: boolean = false;
+  decimalGood: boolean = false;
+  moreSaeQuantity: boolean = false;
   //receiptGuardGood: IRecepitGuard;
   receiptGuardGood: IRecepitGuard;
   receiptWarehouseGood: IRecepitGuard;
@@ -193,7 +196,16 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   settingsTransGood = {
     ...TABLE_SETTINGS,
-    actions: false,
+    selectMode: 'multi',
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'right',
+      delete: true,
+    },
+
+    delete: {
+      deleteButtonContent: '<i class="fa fa-eye"></i>',
+    },
   };
   columns = TRANS_GOODS_EXECUTE_EDITABLE;
 
@@ -313,6 +325,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   guardGoods: LocalDataSource = new LocalDataSource();
   tranGoods = tranGoods;
   receipts: LocalDataSource = new LocalDataSource();
+  infoGoodsTran: LocalDataSource = new LocalDataSource();
   search: FormControl = new FormControl({});
   programming: Iprogramming;
   proceedingOpen: IProceedings[] = [];
@@ -347,7 +360,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     private regionalDelegationService: RegionalDelegationService,
     private stateService: StateOfRepublicService,
     private domicilieService: DomicileService,
-    private historyGoodService: HistoryGoodService
+    private historyGoodService: HistoryGoodService,
+    private strategyService: StrategyServiceService
   ) {
     super();
     this.settings = {
@@ -365,7 +379,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.settingsTransGood.columns = TRANS_GOODS_EXECUTE_EDITABLE;
 
     const self = this;
-    this.settingsTransGood.columns = {
+    /*this.settingsTransGood.columns = {
       saeMeasureUnit: {
         title: 'Unidad de Medida INDEP',
         type: 'custom',
@@ -385,7 +399,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           //this.setDescriptionGoodSae(data);
         });
       },
-    };
+    }; */
     this.getInfoUserLog();
     this.prepareForm();
     this.prepareSearchForm();
@@ -396,7 +410,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.prepareCancelForm();
     this.showDataProgramming();
     this.getConcervationState();
-    this.getUnitMeasure();
+
     this.getPhysicalStatus();
     this.getReceipts();
     this.getReceiptsGuard();
@@ -418,7 +432,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.id'] = `$eq:${task.id}`;
     this.taskService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('task', response);
         this.task = response.data[0];
       },
       error: error => {},
@@ -776,34 +789,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       },
       error: error => {},
     });
-    /*const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.idWarehouse'] = this.programming.storeId;
-    this.warehouseService.getAll(params.getValue()).subscribe(data => {
-      this.nameWarehouse = data.data[0].description;
-
-      this.ubicationWarehouse = data.data[0].ubication;
-    }); */
   }
 
-  /*----------Show info goods programming --------- */
-  /*showDataProgramming() {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    this.goodsTransportable.reset();
-    params.getValue()['filter.programmingId'] = this.programmingId;
-    this.programmingService
-      .getGoodsProgramming(params.getValue())
-      .subscribe(data => {
-        //this.filterStatusTrans(data.data);
-        //this.filterStatusReception(data.data);
-        //this.filterStatusGuard(data.data);
-        //this.filterStatusWarehouse(data.data);
-        //this.filterStatusReprog(data.data);
-        //this.filterStatusCancelation(data.data);
-      });
-  } */
-
   getInfoGoodsTransportable() {
-    const _data: any[] = [];
+    /*const _data: any[] = [];
+    this.formLoadingTrans = true;
 
     this.paramsTransportableGoods.getValue()['filter.programmingId'] =
       this.programmingId;
@@ -815,6 +805,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .subscribe({
         next: async data => {
           this.totalItemsTransportableGoods = data.count;
+          this.goodsTransportable.clear();
           data.data.map((item: IGoodProgramming) => {
             this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
             this.paramsShowTransportable.getValue()['sortBy'] = 'id:ASC';
@@ -822,9 +813,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               .getAll(this.paramsShowTransportable.getValue())
               .subscribe({
                 next: async data => {
-                  console.log('bienes transportable', data);
                   _data.push(data.data[0]);
-                  this.goodsInfoTransportable.load(_data);
+                  console.log('data', _data);
+                  this.infoGoodsTran.load(_data);
+                  this.formLoadingTrans = false;
                 },
                 error: error => {
                   this.formLoadingTrans = false;
@@ -837,7 +829,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.totalItemsTransportableGoods = 0;
           this.selectGood = [];
         },
-      });
+      }); */
+
+    const _data: any[] = [];
 
     this.formLoadingTrans = true;
 
@@ -851,6 +845,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .subscribe({
         next: async data => {
           this.totalItemsTransportableGoods = data.count;
+          this.goodsTransportable.clear();
           data.data.map((item: IGoodProgramming) => {
             this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
             this.paramsShowTransportable.getValue()['sortBy'] = 'id:ASC';
@@ -882,6 +877,64 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       item.transferentDestinyName = 'ADMINISTRACIÓN';
                     }
 
+                    if (item.unitMeasure == 'KWH') {
+                      item.unitMeasureName = 'KILOWATT HORA';
+                    } else if (item.unitMeasure == 'BAR') {
+                      item.unitMeasureName = 'BARRIL';
+                    } else if (item.unitMeasure == 'GR') {
+                      item.unitMeasureName = 'GRAMO';
+                    } else if (item.unitMeasure == 'M2') {
+                      item.unitMeasureName = 'METRO CUADRADO';
+                    } else if (item.unitMeasure == 'M3') {
+                      item.unitMeasureName = 'METRO CÚBICO';
+                    } else if (item.unitMeasure == 'MIL') {
+                      item.unitMeasureName = 'MILLAR';
+                    } else if (item.unitMeasure == 'PAR') {
+                      item.unitMeasureName = 'PAR';
+                    } else if (item.unitMeasure == 'KG') {
+                      item.unitMeasureName = 'KILOGRAMOS';
+                    } else if (item.unitMeasure == 'MT') {
+                      item.unitMeasureName = 'METRO';
+                    } else if (
+                      item.unitMeasure == 'PZ' ||
+                      item.unitMeasure == 'PIEZA'
+                    ) {
+                      item.unitMeasureName = 'PIEZA';
+                    } else if (item.unitMeasure == 'CZA') {
+                      item.unitMeasureName = 'CABEZA';
+                    } else if (item.unitMeasure == 'LT') {
+                      item.unitMeasureName = 'LITRO';
+                    }
+
+                    if (item.ligieUnit == 'KWH') {
+                      item.unitLigieName = 'KILOWATT HORA';
+                    } else if (item.ligieUnit == 'BAR') {
+                      item.unitLigieName = 'BARRIL';
+                    } else if (item.ligieUnit == 'GR') {
+                      item.unitLigieName = 'GRAMO';
+                    } else if (item.ligieUnit == 'M2') {
+                      item.unitLigieName = 'METRO CUADRADO';
+                    } else if (item.ligieUnit == 'M3') {
+                      item.unitLigieName = 'METRO CÚBICO';
+                    } else if (item.ligieUnit == 'MIL') {
+                      item.unitLigieName = 'MILLAR';
+                    } else if (item.ligieUnit == 'PAR') {
+                      item.unitLigieName = 'PAR';
+                    } else if (item.ligieUnit == 'KG') {
+                      item.unitLigieName = 'KILOGRAMOS';
+                    } else if (item.ligieUnit == 'MT') {
+                      item.unitLigieName = 'METRO';
+                    } else if (
+                      item.ligieUnit == 'PZ' ||
+                      item.ligieUnit == 'PIEZA'
+                    ) {
+                      item.unitLigieName = 'PIEZA';
+                    } else if (item.ligieUnit == 'CZA') {
+                      item.unitLigieName = 'CABEZA';
+                    } else if (item.ligieUnit == 'LT') {
+                      item.unitLigieName = 'LITRO';
+                    }
+                    this.getUnitMeasure(item.unitMeasure);
                     //item.transferentDestiny = showDestinyTransferent;
                     this.goodData = item;
                     const form = this.fb.group({
@@ -892,6 +945,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       goodDescription: [item?.goodDescription],
                       quantity: [item?.quantity],
                       unitMeasure: [item?.unitMeasure],
+                      unitMeasureName: [item?.unitMeasureName],
                       descriptionGoodSae: [item?.descriptionGoodSae],
                       quantitySae: [item?.quantitySae],
                       saeMeasureUnit: [item?.saeMeasureUnit],
@@ -907,6 +961,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       destiny: [item?.transferentDestinyName],
                       transferentDestiny: [item?.saeDestiny],
                       observations: [item?.observations],
+                      ligieUnit: [item?.unitLigieName],
                     });
 
                     this.goodsTransportable.push(form);
@@ -940,72 +995,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       });
     });
   }
-
-  /*filterStatusTrans(data: IGoodProgramming[]) {
-    const _data: any[] = [];
-    const filterData = data.filter(item => {
-      return item.status == 'EN_TRANSPORTABLE';
-    });
-
-    if (filterData.length != 0) {
-      filterData.forEach(items => {
-        this.params.getValue()['filter.id'] = items.goodId;
-        this.goodService.getAll(this.params.getValue()).subscribe({
-          next: response => {
-            _data.push(response.data[0]);
-
-            this.goodsTransportable.clear();
-            _data.forEach(async item => {
-              if (item.physicalStatus == 1) {
-                item.physicalStatusName = 'BUENO';
-              } else if (item.physicalStatus == 2) {
-                item.physicalStatusName = 'MALO';
-              }
-              if (item.stateConservation == 1) {
-                item.stateConservationName = 'BUENO';
-              } else if (item.stateConservation == 2) {
-                item.stateConservationName = 'MALO';
-              }
-
-              await this.getDestinyIndep(item.saeDestiny);
-
-              this.goodData = item;
-              const form = this.fb.group({
-                id: [item?.id],
-                goodId: [item?.goodId],
-                uniqueKey: [item?.uniqueKey],
-                fileNumber: [item?.fileNumber],
-                goodDescription: [item?.goodDescription],
-                quantity: [item?.quantity],
-                unitMeasure: [item?.unitMeasure],
-                descriptionGoodSae: [item?.descriptionGoodSae],
-                quantitySae: [item?.quantitySae],
-                saeMeasureUnit: [item?.saeMeasureUnit],
-                physicalStatus: [item?.physicalStatus],
-                physicalStatusName: [item?.physicalStatusName],
-                saePhysicalState: [item?.saePhysicalState],
-                stateConservation: [item?.stateConservation],
-                stateConservationName: [item?.stateConservationName],
-                stateConservationSae: [item?.stateConservationSae],
-                regionalDelegationNumber: [item?.regionalDelegationNumber],
-                destiny: [item?.destiny],
-                transferentDestiny: [item?.saeDestiny],
-                observations: [item?.observations],
-              });
-              this.goodsTransportable.push(form);
-              this.formLoadingTrans = false;
-              this.showTransportable = true;
-            });
-          },
-          error: error => {
-            this.formLoadingTrans = false;
-          },
-        });
-      });
-    } else {
-      this.formLoadingTrans = false;
-    }
-  } */
 
   showDestinyTrasnferent(destinyTNumber: number) {
     return new Promise((resolve, reject) => {
@@ -1074,6 +1063,61 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     item.transferentDestinyName = 'ADMINISTRACIÓN';
                   }
 
+                  if (item.unitMeasure == 'KWH') {
+                    item.unitMeasureName = 'KILOWATT HORA';
+                  } else if (item.unitMeasure == 'BAR') {
+                    item.unitMeasureName = 'BARRIL';
+                  } else if (item.unitMeasure == 'GR') {
+                    item.unitMeasureName = 'GRAMO';
+                  } else if (item.unitMeasure == 'M2') {
+                    item.unitMeasureName = 'METRO CUADRADO';
+                  } else if (item.unitMeasure == 'M3') {
+                    item.unitMeasureName = 'METRO CÚBICO';
+                  } else if (item.unitMeasure == 'MIL') {
+                    item.unitMeasureName = 'MILLAR';
+                  } else if (item.unitMeasure == 'PAR') {
+                    item.unitMeasureName = 'PAR';
+                  } else if (item.unitMeasure == 'KG') {
+                    item.unitMeasureName = 'KILOGRAMOS';
+                  } else if (item.unitMeasure == 'MT') {
+                    item.unitMeasureName = 'METRO';
+                  } else if (item.unitMeasure == 'PZ') {
+                    item.unitMeasureName = 'PIEZA';
+                  } else if (item.unitMeasure == 'CZA') {
+                    item.unitMeasureName = 'CABEZA';
+                  } else if (item.unitMeasure == 'LT') {
+                    item.unitMeasureName = 'LITRO';
+                  }
+
+                  if (item.ligieUnit == 'KWH') {
+                    item.unitLigieName = 'KILOWATT HORA';
+                  } else if (item.ligieUnit == 'BAR') {
+                    item.unitLigieName = 'BARRIL';
+                  } else if (item.ligieUnit == 'GR') {
+                    item.unitLigieName = 'GRAMO';
+                  } else if (item.ligieUnit == 'M2') {
+                    item.unitLigieName = 'METRO CUADRADO';
+                  } else if (item.ligieUnit == 'M3') {
+                    item.unitLigieName = 'METRO CÚBICO';
+                  } else if (item.ligieUnit == 'MIL') {
+                    item.unitLigieName = 'MILLAR';
+                  } else if (item.ligieUnit == 'PAR') {
+                    item.unitLigieName = 'PAR';
+                  } else if (item.ligieUnit == 'KG') {
+                    item.unitLigieName = 'KILOGRAMOS';
+                  } else if (item.ligieUnit == 'MT') {
+                    item.unitLigieName = 'METRO';
+                  } else if (
+                    item.ligieUnit == 'PZ' ||
+                    item.ligieUnit == 'PIEZA'
+                  ) {
+                    item.unitLigieName = 'PIEZA';
+                  } else if (item.ligieUnit == 'CZA') {
+                    item.unitLigieName = 'CABEZA';
+                  } else if (item.ligieUnit == 'LT') {
+                    item.unitLigieName = 'LITRO';
+                  }
+
                   this.goodData = item;
                   const form = this.fb.group({
                     id: [item?.id],
@@ -1082,7 +1126,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     fileNumber: [item?.fileNumber],
                     goodDescription: [item?.goodDescription],
                     quantity: [item?.quantity],
-                    unitMeasure: [item?.unitMeasure],
+                    unitMeasure: [item?.unitMeasureName],
                     descriptionGoodSae: [item?.descriptionGoodSae],
                     quantitySae: [item?.quantitySae],
                     saeMeasureUnit: [item?.saeMeasureUnit],
@@ -1096,6 +1140,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     observations: [item?.observations],
                     destiny: [item?.transferentDestinyName],
                     regionalDelegationNumber: [item?.regionalDelegationNumber],
+                    ligieUnit: [item?.ligieUnit],
                   });
                   this.goodsGuards.push(form);
                   this.headingGuard = `Resguardo(${data.count})`;
@@ -1159,6 +1204,61 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     item.transferentDestinyName = 'ADMINISTRACIÓN';
                   }
 
+                  if (item.unitMeasure == 'KWH') {
+                    item.unitMeasureName = 'KILOWATT HORA';
+                  } else if (item.unitMeasure == 'BAR') {
+                    item.unitMeasureName = 'BARRIL';
+                  } else if (item.unitMeasure == 'GR') {
+                    item.unitMeasureName = 'GRAMO';
+                  } else if (item.unitMeasure == 'M2') {
+                    item.unitMeasureName = 'METRO CUADRADO';
+                  } else if (item.unitMeasure == 'M3') {
+                    item.unitMeasureName = 'METRO CÚBICO';
+                  } else if (item.unitMeasure == 'MIL') {
+                    item.unitMeasureName = 'MILLAR';
+                  } else if (item.unitMeasure == 'PAR') {
+                    item.unitMeasureName = 'PAR';
+                  } else if (item.unitMeasure == 'KG') {
+                    item.unitMeasureName = 'KILOGRAMOS';
+                  } else if (item.unitMeasure == 'MT') {
+                    item.unitMeasureName = 'METRO';
+                  } else if (item.unitMeasure == 'PZ') {
+                    item.unitMeasureName = 'PIEZA';
+                  } else if (item.unitMeasure == 'CZA') {
+                    item.unitMeasureName = 'CABEZA';
+                  } else if (item.unitMeasure == 'LT') {
+                    item.unitMeasureName = 'LITRO';
+                  }
+
+                  if (item.ligieUnit == 'KWH') {
+                    item.unitLigieName = 'KILOWATT HORA';
+                  } else if (item.ligieUnit == 'BAR') {
+                    item.unitLigieName = 'BARRIL';
+                  } else if (item.ligieUnit == 'GR') {
+                    item.unitLigieName = 'GRAMO';
+                  } else if (item.ligieUnit == 'M2') {
+                    item.unitLigieName = 'METRO CUADRADO';
+                  } else if (item.ligieUnit == 'M3') {
+                    item.unitLigieName = 'METRO CÚBICO';
+                  } else if (item.ligieUnit == 'MIL') {
+                    item.unitLigieName = 'MILLAR';
+                  } else if (item.ligieUnit == 'PAR') {
+                    item.unitLigieName = 'PAR';
+                  } else if (item.ligieUnit == 'KG') {
+                    item.unitLigieName = 'KILOGRAMOS';
+                  } else if (item.ligieUnit == 'MT') {
+                    item.unitLigieName = 'METRO';
+                  } else if (
+                    item.ligieUnit == 'PZ' ||
+                    item.ligieUnit == 'PIEZA'
+                  ) {
+                    item.unitLigieName = 'PIEZA';
+                  } else if (item.ligieUnit == 'CZA') {
+                    item.unitLigieName = 'CABEZA';
+                  } else if (item.ligieUnit == 'LT') {
+                    item.unitLigieName = 'LITRO';
+                  }
+
                   this.goodData = item;
                   const form = this.fb.group({
                     id: [item?.id],
@@ -1167,7 +1267,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     fileNumber: [item?.fileNumber],
                     goodDescription: [item?.goodDescription],
                     quantity: [item?.quantity],
-                    unitMeasure: [item?.unitMeasure],
+                    unitMeasure: [item?.unitMeasureName],
                     descriptionGoodSae: [item?.descriptionGoodSae],
                     quantitySae: [item?.quantitySae],
                     saeMeasureUnit: [item?.saeMeasureUnit],
@@ -1182,6 +1282,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     destiny: [item?.transferentDestinyName],
 
                     transferentDestiny: [item?.saeDestiny],
+                    ligieUnit: [item?.unitLigieName],
                   });
 
                   this.goodsReception.push(form);
@@ -1211,66 +1312,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
 
     
-  } */
-
-  formGoooTrans() {}
-  /*filterStatusGuard(data: IGoodProgramming[]) {
-    const _data: any[] = [];
-    const filterData = data.filter(item => {
-      return item.status == 'EN_RESGUARDO_TMP';
-    });
-
-    filterData.forEach(items => {
-      this.params.getValue()['filter.id'] = items.goodId;
-      this.goodService.getAll(this.params.getValue()).subscribe({
-        next: response => {
-          _data.push(response.data[0]);
-
-          this.goodsGuards.clear();
-          _data.forEach(async item => {
-            if (item.physicalStatus == 1) {
-              item.physicalStatusName = 'BUENO';
-            } else if (item.physicalStatus == 2) {
-              item.physicalStatusName = 'MALO';
-            }
-            if (item.stateConservation == 1) {
-              item.stateConservationName = 'BUENO';
-            } else if (item.stateConservation == 2) {
-              item.stateConservationName = 'MALO';
-            }
-            await this.getDestinyIndep(item.saeDestiny);
-            this.goodData = item;
-            const form = this.fb.group({
-              id: [item?.id],
-              goodId: [item?.goodId],
-              uniqueKey: [item?.uniqueKey],
-              fileNumber: [item?.fileNumber],
-              goodDescription: [item?.goodDescription],
-              quantity: [item?.quantity],
-              unitMeasure: [item?.unitMeasure],
-              descriptionGoodSae: [item?.descriptionGoodSae],
-              quantitySae: [item?.quantitySae],
-              saeMeasureUnit: [item?.saeMeasureUnit],
-              physicalStatus: [item?.physicalStatus],
-              physicalStatusName: [item?.physicalStatusName],
-              saePhysicalState: [item?.saePhysicalState],
-              stateConservation: [item?.stateConservation],
-              stateConservationName: [item?.stateConservationName],
-              stateConservationSae: [item?.stateConservationSae],
-              transferentDestiny: [item?.saeDestiny],
-              regionalDelegationNumber: [item?.regionalDelegationNumber],
-            });
-            this.goodsGuards.push(form);
-            this.headingGuard = `En Resguardo(${this.goodsGuards.length})`;
-            this.showGuard = true;
-          });
-        },
-        error: error => {
-          this.goodsGuards.clear();
-          this.formLoading = false;
-        },
-      });
-    });
   } */
 
   getInfoWarehouse() {
@@ -1313,6 +1354,61 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     item.transferentDestinyName = 'ADMINISTRACIÓN';
                   }
 
+                  if (item.unitMeasure == 'KWH') {
+                    item.unitMeasureName = 'KILOWATT HORA';
+                  } else if (item.unitMeasure == 'BAR') {
+                    item.unitMeasureName = 'BARRIL';
+                  } else if (item.unitMeasure == 'GR') {
+                    item.unitMeasureName = 'GRAMO';
+                  } else if (item.unitMeasure == 'M2') {
+                    item.unitMeasureName = 'METRO CUADRADO';
+                  } else if (item.unitMeasure == 'M3') {
+                    item.unitMeasureName = 'METRO CÚBICO';
+                  } else if (item.unitMeasure == 'MIL') {
+                    item.unitMeasureName = 'MILLAR';
+                  } else if (item.unitMeasure == 'PAR') {
+                    item.unitMeasureName = 'PAR';
+                  } else if (item.unitMeasure == 'KG') {
+                    item.unitMeasureName = 'KILOGRAMOS';
+                  } else if (item.unitMeasure == 'MT') {
+                    item.unitMeasureName = 'METRO';
+                  } else if (item.unitMeasure == 'PZ') {
+                    item.unitMeasureName = 'PIEZA';
+                  } else if (item.unitMeasure == 'CZA') {
+                    item.unitMeasureName = 'CABEZA';
+                  } else if (item.unitMeasure == 'LT') {
+                    item.unitMeasureName = 'LITRO';
+                  }
+
+                  if (item.ligieUnit == 'KWH') {
+                    item.unitLigieName = 'KILOWATT HORA';
+                  } else if (item.ligieUnit == 'BAR') {
+                    item.unitLigieName = 'BARRIL';
+                  } else if (item.ligieUnit == 'GR') {
+                    item.unitLigieName = 'GRAMO';
+                  } else if (item.ligieUnit == 'M2') {
+                    item.unitLigieName = 'METRO CUADRADO';
+                  } else if (item.ligieUnit == 'M3') {
+                    item.unitLigieName = 'METRO CÚBICO';
+                  } else if (item.ligieUnit == 'MIL') {
+                    item.unitLigieName = 'MILLAR';
+                  } else if (item.ligieUnit == 'PAR') {
+                    item.unitLigieName = 'PAR';
+                  } else if (item.ligieUnit == 'KG') {
+                    item.unitLigieName = 'KILOGRAMOS';
+                  } else if (item.ligieUnit == 'MT') {
+                    item.unitLigieName = 'METRO';
+                  } else if (
+                    item.ligieUnit == 'PZ' ||
+                    item.ligieUnit == 'PIEZA'
+                  ) {
+                    item.unitLigieName = 'PIEZA';
+                  } else if (item.ligieUnit == 'CZA') {
+                    item.unitLigieName = 'CABEZA';
+                  } else if (item.ligieUnit == 'LT') {
+                    item.unitLigieName = 'LITRO';
+                  }
+
                   this.goodData = item;
                   const form = this.fb.group({
                     id: [item?.id],
@@ -1321,7 +1417,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     fileNumber: [item?.fileNumber],
                     goodDescription: [item?.goodDescription],
                     quantity: [item?.quantity],
-                    unitMeasure: [item?.unitMeasure],
+                    unitMeasure: [item?.unitMeasureName],
                     descriptionGoodSae: [item?.descriptionGoodSae],
                     quantitySae: [item?.quantitySae],
                     saeMeasureUnit: [item?.saeMeasureUnit],
@@ -1335,6 +1431,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     observations: [item?.observations],
                     destiny: [item?.transferentDestinyName],
                     transferentDestiny: [item?.saeDestiny],
+                    ligieUnit: [item?.unitLigieName],
                   });
                   this.goodsWarehouse.push(form);
                   this.formLoading = false;
@@ -1360,63 +1457,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         },
       });
   }
-  /*filterStatusWarehouse(data: IGoodProgramming[]) {
-    const _data: any[] = [];
-    const goodWarehouse = data.filter(items => {
-      return items.status == 'EN_ALMACEN_TMP';
-    });
-
-    goodWarehouse.forEach(items => {
-      this.params.getValue()['filter.id'] = items.goodId;
-      this.goodService.getAll(this.params.getValue()).subscribe({
-        next: response => {
-          _data.push(response.data[0]);
-          this.goodsWarehouse.clear();
-          _data.forEach(async item => {
-            if (item.physicalStatus == 1) {
-              item.physicalStatusName = 'BUENO';
-            } else if (item.physicalStatus == 2) {
-              item.physicalStatusName = 'MALO';
-            }
-            if (item.stateConservation == 1) {
-              item.stateConservationName = 'BUENO';
-            } else if (item.stateConservation == 2) {
-              item.stateConservationName = 'MALO';
-            }
-            await this.getDestinyIndep(item.saeDestiny);
-            this.goodData = item;
-            const form = this.fb.group({
-              id: [item?.id],
-              goodId: [item?.goodId],
-              uniqueKey: [item?.uniqueKey],
-              fileNumber: [item?.fileNumber],
-              goodDescription: [item?.goodDescription],
-              quantity: [item?.quantity],
-              unitMeasure: [item?.unitMeasure],
-              descriptionGoodSae: [item?.descriptionGoodSae],
-              quantitySae: [item?.quantitySae],
-              saeMeasureUnit: [item?.saeMeasureUnit],
-              physicalStatus: [item?.physicalStatus],
-              physicalStatusName: [item?.physicalStatusName],
-              saePhysicalState: [item?.saePhysicalState],
-              stateConservation: [item?.stateConservation],
-              stateConservationName: [item?.stateConservationName],
-              stateConservationSae: [item?.stateConservationSae],
-              regionalDelegationNumber: [item?.regionalDelegationNumber],
-            });
-            this.goodsWarehouse.push(form);
-            this.formLoading = false;
-            this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
-            this.showWarehouse = true;
-          });
-        },
-        error: error => {
-          this.formLoading = false;
-          this.goodsWarehouse.clear();
-        },
-      });
-    });
-  } */
 
   getInfoReprog() {
     const _data: any[] = [];
@@ -1457,6 +1497,61 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     item.transferentDestinyName = 'ADMINISTRACIÓN';
                   }
 
+                  if (item.unitMeasure == 'KWH') {
+                    item.unitMeasureName = 'KILOWATT HORA';
+                  } else if (item.unitMeasure == 'BAR') {
+                    item.unitMeasureName = 'BARRIL';
+                  } else if (item.unitMeasure == 'GR') {
+                    item.unitMeasureName = 'GRAMO';
+                  } else if (item.unitMeasure == 'M2') {
+                    item.unitMeasureName = 'METRO CUADRADO';
+                  } else if (item.unitMeasure == 'M3') {
+                    item.unitMeasureName = 'METRO CÚBICO';
+                  } else if (item.unitMeasure == 'MIL') {
+                    item.unitMeasureName = 'MILLAR';
+                  } else if (item.unitMeasure == 'PAR') {
+                    item.unitMeasureName = 'PAR';
+                  } else if (item.unitMeasure == 'KG') {
+                    item.unitMeasureName = 'KILOGRAMOS';
+                  } else if (item.unitMeasure == 'MT') {
+                    item.unitMeasureName = 'METRO';
+                  } else if (item.unitMeasure == 'PZ') {
+                    item.unitMeasureName = 'PIEZA';
+                  } else if (item.unitMeasure == 'CZA') {
+                    item.unitMeasureName = 'CABEZA';
+                  } else if (item.unitMeasure == 'LT') {
+                    item.unitMeasureName = 'LITRO';
+                  }
+
+                  if (item.ligieUnit == 'KWH') {
+                    item.unitLigieName = 'KILOWATT HORA';
+                  } else if (item.ligieUnit == 'BAR') {
+                    item.unitLigieName = 'BARRIL';
+                  } else if (item.ligieUnit == 'GR') {
+                    item.unitLigieName = 'GRAMO';
+                  } else if (item.ligieUnit == 'M2') {
+                    item.unitLigieName = 'METRO CUADRADO';
+                  } else if (item.ligieUnit == 'M3') {
+                    item.unitLigieName = 'METRO CÚBICO';
+                  } else if (item.ligieUnit == 'MIL') {
+                    item.unitLigieName = 'MILLAR';
+                  } else if (item.ligieUnit == 'PAR') {
+                    item.unitLigieName = 'PAR';
+                  } else if (item.ligieUnit == 'KG') {
+                    item.unitLigieName = 'KILOGRAMOS';
+                  } else if (item.ligieUnit == 'MT') {
+                    item.unitLigieName = 'METRO';
+                  } else if (
+                    item.ligieUnit == 'PZ' ||
+                    item.ligieUnit == 'PIEZA'
+                  ) {
+                    item.unitLigieName = 'PIEZA';
+                  } else if (item.ligieUnit == 'CZA') {
+                    item.unitLigieName = 'CABEZA';
+                  } else if (item.ligieUnit == 'LT') {
+                    item.unitLigieName = 'LITRO';
+                  }
+
                   this.goodData = item;
                   const form = this.fb.group({
                     id: [item?.id],
@@ -1465,7 +1560,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     fileNumber: [item?.fileNumber],
                     goodDescription: [item?.goodDescription],
                     quantity: [item?.quantity],
-                    unitMeasure: [item?.unitMeasure],
+                    unitMeasure: [item?.unitMeasureName],
                     descriptionGoodSae: [item?.descriptionGoodSae],
                     quantitySae: [item?.quantitySae],
                     saeMeasureUnit: [item?.saeMeasureUnit],
@@ -1478,6 +1573,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     observations: [item?.observations],
                     destiny: [item?.transferentDestiny],
                     regionalDelegationNumber: [item?.regionalDelegationNumber],
+                    ligieUnit: [item?.unitLigieName],
                   });
                   this.goodsReprog.push(form);
                   this.goodsReprog.updateValueAndValidity();
@@ -1506,69 +1602,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         },
       });
   }
-  /*filterStatusReprog(data: IGoodProgramming[]) {
-    const _data: any[] = [];
-    const goodsReprog = data.filter(items => {
-      return items.status == 'EN_PROGRAMACION_TMP';
-    });
-
-    goodsReprog.forEach(items => {
-      this.params.getValue()['filter.id'] = items.goodId;
-      this.goodService.getAll(this.params.getValue()).subscribe({
-        next: response => {
-          _data.push(response.data[0]);
-
-          this.goodsReprog.clear();
-          _data.forEach(async item => {
-            if (item.physicalStatus == 1) {
-              item.physicalStatusName = 'BUENO';
-            } else if (item.physicalStatus == 2) {
-              item.physicalStatusName = 'MALO';
-            }
-            if (item.stateConservation == 1) {
-              item.stateConservationName = 'BUENO';
-            } else if (item.stateConservation == 2) {
-              item.stateConservationName = 'MALO';
-            }
-            await this.getDestinyIndep(item.saeDestiny);
-            this.goodData = item;
-            const form = this.fb.group({
-              id: [item?.id],
-              goodId: [item?.goodId],
-              uniqueKey: [item?.uniqueKey],
-              fileNumber: [item?.fileNumber],
-              goodDescription: [item?.goodDescription],
-              quantity: [item?.quantity],
-              unitMeasure: [item?.unitMeasure],
-              descriptionGoodSae: [item?.descriptionGoodSae],
-              quantitySae: [item?.quantitySae],
-              saeMeasureUnit: [item?.saeMeasureUnit],
-              physicalStatus: [item?.physicalStatus],
-              physicalStatusName: [item?.physicalStatusName],
-              saePhysicalState: [item?.saePhysicalState],
-              stateConservation: [item?.stateConservation],
-              stateConservationName: [item?.stateConservationName],
-              stateConservationSae: [item?.stateConservationSae],
-              regionalDelegationNumber: [item?.regionalDelegationNumber],
-            });
-            this.goodsReprog.push(form);
-            this.goodsReprog.updateValueAndValidity();
-            this.formLoading = false;
-            this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
-            this.formLoadingReprog = false;
-            this.formLoadingTrans = false;
-            this.showReprog = true;
-          });
-        },
-        error: error => {
-          this.formLoading = false;
-          this.formLoadingReprog = false;
-          this.formLoadingTrans = false;
-          this.goodsReprog.clear();
-        },
-      });
-    });
-  } */
 
   getInfoCancel() {
     const _data: any[] = [];
@@ -1600,6 +1633,61 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     response.stateConservationName = 'MALO';
                   }
 
+                  if (response.unitMeasure == 'KWH') {
+                    response.unitMeasureName = 'KILOWATT HORA';
+                  } else if (response.unitMeasure == 'BAR') {
+                    response.unitMeasureName = 'BARRIL';
+                  } else if (response.unitMeasure == 'GR') {
+                    response.unitMeasureName = 'GRAMO';
+                  } else if (response.unitMeasure == 'M2') {
+                    response.unitMeasureName = 'METRO CUADRADO';
+                  } else if (response.unitMeasure == 'M3') {
+                    response.unitMeasureName = 'METRO CÚBICO';
+                  } else if (response.unitMeasure == 'MIL') {
+                    response.unitMeasureName = 'MILLAR';
+                  } else if (response.unitMeasure == 'PAR') {
+                    response.unitMeasureName = 'PAR';
+                  } else if (response.unitMeasure == 'KG') {
+                    response.unitMeasureName = 'KILOGRAMOS';
+                  } else if (response.unitMeasure == 'MT') {
+                    response.unitMeasureName = 'METRO';
+                  } else if (response.unitMeasure == 'PZ') {
+                    response.unitMeasureName = 'PIEZA';
+                  } else if (response.unitMeasure == 'CZA') {
+                    response.unitMeasureName = 'CABEZA';
+                  } else if (response.unitMeasure == 'LT') {
+                    response.unitMeasureName = 'LITRO';
+                  }
+
+                  if (response.ligieUnit == 'KWH') {
+                    response.unitLigieName = 'KILOWATT HORA';
+                  } else if (response.ligieUnit == 'BAR') {
+                    response.unitLigieName = 'BARRIL';
+                  } else if (response.ligieUnit == 'GR') {
+                    response.unitLigieName = 'GRAMO';
+                  } else if (response.ligieUnit == 'M2') {
+                    response.unitLigieName = 'METRO CUADRADO';
+                  } else if (response.ligieUnit == 'M3') {
+                    response.unitLigieName = 'METRO CÚBICO';
+                  } else if (response.ligieUnit == 'MIL') {
+                    response.unitLigieName = 'MILLAR';
+                  } else if (response.ligieUnit == 'PAR') {
+                    response.unitLigieName = 'PAR';
+                  } else if (response.ligieUnit == 'KG') {
+                    response.unitLigieName = 'KILOGRAMOS';
+                  } else if (response.ligieUnit == 'MT') {
+                    response.unitLigieName = 'METRO';
+                  } else if (
+                    response.ligieUnit == 'PZ' ||
+                    response.ligieUnit == 'PIEZA'
+                  ) {
+                    response.unitLigieName = 'PIEZA';
+                  } else if (response.ligieUnit == 'CZA') {
+                    response.unitLigieName = 'CABEZA';
+                  } else if (response.ligieUnit == 'LT') {
+                    response.unitLigieName = 'LITRO';
+                  }
+
                   this.goodData = response;
 
                   const form = this.fb.group({
@@ -1624,6 +1712,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     regionalDelegationNumber: [
                       response?.regionalDelegationNumber,
                     ],
+                    ligieUnit: [response?.unitLigieName],
                   });
                   this.goodsCancelation;
                   this.goodsCancelation.push(form);
@@ -1648,67 +1737,16 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       });
   }
 
-  /*filterStatusCancelation(data: IGoodProgramming[]) {
-    const goodsCancel = data.filter(items => {
-      return items.status == 'CANCELADO_TMP';
+  getUnitMeasure(unit: string) {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.nbCode'] = `$eq:${unit}`;
+    this.strategyService.getUnitsMedXConv(params.getValue()).subscribe({
+      next: response => {
+        this.measureUnits = response.data;
+      },
+      error: error => {},
     });
-
-    goodsCancel.map(items => {
-      this.params.getValue()['filter.id'] = items.goodId;
-      this.goodService.getAll(this.params.getValue()).subscribe({
-        next: data => {
-          data.data.map(response => {
-            if (response.physicalStatus == 1) {
-              response.physicalStatusName = 'BUENO';
-            } else if (response.physicalStatus == 2) {
-              response.physicalStatusName = 'MALO';
-            }
-            if (response.stateConservation == 1) {
-              response.stateConservationName = 'BUENO';
-            } else if (response.stateConservation == 2) {
-              response.stateConservationName = 'MALO';
-            }
-
-            this.goodsCancelation.clear();
-            this.goodData = response;
-
-            const form = this.fb.group({
-              id: [response?.id],
-              goodId: [response?.goodId],
-              uniqueKey: [response?.uniqueKey],
-              fileNumber: [response?.fileNumber],
-              goodDescription: [response?.goodDescription],
-              quantity: [response?.quantity],
-              unitMeasure: [response?.unitMeasure],
-              descriptionGoodSae: [response?.descriptionGoodSae],
-              quantitySae: [response?.quantitySae],
-              saeMeasureUnit: [response?.saeMeasureUnit],
-              physicalStatus: [response?.physicalStatus],
-              physicalStatusName: [response?.physicalStatusName],
-              saePhysicalState: [response?.saePhysicalState],
-              stateConservation: [response?.stateConservation],
-              stateConservationName: [response?.stateConservationName],
-              stateConservationSae: [response?.stateConservationSae],
-              regionalDelegationNumber: [response?.regionalDelegationNumber],
-            });
-            this.goodsCancelation;
-            this.goodsCancelation.push(form);
-            this.goodsCancelation.updateValueAndValidity();
-            this.formLoading = false;
-            this.headingCancelation = `Cancelación(${this.goodsCancelation.length})`;
-            this.showCancel = true;
-          });
-        },
-        error: error => {
-          this.formLoading = false;
-          this.goodsCancelation.clear();
-        },
-      });
-    });
-  } */
-
-  getUnitMeasure() {
-    this.params.getValue()['filter.measureTlUnit'] = `$ilike:${
+    /*this.params.getValue()['filter.measureTlUnit'] = `$ilike:${
       this.params.getValue().text
     }`;
     this.params.getValue().limit = 20;
@@ -1717,10 +1755,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
+          console.log('de aqui', resp);
           this.measureUnits = resp.data;
         },
         error: error => {},
-      });
+      }); */
   }
 
   getConcervationState() {
@@ -1864,12 +1903,18 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   editGood(good: IGood) {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modalSizeXL modal-dialog-centered',
+    };
     config.initialState = {
       good,
       tranType: this.tranType,
       callback: (next: boolean) => {
-        if (next) this.getInfoGoodsTransportable();
+        if (next)
+          this.paramsTransportableGoods
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getInfoGoodsTransportable());
       },
     };
 
@@ -2223,58 +2268,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         );
       }
     }
-
-    /*if (this.selectGood.length > 0) {
-      this.count = 0;
-      this.selectGood.map((good: IGood) => {
-        this.count = this.count + 1;
-        if (
-          Number(good.quantity) < Number(this.goodsReprog.value[0].quantitySae)
-        ) {
-          if (this.count == this.count) {
-            this.alert(
-              'error',
-              'Error de captura',
-              `La cantidad indep es mayor a la cantidad transferente ${good.goodId}`
-            );
-          }
-        } else if (this.goodsReprog.value[0].saePhysicalState == null) {
-          if (this.count == this.count) {
-            this.alert(
-              'error',
-              'Error de captura',
-              `Se debe capturar el estado físico indep en el bien ${good.goodId}`
-            );
-          }
-        } else if (this.goodsReprog.value[0].stateConservationSae == null) {
-          if (this.count == this.count) {
-            this.alert(
-              'error',
-              'Error de captura',
-              `Se debe capturar el estado de conservación indep ${good.goodId}`
-            );
-          }
-        } else if (this.goodsReprog.value[0].quantitySae == null) {
-          if (this.count == this.count) {
-            this.alert(
-              'error',
-              'Error de captura',
-              `Se debe capturar la cantidad indep ${good.goodId}`
-            );
-          }
-        } else {
-          if (this.count == 1) {
-            
-          }
-        }
-      });
-    } else {
-      this.alert(
-        'warning',
-        'Acción inválida',
-        'Se necesita tener un bien seleccionado'
-      );
-    } */
   }
 
   assingMinuteCancelation() {
@@ -2335,72 +2328,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         'Se necesita tener un bien seleccionado'
       );
     }
-    /*
-    if (this.selectGood.length > 0) {
-      this.count = 0;
-      this.selectGood.map((good: IGood) => {
-        this.count = this.count + 1;
-        if (
-          Number(good.quantity) <
-          Number(this.goodsCancelation.value[0].quantitySae)
-        ) {
-          if (this.count == this.count) {
-            this.alert(
-              'error',
-              'Error de captura',
-              `La cantidad indep es mayor a la cantidad transferente ${good.goodId}`
-            );
-          }
-        } else if (this.goodsCancelation.value[0].saePhysicalState == null) {
-          if (this.count == this.count) {
-            this.alert(
-              'error',
-              'Error de captura',
-              `Se debe capturar el estado físico indep en el bien ${good.goodId}`
-            );
-          }
-        } else if (
-          this.goodsCancelation.value[0].stateConservationSae == null
-        ) {
-          if (this.count == this.count) {
-            this.alert(
-              'error',
-              'Error de captura',
-              `Se debe capturar el estado de conservación indep ${good.goodId}`
-            );
-          }
-        } else if (this.goodsCancelation.value[0].quantitySae == null) {
-          if (this.count == this.count) {
-            this.alert(
-              'error',
-              'Error de captura',
-              `Se debe capturar la cantidad indep ${good.goodId}`
-            );
-          }
-        } else {
-          if (this.count == 1) {
-            this.alertQuestion(
-              'warning',
-              'Confirmación',
-              '¿Seguro que quiere asignar los bienes  a una acta?',
-              'Aceptar'
-            ).then(async question => {
-              if (question.isConfirmed) {
-                const updateGood = await this.updateGoodProgramming(
-                  'cancelalation'
-                );
-              }
-            });
-          }
-        }
-      });
-    } else {
-      this.alert(
-        'warning',
-        'Acción inválida',
-        'Se necesita tener un bien seleccionado'
-      );
-    } */
   }
 
   updateGoodProgramming(type: string) {
@@ -2491,41 +2418,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           });
         });
       }
-
-      /*this.receipts.getElements().then(item => {
-        const actId = item[0].actaId;
-        this.selectGood.map(item => {
-          const formData: Object = {
-            id: item.id,
-            goodId: item.goodId,
-            goodStatus: 'EN_PROGRAMACION',
-            programmationStatus: 'EN_PROGRAMACION',
-            executionStatus: 'EN_PROGRAMACION',
-          };
-
-          this.goodService.updateByBody(formData).subscribe({
-            next: response => {
-              const formData: Object = {
-                programmingId: this.programming.id,
-                goodId: item.id,
-                status: 'EN_PROGRAMACION',
-                actaId: actId,
-              };
-              this.programmingGoodService
-                .updateGoodProgramming(formData)
-                .subscribe({
-                  next: response => {
-                    this.goodsReprog.clear();
-                    this.showDataProgramming();
-                    this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
-                  },
-                  error: error => {},
-                });
-            },
-            error: error => {},
-          });
-        });
-      }); */
     } else if (type == 'cancelalation') {
       //Acta cerrada//
       if (this.proceedingOpen.length == 0) {
@@ -2671,63 +2563,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         'Necesitas tener un bien seleccionado'
       );
     }
-    /*
-    if (this.selectGood.length > 0) {
-      this.count = 0;
-      this.goodId = '';
-      this.selectGood.map((good: IGood) => {
-        this.count = this.count + 1;
-        this.goodId += good.id + ', ';
-        if (
-          Number(good.quantity) <
-          Number(this.goodsWarehouse.value[0].quantitySae)
-        ) {
-          if (this.count == 1) {
-            this.alert(
-              'warning',
-              'Advertencia',
-              `La cantidad INDEP es mayor a la cantidad transferente en el Bien ${this.goodId}`
-            );
-          }
-        } else if (this.goodsWarehouse.value[0].saePhysicalState == null) {
-          if (this.count == 1) {
-            this.alert(
-              'warning',
-              'Advertencia',
-              `Se debe capturar el estado físico INDEP en el Bien ${this.goodId}`
-            );
-          }
-        } else if (this.goodsWarehouse.value[0].stateConservationSae == null) {
-          if (this.count == 1) {
-            this.alert(
-              'warning',
-              'Advertencia',
-              `Se debe capturar el estado de conservación INDEP ${this.goodId}`
-            );
-          }
-        } else {
-          if (this.count == 1) {
-            this.alertQuestion(
-              'question',
-              '¿Seguro que quiere asignar los Bienes  a una acta?',
-              'Acción irreversible',
-              'Aceptar'
-            ).then(question => {
-              if (question.isConfirmed) {
-                this.checkExistAct('almacen');
-              }
-            });
-          }
-        }
-      });
-    } else {
-      this.alert(
-        'warning',
-        'Acción inválida',
-        'Necesitas tener un bien seleccionado'
-      );
-    }
-    */
   }
 
   async checkExistAct(type: string) {
@@ -2755,20 +2590,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 if (updateProgrammingGood) {
                   const updateGood = await this.updateGoodGuard();
                   if (updateGood) {
-                    const createHistoGood =
-                      await this.createHistoricalGuardGood();
-                    if (createHistoGood) {
-                      this.goodsGuards.clear();
-                      this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
-                      this.getReceiptsGuard();
-                      this.totalItemsGuard = 0;
-                      this.paramsGuardGoods
-                        .pipe(takeUntil(this.$unSubscribe))
-                        .subscribe(() => this.getInfoGoodsGuard());
-                      this.getOpenProceeding();
-                      this.selectInfoGoodGuard = [];
-                      this.formLoadingGuard = false;
-                    }
+                    /*const createHistoGood =
+                      await this.createHistoricalGuardGood(); */
+
+                    this.goodsGuards.clear();
+                    this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
+                    this.getReceiptsGuard();
+                    this.totalItemsGuard = 0;
+                    this.paramsGuardGoods
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoGoodsGuard());
+                    this.getOpenProceeding();
+                    this.selectInfoGoodGuard = [];
+                    this.formLoadingGuard = false;
                   }
                 }
               }
@@ -2800,8 +2634,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 if (updateProgrammingGood) {
                   const updateGood = await this.updateGoodGuard();
                   if (updateGood) {
-                    const createHistoGood =
-                      await this.createHistoricalGuardGood();
+                    /*const createHistoGood =
+                      await this.createHistoricalGuardGood(); */
                     this.goodsGuards.clear();
                     this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
                     this.getReceiptsGuard();
@@ -2840,20 +2674,18 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   const updateGood = await this.updateGoodWarehouse();
 
                   if (updateGood) {
-                    const createHistoricalWarehouse =
-                      await this.createHistoricalWarehouseGood();
+                    /*const createHistoricalWarehouse =
+                      await this.createHistoricalWarehouseGood(); */
 
-                    if (createHistoricalWarehouse) {
-                      this.goodsWarehouse.clear();
-                      this.totalItemsWarehouse = 0;
-                      this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
-                      this.selectInfoGoodWarehouse = [];
-                      this.paramsGoodsWarehouse
-                        .pipe(takeUntil(this.$unSubscribe))
-                        .subscribe(() => this.getInfoWarehouse());
-                      this.getOpenProceeding();
-                      this.getReceiptsGuard();
-                    }
+                    this.goodsWarehouse.clear();
+                    this.totalItemsWarehouse = 0;
+                    this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+                    this.selectInfoGoodWarehouse = [];
+                    this.paramsGoodsWarehouse
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoWarehouse());
+                    this.getOpenProceeding();
+                    this.getReceiptsGuard();
                   }
                 }
               }
@@ -2883,19 +2715,17 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 if (updateProgrammingGood) {
                   const updateGood = await this.updateGoodWarehouse();
                   if (updateGood) {
-                    const _createHistoricalWarehouse =
-                      await this.createHistoricalWarehouseGood();
+                    /*const _createHistoricalWarehouse =
+                      await this.createHistoricalWarehouseGood(); */
 
-                    if (_createHistoricalWarehouse) {
-                      this.goodsWarehouse.clear();
-                      this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
-                      this.selectGood = [];
-                      this.paramsGoodsWarehouse
-                        .pipe(takeUntil(this.$unSubscribe))
-                        .subscribe(() => this.getInfoWarehouse());
+                    this.goodsWarehouse.clear();
+                    this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+                    this.selectGood = [];
+                    this.paramsGoodsWarehouse
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoWarehouse());
 
-                      this.getReceiptsGuard();
-                    }
+                    this.getReceiptsGuard();
                   }
                 }
               }
@@ -2974,7 +2804,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.selectInfoGoodGuard.map(good => {
         const historyGood: IHistoryGood = {
           propertyNum: good.goodId,
-          status: 'ADM',
           changeDate: new Date(),
           userChange: this.userInfo.name,
           statusChangeProgram: 'TR_UPD_HISTO_BIENES',
@@ -2985,9 +2814,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {
-            console.log('error', error);
-          },
+          error: error => {},
         });
       });
     });
@@ -2998,7 +2825,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.selectInfoGoodWarehouse.map(good => {
         const historyGood: IHistoryGood = {
           propertyNum: good.goodId,
-          status: 'ADM',
           changeDate: new Date(),
           userChange: this.userInfo.name,
           statusChangeProgram: 'TR_UPD_HISTO_BIENES',
@@ -3009,9 +2835,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {
-            console.log('error', error);
-          },
+          error: error => {},
         });
       });
     });
@@ -3268,7 +3092,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           goodId: item.goodId,
           goodStatus: 'EN_RESGUARDO',
           programmationStatus: 'EN_RESGUARDO',
-          status: 'ADM',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
@@ -3290,7 +3113,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           goodId: item.goodId,
           goodStatus: 'EN_ALMACEN',
           programmationStatus: 'EN_ALMACEN',
-          status: 'ADM',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
@@ -3308,7 +3130,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   showGoodsReceiptGuard(receipt: IReceipt) {
     let config = {
       ...MODAL_CONFIG,
-      class: 'modalSizeXL modal-dialog-centered',
+      class: 'modal-lg modal-dialog-centered',
     };
     config.initialState = {
       receipt,
@@ -3322,7 +3144,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   showGoodsReceiptWarehouse(receipt: IReceipt) {
     let config = {
       ...MODAL_CONFIG,
-      class: 'modalSizeXL modal-dialog-centered',
+      class: 'modal-lg modal-dialog-centered',
     };
     config.initialState = {
       receipt,
@@ -3684,7 +3506,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     if (this.selectGood.length > 0) {
       this.goodsTransportable.clear();
       this.selectGood.map((item: any) => {
-        console.log('item', item);
         const formData: Object = {
           programmingId: this.programmingId,
           goodId: item.id,
@@ -3997,7 +3818,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           }
         },
       },
-      class: 'modal-xl modal-dialog-centered',
+      class: 'modalSizeXL modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(ShowReportComponentComponent, config);
@@ -4088,7 +3909,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       };
       this.receptionGoodService.getReceiptGoodByIds(data).subscribe({
         next: response => {
-          console.log('data a eliminar', response);
           const deleteObject = {
             receiptId: response.receiptId,
             goodId: response.goodId,
@@ -4097,12 +3917,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           };
 
           this.receptionGoodService.deleteReceiptGood(deleteObject).subscribe({
-            next: response => {
-              console.log('eliminado el bien de recibo', response);
-            },
-            error: error => {
-              console.log('error', error);
-            },
+            next: response => {},
+            error: error => {},
           });
         },
       });
@@ -4422,8 +4238,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   saveInfoGoodReception() {
+    //console.log('this.goodsReception', this.goodsReception);
     this.count = 0;
-    this.goodsReception.value.map((good: IGood) => {
+    this.goodsReception.value.map(async (good: IGood) => {
       this.count = this.count + 1;
       if (Number(good.quantity) < Number(good.quantitySae)) {
         if (this.count == 1) {
@@ -4475,7 +4292,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   stateConservation: good.stateConservation,
                   stateConservationSae: good.stateConservationSae,
                   uniqueKey: good.uniqueKey,
-                  unitMeasure: good.unitMeasure,
+
                   saeDestiny: good.transferentDestiny,
                 };
                 if (this.count == 1) {
@@ -4504,6 +4321,26 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   saveInfoGoodTransportable() {
+    /*const data = this.goodsTransportable.value;
+    let moreSaeQuantity: boolean = false;
+    let decimalGood: boolean = false;
+    const infoUnit = data.map(async (item: any) => {
+      const doobleDisp: any = await this.checkInfoUnitMeasure(item.unitMeasure);
+      console.log('doobleDisp', doobleDisp);
+      if (doobleDisp.tpUnitGreater == 'N') {
+        moreSaeQuantity = false;
+      } else {
+        moreSaeQuantity = true;
+      }
+      if (doobleDisp.decimals == 'N') {
+        decimalGood = false;
+      } else if (doobleDisp.decimals == 'S') {
+        decimalGood = true;
+        //
+      }
+    });
+    console.log('moreSaeQuantity', moreSaeQuantity);
+    console.log('decimalGood', decimalGood); */
     this.count == 0;
     this.goodId = '';
     let saePhysical: boolean = false;
@@ -4632,7 +4469,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 stateConservation: good.stateConservation,
                 stateConservationSae: good.stateConservationSae,
                 uniqueKey: good.uniqueKey,
-                unitMeasure: good.unitMeasure,
                 saeDestiny: good.transferentDestiny,
               };
 
@@ -4658,37 +4494,51 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         );
       }
     }
+  }
 
-    /*
-    this.count = 0;
-    this.goodsTransportable.value.map((good: IGood) => {
-      this.count = this.count + 1;
-      if (Number(good.quantity) < Number(good.quantitySae)) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            `Error de captura`,
-            `La cantidad indep es mayor a la cantidad transferente en el bien ${good.goodId}`
-          );
-        }
-      } else if (good.saePhysicalState == null) {
-        if (this.count == ) {
-          this.alert(
-            'error',
-            'Error de captura',
-            `Se debe capturar el estado físico indep en el bien ${good.goodId}`
-          );
-        }
-      } else if (good.stateConservationSae == null) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            'Error de captura',
-            `Se debe capturar el estado de conservación indep en el bien ${good.goodId}`
-          );
-        }
-      } else {
-       
+  checkInfoUnitMeasure(unitDescription: any) {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.nbCode'] = `$eq:${unitDescription}`;
+      this.strategyService.getUnitsMedXConv(params.getValue()).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: error => {},
+      });
+    });
+    /*return new Promise((resolve, reject) => {
+      let saeUnit: string = '';
+      if (good.saeMeasureUnit == 'KWH') {
+        saeUnit = 'KILOWATT HORA';
+      } else if (good.saeMeasureUnit == 'BAR') {
+        saeUnit = 'BARRIL';
+      } else if (good.saeMeasureUnit == 'GR') {
+        saeUnit = 'GRAMO';
+      } else if (good.saeMeasureUnit == 'M2') {
+        saeUnit = 'METRO CUADRADO';
+      } else if (good.saeMeasureUnit == 'M3') {
+        saeUnit = 'METRO CÚBICO';
+      } else if (good.saeMeasureUnit == 'MIL') {
+        saeUnit = 'MILLAR';
+      } else if (good.saeMeasureUnit == 'PAR') {
+        saeUnit = 'PAR';
+      } else if (good.saeMeasureUnit == 'KG') {
+        saeUnit = 'KILOGRAMOS';
+      } else if (good.saeMeasureUnit == 'MT') {
+        saeUnit = 'METRO';
+      } else if (good.saeMeasureUnit == 'PZ') {
+        saeUnit = 'PIEZA';
+      } else if (good.saeMeasureUnit == 'CZA') {
+        saeUnit = 'CABEZA';
+      } else if (good.saeMeasureUnit == 'LT') {
+        saeUnit = 'LITRO';
+      }
+
+      if (saeUnit == good.unitMeasure) {
+        resolve(true);
+      } else if (saeUnit != good.unitMeasure) {
+        resolve(false);
       }
     }); */
   }
@@ -4818,7 +4668,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 stateConservation: good.stateConservation,
                 stateConservationSae: good.stateConservationSae,
                 uniqueKey: good.uniqueKey,
-                unitMeasure: good.unitMeasure,
+
                 saeDestiny: good.transferentDestiny,
               };
               if (this.count == 1) {
@@ -4843,87 +4693,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         );
       }
     }
-
-    /*
-    this.count = 0;
-    this.goodsGuards.value.map((good: IGood) => {
-      this.count = this.count + 1;
-      if (Number(good.quantity) < Number(good.quantitySae)) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            `Error de captura`,
-            `La cantidad indep es mayor a la cantidad transferente en el bien ${good.goodId}`
-          );
-        }
-      } else if (good.saePhysicalState == null) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            'Error de captura',
-            `Se debe capturar el estado físico indep en el bien ${good.goodId}`
-          );
-        }
-      } else if (good.stateConservationSae == null) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            'Error de captura',
-            `Se debe capturar el estado de conservación indep en el bien ${good.goodId}`
-          );
-        }
-      } else {
-        this.count = 0;
-        if (this.goodsGuards.value.length > 0) {
-          this.alertQuestion(
-            'question',
-            'Confirmación',
-            '¿Desea editar el bien?'
-          ).then(question => {
-            if (question.isConfirmed) {
-              this.goodsGuards.value.map((good: IGood) => {
-                this.count = this.count + 1;
-                const info = {
-                  id: good.id,
-                  descriptionGoodSae: good.descriptionGoodSae,
-                  fileNumber: good.fileNumber,
-                  goodDescription: good.descriptionGood,
-                  goodId: good.goodId,
-                  physicalStatus: good.physicalStatus,
-                  quantity: good.quantity,
-                  quantitySae: good.quantitySae,
-                  regionalDelegationNumber: good.delegationNumber,
-                  saeMeasureUnit: good.saeMeasureUnit,
-                  saePhysicalState: good.saePhysicalState,
-                  stateConservation: good.stateConservation,
-                  stateConservationSae: good.stateConservationSae,
-                  uniqueKey: good.uniqueKey,
-                  unitMeasure: good.unitMeasure,
-                  saeDestiny: good.transferentDestiny,
-                };
-                if (this.count == 1) {
-                  this.alert(
-                    'success',
-                    'Correcto',
-                    'Bien actualizado correctamente'
-                  );
-                }
-                this.goodService.updateByBody(info).subscribe({
-                  next: () => {},
-                  error: error => {},
-                });
-              });
-            }
-          });
-        } else {
-          this.alert(
-            'warning',
-            'Acción Invalida',
-            'No se encontraron bienes para actualizar'
-          );
-        }
-      }
-    }); */
   }
 
   saveInfoGoodWarehouse() {
@@ -5051,7 +4820,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 stateConservation: good.stateConservation,
                 stateConservationSae: good.stateConservationSae,
                 uniqueKey: good.uniqueKey,
-                unitMeasure: good.unitMeasure,
                 saeDestiny: good.transferentDestiny,
               };
               if (this.count == 1) {
@@ -5076,87 +4844,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         );
       }
     }
-
-    /*
-    this.count = 0;
-    this.goodsWarehouse.value.map((good: IGood) => {
-      this.count = this.count + 1;
-      if (Number(good.quantity) < Number(good.quantitySae)) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            `Error de captura`,
-            `La cantidad indep es mayor a la cantidad transferente en el bien ${good.goodId}`
-          );
-        }
-      } else if (good.saePhysicalState == null) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            'Error de captura',
-            `Se debe capturar el estado físico indep en el bien ${good.goodId}`
-          );
-        }
-      } else if (good.stateConservationSae == null) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            'Error de captura',
-            `Se debe capturar el estado de conservación indep en el bien ${good.goodId}`
-          );
-        }
-      } else {
-        this.count = 0;
-        if (this.goodsWarehouse.value.length > 0) {
-          this.alertQuestion(
-            'question',
-            'Confirmación',
-            '¿Desea editar el bien?'
-          ).then(question => {
-            if (question.isConfirmed) {
-              this.goodsWarehouse.value.map((good: IGood) => {
-                this.count = this.count + 1;
-                const info = {
-                  id: good.id,
-                  descriptionGoodSae: good.descriptionGoodSae,
-                  fileNumber: good.fileNumber,
-                  goodDescription: good.descriptionGood,
-                  goodId: good.goodId,
-                  physicalStatus: good.physicalStatus,
-                  quantity: good.quantity,
-                  quantitySae: good.quantitySae,
-                  regionalDelegationNumber: good.delegationNumber,
-                  saeMeasureUnit: good.saeMeasureUnit,
-                  saePhysicalState: good.saePhysicalState,
-                  stateConservation: good.stateConservation,
-                  stateConservationSae: good.stateConservationSae,
-                  uniqueKey: good.uniqueKey,
-                  unitMeasure: good.unitMeasure,
-                  saeDestiny: good.transferentDestiny,
-                };
-                if (this.count == 1) {
-                  this.alert(
-                    'success',
-                    'Correcto',
-                    'Bien actualizado correctamente'
-                  );
-                }
-                this.goodService.updateByBody(info).subscribe({
-                  next: () => {},
-                  error: error => {},
-                });
-              });
-            }
-          });
-        } else {
-          this.alert(
-            'warning',
-            'Acción Invalida',
-            'No se encontraron bienes para actualizar'
-          );
-        }
-      }
-    }); */
   }
 
   saveInfoGoodReprog() {
@@ -5286,7 +4973,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 stateConservation: good.stateConservation,
                 stateConservationSae: good.stateConservationSae,
                 uniqueKey: good.uniqueKey,
-                unitMeasure: good.unitMeasure,
+
                 saeDestiny: good.transferentDestiny,
               };
               if (this.count == 1) {
@@ -5311,86 +4998,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         );
       }
     }
-
-    /*this.count = 0;
-    this.goodsReprog.value.map((good: IGood) => {
-      this.count = this.count + 1;
-      if (Number(good.quantity) < Number(good.quantitySae)) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            `Error de captura`,
-            `La cantidad indep es mayor a la cantidad transferente en el bien ${good.goodId}`
-          );
-        }
-      } else if (good.saePhysicalState == null) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            'Error de captura',
-            `Se debe capturar el estado físico indep en el bien ${good.goodId}`
-          );
-        }
-      } else if (good.stateConservationSae == null) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            'Error de captura',
-            `Se debe capturar el estado de conservación indep en el bien ${good.goodId}`
-          );
-        }
-      } else {
-        this.count = 0;
-        if (this.goodsReprog.value.length > 0) {
-          this.alertQuestion(
-            'question',
-            'Confirmación',
-            '¿Desea editar el bien?'
-          ).then(question => {
-            if (question.isConfirmed) {
-              this.goodsReprog.value.map((good: IGood) => {
-                this.count = this.count + 1;
-                const info = {
-                  id: good.id,
-                  descriptionGoodSae: good.descriptionGoodSae,
-                  fileNumber: good.fileNumber,
-                  goodDescription: good.descriptionGood,
-                  goodId: good.goodId,
-                  physicalStatus: good.physicalStatus,
-                  quantity: good.quantity,
-                  quantitySae: good.quantitySae,
-                  regionalDelegationNumber: good.delegationNumber,
-                  saeMeasureUnit: good.saeMeasureUnit,
-                  saePhysicalState: good.saePhysicalState,
-                  stateConservation: good.stateConservation,
-                  stateConservationSae: good.stateConservationSae,
-                  uniqueKey: good.uniqueKey,
-                  unitMeasure: good.unitMeasure,
-                  saeDestiny: good.transferentDestiny,
-                };
-                if (this.count == 1) {
-                  this.alert(
-                    'success',
-                    'Correcto',
-                    'Bien actualizado correctamente'
-                  );
-                }
-                this.goodService.updateByBody(info).subscribe({
-                  next: () => {},
-                  error: error => {},
-                });
-              });
-            }
-          });
-        } else {
-          this.alert(
-            'warning',
-            'Acción Invalida',
-            'No se encontraron bienes para actualizar'
-          );
-        }
-      }
-    }); */
   }
 
   saveInfoGoodCancelation() {
@@ -5521,7 +5128,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 stateConservation: good.stateConservation,
                 stateConservationSae: good.stateConservationSae,
                 uniqueKey: good.uniqueKey,
-                unitMeasure: good.unitMeasure,
+
                 saeDestiny: good.transferentDestiny,
               };
               if (this.count == 1) {
@@ -5605,27 +5212,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       },
       error: error => {},
     });
-    /*if (this.goodsTransportable.value.length) {
-      let config: ModalOptions = {
-        initialState: {
-          showTDR: true,
-          programming: this.programming,
-          callback: (next: boolean) => {
-            if (next) {
-            }
-          },
-        },
-        class: 'modal-xl modal-dialog-centered',
-        ignoreBackdropClick: true,
-      };
-      this.modalService.show(ShowReportComponentComponent, config);
-    } else {
-      this.alert(
-        'warning',
-        'Acción Invalida',
-        'No hay etiquetas que visualizar'
-      );
-    } */
   }
 
   showLabelTDRReception() {

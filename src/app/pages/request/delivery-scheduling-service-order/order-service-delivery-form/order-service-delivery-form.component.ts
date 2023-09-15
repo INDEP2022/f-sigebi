@@ -1,7 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { catchError, of } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { GenerateReportFormComponent } from '../../reception-scheduling-service-order/components/generate-report-form/generate-report-form.component';
 import { RejectionCommentFormComponent } from '../../reception-scheduling-service-order/components/rejection-comment-form/rejection-comment-form.component';
 import { RejectionJustifyFormComponent } from '../../reception-scheduling-service-order/components/rejection-justify-form/rejection-justify-form.component';
@@ -42,12 +50,124 @@ export class OrderServiceDeliveryFormComponent
   buttonSave: boolean = false;
   buttonSaveFalse: boolean = false;
   buttonAnnexedW: boolean = false;
-  constructor(private modalService: BsModalService) {
+  orderServiceId: number = null;
+  ordServForm: FormGroup = new FormGroup({});
+  form: FormGroup = new FormGroup({});
+  programmingId: number = null;
+  op: number = 1;
+  total: string = null;
+  programming: Iprogramming;
+  constructor(
+    private modalService: BsModalService,
+    private fb: FormBuilder,
+    private programmingService: ProgrammingRequestService,
+    private activeRouter: ActivatedRoute,
+    private orderService: OrderServiceService
+  ) {
     super();
   }
 
   ngOnInit(): void {
+    this.programmingId = this.activeRouter.snapshot.params['id'];
     this.processTitle();
+    this.prepareOrderServiceForm();
+    this.prepareProgForm();
+    this.getProgramming();
+    this.getOrderService();
+  }
+
+  prepareProgForm() {
+    this.form = this.fb.group({
+      location: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      address: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+    });
+  }
+
+  getProgramming() {
+    this.programmingService.getProgrammingId(this.programmingId).subscribe({
+      next: resp => {
+        this.programming = resp;
+      },
+    });
+  }
+
+  getOrderService() {
+    const params = new ListParams();
+    params['filter.programmingId'] = `$eq:${this.programmingId}`;
+    this.orderService
+      .getAllOrderService(params)
+      .pipe(
+        catchError((e: any) => {
+          if (e.status == 400) return of({ data: [], count: 0 });
+          throw e;
+        })
+      )
+      .subscribe({
+        next: (resp: any) => {
+          // setTimeout(() => {
+          this.ordServForm.patchValue(resp.data[0]);
+          this.orderServiceId = resp.data[0].id;
+          // }, 100);
+        },
+      });
+  }
+
+  prepareOrderServiceForm() {
+    this.ordServForm = this.fb.group({
+      serviceOrderFolio: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioReportImplementation: [null, [Validators.pattern(STRING_PATTERN)]],
+      shiftDate: [null, [Validators.pattern(STRING_PATTERN)]],
+      shiftUser: [null, [Validators.pattern(STRING_PATTERN)]],
+      contractNumber: [null, [Validators.pattern(STRING_PATTERN)]],
+      transportationZone: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioTlp: [null, [Validators.pattern(STRING_PATTERN)]],
+      eyeVisit: [null, [Validators.pattern(STRING_PATTERN)]],
+      reasonsNotPerform: [null, [Validators.pattern(STRING_PATTERN)]],
+      userContainers: [null, [Validators.pattern(STRING_PATTERN)]],
+      //
+      transferLocation: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      transferAddress: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      //
+      sourceStore: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      originStreet: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      originPostalCode: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      colonyOrigin: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      //
+      notes: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      observation: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      programmingId: [null],
+      id: [null],
+    });
   }
 
   processTitle() {

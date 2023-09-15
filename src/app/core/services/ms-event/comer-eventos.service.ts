@@ -75,6 +75,10 @@ export class ComerEventosService extends HttpService {
     return this.get(`application/selectComerEvent/${goodType}`, params);
   }
 
+  getSelectComerEventFcomer62(params: _Params, goodType: any) {
+    return this.get(`application/get-event-address/${goodType}`, params);
+  }
+
   getPaymentLots(id: any) {
     return this.get(`application/get-lots-payments/${id}`);
   }
@@ -140,5 +144,18 @@ export class ComerEventosService extends HttpService {
   /* SUMATORIA DE TOTALES */
   getAmountsMtodisp(body: { clientId: number; eventId: number }) {
     return this.post('application/get-amounts', body);
+  }
+
+  getLoteExport(id?: any, params?: ListParams): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      'application/pa-look-lots-change-status',
+      id,
+      params
+    );
+  }
+
+  getspObtnPhaseEvent(body: any) {
+    const route = `${EventEndpoints.SpObtnPhaseEvent}`;
+    return this.post(route, body);
   }
 }

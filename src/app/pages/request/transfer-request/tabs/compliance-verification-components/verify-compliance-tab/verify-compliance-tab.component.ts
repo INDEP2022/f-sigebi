@@ -901,13 +901,13 @@ export class VerifyComplianceTabComponent
     }
     const clarifycationLength = this.clarificationData.length;
     Swal.fire({
-      title: '¿Eliminar Aclaración?',
-      text: '¿Desea eliminar la aclaración?',
+      title: '¿Desea Eliminar la Aclaración?',
+      text: '',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#B38E5D',
-      confirmButtonText: 'Eliminar',
+      confirmButtonText: 'Aceptar',
       allowOutsideClick: false,
     }).then(async result => {
       if (result.isConfirmed) {
@@ -939,7 +939,7 @@ export class VerifyComplianceTabComponent
               body['goodId'] = this.goodsSelected[0].goodId;
               body.processStatus = 'VERIFICAR_CUMPLIMIENTO';
               body.goodStatus = 'VERIFICAR_CUMPLIMIENTO';
-              body.status = null;
+              body.status = 'ROP';
               await this.updateGoods(body);
             } else {
               body['id'] = this.goodsSelected[0].id;
@@ -949,11 +949,11 @@ export class VerifyComplianceTabComponent
                   ? 'ACLARADO'
                   : 'VERIFICAR_CUMPLIMIENTO';
               body.processStatus = 'VERIFICAR_CUMPLIMIENTO';
-              body.status = null;
+              body.status = 'ROP';
               await this.updateGoods(body);
             }
             //crea un historico del status del bien actualizado
-            const history = await this.createHistoricGood('ROP', body.goodId);
+            //const history = await this.createHistoricGood('ROP', body.goodId);
 
             this.updateTable(body.goodStatus, body.processStatus);
           },
@@ -1186,7 +1186,7 @@ export class VerifyComplianceTabComponent
       let body: IHistoryGood = {
         propertyNum: good,
         status: status,
-        changeDate: moment(new Date()).format('YYYY/MM/DD'),
+        changeDate: new Date(),
         userChange: user.username,
         statusChangeProgram: 'SOLICITUD_TRANSFERENCIA',
         reasonForChange: 'N/A',

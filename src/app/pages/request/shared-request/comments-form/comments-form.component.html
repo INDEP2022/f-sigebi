@@ -15,10 +15,10 @@
 
   <div class="row pt-3" *ngIf="showComments">
     <div class="col-md-12">
-      <form [formGroup]="commentsForm" class="form-material">
+      <form [formGroup]="ordServform" class="form-material">
         <div class="pt-3">
           <form-field
-            [control]="commentsForm.get('observations')"
+            [control]="ordServform?.get('observation')"
             label="Observaciones">
             <textarea
               *ngIf="
@@ -27,7 +27,7 @@
                 (!showForm && op == 13)
               "
               class="form-control"
-              formControlName="observations"></textarea>
+              formControlName="observation"></textarea>
 
             <textarea
               *ngIf="
@@ -38,15 +38,15 @@
                 (!showForm && op != 9)
               "
               class="form-control"
-              formControlName="observations"
+              formControlName="observation"
               readonly></textarea>
           </form-field>
         </div>
         <div class="pt-3">
-          <form-field [control]="commentsForm.get('note')" label="Notas">
+          <form-field [control]="ordServform?.get('notes')" label="Notas">
             <textarea
               class="form-control"
-              formControlName="note"
+              formControlName="notes"
               *ngIf="
                 (showForm && op == 1) ||
                 (!showForm && op == 9) ||
@@ -56,7 +56,7 @@
 
             <textarea
               class="form-control"
-              formControlName="note"
+              formControlName="notes"
               readonly
               *ngIf="
                 (showForm && op == 8) ||

@@ -52,16 +52,28 @@
     <div class="row mb-2">
       <div class="col-md-5 buttons">
         <button
+          [disabled]="
+            !disabledBtnCerrar || loadingBtnExcel1 || loadingBtnExcel2
+          "
+          [ngClass]="{ loading: loadingBtnExcel1 }"
           class="btn btn-sm btn-info active mr-3"
           (click)="goods()"
           type="button">
           Bienes
         </button>
         <button
+          [disabled]="
+            !disabledBtnCerrar || loadingBtnExcel1 || loadingBtnExcel2
+          "
+          [ngClass]="{ loading: loadingBtnExcel2 }"
           class="btn btn-sm btn-primary active"
           (click)="calculateCommision()"
           type="button">
           Calcular Comisi&oacute;n
+          <i
+            *ngIf="!loadingBtnExcel2"
+            class="fa fa-calculator"
+            aria-hidden="true"></i>
         </button>
       </div>
     </div>
@@ -99,7 +111,8 @@
                 [attr.class]="'table-bordered'"
                 [settings]="settings2"
                 [source]="comCommisionXGood"
-                (edit)="openForm2($event.data)">
+                (edit)="openForm2($event.data)"
+                (delete)="questionDelete2($event.data)">
               </ng2-smart-table>
             </ng-scrollbar>
             <app-pagination [params]="params2" [totalItems]="totalItems2">
@@ -113,6 +126,7 @@
                 <form-field [control]="totalForm.get('totalVenta')">
                   <label for="">Total Venta</label>
                   <input
+                    currencyMask
                     readonly
                     type="text"
                     class="form-control"
@@ -123,6 +137,7 @@
                 <form-field [control]="totalForm.get('totalMonto')">
                   <label for="">Total Monto</label>
                   <input
+                    currencyMask
                     readonly
                     type="text"
                     class="form-control"

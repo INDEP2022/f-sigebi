@@ -45,7 +45,9 @@
                   #table
                   [attr.class]="'table-bordered'"
                   [settings]="settings"
-                  [source]="dataPaginated">
+                  [source]="dataPaginated"
+                  (userRowSelect)="selectRow($event.data)"
+                  (edit)="edit($event.data)">
                 </ng2-smart-table>
               </div>
             </div>
@@ -94,7 +96,7 @@
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
-              [disabled]="!showFilters"
+              [disabled]="!showFilters || !selectedRow"
               (click)="disperGasto()">
               Dispersa Gasto/Mandato
             </button>

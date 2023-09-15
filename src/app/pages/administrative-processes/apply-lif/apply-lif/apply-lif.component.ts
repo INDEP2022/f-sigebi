@@ -6,18 +6,23 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { map } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { HasMoreResultsComponent } from 'src/app/@standalone/has-more-results/has-more-results.component';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryNumeraryService } from 'src/app/core/services/ms-historynumerary/historynumerary.service';
 import { MassiveNumeraryService } from 'src/app/core/services/ms-massivenumerary/massivenumerary.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ApplyLifRequest } from './apply-lif-requests';
-
 @Component({
   selector: 'app-apply-lif',
   templateUrl: './apply-lif.component.html',
@@ -43,19 +48,28 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
   constructor(
     private fb: FormBuilder,
     private datePipe: DatePipe,
+    private authService: AuthService,
+    private securityService: SecurityService,
     protected goodService: GoodService,
     protected massiveNumeraryService: MassiveNumeraryService,
     protected historyNumeraryService: HistoryNumeraryService,
     protected parameterModService: ParameterModService,
-    protected modal: BsModalService
+    protected modal: BsModalService,
+    private router: Router
   ) {
     super();
   }
-
+  edit = false;
+  userName: string = '';
   isVisibleMotive = true;
   isContConvVisible = false;
   isVisibleVal15 = true;
   isEnableBtnLif = false;
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  lif: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  validPermisos: boolean = true;
+  dataUserLoggedTokenData: any;
   isEnableBtnRvlif = false;
   formGood = new FormGroup({
     id: new FormControl(''),
@@ -85,9 +99,11 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
   });
 
   ngOnInit(): void {
+    this.userName = this.authService.decodeToken().username;
     this.handleForm();
-    console.log(this.formGood.value.id);
-    console.log(this.formGood1.value.id);
+    // console.log(this.formGood.value.id);
+    // console.log(this.formGood1.value.id);
+    this.userTracker();
   }
 
   public handleForm(): void {
@@ -116,6 +132,57 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
       total: [null],
     });
   }
+  userTracker() {
+    this.securityService
+      .getScreenUser('FMCOMDONAC_1', this.userName)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data.data);
+          data.data.map((filter: any) => {
+            switch (true) {
+              case filter.readingPermission == 'S' &&
+                filter.writingPermission == 'S':
+                this.edit = true;
+                console.log('readYes and writeYes');
+                this.validPermisos = true;
+                break;
+              case filter.readingPermission == 'S' &&
+                filter.writingPermission == 'N':
+                this.edit = false;
+                this.validPermisos = false;
+                console.log('readYes and writeNO');
+                break;
+              case filter.readingPermission == 'N' &&
+                filter.writingPermission == 'S':
+                this.edit = true;
+                this.validPermisos = true;
+                console.log('readNo and writeYes');
+                break;
+              default:
+                this.alert(
+                  'info',
+                  'No tiene permiso de Lectura y/o Escritura sobre la Pantalla',
+                  ''
+                );
+                // return;
+                this.edit = false;
+                this.validPermisos = false;
+                console.log('sin permisos');
+            }
+          });
+        },
+        error: (error: any) => {
+          this.edit = false;
+          this.validPermisos = false;
+          console.log('sin permisos');
+          this.alert(
+            'info',
+            'No tiene permiso de Lectura y/o Escritura sobre la Pantalla',
+            ''
+          );
+        },
+      });
+  }
 
   getGood() {
     if (!this.formGood.value.id) return;
@@ -134,7 +201,6 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         },
         error: error => {
           this.loading = false;
-          console.log(error);
         },
       });
   }
@@ -198,7 +264,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         );
         this.formBlkControl.get('dateChange').setValue(new Date(dateChange));
       } catch (error) {
-        console.log(error);
+        this.loading = false;
         try {
           const params = new ListParams();
           params['filter.originalGood'] = this.formGood.value.id;
@@ -207,7 +273,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
           this.formBlkControl.get('dateChange').setValue(new Date(dateChange));
         } catch (error) {
           this.formBlkControl.get('dateChange').setValue(null);
-          console.log(error);
+          this.loading = false;
         }
       }
 
@@ -220,32 +286,36 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         this.isVisibleMotive = true;
       } catch (error) {
         this.isVisibleMotive = false;
-        console.log(error);
+        this.loading = false;
       }
 
       this.formGood1.get('contConv').setValue(TOT);
-      const tTotal = good1.val2 - good1.val13 - (good1.val10 || 0);
-      this.formBlkControl.get('tTotal').setValue(tTotal);
       if (TOT == 0) {
         this.isContConvVisible = false;
       } else {
         this.isContConvVisible = true;
       }
-
       const val15 = good1.val15 || 0;
       if (val15 == 0) {
+        const tTotal = good1.val2 - good1.val13 - (good1.val10 || 0);
+        this.formBlkControl.get('tTotal').setValue(tTotal);
         this.isVisibleVal15 = false;
         this.formGood1.get('val15').disable();
         this.isEnableBtnLif = true;
         this.isEnableBtnRvlif = false;
       } else {
+        const tTotal =
+          Number(good1.val2) -
+          (Number(good1.val13) + Number(good1.val15)) -
+          (Number(good1.val10) || 0);
+        this.formBlkControl.get('tTotal').setValue(tTotal);
         this.isVisibleVal15 = true;
         this.formGood1.get('val15').enable();
         this.isEnableBtnLif = false;
         this.isEnableBtnRvlif = true;
       }
     } catch (error) {
-      this.alert('error', 'Error', '');
+      this.loading = false;
       console.log(error);
     }
   }
@@ -296,8 +366,11 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
     let VLIF: number;
     let VEST: string;
     let GAST: number;
+    let LIF: number;
+    const good1 = this.formGood1.getRawValue();
     try {
       GAST = this.formGood1.value.val13;
+      LIF = good1.val15;
       let params = new ListParams();
       params['filter.id'] = this.formGood1.value.id;
       const { status } = await this.getGoodParams(params, true);
@@ -314,18 +387,19 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         params['filter.parameter'] = 'LIF';
         const { value } = await this.getComerParameterMod(params);
         VLIF = Number(value);
-        this.formGood1
-          .get('val15')
-          .setValue(
-            (
-              (this.formGood1.value.val2 - this.formGood1.value.val10) *
-              VLIF
-            ).toFixed(2)
-          );
-        GAST = GAST + this.formGood1.value.val15;
+        this.lif = (good1.val2 - good1.val10) * VLIF;
+        good1.val15 = this.lif;
+        this.formGood1.get('val15').setValue(this.lif.toFixed(2));
+        console.log(this.lif);
+        GAST = Number(this.formGood1.value.val13) + Number(this.lif);
+        console.log(GAST);
         this.formBlkControl
           .get('tTotal')
-          .setValue(this.formGood1.value.val2 - (GAST || 0));
+          .setValue(
+            Number(this.formGood1.value.val2) -
+              (Number(GAST) || 0) -
+              Number(this.formGood1.value.val10)
+          );
         this.commit();
       }
     } catch (error) {
@@ -356,7 +430,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         params['filter.parameter'] = 'LIF';
         const { value } = await this.getComerParameterMod(params);
         VLIF = Number(value);
-        this.formGood1.get('val13').setValue(good1.val13 - good1.val15);
+        this.formGood1.get('val13').setValue(good1.val13);
         this.formGood1.get('val15').setValue(0);
         this.formBlkControl
           .get('tTotal')
@@ -374,7 +448,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
   commit() {
     const auxBody = { ...this.formGood1.getRawValue() };
     delete auxBody.contConv;
-    auxBody.val15 = String(auxBody?.val15) || null;
+    // auxBody.val15 = String(auxBody.val15) || null;
 
     this.goodService.update(auxBody).subscribe({
       next: () => {
@@ -382,8 +456,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         this.postQueryGood1();
       },
       error: error => {
-        this.alert('error', 'Error al Actualizar Bien', '');
-        console.log(error);
+        this.loading = false;
       },
     });
   }

@@ -205,8 +205,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       requestUpdate.id = this.data.id;
       requestUpdate.targetUserType = this.userForm.controls['typeUser'].value;
       requestUpdate.targetUser = this.user.id;
-      //actualiza el process status y el good status de la solicitud
-      const status = await this.updateStatus();
+
       //Todo: enviar la solicitud
       const requestResult = await this.saveRequest(requestUpdate);
       if (requestResult === true) {
@@ -274,8 +273,8 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
               // actualizar status del bien
               this.loader.load = false;
               Swal.fire({
-                title: 'Solicitud Turnada',
-                text: 'La solicitud se turnó correctamente',
+                title: 'La Solicitud ha sido Turnada',
+                text: 'Se ha creado una nueva tarea',
                 icon: 'success',
                 showCancelButton: false,
                 confirmButtonColor: '#9D2449',
@@ -502,7 +501,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             this.message(
               'error',
               'Error al guardar',
-              'No se pudo bajar el documento'
+              'No se pudo generar el reporte de volante'
             );
             reject('false');
           },
@@ -555,33 +554,5 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     }
 
     return result;
-  }
-
-  updateStatus() {
-    return new Promise((resolve, reject) => {
-      let body: any = { request: 0, status: '', process: '' };
-      body.request = Number(this.data.id);
-      body.status = 'VERIFICAR_CUMPLIMIENTO'; //good.processStatus
-      body.process = 'verify-compliance';
-      body.statusGood = 'ROP'; // good.status
-      body.programChangeStatus = 'SOLICITUD_TRANSFERENCIA';
-      body.user = this.user.username;
-      console.log(body);
-
-      this.goodfinderService.updateStatusProcess(body).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          reject('Error al actualizar los estados');
-          console.log('Error al actualizar los estados ', error);
-          this.onLoadToast(
-            'error',
-            'Error al actualizar el estado de los Bienes',
-            ''
-          );
-        },
-      });
-    });
   }
 }

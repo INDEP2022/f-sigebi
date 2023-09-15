@@ -74,4 +74,53 @@ export class GoodPosessionThirdpartyService extends HttpService {
   }) {
     return this.delete<any>(`detail-good-possession-thirdparty`, params);
   }
+
+  getByMonthYearIndicator(
+    month: number,
+    year: number,
+    delegation: number,
+    params: any
+  ) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyReports}?filter.monthNumber=$eq:${month}&filter.yearNumber=$eq:${year}&filter.delegation1Number=$eq:${delegation}`;
+    return this.get(route, params);
+  }
+
+  getByMonthYearIndicatorNumber(
+    month: number,
+    year: number,
+    delegation: number
+  ) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyReports}?filter.monthNumber=$eq:${month}&filter.yearNumber=$eq:${year}&filter.delegation1Number=$eq:${delegation}&filter.thisTime=$eq:1`;
+    return this.get(route);
+  }
+
+  getAllStrategyFormat(params?: any) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyFormat}`;
+    return this.get(route, params);
+  }
+
+  getAllStrategyFormatById(id: any) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyFormat}?filter.id=$eq:${id}`;
+    return this.get(route);
+  }
+
+  getAllStrategyImportsById(id: any, params: any) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyImports}?filter.formatNumberId=$eq:${id}`;
+    return this.get(route, params);
+  }
+
+  getAllStrategyGoodsById(id: any, params: any) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyGoods}?filter.formatNumber=$eq:${id}`;
+    return this.get(route, params);
+  }
+
+  getAllStrategyLogById(id: any, params: any) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyLog}?filter.formatNumber=$eq:${id}`;
+    return this.get(route, params);
+  }
+
+  getAllStrategyV2(params?: any) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyFormatV2}`;
+    return this.get(route, params);
+  }
 }

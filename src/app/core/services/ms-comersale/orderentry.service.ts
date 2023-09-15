@@ -6,6 +6,7 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGoodOrderEntry } from '../../models/ms-order-entry/good-order-entry.model';
 import { IOrderEntry } from '../../models/ms-order-entry/order-entry.model';
+import { IOrderServiceProvider } from '../../models/ms-order-entry/order-service-provider.model';
 
 @Injectable({
   providedIn: 'root',
@@ -69,6 +70,29 @@ export class orderentryService extends HttpService {
 
   removeGoodOrderEntry(id: number | string) {
     const route = `${OrderEntryEndpoints.SAE_NSBDB_GOOD_ORDER_ENTRY}/${id}`;
+    return this.delete(route);
+  }
+
+  /* ORDENES DE SERVICIO PRESTADO */
+  createServiceProvided(body: IOrderServiceProvider) {
+    const route = `${OrderEntryEndpoints.ORDER_SERVICE_PROVIDER}`;
+    return this.post(route, body);
+  }
+
+  getAllOrderServicesProvided(
+    params: ListParams | string
+  ): Observable<IListResponse<IOrderServiceProvider>> {
+    const route = `${OrderEntryEndpoints.ORDER_SERVICE_PROVIDER}`;
+    return this.get<IListResponse<IOrderServiceProvider>>(route, params);
+  }
+
+  updateOrderServicesProvided(body: IOrderServiceProvider) {
+    const route = `${OrderEntryEndpoints.ORDER_SERVICE_PROVIDER}/${body.id}`;
+    return this.put(route, body);
+  }
+
+  deleteOrderServiceProvided(id: number) {
+    const route = `${OrderEntryEndpoints.ORDER_SERVICE_PROVIDER}/${id}`;
     return this.delete(route);
   }
 }

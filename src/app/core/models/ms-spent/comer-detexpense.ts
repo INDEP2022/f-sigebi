@@ -17,6 +17,43 @@ export interface IComerDetExpense {
   reportDelit?: boolean;
 }
 
+export interface IComerDetExpense2 {
+  detPaymentsId: string;
+  paymentsId: string;
+  amount?: number;
+  iva: number;
+  retencionIsr: string;
+  retencionIva: string;
+  transferorNumber: string;
+  goodNumber: string;
+  total: number;
+  manCV: string;
+  departure: string;
+  origenNB?: any;
+  partialGoodNumber?: any;
+  priceRiAtp?: any;
+  transNumberAtp?: any;
+  expendientNumber: number;
+  clasifGoodNumber: number;
+  value?: any;
+  description?: any;
+  eventId?: any;
+  amount2: number;
+  iva2: number;
+  total2: number;
+  parameter: string;
+  mandato: string;
+  vehiculoCount: string;
+  V_VALCON_ROBO: number;
+  changeStatus?: boolean;
+  reportDelit?: boolean;
+}
+
+export interface IMandContaDTO {
+  idGastos: number;
+  pnoenviasirsae: string;
+}
+
 interface ComerExpenses {
   expenseNumber: string;
   conceptNumber: string;

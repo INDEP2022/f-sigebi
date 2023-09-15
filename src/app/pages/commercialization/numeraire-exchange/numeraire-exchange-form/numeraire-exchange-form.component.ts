@@ -292,6 +292,14 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         text: 'Bien generado por pago parcial por siniestro',
         value: 'BBB',
       },
+      {
+        text: 'Bien cambiado a numerario por responsabilidad',
+        value: 'CNR',
+      },
+      {
+        text: 'Bien cambiado a numerario por enajenación de valores y divisas.',
+        value: 'CNE',
+      },
     ]);
     this.formGood.get('importSell').valueChanges.subscribe({
       next: value => {
@@ -845,6 +853,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         if (!questionResponse1.isConfirmed) {
           return;
         }
+        this.loader.load = false;
         const questionResponse2 = await this.alertQuestion(
           'question',
           'Advertencia',
@@ -877,7 +886,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       // clasifGoodNumber: null,
       // spentPlus: null,
       // amounten: null,
-      description: this.form.value.description,
+      description: this.formGood.value.description,
       amountevta: this.formGood.value.importSell || 1,
       typeConv: this.formBlkControl.value.typeConversion,
       spentId: spent?.spentId || [],
@@ -894,6 +903,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       delegationNumber: this.formGood.value.delegationNumber.id,
       subDelegationNumber: this.formGood.value.subDelegationNumber.id,
       fileNumber: this.formGood.value.fileNumber,
+      flier: this.formGood.value.flyerNumber,
       user: this.infoToken.preferred_username.toUpperCase(),
       bankNew: this.formBlkControl.value.tiNewBank,
       moneyNew: this.formBlkControl.value.diNewCurrency?.replaceAll("'", ''),
@@ -905,18 +915,38 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     };
     await firstValueFrom(
       this.goodService.changeGoodToNumerary(body).pipe(
-        map((resp: { message: []; data: null }) => {
-          const message =
-            // resp.message.length > 0
-            //   ? resp.message.join('.\n')
-            //   :
-            'Proceso Terminado correctamente';
+        map((resp: any) => {
+          console.log(resp);
+          if (resp.data) {
+            const goodFather = resp.data.map((item: any) => {
+              return {
+                goodNumberF: item.goodNumberF,
+                goodStatusF: item.goodStatusF,
+              };
+            });
+            const goodGenerate = resp.data.map((item: any) => {
+              return {
+                goodNumberS: item.goodNumberS,
+                goodStatusS: item.goodStatusS,
+              };
+            });
+            this.openDialogGoodStatus(goodFather, goodGenerate);
+            this.clear();
+          } else {
+            this.alert('warning', 'Bienes no encontrados', '');
+          }
+          // const message =
+          //   // resp.message.length > 0
+          //   //   ? resp.message.join('.\n')
+          //   //   :
+          //   'Proceso Terminado correctamente';
 
-          this.alert('success', message, '');
-          this.clear();
+          // this.alert('success', message, '');
+          // this.clear();
           this.loader.load = false;
         }),
         catchError(err => {
+          this.loader.load = false;
           console.log('error', err);
           const message = err.error.message;
           this.alert(
@@ -1050,6 +1080,19 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
             ivacom: item.ivacom,
             commission: item.comision,
             user: this.infoToken.preferred_username.toUpperCase(),
+            fileNumber: item.no_expediente,
+            spentId: '',
+            delegationNumber: item.no_delegacion,
+            subDelegationNumber: item.no_subdelegacion,
+            flyerNumber: item.no_volante,
+            associatedExpNumber: item.no_exp_asociado,
+            moneyNew:
+              this.formBlkControl.value.diNewCurrency?.replaceAll("'", '') ||
+              '',
+            identificator: item.identificador,
+            accountNew: this.formBlkControl.value.diNewAccount || '',
+            bankNew: this.formBlkControl.value.tiNewBank || '',
+            token: this.formBlkControl.value.tiNewFile || '',
           };
         }),
         token: this.formBlkControl.value.tiNewFile || '',
@@ -1065,22 +1108,35 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       await firstValueFrom(
         this.goodService.pupValidMasiv(body).pipe(
           map(res => {
-            console.log(res.data);
-            if (res.data) {
-              const goodFather = res.data.map((item: any) => {
-                return {
-                  goodNumberF: item.goodNumberF,
-                  goodStatusF: item.goodStatusF,
-                };
-              });
-              const goodGenerate = res.data.map((item: any) => {
-                return {
-                  goodNumberS: item.goodNumberS,
-                  goodStatusS: item.goodStatusS,
-                };
-              });
-              this.openDialogGoodStatus(goodFather, goodGenerate);
-              this.clear();
+            console.log(res);
+            if (res.dataCreateMassiveGood) {
+              if (res.dataCreateMassiveGood[0] == 'Registros no encontrados.') {
+                this.alert(
+                  'warning',
+                  'Advertencia',
+                  'Verificar que el status de los Bienes sea Administración'
+                );
+                this.clear();
+              } else {
+                const goodFather = res.dataCreateMassiveGood.map(
+                  (item: any) => {
+                    return {
+                      goodNumberF: item.goodNumberF,
+                      goodStatusF: item.goodStatusF,
+                    };
+                  }
+                );
+                const goodGenerate = res.dataCreateMassiveGood.map(
+                  (item: any) => {
+                    return {
+                      goodNumberS: item.goodNumberS,
+                      goodStatusS: item.goodStatusS,
+                    };
+                  }
+                );
+                this.openDialogGoodStatus(goodFather, goodGenerate);
+                this.clear();
+              }
             } else {
               this.alert('warning', 'Bienes no encontrados', '');
             }
@@ -1101,6 +1157,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         )
       );
     } catch (error) {
+      this.loader.load = false;
       console.log('error', error);
       this.alert('error', 'Error', 'Ocurrió un Error al Validar el Masivo');
     }

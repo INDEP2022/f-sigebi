@@ -17,21 +17,22 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class CommentsFormComponent implements OnInit {
   @Input() op: number;
   @Input() showForm: boolean;
+  @Input() ordServform: FormGroup = new FormGroup({});
 
   showComments: boolean = true;
 
-  commentsForm: FormGroup = new FormGroup({});
+  // commentsForm: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.prepareForm();
+    //this.prepareForm();
   }
 
-  prepareForm() {
+  /*prepareForm() {
     this.commentsForm = this.fb.group({
       observations: [null],
       note: [null],
     });
-  }
+  }*/
 }

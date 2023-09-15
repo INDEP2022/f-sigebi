@@ -39,7 +39,7 @@ export class ExpedientSamiService extends HttpService {
     return this.post(`${this.route.ExpedientSami}/${id}`, body);
   }
 
-  getexpedient() {
-    return this.get(`${this.route.expedientePrueba}`);
+  getexpedient(params: any) {
+    return this.get(ExpedientEndpoints.expedientePrueba, params);
   }
 }

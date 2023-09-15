@@ -565,7 +565,8 @@ export class NotificationAssetsTabComponent
                         'VERIFICAR_CUMPLIMIENTO',
                         bien.goodid,
                         bien.goodresdev,
-                        bien.typeorigin
+                        bien.typeorigin,
+                        'ROP'
                       );
                       if (updateStatusGood === true) {
                         resolve(true);
@@ -580,7 +581,8 @@ export class NotificationAssetsTabComponent
                         'IMPROCEDENTE',
                         bien.goodid,
                         bien.goodresdev,
-                        bien.typeorigin
+                        bien.typeorigin,
+                        'STI'
                       );
                       if (updateStatusGood === true) {
                         resolve(true);
@@ -591,7 +593,8 @@ export class NotificationAssetsTabComponent
                         'VERIFICAR_CUMPLIMIENTO',
                         bien.goodid,
                         bien.goodresdev,
-                        bien.typeorigin
+                        bien.typeorigin,
+                        'ROP'
                       );
                       if (updateStatusGood === true) {
                         resolve(true);
@@ -969,8 +972,8 @@ export class NotificationAssetsTabComponent
         if (aclaracion) {
           this.alertQuestion(
             'question',
-            'Finalizar',
-            '¿Desea Finalizar la Aclaración?'
+            '¿Desea Finalizar la Aclaración?',
+            ''
           ).then(question => {
             if (question.isConfirmed) {
               this.endAclaration();
@@ -979,8 +982,8 @@ export class NotificationAssetsTabComponent
         } else if (improcedencia) {
           this.alertQuestion(
             'question',
-            'Finalizar',
-            '¿Desea Finalizar la Improcedencia?'
+            '¿Desea Finalizar la Improcedencia?',
+            ''
           ).then(question => {
             if (question.isConfirmed) {
               this.endImpinappropriateness();
@@ -1604,7 +1607,8 @@ export class NotificationAssetsTabComponent
     statusProcess?: string,
     idGood?: number,
     idGoodResDev?: number,
-    typeOrigin?: string
+    typeOrigin?: string,
+    status?: string
   ) {
     return new Promise((resolve, reject) => {
       if (typeOrigin == 'SOL_TRANSFERENCIA') {
@@ -1614,6 +1618,7 @@ export class NotificationAssetsTabComponent
             goodId: idGood,
             goodStatus: statusGood,
             processStatus: statusProcess,
+            status: status,
           };
           this.goodService.update(good).subscribe({
             next: data => {

@@ -68,8 +68,8 @@ export class DonationService
     );
   }
 
-  getExcel(params: ListParams) {
-    return this.get(DonationEndPoint.eventComDonationExcel, params);
+  getExcel() {
+    return this.get(DonationEndPoint.eventComDonationExcel);
   }
 
   createAdmonDonation(model: any) {
@@ -82,5 +82,15 @@ export class DonationService
   createD(goodDon: IGoodDonation) {
     const route = `${endpoint}`;
     return this.post(route, goodDon);
+  }
+  getTempGood(params: ListParams) {
+    return this.get(DonationEndPoint.TempDonationGood, params);
+  }
+
+  createApproveDonation(data: any) {
+    return this.post(DonationEndPoint.ApproveDonation, data);
+  }
+  getDonationRequest(requestId: number) {
+    return this.get(`/donac-request-good?filter.requestId.id=$eq:${requestId}`);
   }
 }

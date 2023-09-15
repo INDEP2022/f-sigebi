@@ -155,4 +155,16 @@ export class ComerInvoiceService extends HttpService {
       `${ENDPOINT_INVOICE.ComerCount}?eventId${event}&invoiceId=${factura}`
     );
   }
+
+  pufValidaInvoiceSP(event: number, folioSp: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ApplicationFolioSP}?eventId=${event}&invoiceSb=${folioSp}`
+    );
+  }
+
+  getEats(event: number, expend: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ApplicationEats}?eventId=${event}&expenseId=${expend}`
+    );
+  }
 }

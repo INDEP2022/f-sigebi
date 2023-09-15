@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">MOVIMIENTOS CUENTAS GENERALES</h5>
+    <h5 class="title">Aplica Importe LIF</h5>
   </div>
 
   <div body class="position-relative">
@@ -9,7 +9,7 @@
       <div class="row">
         <ng-container [formGroup]="formGood">
           <div class="col-md-5 d-flex form-group gap-4 align-items-center">
-            <form-field [control]="formGood.get('id')" label="Número Bien">
+            <form-field [control]="formGood.get('id')" label="No. Bien">
               <input
                 type="number"
                 class="form-control"
@@ -18,7 +18,7 @@
                 oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
             </form-field>
             <button
-              [disabled]="loading"
+              [disabled]="!this.validPermisos"
               class="active align-items-center btn btn-primary btn-sm w-auto"
               (click)="getGood()">
               Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
@@ -103,7 +103,7 @@
       </div>
 
       <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
-        DETALLES NUMERARIO
+        DETALLE NUMERARIO
       </h5>
 
       <div>
@@ -138,7 +138,9 @@
               <button
                 (click)="openSelectorGood()"
                 type="button"
-                [disabled]="!this.formGood1.value.contConv"
+                [disabled]="
+                  !this.formGood1.value.contConv || !this.validPermisos
+                "
                 class="btn btn-primary btn-sm active ml-3 w-auto mr-2">
                 <i class="bx bx-list-plus bx-sm float-icon"></i>
               </button>
@@ -182,7 +184,7 @@
 
         <ng-container [formGroup]="formGood1">
           <div class="row mt-4">
-            <div class="col-md-5"></div>
+            <div class="col-md-4"></div>
             <div class="form-group col-md-3 d-flex justify-content-end">
               <form-field [control]="formGood1.get('val2')" label="Precio">
                 <input
@@ -195,7 +197,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-5"></div>
+            <div class="col-md-4"></div>
             <div class="form-group col-md-3 d-flex justify-content-end">
               <form-field [control]="formGood1.get('val13')" label="Gasto">
                 <input
@@ -203,12 +205,12 @@
                   class="form-control"
                   formControlName="val13"
                   min="0"
-                  pattern="^[0-9]+" />
+                  pattern="^[0-9]+(\.[0-9]+)?$" />
               </form-field>
             </div>
           </div>
           <div class="row">
-            <div class="col-md-5"></div>
+            <div class="col-md-4"></div>
             <div class="form-group col-md-3 d-flex justify-content-end">
               <form-field [control]="formGood1.get('val10')" label="Total IVA">
                 <input
@@ -221,7 +223,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-5"></div>
+            <div class="col-md-4"></div>
             <!-- *ngIf="isVisibleVal15" -->
             <div class="form-group col-md-3 d-flex justify-content-end">
               <form-field [control]="formGood1.get('val15')" label="LIF">
@@ -236,7 +238,7 @@
           </div>
         </ng-container>
         <div [formGroup]="formBlkControl" class="row">
-          <div class="col-md-5"></div>
+          <div class="col-md-4"></div>
           <div class="form-group col-md-3 d-flex justify-content-end">
             <form-field [control]="formBlkControl.get('tTotal')" label="Total">
               <input
@@ -257,7 +259,10 @@
             (click)="onClickApplyLif()"
             class="btn btn-primary active w-auto btn-sm"
             [disabled]="
-              !isEnableBtnLif || !formGood.value.id || !formGood1.value.id
+              !isEnableBtnLif ||
+              !formGood.value.id ||
+              !formGood1.value.id ||
+              !this.validPermisos
             ">
             Aplica Lif
           </button>
@@ -265,7 +270,10 @@
             class="btn btn-primary active w-auto btn-sm"
             (click)="onClickApplyRvlif()"
             [disabled]="
-              !isEnableBtnRvlif || !formGood.value.id || !formGood1.value.id
+              !isEnableBtnRvlif ||
+              !formGood.value.id ||
+              !formGood1.value.id ||
+              !this.validPermisos
             ">
             <!-- [disabled]="
               !isEnableBtnLif || !formGood.value.id || !formGood1.value.id
