@@ -1,3 +1,4 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 export const COLUMNS_APPROVAL_DONATION = {
   recordId: {
     title: 'Ref.',
@@ -133,6 +134,65 @@ export const COPY = {
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.bienindicadores?.coordination;
+    },
+  },
+};
+
+export const ACTAS = {
+  statusProceedings: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },
+
+  id: {
+    title: 'Id',
+    type: 'number',
+    sort: false,
+  },
+  keysProceedings: {
+    title: 'Clave Acta',
+    type: 'string',
+    sort: false,
+  },
+  typeProceedings: {
+    title: 'Tipo de Acta',
+    type: 'string',
+    sort: false,
+  },
+  // file: {
+  //   title: 'No. Expediente',
+  //   type: 'number',
+  //   sort: false,
+  //   valuePrepareFuncion: (cell: any, row: any) => {
+  //     return row.file.filesId
+  //   }
+  // },
+  approvalUserXAdmon: {
+    title: 'Administra',
+    type: 'string',
+    sort: false,
+  },
+  numeraryFolio: {
+    title: 'Folio',
+    type: 'string',
+    sort: false,
+  },
+  numTransfer_: {
+    title: 'Transferente',
+    type: 'number',
+    sort: false,
+  },
+  elaborationDate: {
+    title: 'Fecha de Elaboración',
+    type: 'html',
+    sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
     },
   },
 };

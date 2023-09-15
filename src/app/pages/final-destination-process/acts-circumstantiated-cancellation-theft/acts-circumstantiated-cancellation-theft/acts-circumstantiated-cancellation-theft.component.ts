@@ -136,9 +136,6 @@ export interface IGoodJobManagement {
       .registros-movidos {
         background-color: yellow;
       }
-      .columna {
-        font-weight: bold;
-      }
 
       button.loading:after {
         content: '';

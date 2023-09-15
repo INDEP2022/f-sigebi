@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,7 +15,6 @@ import { IGood } from 'src/app/core/models/good/good.model';
 import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
-
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -22,6 +22,7 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { FindActaComponent } from '../find-acta/find-acta.component';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
 import { COPY } from './columns-approval-donation';
 @Component({
@@ -50,8 +51,11 @@ export class CaptureApprovalDonationComponent
   loading3: boolean = false;
   Exportdate: boolean = false;
   status: string = '';
+  disabledBtnActas: boolean = true;
   totalItems2: number = 0;
+  cveActa: string = '';
   dataDetailDonation: any;
+  consec: string = '';
   dataDetailDonationGood: LocalDataSource = new LocalDataSource();
   excelLoading: boolean = false;
   paramsList2 = new BehaviorSubject<ListParams>(new ListParams());
@@ -70,6 +74,8 @@ export class CaptureApprovalDonationComponent
   columnFilters: any = [];
   columnFilters2: any = [];
   settings2;
+  to: string = '';
+  annio: string = '';
   userName: string = '';
   // @Input() getDetailComDonation: Function;
   // @Input() idActa: number | string;
@@ -104,7 +110,8 @@ export class CaptureApprovalDonationComponent
     private authService: AuthService,
     private donationService: DonationService,
     private changeDetectorRef: ChangeDetectorRef,
-    private statusGoodService: StatusGoodService
+    private statusGoodService: StatusGoodService,
+    private datePipe: DatePipe
   ) {
     super();
     // this.settings = { ...this.settings, actions: false };
@@ -744,6 +751,121 @@ export class CaptureApprovalDonationComponent
         this.statusGood_ = '';
         // this.statusGoodForm.get('statusGood').setValue('')
       },
+    });
+  }
+  cleanActa() {
+    this.regisForm.reset();
+    this.dataTableGood.load([]);
+    // this.dataRecepcionGood.load([]);
+    this.eventDonacion = null;
+    this.estatus = null;
+    this.selectedGooods = [];
+    this.Exportdate = false;
+  }
+  formatDate(date: Date): string {
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear().toString();
+    return `${day}/${month}/${year}`;
+  }
+
+  searchActas(actas?: string) {
+    this.consec = null;
+    actas = this.cveActa;
+    const expedienteNumber = this.fileNumber;
+    const actaActual = this.eventDonacion;
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      actas,
+      actaActual,
+      expedienteNumber,
+    };
+
+    let modalRef = this.modalService.show(FindActaComponent, modalConfig);
+    modalRef.content.onSave.subscribe(async (next: any) => {
+      console.log(next);
+      if (next) {
+        this.alert(
+          'success',
+          'Se Cargó la Información del Acta',
+          next.keysProceedings
+        );
+      }
+      // Limpiar formulario una vez consulte
+      //this.regisForm.reset();
+      //this.formScan.reset();
+
+      const dateElabora =
+        next.elaborationDate != null ? new Date(next.elaborationDate) : null;
+      const formattedfecElaborate =
+        dateElabora != null ? this.formatDate(dateElabora) : null;
+
+      const dateActa =
+        next.datePhysicalReception != null
+          ? new Date(next.datePhysicalReception)
+          : null;
+      const formattedfecActa =
+        dateActa != null ? this.formatDate(dateActa) : null;
+
+      const dateCapture =
+        next.captureDate != null ? new Date(next.captureDate) : null;
+      const formattedfecCapture =
+        dateCapture != null ? this.formatDate(dateCapture) : null;
+
+      this.eventDonacion = next;
+      // this.fCreate = this.datePipe.transform(
+      //   next.dateElaborationReceipt,
+      //   'dd/MM/yyyy'
+      // );
+      this.to = this.datePipe.transform(
+        this.regisForm.controls['year'].value,
+        'MM/yyyy'
+      );
+
+      this.estatus = next.statusProceedings;
+      if (this.estatus == 'CERRADA') {
+        //this.disabledBtnCerrar = false;
+        this.disabledBtnActas = false;
+      } else {
+        this.disabledBtnActas = true;
+        //this.disabledBtnCerrar = true;
+      }
+      console.log('acta NEXT ', next);
+      this.regisForm.patchValue({
+        administra: next.approvedXAdmon,
+        testigoOIC: next.comptrollerWitness,
+        respConv: next.receiptKey,
+
+        observaciones: next.observations,
+        // ejecuta: next.ejecuta,
+        consec: next.numeraryFolio,
+        type: next.id,
+        cveActa: next.keysProceedings,
+        mes: next.dateElaborationReceipt,
+        //cveReceived: next.receiptKey,
+        //anio: new Date(next.dateElaborationReceipt),
+        direccion: next.address,
+        parrafo1: next.parrafo1,
+        // testigoOIC: next.comptrollerWitness,
+        //testigoOIC: next.witness1,
+        testigoOne: next.witness1,
+        testigoTree: next.witness2,
+        elaboradate: formattedfecElaborate,
+        fechaact: formattedfecActa,
+        fechacap: formattedfecCapture,
+      });
+
+      //this.data1 = next.statusProceedings;
+      //this.formScan.get('scanningFoli').patchValue(next.universalFolio);
+      // Pasar clave a esta función
+      //this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
+
+      await this.getDetailProceedingsDevollution(this.eventDonacion.actId);
+    });
+    modalRef.content.cleanForm.subscribe(async (next: any) => {
+      if (next) {
+        this.cleanActa();
+      }
     });
   }
 
