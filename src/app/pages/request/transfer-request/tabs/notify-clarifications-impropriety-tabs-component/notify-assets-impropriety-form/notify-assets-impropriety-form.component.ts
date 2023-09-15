@@ -151,6 +151,7 @@ export class NotifyAssetsImproprietyFormComponent
       webMail: [null, [Validators.pattern(EMAIL_PATTERN)]],
       unit: [null, [Validators.pattern(STRING_PATTERN)]],
       amount: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      description: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -216,14 +217,17 @@ export class NotifyAssetsImproprietyFormComponent
           'IMPROCEDENCIA' &&
         typeTransference == 'MANUAL'
       ) {
+        console.log('improcedenciaTransferentesVoluntarias');
         this.improcedenciaTransferentesVoluntarias(); //IMPROCEDENCIA  MANUAL
       }
     }
 
     if (typeTransference == 'SAT_SAE' && this.typeClarifications == 2) {
+      console.log('oficioAclaracionTransferente');
       this.oficioAclaracionTransferente();
     }
     if (typeTransference == 'SAT_SAE' && this.typeClarifications == 1) {
+      console.log('aclaracionComercioExterior');
       this.aclaracionComercioExterior();
     }
     //this.saveClarificationsAcept();
@@ -709,7 +713,7 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
           }
         },
         error: error => {
-          this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
+          this.onLoadToast('error', 'No se pudo actualizar', '');
         },
       });
   }
@@ -863,10 +867,16 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
         noBien,
         callback: (next: boolean, xml?: string) => {
           if (next) {
-            const typeTransference = this.infoRequest.typeOfTransfer;
-
+            console.log('Ejecuta: changeStatusAnswered(xml)');
             this.changeStatusAnswered(xml);
-            this.changeSimulateGood;
+            if (
+              this.clarificationForm?.controls['amount'].value != null ||
+              this.clarificationForm?.controls['unit'].value != null ||
+              this.clarificationForm?.controls['description'].value != null
+            ) {
+              console.log('Ejecuta: changeSimulateGood');
+              this.changeSimulateGood();
+            }
           } else {
           }
         },
@@ -900,6 +910,7 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
           quantity: this.clarificationForm?.controls['amount'].value,
           unitMeasure: this.clarificationForm?.controls['unit'].value,
           unit: this.clarificationForm?.controls['unit'].value,
+          description: this.clarificationForm?.controls['description'].value,
         };
 
         console.log('Objeto a enviar por body', obj);

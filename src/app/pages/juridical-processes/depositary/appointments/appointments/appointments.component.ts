@@ -2656,7 +2656,7 @@ export class AppointmentsComponent
     });
   }
   getSaeUserChange(event: any) {
-    console.log(event);
+    console.log('USER DATA', event);
     if (event) {
       this.form.get('nombre').setValue(event.name);
       this.mailSAE = event.email;
@@ -3064,6 +3064,8 @@ export class AppointmentsComponent
   }
 
   getPersonXNom() {
+    console.log('PERSON X NOM ', this.depositaryAppointment);
+
     const params = new FilterParams();
     params.removeAllFilters();
     params.addFilter(

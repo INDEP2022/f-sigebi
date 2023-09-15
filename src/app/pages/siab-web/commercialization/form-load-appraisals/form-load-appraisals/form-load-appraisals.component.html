@@ -216,9 +216,16 @@
                   <a
                     class="dropdown-item"
                     style="color: blue"
-                    (click)="insertAvaluo()">
+                    (click)="file.click()">
                     <i class="bx bx-layer"></i> Insertar Avalúo
                   </a>
+                  <input
+                    type="file"
+                    name="file"
+                    #file
+                    class="d-none"
+                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                    (change)="onFileChange($event)" />
                 </li>
                 <li role="menuitem">
                   <a

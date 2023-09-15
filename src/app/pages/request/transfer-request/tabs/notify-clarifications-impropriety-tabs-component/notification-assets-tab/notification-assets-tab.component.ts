@@ -403,6 +403,7 @@ export class NotificationAssetsTabComponent
     this.notifyAssetsSelected = event.selected;
     this.valueGood = event.data.goodId;
     this.valueRejectNotificationId = event.data.rejectNotificationId;
+    console.log('Seleccionada: ', event.data.clarification.clarification);
   }
 
   refuseClarification() {
