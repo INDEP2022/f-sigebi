@@ -230,7 +230,10 @@
     </form>
     <div class="row margin-input">
       <div class="col-md-2">
-        <button class="btn btn-primary btn-sm active" (click)="pupGenera()">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="pupGenera()"
+          [disabled]="!disabledBtnActas">
           Genera
         </button>
       </div>
@@ -238,7 +241,8 @@
         <button
           type="button"
           class="btn btn-primary active btn-sm mr-3"
-          (click)="searchActas()">
+          (click)="searchActas()"
+          [disabled]="!disabledBtnActas">
           Buscar Bienes
           <i class="bx bx-search bx-sm float-icon"></i>
         </button>
@@ -263,7 +267,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="data1">
+              [source]="dataTableGood">
             </ng2-smart-table>
           </div>
         </div>

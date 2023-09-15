@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -24,11 +25,10 @@ import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strate
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FindActaComponent } from '../find-acta/find-acta.component';
+import { COPY } from '../implementation-report-historic/implementation-report-historic-columns';
 import { ImplementationReportHistoricComponent } from '../implementation-report-historic/implementation-report-historic.component';
-import {
-  IMPLEMENTATIONREPORT_COLUMNS,
-  IMPLEMENTATION_COLUMNS,
-} from './implementation-report-columns';
+import { IMPLEMENTATION_COLUMNS } from './implementation-report-columns';
+
 @Component({
   selector: 'app-implementation-report',
   templateUrl: './implementation-report.component.html',
@@ -43,6 +43,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   reportImp: IReportImp;
   area: number = 0;
   data1: any[] = [];
+  dataTableGood: LocalDataSource = new LocalDataSource();
   actasObject: IProccedingsDeliveryReception;
   desStrategy: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -78,7 +79,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: IMPLEMENTATIONREPORT_COLUMNS,
+      columns: COPY,
     };
     this.settings2.columns = IMPLEMENTATION_COLUMNS;
   }
@@ -382,6 +383,14 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
 
   actasDefault: any = null;
   searchActas(actas?: string) {
+    if (this.serviceOrdersForm.value.noFormat == null) {
+      this.alert(
+        'warning',
+        'Debe ingresar la Clave de Orden de Servicio para seleccionar los Bienes',
+        ''
+      );
+      return;
+    }
     actas = this.serviceOrdersForm.value.noFormat;
     const actaActual = this.actasDefault;
     const modalConfig = MODAL_CONFIG;
@@ -391,50 +400,17 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     };
 
     let modalRef = this.modalService.show(FindActaComponent, modalConfig);
-    modalRef.content.onSave.subscribe(async (next: any) => {
+    modalRef.content.onSave.subscribe((next: any[] = []) => {
       console.log(next);
       if (next) {
         this.alert(
           'success',
-          'Se Cargó la Información del Acta',
-          next.keysProceedings
+          'Se Cargaron los Bienes relacionados con el Acta',
+          ''
         );
       }
 
-      this.serviceOrdersForm.reset();
-      // this.formScan.reset();
-      const dateElabora =
-        next.elaborationDate != null ? new Date(next.elaborationDate) : null;
-      const formattedfecElaborate =
-        dateElabora != null ? this.formatDate(dateElabora) : null;
-
-      const dateActa =
-        next.datePhysicalReception != null
-          ? new Date(next.datePhysicalReception)
-          : null;
-      const formattedfecActa =
-        dateActa != null ? this.formatDate(dateActa) : null;
-
-      const dateCapture =
-        next.captureDate != null ? new Date(next.captureDate) : null;
-      const formattedfecCapture =
-        dateCapture != null ? this.formatDate(dateCapture) : null;
-
-      this.actasDefault = next;
-      // this.fCreate = this.datePipe.transform(
-      //   next.dateElaborationReceipt,
-      //   'dd/MM/yyyy'
-      // );
-      this.to = this.datePipe.transform(
-        this.serviceOrdersForm.controls['mes'].value,
-        'MM/yyyy'
-      );
-      this.annio = this.datePipe.transform(
-        this.serviceOrdersForm.controls['anio'].value,
-        'MM/yyyy'
-      );
-      this.status = next.statusProceedings;
-      if (this.actasObject.statusProceedings == 'CERRADA') {
+      if (this.serviceOrdersForm.value.status == 'FINALIZADA') {
         this.disabledBtnActas = false;
       } else {
         this.disabledBtnActas = true;
@@ -442,13 +418,8 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
 
       // MAPEAR DATOS DATA NEXT CUANDO CONSULTO ACTAS
       console.log('acta NEXT ', next);
-      this.data1 = next.statusProceedings;
-
-      // this.serviceOrdersForm.get('scanningFoli').patchValue(next.universalFolio);
-      // Pasar clave a esta función
-      // this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
-
-      // await this.getDetailProceedingsDevollution(this.actasDefault.id);
+      this.dataTableGood.load(next);
+      this.dataTableGood.refresh();
     });
     modalRef.content.cleanForm.subscribe(async (next: any) => {
       if (next) {

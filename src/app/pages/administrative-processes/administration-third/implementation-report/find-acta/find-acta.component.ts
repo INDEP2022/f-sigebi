@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -53,6 +60,7 @@ export class FindActaComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private opcion: ModalOptions,
+    private changeDetectorRef: ChangeDetectorRef,
     private convertiongoodService: ConvertiongoodService,
     protected goodprocessService: GoodProcessService,
     private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
@@ -155,35 +163,10 @@ export class FindActaComponent extends BasePage implements OnInit {
     });
   }
 
-  onUserRowSelect(row: any): void {
-    if (row.isSelected) {
-      this.selectedRow = row.data;
-    } else {
-      this.selectedRow = null;
-    }
-
-    console.log(this.selectedRow);
-  }
-
   handleSuccess(): void {
     this.loading = false;
-    // for (const prop in this.selectedRow) {
-    //   if (Object.prototype.hasOwnProperty.call(this.selectedRow, prop)) {
-    //     console.log(`${prop}: ${this.selectedRow[0].idConversion}`);
-    //   }
-    // }
-
-    this.onSave.emit(this.selectedRow);
+    this.onSave.emit(this.selectedGooodsValid);
     this.modalRef.hide();
-    // this.router.navigate(
-    //   ['/pages/administrative-processes/proceedings-conversion'],
-    //   {
-    //     queryParams: {
-    //       origin: 'FACTDBCONVBIEN',
-    //       PAR_IDCONV: Number(this.selectedRow.id),
-    //     },
-    //   }
-    // );
   }
 
   showDeleteMsg($event: any) {
@@ -239,8 +222,19 @@ export class FindActaComponent extends BasePage implements OnInit {
       }
     });
   }
+  selectedGooodsValid: any[] = [];
+  selectedGooods: any[] = [];
 
   ejecutarFuncionDesdeModal(val: boolean) {
     this.sharedService.ejecutarFuncion(val);
+  }
+
+  onUserRowSelect(event: { data: any; selected: any[] }) {
+    this.selectedRow = event.data;
+    this.selectedGooods = event.selected;
+    this.selectedGooodsValid.push(this.selectedRow);
+    console.log(this.selectedGooodsValid);
+    console.log(this.selectedGooods);
+    this.changeDetectorRef.detectChanges();
   }
 }

@@ -34,7 +34,7 @@ export const ACTAS = {
       });
     },
   },
-  numberProceedingss: {
+  numberProceedings: {
     title: 'No. Acta',
     sort: false,
   },
