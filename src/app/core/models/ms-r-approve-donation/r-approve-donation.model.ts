@@ -10,7 +10,7 @@ export interface IRapproveDonation {
   ruleId: number;
   valid: number;
   amount: null;
-  label?: null
+  label?: null;
 }
 export interface ITransferee {
   transferentId: number;
