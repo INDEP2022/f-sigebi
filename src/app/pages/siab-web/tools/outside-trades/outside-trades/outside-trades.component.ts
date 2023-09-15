@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { takeUntil } from 'rxjs';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { OutsideTradesService } from 'src/app/core/services/catalogs/outside-trades.service';
@@ -24,7 +23,8 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
-    private outsideTradesService: OutsideTradesService
+    private outsideTradesService: OutsideTradesService,
+    private modalRef: BsModalRef
   ) {
     super();
   }
@@ -32,14 +32,17 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
   tip: any = [];
   form: FormGroup;
   No_gestion: number = 0;
-  val_no_ges: string;
+  val_no_ges: number;
   tipos_oficio: string;
+  tipos_oficio1: number;
   user: string;
   a: string;
   access: boolean;
   noOFGestion: number;
   sessionInvalid: Boolean;
   maxDate = new Date();
+  noGes: number;
+  valid1: boolean;
 
   ngOnInit(): void {
     this.createForm();
@@ -63,36 +66,42 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
     });
   }
   async getData() {
-    console.log(this.authService.decodeToken());
+    //console.log(this.authService.decodeToken());
     //verificar si la autenticacion es correcta
     if (this.authService.decodeToken().azp === 'indep-auth') {
-      this.activatedRoute.queryParams
+      /*this.activatedRoute.queryParams
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(params => {
           this.val_no_ges = params['NoGestion']
             ? String(params['NoGestion'])
             : null;
-        });
+        });*/
 
-      // this.a = localStorage.getItem("VEROFICIOS"); // no se en el Token que exactamente seria el veroficios--- this.authService.decodeToken().exp
-      this.a = 'XD'; // no se en el Token que exactamente seria el veroficios--- this.authService.decodeToken().exp
-      this.val_no_ges = '404562';
+      this.a = localStorage.getItem('VEROFICIOS'); // no se en el Token que exactamente seria el veroficios--- this.authService.decodeToken().exp
+      //this.a = 'XD'; // no se en el Token que exactamente seria el veroficios--- this.authService.decodeToken().exp
+      if (this.noGes) {
+        this.val_no_ges = this.noGes;
+      } else {
+        this.val_no_ges = null;
+      }
       console.log('this.a', this.a);
       try {
-        if (this.val_no_ges == null || this.val_no_ges == '') {
+        if (this.val_no_ges == null) {
           if (this.a === 'SIABWEB') {
             //
             //
-            this.router.navigate([`/auth/login`]);
-            //this.router.navigate([`/pages/home`]);
+            this.router.navigate([`/pages/siab-web/tools/property`]);
             //
             //
           }
           if (this.a === 'SAT-SAE') {
+            localStorage.setItem('ficha', 'sificha');
             //
-            //
-            this.router.navigate([`/auth/login`]);
-            //this.router.navigate([`/pages/home`]);
+            this.alert(
+              'warning',
+              'Advertencia',
+              'La Pagina a la que Direcciona no se Encuentra Disponible'
+            );
             //
             //
           }
@@ -109,9 +118,7 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
           );
         } else {
           this.sessionInvalid = true;
-          this.No_gestion = JSON.parse(this.val_no_ges);
-          this.noOFGestion = JSON.parse(this.val_no_ges);
-          this.tip = await this.getTipoOficio(this.noOFGestion);
+          this.tip = await this.getTipoOficio(this.val_no_ges);
           this.tipos_oficio = this.tip;
           console.log(this.tipos_oficio);
 
@@ -156,9 +163,11 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
             //
             //
             localStorage.setItem('ficha', 'sificha');
-            console.log('aqui');
-            //this.router.navigate([`/auth/login`]);
-            //this.router.navigate([`/pages/home`]);
+            this.alert(
+              'warning',
+              'Advertencia',
+              'La Pagina a la que Direcciona no se Encuentra Disponible'
+            );
             //
             //
           }
@@ -171,9 +180,7 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
           if (this.tipos_oficio == 'INTERNO') {
             //
             //
-            console.log('aqui');
-            // this.router.navigate([`/auth/login`]);
-            //this.router.navigate([`/pages/home`]);
+            this.router.navigate([`/pages/siab-web/tools/inside-trades`]);
             //
             //
           }
@@ -182,14 +189,13 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
         //
         //
         localStorage.setItem('Violation', 'false');
-        console.log('aqui');
         this.onLoadToast(
           'warning',
           'Advertencia',
           'Lo Sentimos no se ha Obtenido Toda la Información'
         );
-        //this.router.navigate([`/auth/login`]);
-        //this.router.navigate([`/pages/home`]);
+
+        this.router.navigate([`/pages/siab-web/tools/property`]);
         //
         //
       }
@@ -321,6 +327,6 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
     });
   }
   goBack() {
-    window.history.back();
+    this.modalRef.hide();
   }
 }

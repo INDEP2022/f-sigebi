@@ -8,6 +8,7 @@ import { IIndicatorParameter } from '../../models/ms-parametergood/indicator-par
   providedIn: 'root',
 })
 export class IndicatorsParametersService extends HttpService {
+  private route: string = ParameterGoodEndpoints.RNomencla;
   constructor() {
     super();
     this.microservice = ParameterGoodEndpoints.BasePath;
@@ -15,5 +16,9 @@ export class IndicatorsParametersService extends HttpService {
 
   getAll(params?: _Params): Observable<IListResponse<IIndicatorParameter>> {
     return this.get('indicators-parameter', params);
+  }
+  getRNomencla(del: number) {
+    const route = `${ParameterGoodEndpoints.RNomencla}/${del}`;
+    return this.get<IListResponse<any>>(route);
   }
 }

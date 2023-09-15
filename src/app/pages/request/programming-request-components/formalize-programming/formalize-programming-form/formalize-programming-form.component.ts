@@ -1572,7 +1572,7 @@ export class FormalizeProgrammingFormComponent
                 const sendGoodInventary = await this.sendGoodsGuardInventary();
                 if (sendGoodInventary) {
                   const updateGoodStatus = await this.updateStatusGoodReceipt();
-                  /* this.alertInfo(
+                  this.alertInfo(
                     'success',
                     'Acción correcta',
                     'Se cerro la tarea formalizar entrega correctamente'
@@ -1582,7 +1582,7 @@ export class FormalizeProgrammingFormComponent
                         'pages/siab-web/sami/consult-tasks',
                       ]);
                     }
-                  }); */
+                  });
                 }
               }
             }

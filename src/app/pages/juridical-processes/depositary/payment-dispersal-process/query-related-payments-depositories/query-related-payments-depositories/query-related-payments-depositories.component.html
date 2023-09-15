@@ -354,22 +354,78 @@
         Generando el Reporte de Estado de Cuenta, Espere un momento...
       </div>
       <div class="col-md-12 alert alert-info" *ngIf="loadingSirsaeProcess">
-        Realizando Proceso de Env&oacute; SIRSAE para el registro
-        <strong>
+        Realizando el Proceso de Env&oacute; SIRSAE
+        <!-- para el registro -->
+        <!-- <strong>
           {{ currentItemSirsae }}
         </strong>
-        de <strong> {{ totalItemsSirsae }}</strong
-        >, Espere un momento...
+        de <strong> {{ totalItemsSirsae }}</strong> -->
+        , Espere un momento...
+        <div
+          class="progress row"
+          role="progressbar"
+          aria-label="Envio Sirsae"
+          style="background-color: lightgrey"
+          [attr.aria-valuenow]="
+            (currentItemSirsae / totalItemsSirsae) * 100 | number : '1.0-0'
+          "
+          aria-valuemin="0"
+          aria-valuemax="100">
+          <div
+            class="progress-bar bg-info"
+            [style.width]="
+              ((currentItemSirsae / totalItemsSirsae) * 100
+                | number : '1.0-0') + '%'
+            ">
+            {{
+              (currentItemSirsae / totalItemsSirsae) * 100 | number : '1.0-0'
+            }}%
+          </div>
+        </div>
+        <!-- <ul class="list-group list-group-flush">
+          <div class="list-group-item">
+          </div>
+        </ul> -->
       </div>
       <div
-        class="col-md-12 alert alert-success"
+        class="col-md-12 alert alert-success alert-dismissible fade show"
+        role="alert"
         *ngIf="errorSirSae > 0 && !loadingSirsaeProcess">
+        <button
+          (click)="closeSendSirsae()"
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"></button>
+        <br />
+        <div
+          class="progress row"
+          role="progressbar"
+          aria-label="Envio Sirsae"
+          style="background-color: lightgrey"
+          [attr.aria-valuenow]="
+            (currentItemSirsae / totalItemsSirsae) * 100 | number : '1.0-0'
+          "
+          aria-valuemin="0"
+          aria-valuemax="100">
+          <div
+            class="progress-bar bg-info"
+            [style.width]="
+              ((currentItemSirsae / totalItemsSirsae) * 100
+                | number : '1.0-0') + '%'
+            ">
+            {{
+              (currentItemSirsae / totalItemsSirsae) * 100 | number : '1.0-0'
+            }}%
+          </div>
+        </div>
         Se T&eacute;rmino el Proceso de Env&oacute; SIRSAE, a continuación puede
-        descargar un resumen del Proceso. Se procesaron
+        descargar un resumen del Proceso.
+        <!-- Se procesaron
         <strong>
           {{ currentItemSirsae }}
         </strong>
-        de <strong> {{ totalItemsSirsae }}</strong> Registros.
+        de <strong> {{ totalItemsSirsae }}</strong> Registros. -->
         <button
           [disabled]="loadingSirsaeProcess"
           type="button"

@@ -172,7 +172,7 @@ export class GoodsCaptureMain extends BasePage {
   }
 
   protected showError(message: string) {
-    this.onLoadToast('error', 'Error', message);
+    this.onLoadToast('warning', 'Atención', message);
   }
 
   isCalledFrom(origin: string): boolean {

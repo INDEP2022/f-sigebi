@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GoodProcessPoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
 import { HttpService } from 'src/app/common/services/http.service';
+import { INotifyDTO } from '../models/expense-good-process';
 
 @Injectable({
   providedIn: 'root',
@@ -21,5 +22,9 @@ export class ExpenseGoodProcessService extends HttpService {
       pEvento,
       pRetenido,
     });
+  }
+
+  NOTIFICAR(body: INotifyDTO) {
+    return this.post('application/fcomer084', body);
   }
 }
