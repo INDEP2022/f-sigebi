@@ -1,22 +1,31 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const CONTROLSERVICEORDERS_COLUMNS = {
   serviceOrder: {
     title: 'Orden de Servicio',
     width: '10%',
     sort: false,
   },
-  dateCapture: {
+  captureDate: {
     title: 'Fecha Captura',
     width: '10%',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   status: {
-    title: 'Estatus',
+    title: 'Estado',
     width: '10%',
     sort: false,
   },
   noProcess: {
-    title: 'No.Proceso',
-    width: '10%',
+    title: 'No. Proceso',
+    width: '5%',
     sort: false,
   },
   process: {
@@ -26,7 +35,7 @@ export const CONTROLSERVICEORDERS_COLUMNS = {
   },
   noRegionalDelegation: {
     title: 'No. Delegación Regional',
-    width: '10%',
+    width: '5%',
     sort: false,
   },
   regionalDelegation: {
@@ -36,7 +45,7 @@ export const CONTROLSERVICEORDERS_COLUMNS = {
   },
   implementationReport: {
     title: 'Reporte Implementación',
-    width: '10%',
+    width: '5%',
     sort: false,
   },
 };

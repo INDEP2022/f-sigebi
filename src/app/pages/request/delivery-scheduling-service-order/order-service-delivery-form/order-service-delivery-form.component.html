@@ -105,8 +105,11 @@
     </div>
 
     <app-order-service-form
-      [op]="task"
-      [showForm]="showForm"></app-order-service-form>
+      *ngIf="orderServiceId != null"
+      [ordServform]="ordServForm"
+      [op]="op"
+      [showForm]="showForm"
+      [total]="total"></app-order-service-form>
 
     <div
       *ngIf="(task != 5 && task != 6 && task != 7 && task != 10) || task == 10">
@@ -115,7 +118,10 @@
         [showForm]="showForm"></app-classificate-vehicle-form>
     </div>
 
-    <app-comments-form [op]="task" [showForm]="showForm"></app-comments-form>
+    <app-comments-form
+      [ordServform]="ordServForm"
+      [op]="op"
+      [showForm]="showForm"></app-comments-form>
 
     <app-event-detail-form [op]="task"></app-event-detail-form>
 

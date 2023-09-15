@@ -6,7 +6,15 @@ import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.i
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IPupProcDisp, IPupProcEnvSirsae, IPupProcReproc, IPupProcSelReproceso, IPupProcSeldisp, IPupProcSelsirsae, IPupValidateMandatoNfac } from './models-lots';
+import {
+  IPupProcDisp,
+  IPupProcEnvSirsae,
+  IPupProcReproc,
+  IPupProcSeldisp,
+  IPupProcSelReproceso,
+  IPupProcSelsirsae,
+  IPupValidateMandatoNfac,
+} from './models-lots';
 
 interface IValidateStatus {
   val: string | number;
@@ -402,25 +410,23 @@ export class LotService extends HttpService {
     return this.post('apps/pup-proc-disp', body);
   }
 
-  comerLotsClientsPayrefSum(idEvent: string | number){
-    return this.get(`apps/get-comer-lots-clients-payref-sum/${idEvent}`)
+  comerLotsClientsPayrefSum(idEvent: string | number) {
+    return this.get(`apps/get-comer-lots-clients-payref-sum/${idEvent}`);
   }
 
-  pupProcEnvSirsae(body: IPupProcEnvSirsae){
-    return this.post(`apps/pup-proc-env-sirsae`, body)
+  pupProcEnvSirsae(body: IPupProcEnvSirsae) {
+    return this.post(`apps/pup-proc-env-sirsae`, body);
   }
 
-  pupProcReproc(body: IPupProcReproc){
-    return this.post('apps/pup-proc-reproc',body)
+  pupProcReproc(body: IPupProcReproc) {
+    return this.post('apps/pup-proc-reproc', body);
   }
 
-  pupProcSelsirsae(body: IPupProcSelsirsae){
-    return this.post('apps/pup-proc-selsirsae', body)
+  pupProcSelsirsae(body: IPupProcSelsirsae) {
+    return this.post('apps/pup-proc-selsirsae', body);
   }
 
-  pupProcSelReproceso(body: IPupProcSelReproceso){
-    return this.post('apps/pup-proc-selreproceso', body)
+  pupProcSelReproceso(body: IPupProcSelReproceso) {
+    return this.post('apps/pup-proc-selreproceso', body);
   }
-
-
 }

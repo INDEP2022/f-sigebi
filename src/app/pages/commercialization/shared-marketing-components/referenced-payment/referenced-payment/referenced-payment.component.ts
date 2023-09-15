@@ -557,6 +557,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     this.searchWithEvent = false;
     this.cargado2 = false;
     this.cargado = false;
+    this.settingColumns();
     this.getBanks(new ListParams());
     this.getComerEvents(new ListParams());
   }
@@ -1218,6 +1219,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         Promise.all(result).then(resp => {
           this.alert('success', 'Registros guardados correctamente', '');
           this.form2.reset();
+          this.settingColumns();
           this.dataCargada.load([]);
           this.dataCargada.setSort([{ field: 'paymentId', direction: 'asc' }]);
           this.dataCargada.refresh();
@@ -1477,5 +1479,10 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         },
       });
     });
+  }
+
+  settingColumns() {
+    this.settings.columns = COLUMNS;
+    this.settings2.columns = COLUMNS_CARGADOS;
   }
 }

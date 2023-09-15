@@ -896,11 +896,60 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       }
       if (data.CANTIDAD_SAE) {
         try {
-          good.cantidad_sae = Number(data.CANTIDAD_SAE);
+          const unitsMedConv: any = await this.getUnitsMedConv(
+            data.UNIDAD_MEDIDA_TRASFERENTE
+          );
+
+          let unidadSae: any = '';
+          unidadSae = await this.unitMeasures(data.UNIDAD_MEDIDA_SAE);
+          const unitsView = unitsMedConv.find(
+            (val: any) => val.nbCode === unidadSae
+          );
+          if (unitsView.tpUnitGreater == 'N') {
+            if (
+              Number(data.CANTIDAD_TRASFERENTE) <= Number(data.CANTIDAD_SAE)
+            ) {
+              good.cantidad_sae = Number(data.CANTIDAD_SAE);
+            } else {
+              good.cantidad_sae = 0;
+              good.observaciones =
+                good.observaciones != null
+                  ? good.observaciones
+                  : '' +
+                    ', La cantidad INDEP debe ser menor o igual ala cantidad';
+            }
+          } else {
+            good.cantidad_sae = Number(data.CANTIDAD_SAE);
+          }
+          if (unitsView.decimals == 'N') {
+            const numero = parseInt(data.CANTIDAD_SAE, 10);
+            if (!isNaN(numero) && Number.isInteger(numero)) {
+              good.cantidad_sae = Number(data.CANTIDAD_SAE);
+            } else {
+              good.cantidad_sae = 0;
+              good.observaciones =
+                good.observaciones != null
+                  ? good.observaciones
+                  : '' + ', No se puede convertir la cantidad INDEP ';
+            }
+          } else {
+            const numero = parseFloat(data.CANTIDAD_SAE);
+            if (!isNaN(numero)) {
+              good.cantidad_sae = Number(data.CANTIDAD_SAE);
+            } else {
+              good.cantidad_sae = 0;
+              good.observaciones =
+                good.observaciones != null
+                  ? good.observaciones
+                  : '' + ', No se puede convertir la cantidad INDEP ';
+            }
+          }
         } catch (error) {
           good.cantidad_sae = 0;
           good.observaciones =
-            good.observaciones + ', No se puede convertir la cantidad INDEP';
+            good.observaciones != null
+              ? good.observaciones
+              : '' + ', No se puede convertir la cantidad INDEP ';
           console.log(good.observaciones);
         }
       } else {
@@ -914,18 +963,36 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         good.unidad_medida = '';
       }
       if (data.UNIDAD_MEDIDA_SAE) {
+        const unitsMedConv: any = await this.getUnitsMedConv(
+          data.UNIDAD_MEDIDA_TRASFERENTE
+        );
         console.log(data.UNIDAD_MEDIDA_SAE);
+
         let unidadSae: any = '';
         unidadSae = await this.unitMeasures(data.UNIDAD_MEDIDA_SAE);
+        const unitsView = unitsMedConv.find(
+          (val: any) => val.nbCode === unidadSae
+        );
+        console.log(unitsView);
         console.log(unidadSae);
         if (unidadSae == '0') {
           good.unidad_medida_sae = '';
           good.observaciones =
-            good.observaciones + ', Se necesita una Unidad de Medida INDEP';
+            good.observaciones != null
+              ? good.observaciones
+              : '' + ', Se necesita una Unidad de Medida INDEP ';
           console.log(good.observaciones);
         } else {
-          console.log(unidadSae);
-          good.unidad_medida_sae = unidadSae;
+          if (unitsView) {
+            console.log(unidadSae);
+            good.unidad_medida_sae = unidadSae;
+          } else {
+            good.unidad_medida_sae = '';
+            good.observaciones =
+              good.observaciones != null
+                ? good.observaciones
+                : '' + ', Se necesita una Unidad de Medida valida ';
+          }
         }
       } else {
         good.unidad_medida_sae = '';
@@ -972,7 +1039,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         } else {
           good.observaciones =
             good.observaciones +
-            ', No se encuentra el estado de conservación INDEP';
+            ', No se encuentra el estado de conservación INDEP ';
           good.estado_conservacion_sae = 0;
           console.log(good.observaciones);
         }
@@ -999,7 +1066,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
           good.destino_sae = destinoSae;
         } else {
           good.observaciones =
-            good.observaciones + ', No se encuentra destino INDEP';
+            good.observaciones + ', No se encuentra destino INDEP ';
           good.destino_sae = 0;
           console.log(good.observaciones);
         }
@@ -1043,7 +1110,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       let result: string = '';
       let coma: string = '';
       if (
-        data.unidad_medida_sae.toUpperCase() != 'KG' ||
+        data.unidad_medida_sae.toUpperCase() != 'KG' &&
         data.unidad_medida_sae.toUpperCase() != 'LT'
       ) {
         let cantidasae: number = 0;
@@ -1154,6 +1221,21 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.applicationGoodsQueryService.getAllUnitsQ(params).subscribe({
         next: resp => {
           res(resp.data[0].uom_code);
+        },
+        error: eror => {
+          res('0');
+          console.log(eror);
+        },
+      });
+    });
+  }
+  async getUnitsMedConv(unit: string) {
+    return new Promise((res, rej) => {
+      const params = new ListParams();
+      params['filter.unit'] = `$eq:${unit}`;
+      this.strategyServiceService.getUnitsMedXConv(params).subscribe({
+        next: resp => {
+          res(resp.data);
         },
         error: eror => {
           res('0');
