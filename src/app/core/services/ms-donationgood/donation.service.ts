@@ -92,7 +92,6 @@ export class DonationService
   }
   editApproveDonation(data: any) {
     return this.put(DonationEndPoint.ApproveDonation, data);
-
   }
   getDonationRequest(requestId: number) {
     return this.get(`/donac-request-good?filter.requestId.id=$eq:${requestId}`);
