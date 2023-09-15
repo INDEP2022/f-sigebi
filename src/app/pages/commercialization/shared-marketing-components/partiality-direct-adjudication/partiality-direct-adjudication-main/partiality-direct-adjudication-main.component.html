@@ -3,6 +3,19 @@
     <h5 class="title">Adjudicaciones Directas en Paricialidades</h5>
   </div>
   <div body>
+    <div
+      class="row row-cols-sm-1 row row-cols-1 row-cols-md-2 row row-cols-lg-3 row-cols-xl-4 g-3">
+      <form class="form-material" [formGroup]="licitacionForm">
+        <form-field
+          [control]="licitacionForm.get('licitacionNumber')"
+          label="Id. Licitación">
+          <input
+            type="number"
+            formControlName="licitacionNumber"
+            class="form-control" />
+        </form-field>
+      </form>
+    </div>
     <div class="md-tabs mt-n3" #tabsContainer>
       <tabset #directAdjudicationTabs>
         <tab heading="Adjudicaciones" id="adjudicationTab">
@@ -12,7 +25,7 @@
               <div class="col">
                 <button
                   class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
-                  (click)="(true)">
+                  (click)="generarAdjudicacion()">
                   Generar Adjudicación
                 </button>
               </div>
@@ -193,6 +206,7 @@
                         label="No. Parcialidades">
                         <input
                           type="number"
+                          maxlength="9"
                           formControlName="partialityQuantity"
                           class="form-control" />
                       </form-field>
@@ -466,6 +480,7 @@
                   label="No. Parcialidades">
                   <input
                     type="number"
+                    maxlength="9"
                     formControlName="partialityQuantity"
                     class="form-control" />
                 </form-field>
@@ -476,6 +491,7 @@
                   label="Porcentaje Anticipo">
                   <input
                     type="number"
+                    maxlength="6"
                     formControlName="advancePercent"
                     class="form-control" />
                 </form-field>
@@ -486,6 +502,7 @@
                   label="Monto Venta">
                   <input
                     type="number"
+                    maxlength="15"
                     formControlName="saleAmount"
                     class="form-control" />
                 </form-field>
@@ -498,6 +515,7 @@
                   label="Puntos Porcentuales">
                   <input
                     type="number"
+                    maxlength="20"
                     formControlName="percentPoints"
                     class="form-control" />
                 </form-field>
@@ -508,6 +526,7 @@
                   label="Días Moratorios">
                   <input
                     type="number"
+                    maxlength="20"
                     formControlName="moratoriumDays"
                     class="form-control" />
                 </form-field>
@@ -518,6 +537,7 @@
                   label="Número de Pago">
                   <input
                     type="number"
+                    [maxlength]="2"
                     formControlName="paymentNumber"
                     class="form-control" />
                 </form-field>

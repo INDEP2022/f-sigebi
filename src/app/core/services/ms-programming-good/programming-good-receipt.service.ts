@@ -105,4 +105,9 @@ export class ProgrammingGoodReceiptService extends HttpService {
     const route = `${ProgrammingGoodEndpoints.tmpEstGoods}?filter.itsTUser=$ilike:${user}&filter.valGood=$eq:1`;
     return this.get(route);
   }
+
+  paEstProgTransBie(params: any) {
+    const route = `${ProgrammingGoodEndpoints.paEstProgTransBie}`;
+    return this.post(route, params);
+  }
 }

@@ -19,11 +19,13 @@ import { ExcelService } from 'src/app/common/services/excel.service';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
 import { IGoodCharge } from 'src/app/core/models/ms-good/good';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { ComerSaleService } from 'src/app/core/services/ms-comersale/comer-sale.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { CommercialSalesForm } from '../../consultation-goods-commercial-process-tabs/utils/commercial-sales-form';
 
 @Component({
@@ -42,7 +44,11 @@ export class ConsultationGoodsCommercialSalesComponent
   eventTypes = new DefaultSelect();
   transferents = new DefaultSelect();
   delegations = new DefaultSelect();
-
+  good = new DefaultSelect();
+  Event = new DefaultSelect();
+  status: any = [];
+  transferent: any = [];
+  event: any = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   newLimit = new FormControl(10);
@@ -60,10 +66,13 @@ export class ConsultationGoodsCommercialSalesComponent
     private excelService: ExcelService,
     private comerSaleService: ComerSaleService,
     private goodService: GoodService,
+    private readonly goodServices: GoodService,
     private comerEventService: ComerEventosService,
     private comerTypeEventService: ComerTpEventosService,
     private transferentService: TransferenteService,
-    private delegationService: DelegationService
+    private delegationService: DelegationService,
+    private stationService: StationService,
+    private ComerEvent: ComerEventService
   ) {
     super();
     this.settings = {
@@ -81,6 +90,8 @@ export class ConsultationGoodsCommercialSalesComponent
         this.executeConsult('pag');
       }
     });
+    this.getTransSelect(new DefaultSelect());
+    this.getEventSelect(new DefaultSelect());
   }
 
   getData() {
@@ -224,10 +235,6 @@ export class ConsultationGoodsCommercialSalesComponent
     return this.form.get('goodNumber');
   }
 
-  get descGood() {
-    return this.form.get('descGood');
-  }
-
   get expedientNumber() {
     return this.form.get('expedientNumber');
   }
@@ -254,10 +261,6 @@ export class ConsultationGoodsCommercialSalesComponent
 
   get eventId() {
     return this.form.get('eventId');
-  }
-
-  get descEvent() {
-    return this.form.get('descEvent');
   }
 
   get eventTp() {
@@ -374,9 +377,6 @@ export class ConsultationGoodsCommercialSalesComponent
     this.goodNumber.value != null
       ? (model.goodNumber = this.goodNumber.value)
       : '';
-    this.descGood.value != null
-      ? (model.descriptionGood = this.descGood.value)
-      : '';
     this.expedientNumber.value != null
       ? (model.expedientNumber = this.expedientNumber.value)
       : '';
@@ -479,5 +479,124 @@ export class ConsultationGoodsCommercialSalesComponent
       bytes[i] = binaryString.charCodeAt(i);
     }
     return bytes.buffer;
+  }
+
+  getGoodSelect(params: ListParams) {
+    const val = this.form.get('goodNumber').value;
+
+    if (val === null) {
+      const searchValue = params['search'];
+
+      if (typeof searchValue === 'number' || !isNaN(Number(searchValue))) {
+        params['filter.goodId'] = Number(searchValue);
+        delete params['text'];
+        delete params['search'];
+      } else if (typeof searchValue === 'string') {
+        params['filter.description'] = `$ilike:${searchValue}`;
+        delete params['text'];
+        delete params['search'];
+      }
+    } else {
+      params['filter.goodId'] = val;
+    }
+
+    console.log(val);
+
+    console.log(params['search']);
+    this.goodServices.getByExpedientAndParams__(params).subscribe(
+      (response: any) => {
+        console.log('rrr', response);
+        this.status = response.data.map(async (item: any) => {
+          item['tipoSupbtipoDescription'] =
+            item.goodId + ' - ' + item.description;
+          return item; // Asegurarse de devolver el item modificado.
+        });
+
+        Promise.all(this.status).then((resp: any) => {
+          this.good = new DefaultSelect(response.data, response.count);
+          console.log(this.status);
+          console.log(this.good);
+
+          this.loading = false; // Colocar el loading en false después de mostrar los datos.
+        });
+
+        console.log(response);
+      },
+      error => {
+        console.log('ERR', error);
+      }
+    );
+  }
+
+  getTransSelect(params: ListParams) {
+    this.stationService.getTransfers(params).subscribe(
+      (response: any) => {
+        console.log('rrr', response);
+        this.transferent = response.data.map(async (item: any) => {
+          item['tipoSupbtipoDescription'] =
+            item.id + ' - ' + item.nameTransferent;
+          return item; // Asegurarse de devolver el item modificado.
+        });
+
+        Promise.all(this.transferent).then((resp: any) => {
+          this.transferents = new DefaultSelect(response.data, response.count);
+          console.log(this.transferent);
+          console.log(this.transferents);
+
+          this.loading = false; // Colocar el loading en false después de mostrar los datos.
+        });
+
+        console.log(response);
+      },
+      error => {
+        console.log('ERR', error);
+      }
+    );
+  }
+
+  getEventSelect(params: ListParams) {
+    const val = this.form.get('goodNumber').value;
+
+    if (val === null) {
+      const searchValue = params['search'];
+
+      if (typeof searchValue === 'number' || !isNaN(Number(searchValue))) {
+        params['filter.id'] = Number(searchValue);
+        delete params['text'];
+        delete params['search'];
+      } else if (typeof searchValue === 'string') {
+        params['filter.processKey'] = `$ilike:${searchValue}`;
+        delete params['text'];
+        delete params['search'];
+      }
+    } else {
+      params['filter.goodId'] = val;
+    }
+
+    console.log(val);
+
+    console.log(params['search']);
+    this.ComerEvent.getAllFilter2(params).subscribe(
+      (response: any) => {
+        console.log('rrr', response);
+        this.event = response.data.map(async (item: any) => {
+          item['tipoSupbtipoDescription'] = item.id + ' - ' + item.processKey;
+          return item; // Asegurarse de devolver el item modificado.
+        });
+
+        Promise.all(this.event).then((resp: any) => {
+          this.Event = new DefaultSelect(response.data, response.count);
+          console.log(this.event);
+          console.log(this.Event);
+
+          this.loading = false; // Colocar el loading en false después de mostrar los datos.
+        });
+
+        console.log(response);
+      },
+      error => {
+        console.log('ERR', error);
+      }
+    );
   }
 }

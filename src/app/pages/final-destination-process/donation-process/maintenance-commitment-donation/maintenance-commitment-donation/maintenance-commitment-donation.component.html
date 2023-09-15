@@ -9,19 +9,31 @@
     <div class="md-tabs">
       <tabset>
         <tab heading="COM. EXTERIOR KG">
-          <app-data-table [type]="1"> </app-data-table>
+          <div class="col-sm-12 col-12 col-md-12 p-1">
+            <h6>Comercio Exterior Kg</h6>
+          </div>
+          <app-data-table [type]="1" [attr.class]="'table-bordered table-responsive'">
+          </app-data-table>
         </tab>
-
         <tab heading="DELITOS FEDERALES">
-          <app-data-table [type]="2"> </app-data-table>
+          <div class="col-sm-12 col-12 col-md-12 p-1">
+            <h6>Delitos Federales</h6>
+          </div>
+          <app-data-table [type]="2" [attr.class]="'table-bordered table-responsive'"> </app-data-table>
         </tab>
 
         <tab heading="OTROS TRANS.">
-          <app-data-table [type]="3"> </app-data-table>
+          <div class="col-sm-12 col-12 col-md-12 p-1">
+            <h6>Otros Transferentes</h6>
+          </div>
+          <app-data-table [type]="3" [attr.class]="'table-bordered table-responsive'"> </app-data-table>
         </tab>
 
         <tab heading="PERMISOS RASTREADOR">
-          <app-data-table [type]="4"> </app-data-table>
+          <div class="col-sm-12 col-12 col-md-12 p-1">
+            <h6>Permisos de Usuarios para Rastreador</h6>
+          </div>
+          <app-data-table [type]="4" [attr.class]="'table-bordered table-responsive'"> </app-data-table>
         </tab>
       </tabset>
     </div>

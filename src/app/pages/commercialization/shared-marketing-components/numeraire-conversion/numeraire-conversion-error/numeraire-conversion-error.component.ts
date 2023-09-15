@@ -23,4 +23,11 @@ export class NumeraireConversionErrorComponent
       columns: { ...EVENTO_ERROR_COLUMNS },
     };
   }
+
+  override getField(filter: any) {
+    console.log(filter);
+    return filter.field === 'lotePublico'
+      ? `filter.lots.lotPublic`
+      : `filter.${filter.field}`;
+  }
 }

@@ -59,17 +59,19 @@ export class RegistrationInventoriesDonationComponent
 
   selectedRows: any[] = [];
 
-  flagConf: boolean = false;
+  flagConf: boolean = true;
   flagGenera: boolean = false;
-  flagFilter: boolean = false;
-  flagGoods: boolean = false;
-  flagTracker: boolean = false;
-  flagTrigger: boolean = false;
+  flagFilter: boolean = true;
+  flagGoods: boolean = true;
+  flagTracker: boolean = true;
+  flagTrigger: boolean = true;
 
   V_PANTALLA = 'FDONAC_DIRECT';
   V_ESTATUS_FINAL: string;
 
   V_CONT: number;
+
+  flagCount: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -175,14 +177,14 @@ export class RegistrationInventoriesDonationComponent
             }
           });
           this.params = this.pageFilter(this.params);
-          this.listGoods();
+          this.listGoods(this.flagCount);
           let i = 0;
           console.log('entra ', i++);
         }
       });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.listGoods());
+      .subscribe(() => this.listGoods(this.flagCount));
   }
 
   initForm() {
@@ -357,47 +359,19 @@ export class RegistrationInventoriesDonationComponent
     //     this.listGoods();
     //   },
     // });
-    this.listGoods();
+    this.listGoods(this.flagCount);
   }
 
-  listGoods() {
-    this.goods = [];
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-    console.log('Params Filter-> ', params);
-    this.loading = true;
-    this.goodprocessService.getAvailableGoods(params).subscribe({
-      next: response => {
-        console.log('getAvailableGoods-> ', response);
-        for (let i = 0; i < response.data.length; i++) {
-          if (response.data != null && response.data != undefined) {
-            console.log('ingresa data -> ');
-            let dataB = {
-              noBien: response.data[i].noBien,
-              description: response.data[i].description,
-              cantidad: response.data[i].cantidad,
-              noExpediente: response.data[i].noExpediente,
-              unidad: response.data[i].unidad,
-              sssubtipo: response.data[i].sssubtipo,
-              delAdministra: response.data[i].delAdministra,
-              almacen: response.data[i].almacen,
-              estatus: response.data[i].estatus,
-            };
-            console.log('data ', dataB);
-            this.goods.push(dataB);
-            this.data.load(this.goods);
-            this.data.refresh();
-            this.totalItems = response.count;
-            this.loading = false;
-          }
-        }
-      },
-      error: err => {
-        this.loading = false;
-      },
-    });
+  getallCondition() {
+    this.flagCount = true;
+    this.listGoods(this.flagCount);
+  }
+
+  listGoods(flagCount: boolean) {
+    if (flagCount != true) {
+      return;
+    }
+    this.countRegister();
   }
 
   resetForm() {
@@ -473,12 +447,49 @@ export class RegistrationInventoriesDonationComponent
         'No se Puede Generar la Solicitud sin Bienes Seleccionados, ni Donatario Especificado.'
       );
     } else {
-      //Falta por integrar
-      this.ActualizacionInventario();
+      const { requestId, requestDate, authorizeType } = this.form.value;
+      if (requestId != null) {
+        let token = this.authService.decodeToken();
+
+        let params = {
+          pRequestId: requestId,
+          pRequestDate: requestDate,
+          pGoodNumber: Number(this.selectedRows[0].noBien),
+          pStatus: this.selectedRows[0].estatus,
+          pScreem: 'FDONAC_DIRECT',
+          pUser: token.username,
+          blkctrl: this.selectedRows,
+        };
+        let data = {
+          pRequestId: requestId,
+          pGoodNumber: Number(this.selectedRows[0].noBien),
+          pStatus: this.selectedRows[0].estatus,
+          pUser: token.username,
+        };
+        this.pupDeleteDetail(data);
+        this.ActualizacionInventario(params);
+      } else {
+        this.alert('warning', '', 'Se Requiere el Campo Id Solicitud');
+      }
     }
   }
 
-  ActualizacionInventario() {}
+  ActualizacionInventario(data: any) {
+    this.donationService.postUpdateStore(data).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp ActualizacionInventario-> ', resp);
+        this.alert('success', '', 'Solicitud Generada/Modificada.');
+      }
+    });
+  }
+
+  pupDeleteDetail(data: any) {
+    this.donationService.postDeleteDetail(data).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp pupDeleteDetail', resp);
+      }
+    });
+  }
 
   statusXPantalla(params?: _Params) {
     this.statusXScreenService.getList(params).subscribe(
@@ -539,7 +550,7 @@ export class RegistrationInventoriesDonationComponent
         if (resp != null && resp != undefined) {
           console.log('goodsSave-> ', resp);
           window.scrollTo(0, 0);
-          this.listGoods();
+          this.listGoods(this.flagCount);
         }
       },
       error => {
@@ -656,5 +667,73 @@ export class RegistrationInventoriesDonationComponent
         'Para Poder Autorizar la Solicitud es Necesario Haber Generado un Paquete Previamente Además de que los Campos Solicitud, Donatario, Fecha de Solicitud y Justificación Tengan Valor.'
       );
     }
+  }
+
+  changeData() {
+    this.goods = [];
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    console.log('Params Filter-> ', params);
+    this.loading = true;
+    this.goodprocessService.getAvailableGoods(params).subscribe({
+      next: response => {
+        console.log('getAvailableGoods-> ', response);
+        for (let i = 0; i < response.data.length; i++) {
+          if (response.data != null && response.data != undefined) {
+            console.log('ingresa data -> ');
+            let dataB = {
+              noBien: response.data[i].noBien,
+              description: response.data[i].description,
+              cantidad: response.data[i].cantidad,
+              noExpediente: response.data[i].noExpediente,
+              unidad: response.data[i].unidad,
+              sssubtipo: response.data[i].sssubtipo,
+              delAdministra: response.data[i].delAdministra,
+              almacen: response.data[i].almacen,
+              estatus: response.data[i].estatus,
+            };
+            console.log('data ', dataB);
+            this.goods.push(dataB);
+            this.data.load(this.goods);
+            this.data.refresh();
+            this.totalItems = response.count;
+            this.loading = false;
+          }
+        }
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+  }
+
+  countRegister() {
+    this.goodprocessService.getUniRegister().subscribe(
+      resp => {
+        if (resp != null && resp != undefined) {
+          console.log('Resp countService-> ', resp);
+          if (resp.data[0].count > 1000) {
+            this.alertQuestion(
+              'question',
+              'Rastreador de bienes',
+              'Se recuperarán ' +
+                resp.data[0].count +
+                ' registros (¿Deseas continuar?)'
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.changeData();
+              }
+            });
+          } else {
+            this.changeData();
+          }
+        }
+      },
+      error => {
+        console.log('Error countService-> ', error);
+      }
+    );
   }
 }
