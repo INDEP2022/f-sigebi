@@ -94,6 +94,7 @@ export enum GoodFinderEndpoint {
   AssignDomicilie = 'good-query/update-domicile',
   UpdateGoodStatus = 'good-query/update-status',
   AbleToSignDistamen = 'good-query/count-request',
+  UpdateClassification = 'good-query/classification/request',
 
   /* Good Data Aset */
   GoodDataAsetBase = 'gooddataset',
