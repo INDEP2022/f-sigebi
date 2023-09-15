@@ -3,6 +3,9 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 export const COLUMNS_DATA_TABLE = {
   labelId: {
     title: 'Etiqueta',
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.description : '';
+    },
     type: 'string',
     sort: false,
   },
