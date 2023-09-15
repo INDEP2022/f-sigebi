@@ -5,6 +5,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -30,7 +31,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   subTitle: string;
   op: string;
   statusGood_: any;
-
+  origin: string = '';
   goods: IGood[] = [];
   totalItemsModal: number = 0;
   // selectedGooods: any[] = [];
@@ -59,7 +60,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     private donationService: DonationService,
     private changeDetectorRef: ChangeDetectorRef,
     private GoodprocessService_: GoodprocessService,
-    private statusGoodService: StatusGoodService
+    private statusGoodService: StatusGoodService,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
     // this.settings = {
@@ -202,6 +204,30 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(paramsQuery => {
+        this.origin = paramsQuery['origin'] ?? null;
+        this.paramsScreen.recordId = paramsQuery['recordId'] ?? null;
+        // this.paramsScreen.cveEvent = paramsQuery['cveEvent'] ?? null;
+        this.paramsScreen.area = paramsQuery['area'] ?? null;
+        if (this.origin == 'FMCOMDONAC_1') {
+          for (const key in this.paramsScreen) {
+            if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
+              this.paramsScreen[key as keyof typeof this.paramsScreen] =
+                paramsQuery[key] ?? null;
+            }
+          }
+        }
+        if (
+          this.origin != null &&
+          this.paramsScreen.recordId != null &&
+          this.paramsScreen.area != null
+        ) {
+          console.log(this.paramsScreen);
+        }
+      });
+
     this.dataGoodTable
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -260,7 +286,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     // params['sortBy'] = `goodNumber:DESC`;
-    this.donationService.getTempGood(params).subscribe({
+    this.donationService.getEventComDonationDetail(params).subscribe({
       next: data => {
         console.log(data.data);
         this.totalItems2 = data.count;
@@ -416,7 +442,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     console.log('1412212', params);
-    params['sortBy'] = `goodNumber:DESC`;
+    params['sortBy'] = `goodId:DESC`;
     // params['filter.recordId'] = this.paramsScreen.recordId;
     this.donationService.getEventComDonationDetail(params).subscribe({
       next: data => {
@@ -425,7 +451,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
         let result = data.data.map(async (item: any) => {
           let obj = {
             vcScreen: 'FMCOMDONAC_1',
-            pNumberGood: item.goodNumber,
+            pNumberGood: item.goodId,
           };
           const di_dispo = await this.getStatusScreen(obj);
           item['di_disponible'] = di_dispo;
@@ -434,7 +460,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           }
           item['quantity'] = item.amount;
           item['di_acta'] = item.recordId;
-          item['id'] = item.goodNumber;
+          item['id'] = item.goodId;
           // const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
           // // console.log('acta', acta);
           // item['acta_'] = acta;

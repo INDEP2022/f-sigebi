@@ -117,44 +117,67 @@
                 </form-field>
               </div>
             </div>
-            <!-- <div class="col-md-6 text-md-right">
-              <button class="btn btn-primary btn-sm active">
-                Cerrar Evento
-              </button>
-            </div> -->
-            <div class="row m-3">
-              <div class="col-4"></div>
-              <div class="col-md-3 text-end">
-                <button
-                  (click)="agregarCaptura()"
-                  type="button"
-                  class="btn btn-info active btn-sm mr-3">
-                  Nueva Captura
-                  <i class="bx bx-plus bx-sm float-icon"></i>
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-primary active btn-sm mr-3"
-                  (click)="searchEventos()">
-                  Estatus Actas
-                  <i class="bx bx-search bx-sm float-icon"></i>
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-primary active btn-sm mr-3"
-                  (click)="cerrarEvento()">
-                  Cerrar Evento
-                  <i class="fas fa-close bx-sm float-icon"></i>
-                </button>
-                <button
-                  (click)="clean()"
-                  type="button"
-                  class="btn btn-danger active btn-sm mr-3">
-                  Limpiar
-                  <i class="fa fa-eraser" aria-hidden="true"></i>
-                </button>
+
+            <div footer>
+              <div class="row m-3">
+                <div class="col-4"></div>
+                <div class="col-md-8 text-end">
+                  <span title="Nueva Captura" containerClass="tooltip-style">
+                    <button
+                      (click)="agregarCaptura()"
+                      class="btn btn-secondary btn-sm active m-1">
+                      <i class="bx bx-plus"></i>
+                    </button>
+                  </span>
+                  <span title="Buscar Eventos" containerClass="tooltip-style">
+                    <button
+                      (click)="searchEventos()"
+                      class="btn btn-secondary btn-sm active m-1">
+                      <i class="bx bxs-file-find"></i>
+                    </button>
+                  </span>
+                  <span title="Cerrar Evento" containerClass="tooltip-style">
+                    <button
+                      (click)="cerrarEvento()"
+                      class="btn btn-secondary btn-sm active m-1">
+                      <i class="bx bx-trash"></i>
+                    </button>
+                  </span>
+                  <span
+                    title="Limpiar Formulario"
+                    containerClass="tooltip-style">
+                    <button
+                      (click)="clean()"
+                      class="btn btn-secondary btn-sm active m-1">
+                      <i class="bx bx-brush"></i>
+                    </button>
+                  </span>
+                </div>
               </div>
             </div>
+            <!-- 
+            <div class="col-sm-12 col-12 col-md-3 text-center">
+              <span title="Nueva Captura" containerClass="tooltip-style">
+                <button (click)="agregarCaptura()" class="btn btn-secondary btn-sm active m-1">
+                  <i class="bx bx-plus"></i>
+                </button>
+              </span>
+              <span title="Buscar Eventos" containerClass="tooltip-style">
+                <button (click)="searchEventos()" class="btn btn-secondary btn-sm active m-1">
+                  <i class="bx bxs-file-find"></i>
+                </button>
+              </span>
+              <span title="Cerrar Evento" containerClass="tooltip-style">
+                <button (click)="cerrarEvento()" class="btn btn-secondary btn-sm active m-1">
+                  <i class="bx bx-x"></i>
+                </button>
+              </span>
+              <span title="Limpiar Formulario" containerClass="tooltip-style">
+                <button (click)="clean()" class="btn btn-secondary btn-sm active m-1">
+                  <i class="bx bx-trash"></i>
+                </button>
+              </span>
+            </div> -->
           </div>
         </div>
         <div class="col-md-7">
@@ -218,10 +241,26 @@
       </div>
 
       <app-divider></app-divider>
-
+      <div class="row pt-3">
+        <div class="col-md-12 d-flex justify-content-between">
+          <span class="text-success">
+            <i class="fa fa-check" aria-hidden="true"></i> Cantidad de
+            Bienes&#58; <b>{{ TOTAL_REPORTE }}</b>
+          </span>
+          <span class="text-danger"
+            ><i class="fa fa-ban" aria-hidden="true"></i> Cantidad de Bienes con
+            Error&#58;
+            <b>{{ BIEN_ERROR }}</b>
+          </span>
+          <span class="text-info"
+            ><i class="fa fa-percent" aria-hidden="true"></i> Suma de
+            Cantidades&#58;
+            <b>{{ SUM_BIEN }}&#37;</b>
+          </span>
+        </div>
+      </div>
       <div class="row p-3">
         <div class="col-md-3"></div>
-
         <div class="row mt-12 d-flex justify-content-center">
           <div class="col-md-12">
             <h6>BIENES RELACIONADOS CON EL EVENTO</h6>
@@ -264,47 +303,11 @@
             </button>
           </div>
           <div class="m-3">
-            <button class="btn btn-danger btn-sm active">
+            <button
+              class="btn btn-danger btn-sm active"
+              (click)="removeSelect()">
               Elimina Bienes <i class="fa fa-trash-alt"></i>
             </button>
-          </div>
-        </div>
-      </div>
-      <div class="row mt-5">
-        <div class="col-md-6">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="d-flex align-items-center">
-                <div>
-                  <h5 class="font-size-14">Cantidad de Bienes:</h5>
-                </div>
-                <div class="ml-2">
-                  <span class="badge rounded-pill badge-soft-success">1</span>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="d-flex align-items-center">
-                <div>
-                  <h5 class="font-size-14">Cantidad de Bienes con Error:</h5>
-                </div>
-                <div class="ml-2">
-                  <span class="badge rounded-pill badge-soft-success">1</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col-md-6">
-              <div class="d-flex align-items-center">
-                <div>
-                  <h5 class="font-size-14">Suma de Cantidades:</h5>
-                </div>
-                <div class="ml-2">
-                  <span class="badge rounded-pill badge-soft-success">1</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
