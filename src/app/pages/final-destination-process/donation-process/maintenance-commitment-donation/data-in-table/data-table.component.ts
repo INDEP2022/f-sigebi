@@ -196,24 +196,6 @@ export class DataTableComponent extends BasePage implements OnInit {
     );
   }
 
-
-  /*prepareForm() {
-    this.form = this.fb.group({
-      labelId: ['', Validators.required],
-      status: ['', Validators.required],
-      desStatus: ['', Validators.required],
-      transfereeId: ['', Validators.required],
-      desTrans: ['', Validators.required],
-      clasifId: ['', Validators.required],
-      desClasif: ['', Validators.required],
-      unit: ['', Validators.required],
-    });
-
-    if ((this.newOrEdit = true)) {
-      //  this.form.controls['unit'].disable();
-    }
-  }*/
-
 }
 
 const EXAMPLE_DATA1 = [
