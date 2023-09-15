@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as FileSaver from 'file-saver';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -97,6 +98,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   paramsModal = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsModal: number = 0;
 
+  //Any
+  fullUsers: any;
+  fullCyties: any;
+
   //
 
   constructor(
@@ -105,7 +110,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     private cityService: CityService,
     private datePipe: DatePipe,
     private serviceAppraise: AppraiseService,
-    private generateCveService: GenerateCveService
+    private generateCveService: GenerateCveService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     super();
     this.settings = {
@@ -138,6 +145,20 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.intervalId = setInterval(() => {
       this.updateHour();
     }, 1000);
+    this.setButtons(3);
+
+    this.queryAllUsers();
+
+    this.queryAllUsersTwo();
+
+    this.queryCyties();
+
+    this.route.queryParams.subscribe(params => {
+      let body: OfficesSend = new OfficesSend();
+      body.eventId = +params['event'];
+      body.officeType = +params['type'];
+      this.loadOffice(body.eventId, body.officeType);
+    });
   }
 
   //
@@ -162,7 +183,13 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     }
   }
 
-  getUsersDesList(event: any) {}
+  getUsersDesList(event?: any) {}
+
+  queryAllUsers(event?: any) {}
+
+  queryAllUsersTwo(event?: any) {}
+
+  queryCyties(event?: any) {}
 
   onRadioChange() {
     this.radioValueOne = true;
@@ -287,7 +314,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.findOffice(this.arrayResponseOffice);
   }
 
-  loadOffice(event: number, num: number, arrayLength: number) {
+  loadOffice(event: number, num: number, arrayLength?: number) {
     let body: OfficesSend = new OfficesSend();
     body.eventId = event;
     body.officeType = num;
@@ -410,7 +437,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     });
   }
 
-  async getOfficeResponse(body: any, type: number, arrayLength: number) {
+  async getOfficeResponse(body: any, type?: number, arrayLength?: number) {
     this.array = await this.getOfficeRequest(body);
     if (this.array.length > 0) {
       for (const i of this.array) {

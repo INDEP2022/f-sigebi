@@ -92,21 +92,16 @@
             </form-field>
           </div>
           <div class="col-md-4">
-            <form-field [control]="form.get('cityCi')" label="Ciudad">
-              <!-- <ngx-select
+            <form-field [control]="form.get('cityCi')">
+              <ngx-select
+                (fetchItems)="queryCyties($event)"
                 [searchOnInit]="true"
-                (fetchItems)="getCitiesList($event)"
-                [data]="cityList"
-                [form]="form"
-                value="idCity"
                 label="Ciudad"
-                bindLabel="legendOffice"
+                [data]="fullCyties"
+                [form]="form"
+                bindLabel="nameCity"
                 control="cityCi">
-              </ngx-select> -->
-              <input
-                type="text"
-                class="form-control"
-                formControlName="cityCi" />
+              </ngx-select>
             </form-field>
           </div>
         </div>
@@ -136,13 +131,29 @@
         <!--  -->
         <div class="row mt-3">
           <div class="col-md-6">
-            <form-field [control]="form.get('remi')" label="Remitente">
-              <input type="text" class="form-control" formControlName="remi" />
+            <form-field [control]="form.get('remi')">
+              <ngx-select
+                (fetchItems)="queryAllUsers($event)"
+                [searchOnInit]="true"
+                label="Remitente"
+                [data]="fullUsers"
+                [form]="form"
+                bindLabel="nombre"
+                control="remi">
+              </ngx-select>
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('dest')" label="Destinatario">
-              <input type="text" class="form-control" formControlName="dest" />
+            <form-field [control]="form.get('dest')">
+              <ngx-select
+                (fetchItems)="queryAllUsersTwo($event)"
+                [searchOnInit]="true"
+                label="Destinatario"
+                [data]="fullUsers"
+                [form]="form"
+                bindLabel="nombre"
+                control="dest">
+              </ngx-select>
             </form-field>
           </div>
         </div>
