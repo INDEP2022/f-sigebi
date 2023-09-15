@@ -4,7 +4,6 @@ export const COLUMNS_DATA = {
   goodId: {
     title: 'No. Bien',
     sort: false,
-    filter: false,
   },
   description: {
     title: 'Descripción',
