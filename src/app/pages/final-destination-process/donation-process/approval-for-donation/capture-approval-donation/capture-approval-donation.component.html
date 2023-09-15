@@ -219,73 +219,25 @@
 
       <app-divider></app-divider>
 
-      <div class="d-flex justify-content-end mt-5">
-        <app-columns-select
-          [(settings)]="settings"
-          class="row justify-content-end">
-        </app-columns-select>
-      </div>
-
-      <div class="row mt-3 pt-2 scroll-table">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          class="col-md-12"
-          [settings]="settings"
-          [source]="dataTableGood">
-        </ng2-smart-table>
-      </div>
-
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>
-
-      <div class="row"></div>
       <div class="row p-3">
         <div class="col-md-3"></div>
 
         <div class="row mt-12 d-flex justify-content-center">
-          <div class="col-md-12 justify-content-center">
+          <div class="col-md-12">
+            <h6>BIENES RELACIONADOS CON EL EVENTO</h6>
+            <div class="row"></div>
             <div class="row">
               <div class="d-flex justify-content-end mb-2">
                 <app-columns-select
                   [(settings)]="settings"></app-columns-select>
-                <div>
-                  <!-- <button type="button" tooltip="Nuevo" containerClass="tooltip-style"
-                                              class="btn btn-primary btn-sm active ml-2 mr-2" (click)="goBack()" *ngIf="origin != null">
-                                              Regresar <i class="bx bx-arrow-back bx-sm float-icon"></i>
-                                            </button> -->
-                </div>
               </div>
             </div>
-          </div>
-
-          <!-- <div class="row pt-2">
-            <div class="col-md-12 text-center mt-4 mb-4">
-              <button tooltip="Agregar Bien al Acta" containerClass="tooltip-style"
-                class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="addSelect()">
-                <i class="bx bx-chevron-down bx-md"></i>
-              </button>
-              <button tooltip="Agregar Bienes al Acta" containerClass="tooltip-style"
-                class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="addAll()">
-                <i class="bx bx-chevrons-down bx-md"></i>
-              </button>
-              <button class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="removeAll()">
-                <i class="bx bx-chevrons-up bx-md"></i>
-              </button>
-              <button tooltip="Quitar Bien del Acta" containerClass="tooltip-style"
-                class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button" (click)="removeSelect()">
-                <i class="bx bx-chevron-up bx-md"></i>
-              </button>
-            </div>
-          </div> -->
-
-          <div class="col-md-12">
-            <h6>BIENES RELACIONADOS CON EL EVENTO</h6>
             <div class="row">
               <form-loader *ngIf="loading3"></form-loader>
               <div class="col-md-12">
                 <ng-scrollbar
                   [track]="'all'"
-                  [ngStyle]="{ height: loading3 ? '0px' : '400px' }">
+                  [ngStyle]="{ height: loading3 ? '0px' : '600px' }">
                   <ng2-smart-table
                     class="table-responsive"
                     [attr.class]="'table-bordered table-responsive'"
@@ -293,10 +245,10 @@
                     (userRowSelect)="rowsSelected($event)"
                     [source]="dataDetailDonationGood">
                   </ng2-smart-table>
-                  <app-pagination
-                    [params]="paramsList2"
-                    [totalItems]="totalItems2"></app-pagination>
                 </ng-scrollbar>
+                <app-pagination
+                  [params]="paramsList2"
+                  [totalItems]="totalItems2"></app-pagination>
               </div>
             </div>
           </div>

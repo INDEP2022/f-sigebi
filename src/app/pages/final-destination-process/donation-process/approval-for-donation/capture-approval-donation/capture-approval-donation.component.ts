@@ -43,6 +43,7 @@ export class CaptureApprovalDonationComponent
   regisForm: FormGroup;
   siabForm: FormGroup;
   foolio: number;
+  dataTableGood_: any[] = [];
   totalItems: number = 0;
   loading3: boolean = false;
   Exportdate: boolean = false;
@@ -157,109 +158,6 @@ export class CaptureApprovalDonationComponent
             return row.goodEntity?.quantity;
           },
         },
-        unit: {
-          title: 'Unidad',
-          type: 'string',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.goodEntity?.unit;
-          },
-        },
-        status: {
-          title: 'Estatus',
-          type: 'string',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.goodEntity?.status;
-          },
-        },
-        noExpediente: {
-          title: 'No. Expediente',
-          type: 'number',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.goodEntity?.noExpediente;
-          },
-        },
-        noEtiqueta: {
-          title: 'Etiqueta Destino',
-          type: 'string',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.goodEntity?.noEtiqueta;
-          },
-        },
-        idNoWorker1: {
-          title: 'No. Tranf.',
-          type: 'string',
-          sort: false,
-          // valuePrepareFunction: (cell: any, row: any) => {
-          //   return row.goodEntity?.idNoWorker1;
-          // },
-        },
-        idExpWorker1: {
-          title: 'Des. Tranf.',
-          type: 'string',
-          sort: false,
-          // valuePrepareFunction: (cell: any, row: any) => {
-          //   return row.goodEntity?.idExpWorker1;
-          // },
-        },
-        noClasifBien: {
-          title: 'No. Clasif.',
-          type: 'number',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.good?.goodClassification;
-          },
-        },
-        procesoExtDom: {
-          title: 'Proceso',
-          type: 'string',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.good?.procesoExtDom;
-          },
-        },
-        // warehouseNumb: {
-        //   title: 'No. Alma.',
-        //   type: 'number',
-        //   sort: false,
-        // },
-        // warehouse: {
-        //   title: 'Almacén',
-        //   type: 'string',
-        //   sort: false,
-        // },
-        // warehouseLocat: {
-        //   title: 'Ubica. Almacén ',
-        //   type: 'string',
-        //   sort: false,
-        // },
-        // coordAdmin: {
-        //   title: 'Coord. Admin.',
-        //   type: 'string',
-        //   sort: false,
-        // },
-        // select: {
-        //   title: 'Selec.',
-        //   type: 'custom',
-        //   renderComponent: CheckboxElementComponent,
-        //   onComponentInitFunction(instance: any) {
-        //     instance.toggle.subscribe((data: any) => {
-        //       data.row.to = data.toggle;
-        //     });
-        //   },
-        //   sort: false,
-        // },
-        // noDataMessage: 'No se encontrarón registros',
-      },
-      rowClassFunction: (row: any) => {
-        if (row.data.di_disponible == 'S') {
-          return 'bg-success text-white';
-        } else {
-          return 'bg-dark text-white';
-        }
       },
     };
 
@@ -273,10 +171,6 @@ export class CaptureApprovalDonationComponent
       columns: {
         ...COPY,
       },
-      rowClassFunction: (row: any) => {
-        return 'bg-light text-black';
-      },
-      // noDataMessage: 'No se encontrarón registros',
     };
   }
 
@@ -324,12 +218,6 @@ export class CaptureApprovalDonationComponent
     });
     this.regisForm.get('area').setValue(this.paramsScreen.area);
   }
-  // lv_TRAN      Varchar2(4);
-  // lv_TIPO      Varchar2(4);
-  // lv_AREA      Varchar2(10);
-  // lv_CONS      Varchar2(10);
-  // lv_TIPO_ACTA INDICADORES_PARAMETRO.TIPO_ACTA% type;
-  // lv_FOLIO     Number;
 
   createDon(donationGood: IGoodDonation) {
     this.loading = true;
@@ -339,16 +227,6 @@ export class CaptureApprovalDonationComponent
     const area = this.regisForm.value.area;
     let folio_ = folio.toString().padStart(4, '0');
     this.foolio = folio_;
-
-    // this.eventComDonacion.cveActa =
-    //   this.eventComDonacion.tipo +
-    //   '/' +
-    //   this.global.regi +
-    //   '/' +
-    //   this.eventComDonacion.anio +
-    //   '/' +
-    //   this.global.cons;
-
     const cveActa = `${acta}/${area}/${year}/${folio_}/${this.type}`;
     console.log('cveActa -->', cveActa);
     this.donationService.createD(donationGood).subscribe({
@@ -416,10 +294,11 @@ export class CaptureApprovalDonationComponent
     );
     modalRef.content.onSave.subscribe((next: any[] = []) => {
       console.log('aaaa', next);
+      this.selectedGooodsValid = next;
+      this.addSelect();
+      this.dataDetailDonationGood.load(next);
+      this.dataDetailDonationGood.refresh();
 
-      this.dataTableGood.load(next);
-      this.dataTableGood.refresh();
-      // this.eventdetailDefault = next;
       // this.status = next.statusAct;
     });
   }
@@ -671,6 +550,73 @@ export class CaptureApprovalDonationComponent
   selectedGooodsValid: any[] = [];
   selectedGooods: any[] = [];
   goodsValid: any;
+
+  async addSelect() {
+    if (this.selectedGooods.length > 0) {
+      if (this.paramsScreen.recordId == null) {
+        this.alert(
+          'warning',
+          'No Existe un Acta en la cual Asignar el Bien.',
+          'Debe capturar un acta.'
+        );
+        return;
+      } else {
+        if (this.estatus == 'CERRADA') {
+          this.alert(
+            'warning',
+            'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+            ''
+          );
+          return;
+        } else {
+          // console.log('aaa', this.goods);
+          let result = this.selectedGooods.map(async (good: any) => {
+            if (good.di_acta != null) {
+              this.alert(
+                'warning',
+                `Ese Bien ya se Encuentra en el Acta ${good.di_acta}`,
+                'Debe Capturar un Acta.'
+              );
+            } else if (good.di_disponible == 'N') {
+              this.onLoadToast(
+                'warning',
+                `El Bien ${good.id} tiene un Estatus Inválido para ser Asignado a algún Acta`
+              );
+              return;
+            } else {
+              // console.log('GOOD', good);
+              this.loading = true;
+
+              if (!this.dataDetailDonation.some((v: any) => v === good)) {
+                let indexGood = this.dataTableGood_.findIndex(
+                  _good => _good.id == good.id
+                );
+
+                this.Exportdate = true;
+                console.log('indexGood', indexGood);
+                if (indexGood != -1)
+                  this.dataTableGood_[indexGood].di_disponible = 'N';
+                // await this.updateBienDetalle(good.id, 'ADM');
+                // await this.createDET(good);
+              }
+            }
+          });
+          Promise.all(result).then(async item => {
+            //ACTUALIZA EL COLOR
+            this.dataTableGood_ = [];
+            this.dataDetailDonationGood.load(this.dataTableGood_);
+            this.dataDetailDonationGood.refresh();
+            await this.getDetailProceedingsDevollution(
+              this.dataDetailDonation.recordId
+            );
+          });
+          //this.actasDefault = null;
+        }
+      }
+    } else {
+      this.alert('warning', 'Seleccione Primero el Bien a Asignar.', '');
+    }
+  }
 
   agregarCaptura() {}
   searchEventos() {}
