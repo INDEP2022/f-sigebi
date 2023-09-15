@@ -290,4 +290,11 @@ export class GoodprocessService extends HttpService {
       paramsPaginated
     );
   }
+
+  getUniRegister() {
+    return this.get(GoodprocessEndpoints.GetUniRegister);
+  }
+  getChangeStatusGood(event: any) {
+    return this.get(`${GoodprocessEndpoints.ChangeStatusGood}/${event}`);
+  }
 }

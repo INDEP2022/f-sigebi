@@ -12,9 +12,19 @@
         bindLabel="observations"
         paramSearch="filter.observations"
         prefixSearch="$ilike"
+        secondParamSearch="filter.id"
+        [labelTemplate]="label"
+        [optionTemplate]="option"
         (valueChange)="selectEvent($event)">
       </ng-custom-select-loading>
-
+      <ng-template #label let-item="item">
+        {{ item.id }} - {{ item.observations }}
+      </ng-template>
+      <ng-template #option let-item="item">
+        <div [title]="item.id + '-' + item.observations">
+          {{ item.id }} - {{ item.observations }}
+        </div>
+      </ng-template>
       <!-- <ngx-select
         [form]="form"
         [data]="eventItems"
@@ -169,7 +179,8 @@
               </button>
               <button
                 type="button"
-                class="btn btn-secondary btn-sm active mr-3">
+                class="btn btn-secondary btn-sm active mr-3"
+                (click)="reporte()">
                 Reporte
               </button>
             </td>
@@ -192,7 +203,8 @@
               </button>
               <button
                 type="button"
-                class="btn btn-secondary btn-sm active mr-3">
+                class="btn btn-secondary btn-sm active mr-3"
+                (click)="reporte()">
                 Reporte
               </button>
             </td>

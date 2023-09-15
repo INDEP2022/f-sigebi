@@ -18,7 +18,7 @@
               maxlength="30"
               class="form-control"
               formControlName="labelId"
-              [readonly]="newOrEdit" />
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -95,11 +95,14 @@
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('valid')" label="Valida">
-            <input
-              type="text"
-              maxlength="40"
+            <ng-select
+              formControlName="valid"
+              [searchable]="false"
               class="form-control"
-              formControlName="valid" />
+              [clearable]="false">
+              <ng-option value="1">Sí</ng-option>
+              <ng-option value="0">No</ng-option>
+            </ng-select>
           </form-field>
         </div>
         <div class="col-md-6" *ngIf="this.type == 3">
@@ -129,6 +132,18 @@
             <input type="text" class="form-control" formControlName="name" />
           </form-field>
         </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('valid')" label="Valida">
+            <ng-select
+              formControlName="valid"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="S">Sí</ng-option>
+              <ng-option value="N">No</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
       </div>
     </form>
   </div>
@@ -137,7 +152,11 @@
       <div class="m-3">
         <confirm-button
           [text]="this.textBtn"
-          icon="this.newOrEdit === true ? fas fa-edit bx-sm float-icon : fas fa-save bx-sm float-icon"
+          [icon]="
+            this.newOrEdit
+              ? 'fas fa-edit bx-sm float-icon'
+              : 'fas fa-save bx-sm float-icon'
+          "
           [type]="'button'"
           [loading]="false"
           [btnSmall]="true"

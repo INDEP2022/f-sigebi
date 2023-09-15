@@ -6,4 +6,6 @@ export enum AuthorityEndpoints {
   transferent = 'transferent',
   station = 'station',
   getTdsau = 'apps/get-tdsau-query',
+  getAllAutoritiesV2 = 'authority/getAllAuthoritiesV2',
+  getDataQuery = 'apps/get-tdata-query',
 }
