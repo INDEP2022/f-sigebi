@@ -32,4 +32,8 @@ export class GranteeService implements ICrudMethods<IGrantee> {
   remove(id: string | number): Observable<Object> {
     return this.granteeRepository.remove(`${this.route}/id`, id);
   }
+
+  getById2(id: string | number): Observable<IGrantee> {
+    return this.granteeRepository.getById(`${this.route}/id`, id);
+  }
 }

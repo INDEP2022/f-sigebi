@@ -1,12 +1,18 @@
 import { Component, OnInit } from '@angular/core';
+import { BasePage } from 'src/app/core/shared';
 
 @Component({
   selector: 'app-maintenance-commitment-donation',
   templateUrl: './maintenance-commitment-donation.component.html',
   styles: [],
 })
-export class MaintenanceCommitmentDonationComponent implements OnInit {
-  constructor() {}
+export class MaintenanceCommitmentDonationComponent
+  extends BasePage
+  implements OnInit
+{
+  constructor() {
+    super();
+  }
 
   ngOnInit(): void {}
 }

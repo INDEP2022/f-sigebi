@@ -84,6 +84,7 @@ export enum GoodProcessPoints {
   VGoodType = 'v-good-type',
   //Classification View
   GetVsigLigie = 'application/vsigLigie',
+  ReportNingevent = 'application/report-ningevent',
 }
 
 export enum GoodFinderEndpoint {

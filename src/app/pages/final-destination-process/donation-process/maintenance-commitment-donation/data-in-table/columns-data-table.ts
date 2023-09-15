@@ -3,6 +3,9 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 export const COLUMNS_DATA_TABLE = {
   labelId: {
     title: 'Etiqueta',
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.description : '';
+    },
     type: 'string',
     sort: false,
   },
@@ -12,7 +15,7 @@ export const COLUMNS_DATA_TABLE = {
     sort: false,
   },
   desStatus: {
-    title: 'Des. Status',
+    title: 'Des. Estatus',
     type: 'string',
     sort: false,
   },
@@ -25,7 +28,10 @@ export const COLUMNS_DATA_TABLE = {
     sort: false,
   },
   desTrans: {
-    title: 'Des Trans.',
+    title: 'Des. Trans.',
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value : '';
+    },
     type: 'string',
     sort: false,
   },
@@ -66,4 +72,15 @@ export const COLUMNS_DATA_TABLE = {
     },
     sort: false,
   },
+  /* null: {
+     title: '',
+     type: 'custom',
+     renderComponent: CheckboxElementComponent,
+     onComponentInitFunction(instance: any) {
+       instance.toggle.subscribe((data: any) => {
+         data.row.to = data.toggle;
+       });
+     },
+     sort: false,
+   },*/
 };
