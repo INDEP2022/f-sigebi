@@ -246,10 +246,7 @@ export class ReturnsConficationsListComponent
               .getAllSegUsersbykey(response.data[i].promoterUserDecoDevo)
               .subscribe({
                 next: resp => {
-                  console.log(
-                    'response getAllSegUsersbykey ',
-                    resp.data.length
-                  );
+                  console.log('response getAllSegUsersbykey ', resp.data);
                   let dataB = {
                     id: response.data[i].goodId,
                     description: response.data[i].description,

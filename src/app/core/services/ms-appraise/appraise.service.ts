@@ -52,4 +52,8 @@ export class AppraiseService extends HttpService {
   postGetAppraise(body: any) {
     return this.post(AppraiseEndpoints.PostAppraise, body);
   }
+
+  getDelegation(coordination: number) {
+    return this.get(`${AppraiseEndpoints.Delegation}/${coordination}`);
+  }
 }

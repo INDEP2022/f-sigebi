@@ -15,4 +15,5 @@ export enum ParameterGoodEndpoints {
   GetDelegationGlobal = 'application/getDelegationGlobal',
   CatMotivesrev = 'cat-motivesrev',
   PupArmaClave = 'application/pup-weapon-key',
+  RNomencla = 'application/get-r-nomencla',
 }

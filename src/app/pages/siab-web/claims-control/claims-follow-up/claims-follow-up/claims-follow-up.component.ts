@@ -109,7 +109,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           sort: false,
         },
         detallebienoafectadas: {
-          title: 'Detalle del Bien o las Partes Afectadas',
+          title: 'Detalle Bien o Partes Afectadas',
           type: 'string',
           sort: false,
         },
