@@ -1,7 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
@@ -12,7 +14,11 @@ import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.s
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ButtonColumnDocComponent } from 'src/app/shared/components/button-column-doc/button-column-doc.component';
+import { ButtonColumnScanComponent } from 'src/app/shared/components/button-column-scan/button-column-scan/button-column-scan.component';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { OutsideTradesComponent } from '../../outside-trades/outside-trades/outside-trades.component';
+import { ScannedDocumentsComponent } from '../../scanned-documents/scanned-documents/scanned-documents.component';
 import { REAL_STATE_COLUMNS, REPORT_COLUMNS } from './property-columns';
 //import { Component, OnInit } from '@angular/core';
 
@@ -47,7 +53,8 @@ export class PropertyComponent extends BasePage implements OnInit {
     private goodServices: GoodService,
     private affairService: AffairService,
     private massiveGoodService: MassiveGoodService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private modalService: BsModalService
   ) {
     super();
     this.settings = {
@@ -73,9 +80,73 @@ export class PropertyComponent extends BasePage implements OnInit {
       actions: false,
       hideSubHeader: false,
       columns: {
+        scan: {
+          title: 'Doc. Escaneados',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          filter: false,
+          renderComponent: ButtonColumnScanComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              //console.log(row);
+              this.onSelectScanner(row);
+            });
+          },
+        },
+        office: {
+          title: 'Oficio',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          filter: false,
+          renderComponent: ButtonColumnDocComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              //console.log(row);
+              this.onSelectOffice(row);
+            });
+          },
+        },
         ...REPORT_COLUMNS,
       },
     };
+  }
+
+  onSelectScanner(event: any) {
+    console.log(event.expediente);
+    const proceedings = event.expediente;
+    const valid: boolean = true;
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      proceedings,
+      valid,
+      callback: (next: boolean) => {
+        if (next)
+          this.params1
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getDataGood());
+      },
+    };
+    this.modalService.show(ScannedDocumentsComponent, modalConfig);
+  }
+
+  onSelectOffice(event: any) {
+    console.log(event.no_of_gestion);
+    const noGes = event.no_of_gestion;
+    const valid1: boolean = true;
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      noGes,
+      valid1,
+      callback: (next: boolean) => {
+        if (next)
+          this.params1
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getDataGood());
+      },
+    };
+    this.modalService.show(OutsideTradesComponent, modalConfig);
   }
 
   onSelectDelegation(instance: CheckboxElementComponent) {
@@ -231,7 +302,9 @@ export class PropertyComponent extends BasePage implements OnInit {
   generateReport() {
     this.show = true;
     this.showInm = false;
-    this.getDataGood();
+    this.params1
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDataGood());
   }
 
   onExportExcel() {
