@@ -111,7 +111,7 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
       .patchValue(
         this.userSelected
           ? this.userSelected.email
-            ? this.userSelected.email
+            ? [this.userSelected.email]
             : null
           : null
       );
