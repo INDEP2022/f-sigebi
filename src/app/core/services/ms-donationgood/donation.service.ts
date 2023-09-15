@@ -89,9 +89,16 @@ export class DonationService
 
   createApproveDonation(data: any) {
     return this.post(DonationEndPoint.ApproveDonation, data);
-
   }
   getDonationRequest(requestId: number) {
     return this.get(`/donac-request-good?filter.requestId.id=$eq:${requestId}`);
+  }
+
+  postUpdateStore(data: any) {
+    return this.post(`application/update-store`, data);
+  }
+
+  postDeleteDetail(data: any) {
+    return this.post(`application/pup-delete-detail`, data);
   }
 }

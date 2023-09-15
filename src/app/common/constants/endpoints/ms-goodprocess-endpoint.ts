@@ -36,4 +36,5 @@ export enum GoodprocessEndpoints {
   GetBlkCtrlGood = 'application/get-blkctrl-good',
   //Classification View
   GetVsigLigie = 'application/vsigLigie',
+  GetUniRegister = 'application/get-lnu-register',
 }
