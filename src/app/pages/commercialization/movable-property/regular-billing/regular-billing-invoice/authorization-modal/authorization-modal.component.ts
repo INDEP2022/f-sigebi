@@ -1,7 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { InvoicefolioService } from 'src/app/core/services/ms-invoicefolio/invoicefolio.service';
+import { catchError, firstValueFrom, map, of } from 'rxjs';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -11,22 +20,36 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class AuthorizationModalComponent extends BasePage implements OnInit {
   title: string = 'Verificación';
-
+  user: TokenInfoModel;
   form: FormGroup;
   showPassword: boolean = false;
-  select: any[] = [];
+  data: any[] = [];
   global: any;
+  parameter: any;
   constructor(
     private modalRef: BsModalRef,
-    private invoiceService: InvoicefolioService
+    private comerInvoiceService: ComerInvoiceService,
+    private authService: AuthService,
+    private userService: UsersService,
+    private securityService: SecurityService
   ) {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.user = this.authService.decodeToken();
+  }
 
   validate() {
-    const { refactura, folio } = this.form.value;
+    let cont_sel: number = 0;
+    let aux: number = 0;
+    let aux2: number = 0;
+    let comp: string = '';
+    let aux_auto: number = 0;
+    let cf_leyenda: string = '';
+    let cf_nuevafact: number;
+
+    const { refactura, folio, userV, passwordV } = this.form.value;
     this.loading = true;
 
     if (refactura == 'P' && this.global.canxp == 'S') {
@@ -47,16 +70,200 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
         'warning',
         `Se cancelaran las facturas de los bienes en estatus VNR`,
         '¿Desea continuar?'
-      ).then(ans => {
+      ).then(async ans => {
         if (ans.isDismissed) {
           this.loading = false;
           this.modalRef.hide();
           this.modalRef.content.callback(true, 0);
           return;
         } else {
+          for (const invoice of this.data) {
+            cont_sel++;
+            const v_park = await this.pkComerVnr(invoice, null, 0);
+
+            if (v_park == 1) {
+              aux++;
+            } else if (v_park == 2) {
+              aux2++;
+            } else if (v_park == 0) {
+            }
+
+            if (aux2 >= 1) {
+              comp = ` y ${aux2} no cumplen las condiciones para cancelar por la opción VNR (no existe acta, estatus incorrecto o acta abierta)`;
+            } else {
+              comp = null;
+            }
+          }
+
+          if (cont_sel == 1 && aux2 == 1) {
+            this.alert(
+              'warning',
+              'Atención',
+              `El Lote ${this.data[0].batchId} no cumple las condiciones para cancelar por la opción VNR (no existe acta, estatus incorrecto o acta abierta)`
+            );
+            this.loading = false;
+            this.modalRef.hide();
+            this.modalRef.content.callback(true, 0);
+            return;
+          }
+
+          if (aux >= 1) {
+            this.alertQuestion(
+              'warning',
+              `Se procesaran ${aux} por cancelación ${comp}`,
+              '¿Desea continuar?'
+            ).then(async ans => {
+              if (ans.isDismissed) {
+                this.loading = false;
+                this.modalRef.hide();
+                this.modalRef.content.callback(true, 0);
+                return;
+              } else {
+                aux_auto = await this.validConexUser(
+                  userV,
+                  passwordV,
+                  this.user.department
+                );
+                this.parameter.autorizo = aux_auto;
+                this.modalRef.hide();
+
+                if (aux_auto == 1) {
+                  for (const invoice of this.data) {
+                    if (String(invoice.series ?? '').length > 1) {
+                      cf_leyenda = `Este CFDI refiere al CFDI ${invoice.series} - ${invoice.Invoice}`;
+                    } else {
+                      cf_leyenda = `Este CFDI refiere a la factura ${invoice.series} - ${invoice.Invoice}`;
+                    }
+                    cf_nuevafact = await this.pkComerVnr(
+                      invoice,
+                      cf_leyenda,
+                      1
+                    );
+                  }
+                }
+              }
+            });
+          } else if (aux == 0) {
+            aux_auto = await this.validConexUser(
+              userV,
+              passwordV,
+              this.user.department
+            );
+            this.parameter.autorizo = aux_auto;
+            this.modalRef.hide();
+
+            if (aux_auto == 1) {
+              for (const invoice of this.data) {
+                if (String(invoice.series ?? '').length > 1) {
+                  cf_leyenda = `Este CFDI refiere al CFDI ${invoice.series} - ${invoice.Invoice}`;
+                } else {
+                  cf_leyenda = `Este CFDI refiere a la factura ${invoice.series} - ${invoice.Invoice}`;
+                }
+                cf_nuevafact = await this.pkComerVnr(invoice, cf_leyenda, 1);
+              }
+            }
+          }
+
+          //Se ejecuta paquete p_valores_sat
         }
       });
+      this.modalRef.content.callback(true, 0);
     }
+  }
+
+  async validConexUser(user: string, password: string, delegation: string) {
+    let aux_auto = 0;
+    let aux_conn = 0;
+    let aux_constr = '';
+    const data = await this.checkUser(user.toUpperCase());
+
+    if (!data.aux_dominio && !data.aux_user) {
+      this.alert('warning', 'Atención', 'Usuario no autorizado');
+      return 0;
+    }
+
+    if (data.aux_dominio == 'C') {
+    } else if (data.aux_dominio == 'R') {
+      aux_auto = await this.validateRegUser(
+        user.toUpperCase(),
+        this.user.department
+      );
+
+      if (aux_auto == 0) {
+        this.alert(
+          'warning',
+          'Atención',
+          'El usuario no tiene atributos sobre la regional de la factura'
+        );
+        return 0;
+      }
+    }
+    //revisar esta parte conexion sql
+    aux_conn = await this.valConex(user.toUpperCase(), password);
+
+    return aux_auto;
+  }
+
+  async valConex(user: string, password: string) {
+    const filter = new FilterParams();
+    filter.addFilter('user', user, SearchFilter.EQ);
+    return firstValueFrom(
+      this.userService.getComerUserXCan(filter.getParams()).pipe(
+        map(() => {
+          return 0;
+        }),
+        catchError(() => of(0))
+      )
+    );
+  }
+
+  async validateRegUser(user: string, delegation: string) {
+    const filter = new FilterParams();
+    filter.addFilter('user', user, SearchFilter.EQ);
+    return firstValueFrom(
+      this.securityService.getViewDelegationUser(user, delegation).pipe(
+        map(resp => resp.aux_dele),
+        catchError(() => of(0))
+      )
+    );
+  }
+
+  async checkUser(user: string) {
+    const filter = new FilterParams();
+    filter.addFilter('user', user, SearchFilter.EQ);
+    return firstValueFrom(
+      this.userService.getComerUserXCan(filter.getParams()).pipe(
+        map(resp => {
+          return {
+            aux_user: resp.data[0].user,
+            aux_dominio: resp.data[0].domain,
+          };
+        }),
+        catchError(() => of({ aux_user: null, aux_dominio: null }))
+      )
+    );
+  }
+
+  async pkComerVnr(data: any, leyend: string, option: number) {
+    const { userV, causerebillId } = this.form.value;
+    const body: any = {
+      pEvent: data.eventId,
+      pLot: data.batchId,
+      pInvoice: data.billId,
+      pLegend: leyend,
+      pAuthorized: userV.toUpperCase(),
+      pStatus: '',
+      pCauseA: causerebillId,
+      pOption: option,
+      pDelEmits: this.user.department,
+      pOcionCan: causerebillId,
+    };
+    return firstValueFrom(
+      this.comerInvoiceService.pkComerVnr(body).pipe(
+        map(resp => resp),
+        catchError(() => of(null))
+      )
+    );
   }
 
   close() {

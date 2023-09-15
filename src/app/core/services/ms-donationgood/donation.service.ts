@@ -90,6 +90,9 @@ export class DonationService
   createApproveDonation(data: any) {
     return this.post(DonationEndPoint.ApproveDonation, data);
   }
+  editApproveDonation(data: any) {
+    return this.put(DonationEndPoint.ApproveDonation, data);
+  }
   getDonationRequest(requestId: number) {
     return this.get(`/donac-request-good?filter.requestId.id=$eq:${requestId}`);
   }
