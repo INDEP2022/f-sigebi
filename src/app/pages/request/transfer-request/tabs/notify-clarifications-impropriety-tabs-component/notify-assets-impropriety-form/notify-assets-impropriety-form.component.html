@@ -179,6 +179,62 @@
           </form-field>
         </div>
       </div>
+      <div class="row" *ngIf="infoRequest.typeOfTransfer == 'SAT_SAE'">
+        <div class="col-md-12">
+          <p>
+            <a
+              class="text-color"
+              (click)="showSearchForm = true"
+              *ngIf="!showSearchForm">
+              <i class="fa fa-angle-right" aria-hidden="true"></i>
+              <strong>Simular datos a cambiar del Bien</strong></a
+            >
+          </p>
+
+          <p>
+            <a
+              class="text-color"
+              (click)="showSearchForm = false"
+              *ngIf="showSearchForm">
+              <i class="fa fa-angle-down" aria-hidden="true"></i>
+              <strong>Simular datos a cambiar del Bien</strong></a
+            >
+          </p>
+        </div>
+      </div>
+      <div class="row pt-3" *ngIf="infoRequest.typeOfTransfer == 'SAT_SAE'">
+        <div class="col-md-6" *ngIf="showSearchForm">
+          <form-field
+            [control]="clarificationForm.get('description')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="4000"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-3" *ngIf="showSearchForm">
+          <form-field
+            [control]="clarificationForm.get('amount')"
+            label="Cantidad">
+            <input
+              type="number"
+              class="form-control"
+              maxlength="10"
+              formControlName="amount" />
+          </form-field>
+        </div>
+        <div class="col-md-3" *ngIf="showSearchForm">
+          <form-field [control]="clarificationForm.get('unit')" label="Unidad">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="10"
+              formControlName="unit" />
+          </form-field>
+        </div>
+      </div>
     </form>
   </div>
   <div footer>

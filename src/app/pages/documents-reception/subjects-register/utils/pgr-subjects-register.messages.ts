@@ -3,7 +3,7 @@ const NOT_FOUND_MESSAGE = (nameConsult: string) =>
   `No existen resultados para ${nameConsult}`;
 const ERROR_FORM = 'Completa los campos correctamente.';
 const ERROR_FORM_NOT_INSERT =
-  'Completa al menos un campo de la busqueda para continuar.';
+  'Completa al menos un campo de la búsqueda para continuar.';
 const ERROR_FORM_SEARCH_OFICIO_AVERIGUACION_PREVIA =
   'Buscando transferencias FGR por Oficio FGR y Averiguación Previa.';
 const ERROR_FORM_SEARCH_OFICIO_PGR =

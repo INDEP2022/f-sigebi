@@ -11,18 +11,18 @@
     </div> -->
     <div class="row pt-2" style="max-height: 400px; overflow-y: scroll">
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
+        <div [class]="loadingGood ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
             class="table-responsive"
             [settings]="settings"
             (userRowSelect)="formData($event)"
-            [source]="data">
+            [source]="dataTableGood">
           </ng2-smart-table>
         </div>
       </div>
     </div>
-    <app-pagination [params]="paramsList" [totalItems]="totalItems">
+    <app-pagination [params]="dataTableParamsGood" [totalItems]="totalGood">
     </app-pagination>
     <div class="row">
       <div class="col-12 col-sm-12 col-md-12 text-center">

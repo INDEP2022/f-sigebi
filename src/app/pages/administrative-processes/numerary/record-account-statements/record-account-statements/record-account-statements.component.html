@@ -24,7 +24,7 @@
                 [searchOnInit]="true"
                 termMaxLength="30"
                 (change)="onBankSelectChange($event)"
-                (input)="onSearchName($event.target)">
+                (input)="onSearchNameAccount($event.target)">
               </ngx-select>
             </form-field>
           </div>
@@ -32,27 +32,34 @@
           <div class="col-6">
             <!-- <form-field [control]="form.get('account')">
               <ngx-select [data]="bankAccountSelect" [form]="form" bindLabel="accountAndNumber" label="Cuenta"
-                [control]="'account'" (change)="onBankAccountSelectChange($event)"
-                (fetchItems)="searchBankAccount(bankCode, paramsSubject)"></ngx-select>
-            </form-field> -->
-            <!-- <form-field [control]="form.get('account')">
-              <ngx-select [form]="form" [data]="bankAccountSelect" (fetchItems)="getBanksAccounts($event)"
-                bindLabel="accountAndNumber" control="account" label="Cuenta" [searchOnInit]="true" [showTooltip]="true"
-                termMaxLength="30">
-              </ngx-select>
+                [control]="'account'" (change)="onBankAccountSelectChange($event)" (fetchItems)="getEvent($event)
+                " (input)="onSearchAccount($event.target)"></ngx-select>
             </form-field> -->
             <form-field [control]="form.get('account')">
               <ngx-select
-                [data]="bankAccountSelect"
-                [form]="form"
-                bindLabel="accountAndNumber"
                 label="Cuenta"
-                [control]="'account'"
+                [form]="form"
+                [data]="bankAccountSelect"
+                (fetchItems)="searchBankAccount($event)"
+                bindLabel="accountAndNumber"
+                control="account"
+                [searchOnInit]="true"
+                [showTooltip]="true"
+                termMaxLength="50"
+                (input)="onSearchAccount($event.target)"
+                [labelTemplate]="bankLabel"
+                [optionTemplate]="bankOption"
                 (change)="onBankAccountSelectChange($event)"
-                (fetchItems)="
-                  searchBankAccount(this.codeBanco, this.paramsSubject)
-                "
-                (input)="onSearchAccount($event.target)"></ngx-select>
+                (clear)="onClearSelection()">
+              </ngx-select>
+              <ng-template #bankLabel let-item="item">
+                {{ item.accountNumber.cveAccount }}
+              </ng-template>
+              <ng-template #bankOption let-item="item">
+                <div [title]="item.accountNumber.cveAccount">
+                  {{ item.accountNumber.cveAccount }}
+                </div>
+              </ng-template>
             </form-field>
           </div>
         </div>

@@ -42,6 +42,11 @@ export class OrderServiceService extends HttpService {
     return this.get<IListResponse<IOrderServiceDTO>>(route, params);
   }
 
+  updateOrderService(body: IOrderServiceDTO) {
+    const route = `${OrderServiceEndpoint.ORDER_SERVICE}/${body.id}`;
+    return this.put<IListResponse<IOrderServiceDTO>>(route, body);
+  }
+
   getServiceVehicle(
     _params: ListParams
   ): Observable<IListResponse<IServiceVehicle>> {
@@ -53,6 +58,15 @@ export class OrderServiceService extends HttpService {
 
   postServiceVehicle(formVehicle: IServiceVehicle) {
     return this.post(OrderServiceEndpoint.ServiceVehicle, formVehicle);
+  }
+
+  updateServiceVehicle(
+    idTypeVehicle: number,
+    orderServiceId: number,
+    formVehicle: IServiceVehicle
+  ) {
+    const route = `${OrderServiceEndpoint.ServiceVehicle}/${idTypeVehicle}/${orderServiceId}`;
+    return this.put(route, formVehicle);
   }
 
   private makeParams(params: ListParams): HttpParams {

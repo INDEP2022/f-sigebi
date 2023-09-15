@@ -1,5 +1,4 @@
 import { DatePickerComponent } from 'src/app/shared/render-components/date-picker/date-picker.component';
-import { SelectUserComponent } from 'src/app/shared/render-components/select-user/select-user.component';
 
 export const COLUMNS = {
   id: {
@@ -19,6 +18,9 @@ export const COLUMNS = {
   },
   dateRenderDecoDev: {
     title: 'Fecha Decomiso',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
     editor: {
       type: 'custom',
       component: DatePickerComponent,
@@ -29,10 +31,10 @@ export const COLUMNS = {
     title: 'Promovente',
     sort: false,
     width: '20%',
-    editor: {
+    /*editor: {
       type: 'custom',
       component: SelectUserComponent,
-    },
+    },*/
   },
   quantity: {
     title: 'Cantidad',
@@ -48,6 +50,9 @@ export const COLUMNS = {
     title: 'Fecha Tesofe',
     sort: false,
     editable: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
   },
   /*confRet: {
     title: 'Dev/Conf',
@@ -58,5 +63,8 @@ export const COLUMNS = {
     title: 'Folio Tesofe',
     sort: false,
     editable: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
   },
 };

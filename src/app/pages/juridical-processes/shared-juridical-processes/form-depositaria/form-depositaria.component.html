@@ -10,7 +10,7 @@
           </div>
           <div class="card-body">
             <div class="col-12 col-sm-12 col-md-12 p-2">
-              <form-field
+              <!-- <form-field
                 [control]="form.get('noBien')"
                 label="No&#46; Bien"
                 class="col-sm-12 col-12 col-md-4 p-2">
@@ -18,20 +18,44 @@
                   class="form-control"
                   maxlength="11"
                   formControlName="noBien" />
-              </form-field>
-              <div class="col-sm-12 col-12 col-md-8 p-2">
-                <button
+              </form-field> -->
+              <div class="form-group col-sm-12 col-12 col-md-10 p-2">
+                <form-field [control]="form.get('noBien')">
+                  <ngx-select
+                    (fetchItems)="getGoodsSheard($event)"
+                    [data]="goods"
+                    [form]="form"
+                    value="id"
+                    bindLabel="description"
+                    label="No&#46; Bien"
+                    control="noBien"
+                    [showTooltip]="true"
+                    termMaxLength="400"
+                    (change)="onChangeGood($event)"
+                    [labelTemplate]="userLabel"
+                    [optionTemplate]="userOption">
+                  </ngx-select>
+                </form-field>
+                <ng-template #userLabel let-item="item"
+                  >{{ item.id }} - {{ item.description }}</ng-template
+                >
+                <ng-template #userOption let-item="item"
+                  >{{ item.id }} - {{ item.description }}</ng-template
+                >
+              </div>
+              <div class="col-sm-12 col-12 col-md-2 p-2 text-center">
+                <!-- <button
                   [disabled]="loading"
                   type="button"
                   class="btn btn-primary btn-sm active"
                   (click)="btnSearchGood()">
                   Buscar
                   <i class="bx bx-search-alt bx-sm float-icon"></i>
-                </button>
+                </button> -->
                 <button
                   [disabled]="loading"
                   type="button"
-                  class="btn btn-danger active btn-sm m-2"
+                  class="btn btn-danger active btn-sm m-3"
                   (click)="cleanScreenFields()">
                   Limpiar
                   <i class="fa fa-eraser ml-1"></i>
@@ -135,7 +159,7 @@
                       }}&nbsp;---&nbsp;{{
                         'MONTO:$ ' + formatTotalAmount(optionDate.payId)
                       }}&nbsp;---&nbsp;FECHA:{{
-                        optionDate.processDate | date : 'dd/MM/yyyy'
+                        optionDate.processDate | date: 'dd/MM/yyyy'
                       }}
                     </option>
                   </ng-container>

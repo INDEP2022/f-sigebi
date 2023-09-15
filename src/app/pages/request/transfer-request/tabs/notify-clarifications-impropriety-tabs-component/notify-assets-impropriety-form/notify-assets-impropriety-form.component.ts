@@ -11,11 +11,16 @@ import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  EMAIL_PATTERN,
+  NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { PrintReportModalComponent } from '../print-report-modal/print-report-modal.component';
 
 @Component({
@@ -60,6 +65,7 @@ export class NotifyAssetsImproprietyFormComponent
   delegationUser: any;
 
   xmlRespSat: string = '';
+  showSearchForm: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -69,7 +75,8 @@ export class NotifyAssetsImproprietyFormComponent
     private rejectedGoodService: RejectedGoodService,
     private authService: AuthService,
     private requestService: RequestService,
-    private applicationGoodsQueryService: ApplicationGoodsQueryService
+    private applicationGoodsQueryService: ApplicationGoodsQueryService,
+    private goodService: GoodService
   ) {
     super();
     this.today = new Date();
@@ -78,6 +85,9 @@ export class NotifyAssetsImproprietyFormComponent
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
     console.log('Información de la solicitud', this.infoRequest);
+
+    //Actualiza Bien, de prueba
+    //this.changeSimulateGood()
     this.modalService.onHide.subscribe(key => {});
 
     this.dictamenSeq();
@@ -139,6 +149,9 @@ export class NotifyAssetsImproprietyFormComponent
       ],
 
       webMail: [null, [Validators.pattern(EMAIL_PATTERN)]],
+      unit: [null, [Validators.pattern(STRING_PATTERN)]],
+      amount: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      description: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -204,14 +217,17 @@ export class NotifyAssetsImproprietyFormComponent
           'IMPROCEDENCIA' &&
         typeTransference == 'MANUAL'
       ) {
+        console.log('improcedenciaTransferentesVoluntarias');
         this.improcedenciaTransferentesVoluntarias(); //IMPROCEDENCIA  MANUAL
       }
     }
 
     if (typeTransference == 'SAT_SAE' && this.typeClarifications == 2) {
+      console.log('oficioAclaracionTransferente');
       this.oficioAclaracionTransferente();
     }
     if (typeTransference == 'SAT_SAE' && this.typeClarifications == 1) {
+      console.log('aclaracionComercioExterior');
       this.aclaracionComercioExterior();
     }
     //this.saveClarificationsAcept();
@@ -697,7 +713,7 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
           }
         },
         error: error => {
-          this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
+          this.onLoadToast('error', 'No se pudo actualizar', '');
         },
       });
   }
@@ -838,6 +854,7 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
     const idTypeDoc = Number(data.documentTypeId);
     const requestInfo = this.infoRequest;
     const idSolicitud = this.idSolicitud;
+    const noBien = this.dataClarifications2.goodId;
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
@@ -847,9 +864,19 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
         idReportAclara,
         idSolicitud,
         notificationValidate,
+        noBien,
         callback: (next: boolean, xml?: string) => {
           if (next) {
+            console.log('Ejecuta: changeStatusAnswered(xml)');
             this.changeStatusAnswered(xml);
+            if (
+              this.clarificationForm?.controls['amount'].value != null ||
+              this.clarificationForm?.controls['unit'].value != null ||
+              this.clarificationForm?.controls['description'].value != null
+            ) {
+              console.log('Ejecuta: changeSimulateGood');
+              this.changeSimulateGood();
+            }
           } else {
           }
         },
@@ -858,6 +885,50 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
       ignoreBackdropClick: true,
     };
     this.modalService.show(PrintReportModalComponent, config);
+  }
+
+  //Modifica atributos del bien
+  changeSimulateGood() {
+    console.log('Se cambian los atributos del bien');
+    //Obtiene noBien
+    const noGood = this.dataClarifications2.goodId;
+    //Establecer Cantidad
+    const amountNew = 2;
+    //Unidad
+    const unitNew = 'PZ';
+    //
+
+    //Traer información del Bien
+    this.goodService.getById(noGood).subscribe({
+      next: resp => {
+        console.log('Información del Bien Seleccionado: ', resp);
+
+        const obj = {
+          id: noGood,
+          goodId: noGood,
+          goodClassNumber: resp.goodClassNumber,
+          quantity: this.clarificationForm?.controls['amount'].value,
+          unitMeasure: this.clarificationForm?.controls['unit'].value,
+          unit: this.clarificationForm?.controls['unit'].value,
+          description: this.clarificationForm?.controls['description'].value,
+        };
+
+        console.log('Objeto a enviar por body', obj);
+
+        //Actualiza el Bien
+        this.goodService.update(obj).subscribe({
+          next: resp => {
+            console.log('Bien Actualizado: ', resp.data);
+          },
+          error: error => {
+            console.log('No se pudo actualizar: ', error);
+          },
+        });
+      },
+      error: error => {
+        console.log('No se pudo actualizar: ', error);
+      },
+    });
   }
 
   //Método para crear número secuencial según la no delegación del user logeado

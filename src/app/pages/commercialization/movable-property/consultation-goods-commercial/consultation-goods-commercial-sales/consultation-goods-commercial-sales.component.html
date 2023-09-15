@@ -1,24 +1,15 @@
 <form [formGroup]="form" class="form-material" (submit)="getData()">
   <div class="row mb-3 mt-3">
-    <form-field
-      [control]="form.get('goodNumber')"
-      label="No. Bien"
-      class="col-md-2">
-      <input
-        type="number"
-        [min]="0"
-        formControlName="goodNumber"
-        class="form-control" />
-    </form-field>
-    <form-field
-      [control]="form.get('descGood')"
-      label="Descripción del Bien"
-      class="col-md-6">
-      <input
-        type="text"
-        [min]="0"
-        formControlName="descGood"
-        class="form-control" />
+    <form-field [control]="form.get('goodNumber')" class="col-md-8">
+      <ngx-select
+        [form]="form"
+        [data]="good"
+        label="No. Bien"
+        value="goodId"
+        bindLabel="tipoSupbtipoDescription"
+        (fetchItems)="getGoodSelect($event)"
+        control="goodNumber">
+      </ngx-select>
     </form-field>
     <form-field
       [control]="form.get('expedientNumber')"
@@ -42,21 +33,16 @@
     </form-field>
   </div>
   <div class="row mt-3 mb-3">
-    <form-field
-      [control]="form.get('mandate')"
-      label="Transferente"
-      class="col-md-2">
-      <input
-        type="number"
-        [min]="0"
-        formControlName="mandate"
-        class="form-control" />
-    </form-field>
-    <form-field
-      [control]="form.get('descMandate')"
-      label="Descripción Transferente"
-      class="col-md-6">
-      <input type="text" formControlName="descMandate" class="form-control" />
+    <form-field [control]="form.get('mandate')" class="col-md-8">
+      <ngx-select
+        [form]="form"
+        [data]="transferents"
+        label="Transferente"
+        value="id"
+        bindLabel="tipoSupbtipoDescription"
+        (fetchItems)="getTransSelect($event)"
+        control="mandate">
+      </ngx-select>
     </form-field>
     <form-field [control]="form.get('lot')" label="Lote" class="col-md-2">
       <input
@@ -74,21 +60,16 @@
     </form-field>
   </div>
   <div class="row mb-3 mt-3">
-    <form-field
-      [control]="form.get('eventId')"
-      label="Id Evento"
-      class="col-md-2">
-      <input
-        type="number"
-        [min]="0"
-        formControlName="eventId"
-        class="form-control" />
-    </form-field>
-    <form-field
-      [control]="form.get('descEvent')"
-      label="Descripción del Evento"
-      class="col-md-6">
-      <input type="text" formControlName="descEvent" class="form-control" />
+    <form-field [control]="form.get('eventId')" class="col-md-8">
+      <ngx-select
+        [form]="form"
+        [data]="Event"
+        label="Evento"
+        value="id"
+        bindLabel="tipoSupbtipoDescription"
+        (fetchItems)="getEventSelect($event)"
+        control="eventId">
+      </ngx-select>
     </form-field>
     <form-field [control]="form.get('client')" label="Cliente" class="col-md-4">
       <input type="text" formControlName="client" class="form-control" />

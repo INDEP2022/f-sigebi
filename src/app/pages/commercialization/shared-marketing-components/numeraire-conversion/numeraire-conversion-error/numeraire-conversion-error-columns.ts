@@ -1,17 +1,24 @@
 export const EVENTO_ERROR_COLUMNS = {
-  evento: {
+  eventId: {
     title: 'Evento',
     width: '60px',
     type: 'string',
     sort: false,
   },
-  lote: {
+  lotePublico: {
     title: 'Lote',
     width: '60px',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.lot == null) {
+        return '';
+      } else {
+        return row.lot.lotPublic;
+      }
+    },
   },
-  inconsistencia: {
+  inconsistency: {
     title: 'Inconsistencia',
     type: 'string',
     sort: false,

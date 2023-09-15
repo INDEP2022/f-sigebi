@@ -6,6 +6,7 @@ import { catchError, of } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
+import { IOrderServiceDTO } from 'src/app/core/models/ms-order-service/order-service.mode';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
@@ -14,6 +15,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
 import { ConfirmProgrammingComponent } from '../../shared-request/confirm-programming/confirm-programming.component';
+import { AnnexWFormComponent } from '../components/annex-w-form/annex-w-form.component';
+import { RejectionCommentFormComponent } from '../components/rejection-comment-form/rejection-comment-form.component';
 
 @Component({
   selector: 'app-service-order-request-capture-form',
@@ -36,12 +39,15 @@ export class ServiceOrderRequestCaptureFormComponent
   form: FormGroup = new FormGroup({});
   ordServform: FormGroup = new FormGroup({});
   parentModal: BsModalRef;
-  op: number = 1;
+  op: number = 4;
   showForm: boolean = true;
   orderServiceId: number = null;
   lsProgramming: string = null;
   programmingId: number = null;
   programming: any = null;
+  isUpdate: boolean = false;
+
+  total: string = null;
 
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);
@@ -116,7 +122,15 @@ export class ServiceOrderRequestCaptureFormComponent
         { value: null, disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ],
-
+      //
+      notes: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      observation: [
+        { value: null, disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
       programmingId: [null],
       id: [null],
     });
@@ -191,18 +205,24 @@ export class ServiceOrderRequestCaptureFormComponent
   }
 
   saveService() {
+    const folio = this.ordServform.controls['serviceOrderFolio'].value;
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Desea guardar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+      `¿Desea guardar la orden de servicio con folio ${folio}?`
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.onLoadToast(
+
+        console.log(this.ordServform.getRawValue());
+        let ordServiceForm = this.ordServform.getRawValue();
+        this.isUpdate = true;
+        this.updateOrderService(ordServiceForm);
+        /*this.onLoadToast(
           'success',
           'Orden de servicio guardada correctamente',
           ''
-        );
+        );*/
       }
     });
   }
@@ -215,6 +235,8 @@ export class ServiceOrderRequestCaptureFormComponent
     this.ordServform.controls['originStreet'].enable();
     this.ordServform.controls['originPostalCode'].enable();
     this.ordServform.controls['colonyOrigin'].enable();
+    this.ordServform.controls['notes'].enable();
+    this.ordServform.controls['observation'].enable();
   }
 
   getOrderService() {
@@ -255,6 +277,22 @@ export class ServiceOrderRequestCaptureFormComponent
             resolve(resp);
           },
         });
+    });
+  }
+
+  updateOrderService(body: IOrderServiceDTO) {
+    this.orderService.updateOrderService(body).subscribe({
+      next: resp => {
+        this.onLoadToast(
+          'success',
+          'La orden de servicio se guardada correctamente',
+          ''
+        );
+      },
+      error: error => {
+        console.log(error);
+        this.onLoadToast('error', 'No se pudo actualizar la orden de servicio');
+      },
     });
   }
 
@@ -302,5 +340,42 @@ export class ServiceOrderRequestCaptureFormComponent
         this.programming = resp;
       },
     });
+  }
+
+  annexWReport() {
+    let config: ModalOptions = {
+      initialState: {
+        callback: (next: boolean) => {
+          if (next) {
+            //this.getProgrammingId();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(AnnexWFormComponent, config);
+  }
+
+  getTotal(event: string) {
+    this.total = event;
+  }
+
+  rejectOrder() {
+    const folio = this.ordServform.get('serviceOrderFolio').value;
+    let config: ModalOptions = {
+      initialState: {
+        folio: folio,
+        callback: (next: boolean) => {
+          if (next) {
+            //this.getProgrammingId();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    //RejectionJustifyFormComponent
+    this.modalService.show(RejectionCommentFormComponent, config);
   }
 }

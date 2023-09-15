@@ -132,6 +132,7 @@ export interface IGood {
   userPromoterDecoDevo?: any;
   fecProgramerXDecoDevo?: any;
   ligieUnit: string;
+  unitLigieName: string;
   noGoogDadBias?: any;
   declarationAbnSera?: any;
   identifier: string;
@@ -263,6 +264,7 @@ export interface IGood {
   indAclaration: string;
   msgSatSae?: any;
   color?: any;
+  unitMeasureName: string | null;
   numClow?: any;
   destinyCompensation?: any;
   val1: string;

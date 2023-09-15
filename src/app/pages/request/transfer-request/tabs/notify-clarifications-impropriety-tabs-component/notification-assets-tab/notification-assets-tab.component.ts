@@ -403,6 +403,7 @@ export class NotificationAssetsTabComponent
     this.notifyAssetsSelected = event.selected;
     this.valueGood = event.data.goodId;
     this.valueRejectNotificationId = event.data.rejectNotificationId;
+    console.log('Seleccionada: ', event.data.clarification.clarification);
   }
 
   refuseClarification() {
@@ -972,8 +973,8 @@ export class NotificationAssetsTabComponent
         if (aclaracion) {
           this.alertQuestion(
             'question',
-            'Finalizar',
-            '¿Desea Finalizar la Aclaración?'
+            '¿Desea Finalizar la Aclaración?',
+            ''
           ).then(question => {
             if (question.isConfirmed) {
               this.endAclaration();
@@ -982,8 +983,8 @@ export class NotificationAssetsTabComponent
         } else if (improcedencia) {
           this.alertQuestion(
             'question',
-            'Finalizar',
-            '¿Desea Finalizar la Improcedencia?'
+            '¿Desea Finalizar la Improcedencia?',
+            ''
           ).then(question => {
             if (question.isConfirmed) {
               this.endImpinappropriateness();

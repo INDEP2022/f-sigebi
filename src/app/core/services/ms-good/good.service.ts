@@ -501,4 +501,13 @@ export class GoodService extends HttpService {
   getGoodByNoGood(good: number) {
     return this.get(`${GoodEndpoints.Good}?filter.goodId=$eq:${good}`);
   }
+
+  getByGood(good: any) {
+    const route = `${GoodEndpoints.GetAllGoodQuery}?filter.goodId=$eq:${good}`;
+    return this.get(route);
+  }
+
+  updateGood(params?: any): Observable<IListResponse<any>> {
+    return this.put(GoodEndpoints.Good, params);
+  }
 }

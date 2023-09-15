@@ -1,61 +1,106 @@
 export const GRV_DETALLES_COLUMNS = {
-  noDetails: {
-    title: 'No.',
+  id: {
+    title: 'Id.',
     sort: false,
   },
-  description: {
+  name: {
     title: 'Descripción',
     sort: false,
   },
-  totalAllotment: {
+  total: {
     title: 'Total Lotes',
     sort: false,
   },
-  percentage: {
+  porcentaje: {
     title: 'Porcentaje',
-    sort: false,
-  },
-  details: {
-    title: 'Detalle',
     sort: false,
   },
 };
 
 export const GV_LOTES_COLUMNS = {
-  allotment: {
+  lote_publico: {
     title: 'Lote Público',
     sort: false,
   },
-  id_allotment: {
-    title: 'ID Lote',
+  id_lote: {
+    title: 'Id. Lote',
     sort: false,
   },
-  idStatusVta: {
-    title: 'ID Status VTA',
+  id_estatusvta: {
+    title: 'Id. Estatus',
     sort: false,
   },
-  idEvent: {
-    title: 'ID Evento',
+  id_evento: {
+    title: 'Id. Evento',
     sort: false,
   },
-  description: {
+  descripcion: {
     title: 'Descripción',
     sort: false,
   },
-  client: {
+  cliente: {
     title: 'Cliente',
     sort: false,
   },
-  coordinator: {
+  coordinador_reg: {
     title: 'Coordinador Reg',
     sort: false,
   },
-  transferee: {
+  no_transferente: {
     title: 'Transferente',
     sort: false,
   },
-  detail: {
+  transferente: {
     title: 'Detalle',
+    sort: false,
+  },
+};
+
+export const BIEN_LOTES_COLUMNS = {
+  no_bien: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  estatus: {
+    title: 'Estatus',
+    sort: false,
+  },
+  fec_cambio: {
+    title: 'Fecha de Cambio',
+    sort: false,
+    valuePrepareFunction: (text: string) => {
+      if (text) {
+        const parts = text.split('T')[0].split('-'); // Obtener la parte de la fecha y dividirla
+        if (parts.length === 3) {
+          const [year, month, day] = parts;
+          return `${day}/${month}/${year}`;
+        }
+      }
+      return '';
+    },
+  },
+  usuario_cambio: {
+    title: 'Usuario de Cambio',
+    sort: false,
+  },
+  programa_cambio_estatus: {
+    title: 'Programa',
+    sort: false,
+  },
+  motivo_cambio: {
+    title: 'Motivo de Cambio',
+    sort: false,
+  },
+  no_registro: {
+    title: 'No. Registro',
+    sort: false,
+  },
+  proceso_ext_dom: {
+    title: 'Proceso',
+    sort: false,
+  },
+  descripcion: {
+    title: 'Descripción',
     sort: false,
   },
 };

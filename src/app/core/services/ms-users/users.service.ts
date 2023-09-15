@@ -199,4 +199,14 @@ export class UsersService extends HttpService {
       body
     );
   }
+
+  getAllSegUsersbykey(user: any) {
+    return this.get(
+      `${UserEndpoints.GetAllSegUser}?filter.user=$ilike:${user}`
+    );
+  }
+
+  getComerUserXCan(params: _Params) {
+    return this.get(UserEndpoints.ComerUser, params);
+  }
 }

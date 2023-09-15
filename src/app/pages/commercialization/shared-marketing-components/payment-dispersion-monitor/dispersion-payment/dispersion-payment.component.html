@@ -81,7 +81,7 @@
                 </h5>
                 <form-field [control]="form.get('dateEvent')">
                   <p class="text-muted mb-0">
-                    {{ form.get('dateEvent').value | date : 'dd-MM-yyyy' }}
+                    {{ form.get('dateEvent').value | date: 'dd-MM-yyyy' }}
                   </p>
                 </form-field>
               </div>
@@ -95,7 +95,7 @@
                 <form-field [control]="form.get('dateNotification')">
                   <p class="text-muted mb-0">
                     {{
-                      form.get('dateNotification').value | date : 'dd-MM-yyyy'
+                      form.get('dateNotification').value | date: 'dd-MM-yyyy'
                     }}
                   </p>
                 </form-field>
@@ -109,7 +109,7 @@
                 </h5>
                 <form-field [control]="form.get('dateClose')">
                   <p class="text-muted mb-0">
-                    {{ form.get('dateClose').value | date : 'dd-MM-yyyy' }}
+                    {{ form.get('dateClose').value | date: 'dd-MM-yyyy' }}
                   </p>
                 </form-field>
               </div>
@@ -122,9 +122,7 @@
                 </h5>
                 <form-field [control]="form.get('dateMaxWarranty')">
                   <p class="text-muted mb-0">
-                    {{
-                      form.get('dateMaxWarranty').value | date : 'dd-MM-yyyy'
-                    }}
+                    {{ form.get('dateMaxWarranty').value | date: 'dd-MM-yyyy' }}
                   </p>
                 </form-field>
               </div>
@@ -137,7 +135,7 @@
                 </h5>
                 <form-field [control]="form.get('dateFail')">
                   <p class="text-muted mb-0">
-                    {{ form.get('dateFail').value | date : 'dd-MM-yyyy' }}
+                    {{ form.get('dateFail').value | date: 'dd-MM-yyyy' }}
                   </p>
                 </form-field>
               </div>
@@ -150,7 +148,7 @@
                 </h5>
                 <form-field [control]="form.get('dateMaxPayment')">
                   <p class="text-muted mb-0">
-                    {{ form.get('dateMaxPayment').value | date : 'dd-MM-yyyy' }}
+                    {{ form.get('dateMaxPayment').value | date: 'dd-MM-yyyy' }}
                   </p>
                 </form-field>
               </div>
@@ -617,38 +615,40 @@
 
 <app-card>
   <div body>
-    <div class="row mb-3 mt-3 text-center">
-      <div class="col">
-        <div class="row">
-          <span>Definitivo</span>
+    <form [formGroup]="formRbButton" class="form-material">
+      <div class="row mb-3 mt-3 text-center">
+        <div class="col">
+          <div class="row">
+            <span>Definitivo</span>
+          </div>
+          <div class="row">
+            <div class="col d-flex justify-content-center">
+              <form-radio label="Si">
+                <input type="radio" formControlName="definitive" value="S" />
+              </form-radio>
+              <form-radio label="No">
+                <input type="radio" formControlName="definitive" value="N" />
+              </form-radio>
+            </div>
+          </div>
         </div>
-        <div class="row">
-          <div class="col d-flex justify-content-center">
-            <form-radio label="Si">
-              <input type="radio" formControlName="option" value="true" />
-            </form-radio>
-            <form-radio label="No">
-              <input type="radio" formControlName="option" value="true" />
-            </form-radio>
+        <div class="col">
+          <div class="row">
+            <span>Todos los Lotes</span>
+          </div>
+          <div class="row">
+            <div class="col d-flex justify-content-center">
+              <form-radio label="Si">
+                <input type="radio" formControlName="allBatch" value="S" />
+              </form-radio>
+              <form-radio label="No">
+                <input type="radio" formControlName="allBatch" value="N" />
+              </form-radio>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col">
-        <div class="row">
-          <span>Todos los Lotes</span>
-        </div>
-        <div class="row">
-          <div class="col d-flex justify-content-center">
-            <form-radio label="Si">
-              <input type="radio" formControlName="option" value="true" />
-            </form-radio>
-            <form-radio label="No">
-              <input type="radio" formControlName="option" value="true" />
-            </form-radio>
-          </div>
-        </div>
-      </div>
-    </div>
+    </form>
     <div class="row text-center mb-3 mt-3">
       <div class="col">
         <button
@@ -766,7 +766,10 @@
           (click)="testSend()">
           Prueba_mand.
         </button>
-        <button type="button" class="btn btn-primary btn-sm active">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="userWithoutBill()">
           Usuarios para avisos por Mandatos sin Facturación
         </button>
       </div>

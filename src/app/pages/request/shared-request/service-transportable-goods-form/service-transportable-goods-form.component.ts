@@ -1,9 +1,11 @@
 import {
   Component,
+  EventEmitter,
   inject,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -44,6 +46,7 @@ export class ServiceTransportableGoodsFormComponent
   @Input() showForm: boolean;
   @Input() rejected: boolean;
   @Input() orderServiceId: number;
+  @Input() isUpdate?: boolean = false;
   title: string = '';
   showButtonServiceManual: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -53,6 +56,7 @@ export class ServiceTransportableGoodsFormComponent
   listforUpdate: any = [];
 
   data: any[] = [];
+  @Output() totEvent: EventEmitter<string> = new EventEmitter();
 
   private orderEntryService = inject(orderentryService);
 
@@ -120,6 +124,33 @@ export class ServiceTransportableGoodsFormComponent
       },
     };
 
+    this.columns.resultAssessment = {
+      ...this.columns.resultAssessment,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          this.setResulAssessment(data);
+        });
+      },
+    };
+
+    this.columns.amountNumbercomplies = {
+      ...this.columns.amountNumbercomplies,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          this.setAmountNumbercomplies(data);
+        });
+      },
+    };
+
+    this.columns.porcbreaches = {
+      ...this.columns.porcbreaches,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          this.setPorcbreaches(data);
+        });
+      },
+    };
+
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       //verificar si existe el order service id
       if (this.orderServiceId != null) {
@@ -129,7 +160,12 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.orderServiceId) this.getOrderServiceProvided();
+    if (this.orderServiceId) {
+      this.getOrderServiceProvided();
+    }
+    if (this.isUpdate == true) {
+      this.saveForm();
+    }
   }
 
   getOrderServiceProvided() {
@@ -148,14 +184,26 @@ export class ServiceTransportableGoodsFormComponent
       )
       .subscribe({
         next: resp => {
-          //this.data = testData;
+          console.log(resp.data);
+
+          let ttotal = 0;
           resp.data.map((item: any) => {
-            item['total'] =
-              Number(item.priceUnitary) * Number(item.resourcesReal);
+            const resource =
+              Number(item.resourcesNumber) != null
+                ? Number(item.resourcesNumber)
+                : 0;
+            item['total'] = Number(item.priceUnitary) * resource;
+            ttotal = ttotal + item['total'];
           });
+
+          const t = `$${this.formatTotalAmount(ttotal)}`;
+          this.totEvent.emit(t);
+          const bodyTotal: any = { total: t };
+          resp.data.push(bodyTotal);
           this.data = resp.data;
           this.totalItems = resp.count;
           this.setTableColumnsRows();
+          this.setTableRowTotal();
         },
       });
   }
@@ -190,21 +238,83 @@ export class ServiceTransportableGoodsFormComponent
       if (this.op == 3 || this.op == 4 || this.op == 5 || this.op == 6) {
         for (let index = 0; index < tbody.length; index++) {
           const ele: any = tbody[index];
-          ele.children[5].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
-            true;
-          ele.children[6].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
-            true;
+          //duracion hora
+          ele.children[8].querySelector('#text-input').disabled = true;
+          /* ele.children[5].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
+            true; */
+          /* ele.children[6].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
+            true; */
+          //no. recursos
+          ele.children[9].querySelector('#text-input').disabled = true;
         }
       }
       //readonly no. recursos
       if (this.op == 4 || this.op == 5 || this.op == 14) {
         for (let index = 0; index < tbody.length; index++) {
           const ele: any = tbody[index];
-          ele.children[6].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
-            true;
+          /*  ele.children[6].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
+            true; */
+          //no. recursos
+          ele.children[9].querySelector('#text-input').disabled = true;
         }
       }
     }, 300);
+  }
+
+  setTableRowTotal() {
+    setTimeout(() => {
+      const tableColumn = this.table.grid.getColumns();
+      let noResources = tableColumn.find((x: any) => x.id == 'resourcesReal');
+      let descriptionDifference = tableColumn.find(
+        (x: any) => x.id == 'descriptionDifference'
+      );
+      const resultAssessment = tableColumn.find(
+        (x: any) => x.id == 'resultAssessment'
+      );
+      const amountNumbercomplies = tableColumn.find(
+        (x: any) => x.id == 'amountNumbercomplies'
+      );
+      const porcbreaches = tableColumn.find((x: any) => x.id == 'porcbreaches');
+      const resourcesReal = tableColumn.find(
+        (x: any) => x.id == 'resourcesReal'
+      );
+
+      const table = document.getElementById('table');
+      const tbody = table.children[0].children[1].children;
+      const row: any = tbody[this.data.length - 1];
+      //select
+      row.children[0].querySelector('#checkbox-input').hidden = true;
+      if (resultAssessment.hide == false)
+        //result evaluacion
+        row.children[1].querySelector('#select-input').hidden = true;
+      if (amountNumbercomplies.hide == false)
+        //bi recur no cumple
+        row.children[2].querySelector('#text-input').hidden = true;
+      if (porcbreaches.hide == false)
+        //incumpli %
+        row.children[3].querySelector('#text-input').hidden = true;
+      //comentario de servicio
+      row.children[7].querySelector('#text-input').hidden = true;
+      //duracion horas
+      row.children[8].querySelector('#text-input').hidden = true;
+      //no. recurso
+      row.children[9].querySelector('#text-input').hidden = true;
+      if (resourcesReal.hide == false)
+        //recurso real
+        row.children[10].querySelector('#text-input').hidden = true;
+      if (descriptionDifference.hide == false) {
+        //descrip de diferencia
+        row.children[13].querySelector('#text-input').hidden = true;
+      }
+    }, 300);
+  }
+
+  formatTotalAmount(numberParam: number) {
+    if (numberParam) {
+      return new Intl.NumberFormat('es-MX').format(numberParam);
+    } else {
+      return '0.00';
+    }
   }
 
   titleTab() {
@@ -219,10 +329,13 @@ export class ServiceTransportableGoodsFormComponent
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-content-centered' };
 
     config.initialState = {
+      orderServId: this.orderServiceId,
+      typeService: 'EN_TRANSPORTABLE',
       callback: (data: any) => {
         if (data) {
           console.log(data);
           this.showButtonServiceManual = true;
+          this.getOrderServiceProvided();
         }
       },
     };
@@ -234,13 +347,12 @@ export class ServiceTransportableGoodsFormComponent
 
   newServiceManual() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-content-centered' };
-
     config.initialState = {
+      orderServiceId: this.orderServiceId,
       callback: (data: any) => {
         if (data) {
           console.log(data);
-          this.data.push(data);
-          this.data = [...this.data];
+          this.getOrderServiceProvided();
         }
       },
     };
@@ -251,6 +363,11 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   deleteService() {
+    console.log(this.ordersSelected);
+    if (this.ordersSelected.length == 0 || this.ordersSelected.length > 1) {
+      this.onLoadToast('info', 'Seleccione un bien');
+      return;
+    }
     this.alertQuestion(
       'warning',
       'Confirmación',
@@ -258,7 +375,7 @@ export class ServiceTransportableGoodsFormComponent
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.onLoadToast('success', 'Servicio eliminado correctamente', '');
+        this.deleteOrderServiceProvided(this.ordersSelected[0].id);
       }
     });
   }
@@ -354,5 +471,111 @@ export class ServiceTransportableGoodsFormComponent
           data.text != '' ? data.text : null;
       }
     }
+  }
+
+  setResulAssessment(data: any) {
+    /*if (data.text != null) {
+      debugger*/
+    const index = this.data.indexOf(data.row);
+    this.data[index].resultAssessment = data.text != '' ? data.text : null;
+
+    //aniadir a la lista de actualizaciones
+    const index2 = this.listforUpdate.indexOf(data.row);
+    if (index2 == -1) {
+      this.listforUpdate.push(data.row);
+    } else {
+      this.listforUpdate[index].resultAssessment =
+        data.text != '' ? data.text : null;
+    }
+    /*}*/
+  }
+
+  setAmountNumbercomplies(data: any) {
+    if (data.text != null) {
+      const index = this.data.indexOf(data.row);
+      this.data[index].amountNumbercomplies =
+        data.text != '' ? data.text : null;
+
+      //aniadir a la lista de actualizaciones
+      const index2 = this.listforUpdate.indexOf(data.row);
+      if (index2 == -1) {
+        this.listforUpdate.push(data.row);
+      } else {
+        this.listforUpdate[index].amountNumbercomplies =
+          data.text != '' ? data.text : null;
+      }
+    }
+  }
+
+  setPorcbreaches(data: any) {
+    if (data.text != null) {
+      const index = this.data.indexOf(data.row);
+      this.data[index].porcbreaches = data.text != '' ? data.text : null;
+
+      //aniadir a la lista de actualizaciones
+      const index2 = this.listforUpdate.indexOf(data.row);
+      if (index2 == -1) {
+        this.listforUpdate.push(data.row);
+      } else {
+        this.listforUpdate[index].porcbreaches =
+          data.text != '' ? data.text : null;
+      }
+    }
+  }
+
+  saveForm() {
+    if (this.listforUpdate.length == 0) return;
+
+    this.listforUpdate.map(async (item: any, _i: number) => {
+      const index = _i + 1;
+      delete item.total;
+      console.log(item);
+
+      const body: any = {};
+      for (const key in item) {
+        if (item[key] != null) {
+          body[key] = item[key];
+        }
+      }
+
+      const update = await this.updateOrderServiceProvided(body);
+
+      if (this.listforUpdate.length == index) {
+        this.isUpdate = false;
+        console.log('BIENES TRANSPORTABLES ACTUALIZADO');
+        this.getOrderServiceProvided();
+      }
+    });
+  }
+  /**
+   * consultar el campo serviceCost no deveria mostrarse en ordservice provi porque no guarda
+   * No carga automativamente los datos en el selector cuando se guardan
+   */
+
+  updateOrderServiceProvided(good: any) {
+    return new Promise((resolve, reject) => {
+      this.orderEntryService.updateOrderServicesProvided(good).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(error);
+          console.log(error);
+          this.onLoadToast(
+            'error',
+            'No se pudo actualzar los bienes transportables'
+          );
+        },
+      });
+    });
+  }
+
+  deleteOrderServiceProvided(id: number) {
+    this.orderEntryService.deleteOrderServiceProvided(id).subscribe({
+      next: resp => {
+        this.onLoadToast('success', 'Servicio eliminado correctamente', '');
+        this.getOrderServiceProvided();
+      },
+    });
   }
 }

@@ -24,12 +24,12 @@ export const DETAILS_OI_COLUMNS = {
     sort: false,
   },
   amountSVat: {
-    title: 'Importe sin IVA',
+    title: 'Importe sin Iva',
     type: 'string',
     sort: false,
   },
   vat: {
-    title: 'IVA',
+    title: 'Iva',
     type: 'string',
     sort: false,
   },
@@ -44,7 +44,7 @@ export const DETAILS_OI_COLUMNS = {
     sort: false,
   },
   percentVat: {
-    title: 'IVA',
+    title: 'Iva',
     type: 'string',
     sort: false,
   },
@@ -64,7 +64,7 @@ export const DETAILS_OI_COLUMNS = {
     sort: false,
   },
   check: {
-    title: '',
+    title: 'Rec Imp',
     type: 'custom',
     filter: false,
     showAlways: true,

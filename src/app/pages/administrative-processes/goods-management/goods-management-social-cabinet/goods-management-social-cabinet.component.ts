@@ -361,7 +361,7 @@ export class GoodsManagementSocialCabinetComponent
     );
     if (response.data.length === 0) {
       this.notLoadedGoods = [];
-      this.alert('error', 'Error', 'Bienes no encontrados');
+      this.alert('warning', 'Bienes no encontrados', '');
       this.goodsManagementService.data = [];
       this.goodsManagementService.refreshTable.next(false);
       this.sinAsignarCant = 0;

@@ -5,4 +5,5 @@ export enum DinamicCatalogEndPoints {
   TvalTable5 = 'tval-table-5',
   GetOtValor = 'application/getotvalor',
   PostQuery = 'application/get-eat-detinvoice-query',
+  GetTvaltable1 = 'tval-table-1',
 }

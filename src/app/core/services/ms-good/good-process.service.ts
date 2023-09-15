@@ -27,6 +27,10 @@ export class GoodProcessService extends HttpService {
     this.microservice = GoodProcessPoints.basepath;
   }
 
+  getReportNingevent(params: ListParams) {
+    return this.get(GoodProcessPoints.ReportNingevent, params);
+  }
+
   updateFraction(body: { newFraction: string; goodNum: number }) {
     return this.post(GoodProcessPoints.updateFractions, body);
   }
@@ -281,5 +285,15 @@ export class GoodProcessService extends HttpService {
     return this.get(
       `${GoodProcessPoints.GetDataCustom}?tCurrency=${currency}&noGood=${good}`
     );
+  }
+
+  getVGoodTpye(params: ListParams) {
+    const route = `${GoodProcessPoints.VGoodType}`;
+    return this.get<any>(route, params);
+  }
+
+  getVsigLigie(params: ListParams | string): Observable<IListResponse<any>> {
+    const route = GoodProcessPoints.GetVsigLigie;
+    return this.get<IListResponse<any>>(route, params);
   }
 }

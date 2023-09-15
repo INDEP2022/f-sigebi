@@ -24,6 +24,7 @@ export class AuxListComponent extends BasePage implements OnInit {
   REFERENCIA: any;
   valRef: boolean;
   columnFilters: any = [];
+  valCargado: boolean;
   constructor(
     private modalRef: BsModalRef,
     private paymentService: PaymentService,
@@ -145,6 +146,15 @@ export class AuxListComponent extends BasePage implements OnInit {
       this.alert('warning', 'Debe Seleccionar un Pago', '');
       return;
     }
+    if (this.valCargado) {
+      this.dataParams.reference = this.dataSelected.referential;
+      this.handleSuccess();
+    } else {
+      this.saveNoCargado();
+    }
+  }
+
+  saveNoCargado() {
     const requestBody: any = {
       paymentId: this.dataParams.paymentId,
       reference: this.dataSelected.referential,
@@ -167,7 +177,7 @@ export class AuxListComponent extends BasePage implements OnInit {
     const message: string = 'Actualizado';
     this.alert('success', `Registro ${message} Correctamente`, '');
     this.loading = false;
-    this.modalRef.content.callback(true);
+    this.modalRef.content.callback(true, this.dataParams);
     this.modalRef.hide();
   }
 

@@ -26,7 +26,10 @@ export class OrderServiceFormComponent implements OnInit, OnChanges {
   @Input() op: number;
   @Input() showForm: boolean;
   @Input() ordServform?: FormGroup = new FormGroup({});
+  @Input() total: string = null;
   readonly: boolean = false;
+  visitEye: boolean = false;
+  consolideContainer: boolean = false;
 
   orderService: any = {};
 
@@ -37,7 +40,28 @@ export class OrderServiceFormComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log(this.total);
+
     this.orderService = this.ordServform.getRawValue();
     console.log('showForm', this.showForm);
+    this.visitEye = this.orderService.eyeVisit == 'Y' ? true : false;
+    this.consolideContainer =
+      this.orderService.userContainers == 'Y' ? true : false;
+  }
+
+  changeVisitEye(event: any) {
+    if (event.target.checked == true) {
+      this.ordServform.controls['eyeVisit'].setValue('Y');
+    } else {
+      this.ordServform.controls['eyeVisit'].setValue('N');
+    }
+  }
+
+  changeConsolidate(event: any) {
+    if (event.target.checked == true) {
+      this.ordServform.controls['userContainers'].setValue('Y');
+    } else {
+      this.ordServform.controls['userContainers'].setValue('N');
+    }
   }
 }

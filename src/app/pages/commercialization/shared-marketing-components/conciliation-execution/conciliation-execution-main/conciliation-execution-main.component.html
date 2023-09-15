@@ -1,6 +1,9 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">ejecución de la conciliación</h5>
+    <h5 *ngIf="layout == 'M'" class="title">Ejecución de la conciliación</h5>
+    <h5 *ngIf="layout == 'I'" class="title">
+      Ejecutar la conciliación de pagos recibidos
+    </h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="conciliationForm">
@@ -13,8 +16,8 @@
                   [form]="conciliationForm"
                   [searchOnInit]="true"
                   [data]="comerEventSelect"
-                  value="id_evento"
-                  bindLabel="id_evento"
+                  value="eventId"
+                  bindLabel="eventId"
                   label="Evento"
                   (fetchItems)="getComerEvents($event)"
                   control="event"
@@ -48,12 +51,54 @@
                   class="form-control"
                   formControlName="date"
                   [maxDate]="maxDate"
-                  bsDatepicker />
+                  bsDatepicker
+                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
               </form-field>
             </div>
-            <div class="col-sm-6 col-lg-5 mt-2">
+            <div *ngIf="layout == 'I'" class="col-sm-6 col-lg-6 mt-2">
               <form-field
-                *ngIf="mostrarLotes"
+                *ngIf="faseAct"
+                [control]="conciliationForm.get('phaseAct')"
+                label="Fase">
+                <ng-select
+                  (change)="selectedFaseAct($event)"
+                  [readonly]="!selectedEvent"
+                  formControlName="phaseAct"
+                  [searchable]="false"
+                  class="form-control"
+                  [clearable]="false">
+                  <ng-option value="1">GARANTIA DE SERIEDAD</ng-option>
+                  <ng-option value="2">GARANTIA DE CUMPLIMIENTO</ng-option>
+                  <ng-option value="3">LIQUIDACIÓN</ng-option>
+                  <ng-option value="4">LIQUIDACIÓN EXTEMPORÁNEA</ng-option>
+                  <ng-option value="5">VENTA DE BASES</ng-option>
+                  <ng-option value="6">AMORTIZACIONES</ng-option>
+                  <ng-option value="7"
+                    >GARANTIA DE CUMPLIMIENTO EXTEMPORÁNEA</ng-option
+                  >
+                </ng-select>
+              </form-field>
+
+              <form-field
+                *ngIf="faseAnt"
+                [control]="conciliationForm.get('phaseAnt')"
+                label="Fase">
+                <ng-select
+                  (change)="selectedFaseAnt($event)"
+                  [readonly]="!selectedEvent"
+                  formControlName="phaseAnt"
+                  [searchable]="false"
+                  class="form-control"
+                  [clearable]="false">
+                  <ng-option value="1">FASE DE GARANTIAS</ng-option>
+                  <ng-option value="2">FASE DE VENTA FINAL</ng-option>
+                  <ng-option value="3">FASE DE ADELANTOS</ng-option>
+                </ng-select>
+              </form-field>
+            </div>
+            <div *ngIf="layout == 'M'" class="col-sm-6 col-lg-5 mt-2">
+              <form-field
+                *ngIf="mostrarLotes; inmuebles"
                 [control]="conciliationForm.get('phase')"
                 label="Fase">
                 <ng-select
@@ -75,7 +120,7 @@
                 </ng-select>
               </form-field>
             </div>
-            <div class="col-sm-6 col-lg-4 mt-2">
+            <div *ngIf="layout == 'M'" class="col-sm-6 col-lg-4 mt-2">
               <form-field
                 *ngIf="mostrarLotes"
                 [control]="conciliationForm.get('batch')">
@@ -91,6 +136,54 @@
                 </ngx-select>
               </form-field>
             </div>
+            <!-- <div *ngIf="layout == 'I'" class="col-sm-3 col-lg-3 mt-2"></div> -->
+            <!-- <div *ngIf="layout == 'I'" class="col-sm-9 col-lg-9 mt-2"> -->
+            <div *ngIf="layout == 'I'" class="col-sm-3 col-lg-3 mt-2">
+              <form-field
+                *ngIf="mostrarLotesInmuebles"
+                [control]="conciliationForm.get('batch')">
+                <ngx-select
+                  [readonly]="!selectedEvent"
+                  [form]="conciliationForm"
+                  [data]="lotes"
+                  bindLabel="lotPublic"
+                  label="Lote"
+                  (fetchItems)="getLotes($event, 'no')"
+                  control="batch"
+                  (change)="selectBatch($event)">
+                </ngx-select>
+              </form-field>
+            </div>
+            <div *ngIf="layout == 'I'" class="col-sm-3 col-lg-3 mt-2">
+              <form-field
+                label="Precio"
+                *ngIf="mostrarLotesInmuebles"
+                [control]="conciliationForm.get('priceLote')">
+                <input
+                  currencyMask
+                  readonly
+                  type="text"
+                  class="form-control"
+                  formControlName="priceLote" />
+              </form-field>
+            </div>
+            <div *ngIf="layout == 'I'" class="col-sm-9 col-lg-9 mt-2">
+              <form-field
+                label="Descripción Lote"
+                *ngIf="mostrarLotesInmuebles"
+                [control]="conciliationForm.get('descLote')">
+                <textarea
+                  readonly
+                  type="text"
+                  class="form-control"
+                  formControlName="descLote"
+                  cols="3"
+                  rows="3"></textarea>
+                <!-- <input readonly type="text" class="form-control" formControlName="descLote" /> -->
+              </form-field>
+            </div>
+
+            <!-- </div> -->
           </div>
 
           <div class="row d-flex justify-content-center">
@@ -141,7 +234,8 @@
                 (click)="modify()"
                 tooltip="Modificar Estatus de Bienes"
                 containerClass="tooltip-style">
-                Modificar <i *ngIf="!loadingBtn2" class="fa fa-pencil-alt"></i>
+                {{ layout == 'I' ? 'Estatus' : 'Modificar' }}
+                <i *ngIf="!loadingBtn2" class="fa fa-pencil-alt"></i>
               </button>
             </div>
             <div class="col-12 mt-2">
