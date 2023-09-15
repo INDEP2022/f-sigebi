@@ -1,11 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -27,7 +29,7 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
   form: FormGroup;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  data: any;
+  dataTable: LocalDataSource = new LocalDataSource();
   bsModalRef?: BsModalRef;
   bsValueFromYear: Date = new Date();
   bsConfigFromYear: Partial<BsDatepickerConfig>;
@@ -39,7 +41,8 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private donationService: DonationProcessService
+    private donationService: DonationProcessService,
+    private previousDonationService: DonationService
   ) {
     super();
   }
@@ -49,8 +52,18 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
     this.configInputsDate();
     this.assignTableColumns();
     console.log(this.op);
+    this.fillTable();
 
     this.donationService.getAllContracts();
+
+    this.donationService.getDataInventario().subscribe({
+      next: data => {
+        console.log(data);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
   }
 
   newColumn = {
@@ -212,7 +225,27 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
   }
 
   onIncorporar() {
-    this.alert('success', 'El contrato ha sido incorporado', '');
+    let params = `filter.id=$eq:${this.form.get('idContract').value}`;
+
+    this.donationService.getAllContracts(params).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        console.log(data.data);
+        ///Try to find the way to data come in a better and clean way
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
+
+  fillTable() {
+    this.loading = true;
+    setTimeout(() => {
+      this.dataTable.load(dataMock);
+    }, 1500);
+
+    this.loading = false;
   }
 
   onQuitarBienesSeleccionados() {
@@ -265,3 +298,226 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
     this.alert('success', 'Test', 'Se ha cerrado el contrato');
   }
 }
+
+const dataMock = [
+  {
+    idRequest: 1,
+    goodNumb: 123,
+    proceedings: 456,
+    quantityWarehouse: 50,
+    quantityToDonate: 30,
+    classifNumbGood: 789,
+    ssSubtype: 111,
+    description: 'Producto 1',
+    delAdmin: 'Admin 1',
+  },
+  {
+    idRequest: 2,
+    goodNumb: 234,
+    proceedings: 567,
+    quantityWarehouse: 75,
+    quantityToDonate: 40,
+    classifNumbGood: 890,
+    ssSubtype: 222,
+    description: 'Producto 2',
+    delAdmin: 'Admin 2',
+  },
+  {
+    idRequest: 3,
+    goodNumb: 345,
+    proceedings: 678,
+    quantityWarehouse: 60,
+    quantityToDonate: 20,
+    classifNumbGood: 901,
+    ssSubtype: 333,
+    description: 'Producto 3',
+    delAdmin: 'Admin 3',
+  },
+  {
+    idRequest: 4,
+    goodNumb: 456,
+    proceedings: 789,
+    quantityWarehouse: 45,
+    quantityToDonate: 25,
+    classifNumbGood: 912,
+    ssSubtype: 444,
+    description: 'Producto 4',
+    delAdmin: 'Admin 4',
+  },
+  {
+    idRequest: 5,
+    goodNumb: 567,
+    proceedings: 890,
+    quantityWarehouse: 70,
+    quantityToDonate: 35,
+    classifNumbGood: 923,
+    ssSubtype: 555,
+    description: 'Producto 5',
+    delAdmin: 'Admin 5',
+  },
+  {
+    idRequest: 6,
+    goodNumb: 678,
+    proceedings: 901,
+    quantityWarehouse: 55,
+    quantityToDonate: 15,
+    classifNumbGood: 934,
+    ssSubtype: 666,
+    description: 'Producto 6',
+    delAdmin: 'Admin 6',
+  },
+  {
+    idRequest: 7,
+    goodNumb: 789,
+    proceedings: 912,
+    quantityWarehouse: 80,
+    quantityToDonate: 50,
+    classifNumbGood: 945,
+    ssSubtype: 777,
+    description: 'Producto 7',
+    delAdmin: 'Admin 7',
+  },
+  {
+    idRequest: 8,
+    goodNumb: 890,
+    proceedings: 923,
+    quantityWarehouse: 65,
+    quantityToDonate: 10,
+    classifNumbGood: 956,
+    ssSubtype: 888,
+    description: 'Producto 8',
+    delAdmin: 'Admin 8',
+  },
+  {
+    idRequest: 9,
+    goodNumb: 901,
+    proceedings: 934,
+    quantityWarehouse: 40,
+    quantityToDonate: 20,
+    classifNumbGood: 967,
+    ssSubtype: 999,
+    description: 'Producto 9',
+    delAdmin: 'Admin 9',
+  },
+  {
+    idRequest: 10,
+    goodNumb: 101,
+    proceedings: 145,
+    quantityWarehouse: 90,
+    quantityToDonate: 60,
+    classifNumbGood: 100,
+    ssSubtype: 11,
+    description: 'Producto 10',
+    delAdmin: 'Admin 10',
+  },
+  {
+    idRequest: 11,
+    goodNumb: 202,
+    proceedings: 255,
+    quantityWarehouse: 35,
+    quantityToDonate: 15,
+    classifNumbGood: 211,
+    ssSubtype: 22,
+    description: 'Producto 11',
+    delAdmin: 'Admin 11',
+  },
+  {
+    idRequest: 12,
+    goodNumb: 303,
+    proceedings: 367,
+    quantityWarehouse: 75,
+    quantityToDonate: 40,
+    classifNumbGood: 322,
+    ssSubtype: 33,
+    description: 'Producto 12',
+    delAdmin: 'Admin 12',
+  },
+  {
+    idRequest: 13,
+    goodNumb: 404,
+    proceedings: 479,
+    quantityWarehouse: 55,
+    quantityToDonate: 30,
+    classifNumbGood: 433,
+    ssSubtype: 44,
+    description: 'Producto 13',
+    delAdmin: 'Admin 13',
+  },
+  {
+    idRequest: 14,
+    goodNumb: 505,
+    proceedings: 591,
+    quantityWarehouse: 95,
+    quantityToDonate: 50,
+    classifNumbGood: 544,
+    ssSubtype: 55,
+    description: 'Producto 14',
+    delAdmin: 'Admin 14',
+  },
+  {
+    idRequest: 15,
+    goodNumb: 606,
+    proceedings: 703,
+    quantityWarehouse: 50,
+    quantityToDonate: 20,
+    classifNumbGood: 655,
+    ssSubtype: 66,
+    description: 'Producto 15',
+    delAdmin: 'Admin 15',
+  },
+  {
+    idRequest: 16,
+    goodNumb: 707,
+    proceedings: 815,
+    quantityWarehouse: 80,
+    quantityToDonate: 40,
+    classifNumbGood: 766,
+    ssSubtype: 77,
+    description: 'Producto 16',
+    delAdmin: 'Admin 16',
+  },
+  {
+    idRequest: 17,
+    goodNumb: 808,
+    proceedings: 927,
+    quantityWarehouse: 60,
+    quantityToDonate: 25,
+    classifNumbGood: 877,
+    ssSubtype: 88,
+    description: 'Producto 17',
+    delAdmin: 'Admin 17',
+  },
+  {
+    idRequest: 18,
+    goodNumb: 909,
+    proceedings: 1039,
+    quantityWarehouse: 85,
+    quantityToDonate: 45,
+    classifNumbGood: 988,
+    ssSubtype: 99,
+    description: 'Producto 18',
+    delAdmin: 'Admin 18',
+  },
+  {
+    idRequest: 19,
+    goodNumb: 1010,
+    proceedings: 1151,
+    quantityWarehouse: 45,
+    quantityToDonate: 15,
+    classifNumbGood: 1055,
+    ssSubtype: 100,
+    description: 'Producto 19',
+    delAdmin: 'Admin 19',
+  },
+  {
+    idRequest: 20,
+    goodNumb: 1111,
+    proceedings: 1263,
+    quantityWarehouse: 70,
+    quantityToDonate: 30,
+    classifNumbGood: 1111,
+    ssSubtype: 111,
+    description: 'Producto 20',
+    delAdmin: 'Admin 20',
+  },
+];

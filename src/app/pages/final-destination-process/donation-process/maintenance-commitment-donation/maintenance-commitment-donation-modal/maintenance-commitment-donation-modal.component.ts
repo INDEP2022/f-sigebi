@@ -8,6 +8,9 @@ import { AccountMovementService } from 'src/app/core/services/ms-account-movemen
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { BasePage } from 'src/app/core/shared';
 import Swal from 'sweetalert2';
+import { data } from '../../../../administrative-processes/siab-sami-interaction/refunds/payment-request/data';
+import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
+import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 
 @Component({
   selector: 'app-maintenance-commitment-donation-modal',
@@ -16,14 +19,15 @@ import Swal from 'sweetalert2';
 })
 export class MaintenanceCommitmentDonationModalComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   form: FormGroup = new FormGroup({});
   title: string = '';
   newOrEdit: boolean = false;
   data: any;
   type: any;
   textBtn: string = 'Guardar';
+  dataValid: string[] = [];
+  totalOtKey: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -31,7 +35,9 @@ export class MaintenanceCommitmentDonationModalComponent
     private movementService: AccountMovementService,
     private goodsQueryService: GoodsQueryService,
     private authService: AuthService,
-    private donationService: DonationService
+    private donationService: DonationService,
+    private tvalTable1Service: TvalTable1Service,
+    private dynamicCatalogsService: DynamicCatalogsService,
   ) {
     super();
   }
@@ -39,6 +45,7 @@ export class MaintenanceCommitmentDonationModalComponent
   ngOnInit(): void {
     console.log('flag ', this.newOrEdit);
     //console.log('NewOrEdir: ', this.newOrEdit);
+
     if (this.newOrEdit || !this.newOrEdit) {
       console.log('type -> ', this.type);
       switch (this.type) {
@@ -57,6 +64,7 @@ export class MaintenanceCommitmentDonationModalComponent
         case 4:
           this.title = 'Permisos de Usuarios para Rastreador';
           this.prepareFormPermissionR();
+          this.getOtKey();
           break;
         default:
           this.title = '';
@@ -66,19 +74,29 @@ export class MaintenanceCommitmentDonationModalComponent
       if (this.data != null) {
         this.textBtn = 'Editar';
 
-        console.log('data a mapear -> ', this.data.labelId);
-        this.form.patchValue({
-          labelId: this.data.labelId,
-          status: this.data.status,
-          desStatus: this.data.desStatus,
-          transferentId: this.data.transfereeId.transferentId,
-          keyCode: this.data.desTrans,
-          clasifId: this.data.clasifId,
-          desClasif: this.data.desClasif,
-          unit: this.data.unit,
-          ruleId: this.data.ruleId,
-          valid: this.data.valid,
-        });
+        console.log('data a mapear en el editar-> ', this.data.labelId);
+        if (this.type == 4) {
+          console.log("tipo 4 > ", this.data);
+          this.form.patchValue({
+            value: this.data.labelId,
+            name: this.data.status,
+            valid: this.data.valid,
+          });
+        } else {
+          this.form.patchValue({
+            labelId: this.data.label.id,
+            status: this.data.status,
+            desStatus: this.data.desStatus,
+            transferentId: this.data.transfereeId.transferentId,
+            keyCode: this.data.desTrans,
+            clasifId: this.data.clasifId,
+            desClasif: this.data.desClasif,
+            unit: this.data.unit,
+            ruleId: this.data.ruleId,
+            valid: this.data.valid,
+            amount: this.data.amount,
+          });
+        }
       }
     }
   }
@@ -92,9 +110,16 @@ export class MaintenanceCommitmentDonationModalComponent
     if (this.newOrEdit) {
       switch (this.type) {
         case 1:
-          this.alert('success', 'Editar', 'daaa');
-          //this.update(this.form.value);
+          this.update(this.form.value);
           break;
+        case 2:
+          this.update(this.form.value);
+          break;
+        case 3:
+          this.updateOtros(this.form.value);
+          break;
+        case 4:
+
         default:
           break;
       }
@@ -102,6 +127,15 @@ export class MaintenanceCommitmentDonationModalComponent
       switch (this.type) {
         case 1:
           this.insertAprueba_donacion();
+          break;
+        case 2:
+          this.insertDelitosFede();
+          break;
+        case 3:
+          this.insertOtrosTrasn();
+          break;
+        case 4:
+          this.createTableUser();
           break;
         default:
           break;
@@ -126,10 +160,124 @@ export class MaintenanceCommitmentDonationModalComponent
     this.donationService.createApproveDonation(model).subscribe({
       next: () => {
         this.handleSuccess();
-        this.onLoadToast('success', 'Comercio Exterior Kg creado', '');
+        this.onLoadToast('success', 'Comercio Exterior Kg Creado', '');
+
       },
       error: error => {
         this.onLoadToast('error', error.error.message, '');
+      },
+    });
+  }
+  insertDelitosFede() {
+    this.newOrEdit = false;
+    const model = {} as any;
+    model.labelId = Number(this.form.value.labelId);
+    model.status = this.form.value.status;
+    model.desStatus = this.form.value.desStatus;
+    model.transfereeId = Number(this.form.value.transferentId);
+    model.desTrans = this.form.value.keyCode;
+    model.clasifId = Number(this.form.value.clasifId);
+    model.desClasif = this.form.value.desClasif;
+    model.unit = this.form.value.unit;
+    model.ruleId = Number(this.form.value.ruleId);
+    model.valid = Number(this.form.value.valid);
+
+    //SERVICIO 1
+    this.donationService.createApproveDonation(model).subscribe({
+      next: () => {
+        this.handleSuccess();
+        this.onLoadToast('success', 'Delitos Federales Creado', '');
+
+      },
+      error: error => {
+        this.onLoadToast('error', error.error.message, '');
+      },
+    });
+  }
+  insertOtrosTrasn() {
+    this.newOrEdit = false;
+    const model = {} as any;
+    model.labelId = Number(this.form.value.labelId);
+    model.status = this.form.value.status;
+    model.desStatus = this.form.value.desStatus;
+    model.transfereeId = Number(this.form.value.transferentId);
+    model.desTrans = this.form.value.keyCode;
+    model.clasifId = Number(this.form.value.clasifId);
+    model.desClasif = this.form.value.desClasif;
+    model.unit = this.form.value.unit;
+    model.ruleId = Number(this.form.value.ruleId);
+    model.valid = Number(this.form.value.valid);
+    model.amount = Number(this.form.value.amount);
+
+    //SERVICIO 1
+    this.donationService.createApproveDonation(model).subscribe({
+      next: () => {
+        this.handleSuccess();
+        this.onLoadToast('success', 'Otros Transferentes Creado', '');
+
+      },
+      error: error => {
+        this.onLoadToast('error', error.error.message, '');
+      },
+    });
+  }
+  insertPermisosRastreador() {
+    this.newOrEdit = false;
+    const model = {} as any;
+    model.value = this.form.value.value;
+    model.name = this.form.value.name;
+    model.valid = Number(this.form.value.valid);
+
+    //SERVICIO POS PERMISOS
+    this.donationService.createApproveDonation(model).subscribe({
+      next: () => {
+        this.handleSuccess();
+        this.onLoadToast('success', 'Usuario para Rastereador Creado', '');
+
+      },
+      error: error => {
+        this.onLoadToast('error', error.error.message, '');
+      },
+    });
+  }
+
+  getOtKey() {
+    let arr: number[] = [];
+    this.tvalTable1Service.getByIdFind(421).subscribe({
+      next: response => {
+        console.log("total key data ", response.count);
+        console.log("total key data ", response);
+        for (let i = 0; i < response.count; i++) {
+          console.log("i -> ", (i + 1));
+          arr.push(response.data[i].otKey);
+        }
+        console.log("arr  ", arr.sort);
+      },
+      error: error => {
+        console.log(error);
+        this.loading = false;
+      },
+    });
+  }
+
+  createTableUser() {
+    const model = {} as any;
+    model.nmtable = 421;
+    model.otkey = Number(this.form.value.labelId);
+    model.otvalor = Number(this.form.value.value);
+
+    model.registerNumber = 0;
+    model.abbreviation = this.form.value.valid;
+
+    console.log("data a guardar 4 -> ", model);
+    this.tvalTable1Service.createTvalTable1(model).subscribe({
+      next: (resp) => {
+        if (resp != null && resp != undefined) {
+          this.alert('success', '', 'Registro Creado Correctamente');
+        }
+      },
+      error: (err) => {
+        this.onLoadToast('error', err.message, '');
       },
     });
   }
@@ -141,8 +289,56 @@ export class MaintenanceCommitmentDonationModalComponent
     );
   }
 
-  update(data: IUnits) {
-    this.goodsQueryService.putUnits(data, data.unit).subscribe({
+  update(data: any) {
+    //console.log("data update -> ", data);
+    const model = {} as any;
+    model.labelId = Number(data.labelId);
+    model.status = data.status;
+    model.desStatus = data.desStatus;
+    model.transfereeId = Number(data.transferentId);
+    model.desTrans = data.keyCode;
+    model.clasifId = Number(data.clasifId);
+    model.desClasif = data.desClasif;
+    model.unit = data.unit;
+    model.ruleId = Number(data.ruleId);
+    model.valid = Number(data.valid);
+    console.log("data update 2-> ", model);
+
+    this.donationService.editApproveDonation(model).subscribe({
+      next: data => {
+        this.handleSuccess();
+        Swal.fire('Actualizado', '', 'success');
+      },
+      error: err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+          this.onLoadToast('error', 'Error', error);
+          //this.newOrEdit = false;
+        } else {
+          this.onLoadToast('error', 'Error', err.error.message);
+        }
+      },
+    });
+  }
+  updateOtros(data: any) {
+    //console.log("data update -> ", data);
+    const model = {} as any;
+    model.labelId = Number(data.labelId);
+    model.status = data.status;
+    model.desStatus = data.desStatus;
+    model.transfereeId = Number(data.transferentId);
+    model.desTrans = data.keyCode;
+    model.clasifId = Number(data.clasifId);
+    model.desClasif = data.desClasif;
+    model.unit = data.unit;
+    model.ruleId = Number(data.ruleId);
+    model.valid = Number(data.valid);
+    model.amount = Number(data.amount);
+
+    console.log("data update 3-> ", model);
+
+    this.donationService.editApproveDonation(model).subscribe({
       next: data => {
         this.handleSuccess();
         Swal.fire('Actualizado', '', 'success');
@@ -160,6 +356,7 @@ export class MaintenanceCommitmentDonationModalComponent
     });
   }
 
+
   prepareForm() {
     this.form = this.fb.group({
       labelId: ['', Validators.required],
@@ -173,6 +370,11 @@ export class MaintenanceCommitmentDonationModalComponent
       ruleId: ['', Validators.required],
       valid: ['', Validators.required],
     });
+
+    this.form.patchValue({
+      labelId: this.type
+    });
+    this.form.get('labelId').disabled;
   }
   prepareFormOthersT() {
     this.form = this.fb.group({
@@ -185,13 +387,21 @@ export class MaintenanceCommitmentDonationModalComponent
       desClasif: ['', Validators.required],
       unit: ['', Validators.required],
       amount: ['', Validators.required],
+      ruleId: ['', Validators.required],
+      valid: ['', Validators.required],
     });
+
+    this.form.patchValue({
+      labelId: this.type
+    });
+    this.form.get('labelId').disabled;
   }
 
   prepareFormPermissionR() {
     this.form = this.fb.group({
       value: ['', Validators.required],
       name: ['', Validators.required],
+      valid: ['', Validators.required],
     });
   }
 
@@ -199,4 +409,8 @@ export class MaintenanceCommitmentDonationModalComponent
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
+
 }
+
+
+

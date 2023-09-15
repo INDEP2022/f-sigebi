@@ -26,4 +26,6 @@ export enum StrategyEndpoints {
   StrategyTurn = 'aplication/get-bills-turn',
   StrategyCost = 'aplication/get-bills-variable-bills',
   StrategyRepIm = 'strategy-rep-implementation',
+  paEstGoodsProgTrans = 'aplication/pa-est-goods-prog-trans',
+  paEstGoodIncor = 'aplication/pa-est-goods-incor',
 }
