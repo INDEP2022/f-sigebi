@@ -1,10 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRapproveDonation } from 'src/app/core/models/ms-r-approve-donation/r-approve-donation.model';
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
+import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { RapproveDonationService } from 'src/app/core/services/ms-r-approve-donation/r-approve-donation.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -13,11 +15,6 @@ import { MaintenanceCommitmentDonationModalComponent } from '../maintenance-comm
 import { COLUMNS_DATA_TABLE } from './columns-data-table';
 import { COLUMNS_OTHER_TRANS } from './columns-other-transf';
 import { COLUMNS_USER_PERMISSIONS } from './columns-user-permissions';
-import { MeasuremenUnitsModalComponent } from 'src/app/pages/administrative-processes/administration-third/measurement-units/measuremen-units-modal/measuremen-units-modal.component';
-import { IUnits } from 'src/app/core/models/administrative-processes/siab-sami-interaction/measurement-units';
-import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dynamic-catalogs.service';
-import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
-import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-data-table',
@@ -112,7 +109,7 @@ export class DataTableComponent extends BasePage implements OnInit {
           this.data[i].labelId = response.data[i].label;
         }
 
-        console.log("data after ", this.data);
+        console.log('data after ', this.data);
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -164,7 +161,7 @@ export class DataTableComponent extends BasePage implements OnInit {
     });
   }
 
-  getUsers(name: string) { }
+  getUsers(name: string) {}
 
   loadModal(bool: boolean, data: any) {
     if (data != null) {
@@ -195,7 +192,6 @@ export class DataTableComponent extends BasePage implements OnInit {
       modalConfig
     );
   }
-
 }
 
 const EXAMPLE_DATA1 = [
