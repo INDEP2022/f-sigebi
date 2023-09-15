@@ -205,4 +205,8 @@ export class UsersService extends HttpService {
       `${UserEndpoints.GetAllSegUser}?filter.user=$ilike:${user}`
     );
   }
+
+  getComerUserXCan(params: _Params) {
+    return this.get(UserEndpoints.ComerUser, params);
+  }
 }

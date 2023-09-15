@@ -1,16 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { IUnits } from 'src/app/core/models/administrative-processes/siab-sami-interaction/measurement-units';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
+import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { BasePage } from 'src/app/core/shared';
 import Swal from 'sweetalert2';
-import { data } from '../../../../administrative-processes/siab-sami-interaction/refunds/payment-request/data';
-import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
-import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 
 @Component({
   selector: 'app-maintenance-commitment-donation-modal',
@@ -19,7 +17,8 @@ import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.se
 })
 export class MaintenanceCommitmentDonationModalComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   title: string = '';
   newOrEdit: boolean = false;
@@ -37,7 +36,7 @@ export class MaintenanceCommitmentDonationModalComponent
     private authService: AuthService,
     private donationService: DonationService,
     private tvalTable1Service: TvalTable1Service,
-    private dynamicCatalogsService: DynamicCatalogsService,
+    private dynamicCatalogsService: DynamicCatalogsService
   ) {
     super();
   }
@@ -76,7 +75,7 @@ export class MaintenanceCommitmentDonationModalComponent
 
         console.log('data a mapear en el editar-> ', this.data.labelId);
         if (this.type == 4) {
-          console.log("tipo 4 > ", this.data);
+          console.log('tipo 4 > ', this.data);
           this.form.patchValue({
             value: this.data.labelId,
             name: this.data.status,
@@ -161,7 +160,6 @@ export class MaintenanceCommitmentDonationModalComponent
       next: () => {
         this.handleSuccess();
         this.onLoadToast('success', 'Comercio Exterior Kg Creado', '');
-
       },
       error: error => {
         this.onLoadToast('error', error.error.message, '');
@@ -187,7 +185,6 @@ export class MaintenanceCommitmentDonationModalComponent
       next: () => {
         this.handleSuccess();
         this.onLoadToast('success', 'Delitos Federales Creado', '');
-
       },
       error: error => {
         this.onLoadToast('error', error.error.message, '');
@@ -214,7 +211,6 @@ export class MaintenanceCommitmentDonationModalComponent
       next: () => {
         this.handleSuccess();
         this.onLoadToast('success', 'Otros Transferentes Creado', '');
-
       },
       error: error => {
         this.onLoadToast('error', error.error.message, '');
@@ -233,7 +229,6 @@ export class MaintenanceCommitmentDonationModalComponent
       next: () => {
         this.handleSuccess();
         this.onLoadToast('success', 'Usuario para Rastereador Creado', '');
-
       },
       error: error => {
         this.onLoadToast('error', error.error.message, '');
@@ -245,13 +240,13 @@ export class MaintenanceCommitmentDonationModalComponent
     let arr: number[] = [];
     this.tvalTable1Service.getByIdFind(421).subscribe({
       next: response => {
-        console.log("total key data ", response.count);
-        console.log("total key data ", response);
+        console.log('total key data ', response.count);
+        console.log('total key data ', response);
         for (let i = 0; i < response.count; i++) {
-          console.log("i -> ", (i + 1));
+          console.log('i -> ', i + 1);
           arr.push(response.data[i].otKey);
         }
-        console.log("arr  ", arr.sort);
+        console.log('arr  ', arr.sort);
       },
       error: error => {
         console.log(error);
@@ -269,14 +264,14 @@ export class MaintenanceCommitmentDonationModalComponent
     model.registerNumber = 0;
     model.abbreviation = this.form.value.valid;
 
-    console.log("data a guardar 4 -> ", model);
+    console.log('data a guardar 4 -> ', model);
     this.tvalTable1Service.createTvalTable1(model).subscribe({
-      next: (resp) => {
+      next: resp => {
         if (resp != null && resp != undefined) {
           this.alert('success', '', 'Registro Creado Correctamente');
         }
       },
-      error: (err) => {
+      error: err => {
         this.onLoadToast('error', err.message, '');
       },
     });
@@ -302,7 +297,7 @@ export class MaintenanceCommitmentDonationModalComponent
     model.unit = data.unit;
     model.ruleId = Number(data.ruleId);
     model.valid = Number(data.valid);
-    console.log("data update 2-> ", model);
+    console.log('data update 2-> ', model);
 
     this.donationService.editApproveDonation(model).subscribe({
       next: data => {
@@ -336,7 +331,7 @@ export class MaintenanceCommitmentDonationModalComponent
     model.valid = Number(data.valid);
     model.amount = Number(data.amount);
 
-    console.log("data update 3-> ", model);
+    console.log('data update 3-> ', model);
 
     this.donationService.editApproveDonation(model).subscribe({
       next: data => {
@@ -356,7 +351,6 @@ export class MaintenanceCommitmentDonationModalComponent
     });
   }
 
-
   prepareForm() {
     this.form = this.fb.group({
       labelId: ['', Validators.required],
@@ -372,7 +366,7 @@ export class MaintenanceCommitmentDonationModalComponent
     });
 
     this.form.patchValue({
-      labelId: this.type
+      labelId: this.type,
     });
     this.form.get('labelId').disabled;
   }
@@ -392,7 +386,7 @@ export class MaintenanceCommitmentDonationModalComponent
     });
 
     this.form.patchValue({
-      labelId: this.type
+      labelId: this.type,
     });
     this.form.get('labelId').disabled;
   }
@@ -409,8 +403,4 @@ export class MaintenanceCommitmentDonationModalComponent
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
-
 }
-
-
-
