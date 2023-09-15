@@ -3,10 +3,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import {
   IReportImp,
   IStrategyLovSer,
@@ -21,6 +23,7 @@ import { StrategyProcessService } from 'src/app/core/services/ms-strategy/strate
 import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { FindActaComponent } from '../find-acta/find-acta.component';
 import { ImplementationReportHistoricComponent } from '../implementation-report-historic/implementation-report-historic.component';
 import {
   IMPLEMENTATIONREPORT_COLUMNS,
@@ -40,6 +43,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   reportImp: IReportImp;
   area: number = 0;
   data1: any[] = [];
+  actasObject: IProccedingsDeliveryReception;
   desStrategy: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
   turnos = new DefaultSelect();
@@ -47,6 +51,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   delegationUser: any;
   dateCapt: string = '';
   maxDate = new Date();
+  disabledBtnActas: boolean = true;
   dateClose: string = '';
   delegation = new DefaultSelect();
   settings2 = { ...this.settings, actions: false };
@@ -58,7 +63,8 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   public reportKey = new DefaultSelect();
   public noFormat: number = 0;
   public status = new DefaultSelect();
-
+  annio: string = '';
+  to: string = '';
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -96,6 +102,14 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       dateCapture: [null, Validators.required],
       observations: [null, Validators.required],
     });
+    this.dateCapt = this.datePipe.transform(
+      this.serviceOrdersForm.controls['dateCapture'].value,
+      'dd/MM/yyyy'
+    );
+    this.dateClose = this.datePipe.transform(
+      this.serviceOrdersForm.controls['authorizationDate'].value,
+      'dd/MM/yyyy'
+    );
   }
 
   openHistoric(data: any) {
@@ -303,18 +317,13 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
           }
         }
       });
-      // this.getReportImp();
-      this.dateCapt = this.datePipe.transform(
-        this.serviceOrdersForm.value.dateCapture,
-        'dd/MM/yyyy'
-      );
-      this.dateClose = this.datePipe.transform(
-        this.serviceOrdersForm.value.authorizationDate,
-        'dd/MM/yyyy'
-      );
       let fechaCapture = this.dateCapt;
       let fechaCierre = this.dateClose;
       let vParUser = this.authService.decodeToken().username;
+      console.log(
+        ' en espera dde funcion para generar',
+        this.dateCapt + this.dateClose
+      );
     } catch {
       console.log('error reporte');
     }
@@ -362,6 +371,89 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     this.serviceOrdersForm.reset();
     this.reportImp = null;
   }
+  formatDate(date: Date): string {
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear().toString();
+    return `${day}/${month}/${year}`;
+  }
 
   genClave() {}
+
+  actasDefault: any = null;
+  searchActas(actas?: string) {
+    actas = this.serviceOrdersForm.value.noFormat;
+    const actaActual = this.actasDefault;
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      actas,
+      actaActual,
+    };
+
+    let modalRef = this.modalService.show(FindActaComponent, modalConfig);
+    modalRef.content.onSave.subscribe(async (next: any) => {
+      console.log(next);
+      if (next) {
+        this.alert(
+          'success',
+          'Se Cargó la Información del Acta',
+          next.keysProceedings
+        );
+      }
+
+      this.serviceOrdersForm.reset();
+      // this.formScan.reset();
+      const dateElabora =
+        next.elaborationDate != null ? new Date(next.elaborationDate) : null;
+      const formattedfecElaborate =
+        dateElabora != null ? this.formatDate(dateElabora) : null;
+
+      const dateActa =
+        next.datePhysicalReception != null
+          ? new Date(next.datePhysicalReception)
+          : null;
+      const formattedfecActa =
+        dateActa != null ? this.formatDate(dateActa) : null;
+
+      const dateCapture =
+        next.captureDate != null ? new Date(next.captureDate) : null;
+      const formattedfecCapture =
+        dateCapture != null ? this.formatDate(dateCapture) : null;
+
+      this.actasDefault = next;
+      // this.fCreate = this.datePipe.transform(
+      //   next.dateElaborationReceipt,
+      //   'dd/MM/yyyy'
+      // );
+      this.to = this.datePipe.transform(
+        this.serviceOrdersForm.controls['mes'].value,
+        'MM/yyyy'
+      );
+      this.annio = this.datePipe.transform(
+        this.serviceOrdersForm.controls['anio'].value,
+        'MM/yyyy'
+      );
+      this.status = next.statusProceedings;
+      if (this.actasObject.statusProceedings == 'CERRADA') {
+        this.disabledBtnActas = false;
+      } else {
+        this.disabledBtnActas = true;
+      }
+
+      // MAPEAR DATOS DATA NEXT CUANDO CONSULTO ACTAS
+      console.log('acta NEXT ', next);
+      this.data1 = next.statusProceedings;
+
+      // this.serviceOrdersForm.get('scanningFoli').patchValue(next.universalFolio);
+      // Pasar clave a esta función
+      // this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
+
+      // await this.getDetailProceedingsDevollution(this.actasDefault.id);
+    });
+    modalRef.content.cleanForm.subscribe(async (next: any) => {
+      if (next) {
+        this.cleanForm();
+      }
+    });
+  }
 }

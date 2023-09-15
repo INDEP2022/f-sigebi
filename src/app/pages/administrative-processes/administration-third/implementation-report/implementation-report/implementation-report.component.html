@@ -167,9 +167,6 @@
           <form-field
             [control]="serviceOrdersForm.get('reportKey')"
             label="Clave del Reporte">
-            <!-- <ngx-select (fetchItems)="getReportKey($event)" [data]="reportKey" [form]="serviceOrdersForm"
-              value="reportKey" bindLabel="description" label="Clave de Reporte" control="reportKey">
-            </ngx-select> -->
             <input
               type="text"
               formControlName="reportKey"
@@ -178,29 +175,44 @@
               readonly />
           </form-field>
         </div>
-
+        <!-- <div class="col-md-4">
+          <form-field [control]="serviceOrdersForm.get('authorizationDate')" label="Fecha de Autorización">
+            <input type="text" formControlName="authorizationDate" [max]="maxDate" class="form-control" bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="serviceOrdersForm.get('dateCapture')" label="Fecha de Captura">
+            <form-field [control]="form.get('from')" label="Fecha de Captura">
+              <input [maxDate]="maxDate" formControlName="dateCapture" class="form-control" bsDatepicker />
+            </form-field>
+        </div> -->
         <div class="col-md-4">
           <form-field
-            [control]="serviceOrdersForm.get('authorizationDate')"
-            label="Fecha de Autorización">
+            [control]="serviceOrdersForm.get('dateCapture')"
+            label="Fecha de Captura">
             <input
-              type="text"
-              formControlName="authorizationDate"
-              [max]="maxDate"
+              [maxDate]="maxDate"
+              formControlName="dateCapture"
               class="form-control"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="serviceOrdersForm.get('dateCapture')"
-            label="Fecha de Captura">
+            [control]="serviceOrdersForm.get('authorizationDate')"
+            label="Fecha de Autorización">
             <input
-              type="text"
+              [maxDate]="maxDate"
               formControlName="dateCapture"
               class="form-control"
-              [min]="this.serviceOrdersForm.get('authorizationDate').value"
-              [max]="maxDate"
+              [min]="serviceOrdersForm.get('dateCapture').value"
+              [minDate]="serviceOrdersForm.get('dateCapture').value"
+              [ngModel]="
+                serviceOrdersForm.get('authorizationDate').value <
+                serviceOrdersForm.get('dateCapture').value
+                  ? serviceOrdersForm.get('dateCapture').value
+                  : serviceOrdersForm.get('authorizationDate').value
+              "
               bsDatepicker />
           </form-field>
         </div>
@@ -220,6 +232,15 @@
       <div class="col-md-2">
         <button class="btn btn-primary btn-sm active" (click)="pupGenera()">
           Genera
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm mr-3"
+          (click)="searchActas()">
+          Buscar Bienes
+          <i class="bx bx-search bx-sm float-icon"></i>
         </button>
       </div>
       <div class="col-md-2">
