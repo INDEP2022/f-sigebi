@@ -3,6 +3,7 @@ export enum ProceedingsEndpoints {
   Proceedings = 'proceedings',
   ProeedingsDevolution = 'proceedings-devolution',
   ProeedingsDevolutionCustome = 'proceedings-devolution/getAllCustom',
+  ActasRecptionImp = 'detail-proceedings-delivery-reception/all',
   //ProceedingsDeliveryReception = 'proceedings-delivery-reception',
   DetailProceedingsDevollution = 'detail-proceedings-devolution',
   ActasDeliveryReception = 'aplication/get-actas-delivery-reception',
