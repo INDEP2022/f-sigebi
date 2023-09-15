@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs';
 import { ComerConceptEndpoints } from 'src/app/common/constants/endpoints/ms-comerconcept';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponseMessage } from '../../interfaces/list-response.interface';
 import {
@@ -21,6 +22,10 @@ export class ParametersConceptsService extends HttpService {
 
   create(body: IParameterConceptCreate) {
     return this.post(ComerConceptEndpoints.ParametersConceptsCreate, body);
+  }
+
+  getConcepts(params: ListParams) {
+    return this.get(ComerConceptEndpoints.ConceptsCreate, params);
   }
 
   update(body: IParameterConceptUpdate) {

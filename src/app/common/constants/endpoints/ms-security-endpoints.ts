@@ -21,4 +21,5 @@ export enum SecurityEndpoints {
   FaDelResponsable = 'application/fa-del-responsable',
   User = 'application/facta-db-solcam-nume',
   IniEmail = 'application/pup-ini-correo',
+  ApplicationAux = 'application/get-aux-dele-user',
 }

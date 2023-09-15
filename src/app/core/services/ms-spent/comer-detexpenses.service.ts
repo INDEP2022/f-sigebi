@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, of } from 'rxjs';
 import { SpentEndpoints } from 'src/app/common/constants/endpoints/ms-spent';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponseMessage } from '../../interfaces/list-response.interface';
 import {
@@ -99,5 +100,9 @@ export class ComerDetexpensesService extends HttpService {
 
   mandContaTpBien(body: IMandContaDTO) {
     return this.post('aplication/get-mandaContaTpBien', body);
+  }
+
+  getExpenses(body: ListParams) {
+    return this.post(SpentEndpoints.GetAllExpensesByFilter, body);
   }
 }
