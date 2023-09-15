@@ -48,4 +48,5 @@ export enum ProceedingsEndpoints {
   constDelivery = 'aplication/pa-const-delivery',
   AplicationGetTypeActa = 'aplication/getTypeActa',
   AplicationGetTypeActaDetail = 'aplication/getDetalleActaByNoActaPag',
+  TmpEspPrograming = 'tmp-est-programming',
 }

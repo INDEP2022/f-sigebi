@@ -18,10 +18,10 @@
                 className="scroll-line"
                 [form]="form"
                 value="email"
-                bindLabel="nombre"
-                [searchable]="false"
+                bindLabel="name"
+                [searchable]="true"
                 [searchOnInit]="true"
-                [multiple]="false"
+                [multiple]="true"
                 [control]="'PARA'"
                 (change)="changeName($event)"
                 [labelTemplate]="label"
@@ -31,14 +31,14 @@
                 {{ item.email }}
               </ng-template>
               <ng-template #opt let-item="item">
-                <div [title]="item.nombre + '-' + item.email">
-                  {{ item.nombre }} - {{ item.email }}
+                <div [title]="item.name + '-' + item.email">
+                  {{ item.name }} - {{ item.email }}
                 </div>
               </ng-template>
             </form-field>
           </div>
           <div class="col-md-12">
-            <form-field [control]="form.get('CC')" label="C&#46;C&#46;">
+            <!-- <form-field [control]="form.get('CC')" label="C&#46;C&#46;">
               <input
                 type="text"
                 class="form-control"
@@ -46,8 +46,8 @@
                 min="1"
                 maxlength="50"
                 oninput="if(this.value.length > 50) this.value = this.value.slice(0, 50)" />
-            </form-field>
-            <!-- <form-field class="w-100" [control]="form.get('USER')">
+            </form-field> -->
+            <form-field class="w-100" [control]="form.get('CC')">
               <ngx-select
                 (fetchItems)="getNameRemit($event)"
                 label="C.C"
@@ -55,11 +55,11 @@
                 className="scroll-line"
                 [form]="form"
                 value="email"
-                bindLabel="nombre"
-                [searchable]="false"
+                bindLabel="name"
+                [searchable]="true"
                 [searchOnInit]="true"
                 [multiple]="true"
-                [control]="'USER'"
+                [control]="'CC'"
                 (change)="changeName($event)"
                 [labelTemplate]="label"
                 [optionTemplate]="opt">
@@ -68,11 +68,11 @@
                 {{ item.email }}
               </ng-template>
               <ng-template #opt let-item="item">
-                <div [title]="item.nombre + '-' + item.email">
-                  {{ item.nombre }} - {{ item.email }}
+                <div [title]="item.name + '-' + item.email">
+                  {{ item.name }} - {{ item.email }}
                 </div>
               </ng-template>
-            </form-field> -->
+            </form-field>
           </div>
           <div class="col-md-12">
             <form-field [control]="form.get('ASUNTO')" label="Asunto">

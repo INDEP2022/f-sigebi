@@ -1,22 +1,11 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
-/** ********************************************************************
- * ! ME ENCANTARIA DECLARARTE MI AMOR PERO SOLO SE DECLARAR VARIABLES **
- *
- *!                     ****   ****
- *!                    **************
- *!                    *************
- *!                     ***********
- *!                       *******
- *!                         ***
- *!                          *
- *!
- * **********************************************************************/
+
 export const environment = {
   production: true,
-  API_URL: 'http://sigebimstest.indep.gob.mx/', //'http://localhost:3000/api/v1/', // ********** SOLO CAMBIAR ESTA PARTE
-  API_URL2: 'http://sigebimstest.indep.gob.mx/', // ********** SOLO CAMBIAR ESTA PARTE
+  API_URL: 'http://sigebimsqa.indep.gob.mx/', //'http://localhost:3000/api/v1/', // ********** SOLO CAMBIAR ESTA PARTE
+  API_URL2: 'http://sigebimsqa.indep.gob.mx/', // ********** SOLO CAMBIAR ESTA PARTE
   SOCKET_URL: 'http://socket.indep.gob.mx/',
   URL_PREFIX: 'api/v1/',
   API_REPORTS_BASE: 'http://reports-qa.indep.gob.mx/jasperserver/',

@@ -210,4 +210,9 @@ export class PaymentService extends HttpService {
   getPaymentRefById_(id: any) {
     return this.get(`${PaymentEndPoints.ComerPaymentRef}/${id}`);
   }
+
+  //comer-rel-usu-canc
+  getComerRelUsuCanc(params?: string) {
+    return this.get(`comer-rel-usu-canc`, params);
+  }
 }

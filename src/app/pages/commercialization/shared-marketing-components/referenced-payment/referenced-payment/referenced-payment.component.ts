@@ -290,7 +290,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         //Ejecutar el servicio
         this.paymentService.remove(data.paymentId).subscribe({
           next: response => {
-            this.alert('success', 'El Registro se Eliminó Correctamente', '');
+            this.alert('success', 'El registro se eliminó correctamente', '');
             this.getPayments('no');
           },
           error: error => {
@@ -300,13 +300,13 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             ) {
               this.alert(
                 'error',
-                'Ocurrió un Error al Eliminar el Registro',
-                'Tiene Registros Relacionados en Otras Tablas'
+                'Ocurrió un error al eliminar el registro',
+                'Tiene registros relacionados en otras tablas'
               );
             } else {
               this.alert(
                 'error',
-                'Ocurrió un Error al Eliminar el Registro',
+                'Ocurrió un error al eliminar el registro',
                 ''
               );
             }
@@ -408,7 +408,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         console.log(response);
         if (response.count == 0) {
           if (filter == 'si') {
-            this.alert('warning', 'No se Encontraron Resultados', '');
+            this.alert('warning', 'No se encontraron resultados', '');
           }
           this.data.load([]);
           this.data.refresh();
@@ -427,7 +427,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
               : null;
 
             item['bankAndNumber'] = item.ctrl
-              ? item.ctrl.code + ' - ' + item.ctrl.cveBank
+              ? item.ctrl.code + ' - ' + item.bankKey
               : null;
             item['descriptionSAT'] = item.satInfo
               ? item.satInfo.description
@@ -557,6 +557,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     this.searchWithEvent = false;
     this.cargado2 = false;
     this.cargado = false;
+    this.settingColumns();
     this.getBanks(new ListParams());
     this.getComerEvents(new ListParams());
   }
@@ -565,29 +566,29 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     if (!this.eventSelected)
       return this.alert(
         'warning',
-        'Es Necesario Especificar un Evento para Realizar la Carga',
+        'Es necesario especificar un Evento para realizar la carga',
         ''
       );
 
     const respEvent: any = await this.getSelectFase(this.eventSelected.id);
 
     if (!respEvent) {
-      return this.alert('warning', 'El Evento no se Encuentra en una fase', '');
+      return this.alert('warning', 'El evento no se encuentra en una fase', '');
     } else {
       // respEvent.phase
       if (respEvent.phase == 1) {
         if (!this.bankSelected) {
           return this.alert(
             'warning',
-            'Necesita Indicar de qué Banco va a Cargar Datos',
+            'Necesita indicar de qué Banco va a cargar datos',
             ''
           );
         }
 
         this.alertQuestion(
           'question',
-          'Carga de Pagos Fase: 1',
-          '¿Desea Continuar?'
+          'Carga de pagos fase: 1',
+          '¿Desea continuar?'
         ).then(async question => {
           if (question.isConfirmed) {
             // PUP_PROC_ANT;
@@ -598,8 +599,8 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       } else if (respEvent.phase == 2) {
         this.alertQuestion(
           'question',
-          'Carga de Pagos Fase: 2',
-          '¿Desea Continuar?'
+          'Carga de pagos fase: 2',
+          '¿Desea continuar?'
         ).then(async question => {
           if (question.isConfirmed) {
             // PUP_PROC_NUEVO;
@@ -690,7 +691,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
                   this.alert(
                     'success',
                     'Proceso Terminado',
-                    'Referencias Cargadas Correctamente'
+                    'Referencias cargadas correctamente'
                   );
                 });
               }
@@ -700,7 +701,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       } else {
         return this.alert(
           'warning',
-          'El Evento no se Encuentra en una fase',
+          'El Evento no se encuentra en una fase',
           ''
         );
       }
@@ -815,12 +816,12 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
               this.performScroll();
             }, 500);
             this.loadingBtn = false;
-            this.alert('success', 'Archivo Cargado Correctamente', '');
+            this.alert('success', 'Archivo cargado correctamente', '');
           });
         }
         this.clearInput();
       } else {
-        this.alert('error', cargaPagosCSV.data, 'Verifique el Archivo');
+        this.alert('error', cargaPagosCSV.data, 'Verifique el archivo');
         this.dataCargada.load([]);
         this.dataCargada.refresh();
         this.clearInput();
@@ -830,7 +831,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
       this.clearInput();
     } catch (error) {
-      this.alert('error', 'Ocurrió un Error al Leer el Archivo', 'Error');
+      this.alert('error', 'Ocurrió un error al leer el archivo', '');
     }
   }
 
@@ -911,7 +912,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   async ratificar() {
     console.log(this.valAcc);
     if (!this.valAcc) {
-      this.alert('warning', 'Debe Seleccionar un Pago', '');
+      this.alert('warning', 'Debe seleccionar un pago', '');
       return;
     }
 
@@ -944,7 +945,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             result: 'Referencia Invalida',
           };
           await this.updatePago(this.valAcc.paymentId, requestBody);
-          this.alert('warning', 'El Movimiento sigue por ratificarse', '');
+          this.alert('warning', 'El movimiento sigue por ratificarse', '');
         } else {
           // if (comerLotes.length > 1) {
           this.alert(
@@ -992,7 +993,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'El Movimiento ya no Puede Modificarse, ya fue Asignado',
+        'El movimiento ya no puede modificarse, ya fue asignado',
         ''
       );
       return;
@@ -1216,8 +1217,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         });
 
         Promise.all(result).then(resp => {
-          this.alert('success', 'Registros Guardados Correctamente', '');
+          this.alert('success', 'Registros guardados correctamente', '');
           this.form2.reset();
+          this.settingColumns();
           this.dataCargada.load([]);
           this.dataCargada.setSort([{ field: 'paymentId', direction: 'asc' }]);
           this.dataCargada.refresh();
@@ -1281,7 +1283,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   async ratificarCargado() {
     console.log(this.valAccCargado);
     if (!this.valAccCargado) {
-      this.alert('warning', 'Debe Seleccionar un Pago', '');
+      this.alert('warning', 'Debe seleccionar un pago', '');
       return;
     }
 
@@ -1322,14 +1324,14 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             this.valAccCargado.paymentId,
             this.valAccCargado
           );
-          this.alert('warning', 'El Movimiento sigue por ratificarse', '');
+          this.alert('warning', 'El movimiento sigue por ratificarse', '');
         } else {
           // if (comerLotes.length > 1) {
           this.alert(
             'warning',
             'Referencia: ' +
               this.valAccCargado.reference +
-              ', Repetida en otro Evento ',
+              ', repetida en otro Evento ',
             ''
           );
 
@@ -1477,5 +1479,10 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         },
       });
     });
+  }
+
+  settingColumns() {
+    this.settings.columns = COLUMNS;
+    this.settings2.columns = COLUMNS_CARGADOS;
   }
 }
