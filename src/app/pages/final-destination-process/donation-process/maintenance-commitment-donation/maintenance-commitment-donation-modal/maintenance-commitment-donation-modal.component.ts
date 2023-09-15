@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IUnits } from 'src/app/core/models/administrative-processes/siab-sami-interaction/measurement-units';
-import { IRapproveDonation } from 'src/app/core/models/ms-r-approve-donation/r-approve-donation.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
@@ -16,11 +15,11 @@ import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.se
 @Component({
   selector: 'app-maintenance-commitment-donation-modal',
   templateUrl: './maintenance-commitment-donation-modal.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class MaintenanceCommitmentDonationModalComponent extends BasePage implements OnInit {
-
+export class MaintenanceCommitmentDonationModalComponent
+  extends BasePage
+  implements OnInit {
   form: FormGroup = new FormGroup({});
   title: string = '';
   newOrEdit: boolean = false;
@@ -29,7 +28,6 @@ export class MaintenanceCommitmentDonationModalComponent extends BasePage implem
   textBtn: string = 'Guardar';
   dataValid: string[] = [];
   totalOtKey: number = 0;
-
 
   constructor(
     private fb: FormBuilder,
@@ -45,12 +43,11 @@ export class MaintenanceCommitmentDonationModalComponent extends BasePage implem
   }
 
   ngOnInit(): void {
-    console.log("flag ", this.newOrEdit);
+    console.log('flag ', this.newOrEdit);
     //console.log('NewOrEdir: ', this.newOrEdit);
 
     if (this.newOrEdit || !this.newOrEdit) {
-
-      console.log("type -> ", this.type);
+      console.log('type -> ', this.type);
       switch (this.type) {
         case 1:
           this.title = 'Comercio Exterior Kg';
@@ -73,7 +70,7 @@ export class MaintenanceCommitmentDonationModalComponent extends BasePage implem
           this.title = '';
           break;
       }
-      console.log("data -> ", this.data);
+      console.log('data -> ', this.data);
       if (this.data != null) {
         this.textBtn = 'Editar';
 
@@ -111,7 +108,6 @@ export class MaintenanceCommitmentDonationModalComponent extends BasePage implem
   confirm() {
     if (this.form.invalid) return;
     if (this.newOrEdit) {
-
       switch (this.type) {
         case 1:
           this.update(this.form.value);
@@ -127,7 +123,6 @@ export class MaintenanceCommitmentDonationModalComponent extends BasePage implem
         default:
           break;
       }
-
     } else {
       switch (this.type) {
         case 1:
@@ -145,7 +140,6 @@ export class MaintenanceCommitmentDonationModalComponent extends BasePage implem
         default:
           break;
       }
-
     }
   }
   insertAprueba_donacion() {
@@ -410,7 +404,6 @@ export class MaintenanceCommitmentDonationModalComponent extends BasePage implem
       valid: ['', Validators.required],
     });
   }
-
 
   handleSuccess() {
     this.modalRef.content.callback(true);

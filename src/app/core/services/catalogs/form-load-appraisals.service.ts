@@ -9,6 +9,7 @@ export class FormLoadAppraisalsService extends HttpService {
   private readonly route2: string =
     formLoadAppraisalService.obtenerEstatusLotes;
   private readonly route3: string = formLoadAppraisalService.validarEvento;
+  private readonly route4: string = formLoadAppraisalService.generarOficio;
 
   constructor() {
     super();
@@ -18,14 +19,16 @@ export class FormLoadAppraisalsService extends HttpService {
     console.log(body);
     return this.post(this.route, body);
   }
-
   obtenerEstatusLotes(body: any) {
     console.log(body);
     return this.post(this.route2, body);
   }
-
   validarEvento(body: any) {
     console.log(body);
     return this.post(this.route3, body);
+  }
+  generarOficio(body: any) {
+    console.log(body);
+    return this.post(this.route4, body);
   }
 }
