@@ -172,7 +172,7 @@ export class AuthorityService
   }
 
   getstationId(trasnfer: any, emisora: any) {
-    const route = `${AuthorityEndpoints.transferent}?filter.idTransferent=$eq:${trasnfer}&filter.id=$eq:${emisora}`;
+    const route = `${AuthorityEndpoints.station}?filter.idTransferent=$eq:${trasnfer}&filter.id=$eq:${emisora}`;
     return this.get(route);
   }
 
@@ -181,5 +181,21 @@ export class AuthorityService
   ): Observable<IListResponse<any>> {
     const route = `${AuthorityEndpoints.getTdsau}`;
     return this.get(route, params);
+  }
+
+  getAllUthorities(
+    params: ListParams | string,
+    params2: any
+  ): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.getAllAutoritiesV2}`;
+    return this.post(route, params, params2);
+  }
+
+  getAllDataQuery(
+    params: ListParams | string,
+    delegation: any
+  ): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.getDataQuery}?virDelegation=${delegation}`;
+    return this.post(route, params);
   }
 }

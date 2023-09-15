@@ -21,6 +21,10 @@ export class ComerEventService extends HttpService {
     return this.get<IListResponse<IComerEvent>>('comer-event', params);
   }
 
+  getAllFilter2(params?: ListParams) {
+    return this.get<IListResponse<IComerEvent>>('comer-event', params);
+  }
+
   getEatEvents(params: _Params) {
     return this.get<IListResponse<IComerEvent>>(
       'comer-event/getEatEvents',
