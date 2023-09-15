@@ -1,9 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { firstValueFrom, take } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { IFillExpenseDataCombined } from 'src/app/core/models/ms-spent/comer-expense';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvNumeraryService } from 'src/app/core/services/ms-conv-numerary/conv-numerary.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
@@ -30,7 +34,10 @@ export class NumeraireConversionAuctionsComponent
     private fb: FormBuilder,
     private convNumeraryService: ConvNumeraryService,
     private comertpEventService: ComerTpEventosService,
-    private lotService: LotService
+    private lotService: LotService,
+    private modalService: BsModalService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer
   ) {
     super();
   }
@@ -191,5 +198,33 @@ export class NumeraireConversionAuctionsComponent
         ''
       );
     }
+  }
+
+  reporte() {
+    let params = {
+      DESTYPE: 'SCREEN',
+      PARAMFORM: 'NO',
+      PEVENTO: this.selectedEvent.id,
+      PCVEPROCESO: this.selectedEvent.processKey,
+    };
+    this.siabService.fetchReport('RCOMER_NUMERARIO', params).subscribe({
+      next: response => {
+        this.loading = false;
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
   }
 }
