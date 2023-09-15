@@ -15,6 +15,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IUnits } from 'src/app/core/models/administrative-processes/siab-sami-interaction/measurement-units';
 import { MaintenanceCommitmentDonationModalComponent } from '../maintenance-commitment-donation-modal/maintenance-commitment-donation-modal.component';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dynamic-catalogs.service';
+import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
+import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-data-table',
@@ -34,8 +37,10 @@ export class DataTableComponent extends BasePage implements OnInit {
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems2: number = 0;
   data: any;
+  data1: any[] = [];
   newOrEdit: boolean = false;
   form: FormGroup = new FormGroup({});
+  dataTable1: LocalDataSource = new LocalDataSource();
 
   constructor(
     private rapproveDonationService: RapproveDonationService,
@@ -43,6 +48,7 @@ export class DataTableComponent extends BasePage implements OnInit {
     private usersService: UsersService,
     private modalService: BsModalService,
     private fb: FormBuilder,
+    private dynamicCatalogsService: DynamicCatalogsService
   ) {
     super();
     // this.settings = { ...this.settings, actions: false };
@@ -93,6 +99,7 @@ export class DataTableComponent extends BasePage implements OnInit {
       next: response => {
         console.log("primer tabla -> ", response.data);
         this.data = response.data;
+
         for (let i = 0; i < this.data.length; i++) {
           if (this.data[i].valid == '1') {
             console.log(this.data[i].valid);
@@ -102,8 +109,10 @@ export class DataTableComponent extends BasePage implements OnInit {
             this.data[i].yes = null;
             this.data[i].not = 1;
           }
+          this.data[i].labelId = response.data[i].label;
         }
-        console.log(this.data);
+
+        console.log("data after ", this.data);
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -113,12 +122,14 @@ export class DataTableComponent extends BasePage implements OnInit {
       },
     });
   }
+
   getTracker() {
     this.tvalTable1Service.getByIdFind(421).subscribe({
       next: response => {
         console.log(response.data);
         for (let i = 0; i < response.data.length; i++) {
           this.params.getValue()['filter.id'] = `$eq:${response.data[i].value}`;
+          // SERVICIO
           this.usersService.getAllSegUsers(this.params.getValue()).subscribe({
             next: response1 => {
               console.log(response1.data);
@@ -152,6 +163,7 @@ export class DataTableComponent extends BasePage implements OnInit {
       },
     });
   }
+
   getUsers(name: string) { }
 
 
@@ -180,7 +192,8 @@ export class DataTableComponent extends BasePage implements OnInit {
     this.modalService.show(MaintenanceCommitmentDonationModalComponent, modalConfig);
   }
 
-  prepareForm() {
+
+  /*prepareForm() {
     this.form = this.fb.group({
       labelId: ['', Validators.required],
       status: ['', Validators.required],
@@ -195,7 +208,7 @@ export class DataTableComponent extends BasePage implements OnInit {
     if ((this.newOrEdit = true)) {
       //  this.form.controls['unit'].disable();
     }
-  }
+  }*/
 
 }
 
