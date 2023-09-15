@@ -7,6 +7,18 @@
     <form [formGroup]="serviceOrdersForm" class="form-material">
       <div class="row margin-input">
         <div class="col-md-4">
+          <form-field
+            [control]="serviceOrdersForm.get('noFormat')"
+            label="Clave de orden de Servicio">
+            <input
+              type="number"
+              formControlName="noFormat"
+              class="form-control"
+              maxlength="10"
+              (input)="getReportImp()" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
           <form-field [control]="serviceOrdersForm.get('process')">
             <ngx-select
               label="Proceso"
@@ -152,16 +164,18 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="serviceOrdersForm.get('reportKey')">
-            <ngx-select
-              (fetchItems)="getReportKey($event)"
-              [data]="reportKey"
-              [form]="serviceOrdersForm"
-              value="reportKey"
-              bindLabel="description"
-              label="Clave de Reporte"
-              control="reportKey">
-            </ngx-select>
+          <form-field
+            [control]="serviceOrdersForm.get('reportKey')"
+            label="Clave del Reporte">
+            <!-- <ngx-select (fetchItems)="getReportKey($event)" [data]="reportKey" [form]="serviceOrdersForm"
+              value="reportKey" bindLabel="description" label="Clave de Reporte" control="reportKey">
+            </ngx-select> -->
+            <input
+              type="text"
+              formControlName="reportKey"
+              class="form-control"
+              [maxLength]="30"
+              readonly />
           </form-field>
         </div>
 
@@ -172,6 +186,7 @@
             <input
               type="text"
               formControlName="authorizationDate"
+              [max]="maxDate"
               class="form-control"
               bsDatepicker />
           </form-field>
@@ -184,6 +199,8 @@
               type="text"
               formControlName="dateCapture"
               class="form-control"
+              [min]="this.serviceOrdersForm.get('authorizationDate').value"
+              [max]="maxDate"
               bsDatepicker />
           </form-field>
         </div>
@@ -194,29 +211,27 @@
             label="Observaciones">
             <textarea
               class="form-control"
-              formControlName="observations"
-              placeholder="Observaciones"></textarea>
+              formControlName="observations"></textarea>
           </form-field>
         </div>
-        <!-- <div class="row margin-input">
-          <div class="col-md-8">
-            <form-field [control]="serviceOrdersForm.get('observations')" label="Observaciones">
-              <textarea class="form-control" formControlName="observations" placeholder="Observaciones"></textarea>
-            </form-field>
-          </div>
-        </div> -->
       </div>
     </form>
     <div class="row margin-input">
       <div class="col-md-2">
-        <button
-          class="btn btn-primary btn-sm active"
-          (click)="openHistoric('')">
+        <button class="btn btn-primary btn-sm active" (click)="pupGenera()">
           Genera
         </button>
       </div>
       <div class="col-md-2">
         <button class="btn btn-primary btn-sm active">Bitacora</button>
+      </div>
+      <div class="col-md-2">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="cleanForm()">
+          Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+        </button>
       </div>
     </div>
     <div class="margin-input">
