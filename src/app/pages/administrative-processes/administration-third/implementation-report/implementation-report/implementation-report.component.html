@@ -228,37 +228,30 @@
         </div>
       </div>
     </form>
-    <div class="row margin-input">
-      <div class="col-md-2">
-        <button
-          class="btn btn-primary btn-sm active"
-          (click)="pupGenera()"
-          [disabled]="!disabledBtnActas">
-          Genera
-        </button>
-      </div>
-      <div class="col-md-2">
-        <button
-          type="button"
-          class="btn btn-primary active btn-sm mr-3"
-          (click)="searchActas()"
-          [disabled]="!disabledBtnActas">
-          Buscar Bienes
-          <i class="bx bx-search bx-sm float-icon"></i>
-        </button>
-      </div>
-      <div class="col-md-2">
-        <button class="btn btn-primary btn-sm active">Bitacora</button>
-      </div>
-      <div class="col-md-2">
-        <button
-          type="button"
-          class="btn btn-danger active btn-sm"
-          (click)="cleanForm()">
-          Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
-        </button>
+
+    <div class="row pt-2">
+      <div class="col-md-12 text-center mt-4 mb-4">
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm mr-3"
+            (click)="searchActas()"
+            [disabled]="!disabledBtnActas">
+            Buscar Bienes
+            <i class="bx bx-search bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm"
+            (click)="cleanForm()">
+            Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+          </button>
+        </div>
       </div>
     </div>
+
     <div class="margin-input">
       <h5 class="title">Bienes del Reporte Implementación</h5>
       <div class="row pt-4">
@@ -276,12 +269,15 @@
           [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-2">
-        <button class="btn btn-primary btn-sm active">Incorpora</button>
-      </div>
-      <div class="col-md-2">
-        <button class="btn btn-danger btn-sm active">Elimina</button>
+
+    <div class="row pt-2">
+      <div class="col-md-12 text-center mt-4 mb-4">
+        <div class="col-md-2">
+          <button class="btn btn-primary btn-sm active">Incorpora</button>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-danger btn-sm active">Elimina</button>
+        </div>
       </div>
     </div>
     <div class="margin-input">
@@ -292,7 +288,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings2"
-              [source]="data1">
+              [source]="bienesStrategy">
             </ng2-smart-table>
           </div>
         </div>
@@ -301,12 +297,22 @@
           [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-2">
-        <button class="btn btn-primary btn-sm active">Incorpora</button>
-      </div>
-      <div class="col-md-2">
-        <button class="btn btn-primary btn-sm active">Nuevos Costos</button>
+    <div class="row pt-2">
+      <div class="col-md-12 text-center mt-4 mb-4">
+        <div class="col-md-2">
+          <button class="btn btn-primary btn-sm active">Incorpora</button>
+        </div>
+        <div class="col-md-2">
+          <button
+            class="btn btn-primary btn-sm active"
+            (click)="pupGenera()"
+            [disabled]="!disabledBtnActas">
+            Genera
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-primary btn-sm active">Nuevos Costos</button>
+        </div>
       </div>
     </div>
   </div>

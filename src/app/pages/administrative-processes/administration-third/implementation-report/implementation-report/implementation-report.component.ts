@@ -51,6 +51,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   delegationUser: any;
   dateCapt: string = '';
+  bienesStrategy: LocalDataSource = new LocalDataSource();
   maxDate = new Date();
   disabledBtnActas: boolean = true;
   dateClose: string = '';
@@ -213,7 +214,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     this.strategyServiceService.getTurn(this.filterTurn).subscribe({
       next: data => {
         data.data.filter((item: any) => {
-          item['turnAndName'] = item.no_tiposervicio + '-' + item.descripcion;
+          item['turnAndName'] = item.no_turno + '-' + item.descripcion;
         });
         this.turnos = new DefaultSelect(data.data, data.count);
         // console.log(data);
@@ -257,8 +258,11 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       .getStrategyRepImplementation(this.serviceOrdersForm.value.noFormat)
       .subscribe({
         next: data => {
+          this.reportImp = data.data;
+          console.log(this.reportImp);
+          this.bienesStrategy.load(data.data);
+          this.bienesStrategy.refresh();
           data.data.filter((value: any) => {
-            this.reportImp = value;
             console.log(value);
             this.dateCapt = this.datePipe.transform(
               this.serviceOrdersForm.value.dateCapture,
@@ -427,4 +431,8 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       }
     });
   }
+  addSelect() {}
+  removeSelect() {}
+  addAll() {}
+  removeAll() {}
 }
