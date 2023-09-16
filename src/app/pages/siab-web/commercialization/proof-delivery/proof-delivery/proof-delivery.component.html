@@ -1,73 +1,112 @@
 <app-card [header]="true">
+  <!--  -->
   <div header>
     <div class="ch-content">
-      <h5 class="title">Constancia de entregas</h5>
+      <h5 class="title">Constancia de Entregas</h5>
     </div>
   </div>
+  <!--  -->
   <div body>
-    <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
-      <div class="row">
-        <div class="col-md-2">
-          <form-field [control]="form.get('event')" label="Evento">
-            <input type="text" class="form-control" formControlName="event" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field
-            [control]="form.get('delegation')"
-            label="Delegaci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="delegation" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field
-            [control]="form.get('allotment')"
-            label="Lote P&uacute;blico">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="allotment" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('rfc')" label="RFC">
-            <input type="text" class="form-control" formControlName="rfc" />
-          </form-field>
-        </div>
-        <div class="col-md-1">
-          <div class="justify-content-center">
-            <button
-              type="submit"
-              class="btn btn-primary btn-sm active"
-              [disabled]="!form.valid">
-              Limpiar filtros
-            </button>
+    <!--  -->
+    <div class="mb-5" style="margin-top: -10px">
+      <h5 class="title" style="font-size: 25px; text-align: center">
+        Descarga de Constancia de Entrega
+      </h5>
+    </div>
+    <!--  -->
+    <div class="mt-5">
+      <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-3">
+            <form-field [control]="form.get('event')">
+              <ngx-select
+                [searchOnInit]="true"
+                (fetchItems)="getEvents($event)"
+                [data]="events"
+                [form]="form"
+                bindLabel="evento_proceso"
+                label="Evento"
+                control="event"
+                (change)="loadDataEventSelected($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('delegation')"
+              label="Delegaci&oacute;n">
+              <!-- <ngx-select [searchOnInit]="true" (fetchItems)="getDelegations($event)" [data]="delegations" [form]="form"
+                bindLabel="cveJob" label="Delegaci&oacute;n" control="delegation">
+              </ngx-select> -->
+              <select
+                class="form-control"
+                formControlName="delegation"
+                (change)="delegationChangeIndex()">
+                <option></option>
+                <option *ngFor="let item of delegations">
+                  {{ item.no_delegacion }}
+                </option>
+              </select>
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('allotment')"
+              label="Lote P&uacute;blico">
+              <!-- <ngx-select [searchOnInit]="true" (fetchItems)="getPublic($event)" [data]="public" [form]="form"
+                bindLabel="cveJob" label="Lote P&uacute;blico" control="allotment">
+              </ngx-select> --><select
+                class="form-control"
+                formControlName="allotment"
+                (change)="publicChangeIndex()">
+                <option></option>
+                <option *ngFor="let item of public">
+                  {{ item.lote_publico }}
+                </option>
+              </select>
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('rfc')"
+              label="RFC"
+              (change)="rfcChangeIndex()">
+              <!-- <ngx-select [searchOnInit]="true" (fetchItems)="getRrcs($event)" [data]="rfcs" [form]="form"
+                bindLabel="cveJob" label="RFC" control="rfc">
+              </ngx-select> --><select
+                class="form-control"
+                formControlName="rfc">
+                <option></option>
+                <option *ngFor="let item of rfcs">{{ item.rfc }}</option>
+              </select>
+            </form-field>
           </div>
         </div>
-        <div class="col-md-2">
-          <div class="justify-content-center">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              [disabled]="!form.valid"
-              (click)="show = !show">
-              Generar constancia de entrega
-            </button>
-          </div>
-        </div>
+      </form>
+    </div>
+    <!--  -->
+    <div class="d-flex mb-3">
+      <div class="ml-auto">
+        <button class="btn btn-danger btn-sm active mr-3">
+          Limpiar Filtros <i class="fas fa-eraser"> </i>
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          [disabled]="!form.valid">
+          Generar Constancia(s) de Entrega
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
       </div>
-    </form>
-    <div class="row" *ngIf="show">
-      <div class="ch-content" header>
-        <h5 class="title">Descarga de constancia de entrega</h5>
-        <div class="col-md-5 buttons">
+    </div>
+    <!--  -->
+    <div class="mt-3" *ngIf="true">
+      <div class="ml-auto mb-3">
+        <div>
           <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
       </div>
-      <div class="table-responsive">
+      <div>
         <ng2-smart-table
           [settings]="settings"
           [source]="data"></ng2-smart-table>

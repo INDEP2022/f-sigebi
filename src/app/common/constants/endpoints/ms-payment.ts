@@ -17,6 +17,7 @@ export enum PaymentEndPoints {
   UpdatePayments = 'payment/update-payments',
   Delete = 'search-payments-det/delete-search-payments',
   validSystem = 'comer-valid-system',
+  postIndentifiesPayments = 'payment/identifies-payments-inconsistency',
   ComerCtldevpagB = `comer-ctldevpag-b`,
   ComerCtldevpagBfindAllRegistersV2 = `comer-ctldevpag-b/findAllRegistersV2`,
   PaymentsxConfirm = 'views/v-comer-paymentsxconfirm',

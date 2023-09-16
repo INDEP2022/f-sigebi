@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -14,13 +15,14 @@ import { IGood } from 'src/app/core/models/good/good.model';
 import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
-
+import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { FindActaComponent } from '../find-acta/find-acta.component';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
 import { COPY } from './columns-approval-donation';
 @Component({
@@ -43,18 +45,24 @@ export class CaptureApprovalDonationComponent
   regisForm: FormGroup;
   siabForm: FormGroup;
   foolio: number;
+  statusGood_: any;
+  dataTableGood_: any[] = [];
   totalItems: number = 0;
   loading3: boolean = false;
   Exportdate: boolean = false;
   status: string = '';
+  disabledBtnActas: boolean = true;
   totalItems2: number = 0;
+  cveActa: string = '';
   dataDetailDonation: any;
+  consec: string = '';
   dataDetailDonationGood: LocalDataSource = new LocalDataSource();
   excelLoading: boolean = false;
   paramsList2 = new BehaviorSubject<ListParams>(new ListParams());
-
   bsValueToYear: Date = new Date();
-
+  TOTAL_REPORTE: number = 0;
+  BIEN_ERROR: number = 0;
+  SUM_BIEN: number = 0;
   minModeToYear: BsDatepickerViewMode = 'year'; // change for month:year
   bsConfigToYear: Partial<BsDatepickerConfig>;
   dataTableGood: LocalDataSource = new LocalDataSource();
@@ -66,6 +74,8 @@ export class CaptureApprovalDonationComponent
   columnFilters: any = [];
   columnFilters2: any = [];
   settings2;
+  to: string = '';
+  annio: string = '';
   userName: string = '';
   // @Input() getDetailComDonation: Function;
   // @Input() idActa: number | string;
@@ -98,7 +108,10 @@ export class CaptureApprovalDonationComponent
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
-    private donationService: DonationService
+    private donationService: DonationService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private statusGoodService: StatusGoodService,
+    private datePipe: DatePipe
   ) {
     super();
     // this.settings = { ...this.settings, actions: false };
@@ -157,109 +170,6 @@ export class CaptureApprovalDonationComponent
             return row.goodEntity?.quantity;
           },
         },
-        unit: {
-          title: 'Unidad',
-          type: 'string',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.goodEntity?.unit;
-          },
-        },
-        status: {
-          title: 'Estatus',
-          type: 'string',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.goodEntity?.status;
-          },
-        },
-        noExpediente: {
-          title: 'No. Expediente',
-          type: 'number',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.goodEntity?.noExpediente;
-          },
-        },
-        noEtiqueta: {
-          title: 'Etiqueta Destino',
-          type: 'string',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.goodEntity?.noEtiqueta;
-          },
-        },
-        idNoWorker1: {
-          title: 'No. Tranf.',
-          type: 'string',
-          sort: false,
-          // valuePrepareFunction: (cell: any, row: any) => {
-          //   return row.goodEntity?.idNoWorker1;
-          // },
-        },
-        idExpWorker1: {
-          title: 'Des. Tranf.',
-          type: 'string',
-          sort: false,
-          // valuePrepareFunction: (cell: any, row: any) => {
-          //   return row.goodEntity?.idExpWorker1;
-          // },
-        },
-        noClasifBien: {
-          title: 'No. Clasif.',
-          type: 'number',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.good?.goodClassification;
-          },
-        },
-        procesoExtDom: {
-          title: 'Proceso',
-          type: 'string',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.good?.procesoExtDom;
-          },
-        },
-        // warehouseNumb: {
-        //   title: 'No. Alma.',
-        //   type: 'number',
-        //   sort: false,
-        // },
-        // warehouse: {
-        //   title: 'Almacén',
-        //   type: 'string',
-        //   sort: false,
-        // },
-        // warehouseLocat: {
-        //   title: 'Ubica. Almacén ',
-        //   type: 'string',
-        //   sort: false,
-        // },
-        // coordAdmin: {
-        //   title: 'Coord. Admin.',
-        //   type: 'string',
-        //   sort: false,
-        // },
-        // select: {
-        //   title: 'Selec.',
-        //   type: 'custom',
-        //   renderComponent: CheckboxElementComponent,
-        //   onComponentInitFunction(instance: any) {
-        //     instance.toggle.subscribe((data: any) => {
-        //       data.row.to = data.toggle;
-        //     });
-        //   },
-        //   sort: false,
-        // },
-        // noDataMessage: 'No se encontrarón registros',
-      },
-      rowClassFunction: (row: any) => {
-        if (row.data.di_disponible == 'S') {
-          return 'bg-success text-white';
-        } else {
-          return 'bg-dark text-white';
-        }
       },
     };
 
@@ -273,10 +183,6 @@ export class CaptureApprovalDonationComponent
       columns: {
         ...COPY,
       },
-      rowClassFunction: (row: any) => {
-        return 'bg-light text-black';
-      },
-      // noDataMessage: 'No se encontrarón registros',
     };
   }
 
@@ -324,12 +230,6 @@ export class CaptureApprovalDonationComponent
     });
     this.regisForm.get('area').setValue(this.paramsScreen.area);
   }
-  // lv_TRAN      Varchar2(4);
-  // lv_TIPO      Varchar2(4);
-  // lv_AREA      Varchar2(10);
-  // lv_CONS      Varchar2(10);
-  // lv_TIPO_ACTA INDICADORES_PARAMETRO.TIPO_ACTA% type;
-  // lv_FOLIO     Number;
 
   createDon(donationGood: IGoodDonation) {
     this.loading = true;
@@ -339,16 +239,6 @@ export class CaptureApprovalDonationComponent
     const area = this.regisForm.value.area;
     let folio_ = folio.toString().padStart(4, '0');
     this.foolio = folio_;
-
-    // this.eventComDonacion.cveActa =
-    //   this.eventComDonacion.tipo +
-    //   '/' +
-    //   this.global.regi +
-    //   '/' +
-    //   this.eventComDonacion.anio +
-    //   '/' +
-    //   this.global.cons;
-
     const cveActa = `${acta}/${area}/${year}/${folio_}/${this.type}`;
     console.log('cveActa -->', cveActa);
     this.donationService.createD(donationGood).subscribe({
@@ -416,10 +306,11 @@ export class CaptureApprovalDonationComponent
     );
     modalRef.content.onSave.subscribe((next: any[] = []) => {
       console.log('aaaa', next);
+      this.selectedGooodsValid = next;
+      this.addSelect();
+      this.dataDetailDonationGood.load(next);
+      this.dataDetailDonationGood.refresh();
 
-      this.dataTableGood.load(next);
-      this.dataTableGood.refresh();
-      // this.eventdetailDefault = next;
       // this.status = next.statusAct;
     });
   }
@@ -671,6 +562,312 @@ export class CaptureApprovalDonationComponent
   selectedGooodsValid: any[] = [];
   selectedGooods: any[] = [];
   goodsValid: any;
+
+  async addSelect() {
+    if (this.selectedGooods.length > 0) {
+      if (this.dataDetailDonation.recordId == null) {
+        this.alert(
+          'warning',
+          'No Existe un Acta en la cual Asignar el Bien.',
+          'Debe capturar un acta.'
+        );
+        return;
+      } else {
+        if (this.estatus == 'CERRADA') {
+          this.alert(
+            'warning',
+            'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+            ''
+          );
+          return;
+        } else {
+          // console.log('aaa', this.goods);
+          let result = this.selectedGooods.map(async (good: any) => {
+            if (good.di_acta != null) {
+              this.alert(
+                'warning',
+                `Ese Bien ya se Encuentra en el Acta ${good.di_acta}`,
+                'Debe Capturar un Acta.'
+              );
+            } else if (good.di_disponible == 'N') {
+              this.onLoadToast(
+                'warning',
+                `El Bien ${good.id} tiene un Estatus Inválido para ser Asignado a algún Acta`
+              );
+              return;
+            } else {
+              // console.log('GOOD', good);
+              this.loading = true;
+
+              if (!this.dataDetailDonation.some((v: any) => v === good)) {
+                let indexGood = this.dataTableGood_.findIndex(
+                  _good => _good.id == good.id
+                );
+
+                this.Exportdate = true;
+                console.log('indexGood', indexGood);
+                if (indexGood != -1)
+                  this.dataTableGood_[indexGood].di_disponible = 'N';
+                // await this.updateBienDetalle(good.id, 'ADM');
+                await this.createDET(good);
+              }
+            }
+          });
+          Promise.all(result).then(async item => {
+            //ACTUALIZA EL COLOR
+            this.dataTableGood_ = [];
+            this.dataDetailDonationGood.load(this.dataTableGood_);
+            this.dataDetailDonationGood.refresh();
+            await this.getDetailProceedingsDevollution(
+              this.dataDetailDonation.recordId
+            );
+          });
+          //this.actasDefault = null;
+        }
+      }
+    }
+    // else {
+    //   this.alert('warning', 'Seleccione Primero el Bien a Asignar.', '');
+    // }
+  }
+  removeSelect() {
+    if (this.estatus == 'CERRADA') {
+      this.alert(
+        'warning',
+        'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+        ''
+      );
+      return;
+    } else {
+      // console.log('this.actasDefault ', this.actasDefault);
+
+      if (this.dataDetailDonation == null) {
+        this.alert(
+          'warning',
+          'Debe Especificar/Buscar el Acta para Despues Eliminar el Bien de Esta.',
+          ''
+        );
+        return;
+      } else if (this.selectedGooodsValid.length == 0) {
+        this.alert(
+          'warning',
+          'Debe Seleccionar un Bien que Forme Parte del Acta Primero',
+          'Debe Capturar un Acta.'
+        );
+        return;
+      } else {
+        this.loading = true;
+        if (this.selectedGooodsValid.length > 0) {
+          // this.goods = this.goods.concat(this.selectedGooodsValid);
+          let result = this.selectedGooodsValid.map(async good => {
+            console.log('good', good);
+            this.dataDetailDonation = this.dataDetailDonation.filter(
+              (_good: any) => _good.id != good.id
+            );
+            let index = this.dataTableGood_.findIndex(
+              g => g.id === good.numberGood
+            );
+            // await this.updateBienDetalle(good.numberGood, 'CNE');
+            // await this.deleteDET(good);
+            // this.selectedGooods = [];
+            //ACTUALIZA COLOR
+            this.dataTableGood_ = [];
+            this.dataTableGood.load(this.dataTableGood_);
+            this.dataTableGood.refresh();
+          });
+
+          Promise.all(result).then(async item => {
+            await this.getDetailProceedingsDevollution(
+              this.dataDetailDonation.recordId
+            );
+            // this.getGoodsByStatus(Number(this.fileNumber));
+          });
+          this.Exportdate = false;
+          this.selectedGooodsValid = [];
+        }
+      }
+    }
+  }
+
+  async createDET(good: any) {
+    // if (this.dataRecepcion.length > 0) {
+    // let result = this.dataRecepcion.map(async good => {
+    let obj: any = {
+      numberProceedings: this.paramsScreen.recordId,
+      numberGood: good.goodId,
+      amount: good.quantity,
+      received: null,
+      approvedXAdmon: null,
+      approvedDateXAdmon: null,
+      approvedUserXAdmon: null,
+      dateIndicatesUserApproval: null,
+      numberRegister: null,
+      reviewIndft: null,
+      correctIndft: null,
+      idftUser: null,
+      idftDate: null,
+      numDelegationIndft: null,
+      yearIndft: null,
+      monthIndft: null,
+      idftDateHc: null,
+      packageNumber: null,
+      exchangeValue: null,
+    };
+
+    await this.saveGoodDetail(obj);
+  }
+  async saveGoodDetail(body: any) {
+    return new Promise((resolve, reject) => {
+      this.donationService.createAdmonDonation(body).subscribe({
+        next: data => {
+          // this.alert('success', 'Bien agregado correctamente', '');
+          resolve(true);
+        },
+        error: error => {
+          // this.authorityName = '';
+          resolve(false);
+        },
+      });
+    });
+  }
+  removeAll() {}
+
+  async selectData(event: { data: IGood; selected: any }) {
+    this.selectedRow = event.data;
+    // console.log('select RRR', this.selectedRow);
+
+    await this.getStatusGoodService(this.selectedRow.status);
+    this.selectedGooods = event.selected;
+    this.changeDetectorRef.detectChanges();
+  }
+  async getStatusGoodService(status: any) {
+    this.statusGoodService.getById(status).subscribe({
+      next: async (resp: any) => {
+        console.log('datapruebaJess', resp);
+        this.statusGood_ = resp.description;
+        // this.statusGoodForm.get('statusGood').setValue(resp.description)
+      },
+      error: err => {
+        this.statusGood_ = '';
+        // this.statusGoodForm.get('statusGood').setValue('')
+      },
+    });
+  }
+  cleanActa() {
+    this.regisForm.reset();
+    this.dataTableGood.load([]);
+    // this.dataRecepcionGood.load([]);
+    this.eventDonacion = null;
+    this.estatus = null;
+    this.selectedGooods = [];
+    this.Exportdate = false;
+  }
+  formatDate(date: Date): string {
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear().toString();
+    return `${day}/${month}/${year}`;
+  }
+
+  searchActas(actas?: string) {
+    this.consec = null;
+    actas = this.cveActa;
+    const expedienteNumber = this.fileNumber;
+    const actaActual = this.eventDonacion;
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      actas,
+      actaActual,
+      expedienteNumber,
+    };
+
+    let modalRef = this.modalService.show(FindActaComponent, modalConfig);
+    modalRef.content.onSave.subscribe(async (next: any) => {
+      console.log(next);
+      if (next) {
+        this.alert(
+          'success',
+          'Se Cargó la Información del Acta',
+          next.keysProceedings
+        );
+      }
+      // Limpiar formulario una vez consulte
+      //this.regisForm.reset();
+      //this.formScan.reset();
+
+      const dateElabora =
+        next.elaborationDate != null ? new Date(next.elaborationDate) : null;
+      const formattedfecElaborate =
+        dateElabora != null ? this.formatDate(dateElabora) : null;
+
+      const dateActa =
+        next.datePhysicalReception != null
+          ? new Date(next.datePhysicalReception)
+          : null;
+      const formattedfecActa =
+        dateActa != null ? this.formatDate(dateActa) : null;
+
+      const dateCapture =
+        next.captureDate != null ? new Date(next.captureDate) : null;
+      const formattedfecCapture =
+        dateCapture != null ? this.formatDate(dateCapture) : null;
+
+      this.eventDonacion = next;
+      // this.fCreate = this.datePipe.transform(
+      //   next.dateElaborationReceipt,
+      //   'dd/MM/yyyy'
+      // );
+      this.to = this.datePipe.transform(
+        this.regisForm.controls['year'].value,
+        'MM/yyyy'
+      );
+
+      this.estatus = next.statusProceedings;
+      if (this.estatus == 'CERRADA') {
+        //this.disabledBtnCerrar = false;
+        this.disabledBtnActas = false;
+      } else {
+        this.disabledBtnActas = true;
+        //this.disabledBtnCerrar = true;
+      }
+      console.log('acta NEXT ', next);
+      this.regisForm.patchValue({
+        administra: next.approvedXAdmon,
+        testigoOIC: next.comptrollerWitness,
+        respConv: next.receiptKey,
+
+        observaciones: next.observations,
+        // ejecuta: next.ejecuta,
+        consec: next.numeraryFolio,
+        type: next.id,
+        cveActa: next.keysProceedings,
+        mes: next.dateElaborationReceipt,
+        //cveReceived: next.receiptKey,
+        //anio: new Date(next.dateElaborationReceipt),
+        direccion: next.address,
+        parrafo1: next.parrafo1,
+        // testigoOIC: next.comptrollerWitness,
+        //testigoOIC: next.witness1,
+        testigoOne: next.witness1,
+        testigoTree: next.witness2,
+        elaboradate: formattedfecElaborate,
+        fechaact: formattedfecActa,
+        fechacap: formattedfecCapture,
+      });
+
+      //this.data1 = next.statusProceedings;
+      //this.formScan.get('scanningFoli').patchValue(next.universalFolio);
+      // Pasar clave a esta función
+      //this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
+
+      await this.getDetailProceedingsDevollution(this.eventDonacion.actId);
+    });
+    modalRef.content.cleanForm.subscribe(async (next: any) => {
+      if (next) {
+        this.cleanActa();
+      }
+    });
+  }
 
   agregarCaptura() {}
   searchEventos() {}

@@ -2,6 +2,8 @@ export enum ENDPOINT_INVOICE {
   BasePath = 'invoice',
   straInvoice = 'strategies-invoices',
   ComerInovice = 'comer-invoices',
+  GetInvoiceForniture = 'application/getEventmuebles/',
+  GetInvoiceEvent = 'application/get-invoice-ent/',
   ApplicationImpPenalize = 'application/get-obt-imp-penalize',
   ApplicationMaxFolio = 'application/get-id-invoice/',
   DeleteFolio = 'ctrl-invoice/update-folioinvoice',
