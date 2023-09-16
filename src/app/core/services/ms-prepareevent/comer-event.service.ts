@@ -133,4 +133,8 @@ export class ComerEventService extends HttpService {
   putUpdateBySubquery(body: any) {
     return this.post(PrepareEventEndpoints.UpdateBySubquery, body);
   }
+
+  getEnvFormalize(body: any) {
+    return this.post(PrepareEventEndpoints.EnvFormalize, body);
+  }
 }
