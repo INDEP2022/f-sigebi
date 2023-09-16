@@ -6,7 +6,7 @@ import {
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -38,6 +38,10 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
   minModeFromMonth: BsDatepickerViewMode = 'month';
   minModeFromYear: BsDatepickerViewMode = 'year';
 
+  lista: any = [];
+  bienSeleccionado: any = {};
+  datosParaTabla: any[] = [];
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -48,6 +52,7 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.datosParaTabla = dataMock;
     this.initForm();
     this.configInputsDate();
     this.assignTableColumns();
@@ -63,6 +68,10 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
       error: error => {
         console.log(error);
       },
+    });
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.fillTable();
     });
   }
 
@@ -220,6 +229,23 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
 
   onSubmit() {}
 
+  onKeyDownIdContract(event: any) {
+    console.log(event.target.value);
+    this.donationService.getContrato(event.target.value).subscribe({
+      next: data => {
+        console.log(data);
+        console.log(data.data[0].donee);
+        this.form.controls['donee'].setValue(data.data[0].donee || null);
+        this.form.controls['reasonSocial'].setValue(
+          data.data[0].doneeId.razonSocial
+        );
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
+
   settingsChange(event: any) {
     this.settings = event;
   }
@@ -241,20 +267,29 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
 
   fillTable() {
     this.loading = true;
-    setTimeout(() => {
-      this.dataTable.load(dataMock);
-    }, 1500);
+
+    this.dataTable.load(this.datosParaTabla);
+    this.totalItems = this.datosParaTabla.length;
 
     this.loading = false;
   }
 
   onQuitarBienesSeleccionados() {
-    this.alert(
-      'success',
-      'El bien o los bienes seleccionados han sido retirados',
-      ''
-    );
+    if (this.bienSeleccionado) {
+      const filtra = this.datosParaTabla.filter((item: any) => {
+        return item.idRequest !== this.bienSeleccionado.idRequest;
+      });
+
+      this.datosParaTabla = filtra;
+      this.dataTable.load(this.datosParaTabla);
+      this.bienSeleccionado = {};
+      this.totalItems = this.datosParaTabla.length;
+      this.alert('success', 'El contrato seleccionado han sido retirado', '');
+    } else {
+      this.alert('warning', '', 'Primero debe seleccionar un contrato');
+    }
   }
+
   configInputsDate() {
     this.bsConfigFromYear = Object.assign(
       {},
@@ -296,6 +331,22 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
 
   onCerrarContrato() {
     this.alert('success', 'Test', 'Se ha cerrado el contrato');
+  }
+
+  rowsSelected(event: any) {
+    this.bienSeleccionado = {
+      idRequest: event.data.idRequest,
+      goodNumb: event.data.goodNumb,
+      proceedings: event.data.proceedings,
+      quantityWarehouse: event.data.quantityWarehouse,
+      quantityToDonate: event.data.quantityToDonate,
+      classifNumbGood: event.data.classifNumbGood,
+      ssSubtype: event.data.ssSubtype,
+      description: event.data.description,
+      delAdmin: event.data.delAdmin,
+    };
+
+    console.log(this.bienSeleccionado);
   }
 }
 
