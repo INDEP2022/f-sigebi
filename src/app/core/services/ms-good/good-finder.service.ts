@@ -70,4 +70,9 @@ export class GoodFinderService extends HttpService {
   getAll3(params?: ListParams) {
     return this.get<IListResponse<IGood>>(`good-query`, params);
   }
+
+  updateClassifyGoodByRequest(id: number) {
+    const route = `${GoodFinderEndpoint.UpdateClassification}/${id}`;
+    return this.get(route);
+  }
 }

@@ -130,4 +130,11 @@ export class ComerEventService extends HttpService {
       `${PrepareEventEndpoints.GetValidLiquidation}?eventId=${event}&batchPublic=${batchPublic}`
     );
   }
+  putUpdateBySubquery(body: any) {
+    return this.post(PrepareEventEndpoints.UpdateBySubquery, body);
+  }
+
+  getEnvFormalize(body: any) {
+    return this.post(PrepareEventEndpoints.EnvFormalize, body);
+  }
 }
