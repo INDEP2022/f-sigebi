@@ -32,7 +32,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="idContract" />
+                  formControlName="idContract"
+                  (keydown)="onKeyDownIdContract($event)" />
               </form-field>
             </div>
           </div>
@@ -422,7 +423,8 @@
             class="col-md-12"
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="dataTable">
+            [source]="dataTable"
+            (userRowSelect)="rowsSelected($event)">
           </ng2-smart-table>
         </div>
       </ng-scrollbar>
