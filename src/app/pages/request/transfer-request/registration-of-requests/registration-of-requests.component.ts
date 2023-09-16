@@ -360,6 +360,9 @@ export class RegistrationOfRequestsComponent
           }
           this.requestData = data as IRequest;
           this.formLoading = false;
+          //inserta en el campo clasificacion del bien en caso de ser pgr o sat
+          this.setClassificationGood(data.id);
+
           /*request.receptionDate = new Date().toISOString();
         this.object = request as IRequest;
         this.requestData = request as IRequest;
@@ -1801,6 +1804,17 @@ export class RegistrationOfRequestsComponent
     }).then(result => {
       if (result.isConfirmed) {
       }
+    });
+  }
+
+  setClassificationGood(id: number) {
+    const typeTransference = this.requestData.typeOfTransfer;
+    if (typeTransference != 'SAT_SAE' || typeTransference != 'PGR_SAE') return;
+
+    this.goodfinderService.updateClassifyGoodByRequest(id).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
     });
   }
 }

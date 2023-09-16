@@ -210,4 +210,10 @@ export class DetailProceeDelRecService extends HttpService {
     const route = `${ProceedingsEndpoints.TmpEspPrograming}?filter.userEst=$ilike:${user}`;
     return this.get(route, params);
   }
+
+  getProcedingImp(params: ListParams) {
+    const receive = 'S';
+    const route = `${ProceedingsEndpoints.ActasRecptionImp}?filter.received=${receive}`;
+    return this.get(route, params);
+  }
 }

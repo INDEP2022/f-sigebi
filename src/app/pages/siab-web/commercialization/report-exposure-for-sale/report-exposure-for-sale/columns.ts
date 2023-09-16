@@ -1,49 +1,100 @@
 export const UNEXPOSED_GOODS_COLUMNS = {
-  noGood: {
+  no_bien: {
     title: 'No. Bien',
     sort: false,
   },
-  description: {
+  descripcion_bien: {
     title: 'Descripción',
     sort: false,
   },
-  valueBase: {
+  valor_base: {
     title: 'Valor Base',
     sort: false,
   },
-  descriptionTrans: {
+  nombre_transferente: {
     title: 'Desc. Transferente',
     sort: false,
   },
-  idStatusVta: {
+  id_estatusvta: {
     title: 'ID Status VTA',
     sort: false,
   },
-  dateGood: {
+  fecha_bien: {
     title: 'Fecha Bien',
     sort: false,
   },
-  dateFail: {
+  fecha_fallo: {
     title: 'Fecha Fallo',
     sort: false,
   },
-  dateEvent: {
+  fecha_evento: {
     title: 'Fecha Evento',
     sort: false,
   },
-  dateCreation: {
+  fecha_creacion: {
     title: 'Fecha Creación',
     sort: false,
   },
-  typeGood: {
+  tipo_bien: {
     title: 'Tipo Bien',
     sort: false,
   },
-  subTypeGood: {
+  sub_tipo_bien: {
     title: 'Sub tipo Bien',
     sort: false,
   },
-  delegation: {
+  delegacion_admin: {
+    title: 'Delegación Admin',
+    sort: false,
+  },
+};
+
+export const MONTH_COLUMNS = {
+  no_bien: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  descripcion_bien: {
+    title: 'Descripción',
+    sort: false,
+  },
+  valor_base: {
+    title: 'Valor Base',
+    sort: false,
+  },
+  nombre_transferente: {
+    title: 'Desc. Transferente',
+    sort: false,
+  },
+  id_estatusvta: {
+    title: 'ID Status VTA',
+    sort: false,
+  },
+  fecha_bien: {
+    title: 'Fecha Bien',
+    sort: false,
+  },
+  fecha_fallo: {
+    title: 'Fecha Fallo',
+    sort: false,
+  },
+  fecha_evento: {
+    title: 'Fecha Evento',
+    sort: false,
+  },
+  fecha_creacion: {
+    title: 'Fecha Creación',
+    sort: false,
+  },
+  tipo_bien: {
+    title: 'Tipo Bien',
+    sort: false,
+  },
+  sub_tipo_bien: {
+    title: 'Sub tipo Bien',
+    sort: false,
+  },
+  delegacion_admin: {
     title: 'Delegación Admin',
     sort: false,
   },
