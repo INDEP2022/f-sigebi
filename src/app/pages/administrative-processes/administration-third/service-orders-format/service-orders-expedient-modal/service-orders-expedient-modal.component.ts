@@ -92,26 +92,16 @@ export class ServiceOrdersExpedientModalComponent
         next: response => {
           console.log('respuesta primer servicio ', response);
           for (let i = 0; i < response.data.length; i++) {
-            proceedingNumbers.push(response.data[i].minutesNum);
+            let params = {
+              key: response.data[i].minutesKey,
+              status: response.data[i].statusMinutes,
+              user: response.data[i].user,
+              noActa: response.data[i].minutesNum,
+            };
+            this.data2.push(params);
+            this.localData2.load(this.data2);
+            this.localData2.refresh();
           }
-          let params = {
-            proceedingNumber: proceedingNumbers,
-          };
-          this.strategyProcessService.ByFormats(params).subscribe({
-            next: response => {
-              for (let i = 0; i < response.data.length; i++) {
-                let params = {
-                  key: response.data[i].cve_acta,
-                  status: response.data[i].estatus_acta,
-                  user: response.data[i].usuario,
-                  noActa: response.data[i].no_acta,
-                };
-                this.data2.push(params);
-                this.localData2.load(this.data2);
-                this.localData2.refresh();
-              }
-            },
-          });
         },
       });
   }
@@ -129,13 +119,16 @@ export class ServiceOrdersExpedientModalComponent
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
-              case 'id':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'processNumber':
-                searchFilter = SearchFilter.EQ;
+              case 'key':
+                field = `filter.programmation.minutesKey`;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'status':
+                field = `filter.programmation.statusMinutes`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'user':
+                field = `filter.programmation.user`;
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'formatKey':
