@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
@@ -35,7 +38,7 @@ export class ServiceOrdersExpedientModalComponent
   user: any;
   selectedRow: any;
   columnFilters: any = [];
-  bienes: number;
+  BIENES: any;
   selectedRows: any = [];
   flag: boolean = false;
   settings2 = {
@@ -111,6 +114,53 @@ export class ServiceOrdersExpedientModalComponent
           });
         },
       });
+  }
+
+  filterA() {
+    this.localData2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'processNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'status':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'formatKey':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'recordNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params2 = this.pageFilter(this.params2);
+          this.getAllByUser();
+        }
+      });
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getAllByUser());
   }
 
   onRowSelect(event: any) {
@@ -189,7 +239,7 @@ export class ServiceOrdersExpedientModalComponent
   }
 
   Apply() {
-    if (this.bienes == 1) {
+    if (this.BIENES == 1) {
       this.PuIncorpBienPro();
     } else {
       this.PuIncorpBien();
@@ -260,6 +310,7 @@ export class ServiceOrdersExpedientModalComponent
       },
     });
   }
+
   PuIncorpBien() {
     let lv_TOTREG = 0;
     this.programmingGoodReceiptService

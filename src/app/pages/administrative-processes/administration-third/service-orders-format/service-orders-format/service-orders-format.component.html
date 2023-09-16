@@ -9,15 +9,28 @@
           type="button"
           tooltip="Nuevo"
           containerClass="tooltip-style"
-          class="btn btn-info btn-sm active ml-2 mr-2">
-          Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          class="btn btn-primary btn-sm active mr-3"
+          (click)="updatevalid()"
+          *ngIf="updatebtn">
+          Actualizar <i class="fas fa-sync-alt"> </i>
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button
+          type="button"
+          tooltip="Nuevo"
+          containerClass="tooltip-style"
+          class="btn btn-info btn-sm active ml-2 mr-2"
+          (click)="newOrden()">
+          {{ accion }} <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
       </div>
       <div class="col-md-2">
         <button
           type="button"
           class="btn btn-primary active btn-sm"
-          (click)="openSelect('')">
+          (click)="openSelect('')"
+          [disabled]="!consult">
           Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
         </button>
       </div>
@@ -40,10 +53,13 @@
               [control]="serviceOrdersForm.get('process')"
               label="Proceso">
               <input
-                type="text"
+                type="number"
                 formControlName="process"
                 placeholder="Proceso"
-                class="form-control" />
+                class="form-control"
+                min="0"
+                max="99"
+                [readOnly]="consult" />
             </form-field>
           </div>
           <div class="col-md-2 mt-3">
@@ -54,22 +70,11 @@
                 type="text"
                 formControlName="dateCapture"
                 placeholder="Fecha de captura"
-                class="form-control"
+                class="form-control disable"
                 bsDatepicker />
             </form-field>
           </div>
           <div class="col-md-4">
-            <!-- <form-field [control]="serviceOrdersForm.get('regionalCoordination')">
-              <ngx-select
-                (fetchItems)="getRegionalCoordination($event)"
-                [data]="regionalCoordination"
-                [form]="serviceOrdersForm"
-                value="regionalCoordination"
-                bindLabel="description"
-                label="Coordinación Regional"
-                control="regionalCoordination">
-              </ngx-select>
-            </form-field> -->
             <form-field
               [control]="serviceOrdersForm.get('regionalCoordination')">
               <app-delegation-shared
@@ -90,7 +95,8 @@
                 type="text"
                 formControlName="serviceOrderKey"
                 placeholder="Cve. Orden de servicio"
-                class="form-control" />
+                class="form-control"
+                [readOnly]="true" />
             </form-field>
           </div>
           <div class="col-md-4">
@@ -113,7 +119,8 @@
                 type="text"
                 formControlName="uniqueKey"
                 placeholder="Clave única de 3 niveles"
-                class="form-control" />
+                class="form-control"
+                [readOnly]="consult" />
             </form-field>
           </div>
         </div>
@@ -121,7 +128,6 @@
           <div class="col-md-3">
             <form-field [control]="serviceOrdersForm.get('transference')">
               <ngx-select
-                [(ngModel)]="selectedTransference"
                 (fetchItems)="getTransference($event)"
                 [data]="transferenceSele"
                 [form]="serviceOrdersForm"
@@ -142,8 +148,7 @@
                 value="id"
                 bindLabel="stationName"
                 label="Emisora"
-                control="station"
-                disabled="!tranferencebool">
+                control="station">
               </ngx-select>
             </form-field>
           </div>
@@ -151,10 +156,10 @@
             <form-field [control]="serviceOrdersForm.get('authority')">
               <ngx-select
                 (fetchItems)="getAuthority($event)"
-                [data]="authority"
+                [data]="autoritySele"
                 [form]="serviceOrdersForm"
-                value="authority"
-                bindLabel="description"
+                value="idAuthority"
+                bindLabel="authorityName"
                 label="Autoridad"
                 control="authority">
               </ngx-select>
@@ -164,10 +169,10 @@
             <form-field [control]="serviceOrdersForm.get('keyStore')">
               <ngx-select
                 (fetchItems)="getKeyStore($event)"
-                [data]="keyStore"
+                [data]="storeSele"
                 [form]="serviceOrdersForm"
-                value="keyStore"
-                bindLabel="description"
+                value="noStore"
+                bindLabel="store"
                 label="Clave almacén"
                 control="keyStore">
               </ngx-select>
@@ -183,7 +188,8 @@
                 type="text"
                 formControlName="location"
                 placeholder="Ubicación"
-                class="form-control" />
+                class="form-control"
+                [readOnly]="consult" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -194,7 +200,8 @@
                 type="text"
                 formControlName="municipality"
                 placeholder="Municipio"
-                class="form-control" />
+                class="form-control"
+                [readOnly]="consult" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -205,7 +212,8 @@
                 type="text"
                 formControlName="entity"
                 placeholder="Entidad"
-                class="form-control" />
+                class="form-control"
+                [readOnly]="consult" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -216,7 +224,8 @@
                 type="text"
                 formControlName="supplierFolio"
                 placeholder="Folio Proveedor"
-                class="form-control" />
+                class="form-control"
+                [readOnly]="consult" />
             </form-field>
           </div>
         </div>
@@ -243,7 +252,8 @@
                   formControlName="finished"
                   placeholder="Término"
                   class="form-control"
-                  bsDatepicker />
+                  bsDatepicker
+                  [minDate]="serviceOrdersForm.get('start').value" />
               </form-field>
               <div class="row">
                 <div class="col-md-4">
@@ -256,7 +266,8 @@
                       placeholder="Hora"
                       class="form-control"
                       min="1"
-                      max="12" />
+                      max="12"
+                      [readOnly]="consult" />
                   </form-field>
                 </div>
                 <div class="col-md-4">
@@ -269,7 +280,8 @@
                       placeholder="Minuto"
                       class="form-control"
                       min="0"
-                      max="59" />
+                      max="59"
+                      [readOnly]="consult" />
                   </form-field>
                 </div>
                 <div class="col-md-4">
@@ -278,8 +290,8 @@
                     label="Horario">
                     <select
                       class="form-control"
-                      formControlName="targetIndicator"
-                      placeholder="Horario">
+                      placeholder="Horario"
+                      formControlName="ampm">
                       <option value="AM">AM</option>
                       <option value="PM">PM</option>
                     </select>
@@ -305,7 +317,8 @@
               </form-field>
               <button
                 class="btn btn-primary btn-sm active"
-                (click)="openEstate('')">
+                (click)="openEstate('')"
+                disabled="NoFormat == null ">
                 Histórico
               </button>
             </div>
@@ -330,25 +343,34 @@
     </div>
     <div class="row margin-input">
       <div class="col-md-2">
-        <button class="btn btn-primary btn-sm active">Incorpora Bienes</button>
+        <button class="btn btn-primary btn-sm active" (click)="Incorpora()">
+          Incorpora Bienes
+        </button>
       </div>
       <div class="col-md-2">
-        <button class="btn btn-danger btn-sm active">Eliminar Bienes</button>
+        <button class="btn btn-danger btn-sm active" (click)="Delete()">
+          Eliminar Bienes
+        </button>
       </div>
       <div class="col-md-2">
-        <button class="btn btn-primary btn-sm active">G.Programación</button>
+        <button class="btn btn-primary btn-sm active" (click)="Gprogram()">
+          G. Programación
+        </button>
       </div>
     </div>
     <div class="ch-content" header>
       <h5 class="title">Control de las Ordenes de Servicio</h5>
     </div>
+    <div class="d-flex justify-content-end">
+      <app-columns-select [(settings)]="settings2"></app-columns-select>
+    </div>
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
             [settings]="settings2"
-            [source]="dataLocalI">
+            [source]="dataLocalI"
+            [attr.class]="'table-bordered table-responsive'">
           </ng2-smart-table>
         </div>
       </div>
