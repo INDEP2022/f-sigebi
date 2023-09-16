@@ -45,3 +45,44 @@ export interface IDonationPropolsal {
   descripcion: string;
   del_admin: string;
 }
+
+export interface IDonacContract {
+  id: string;
+  contractKey: string;
+  representativeSae: string;
+  granteeId: string;
+  elaborationDate: Date;
+  paragraph1: string;
+  paragraph2: string;
+  paragraph3: string;
+  paragraph4: string;
+  paragraph5: string;
+  fecsession: string;
+  agreementsSes: string;
+  sessionNumber: string;
+  job: string;
+  fecJob: string;
+  home: string;
+  witness1: string;
+  witness2: string;
+  contractStatus: string;
+  folioScan: string;
+  observations: string;
+  scanDate: Date;
+  puetsosae: string;
+  usersae: string;
+  positionDona: string;
+  nomrepdona: string;
+  requestId: string | number;
+  donee?: string | number;
+  typeDonac?: number;
+  justification?: string;
+  requestDate?: Date;
+  authorizeKey?: string;
+  authorizeDate?: Date;
+  don?: string; /// Esta es el acta
+  razonSocial?: string;
+  descDonatario?: string;
+  estado?: string;
+  municipio?: string;
+}

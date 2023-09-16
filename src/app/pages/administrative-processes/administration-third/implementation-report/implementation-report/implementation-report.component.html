@@ -7,6 +7,18 @@
     <form [formGroup]="serviceOrdersForm" class="form-material">
       <div class="row margin-input">
         <div class="col-md-4">
+          <form-field
+            [control]="serviceOrdersForm.get('noFormat')"
+            label="Clave de orden de Servicio">
+            <input
+              type="number"
+              formControlName="noFormat"
+              class="form-control"
+              maxlength="10"
+              (input)="getReportImp()" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
           <form-field [control]="serviceOrdersForm.get('process')">
             <ngx-select
               label="Proceso"
@@ -152,38 +164,55 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="serviceOrdersForm.get('reportKey')">
-            <ngx-select
-              (fetchItems)="getReportKey($event)"
-              [data]="reportKey"
-              [form]="serviceOrdersForm"
-              value="reportKey"
-              bindLabel="description"
-              label="Clave de Reporte"
-              control="reportKey">
-            </ngx-select>
-          </form-field>
-        </div>
-
-        <div class="col-md-4">
           <form-field
-            [control]="serviceOrdersForm.get('authorizationDate')"
-            label="Fecha de Autorización">
+            [control]="serviceOrdersForm.get('reportKey')"
+            label="Clave del Reporte">
             <input
               type="text"
-              formControlName="authorizationDate"
+              formControlName="reportKey"
+              class="form-control"
+              [maxLength]="30"
+              readonly />
+          </form-field>
+        </div>
+        <!-- <div class="col-md-4">
+          <form-field [control]="serviceOrdersForm.get('authorizationDate')" label="Fecha de Autorización">
+            <input type="text" formControlName="authorizationDate" [max]="maxDate" class="form-control" bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="serviceOrdersForm.get('dateCapture')" label="Fecha de Captura">
+            <form-field [control]="form.get('from')" label="Fecha de Captura">
+              <input [maxDate]="maxDate" formControlName="dateCapture" class="form-control" bsDatepicker />
+            </form-field>
+        </div> -->
+        <div class="col-md-4">
+          <form-field
+            [control]="serviceOrdersForm.get('dateCapture')"
+            label="Fecha de Captura">
+            <input
+              [maxDate]="maxDate"
+              formControlName="dateCapture"
               class="form-control"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="serviceOrdersForm.get('dateCapture')"
-            label="Fecha de Captura">
+            [control]="serviceOrdersForm.get('authorizationDate')"
+            label="Fecha de Autorización">
             <input
-              type="text"
+              [maxDate]="maxDate"
               formControlName="dateCapture"
               class="form-control"
+              [min]="serviceOrdersForm.get('dateCapture').value"
+              [minDate]="serviceOrdersForm.get('dateCapture').value"
+              [ngModel]="
+                serviceOrdersForm.get('authorizationDate').value <
+                serviceOrdersForm.get('dateCapture').value
+                  ? serviceOrdersForm.get('dateCapture').value
+                  : serviceOrdersForm.get('authorizationDate').value
+              "
               bsDatepicker />
           </form-field>
         </div>
@@ -194,31 +223,35 @@
             label="Observaciones">
             <textarea
               class="form-control"
-              formControlName="observations"
-              placeholder="Observaciones"></textarea>
+              formControlName="observations"></textarea>
           </form-field>
         </div>
-        <!-- <div class="row margin-input">
-          <div class="col-md-8">
-            <form-field [control]="serviceOrdersForm.get('observations')" label="Observaciones">
-              <textarea class="form-control" formControlName="observations" placeholder="Observaciones"></textarea>
-            </form-field>
-          </div>
-        </div> -->
       </div>
     </form>
-    <div class="row margin-input">
-      <div class="col-md-2">
-        <button
-          class="btn btn-primary btn-sm active"
-          (click)="openHistoric('')">
-          Genera
-        </button>
-      </div>
-      <div class="col-md-2">
-        <button class="btn btn-primary btn-sm active">Bitacora</button>
+
+    <div class="row pt-2">
+      <div class="col-md-12 text-center mt-4 mb-4">
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm mr-3"
+            (click)="searchActas()"
+            [disabled]="!disabledBtnActas">
+            Buscar Bienes
+            <i class="bx bx-search bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm"
+            (click)="cleanForm()">
+            Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+          </button>
+        </div>
       </div>
     </div>
+
     <div class="margin-input">
       <h5 class="title">Bienes del Reporte Implementación</h5>
       <div class="row pt-4">
@@ -227,7 +260,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="data1">
+              [source]="dataTableGood">
             </ng2-smart-table>
           </div>
         </div>
@@ -236,12 +269,15 @@
           [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-2">
-        <button class="btn btn-primary btn-sm active">Incorpora</button>
-      </div>
-      <div class="col-md-2">
-        <button class="btn btn-danger btn-sm active">Elimina</button>
+
+    <div class="row pt-2">
+      <div class="col-md-12 text-center mt-4 mb-4">
+        <div class="col-md-2">
+          <button class="btn btn-primary btn-sm active">Incorpora</button>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-danger btn-sm active">Elimina</button>
+        </div>
       </div>
     </div>
     <div class="margin-input">
@@ -252,7 +288,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings2"
-              [source]="data1">
+              [source]="bienesStrategy">
             </ng2-smart-table>
           </div>
         </div>
@@ -261,12 +297,22 @@
           [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-2">
-        <button class="btn btn-primary btn-sm active">Incorpora</button>
-      </div>
-      <div class="col-md-2">
-        <button class="btn btn-primary btn-sm active">Nuevos Costos</button>
+    <div class="row pt-2">
+      <div class="col-md-12 text-center mt-4 mb-4">
+        <div class="col-md-2">
+          <button class="btn btn-primary btn-sm active">Incorpora</button>
+        </div>
+        <div class="col-md-2">
+          <button
+            class="btn btn-primary btn-sm active"
+            (click)="pupGenera()"
+            [disabled]="!disabledBtnActas">
+            Genera
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-primary btn-sm active">Nuevos Costos</button>
+        </div>
       </div>
     </div>
   </div>

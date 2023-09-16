@@ -844,16 +844,16 @@ export class QueryRelatedPaymentsDepositoriesComponent
         obj = dataComplete[count];
         if (err.status == 500) {
           obj['errores'] = 'Error al procesar este registro';
-          obj['lstLot'] = 'Realice el proceso nuevamente de envio SIRSAE';
+          obj['lstLot'] = 'Realice el proceso nuevamente de "Enviar SIRSAE"';
         } else {
           obj['errores'] = err.error.message
             ? err.error.message.includes('duplicate key')
-              ? 'Ya existe un registro en Sirsae de este pago'
+              ? 'Ya existe un registro en SIRSAE de este pago'
               : 'Error en el Servidor'
             : 'Error en el Servidor';
           obj['lstLot'] = err.error.message
             ? err.error.message.includes('duplicate key')
-              ? 'Ya existe un registro en Sirsae de este pago'
+              ? 'Ya existe un registro en SIRSAE de este pago'
               : 'Error en el Servidor'
             : 'Error en el Servidor';
         }
@@ -873,7 +873,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
     if (this.errorsSirsae.length == 0) {
       this.onLoadToast(
         'warning',
-        'Ejecute el proceso de "Enviar Sirsae" primero',
+        'Ejecute el proceso de "Enviar SIRSAE" primero',
         ''
       );
     }

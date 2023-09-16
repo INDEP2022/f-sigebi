@@ -8,6 +8,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IGoodSpent } from 'src/app/core/models/ms-spent/good-spent.model';
+import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodSpentService } from 'src/app/core/services/ms-spent/good-spent.service';
 import { SpentService } from 'src/app/core/services/ms-spent/spent.service';
@@ -30,7 +31,7 @@ export class ConsultationGoodsCommercialBillsComponent
   transferents = new DefaultSelect();
   data = new LocalDataSource();
   selectedRows: IGoodSpent[] = [];
-
+  transferent: any = [];
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   newLimit2 = new FormControl(10);
@@ -42,7 +43,8 @@ export class ConsultationGoodsCommercialBillsComponent
     private excelService: ExcelService,
     private goodSpentService: GoodSpentService,
     private transferentService: TransferenteService,
-    private spentService: SpentService
+    private spentService: SpentService,
+    private stationService: StationService
   ) {
     super();
     this.settings = {
@@ -97,6 +99,7 @@ export class ConsultationGoodsCommercialBillsComponent
         }
       },
     });
+    this.getTransSelect(new DefaultSelect());
   }
 
   resetForm() {
@@ -254,10 +257,6 @@ export class ConsultationGoodsCommercialBillsComponent
     return this.form.get('mandate');
   }
 
-  get descMandate() {
-    return this.form.get('descMandate');
-  }
-
   get paymentRequest() {
     return this.form.get('paymentRequest');
   }
@@ -356,5 +355,31 @@ export class ConsultationGoodsCommercialBillsComponent
         }
       );
     }
+  }
+
+  getTransSelect(params: ListParams) {
+    this.stationService.getTransfers(params).subscribe(
+      (response: any) => {
+        console.log('rrr', response);
+        this.transferent = response.data.map(async (item: any) => {
+          item['tipoSupbtipoDescription'] =
+            item.id + ' - ' + item.nameTransferent;
+          return item; // Asegurarse de devolver el item modificado.
+        });
+
+        Promise.all(this.transferent).then((resp: any) => {
+          this.transferents = new DefaultSelect(response.data, response.count);
+          console.log(this.transferent);
+          console.log(this.transferents);
+
+          this.loading = false; // Colocar el loading en false después de mostrar los datos.
+        });
+
+        console.log(response);
+      },
+      error => {
+        console.log('ERR', error);
+      }
+    );
   }
 }
