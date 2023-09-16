@@ -4,9 +4,10 @@ import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
 import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Repository } from 'src/app/common/repository/repository';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ParameterComerEndpoints } from '../../../common/constants/endpoints/ms-parametercomer-endpoints';
+import { IComerEventApp } from '../../models/ms-parametercomer/comer-event-pq.model';
 import {
   IParameter,
   ITypeEvent,
@@ -83,6 +84,121 @@ export class ParameterModService
   getAsigna(user: string, adress: string) {
     return this.get(
       `${ParameterComerEndpoints.ApplicationSigna}?user=${user}&address=${adress}`
+    );
+  }
+
+  getComerEvent(body: {
+    direction: 'M' | 'I';
+    eventId: string | number;
+    cveDisplay: string;
+  }) {
+    return this.post<IComerEventApp>('aplication/comer-events-post-query', {
+      ...body,
+      tpEventId: '1',
+      statusVtaId: '1',
+      tpSolaValId: '1',
+    });
+  }
+
+  getComerEventGoods(
+    body: {
+      eventId: string | number;
+      direction: string;
+      pProcess?: string;
+    },
+    params: _Params
+  ) {
+    return this.post<IListResponse>(
+      'aplication/goods-post-query',
+      body,
+      params
+    );
+  }
+
+  getComerEventGoodsFormat(
+    body: {
+      eventId: string | number;
+      direction: string;
+      pProcess?: string;
+    },
+    params: _Params
+  ) {
+    return this.post<{ base64: string }>(
+      'aplication/goods-post-query-excel',
+      body,
+      params
+    );
+  }
+
+  getComerEventAppraisal(
+    body: {
+      eventId: string | number;
+      direction: string;
+    },
+    params: _Params
+  ) {
+    return this.post<IListResponse>('aplication/pup-consult', body, params);
+  }
+
+  getComerEventAppraisalDetail(appraisalId: string | number, params: _Params) {
+    return this.post<IListResponse>(
+      `aplication/comer-detavaluo-post-query/${appraisalId}`,
+      {},
+      params
+    );
+  }
+
+  validDisscountFile(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.post<IListResponse<{ NO_BIEN: string; CAUSA: string }>>(
+      'aplication/pup-valid-arch-desc',
+      formData
+    );
+  }
+
+  pufValService(body: {
+    cveDisplay: string;
+    pProcess: string;
+    pEvent: string | number;
+    pTpevent: string | number;
+    pCveAppraisal: string;
+    pDirection: string;
+    ptpoAvalue: string | number;
+    pTpodocument: string | number;
+    pEstevent: string | number;
+  }) {
+    return this.post<{ data: string }>('aplication/puf-val-event', body);
+  }
+
+  applyDisscount(
+    body: {
+      cveDisplay: string;
+      pProcess: string;
+      pEvent: string | number;
+      pTpevent: string | number;
+      pCveAppraisal: string;
+      pDirection: string;
+      ptpoAvalue: string | number;
+      pTpodocument: string | number;
+      pEstevent: string | number;
+    },
+    file: File
+  ) {
+    const formData = new FormData();
+    formData.append('cveDisplay', body.cveDisplay);
+    formData.append('pProcess', body.pProcess);
+    formData.append('pEvent', body.pEvent as string);
+    formData.append('pTpevent', body.pTpevent as string);
+    formData.append('pCveAppraisal', body.pCveAppraisal);
+    formData.append('pDirection', body.pDirection);
+    formData.append('ptpoAvalue', body.ptpoAvalue as string);
+    formData.append('pTpodocument', body.pTpodocument as string);
+    formData.append('pEstevent', body.pEstevent as string);
+    formData.append('file', file);
+    return this.post(
+      'aplication/blkcontrol-img-aplica-desctos-when-image-pressed',
+      formData
     );
   }
 }
