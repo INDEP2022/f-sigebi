@@ -160,13 +160,10 @@ export const ACTAS = {
     type: 'string',
     sort: false,
   },
-  expedient: {
+  fileId: {
     title: 'No. Expediente',
     type: 'number',
     sort: false,
-    valuePrepareFuncion: (cell: any, row: any) => {
-      return row.expedient.id;
-    },
   },
   elaborated: {
     title: 'Administra',

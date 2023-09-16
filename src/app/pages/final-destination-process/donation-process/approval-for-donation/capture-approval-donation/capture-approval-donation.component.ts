@@ -10,18 +10,24 @@ import {
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
 import { COPY } from './columns-approval-donation';
@@ -53,8 +59,11 @@ export class CaptureApprovalDonationComponent
   status: string = '';
   disabledBtnActas: boolean = true;
   totalItems2: number = 0;
+  activeRadio: boolean = true;
   cveActa: string = '';
+  goodError: IDonationGoodError[];
   dataDetailDonation: any;
+  data1: any;
   consec: string = '';
   dataDetailDonationGood: LocalDataSource = new LocalDataSource();
   excelLoading: boolean = false;
@@ -98,7 +107,8 @@ export class CaptureApprovalDonationComponent
     private donationService: DonationService,
     private changeDetectorRef: ChangeDetectorRef,
     private statusGoodService: StatusGoodService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private usersService: UsersService
   ) {
     super();
 
@@ -206,6 +216,8 @@ export class CaptureApprovalDonationComponent
       ],
       captureDate: [null, []],
       keyEvent: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      observaElimina: [null],
+      observaciones: [null],
     });
     this.regisForm.get('area').setValue(this.paramsScreen.area);
   }
@@ -380,7 +392,21 @@ export class CaptureApprovalDonationComponent
         this.dataDetailDonation = data.data;
         this.dataDetailDonationGood.load(this.dataDetailDonation);
         this.dataDetailDonationGood.refresh();
-        this.totalItems2 = data.count;
+        this.totalItems = data.count;
+        this.TOTAL_REPORTE = this.totalItems;
+        this.SUM_BIEN = this.dataDetailDonation.reduce(
+          (accumulator: any, object: any) => {
+            return accumulator + parseFloat(object.amount);
+          },
+          0
+        );
+        console.log(this.SUM_BIEN);
+        this.dataDetailDonation.map((item: any) => {
+          this.goodError = item;
+          const counter = this.goodError.length;
+          this.BIEN_ERROR = counter;
+          console.log(this.SUM_BIEN);
+        });
       },
       error: () => console.error('no hay detalle acta'),
     });
@@ -405,6 +431,20 @@ export class CaptureApprovalDonationComponent
             this.dataDetailDonationGood.load(this.dataDetailDonation);
             this.dataDetailDonationGood.refresh();
             this.totalItems2 = data.count;
+            this.TOTAL_REPORTE = this.totalItems2;
+            this.SUM_BIEN = this.dataDetailDonation.reduce(
+              (accumulator: any, object: any) => {
+                return accumulator + parseFloat(object.amount);
+              },
+              0
+            );
+            console.log(this.SUM_BIEN);
+            this.dataDetailDonation.map((item: any) => {
+              this.goodError = item;
+              const counter = this.goodError.length;
+              this.BIEN_ERROR = counter;
+              console.log(this.goodError);
+            });
             console.log('data', data);
             this.loading3 = false;
             this.Exportdate = true;
@@ -741,12 +781,6 @@ export class CaptureApprovalDonationComponent
     this.selectedGooods = [];
     this.Exportdate = false;
   }
-  formatDate(date: Date): string {
-    const day = date.getUTCDate().toString().padStart(2, '0');
-    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-    const year = date.getUTCFullYear().toString();
-    return `${day}/${month}/${year}`;
-  }
 
   searchActas(actas?: string) {
     this.consec = null;
@@ -766,8 +800,8 @@ export class CaptureApprovalDonationComponent
       if (next) {
         this.alert(
           'success',
-          'Se Cargó la Información del Acta',
-          next.keysProceedings
+          'Se Cargó la Información del Evento',
+          next.cveAct
         );
       }
       // Limpiar formulario una vez consulte
@@ -781,9 +815,7 @@ export class CaptureApprovalDonationComponent
         dateElabora != null ? this.formatDate(dateElabora) : null;
 
       const dateActa =
-        next.datePhysicalReception != null
-          ? new Date(next.datePhysicalReception)
-          : null;
+        next.captureDate != null ? new Date(next.captureDate) : null;
       const formattedfecActa =
         dateActa != null ? this.formatDate(dateActa) : null;
 
@@ -800,9 +832,8 @@ export class CaptureApprovalDonationComponent
         this.regisForm.controls['year'].value,
         'MM/yyyy'
       );
-      this.regisForm.get('keyEvent').setValue(next.cveActa);
 
-      this.estatus = next.statusProceedings;
+      this.estatus = next.estatusAct;
       if (this.estatus == 'CERRADA') {
         //this.disabledBtnCerrar = false;
         this.disabledBtnActas = false;
@@ -811,28 +842,18 @@ export class CaptureApprovalDonationComponent
         //this.disabledBtnCerrar = true;
       }
       console.log('acta NEXT ', next);
-      this.paramsScreen.recordId = next.id;
+      this.paramsScreen.recordId = next.actId;
       this.paramsScreen.area = next.noDelegation1;
       this.regisForm.patchValue({
-        // administra: next.approvedXAdmon,
-        // testigoOIC: next.comptrollerWitness,
-        // respConv: next.receiptKey,
-        // observaciones: next.observations,
-        // ejecuta: next.ejecuta,
-        consec: next.numeraryFolio,
+        folio: next.folioUniversal,
         type: this.type,
-        cveActa: next.keysProceedings,
-        mes: next.dateElaborationReceipt,
-        //cveReceived: next.receiptKey,
-        year: new Date(next.dateElaborationReceipt),
-        // direccion: next.address,
-        // parrafo1: next.parrafo1,
-        // testigoOIC: next.comptrollerWitness,
-        //testigoOIC: next.witness1,
+        keyEvent: next.cveAct,
+        mes: next.captureDate,
+        year: new Date(next.elaborationDate),
         testigoOne: next.witness1,
         testigoTree: next.witness2,
         elaboradate: formattedfecElaborate,
-        fechaact: formattedfecActa,
+        captureDate: formattedfecActa,
         fechacap: formattedfecCapture,
       });
 
@@ -844,7 +865,7 @@ export class CaptureApprovalDonationComponent
       //this.data1 = next.statusProceedings;
       //this.formScan.get('scanningFoli').patchValue(next.universalFolio);
       // Pasar clave a esta función
-      //this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
+      this.generarDatosDesdeUltimosCincoDigitos(next.cveAct);
 
       await this.getDetailProceedingsDevollution(this.eventDonacion.actId);
     });
@@ -862,14 +883,9 @@ export class CaptureApprovalDonationComponent
       return null; // Clave no válida
     }
 
-    // Obtener los últimos cinco dígitos de la clave
     const ultimosCincoDigitos = claveActa.slice(-5);
-
-    // Obtener el año y el mes a partir de los últimos cinco dígitos
     const anio = parseInt(ultimosCincoDigitos.substring(0, 2), 10);
     const mesNumero = parseInt(ultimosCincoDigitos.substring(3, 5), 10);
-
-    // Validar los valores obtenidos
     if (
       isNaN(anio) ||
       isNaN(mesNumero) ||
@@ -877,7 +893,7 @@ export class CaptureApprovalDonationComponent
       mesNumero < 1 ||
       mesNumero > 12
     ) {
-      return null; // Valores no válidos
+      return null;
     }
 
     const mesesTexto = [
@@ -895,9 +911,7 @@ export class CaptureApprovalDonationComponent
       'Diciembre',
     ];
 
-    const mesTexto = mesesTexto[mesNumero - 1]; // Restamos 1 porque los meses en el array comienzan desde 0
-
-    // Obtener el año completo basado en el siglo actual
+    const mesTexto = mesesTexto[mesNumero - 1];
     const fechaActual = new Date();
     const sigloActual = Math.floor(fechaActual.getFullYear() / 100) * 100;
     const anioCompleto = anio < 100 ? sigloActual + anio : anio;
@@ -910,35 +924,252 @@ export class CaptureApprovalDonationComponent
     return { anio: anioCompleto, mes: mesTexto };
   }
 
-  agregarCaptura() {}
+  agregarCaptura() {
+    // const testigoOne = this.regisForm.get('testigoOne').value;
+    // const testigoTree = this.regisForm.get('testigoTree').value;
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      delegationToolbar: this.delegationToolbar,
+      fileNumber: this.fileNumber,
+      expedient: this.fileNumber,
+      // testigoTree,
+      // testigoOne,
+    };
+
+    let modalRef = this.modalService.show(CreateActaComponent, modalConfig);
+    modalRef.content.onSave.subscribe(async (next: any) => {
+      if (next) {
+        this.alert(
+          'success',
+          'Se Cargó la Información del Evento',
+          next.keysProceedings
+        );
+      }
+
+      this.totalItems2 = 0;
+      this.eventdetailDefault = next;
+      this.estatus = next.estatusAct;
+      if (this.estatus == 'CERRADA') {
+        //this.disabledBtnCerrar = false;
+        this.disabledBtnActas = false;
+      } else {
+        this.disabledBtnActas = true;
+        //this.disabledBtnCerrar = true;
+      }
+      //Se limpia el campo de folio de escaneo cuando se genera nueva acta
+      // this.formScan.reset();
+
+      // Const formato de fecha
+      const dateElabora =
+        next.elaborationDate != null ? new Date(next.elaborationDate) : null;
+      const formattedfecElaborate =
+        dateElabora != null ? this.formatDate(dateElabora) : null;
+
+      const dateActa =
+        next.datePhysicalReception != null
+          ? new Date(next.datePhysicalReception)
+          : null;
+      const formattedfecActa =
+        dateActa != null ? this.formatDate(dateActa) : null;
+
+      const dateCapture =
+        next.captureDate != null ? new Date(next.captureDate) : null;
+      const formattedfecCapture =
+        dateCapture != null ? this.formatDate(dateCapture) : null;
+
+      this.regisForm.patchValue({
+        acta: next.id,
+        administra: next.approvedXAdmon,
+        consec: next.numeraryFolio,
+        type: next.id,
+        claveTrans: next.numTransfer,
+        cveActa: next.keysProceedings,
+        respConv: next.receiptKey,
+        testigoOne: next.witness1,
+        testigoTree: next.witness2,
+        testigoOIC: next.comptrollerWitness,
+        direccion: next.address,
+        observaciones: next.observations,
+        elaboradate: formattedfecElaborate,
+        fechaact: formattedfecActa,
+        fechacap: formattedfecCapture,
+      });
+
+      this.data1 = next.statusProceedings;
+      // Se mapea Mes  y año al crear nueva acta
+      this.generarDatosDesdeUltimosCincoDigitos(next.cveAct);
+
+      await this.getDetailProceedingsDevollution(this.eventdetailDefault.id);
+    });
+    // console.log(this.authService.decodeToken());
+  }
+  delegationToolbar: any = null;
+  getDelegation(params: FilterParams) {
+    params.addFilter(
+      'actId',
+      this.authService.decodeToken().preferred_username,
+      SearchFilter.EQ
+    );
+    return this.usersService.getAllSegUsers(params.getParams()).subscribe({
+      next: (value: any) => {
+        const data = value.data[0].usuario;
+        if (data) this.delegationToolbar = data.delegationNumber;
+
+        // console.log('SI', value);
+      },
+      error(err) {
+        console.log('NO');
+      },
+    });
+  }
+
+  // Cammbiar formato de fecha
+
+  formatDate(date: Date): string {
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear().toString();
+    return `${day}/${month}/${year}`;
+  }
+
+  async cerrarActa() {
+    // let folio = this.formScan.get('scanningFoli').value;
+    // if (folio == null) {
+    //   this.alert(
+    //     'warning',
+    //     'No se puede Cerrar el Acta sin Folio de Escaneo',
+    //     ''
+    //   );
+    //   return;
+    // }
+    if (this.data1 != null) {
+      if (this.data1 == null) {
+        this.alert('warning', 'No Existe Evento para Cerrar', '');
+        return;
+      }
+      if (this.data1 == 'CERRADA') {
+        this.alertInfo('warning', 'El Evento ya se Encuentra Cerrada', '');
+        return;
+      }
+      if (this.eventdetailDefault.count() == 0) {
+        this.alertInfo(
+          'warning',
+          'Para Cerrar un Acta debe Contener al Menos un Bien, por favor Registra este en la Pantalla de Actas.',
+          ''
+        );
+        return;
+      }
+
+      const toolbar_user = this.authService.decodeToken().preferred_username;
+      const cadena = this.cveActa ? this.cveActa.indexOf('?') : 0;
+
+      if (
+        cadena != 0 &&
+        this.authService.decodeToken().preferred_username == toolbar_user
+      ) {
+        null;
+      } else {
+        this.alertQuestion(
+          'question',
+          '¿Seguro que Desea Realizar el Cierre de esta Acta?',
+          ''
+        ).then(async question => {
+          if (question.isConfirmed) {
+            this.eventdetailDefault.statusProceedings = 'CERRADA';
+            // delete this.eventdetailDefault.numDelegation1Description;
+            // delete this.eventdetailDefault.numDelegation2Description;
+            // delete this.eventdetailDefault.numTransfer_;
+            this.eventdetailDefault.universalFolio = this.consec;
+            this.donationService
+              .updateDonation(
+                this.eventdetailDefault.id,
+                this.eventdetailDefault
+              )
+              .subscribe({
+                next: async data => {
+                  this.loading = false;
+
+                  let obj = {
+                    pActaNumber: this.eventdetailDefault.actId,
+                    pStatusActa: 'CERRADA',
+                    pVcScreen: 'FMCOMDONAC_1',
+                    pUser: this.authService.decodeToken().preferred_username,
+                  };
+
+                  await this.updateGoodEInsertHistoric(obj);
+
+                  this.alertInfo('success', 'El Acta Ha Sido Cerrada', '');
+                  this.alert('success', 'Acta Cerrada', '');
+                  this.data1 = 'CERRADA';
+                  //this.disabledBtnCerrar = false;
+                  this.disabledBtnActas = false;
+                  this.dataTableGood.refresh();
+                  await this.getDetailProceedingsDevollution(
+                    this.eventdetailDefault.actId
+                  );
+                },
+                error: error => {
+                  this.alert(
+                    'error',
+                    'Ocurrió un Error al Cerrar el Evento',
+                    ''
+                  );
+                },
+              });
+          }
+        });
+      }
+    } else {
+      this.alert(
+        'warning',
+        'No Existe Ningún Evento a Cerrar.',
+        // 'El Usuario no está autorizado para cerrar acta',
+        ''
+      );
+    }
+  }
+  updateGoodEInsertHistoric(obj: {
+    pActaNumber: any;
+    pStatusActa: string;
+    pVcScreen: string;
+    pUser: string;
+  }) {
+    //throw new Error('Method not implemented.');
+  }
+
+  validaGood() {
+    if (this.eventDonacion.estatusAct === 'CERRADA') {
+      this.alert(
+        'warning',
+        'El Evento está cerrado, no se pueden validar bienes',
+        ''
+      );
+      return;
+    } else if (this.eventdetailDefault !== null) {
+      this.alert('warning', 'No hay Bienes a validar', '');
+      return;
+    } else {
+      this.donationService.getApprove(this.params.getValue()).subscribe({
+        next: data => {
+          console.log(this.dataDetailDonation);
+          console.log(data.data);
+        },
+      });
+    }
+  }
+
   searchEventos() {}
   cerrarEvento() {}
   clean() {}
 }
 
-const EXAMPLE_DATA = [
-  {
-    ref: 1,
-    goods: 33321,
-    goodsDescrip: 'Bien Integrado',
-    quantity: 7,
-    unit: 'KILOGRAMO',
-    status: 'ADM',
-    proceedings: 1245454,
-    targetTag: 'DONACION',
-    transfNumb: 120,
-    desTransf: 'SAT',
-    clasifNumb: 778,
-    process: 'TRANSFERENT',
-    warehouseNumb: 28730,
-    warehouse: 'DRCS ALMA',
-    warehouseLocat: 'DCRS ALMA',
-    coordAdmin: 'DELELGACIÓN REG.',
-  },
-];
-
 export interface IParamsDonac {
   origin: string;
   recordId: string;
   area: string;
+}
+
+export interface IDonationGoodError {
+  goodId: number;
+  description: string;
 }

@@ -107,4 +107,14 @@ export class DonationService
   getEventGood(params: ListParams) {
     return this.get(DonationEndPoint.eventComDonation, params);
   }
+  getApprove(params: ListParams) {
+    return this.get(DonationEndPoint.ApproveDnation, params);
+  }
+
+  putEventComDonationDetail(body: Object) {
+    return this.put(DonationEndPoint.DetailEventComDon, body);
+  }
+  createEventComDonationDetail(body: Object) {
+    return this.post(DonationEndPoint.DetailEventComDon, body);
+  }
 }
