@@ -85,6 +85,9 @@ export enum GoodProcessPoints {
   //Classification View
   GetVsigLigie = 'application/vsigLigie',
   ReportNingevent = 'application/report-ningevent',
+  ReportNingeventExcel = 'application/report-ningevent-excel',
+  ReportMonth = 'application/report-months',
+  ReportMonthExcel = 'application/reportMonthsDataExcel',
 }
 
 export enum GoodFinderEndpoint {
