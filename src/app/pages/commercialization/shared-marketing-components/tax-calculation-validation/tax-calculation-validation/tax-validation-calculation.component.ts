@@ -8,10 +8,12 @@ import { InconsistenciesComponent } from '../inconsistencies/inconsistencies.com
 import { RateChangeComponent } from '../rate-change/rate-change.component';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { ExpenseParametercomerService } from '../../expense-capture/services/expense-parametercomer.service';
 import { COLUMNS, COLUMNS2 } from './columns';
 
 @Component({
@@ -29,12 +31,28 @@ export class TaxValidationCalculationComponent
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
+  DIRECCION: 'I';
+
+  TIPO_PROCESO: any;
+  V_WHERE_IDAVALUO: any;
+
+  V_IVA: any;
+  V_NO_COLUM: any;
+
+  V_TMPBIENES_ERROR: any;
+  V_TMPAVALUO_ERROR: any;
+
   settings2 = { ...this.settings, actions: false };
   data2: any[] = [];
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private expenseParametercomerService: ExpenseParametercomerService,
+    private authService: AuthService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -53,6 +71,12 @@ export class TaxValidationCalculationComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getExample());*/
     this.prepareForm();
+    this.getValueIva();
+    //let token = this.authService.decodeToken();
+    let token = 'JBUSTOS';
+    if (token == 'JBUSTOS') {
+      //Activar botón Confirmar
+    }
   }
 
   private prepareForm(): void {
@@ -112,5 +136,29 @@ export class TaxValidationCalculationComponent
 
   settingsChange2($event: any): void {
     this.settings2 = $event;
+  }
+
+  getValueIva() {
+    this.expenseParametercomerService.getParameterMod().subscribe(
+      resp => {
+        if (resp != null && resp != undefined) {
+          console.log('Resp getValueIva-> ', resp);
+          this.V_IVA = '0.' + resp.data[0].value;
+          console.log('this.V_IVA-> ', this.V_IVA);
+        }
+      },
+      error => {
+        console.log('Error al obtener el valor del IVA. ');
+      }
+    );
+  }
+
+  consult() {
+    const { eventId } = this.form.value;
+
+    if (eventId == null) {
+      this.alert('warning', '', 'Debe ingresar el No. Evento');
+    } else if (eventId != null) {
+    }
   }
 }
