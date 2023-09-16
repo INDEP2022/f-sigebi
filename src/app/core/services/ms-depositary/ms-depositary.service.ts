@@ -300,4 +300,14 @@ export class MsDepositaryService extends HttpService {
       params
     );
   }
+
+  postFullErase(body: any) {
+    return this.post<IListResponse<any>>(DepositaryEndPoints.FullErase, body);
+  }
+  postCurrentFullErase(body: any) {
+    return this.post<IListResponse<any>>(
+      DepositaryEndPoints.CurrentFullErase,
+      body
+    );
+  }
 }

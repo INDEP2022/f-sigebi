@@ -38,3 +38,23 @@ export interface IStrateyCost {
   pServiceTypeNumber: number;
   pTurnNumber: number;
 }
+
+export interface IReportImp {
+  reportNumber: string;
+  formatNumber: string;
+  reportKey: string;
+  status: string;
+  captureDate: Date;
+  authorizeDate: Date;
+  monthNumber: number;
+  yearNumber: number;
+  inTime: string;
+  recordNumber: string;
+  elaboratedUser: string;
+  observations: string;
+  statuslaughedNumber: number;
+  oPobservations: string;
+  UniversalInvoice: string;
+  reportTOKey: string;
+  originNb: string;
+}

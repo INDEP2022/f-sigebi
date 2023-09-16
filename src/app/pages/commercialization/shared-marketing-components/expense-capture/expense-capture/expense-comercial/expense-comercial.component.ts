@@ -29,6 +29,7 @@ import { BasePage } from 'src/app/core/shared';
 import { secondFormatDateToDate } from 'src/app/shared/utils/date';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
 import { ExpenseGoodProcessService } from '../../services/expense-good-process.service';
+import { ExpenseLotService } from '../../services/expense-lot.service';
 import { ExpenseModalService } from '../../services/expense-modal.service';
 import { ExpenseScreenService } from '../../services/expense-screen.service';
 import { SpentIService } from '../../services/spentI.service';
@@ -87,6 +88,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     private expenseGoodProcessService: ExpenseGoodProcessService,
     private authService: AuthService,
     private segAccessAreaService: SegAcessXAreasService,
+    private lotService: ExpenseLotService,
     private expenseModalService: ExpenseModalService,
     private parameterService: ParametersConceptsService
   ) {
@@ -384,7 +386,24 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   private CARGA_BIENES_LOTE_XDELRES(id_evento: number, id_lote: number) {}
 
-  private CARGA_BIENES_LOTE(id_evento: number, id_lote: number) {}
+  private CARGA_BIENES_LOTE(pEventId: number, pBatchId: number) {
+    this.lotService
+      .CARGA_BIENES_LOTE({
+        pEventId,
+        pBatchId,
+        pConceptoId: this.conceptNumberValue,
+        pScreen: 'FCOMER084',
+      })
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          if (response) {
+            console.log(response);
+            this.alert('success', 'Se han cargado los Bienes del lote', '');
+          }
+        },
+      });
+  }
 
   get PVALIDADET() {
     return this.dataService.PVALIDADET;

@@ -191,6 +191,9 @@ export class PaymentService extends HttpService {
   postCreateRecord(params: any) {
     return this.post(PaymentEndPoints.BusquedaPagosDet, params);
   }
+  postIdentifiesPaymentsInconsistency(params: any) {
+    return this.post(PaymentEndPoints.postIndentifiesPayments, params);
+  }
 
   getCtlDevPagB(params: _Params) {
     return this.get(`${PaymentEndPoints.ComerCtldevpagB}`, params);

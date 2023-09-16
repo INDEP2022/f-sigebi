@@ -149,4 +149,10 @@ export class SecurityService extends HttpService {
       `${SecurityEndpoints.TrackingValidScreens}`
     );
   }
+
+  getViewDelegationUser(user: string, delegation: string) {
+    return this.get(
+      `${SecurityEndpoints.ApplicationAux}?puser=${user}&pdelega=${delegation}`
+    );
+  }
 }

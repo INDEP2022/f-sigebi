@@ -85,4 +85,16 @@ export class ComerDetailsService extends HttpService {
       `application/change-status-ant/${body}`
     );
   }
+
+  VALIDA_ESTATUS_INMUEBLES(body: any): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(`application/validMandate`, body);
+  }
+
+  VALIDA_MANDATO_INMUEBLES(body: any): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(`application/validateStatus`, body);
+  }
+
+  VALIDA_GARANTIA_INMUEBLES(body: any): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(`application/validWarranty/${body}`);
+  }
 }
