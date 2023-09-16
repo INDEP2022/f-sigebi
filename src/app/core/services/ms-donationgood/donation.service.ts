@@ -104,4 +104,7 @@ export class DonationService
   postDeleteDetail(data: any) {
     return this.post(`application/pup-delete-detail`, data);
   }
+  getEventGood(params: ListParams) {
+    return this.get(DonationEndPoint.eventComDonation, params);
+  }
 }

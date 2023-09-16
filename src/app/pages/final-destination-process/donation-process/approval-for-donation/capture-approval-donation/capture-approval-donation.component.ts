@@ -88,19 +88,6 @@ export class CaptureApprovalDonationComponent
     recordId: '',
     area: '',
   };
-  data = EXAMPLE_DATA;
-  info = [
-    {
-      id: 0,
-      title: 'CONSULTA BIENES',
-      color: 'grey',
-    },
-    {
-      id: 1,
-      title: 'COM. EXTERIOR KG',
-      color: 'brackground-color: green',
-    },
-  ];
 
   constructor(
     private router: Router,
@@ -114,15 +101,7 @@ export class CaptureApprovalDonationComponent
     private datePipe: DatePipe
   ) {
     super();
-    // this.settings = { ...this.settings, actions: false };
-    // this.settings.columns = COLUMNS_APPROVAL_DONATION;
-    // this.settings = {
-    //   ...this.settings,
-    //   hideSubHeader: false,
-    //   actions: false,
-    //   columns: { ...COLUMNS_APPROVAL_DONATION },
-    //   noDataMessage: 'No se encontrarón registros',
-    // };
+
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
@@ -792,8 +771,9 @@ export class CaptureApprovalDonationComponent
         );
       }
       // Limpiar formulario una vez consulte
-      //this.regisForm.reset();
+      this.regisForm.reset();
       //this.formScan.reset();
+      this.eventDonacion = next;
 
       const dateElabora =
         next.elaborationDate != null ? new Date(next.elaborationDate) : null;
@@ -812,7 +792,6 @@ export class CaptureApprovalDonationComponent
       const formattedfecCapture =
         dateCapture != null ? this.formatDate(dateCapture) : null;
 
-      this.eventDonacion = next;
       // this.fCreate = this.datePipe.transform(
       //   next.dateElaborationReceipt,
       //   'dd/MM/yyyy'
@@ -821,6 +800,7 @@ export class CaptureApprovalDonationComponent
         this.regisForm.controls['year'].value,
         'MM/yyyy'
       );
+      this.regisForm.get('keyEvent').setValue(next.cveActa);
 
       this.estatus = next.statusProceedings;
       if (this.estatus == 'CERRADA') {
@@ -831,21 +811,22 @@ export class CaptureApprovalDonationComponent
         //this.disabledBtnCerrar = true;
       }
       console.log('acta NEXT ', next);
+      this.paramsScreen.recordId = next.id;
+      this.paramsScreen.area = next.noDelegation1;
       this.regisForm.patchValue({
-        administra: next.approvedXAdmon,
-        testigoOIC: next.comptrollerWitness,
-        respConv: next.receiptKey,
-
-        observaciones: next.observations,
+        // administra: next.approvedXAdmon,
+        // testigoOIC: next.comptrollerWitness,
+        // respConv: next.receiptKey,
+        // observaciones: next.observations,
         // ejecuta: next.ejecuta,
         consec: next.numeraryFolio,
-        type: next.id,
+        type: this.type,
         cveActa: next.keysProceedings,
         mes: next.dateElaborationReceipt,
         //cveReceived: next.receiptKey,
-        //anio: new Date(next.dateElaborationReceipt),
-        direccion: next.address,
-        parrafo1: next.parrafo1,
+        year: new Date(next.dateElaborationReceipt),
+        // direccion: next.address,
+        // parrafo1: next.parrafo1,
         // testigoOIC: next.comptrollerWitness,
         //testigoOIC: next.witness1,
         testigoOne: next.witness1,
@@ -855,6 +836,11 @@ export class CaptureApprovalDonationComponent
         fechacap: formattedfecCapture,
       });
 
+      this.paramsScreen = {
+        origin: 'FMCOMDONAC_1',
+        recordId: String(this.eventDonacion.actId),
+        area: String(this.eventDonacion.noDelegation1),
+      };
       //this.data1 = next.statusProceedings;
       //this.formScan.get('scanningFoli').patchValue(next.universalFolio);
       // Pasar clave a esta función
@@ -867,6 +853,61 @@ export class CaptureApprovalDonationComponent
         this.cleanActa();
       }
     });
+  }
+  generarDatosDesdeUltimosCincoDigitos(
+    claveActa: string
+  ): { anio: number; mes: string } | null {
+    // Verificar que la longitud de la clave sea la esperada
+    if (claveActa.length < 5) {
+      return null; // Clave no válida
+    }
+
+    // Obtener los últimos cinco dígitos de la clave
+    const ultimosCincoDigitos = claveActa.slice(-5);
+
+    // Obtener el año y el mes a partir de los últimos cinco dígitos
+    const anio = parseInt(ultimosCincoDigitos.substring(0, 2), 10);
+    const mesNumero = parseInt(ultimosCincoDigitos.substring(3, 5), 10);
+
+    // Validar los valores obtenidos
+    if (
+      isNaN(anio) ||
+      isNaN(mesNumero) ||
+      anio < 0 ||
+      mesNumero < 1 ||
+      mesNumero > 12
+    ) {
+      return null; // Valores no válidos
+    }
+
+    const mesesTexto = [
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre',
+    ];
+
+    const mesTexto = mesesTexto[mesNumero - 1]; // Restamos 1 porque los meses en el array comienzan desde 0
+
+    // Obtener el año completo basado en el siglo actual
+    const fechaActual = new Date();
+    const sigloActual = Math.floor(fechaActual.getFullYear() / 100) * 100;
+    const anioCompleto = anio < 100 ? sigloActual + anio : anio;
+
+    this.regisForm.patchValue({
+      year: anioCompleto,
+      mes: mesTexto,
+    });
+
+    return { anio: anioCompleto, mes: mesTexto };
   }
 
   agregarCaptura() {}
