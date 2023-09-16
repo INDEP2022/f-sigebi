@@ -36,7 +36,5 @@ export class DonationProcessService extends HttpService {
     return this.httpClient.get<any>(
       `${environment.API_URL}donationgood/api/v1/${this.requets}?filter.requestId.id=$eq:${params}`
     );
-
-    //http://sigebimstest.indep.gob.mx/donationgood/api/v1/donac-request?limit=10&page=1&filter.requestId.id=$eq:16674
   }
 }

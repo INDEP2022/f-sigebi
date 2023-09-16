@@ -13,4 +13,5 @@ export enum ProgrammingGoodEndpoints {
   paAbrirActa = 'programminggood/apps/open-minutes-program',
   PaRegresarStatus = 'programminggood/apps/return-previous-status',
   tmpEstGoods = 'tmp-est-goods-prog',
+  paEstProgTransBie = 'programminggood/apps/paEstProgTransBie',
 }
