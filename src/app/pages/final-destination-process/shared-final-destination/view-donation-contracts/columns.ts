@@ -1,15 +1,15 @@
 export let COLUMNS = {
-  idRequest: {
+  requestId: {
     title: 'Id Solicitud',
     type: 'number',
     sort: false,
   },
-  goodNumb: {
+  goodNumber: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
   },
-  proceedings: {
+  fileNumber: {
     title: 'No. Expediente',
     type: 'number',
     sort: false,
@@ -19,17 +19,17 @@ export let COLUMNS = {
     type: 'number',
     sort: false,
   },
-  quantityToDonate: {
+  quantity: {
     title: 'Cantidad a Donar',
     type: 'number',
     sort: false,
   },
-  classifNumbGood: {
+  clasifGoodNumber: {
     title: 'No. Clasif. Bien',
     type: 'number',
     sort: false,
   },
-  ssSubtype: {
+  clasifGoodDesc: {
     title: 'SSSubtipo de Bien',
     type: 'string',
     sort: false,
@@ -39,7 +39,7 @@ export let COLUMNS = {
     type: 'string',
     sort: false,
   },
-  delAdmin: {
+  adminDel: {
     title: 'Del. Admin',
     type: 'string',
     sort: false,

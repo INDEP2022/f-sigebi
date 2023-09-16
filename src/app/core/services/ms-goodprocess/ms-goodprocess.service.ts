@@ -273,9 +273,28 @@ export class GoodprocessService extends HttpService {
     );
   }
 
+  getBlkCtrlGood(cve: string, good: number) {
+    return this.get(`${GoodprocessEndpoints.GetBlkCtrlGood}/${cve}/${good}`);
+  }
+
   getVsigLigie(params: ListParams | string): Observable<IListResponse<any>> {
     const route = GoodprocessEndpoints.GetVsigLigie;
     debugger;
     return this.get<IListResponse<any>>(route, params);
+  }
+
+  getTypesGoods(params: any, paramsPaginated?: any) {
+    return this.post(
+      GoodprocessEndpoints.GetTypesGoods,
+      params,
+      paramsPaginated
+    );
+  }
+
+  getUniRegister() {
+    return this.get(GoodprocessEndpoints.GetUniRegister);
+  }
+  getChangeStatusGood(event: any) {
+    return this.get(`${GoodprocessEndpoints.ChangeStatusGood}/${event}`);
   }
 }

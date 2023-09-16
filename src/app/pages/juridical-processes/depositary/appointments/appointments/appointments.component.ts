@@ -2656,7 +2656,7 @@ export class AppointmentsComponent
     });
   }
   getSaeUserChange(event: any) {
-    console.log(event);
+    console.log('USER DATA', event);
     if (event) {
       this.form.get('nombre').setValue(event.name);
       this.mailSAE = event.email;
@@ -3033,6 +3033,16 @@ export class AppointmentsComponent
   }
 
   openModalMail() {
+    let desc = '';
+    if (this.good) {
+      desc = this.good.description;
+    }
+    let person = '';
+    if (this.depositaryAppointment) {
+      if (this.depositaryAppointment.personNumber) {
+        person = this.depositaryAppointment.personNumber.personName + '';
+      }
+    }
     const config = {
       ...MODAL_CONFIG,
       initialState: {
@@ -3044,11 +3054,9 @@ export class AppointmentsComponent
           'Por este Conducto se le Informa que el Bien: ' +
           this.noBienReadOnly +
           ' con Descripción: ' +
-          this.good
-            ? this.good.description
-            : '' +
-              '. Está en la Depositaría: ' +
-              this.depositaryAppointment.personNumber.personName,
+          desc +
+          '. Está en la Depositaría: ' +
+          person,
         asunto: 'Bien: ' + this.noBienReadOnly + ' en Depositaría',
       },
     };
@@ -3056,6 +3064,8 @@ export class AppointmentsComponent
   }
 
   getPersonXNom() {
+    console.log('PERSON X NOM ', this.depositaryAppointment);
+
     const params = new FilterParams();
     params.removeAllFilters();
     params.addFilter(

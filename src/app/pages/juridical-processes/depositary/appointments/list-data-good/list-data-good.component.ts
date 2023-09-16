@@ -5,6 +5,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
@@ -33,6 +34,14 @@ export class ListDataAppointmentGoodsComponent
   @Input() expedient: number = null;
   docSelect: IGood = null;
 
+  // Goods
+  dataTableGood: LocalDataSource = new LocalDataSource();
+  dataTableParamsGood = new BehaviorSubject<ListParams>(new ListParams());
+  loadingGood: boolean = false;
+  totalGood: number = 0;
+  testDataGood: any[] = [];
+  columnFiltersGood: any = [];
+  //
   constructor(
     private modalRef: BsModalRef,
     private docService: DocumentsService,
@@ -44,7 +53,7 @@ export class ListDataAppointmentGoodsComponent
     this.settings.actions.delete = false;
     this.settings.actions.add = false;
     this.settings.actions.edit = false;
-    // this.settings.hideSubHeader = false;
+    this.settings.hideSubHeader = false;
     // this.dataDocs.count = 0;
   }
 
@@ -53,9 +62,10 @@ export class ListDataAppointmentGoodsComponent
       console.log(this.paramsList);
       if (this.paramsList) {
         //observador para el paginado
-        this.paramsList
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getAppointments());
+        // this.paramsList
+        //   .pipe(takeUntil(this.$unSubscribe))
+        //   .subscribe(() => this.getAppointments());
+        this.loadingDataTableGood();
       }
     }, 300);
   }
@@ -118,5 +128,78 @@ export class ListDataAppointmentGoodsComponent
     }
     this.modalRef.content.callback(true, this.docSelect);
     this.modalRef.hide();
+  }
+  loadingDataTableGood() {
+    //Filtrado por columnas
+    this.dataTableGood
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              goodId: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.LIKE),
+              status: () => (searchFilter = SearchFilter.EQ),
+              goodClassNumber: () => (searchFilter = SearchFilter.EQ),
+            };
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFiltersGood[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersGood[field];
+            }
+          });
+          this.dataTableParamsGood = this.pageFilter(this.dataTableParamsGood);
+          //Su respectivo metodo de busqueda de datos
+          this.getGoodData();
+        }
+      });
+    //observador para el paginado
+    this.dataTableParamsGood
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodData());
+  }
+
+  getGoodData() {
+    this.loadingGood = true;
+    if (
+      !this.columnFiltersGood['filter.goodId'] ||
+      this.columnFiltersGood['filter.goodId'] == '$eq:' + this.noBien
+    ) {
+      this.columnFiltersGood['filter.goodId'] = '$not:' + this.noBien;
+    }
+    this.columnFiltersGood['filter.fileNumber'] = '$eq:' + this.expedient;
+    this.columnFiltersGood['sortBy'] = 'goodId:ASC';
+    let params = {
+      ...this.dataTableParamsGood.getValue(),
+      ...this.columnFiltersGood,
+    };
+    this.appointmentsService.getGoodByParams(params).subscribe({
+      next: (res: any) => {
+        // console.log('DATA Good', res);
+        this.testDataGood = res.data;
+        this.dataTableGood.load(this.testDataGood);
+        this.totalGood = res.count;
+        this.loadingGood = false;
+      },
+      error: error => {
+        // console.log(error);
+        this.testDataGood = [];
+        this.dataTableGood.load([]);
+        this.totalGood = 0;
+        this.loadingGood = false;
+      },
+    });
   }
 }

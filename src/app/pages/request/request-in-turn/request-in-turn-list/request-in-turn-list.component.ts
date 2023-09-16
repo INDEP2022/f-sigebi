@@ -7,8 +7,10 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IRequestInTurn } from 'src/app/core/models/catalogs/request-in-turn.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
@@ -53,7 +55,8 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
   constructor(
     private modalService: BsModalService,
     public fb: FormBuilder,
-    private wcontentService: WContentService
+    private wcontentService: WContentService,
+    private authService: AuthService
   ) {
     super();
   }
@@ -66,6 +69,14 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
       selectMode: 'multi',
       columns: REQUEST_IN_TURN_COLUMNS,
     };
+
+    const user = this.authService.decodeToken();
+    var params = new FilterParams();
+    params.addFilter('regionalDelegationId', user.department, SearchFilter.EQ);
+    params.addFilter('requestStatus', 'POR_TURNAR', SearchFilter.EQ);
+    params.sortBy = 'applicationDate:DESC';
+
+    this.searchForm(params);
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       if (this.active) this.getRequest();

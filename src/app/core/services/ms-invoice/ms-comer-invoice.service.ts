@@ -17,6 +17,14 @@ export class ComerInvoiceService extends HttpService {
     return this.get<IListResponse<any>>(ENDPOINT_INVOICE.ComerInovice, params);
   }
 
+  getInvoiceForniture(year: string, params: ListParams) {
+    return this.get(`${ENDPOINT_INVOICE.GetInvoiceForniture}${year}`, params);
+  }
+
+  getInvoiceByEvent(event: number) {
+    return this.get(`${ENDPOINT_INVOICE.GetInvoiceEvent}${event}`);
+  }
+
   getAllInvoicePag(params: ListParams) {
     return this.get<IListResponse<any>>(ENDPOINT_INVOICE.GetInvoicePag, params);
   }
@@ -154,5 +162,32 @@ export class ComerInvoiceService extends HttpService {
     return this.get(
       `${ENDPOINT_INVOICE.ComerCount}?eventId${event}&invoiceId=${factura}`
     );
+  }
+
+  pufValidaInvoiceSP(event: number, folioSp: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ApplicationFolioSP}?eventId=${event}&invoiceSb=${folioSp}`
+    );
+  }
+
+  getEats(event: number, expend: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ApplicationEats}?eventId=${event}&expenseId=${expend}`
+    );
+  }
+
+  pkComerVnr(data: {
+    pEvent: string;
+    pLot: string;
+    pInvoice: string;
+    pLegend: string;
+    pAuthorized: string;
+    pStatus: string;
+    pCauseA: string;
+    pOption: string;
+    pDelEmits: string;
+    pOcionCan: string;
+  }) {
+    return this.post(ENDPOINT_INVOICE.PkComerVnr, data);
   }
 }

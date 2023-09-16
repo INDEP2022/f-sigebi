@@ -46,7 +46,8 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settings"
                   [source]="dataPaginated"
-                  (userRowSelect)="selectRow($event.data)">
+                  (userRowSelect)="selectRow($event.data)"
+                  (edit)="edit($event.data)">
                 </ng2-smart-table>
               </div>
             </div>

@@ -176,14 +176,14 @@ export class ParamsConcepsListComponent
               this.alert(
                 'success',
                 'Parámetro por Concepto de Pago ' + this.conceptId,
-                'Creado Correctamente'
+                'Creado correctamente'
               );
               this.getData();
             },
             error: err => {
               this.alert(
                 'error',
-                'ERROR',
+                'Creación Parámetro',
                 'No se pudo crear el parámetro por concepto de pago ' +
                   this.conceptId
               );
@@ -264,8 +264,8 @@ export class ParamsConcepsListComponent
   async deleteConfirm(row: IParameterConcept) {
     const response = await this.alertQuestion(
       'warning',
-      'Eliminar',
-      '¿Desea Eliminar este Registro?'
+      'Eliminación Parámetro',
+      '¿Desea eliminar este registro?'
     );
     if (response.isConfirmed) {
       this.deleteParam(row).subscribe({
@@ -273,14 +273,14 @@ export class ParamsConcepsListComponent
           this.alert(
             'success',
             'Parámetro ' + row.parameter,
-            'Eliminado Correctamente'
+            'Eliminado correctamente'
           );
           this.getData();
         },
         error: err => {
           this.alert(
             'error',
-            'Error',
+            'Eliminación Parámetro',
             'No se pudo eliminar el parámetro por concepto de pago'
           );
         },

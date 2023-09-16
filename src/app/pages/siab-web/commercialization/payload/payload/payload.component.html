@@ -24,6 +24,7 @@
             <button
               type="button"
               class="btn btn-primary btn-sm active mr-3"
+              (click)="loadAgo()"
               [disabled]="!form.valid">
               Cargar pagos
             </button>
@@ -59,13 +60,6 @@
           [leftList]="true"></app-columns-select>
       </div>
     </div>
-
-    <!--<div class="ch-content" header>
-      <h5 class="title"></h5>
-      <div class="col-md-5 buttons">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
-      </div>
-    </div>-->
     <div class="row">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
@@ -80,5 +74,49 @@
         </div>
       </div>
     </div>
+
+    <form class="form-material" [formGroup]="form">
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <label for="nombre">Registros Cargados: </label>
+          <span style="margin-left: 10px">{{ totalrecords }} </span>
+        </div>
+        <!--<div class="col-md-6">
+          <label for="nombre">Monto Cargado:</label>
+          <span style="margin-left: 10px">{{ loadedAmount }}</span>
+        </div>-->
+      </div>
+    </form>
+
+    <!--<div class="row pt-5">
+      <div class="col-md-12 d-flex justify-content-center">
+        <div>
+          <button
+            type="button"
+            [disabled]="!formFilter.valid"
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="searchRef()">
+            Habilitar la búsqueda de una Referencia en SIRSAE
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="changeevent()">
+            Cambiar pago a otro Evento/Lote
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="relatepagosport()">
+           Relacionar Pagos de Portal SIRSAE
+          </button>
+          <button
+            class="btn btn-primary btn-sm active"
+            (click)="relatePaymentsSIRSAE()">
+            Relacionar Pagos SIRSAE no Portal
+          </button>
+        </div>
+      </div>
+    </div>-->
   </div>
 </app-card>

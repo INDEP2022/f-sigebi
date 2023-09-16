@@ -31,6 +31,10 @@ export class PaymentService extends HttpService {
     return this.get(PaymentEndPoints.ComerPaymentRef, params);
   }
 
+  getPaymentsxConfirm(params: _Params) {
+    return this.get(PaymentEndPoints.PaymentsxConfirm, params);
+  }
+
   remove(id: any) {
     return this.delete(`${PaymentEndPoints.ComerPaymentRef}/${id}`);
   }
@@ -183,6 +187,9 @@ export class PaymentService extends HttpService {
   postCreateRecord(params: any) {
     return this.post(PaymentEndPoints.BusquedaPagosDet, params);
   }
+  postIdentifiesPaymentsInconsistency(params: any) {
+    return this.post(PaymentEndPoints.postIndentifiesPayments, params);
+  }
 
   getCtlDevPagB(params: _Params) {
     return this.get(`${PaymentEndPoints.ComerCtldevpagB}`, params);
@@ -201,5 +208,14 @@ export class PaymentService extends HttpService {
       params,
       // responseType: 'arraybuffer' as 'json',
     });
+  }
+
+  getPaymentRefById_(id: any) {
+    return this.get(`${PaymentEndPoints.ComerPaymentRef}/${id}`);
+  }
+
+  //comer-rel-usu-canc
+  getComerRelUsuCanc(params?: string) {
+    return this.get(`comer-rel-usu-canc`, params);
   }
 }
