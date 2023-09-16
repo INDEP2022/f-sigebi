@@ -77,6 +77,7 @@ export class DetailAssetsTabComponentComponent
   @Input() process: string = '';
   @Input() childSaveAction: boolean = false;
   @Output() sendDetailInfoEvent?: EventEmitter<any> = new EventEmitter();
+  @Output() sendDomicileSelectedEvent?: EventEmitter<any> = new EventEmitter();
 
   goodData: IGood;
   bsModalRef: BsModalRef;
@@ -1558,6 +1559,7 @@ export class DetailAssetsTabComponentComponent
       domicilio.userCreation = username;
       domicilio.userModification = username;
       domicilio.id = this.detailAssets.controls['id'].value;
+
       this.goodEstateService.create(domicilio).subscribe({
         next: resp => {
           console.log(resp);
@@ -1840,6 +1842,7 @@ export class DetailAssetsTabComponentComponent
     this.domicileForm.patchValue(domicilie);
 
     this.domicileForm.controls['localityKey'].setValue(domicilie.localityKey);
+    this.sendDomicileSelectedEvent.emit(domicilie);
   }
 
   getDetailInfo(event: any) {
