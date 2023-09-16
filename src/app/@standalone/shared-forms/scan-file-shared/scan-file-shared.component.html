@@ -5,6 +5,7 @@
         <div class="col-md-2"></div>
         <div class="col">
           <button
+            [disabled]="disabled"
             type="button"
             data-toggle="tooltip"
             class="btn btn-secondary btn-sm active mr-1"
@@ -13,6 +14,7 @@
             <i class="bx bxs-file-find"></i>
           </button>
           <button
+            [disabled]="disabled"
             type="button"
             data-toggle="tooltip"
             class="btn btn-secondary btn-sm active"
@@ -26,6 +28,7 @@
             [control]="form.get(formControlName)"
             label="Folio de Escaneo">
             <input
+              [disabled]="disabled"
               type="number"
               class="form-control"
               min="1"
@@ -45,6 +48,7 @@
         </div>
         <div class="col">
           <button
+            [disabled]="disabled"
             type="button"
             data-toggle="tooltip"
             class="btn btn-secondary btn-sm active mr-1"
@@ -53,6 +57,7 @@
             <i class="bx bxs-printer"></i>
           </button>
           <button
+            [disabled]="disabled"
             type="button"
             data-toggle="tooltip"
             class="btn btn-secondary btn-sm active"

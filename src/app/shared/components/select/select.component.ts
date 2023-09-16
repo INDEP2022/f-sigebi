@@ -131,13 +131,13 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
       this.buffer = [];
       this.page = 1;
     }
-    if (changes['data']?.currentValue.length === 0) {
+    if (changes['data']?.currentValue?.length === 0) {
       this.buffer = [];
     } else if (changes['data'] && this.concat) {
       this.buffer = [...this.buffer, ...this.data.data];
     } else {
-      this.buffer = this.data.data;
-      this.totalItems = this.data.count;
+      this.buffer = this.data?.data;
+      this.totalItems = this.data?.count;
     }
     this.loading = false;
   }
