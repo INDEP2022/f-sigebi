@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CustomersEndpoints } from 'src/app/common/constants/endpoints/ms-customers-endpoints';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IRangeDateTmp5 } from './comer-details';
@@ -19,6 +20,9 @@ export class ComerDetailsService extends HttpService {
     return this.get(`${this.route}`, params);
   }
 
+  getComerDetails2(params?: ListParams) {
+    return this.get(`${this.route}`, params);
+  }
   faCoinciliationGood(body: any) {
     return this.post(`${this.route}/fa-conciliation-good`, body);
   }

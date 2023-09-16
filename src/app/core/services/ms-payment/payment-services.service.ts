@@ -31,6 +31,10 @@ export class PaymentService extends HttpService {
     return this.get(PaymentEndPoints.ComerPaymentRef, params);
   }
 
+  getComerPaymentRef2(params: ListParams) {
+    return this.get(PaymentEndPoints.ComerPaymentRef2, params);
+  }
+
   getPaymentsxConfirm(params: _Params) {
     return this.get(PaymentEndPoints.PaymentsxConfirm, params);
   }
