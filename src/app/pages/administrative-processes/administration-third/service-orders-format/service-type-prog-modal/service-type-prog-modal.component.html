@@ -1,0 +1,41 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Tipo de Programación</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-2">
+          <h5 class="title pt-4">Seleccione un tipo:</h5>
+          <form-radio label="Entrega Comercialización">
+            <input type="radio" formControlName="space" value="2" />
+          </form-radio>
+          <form-radio label="Entrega Donaciones">
+            <input type="radio" formControlName="space" value="3" />
+          </form-radio>
+          <form-radio label="Entrega Destrucción">
+            <input type="radio" formControlName="space" value="4" />
+          </form-radio>
+          <form-radio label="Entrega Devolución">
+            <input type="radio" formControlName="space" value="5" />
+          </form-radio>
+        </div>
+      </div>
+    </form>
+    <div class="row d-flex justify-contend-center">
+      <div class="col-md-2">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="selected()">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary btn-sm active" (click)="close()">
+          Salir
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

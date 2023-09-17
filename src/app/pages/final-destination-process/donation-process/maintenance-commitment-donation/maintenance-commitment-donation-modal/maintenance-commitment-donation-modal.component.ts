@@ -9,6 +9,8 @@ import { AccountMovementService } from 'src/app/core/services/ms-account-movemen
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { BasePage } from 'src/app/core/shared';
 import Swal from 'sweetalert2';
+import { Params } from '@angular/router';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-maintenance-commitment-donation-modal',
@@ -17,8 +19,7 @@ import Swal from 'sweetalert2';
 })
 export class MaintenanceCommitmentDonationModalComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   form: FormGroup = new FormGroup({});
   title: string = '';
   newOrEdit: boolean = false;
@@ -27,6 +28,9 @@ export class MaintenanceCommitmentDonationModalComponent
   textBtn: string = 'Guardar';
   dataValid: string[] = [];
   totalOtKey: number = 0;
+  users = new DefaultSelect();
+
+  arr: number[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -63,7 +67,7 @@ export class MaintenanceCommitmentDonationModalComponent
         case 4:
           this.title = 'Permisos de Usuarios para Rastreador';
           this.prepareFormPermissionR();
-          this.getOtKey();
+          this.getMax();
           break;
         default:
           this.title = '';
@@ -77,9 +81,10 @@ export class MaintenanceCommitmentDonationModalComponent
         if (this.type == 4) {
           console.log('tipo 4 > ', this.data);
           this.form.patchValue({
-            value: this.data.labelId,
-            name: this.data.status,
-            valid: this.data.valid,
+            value: this.data.otvalor,
+            name: this.data.name,
+            otkey: this.data.otKey,
+            valid: this.data.abbreviation,
           });
         } else {
           this.form.patchValue({
@@ -118,7 +123,8 @@ export class MaintenanceCommitmentDonationModalComponent
           this.updateOtros(this.form.value);
           break;
         case 4:
-
+          this.updatePermisoRas(this.form.value);
+          break;
         default:
           break;
       }
@@ -184,7 +190,7 @@ export class MaintenanceCommitmentDonationModalComponent
     this.donationService.createApproveDonation(model).subscribe({
       next: () => {
         this.handleSuccess();
-        this.onLoadToast('success', 'Delitos Federales Creado', '');
+        this.onLoadToast('success', 'Registro creado correctamente', '');
       },
       error: error => {
         this.onLoadToast('error', error.error.message, '');
@@ -210,43 +216,26 @@ export class MaintenanceCommitmentDonationModalComponent
     this.donationService.createApproveDonation(model).subscribe({
       next: () => {
         this.handleSuccess();
-        this.onLoadToast('success', 'Otros Transferentes Creado', '');
+        this.onLoadToast('success', 'Registro creado correctamente', '');
       },
       error: error => {
         this.onLoadToast('error', error.error.message, '');
       },
     });
   }
-  insertPermisosRastreador() {
-    this.newOrEdit = false;
-    const model = {} as any;
-    model.value = this.form.value.value;
-    model.name = this.form.value.name;
-    model.valid = Number(this.form.value.valid);
-
-    //SERVICIO POS PERMISOS
-    this.donationService.createApproveDonation(model).subscribe({
-      next: () => {
-        this.handleSuccess();
-        this.onLoadToast('success', 'Usuario para Rastereador Creado', '');
-      },
-      error: error => {
-        this.onLoadToast('error', error.error.message, '');
-      },
-    });
-  }
-
   getOtKey() {
-    let arr: number[] = [];
+    // let arr: number[] = [];
     this.tvalTable1Service.getByIdFind(421).subscribe({
       next: response => {
         console.log('total key data ', response.count);
         console.log('total key data ', response);
-        for (let i = 0; i < response.count; i++) {
-          console.log('i -> ', i + 1);
-          arr.push(response.data[i].otKey);
+        for (let i = 0; i < response.data.length; i++) {
+          console.log('i -> ', i);
+          this.arr.push(Number(response.data[i].otKey));
         }
-        console.log('arr  ', arr.sort);
+        console.log('arr  ', this.arr.sort());
+        const ultimoNumero = this.arr.sort()[this.arr.length - 1];
+        console.log("ult -> ", ultimoNumero);
       },
       error: error => {
         console.log(error);
@@ -255,12 +244,23 @@ export class MaintenanceCommitmentDonationModalComponent
     });
   }
 
+  getMax() {
+    this.dynamicCatalogsService.GetMax(421).subscribe({
+      next: response => {
+        console.log("res 111 ", response);
+        this.totalOtKey = response + 1;
+        console.log("max ln. ", response);
+        console.log("this.totalOtKey ", this.totalOtKey);
+      }
+    });
+  }
+
   createTableUser() {
     const model = {} as any;
     model.nmtable = 421;
-    model.otkey = Number(this.form.value.labelId);
-    model.otvalor = Number(this.form.value.value);
-
+    model.otkey = this.totalOtKey;
+    model.otvalor = this.form.value.value;
+    model.name = this.form.value.name;
     model.registerNumber = 0;
     model.abbreviation = this.form.value.valid;
 
@@ -268,7 +268,8 @@ export class MaintenanceCommitmentDonationModalComponent
     this.tvalTable1Service.createTvalTable1(model).subscribe({
       next: resp => {
         if (resp != null && resp != undefined) {
-          this.alert('success', '', 'Registro Creado Correctamente');
+          this.handleSuccess();
+          this.alert('success', '', 'Registro creado correctamente');
         }
       },
       error: err => {
@@ -351,6 +352,34 @@ export class MaintenanceCommitmentDonationModalComponent
     });
   }
 
+  updatePermisoRas(data: any) {
+    const model = {} as any;
+    model.nmtable = 421,
+      model.otkey = Number(this.data.otkey);
+    model.otvalor = data.value;
+    model.registerNumber = 0;
+    model.abbreviation = data.valid;
+
+    console.log('data update 4-> ', model);
+
+    this.dynamicCatalogsService.editTvalTable1(model).subscribe({
+      next: data => {
+        this.handleSuccess();
+        Swal.fire('Actualizado', '', 'success');
+      },
+      error: err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+          this.onLoadToast('error', 'Error', error);
+          //this.newOrEdit = false;
+        } else {
+          this.onLoadToast('error', 'Error', err.error.message);
+        }
+      },
+    });
+  }
+
   prepareForm() {
     this.form = this.fb.group({
       labelId: ['', Validators.required],
@@ -394,8 +423,8 @@ export class MaintenanceCommitmentDonationModalComponent
   prepareFormPermissionR() {
     this.form = this.fb.group({
       value: ['', Validators.required],
-      name: ['', Validators.required],
       valid: ['', Validators.required],
+      //otkey: ['', Validators.required],
     });
   }
 

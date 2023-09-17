@@ -188,7 +188,7 @@ export class AuthorityService
     params2: any
   ): Observable<IListResponse<any>> {
     const route = `${AuthorityEndpoints.getAllAutoritiesV2}`;
-    return this.post(route, params, params2);
+    return this.post(route, params2, params);
   }
 
   getAllDataQuery(
@@ -196,6 +196,24 @@ export class AuthorityService
     delegation: any
   ): Observable<IListResponse<any>> {
     const route = `${AuthorityEndpoints.getDataQuery}?virDelegation=${delegation}`;
+    return this.get(route, params);
+  }
+
+  getAuthorities(
+    params: any,
+    Autority: any,
+    transferer: any,
+    station: any
+  ): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.getAllAutoritiesV2}?filter.idAuthority=$eq:${Autority}&filter.idTransferer=$eq:${transferer}&filter.idStation=$eq:${station}`;
     return this.post(route, params);
+  }
+
+  getDataQuery(
+    delegation: any,
+    noWarehouse: any
+  ): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.getDataQuery}?virDelegation=${delegation}&noWarehouse=${noWarehouse}`;
+    return this.get(route);
   }
 }
