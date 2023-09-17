@@ -40,4 +40,9 @@ export class ParameterBaseCatService extends HttpService {
   remove(model: IRateCatalog): Observable<Object> {
     return this.deductiveRepository.remove3(this.route1, model);
   }
+
+  getnomencla(delegation: any) {
+    const route = `${ParameterGoodEndpoints.rNomecla}?filter.numberDelegation2=$eq:${delegation}`;
+    return this.get(route);
+  }
 }
