@@ -16,7 +16,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-12 text-md-start">
+            <div class="col-12 text-end">
               <span class="badge rounded-pill badge-soft-success">
                 Estatus
               </span>
@@ -155,29 +155,6 @@
                 </div>
               </div>
             </div>
-            <!-- 
-            <div class="col-sm-12 col-12 col-md-3 text-center">
-              <span title="Nueva Captura" containerClass="tooltip-style">
-                <button (click)="agregarCaptura()" class="btn btn-secondary btn-sm active m-1">
-                  <i class="bx bx-plus"></i>
-                </button>
-              </span>
-              <span title="Buscar Eventos" containerClass="tooltip-style">
-                <button (click)="searchEventos()" class="btn btn-secondary btn-sm active m-1">
-                  <i class="bx bxs-file-find"></i>
-                </button>
-              </span>
-              <span title="Cerrar Evento" containerClass="tooltip-style">
-                <button (click)="cerrarEvento()" class="btn btn-secondary btn-sm active m-1">
-                  <i class="bx bx-x"></i>
-                </button>
-              </span>
-              <span title="Limpiar Formulario" containerClass="tooltip-style">
-                <button (click)="clean()" class="btn btn-secondary btn-sm active m-1">
-                  <i class="bx bx-trash"></i>
-                </button>
-              </span>
-            </div> -->
           </div>
         </div>
         <div class="col-md-7">
@@ -189,6 +166,20 @@
           <div class="row">
             <div class="col-md-12">
               <div class="row">
+                <div class="col-md-2 d-flex justify-content-end">
+                  <div
+                    class="row ps-4"
+                    [ngClass]="{ 'not-press': !activeRadio }">
+                    <form-radio label="Normal">
+                      <input type="radio" formControlName="tipo" value="N" />
+                    </form-radio>
+                    <form-radio label="Paquete">
+                      <input type="radio" formControlName="tipo" value="P" />
+                    </form-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
                 <div class="col-md-12">
                   <div class="card">
                     <div class="card-body mt-4 mb-4">
@@ -197,7 +188,7 @@
                         <div class="col-md-3">
                           <button
                             class="btn btn-secondary btn-sm active"
-                            (click)="ValidGoods()">
+                            (click)="validaGood()">
                             Valida Bienes <i class="bx bx-check float-icon"></i>
                           </button>
                         </div>
@@ -252,10 +243,9 @@
             Error&#58;
             <b>{{ BIEN_ERROR }}</b>
           </span>
-          <span class="text-info"
-            ><i class="fa fa-percent" aria-hidden="true"></i> Suma de
-            Cantidades&#58;
-            <b>{{ SUM_BIEN }}&#37;</b>
+          <span class="text-info">
+            Suma de Cantidades
+            <b>{{ SUM_BIEN | currency }}</b>
           </span>
         </div>
       </div>
@@ -289,10 +279,39 @@
                   [params]="paramsList2"
                   [totalItems]="totalItems2"></app-pagination>
               </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div>
+                    <form-field
+                      [control]="regisForm.get('observaciones')"
+                      label="Observaciones">
+                      <textarea
+                        maxlength="1000"
+                        type="text"
+                        class="form-control pt-1"
+                        formControlName="observaciones"></textarea>
+                    </form-field>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div>
+                    <form-field
+                      [control]="regisForm.get('observaElimina')"
+                      label="Observ. Eliminación de Bienes por">
+                      <textarea
+                        maxlength="1000"
+                        type="text"
+                        class="form-control pt-1"
+                        formControlName="observaElimina"></textarea>
+                    </form-field>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
       <div footer>
         <div class="d-flex justify-content-center">
           <div class="m-3">
