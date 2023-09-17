@@ -10,4 +10,5 @@ export enum DonationEndPoint {
   TempDonationGood = 'donate-invent-rel',
   ApproveDonation = 'r-approve-donation',
   fdonacDocumAdm1 = 'fdonacDocumAdm1',
+  ApproveDnation = 'r-approve-donation',
 }

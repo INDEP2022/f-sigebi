@@ -13,6 +13,17 @@
       <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="row">
           <div class="col-12 col-md-3">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('idContract')"
+                label="Id Contrato o Convenio">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="idContract"
+                  (keydown)="onKeyDownIdContract($event)" />
+              </form-field>
+            </div>
             <form-field
               [control]="form.get('idContract')"
               label="Id Contrato o Convenio">

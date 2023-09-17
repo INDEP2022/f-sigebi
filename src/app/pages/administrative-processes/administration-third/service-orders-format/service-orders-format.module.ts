@@ -10,6 +10,7 @@ import { ServiceOrdersFormatHistoricComponent } from './service-orders-format-hi
 import { ServiceOrdersFormatRoutingModule } from './service-orders-format-routing.module';
 import { ServiceOrdersFormatComponent } from './service-orders-format/service-orders-format.component';
 import { ServiceOrdersSelectModalComponent } from './service-orders-select-modal/service-orders-select-modal.component';
+import { ServiceTypeProgModalComponent } from './service-type-prog-modal/service-type-prog-modal.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { ServiceOrdersSelectModalComponent } from './service-orders-select-modal
     ServiceOrdersFormatHistoricComponent,
     ServiceOrdersSelectModalComponent,
     ServiceOrdersExpedientModalComponent,
+    ServiceTypeProgModalComponent,
   ],
   exports: [ServiceOrdersFormatHistoricComponent],
   imports: [
