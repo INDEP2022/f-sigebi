@@ -12,80 +12,39 @@
           <div class="col-md-3 mt-2">
             <div>
               <form-field
-                [control]="actaRecepttionForm.get('acta')"
-                label="Acta">
-                <ng-select formControlName="acta" class="form-control pt-1">
+                [control]="actaRecepttionForm.get('type')"
+                label="Tipo de Acta">
+                <ng-select formControlName="type" class="form-control pt-1">
                   <ng-option value="COMPDON">COMPDON</ng-option>
                 </ng-select>
               </form-field>
             </div>
           </div>
+
           <div class="col-md-3 mt-2">
             <div>
               <form-field
-                [control]="actaRecepttionForm.get('type')"
-                label="Estado">
-                <ng-select formControlName="type" class="form-control pt-1">
-                  <ng-option value="A">A</ng-option>
-                  <ng-option value="D">D</ng-option>
-                  <ng-option value="RT">RT</ng-option>
-                </ng-select>
-                <!-- <input #inputValue type="text" class="form-control" formControlName="type" readonly /> -->
-              </form-field>
-            </div>
-          </div>
-          <div class="col-md-6 mt-2">
-            <div>
-              <form-field [control]="actaRecepttionForm.get('claveTrans')">
-                <ngx-select
-                  [form]="actaRecepttionForm"
-                  [data]="trans"
-                  (fetchItems)="consultREG_TRANSFERENTES($event)"
-                  bindLabel="transfer"
-                  value="password"
-                  control="claveTrans"
-                  label="Clave Transferente"
-                  [searchOnInit]="true"
-                  [showTooltip]="true"
-                  termMaxLength="30">
-                </ngx-select>
-                <!-- <input #inputValue type="text" class="form-control" formControlName="claveTrans" /> -->
-              </form-field>
-            </div>
-          </div>
-          <div class="col-md-3 mt-2">
-            <div>
-              <form-field
-                [control]="actaRecepttionForm.get('respConv')"
-                label="Recibe">
+                [control]="actaRecepttionForm.get('fileId')"
+                label="Expediente">
                 <input
                   maxlength="6"
-                  type="text"
+                  type="number"
                   class="form-control pt-1"
-                  formControlName="respConv" />
+                  formControlName="fileId" />
               </form-field>
             </div>
           </div>
-          <div class="col-md-3 mt-2">
+          <!-- <div class="col-md-3 mt-2">
             <div>
-              <form-field
-                [control]="actaRecepttionForm.get('administra')"
-                label="Adm.">
-                <ng-select
-                  formControlName="administra"
-                  class="form-control pt-1">
-                  <ng-option
-                    *ngFor="let item of arrayDele"
-                    [value]="item.delegacion"
-                    >{{ item.no_delegacion_2 }} -
-                    {{ item.delegacion }}</ng-option
-                  >
+              <form-field [control]="actaRecepttionForm.get('administra')" label="Adm.">
+                <ng-select formControlName="administra" class="form-control pt-1">
+                  <ng-option *ngFor="let item of arrayDele" [value]="item.delegacion">{{ item.no_delegacion_2 }} -
+                    {{ item.delegacion }}</ng-option>
                 </ng-select>
-                <!-- <input #inputValue type="text" class="form-control" formControlName="cveReceived"
-                                    readonly /> -->
+
               </form-field>
             </div>
-          </div>
+          </div> -->
           <!-- <div class="col-md-3 mt-2">
             <div>
               <form-field [control]="actaRecepttionForm.get('cveReceived')">
@@ -136,69 +95,34 @@
           </div>
           <div class="col-md-3 mt-2">
             <div>
-              <form-field [control]="actaRecepttionForm.get('mes')" label="Mes">
+              <form-field
+                [control]="actaRecepttionForm.get('captureDate')"
+                label="mes">
                 <ng-select
                   class="form-control pt-1"
-                  formControlName="mes"
+                  formControlName="captureDate"
                   [items]="months"></ng-select>
-                <!-- <select>
-                  <option formControlName="mes" class="form-control" *ngFor="let month of currentmonths"
-                    value="month.value">
-                    {{ month.label }}</option>
-                </select> -->
-                <!-- <input [max-length]="2" pattern="^[0-9]+" #inputValue type="number" class="form-control"
-                  formControlName="mes" /> -->
               </form-field>
             </div>
           </div>
-          <!-- <div class="col-md-6 mt-3">
-                    </div> -->
-          <div class="col-md-3 mt-2">
+          <!-- <div class="col-md-3 mt-2">
             <div>
-              <form-field
-                [control]="actaRecepttionForm.get('elaboradate')"
-                label="Fec. Elaboración">
-                <input
-                  [ngClass]="{ 'not-press bg-gray': !disabledSend }"
-                  #datepickerElement
-                  type="text"
-                  class="form-control pt-1"
-                  formControlName="elaboradate"
-                  bsDatepicker
+              <form-field [control]="actaRecepttionForm.get('elaboradate')" label="Fec. Elaboración">
+                <input [ngClass]="{ 'not-press bg-gray': !disabledSend }" #datepickerElement type="text"
+                  class="form-control pt-1" formControlName="elaboradate" bsDatepicker
                   [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
               </form-field>
             </div>
-          </div>
-          <div class="col-md-3 mt-2">
+          </div> -->
+
+          <!-- <div class="col-md-3 mt-2">
             <div>
-              <form-field
-                [control]="actaRecepttionForm.get('fechaact')"
-                label="Fec. Acta">
-                <input
-                  #datepickerElement
-                  type="text"
-                  class="form-control pt-1"
-                  formControlName="fechaact"
-                  bsDatepicker
+              <form-field [control]="actaRecepttionForm.get('fechacap')" label="Fec. Captura">
+                <input #datepickerElement type="text" class="form-control pt-1" formControlName="fechacap" bsDatepicker
                   [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
               </form-field>
             </div>
-          </div>
-          <div class="col-md-3 mt-2">
-            <div>
-              <form-field
-                [control]="actaRecepttionForm.get('fechacap')"
-                label="Fec. Captura">
-                <input
-                  #datepickerElement
-                  type="text"
-                  class="form-control pt-1"
-                  formControlName="fechacap"
-                  bsDatepicker
-                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
-              </form-field>
-            </div>
-          </div>
+          </div> -->
           <div class="col-md-3 mt-2">
             <div>
               <form-field
@@ -216,7 +140,7 @@
             <div>
               <form-field
                 [control]="actaRecepttionForm.get('testigoOne')"
-                label="Autoridad">
+                label="Testigo 1">
                 <input
                   maxlength="100"
                   type="text"
@@ -229,7 +153,7 @@
             <div>
               <form-field
                 [control]="actaRecepttionForm.get('testigoTree')"
-                label="Elabora">
+                label="Testigo 2">
                 <input
                   maxlength="100"
                   type="text"

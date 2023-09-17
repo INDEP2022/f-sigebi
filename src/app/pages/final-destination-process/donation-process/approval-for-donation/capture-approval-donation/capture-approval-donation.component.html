@@ -280,31 +280,24 @@
                   [totalItems]="totalItems2"></app-pagination>
               </div>
               <div class="row">
-                <div class="col-md-12">
+                <!-- <div class="col-md-12">
                   <div>
-                    <form-field
-                      [control]="regisForm.get('observaciones')"
-                      label="Observaciones">
-                      <textarea
-                        maxlength="1000"
-                        type="text"
-                        class="form-control"
-                        formControlName="observaciones"
-                        [disabled]="!delete"></textarea>
+                    <form-field [control]="regisForm.get('observaciones')" label="Observaciones">
+                      <textarea maxlength="1000" type="text" class="form-control"
+                        formControlName="observaciones"></textarea>
                     </form-field>
                   </div>
-                </div>
+                </div> -->
                 <div class="col-md-12">
                   <div>
                     <form-field
                       [control]="regisForm.get('observaElimina')"
-                      label="Observ. Eliminación de Bienes por">
+                      label="Observaciones Eliminación de Bienes por">
                       <textarea
                         maxlength="1000"
                         type="text"
                         class="form-control"
-                        formControlName="observaElimina"
-                        [disabled]="!deleteG"></textarea>
+                        formControlName="observaElimina"></textarea>
                     </form-field>
                   </div>
                 </div>

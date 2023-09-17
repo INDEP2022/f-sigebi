@@ -55,8 +55,8 @@ export class CaptureApprovalDonationComponent
   siabForm: FormGroup;
   foolio: number;
   statusGood_: any;
-  delete: boolean = false;
-  deleteG: boolean = false;
+  delete: boolean = true;
+  deleteG: boolean = true;
   dataTableGood_: any[] = [];
   totalItems: number = 0;
   loading3: boolean = false;
@@ -296,6 +296,7 @@ export class CaptureApprovalDonationComponent
         this.regisForm.get('year').setValue(anioCompleto);
         this.regisForm.get('folio').setValue(data.folioUniversal);
         this.regisForm.get('keyEvent').setValue(data.cveAct);
+        this.regisForm.get('captureDate').setValue(mesTexto);
         console.log(this.eventDonacion);
         this.getDetailDonation();
       },
@@ -959,7 +960,7 @@ export class CaptureApprovalDonationComponent
         type: this.type,
         keyEvent: next.cveAct,
         mes: next.captureDate,
-        year: new Date(next.elaborationDate),
+        year: next.elaborationDate,
         testigoOne: next.witness1,
         testigoTree: next.witness2,
         elaboradate: formattedfecElaborate,
@@ -970,7 +971,7 @@ export class CaptureApprovalDonationComponent
       this.paramsScreen = {
         origin: 'FMCOMDONAC_1',
         recordId: String(this.eventDonacion.actId),
-        area: String(this.eventDonacion.noDelegation1),
+        area: String(this.authService.decodeToken().department),
       };
       //this.data1 = next.statusProceedings;
       //this.formScan.get('scanningFoli').patchValue(next.universalFolio);
@@ -993,7 +994,7 @@ export class CaptureApprovalDonationComponent
       return null; // Clave no válida
     }
 
-    const ultimosCincoDigitos = claveActa.slice(-5);
+    const ultimosCincoDigitos = claveActa.slice(-4);
     const anio = parseInt(ultimosCincoDigitos.substring(0, 2), 10);
     const mesNumero = parseInt(ultimosCincoDigitos.substring(3, 5), 10);
     if (
@@ -1052,7 +1053,7 @@ export class CaptureApprovalDonationComponent
         this.alert(
           'success',
           'Se Cargó la Información del Evento',
-          next.keysProceedings
+          next.cveAct
         );
       }
 
@@ -1088,24 +1089,20 @@ export class CaptureApprovalDonationComponent
         dateCapture != null ? this.formatDate(dateCapture) : null;
 
       this.regisForm.patchValue({
-        acta: next.id,
-        administra: next.approvedXAdmon,
+        acta: next.actId,
         consec: next.numeraryFolio,
-        type: next.id,
-        claveTrans: next.numTransfer,
-        cveActa: next.keysProceedings,
-        respConv: next.receiptKey,
+        type: next.actType,
+        cveActa: next.cveAct,
+        respConv: next.elaborated,
         testigoOne: next.witness1,
         testigoTree: next.witness2,
-        testigoOIC: next.comptrollerWitness,
-        direccion: next.address,
         observaciones: next.observations,
         elaboradate: formattedfecElaborate,
         fechaact: formattedfecActa,
         fechacap: formattedfecCapture,
       });
 
-      this.data1 = next.statusProceedings;
+      this.data1 = next.estatusAct;
       // Se mapea Mes  y año al crear nueva acta
       this.generarDatosDesdeUltimosCincoDigitos(next.cveAct);
 
@@ -1143,15 +1140,6 @@ export class CaptureApprovalDonationComponent
   }
 
   async cerrarActa() {
-    // let folio = this.formScan.get('scanningFoli').value;
-    // if (folio == null) {
-    //   this.alert(
-    //     'warning',
-    //     'No se puede Cerrar el Acta sin Folio de Escaneo',
-    //     ''
-    //   );
-    //   return;
-    // }
     if (this.data1 != null) {
       if (this.data1 == null) {
         this.alert('warning', 'No Existe Evento para Cerrar', '');
