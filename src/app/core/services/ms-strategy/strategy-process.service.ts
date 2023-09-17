@@ -112,4 +112,9 @@ export class StrategyProcessService extends HttpService {
     const route = `${StrategyEndpoints.paEstGoodIncor}`;
     return this.post(route, params);
   }
+
+  getStrategiProcess(id: any) {
+    const route = `${StrategyEndpoints.StrategyProcess}?filter.processNumber=$eq:${id}`;
+    return this.get(route);
+  }
 }
