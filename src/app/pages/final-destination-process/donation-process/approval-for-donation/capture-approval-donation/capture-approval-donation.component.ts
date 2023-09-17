@@ -62,6 +62,7 @@ export class CaptureApprovalDonationComponent
   loading3: boolean = false;
   Exportdate: boolean = false;
   status: string = '';
+  idAct: number = 0;
   disabledBtnActas: boolean = true;
   totalItems2: number = 0;
   activeRadio: boolean = true;
@@ -250,8 +251,8 @@ export class CaptureApprovalDonationComponent
   }
 
   getComerDonation() {
-    let id = this.paramsScreen.recordId.match(/[0-9]+/)[0];
-    this.donationService.getByIdEvent(Number(id)).subscribe({
+    this.idAct = Number(this.paramsScreen.recordId.match(/[0-9]+/)[0]);
+    this.donationService.getByIdEvent(this.idAct).subscribe({
       next: (data: any) => {
         this.eventDonacion = data;
         this.fileNumber = data.fileNumber;
@@ -404,42 +405,6 @@ export class CaptureApprovalDonationComponent
   }
   ValidGoods(): void {
     console.log('this.bienes1 -->');
-
-    //   if (this.dataRecepcion.length === 0) {
-    //     this.alertInfo('warning', 'No Hay Ningún Bien a Comparar', '');
-    //     return;
-    //   }
-
-    //   this.contador = 0;
-    //   this.vTotalB = '';
-
-    //   for (const bien of this.dataRecepcion) {
-    //     console.log('entra al for ', bien);
-    //     if (bien != null) {
-    //       console.log('Entra al if y al for');
-    //       this.contador++;
-
-    //       if (this.contador === 1) {
-    //         this.vTotalB = bien.numberGood.toString();
-    //       } else {
-    //         this.vTotalB = bien.numberGood + ', ' + this.vTotalB;
-    //       }
-    //     }
-    //   }
-
-    //   console.log('this.bienes -->', this.dataRecepcion);
-    //   console.log('Contador ', this.contador);
-
-    //   if (this.contador > 0) {
-    //     this.onLoadToast(
-    //       'success',
-    //       'Se Encontraron ' + this.contador + ' No. Bien',
-    //       'Que Son: ' + this.vTotalB
-    //     );
-    //     console.log('SE ENCONTRARON:', this.contador, 'QUE SON:', this.vTotalB);
-    //   } else {
-    //     this.alertInfo('warning', 'No Existe el Bien de Gastos', '');
-    //   }
   }
   getDetailDonation() {
     const params = new ListParams();
@@ -886,7 +851,7 @@ export class CaptureApprovalDonationComponent
   cleanActa() {
     this.regisForm.reset();
     this.dataTableGood.load([]);
-    // this.dataRecepcionGood.load([]);
+    this.dataDetailDonationGood.load([]);
     this.eventDonacion = null;
     this.estatus = null;
     this.selectedGooods = [];
@@ -1113,7 +1078,7 @@ export class CaptureApprovalDonationComponent
   delegationToolbar: any = null;
   getDelegation(params: FilterParams) {
     params.addFilter(
-      'actId',
+      'elaborated',
       this.authService.decodeToken().preferred_username,
       SearchFilter.EQ
     );
@@ -1140,19 +1105,15 @@ export class CaptureApprovalDonationComponent
   }
 
   async cerrarActa() {
-    if (this.data1 != null) {
-      if (this.data1 == null) {
-        this.alert('warning', 'No Existe Evento para Cerrar', '');
-        return;
-      }
-      if (this.data1 == 'CERRADA') {
+    if (this.eventDonacion != null) {
+      if (this.eventDonacion.estatusAct == 'CERRADA') {
         this.alertInfo('warning', 'El Evento ya se Encuentra Cerrada', '');
         return;
       }
-      if (this.eventdetailDefault.count() == 0) {
+      if (this.dataDetailDonationGood.count() == 0) {
         this.alertInfo(
           'warning',
-          'Para Cerrar un Acta debe Contener al Menos un Bien, por favor Registra este en la Pantalla de Actas.',
+          'Para Cerrar un Evento debe Contener al Menos un Bien, por favor Registra este en la Pantalla de Actas.',
           ''
         );
         return;
@@ -1169,51 +1130,54 @@ export class CaptureApprovalDonationComponent
       } else {
         this.alertQuestion(
           'question',
-          '¿Seguro que Desea Realizar el Cierre de esta Acta?',
+          '¿Seguro que Desea Realizar el Cierre de esta Evento?',
           ''
         ).then(async question => {
           if (question.isConfirmed) {
-            this.eventdetailDefault.estatusAct = 'CERRADA';
-            // delete this.eventdetailDefault.numDelegation1Description;
-            // delete this.eventdetailDefault.numDelegation2Description;
-            // delete this.eventdetailDefault.numTransfer_;
-            this.eventdetailDefault.universalFolio = this.consec;
-            this.donationService
-              .updateDonation(
-                this.eventdetailDefault.id,
-                this.eventdetailDefault
-              )
-              .subscribe({
-                next: async data => {
-                  this.loading = false;
+            let obj: any = {
+              cveAct: this.eventDonacion.actId,
+              elaborationDate: this.eventDonacion.elaborationDate,
+              estatusAct: 'CERRADA',
+              elaborated: this.authService.decodeToken().preferred_username,
+              witness1: this.eventDonacion.witness1,
+              witness2: this.eventDonacion.witness2,
+              actType: 'COMPDON',
+              observations: this.eventDonacion.observations,
+              registreNumber: null,
+              numDelegation1: null,
+              numDelegation2: null,
+              identifier: null,
+              label: null,
+              folioUniversal: this.eventDonacion.folioUniversal,
+              closeDate: null,
+            };
+            this.donationService.putEvent(obj, this.idAct).subscribe({
+              next: async data => {
+                this.loading = false;
 
-                  let obj = {
-                    pActaNumber: this.eventdetailDefault.actId,
-                    pStatusActa: 'CERRADA',
-                    pVcScreen: 'FMCOMDONAC_1',
-                    pUser: this.authService.decodeToken().preferred_username,
-                  };
+                let obj = {
+                  pActaNumber: this.idAct,
+                  pStatusActa: 'CERRADA',
+                  pVcScreen: 'FMCOMDONAC_1',
+                  pUser: this.authService.decodeToken().preferred_username,
+                };
 
-                  await this.updateGoodEInsertHistoric(obj);
+                await this.updateGoodEInsertHistoric(obj);
 
-                  this.alertInfo('success', 'El Evento Ha Sido Cerrado', '');
-                  this.alert('success', 'Acta Cerrada', '');
-                  this.data1 = 'CERRADA';
-                  //this.disabledBtnCerrar = false;
-                  this.disabledBtnActas = false;
-                  this.dataTableGood.refresh();
-                  await this.getDetailProceedingsDevollution(
-                    this.eventdetailDefault.actId
-                  );
-                },
-                error: error => {
-                  this.alert(
-                    'error',
-                    'Ocurrió un Error al Cerrar el Evento',
-                    ''
-                  );
-                },
-              });
+                this.alertInfo('success', 'El Evento Ha Sido Cerrado', '');
+                this.alert('success', 'Evento Cerrado', '');
+                this.data1 = 'CERRADA';
+                //this.disabledBtnCerrar = false;
+                this.disabledBtnActas = false;
+                this.dataTableGood.refresh();
+                await this.getDetailProceedingsDevollution(
+                  this.eventdetailDefault.actId
+                );
+              },
+              error: error => {
+                this.alert('error', 'Ocurrió un Error al Cerrar el Evento', '');
+              },
+            });
           }
         });
       }

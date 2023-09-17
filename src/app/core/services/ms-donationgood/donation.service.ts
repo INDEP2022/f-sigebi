@@ -120,4 +120,9 @@ export class DonationService
   getByIdEvent(id: number) {
     return this.get(`/${DonationEndPoint.eventComDonation}/${id}`);
   }
+
+  putEvent(goodDon: IGoodDonation, id: number) {
+    const route = `${DonationEndPoint.eventComDonation}/${id}`;
+    return this.put(route, goodDon);
+  }
 }
