@@ -117,4 +117,7 @@ export class DonationService
   createEventComDonationDetail(body: Object) {
     return this.post(DonationEndPoint.DetailEventComDon, body);
   }
+  getByIdEvent(id: number) {
+    return this.get(`/${DonationEndPoint.eventComDonation}/${id}`);
+  }
 }

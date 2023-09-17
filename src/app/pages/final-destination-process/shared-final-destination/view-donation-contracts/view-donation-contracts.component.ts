@@ -346,22 +346,22 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
 
   onSubmit() {}
 
-  onKeyDownIdContract(event: any) {
-    console.log(event.target.value);
-    this.donationService.getContrato(event.target.value).subscribe({
-      next: data => {
-        console.log(data);
-        console.log(data.data[0].donee);
-        this.form.controls['donee'].setValue(data.data[0].donee || null);
-        this.form.controls['reasonSocial'].setValue(
-          data.data[0].doneeId.razonSocial
-        );
-      },
-      error: error => {
-        console.log(error);
-      },
-    });
-  }
+  // onKeyDownIdContract(event: any) {
+  //   console.log(event.target.value);
+  //   this.donationService.getContrato(event.target.value).subscribe({
+  //     next: data => {
+  //       console.log(data);
+  //       console.log(data.data[0].donee);
+  //       this.form.controls['donee'].setValue(data.data[0].donee || null);
+  //       this.form.controls['reasonSocial'].setValue(
+  //         data.data[0].doneeId.razonSocial
+  //       );
+  //     },
+  //     error: error => {
+  //       console.log(error);
+  //     },
+  //   });
+  // }
 
   settingsChange(event: any) {
     this.settings = event;

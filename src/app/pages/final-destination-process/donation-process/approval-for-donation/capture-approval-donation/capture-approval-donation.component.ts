@@ -18,8 +18,10 @@ import {
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -31,6 +33,7 @@ import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
 import { COPY } from './columns-approval-donation';
+
 @Component({
   selector: 'app-capture-approval-donation',
   templateUrl: './capture-approval-donation.component.html',
@@ -52,6 +55,8 @@ export class CaptureApprovalDonationComponent
   siabForm: FormGroup;
   foolio: number;
   statusGood_: any;
+  delete: boolean = false;
+  deleteG: boolean = false;
   dataTableGood_: any[] = [];
   totalItems: number = 0;
   loading3: boolean = false;
@@ -104,11 +109,13 @@ export class CaptureApprovalDonationComponent
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
+    private goodService: GoodService,
     private donationService: DonationService,
     private changeDetectorRef: ChangeDetectorRef,
     private statusGoodService: StatusGoodService,
     private datePipe: DatePipe,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private detailProceeDelRecService: DetailProceeDelRecService
   ) {
     super();
 
@@ -243,13 +250,52 @@ export class CaptureApprovalDonationComponent
   }
 
   getComerDonation() {
-    const params = new ListParams();
-    params['filter.actId'] = this.paramsScreen.recordId;
-    this.donationService.getEventComDonation(params).subscribe({
+    let id = this.paramsScreen.recordId.match(/[0-9]+/)[0];
+    this.donationService.getByIdEvent(Number(id)).subscribe({
       next: (data: any) => {
         this.eventDonacion = data;
         this.fileNumber = data.fileNumber;
         this.estatus = data.estatusAct;
+        console.log(this.eventDonacion);
+        if (this.estatus != 'ABIERTA') {
+          this.delete = false;
+          // this.generarClave(this.regisForm.value.area, )
+        }
+        const ultimosCincoDigitos = data.cveAct.slice(-5);
+        const anio = parseInt(ultimosCincoDigitos.substring(0, 2), 10);
+        const mesNumero = parseInt(ultimosCincoDigitos.substring(3, 5), 10);
+        if (
+          isNaN(anio) ||
+          isNaN(mesNumero) ||
+          anio < 0 ||
+          mesNumero < 1 ||
+          mesNumero > 12
+        ) {
+          return null;
+        }
+
+        const mesesTexto = [
+          'Enero',
+          'Febrero',
+          'Marzo',
+          'Abril',
+          'Mayo',
+          'Junio',
+          'Julio',
+          'Agosto',
+          'Septiembre',
+          'Octubre',
+          'Noviembre',
+          'Diciembre',
+        ];
+
+        const mesTexto = mesesTexto[mesNumero - 1];
+        const fechaActual = new Date();
+        const sigloActual = Math.floor(fechaActual.getFullYear() / 100) * 100;
+        const anioCompleto = anio < 100 ? sigloActual + anio : anio;
+        this.regisForm.get('year').setValue(anioCompleto);
+        this.regisForm.get('folio').setValue(data.folioUniversal);
+        this.regisForm.get('keyEvent').setValue(data.cveAct);
         console.log(this.eventDonacion);
         this.getDetailDonation();
       },
@@ -304,6 +350,17 @@ export class CaptureApprovalDonationComponent
 
       // this.status = next.statusAct;
     });
+  }
+
+  generarClave(lvArea: number, lvCons: number, anio: number): string {
+    // Validamos que los datos sean del tipo correcto
+    // if (typeof lvArea !== "number" || typeof lvCons !== "number" || typeof anio !== "number") {
+    //   throw new Error("Los datos ingresados no son del tipo correcto");
+    // }
+    const clave = `${lvArea.toString().padStart(2, '0')}${lvCons
+      .toString()
+      .padStart(4, '0')}${anio.toString().padStart(4, '0')}`;
+    return clave;
   }
 
   configDatePicker() {
@@ -627,7 +684,7 @@ export class CaptureApprovalDonationComponent
                 console.log('indexGood', indexGood);
                 if (indexGood != -1)
                   this.dataTableGood_[indexGood].di_disponible = 'N';
-                // await this.updateBienDetalle(good.id, 'ADM');
+                await this.updateBienDetalle(good.id, 'ADM');
                 await this.createDET(good);
               }
             }
@@ -670,8 +727,8 @@ export class CaptureApprovalDonationComponent
       } else if (this.selectedGooodsValid.length == 0) {
         this.alert(
           'warning',
-          'Debe Seleccionar un Bien que Forme Parte del Acta Primero',
-          'Debe Capturar un Acta.'
+          'Debe Seleccionar un Bien que Forme Parte del Evento Primero',
+          'Debe Capturar un Evento.'
         );
         return;
       } else {
@@ -684,10 +741,10 @@ export class CaptureApprovalDonationComponent
               (_good: any) => _good.id != good.id
             );
             let index = this.dataTableGood_.findIndex(
-              g => g.id === good.numberGood
+              g => g.id === good.goodId
             );
-            // await this.updateBienDetalle(good.numberGood, 'CNE');
-            // await this.deleteDET(good);
+            await this.updateBienDetalle(good.numberGood, 'ROP');
+            await this.deleteDET(good);
             // this.selectedGooods = [];
             //ACTUALIZA COLOR
             this.dataTableGood_ = [];
@@ -706,6 +763,42 @@ export class CaptureApprovalDonationComponent
         }
       }
     }
+  }
+  async updateBienDetalle(idGood: string | number, status: string) {
+    this.goodService.updateStatusActasRobo(idGood, status).subscribe({
+      next: data => {
+        console.log(data);
+        this.getDetailProceedingsDevollution(idGood);
+      },
+      error: () => (this.loading = false),
+    });
+  }
+  async deleteDET(good: any) {
+    console.log(good);
+    const valid: any = await this.getGoodsDelete(good.numberGood);
+    if (valid != null) {
+      let obj: any = {
+        numberGood: good.numberGood,
+        numberProceedings: this.eventdetailDefault.id,
+      };
+
+      await this.deleteDetailProcee(obj);
+    }
+  }
+  async deleteDetailProcee(params: any) {
+    return new Promise((resolve, reject) => {
+      this.detailProceeDelRecService.deleteDetailProcee(params).subscribe({
+        next: data => {
+          console.log('data', data);
+          // this.loading2 = false;
+          resolve(true);
+        },
+        error: error => {
+          // this.loading2 = false;
+          resolve(false);
+        },
+      });
+    });
   }
 
   async createDET(good: any) {
@@ -749,6 +842,23 @@ export class CaptureApprovalDonationComponent
       });
     });
   }
+  async getGoodsDelete(id: any) {
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    return new Promise((resolve, reject) => {
+      this.goodService
+        .getByExpedient_(Number(this.fileNumber), params)
+        .subscribe({
+          next: data => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(null);
+          },
+        });
+    });
+  }
+
   removeAll() {}
 
   async selectData(event: { data: IGood; selected: any }) {
@@ -1075,7 +1185,7 @@ export class CaptureApprovalDonationComponent
           ''
         ).then(async question => {
           if (question.isConfirmed) {
-            this.eventdetailDefault.statusProceedings = 'CERRADA';
+            this.eventdetailDefault.estatusAct = 'CERRADA';
             // delete this.eventdetailDefault.numDelegation1Description;
             // delete this.eventdetailDefault.numDelegation2Description;
             // delete this.eventdetailDefault.numTransfer_;
@@ -1098,7 +1208,7 @@ export class CaptureApprovalDonationComponent
 
                   await this.updateGoodEInsertHistoric(obj);
 
-                  this.alertInfo('success', 'El Acta Ha Sido Cerrada', '');
+                  this.alertInfo('success', 'El Evento Ha Sido Cerrado', '');
                   this.alert('success', 'Acta Cerrada', '');
                   this.data1 = 'CERRADA';
                   //this.disabledBtnCerrar = false;

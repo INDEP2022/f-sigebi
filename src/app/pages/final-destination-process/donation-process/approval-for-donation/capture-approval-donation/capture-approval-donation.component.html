@@ -138,7 +138,7 @@
                   </span>
                   <span title="Cerrar Evento" containerClass="tooltip-style">
                     <button
-                      (click)="cerrarEvento()"
+                      (click)="cerrarActa()"
                       class="btn btn-secondary btn-sm active m-1">
                       <i class="bx bx-trash"></i>
                     </button>
@@ -288,8 +288,9 @@
                       <textarea
                         maxlength="1000"
                         type="text"
-                        class="form-control pt-1"
-                        formControlName="observaciones"></textarea>
+                        class="form-control"
+                        formControlName="observaciones"
+                        [disabled]="!delete"></textarea>
                     </form-field>
                   </div>
                 </div>
@@ -301,8 +302,9 @@
                       <textarea
                         maxlength="1000"
                         type="text"
-                        class="form-control pt-1"
-                        formControlName="observaElimina"></textarea>
+                        class="form-control"
+                        formControlName="observaElimina"
+                        [disabled]="!deleteG"></textarea>
                     </form-field>
                   </div>
                 </div>
