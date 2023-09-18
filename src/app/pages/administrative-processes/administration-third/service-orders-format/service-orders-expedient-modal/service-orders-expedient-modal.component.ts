@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
@@ -67,7 +68,11 @@ export class ServiceOrdersExpedientModalComponent
 
   ngOnInit(): void {
     this.getuser();
-    this.getAllByUser();
+    this.filterB();
+    this.filterA();
+    //this.getAllByUser();
+    console.log('BIENES ', this.BIENES);
+    console.log('data ', this.data);
   }
 
   close() {
@@ -93,14 +98,15 @@ export class ServiceOrdersExpedientModalComponent
           console.log('respuesta primer servicio ', response);
           for (let i = 0; i < response.data.length; i++) {
             let params = {
-              key: response.data[i].minutesKey,
-              status: response.data[i].statusMinutes,
-              user: response.data[i].user,
+              key: response.data[i].programmation.minutesKey,
+              status: response.data[i].programmation.statusMinutes,
+              user: response.data[i].programmation.user,
               noActa: response.data[i].minutesNum,
             };
             this.data2.push(params);
             this.localData2.load(this.data2);
             this.localData2.refresh();
+            this.totalItems2 = response.count;
           }
         },
       });
@@ -164,19 +170,117 @@ export class ServiceOrdersExpedientModalComponent
   }
 
   getGoodByNoActa(NoActa: number) {
+    if (this.selectedRow.noActa == null) {
+      return;
+    }
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
     this.data1 = [];
     this.localData.load(this.data1);
-    this.programmingGoodReceiptService.getTmpGoods(NoActa).subscribe({
+    this.programmingGoodReceiptService.getTmpGoods(NoActa, params).subscribe({
       next: response => {
         console.log('respuesta TMP GOODS ', response);
         for (let i = 0; i < response.data.length; i++) {
-          this.getGood(response.data[i].numberGood, NoActa);
+          //this.getGood(response.data[i].numberGood, NoActa);
+          const Ini =
+            response.data[i].vindprogrammation.iniDate != null
+              ? new Date(response.data[i].vindprogrammation.iniDate)
+              : null;
+          const formattedfecIni = Ini != null ? this.formatDate(Ini) : null;
+          const Fin =
+            response.data[i].vindprogrammation.endDate != null
+              ? new Date(response.data[i].vindprogrammation.endDate)
+              : null;
+          const formattedfecFin = Fin != null ? this.formatDate(Fin) : null;
+          let params = {
+            NumberGood: response.data[i].numberGood,
+            status: response.data[i].good.status,
+            description: response.data[i].good.description,
+            quantity: response.data[i].good.quantity,
+            DateIni: formattedfecIni,
+            DateFin: formattedfecFin,
+          };
+          this.data1.push(params);
+          this.localData.load(this.data1);
         }
+        this.totalItems = response.count;
       },
       error: err => {
         this.alert('error', 'Error', 'El Acta no Tiene asociado Ningun Bien');
       },
     });
+  }
+
+  filterB() {
+    this.localData
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'NumberGood':
+                field = `filter.numberGood`;
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'status':
+                field = `filter.good.status`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'description':
+                field = `filter.good.description`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'quantity':
+                field = `filter.good.quantity`;
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'DateIni':
+                var raw = filter.search;
+                var formatted = new DatePipe('en-EN').transform(
+                  raw,
+                  'yyyy-MM-dd',
+                  'UTC'
+                );
+                filter.search = formatted;
+                field = `filter.vindprogrammation.iniDate`;
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'DateFin':
+                var raw = filter.search;
+                var formatted = new DatePipe('en-EN').transform(
+                  raw,
+                  'yyyy-MM-dd',
+                  'UTC'
+                );
+                filter.search = formatted;
+                field = `filter.vindprogrammation.endDate`;
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getGoodByNoActa(this.selectedRow.noActa);
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodByNoActa(this.selectedRow.noActa));
   }
 
   getGood(numberGood: any, NoActa: any) {
