@@ -34,13 +34,24 @@
               </option>
             </select>
           </form-field> -->
-          <app-user-shared
+          <!-- <app-user-shared
             class="col-md-12"
             [form]="form"
             [userField]="'promoter'"
             [label]="'Usuario'"
             [id]="true"
-            (change)="onChangeUser($event)"></app-user-shared>
+            (change)="onChangeUser($event)"></app-user-shared> -->
+          <form-field [control]="form.get('user')">
+            <ngx-select
+              (fetchItems)="getUser($event)"
+              [data]="userSele"
+              [form]="form"
+              value="user"
+              bindLabel="name"
+              label="Usuario"
+              control="user">
+            </ngx-select>
+          </form-field>
         </div>
       </div>
     </form>

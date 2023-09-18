@@ -14,6 +14,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
@@ -163,6 +164,8 @@ export class SirsaeMovementSendingMainComponent
   lotes = new DefaultSelect();
   loadingBtnSendIn: boolean = false;
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
+  className = 'col-4';
+
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -173,7 +176,8 @@ export class SirsaeMovementSendingMainComponent
     private paymentService: PaymentService,
     private comerDetailsService: ComerDetailsService,
     private lotService: LotService,
-    private interfacesirsaeService: InterfacesirsaeService
+    private interfacesirsaeService: InterfacesirsaeService,
+    private comerEventosService: ComerEventosService
   ) {
     super();
     this.settings = {
@@ -195,6 +199,7 @@ export class SirsaeMovementSendingMainComponent
   }
 
   ngOnInit(): void {
+    // this.mapValToClass(this.layout)
     console.log('AQUI');
     this.route.paramMap.subscribe(params => {
       if (params.get('goodType')) {
@@ -265,6 +270,15 @@ export class SirsaeMovementSendingMainComponent
     //   .subscribe(() => this.getComerClientsXEvent());
 
     this.getData();
+  }
+
+  mapValToClass(layout?: any) {
+    if (this.layout == 'M') {
+      return 'col-10';
+    } else if (this.layout == 'I') {
+      return 'col-7';
+    }
+    return 'col-4';
   }
 
   private prepareForm(): void {
@@ -352,20 +366,23 @@ export class SirsaeMovementSendingMainComponent
         },
       });
     } else if (this.layout == 'I') {
-      if (lparams.text) params.addFilter('id', lparams.text, SearchFilter.EQ);
-      params.addFilter('address', this.layout, SearchFilter.EQ);
-      params.addFilter('eventTpId', `1,2,3,4,5`, SearchFilter.IN);
-      params.addFilter('statusVtaId', `CNE`, SearchFilter.NOT);
-
-      this.comerEventService.getAllFilter(params.getParams()).subscribe({
+      if (lparams.text)
+        params.addFilter('id_evento', lparams.text, SearchFilter.EQ);
+      params.addFilter3('pDirection', this.layout);
+      // params.addFilter('eventTpId', `1,2,3,4,5`, SearchFilter.IN);
+      // params.addFilter('statusVtaId', `CNE`, SearchFilter.NOT);
+      params.sortBy = `id_evento:DESC`;
+      this.comerEventosService.getLovEventos1(params.getParams()).subscribe({
         next: data => {
-          // let result = data.data.map(item => {
-          //   item['bindlabel_'] = item.id + ' - ' + item.description;
-          // });
-          // Promise.all(result).then(resp => {
-          console.log('EVENT', data);
-          this.comerEventSelect = new DefaultSelect(data.data, data.count);
-          // });
+          let result = data.data.map((item: any) => {
+            item['id'] = item.id_evento;
+            item['processKey'] = item.cve_proceso;
+            // item['bindlabel_'] = item.id + ' - ' + item.description;
+          });
+          Promise.all(result).then(resp => {
+            console.log('EVENT22', data);
+            this.comerEventSelect = new DefaultSelect(data.data, data.count);
+          });
         },
         error: err => {
           this.comerEventSelect = new DefaultSelect();
@@ -452,7 +469,7 @@ export class SirsaeMovementSendingMainComponent
     if (!this.eventSelected)
       return this.alert(
         'warning',
-        'Es necesario especificar un Evento para consultar',
+        'Es necesario especificar un evento para consultar',
         ''
       );
 
@@ -501,12 +518,12 @@ export class SirsaeMovementSendingMainComponent
   openForm(data: any, editVal: boolean) {
     if (this.layout == 'M') {
       if (!this.eventSelected) {
-        this.alert('warning', 'Es necesario especificar un Evento', '');
+        this.alert('warning', 'Es necesario especificar un evento', '');
         return;
       }
     } else if (this.layout == 'I') {
       if (!this.eventSelectedInmueble) {
-        this.alert('warning', 'Es necesario especificar un Evento', '');
+        this.alert('warning', 'Es necesario especificar un evento', '');
         return;
       }
     }
@@ -528,12 +545,12 @@ export class SirsaeMovementSendingMainComponent
   allNo() {
     if (this.layout == 'M') {
       if (!this.eventSelected) {
-        this.alert('warning', 'Es Necesario Especificar un Evento', '');
+        this.alert('warning', 'Es necesario especificar un evento', '');
         return;
       }
 
       if (this.data.count() == 0) {
-        this.alert('warning', 'No hay Clientes Cargados en la Tabla', '');
+        this.alert('warning', 'No hay clientes cargados en la tabla', '');
         return;
       }
 
@@ -544,12 +561,12 @@ export class SirsaeMovementSendingMainComponent
       });
     } else if (this.layout == 'I') {
       if (!this.eventSelectedInmueble) {
-        this.alert('warning', 'Es Necesario Especificar un Evento', '');
+        this.alert('warning', 'Es necesario especificar un evento', '');
         return;
       }
 
       if (this.data.count() == 0) {
-        this.alert('warning', 'No hay Clientes Cargados en la Tabla', '');
+        this.alert('warning', 'No hay clientes cargados en la tabla', '');
         return;
       }
 
@@ -563,12 +580,12 @@ export class SirsaeMovementSendingMainComponent
   allYes() {
     if (this.layout == 'M') {
       if (!this.eventSelected) {
-        this.alert('warning', 'Es Necesario Especificar un Evento', '');
+        this.alert('warning', 'Es necesario especificar un evento', '');
         return;
       }
 
       if (this.data.count() == 0) {
-        this.alert('warning', 'No hay Clientes Cargados en la Tabla', '');
+        this.alert('warning', 'No hay clientes cargados en la tabla', '');
         return;
       }
 
@@ -580,12 +597,12 @@ export class SirsaeMovementSendingMainComponent
       });
     } else if (this.layout == 'I') {
       if (!this.eventSelectedInmueble) {
-        this.alert('warning', 'Es Necesario Especificar un Evento', '');
+        this.alert('warning', 'Es necesario especificar un evento', '');
         return;
       }
 
       if (this.data.count() == 0) {
-        this.alert('warning', 'No hay Clientes Cargados en la Tabla', '');
+        this.alert('warning', 'No hay clientes cargados en la tabla', '');
         return;
       }
 
@@ -630,7 +647,7 @@ export class SirsaeMovementSendingMainComponent
 
   async enviarSIRSAE() {
     if (!this.eventSelected) {
-      this.alert('warning', 'Es necesario especificar un Evento', '');
+      this.alert('warning', 'Es necesario especificar un evento', '');
       return;
     }
     if (this.layout == 'M') {
@@ -898,7 +915,7 @@ export class SirsaeMovementSendingMainComponent
   obtenerOI() {
     if (this.layout == 'M') {
       if (!this.eventSelected) {
-        this.alert('warning', 'Es necesario especificar un Evento', '');
+        this.alert('warning', 'Es necesario especificar un evento', '');
         return;
       }
       const data: any = this.data.getAll().then(async resp => {
@@ -930,7 +947,7 @@ export class SirsaeMovementSendingMainComponent
       });
     } else if (this.layout == 'I') {
       if (!this.eventSelectedInmueble) {
-        this.alert('warning', 'Es necesario especificar un Evento', '');
+        this.alert('warning', 'Es necesario especificar un evento', '');
         return;
       }
       this.loadingBtnOIICliente = true;
@@ -969,7 +986,7 @@ export class SirsaeMovementSendingMainComponent
   async obtenerOIInmueble() {
     // ENVIA_LEE_SIRSAE(2, null);
     if (!this.eventSelected) {
-      this.alert('warning', 'Es necesario especificar un Evento', '');
+      this.alert('warning', 'Es necesario especificar un evento', '');
       return;
     }
     this.loadingBtnOII = true;
@@ -1013,7 +1030,7 @@ export class SirsaeMovementSendingMainComponent
 
     params.addFilter('idEvent', this.eventSelected.id, SearchFilter.EQ);
     params.addFilter('idStatusVta', 'PAG', SearchFilter.NOT);
-
+    params.addFilter('idClient', '$null', SearchFilter.NOT);
     this.lotService.getLotbyEvent_(params.getParams()).subscribe({
       next: data => {
         console.log('LOTES', data);
@@ -1041,23 +1058,27 @@ export class SirsaeMovementSendingMainComponent
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    if (lparams.text) params.addFilter('id', lparams.text, SearchFilter.EQ);
-    params.addFilter('address', this.layout, SearchFilter.EQ);
-    params.addFilter('eventTpId', `1,2,3,4,5`, SearchFilter.NOTIN);
-    params.addFilter('statusVtaId', `CNE`, SearchFilter.NOT);
-
-    this.comerEventService.getAllFilter(params.getParams()).subscribe({
+    if (lparams.text)
+      params.addFilter('id_evento', lparams.text, SearchFilter.EQ);
+    // params.addFilter('address', this.layout, SearchFilter.EQ);
+    // params.addFilter('eventTpId', `1,2,3,4,5`, SearchFilter.NOTIN);
+    // params.addFilter('statusVtaId', `CNE`, SearchFilter.NOT);
+    params.addFilter3('pDirection', this.layout);
+    params.sortBy = `id_evento:DESC`;
+    this.comerEventosService.getLovEventos1(params.getParams()).subscribe({
       next: data => {
-        // let result = data.data.map(item => {
-        //   item['bindlabel_'] = item.id + ' - ' + item.description;
-        // });
-        // Promise.all(result).then(resp => {
-        console.log('EVENT', data);
-        this.comerEventSelectInmueble = new DefaultSelect(
-          data.data,
-          data.count
-        );
-        // });
+        let result = data.data.map((item: any) => {
+          item['id'] = item.id_evento;
+          item['processKey'] = item.cve_proceso;
+          // item['bindlabel_'] = item.id + ' - ' + item.description;
+        });
+        Promise.all(result).then(resp => {
+          console.log('EVENT', data);
+          this.comerEventSelectInmueble = new DefaultSelect(
+            data.data,
+            data.count
+          );
+        });
       },
       error: err => {
         this.comerEventSelectInmueble = new DefaultSelect();
@@ -1076,7 +1097,7 @@ export class SirsaeMovementSendingMainComponent
     if (!this.eventSelectedInmueble)
       return this.alert(
         'warning',
-        'Es necesario especificar un Evento para consultar',
+        'Es necesario especificar un evento para consultar',
         ''
       );
 
@@ -1105,7 +1126,7 @@ export class SirsaeMovementSendingMainComponent
 
   async enviarSIRSAExCliente() {
     if (!this.eventSelectedInmueble) {
-      this.alert('warning', 'Es necesario especificar un Evento', '');
+      this.alert('warning', 'Es necesario especificar un evento', '');
       return;
     }
     const data: any = this.data.getAll().then(async resp => {
@@ -1215,7 +1236,7 @@ export class SirsaeMovementSendingMainComponent
 
   obtenerOIxCliente() {
     if (!this.eventSelectedInmueble) {
-      this.alert('warning', 'Es necesario especificar un Evento', '');
+      this.alert('warning', 'Es necesario especificar un evento', '');
       return;
     }
 

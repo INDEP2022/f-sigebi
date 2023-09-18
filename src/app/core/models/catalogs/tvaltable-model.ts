@@ -11,4 +11,7 @@ export interface ITvaltables1 {
   otvalor: string;
   registerNumber: string;
   abbreviation: string;
+  yes?: number;
+  not?: number;
+  name?: string
 }
