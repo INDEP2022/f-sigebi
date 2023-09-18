@@ -13,6 +13,7 @@ import { RegionalDelegationService } from 'src/app/core/services/catalogs/region
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ButtonColumnDocComponent } from 'src/app/shared/components/button-column-doc/button-column-doc.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { MONTH_COLUMNS, UNEXPOSED_GOODS_COLUMNS } from './columns';
 
@@ -115,15 +116,49 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
       ...this.settings,
       actions: false,
       hideSubHeader: false,
-      columns: { ...UNEXPOSED_GOODS_COLUMNS },
+      columns: {
+        office: {
+          title: 'Detalle',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          filter: false,
+          renderComponent: ButtonColumnDocComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              //console.log(row);
+              this.onSelectOffice(row);
+            });
+          },
+        },
+        ...UNEXPOSED_GOODS_COLUMNS,
+      },
     };
     this.settings1 = {
       ...this.settings,
       actions: false,
       hideSubHeader: false,
-      columns: { ...MONTH_COLUMNS },
+      columns: {
+        office: {
+          title: 'Detalle',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          filter: false,
+          renderComponent: ButtonColumnDocComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              //console.log(row);
+              this.onSelectOffice(row);
+            });
+          },
+        },
+        ...MONTH_COLUMNS,
+      },
     };
   }
+
+  onSelectOffice(event: any) {}
 
   ngOnInit(): void {
     this.prepareForm();
