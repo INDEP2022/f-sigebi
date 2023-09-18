@@ -24,14 +24,6 @@
                   (keydown)="onKeyDownIdContract($event)" />
               </form-field>
             </div>
-            <form-field
-              [control]="form.get('idContract')"
-              label="Id Contrato o Convenio">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="idContract" />
-            </form-field>
           </div>
           <div class="col">
             <div class="justify-content-start">
@@ -57,11 +49,10 @@
           </div>
           <div class="col">
             <form-field [control]="form.get('status')" label="Estado">
-              <select class="form-control" formControlName="status">
-                <option [value]="null">Seleccione un valor</option>
-                <option [value]="1">1</option>
-                <option [value]="2">2</option>
-              </select>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="status" />
             </form-field>
           </div>
           <div class="col">

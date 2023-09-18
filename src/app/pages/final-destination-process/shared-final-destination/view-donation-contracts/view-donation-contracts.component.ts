@@ -356,6 +356,18 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
         this.form.controls['reasonSocial'].setValue(
           data.data[0].doneeId.razonSocial
         );
+        this.form.controls['cto'].setValue(data.data[0].requestId.affair);
+        this.form.controls['status'].setValue(data.data[0].sunStatus);
+        this.form.controls['trans'].setValue(
+          data.data[0].requestId.transferenceId
+        );
+        this.form.controls['don'].setValue(data.data[0].doneeId.col);
+        this.form.controls['ctrlAut'].setValue(data.data[0].authorizeType);
+        this.form.controls['folio'].setValue(
+          data.data[0].requestId.rulingDocumentId
+        );
+        this.form.controls['contractKey'].setValue(data.data[0].authorizeCve);
+        this.form.controls['job'].setValue(data.data[0].requestId.reportSheet);
       },
       error: error => {
         console.log(error);
