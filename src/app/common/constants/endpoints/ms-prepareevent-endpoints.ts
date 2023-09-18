@@ -20,4 +20,6 @@ export enum PrepareEventEndpoints {
   UpdatePhase = 'comer-event/update-phase',
   GetProcessPhase3Ant = 'application/get-process-phase3-ant',
   GetValidLiquidation = 'application/get-valid-liquidation',
+  UpdateBySubquery = 'comer-event/update-by-subquery',
+  EnvFormalize = 'util-comer-v1/envformalize',
 }

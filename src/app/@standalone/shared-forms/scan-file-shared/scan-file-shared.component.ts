@@ -35,6 +35,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
   @Input() reportPrint: string;
   @Input() replicateFolioView: boolean = true;
   @Input() actaSC: boolean = false;
+  @Input() disabled: boolean = false;
 
   @Output() emitfileNumber = new EventEmitter();
 
