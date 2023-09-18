@@ -1,7 +1,12 @@
 <div class="d-flex justify-content-end">
   <div>
-    <button button type="button" tooltip="Nuevo" containerClass="tooltip-style"
-      class="btn btn-info btn-sm active ml-2 mr-2" (click)="loadModal(false, $event)">
+    <button
+      button
+      type="button"
+      tooltip="Nuevo"
+      containerClass="tooltip-style"
+      class="btn btn-info btn-sm active ml-2 mr-2"
+      (click)="loadModal(false, $event)">
       Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
     </button>
   </div>
@@ -10,7 +15,10 @@
 </div>
 
 <div class="row mt-2">
-  <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" (edit)="loadModal(true, $event)"
+  <ng2-smart-table
+    [attr.class]="'table-bordered'"
+    [settings]="settings"
+    (edit)="loadModal(true, $event)"
     [source]="data">
   </ng2-smart-table>
 </div>
@@ -22,3 +30,4 @@
 <div class="row" *ngIf="this.type == 4">
   <app-pagination [params]="params" [totalItems]="totalItem4"> </app-pagination>
 </div>
+

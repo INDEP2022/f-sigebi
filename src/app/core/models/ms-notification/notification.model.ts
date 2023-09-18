@@ -74,6 +74,7 @@ export interface INotification {
   stationNumber: number;
   autorityNumber: number;
   endTransferNumber: number;
+  reason?: string;
   dailyEviction: number;
   hcCaptureDate?: Date | string;
   hcEntryProcedureDate?: Date;

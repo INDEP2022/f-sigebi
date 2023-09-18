@@ -5,56 +5,101 @@
     </h5>
   </div>
   <div body>
-    <form action="" class="form-material" [formGroup]="form" *ngIf="this.type == 1 || this.type == 2 || this.type == 3">
+    <form
+      action=""
+      class="form-material"
+      [formGroup]="form"
+      *ngIf="this.type == 1 || this.type == 2 || this.type == 3">
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="form.get('labelId')" label="Etiqueta">
-            <input type="number" maxlength="30" class="form-control" formControlName="labelId" [readonly]="true" />
+            <input
+              type="number"
+              maxlength="30"
+              class="form-control"
+              formControlName="labelId"
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('status')" label="Estatus">
-            <input type="text" maxlength="3" class="form-control" formControlName="status" />
+            <input
+              type="text"
+              maxlength="3"
+              class="form-control"
+              formControlName="status" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('desStatus')" label="Des. Estatus">
-            <input type="text" maxlength="100" class="form-control" formControlName="desStatus" />
+            <input
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="desStatus" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('transferentId')" label="No. Trans.">
-            <input type="number" maxlength="40" class="form-control" formControlName="transferentId" />
+            <input
+              type="number"
+              maxlength="40"
+              class="form-control"
+              formControlName="transferentId" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('keyCode')" label="Des. Trans.">
-            <input type="text" maxlength="100" class="form-control" formControlName="keyCode" />
+            <input
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="keyCode" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('clasifId')" label="No. Clasif.">
-            <input type="number" maxlength="40" class="form-control" formControlName="clasifId" />
+            <input
+              type="number"
+              maxlength="40"
+              class="form-control"
+              formControlName="clasifId" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('desClasif')" label="Des. Clasif.">
-            <input type="text" maxlength="100" class="form-control" formControlName="desClasif" />
+            <input
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="desClasif" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('unit')" label="Unidad">
-            <input type="text" maxlength="30" class="form-control" formControlName="unit" />
+            <input
+              type="text"
+              maxlength="30"
+              class="form-control"
+              formControlName="unit" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('ruleId')" label="Id Regla">
-            <input type="number" maxlength="40" class="form-control" formControlName="ruleId" />
+            <input
+              type="number"
+              maxlength="40"
+              class="form-control"
+              formControlName="ruleId" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('valid')" label="Valida">
-            <ng-select formControlName="valid" [searchable]="false" class="form-control" [clearable]="false">
+            <ng-select
+              formControlName="valid"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
               <ng-option value="1">Sí</ng-option>
               <ng-option value="0">No</ng-option>
             </ng-select>
@@ -62,13 +107,20 @@
         </div>
         <div class="col-md-6" *ngIf="this.type == 3">
           <form-field [control]="form.get('amount')" label="Cantidad">
-            <input type="number" class="form-control" formControlName="amount" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="amount" />
           </form-field>
         </div>
       </div>
     </form>
 
-    <form action="" class="form-material" [formGroup]="form" *ngIf="this.type == 4">
+    <form
+      action=""
+      class="form-material"
+      [formGroup]="form"
+      *ngIf="this.type == 4">
       <div class="row">
         <!-- <div class="col-md-6">
           <form-field [control]="form.get('otkey')" label="Clave">
@@ -79,9 +131,17 @@
           <!-- <form-field [control]="form.get('value')" label="Usuario">
             <input type="text" class="form-control" formControlName="value" />
           </form-field> -->
-          <ng-custom-select-loading [form]="form" formControlName="value" label="Usuario" value="id" bindLabel="name"
-            loadingText="Cargando usuarios..." typeToSearchText="Escriba el nombre del usuario"
-            path="users/api/v1/seg-users" [labelTemplate]="usuarioLabel" [readonly]="newOrEdit"
+          <ng-custom-select-loading
+            [form]="form"
+            formControlName="value"
+            label="Usuario"
+            value="id"
+            bindLabel="name"
+            loadingText="Cargando usuarios..."
+            typeToSearchText="Escriba el nombre del usuario"
+            path="users/api/v1/seg-users"
+            [labelTemplate]="usuarioLabel"
+            [readonly]="newOrEdit"
             [optionTemplate]="usuarioOption">
           </ng-custom-select-loading>
         </div>
@@ -101,7 +161,11 @@
         </div> -->
         <div class="col-md-6">
           <form-field [control]="form.get('valid')" label="Abreviatura">
-            <ng-select formControlName="valid" [searchable]="false" class="form-control" [clearable]="false">
+            <ng-select
+              formControlName="valid"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
               <ng-option value="S">Sí</ng-option>
               <ng-option value="N">No</ng-option>
             </ng-select>
@@ -113,15 +177,25 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [text]="this.textBtn" [icon]="
+        <confirm-button
+          [text]="this.textBtn"
+          [icon]="
             this.newOrEdit
               ? 'fas fa-edit bx-sm float-icon'
               : 'fas fa-save bx-sm float-icon'
-          " [type]="'button'" [loading]="false" [btnSmall]="true" [disabled]="form.invalid" (confirm)="confirm()">
+          "
+          [type]="'button'"
+          [loading]="false"
+          [btnSmall]="true"
+          [disabled]="form.invalid"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active btn-sm" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
           Cancelar
         </button>
       </div>

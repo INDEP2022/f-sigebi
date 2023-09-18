@@ -122,7 +122,7 @@ export class DataTableComponent extends BasePage implements OnInit {
   }
 
   getTracker() {
-    console.log(" getTracker ");
+    console.log(' getTracker ');
     const params: ListParams = {};
     params['filter.nmtable'] = '$eq:421';
 
@@ -130,7 +130,7 @@ export class DataTableComponent extends BasePage implements OnInit {
 
     this.tvalTable1Service.getAlls(this.params.getValue()).subscribe({
       next: response => {
-        console.log("data tracer ", response);
+        console.log('data tracer ', response);
         for (let i = 0; i < response.data.length; i++) {
           const params: ListParams = {};
           params['filter.id'] = `$eq:${response.data[i].otvalor}`;
@@ -159,21 +159,19 @@ export class DataTableComponent extends BasePage implements OnInit {
               }
             },
             error: error => {
-              console.log("error tracer ", error);
+              console.log('error tracer ', error);
               this.loading = false;
             },
           });
         }
       },
       error: error => {
-        console.log("error ", error);
+        console.log('error ', error);
         this.loading = false;
       },
     });
   }
-
-
-  getUsers(name: string) { }
+  getUsers(name: string) {}
 
   loadModal(bool: boolean, data: any) {
     if (data != null) {
