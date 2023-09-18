@@ -8,6 +8,7 @@ import { ApprovalForDonationComponent } from './approval-for-donation/approval-f
 import { CaptureApprovalDonationComponent } from './capture-approval-donation/capture-approval-donation.component';
 import { CreateActaComponent } from './create-acta/create-acta.component';
 import { FindActaComponent } from './find-acta/find-acta.component';
+import { GoodErrorComponent } from './good-error/good-error.component';
 import { ModalApprovalDonationComponent } from './modal-approval-donation/modal-approval-donation.component';
 
 @NgModule({
@@ -17,6 +18,7 @@ import { ModalApprovalDonationComponent } from './modal-approval-donation/modal-
     ModalApprovalDonationComponent,
     FindActaComponent,
     CreateActaComponent,
+    GoodErrorComponent,
   ],
   imports: [
     CommonModule,

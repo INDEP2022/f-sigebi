@@ -54,7 +54,6 @@ export class ConsultationGoodsCommercialBillsComponent
           title: 'Seleccionar',
           sort: false,
           type: 'custom',
-          showAlways: true,
           valuePrepareFunction: (departament: any, row: any) =>
             this.isRowSelected(row),
           renderComponent: CheckboxElementComponent,

@@ -28,32 +28,32 @@
         </div>
         <ng-container *ngIf="op === 1">
           <div class="col-12 col-md-2">
-            <form-field
-              [control]="form.get('id_donatario')"
-              label="Id. Donatario">
+            <form-field [control]="form.get('doneeId')" label="Id. Donatario">
               <input
                 type="text"
                 class="form-control"
-                formControlName="id_donatario" />
+                formControlName="doneeId" />
             </form-field>
           </div>
           <div class="col-12 col-md-2">
-            <form-field [control]="form.get('no_almacen')" label="No. Almacén">
+            <form-field
+              [control]="form.get('delegationNumber')"
+              label="No. Almacén">
               <input
                 type="text"
                 class="form-control"
-                formControlName="no_almacen" />
+                formControlName="delegationNumber" />
             </form-field>
           </div>
         </ng-container>
         <div class="col-12 col-md-2">
           <form-field
-            [control]="form.get('tipo_solicitud')"
+            [control]="form.get('requestType')"
             label="Tipo Solicitud">
             <input
               type="text"
               class="form-control"
-              formControlName="tipo_solicitud" />
+              formControlName="requestType" />
           </form-field>
         </div>
       </div>
