@@ -348,9 +348,9 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         // params.addFilter('cve_banco', lparams.text);
       }
     params.sortBy = `idLot:DESC`;
-    // if (this.valEvent) {
-    //   params.addFilter('eat_events.address', this.layout, SearchFilter.EQ);
-    // }
+    if (this.valEvent) {
+      params.addFilter('eat_events.address', this.layout, SearchFilter.EQ);
+    }
 
     this.lotService.getLotbyEvent_(params.getParams()).subscribe({
       next: data => {

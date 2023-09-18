@@ -274,9 +274,9 @@ export class SirsaeMovementSendingMainComponent
 
   mapValToClass(layout?: any) {
     if (this.layout == 'M') {
-      return 'col-10';
+      return 'col-6';
     } else if (this.layout == 'I') {
-      return 'col-7';
+      return 'col-6';
     }
     return 'col-4';
   }
@@ -502,6 +502,11 @@ export class SirsaeMovementSendingMainComponent
     this.clearSubheaderFields();
   }
 
+  clear2() {
+    this.form.reset();
+    this.getComerEvents(new ListParams());
+    this.eventSelected = null;
+  }
   async clearSubheaderFields() {
     const subheaderFields: any = this.table.grid.source;
     const filterConf = subheaderFields.filterConf;

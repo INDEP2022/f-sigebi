@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
@@ -31,16 +32,18 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
     private comerInvoiceService: ComerInvoiceService,
     private authService: AuthService,
     private userService: UsersService,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private datePipe: DatePipe
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.user = this.authService.decodeToken();
+    console.log(this.data);
   }
 
-  validate() {
+  async validate() {
     let cont_sel: number = 0;
     let aux: number = 0;
     let aux2: number = 0;
@@ -48,8 +51,10 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
     let aux_auto: number = 0;
     let cf_leyenda: string = '';
     let cf_nuevafact: number;
+    let yyyy: number;
 
-    const { refactura, folio, userV, passwordV } = this.form.value;
+    const { refactura, folio, userV, passwordV, causerebillId } =
+      this.form.value;
     this.loading = true;
 
     if (refactura == 'P' && this.global.canxp == 'S') {
@@ -62,6 +67,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
           this.loading = false;
           return;
         } else {
+          this.cancelXSolPayment();
           //se ejecuta el procedimiento pup_cancelaxsolpago
         }
       });
@@ -163,12 +169,311 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
               }
             }
           }
+          const p_val = await this.pValSat(this.data[0]);
 
-          //Se ejecuta paquete p_valores_sat
+          if (!p_val) {
+            this.alert(
+              'error',
+              'Ha ocurrido un error en el procedimiento valores sat',
+              ''
+            );
+            this.loading = false;
+            return;
+          }
         }
       });
+      //filter por idEvent
       this.modalRef.content.callback(true, 0);
+    } else {
+      aux_auto = await this.validConexUser(
+        userV,
+        passwordV,
+        this.user.department
+      );
+      this.parameter.autorizo = aux_auto;
+      this.modalRef.hide();
+
+      if (aux_auto == 1) {
+        for (const invoice of this.data) {
+          yyyy = Number(invoice.impressionDate.split('/')[0]);
+          if (invoice.Invoice) {
+            this.alertInfo(
+              'warning',
+              'Atención',
+              `No se puede cancelar una factura sin folio para el evento: ${invoice.eventId} y lote ${invoice.batchId}`
+            );
+          } else {
+            if (String(invoice.series ?? '').length > 1) {
+              cf_leyenda = `Este CFDI refiere al CFDI ${invoice.series} - ${invoice.Invoice}`;
+            } else {
+              cf_leyenda = `Este CFDI refiere a la factura ${invoice.series} - ${invoice.Invoice}`;
+            }
+
+            if (refactura == 'R') {
+              if ([2010, 2011].includes(yyyy)) {
+                if (yyyy == 2010) {
+                  const body: any = {
+                    pEventO: Number(invoice.eventId),
+                    pInvoiceO: Number(invoice.billId),
+                    pLegend: cf_leyenda,
+                    pAuthorized: userV,
+                    pStatus: 'PREF',
+                    pImagen: 1,
+                    pCfdi: 1,
+                    pLot: Number(invoice.batchId),
+                    pCause: Number(causerebillId),
+                    pDeletedEmits: Number(this.user.department),
+                  };
+
+                  cf_nuevafact = await this.copyInovice(body);
+
+                  if (cf_nuevafact) {
+                    const success = await this.cancelInvoiceComer(body);
+                    if (success) {
+                      invoice.factstatusId = 'CAN';
+                      invoice.causerebillId = causerebillId;
+                      invoice.userIauthorize = this.user.preferred_username;
+                      invoice.IauthorizeDate = this.datePipe.transform(
+                        new Date(),
+                        'yyyy-MM-dd'
+                      );
+
+                      //update invoice service invoice
+                    }
+                  }
+                } else if (yyyy > 2010) {
+                  if (String(invoice.series ?? '').length > 1) {
+                    const body: any = {
+                      pEventO: Number(invoice.eventId),
+                      pInvoiceO: Number(invoice.billId),
+                      pLegend: cf_leyenda,
+                      pAuthorized: userV,
+                      pStatus: 'PREF',
+                      pImagen: 1,
+                      pCfdi: 0,
+                      pLot: Number(invoice.batchId),
+                      pCause: Number(causerebillId),
+                      pDeletedEmits: Number(this.user.department),
+                    };
+
+                    cf_nuevafact = await this.copyInovice(body);
+
+                    if (cf_nuevafact) {
+                      //procedimiento cancelar factura
+                      const success = await this.cancelInvoiceComer(body);
+                      if (success) {
+                        invoice.factstatusId = 'CAN';
+                        invoice.causerebillId = causerebillId;
+                        invoice.userIauthorize = this.user.preferred_username;
+                        invoice.IauthorizeDate = this.datePipe.transform(
+                          new Date(),
+                          'yyyy-MM-dd'
+                        );
+
+                        //update invoice service invoice
+                      }
+                    }
+                  } else {
+                    const body: any = {
+                      pEventO: Number(invoice.eventId),
+                      pInvoiceO: Number(invoice.billId),
+                      pLegend: cf_leyenda,
+                      pAuthorized: userV,
+                      pStatus: 'PREF',
+                      pImagen: 1,
+                      pCfdi: 1,
+                      pLot: Number(invoice.batchId),
+                      pCause: Number(causerebillId),
+                      pDeletedEmits: Number(this.user.department),
+                    };
+
+                    cf_nuevafact = await this.copyInovice(body);
+
+                    if (cf_nuevafact) {
+                      const body = {
+                        invoiceId: invoice.billId,
+                        eventId: invoice.eventId,
+                        batchId: invoice.batchId,
+                      };
+                      const success = await this.cancelInvoiceComer(body);
+                      if (success) {
+                        invoice.factstatusId = 'CAN';
+                        invoice.causerebillId = causerebillId;
+                        invoice.userIauthorize = this.user.preferred_username;
+                        invoice.IauthorizeDate = this.datePipe.transform(
+                          new Date(),
+                          'yyyy-MM-dd'
+                        );
+
+                        //update invoice service invoice
+                      }
+                    }
+                  }
+                }
+              } else if (yyyy > 2011) {
+                const body = {
+                  invoiceId: invoice.billId,
+                  eventId: invoice.eventId,
+                  batchId: invoice.batchId,
+                };
+                const success = await this.cancelInvoiceComer(body);
+                if (success) {
+                  invoice.factstatusId = 'CAN';
+                  invoice.causerebillId = causerebillId;
+                  invoice.userIauthorize = this.user.preferred_username;
+                  invoice.IauthorizeDate = this.datePipe.transform(
+                    new Date(),
+                    'yyyy-MM-dd'
+                  );
+
+                  //update invoice service invoice
+                }
+
+                const body2: any = {
+                  pEventO: Number(invoice.eventId),
+                  pInvoiceO: Number(invoice.billId),
+                  pLegend: cf_leyenda,
+                  pAuthorized: userV,
+                  pStatus: 'PREF',
+                  pImagen: 1,
+                  pCfdi: 0,
+                  pLot: Number(invoice.batchId),
+                  pCause: Number(causerebillId),
+                  pDeletedEmits: Number(this.user.department),
+                };
+
+                cf_nuevafact = await this.copyInovice(body2);
+              } else if (yyyy <= 2009) {
+                this.alert(
+                  'warning',
+                  'Atención',
+                  'Año 2009 proceso por definir'
+                );
+                this.loading = false;
+              }
+
+              if (cf_nuevafact > 0) {
+                //lipcommit silent
+              } else {
+                this.alert(
+                  'warning',
+                  'Atención',
+                  'Fallo de operación de cancelación'
+                );
+                this.loading = false;
+              }
+            } else if (refactura == 'C') {
+              if ([2010, 2011].includes(yyyy)) {
+                const body: any = {
+                  pEventO: Number(invoice.eventId),
+                  pInvoiceO: Number(invoice.billId),
+                  pLegend: cf_leyenda,
+                  pAuthorized: userV,
+                  pStatus: 'PREF',
+                  pImagen: 1,
+                  pCfdi: 2,
+                  pLot: Number(invoice.batchId),
+                  pCause: Number(causerebillId),
+                  pDeletedEmits: Number(this.user.department),
+                };
+
+                cf_nuevafact = await this.copyInovice(body);
+
+                if (cf_nuevafact) {
+                  const success = await this.cancelInvoiceComer(body);
+                  if (success) {
+                    invoice.factstatusId = 'CAN';
+                    invoice.causerebillId = causerebillId;
+                    invoice.userIauthorize = this.user.preferred_username;
+                    invoice.IauthorizeDate = this.datePipe.transform(
+                      new Date(),
+                      'yyyy-MM-dd'
+                    );
+
+                    //update invoice service invoice
+                  }
+                }
+              } else if (yyyy <= 2009) {
+                this.alert(
+                  'warning',
+                  'Atención',
+                  'Año 2009 proceso por definir'
+                );
+                this.loading = false;
+              }
+            }
+          }
+        }
+      }
     }
+
+    this.modalRef.content.callback(true, 0);
+    //filtrar por idevento y id_estatus != CAN = filter.eventId=5604&filter.factstatusId=$not:CAN
+  }
+
+  async cancelXSolPayment() {
+    let aux_auto: number = 0;
+    let cf_leyenda: string = '';
+    let cf_nuevafact: number;
+    let borra: string;
+    let yyyy: number;
+    let numreg: number;
+    let aut: number = 0;
+    let plote: number;
+    let total: number;
+    let v_precioivta: number;
+    let v_iva: number;
+    let v_total: number;
+    let monto_valid: number;
+
+    const { refactura, folio, userV, passwordV, causerebillId } =
+      this.form.value;
+
+    aux_auto = await this.validConexUser(
+      userV,
+      passwordV,
+      this.user.department
+    );
+    this.parameter.autorizo = aux_auto;
+    this.modalRef.hide();
+
+    if (aux_auto == 1) {
+    } //fin aux_auto
+  }
+
+  async cancelInvoiceComer(data: any) {
+    return firstValueFrom<boolean>(
+      this.comerInvoiceService.cancelInvoice(data).pipe(
+        map(resp => {
+          return true;
+        }),
+        catchError(() => of(false))
+      )
+    );
+  }
+
+  async copyInovice(data: any) {
+    return firstValueFrom<number>(
+      this.comerInvoiceService.copyInvoice(data).pipe(
+        map(resp => resp),
+        catchError(() => of(0))
+      )
+    );
+  }
+
+  async pValSat(data: any) {
+    const body: any = {
+      pEventId: data.eventId,
+      pLot: data.batchId,
+      pInvoice: null,
+      pOption: 2,
+    };
+    return firstValueFrom(
+      this.comerInvoiceService.invoicePValuesSat(body).pipe(
+        map(() => true),
+        catchError(() => of(false))
+      )
+    );
   }
 
   async validConexUser(user: string, password: string, delegation: string) {
