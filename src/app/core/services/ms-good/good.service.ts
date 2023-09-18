@@ -510,4 +510,9 @@ export class GoodService extends HttpService {
   updateGood(params?: any): Observable<IListResponse<any>> {
     return this.put(GoodEndpoints.Good, params);
   }
+
+  updateByBody(formData: Object) {
+    const route = `good/api/v1/good`;
+    return this.http.put(`${environment.API_URL}/${route}`, formData);
+  }
 }
