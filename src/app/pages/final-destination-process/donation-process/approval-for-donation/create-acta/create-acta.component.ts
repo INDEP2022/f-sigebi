@@ -87,23 +87,19 @@ export class CreateActaComponent extends BasePage implements OnInit {
 
   async actaForm() {
     this.actaRecepttionForm = this.fb.group({
-      acta: [null, Validators.required],
       type: [null, Validators.required],
-      claveTrans: [null, Validators.required],
-      administra: [null, Validators.required],
-      //cveReceived: [null, Validators.required],
+      fileId: [null, Validators.required],
       consec: [null, Validators.required],
-      // ejecuta: [null],
       anio: [null, [Validators.required]],
-      mes: [null, [Validators.required]],
+      captureDate: [null],
       cveActa: [null],
       observaciones: [null],
       testigoOne: [null, [Validators.required]],
       testigoTree: [null, [Validators.required]],
-      respConv: [null, [Validators.required]],
-      elaboradate: [null, Validators.required],
-      fechaact: [null, Validators.required],
-      fechacap: [null, Validators.required],
+      respConv: [null],
+      elaboradate: [null],
+      fechaact: [null],
+      fechacap: [null],
       // witness1: [null],
       // witness2: [null],
     });
@@ -152,7 +148,6 @@ export class CreateActaComponent extends BasePage implements OnInit {
     if (lparams?.text.length > 0)
       if (!isNaN(parseInt(lparams?.text))) {
         console.log('SI');
-
         params.addFilter('numberDelegation2', lparams.text, SearchFilter.EQ);
       } else {
         params.addFilter('delegation', lparams.text, SearchFilter.ILIKE);
@@ -176,54 +171,11 @@ export class CreateActaComponent extends BasePage implements OnInit {
     // });
   }
 
-  consultREG_TRANSFERENTES(lparams: ListParams) {
-    console.log('LPARAMS - ', lparams);
-    let obj = {
-      transfereeNumber: this.fileNumber.expTransferNumber,
-      expedientType: this.fileNumber.expedientType,
-    };
-
-    console.log('ObJ --', obj);
-
-    const params = new FilterParams();
-
-    params.page = lparams.page;
-    params.limit = lparams.limit;
-
-    if (lparams?.text.length > 0)
-      if (!isNaN(parseInt(lparams?.text))) {
-        console.log('SI');
-
-        params.addFilter3('number', lparams.text);
-      } else {
-        params.addFilter3('password', lparams.text);
-      }
-
-    this.transferenteService.appsGetPassword(obj, lparams).subscribe({
-      next: (data: any) => {
-        console.log('data', data);
-        let result = data.data.map(async (item: any) => {
-          item['transfer'] =
-            item.password + ' - ' + item.number + ' - ' + item.name;
-        });
-
-        Promise.all(result).then(resp => {
-          this.trans = new DefaultSelect(data.data, data.count);
-        });
-        console.log('data222', data);
-      },
-      error: error => {
-        this.trans = new DefaultSelect([], 0);
-      },
-    });
-  }
-
   agregarActa() {
     const acta = this.actaRecepttionForm.value.acta;
     const type = this.actaRecepttionForm.value.type;
-    const claveTrans = this.actaRecepttionForm.value.claveTrans;
     const respConv = this.actaRecepttionForm.value.respConv;
-    //const cveReceived = this.actaRecepttionForm.value.cveReceived;
+    const obser = this.actaRecepttionForm.value.observaciones;
     const administra = this.actaRecepttionForm.value.administra;
     const consec = this.actaRecepttionForm.value.consec;
     this.witnessOic = this.actaRecepttionForm.value.testigoOIC;
@@ -231,7 +183,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     this.witnessAdm = this.actaRecepttionForm.value.testigoTree;
     //this.cve_recibe = this.actaRecepttionForm.value.respConv;
     const anio = this.actaRecepttionForm.value.anio;
-    const mes = this.actaRecepttionForm.value.mes;
+    const mes = this.actaRecepttionForm.value.captureDate;
 
     const miCadenaAnio = anio + '';
     const miSubcadena = miCadenaAnio.slice(2, 5);
@@ -248,10 +200,9 @@ export class CreateActaComponent extends BasePage implements OnInit {
       consec_ = consec_.toString().slice(0, 4);
     }
 
-    //const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${cveReceived}/${consec_}/${miSubcadena
-    const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${respConv}/${consec_}/${miSubcadena
-      .toString()
-      .padStart(2, '0')}/${mes.value.toString().padStart(2, '0')}`;
+    const cveActa = `${
+      this.authService.decodeToken().department
+    }/${consec_}/${anio}`;
     console.log('cveActa -->', cveActa);
 
     if (cveActa) {
@@ -284,33 +235,25 @@ export class CreateActaComponent extends BasePage implements OnInit {
       elaborationDate: this.actaRecepttionForm.value.elaboradate,
       estatusAct: 'ABIERTA',
       elaborated: this.authService.decodeToken().preferred_username,
-      fileId: this.fileNumber,
-      witness1: this.witnessTes,
-      witness2: this.witnessAdm,
+      fileId: this.actaRecepttionForm.value.fileId,
+      witness1: this.actaRecepttionForm.value.testigoOne,
+      witness2: this.actaRecepttionForm.value.testigoTree,
       actType: 'COMPDON',
-      captureDate: this.mes,
-      dateDeliveryGood: null,
-      responsible: this.responsable,
-      destructionMethod: null,
+      captureDate: new Date(),
       observations: this.actaRecepttionForm.value.observaciones,
-      approvedXAdmon: null,
-      approvalDateXAdmon: null,
-      approvalUserXAdmon: null,
-      numRegister: null,
-      //captureDate: new Date(),
+      registreNumber: null,
       numDelegation1: null,
       numDelegation2: null,
       identifier: null,
       label: null,
       folioUniversal: this.foolio,
-      // numTransfer: null,
       closeDate: null,
     };
-    this.donationService.getEventGood(obj).subscribe({
+    this.donationService.createD(obj).subscribe({
       next: (data: any) => {
         console.log('DATA', data);
         this.newRegister = data;
-        this.alert('success', 'El Acta se ha Creado Correctamente', '');
+        this.alert('success', 'El Evento se ha Creado Correctamente', '');
         this.handleSuccess();
       },
       error: error => {
