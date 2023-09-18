@@ -36,4 +36,6 @@ export enum ENDPOINT_INVOICE {
   ApplicationFolioSP = 'application/puf-valid-invoice-sp',
   ApplicationEats = 'application/get-data-eats',
   PkComerVnr = 'pk-comer-vnr/valid-rebilling',
+  PValueSat = 'ctrl-invoice/pvaluesSat',
+  CancelInvoice = 'application/cancel-invoice',
 }
