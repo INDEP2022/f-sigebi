@@ -1,6 +1,25 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+
+export let propContratosSelect: any[] = [];
 export const COLUMNS = {
-  idDonee: {
+  select: {
+    title: 'Sel',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.SELEC = data.toggle;
+        if (data.toggle === true) {
+          propContratosSelect.push(data.row);
+        } else {
+          propContratosSelect.splice(propContratosSelect.indexOf(data.row), 1);
+        }
+      });
+    },
+    sort: false,
+    filter: false,
+  },
+  doneeId: {
     title: 'Id Donatario',
     type: 'number',
     sort: false,
@@ -10,50 +29,43 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  numbWarehouse: {
+  delegationNumber: {
     title: 'No. Almacén',
     type: 'number',
     sort: false,
   },
-  warehouse: {
+  warehouseDesc: {
     title: 'Almacén',
     type: 'string',
     sort: false,
   },
-  proposedScope: {
-    title: 'Acance de Propuesta',
+  propAdvance: {
+    title: 'Avance de Propuesta',
     type: 'string',
     sort: false,
   },
-  cveAuth: {
+  authorizeKey: {
     title: 'Cve Autorización',
     type: 'string',
     sort: false,
   },
-  authDate: {
+  authorizeDate: {
     title: 'Fecha Autorización',
     type: 'string',
     sort: false,
   },
-  description: {
+  justification: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  request: {
+  requestId: {
     title: 'Solicitud',
     type: 'string',
     sort: false,
   },
-  select: {
-    title: 'Sel',
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
-    },
-    sort: false,
-  },
 };
+
+export function clearCheck() {
+  propContratosSelect = [];
+}

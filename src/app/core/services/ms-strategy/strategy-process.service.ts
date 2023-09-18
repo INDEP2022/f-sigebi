@@ -74,7 +74,7 @@ export class StrategyProcessService extends HttpService {
   }
 
   ByIdProces(process: number) {
-    const route = `${StrategyEndpoints.StrategyProcess}filter.processNumber=$eq:${process}`;
+    const route = `${StrategyEndpoints.StrategyProcess}?filter.processNumber=$eq:${process}`;
     return this.get(route);
   }
 
@@ -95,6 +95,26 @@ export class StrategyProcessService extends HttpService {
 
   getStrategyRepImplementation(noFormat: any) {
     const route = `${StrategyEndpoints.StrategyRepIm}?filter.formatNumber=$eq:${noFormat}`;
+    return this.get(route);
+  }
+
+  getStrategyProcess(noProcess: any) {
+    const route = `${StrategyEndpoints.StrategyProcess}?filter.processNumber=$eq:${noProcess}`;
+    return this.get(route);
+  }
+
+  PaEstGoodProgTrans(params: any) {
+    const route = `${StrategyEndpoints.paEstGoodsProgTrans}`;
+    return this.post(route, params);
+  }
+
+  PaEstGoodIncor(params: any) {
+    const route = `${StrategyEndpoints.paEstGoodIncor}`;
+    return this.post(route, params);
+  }
+
+  getStrategiProcess(id: any) {
+    const route = `${StrategyEndpoints.StrategyProcess}?filter.processNumber=$eq:${id}`;
     return this.get(route);
   }
 }

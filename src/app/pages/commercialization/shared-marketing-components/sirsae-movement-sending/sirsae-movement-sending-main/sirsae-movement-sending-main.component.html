@@ -22,16 +22,19 @@
                 </ngx-select>
               </form-field>
             </div>
-            <div class="col-sm-4 col-md-4">
+            <!-- class="col-sm-10 col-md-10" -->
+            <div [ngClass]="mapValToClass()">
               <form-field
                 [control]="form.get('description')"
                 label="Descripción">
-                <input
+                <textarea
+                  cols="2"
+                  rows="2"
                   [(ngModel)]="selectedEvent"
                   readonly
                   type="text"
                   class="form-control loading"
-                  formControlName="description" />
+                  formControlName="description"></textarea>
               </form-field>
             </div>
             <div *ngIf="layout == 'M'" class="col-sm-2 col-md-2 col-xl-2 mt-2">
@@ -52,8 +55,15 @@
               </button>
             </div>
             <div
-              *ngIf="layout == 'I'"
-              class="col-sm-3 col-md-3 col-xl-3 mt-2"></div>
+              *ngIf="layout == 'M'"
+              class="col-sm-2 col-md-2 col-xl-2 mt-2 mb-3">
+              <button
+                [disabled]="loading || loadingBtn || !eventSelected"
+                (click)="obtenerOI()"
+                class="w-100 btn btn-sm btn-block btn-info active">
+                Obtener OI
+              </button>
+            </div>
             <div *ngIf="layout == 'M'" class="col-sm-2 col-md-2 col-xl-2 mt-2">
               <button
                 [ngClass]="{ loading: loadingBtn }"
@@ -66,7 +76,7 @@
                 Enviar SIRSAE <i *ngIf="!loadingBtn" class="bx bx-send"></i>
               </button>
             </div>
-            <div *ngIf="layout == 'I'" class="col-sm-3 col-md-3 col-xl-3">
+            <div *ngIf="layout == 'I'" class="col-sm-2 col-md-2 col-xl-2 mt-2">
               <button
                 [ngClass]="{ loading: loadingBtnOII }"
                 [disabled]="
@@ -82,15 +92,16 @@
                 Obtener OI
               </button>
             </div>
-            <div
-              *ngIf="layout == 'M'"
-              class="col-sm-2 col-md-2 col-xl-2 mt-2 mb-3">
+            <div *ngIf="layout == 'I'" class="col-sm-2 col-md-2 col-xl-2 mt-2">
               <button
-                [disabled]="loading || loadingBtn || !eventSelected"
-                (click)="obtenerOI()"
-                class="w-100 btn btn-sm btn-block btn-info active">
-                Obtener OI
+                *ngIf="layout == 'I'"
+                (click)="clear2()"
+                class="btn btn-sm btn-block btn-danger active">
+                Limpiar <i class="fas fa-eraser"> </i>
               </button>
+            </div>
+            <div *ngIf="layout == 'M'" class="col-12">
+              <div class="row text-center justify-content-center"></div>
             </div>
           </div>
           <div class="row mt-2">
@@ -108,7 +119,7 @@
                 </ngx-select>
               </form-field>
             </div>
-            <div *ngIf="layout == 'I'" class="col-sm-4 col-md-4">
+            <div *ngIf="layout == 'I'" [ngClass]="mapValToClass()">
               <form-field [control]="form.get('cliente')" label="Cliente">
                 <input
                   readonly
@@ -117,8 +128,7 @@
                   formControlName="cliente" />
               </form-field>
             </div>
-            <div class="col-sm-3 col-md-3 col-xl-3 mt-2"></div>
-            <div class="col-sm-3 col-md-3 col-xl-3 mt-2">
+            <div class="col-sm-4 col-md-4 col-xl-4 mt-2">
               <button
                 [ngClass]="{ loading: loadingBtnSendIn }"
                 [disabled]="
@@ -131,7 +141,7 @@
                 "
                 *ngIf="layout == 'I'"
                 type="button"
-                class="btn btn-primary btn-block btn-sm active mr-3"
+                class="btn btn-primary btn-block btn-sm active"
                 tooltip=""
                 containerClass="tooltip-style"
                 (click)="enviarSIRSAE()">

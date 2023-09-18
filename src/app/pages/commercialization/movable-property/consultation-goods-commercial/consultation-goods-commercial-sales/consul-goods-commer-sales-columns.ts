@@ -49,7 +49,7 @@ export const CONSUL_GOODS_COMMER_SALES_COLUMNS = {
     sort: false,
   },
   no_expediente: {
-    title: 'Expediente',
+    title: 'No. Expediente',
     type: 'number',
     sort: false,
   },

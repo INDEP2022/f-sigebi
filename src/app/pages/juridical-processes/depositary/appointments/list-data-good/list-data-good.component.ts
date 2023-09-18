@@ -145,6 +145,7 @@ export class ListDataAppointmentGoodsComponent
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
+              goodId: () => (searchFilter = SearchFilter.EQ),
               description: () => (searchFilter = SearchFilter.LIKE),
               status: () => (searchFilter = SearchFilter.EQ),
               goodClassNumber: () => (searchFilter = SearchFilter.EQ),
@@ -172,7 +173,12 @@ export class ListDataAppointmentGoodsComponent
 
   getGoodData() {
     this.loadingGood = true;
-    this.columnFiltersGood['filter.goodId'] = '$not:' + this.noBien;
+    if (
+      !this.columnFiltersGood['filter.goodId'] ||
+      this.columnFiltersGood['filter.goodId'] == '$eq:' + this.noBien
+    ) {
+      this.columnFiltersGood['filter.goodId'] = '$not:' + this.noBien;
+    }
     this.columnFiltersGood['filter.fileNumber'] = '$eq:' + this.expedient;
     this.columnFiltersGood['sortBy'] = 'goodId:ASC';
     let params = {
@@ -181,14 +187,14 @@ export class ListDataAppointmentGoodsComponent
     };
     this.appointmentsService.getGoodByParams(params).subscribe({
       next: (res: any) => {
-        console.log('DATA Good', res);
+        // console.log('DATA Good', res);
         this.testDataGood = res.data;
         this.dataTableGood.load(this.testDataGood);
         this.totalGood = res.count;
         this.loadingGood = false;
       },
       error: error => {
-        console.log(error);
+        // console.log(error);
         this.testDataGood = [];
         this.dataTableGood.load([]);
         this.totalGood = 0;

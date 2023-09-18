@@ -1,3 +1,4 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 export const COLUMNS_APPROVAL_DONATION = {
   recordId: {
     title: 'Ref.',
@@ -14,7 +15,6 @@ export const COLUMNS_APPROVAL_DONATION = {
   },
   description: {
     title: 'Descripción del Bien',
-    type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.good?.description;
@@ -28,98 +28,6 @@ export const COLUMNS_APPROVAL_DONATION = {
       return row.good?.quantity;
     },
   },
-  unit: {
-    title: 'Unidad',
-    type: 'string',
-    sort: false,
-  },
-  status: {
-    title: 'Estatus',
-    type: 'string',
-    sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.good?.status;
-    },
-  },
-  noExpediente: {
-    title: 'No. Expediente',
-    type: 'number',
-    sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.good?.noExpediente;
-    },
-  },
-  noEtiqueta: {
-    title: 'Etiqueta Destino',
-    type: 'string',
-    sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.good?.noEtiqueta;
-    },
-  },
-  idNoWorker1: {
-    title: 'No. Tranf.',
-    type: 'string',
-    sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.proceeding?.idNoWorker1;
-    // },
-  },
-  idExpWorker1: {
-    title: 'Des. Tranf.',
-    type: 'string',
-    sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.proceeding?.idExpWorker1;
-    // },
-  },
-  noClasifBien: {
-    title: 'No. Clasif.',
-    type: 'number',
-    sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.good?.noClasifBien;
-    },
-  },
-  procesoExtDom: {
-    title: 'Proceso',
-    type: 'string',
-    sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.good?.procesoExtDom;
-    },
-  },
-  // warehouseNumb: {
-  //   title: 'No. Alma.',
-  //   type: 'number',
-  //   sort: false,
-  // },
-  // warehouse: {
-  //   title: 'Almacén',
-  //   type: 'string',
-  //   sort: false,
-  // },
-  // warehouseLocat: {
-  //   title: 'Ubica. Almacén ',
-  //   type: 'string',
-  //   sort: false,
-  // },
-  // coordAdmin: {
-  //   title: 'Coord. Admin.',
-  //   type: 'string',
-  //   sort: false,
-  // },
-  // select: {
-  //   title: 'Selec.',
-  //   type: 'custom',
-  //   renderComponent: CheckboxElementComponent,
-  //   onComponentInitFunction(instance: any) {
-  //     instance.toggle.subscribe((data: any) => {
-  //       data.row.to = data.toggle;
-  //     });
-  //   },
-  //   sort: false,
-  // },
 };
 
 export const COPY = {
@@ -140,6 +48,166 @@ export const COPY = {
   },
   amount: {
     title: 'Cantidad',
+    sort: false,
+  },
+  unit: {
+    title: 'Unidad',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.good?.unit;
+    },
+  },
+  status: {
+    title: 'Estatus',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.bienindicadores?.estatus;
+    },
+  },
+  noExpediente: {
+    title: 'No. Expediente',
+    type: 'number',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.bienindicadores?.noExpediente;
+    },
+  },
+  noEtiqueta: {
+    title: 'Etiqueta Destino',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.goodEntity?.noEtiqueta;
+    },
+  },
+  idNoWorker1: {
+    title: 'No. Tranf.',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.transference?.id;
+    },
+  },
+  idExpWorker1: {
+    title: 'Des. Tranf.',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.transference?.nameTransferent;
+    },
+  },
+  noClasifBien: {
+    title: 'No. Clasif.',
+    type: 'number',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.good?.clasificationGood;
+    },
+  },
+  procesoExtDom: {
+    title: 'Proceso',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.bienindicadores?.procesoExtDom;
+    },
+  },
+  warehouseNumb: {
+    title: 'No. Almacén',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.warehouse?.id;
+    },
+  },
+  warehouse: {
+    title: 'Descrip. Almacén',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.warehouse?.description;
+    },
+  },
+  warehouseLocat: {
+    title: 'Ubica. Almacén ',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.warehouse?.ubication;
+    },
+  },
+  coordAdmin: {
+    title: 'Coord. Admin.',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.bienindicadores?.coordination;
+    },
+  },
+};
+
+export const ACTAS = {
+  estatusAct: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },
+
+  actId: {
+    title: 'Id',
+    type: 'number',
+    sort: false,
+  },
+  cveAct: {
+    title: 'Clave Acta',
+    type: 'string',
+    sort: false,
+  },
+  actType: {
+    title: 'Tipo de Acta',
+    type: 'string',
+    sort: false,
+  },
+  fileId: {
+    title: 'No. Expediente',
+    type: 'number',
+    sort: false,
+  },
+  elaborated: {
+    title: 'Administra',
+    type: 'string',
+    sort: false,
+  },
+  folioUniversal: {
+    title: 'Folio',
+    type: 'string',
+    sort: false,
+  },
+  captureDate: {
+    title: 'Fecha de Captura',
+    type: 'html',
+    sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  closeDate: {
+    title: 'Fecha de Cierre',
+    type: 'html',
+    sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+};
+
+export const GODD_ERROR = {
+  goodId: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  des_error: {
+    title: 'Descripción del Error',
     sort: false,
   },
 };
