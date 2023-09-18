@@ -782,11 +782,15 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
         contract: this.contract,
         formContract: this.form,
         typeRequest: this.parameterTypeDonation,
-        callback: (next: boolean) => {
+        callback: async (next: any[]) => {
           if (next) {
-            /* this.params
-              .pipe(takeUntil(this.$unSubscribe))
-              .subscribe(() => this.()); */
+            console.error(next);
+            this.loading = true;
+            const data: any[] = await this.data.getAll();
+            const newData: any[] = data.concat(next);
+            this.data.load(newData);
+            this.data.refresh();
+            this.loading = false;
           }
         },
       },

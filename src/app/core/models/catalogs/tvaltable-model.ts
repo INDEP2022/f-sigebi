@@ -13,5 +13,5 @@ export interface ITvaltables1 {
   abbreviation: string;
   yes?: number;
   not?: number;
-  name?: string
+  name?: string;
 }

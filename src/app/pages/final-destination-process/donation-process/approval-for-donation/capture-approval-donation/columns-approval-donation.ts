@@ -54,14 +54,14 @@ export const COPY = {
     title: 'Unidad',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.goodEntity?.unit;
+      return row.good?.unit;
     },
   },
   status: {
     title: 'Estatus',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.goodEntity?.status;
+      return row.bienindicadores?.estatus;
     },
   },
   noExpediente: {
@@ -198,5 +198,16 @@ export const ACTAS = {
       type: 'custom',
       component: CustomDateFilterComponent,
     },
+  },
+};
+
+export const GODD_ERROR = {
+  goodId: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  des_error: {
+    title: 'Descripción del Error',
+    sort: false,
   },
 };

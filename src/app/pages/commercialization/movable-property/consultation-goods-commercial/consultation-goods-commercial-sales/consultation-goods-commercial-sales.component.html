@@ -13,7 +13,7 @@
     </form-field>
     <form-field
       [control]="form.get('expedientNumber')"
-      label="Expediente"
+      label="No. Expediente"
       class="col-md-2">
       <input
         type="number"
@@ -37,7 +37,7 @@
       <ngx-select
         [form]="form"
         [data]="transferents"
-        label="Transferente"
+        label="No. Transferente"
         value="id"
         bindLabel="tipoSupbtipoDescription"
         (fetchItems)="getTransSelect($event)"
@@ -162,14 +162,14 @@
         class="btn btn-danger btn-sm active mr-3"
         [disabled]="loading"
         (click)="cleanFilters()">
-        Limpiar Filtros <i class="fas fa-eraser"> </i>
+        Limpiar<i class="fas fa-eraser"> </i>
       </button>
       <button
         type="button"
         class="btn btn-primary active btn-sm"
         [disabled]="loading"
         (click)="executeConsult('search')">
-        Ejecutar Consulta
+        Consultar
         <i class="bx bx-search-alt bx-sm float-icon"></i>
       </button>
     </div>
