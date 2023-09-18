@@ -1277,19 +1277,20 @@ export class CaptureApprovalDonationComponent
       }
     });
   }
+
   addStatus() {
     /* this.data.load(this.goods); */
-    this.paginator();
+    // this.paginator();
     this.data.refresh();
   }
 
-  paginator(noPage: number = 1, elementPerPage: number = 10) {
-    const indiceInicial = (noPage - 1) * elementPerPage;
-    const indiceFinal = indiceInicial + elementPerPage;
+  //   paginator(noPage: number = 1, elementPerPage: number = 10) {
+  //     const indiceInicial = (noPage - 1) * elementPerPage;
+  //     const indiceFinal = indiceInicial + elementPerPage;
 
-    let paginateData = this.goods.slice(indiceInicial, indiceFinal);
-    this.data.load(paginateData);
-  }
+  //     let paginateData = this.goods.slice(indiceInicial, indiceFinal);
+  //     this.data.load(paginateData);
+  //   }
 }
 
 export interface IParamsDonac {

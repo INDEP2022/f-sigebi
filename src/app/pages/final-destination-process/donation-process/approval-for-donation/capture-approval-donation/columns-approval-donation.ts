@@ -200,3 +200,14 @@ export const ACTAS = {
     },
   },
 };
+
+export const GODD_ERROR = {
+  goodId: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  des_error: {
+    title: 'No. Bien',
+    sort: false,
+  },
+};
