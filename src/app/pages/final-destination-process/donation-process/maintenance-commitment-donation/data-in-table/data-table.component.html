@@ -7,11 +7,6 @@
   </div>
   <app-columns-select [(settings)]="settings" class="mx-1" [leftList]="true">
   </app-columns-select>
-  <!-- <button type="button" style="width: 90px" tooltip="Nuevo" containerclass="tooltip-style"
-    class="btn btn-info btn-sm active ml-2 mr-2">
-    Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
-  </button> -->
-
 </div>
 
 <div class="row mt-2">
@@ -19,4 +14,11 @@
     [source]="data">
   </ng2-smart-table>
 </div>
-<app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>
+<div class="row" *ngIf="this.type == 1 || this.type == 2 || this.type == 3">
+  <app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>
+</div>
+
+<!-- TYPE 4   -->
+<div class="row" *ngIf="this.type == 4">
+  <app-pagination [params]="params4" [totalItems]="totalItem4"> </app-pagination>
+</div>

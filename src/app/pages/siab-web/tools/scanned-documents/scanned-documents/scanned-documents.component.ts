@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
@@ -22,9 +23,13 @@ export class ScannedDocumentsComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   user: any;
   noExpe: number = 1;
+  proceedings: number;
+  validate: boolean = false;
+  valid: boolean;
   constructor(
     private authService: AuthService,
-    private documentsDictumStatetMService: DocumentsDictumStatetMService
+    private documentsDictumStatetMService: DocumentsDictumStatetMService,
+    private modalRef: BsModalRef
   ) {
     super();
     this.settings = {
@@ -65,13 +70,18 @@ export class ScannedDocumentsComponent extends BasePage implements OnInit {
           this.getData(this.noExpe);
         }
       });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData(this.noExpe));
-
     const user: any = this.authService.decodeToken() as any;
     this.user = user.username;
-
+    if (this.proceedings && this.valid) {
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getData(this.proceedings));
+      this.validate = this.valid;
+    } else {
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getData(this.noExpe));
+    }
     console.log(this.user, user, this.noExpe);
   }
 
@@ -102,4 +112,8 @@ export class ScannedDocumentsComponent extends BasePage implements OnInit {
   }
 
   rowsSelected(event: any) {}
+
+  goBack() {
+    this.modalRef.hide();
+  }
 }

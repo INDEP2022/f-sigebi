@@ -3,7 +3,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared';
 import { inputSelect } from 'src/app/pages/final-destination-process/delivery-schedule/schedule-of-events/interfaces/input-select';
@@ -21,7 +23,7 @@ export class EditModalConfComponent extends BasePage implements OnInit {
   edit: boolean = false;
 
   userName: any[];
-
+  userSele: any;
   @Output() refresh = new EventEmitter<any>();
   @Output() onAdd = new EventEmitter<any>();
   @Output() onEdit = new EventEmitter<any>();
@@ -31,7 +33,9 @@ export class EditModalConfComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private usersService: UsersService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private authorityService: AuthorityService,
+    private indUserService: IndUserService
   ) {
     super();
   }
@@ -53,32 +57,28 @@ export class EditModalConfComponent extends BasePage implements OnInit {
             : null,
       });
 
-      /*if (this.data.promoterUserDecoDevo != null) {
-        //this.params(this.data.promoterUserDecoDevo);
+      if (this.data.promoterUserDecoDevo != null) {
         console.log(
           'this.data.promoterUserDecoDevo -> ',
           this.data.promoterUserDecoDevo
         );
-        this.form.get('promoter').setValue(this.data.promoterUserDecoDevo);
-        this.user1 = new DefaultSelect([1, 'user1', 'user1@example.com']);
-
-        // this.user1.data.push(this.data.promoterUserDecoDevo);
-      } */
+        this.getAllSegUserFind(this.data.promoterUserDecoDevo);
+      }
     }
   }
 
   private prepareForm() {
     this.form = this.fb.group({
       fecha: [null, [Validators.required]],
-      promoter: [null, [Validators.required]],
+      user: [null, [Validators.required]],
     });
     //this.form.controls['promoter'].setValue('SUPERUSUARIO');
     //this.form.get('promoter').setValue('SUPERUSUARIO');
   }
 
   close() {
-    this.modalRef.content.callback(this.refresh);
     this.modalRef.hide();
+    this.modalRef.content.callback(this.refresh);
   }
 
   update() {
@@ -136,14 +136,18 @@ export class EditModalConfComponent extends BasePage implements OnInit {
     });
   }
 
-  getAllSegUserFind(params: ListParams) {
-    console.log('params: ', params);
-    this.usersService.getAllSegUsers2(params).subscribe({
+  getAllSegUserFind(num: any) {
+    console.log('num : ', num);
+    const params = new ListParams();
+    const _params: ListParams = params;
+    _params[`filter.name`] = `$eq:${num}`;
+    console.log('_params-> ', _params);
+    this.usersService.getAllSegUsers2(_params).subscribe({
       next: resp => {
-        console.log('resp data ', resp.data[0]);
-        //this.user1.data = resp.data[0];
-        this.form.get('promoter').setValue(resp.data[0]);
-        this.user1 = new DefaultSelect(resp.data, resp.count);
+        //this.user1 = new DefaultSelect(resp.data, resp.count);
+        console.log('resp.data[0].user -> ', resp.data[0].user);
+        this.loadUser(resp.data[0].user);
+        //this.form.get('promoter').patchValue(resp.data[0].user);
       },
       error: err => {
         this.user1 = new DefaultSelect();
@@ -181,5 +185,27 @@ export class EditModalConfComponent extends BasePage implements OnInit {
   onChangeUser(event: any) {
     console.log(event);
     this.form.get('promoter').patchValue(event.id);
+  }
+
+  public getUser(params: ListParams) {
+    params.limit = 100;
+    params.take = 100;
+    this.indUserService.getAllUser(params).subscribe({
+      next: data => {
+        this.userSele = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.userSele = new DefaultSelect();
+      },
+    });
+  }
+
+  loadUser(user: string) {
+    this.indUserService.getUser(user).subscribe({
+      next: response => {
+        this.userSele = new DefaultSelect(response.data, response.count);
+        this.form.get('user').setValue(response.data[0].user);
+      },
+    });
   }
 }

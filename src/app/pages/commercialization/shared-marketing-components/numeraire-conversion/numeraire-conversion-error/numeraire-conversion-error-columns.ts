@@ -10,6 +10,13 @@ export const EVENTO_ERROR_COLUMNS = {
     width: '60px',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.lot == null) {
+        return '';
+      } else {
+        return row.lot.lotPublic;
+      }
+    },
   },
   inconsistency: {
     title: 'Inconsistencia',
