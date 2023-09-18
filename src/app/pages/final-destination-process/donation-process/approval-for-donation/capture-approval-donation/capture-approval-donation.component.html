@@ -160,7 +160,7 @@
             <div class="col-md-12">
               <div class="row">
                 <div class="col-md-12">
-                  <div class="card">
+                  <div class="card justify-content-center">
                     <div class="col-md-6 d-flex flex-column">
                       <div
                         class="row ps-4"
@@ -168,61 +168,61 @@
                         <form-radio label="Consulta de Bienes">
                           <input
                             type="radio"
-                            formControlName="tipo"
+                            formControlName="activeRadio"
                             value="0" />
                         </form-radio>
                         <form-radio label="Com. Exterior KG">
                           <input
                             type="radio"
-                            formControlName="tipo"
+                            formControlName="activeRadio"
                             value="1" />
                         </form-radio>
                         <form-radio label="Delitos Federales">
                           <input
                             type="radio"
-                            formControlName="tipo"
+                            formControlName="activeRadio"
                             value="2" />
                         </form-radio>
                         <form-radio label="Otros Trans.">
                           <input
                             type="radio"
-                            formControlName="tipo"
+                            formControlName="activeRadio"
                             value="3" />
                         </form-radio>
-                      </div>
-                    </div>
-                    <div class="row m-12">
-                      <div class="col-4"></div>
-                      <div class="col-md-12 text-center">
-                        <button
-                          class="btn btn-secondary btn-sm active me-2"
-                          (click)="validaGood()">
-                          Valida Bienes <i class="bx bx-check float-icon"></i>
-                        </button>
-                        <button
-                          class="btn btn-success btn-sm active me-2"
-                          type="button"
-                          (click)="exportToExcel()">
-                          Exportar a Excel
-                          <i class="bx bx-download float-icon"></i>
-                        </button>
-                        <button
-                          class="btn btn-primary btn-sm active me-2"
-                          (click)="ubicaGood()">
-                          Consulta Bienes
-                          <i class="bx bx-search float-icon"></i>
-                        </button>
-                        <button
-                          class="btn btn-info active btn-sm active"
-                          (click)="findRast()">
-                          Rastreador de Bienes&nbsp;
-                          <i class="fas fa-map-marker bx-sm float-icon"></i>
-                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+          <div class="row m-3">
+            <div class="col-4"></div>
+            <div class="col-md-12 text-center">
+              <button
+                class="btn btn-secondary btn-sm active me-2"
+                (click)="validaGood()">
+                Valida Bienes <i class="bx bx-check float-icon"></i>
+              </button>
+              <button
+                class="btn btn-success btn-sm active me-2"
+                type="button"
+                (click)="exportToExcel()">
+                Exportar a Excel
+                <i class="bx bx-download float-icon"></i>
+              </button>
+              <button
+                class="btn btn-primary btn-sm active me-2"
+                (click)="ubicaGood()">
+                Consulta Bienes
+                <i class="bx bx-search float-icon"></i>
+              </button>
+              <button
+                class="btn btn-info active btn-sm active"
+                (click)="findRast()">
+                Rastreador de Bienes&nbsp;
+                <i class="fas fa-map-marker bx-sm float-icon"></i>
+              </button>
             </div>
           </div>
         </div>
@@ -277,14 +277,19 @@
                   [totalItems]="totalItems2"></app-pagination>
               </div>
               <div class="row">
-                <!-- <div class="col-md-12">
+                <div class="col-md-12">
                   <div>
-                    <form-field [control]="regisForm.get('observaciones')" label="Observaciones">
-                      <textarea maxlength="1000" type="text" class="form-control"
+                    <form-field
+                      [control]="regisForm.get('observaciones')"
+                      label="Observaciones">
+                      <textarea
+                        maxlength="1000"
+                        type="text"
+                        class="form-control"
                         formControlName="observaciones"></textarea>
                     </form-field>
                   </div>
-                </div> -->
+                </div>
                 <div class="col-md-12">
                   <div class="row">
                     <form-field

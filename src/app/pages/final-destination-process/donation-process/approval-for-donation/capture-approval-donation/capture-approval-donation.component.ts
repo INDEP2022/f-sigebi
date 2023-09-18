@@ -250,6 +250,7 @@ export class CaptureApprovalDonationComponent
       keyEvent: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       observaElimina: [null],
       observaciones: [null],
+      activeRadio: [null],
     });
     this.regisForm.get('area').setValue(this.paramsScreen.area);
   }
@@ -1322,23 +1323,37 @@ export class CaptureApprovalDonationComponent
       this.alertInfo('warning', 'No puede Actualizar un Evento Cerrado', '');
       return;
     }
-    this.eventdetailDefault.observaciones =
-      this.regisForm.get('observaciones').value;
+    let obj: any = {
+      cveAct: this.eventDonacion.actId,
+      elaborationDate: new Date(),
+      estatusAct: 'CERRADA',
+      elaborated: this.authService.decodeToken().preferred_username,
+      witness1: this.eventDonacion.witness1,
+      witness2: this.eventDonacion.witness2,
+      actType: 'COMPDON',
+      observations: this.eventDonacion.observations,
+      registreNumber: null,
+      numDelegation1: null,
+      numDelegation2: null,
+      identifier: null,
+      label: null,
+      folioUniversal: this.eventDonacion.folioUniversal,
+      closeDate: null,
+    };
+
     delete this.eventdetailDefault.numDelegation1Description;
     delete this.eventdetailDefault.numDelegation2Description;
     delete this.eventdetailDefault.numTransfer_;
-    this.donationService
-      .putEvent(this.eventdetailDefault.actId, this.eventdetailDefault)
-      .subscribe({
-        next: async data => {
-          this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
-          await this.generaRepote();
-        },
-        error: error => {
-          this.alert('error', 'Ocurrió un Error al Actualizar el Evento', '');
-          // this.loading = false
-        },
-      });
+    this.donationService.putEvent(obj, this.idAct).subscribe({
+      next: async data => {
+        this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
+        await this.generaRepote();
+      },
+      error: error => {
+        this.alert('error', 'Ocurrió un Error al Actualizar el Evento', '');
+        // this.loading = false
+      },
+    });
   }
   generaRepote() {}
 }
