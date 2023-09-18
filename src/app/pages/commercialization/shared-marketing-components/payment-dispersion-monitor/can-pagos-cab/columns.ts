@@ -1,6 +1,6 @@
 export const COLUMNS_PAGOS = {
   idIdentifier: {
-    title: 'ID',
+    title: 'Id',
     sort: false,
   },
   consecutive: {
@@ -40,7 +40,7 @@ export const COLUMNS_PAGOS = {
     sort: false,
   },
   byPayment: {
-    title: 'F.Pago',
+    title: 'Fecha Pago',
     sort: false,
   },
   orderDate: {
@@ -68,11 +68,11 @@ export const COLUMNS_PAGOS = {
     sort: false,
   },
   paymentId: {
-    title: 'Id.Pago',
+    title: 'Id. Pago',
     sort: false,
   },
   recordedOrderId: {
-    title: 'Id.Ord.Grabada',
+    title: 'Id. Ord. Grabada',
     sort: false,
   },
   oiDate: {
@@ -87,7 +87,7 @@ export const COLUMNS_PAGOS = {
 
 export const COLUMNS_DETALLE = {
   id: {
-    title: 'ID',
+    title: 'Id',
     sort: false,
   },
   consecutive: {
@@ -107,11 +107,11 @@ export const COLUMNS_DETALLE = {
     sort: false,
   },
   vat: {
-    title: 'IVA',
+    title: 'Iva',
     sort: false,
   },
   amountSVat: {
-    title: 'Importe sin IVA',
+    title: 'Importe sin Iva',
     sort: false,
   },
   indType: {
@@ -127,7 +127,7 @@ export const COLUMNS_DETALLE = {
     sort: false,
   },
   aResponsable: {
-    title: 'U.Resp.',
+    title: 'U. Resp.',
     sort: false,
   },
   eventId: {
@@ -147,7 +147,7 @@ export const COLUMNS_DETALLE = {
     sort: false,
   },
   percentVat: {
-    title: '% IVA',
+    title: '% Iva',
     sort: false,
   },
   priceVtaLot: {

@@ -6,6 +6,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ApprovalForDonationRoutingModule } from './approval-for-donation-routing.module';
 import { ApprovalForDonationComponent } from './approval-for-donation/approval-for-donation.component';
 import { CaptureApprovalDonationComponent } from './capture-approval-donation/capture-approval-donation.component';
+import { CreateActaComponent } from './create-acta/create-acta.component';
+import { FindActaComponent } from './find-acta/find-acta.component';
 import { ModalApprovalDonationComponent } from './modal-approval-donation/modal-approval-donation.component';
 
 @NgModule({
@@ -13,6 +15,8 @@ import { ModalApprovalDonationComponent } from './modal-approval-donation/modal-
     ApprovalForDonationComponent,
     CaptureApprovalDonationComponent,
     ModalApprovalDonationComponent,
+    FindActaComponent,
+    CreateActaComponent,
   ],
   imports: [
     CommonModule,

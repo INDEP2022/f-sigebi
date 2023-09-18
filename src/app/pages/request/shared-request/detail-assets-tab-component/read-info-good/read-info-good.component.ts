@@ -22,6 +22,7 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -69,6 +70,7 @@ export class ReadInfoGoodComponent
   uniqueKey: string;
   idSolicitud: Number = 0;
   descriptionGoodSae: string = '';
+  unitTrans: string = null;
 
   private readonly fractionsService = inject(FractionService);
   private readonly genericService = inject(GenericService);
@@ -78,6 +80,7 @@ export class ReadInfoGoodComponent
   private readonly typeRelevantSevice = inject(TypeRelevantService);
   private readonly goodFinderService = inject(GoodFinderService);
   private readonly requestService = inject(RequestService);
+  private readonly strategyService = inject(StrategyServiceService);
 
   constructor(private fb: FormBuilder) {
     super();
@@ -93,7 +96,7 @@ export class ReadInfoGoodComponent
       this.getTransferentUnit(this.goodData.unitMeasure);
 
       if (this.process == 'classify-assets') {
-        this.getUnitMeasureSae(new ListParams(), this.goodData.saeMeasureUnit);
+        //poner lo acca
         this.getDestinoSAE(
           new ListParams(),
           this.goodData.saeDestiny,
@@ -183,6 +186,13 @@ export class ReadInfoGoodComponent
 
         this.fraction = good.fractionCodeFracction;
         this.uniqueKey = good.uniqueKey ? good.uniqueKey : '';
+
+        this.unitTrans = good.measureUnitTransferent;
+        this.getUnitMeasureSae(
+          new ListParams(),
+          this.goodData.saeMeasureUnit,
+          good.measureUnitTransferent
+        );
       },
       error: error => {
         console.log(error);
@@ -366,11 +376,33 @@ export class ReadInfoGoodComponent
   }
 
   //ver
-  getUnitMeasureSae(params: ListParams, id?: string | number) {
+  getUnitMeasureSae(params: ListParams, id?: string | number, unit?: string) {
     if (id && this.process != 'classify-assets') {
-      params['filter.uomCode'] = `$eq:${id}`;
+      params['filter.nbCode'] = `$eq:${id}`;
+    } else if (!id && this.process == 'classify-assets') {
+      params['filter.unit'] = `$eq:${unit}`;
+    } else if (id && this.process == 'classify-assets') {
+      params['filter.nbCode'] = `$eq:${id}`;
     }
-    this.goodsQueryService
+    this.strategyService.getUnitsMedXConv(params).subscribe({
+      next: resp => {
+        if (this.process == 'classify-assets') {
+          if (id) {
+            this.selectMeasureUnitSae = new DefaultSelect(
+              resp.data,
+              resp.count
+            );
+            this.goodForm.controls['saeMeasureUnit'].setValue(id);
+          } else {
+            this.selectMeasureUnitSae = new DefaultSelect(
+              resp.data,
+              resp.count
+            );
+          }
+        }
+      },
+    });
+    /*this.goodsQueryService
       .getCatMeasureUnitView(params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
@@ -391,7 +423,7 @@ export class ReadInfoGoodComponent
           }
           //this.saeMeasureUnit = id ? resp.data[0].measureTlUnit : '';
         },
-      });
+      });*/
   }
 
   getTransferentUnit(id: string) {
@@ -445,7 +477,17 @@ export class ReadInfoGoodComponent
   }
 
   unidMediIndep(event: any) {
-    this.dataToSend.saeMeasureUnit = event != undefined ? event.uomCode : null;
+    this.dataToSend.saeMeasureUnit = event != undefined ? event.nbCode : null;
+    if (event == undefined) {
+      this.getUnitMeasureSae(
+        new ListParams(),
+        this.goodData.saeMeasureUnit,
+        this.unitTrans
+      );
+    } else {
+      this.selectMeasureUnitSae = new DefaultSelect();
+      this.getUnitMeasureSae(new ListParams(), null, event.idUnitDestine);
+    }
   }
 
   destinySae(event: any) {
@@ -515,6 +557,16 @@ export class ReadInfoGoodComponent
           },
         });
       }
+    });
+  }
+
+  getAsyncUnitMedXConv(params: ListParams) {
+    return new Promise((resolve, reject) => {
+      this.strategyService.getUnitsMedXConv(params).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+      });
     });
   }
 }

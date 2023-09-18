@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { ScanFileSharedComponent } from 'src/app/@standalone/shared-forms/scan-file-shared/scan-file-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CheckDocumentaryRequirementsComponent } from './check-documentary-requirements/check-documentary-requirements.component';
 import { ModalComponentComponent } from './check-documentary-requirements/modal-component/modal-component.component';
@@ -24,6 +25,7 @@ import { ViewDonationContractsComponent } from './view-donation-contracts/view-d
     SharedModule,
     SharedFinalDestinationRoutingModule,
     NgScrollbarModule,
+    ScanFileSharedComponent,
   ],
   exports: [
     ImpressionOfActsComponent,

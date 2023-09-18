@@ -85,10 +85,6 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
-    console.log('Información de la solicitud', this.infoRequest);
-    console.log('Aclaración', this.clarification);
-    console.log('notification', this.notification.clarification.clarification);
-
     //Actualiza Bien, de prueba
     //this.changeSimulateGood()
     this.modalService.onHide.subscribe(key => {});
@@ -155,6 +151,7 @@ export class NotifyAssetsImproprietyFormComponent
       unit: [null, [Validators.pattern(STRING_PATTERN)]],
       amount: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       keyClarificationPaper: [null],
+      description: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -187,13 +184,11 @@ export class NotifyAssetsImproprietyFormComponent
       if (obtainTypeDocument) {
         switch (this.typeDoc) {
           case 'AclaracionAsegurados': {
-            console.log('AclaracionAsegurados');
             this.aclaracionAsegurados(); //Aclaración PGR tipo 1 y 2
 
             break;
           }
           case 'AclaracionTransferentesVoluntarias': {
-            console.log('AclaracionTransferentesVoluntarias');
             this.countAclaraManual = this.countAclaraManual + 1;
             this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
 
@@ -232,7 +227,6 @@ export class NotifyAssetsImproprietyFormComponent
       this.notification?.clarification?.clarification ==
         'INDIVIDUALIZACIÓN DE BIENES'
     ) {
-      console.log('Camara aqui solo se guarda no se ve');
       this.aclaracionComercioExterior();
     }
 
@@ -387,7 +381,6 @@ export class NotifyAssetsImproprietyFormComponent
           this.notification?.clarification?.clarification ==
           'INDIVIDUALIZACIÓN DE BIENES'
         ) {
-          console.log('fsdf', data);
           this.updateAnsweredAcla(
             this.notification.rejectNotificationId,
             this.notification.chatClarification.idClarification,
@@ -592,12 +585,10 @@ export class NotifyAssetsImproprietyFormComponent
         },
       });
     } else {
-      console.log('Ya se generó un reporte aclaracionTransferentesVoluntarias');
     }
   }
 
   changeStatusAnswered(xml: string) {
-    console.log('xml recibido: ', xml);
     this.loading = true;
     this.paramsReload.getValue()['filter.clarifiNewsRejectId'] =
       this.dataClarifications2.rejectNotificationId;
@@ -731,7 +722,7 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
           }
         },
         error: error => {
-          this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
+          this.onLoadToast('error', 'No se pudo actualizar', '');
         },
       });
   }
@@ -885,10 +876,14 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
         noBien,
         callback: (next: boolean, xml?: string) => {
           if (next) {
-            const typeTransference = this.infoRequest.typeOfTransfer;
-
             this.changeStatusAnswered(xml);
-            this.changeSimulateGood;
+            if (
+              this.clarificationForm?.controls['amount'].value != null ||
+              this.clarificationForm?.controls['unit'].value != null ||
+              this.clarificationForm?.controls['description'].value != null
+            ) {
+              this.changeSimulateGood();
+            }
           } else {
           }
         },
@@ -901,7 +896,6 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
 
   //Modifica atributos del bien
   changeSimulateGood() {
-    console.log('Se cambian los atributos del bien');
     //Obtiene noBien
     const noGood = this.dataClarifications2.goodId;
     //Establecer Cantidad
@@ -913,8 +907,6 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
     //Traer información del Bien
     this.goodService.getById(noGood).subscribe({
       next: resp => {
-        console.log('Información del Bien Seleccionado: ', resp);
-
         const obj = {
           id: noGood,
           goodId: noGood,
@@ -922,23 +914,16 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
           quantity: this.clarificationForm?.controls['amount'].value,
           unitMeasure: this.clarificationForm?.controls['unit'].value,
           unit: this.clarificationForm?.controls['unit'].value,
+          description: this.clarificationForm?.controls['description'].value,
         };
-
-        console.log('Objeto a enviar por body', obj);
 
         //Actualiza el Bien
         this.goodService.update(obj).subscribe({
-          next: resp => {
-            console.log('Bien Actualizado: ', resp.data);
-          },
-          error: error => {
-            console.log('No se pudo actualizar: ', error);
-          },
+          next: resp => {},
+          error: error => {},
         });
       },
-      error: error => {
-        console.log('No se pudo actualizar: ', error);
-      },
+      error: error => {},
     });
   }
 
@@ -968,13 +953,13 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
 
     if (token.siglasnivel4 != null) {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/${noDictamen}/${year}`;
-      console.log('CLAVE ARMADA: ', this.folioReporte);
+
       this.clarificationForm
         .get('keyClarificationPaper')
         .setValue(this.folioReporte);
     } else {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${noDictamen}/${year}`;
-      console.log('CLAVE ARMADA: ', this.folioReporte);
+
       this.clarificationForm
         .get('keyClarificationPaper')
         .setValue(this.folioReporte);

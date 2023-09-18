@@ -28,6 +28,7 @@ export class CanLcsWarrantyComponent extends BasePage implements OnInit {
     ...TABLE_SETTINGS,
     actions: false,
     columns: COLUMNS_LCS_WARRANTY,
+    hideSubHeader: false,
   };
 
   constructor(

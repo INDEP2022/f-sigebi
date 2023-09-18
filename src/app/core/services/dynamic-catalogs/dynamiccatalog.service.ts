@@ -34,4 +34,14 @@ export class DynamicCatalogsService extends HttpService {
   }) {
     return this.post(DinamicCatalogEndPoints.PostQuery, data);
   }
+  getTvaltable1_(params: _Params) {
+    return this.get(DinamicCatalogEndPoints.GetTvaltable1, params);
+  }
+  editTvalTable1(params: _Params) {
+    return this.put(DinamicCatalogEndPoints.GetTvaltable1, params);
+  }
+
+  GetMax(value: number) {
+    return this.get(`${DinamicCatalogEndPoints.getMax}/${value}`);
+  }
 }

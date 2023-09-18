@@ -1,58 +1,146 @@
-<form class="form-material" [formGroup]="form">
-  <div class="row pt-3">
-    <div class="col-md-2">
-      <form-field [control]="form.get('event')" label="Evento">
-        <input type="text" class="form-control" formControlName="event" />
-      </form-field>
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Afectaciones Contables de las SP´s</h5>
     </div>
-    <div class="col-md-2">
-      <form-field [control]="form.get('rangeDate')" label="Rango de fechas">
-        <input
-          class="form-control"
-          formControlName="rangeDate"
-          placeholder=""
-          ngModel
-          bsDaterangepicker
-          [maxDate]="today"
-          [bsConfig]="{
-            dateInputFormat: 'DD-MM-YYYY',
-            displayOneMonthRange: true
-          }" />
-      </form-field>
-    </div>
-    <div class="col-md-1">
-      <div class="justify-content-center">
-        <button
-          type="submit"
-          class="btn btn-primary btn-sm active"
-          [disabled]="!form.valid">
-          Limpiar
-        </button>
-      </div>
-    </div>
-    <div class="col-md-2">
-      <div class="justify-content-center">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active"
-          [disabled]="!form.valid"
-          (click)="show = !show">
-          Consultar Gastos
-        </button>
-      </div>
-    </div>
-    <div class="row">
-      <div class="ch-content" header>
-        <h5 class="title">Inconsistencias SIAB</h5>
-        <div class="col-md-4 buttons">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
+  </div>
+  <div body>
+    <div>
+      <div>
+        <!--  -->
+        <div>
+          <div>
+            <form class="form-material" [formGroup]="form">
+              <div>
+                <div class="row mt-4">
+                  <div class="col-md-6">
+                    <form-field
+                      [control]="form.get('year')"
+                      label="Seleccionar Año de Consulta">
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="year"
+                        [bsConfig]="bsConfig"
+                        #dp="bsDatepicker"
+                        bsDatepicker />
+                    </form-field>
+                  </div>
+                  <div class="col-md-6">
+                    <form-field [control]="form.get('event')">
+                      <!--  -->
+                      <ngx-select
+                        (fetchItems)="fullEventsExpenses($event)"
+                        [searchOnInit]="true"
+                        [searchable]="true"
+                        label="Evento"
+                        [data]="eventsExpenses"
+                        [form]="form"
+                        control="event"
+                        bindLabel="eventprocces">
+                      </ngx-select>
+                    </form-field>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mt-4">
+                <div class="col-md-6">
+                  <form-field [control]="form.get('from')" label="Del:">
+                    <input
+                      [maxDate]="maxDate"
+                      formControlName="from"
+                      class="form-control"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+                <div class="col-md-6">
+                  <form-field [control]="form.get('to')" label="Al:">
+                    <input
+                      [maxDate]="maxDate"
+                      formControlName="to"
+                      class="form-control"
+                      [minDate]="form.get('from').value"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div>
+            <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseOne"
+                    aria-expanded="true"
+                    aria-controls="collapseOne">
+                    Conceptos
+                  </button>
+                </h2>
+                <div
+                  id="collapseOne"
+                  class="accordion-collapse collapse show"
+                  data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <!-- <ul class="list-group"> -->
+                    <!-- <li class="list-group-item" *ngFor="let item of concepts">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="firstCheckbox">
+                        <label class="form-check-label" for="firstCheckbox"
+                          style="margin-left: 25px; margin-bottom: -20px;">{{item.description}}</label> -->
+                    <form class="form-material" [formGroup]="formTwo">
+                      <div class="row mt-4">
+                        <div class="col-md-12">
+                          <form-field [control]="formTwo.get('concepts')">
+                            <ngx-select
+                              (fetchItems)="fullConcepts($event)"
+                              [searchOnInit]="true"
+                              [searchable]="true"
+                              label="Todos los Conceptos"
+                              [multiple]="true"
+                              [data]="concepts"
+                              [form]="formTwo"
+                              value="usuario"
+                              control="concepts"
+                              bindLabel="description">
+                            </ngx-select>
+                          </form-field>
+                        </div>
+                      </div>
+                    </form>
+                    <!--  -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--  -->
+          <!--  -->
+          <div class="d-flex mb-5 mt-3">
+            <div class="ml-auto">
+              <div>
+                <button
+                  class="btn btn-danger btn-sm active ml-3 mr-3"
+                  (click)="resetForm()">
+                  Limpiar <i class="fas fa-eraser"> </i>
+                </button>
+                <!--  -->
+                <button
+                  class="btn btn-primary btn-sm active"
+                  (click)="fullQueryExpenses()">
+                  Consultar
+                  <i class="bx bx-search-alt bx-sm float-icon"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <!--  -->
         </div>
-      </div>
-      <div class="table-responsive">
-        <ng2-smart-table
-          [settings]="settings"
-          [source]="data"></ng2-smart-table>
+        <!--  -->
       </div>
     </div>
   </div>
-</form>
+</app-card>
