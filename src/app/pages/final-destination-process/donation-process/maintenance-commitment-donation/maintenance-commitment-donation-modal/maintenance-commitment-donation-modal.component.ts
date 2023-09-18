@@ -29,6 +29,7 @@ export class MaintenanceCommitmentDonationModalComponent
   dataValid: string[] = [];
   totalOtKey: number = 0;
   users = new DefaultSelect();
+  case: boolean = false;
   arr: number[] = [];
   constructor(
     private fb: FormBuilder,
@@ -65,6 +66,7 @@ export class MaintenanceCommitmentDonationModalComponent
           this.title = 'Permisos de Usuarios para Rastreador';
           this.prepareFormPermissionR();
           this.getMax();
+          this.case = true;
           break;
         default:
           this.title = '';
@@ -425,7 +427,7 @@ export class MaintenanceCommitmentDonationModalComponent
   }
 
   handleSuccess() {
-    this.modalRef.content.callback(true);
+    this.modalRef.content.callback(true, this.case);
     this.modalRef.hide();
   }
 }
