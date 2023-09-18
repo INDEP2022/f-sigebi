@@ -125,4 +125,10 @@ export class DonationService
     const route = `${DonationEndPoint.eventComDonation}/${id}`;
     return this.put(route, goodDon);
   }
+  deleteDetailDona(model: any) {
+    return this.delete(DonationEndPoint.DetailEventComDon, model);
+  }
+  putDetailDona(model: any) {
+    return this.put(DonationEndPoint.DetailEventComDon, model);
+  }
 }

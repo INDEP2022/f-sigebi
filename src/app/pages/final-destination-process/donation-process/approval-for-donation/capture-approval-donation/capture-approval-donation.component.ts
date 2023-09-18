@@ -61,13 +61,15 @@ export class CaptureApprovalDonationComponent
   foolio: number;
   statusGood_: any;
   ngGlobal: any;
-  delete: boolean = true;
-  deleteG: boolean = true;
+  deleteO: boolean = false;
   goods: any[] = [];
   dataTableGood_: any[] = [];
+  valueChange: number = 0;
   totalItems: number = 0;
+  deleteG: boolean = false;
   loading3: boolean = false;
   Exportdate: boolean = false;
+  inputVisible: boolean = false;
   status: string = '';
   idAct: number = 0;
   disabledBtnActas: boolean = true;
@@ -87,6 +89,7 @@ export class CaptureApprovalDonationComponent
   TOTAL_REPORTE: number = 0;
   BIEN_ERROR: number = 0;
   SUM_BIEN: number = 0;
+  validChange: number = 0;
   minModeToYear: BsDatepickerViewMode = 'year'; // change for month:year
   bsConfigToYear: Partial<BsDatepickerConfig>;
   dataTableGood: LocalDataSource = new LocalDataSource();
@@ -284,9 +287,10 @@ export class CaptureApprovalDonationComponent
         this.estatus = data.estatusAct;
         console.log(this.eventDonacion);
         if (this.estatus != 'ABIERTA') {
-          this.delete = false;
+          this.deleteO = true;
           // this.generarClave(this.regisForm.value.area, )
         }
+        this.deleteO = false;
         const ultimosCincoDigitos = data.cveAct.slice(-5);
         const anio = parseInt(ultimosCincoDigitos.substring(0, 2), 10);
         const mesNumero = parseInt(ultimosCincoDigitos.substring(3, 5), 10);
@@ -323,6 +327,7 @@ export class CaptureApprovalDonationComponent
         this.regisForm.get('folio').setValue(data.folioUniversal);
         this.regisForm.get('keyEvent').setValue(data.cveAct);
         this.regisForm.get('captureDate').setValue(mesTexto);
+        this.regisForm.get('observaciones').setValue(data.observations);
         console.log(this.eventDonacion);
         this.getDetailDonation();
       },
@@ -434,6 +439,7 @@ export class CaptureApprovalDonationComponent
   getDetailDonation() {
     const params = new ListParams();
     params['filter.recordId'] = this.paramsScreen.recordId;
+    params['filter.good.status'] = 'DON';
     this.donationService.getEventComDonationDetail(params).subscribe({
       next: data => {
         console.log(data);
@@ -466,6 +472,7 @@ export class CaptureApprovalDonationComponent
       ...this.paramsList2.getValue(),
       ...this.columnFilters2,
     };
+    params['filter.good.status'] = 'DON';
     params['filter.recordId'] = this.paramsScreen.recordId;
     return new Promise((resolve, reject) => {
       this.donationService.getEventComDonationDetail(params).subscribe({
@@ -668,14 +675,14 @@ export class CaptureApprovalDonationComponent
 
               if (!this.dataDetailDonation.some((v: any) => v === good)) {
                 let indexGood = this.dataTableGood_.findIndex(
-                  _good => _good.id == good.id
+                  _good => _good.id == good.goodId
                 );
 
                 this.Exportdate = true;
                 console.log('indexGood', indexGood);
                 if (indexGood != -1)
                   this.dataTableGood_[indexGood].di_disponible = 'N';
-                await this.updateBienDetalle(good.id, 'DON');
+                await this.updateBienDetalle(good.goodId, 'DON');
                 await this.createDET(good);
               }
             }
@@ -723,35 +730,54 @@ export class CaptureApprovalDonationComponent
         );
         return;
       } else {
-        this.loading = true;
-        if (this.selectedGooodsValid.length > 0) {
-          // this.goods = this.goods.concat(this.selectedGooodsValid);
-          let result = this.selectedGooodsValid.map(async good => {
-            console.log('good', good);
-            this.dataDetailDonation = this.dataDetailDonation.filter(
-              (_good: any) => _good.id != good.id
-            );
-            let index = this.dataTableGood_.findIndex(
-              g => g.id === good.goodId
-            );
-            await this.updateBienDetalle(good.numberGood, 'ROP');
-            await this.deleteDET(good);
-            // this.selectedGooods = [];
-            //ACTUALIZA COLOR
-            this.dataTableGood_ = [];
-            this.dataTableGood.load(this.dataTableGood_);
-            this.dataTableGood.refresh();
-          });
+        this.inputVisible = true;
+        this.alertQuestion(
+          'question',
+          '¿Seguro que Desea Eliminar el Bien del Evento?',
+          ''
+        ).then(async question => {
+          if (question.isConfirmed) {
+            if (this.regisForm.get('observaElimina').value == null) {
+              this.alert(
+                'warning',
+                'Debe Llenar las Obervaciones de la eliminación Primero',
+                'Debe Capturar un Evento.'
+              );
+              return;
+            }
+            this.loading = true;
+            if (this.selectedGooodsValid.length > 0) {
+              // this.goods = this.goods.concat(this.selectedGooodsValid);
+              let result = this.selectedGooodsValid.map(async good => {
+                console.log('good', good);
+                this.dataDetailDonation = this.dataDetailDonation.filter(
+                  (_good: any) => _good.id != good.goodId
+                );
+                let index = this.dataTableGood_.findIndex(
+                  g => g.id === good.goodId
+                );
 
-          Promise.all(result).then(async item => {
-            await this.getDetailProceedingsDevollution(
-              this.dataDetailDonation.recordId
-            );
-            // this.getGoodsByStatus(Number(this.fileNumber));
-          });
-          this.Exportdate = false;
-          this.selectedGooodsValid = [];
-        }
+                await this.updateBienDetalle(good.goodId, 'ROP');
+                await this.deleteDET(good);
+                // this.selectedGooods = [];
+                //ACTUALIZA COLOR
+                this.dataTableGood_ = [];
+                this.dataTableGood.load(this.dataTableGood_);
+                this.dataTableGood.refresh();
+              });
+
+              Promise.all(result).then(async item => {
+                await this.getDetailProceedingsDevollution(
+                  this.dataDetailDonation.recordId
+                );
+
+                // this.getGoodsByStatus(Number(this.fileNumber));
+              });
+              this.Exportdate = false;
+              this.selectedGooodsValid = [];
+            }
+          }
+        });
       }
     }
   }
@@ -766,11 +792,15 @@ export class CaptureApprovalDonationComponent
   }
   async deleteDET(good: any) {
     console.log(good);
-    const valid: any = await this.getGoodsDelete(good.numberGood);
+    const valid: any = await this.getGoodsDelete(good.goodId);
     if (valid != null) {
       let obj: any = {
-        numberGood: good.numberGood,
-        numberProceedings: this.eventdetailDefault.id,
+        recordId: this.idAct,
+        goodId: good.goodId,
+        amount: good.amount,
+        received: 0,
+        exchangeValue: this.regisForm.get('activeRadio').value | 0,
+        registrationId: good.registreNumber,
       };
 
       await this.deleteDetailProcee(obj);
@@ -778,7 +808,7 @@ export class CaptureApprovalDonationComponent
   }
   async deleteDetailProcee(params: any) {
     return new Promise((resolve, reject) => {
-      this.detailProceeDelRecService.deleteDetailProcee(params).subscribe({
+      this.donationService.putDetailDona(params).subscribe({
         next: data => {
           console.log('data', data);
           // this.loading2 = false;
@@ -841,6 +871,7 @@ export class CaptureApprovalDonationComponent
         .getByExpedient_(Number(this.fileNumber), params)
         .subscribe({
           next: data => {
+            this.inputVisible = true;
             resolve(true);
           },
           error: error => {
@@ -1315,7 +1346,7 @@ export class CaptureApprovalDonationComponent
     });
   }
   actualizarActa() {
-    if (!this.eventdetailDefault) {
+    if (this.paramsScreen.recordId == '0' || null) {
       this.alertInfo('warning', 'Debe Seleccionar un Evento', '');
       return;
     }
@@ -1323,8 +1354,9 @@ export class CaptureApprovalDonationComponent
       this.alertInfo('warning', 'No puede Actualizar un Evento Cerrado', '');
       return;
     }
+
     let obj: any = {
-      cveAct: this.eventDonacion.actId,
+      cveAct: this.idAct,
       elaborationDate: new Date(),
       estatusAct: 'CERRADA',
       elaborated: this.authService.decodeToken().preferred_username,

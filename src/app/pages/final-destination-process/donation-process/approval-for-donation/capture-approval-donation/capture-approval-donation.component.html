@@ -286,6 +286,7 @@
                         maxlength="1000"
                         type="text"
                         class="form-control"
+                        [disabled]="!deleteO"
                         formControlName="observaciones"></textarea>
                     </form-field>
                   </div>
@@ -294,6 +295,7 @@
                   <div class="row">
                     <form-field
                       [control]="regisForm.get('observaElimina')"
+                      [hidden]="!inputVisible"
                       label="Observaciones Eliminación de Bienes por">
                       <textarea
                         maxlength="1000"
@@ -327,7 +329,6 @@
           </div>
           <div class="m-3">
             <button
-              [disabled]="!eventdetailDefault"
               (click)="actualizarActa()"
               type="button"
               class="btn btn-primary active btn-sm mr-3">
