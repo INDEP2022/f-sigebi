@@ -128,4 +128,19 @@ export class GoodPosessionThirdpartyService extends HttpService {
     const route = `${ThirdPartyAdmonEndpoints.StrategyGoods}?filter.formatNumber=$eq:${id}&filter.valGood=$eq:0`;
     return this.get(route);
   }
+
+  PostStrategyFormat(params?: any) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyFormat}`;
+    return this.post(route, params);
+  }
+
+  putStrategyFormat(params: any, id: any) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyFormat}/${id}`;
+    return this.put(route, params);
+  }
+
+  posStrategyBitacora(params: any) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyLog}`;
+    return this.post(route, params);
+  }
 }

@@ -104,4 +104,31 @@ export class DonationService
   postDeleteDetail(data: any) {
     return this.post(`application/pup-delete-detail`, data);
   }
+  getEventGood(params: ListParams) {
+    return this.get(DonationEndPoint.eventComDonation, params);
+  }
+  getApprove(params: ListParams) {
+    return this.get(DonationEndPoint.ApproveDnation, params);
+  }
+
+  putEventComDonationDetail(body: Object) {
+    return this.put(DonationEndPoint.DetailEventComDon, body);
+  }
+  createEventComDonationDetail(body: Object) {
+    return this.post(DonationEndPoint.DetailEventComDon, body);
+  }
+  getByIdEvent(id: number) {
+    return this.get(`/${DonationEndPoint.eventComDonation}/${id}`);
+  }
+
+  putEvent(goodDon: IGoodDonation, id: number) {
+    const route = `${DonationEndPoint.eventComDonation}/${id}`;
+    return this.put(route, goodDon);
+  }
+  deleteDetailDona(model: any) {
+    return this.delete(DonationEndPoint.DetailEventComDon, model);
+  }
+  putDetailDona(model: any) {
+    return this.put(DonationEndPoint.DetailEventComDon, model);
+  }
 }
