@@ -85,6 +85,9 @@ export enum GoodProcessPoints {
   //Classification View
   GetVsigLigie = 'application/vsigLigie',
   ReportNingevent = 'application/report-ningevent',
+  ReportNingeventExcel = 'application/report-ningevent-excel',
+  ReportMonth = 'application/report-months',
+  ReportMonthExcel = 'application/reportMonthsDataExcel',
 }
 
 export enum GoodFinderEndpoint {
@@ -95,6 +98,7 @@ export enum GoodFinderEndpoint {
   AssignDomicilie = 'good-query/update-domicile',
   UpdateGoodStatus = 'good-query/update-status',
   AbleToSignDistamen = 'good-query/count-request',
+  UpdateClassification = 'good-query/classification/request',
 
   /* Good Data Aset */
   GoodDataAsetBase = 'gooddataset',

@@ -165,4 +165,11 @@ export class ComerEventosService extends HttpService {
     const route = `${EventEndpoints.SpObtnPhaseEvent}`;
     return this.post(route, body);
   }
+
+  getLovEventos1(params: _Params) {
+    return this.get(EventEndpoints.LovEventos1, params);
+  }
+  getLovEventos2(params: _Params) {
+    return this.get(EventEndpoints.LovEventos2, params);
+  }
 }
