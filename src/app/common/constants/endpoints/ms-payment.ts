@@ -1,6 +1,7 @@
 export enum PaymentEndPoints {
   BasePath = `payment`,
   ComerPaymentRef = `comer-payment-ref`,
+  ComerPaymentRef2 = `comer-payment-ref?filter.SystemValid=$not:$in:R,D,B`,
   CreateHeader = 'application/createHeader',
   CreateHeaderFcomer113 = 'application/createHeaderFcomer113',
   SendReadSirsaeFcomer113 = 'application/sendReadSirsaeFcomer113',

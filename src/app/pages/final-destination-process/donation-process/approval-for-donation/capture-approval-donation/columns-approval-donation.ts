@@ -139,52 +139,56 @@ export const COPY = {
 };
 
 export const ACTAS = {
-  statusProceedings: {
+  estatusAct: {
     title: 'Estatus',
     type: 'string',
     sort: false,
   },
 
-  id: {
+  actId: {
     title: 'Id',
     type: 'number',
     sort: false,
   },
-  keysProceedings: {
+  cveAct: {
     title: 'Clave Acta',
     type: 'string',
     sort: false,
   },
-  typeProceedings: {
+  actType: {
     title: 'Tipo de Acta',
     type: 'string',
     sort: false,
   },
-  // file: {
-  //   title: 'No. Expediente',
-  //   type: 'number',
-  //   sort: false,
-  //   valuePrepareFuncion: (cell: any, row: any) => {
-  //     return row.file.filesId
-  //   }
-  // },
-  approvalUserXAdmon: {
+  fileId: {
+    title: 'No. Expediente',
+    type: 'number',
+    sort: false,
+  },
+  elaborated: {
     title: 'Administra',
     type: 'string',
     sort: false,
   },
-  numeraryFolio: {
+  folioUniversal: {
     title: 'Folio',
     type: 'string',
     sort: false,
   },
-  numTransfer_: {
-    title: 'Transferente',
-    type: 'number',
+  captureDate: {
+    title: 'Fecha de Captura',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
-  elaborationDate: {
-    title: 'Fecha de Elaboración',
+  closeDate: {
+    title: 'Fecha de Cierre',
     type: 'html',
     sort: false,
     valuePrepareFunction: (text: string) => {
