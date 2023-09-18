@@ -15,12 +15,13 @@
               <app-columns-select [(settings)]="settings1"></app-columns-select>
             </div>
           </div>
-
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings1"
-            (userRowSelect)="selectComer($event)"
-            [source]="data"></ng2-smart-table>
+          <div class="table-responsive">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings1"
+              (userRowSelect)="selectComer($event)"
+              [source]="data"></ng2-smart-table>
+          </div>
           <app-pagination
             [params]="params"
             [totalItems]="totalItems"></app-pagination>
@@ -39,11 +40,12 @@
               <app-columns-select [(settings)]="settings2"></app-columns-select>
             </div>
           </div>
-
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings2"
-            [source]="dataDetail"></ng2-smart-table>
+          <div class="table-responsive">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="dataDetail"></ng2-smart-table>
+          </div>
           <app-pagination
             [params]="paramsDetail"
             [totalItems]="totalItemsDetail"></app-pagination>

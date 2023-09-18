@@ -1,6 +1,6 @@
 export const SERVICEORDERSFORMAT_COLUMNS = {
   noGoods: {
-    title: 'No.Bien',
+    title: 'No. Bien',
     width: '25%',
     sort: false,
   },
