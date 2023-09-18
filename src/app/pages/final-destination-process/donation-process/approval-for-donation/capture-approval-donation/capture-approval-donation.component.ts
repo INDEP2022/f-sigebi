@@ -29,11 +29,15 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
 import { COPY } from './columns-approval-donation';
-
+interface NotData {
+  id: number;
+  reason: string;
+}
 @Component({
   selector: 'app-capture-approval-donation',
   templateUrl: './capture-approval-donation.component.html',
@@ -55,8 +59,10 @@ export class CaptureApprovalDonationComponent
   siabForm: FormGroup;
   foolio: number;
   statusGood_: any;
+  ngGlobal: any;
   delete: boolean = true;
   deleteG: boolean = true;
+  goods: any[] = [];
   dataTableGood_: any[] = [];
   totalItems: number = 0;
   loading3: boolean = false;
@@ -70,7 +76,9 @@ export class CaptureApprovalDonationComponent
   goodError: IDonationGoodError[];
   dataDetailDonation: any;
   data1: any;
+  data: LocalDataSource = new LocalDataSource();
   consec: string = '';
+  idsNotExist: NotData[] = [];
   dataDetailDonationGood: LocalDataSource = new LocalDataSource();
   excelLoading: boolean = false;
   paramsList2 = new BehaviorSubject<ListParams>(new ListParams());
@@ -85,6 +93,7 @@ export class CaptureApprovalDonationComponent
   bsModalRef?: BsModalRef;
   estatus: string;
   selectedRow: IGood;
+  origin2: 'FCONGENRASTREADOR';
   fileNumber: number = 0;
   columnFilters: any = [];
   columnFilters2: any = [];
@@ -116,7 +125,8 @@ export class CaptureApprovalDonationComponent
     private statusGoodService: StatusGoodService,
     private datePipe: DatePipe,
     private usersService: UsersService,
-    private detailProceeDelRecService: DetailProceeDelRecService
+    private detailProceeDelRecService: DetailProceeDelRecService,
+    private globalVarService: GlobalVarsService
   ) {
     super();
 
@@ -184,6 +194,18 @@ export class CaptureApprovalDonationComponent
   }
 
   ngOnInit(): void {
+    this.globalVarService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          this.ngGlobal = global;
+          console.log('GLOBAL ', this.ngGlobal);
+          if (this.ngGlobal.REL_BIENES) {
+            console.log('GLOBAL ', this.ngGlobal.REL_BIENES);
+          }
+        },
+      });
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
@@ -198,6 +220,7 @@ export class CaptureApprovalDonationComponent
                 paramsQuery[key] ?? null;
             }
           }
+          this.origin2 = paramsQuery['origin2'] ?? null;
         }
         if (
           this.origin != null &&
@@ -1220,9 +1243,53 @@ export class CaptureApprovalDonationComponent
     }
   }
 
-  searchEventos() {}
-  cerrarEvento() {}
-  clean() {}
+  findRast() {
+    this.data.load([]);
+    this.router.navigate(['/pages/general-processes/goods-tracker'], {
+      queryParams: { origin: 'FMCOMDONAC_1' },
+    });
+  }
+  loadGood(data: any[]) {
+    this.loading = true;
+    let count = 0;
+    data.forEach(good => {
+      count = count + 1;
+      this.goodService.getById(good.No_bien).subscribe({
+        next: response => {
+          this.goods.push({
+            ...JSON.parse(JSON.stringify(response)).data[0],
+            avalaible: null,
+          });
+          console.log(this.goods);
+          this.addStatus();
+          /* this.validGood(JSON.parse(JSON.stringify(response)).data[0]); */ //!SE TIENE QUE REVISAR
+        },
+        error: err => {
+          if (err.error.message === 'No se encontrarón registros')
+            this.idsNotExist.push({
+              id: good.goodNumber,
+              reason: err.error.message,
+            });
+        },
+      });
+      if (count === data.length) {
+        this.loading = false;
+      }
+    });
+  }
+  addStatus() {
+    /* this.data.load(this.goods); */
+    this.paginator();
+    this.data.refresh();
+  }
+
+  paginator(noPage: number = 1, elementPerPage: number = 10) {
+    const indiceInicial = (noPage - 1) * elementPerPage;
+    const indiceFinal = indiceInicial + elementPerPage;
+
+    let paginateData = this.goods.slice(indiceInicial, indiceFinal);
+    this.data.load(paginateData);
+  }
 }
 
 export interface IParamsDonac {

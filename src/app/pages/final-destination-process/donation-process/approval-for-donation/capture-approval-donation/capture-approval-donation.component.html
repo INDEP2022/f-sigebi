@@ -16,10 +16,9 @@
             </div>
           </div>
           <div class="row mt-5">
-            <div
-              class="col-7 d-flex align-items-center justify-content-between">
+            <div class="col-5 d-flex align-items-center justify-content-start">
               <span class="badge rounded-pill badge-soft-success">Estatus</span>
-              <div>{{ estatus || '' }}</div>
+              <div style="font-weight: bold">{{ estatus || '' }}</div>
             </div>
           </div>
           <div class="row mt-5">
@@ -200,11 +199,6 @@
                     <div class="row m-12">
                       <div class="col-4"></div>
                       <div class="col-md-12 text-center">
-                        <!-- <button [disabled]="!actasDefault" (click)="actualizarActa()" type="button"
-                              class="btn btn-primary active btn-sm mr-3">
-                              Guardar
-                              <i aria-hidden="true" class="fa fa-save"></i>
-                            </button> -->
                         <button
                           class="btn btn-secondary btn-sm active me-2"
                           (click)="validaGood()">
@@ -225,7 +219,7 @@
                         </button>
                         <button
                           class="btn btn-info active btn-sm active"
-                          (click)="exportToExcel()">
+                          (click)="findRast()">
                           Rastreador de Bienes&nbsp;
                           <i class="fas fa-map-marker bx-sm float-icon"></i>
                         </button>

@@ -54,14 +54,14 @@ export const COPY = {
     title: 'Unidad',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.goodEntity?.unit;
+      return row.good?.unit;
     },
   },
   status: {
     title: 'Estatus',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.goodEntity?.status;
+      return row.bienindicadores?.estatus;
     },
   },
   noExpediente: {
