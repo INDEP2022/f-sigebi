@@ -918,7 +918,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     }
   }
 
-  async copyInovice(data: Object) {
+  async copyInovice(data: any) {
     return firstValueFrom<number>(
       this.comerInvoice.copyInvoice(data).pipe(
         map(resp => resp),
