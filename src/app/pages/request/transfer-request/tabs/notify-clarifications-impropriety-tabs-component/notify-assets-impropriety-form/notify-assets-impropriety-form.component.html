@@ -178,6 +178,26 @@
               formControlName="webMail" />
           </form-field>
         </div>
+
+        <div
+          class="col-md-4"
+          *ngIf="
+            notification?.clarification?.clarification ==
+            'INDIVIDUALIZACIÓN DE BIENES'
+          ">
+          <form-field
+            [control]="clarificationForm.get('keyClarificationPaper')"
+            label="Clave Oficio Aclaración">
+            <input
+              style="text-transform: lowercase"
+              onkeyup="javascript:this.value=this.value.toLowerCase();"
+              type="text"
+              class="form-control"
+              [readOnly]="true"
+              maxlength="100"
+              formControlName="keyClarificationPaper" />
+          </form-field>
+        </div>
       </div>
       <div class="row" *ngIf="infoRequest.typeOfTransfer == 'SAT_SAE'">
         <div class="col-md-12">

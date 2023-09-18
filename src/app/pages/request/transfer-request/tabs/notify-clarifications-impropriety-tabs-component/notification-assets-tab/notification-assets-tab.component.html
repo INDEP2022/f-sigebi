@@ -484,7 +484,9 @@
                     requestData?.typeOfTransfer == 'MANUAL' ||
                     (requestData?.typeOfTransfer == 'SAT_SAE' &&
                       dataNotificationSelected?.clarificationType ==
-                        'SOLICITAR_IMPROCEDENCIA')
+                        'SOLICITAR_IMPROCEDENCIA') ||
+                    dataNotificationSelected?.clarification?.clarification ==
+                      'INDIVIDUALIZACIÓN DE BIENES'
                   ">
                   <button
                     class="btn btn-success btn-sm active"

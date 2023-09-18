@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IClarification } from 'src/app/core/models/catalogs/clarification.model';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { IClarificationDocumentsImpro } from 'src/app/core/models/ms-documents/clarification-documents-impro-model';
@@ -34,8 +35,8 @@ export class NotifyAssetsImproprietyFormComponent
 {
   title: string = 'Aclaración';
   clarificationForm: FormGroup = new FormGroup({});
-  clarification: any;
-
+  clarification: IClarification;
+  notification: any;
   //en el caso de que una aclaracion llege sin documentacion
   withDocumentation: boolean = false;
 
@@ -85,6 +86,8 @@ export class NotifyAssetsImproprietyFormComponent
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
     console.log('Información de la solicitud', this.infoRequest);
+    console.log('Aclaración', this.clarification);
+    console.log('notification', this.notification.clarification.clarification);
 
     //Actualiza Bien, de prueba
     //this.changeSimulateGood()
@@ -151,6 +154,7 @@ export class NotifyAssetsImproprietyFormComponent
       webMail: [null, [Validators.pattern(EMAIL_PATTERN)]],
       unit: [null, [Validators.pattern(STRING_PATTERN)]],
       amount: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      keyClarificationPaper: [null],
     });
   }
 
@@ -158,6 +162,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   async confirm() {
     const typeTransference = this.infoRequest.typeOfTransfer;
+
     let generaXML: boolean = false;
     if (
       typeTransference == 'SAT_SAE' &&
@@ -197,19 +202,6 @@ export class NotifyAssetsImproprietyFormComponent
         }
       }
 
-      /*if (
-        this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
-        (this.dataClarifications2.chatClarification.idClarificationType ==
-          '2' ||
-          this.dataClarifications2.chatClarification.idClarificationType ==
-            '1') &&
-        typeTransference == 'MANUAL'
-      ) {
-        console.log('Se ejecutará aclaracionTransferentesVoluntarias segundo')
-        this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1 y 2
-
-      }*/
-
       if (
         this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
         this.dataClarifications2.chatClarification.clarificationStatus ==
@@ -220,12 +212,30 @@ export class NotifyAssetsImproprietyFormComponent
       }
     }
 
-    if (typeTransference == 'SAT_SAE' && this.typeClarifications == 2) {
+    if (
+      typeTransference == 'SAT_SAE' &&
+      this.typeClarifications == 2 &&
+      this.notification.reason != 'INDIVIDUALIZACIÓN DE BIENES'
+    ) {
       this.oficioAclaracionTransferente();
     }
-    if (typeTransference == 'SAT_SAE' && this.typeClarifications == 1) {
+    if (
+      typeTransference == 'SAT_SAE' &&
+      this.typeClarifications == 1 &&
+      this.notification.reason != 'INDIVIDUALIZACIÓN DE BIENES'
+    ) {
       this.aclaracionComercioExterior();
     }
+
+    if (
+      typeTransference == 'SAT_SAE' &&
+      this.notification?.clarification?.clarification ==
+        'INDIVIDUALIZACIÓN DE BIENES'
+    ) {
+      console.log('Camara aqui solo se guarda no se ve');
+      this.aclaracionComercioExterior();
+    }
+
     //this.saveClarificationsAcept();
   }
 
@@ -373,12 +383,24 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        const createClarGoodDoc = this.createClarGoodDoc(data);
+        if (
+          this.notification?.clarification?.clarification ==
+          'INDIVIDUALIZACIÓN DE BIENES'
+        ) {
+          console.log('fsdf', data);
+          this.updateAnsweredAcla(
+            this.notification.rejectNotificationId,
+            this.notification.chatClarification.idClarification,
+            this.notification.goodId
+          );
+        } else {
+          const createClarGoodDoc = this.createClarGoodDoc(data);
 
-        if (createClarGoodDoc) {
-          this.openReport(data);
-          this.loading = false;
-          this.close();
+          if (createClarGoodDoc) {
+            this.openReport(data);
+            this.loading = false;
+            this.close();
+          }
         }
       },
       error: error => {
@@ -737,7 +759,7 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
         this.chatService.update(chatClarId, updateInfo).subscribe({
           next: data => {
             this.loading = false;
-            this.onLoadToast('success', 'Actualizado', '');
+            //his.onLoadToast('success', 'Actualizado', '');
             this.modalRef.content.callback(true, data.goodId);
             this.modalRef.hide();
           },
@@ -947,9 +969,15 @@ XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
     if (token.siglasnivel4 != null) {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/${noDictamen}/${year}`;
       console.log('CLAVE ARMADA: ', this.folioReporte);
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
     } else {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${noDictamen}/${year}`;
       console.log('CLAVE ARMADA: ', this.folioReporte);
+      this.clarificationForm
+        .get('keyClarificationPaper')
+        .setValue(this.folioReporte);
     }
   }
 
