@@ -32,6 +32,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
+import { GoodErrorComponent } from '../good-error/good-error.component';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
 import { COPY } from './columns-approval-donation';
 interface NotData {
@@ -673,7 +674,7 @@ export class CaptureApprovalDonationComponent
                 console.log('indexGood', indexGood);
                 if (indexGood != -1)
                   this.dataTableGood_[indexGood].di_disponible = 'N';
-                await this.updateBienDetalle(good.id, 'ADM');
+                await this.updateBienDetalle(good.id, 'DON');
                 await this.createDET(good);
               }
             }
@@ -699,7 +700,7 @@ export class CaptureApprovalDonationComponent
     if (this.estatus == 'CERRADA') {
       this.alert(
         'warning',
-        'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+        'El Evento ya está Cerrado, no puede Realizar Modificaciones',
         ''
       );
       return;
@@ -709,7 +710,7 @@ export class CaptureApprovalDonationComponent
       if (this.dataDetailDonation == null) {
         this.alert(
           'warning',
-          'Debe Especificar/Buscar el Acta para Despues Eliminar el Bien de Esta.',
+          'Debe Especificar/Buscar el Evento para Despues Eliminar el Bien.',
           ''
         );
         return;
@@ -1238,12 +1239,21 @@ export class CaptureApprovalDonationComponent
         next: data => {
           console.log(this.dataDetailDonation);
           console.log(data.data);
+          this.alert('success', 'Bienes Validados', '');
         },
       });
     }
   }
 
   findRast() {
+    if (this.eventDonacion.estatusAct === 'CERRADA') {
+      this.alert(
+        'warning',
+        'El Evento está cerrado, no se pueden validar bienes',
+        ''
+      );
+      return;
+    }
     this.data.load([]);
     this.router.navigate(['/pages/general-processes/goods-tracker'], {
       queryParams: { origin: 'FMCOMDONAC_1' },
@@ -1291,6 +1301,46 @@ export class CaptureApprovalDonationComponent
   //     let paginateData = this.goods.slice(indiceInicial, indiceFinal);
   //     this.data.load(paginateData);
   //   }
+  searchGoodError(provider?: any) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      provider,
+    };
+    let modalRef = this.modalService.show(GoodErrorComponent, modalConfig);
+    modalRef.content.onSave.subscribe(async (next: any) => {
+      if (next) {
+        console.log(next);
+      }
+    });
+  }
+  actualizarActa() {
+    if (!this.eventdetailDefault) {
+      this.alertInfo('warning', 'Debe Seleccionar un Evento', '');
+      return;
+    }
+    if (this.eventdetailDefault.estatusAct == 'CERRADA') {
+      this.alertInfo('warning', 'No puede Actualizar un Evento Cerrado', '');
+      return;
+    }
+    this.eventdetailDefault.observaciones =
+      this.regisForm.get('observaciones').value;
+    delete this.eventdetailDefault.numDelegation1Description;
+    delete this.eventdetailDefault.numDelegation2Description;
+    delete this.eventdetailDefault.numTransfer_;
+    this.donationService
+      .putEvent(this.eventdetailDefault.actId, this.eventdetailDefault)
+      .subscribe({
+        next: async data => {
+          this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
+          await this.generaRepote();
+        },
+        error: error => {
+          this.alert('error', 'Ocurrió un Error al Actualizar el Evento', '');
+          // this.loading = false
+        },
+      });
+  }
+  generaRepote() {}
 }
 
 export interface IParamsDonac {

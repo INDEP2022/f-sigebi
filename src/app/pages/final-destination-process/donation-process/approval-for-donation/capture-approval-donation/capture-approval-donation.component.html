@@ -118,11 +118,6 @@
             <div class="row m-3">
               <div class="col-4"></div>
               <div class="col-md-12 text-center">
-                <!-- <button [disabled]="!actasDefault" (click)="actualizarActa()" type="button"
-                  class="btn btn-primary active btn-sm mr-3">
-                  Guardar
-                  <i aria-hidden="true" class="fa fa-save"></i>
-                </button> -->
                 <button
                   (click)="agregarCaptura()"
                   type="button"
@@ -291,7 +286,7 @@
                   </div>
                 </div> -->
                 <div class="col-md-12">
-                  <div>
+                  <div class="row">
                     <form-field
                       [control]="regisForm.get('observaElimina')"
                       label="Observaciones Eliminación de Bienes por">
@@ -314,7 +309,7 @@
           <div class="m-3">
             <button
               class="btn btn-secondary btn-sm active"
-              (click)="ubicaGood()">
+              (click)="searchGoodError()">
               Ver Error
             </button>
           </div>
@@ -323,6 +318,16 @@
               class="btn btn-danger btn-sm active"
               (click)="removeSelect()">
               Elimina Bienes <i class="fa fa-trash-alt"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <button
+              [disabled]="!eventdetailDefault"
+              (click)="actualizarActa()"
+              type="button"
+              class="btn btn-primary active btn-sm mr-3">
+              Guardar
+              <i aria-hidden="true" class="fa fa-save"></i>
             </button>
           </div>
         </div>
