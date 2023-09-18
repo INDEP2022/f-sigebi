@@ -147,8 +147,9 @@ export class DataTableComponent extends BasePage implements OnInit {
                 response.data[i].yes = null;
                 response.data[i].not = 1;
               }
-              console.log(" response1.data[0].name -> ", response1.data[0]);
-              response.data[i].name = response1.data[0].name != null ? response1.data[0].name : null;
+              console.log(' response1.data[0].name -> ', response1.data[0]);
+              response.data[i].name =
+                response1.data[0].name != null ? response1.data[0].name : null;
 
               if (i == response.data.length - 1) {
                 this.data = response.data;
@@ -196,10 +197,9 @@ export class DataTableComponent extends BasePage implements OnInit {
       callback: (next: boolean, case1?: boolean) => {
         if (case1 == true) {
           this.getTracker();
-        } else
-          if (next) {
-            this.getForeignTrade();
-          };
+        } else if (next) {
+          this.getForeignTrade();
+        }
       },
     };
     this.modalService.show(
