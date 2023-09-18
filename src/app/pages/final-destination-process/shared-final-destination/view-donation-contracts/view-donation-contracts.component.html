@@ -57,9 +57,9 @@
           <div class="col">
             <form-field [control]="form.get('status')" label="Estado">
               <ng-select class="form-control" formControlName="status">
-                <ng-option [value]="null">Seleccione un valor</ng-option>
-                <ng-option [value]="1">1</ng-option>
-                <ng-option [value]="2">2</ng-option>
+                <ng-option [value]="'A'">A</ng-option>
+                <ng-option [value]="'RT'">RT</ng-option>
+                <ng-option [value]="'D'">D</ng-option>
               </ng-select>
             </form-field>
           </div>
