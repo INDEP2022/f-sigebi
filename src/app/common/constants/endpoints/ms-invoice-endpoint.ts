@@ -37,4 +37,5 @@ export enum ENDPOINT_INVOICE {
   ComerEleBill = 'comer-elec-bill',
   ApplicationFolioSP = 'application/puf-valid-invoice-sp',
   ApplicationEats = 'application/get-data-eats',
+  PkComerVnr = 'pk-comer-vnr/valid-rebilling',
 }

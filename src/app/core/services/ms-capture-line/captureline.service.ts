@@ -40,6 +40,9 @@ export class CapturelineService extends HttpService {
   getPaConsultLc(body: any, params?: ListParams) {
     return this.post<any>(CapturelineEndpoints.PaConsultLc, body, params);
   }
+  getPaUpdateUniqueKey(body: any) {
+    return this.post<any>(CapturelineEndpoints.getPaUpdateUniqueKey, body);
+  }
   getAllAdminCaptureLine1(params: ListParams): Observable<IListResponse<any>> {
     return this.binnacle.getAllPaginated(this.route3, params);
   }

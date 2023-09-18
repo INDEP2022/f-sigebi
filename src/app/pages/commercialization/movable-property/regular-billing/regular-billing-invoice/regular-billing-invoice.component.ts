@@ -66,7 +66,10 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
   loading2: boolean = false;
   buttons: boolean = false;
   isCancel: boolean = false;
-
+  global: any = {
+    canxp: '',
+    pidgasto: '',
+  };
   settings2 = {
     ...this.settings,
     actions: false,
@@ -1277,8 +1280,9 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
         initialState: {
           form: this.form,
           data: this.isSelect,
-          callback: (data: any) => {
-            console.log(data);
+          global: this.global,
+          callback: (data: boolean, val: number) => {
+            this.isVisibleField(val);
           },
         },
         class: 'modal-md modal-dialog-centered',
@@ -1293,6 +1297,8 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     const idpayment = await this.checkIdGasto(folio, this.isSelect[0].eventId);
 
     if (idpayment) {
+      this.global.canxp = 'S';
+      this.global.pidgasto = idpayment;
       const data = await this.getData(
         this.isSelect[0].eventId,
         Number(idpayment)

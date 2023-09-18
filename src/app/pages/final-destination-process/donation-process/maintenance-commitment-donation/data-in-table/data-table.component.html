@@ -22,4 +22,12 @@
     [source]="data">
   </ng2-smart-table>
 </div>
-<app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>
+<div class="row" *ngIf="this.type == 1 || this.type == 2 || this.type == 3">
+  <app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>
+</div>
+
+<!-- TYPE 4   -->
+<div class="row" *ngIf="this.type == 4">
+  <app-pagination [params]="params4" [totalItems]="totalItem4">
+  </app-pagination>
+</div>

@@ -76,6 +76,10 @@ export class ComerInvoiceService extends HttpService {
     return this.get(ENDPOINT_INVOICE.ComerHeadboard, params);
   }
 
+  getValidPayments2(params?: ListParams) {
+    return this.get(ENDPOINT_INVOICE.ComerHeadboard, params);
+  }
+
   executeSQL(data: {
     invoiceField: string;
     table: string;
@@ -174,5 +178,20 @@ export class ComerInvoiceService extends HttpService {
     return this.get(
       `${ENDPOINT_INVOICE.ApplicationEats}?eventId=${event}&expenseId=${expend}`
     );
+  }
+
+  pkComerVnr(data: {
+    pEvent: string;
+    pLot: string;
+    pInvoice: string;
+    pLegend: string;
+    pAuthorized: string;
+    pStatus: string;
+    pCauseA: string;
+    pOption: string;
+    pDelEmits: string;
+    pOcionCan: string;
+  }) {
+    return this.post(ENDPOINT_INVOICE.PkComerVnr, data);
   }
 }

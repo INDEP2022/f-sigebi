@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as FileSaver from 'file-saver';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { AppraiseService } from 'src/app/core/services/ms-appraise/appraise.service';
@@ -16,6 +16,7 @@ import {
   MyBody,
   OfficesSend,
   SendObtainGoodValued,
+  UserFind,
   ValidationResponseFile,
 } from './res-cancel-valuation-class/class-service';
 import {
@@ -112,7 +113,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     private serviceAppraise: AppraiseService,
     private generateCveService: GenerateCveService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private serviceUser: GenerateCveService
   ) {
     super();
     this.settings = {
@@ -154,10 +156,14 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.queryCyties();
 
     this.route.queryParams.subscribe(params => {
-      let body: OfficesSend = new OfficesSend();
-      body.eventId = +params['event'];
-      body.officeType = +params['type'];
-      this.loadOffice(body.eventId, body.officeType);
+      if (params['event'] != undefined && params['type'] != undefined) {
+        let body: OfficesSend = new OfficesSend();
+        body.eventId = +params['event'];
+        body.officeType = +params['type'];
+        console.log('Los parametros: ', body.eventId, ' -- ', params['type']);
+        console.log('Si se esta ejecutando esta mrd');
+        this.loadOffice(body.eventId, body.officeType);
+      }
     });
   }
 
@@ -185,7 +191,31 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
   getUsersDesList(event?: any) {}
 
-  queryAllUsers(event?: any) {}
+  queryAllUsers(event?: any) {
+    let userBody: UserFind = new UserFind();
+    userBody.flagIn = 1;
+    this.getUserService(userBody, event).subscribe(arrayRemi => {
+      console.log('Lo que almacena remi: ', arrayRemi);
+      this.fullUsers = new DefaultSelect(
+        arrayRemi?.data,
+        arrayRemi?.count || 0
+      );
+    });
+  }
+
+  getUserService(body: any, event: any): Observable<any> {
+    return new Observable(observer => {
+      this.serviceUser.postSpUserAppraisal(body, event).subscribe({
+        next: response => {
+          observer.next(response);
+          observer.complete();
+        },
+        error: error => {
+          observer.error(error);
+        },
+      });
+    });
+  }
 
   queryAllUsersTwo(event?: any) {}
 
