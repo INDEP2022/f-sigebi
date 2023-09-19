@@ -17,7 +17,7 @@
       <ngx-select
         [form]="form"
         [data]="transferents"
-        label="Transferente"
+        label="No. Transferente"
         value="id"
         bindLabel="tipoSupbtipoDescription"
         (fetchItems)="getTransSelect($event)"
@@ -57,13 +57,13 @@
   <div class="row mb-3 mt-3">
     <form-field
       [control]="form.get('concept')"
-      class="col-md-2"
+      class="col-md-6"
       label="Concepto">
       <input type="text" formControlName="concept" class="form-control" />
     </form-field>
     <form-field
       [control]="form.get('descConcept')"
-      class="col-md-4"
+      class="col-md-6"
       label="Descripción Concepto">
       <input type="text" formControlName="descConcept" class="form-control" />
     </form-field>
@@ -94,14 +94,14 @@
         class="btn btn-danger btn-sm active mr-3"
         [disabled]="loading"
         (click)="cleanFilters()">
-        Limpiar Filtros <i class="fas fa-eraser"> </i>
+        Limpiar<i class="fas fa-eraser"> </i>
       </button>
       <button
         type="button"
         class="btn btn-primary active btn-sm"
         [disabled]="loading"
         (click)="executeConsult()">
-        Ejecutar Consulta
+        Consultar
         <i class="bx bx-search-alt bx-sm float-icon"></i>
       </button>
     </div>
@@ -115,7 +115,7 @@
       <app-columns-select [(settings)]="settings"></app-columns-select>
     </div>
   </div>
-  <div [class]="loading ? 'table-loading row pt-3' : 'row pt-3'">
+  <div [class]="loading ? 'table-loading row pt-3 table-responsive' : 'row pt-3 table-responsive'">
     <ng2-smart-table [settings]="settings" [source]="data"> </ng2-smart-table>
   </div>
   <app-pagination

@@ -209,7 +209,7 @@ export class FindActaComponent extends BasePage implements OnInit {
       next: data => {
         this.alert(
           'warning',
-          'No Puede Borrar Registro Maestro Cuando Existen Registros Detalles Coincidentes.',
+          'No puede borrar registro maestro cuando existen registros detalles coincidentes.',
           ''
         );
       },
@@ -224,7 +224,7 @@ export class FindActaComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar Este Registro?'
+      '¿Desea eliminar este registro?'
     ).then(async question => {
       if (question.isConfirmed) {
         this.proceedingsDeliveryReceptionService
@@ -236,7 +236,7 @@ export class FindActaComponent extends BasePage implements OnInit {
                   this.valDelete = true;
                   this.ejecutarFuncionDesdeModal(true);
                 }
-              this.alert('success', 'Acta Eliminada Correctamente', '');
+              this.alert('success', 'Acta eliminada correctamente', '');
               this.getStatusDeliveryCve();
               // console.log(this.dataTableGoodsActa);
             },
@@ -245,7 +245,7 @@ export class FindActaComponent extends BasePage implements OnInit {
               this.totalItems2 = 0;
               this.alert(
                 'error',
-                'Ocurrió un error al Intentar Eliminar el Acta',
+                'Ocurrió un error al intentar eliminar el acta',
                 ''
               );
               // console.log(error);

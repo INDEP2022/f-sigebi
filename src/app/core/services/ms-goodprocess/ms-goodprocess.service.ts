@@ -283,6 +283,14 @@ export class GoodprocessService extends HttpService {
     return this.get<IListResponse<any>>(route, params);
   }
 
+  getTypesGoods(params: any, paramsPaginated?: any) {
+    return this.post(
+      GoodprocessEndpoints.GetTypesGoods,
+      params,
+      paramsPaginated
+    );
+  }
+
   getUniRegister() {
     return this.get(GoodprocessEndpoints.GetUniRegister);
   }

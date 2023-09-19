@@ -50,6 +50,7 @@ export class ConsultationGoodsCommercialBillsComponent
     this.settings = {
       ...this.settings,
       columns: {
+        ...CONSULTATION_GOODS_BILLS_COLUMNS,
         select: {
           title: 'Seleccionar',
           sort: false,
@@ -61,7 +62,6 @@ export class ConsultationGoodsCommercialBillsComponent
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.rowSelectChange(instance),
         },
-        ...CONSULTATION_GOODS_BILLS_COLUMNS,
       },
       actions: false,
     };
