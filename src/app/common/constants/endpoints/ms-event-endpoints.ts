@@ -29,4 +29,6 @@ export enum EventEndpoints {
   SpObtnPhaseEvent = 'application/spObtnPhaseEvent',
   LovEventos1 = 'application/lov-eventos-1',
   LovEventos2 = 'application/lov-eventos-2',
+  PaLookLotsChange = 'application/pa-look-lots-change-status2',
+  PaLookLotsChangeExcel = 'application/paLookLotsChangeStatusDataExcel',
 }
