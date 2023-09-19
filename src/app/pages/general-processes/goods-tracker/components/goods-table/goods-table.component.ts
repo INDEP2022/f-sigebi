@@ -699,6 +699,14 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   }
 
   async getHistory() {
+    if (!this.selectedGooods.length) {
+      this.alert('warning', 'Debe Seleccionar un Bien', '');
+      return;
+    }
+    if (this.selectedGooods.length > 1) {
+      this.alert('warning', 'Debe Seleccionar solo un Bien', '');
+      return;
+    }
     const good = this.selectedGooods[0];
 
     const histo = await this.getHistoryData(Number(good.goodNumber));
