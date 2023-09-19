@@ -74,25 +74,15 @@ export class DataTableComponent extends BasePage implements OnInit {
       //comercio exterior
       this.filterComerAndDeli();
       this.settings.columns = COLUMNS_DATA_TABLE;
-      this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getForeignTrade());
     } else if (this.type == 3) {
       //Otros Trans
       this.filterOtrosTrans();
       this.settings.columns = COLUMNS_OTHER_TRANS;
-      // this.data = EXAMPLE_DATA1;
-      this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getForeignTrade());
+
     } else {
       //Permisos Rastreador
       this.filterPermis();
       this.settings.columns = COLUMNS_USER_PERMISSIONS;
-      this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getTracker());
-      //this.data = EXAMPLE_DATA2;
     }
   }
 
@@ -244,6 +234,7 @@ export class DataTableComponent extends BasePage implements OnInit {
                 break;
               case 'name':
                 console.log('NAME -> ');
+                field = `filter.segUser.name`
                 searchFilter = SearchFilter.ILIKE;
                 break;
               default:
@@ -308,52 +299,32 @@ export class DataTableComponent extends BasePage implements OnInit {
   }
 
   getTracker() {
-    console.log(' getTracker ');
-    const params: ListParams = {};
-
-    params['filter.nmtable'] = `$eq:421`;
-    this.params.getValue()['filter.nmtable'] = `$eq:421`;
-
-    console.log('params 2 -> ', this.params.getValue());
-
-    this.tvalTable1Service.getAlls(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.tvalTable1Service.getAlls2(params).subscribe({
       next: response => {
         console.log('data tracer ', response);
         for (let i = 0; i < response.data.length; i++) {
-          const params: ListParams = {};
-          params['filter.id'] = `$eq:${response.data[i].otvalor}`;
-          //this.params.getValue()['filter.id'] = `$eq:${response.data[i].otvalor}`;
-          // SERVICIO
-          this.usersService.getAllSegUsers(params).subscribe({
-            next: response1 => {
-              console.log('response1.DATA -->', response1.data);
-              if (response.data[i].abbreviation == 'S') {
-                console.log(response.data[i].abbreviation);
-                response.data[i].yes = 1;
-                response.data[i].not = null;
-              } else {
-                response.data[i].yes = null;
-                response.data[i].not = 1;
-              }
-              //console.log(" response1.data[0].name -> ", response1.data[0]);
-              response.data[i].name =
-                response1.data[0].name != null ? response1.data[0].name : null;
-
-              if (i == response.data.length - 1) {
-                this.data = response.data;
-                //console.log('this DATA -->', this.data);
-                this.dataTable1.load(response.data);
-                this.dataTable1.refresh();
-                this.totalItem4 = response.count || 0;
-                console.log('getAllSegUsers: ', this.totalItem4);
-                this.loading = false;
-              }
-            },
-            error: error => {
-              console.log('error tracer ', error);
-              this.loading = false;
-            },
-          });
+          if (response.data[i].abbreviation == 'S') {
+            console.log(response.data[i].abbreviation);
+            response.data[i].yes = 1;
+            response.data[i].not = null;
+          } else {
+            response.data[i].yes = null;
+            response.data[i].not = 1;
+          }
+          response.data[i].name = response.data[i].segUser.name;
+          if (i == response.data.length - 1) {
+            this.data = response.data;
+            //console.log('this DATA -->', this.data);
+            this.dataTable1.load(response.data);
+            this.dataTable1.refresh();
+            this.totalItem4 = response.count || 0;
+            console.log('getAllSegUsers: ', this.totalItem4);
+            this.loading = false;
+          }
         }
       },
       error: error => {
