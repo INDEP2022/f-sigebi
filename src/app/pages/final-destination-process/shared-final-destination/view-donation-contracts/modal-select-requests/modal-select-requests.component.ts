@@ -56,9 +56,9 @@ export class ModalSelectRequestsComponent extends BasePage implements OnInit {
   initForm() {
     if (this.op === 1) {
       this.form = this.fb.group({
-        id_donatario: [null],
-        no_almacen: [null],
-        tipo_solicitud: [null, [Validators.pattern(STRING_PATTERN)]],
+        doneeId: [null],
+        delegationNumber: [null],
+        requestType: [null, [Validators.pattern(STRING_PATTERN)]],
       });
       this.form.disable();
     } else {
@@ -76,7 +76,7 @@ export class ModalSelectRequestsComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  consult() {
+  consult2() {
     this.consulto = true;
     this.loading = true;
     const model: any = {
@@ -109,6 +109,32 @@ export class ModalSelectRequestsComponent extends BasePage implements OnInit {
       });
   }
 
+  consult() {
+    this.consulto = true;
+    this.loading = true;
+    this.params.getValue()['filter.requestType'] = `$eq:${this.typeRequest}`;
+    this.donationRequestService.getDonationData2(this.params.value).subscribe({
+      next: data => {
+        const dataArray = data.data.map((item: any) => {
+          return {
+            ...item,
+            SELEC: false,
+          };
+        });
+        console.error(data.data);
+        this.data.load(dataArray);
+        this.data.refresh();
+        this.totalItems = data.count;
+        this.loading = false;
+      },
+      error: (error: any) => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+      },
+    });
+  }
+
   async incorporar() {
     if (!this.contract) {
       this.alert(
@@ -123,8 +149,7 @@ export class ModalSelectRequestsComponent extends BasePage implements OnInit {
     const newArray = array1.map((obj1: any) => {
       const matchingObj = this.propContratosSelect.find(
         (obj2: any) =>
-          obj2.id_donatario === obj1.id_donatario &&
-          obj2.donatario === obj1.donatario
+          obj2.doneeId === obj1.doneeId && obj2.donee === obj1.donee
       );
       if (matchingObj && !matchingObj.SELEC) {
         return matchingObj;
@@ -149,27 +174,27 @@ export class ModalSelectRequestsComponent extends BasePage implements OnInit {
         console.log(record);
         if (record.SELEC === true && !V_BAN) {
           V_BAN = true;
-          V_ID_DONATARIO = record.id_donatario;
-          V_NO_ALMACEN = record.no_almacen;
-          V_ID_SOLICITUD = record.id_solicitud;
+          V_ID_DONATARIO = record.doneeId;
+          V_NO_ALMACEN = record.delegationNumber;
+          V_ID_SOLICITUD = record.doneeId;
           V_BAN_REG = true;
         } else if (
           record.SELEC === false &&
           V_BAN &&
-          V_ID_DONATARIO === record.id_donatario &&
-          V_NO_ALMACEN === record.no_almacen
+          V_ID_DONATARIO === record.doneeId &&
+          V_NO_ALMACEN === record.delegationNumber
         ) {
           V_BAN_EX = true;
         } else if (
           record.SELEC === true &&
           V_BAN &&
-          V_ID_DONATARIO !== record.id_donatario
+          V_ID_DONATARIO !== record.doneeId
         ) {
           V_BAN_MAL = true;
         } else if (
           record.SELEC === true &&
           V_BAN &&
-          V_NO_ALMACEN !== record.no_almacen
+          V_NO_ALMACEN !== record.delegationNumber
         ) {
           V_BAN_MAA = true;
         }
@@ -215,8 +240,8 @@ export class ModalSelectRequestsComponent extends BasePage implements OnInit {
           propContratosSelect.forEach((record: any, index: number) => {
             if (
               record.SELEC === false &&
-              V_ID_DONATARIO === record.id_donatario &&
-              V_NO_ALMACEN === record.no_almacen
+              V_ID_DONATARIO === record.doneeId &&
+              V_NO_ALMACEN === record.delegationNumber
             ) {
               propContratosSelect[index].SELEC = true;
             }
@@ -225,8 +250,6 @@ export class ModalSelectRequestsComponent extends BasePage implements OnInit {
       }
       //currentIndex = propContratosSelect.findIndex((record: any) => record.ID_SOLICITUD === V_NO_REG);
     }
-
-    console.log(propContratosSelect);
 
     const respuesta = await this.alertQuestion(
       'question',
@@ -253,6 +276,8 @@ export class ModalSelectRequestsComponent extends BasePage implements OnInit {
       this.contract.requestId = V_ID_SOLICITUD;
       this.contract.donee = V_ID_DONATARIO;
       this.updateDonacContract();
+      this.modalRef.content.callback(this.propContratosSelect);
+      this.modalRef.hide();
     }
   }
 
@@ -286,8 +311,7 @@ export class ModalSelectRequestsComponent extends BasePage implements OnInit {
     const newArray = array1.map((obj1: any) => {
       const matchingObj = this.propContratosSelect.find(
         (obj2: any) =>
-          obj2.id_donatario === obj1.id_donatario &&
-          obj2.donatario === obj1.donatario
+          obj2.doneeId === obj1.doneeId && obj2.donee === obj1.donee
       );
       if (matchingObj && !matchingObj.SELEC) {
         return matchingObj;

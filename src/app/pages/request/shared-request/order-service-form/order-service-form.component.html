@@ -29,7 +29,7 @@
   <div class="row pt-2">
     <div class="col-md-4">
       <div class="form-group">
-        <label class="col-lg-6 text-right">Folio Órden Servicio&#58;</label>
+        <label class="text-right">Folio Órden Servicio&#58;</label>
         <span> {{ orderService?.serviceOrderFolio }} </span>
       </div>
     </div>
@@ -74,7 +74,7 @@
     <div class="col-md-4">
       <div class="form-group">
         <label class="col-lg-6 text-right">Fecha de Turnano&#58;</label>
-        <span> {{ orderService?.shiftDate | date: 'YYYY/MM/DD' }} </span>
+        <span> {{ orderService?.shiftDate | date: 'dd/MM/yyyy' }} </span>
       </div>
     </div>
 
@@ -100,7 +100,7 @@
       </form-field>
       <!--
         <div class="form-group">
-          <label class="col-lg-6 text-right">Tranporte zona&#58;</label>
+          <label class=" text-right">Tranporte zona&#58;</label>
           
         </div>
       -->
@@ -161,7 +161,7 @@
   <div class="row pt-4">
     <div class="col-md-4">
       <div class="form-group">
-        <label class="col-lg-6 text-right">Usuario Turnado&#58;</label>
+        <label class="text-right">Usuario Turnado&#58;</label>
         <span> {{ orderService?.shiftUser }} </span>
       </div>
     </div>
@@ -185,7 +185,7 @@
           readonly />
       </form-field>
       <!--<div class="form-group">
-        <label class="col-lg-6 text-right">&#58;</label>
+        <label class=" text-right">&#58;</label>
        
       
       </div> -->
@@ -266,14 +266,14 @@
       
 
       <div class="form-group" *ngIf="op != 1 && op != 2">
-        <label class="col-lg-6 text-right"
+        <label class=" text-right"
           >Folio reporte implementación&#58;</label
         >
         <span> Metropolitana-SAT-1333-RI </span>
       </div>
 
       <div class="form-group">
-        <label class="col-lg-6 text-right">Fecha de turnano&#58;</label>
+        <label class=" text-right">Fecha de turnano&#58;</label>
         <span> 25-nov-2022 </span>
       </div>
     </div>
@@ -285,7 +285,7 @@
 
       
       <div class="form-group">
-        <label class="col-lg-6 text-right">Folio TLP&#58;</label>
+        <label class=" text-right">Folio TLP&#58;</label>
         <input
           type="text"
           class="form-control"
