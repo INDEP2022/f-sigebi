@@ -242,7 +242,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
               if (response) {
                 this.files = [...response];
                 // this.errorMessage = null;
-                // return;
+                return;
                 if (!this.errorMessage) {
                   const pufValidaUsuario = await this.pufValidaUsuario();
                   if (pufValidaUsuario === 1) {
@@ -331,10 +331,9 @@ export class PhotosListComponent extends BasePage implements OnInit {
     this.deleteFile(files.toString()).subscribe({
       next: response => {
         console.log(response);
-        const data = response.data;
-        if (data) {
-          if (data.error && data.error.length > 0) {
-            if (data.correct && data.correct.length > 0) {
+        if (response) {
+          if (response.error && response.error.length > 0) {
+            if (response.correct && response.correct.length > 0) {
               this.alert(
                 'warning',
                 'Fotos a Histórico',
@@ -349,11 +348,11 @@ export class PhotosListComponent extends BasePage implements OnInit {
             }
             return;
           }
-          if (data.correct && data.correct.length > 0) {
+          if (response.correct && response.correct.length > 0) {
             this.alert(
               'success',
               'Fotos a Histórico',
-              'Las fotos seleccionadas se han eliminado'
+              'Las fotos seleccionadas se han enviado a histórico'
             );
           }
         }
