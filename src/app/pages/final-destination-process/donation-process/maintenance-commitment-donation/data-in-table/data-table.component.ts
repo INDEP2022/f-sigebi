@@ -30,14 +30,15 @@ export class DataTableComponent extends BasePage implements OnInit {
 
   params1 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems1: number = 0;
-
   params2 = new BehaviorSubject<ListParams>(new ListParams());
+  params4 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems2: number = 0;
   data: any;
   data1: any[] = [];
   newOrEdit: boolean = false;
   form: FormGroup = new FormGroup({});
   dataTable1: LocalDataSource = new LocalDataSource();
+  totalItem4: number = 0;
 
   constructor(
     private rapproveDonationService: RapproveDonationService,
@@ -121,15 +122,23 @@ export class DataTableComponent extends BasePage implements OnInit {
   }
 
   getTracker() {
-    this.tvalTable1Service.getByIdFind(421).subscribe({
+    console.log(' getTracker ');
+    const params: ListParams = {};
+    params['filter.nmtable'] = '$eq:421';
+
+    this.params.getValue()['filter.nmtable'] = `$eq:421`;
+
+    this.tvalTable1Service.getAlls(this.params.getValue()).subscribe({
       next: response => {
-        console.log(response.data);
+        console.log('data tracer ', response);
         for (let i = 0; i < response.data.length; i++) {
-          this.params.getValue()['filter.id'] = `$eq:${response.data[i].value}`;
+          const params: ListParams = {};
+          params['filter.id'] = `$eq:${response.data[i].otvalor}`;
+          //this.params.getValue()['filter.id'] = `$eq:${response.data[i].otvalor}`;
           // SERVICIO
-          this.usersService.getAllSegUsers(this.params.getValue()).subscribe({
+          this.usersService.getAllSegUsers(params).subscribe({
             next: response1 => {
-              console.log(response1.data);
+              console.log('response1.DATA -->', response1.data);
               if (response.data[i].abbreviation == 'S') {
                 console.log(response.data[i].abbreviation);
                 response.data[i].yes = 1;
@@ -138,29 +147,31 @@ export class DataTableComponent extends BasePage implements OnInit {
                 response.data[i].yes = null;
                 response.data[i].not = 1;
               }
-              response.data[i].name = response1.data[0].name;
+              console.log(' response1.data[0].name -> ', response1.data[0]);
+              response.data[i].name =
+                response1.data[0].name != null ? response1.data[0].name : null;
 
               if (i == response.data.length - 1) {
                 this.data = response.data;
-                console.log('this DATA -->', this.data);
-                this.totalItems = response.count;
+                //console.log('this DATA -->', this.data);
+                this.totalItem4 = response.count || 0;
+                console.log('getAllSegUsers: ', this.totalItem4);
                 this.loading = false;
               }
             },
             error: error => {
-              console.log(error);
+              console.log('error tracer ', error);
               this.loading = false;
             },
           });
         }
       },
       error: error => {
-        console.log(error);
+        console.log('error ', error);
         this.loading = false;
       },
     });
   }
-
   getUsers(name: string) {}
 
   loadModal(bool: boolean, data: any) {
@@ -183,8 +194,12 @@ export class DataTableComponent extends BasePage implements OnInit {
       newOrEdit,
       data,
       type,
-      callback: (next: boolean) => {
-        if (next) this.getForeignTrade();
+      callback: (next: boolean, case1?: boolean) => {
+        if (case1 == true) {
+          this.getTracker();
+        } else if (next) {
+          this.getForeignTrade();
+        }
       },
     };
     this.modalService.show(

@@ -102,7 +102,7 @@ export class ImageDebuggingModalComponent extends BasePage implements OnInit {
   private deleteSelectedFiles() {
     const obs = this.filesToDelete.map(file => {
       const index = file.name.indexOf('F');
-      return this.deleteFile(+file.name.substring(index + 1, index + 5));
+      return this.deleteFile(file.name.substring(index + 1, index + 5));
     });
     forkJoin(obs).subscribe({
       complete: () => {
@@ -118,7 +118,7 @@ export class ImageDebuggingModalComponent extends BasePage implements OnInit {
     });
   }
 
-  private deleteFile(consecNumber: number) {
+  private deleteFile(consecNumber: string) {
     return this.filePhotoService
       .deletePhoto(this.goodNumber + '', consecNumber)
       .pipe(

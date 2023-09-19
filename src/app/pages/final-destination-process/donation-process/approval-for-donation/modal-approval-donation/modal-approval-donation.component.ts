@@ -285,8 +285,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    // params['sortBy'] = `goodNumber:DESC`;
-    this.donationService.getEventComDonationDetail(params).subscribe({
+    params['sortBy'] = `captureDate:DESC`;
+    this.goodService.getAllGood(params).subscribe({
       next: data => {
         console.log(data.data);
         this.totalItems2 = data.count;
@@ -371,7 +371,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     // let result = this.dataRecepcion.map(async good => {
     let obj: any = {
       numberProceedings: this.paramsScreen.recordId,
-      numberGood: good.goodNumber,
+      numberGood: good.goodId,
       amount: good.quantity,
       received: null,
       approvedXAdmon: null,
@@ -412,7 +412,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
 
   async selectData(event: { data: IGood; selected: any }) {
     this.selectedRow = event.data;
-    // console.log('select RRR', this.selectedRow);
+    console.log('select RRR', this.selectedRow);
 
     await this.getStatusGoodService(this.selectedRow.status);
     this.selectedGooods = event.selected;
@@ -443,7 +443,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     };
     console.log('1412212', params);
     params['sortBy'] = `goodId:DESC`;
-    // params['filter.recordId'] = this.paramsScreen.recordId;
+    // params['good.status'] != 'DON';
+    params['filter.recordId'] = this.paramsScreen.recordId;
     this.donationService.getEventComDonationDetail(params).subscribe({
       next: data => {
         this.goods = data.data;
@@ -460,7 +461,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           }
           item['quantity'] = item.amount;
           item['di_acta'] = item.recordId;
-          item['id'] = item.goodId;
+          item['goodId'] = item.goodId;
           // const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
           // // console.log('acta', acta);
           // item['acta_'] = acta;

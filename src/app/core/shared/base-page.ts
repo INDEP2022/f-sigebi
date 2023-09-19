@@ -54,7 +54,7 @@ interface Action {
   edit: boolean;
   delete: boolean;
 }
-const TABLE_SETTINGS: TableSettings = {
+export const TABLE_SETTINGS: TableSettings = {
   selectMode: '',
   selectedRowIndex: -1,
   actions: {

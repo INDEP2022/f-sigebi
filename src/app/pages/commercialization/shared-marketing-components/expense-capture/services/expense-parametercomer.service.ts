@@ -15,4 +15,10 @@ export class ExpenseParametercomerService extends HttpService {
   getValidGoods(body: IParameterComerDTO) {
     return this.post('aplication/get-bienes-validados', body);
   }
+
+  getParameterMod() {
+    return this.get(
+      `${ParameterComerEndpoints.ParameterMod}?limit=0&filter.parameter=$eq:IVA`
+    );
+  }
 }
