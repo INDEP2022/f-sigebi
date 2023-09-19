@@ -1204,6 +1204,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   }
 
   async saveCarga() {
+    if (this.dataCargada.count() == 0) {
+      return this.alert('warning', 'No hay registros para guardar', '');
+    }
     this.alertQuestion(
       'question',
       'Se guardarán los Pagos Referenciados cargados',
@@ -1463,6 +1466,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         //Ejecutar el servicio
         this.dataCargada.remove(data);
         this.dataCargada.refresh();
+        this.valAccCargado = null;
         this.alert('success', 'El registro se eliminó correctamente', '');
       }
     });
