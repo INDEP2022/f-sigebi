@@ -719,6 +719,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         console.log('ress historyGoodProcess res:', res);
         if (res) {
           this.updateConversion();
+          this.updateGoodConversion();
         }
       },
       err => {
@@ -752,6 +753,25 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           this.form.reset();
           this.pw();
         }
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  updateGoodConversion() {
+    let conversions = {
+      descriptionConv: this.descriptionSon.value,
+      amountConv: Number(this.quantity.value),
+      noClasifGoodConv: Number(this.classifier.value),
+      unitConv: this.unitOfMeasure.value,
+      noLabelConv: Number(this.destinationLabel.value),
+      conversionId: Number(this.idConversion.value),
+      goodId: Number(this.numberGoodFather.value),
+    };
+    this.convertiongoodService.putAssetConversions(conversions).subscribe(
+      async res => {
+        console.log(res);
       },
       err => {
         console.log(err);
@@ -831,8 +851,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         let good = this.good;
         delete good.id;
         delete good.goodId;
-        delete good.statusDetails;
-        delete good.menaje;
+        // delete good.statusDetails;
+        // delete good.menaje;
         good.goodReferenceNumber = this.goodFatherNumber$.getValue();
         good.almacen =
           this.good.almacen != null ? this.good.almacen.idWarehouse : '';
@@ -849,6 +869,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           this.good.lotNumber != null ? this.good.lotNumber.id : null;
         good.observations = this.observation.value;
         good.description = this.descriptionSon.value;
+        good.goodDescription = this.descriptionSon.value;
         good.quantity = this.quantity.value;
         good.classifier = this.classifier.value;
         good.unit = this.unitOfMeasure.value;

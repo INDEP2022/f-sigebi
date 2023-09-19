@@ -333,6 +333,7 @@ export class DataTableComponent extends BasePage implements OnInit {
       },
     });
   }
+
   getUsers(name: string) { }
 
   loadModal(bool: boolean, data: any) {
