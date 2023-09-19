@@ -26,6 +26,7 @@ export class TableGoodsComponent
   @Input() selectedGoodsByQueryParams: number[] = [];
   @Input() set reset(value: number) {
     if (value > 0) {
+      this.columnFilters = [];
       this.data.setFilter([], true, false);
       this.getData();
     }
