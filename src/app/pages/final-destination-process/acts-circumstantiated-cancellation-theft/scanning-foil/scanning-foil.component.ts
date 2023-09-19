@@ -95,12 +95,12 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         // Llamar a crear folio universal
         await this.confirmScanRequest();
       } else {
-        this.alertInfo('info', 'El Dictamen ya tiene Folio de Escaneo', '');
+        this.alertInfo('info', 'El dictamen ya tiene folio de escaneo', '');
       }
     } else {
       this.alertInfo(
         'warning',
-        'No se puede escanear para un Dictamen que esté abierto',
+        'No se puede escanear para un dictamen que esté abierto',
         ''
       );
     }
@@ -116,7 +116,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     } else {
       this.alertInfo(
         'warning',
-        'No tiene folio de Escaneo para visualizar',
+        'No tiene folio de escaneo para visualizar',
         ''
       );
     }
@@ -133,7 +133,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       if (this.formScan.get('scanningFoli').value) {
         this.alertQuestion(
           'info',
-          'Se abrirá la pantalla de escaneo para el folio de Escaneo del Acta. ¿Deseas continuar?',
+          'Se abrirá la pantalla de escaneo para el folio de escaneo del acta. ¿Deseas continuar?',
           '',
           'Aceptar',
           'Cancelar'
@@ -154,14 +154,14 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       } else {
         this.alertInfo(
           'warning',
-          'No tiene Folio de Escaneo para continuar a la pantalla de Escaneo',
+          'No tiene folio de escaneo para continuar a la pantalla de escaneo',
           ''
         );
       }
     } else {
       this.alertInfo(
         'warning',
-        'No se puede Escanear para un Dictamen que esté abierto',
+        'No se puede escanear para un dictamen que esté abierto',
         ''
       );
     }
@@ -172,12 +172,12 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       this.alertInfo(
         'success',
         'El folio universal generado es: "' +
-          this.formScan.get('scanningFoli').value +
-          '"',
+        this.formScan.get('scanningFoli').value +
+        '"',
         ''
       );
     } else {
-      this.alertInfo('warning', 'No tiene Folio de Escaneo para Imprimir', '');
+      this.alertInfo('warning', 'No tiene folio de escaneo para imprimir', '');
     }
   }
 
@@ -185,7 +185,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     const response = await this.alertQuestion(
       'question',
       'Aviso',
-      'Se generará un nuevo folio de Escaneo para el Dictamen, ¿Desea continuar?'
+      'Se generará un nuevo folio de escaneo para el dictamen, ¿Desea continuar?'
     );
 
     if (!response.isConfirmed) {
@@ -197,10 +197,10 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       this.alert(
         'error',
         'Error',
-        'Al localizar la información de Volante: ' +
-          flyerNumber +
-          ' y Expediente: ' +
-          this.fileNumber
+        'Al localizar la información de volante: ' +
+        flyerNumber +
+        ' y expediente: ' +
+        this.fileNumber
       );
       return;
     }
@@ -241,7 +241,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       .subscribe();
   }
 
-  addPdf() {}
+  addPdf() { }
 
   createDocument(document: IDocuments) {
     return this.documentsService.create(document).pipe(
@@ -274,7 +274,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
               type: 'pdf',
             },
-            callback: (data: any) => {},
+            callback: (data: any) => { },
           },
           class: 'modal-lg modal-dialog-centered',
           ignoreBackdropClick: true,
@@ -290,7 +290,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'error',
           'Error',
-          'Ocurrió un error al actualizar la Dictaminación'
+          'Ocurrió un error al actualizar la dictaminación'
         );
         return throwError(() => error);
       })
@@ -382,7 +382,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         tap(_document => {
           this.onLoadToast(
             'success',
-            'Se creó correctamente el nuevo Folio Universal: ' + _document.id,
+            'Se creó correctamente el nuevo folio universal: ' + _document.id,
             ''
           );
           const folio = _document.id;
@@ -441,7 +441,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         }
         this.onLoadToast(
           'error',
-          'Ocurrió un error al validar el Folio ingresado',
+          'Ocurrió un error al validar el folio ingresado',
           error.error.message
         );
         return throwError(() => error);
