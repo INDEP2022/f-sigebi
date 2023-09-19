@@ -31,6 +31,10 @@ export class PaymentService extends HttpService {
     return this.get(PaymentEndPoints.ComerPaymentRef, params);
   }
 
+  getComerPaymentRef2(params: ListParams) {
+    return this.get(PaymentEndPoints.ComerPaymentRef2, params);
+  }
+
   getPaymentsxConfirm(params: _Params) {
     return this.get(PaymentEndPoints.PaymentsxConfirm, params);
   }
@@ -186,6 +190,9 @@ export class PaymentService extends HttpService {
 
   postCreateRecord(params: any) {
     return this.post(PaymentEndPoints.BusquedaPagosDet, params);
+  }
+  postIdentifiesPaymentsInconsistency(params: any) {
+    return this.post(PaymentEndPoints.postIndentifiesPayments, params);
   }
 
   getCtlDevPagB(params: _Params) {

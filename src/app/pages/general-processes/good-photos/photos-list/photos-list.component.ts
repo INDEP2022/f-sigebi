@@ -11,9 +11,10 @@ import * as FileSaver from 'file-saver';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import {
   catchError,
-  debounceTime,
   firstValueFrom,
+  forkJoin,
   map,
+  Observable,
   of,
   takeUntil,
 } from 'rxjs';
@@ -308,46 +309,78 @@ export class PhotosListComponent extends BasePage implements OnInit {
     return false;
   }
 
-  private async deleteSelectedFiles() {
-    this.errorImages = [];
-    this.loader.load = true;
-    const results = await Promise.all(
-      this.filesToDelete.map(async file => {
-        const index = file.name.indexOf('F');
-        const finish = file.name.indexOf('.');
-        return await firstValueFrom(
-          this.deleteFile(
-            +file.name.substring(index + 1, finish),
-            file.name
-          ).pipe(debounceTime(500))
-        );
-      })
-    );
-    if (this.errorImages.length === this.filesToDelete.length) {
-      this.alert(
-        'error',
-        'ERROR',
-        'No se pudieron cambiar a histórico las fotos'
-      );
-    } else {
-      if (this.errorImages.length > 0) {
-        this.alert(
-          'warning',
-          'Fotos a Histórico',
-          'Pero no se puedieron cambiar todas las fotos'
-        );
-      } else {
-        this.alert(
-          'success',
-          'Eliminación de Fotos',
-          'Las fotos seleccionadas se han eliminado'
-        );
-      }
-    }
+  private validationObs(obs: Observable<any>[]) {
+    return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
+  }
+
+  private lastProcessDeletePhotos() {
     this.loader.load = false;
     this.filesToDelete = [];
     this.service.deleteEvent.next(true);
     this.getData();
+  }
+
+  private async deleteSelectedFiles() {
+    this.errorImages = [];
+    this.loader.load = true;
+    let files = this.filesToDelete.map(file => {
+      const index = file.name.indexOf('F');
+      const finish = file.name.indexOf('.');
+      return +file.name.substring(index + 1, finish);
+    });
+    this.deleteFile(files.toString()).subscribe({
+      next: response => {
+        console.log(response);
+        const data = response.data;
+        if (data) {
+          if (data.error && data.error.length > 0) {
+            if (data.correct && data.correct.length > 0) {
+              this.alert(
+                'warning',
+                'Fotos a Histórico',
+                'No se pudieron cambiar todas las fotos'
+              );
+            } else {
+              this.alert(
+                'error',
+                'Fotos a Histórico',
+                'No se pudieron cambiar a histórico las fotos'
+              );
+            }
+            return;
+          }
+          if (data.correct && data.correct.length > 0) {
+            this.alert(
+              'success',
+              'Fotos a Histórico',
+              'Las fotos seleccionadas se han eliminado'
+            );
+          }
+        }
+        this.lastProcessDeletePhotos();
+      },
+      error: err => {
+        this.alert(
+          'error',
+          'Fotos a Histórico',
+          'No se pudieron cambiar a histórico las fotos'
+        );
+        this.lastProcessDeletePhotos();
+      },
+    });
+    // const results = await Promise.all(
+    //   this.filesToDelete.map(async file => {
+    //     const index = file.name.indexOf('F');
+    //     const finish = file.name.indexOf('.');
+    //     return await firstValueFrom(
+    //       this.deleteFile(
+    //         +file.name.substring(index + 1, finish),
+    //         file.name
+    //       ).pipe(debounceTime(500))
+    //     );
+    //   })
+    // );
+
     // const obs = this.filesToDelete.map(filename => {
     //   const index = filename.indexOf('F');
     //   const finish = filename.indexOf('.');
@@ -385,21 +418,24 @@ export class PhotosListComponent extends BasePage implements OnInit {
     //   });
   }
 
-  private deleteFile(consecNumber: number, filename: string) {
-    return this.filePhotoService
-      .deletePhoto(this.goodNumber + '', consecNumber)
-      .pipe(
-        catchError(error => {
-          console.log(error);
-          // this.alert(
-          //   'error',
-          //   'Error',
-          //   'Ocurrió un error al eliminar la imagen'
-          // );
-          this.errorImages.push(error.error.message);
-          return of(null);
-        })
-      );
+  private deleteFile(consecNumber: string) {
+    return this.filePhotoService.deletePhoto(
+      this.goodNumber + '',
+      consecNumber
+    );
+    // .pipe(
+    //   tap(x => console.log('Eliminando ' + consecNumber)),
+    //   catchError(error => {
+    //     console.log(error);
+    //     // this.alert(
+    //     //   'error',
+    //     //   'Error',
+    //     //   'Ocurrió un error al eliminar la imagen'
+    //     // );
+    //     this.errorImages.push(error.error.message);
+    //     return of(null);
+    //   })
+    // );
   }
 
   openFileUploader() {

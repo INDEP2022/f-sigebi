@@ -31,6 +31,18 @@ export class GoodProcessService extends HttpService {
     return this.get(GoodProcessPoints.ReportNingevent, params);
   }
 
+  getReportNingeventExcel(params: ListParams) {
+    return this.get(GoodProcessPoints.ReportNingeventExcel, params);
+  }
+
+  getReportMonth(params: ListParams) {
+    return this.get(GoodProcessPoints.ReportMonth, params);
+  }
+
+  getReportMonthExcel(params: ListParams) {
+    return this.get(GoodProcessPoints.ReportMonthExcel, params);
+  }
+
   updateFraction(body: { newFraction: string; goodNum: number }) {
     return this.post(GoodProcessPoints.updateFractions, body);
   }

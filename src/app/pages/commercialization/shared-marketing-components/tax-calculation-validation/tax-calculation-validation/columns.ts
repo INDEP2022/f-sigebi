@@ -1,6 +1,6 @@
 export const COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'Id Avalúo',
     sort: false,
   },
   valueKey: {
@@ -12,7 +12,7 @@ export const COLUMNS = {
     sort: false,
   },
   dateInsert: {
-    title: 'Fecha Insert',
+    title: 'Insertar Fecha',
     sort: false,
   },
 };
