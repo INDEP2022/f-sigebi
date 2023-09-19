@@ -303,6 +303,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   validationUser(file: IPhotoFile) {
+    if (this.errorMessage && this.errorMessage.length > 0) return false;
     if (!file.usuario_creacion) return true;
     if (file.usuario_creacion.length === 0) return true;
     if (file.usuario_creacion.toUpperCase() === this.userName) return true;
@@ -331,10 +332,9 @@ export class PhotosListComponent extends BasePage implements OnInit {
     this.deleteFile(files.toString()).subscribe({
       next: response => {
         console.log(response);
-        const data = response.data;
-        if (data) {
-          if (data.error && data.error.length > 0) {
-            if (data.correct && data.correct.length > 0) {
+        if (response) {
+          if (response.error && response.error.length > 0) {
+            if (response.correct && response.correct.length > 0) {
               this.alert(
                 'warning',
                 'Fotos a Histórico',
@@ -349,11 +349,11 @@ export class PhotosListComponent extends BasePage implements OnInit {
             }
             return;
           }
-          if (data.correct && data.correct.length > 0) {
+          if (response.correct && response.correct.length > 0) {
             this.alert(
               'success',
               'Fotos a Histórico',
-              'Las fotos seleccionadas se han eliminado'
+              'Las fotos seleccionadas se han enviado a histórico'
             );
           }
         }

@@ -42,6 +42,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
+          [disabled]="!form.valid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

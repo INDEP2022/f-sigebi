@@ -172,8 +172,8 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       this.alertInfo(
         'success',
         'El folio universal generado es: "' +
-        this.formScan.get('scanningFoli').value +
-        '"',
+          this.formScan.get('scanningFoli').value +
+          '"',
         ''
       );
     } else {
@@ -198,9 +198,9 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         'error',
         'Error',
         'Al localizar la información de volante: ' +
-        flyerNumber +
-        ' y expediente: ' +
-        this.fileNumber
+          flyerNumber +
+          ' y expediente: ' +
+          this.fileNumber
       );
       return;
     }
@@ -241,7 +241,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       .subscribe();
   }
 
-  addPdf() { }
+  addPdf() {}
 
   createDocument(document: IDocuments) {
     return this.documentsService.create(document).pipe(
@@ -274,7 +274,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
               type: 'pdf',
             },
-            callback: (data: any) => { },
+            callback: (data: any) => {},
           },
           class: 'modal-lg modal-dialog-centered',
           ignoreBackdropClick: true,
