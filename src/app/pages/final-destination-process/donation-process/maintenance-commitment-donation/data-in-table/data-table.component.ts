@@ -3,7 +3,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IRapproveDonation } from 'src/app/core/models/ms-r-approve-donation/r-approve-donation.model';
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
@@ -67,7 +70,6 @@ export class DataTableComponent extends BasePage implements OnInit {
     };
   }
   ngOnInit(): void {
-
     if (this.type == 1 || this.type == 2) {
       //comercio exterior
       this.filterComerAndDeli();
@@ -148,7 +150,7 @@ export class DataTableComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          console.log(" this.params ", this.params);
+          console.log(' this.params ', this.params);
           this.getForeignTrade();
         }
       });
@@ -214,7 +216,7 @@ export class DataTableComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          console.log(" this.params ", this.params);
+          console.log(' this.params ', this.params);
           this.getForeignTrade();
         }
       });
@@ -242,7 +244,7 @@ export class DataTableComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'name':
-                console.log("NAME -> ");
+                console.log('NAME -> ');
                 searchFilter = SearchFilter.ILIKE;
                 break;
               default:
@@ -256,7 +258,7 @@ export class DataTableComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          console.log(" this.params ", this.params);
+          console.log(' this.params ', this.params);
           this.getTracker();
         }
       });
@@ -276,7 +278,7 @@ export class DataTableComponent extends BasePage implements OnInit {
     };
     params['filter.labelId'] = `$eq:${this.type}`;
     //params.getValue()['filter.labelId'] = `$eq:${this.type}`;
-    console.log("params 1 -> ", params);
+    console.log('params 1 -> ', params);
     this.rapproveDonationService.getAll(params).subscribe({
       next: response => {
         console.log('primer tabla -> ', response.data);
@@ -313,11 +315,11 @@ export class DataTableComponent extends BasePage implements OnInit {
     params['filter.nmtable'] = `$eq:421`;
     this.params.getValue()['filter.nmtable'] = `$eq:421`;
 
-    console.log("params 2 -> ", this.params.getValue());
+    console.log('params 2 -> ', this.params.getValue());
 
     this.tvalTable1Service.getAlls(this.params.getValue()).subscribe({
       next: response => {
-        console.log("data tracer ", response);
+        console.log('data tracer ', response);
         for (let i = 0; i < response.data.length; i++) {
           const params: ListParams = {};
           params['filter.id'] = `$eq:${response.data[i].otvalor}`;
@@ -335,8 +337,8 @@ export class DataTableComponent extends BasePage implements OnInit {
                 response.data[i].not = 1;
               }
               //console.log(" response1.data[0].name -> ", response1.data[0]);
-              response.data[i].name = response1.data[0].name != null ? response1.data[0].name : null;
-
+              response.data[i].name =
+                response1.data[0].name != null ? response1.data[0].name : null;
 
               if (i == response.data.length - 1) {
                 this.data = response.data;
@@ -386,10 +388,9 @@ export class DataTableComponent extends BasePage implements OnInit {
       callback: (next: boolean, case1?: boolean) => {
         if (case1 == true) {
           this.getTracker();
-        } else
-          if (next) {
-            this.getForeignTrade();
-          };
+        } else if (next) {
+          this.getForeignTrade();
+        }
       },
     };
     this.modalService.show(
