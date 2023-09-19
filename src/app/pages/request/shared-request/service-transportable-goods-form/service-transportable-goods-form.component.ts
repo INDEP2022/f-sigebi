@@ -319,9 +319,9 @@ export class ServiceTransportableGoodsFormComponent
 
   titleTab() {
     if (this.op != 0) {
-      this.title = 'Servicios prestados';
+      this.title = 'Servicios Prestados';
     } else {
-      this.title = 'Servicio para bienes transportables';
+      this.title = 'Servicio Bienes Transportables';
     }
   }
 

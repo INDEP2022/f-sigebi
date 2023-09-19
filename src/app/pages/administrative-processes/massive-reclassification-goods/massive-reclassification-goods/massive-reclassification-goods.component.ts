@@ -237,6 +237,7 @@ export class MassiveReclassificationGoodsComponent
 
   //Llenado de excel
   onFileChange(event: Event) {
+    // debugger;
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     this.files = files;

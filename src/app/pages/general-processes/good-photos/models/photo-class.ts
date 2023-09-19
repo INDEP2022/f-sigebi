@@ -47,7 +47,7 @@ export class PhotoClassComponent extends BasePage {
       ? this.getUrlTiff(base64)
       : this.getUrlDocument(base64);
     this.mimeType = getMimeTypeFromImg(this.file.name);
-    console.log(base64, this.imgSrc, this.mimeType, this.file.name);
+    // console.log(base64, this.imgSrc, this.mimeType, this.file.name);
   }
 
   protected getUrlTiff(base64: string) {
@@ -56,11 +56,11 @@ export class PhotoClassComponent extends BasePage {
       const tiff = new Tiff({ buffer });
       const canvas: HTMLCanvasElement = tiff.toCanvas();
       canvas.style.width = '100%';
-      console.log('llego aca', this.file.name);
+      // console.log('llego aca', this.file.name);
       return this.sanitizer.bypassSecurityTrustResourceUrl(canvas.toDataURL());
     } catch (error) {
       this.error = true;
-      console.log(this.error);
+      // console.log(this.error);
       return this.sanitizer.bypassSecurityTrustResourceUrl(NO_IMAGE_FOUND);
     }
   }
@@ -75,7 +75,7 @@ export class PhotoClassComponent extends BasePage {
   }
 
   openDocumentsViewer() {
-    console.log(this.error);
+    // console.log(this.error);
     if (this.loading || this.error) {
       return;
     }

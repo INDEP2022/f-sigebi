@@ -6,7 +6,7 @@
       </div>
       <div class="p-2">
         <button class="btn btn-primary btn-sm active" (click)="turnSampling()">
-          <i class="bx bxs-right-arrow-square"></i> Turnar muestreo
+          Turnar muestreo <i class="bx bxs-right-arrow-square"></i>
         </button>
       </div>
     </div>
@@ -15,8 +15,10 @@
     <div class="row">
       <div class="d-flex justify-content-end">
         <div class="p-2">
-          <button class="btn btn-primary btn-sm active">
-            <i class="bx bxs-component"></i> Buscar Ordenes
+          <button
+            class="btn btn-primary btn-sm active"
+            (click)="searchOrders()">
+            Buscar Ordenes <i class="bx bxs-component"></i>
           </button>
         </div>
         <div class="p-2">
@@ -44,9 +46,10 @@
                     control="geographicalArea"
                     [data]="geographicalAreaSelected"
                     value="id"
-                    bindLabel="id"
+                    bindLabel="description"
                     label="Area Geográfica"
-                    (fetchItems)="getgeographicalAreaSelect($event)">
+                    (fetchItems)="getgeographicalAreaSelect($event)"
+                    (change)="zoneGeographChange($event)">
                   </ngx-select>
                 </form-field>
               </div>
@@ -65,16 +68,23 @@
             </div>
             <div class="row pt-4">
               <div class="col-md-3">
-                <form-field [control]="orderServiceForm.get('contractNumber')">
-                  <ngx-select
+                <form-field
+                  [control]="orderServiceForm.get('contractNumber')"
+                  label="No. Contrato">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="contractNumber"
+                    id="contractNumber" />
+                  <!-- <ngx-select
                     [form]="orderServiceForm"
                     control="contractNumber"
                     [data]="contractNumberSelected"
-                    value="id"
-                    bindLabel="id"
+                    value="contractNumber"
+                    bindLabel="contractNumber"
                     label="&#42;No&#46; contrato"
                     (fetchItems)="getContractNumberSelect($event)">
-                  </ngx-select>
+                  </ngx-select> -->
                 </form-field>
               </div>
             </div>
