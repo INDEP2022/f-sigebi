@@ -136,7 +136,7 @@ export class ScanFileComponent extends BasePage implements OnInit {
                     .subscribe(
                       res => {
                         const param = {
-                          pn_folio: res.lnu_folio,
+                          pn_folio: this.form.get(this.formControlName).value,
                         };
 
                         this.downloadReport('RGERGENSOLICDIGIT', param);
