@@ -316,7 +316,7 @@ export class DataTableComponent extends BasePage implements OnInit {
 
     this.tvalTable1Service.getAlls(this.params.getValue()).subscribe({
       next: response => {
-        console.log('data tracer ', response);
+        console.log("data tracer ", response);
         for (let i = 0; i < response.data.length; i++) {
           const params: ListParams = {};
           params['filter.id'] = `$eq:${response.data[i].otvalor}`;
@@ -333,7 +333,6 @@ export class DataTableComponent extends BasePage implements OnInit {
                 response.data[i].yes = null;
                 response.data[i].not = 1;
               }
-
               //console.log(" response1.data[0].name -> ", response1.data[0]);
               response.data[i].name = response1.data[0].name != null ? response1.data[0].name : null;
 
