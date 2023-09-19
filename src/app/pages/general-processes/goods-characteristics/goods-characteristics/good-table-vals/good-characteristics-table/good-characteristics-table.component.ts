@@ -316,7 +316,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
         columnsType:
           this.dynamicTablesService.selectedTable === 'CAT_CIUDAD'
             ? {
-                upper: {
+                legendjob: {
                   title: row.attribute,
                   type: 'string',
                   sort: false,
