@@ -57,13 +57,13 @@
   <div class="row mb-3 mt-3">
     <form-field
       [control]="form.get('concept')"
-      class="col-md-2"
+      class="col-md-6"
       label="Concepto">
       <input type="text" formControlName="concept" class="form-control" />
     </form-field>
     <form-field
       [control]="form.get('descConcept')"
-      class="col-md-4"
+      class="col-md-6"
       label="Descripción Concepto">
       <input type="text" formControlName="descConcept" class="form-control" />
     </form-field>
@@ -115,7 +115,7 @@
       <app-columns-select [(settings)]="settings"></app-columns-select>
     </div>
   </div>
-  <div [class]="loading ? 'table-loading row pt-3' : 'row pt-3'">
+  <div [class]="loading ? 'table-loading row pt-3 table-responsive' : 'row pt-3 table-responsive'">
     <ng2-smart-table [settings]="settings" [source]="data"> </ng2-smart-table>
   </div>
   <app-pagination
