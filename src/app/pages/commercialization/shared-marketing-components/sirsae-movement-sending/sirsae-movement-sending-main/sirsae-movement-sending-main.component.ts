@@ -77,23 +77,23 @@ export class SirsaeMovementSendingMainComponent
   eventsTestData = [
     {
       id: 101,
-      description: 'DESCRIPCION DE EJEMPLO DE Evento 101',
+      description: 'DESCRIPCION DE EJEMPLO DE evento 101',
     },
     {
       id: 201,
-      description: 'DESCRIPCION DE EJEMPLO DE Evento 201',
+      description: 'DESCRIPCION DE EJEMPLO DE evento 201',
     },
     {
       id: 301,
-      description: 'DESCRIPCION DE EJEMPLO DE Evento 301',
+      description: 'DESCRIPCION DE EJEMPLO DE evento 301',
     },
     {
       id: 401,
-      description: 'DESCRIPCION DE EJEMPLO DE Evento 401',
+      description: 'DESCRIPCION DE EJEMPLO DE evento 401',
     },
     {
       id: 501,
-      description: 'DESCRIPCION DE EJEMPLO DE Evento 501',
+      description: 'DESCRIPCION DE EJEMPLO DE evento 501',
     },
   ];
 
@@ -436,7 +436,7 @@ export class SirsaeMovementSendingMainComponent
         if (filter == 'si') {
           this.alert(
             'warning',
-            'No se encontraron clientes para este Evento',
+            'No se encontraron clientes para este evento',
             ''
           );
         }
@@ -620,7 +620,7 @@ export class SirsaeMovementSendingMainComponent
     }
   }
 
-  // UPDATE CLIENTES X EventoS //
+  // UPDATE CLIENTES X eventoS //
   async update(event: any, type: any) {
     return new Promise((resolve, reject) => {
       this.comerDetailsService.pFmcomr612ClientxEvent2(event, type).subscribe({
@@ -735,7 +735,7 @@ export class SirsaeMovementSendingMainComponent
       if (valid_pago == 0) {
         this.alert(
           'warning',
-          'EL Evento o Lote seleccionado no tiene dispersión de pagos, verifique',
+          'EL evento o lote seleccionado no tiene dispersión de pagos, verifique',
           ''
         );
         this.loadingBtnSendIn = false;
@@ -1049,7 +1049,7 @@ export class SirsaeMovementSendingMainComponent
       },
       error: err => {
         if (filter == 'si') {
-          this.alert('warning', 'No hay lotes disponibles en el Evento', '');
+          this.alert('warning', 'No hay lotes disponibles en el evento', '');
         }
         // this.conciliationForm.get('batch').setValue(null);
         this.lotes = new DefaultSelect([], 0);
