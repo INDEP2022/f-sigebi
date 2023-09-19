@@ -1,22 +1,26 @@
 <app-modal>
   <div header>
-    <div class="ch-content">
-      <h5 class="title">Bienes asociados a lote</h5>
-    </div>
+    <h5 class="modal-title">Bienes asociados a lote</h5>
   </div>
   <div body>
     <div class="row">
-      <div class="ch-content">
+      <!--<div class="ch-content">
         <h5 class="title">
           Bienes que no han sido expuestos a evento comercial
         </h5>
-      </div>
-      <div class="col-md-8 mb-3"></div>
-      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+      </div>-->
+      <!--<div class="col-md-6 mb-3"></div>-->
+      <div class="col-md-12 text-end d-flex flex-row-reverse mb-3">
         <app-columns-select
           [(settings)]="settings"
           [leftList]="true"></app-columns-select>
         <div>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="close()">
+            Regresar <i class="fas fa-arrow-circle-left"></i>
+          </button>
           <button
             class="btn btn-sm btn-success active mr-3"
             [disabled]="!validate"
