@@ -91,9 +91,9 @@ export class ProgrammingGoodReceiptService extends HttpService {
     return this.post(route, params);
   }
 
-  getTmpGoods(NoActa: any) {
+  getTmpGoods(NoActa: any, params?: any) {
     const route = `${ProgrammingGoodEndpoints.tmpEstGoods}?filter.minutesNumber=$eq:${NoActa}`;
-    return this.get(route);
+    return this.get(route, params);
   }
 
   getTmpGoodsByuser(user: any) {
@@ -104,5 +104,10 @@ export class ProgrammingGoodReceiptService extends HttpService {
   getTmpGoodsByuserandVal(user: any) {
     const route = `${ProgrammingGoodEndpoints.tmpEstGoods}?filter.itsTUser=$ilike:${user}&filter.valGood=$eq:1`;
     return this.get(route);
+  }
+
+  paEstProgTransBie(params: any) {
+    const route = `${ProgrammingGoodEndpoints.paEstProgTransBie}`;
+    return this.post(route, params);
   }
 }

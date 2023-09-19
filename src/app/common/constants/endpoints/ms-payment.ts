@@ -1,6 +1,7 @@
 export enum PaymentEndPoints {
   BasePath = `payment`,
   ComerPaymentRef = `comer-payment-ref`,
+  ComerPaymentRef2 = `comer-payment-ref?filter.SystemValid=$not:$in:R,D,B`,
   CreateHeader = 'application/createHeader',
   CreateHeaderFcomer113 = 'application/createHeaderFcomer113',
   SendReadSirsaeFcomer113 = 'application/sendReadSirsaeFcomer113',
@@ -17,6 +18,7 @@ export enum PaymentEndPoints {
   UpdatePayments = 'payment/update-payments',
   Delete = 'search-payments-det/delete-search-payments',
   validSystem = 'comer-valid-system',
+  postIndentifiesPayments = 'payment/identifies-payments-inconsistency',
   ComerCtldevpagB = `comer-ctldevpag-b`,
   ComerCtldevpagBfindAllRegistersV2 = `comer-ctldevpag-b/findAllRegistersV2`,
   PaymentsxConfirm = 'views/v-comer-paymentsxconfirm',

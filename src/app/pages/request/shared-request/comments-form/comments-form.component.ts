@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
@@ -28,6 +28,8 @@ export class CommentsFormComponent implements OnInit {
   ngOnInit(): void {
     //this.prepareForm();
   }
+
+  ngOnChanges(changes: SimpleChanges): void {}
 
   /*prepareForm() {
     this.commentsForm = this.fb.group({

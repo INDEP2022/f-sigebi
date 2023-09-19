@@ -71,7 +71,7 @@ export class ParameterModService
   }
 
   //COMER_PARAMETROSMOD
-  getParamterMod(params?: string) {
+  getParamterMod(params?: any) {
     return this.get(`parameters-mod`, params);
   }
 

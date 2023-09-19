@@ -19,6 +19,13 @@ export class ComerEventosService extends HttpService {
   getAllEvents(params?: ListParams): Observable<IListResponse<IComerEvent>> {
     return this.get<IListResponse<IComerEvent>>(EventEndpoints.ComerE, params);
   }
+  getEvents(params: any) {
+    return this.get(EventEndpoints.GetAllEvent, params);
+  }
+
+  getEventsExpenses(params: any) {
+    return this.get(EventEndpoints.GetEventsExpenses, params);
+  }
 
   getAll(params?: _Params): Observable<IListResponse<IComerEvent>> {
     return this.get<IListResponse<IComerEvent>>(this.endpoint, params);
@@ -157,5 +164,12 @@ export class ComerEventosService extends HttpService {
   getspObtnPhaseEvent(body: any) {
     const route = `${EventEndpoints.SpObtnPhaseEvent}`;
     return this.post(route, body);
+  }
+
+  getLovEventos1(params: _Params) {
+    return this.get(EventEndpoints.LovEventos1, params);
+  }
+  getLovEventos2(params: _Params) {
+    return this.get(EventEndpoints.LovEventos2, params);
   }
 }
