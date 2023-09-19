@@ -348,7 +348,7 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
     if (!this.valAcc) return this.alert('warning', 'Seleccione un pago', '');
 
     if (!this.valAcc.lots)
-      return this.alert('warning', 'Este pago no está asociado a un Lote', '');
+      return this.alert('warning', 'Este pago no está asociado a un lote', '');
 
     this.loadingBtn = true;
     // CREA_CABECERA;
