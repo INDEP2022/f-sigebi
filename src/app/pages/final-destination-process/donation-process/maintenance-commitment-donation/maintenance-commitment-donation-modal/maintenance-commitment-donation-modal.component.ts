@@ -30,9 +30,7 @@ export class MaintenanceCommitmentDonationModalComponent
   totalOtKey: number = 0;
   users = new DefaultSelect();
   case: boolean = false;
-
   arr: number[] = [];
-
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -49,7 +47,6 @@ export class MaintenanceCommitmentDonationModalComponent
   ngOnInit(): void {
     console.log('flag ', this.newOrEdit);
     //console.log('NewOrEdir: ', this.newOrEdit);
-
     if (this.newOrEdit || !this.newOrEdit) {
       console.log('type -> ', this.type);
       switch (this.type) {

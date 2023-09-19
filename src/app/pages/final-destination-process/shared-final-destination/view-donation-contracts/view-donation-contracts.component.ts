@@ -346,22 +346,34 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
 
   onSubmit() {}
 
-  // onKeyDownIdContract(event: any) {
-  //   console.log(event.target.value);
-  //   this.donationService.getContrato(event.target.value).subscribe({
-  //     next: data => {
-  //       console.log(data);
-  //       console.log(data.data[0].donee);
-  //       this.form.controls['donee'].setValue(data.data[0].donee || null);
-  //       this.form.controls['reasonSocial'].setValue(
-  //         data.data[0].doneeId.razonSocial
-  //       );
-  //     },
-  //     error: error => {
-  //       console.log(error);
-  //     },
-  //   });
-  // }
+  onKeyDownIdContract(event: any) {
+    console.log(event.target.value);
+    this.donationService.getContrato(event.target.value).subscribe({
+      next: data => {
+        console.log(data);
+        console.log(data.data[0].donee);
+        this.form.controls['donee'].setValue(data.data[0].donee || null);
+        this.form.controls['reasonSocial'].setValue(
+          data.data[0].doneeId.razonSocial
+        );
+        this.form.controls['cto'].setValue(data.data[0].requestId.affair);
+        this.form.controls['status'].setValue(data.data[0].sunStatus);
+        this.form.controls['trans'].setValue(
+          data.data[0].requestId.transferenceId
+        );
+        this.form.controls['don'].setValue(data.data[0].doneeId.col);
+        this.form.controls['ctrlAut'].setValue(data.data[0].authorizeType);
+        this.form.controls['folio'].setValue(
+          data.data[0].requestId.rulingDocumentId
+        );
+        this.form.controls['contractKey'].setValue(data.data[0].authorizeCve);
+        this.form.controls['job'].setValue(data.data[0].requestId.reportSheet);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
 
   settingsChange(event: any) {
     this.settings = event;
@@ -770,11 +782,15 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
         contract: this.contract,
         formContract: this.form,
         typeRequest: this.parameterTypeDonation,
-        callback: (next: boolean) => {
+        callback: async (next: any[]) => {
           if (next) {
-            /* this.params
-              .pipe(takeUntil(this.$unSubscribe))
-              .subscribe(() => this.()); */
+            console.error(next);
+            this.loading = true;
+            const data: any[] = await this.data.getAll();
+            const newData: any[] = data.concat(next);
+            this.data.load(newData);
+            this.data.refresh();
+            this.loading = false;
           }
         },
       },

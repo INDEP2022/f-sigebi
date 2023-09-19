@@ -156,7 +156,7 @@ export class GoodsListComponent
 
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
-      debugger;
+      // debugger;
       this.data.load([]);
       this.totalItems = 0;
       this.availableToUpdate = [];
