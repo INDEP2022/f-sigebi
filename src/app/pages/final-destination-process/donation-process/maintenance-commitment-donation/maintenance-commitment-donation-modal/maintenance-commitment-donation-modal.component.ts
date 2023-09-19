@@ -306,7 +306,7 @@ export class MaintenanceCommitmentDonationModalComponent
       error: err => {
         let error = '';
         if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
+          error = 'Revise su conexión de internet.';
           this.onLoadToast('error', 'Error', error);
           //this.newOrEdit = false;
         } else {
@@ -340,7 +340,7 @@ export class MaintenanceCommitmentDonationModalComponent
       error: err => {
         let error = '';
         if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
+          error = 'Revise su conexión de internet.';
           this.onLoadToast('error', 'Error', error);
           //this.newOrEdit = false;
         } else {
@@ -367,7 +367,7 @@ export class MaintenanceCommitmentDonationModalComponent
       error: err => {
         let error = '';
         if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
+          error = 'Revise su conexión de internet.';
           this.onLoadToast('error', 'Error', error);
           //this.newOrEdit = false;
         } else {
