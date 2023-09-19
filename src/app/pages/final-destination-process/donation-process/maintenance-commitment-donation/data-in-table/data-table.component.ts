@@ -90,7 +90,6 @@ export class DataTableComponent extends BasePage implements OnInit {
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getTracker());
-
       //this.data = EXAMPLE_DATA2;
     }
   }
@@ -307,8 +306,9 @@ export class DataTableComponent extends BasePage implements OnInit {
   }
 
   getTracker() {
-    console.log(" getTracker ");
+    console.log(' getTracker ');
     const params: ListParams = {};
+
     params['filter.nmtable'] = `$eq:421`;
     this.params.getValue()['filter.nmtable'] = `$eq:421`;
 
@@ -316,7 +316,7 @@ export class DataTableComponent extends BasePage implements OnInit {
 
     this.tvalTable1Service.getAlls(this.params.getValue()).subscribe({
       next: response => {
-        console.log("data tracer ", response);
+        console.log('data tracer ', response);
         for (let i = 0; i < response.data.length; i++) {
           const params: ListParams = {};
           params['filter.id'] = `$eq:${response.data[i].otvalor}`;
@@ -333,8 +333,10 @@ export class DataTableComponent extends BasePage implements OnInit {
                 response.data[i].yes = null;
                 response.data[i].not = 1;
               }
+
               //console.log(" response1.data[0].name -> ", response1.data[0]);
               response.data[i].name = response1.data[0].name != null ? response1.data[0].name : null;
+
 
               if (i == response.data.length - 1) {
                 this.data = response.data;
@@ -347,20 +349,18 @@ export class DataTableComponent extends BasePage implements OnInit {
               }
             },
             error: error => {
-              console.log("error tracer ", error);
+              console.log('error tracer ', error);
               this.loading = false;
             },
           });
         }
       },
       error: error => {
-        console.log("error ", error);
+        console.log('error ', error);
         this.loading = false;
       },
     });
   }
-
-
   getUsers(name: string) { }
 
   loadModal(bool: boolean, data: any) {

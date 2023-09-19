@@ -282,9 +282,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   questionDelete(data: any) {
     console.log(data);
     this.alertQuestion(
-      'warning',
-      'Eliminar',
-      '¿Desea eliminar este registro?'
+      'question',
+      'Se eliminará el registro',
+      '¿Desea continuar?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -782,6 +782,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
                 ' - ' +
                 item.COMER_PAGOREF_CVE_BANCO,
             };
+            obj.bill = await this.getBanksForCreateAndUpdate(
+              item.COMER_PAGOREF_CVE_BANCO
+            );
             // DESCRIPCIÓN DEL PAGO SAT //
             const desc = await this.gettypeSatIdUpdate(
               item.COMER_PAGOREF_ID_TIPO_SAT
@@ -1452,9 +1455,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   questionDeleteCargada(data: any) {
     console.log(data);
     this.alertQuestion(
-      'warning',
-      'Eliminar',
-      '¿Desea eliminar este registro?'
+      'question',
+      'Se eliminará el registro',
+      '¿Desea continuar?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -1484,5 +1487,27 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   settingColumns() {
     this.settings.columns = COLUMNS;
     this.settings2.columns = COLUMNS_CARGADOS;
+  }
+
+  async getBanksForCreateAndUpdate(bankCode: any) {
+    console.log('bankCode', bankCode);
+    if (!bankCode) return null;
+
+    const params = new FilterParams();
+    params.addFilter('bankCode', bankCode, SearchFilter.EQ);
+    return new Promise((resolve, reject) => {
+      this.bankService.getAll_(params.getParams()).subscribe({
+        next: response => {
+          if (!response.data[0].bankAccount) {
+            resolve(null);
+          } else {
+            resolve(response.data[0].bankAccount.cveAccount);
+          }
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
   }
 }

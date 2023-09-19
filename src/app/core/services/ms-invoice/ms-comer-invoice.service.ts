@@ -64,7 +64,18 @@ export class ComerInvoiceService extends HttpService {
     return this.get(`${ENDPOINT_INVOICE.UpdateByEvemt}/${eventId}`);
   }
 
-  copyInvoice(data: Object) {
+  copyInvoice(data: {
+    pEventO: number;
+    pInvoiceO: number;
+    pLegend: string;
+    pAuthorized: string;
+    pStatus: string;
+    pImagen: string;
+    pCfdi: string;
+    pLot: number;
+    pCause: number;
+    pDeletedEmits: number;
+  }) {
     return this.post(ENDPOINT_INVOICE.CopyInvoice, data);
   }
 
@@ -193,5 +204,18 @@ export class ComerInvoiceService extends HttpService {
     pOcionCan: string;
   }) {
     return this.post(ENDPOINT_INVOICE.PkComerVnr, data);
+  }
+
+  invoicePValuesSat(data: {
+    pEventId: string;
+    pLot: string;
+    pInvoice: string;
+    pOption: string;
+  }) {
+    return this.post(ENDPOINT_INVOICE.PValueSat, data);
+  }
+
+  cancelInvoice(data: { invoiceId: number; eventId: number; batchId: number }) {
+    return this.put(ENDPOINT_INVOICE.CancelInvoice, data);
   }
 }

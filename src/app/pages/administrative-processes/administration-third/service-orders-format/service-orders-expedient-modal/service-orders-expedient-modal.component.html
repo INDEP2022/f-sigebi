@@ -18,6 +18,9 @@
         [params]="params2"
         [totalItems]="totalItems2"></app-pagination>
     </div>
+    <div class="d-flex justify-content-end">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">

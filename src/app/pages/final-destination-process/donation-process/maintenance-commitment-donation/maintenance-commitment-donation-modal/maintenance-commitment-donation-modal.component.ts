@@ -8,9 +8,8 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { BasePage } from 'src/app/core/shared';
-import Swal from 'sweetalert2';
-import { Params } from '@angular/router';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-maintenance-commitment-donation-modal',
@@ -30,9 +29,7 @@ export class MaintenanceCommitmentDonationModalComponent
   totalOtKey: number = 0;
   users = new DefaultSelect();
   case: boolean = false;
-
   arr: number[] = [];
-
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -49,7 +46,6 @@ export class MaintenanceCommitmentDonationModalComponent
   ngOnInit(): void {
     console.log('flag ', this.newOrEdit);
     //console.log('NewOrEdir: ', this.newOrEdit);
-
     if (this.newOrEdit || !this.newOrEdit) {
       console.log('type -> ', this.type);
       switch (this.type) {
@@ -237,7 +233,7 @@ export class MaintenanceCommitmentDonationModalComponent
         }
         console.log('arr  ', this.arr.sort());
         const ultimoNumero = this.arr.sort()[this.arr.length - 1];
-        console.log("ult -> ", ultimoNumero);
+        console.log('ult -> ', ultimoNumero);
       },
       error: error => {
         console.log(error);
@@ -249,11 +245,11 @@ export class MaintenanceCommitmentDonationModalComponent
   getMax() {
     this.dynamicCatalogsService.GetMax(421).subscribe({
       next: response => {
-        console.log("res 111 ", response);
+        console.log('res 111 ', response);
         this.totalOtKey = response + 1;
-        console.log("max ln. ", response);
-        console.log("this.totalOtKey ", this.totalOtKey);
-      }
+        console.log('max ln. ', response);
+        console.log('this.totalOtKey ', this.totalOtKey);
+      },
     });
   }
 
@@ -356,8 +352,7 @@ export class MaintenanceCommitmentDonationModalComponent
 
   updatePermisoRas(data: any) {
     const model = {} as any;
-    model.nmtable = 421,
-      model.otkey = Number(this.data.otkey);
+    (model.nmtable = 421), (model.otkey = Number(this.data.otkey));
     model.otvalor = data.value;
     model.registerNumber = 0;
     model.abbreviation = data.valid;
