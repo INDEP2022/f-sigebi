@@ -8,14 +8,15 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
+import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IInitFormProceedingsBody } from 'src/app/pages/administrative-processes/proceedings-conversion/proceedings-conversion/proceedings-conversion.component';
 import { ActasConvertionCommunicationService } from 'src/app/pages/administrative-processes/proceedings-conversion/services/proceedings-conversionn';
-import { ACTAS } from '../../../acts-circumstantiated-cancellation-theft/acts-cir-columns';
-
+import { ACTAS } from '../capture-approval-donation/columns-approval-donation';
 @Component({
   selector: 'app-find-acta',
   templateUrl: './find-acta.component.html',
@@ -31,6 +32,7 @@ export class FindActaComponent extends BasePage implements OnInit {
   edit = false;
   vaultSelect: any;
   cve: any;
+  donationGood: IGoodDonation;
   totalItems2: number = 0;
   selectedRow: any | null = null;
   conversiones: any;
@@ -53,7 +55,8 @@ export class FindActaComponent extends BasePage implements OnInit {
     protected goodprocessService: GoodProcessService,
     private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
     private detailProceeDelRecService: DetailProceeDelRecService,
-    private sharedService: ActasConvertionCommunicationService
+    private sharedService: ActasConvertionCommunicationService,
+    private donationService: DonationService
   ) {
     super();
     this.settings = {
@@ -81,25 +84,32 @@ export class FindActaComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            this.cve = filter.field == 'cveActa';
+            this.cve = filter.field == 'cveAct';
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'statusProceedings':
+              case 'actType':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'id':
+              case 'actId':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'numTransfer':
+              case 'expedient':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'numeraryFolio':
+              case 'folioUniversal':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'typeProceedings':
+              case 'actType':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'dateElaborationReceipt':
+              case 'elaborated':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'captureDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'closeDate':
                 filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
                 break;
@@ -134,38 +144,32 @@ export class FindActaComponent extends BasePage implements OnInit {
   getStatusDeliveryCve() {
     this.loading = true;
     // console.log(this.providerForm.value.cveActa.replace(/\//g, ''));
-    // console.log(nuevaCadena);
-    // console.log(this.providerForm.value.cve);
-    this.params.getValue()['filter.numFile'] = this.expedienteNumber;
+
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.proceedingsDeliveryReceptionService
-      .getStatusDeliveryCveExpendienteAll(params)
-      .subscribe({
-        next: data => {
-          console.log(data);
-          let result = data.data.map((item: any) => {
-            item['numTransfer_'] = item.numTransfer
-              ? item.numTransfer.id
-              : null;
-          });
-          this.dataFactActas.load(data.data);
-          this.dataFactActas.refresh();
-          this.loading = false;
-          this.totalItems2 = data.count;
+    this.params.getValue()['filter.actType'] = 'COMPDON';
+    params['sortBy'] = `captureDate:DESC`;
+    this.donationService.getEventGood(params).subscribe({
+      next: data => {
+        console.log(data.data);
+        // this.donationGood = data.data
+        this.dataFactActas.load(data.data);
+        this.dataFactActas.refresh();
+        this.loading = false;
+        this.totalItems2 = data.count;
 
-          console.log('asdasd ', this.dataTableGoodsActa);
-        },
-        error: error => {
-          this.loading = false;
-          this.totalItems2 = 0;
-          // console.log(error);
-          // this.dataFactActas.load([]);
-          // this.dataFactActas.refresh();
-        },
-      });
+        console.log('asdasd ', this.dataTableGoodsActa);
+      },
+      error: error => {
+        this.loading = false;
+        this.totalItems2 = 0;
+        // console.log(error);
+        // this.dataFactActas.load([]);
+        // this.dataFactActas.refresh();
+      },
+    });
   }
 
   onUserRowSelect(row: any): void {

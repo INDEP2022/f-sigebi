@@ -128,7 +128,7 @@ export class AuthorizationAssetsDestructionComponent
           console.log(response);
         } else {
           //TODO: CHECK MESSAGE
-          this.alert('info', 'No se encontraron registros', '');
+          this.alert('warning', 'No se encontraron registros', '');
         }
 
         this.loading = false;

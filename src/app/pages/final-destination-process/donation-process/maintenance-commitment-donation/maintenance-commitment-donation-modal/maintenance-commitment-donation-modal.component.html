@@ -122,18 +122,45 @@
       [formGroup]="form"
       *ngIf="this.type == 4">
       <div class="row">
-        <div class="col-md-6">
-          <form-field [control]="form.get('value')" label="Usuario">
-            <input type="text" class="form-control" formControlName="value" />
+        <!-- <div class="col-md-6">
+          <form-field [control]="form.get('otkey')" label="Clave">
+            <input type="number" maxlength="15" class="form-control" formControlName="otkey" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-6">
+          <!-- <form-field [control]="form.get('value')" label="Usuario">
+            <input type="text" class="form-control" formControlName="value" />
+          </form-field> -->
+          <ng-custom-select-loading
+            [form]="form"
+            formControlName="value"
+            label="Usuario"
+            value="id"
+            bindLabel="name"
+            loadingText="Cargando usuarios..."
+            typeToSearchText="Escriba el nombre del usuario"
+            path="users/api/v1/seg-users"
+            [labelTemplate]="usuarioLabel"
+            [readonly]="newOrEdit"
+            [optionTemplate]="usuarioOption">
+          </ng-custom-select-loading>
+        </div>
+        <ng-template #usuarioLabel let-item="item">
+          {{ item.id }} - {{ item.name }}
+        </ng-template>
+        <ng-template #usuarioOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id }} - {{ item.name }}
+          </div>
+        </ng-template>
+
+        <!-- <div class="col-md-6">
           <form-field [control]="form.get('name')" label="Nombre">
             <input type="text" class="form-control" formControlName="name" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-6">
-          <form-field [control]="form.get('valid')" label="Valida">
+          <form-field [control]="form.get('valid')" label="Abreviatura">
             <ng-select
               formControlName="valid"
               [searchable]="false"

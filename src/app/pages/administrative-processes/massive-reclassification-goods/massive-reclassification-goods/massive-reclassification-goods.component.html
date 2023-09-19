@@ -21,9 +21,9 @@
             <i aria-hidden="true" class="fa fa-upload"></i>
           </button>
           <input
+            #file
             type="file"
             name="file"
-            #file
             class="d-none"
             accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
             (change)="onFileChange($event)" />
