@@ -7,6 +7,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { AppraiseService } from 'src/app/core/services/ms-appraise/appraise.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
 import { GenerateCveService } from 'src/app/core/services/ms-security/application-generate-clave';
@@ -46,8 +47,11 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
   // Select
   offices = new DefaultSelect();
-  cityList = new DefaultSelect();
+  fullCyties = new DefaultSelect();
   sender = new DefaultSelect();
+  fullUsersTwo = new DefaultSelect();
+  fullUsers = new DefaultSelect();
+  fullDelegations = new DefaultSelect();
   usersList = new DefaultSelect();
   lsbConCopiaList: any[] = [];
 
@@ -99,10 +103,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   paramsModal = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsModal: number = 0;
 
-  //Any
-  fullUsers: any;
-  fullCyties: any;
-
   //
 
   constructor(
@@ -114,7 +114,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     private generateCveService: GenerateCveService,
     private route: ActivatedRoute,
     private router: Router,
-    private serviceUser: GenerateCveService
+    private serviceUser: GenerateCveService,
+    private serviceDelegations: DelegationService
   ) {
     super();
     this.settings = {
@@ -147,6 +148,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.intervalId = setInterval(() => {
       this.updateHour();
     }, 1000);
+
     this.setButtons(3);
 
     this.queryAllUsers();
@@ -155,13 +157,13 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
     this.queryCyties();
 
+    this.queryDelegations();
+
     this.route.queryParams.subscribe(params => {
       if (params['event'] != undefined && params['type'] != undefined) {
         let body: OfficesSend = new OfficesSend();
         body.eventId = +params['event'];
         body.officeType = +params['type'];
-        console.log('Los parametros: ', body.eventId, ' -- ', params['type']);
-        console.log('Si se esta ejecutando esta mrd');
         this.loadOffice(body.eventId, body.officeType);
       }
     });
@@ -185,24 +187,11 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         }
       }
     } else {
-      this.alert('warning', 'Debe Seleccionar un Usuario', '');
+      this.alert('warning', 'Debe seleccionar un usuario', '');
     }
   }
 
-  getUsersDesList(event?: any) {}
-
-  queryAllUsers(event?: any) {
-    let userBody: UserFind = new UserFind();
-    userBody.flagIn = 1;
-    this.getUserService(userBody, event).subscribe(arrayRemi => {
-      console.log('Lo que almacena remi: ', arrayRemi);
-      this.fullUsers = new DefaultSelect(
-        arrayRemi?.data,
-        arrayRemi?.count || 0
-      );
-    });
-  }
-
+  //#region Users
   getUserService(body: any, event: any): Observable<any> {
     return new Observable(observer => {
       this.serviceUser.postSpUserAppraisal(body, event).subscribe({
@@ -217,9 +206,78 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     });
   }
 
-  queryAllUsersTwo(event?: any) {}
+  getUsersDesList(params?: ListParams) {
+    let userBody: UserFind = new UserFind();
+    userBody.flagIn = 2;
+    if (params !== undefined) {
+      if (params?.text != '') {
+        params['filter.usuario'] = `$eq:${params?.text.toUpperCase()}`;
+      }
+    }
+    this.getUserService(userBody, params).subscribe(userList => {
+      this.usersList = new DefaultSelect(userList?.data, userList?.count || 0);
+    });
+  }
 
-  queryCyties(event?: any) {}
+  queryAllUsers(params?: ListParams) {
+    let userBody: UserFind = new UserFind();
+    userBody.flagIn = 1;
+    if (params !== undefined) {
+      if (params?.text != '') {
+        params['filter.usuario'] = `$eq:${params?.text.toUpperCase()}`;
+      }
+    }
+    this.getUserService(userBody, params).subscribe(arrayRemi => {
+      this.fullUsers = new DefaultSelect(
+        arrayRemi?.data,
+        arrayRemi?.count || 0
+      );
+    });
+  }
+
+  queryAllUsersTwo(params?: ListParams) {
+    let userBody: UserFind = new UserFind();
+    userBody.flagIn = 2;
+    if (params !== undefined) {
+      if (params.text != '') {
+        params['filter.usuario'] = `$eq:${params.text.toUpperCase()}`;
+      }
+    }
+    this.getUserService(userBody, params).subscribe(arrayDes => {
+      this.fullUsersTwo = new DefaultSelect(
+        arrayDes?.data,
+        arrayDes?.count || 0
+      );
+    });
+  }
+  //#endregion
+
+  //#region   Cityes
+  queryCyties(params?: any) {
+    this.cityService.getAllCitysTwo(params).subscribe({
+      next: response => {
+        this.fullCyties = new DefaultSelect(response?.data, response?.count);
+      },
+      error: error => {
+        this.loader.load = false;
+        this.fullCyties = new DefaultSelect([], 0, true);
+      },
+    });
+  }
+  //#endregion
+
+  //#region Delegations
+  queryDelegations(params?: any) {
+    this.serviceDelegations.getAllTwo().subscribe({
+      next: response => {
+        this.fullDelegations = new DefaultSelect(response.data, response.count);
+      },
+      error: error => {
+        this.fullDelegations = new DefaultSelect([], 0);
+      },
+    });
+  }
+  //#endregion
 
   onRadioChange() {
     this.radioValueOne = true;
@@ -269,7 +327,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.formDialogOne.reset();
     this.data = new LocalDataSource();
     this.dataTwo = new LocalDataSource();
-    this.cityList = new DefaultSelect();
+    this.fullCyties = new DefaultSelect();
     this.columns = [];
     this.totalItems = 0;
     this.params.next(new ListParams());
@@ -290,19 +348,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.btnModificar = false;
     this.btnGuardar = false;
     this.getOffices();
-    this.getCitiesList();
-  }
-
-  getCitiesList(params?: ListParams) {
-    this.cityService.getAllCitysTwo(params).subscribe({
-      next: resp => {
-        this.cityList = new DefaultSelect(resp.data, resp.count);
-      },
-      error: eror => {
-        this.loader.load = false;
-        this.cityList = new DefaultSelect([], 0, true);
-      },
-    });
   }
 
   getCityById(id: any): Promise<any> {
@@ -314,7 +359,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loader.load = false;
-          this.cityList = new DefaultSelect([], 0, true);
+          this.fullCyties = new DefaultSelect([], 0, true);
           reject(error);
         },
       });
@@ -543,7 +588,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
               this.returnOfOffice(),
               array.length
             );
-            console.log('Este es el usuario de remitente.', i?.remitente);
             this.form.patchValue({
               dest: i?.destinatario,
               key: i?.cve_oficio,
@@ -585,7 +629,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       this.pnlControles = false;
       this.pnlControles2 = false;
       this.setButtons(1);
-      console.log('Lo que retorna el oficio: ', this.returnOfOffice());
       if (this.returnOfOffice() == 2) {
         this.settings = {
           ...this.settings,
@@ -680,7 +723,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       noti: [null],
     });
     this.formThree = this.fb.group({
-      byDel: [null],
       user: [null],
       del: [null],
     });
@@ -695,10 +737,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     let data = {
       flagIn: 1,
     };
-    console.log(data);
     this.generateCveService.postSpUserAppraisal(data, params).subscribe({
       next: resp => {
-        console.log(resp);
         this.sender = new DefaultSelect(resp.data, resp.count);
       },
       error: eror => {
@@ -713,7 +753,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     body.idEventIn = this.event;
     body.idJobIn = numTwo;
     body.tpJobIn = numOne;
-    console.log('Los datos de filtrado ', body);
     this.serviceAppraise.postGetAppraise(body).subscribe({
       next: response => {
         if (response.data && Array.isArray(response.data)) {
@@ -833,12 +872,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     eventGlobal = this.event;
     this.serviceJobs.getMoCanById(eventGlobal).subscribe({
       next: response => {
-        console.log(
-          'Esto trae la respuesta : ',
-          response.data[0],
-          ' y esto es el event : ',
-          this.event
-        );
         this.dataModal.load(response.data[0]);
         this.dataModal.refresh();
         this.totalItemsModal = response.count || 0;
@@ -856,12 +889,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   selectedRows: Array<any> = [];
 
   onUserRowSelect(event: any): void {
-    console.log('Esto es de la tabla del modal');
     this.selectedRows = event.selected; // Aquí, event.selected te dará todas las filas seleccionadas
   }
 
   onUserRowSelectCancel(event: any): void {
-    console.log('Esto es de la tabla de abajo');
     this.selectedRowsCancel = event.selected; // Aquí, event.selected te dará todas las filas seleccionadas
   }
 
@@ -875,7 +906,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     });
 
     this.selectedRowsCancel.forEach(row => {
-      console.log('Si entro aqui de verdad.');
       if (row.motivos == ' ') {
         row.motivos += motivos;
       }

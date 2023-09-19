@@ -140,6 +140,12 @@
                 [form]="form"
                 bindLabel="usuario"
                 control="remi">
+                <ng-template #userLabel let-item="item"
+                  >{{ item.usuario }} - {{ item.nombre }}</ng-template
+                >
+                <ng-template #userOption let-item="item"
+                  >{{ item.usuario }} - {{ item.nombre }}</ng-template
+                >
               </ngx-select>
             </form-field>
           </div>
@@ -149,10 +155,18 @@
                 (fetchItems)="queryAllUsersTwo($event)"
                 [searchOnInit]="true"
                 label="Destinatario"
-                [data]="fullUsers"
+                [data]="fullUsersTwo"
                 [form]="form"
-                bindLabel="nombre"
-                control="dest">
+                bindLabel="usuario"
+                control="dest"
+                [labelTemplate]="userLabel"
+                [optionTemplate]="userOption">
+                <ng-template #userLabel let-item="item"
+                  >{{ item.usuario }} - {{ item.nombre }}</ng-template
+                >
+                <ng-template #userOption let-item="item"
+                  >{{ item.usuario }} - {{ item.nombre }}</ng-template
+                >
               </ngx-select>
             </form-field>
           </div>
@@ -194,62 +208,20 @@
         </div>
         <div body>
           <form class="form-material" [formGroup]="formThree">
-            <!-- <div>
-              <div>
-                <form-radio label="Por Delegación">
-                  <input type="radio" [value]="true" formControlName="byDel" />
-                </form-radio>
-              </div>
-            </div>
-            <div>
-              <div class="row mt-3">
-                <div class="col-md-6">
-                  <form-field [control]="formThree.get('user')" label="Usuario y Nombre">
-                    <input type="text" class="form-control" formControlName="user" />
-                  </form-field>
-                </div>
-                <div class="col-md-6">
-                  <form-field [control]="formThree.get('del')" label="Delegación">
-                    <input type="text" class="form-control" formControlName="del" />
-                  </form-field>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-5"></div>
-              <div class="col-md-3">
-                <button id="btnAgregar" type="button" class="btn btn-primary btn-sm active">
-                  Agregar Usuario
-                </button>
-              </div>
-              <div class="col-md-3">
-                <button id="Button2" type="button" class="btn btn-primary btn-sm active">
-                  Quitar Usuario
-                </button>
-              </div>
-              <div class="col-md-1"></div>
-            </div>
-            <div class="row">
-              <div class="col-md-1"></div>
-              <div class="col-md-10">
-                <select multiple class="form-control" id="lsbConCopia"></select>
-              </div>
-              <div class="col-md-1"></div>
-            </div> -->
-            <!--  -->
-            <!--  -->
             <!--  -->
             <div class="row pt-5">
               <div class="col-md-4">
                 <form-field [control]="formThree.get('user')">
                   <ngx-select
                     (fetchItems)="getUsersDesList($event)"
+                    [searchOnInit]="true"
                     [data]="usersList"
                     [form]="formThree"
                     value="usuario"
                     label="Usuario y Nombre"
                     bindLabel="nombre"
                     control="user"
+                    (change)="getUsersDesList()"
                     [labelTemplate]="userLabel"
                     [optionTemplate]="userOption">
                   </ngx-select>
@@ -261,11 +233,6 @@
                   >
                 </form-field>
               </div>
-              <!-- <div class="col-md-4">
-                        <form-field [control]="form.get('txtUserCCP')" label="Texto con copia">
-                          <textarea class="form-control" type="text" formControlName="txtUserCCP"></textarea>
-                        </form-field>
-                      </div> -->
               <div class="col-md-2">
                 <div class="justify-content-center">
                   <button
@@ -287,16 +254,16 @@
                 </div>
               </div>
               <div class="col-md-4">
-                <form-field
-                  [control]="formThree.get('del')"
-                  label="Usuario Con Copia">
-                  <select class="form-control" formControlName="del">
-                    <option
-                      *ngFor="let option of lsbConCopiaList"
-                      [value]="option">
-                      {{ option }}
-                    </option>
-                  </select>
+                <form-field [control]="formThree.get('del')">
+                  <ngx-select
+                    (fetchItems)="queryDelegations($event)"
+                    [searchOnInit]="true"
+                    label="Delegación"
+                    [data]="fullDelegations"
+                    [form]="formThree"
+                    bindLabel="description"
+                    control="del">
+                  </ngx-select>
                 </form-field>
               </div>
             </div>
