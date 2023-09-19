@@ -252,19 +252,121 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     this.excelLoading = true;
     //const filename: string = this.userName + '-Tasks';
     // El type no es necesario ya que por defecto toma 'xlsx'
-    /*let filter = this.filter;
-    filter.getValue().limit = 99999999;
-    filter.sortBy = 'id:DESC'
-    console.log(filter.getValue());*/
+    const params = new ListParams();
+    if (this.consultTasksForm.get('State').value != null)
+      params['filter.State'] = `$eq:${
+        this.consultTasksForm.get('State').value
+      }`;
+
+    if (this.consultTasksForm.value.typeOfTrasnfer) {
+      const value = this.consultTasksForm.value.typeOfTrasnfer;
+      if (value == 'FGR_SAE') {
+        params['filter.request.typeOfTransfer'] = `$eq:PGR_SAE`;
+        params['filter.request.typeOfTransfer'] = `$or:${value}`;
+      } else {
+        params['filter.request.typeOfTransfer'] = `$eq:${value}`;
+      }
+    }
+
+    if (this.consultTasksForm.value.txtNoSolicitud)
+      params[
+        'filter.requestId'
+      ] = `$eq:${this.consultTasksForm.value.txtNoSolicitud}`;
+
+    if (this.consultTasksForm.value.txtNoTransferente)
+      params[
+        'filter.idTransferee'
+      ] = `$eq:${this.consultTasksForm.value.txtNoTransferente}`;
+
+    if (this.consultTasksForm.value.txtDaysAtrasos)
+      params[
+        'filter.backwardness'
+      ] = `$btw:${this.consultTasksForm.value.txtDaysAtrasos}`;
+
+    if (this.consultTasksForm.value.txtTituloTarea)
+      params[
+        'filter.title'
+      ] = `$ilike:${this.consultTasksForm.value.txtTituloTarea}`;
+
+    if (this.consultTasksForm.value.txtNoProgramacionEntrega)
+      params[
+        'filter.programmingId'
+      ] = `$ilike:${this.consultTasksForm.value.txtNoProgramacionEntrega}`;
+
+    if (this.consultTasksForm.value.txtNombreActividad)
+      params[
+        'filter.activityName'
+      ] = `$ilike:${this.consultTasksForm.value.txtNombreActividad}`;
+
+    if (this.consultTasksForm.value.txtNoOrdenServicio)
+      params[
+        'filter.-OrdenServicio'
+      ] = `$ilike:${this.consultTasksForm.value.txtNoOrdenServicio}`;
+
+    if (this.consultTasksForm.value.txtNoOrdenPago)
+      params[
+        'filter.-OrdenPago'
+      ] = `$ilike:${this.consultTasksForm.value.txtNoOrdenPago}`;
+
+    if (this.consultTasksForm.value.txtAprobador)
+      params[
+        'filter.approvers'
+      ] = `$ilike:${this.consultTasksForm.value.txtAprobador}`;
+
+    if (this.consultTasksForm.value.txtNoOrdenIngreso)
+      params[
+        'filter.-OrdenIngreso'
+      ] = `$ilike:${this.consultTasksForm.value.txtNoOrdenIngreso}`;
+
+    if (this.consultTasksForm.value.txtNombreAplicacion)
+      params[
+        'filter.applicationName'
+      ] = `$ilike:${this.consultTasksForm.value.txtNombreAplicacion}`;
+
+    if (this.consultTasksForm.value.txtNoMuestreo)
+      params[
+        'filter.-NoMuestreo'
+      ] = `$ilike:${this.consultTasksForm.value.txtNoMuestreo}`;
+
+    if (this.consultTasksForm.value.txtFecAsigDesde) {
+      const fechaInicio = this.consultTasksForm.value.txtFecAsigDesde;
+      const fechaFin = this.consultTasksForm.value.txtFecAsigHasta;
+      const inicio =
+        fechaInicio instanceof Date
+          ? fechaInicio.toISOString().split('T')[0]
+          : fechaInicio;
+      const final = fechaFin ? fechaFin.toISOString().split('T')[0] : inicio;
+      params['filter.createdDate'] = `$btw:${inicio + ',' + final}`;
+    }
+    if (this.consultTasksForm.value.txtNoMuestreoOrden)
+      params[
+        'filter.-NoMuestreoOrden'
+      ] = `$ilike:${this.consultTasksForm.value.txtNoMuestreoOrden}`;
+
+    if (this.consultTasksForm.value.txtFechaFinDesde) {
+      const fechaInicio = this.consultTasksForm.value.txtFechaFinDesde;
+      const fechaFin = this.consultTasksForm.value.txtFechaFinHasta;
+
+      const inicio =
+        fechaInicio instanceof Date
+          ? fechaInicio.toISOString().split('T')[0]
+          : fechaInicio;
+      const final = fechaFin ? fechaFin.toISOString().split('T')[0] : inicio;
+      params['filter.endDate'] = `$btw:${inicio + ',' + final}`;
+    }
+
+    if (typeof this.consultTasksForm.value.txtNoProgramacion == 'number')
+      params[
+        'filter.programmingId'
+      ] = `$eq:${this.consultTasksForm.value.txtNoProgramacion}`;
 
     const user = this.authService.decodeToken() as any;
     const idDeleReg = this.consultTasksForm.value.txtNoDelegacionRegional;
-    const filterStatus = this.consultTasksForm.get('State').value;
-    const params = new ListParams();
+
     params['filter.assignees'] = `$ilike:${user.username}`;
-    params['filter.State'] = `$eq:${filterStatus}`;
     params['filter.idDelegationRegional'] = `$eq:${idDeleReg}`;
     params['sortBy'] = 'id:DESC';
+    debugger;
     const result: any = await this.getTaskRepostBase64(params);
     const base64String = result.base64File;
     const filename: string = result.nameFile;
