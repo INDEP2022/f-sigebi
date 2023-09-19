@@ -71,6 +71,7 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   ngOnInit(): void {
+    this.getOrderServiceProvided();
     this.titleTab();
     this.showButtonServiceManual = true;
 
@@ -173,7 +174,8 @@ export class ServiceTransportableGoodsFormComponent
      * Obtener la data por el orderServiceId
      */
     const params = new ListParams();
-    params['filter.orderServiceId'] = `$eq:${this.orderServiceId}`;
+    //params['filter.orderServiceId'] = `$eq:${this.orderServiceId}`;
+    params['filter.orderServiceId'] = 516;
     this.orderEntryService
       .getAllOrderServicesProvided(params)
       .pipe(
@@ -184,7 +186,7 @@ export class ServiceTransportableGoodsFormComponent
       )
       .subscribe({
         next: resp => {
-          console.log(resp.data);
+          console.log('data', resp.data);
 
           let ttotal = 0;
           resp.data.map((item: any) => {
