@@ -13,14 +13,16 @@
       <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="row">
           <div class="col-12 col-md-3">
-            <form-field
-              [control]="form.get('idContract')"
-              label="Id Contrato o Convenio">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="idContract" />
-            </form-field>
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('idContract')"
+                label="Id Contrato o Convenio">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="idContract" />
+              </form-field>
+            </div>
           </div>
           <div class="col">
             <div class="justify-content-start">
@@ -46,11 +48,18 @@
           </div>
           <div class="col">
             <form-field [control]="form.get('status')" label="Estado">
-              <select class="form-control" formControlName="status">
-                <option [value]="null">Seleccione un valor</option>
-                <option [value]="1">1</option>
-                <option [value]="2">2</option>
-              </select>
+              <<<<<<< HEAD
+              <input
+                type="text"
+                class="form-control"
+                formControlName="status" />
+              =======
+              <ng-select class="form-control" formControlName="status">
+                <ng-option [value]="'A'">A</ng-option>
+                <ng-option [value]="'RT'">RT</ng-option>
+                <ng-option [value]="'D'">D</ng-option>
+              </ng-select>
+              >>>>>>> eed8343e0bb1da8af5c291595a8e2501c4fe00d3
             </form-field>
           </div>
           <div class="col">

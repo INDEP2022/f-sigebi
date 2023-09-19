@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { firstValueFrom, take } from 'rxjs';
+import { catchError, firstValueFrom, of, take } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
@@ -13,11 +13,15 @@ import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpev
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { secondFormatDateTofirstFormatDate } from 'src/app/shared/utils/date';
+import { ComerieventosService } from '../services/comerieventos.service';
+import { ComermeventosService } from '../services/comermeventos.service';
+import { NumerarieService } from '../services/numerarie.service';
+import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-numeraire-conversion-auctions',
   templateUrl: './numeraire-conversion-auctions.component.html',
-  styles: [],
+  styleUrls: ['./numeraire-conversion-auctions.component.scss'],
 })
 export class NumeraireConversionAuctionsComponent
   extends BasePage
@@ -26,10 +30,13 @@ export class NumeraireConversionAuctionsComponent
   @Input() address: string;
   reloadExpenses = 0;
   form: FormGroup = new FormGroup({});
-  selectedEvent: IComerEvent = null;
+
   selectedExpenseData: IFillExpenseDataCombined;
   nameEvent = '';
   disabledParcial = false;
+  ilikeFilters = ['observations', 'processKey', 'statusVtaId', 'place', 'user'];
+  dateFilters = ['eventDate', 'failureDate'];
+  eventColumns = { ...COLUMNS };
   constructor(
     private fb: FormBuilder,
     private convNumeraryService: ConvNumeraryService,
@@ -37,13 +44,28 @@ export class NumeraireConversionAuctionsComponent
     private lotService: LotService,
     private modalService: BsModalService,
     private siabService: SiabService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private numerarieService: NumerarieService,
+    private eventMService: ComermeventosService,
+    private eventIService: ComerieventosService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
+  }
+
+  get eventService() {
+    return this.address
+      ? this.address === 'M'
+        ? this.eventMService
+        : this.eventIService
+      : null;
+  }
+
+  get updateAllowed() {
+    return this.numerarieService.updateAllowed;
   }
 
   private prepareForm() {
@@ -65,15 +87,25 @@ export class NumeraireConversionAuctionsComponent
     );
   }
 
+  get selectedEvent() {
+    return this.numerarieService.selectedEvent;
+  }
+
+  set selectedEvent(value) {
+    this.numerarieService.selectedEvent = value;
+  }
+
   selectEvent(event: IComerEvent) {
     console.log(event);
+    this.selectedExpenseData = null;
     this.nameEvent = '';
     this.reloadExpenses++;
-    this.selectedEvent = this.selectedEvent = {
+    this.selectedEvent = {
       ...event,
       failureDate: secondFormatDateTofirstFormatDate(event.failureDate),
       eventDate: secondFormatDateTofirstFormatDate(event.eventDate as string),
     };
+    this.numerarieService.selectedEventSubject.next(this.selectedEvent);
     const filterParams = new FilterParams();
     filterParams.addFilter('id', event.eventTpId);
     this.comertpEventService
@@ -110,16 +142,20 @@ export class NumeraireConversionAuctionsComponent
 
   calcula() {
     if (this.selectedEvent.statusVtaId !== 'CNE') {
+      this.loader.load = true;
       this.convNumeraryService
         .getCentralNumera(this.selectedEvent.id)
         .pipe(take(1))
         .subscribe({
           next: response => {
             this.reloadExpenses++;
+            this.loader.load = false;
             this.alert('success', 'Proceso Cálculo terminado', '');
           },
           error: err => {
             console.log(err);
+            this.loader.load = false;
+            this.alert('error', 'Proceso Cálculo', err.error.message);
           },
         });
     } else {
@@ -133,13 +169,30 @@ export class NumeraireConversionAuctionsComponent
 
   async calculaParc() {
     if (this.selectedEvent.statusVtaId === 'VEN') {
+      this.loader.load = true;
       let resultBorra = await firstValueFrom(
-        this.convNumeraryService.SPBorraNumera(this.selectedEvent.id)
+        this.convNumeraryService
+          .SPBorraNumera(this.selectedEvent.id)
+          .pipe(catchError(x => of(x.error)))
       );
-      let resultParcial = await firstValueFrom(
-        this.convNumeraryService.getSPGastosEventoParcial(this.selectedEvent.id)
-      );
+      if (resultBorra.statusCode !== 200) {
+        this.alert('error', 'Proceso Cálculo Parcial', resultBorra.message);
+        this.loader.load = false;
+        return;
+      }
       console.log(resultBorra);
+      let resultParcial = await firstValueFrom(
+        this.convNumeraryService
+          .getSPGastosEventoParcial(this.selectedEvent.id)
+          .pipe(catchError(x => of(x.error)))
+      );
+      if (resultParcial.statusCode !== 200) {
+        this.alert('error', 'Proceso Cálculo Parcial', resultParcial.message);
+        this.loader.load = false;
+        return;
+      }
+
+      this.loader.load = false;
       this.reloadExpenses++;
       this.alert('success', 'Proceso Cálculo Parcial terminado', '');
     } else {
@@ -153,16 +206,20 @@ export class NumeraireConversionAuctionsComponent
 
   convierte() {
     if (this.selectedEvent.statusVtaId !== 'CNE') {
+      this.loader.load = true;
       this.convNumeraryService
         .convert({ idEvent: this.selectedEvent.id, screen: 'FCOMER087' })
         .pipe(take(1))
         .subscribe({
           next: response => {
             this.reloadExpenses++;
+            this.loader.load = false;
             this.alert('success', 'Proceso Convierte terminado', '');
           },
           error: err => {
             console.log(err);
+            this.loader.load = false;
+            this.alert('error', 'Proceso Convierte', err.error.message);
           },
         });
     } else {
@@ -176,6 +233,7 @@ export class NumeraireConversionAuctionsComponent
 
   convierteParcial() {
     if (this.selectedEvent.statusVtaId === 'VEN') {
+      this.loader.load = true;
       this.convNumeraryService
         .SP_CONVERSION_ASEG_PARCIAL({
           idEvent: this.selectedEvent.id,
@@ -189,6 +247,8 @@ export class NumeraireConversionAuctionsComponent
           },
           error: err => {
             console.log(err);
+            this.loader.load = false;
+            this.alert('error', 'Proceso Convierte Parcial', err.error.message);
           },
         });
     } else {
@@ -224,6 +284,9 @@ export class NumeraireConversionAuctionsComponent
           ignoreBackdropClick: true,
         };
         this.modalService.show(PreviewDocumentsComponent, config);
+      },
+      error: err => {
+        console.log(err);
       },
     });
   }

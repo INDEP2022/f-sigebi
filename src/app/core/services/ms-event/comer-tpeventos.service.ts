@@ -106,6 +106,10 @@ export class ComerTpEventosService extends HttpService {
     return this.get<any>(`application/get-tp-event2`, params);
   }
 
+  getTpEvent3(params?: ListParams) {
+    return this.get<any>(`application/get-tp-event2`, params);
+  }
+
   getTpEvent(body: { pDirection: string; pEventKey: string | number }) {
     return this.post<any>(`application/get-tp-event`, body);
   }
