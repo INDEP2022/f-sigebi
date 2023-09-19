@@ -45,17 +45,15 @@ export class CreateManualServiceFormComponent
     });
   }
   confirm() {
-    window.alert('El tipo de servcio esta enduro');
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Estás seguro que desea crear el servicio manual?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
         const form = this.form.getRawValue();
         form.classificationService = 'Manual';
-        form.orderServiceId = +this.orderServiceId;
+        form.orderServiceId = 516;
         form.typeService = 'ORDEN_SERVICIO_PRESTAMO_MANUAL';
 
         this.createOrderServiceProvided(form);
@@ -68,7 +66,7 @@ export class CreateManualServiceFormComponent
   }
 
   createOrderServiceProvided(body: IOrderServiceProvider) {
-    debugger;
+    console.log('body', body);
     this.orderEntryService.createServiceProvided(body).subscribe({
       next: resp => {
         this.onLoadToast('success', 'Servicio manual creado correctamente');

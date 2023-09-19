@@ -61,6 +61,7 @@ export interface IOrderServiceDTO {
   saeFirmType?: string;
   cargoCae?: string;
   contentType?: string;
+
   contentRepId?: string;
   userContainers?: string;
   folioReportImplementation?: string;

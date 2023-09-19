@@ -69,6 +69,11 @@ export class OrderServiceService extends HttpService {
     return this.put(route, formVehicle);
   }
 
+  getSamplingOrderView(body: Object) {
+    const route = OrderServiceEndpoint.GetSamplingOrderView;
+    return this.post(route, body);
+  }
+
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {

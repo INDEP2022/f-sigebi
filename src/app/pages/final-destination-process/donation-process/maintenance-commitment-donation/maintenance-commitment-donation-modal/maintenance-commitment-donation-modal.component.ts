@@ -8,9 +8,8 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { BasePage } from 'src/app/core/shared';
-import Swal from 'sweetalert2';
-import { Params } from '@angular/router';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-maintenance-commitment-donation-modal',
@@ -19,7 +18,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class MaintenanceCommitmentDonationModalComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   title: string = '';
   newOrEdit: boolean = false;
@@ -29,9 +29,8 @@ export class MaintenanceCommitmentDonationModalComponent
   dataValid: string[] = [];
   totalOtKey: number = 0;
   users = new DefaultSelect();
-
+  case: boolean = false;
   arr: number[] = [];
-
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -48,7 +47,6 @@ export class MaintenanceCommitmentDonationModalComponent
   ngOnInit(): void {
     console.log('flag ', this.newOrEdit);
     //console.log('NewOrEdir: ', this.newOrEdit);
-
     if (this.newOrEdit || !this.newOrEdit) {
       console.log('type -> ', this.type);
       switch (this.type) {
@@ -68,6 +66,7 @@ export class MaintenanceCommitmentDonationModalComponent
           this.title = 'Permisos de Usuarios para Rastreador';
           this.prepareFormPermissionR();
           this.getMax();
+          this.case = true;
           break;
         default:
           this.title = '';
@@ -235,7 +234,7 @@ export class MaintenanceCommitmentDonationModalComponent
         }
         console.log('arr  ', this.arr.sort());
         const ultimoNumero = this.arr.sort()[this.arr.length - 1];
-        console.log("ult -> ", ultimoNumero);
+        console.log('ult -> ', ultimoNumero);
       },
       error: error => {
         console.log(error);
@@ -247,11 +246,11 @@ export class MaintenanceCommitmentDonationModalComponent
   getMax() {
     this.dynamicCatalogsService.GetMax(421).subscribe({
       next: response => {
-        console.log("res 111 ", response);
+        console.log('res 111 ', response);
         this.totalOtKey = response + 1;
-        console.log("max ln. ", response);
-        console.log("this.totalOtKey ", this.totalOtKey);
-      }
+        console.log('max ln. ', response);
+        console.log('this.totalOtKey ', this.totalOtKey);
+      },
     });
   }
 
@@ -354,8 +353,7 @@ export class MaintenanceCommitmentDonationModalComponent
 
   updatePermisoRas(data: any) {
     const model = {} as any;
-    model.nmtable = 421,
-      model.otkey = Number(this.data.otkey);
+    (model.nmtable = 421), (model.otkey = Number(this.data.otkey));
     model.otvalor = data.value;
     model.registerNumber = 0;
     model.abbreviation = data.valid;
@@ -429,7 +427,7 @@ export class MaintenanceCommitmentDonationModalComponent
   }
 
   handleSuccess() {
-    this.modalRef.content.callback(true);
+    this.modalRef.content.callback(true, this.case);
     this.modalRef.hide();
   }
 }
