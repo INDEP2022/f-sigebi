@@ -9,7 +9,7 @@ export const CONSULTATION_GOODS_BILLS_COLUMNS = {
   },
   no_expediente: {
     sort: false,
-    title: 'Expediente',
+    title: 'No. Expediente',
   },
   estatus: {
     sort: false,

@@ -91,9 +91,9 @@ export class ProgrammingGoodReceiptService extends HttpService {
     return this.post(route, params);
   }
 
-  getTmpGoods(NoActa: any) {
+  getTmpGoods(NoActa: any, params?: any) {
     const route = `${ProgrammingGoodEndpoints.tmpEstGoods}?filter.minutesNumber=$eq:${NoActa}`;
-    return this.get(route);
+    return this.get(route, params);
   }
 
   getTmpGoodsByuser(user: any) {

@@ -6,7 +6,11 @@ import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { ConvNumeraryService } from 'src/app/core/services/ms-conv-numerary/conv-numerary.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { BasePage } from 'src/app/core/shared';
+
 import { secondFormatDateTofirstFormatDate } from 'src/app/shared/utils/date';
+import { COLUMNS } from '../numeraire-conversion-auctions/columns';
+import { ComerieventosService } from '../services/comerieventos.service';
+import { ComermeventosService } from '../services/comermeventos.service';
 
 @Component({
   selector: 'app-numeraire-conversion-allotments',
@@ -21,12 +25,25 @@ export class NumeraireConversionAllotmentsComponent
   form: FormGroup = new FormGroup({});
   selectedEvent: IComerEvent = null;
   nameEvent = '';
+  ilikeFilters = ['observations', 'processKey', 'statusVtaId', 'place', 'user'];
+  dateFilters = ['eventDate', 'failureDate'];
+  eventColumns = { ...COLUMNS };
   constructor(
     private fb: FormBuilder,
     private convNumeraryService: ConvNumeraryService,
-    private comertpEventService: ComerTpEventosService
+    private comertpEventService: ComerTpEventosService,
+    private eventMService: ComermeventosService,
+    private eventIService: ComerieventosService
   ) {
     super();
+  }
+
+  get eventService() {
+    return this.address
+      ? this.address === 'M'
+        ? this.eventMService
+        : this.eventIService
+      : null;
   }
 
   ngOnInit(): void {
