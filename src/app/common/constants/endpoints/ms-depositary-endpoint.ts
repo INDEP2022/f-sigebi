@@ -35,7 +35,7 @@ export enum DepositaryEndPoints {
   SearchPaymentProcess = 'comer-payment/change-payment-process',
   ComerPaymentSelect = 'comer-payment/selection-payment/selection',
   InsertDispersionDB = `payment-ref/insert-dispersion-db`,
-  // InsertDispersionDB = `payment-ref/exec-deductions`,
+  ExecDeductions = `payment-ref/exec-deductions`,
   FullErase = 'payment-ref/full-erase',
   CurrentFullErase = 'payment-ref/current-full-erase',
 }

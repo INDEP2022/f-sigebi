@@ -58,4 +58,7 @@ export class ConciliationDepositaryPaymentsService {
   insertDispersionDB(params: any) {
     return this.msDepositaryService.insertDispersionDB(params);
   }
+  execDeductions(params: any) {
+    return this.msDepositaryService.execDeductions(params);
+  }
 }
