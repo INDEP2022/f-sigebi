@@ -27,6 +27,7 @@ import { LabelGoodService } from 'src/app/core/services/catalogs/label-good.serv
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { ClassifyGoodService } from 'src/app/core/services/ms-classifygood/ms-classifygood.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
@@ -144,6 +145,7 @@ export class ChangeOfGoodClassificationComponent
     private readonly classifyGoodServices: ClassifyGoodService,
     private readonly labeGoodServices: LabelGoodService,
     private goodFinderService: GoodFinderService,
+    private expedientService: ExpedientService,
     private readonly goodsQueryServices: GoodsQueryService,
     private readonly dynamicCatalogsService: DynamicCatalogsService,
     private readonly goodSssubtypeService: GoodSssubtypeService,
@@ -639,6 +641,29 @@ export class ChangeOfGoodClassificationComponent
   }
 
   async addAtribut() {
+    if (this.formNew.invalid) {
+      this.alert('warning', 'Complete los campos requeridos', '');
+      return;
+    }
+    if (this.fileNumberNew.value) {
+      let filterParams = new FilterParams();
+      filterParams.addFilter('id', this.fileNumberNew.value);
+      let IDENT_EXP = await firstValueFrom(
+        this.expedientService.getAll(filterParams.getParams()).pipe(
+          catchError(x => of({ data: [] })),
+          map(x => (x.data.length > 0 ? x.data[0].identifier : null))
+        )
+      );
+      if (this.good.identifier !== IDENT_EXP) {
+        this.alert(
+          'warning',
+          'Cambio de clasificación del bien ' + this.good.goodId,
+          'El identificador del expediente no coincide con el identificador del bien, favor de verificar...'
+        );
+        return;
+      }
+    }
+
     const putGood: any = {
       id: Number(this.good.id),
       goodId: Number(this.good.goodId),
