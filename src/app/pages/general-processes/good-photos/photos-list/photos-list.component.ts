@@ -242,7 +242,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
               if (response) {
                 this.files = [...response];
                 // this.errorMessage = null;
-                return;
+                // return;
                 if (!this.errorMessage) {
                   const pufValidaUsuario = await this.pufValidaUsuario();
                   if (pufValidaUsuario === 1) {
@@ -303,6 +303,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   validationUser(file: IPhotoFile) {
+    if (this.errorMessage && this.errorMessage.length > 0) return false;
     if (!file.usuario_creacion) return true;
     if (file.usuario_creacion.length === 0) return true;
     if (file.usuario_creacion.toUpperCase() === this.userName) return true;
