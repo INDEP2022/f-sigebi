@@ -215,4 +215,8 @@ export class PaymentService extends HttpService {
   getComerRelUsuCanc(params?: string) {
     return this.get(`comer-rel-usu-canc`, params);
   }
+
+  getDataFromView(params: any) {
+    return this.post(PaymentEndPoints.GetDataFromView, params);
+  }
 }
