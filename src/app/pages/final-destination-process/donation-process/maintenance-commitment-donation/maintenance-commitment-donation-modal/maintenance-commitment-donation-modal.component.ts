@@ -18,8 +18,7 @@ import Swal from 'sweetalert2';
 })
 export class MaintenanceCommitmentDonationModalComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   form: FormGroup = new FormGroup({});
   title: string = '';
   newOrEdit: boolean = false;
