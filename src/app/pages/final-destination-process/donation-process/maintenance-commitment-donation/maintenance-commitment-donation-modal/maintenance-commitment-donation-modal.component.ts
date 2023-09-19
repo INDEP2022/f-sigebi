@@ -221,6 +221,26 @@ export class MaintenanceCommitmentDonationModalComponent
       },
     });
   }
+
+  insertPermisosRastreador() {
+    this.newOrEdit = false;
+    const model = {} as any;
+    model.value = this.form.value.value;
+    model.name = this.form.value.name;
+    model.valid = Number(this.form.value.valid);
+
+    //SERVICIO POS PERMISOS
+    this.donationService.createApproveDonation(model).subscribe({
+      next: () => {
+        this.handleSuccess();
+        this.onLoadToast('success', 'Usuario para Rastereador Creado', '');
+      },
+      error: error => {
+        this.onLoadToast('error', error.error.message, '');
+      },
+    });
+  }
+
   getOtKey() {
     // let arr: number[] = [];
     this.tvalTable1Service.getByIdFind(421).subscribe({
