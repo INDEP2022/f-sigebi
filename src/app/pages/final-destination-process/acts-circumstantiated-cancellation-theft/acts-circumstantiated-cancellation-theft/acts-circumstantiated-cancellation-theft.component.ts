@@ -996,7 +996,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     if (this.fileNumber == 0 || this.fileNumber == null) {
       this.alertInfo(
         'warning',
-        'No se Puede Buscar Actas sin Selecccionar el Expediente',
+        'No se puede buscar actas sin selecccionar el expediente',
         ''
       );
       return;
@@ -1018,7 +1018,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       if (next) {
         this.alert(
           'success',
-          'Se Cargó la Información del Acta',
+          'Se cargó la información del acta',
           next.keysProceedings
         );
       }
@@ -1202,7 +1202,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       if (this.actasDefault == null) {
         this.alert(
           'warning',
-          'No Existe un Acta en la cual Asignar el Bien.',
+          'No existe un acta en la cual asignar el bien.',
           'Debe capturar un acta.'
         );
         return;
@@ -1210,7 +1210,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         if (this.statusCanc == 'CERRADA') {
           this.alert(
             'warning',
-            'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+            'El acta ya está cerrada, no puede realizar modificaciones a esta',
             ''
           );
           return;
@@ -1220,13 +1220,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
             if (good.di_acta != null) {
               this.alert(
                 'warning',
-                `Ese Bien ya se Encuentra en el Acta ${good.di_acta}`,
-                'Debe Capturar un Acta.'
+                `Ese bien ya se encuentra en el acta ${good.di_acta}`,
+                'Debe capturar un acta.'
               );
             } else if (good.di_disponible == 'N') {
               this.onLoadToast(
                 'warning',
-                `El Bien ${good.id} tiene un Estatus Inválido para ser Asignado a algún Acta`
+                `El bien ${good.id} tiene un estatus inválido para ser asignado a algún acta`
               );
               return;
             } else {
@@ -1259,7 +1259,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         }
       }
     } else {
-      this.alert('warning', 'Seleccione Primero el Bien a Asignar.', '');
+      this.alert('warning', 'Seleccione primero el bien a asignar.', '');
     }
   }
   onGoodSelect(instance: CheckboxElementComponent) {
@@ -1460,7 +1460,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     if (this.actasDefault == null) {
       this.alert(
         'warning',
-        'No existe un Acta en la cual Asignar el Bien.',
+        'No existe un acta en la cual asignar el bien.',
         'Debe capturar un acta.'
       );
       return;
@@ -1468,7 +1468,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       if (this.statusCanc == 'CERRADA') {
         this.alert(
           'warning',
-          'El Acta ya esta Cerrada, no puede Realizar Modificaciones a esta',
+          'El acta ya esta cerrada, no puede realizar modificaciones a esta',
           ''
         );
         return;
@@ -1507,7 +1507,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     if (this.statusCanc == 'CERRADA') {
       this.alert(
         'warning',
-        'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+        'El acta ya está cerrada, no puede realizar modificaciones a esta',
         ''
       );
       return;
@@ -1517,15 +1517,15 @@ export class ActsCircumstantiatedCancellationTheftComponent
       if (this.actasDefault == null) {
         this.alert(
           'warning',
-          'Debe Especificar/Buscar el Acta para Despues Eliminar el Bien de Esta.',
+          'Debe especificar/buscar el acta para después eliminar el bien de esta.',
           ''
         );
         return;
       } else if (this.selectedGooodsValid.length == 0) {
         this.alert(
           'warning',
-          'Debe Seleccionar un Bien que Forme Parte del Acta Primero',
-          'Debe Capturar un Acta.'
+          'Debe seleccionar un bien que forme parte del acta primero',
+          'Debe capturar un acta.'
         );
         return;
       } else {
@@ -1566,7 +1566,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     if (this.actasDefault == null) {
       this.alert(
         'warning',
-        'No existe un Acta en la cual Asignar el Bien.',
+        'No existe un acta en la cual asignar el bien.',
         'Debe capturar un acta.'
       );
       return;
@@ -1574,7 +1574,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       if (this.statusCanc == 'CERRADA') {
         this.alert(
           'warning',
-          'El Acta ya esta Cerrada, no puede Realizar Modificaciones a esta',
+          'El acta ya esta cerrada, no puede realizar modificaciones a esta',
           ''
         );
         return;
@@ -1609,11 +1609,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
   actualizarActa() {
     if (!this.actasDefault) {
-      this.alertInfo('warning', 'Debe Seleccionar un Acta', '');
+      this.alertInfo('warning', 'Debe seleccionar un acta', '');
       return;
     }
     if (this.actasDefault.statusProceedings == 'CERRADA') {
-      this.alertInfo('warning', 'No puede Actualizar un Acta Cerrada', '');
+      this.alertInfo('warning', 'No puede actualizar un acta cerrada', '');
       return;
     }
     this.actasDefault.address = this.actaRecepttionForm.get('direccion').value;
@@ -1624,11 +1624,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
       .editProceeding(this.actasDefault.id, this.actasDefault)
       .subscribe({
         next: async data => {
-          this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
+          this.alertInfo('success', 'Se actualizó el acta correctamente', '');
           await this.confirmScanRequest();
         },
         error: error => {
-          this.alert('error', 'Ocurrió un Error al Actualizar el Acta', '');
+          this.alert('error', 'Ocurrió un error al actualizar el acta', '');
           // this.loading = false
         },
       });
@@ -1665,7 +1665,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     if (this.fileNumber == 0 || this.fileNumber == null) {
       this.alertInfo(
         'warning',
-        'No se Puede Crear una Nueva Acta sin Selecccionar el Expediente',
+        'No se puede crear una nueva acta sin selecccionar el expediente',
         ''
       );
       return;
@@ -1689,7 +1689,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       if (next) {
         this.alert(
           'success',
-          'Se Cargó la Información del Acta',
+          'Se cargó la información del acta',
           next.keysProceedings
         );
       }
@@ -1789,24 +1789,24 @@ export class ActsCircumstantiatedCancellationTheftComponent
     if (folio == null) {
       this.alert(
         'warning',
-        'No se puede Cerrar el Acta sin Folio de Escaneo',
+        'No se puede cerrar el acta sin folio de escaneo',
         ''
       );
       return;
     }
     if (this.data1 != null) {
       if (this.data1 == null) {
-        this.alert('warning', 'No Existe Acta para Cerrar', '');
+        this.alert('warning', 'No existe acta para cerrar', '');
         return;
       }
       if (this.data1 == 'CERRADA') {
-        this.alertInfo('warning', 'El Acta ya se Encuentra Cerrada', '');
+        this.alertInfo('warning', 'El acta ya se encuentra cerrada', '');
         return;
       }
       if (this.dataRecepcionGood.count() == 0) {
         this.alertInfo(
           'warning',
-          'Para Cerrar un Acta debe Contener al Menos un Bien, por favor Registra este en la Pantalla de Actas.',
+          'Para cerrar un acta debe contener al menos un bien, por favor registra este en la pantalla de actas.',
           ''
         );
         return;
@@ -1823,7 +1823,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       } else {
         this.alertQuestion(
           'question',
-          '¿Seguro que Desea Realizar el Cierre de esta Acta?',
+          '¿Seguro que desea realizar el cierre de esta acta?',
           ''
         ).then(async question => {
           if (question.isConfirmed) {
@@ -1847,8 +1847,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
                   await this.updateGoodEInsertHistoric(obj);
 
-                  this.alertInfo('success', 'El Acta Ha Sido Cerrada', '');
-                  this.alert('success', 'Acta Cerrada', '');
+                  this.alertInfo('success', 'El acta ha sido cerrada', '');
+                  this.alert('success', 'Acta cerrada', '');
                   this.data1 = 'CERRADA';
                   //this.disabledBtnCerrar = false;
                   this.disabledBtnActas = false;
@@ -1858,7 +1858,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                   );
                 },
                 error: error => {
-                  this.alert('error', 'Ocurrió un Error al Cerrar el Acta', '');
+                  this.alert('error', 'Ocurrió un error al cerrar el acta', '');
                 },
               });
           }
@@ -1867,7 +1867,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     } else {
       this.alert(
         'warning',
-        'No Existe Ningún Acta a Cerrar.',
+        'No existe ningún acta a cerrar.',
         // 'El Usuario no está autorizado para cerrar acta',
         ''
       );
@@ -1900,7 +1900,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     ) {
       // console.log('Redirigiendo a la página de actas');
     } else {
-      this.alert('info', 'Necesitas un Número de Expedientes con Acta', '');
+      this.alert('info', 'Necesitas un número de expedientes con acta', '');
       this.loadingExcel = false;
       return;
     }
@@ -1909,19 +1909,19 @@ export class ActsCircumstantiatedCancellationTheftComponent
     // El type no es necesario ya que por defecto toma 'xlsx'
     this.loading = false;
     this.excelService.export(this.dataRecepcion, { filename });
-    this.alert('success', 'Datos Exportados', '');
+    this.alert('success', 'Datos exportados', '');
   }
 
   viewPictures(event: any) {
     let foliouniversal = this.formScan.get('scanningFoli').value;
     // console.log('FOLIO PARA IMA -->', foliouniversal);
     if (foliouniversal == null) {
-      this.alert('warning', 'No Tiene Folio de Escaneo para Visualizar', '');
+      this.alert('warning', 'No tiene folio de escaneo para visualizar', '');
       return;
     }
     // console.log(event);
     if (!this.wheelNumber) {
-      this.onLoadToast('error', 'Error', 'ésta acta no tiene volante asignado');
+      this.onLoadToast('error', 'Error', 'Ésta acta no tiene volante asignado');
       return;
     }
     this.getDocumentsByFlyer(this.wheelNumber);
@@ -2064,7 +2064,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     const response = await this.alertQuestion(
       'question',
       'Aviso',
-      'Se Generará un Nuevo Folio de Escaneo para el Acta Abierta. ¿Deseas continuar?'
+      'Se generará un nuevo folio de escaneo para el acta abierta. ¿Deseas continuar?'
     );
     if (!response.isConfirmed) {
       return;
@@ -2075,9 +2075,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.alert(
         'error',
         'Error',
-        'Al localizar la información de Volante: ' +
+        'Al localizar la información de volante: ' +
           flyerNumber +
-          ' y Expediente: ' +
+          ' y expediente: ' +
           this.fileNumber
       );
       return;
@@ -2148,10 +2148,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
       .editProceeding(this.actasDefault.id, this.actasDefault)
       .subscribe({
         next: async data => {
-          this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
+          this.alertInfo('success', 'Se actualizó el acta correctamente', '');
         },
         error: error => {
-          this.alert('error', 'Ocurrió un Error al Actualizar el Acta', '');
+          this.alert('error', 'Ocurrió un error al actualizar el acta', '');
           // this.loading = false
         },
       });
@@ -2191,7 +2191,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     } else {
       this.alertInfo(
         'warning',
-        'No tiene Folio de Escaneo para visualizar',
+        'No tiene folio de escaneo para visualizar',
         ''
       );
     }
@@ -2206,7 +2206,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       if (this.formScan.get('scanningFoli').value) {
         this.alertQuestion(
           'info',
-          'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Acta Abierta ¿Deseas continuar?',
+          'Se abrirá la pantalla de escaneo para el folio de escaneo del acta abierta ¿Deseas continuar?',
           '',
           'Aceptar',
           'Cancelar'
@@ -2228,12 +2228,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
           }
         });
       } else {
-        this.alertInfo('warning', 'No Existe Folio de Escaneo a Escanear', '');
+        this.alertInfo('warning', 'No existe folio de escaneo a escanear', '');
       }
     } else {
       this.alertInfo(
         'warning',
-        'No se puede Escanear para un Acta que esté Cerrada',
+        'No se puede escanear para un acta que esté cerrada',
         ''
       );
     }
@@ -2252,8 +2252,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
             tap(response => {
               this.alert(
                 'success',
-                'Generado Correctamente',
-                'Folio de Escaneo: ' + this.formScan.get('scanningFoli').value
+                'Generado correctamente',
+                'Folio de escaneo: ' + this.formScan.get('scanningFoli').value
               );
               const blob = new Blob([response], { type: 'application/pdf' });
               const url = URL.createObjectURL(blob);
@@ -2280,7 +2280,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.alert(
         'error',
         'ERROR',
-        'Debe Tener el Folio en Pantalla para poder Imprimir'
+        'Debe tener el folio en pantalla para poder imprimir'
       );
     }
   }
@@ -2308,7 +2308,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         const response = await this.alertQuestion(
           'question',
           'Aviso',
-          'Se Generará un Nuevo Folio de Escaneo y se le Copiarán las Imágenes del Folio de Escaneo Actual. ¿Deseas Continuar?'
+          'Se generará un nuevo folio de escaneo y se le copiarán las imágenes del folio de escaneo actual. ¿Deseas continuar?'
         );
 
         if (!response.isConfirmed) {
@@ -2328,7 +2328,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           if (count == null) {
             this.alert(
               'warning',
-              'Folio de Escaneo Inválido para Replicar',
+              'Folio de escaneo inválido para replicar',
               ''
             );
           } else {
@@ -2339,7 +2339,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       } else {
         this.alertInfo(
           'warning',
-          'Especifique el Folio de Escaneo a Replicar',
+          'Especifique el folio de escaneo a replicar',
           ''
         );
         return;
@@ -2347,7 +2347,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     } else {
       this.alertInfo(
         'warning',
-        'No se Puede Replicar el Folio de Escaneo en un Acta Cerrada',
+        'No se puede replicar el folio de escaneo en un acta cerrada',
         ''
       );
       return;
@@ -2358,15 +2358,15 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
     let foliouniversal = this.formScan.get('scanningFoli').value;
     if (foliouniversal != null) {
-      this.alert('warning', 'El Acta ya Tiene Folio de Escaneo', '');
+      this.alert('warning', 'El acta ya tiene folio de escaneo', '');
       return;
     }
     if (!this.actasDefault) {
-      this.alertInfo('warning', 'Debe Seleccionar un Acta', '');
+      this.alertInfo('warning', 'Debe seleccionar un acta', '');
       return;
     }
     if (this.actasDefault.statusProceedings == 'CERRADA') {
-      this.alertInfo('warning', 'No puede Actualizar un Acta Cerrada', '');
+      this.alertInfo('warning', 'No puede actualizar un acta cerrada', '');
       return;
     }
     this.actasDefault.address = this.actaRecepttionForm.get('direccion').value;
@@ -2377,12 +2377,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
       .editProceeding(this.actasDefault.id, this.actasDefault)
       .subscribe({
         next: async data => {
-          this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
+          this.alertInfo('success', 'Se actualizó el acta correctamente', '');
           this.disabledBtnEscaneo = true;
           await this.confirmScanRequest();
         },
         error: error => {
-          this.alert('error', 'Ocurrió un Error al Actualizar el Acta', '');
+          this.alert('error', 'Ocurrió un error al actualizar el acta', '');
           // this.loading = false
         },
       });
@@ -2425,7 +2425,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           const folio = _document.id;
           this.formScan.get('scanningFoli').setValue(folio);
           this.formScan.get('scanningFoli').updateValueAndValidity();
-          this.alert('success', 'El Folio Universal Generado es: ' + folio, '');
+          this.alert('success', 'El folio universal generado es: ' + folio, '');
           // this.updateDocumentsByFolio(
           //   folio,
           //   document.associateUniversalFolio
@@ -2483,7 +2483,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     console.log('this.bienes1 -->', this.dataRecepcion);
 
     if (this.dataRecepcion.length === 0) {
-      this.alertInfo('warning', 'No Hay Ningún Bien a Comparar', '');
+      this.alertInfo('warning', 'No hay ningún bien a comparar', '');
       return;
     }
 
@@ -2515,7 +2515,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       );
       console.log('SE ENCONTRARON:', this.contador, 'QUE SON:', this.vTotalB);
     } else {
-      this.alertInfo('warning', 'No Existe el Bien de Gastos', '');
+      this.alertInfo('warning', 'No existe el bien de gastos', '');
     }
   }
 

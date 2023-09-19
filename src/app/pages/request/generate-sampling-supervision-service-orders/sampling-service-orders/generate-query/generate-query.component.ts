@@ -71,7 +71,6 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
 
   getDelegReg() {
     const delegation = this.authService.decodeToken();
-    console.log(delegation);
     return delegation.department;
   }
 

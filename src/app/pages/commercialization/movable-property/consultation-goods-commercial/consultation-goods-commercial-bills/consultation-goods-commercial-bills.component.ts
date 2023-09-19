@@ -50,17 +50,18 @@ export class ConsultationGoodsCommercialBillsComponent
     this.settings = {
       ...this.settings,
       columns: {
+        ...CONSULTATION_GOODS_BILLS_COLUMNS,
         select: {
           title: 'Seleccionar',
           sort: false,
           type: 'custom',
+          showAlways: true,
           valuePrepareFunction: (departament: any, row: any) =>
             this.isRowSelected(row),
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.rowSelectChange(instance),
         },
-        ...CONSULTATION_GOODS_BILLS_COLUMNS,
       },
       actions: false,
     };

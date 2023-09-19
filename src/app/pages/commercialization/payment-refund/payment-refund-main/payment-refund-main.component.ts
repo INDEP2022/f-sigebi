@@ -454,7 +454,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           ? '$eq:PROC'
           : this.controlForm.get('filter').value == 'C'
           ? '$eq:CONC'
-          : '$null'
+          : '$ilike:'
       }`;
     }
     // this.columnFiltersControl['filter.creationdate'] = `$order:desc`;

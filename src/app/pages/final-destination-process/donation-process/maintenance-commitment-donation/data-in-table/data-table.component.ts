@@ -3,7 +3,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IRapproveDonation } from 'src/app/core/models/ms-r-approve-donation/r-approve-donation.model';
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
@@ -40,6 +43,8 @@ export class DataTableComponent extends BasePage implements OnInit {
   dataTable1: LocalDataSource = new LocalDataSource();
   totalItem4: number = 0;
 
+  columnFilters: any = [];
+
   constructor(
     private rapproveDonationService: RapproveDonationService,
     private tvalTable1Service: TvalTable1Service,
@@ -67,33 +72,203 @@ export class DataTableComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     if (this.type == 1 || this.type == 2) {
       //comercio exterior
+      this.filterComerAndDeli();
       this.settings.columns = COLUMNS_DATA_TABLE;
-      this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getForeignTrade());
     } else if (this.type == 3) {
       //Otros Trans
+      this.filterOtrosTrans();
       this.settings.columns = COLUMNS_OTHER_TRANS;
-      // this.data = EXAMPLE_DATA1;
-      this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getForeignTrade());
     } else {
       //Permisos Rastreador
-      this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getTracker());
+      this.filterPermis();
       this.settings.columns = COLUMNS_USER_PERMISSIONS;
-      //this.data = EXAMPLE_DATA2;
     }
+  }
+
+  filterComerAndDeli() {
+    this.dataTable1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        //console.log('change - ', change);
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'labelId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'type':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'status':
+                //console.log("ESTATUS -> ");
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'desStatus':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'transfereeId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'desTrans':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'clasifId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'desClasif':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'unit':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          console.log(' this.params ', this.params);
+          this.getForeignTrade();
+        }
+      });
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getForeignTrade();
+    });
+  }
+
+  filterOtrosTrans() {
+    this.dataTable1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        //console.log('change - ', change);
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'labelId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'type':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'status':
+                //console.log("ESTATUS -> ");
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'desStatus':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'transfereeId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'desTrans':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'clasifId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'desClasif':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'unit':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'amount':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          console.log(' this.params ', this.params);
+          this.getForeignTrade();
+        }
+      });
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getForeignTrade();
+    });
+  }
+
+  filterPermis() {
+    this.dataTable1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        //console.log('change - ', change);
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'otvalor':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'name':
+                console.log('NAME -> ');
+                field = `filter.segUser.name`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          console.log(' this.params ', this.params);
+          this.getTracker();
+        }
+      });
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getTracker();
+    });
   }
 
   settingsChange($event: any): void {
     this.settings = $event;
   }
   getForeignTrade() {
-    this.params.getValue()['filter.labelId'] = `$eq:${this.type}`;
-    this.rapproveDonationService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    params['filter.labelId'] = `$eq:${this.type}`;
+    //params.getValue()['filter.labelId'] = `$eq:${this.type}`;
+    console.log('params 1 -> ', params);
+    this.rapproveDonationService.getAll(params).subscribe({
       next: response => {
         console.log('primer tabla -> ', response.data);
         this.data = response.data;
@@ -109,7 +284,8 @@ export class DataTableComponent extends BasePage implements OnInit {
           }
           this.data[i].labelId = response.data[i].label;
         }
-
+        this.dataTable1.load(response.data);
+        this.dataTable1.refresh();
         console.log('data after ', this.data);
         this.totalItems = response.count;
         this.loading = false;
@@ -122,48 +298,32 @@ export class DataTableComponent extends BasePage implements OnInit {
   }
 
   getTracker() {
-    console.log(' getTracker ');
-    const params: ListParams = {};
-    params['filter.nmtable'] = '$eq:421';
-
-    this.params.getValue()['filter.nmtable'] = `$eq:421`;
-
-    this.tvalTable1Service.getAlls(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.tvalTable1Service.getAlls2(params).subscribe({
       next: response => {
         console.log('data tracer ', response);
         for (let i = 0; i < response.data.length; i++) {
-          const params: ListParams = {};
-          params['filter.id'] = `$eq:${response.data[i].otvalor}`;
-          //this.params.getValue()['filter.id'] = `$eq:${response.data[i].otvalor}`;
-          // SERVICIO
-          this.usersService.getAllSegUsers(params).subscribe({
-            next: response1 => {
-              console.log('response1.DATA -->', response1.data);
-              if (response.data[i].abbreviation == 'S') {
-                console.log(response.data[i].abbreviation);
-                response.data[i].yes = 1;
-                response.data[i].not = null;
-              } else {
-                response.data[i].yes = null;
-                response.data[i].not = 1;
-              }
-              console.log(' response1.data[0].name -> ', response1.data[0]);
-              response.data[i].name =
-                response1.data[0].name != null ? response1.data[0].name : null;
-
-              if (i == response.data.length - 1) {
-                this.data = response.data;
-                //console.log('this DATA -->', this.data);
-                this.totalItem4 = response.count || 0;
-                console.log('getAllSegUsers: ', this.totalItem4);
-                this.loading = false;
-              }
-            },
-            error: error => {
-              console.log('error tracer ', error);
-              this.loading = false;
-            },
-          });
+          if (response.data[i].abbreviation == 'S') {
+            console.log(response.data[i].abbreviation);
+            response.data[i].yes = 1;
+            response.data[i].not = null;
+          } else {
+            response.data[i].yes = null;
+            response.data[i].not = 1;
+          }
+          response.data[i].name = response.data[i].segUser.name;
+          if (i == response.data.length - 1) {
+            this.data = response.data;
+            //console.log('this DATA -->', this.data);
+            this.dataTable1.load(response.data);
+            this.dataTable1.refresh();
+            this.totalItem4 = response.count || 0;
+            console.log('getAllSegUsers: ', this.totalItem4);
+            this.loading = false;
+          }
         }
       },
       error: error => {
@@ -172,6 +332,7 @@ export class DataTableComponent extends BasePage implements OnInit {
       },
     });
   }
+
   getUsers(name: string) {}
 
   loadModal(bool: boolean, data: any) {
