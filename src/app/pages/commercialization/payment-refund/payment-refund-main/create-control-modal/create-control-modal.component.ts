@@ -8,6 +8,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { PaymentDevolutionService } from 'src/app/core/services/ms-paymentdevolution/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { KEYGENERATION_PATTERN } from 'src/app/core/shared/patterns';
@@ -45,7 +46,8 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private svPaymentDevolutionService: PaymentDevolutionService
+    private svPaymentDevolutionService: PaymentDevolutionService,
+    private msPaymentService: PaymentService
   ) {
     super();
     this.controlSettings.columns = ADD_RELATED_EVENT_COLUMNS;
@@ -84,6 +86,25 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
   search() {
     // this.controlColumns = this.eventsTestData;
     // this.totalItems = this.controlColumns.length;
+
+    // if (this.controlForm.invalid) {
+    //   return;
+    // }
+    let params = {
+      dispTypeId: this.controlForm.get('dispersionType').value,
+      originId: this.controlForm.get('origin').value,
+      direction: this.controlForm.get('direction').value,
+    };
+    this.msPaymentService.getDataFromView(params).subscribe({
+      next: res => {
+        console.log('DATA Control', res);
+        this.loading = false;
+      },
+      error: error => {
+        console.log(error);
+        this.loading = false;
+      },
+    });
   }
 
   select(rows: any[]) {
@@ -97,12 +118,12 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
 
   async confirm() {
     if (this.controlForm.invalid) {
-      this.alert('warning', 'Ingresa una Clave', '');
+      this.alert('warning', 'Ingresa una clave', '');
       return;
     }
     let confirm = await this.alertQuestion(
       'question',
-      'Control de Devoluciones',
+      'Control de devoluciones',
       '¿Desea generar el control de devoluciones?'
     );
     if (confirm.isConfirmed) {

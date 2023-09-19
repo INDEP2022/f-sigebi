@@ -301,6 +301,13 @@ export class MsDepositaryService extends HttpService {
     );
   }
 
+  execDeductions(params: any): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      DepositaryEndPoints.ExecDeductions,
+      params
+    );
+  }
+
   postFullErase(body: any) {
     return this.post<IListResponse<any>>(DepositaryEndPoints.FullErase, body);
   }
