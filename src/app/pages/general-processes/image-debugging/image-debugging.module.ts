@@ -8,8 +8,6 @@ import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/good
 import { SharedModule } from 'src/app/shared/shared.module';
 import { GoodsFilterSharedComponent } from '../../../@standalone/shared-forms/goods-shared/goods-filter-shared';
 import { GoodPhotosModule } from '../good-photos/good-photos.module';
-import { GoodPhotoComponent } from '../image-debugging/good-photos/good-photo/good-photo/good-photo.component';
-import { GoodPhotosComponent } from '../image-debugging/good-photos/good-photos.component';
 import { AllExpedientComponent } from './all-expedient/all-expedient/all-expedient.component';
 import { AllLotEventComponent } from './all-lot-event/all-lot-event/all-lot-event.component';
 import { ImageDebuggingModalComponent } from './image-debugging-modal/image-debugging-modal.component';
@@ -32,8 +30,6 @@ import { ImageDebuggingComponent } from './image-debugging/image-debugging.compo
     GoodValueEditWebCar,
     GoodValueEditWebCarCellComponent,
     GoodCharacteristicCellValueComponent,
-    GoodPhotosComponent,
-    GoodPhotoComponent,
     AllExpedientComponent,
     AllLotEventComponent,
   ],

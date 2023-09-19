@@ -19,47 +19,47 @@ export const COLUMNS = {
     sort: false,
     filter: false,
   },
-  id_donatario: {
+  doneeId: {
     title: 'Id Donatario',
     type: 'number',
     sort: false,
   },
-  donatario: {
+  donee: {
     title: 'Donatario',
     type: 'string',
     sort: false,
   },
-  no_almacen: {
+  delegationNumber: {
     title: 'No. Almacén',
     type: 'number',
     sort: false,
   },
-  desc_almacen: {
+  warehouseDesc: {
     title: 'Almacén',
     type: 'string',
     sort: false,
   },
-  avance_propu: {
-    title: 'Acance de Propuesta',
+  propAdvance: {
+    title: 'Avance de Propuesta',
     type: 'string',
     sort: false,
   },
-  cve_autoriza: {
+  authorizeKey: {
     title: 'Cve Autorización',
     type: 'string',
     sort: false,
   },
-  fec_autoriza: {
+  authorizeDate: {
     title: 'Fecha Autorización',
     type: 'string',
     sort: false,
   },
-  justificacion: {
+  justification: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  id_solicitud: {
+  requestId: {
     title: 'Solicitud',
     type: 'string',
     sort: false,

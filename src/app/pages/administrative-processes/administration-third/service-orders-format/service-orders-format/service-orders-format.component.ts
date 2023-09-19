@@ -122,9 +122,9 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
       process: [null, Validators.required],
       dateCapture: [null, Validators.required],
       regionalCoordination: [null, [Validators.required]],
-      serviceOrderKey: [null, Validators.required],
+      serviceOrderKey: [null],
       cancellationAuthorizationDate: [null, Validators.required],
-      uniqueKey: [null, Validators.required],
+      uniqueKey: [null],
       transference: [null, [Validators.required]],
       station: [null, [Validators.required]],
       authority: [null, [Validators.required]],
@@ -676,8 +676,8 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   }
 
   Incorpora() {
-    if (this.dataB.length > 0) {
-      let proceso = this.serviceOrdersForm.get('process').value;
+    let proceso = this.serviceOrdersForm.get('process').value;
+    if (proceso != null) {
       this.strategyProcessService.ByIdProces(proceso).subscribe({
         next: response => {
           console.log('Respuesta by format ', response);
@@ -688,7 +688,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
         },
       });
     } else {
-      this.alert('error', 'Error', 'No tiene bienes asociados para incorporar');
+      this.alert('error', 'Error', 'Es necesaria una orden de Servicio');
       return;
     }
   }
@@ -879,6 +879,12 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   }
 
   LoadTMPESTGOOD(data?: any) {
+    console.log('this.NoFormat ', this.NoFormat);
+    data = {
+      noformato: this.NoFormat,
+      noProcess: this.serviceOrdersForm.get('process').value,
+      status: this.serviceOrdersForm.get('status').value,
+    };
     let BIENES = this.BIENES;
     let config: ModalOptions = {
       initialState: {
@@ -921,6 +927,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
                 this.strategyProcessService.PaEstGoodIncor(params).subscribe({
                   next: resp => {
                     this.alert('success', 'Exitoso', 'Proceso Terminado');
+                    this.getStrategyById(true, this.idFormat);
                   },
                 });
               }
@@ -928,7 +935,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
           },
         });
     } else {
-      this.alert('error', 'Error', 'No tiene bienes asociados para incorporar');
+      this.alert('error', 'Error', 'No tiene bienes asociados para Eliminar');
       return;
     }
   }
@@ -1028,6 +1035,9 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
             );
           },
         });
+      },
+      error: err => {
+        this.alert('error', 'Error', 'El número de proceso no es valido');
       },
     });
   }

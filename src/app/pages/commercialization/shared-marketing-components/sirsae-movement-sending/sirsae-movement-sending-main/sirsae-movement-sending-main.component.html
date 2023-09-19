@@ -37,7 +37,46 @@
                   formControlName="description"></textarea>
               </form-field>
             </div>
-            <div *ngIf="layout == 'I'" class="col-sm-3 col-md-3 col-xl-3">
+            <div *ngIf="layout == 'M'" class="col-sm-2 col-md-2 col-xl-2 mt-2">
+              <button
+                *ngIf="layout == 'M'"
+                [disabled]="!eventSelected || loading || loadingBtn"
+                (click)="search()"
+                class="btn btn-sm btn-block btn-primary active">
+                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+            </div>
+            <div *ngIf="layout == 'M'" class="col-sm-2 col-md-2 col-xl-2 mt-2">
+              <button
+                *ngIf="layout == 'M'"
+                (click)="clear()"
+                class="btn btn-sm btn-block btn-danger active">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+            </div>
+            <div
+              *ngIf="layout == 'M'"
+              class="col-sm-2 col-md-2 col-xl-2 mt-2 mb-3">
+              <button
+                [disabled]="loading || loadingBtn || !eventSelected"
+                (click)="obtenerOI()"
+                class="w-100 btn btn-sm btn-block btn-info active">
+                Obtener OI
+              </button>
+            </div>
+            <div *ngIf="layout == 'M'" class="col-sm-2 col-md-2 col-xl-2 mt-2">
+              <button
+                [ngClass]="{ loading: loadingBtn }"
+                [disabled]="loading || loadingBtn || !eventSelected"
+                type="button"
+                class="btn btn-primary btn-block btn-sm active mr-3"
+                tooltip="Enviar a SIRSAE"
+                containerClass="tooltip-style"
+                (click)="enviarSIRSAE()">
+                Enviar SIRSAE <i *ngIf="!loadingBtn" class="bx bx-send"></i>
+              </button>
+            </div>
+            <div *ngIf="layout == 'I'" class="col-sm-2 col-md-2 col-xl-2 mt-2">
               <button
                 [ngClass]="{ loading: loadingBtnOII }"
                 [disabled]="
@@ -53,54 +92,16 @@
                 Obtener OI
               </button>
             </div>
-            <div class="col-12">
-              <div class="row text-center justify-content-center">
-                <div
-                  *ngIf="layout == 'M'"
-                  class="col-sm-2 col-md-2 col-xl-2 mt-2">
-                  <button
-                    *ngIf="layout == 'M'"
-                    [disabled]="!eventSelected || loading || loadingBtn"
-                    (click)="search()"
-                    class="btn btn-sm btn-block btn-primary active">
-                    Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
-                  </button>
-                </div>
-                <div
-                  *ngIf="layout == 'M'"
-                  class="col-sm-2 col-md-2 col-xl-2 mt-2">
-                  <button
-                    *ngIf="layout == 'M'"
-                    (click)="clear()"
-                    class="btn btn-sm btn-block btn-danger active">
-                    Limpiar <i class="fas fa-eraser"> </i>
-                  </button>
-                </div>
-                <div
-                  *ngIf="layout == 'M'"
-                  class="col-sm-2 col-md-2 col-xl-2 mt-2">
-                  <button
-                    [ngClass]="{ loading: loadingBtn }"
-                    [disabled]="loading || loadingBtn || !eventSelected"
-                    type="button"
-                    class="btn btn-primary btn-block btn-sm active mr-3"
-                    tooltip="Enviar a SIRSAE"
-                    containerClass="tooltip-style"
-                    (click)="enviarSIRSAE()">
-                    Enviar SIRSAE <i *ngIf="!loadingBtn" class="bx bx-send"></i>
-                  </button>
-                </div>
-                <div
-                  *ngIf="layout == 'M'"
-                  class="col-sm-2 col-md-2 col-xl-2 mt-2 mb-3">
-                  <button
-                    [disabled]="loading || loadingBtn || !eventSelected"
-                    (click)="obtenerOI()"
-                    class="w-100 btn btn-sm btn-block btn-info active">
-                    Obtener OI
-                  </button>
-                </div>
-              </div>
+            <div *ngIf="layout == 'I'" class="col-sm-2 col-md-2 col-xl-2 mt-2">
+              <button
+                *ngIf="layout == 'I'"
+                (click)="clear2()"
+                class="btn btn-sm btn-block btn-danger active">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+            </div>
+            <div *ngIf="layout == 'M'" class="col-12">
+              <div class="row text-center justify-content-center"></div>
             </div>
           </div>
           <div class="row mt-2">
@@ -127,7 +128,7 @@
                   formControlName="cliente" />
               </form-field>
             </div>
-            <div class="col-sm-3 col-md-3 col-xl-3 mt-2">
+            <div class="col-sm-4 col-md-4 col-xl-4 mt-2">
               <button
                 [ngClass]="{ loading: loadingBtnSendIn }"
                 [disabled]="
