@@ -56,4 +56,14 @@ export class AppraiseService extends HttpService {
   getDelegation(coordination: number) {
     return this.get(`${AppraiseEndpoints.Delegation}/${coordination}`);
   }
+
+  getComerAvaluo(params?: ListParams | string) {
+    return this.get(`${AppraiseEndpoints.ComerAvaluo}`, params);
+  }
+
+  getComerDetAvaluo(appraisal: number, status: string) {
+    return this.get(
+      `${AppraiseEndpoints.ComerDetAvaluo}?filter.idAppraisal=$eq:${appraisal}&filter.good.status=$eq:${status}`
+    );
+  }
 }

@@ -3,22 +3,22 @@ export const COLUMNS = {
     title: 'Id Avalúo',
     sort: false,
   },
-  valueKey: {
+  appraisalKey: {
     title: 'Clave Avalúo',
     sort: false,
   },
-  fileKey: {
+  cveOffice: {
     title: 'Clave Oficio',
     sort: false,
   },
-  dateInsert: {
+  insertDate: {
     title: 'Insertar Fecha',
     sort: false,
   },
 };
 
 export const COLUMNS2 = {
-  id: {
+  idDetAppraisal: {
     title: 'No.',
     sort: false,
   },
@@ -34,7 +34,7 @@ export const COLUMNS2 = {
     title: 'Estatus',
     sort: false,
   },
-  clasification: {
+  goodClassNumber: {
     title: 'Clasificación',
     sort: false,
   },
