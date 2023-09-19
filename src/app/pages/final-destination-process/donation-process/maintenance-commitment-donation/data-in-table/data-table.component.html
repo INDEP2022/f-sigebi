@@ -15,9 +15,11 @@
 </div>
 
 <div class="row mt-2">
-  <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" (edit)="loadModal(true, $event)"
+  <ng2-smart-table
+    [attr.class]="'table-bordered'"
+    [settings]="settings"
+    (edit)="loadModal(true, $event)"
     [source]="dataTable1">
-
   </ng2-smart-table>
 </div>
 <div class="row" *ngIf="this.type == 1 || this.type == 2 || this.type == 3">
@@ -28,5 +30,3 @@
 <div class="row" *ngIf="this.type == 4">
   <app-pagination [params]="params" [totalItems]="totalItem4"> </app-pagination>
 </div>
-
-

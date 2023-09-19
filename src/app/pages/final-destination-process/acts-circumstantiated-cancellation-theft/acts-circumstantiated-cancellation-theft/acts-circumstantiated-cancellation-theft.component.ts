@@ -161,7 +161,8 @@ export interface IGoodJobManagement {
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   response: boolean = false;
   form: FormGroup;
   selectedRow: IGood;
@@ -713,7 +714,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       statusGood: [null],
     });
   }
-  onSubmit() { }
+  onSubmit() {}
 
   search(event: any) {
     this.getExpedient(event);
@@ -2075,9 +2076,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         'error',
         'Error',
         'Al localizar la información de volante: ' +
-        flyerNumber +
-        ' y expediente: ' +
-        this.fileNumber
+          flyerNumber +
+          ' y expediente: ' +
+          this.fileNumber
       );
       return;
     }
@@ -2172,7 +2173,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => { },
+              callback: (data: any) => {},
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
@@ -2262,7 +2263,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                     urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                     type: 'pdf',
                   },
-                  callback: (data: any) => { },
+                  callback: (data: any) => {},
                 },
                 class: 'modal-lg modal-dialog-centered',
                 ignoreBackdropClick: true,
