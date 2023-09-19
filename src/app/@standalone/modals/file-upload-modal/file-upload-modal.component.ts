@@ -130,6 +130,7 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
 
   testFiles(uploadEvent: IUploadEvent) {
     this.uploadFiles = true;
+    let errors = false;
     const { index, fileEvents } = uploadEvent;
     console.log(uploadEvent);
     this.fileEvents = fileEvents;
@@ -143,10 +144,25 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
       this.loading = true;
       concat(...obs).subscribe({
         error: error => {
+          console.log(error);
           this.loading = false;
           this.uploadFiles = false;
         },
         next: async (response: any) => {
+          console.log(response);
+          if (
+            response.body &&
+            response.body.errorFile &&
+            response.body.errorFile.length > 0
+          ) {
+            errors = true;
+            this.alert(
+              'error',
+              'Carga de Imagenes',
+              '' + response.body.errorFile.map((x: any) => x.msg)
+            );
+            return;
+          }
           if (this.identificator && this.accept === '.zip') {
             const result = await this.loadZipFiles(response);
             if (result) {
@@ -155,12 +171,15 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
           }
         },
         complete: async () => {
-          if (this.identificator === null || this.accept !== '.zip') {
-            const result = await this.completeLoadFiles();
-            if (result) {
-              uploadEvent.fileEvents.length = 0;
-            } else {
-              this.close();
+          console.log('Entro a complete');
+          if (!errors) {
+            if (this.identificator === null || this.accept !== '.zip') {
+              const result = await this.completeLoadFiles();
+              if (result) {
+                uploadEvent.fileEvents.length = 0;
+              } else {
+                this.close();
+              }
             }
           }
         },

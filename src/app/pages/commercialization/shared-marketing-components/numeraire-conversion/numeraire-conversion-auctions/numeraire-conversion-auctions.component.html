@@ -1,80 +1,42 @@
 <form class="form-material" [formGroup]="form">
-  <div class="row pt-5">
+  <div class="row pt-3">
     <div class="col-md-12">
-      <!-- <h5 class="font-size-14 d-inline">Ingrese No. de Evento</h5> -->
-      <ng-custom-select-loading
+      <app-select-modal-table-shared
         *ngIf="address"
         [form]="form"
-        formControlName="idEvent"
+        [maxlengthInput]="12"
+        [disabled]="false"
+        [widthDescription]="false"
+        [haveSelectColumns]="true"
+        [haveColumnFilters]="true"
+        [ilikeFilters]="ilikeFilters"
+        [dateFilters]="dateFilters"
         label="Evento"
-        [path]="pathEvent"
-        value="observations"
-        bindLabel="observations"
-        paramSearch="filter.observations"
-        prefixSearch="$ilike"
-        secondParamSearch="filter.id"
-        [labelTemplate]="label"
-        [optionTemplate]="option"
-        (valueChange)="selectEvent($event)">
-      </ng-custom-select-loading>
-      <ng-template #label let-item="item">
-        {{ item.id }} - {{ item.observations }}
-      </ng-template>
-      <ng-template #option let-item="item">
-        <div [title]="item.id + '-' + item.observations">
-          {{ item.id }} - {{ item.observations }}
-        </div>
-      </ng-template>
-      <!-- <ngx-select
-        [form]="form"
-        [data]="eventItems"
-        value="idEvent"
-        bindLabel="nameEvent"
-        (fetchItems)="getEvents($event)"
-        (change)="selectEvent($event)"
-        control="idEvent">
-      </ngx-select> -->
+        formField="idEvent"
+        [service]="eventService"
+        [columnsType]="eventColumns"
+        id="id"
+        title="Evento"
+        (selectRow)="selectEvent($event)"></app-select-modal-table-shared>
     </div>
-    <div class="col-md-2" *ngIf="selectedEvent != null">
-      <h5 class="font-size-14 d-inline">ID Evento</h5>
-      <p class="mt-2 font-size-28 text-muted">{{ selectedEvent.id }}</p>
-      <!-- <form-field [control]="form.get('idEvent')" label="ID Evento">
-        <input type="text" class="form-control" formControlName="idEvent" />
-      </form-field> -->
-    </div>
-    <div class="col-md-4" *ngIf="selectedEvent != null">
+    <div class="col-md-3" *ngIf="selectedEvent != null">
       <h5 class="font-size-14 d-inline">Nombre de Evento</h5>
       <p class="mt-2 font-size-28 text-muted">{{ nameEvent }}</p>
-      <!-- <form-field [control]="form.get('nameEvent')" label="Nombre de Evento">
-        <input type="text" class="form-control" formControlName="idEvent" />
-      </form-field> -->
     </div>
     <div class="col-md-3" *ngIf="selectedEvent != null">
       <h5 class="font-size-14 d-inline">Clave de Evento</h5>
       <p class="mt-2 font-size-28 text-muted">{{ selectedEvent.processKey }}</p>
-      <!-- <form-field [control]="form.get('cveEvent')" label="Clave de Evento">
-        <input type="text" class="form-control" formControlName="idEvent" />
-      </form-field> -->
+    </div>
+    <div class="col-md-3" *ngIf="selectedEvent != null">
+      <h5 class="font-size-14 d-inline">Estatus de Evento</h5>
+      <p class="mt-2 font-size-28 text-muted">
+        {{ selectedEvent.statusVtaId }}
+      </p>
     </div>
     <div class="col-md-3" *ngIf="selectedEvent != null">
       <h5 class="font-size-14 d-inline">Fecha de Evento</h5>
       <p class="mt-2 font-size-28 text-muted">{{ selectedEvent.eventDate }}</p>
-      <!-- <form-field [control]="form.get('eventDate')" label="Fecha de Evento">
-        <input
-          type="text"
-          placeholder=""
-          class="form-control"
-          bsDatepicker
-          formControlName="eventDate"
-          [bsConfig]="{ isAnimated: true }" />
-      </form-field> -->
     </div>
-
-    <!-- <div class="col-md-2">
-      <button type="button" class="btn btn-primary btn-sm active">
-        Convertir
-      </button>
-    </div> -->
   </div>
   <div class="row">
     <div class="col-md-6" *ngIf="selectedEvent != null">
@@ -82,80 +44,33 @@
       <p class="mt-2 font-size-28 text-muted">
         {{ selectedEvent.observations }}
       </p>
-      <!-- <form-field [control]="form.get('obsEvent')" label="Observaciones">
-        <input type="text" class="form-control" formControlName="obsEvent" />
-      </form-field> -->
     </div>
     <div class="col-md-3" *ngIf="selectedEvent != null">
       <h5 class="font-size-14 d-inline">Lugar</h5>
       <p class="mt-2 font-size-28 text-muted">{{ selectedEvent.place }}</p>
-      <!-- <form-field [control]="form.get('place')" label="Lugar">
-        <input type="text" class="form-control" formControlName="place" />
-      </form-field> -->
     </div>
     <div class="col-md-3" *ngIf="selectedEvent != null">
       <h5 class="font-size-14 d-inline">Fecha de Fallo</h5>
       <p class="mt-2 font-size-28 text-muted">
         {{ selectedEvent.failureDate }}
       </p>
-      <!-- <form-field [control]="form.get('failureDate')" label="Fecha de fallo">
-        <input
-          type="text"
-          placeholder=""
-          class="form-control"
-          bsDatepicker
-          formControlName="failureDate"
-          [bsConfig]="{ isAnimated: true }" />
-      </form-field> -->
     </div>
-    <!-- <div class="col-md-2">
-      <button type="button" class="btn btn-primary btn-sm active">
-        Convertir
-      </button>
-    </div> -->
   </div>
 </form>
 
 <div *ngIf="selectedEvent != null">
   <hr />
   <div class="row pt-5">
-    <!-- <div class="ch-content">
-      <h5 class="title">Gastos</h5>
-      <div class="row justify-content-end mr-3">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
-      </div>
-    </div>
-    <ng2-smart-table class="mt-3" [settings]="settings" [source]="data1">
-    </ng2-smart-table> -->
     <app-numeraire-expenses
       [event]="selectedEvent"
       [reload]="reloadExpenses"
       (selectedRow)="selectedExpenseData = $event"></app-numeraire-expenses>
-    <!-- <div class="row pt-3">
-      <div class="col-md-2">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="showDisperstion = !showDisperstion">
-          Calcular
-        </button>
-      </div>
-    </div> -->
   </div>
   <div class="row pt-5" *ngIf="selectedExpenseData">
     <app-numeraire-dispersion
       [idEvento]="selectedEvent.id"
-      [idGasto]="selectedExpenseData.id_gasto"
-      [mandato]="selectedExpenseData.cvman"></app-numeraire-dispersion>
-    <!-- <hr />
-    <div class="ch-content">
-      <h5 class="title">Dispersión</h5>
-      <div class="row justify-content-end mr-3">
-        <app-columns-select [(settings)]="settings2"></app-columns-select>
-      </div>
-    </div>
-    <ng2-smart-table class="mt-3" [settings]="settings2" [source]="data2">
-    </ng2-smart-table> -->
+      [selectedExpenseData]="selectedExpenseData"
+      [updateAllowed]="updateAllowed"></app-numeraire-dispersion>
   </div>
   <div class="row">
     <div class="md-tabs">
