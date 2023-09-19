@@ -472,7 +472,7 @@ export class CaptureApprovalDonationComponent
       ...this.paramsList2.getValue(),
       ...this.columnFilters2,
     };
-    params['filter.good.status'] = 'DON';
+    // params['filter.good.status'] = 'DON';
     params['filter.recordId'] = this.paramsScreen.recordId;
     return new Promise((resolve, reject) => {
       this.donationService.getEventComDonationDetail(params).subscribe({
@@ -675,7 +675,7 @@ export class CaptureApprovalDonationComponent
 
               if (!this.dataDetailDonation.some((v: any) => v === good)) {
                 let indexGood = this.dataTableGood_.findIndex(
-                  _good => _good.id == good.goodId
+                  _good => _good.id == good.id
                 );
 
                 this.Exportdate = true;
@@ -826,25 +826,11 @@ export class CaptureApprovalDonationComponent
     // if (this.dataRecepcion.length > 0) {
     // let result = this.dataRecepcion.map(async good => {
     let obj: any = {
-      numberProceedings: this.paramsScreen.recordId,
-      numberGood: good.goodId,
-      amount: good.quantity,
-      received: null,
-      approvedXAdmon: null,
-      approvedDateXAdmon: null,
-      approvedUserXAdmon: null,
-      dateIndicatesUserApproval: null,
-      numberRegister: null,
-      reviewIndft: null,
-      correctIndft: null,
-      idftUser: null,
-      idftDate: null,
-      numDelegationIndft: null,
-      yearIndft: null,
-      monthIndft: null,
-      idftDateHc: null,
-      packageNumber: null,
-      exchangeValue: null,
+      recordId: this.idAct,
+      goodId: good.goodId,
+      amount: good.amount,
+      received: 1,
+      exchangeValue: this.regisForm.get('activeRadio').value | 0,
     };
 
     await this.saveGoodDetail(obj);
@@ -912,6 +898,7 @@ export class CaptureApprovalDonationComponent
     this.estatus = null;
     this.selectedGooods = [];
     this.Exportdate = false;
+    this.idAct = 0;
   }
 
   searchActas(actas?: string) {
@@ -988,11 +975,10 @@ export class CaptureApprovalDonationComponent
         captureDate: formattedfecActa,
         fechacap: formattedfecCapture,
       });
-
       this.paramsScreen = {
         origin: 'FMCOMDONAC_1',
-        recordId: String(this.eventDonacion.actId),
-        area: String(this.authService.decodeToken().department),
+        recordId: next.actId,
+        area: this.authService.decodeToken().department,
       };
       //this.data1 = next.statusProceedings;
       //this.formScan.get('scanningFoli').patchValue(next.universalFolio);
@@ -1191,7 +1177,8 @@ export class CaptureApprovalDonationComponent
         ).then(async question => {
           if (question.isConfirmed) {
             let obj: any = {
-              cveAct: this.eventDonacion.actId,
+              actId: this.idAct,
+              cveAct: this.eventDonacion.cveAct,
               elaborationDate: this.eventDonacion.elaborationDate,
               estatusAct: 'CERRADA',
               elaborated: this.authService.decodeToken().preferred_username,
@@ -1200,12 +1187,12 @@ export class CaptureApprovalDonationComponent
               actType: 'COMPDON',
               observations: this.eventDonacion.observations,
               registreNumber: null,
-              numDelegation1: null,
-              numDelegation2: null,
-              identifier: null,
-              label: null,
+              noDelegation1: this.authService.decodeToken().department,
+              fileId: this.eventDonacion.fileId,
+              noDelegation2: null,
+              identifier: this.eventDonacion.identifier,
               folioUniversal: this.eventDonacion.folioUniversal,
-              closeDate: null,
+              closeDate: new Date(),
             };
             this.donationService.putEvent(obj, this.idAct).subscribe({
               next: async data => {
@@ -1226,9 +1213,7 @@ export class CaptureApprovalDonationComponent
                 //this.disabledBtnCerrar = false;
                 this.disabledBtnActas = false;
                 this.dataTableGood.refresh();
-                await this.getDetailProceedingsDevollution(
-                  this.eventdetailDefault.actId
-                );
+                await this.getDetailProceedingsDevollution(this.idAct);
               },
               error: error => {
                 this.alert('error', 'Ocurrió un Error al Cerrar el Evento', '');
@@ -1309,7 +1294,7 @@ export class CaptureApprovalDonationComponent
         error: err => {
           if (err.error.message === 'No se encontrarón registros')
             this.idsNotExist.push({
-              id: good.goodNumber,
+              id: good.goodId,
               reason: err.error.message,
             });
         },
@@ -1350,44 +1335,89 @@ export class CaptureApprovalDonationComponent
       this.alertInfo('warning', 'Debe Seleccionar un Evento', '');
       return;
     }
-    if (this.eventdetailDefault.estatusAct == 'CERRADA') {
+    if (this.estatus == 'CERRADA') {
       this.alertInfo('warning', 'No puede Actualizar un Evento Cerrado', '');
       return;
     }
-
-    let obj: any = {
-      cveAct: this.idAct,
-      elaborationDate: new Date(),
-      estatusAct: 'CERRADA',
-      elaborated: this.authService.decodeToken().preferred_username,
-      witness1: this.eventDonacion.witness1,
-      witness2: this.eventDonacion.witness2,
-      actType: 'COMPDON',
-      observations: this.eventDonacion.observations,
-      registreNumber: null,
-      numDelegation1: null,
-      numDelegation2: null,
-      identifier: null,
-      label: null,
-      folioUniversal: this.eventDonacion.folioUniversal,
-      closeDate: null,
-    };
-
-    delete this.eventdetailDefault.numDelegation1Description;
-    delete this.eventdetailDefault.numDelegation2Description;
-    delete this.eventdetailDefault.numTransfer_;
-    this.donationService.putEvent(obj, this.idAct).subscribe({
-      next: async data => {
-        this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
-        await this.generaRepote();
-      },
-      error: error => {
-        this.alert('error', 'Ocurrió un Error al Actualizar el Evento', '');
-        // this.loading = false
-      },
+    this.selectedGooodsValid.forEach(good => {
+      let obj: any = {
+        recordId: this.idAct,
+        goodId: good.goodId,
+        amount: good.amount,
+        received: 1,
+        exchangeValue: this.regisForm.get('activeRadio').value | 0,
+      };
+      this.updateBienDetalle(good.goodId, 'DON');
+      // delete this.eventdetailDefault.numDelegation1Description;
+      // delete this.eventdetailDefault.numDelegation2Description;
+      // delete this.eventdetailDefault.numTransfer_;
+      this.donationService.putDetailDona(obj).subscribe({
+        next: async data => {
+          this.alertInfo('success', 'Se Actualizó el Evento Correctamente', '');
+          await this.generaRepote();
+        },
+        error: error => {
+          this.alert('error', 'Ocurrió un Error al Actualizar el Evento', '');
+          // this.loading = false
+        },
+      });
     });
   }
   generaRepote() {}
+  actualizarEvento() {
+    const toolbar_user = this.authService.decodeToken().preferred_username;
+    const cadena = this.cveActa ? this.cveActa.indexOf('?') : 0;
+
+    if (
+      cadena != 0 &&
+      this.authService.decodeToken().preferred_username == toolbar_user
+    ) {
+      null;
+    } else {
+      let obj: any = {
+        cveAct: this.eventDonacion.cveAct,
+        elaborationDate: this.eventDonacion.elaborationDate,
+        estatusAct: 'CERRADA',
+        elaborated: this.authService.decodeToken().preferred_username,
+        witness1: this.eventDonacion.witness1,
+        witness2: this.eventDonacion.witness2,
+        actType: 'COMPDON',
+        observations: this.eventDonacion.observations,
+        registreNumber: null,
+        noDelegation1: this.authService.decodeToken().department,
+        fileId: this.eventDonacion.fileId,
+        noDelegation2: null,
+        identifier: this.eventDonacion.identifier,
+        folioUniversal: this.eventDonacion.folioUniversal,
+        closeDate: null,
+      };
+      this.donationService.putEvent(obj, this.idAct).subscribe({
+        next: async data => {
+          this.loading = false;
+
+          let obj = {
+            pActaNumber: this.idAct,
+            pStatusActa: 'ABIERTA',
+            pVcScreen: 'FMCOMDONAC_1',
+            pUser: this.authService.decodeToken().preferred_username,
+          };
+
+          await this.updateGoodEInsertHistoric(obj);
+
+          // this.alertInfo('success', 'El Evento Ha Sido Actualizado', '');
+          this.alert('success', 'Evento Actualizado', '');
+          this.data1 = 'ABIERTA';
+          //this.disabledBtnCerrar = false;
+          this.disabledBtnActas = false;
+          this.dataTableGood.refresh();
+          await this.getDetailProceedingsDevollution(this.idAct);
+        },
+        error: error => {
+          console.log('error', 'Ocurrió un Error al Actualizar el Evento', '');
+        },
+      });
+    }
+  }
 }
 
 export interface IParamsDonac {
