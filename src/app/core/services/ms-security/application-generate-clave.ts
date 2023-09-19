@@ -24,7 +24,7 @@ export class GenerateCveService extends HttpService {
   getAccountBank(id: string | number): Observable<IListResponse<any>> {
     return this.get<IListResponse<any>>(`${this.apiAccountBank}/${id}`);
   }
-  postSpUserAppraisal(body: Object, params: ListParams) {
+  postSpUserAppraisal(body?: Object, params?: ListParams) {
     return this.post('application/spUserAppraisal', body, params);
   }
 }
