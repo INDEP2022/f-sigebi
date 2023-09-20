@@ -215,21 +215,34 @@ export const GOODS = {
   inventoryNumber: {
     title: 'No. Inventario',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.goodId?.inventoryNumber;
+    },
   },
   goodId: {
-    title: 'No. Gestión',
-    sort: false,
-  },
-  id: {
     title: 'No. Bien',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.goodId?.id;
+    },
+  },
+  goodNumber: {
+    title: 'No. Gestión',
     sort: false,
   },
   description: {
     title: 'Descripción',
     sort: false,
   },
-  quantity: {
+  number: {
     title: 'Cantidad',
     sort: false,
+  },
+  status: {
+    title: 'Estatus',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.goodId?.status;
+    },
   },
 };

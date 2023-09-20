@@ -54,10 +54,10 @@ export const GOODS = {
     title: 'No. Gestión',
     sort: false,
   },
-  id: {
-    title: 'No. Bien',
-    sort: false,
-  },
+  // id: {
+  //   title: 'No. Bien',
+  //   sort: false,
+  // },
   description: {
     title: 'Descripción',
     sort: false,

@@ -217,7 +217,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              id: () => (searchFilter = SearchFilter.ILIKE),
+              goodId: () => (searchFilter = SearchFilter.ILIKE),
               inventoryNumber: () => (searchFilter = SearchFilter.ILIKE),
               goodNumber: () => (searchFilter = SearchFilter.EQ),
               description: () => (searchFilter = SearchFilter.EQ),
@@ -247,7 +247,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    params['sortBy'] = `inventaryNumber:DESC`;
+    // params['sortBy'] = `inventaryNumber:DESC`;
     this.goodService.getAll(params).subscribe({
       next: data => {
         console.log(data.data);
@@ -406,7 +406,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     console.log('1412212', params);
     params['sortBy'] = `goodId:DESC`;
     // params['good.status'] != 'DON';
-    this.goodService.getAll(params).subscribe({
+    this.donationService.getGoodsDonation(params).subscribe({
       next: data => {
         this.goods = data.data;
         // console.log('Bienes', this.bienes);
