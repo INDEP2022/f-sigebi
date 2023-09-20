@@ -69,7 +69,7 @@ export class ServiceTransportableGoodsFormComponent
 
   ngOnInit(): void {
     this.getOrderServiceProvided();
-    if (this.op != 1) {
+    if (this.op != 1 && this.op != 2) {
       this.columns = SERVICE_TRANSPORTABLE_COLUMNS;
       this.settings = {
         ...this.settings,
@@ -164,8 +164,9 @@ export class ServiceTransportableGoodsFormComponent
           this.getOrderServiceProvided();
         }
       });
-    } else if (this.op == 1) {
+    } else if (this.op == 1 || this.op == 2) {
       this.titleTab();
+      this.showButtonServiceManual = true;
       this.settings = {
         ...this.settings,
         actions: false,
@@ -218,11 +219,12 @@ export class ServiceTransportableGoodsFormComponent
           this.data = resp.data;
           this.totalItems = resp.count;
 
-          if (this.op != 1) {
+          if (this.op != 1 && this.op != 2) {
             this.setTableColumnsRows();
             this.setTableRowTotal();
-          } else if (this.op == 1) {
+          } else if (this.op == 1 || this.op == 2) {
             this.setTableRowTotal();
+            this.setTableColumnsRows();
           }
         },
       });
@@ -235,13 +237,13 @@ export class ServiceTransportableGoodsFormComponent
       let descriptionDifference = tableColumn.find(
         (x: any) => x.id == 'descriptionDifference'
       );
-      noResources.hide = true;
-      descriptionDifference.hide = true;
+      if (this.op != 2) noResources.hide = true;
+      if (this.op != 2) descriptionDifference.hide = true;
 
       //
-      if (this.op == 4 || this.op == 5 || this.op == 14) {
-        noResources.hide = false;
-        descriptionDifference.hide = false;
+      if (this.op == 4 || this.op == 5 || this.op == 14 || this.op == 2) {
+        if (this.op != 2) noResources.hide = false;
+        if (this.op != 2) descriptionDifference.hide = false;
       }
 
       const table = document.getElementById('table');
@@ -255,17 +257,30 @@ export class ServiceTransportableGoodsFormComponent
     } */
 
       //readonly duracion
-      if (this.op == 3 || this.op == 4 || this.op == 5 || this.op == 6) {
+      if (
+        this.op == 3 ||
+        this.op == 4 ||
+        this.op == 5 ||
+        this.op == 6 ||
+        this.op == 2
+      ) {
         for (let index = 0; index < tbody.length; index++) {
           const ele: any = tbody[index];
           //duracion hora
-          ele.children[8].querySelector('#text-input').disabled = true;
+          if (this.op != 2) {
+            ele.children[8].querySelector('#text-input').disabled = true;
+          } else if (this.op == 2) {
+            ele.children[4].querySelector('#text-input').disabled = true;
+            ele.children[5].querySelector('#text-input').disabled = true;
+            ele.children[6].querySelector('#text-input').disabled = true;
+          }
           /* ele.children[5].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
             true; */
           /* ele.children[6].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
             true; */
           //no. recursos
-          ele.children[9].querySelector('#text-input').disabled = true;
+          if (this.op != 2)
+            ele.children[9].querySelector('#text-input').disabled = true;
         }
       }
       //readonly no. recursos
@@ -283,7 +298,7 @@ export class ServiceTransportableGoodsFormComponent
 
   setTableRowTotal() {
     setTimeout(() => {
-      if (this.op != 1) {
+      if (this.op != 1 && this.op != 2) {
         const tableColumn = this.table.grid.getColumns();
         let noResources = tableColumn.find((x: any) => x.id == 'resourcesReal');
         let descriptionDifference = tableColumn.find(
@@ -330,7 +345,7 @@ export class ServiceTransportableGoodsFormComponent
           //descrip de diferencia
           row.children[13].querySelector('#text-input').hidden = true;
         }
-      } else if (this.op == 1) {
+      } else if (this.op == 1 || this.op == 2) {
         const table = document.getElementById('table');
         const tbody = table.children[0].children[1].children;
         const row: any = tbody[this.data.length - 1];
