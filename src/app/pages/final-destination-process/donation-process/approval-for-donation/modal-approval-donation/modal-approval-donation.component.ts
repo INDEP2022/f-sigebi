@@ -154,10 +154,6 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           title: 'No. Gestión',
           sort: false,
         },
-        id: {
-          title: 'No. Bien',
-          sort: false,
-        },
         description: {
           title: 'Descripción',
           sort: false,
@@ -166,14 +162,18 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           title: 'Cantidad',
           sort: false,
         },
+        status: {
+          title: 'Estatus',
+          sort: false,
+        },
       },
-      rowClassFunction: (row: any) => {
-        if (row.data.di_disponible == 'S') {
-          return 'bg-success text-white';
-        } else {
-          return 'bg-dark text-white';
-        }
-      },
+      // rowClassFunction: (row: any) => {
+      //   if (row.data.di_disponible == 'S') {
+      //     return 'bg-success text-white';
+      //   } else {
+      //     return 'bg-dark text-white';
+      //   }
+      // },
     };
   }
 
@@ -217,11 +217,11 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              goodId: () => (searchFilter = SearchFilter.ILIKE),
               inventoryNumber: () => (searchFilter = SearchFilter.ILIKE),
-              goodNumber: () => (searchFilter = SearchFilter.EQ),
+              goodId: () => (searchFilter = SearchFilter.EQ),
               description: () => (searchFilter = SearchFilter.EQ),
               quantity: () => (searchFilter = SearchFilter.EQ),
+              status: () => (searchFilter = SearchFilter.ILIKE),
             };
 
             search[filter.field]();
@@ -405,15 +405,15 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     };
     console.log('1412212', params);
     params['sortBy'] = `goodId:DESC`;
-    // params['good.status'] != 'DON';
-    this.donationService.getGoodsDonation(params).subscribe({
+    params['filter.status'] != 'ADM';
+    this.goodService.getByGood2(params).subscribe({
       next: data => {
         this.goods = data.data;
         console.log('Bienes', this.goods);
         let result = data.data.map(async (item: any) => {
           let obj = {
             vcScreen: 'FMCOMDONAC_1',
-            pNumberGood: item.goodNumber,
+            pNumberGood: item.goodId,
           };
 
           const di_dispo = await this.getStatusScreen(obj);
@@ -423,7 +423,18 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           }
           item['quantity'] = item.amount;
           item['di_acta'] = item.minutesKey;
-          item['id'] = item.goodNumber;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+
           // const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
           // // console.log('acta', acta);
           // item['acta_'] = acta;

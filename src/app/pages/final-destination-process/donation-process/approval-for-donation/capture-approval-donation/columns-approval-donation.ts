@@ -215,18 +215,8 @@ export const GOODS = {
   inventoryNumber: {
     title: 'No. Inventario',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.goodId?.inventoryNumber;
-    },
   },
   goodId: {
-    title: 'No. Bien',
-    sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.goodId?.id;
-    },
-  },
-  goodNumber: {
     title: 'No. Gestión',
     sort: false,
   },
@@ -234,15 +224,12 @@ export const GOODS = {
     title: 'Descripción',
     sort: false,
   },
-  number: {
+  quantity: {
     title: 'Cantidad',
     sort: false,
   },
   status: {
     title: 'Estatus',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.goodId?.status;
-    },
   },
 };
