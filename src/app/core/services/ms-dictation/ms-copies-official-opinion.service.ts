@@ -32,4 +32,10 @@ export class CopiesOfficialOpinionService extends HttpService {
   deleteCcp(body: Partial<ICopiesOfficialOpinion>) {
     return this.delete(DictationEndpoints.CopiesOfficialOpinion, body);
   }
+
+  ProceedingsDetailDicta(id: string | number) {
+    return this.get<IListResponse<any>>(
+      'application/get-detail-acta-ent-recep-ruling/' + id
+    );
+  }
 }
