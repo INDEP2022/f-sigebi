@@ -163,7 +163,7 @@ export class MaintenanceCommitmentDonationModalComponent
     this.donationService.createApproveDonation(model).subscribe({
       next: () => {
         this.handleSuccess();
-        this.onLoadToast('success', 'Comercio Exterior Kg Creado', '');
+        this.onLoadToast('success', 'Registro creado correctamente', '');
       },
       error: error => {
         this.onLoadToast('error', error.error.message, '');

@@ -98,6 +98,7 @@ export class DataTableComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
+
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'labelId':
@@ -107,14 +108,15 @@ export class DataTableComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'status':
-                //console.log("ESTATUS -> ");
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'desStatus':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'transfereeId':
+                console.log('-- enttra --');
                 searchFilter = SearchFilter.EQ;
+                //field = 'transfereeId.transferentId';
                 break;
               case 'desTrans':
                 searchFilter = SearchFilter.ILIKE;
@@ -233,7 +235,6 @@ export class DataTableComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'name':
-                console.log('NAME -> ');
                 field = `filter.segUser.name`
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -262,6 +263,7 @@ export class DataTableComponent extends BasePage implements OnInit {
     this.settings = $event;
   }
   getForeignTrade() {
+    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -299,6 +301,7 @@ export class DataTableComponent extends BasePage implements OnInit {
   }
 
   getTracker() {
+    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
