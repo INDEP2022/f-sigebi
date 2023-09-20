@@ -64,7 +64,7 @@ export const MOT_CAN = {
     sort: false,
   },
   descripcion_motivo: {
-    title: 'Descripcíon',
+    title: 'Descripción',
     sort: false,
   },
 };

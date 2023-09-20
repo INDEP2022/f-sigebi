@@ -64,6 +64,8 @@ export function getMimeTypeFromImg(fileName = 'unamedfile') {
     webm: 'image/webm',
     bmp: 'image/bmp',
     svg: 'image/svg',
+    heif: 'image/jpeg',
+    heic: 'image/jpeg',
   };
 
   for (const s in signatures) {
