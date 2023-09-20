@@ -205,7 +205,7 @@ export class reportOiComponent extends BasePage implements OnInit {
             for (const additionalResp of additionalResponses) {
               allData.push(...additionalResp.data);
             }
-
+            this.alert('success', filename, 'Exportado Correctamente');
             this.excelService.export(allData, { type: 'csv', filename });
           },
           error: err => {
