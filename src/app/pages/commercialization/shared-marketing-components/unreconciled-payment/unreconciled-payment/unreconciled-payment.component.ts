@@ -400,7 +400,11 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
       } else {
         this.loadingBtn = false;
         await this.getPayments();
-        this.alert('warning', 'Proceso Terminado', 'No se pudo enviar el pago');
+        this.alert(
+          'warning',
+          'Proceso Terminado',
+          'No se pudo conciliar el pago'
+        );
       }
     }
     // else if (a && b) {

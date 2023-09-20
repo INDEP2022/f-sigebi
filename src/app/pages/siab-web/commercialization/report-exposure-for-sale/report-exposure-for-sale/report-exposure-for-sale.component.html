@@ -37,7 +37,7 @@
           <form-field [control]="form2.get('filterText')">
             <input
               type="file"
-              accept="txt"
+              accept=".txt"
               formControlName="filterText"
               (change)="chargeFile($event)" />
           </form-field>
@@ -46,9 +46,9 @@
           <div class="justify-content-center">
             <button
               type="button"
+              (click)="reporGood()"
               class="btn btn-primary btn-sm active"
-              [disabled]="validTxt"
-              (click)="show = !show">
+              [disabled]="validTxt">
               Buscar bienes
             </button>
           </div>
@@ -162,6 +162,65 @@
           </div>
         </div>
       </form>
+    </div>
+
+    <div *ngIf="showGood" class="pt-5">
+      <div class="row">
+        <div class="ch-content">
+          <h5 class="title">
+            Bienes que no han sido expuestos a evento comercial
+          </h5>
+        </div>
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <app-columns-select
+            [(settings)]="settings7"
+            [leftList]="true"></app-columns-select>
+          <div>
+            <button
+              class="btn btn-sm btn-success active mr-3"
+              [disabled]="!validate3"
+              (click)="onExportExcel()">
+              Exportar
+              <i class="bx bx-download float-icon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings7"
+              [source]="data7"
+              (userRowSelect)="rowsSelected($event)">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination
+          [params]="params7"
+          [totalItems]="totalItems7"></app-pagination>
+      </div>
+      <!--<div class="row pt-5">
+        <div class="col-md-3">
+          <label>Total de bienes encontrados</label>
+        </div>
+        <div class="col-md-2">
+          <form
+            class="form-material"
+            [formGroup]="form"
+            (ngSubmit)="onSubmit()">
+            <form-field [control]="form.get('totalAssets')">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="totalAssets" />
+            </form-field>
+          </form>
+        </div>
+      </div>-->
     </div>
 
     <div *ngIf="show" class="pt-5">
