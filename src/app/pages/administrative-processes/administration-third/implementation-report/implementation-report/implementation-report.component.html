@@ -232,13 +232,19 @@
     <div class="row pt-2">
       <div class="col-md-12 text-center mt-4 mb-4">
         <div class="col-md-2">
-          <button
+          <!-- <button
             type="button"
             class="btn btn-primary active btn-sm mr-3"
             (click)="searchActas()"
             [disabled]="!disabledBtnActas">
             Buscar Bienes
             <i class="bx bx-search bx-sm float-icon"></i>
+          </button> -->
+          <button
+            class="btn btn-primary btn-sm active"
+            (click)="pupGenera()"
+            [disabled]="!disabledBtnActas">
+            Genera
           </button>
         </div>
         <div class="col-md-2">
@@ -302,14 +308,7 @@
         <div class="col-md-2">
           <button class="btn btn-primary btn-sm active">Incorpora</button>
         </div>
-        <div class="col-md-2">
-          <button
-            class="btn btn-primary btn-sm active"
-            (click)="pupGenera()"
-            [disabled]="!disabledBtnActas">
-            Genera
-          </button>
-        </div>
+
         <div class="col-md-2">
           <button class="btn btn-primary btn-sm active">Nuevos Costos</button>
         </div>
