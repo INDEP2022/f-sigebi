@@ -3,31 +3,6 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 export let goodCheck: any[] = [];
 
 export const CONSUL_GOODS_COMMER_SALES_COLUMNS = {
-  check: {
-    title: 'Seleccionar',
-    type: 'custom',
-    sort: false,
-    renderComponent: CheckboxElementComponent,
-    valuePrepareFunction: (isSelected: any, row: any) => {
-      return goodCheck.find(
-        (e: any) => e.row.idordeningreso == row.idordeningreso
-      )
-        ? true
-        : false;
-    },
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        if (data.toggle) {
-          console.log(goodCheck);
-          goodCheck.push(data.row);
-        } else {
-          goodCheck = goodCheck.filter(
-            valor => valor.row.idordeningreso != data.row.idordeningreso
-          );
-        }
-      });
-    },
-  },
   idordeningreso: {
     title: 'Id Orden',
     type: 'number',
@@ -62,6 +37,32 @@ export const CONSUL_GOODS_COMMER_SALES_COLUMNS = {
     title: 'Descripción Bien',
     type: 'text',
     sort: false,
+  },
+  check: {
+    title: 'Seleccionar',
+    type: 'custom',
+    sort: false,
+    showAlways: true,
+    renderComponent: CheckboxElementComponent,
+    valuePrepareFunction: (isSelected: any, row: any) => {
+      return goodCheck.find(
+        (e: any) => e.row.idordeningreso == row.idordeningreso
+      )
+        ? true
+        : false;
+    },
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        if (data.toggle) {
+          console.log(goodCheck);
+          goodCheck.push(data.row);
+        } else {
+          goodCheck = goodCheck.filter(
+            valor => valor.row.idordeningreso != data.row.idordeningreso
+          );
+        }
+      });
+    },
   },
 };
 
