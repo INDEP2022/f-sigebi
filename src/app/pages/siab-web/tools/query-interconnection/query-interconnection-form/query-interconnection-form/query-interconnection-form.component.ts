@@ -65,6 +65,7 @@ export class QueryInterconnectionFormComponent
     }
   }
   consult() {
+    console.log(this.records);
     if (this.records.length === 0) {
       this.alert('warning', 'No se encontraron registros', ``);
     } else {
@@ -95,7 +96,7 @@ export class QueryInterconnectionFormComponent
 
       for (let r = 0; r < dtCveUnicas.length; r++) {
         CveUnicaRecorrido = dtCveUnicas[r][0].toString();
-        //console.log(CveUnicaRecorrido);
+        console.log(CveUnicaRecorrido);
         if (r !== i) {
           console.log(CveUnicaExcel, CveUnicaRecorrido);
           if (CveUnicaExcel === CveUnicaRecorrido) {
