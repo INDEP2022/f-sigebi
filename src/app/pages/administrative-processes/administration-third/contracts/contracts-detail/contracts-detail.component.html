@@ -6,27 +6,57 @@
     <form class="form-material" [formGroup]="contractForm">
       <div class="row">
         <div class="col-md-6">
-          <form-field label="Contrato" [control]="contractForm.get('contractKey')">
-            <input type="text" class="form-control" maxlength="60" formControlName="contractKey" />
+          <form-field
+            label="Contrato"
+            [control]="contractForm.get('contractKey')">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="60"
+              formControlName="contractKey" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="contractForm.get('zoneContractKey')">
-            <ngx-select (fetchItems)="getZoneContracts($event)" [data]="zoneContracts" [form]="contractForm" value="id"
-              bindLabel="description" label="Zona" control="zoneContractKey" (change)="onValuesChange($event)" required>
+            <ngx-select
+              (fetchItems)="getZoneContracts($event)"
+              [data]="zoneContracts"
+              [form]="contractForm"
+              value="id"
+              bindLabel="description"
+              label="Zona"
+              control="zoneContractKey"
+              (change)="onValuesChange($event)"
+              required>
             </ngx-select>
           </form-field>
         </div>
         <div class="col-md-6 mt-4">
-          <form-field label="Fecha inicial" [control]="contractForm.get('startDate')">
-            <input type="text" class="form-control" formControlName="startDate" bsDatepicker required [bsConfig]="{
+          <form-field
+            label="Fecha inicial"
+            [control]="contractForm.get('startDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="startDate"
+              bsDatepicker
+              required
+              [bsConfig]="{
                 dateInputFormat: 'DD-MM-YYYY'
               }" />
           </form-field>
         </div>
         <div class="col-md-6 mt-4">
-          <form-field label="Fecha final" [control]="contractForm.get('endDate')">
-            <input type="text" class="form-control" formControlName="endDate" bsDatepicker required [bsConfig]="{
+          <form-field
+            label="Fecha final"
+            [control]="contractForm.get('endDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="endDate"
+              bsDatepicker
+              required
+              [bsConfig]="{
                 dateInputFormat: 'DD-MM-YYYY'
               }" />
           </form-field>
@@ -34,7 +64,12 @@
 
         <div class="col-md-6">
           <form-field [control]="contractForm.get('statusContract')">
-            <ngx-select [data]="status" value="id" bindLabel="descripcion" label="Estado" [form]="contractForm"
+            <ngx-select
+              [data]="status"
+              value="id"
+              bindLabel="descripcion"
+              label="Estado"
+              [form]="contractForm"
               control="statusContract">
             </ngx-select>
           </form-field>
@@ -49,7 +84,10 @@
           [type]="'button'"
           [disabled]="contractForm.invalid"
           (confirm)="confirm()"></confirm-button> -->
-        <button type="button" class="btn btn-primary btn-sm active" (click)="confirm()"
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()"
           [disabled]="contractForm.invalid">
           Guardar
           <i aria-hidden="true" class="fa fa-save"></i>

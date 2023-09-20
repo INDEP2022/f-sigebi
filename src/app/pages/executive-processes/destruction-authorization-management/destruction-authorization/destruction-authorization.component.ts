@@ -38,6 +38,7 @@ import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceeding
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGoodService } from 'src/app/core/services/ms-dictation/dictation-x-good.service';
+import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation/ms-copies-official-opinion.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
@@ -84,6 +85,7 @@ export class DestructionAuthorizationComponent
   totalItems3: number = 0;
   totalItems4: number = 0;
   totalItems5: number = 0;
+  totalItems6: number = 0;
 
   $state = this.store.select(getDestructionAuth);
   state: IDestructionAuth;
@@ -93,6 +95,7 @@ export class DestructionAuthorizationComponent
   params3 = new BehaviorSubject<ListParams>(new ListParams());
   params4 = new BehaviorSubject<ListParams>(new ListParams());
   params5 = new BehaviorSubject<ListParams>(new ListParams());
+  params6 = new BehaviorSubject<ListParams>(new ListParams());
 
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   searchFilter: SearchBarFilter;
@@ -120,6 +123,8 @@ export class DestructionAuthorizationComponent
   selectedRow: any = null;
 
   data: LocalDataSource = new LocalDataSource();
+  actaList2: LocalDataSource = new LocalDataSource();
+  dictaList2: LocalDataSource = new LocalDataSource();
   actaList: { cve_acta: string }[] = [];
 
   loadingProceedings = false;
@@ -198,7 +203,8 @@ export class DestructionAuthorizationComponent
     private authService: AuthService,
     private documentsService: DocumentsService,
     private siabService: SiabService,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    private copiesOfficialOpinionService: CopiesOfficialOpinionService
   ) {
     super();
 
@@ -222,6 +228,7 @@ export class DestructionAuthorizationComponent
         position: 'right',
       },
       columns: { ...PROCEEDINGS_COLUMNS },
+      hideSubHeader: false,
     };
 
     this.settings2 = {
@@ -241,6 +248,7 @@ export class DestructionAuthorizationComponent
             this.onSelectGood(instance),
         },
       },
+      hideSubHeader: false,
     };
 
     this.settings3 = {
@@ -248,6 +256,7 @@ export class DestructionAuthorizationComponent
       ...this.settings,
       actions: false,
       columns: { ...GOODS_COLUMNS },
+      hideSubHeader: false,
     };
 
     this.settings4 = {
@@ -255,6 +264,7 @@ export class DestructionAuthorizationComponent
       ...this.settings,
       actions: false,
       columns: { ...ACTA_RECEPTION_COLUMNS },
+      hideSubHeader: false,
     };
 
     this.settings5 = {
@@ -262,6 +272,7 @@ export class DestructionAuthorizationComponent
       ...this.settings,
       actions: false,
       columns: { ...DICTATION_COLUMNS },
+      hideSubHeader: false,
     };
   }
 
@@ -851,6 +862,7 @@ export class DestructionAuthorizationComponent
 
   getDictAndActs() {
     const allGoods = this.detailProceedingsList.map(detail => detail.good.id);
+    console.log(allGoods);
 
     return forkJoin([this.getDicts(allGoods), this.getActs(allGoods)]);
   }
@@ -911,22 +923,38 @@ export class DestructionAuthorizationComponent
 
   keyProceedingchange() {
     const keyProceeding = this.controls.keysProceedings.value;
-    if (!this.queryMode) {
-      return;
-    }
-    if (!keyProceeding) {
-      return;
-    }
+    console.log(keyProceeding);
+
+    // if (!this.queryMode) {
+    //   console.log(!this.queryMode);
+    //   return;
+    // }
+    // if (!keyProceeding) {
+    //   return;
+    // }
 
     this.findProceeding(keyProceeding).subscribe();
   }
 
+  formatDateForInput(dateString: string): string {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    return `${day}/${month}/${year}`;
+  }
+
   findProceeding(keyProceeding: string) {
-    const params = new FilterParams();
-    params.addFilter('typeProceedings', 'RGA');
-    params.addFilter('keysProceedings', keyProceeding);
+    //params.addFilter('typeProceedings', 'RGA');
+    //params.addFilter('keysProceedings', keyProceeding);
+
+    let params = {
+      ...this.params.getValue(),
+    };
+
+    params['filter.keysProceedings'] = `$ilike:${keyProceeding}`;
     return this.proceedingsDeliveryReceptionService
-      .getAllProceedingsDeliveryReception(params.getParams())
+      .getAllProceedingsDeliveryReception2(params)
       .pipe(
         catchError(error => {
           if (error.status < 500) {
@@ -944,7 +972,12 @@ export class DestructionAuthorizationComponent
         }),
         map(response => response.data[0]),
         tap((proceeding: any) => this.proceedingForm.patchValue(proceeding)),
-        switchMap(proceeding => this.getProceedingGoods(proceeding.id))
+        switchMap(proceeding => {
+          const getGoods$ = this.getProceedingGoods(proceeding.id);
+          const searchActa$ = this.searchActa(proceeding.id);
+
+          return forkJoin([getGoods$, searchActa$]);
+        })
       );
   }
 
@@ -992,8 +1025,11 @@ export class DestructionAuthorizationComponent
       this.closeDate.nativeElement.focus();
       return;
     }
+    console.log(universalFolio.value);
 
     if (!universalFolio.value) {
+      console.log(!universalFolio.value);
+
       this.onLoadToast(
         'error',
         'Error',
@@ -1083,5 +1119,34 @@ export class DestructionAuthorizationComponent
 
   filterField2() {
     this.filterParams2.getValue().addFilter('status', 'PDS');
+  }
+
+  searchActa(id: string) {
+    let params = {
+      ...this.params5.getValue(),
+    };
+    this.proceedingsDeliveryReceptionService
+      .ProceedingsDetailActa(id)
+      .subscribe({
+        next: resp => {
+          this.actaList2.load(resp.data);
+          this.totalItems5 = resp.count;
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
+  }
+
+  searchDicta(id: string) {
+    this.copiesOfficialOpinionService.ProceedingsDetailDicta(id).subscribe({
+      next: (resp: any) => {
+        this.dictaList2.load(resp.data);
+        this.totalItems6 = resp.count;
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
   }
 }

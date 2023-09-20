@@ -11,7 +11,7 @@ import { IParameterMod } from '../../models/ms-comer-concepts/parameter-mod.mode
   providedIn: 'root',
 })
 export class ParametersModService extends HttpService {
-  private readonly endpoint: string = 'parameters-mod';
+  private readonly endpoint: string = 'parameters-mod/get-all';
   constructor() {
     super();
     this.microservice = 'comerconcepts';

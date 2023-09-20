@@ -56,7 +56,7 @@ export class OrderServiceDeliveryFormComponent
   ordServForm: FormGroup = new FormGroup({});
   form: FormGroup = new FormGroup({});
   programmingId: number = null;
-  op: number = 1;
+  op: number = 0;
   total: string = null;
   programming: Iprogramming;
   constructor(
@@ -70,6 +70,8 @@ export class OrderServiceDeliveryFormComponent
   }
 
   ngOnInit(): void {
+    console.log('task', this.task);
+    this.op = this.task;
     this.programmingId = this.activeRouter.snapshot.params['id'];
 
     this.prepareOrderServiceForm();

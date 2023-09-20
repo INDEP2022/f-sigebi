@@ -61,7 +61,7 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
 
   confirm() {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Estás seguro que desea agregar un nuevo servicio?'
     ).then(question => {
@@ -73,7 +73,7 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
         this.servicesSelected.map(async (item: any, _i: number) => {
           const index = _i + 1;
           const body: IOrderServiceProvider = {
-            orderServiceId: this.orderServId,
+            orderServiceId: 516,
             priceUnitary: item.costConter,
             description: item.detServiceConter,
             andmidserv: item.detuomConter,
@@ -90,7 +90,11 @@ export class CreateServiceFormComponent extends BasePage implements OnInit {
           if (this.servicesSelected.length == index) {
             this.loader.load = false;
             this.modalRef.content.callback(this.form.value);
-            this.onLoadToast('success', 'Servicio creado correctamente', '');
+            this.onLoadToast(
+              'success',
+              'Correcto',
+              'Servicio creado correctamente'
+            );
             this.close();
           }
         });

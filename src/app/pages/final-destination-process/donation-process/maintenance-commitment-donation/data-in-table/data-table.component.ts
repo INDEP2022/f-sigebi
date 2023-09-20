@@ -78,7 +78,6 @@ export class DataTableComponent extends BasePage implements OnInit {
       //Otros Trans
       this.filterOtrosTrans();
       this.settings.columns = COLUMNS_OTHER_TRANS;
-
     } else {
       //Permisos Rastreador
       this.filterPermis();
@@ -337,7 +336,7 @@ export class DataTableComponent extends BasePage implements OnInit {
     });
   }
 
-  getUsers(name: string) { }
+  getUsers(name: string) {}
 
   loadModal(bool: boolean, data: any) {
     if (data != null) {
