@@ -69,7 +69,7 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
           return value ? true : false;
         });
         if (!filledFields.length) {
-          this.getAllGoods();
+          this.alert('warning', 'Debe ingresar al menos un filtro', '');
           return;
         }
         this.getGoods(next);

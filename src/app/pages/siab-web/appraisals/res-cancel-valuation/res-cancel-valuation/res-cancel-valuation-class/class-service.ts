@@ -37,3 +37,7 @@ export class MyBody {
   goodsDataTable: any;
   recipientsDataTable: any;
 }
+
+export class UserFind {
+  flagIn: number;
+}
