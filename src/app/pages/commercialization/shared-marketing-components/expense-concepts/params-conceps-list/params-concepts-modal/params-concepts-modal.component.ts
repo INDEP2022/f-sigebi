@@ -41,12 +41,17 @@ export class ParamsConceptsModalComponent
     this.service = this.parametersModService;
     this.params.value.limit = 5;
     this.ilikeFilters = ['parameter', 'value', 'address'];
-    this.prepareForm();
     this.settings = {
       ...this.settings,
       actions: false,
       columns: { ...COLUMNS },
     };
+  }
+
+  override ngOnInit(): void {
+    this.prepareForm();
+    this.dinamicFilterUpdate();
+    this.searchParams();
   }
 
   selectParamsMod(event: IParameterMod) {
@@ -117,6 +122,7 @@ export class ParamsConceptsModalComponent
   }
 
   private prepareForm() {
+    debugger;
     this.form = this.fb.group({
       parameter: [null, [Validators.required]],
       value: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
@@ -125,7 +131,7 @@ export class ParamsConceptsModalComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
     });
-    if (this.parameterValue != null) {
+    if (this.parameterValue !== null) {
       this.edit = true;
       // const formattedDate = this.formatDate(this.representative.dateBorn);
       const body = {
