@@ -47,13 +47,17 @@ export class ReportDocReceivedComponent extends BasePage implements OnInit {
     const rangeDate = this.form.controls['rangeDate'].value;
     const detailReport = this.form.controls['report'].value;
 
-    const startTemp = `${rangeDate[0].getFullYear()}-${rangeDate[0].getUTCMonth() + 1 <= 9 ? 0 : ''
-      }${rangeDate[0].getUTCMonth() + 1}-${rangeDate[0].getDate() <= 9 ? 0 : ''
-      }${rangeDate[0].getDate()}`;
+    const startTemp = `${rangeDate[0].getFullYear()}-${
+      rangeDate[0].getUTCMonth() + 1 <= 9 ? 0 : ''
+    }${rangeDate[0].getUTCMonth() + 1}-${
+      rangeDate[0].getDate() <= 9 ? 0 : ''
+    }${rangeDate[0].getDate()}`;
 
-    const endTemp = `${rangeDate[1].getFullYear()}-${rangeDate[1].getUTCMonth() + 1 <= 9 ? 0 : ''
-      }${rangeDate[1].getUTCMonth() + 1}-${rangeDate[1].getDate() <= 9 ? 0 : ''
-      }${rangeDate[1].getDate()}`;
+    const endTemp = `${rangeDate[1].getFullYear()}-${
+      rangeDate[1].getUTCMonth() + 1 <= 9 ? 0 : ''
+    }${rangeDate[1].getUTCMonth() + 1}-${
+      rangeDate[1].getDate() <= 9 ? 0 : ''
+    }${rangeDate[1].getDate()}`;
 
     const reportParams = {
       PF_FECINI: startTemp,
@@ -78,7 +82,7 @@ export class ReportDocReceivedComponent extends BasePage implements OnInit {
               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
               type: 'pdf',
             },
-            callback: (data: any) => { },
+            callback: (data: any) => {},
           }, //pasar datos por aca
           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
           ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -104,7 +108,7 @@ export class ReportDocReceivedComponent extends BasePage implements OnInit {
               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
               type: 'pdf',
             },
-            callback: (data: any) => { },
+            callback: (data: any) => {},
           }, //pasar datos por aca
           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
           ignoreBackdropClick: true, //ignora el click fuera del modal
