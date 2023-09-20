@@ -10,6 +10,7 @@ import {
   IOrderService,
   IOrderServiceDTO,
 } from '../../models/ms-order-service/order-service.mode';
+import { ISamplingOrderService } from '../../models/ms-order-service/sampling-order-service.model';
 
 @Injectable({
   providedIn: 'root',
@@ -69,9 +70,33 @@ export class OrderServiceService extends HttpService {
     return this.put(route, formVehicle);
   }
 
-  getSamplingOrderView(body: Object) {
-    const route = OrderServiceEndpoint.GetSamplingOrderView;
+  getSamplingOrderView(body: Object, page: number, limit: number) {
+    const route = `${OrderServiceEndpoint.SamplingOrderView}?limit=${limit}&page=${page}`;
     return this.post(route, body);
+  }
+
+  getAllSamplingOrderService(params: ListParams | string) {
+    const route = `${OrderServiceEndpoint.SamplingOrderService}`;
+    return this.get(route, params);
+  }
+
+  createSamplingOrderService(body: ISamplingOrderService) {
+    const route = `${OrderServiceEndpoint.SamplingOrderService}`;
+    return this.post(route, body);
+  }
+
+  updateSamplingOrderService(
+    sampleOrderId: number,
+    orderServiceId: number,
+    body: ISamplingOrderService
+  ) {
+    const route = `${OrderServiceEndpoint.SamplingOrderService}/${sampleOrderId}/${orderServiceId}`;
+    return this.put(route, body);
+  }
+
+  deleteSamplingOrderService(sampleOrderId: number, orderServiceId: number) {
+    const route = `${OrderServiceEndpoint.SamplingOrderService}/${sampleOrderId}/${orderServiceId}`;
+    return this.delete(route);
   }
 
   private makeParams(params: ListParams): HttpParams {

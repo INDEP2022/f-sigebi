@@ -568,8 +568,6 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     if (lookPhoto) {
       this.alert('warning', 'De Doble Clic sobre la Foto', '');
     } else {
-      await this.getTem();
-
       this.selectedGooods.map(async good => {
         if (good.select) {
           lst_good = lst_good + `${good.goodNumber},`;
@@ -583,9 +581,28 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       });
 
       if (this.selectedGooods.length > 1) {
-        lst_good = lst_good.substring(0, lst_good.length - 1);
-        this.insertListPhoto(Number(lst_good));
-        this.callReport(null, this.ngGlobal);
+        const goodIds = this.selectedGooods.map(good => good.goodNumber);
+        this.getTmpNextVal()
+          .pipe(
+            switchMap(identificator => {
+              const $obs = goodIds.map(goodNumber =>
+                this.saveTmpGood(identificator, goodNumber)
+              );
+              return forkJoin($obs).pipe(map(() => identificator));
+            })
+          )
+          .subscribe({
+            next: identificator => {
+              lst_good = lst_good.substring(0, lst_good.length - 1);
+              this.insertListPhoto(Number(lst_good));
+              const x: any = '';
+              this.callReport(x, identificator);
+            },
+            error: error => {
+              this.includeLoading = false;
+              this.onLoadToast('error', 'Error', 'Ocurrió un error');
+            },
+          });
       } else {
         if (this.selectedGooods.length > 0) {
           this.insertListPhoto(Number(this.selectedGooods[0].goodNumber));
@@ -887,6 +904,10 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   }
 
   getDataExcell() {
+    if (!this.totalItems) {
+      this.alert('warning', 'No hay datos para exportar', '');
+      return;
+    }
     this.excelLoading = true;
     this.goodTrackerService.getExcel(this.filters).subscribe({
       next: resp => {
