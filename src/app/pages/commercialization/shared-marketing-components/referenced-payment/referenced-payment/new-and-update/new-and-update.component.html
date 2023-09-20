@@ -49,21 +49,13 @@
               formControlName="movementNumber" />
           </form-field>
         </div>
-        <div class="col-md-6 mt-2">
+        <!-- <div class="col-md-6 mt-2">
           <form-field [control]="form.get('lotId')">
-            <ngx-select
-              [readonly]="valScroll"
-              [searchOnInit]="true"
-              [form]="form"
-              control="lotId"
-              [data]="lotes"
-              value="idLot"
-              bindLabel="idLot"
-              label="Lote"
-              (fetchItems)="getLotes($event)">
+            <ngx-select [readonly]="valScroll" [searchOnInit]="true" [form]="form" control="lotId" [data]="lotes"
+              value="idLot" bindLabel="idLot" label="Lote" (fetchItems)="getLotes($event)">
             </ngx-select>
           </form-field>
-        </div>
+        </div> -->
 
         <div class="col-md-6 mt-2">
           <form-field [control]="form.get('reference')" label="Referencia">
@@ -78,7 +70,7 @@
         <div *ngIf="edit" class="col-md-6 mt-2">
           <form-field
             [control]="form.get('referenceOri')"
-            label="Referencia Orden Ingresos">
+            label="Referencia Orden Ingreso">
             <input
               [readonly]="valScroll"
               maxlength="30"
@@ -114,24 +106,18 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-6 mt-2">
+        <!-- <div class="col-md-6 mt-2">
           <form-field [control]="form.get('clientId')">
-            <ngx-select
-              [readonly]="valScroll"
-              [searchOnInit]="true"
-              [form]="form"
-              control="clientId"
-              [data]="clients"
-              bindLabel="idAndName"
-              label="Cliente"
-              (fetchItems)="getClients($event)">
+            <ngx-select [readonly]="valScroll" [searchOnInit]="true" [form]="form" control="clientId" [data]="clients"
+              bindLabel="idAndName" label="Cliente" (fetchItems)="getClients($event)">
             </ngx-select>
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-6 mt-2">
           <form-field [control]="form.get('amount')" label="Monto">
             <input
               [readonly]="valScroll"
+              currencyMask
               maxlength="17"
               type="text"
               class="form-control"
@@ -179,41 +165,25 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-6 mt-2">
+        <!-- <div class="col-md-6 mt-2">
           <form-field [control]="form.get('branchOffice')" label="Sucursal">
-            <input
-              [readonly]="valScroll"
-              maxlength="6"
-              type="text"
-              class="form-control"
+            <input [readonly]="valScroll" maxlength="6" type="text" class="form-control"
               formControlName="branchOffice" />
           </form-field>
-        </div>
-        <div class="col-md-3 mt-2">
+        </div> -->
+        <!-- <div class="col-md-3 mt-2">
           <form-field [control]="form.get('type')" label="Tipo">
-            <input
-              [readonly]="valScroll"
-              maxlength="1"
-              type="text"
-              class="form-control"
-              formControlName="type" />
+            <input [readonly]="valScroll" maxlength="1" type="text" class="form-control" formControlName="type" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-12">
           <div class="row">
-            <div class="col-md-12 mt-2">
-              <form-field
-                [control]="form.get('description')"
-                label="Descripción">
-                <textarea
-                  [readonly]="valScroll"
-                  maxlength="200"
-                  class="form-control"
-                  cols="5"
-                  rows="5"
+            <!-- <div class="col-md-12 mt-2">
+              <form-field [control]="form.get('description')" label="Descripción">
+                <textarea [readonly]="valScroll" maxlength="200" class="form-control" cols="5" rows="5"
                   formControlName="description"></textarea>
               </form-field>
-            </div>
+            </div> -->
             <!-- <div class="col-md-6 mt-2">
               <form-field [control]="form.get('result')" label="Resultado">
                 <textarea maxlength="200" type="text" cols="5" rows="5" class="form-control"

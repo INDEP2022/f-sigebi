@@ -1,4 +1,18 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+const meses = [
+  'ENE',
+  'FEB',
+  'MAR',
+  'ABR',
+  'MAY',
+  'JUN',
+  'JUL',
+  'AGO',
+  'SEP',
+  'OCT',
+  'NOV',
+  'DIC',
+];
 
 export const COLUMNS = {
   movementNumber: {
@@ -13,7 +27,22 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (text: string) => {
-      console.log('text', text);
+      // console.log('text', text);
+      if (!text) return null;
+      const fechaOriginal: any = text;
+
+      // Dividir la fecha en día, mes y año
+      const partesFecha = fechaOriginal.split('-');
+      const dia = partesFecha[0];
+      const mes = partesFecha[1] - 1; // Restamos 1 ya que los arrays en JavaScript comienzan desde 0
+      const ano = partesFecha[2];
+
+      // Obtener el nombre del mes
+      const nombreMes = meses[mes];
+
+      // Crear la nueva fecha en el formato deseado
+      const fechaTransformada = `${dia}-${mes}-${ano}`;
+      // console.log("fechaTransformada", fechaTransformada)
       return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
@@ -29,6 +58,12 @@ export const COLUMNS = {
   },
   bill: {
     title: 'Cuenta',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  reference: {
+    title: 'Referencia',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -56,6 +91,20 @@ export const COLUMNS = {
     // width: '15%',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        return numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      } else {
+        return amount;
+      }
+    },
   },
   result: {
     title: 'Resultado',
@@ -110,17 +159,12 @@ export const COLUMNS = {
     },
   },
   paymentId: {
-    title: 'ID Pago',
+    title: 'Id Pago',
     // width: '15%',
     type: 'string',
     sort: false,
   },
-  reference: {
-    title: 'Referencia',
-    // width: '15%',
-    type: 'string',
-    sort: false,
-  },
+
   lotPub: {
     title: 'Lote Pub.',
     // width: '15%',
@@ -134,7 +178,7 @@ export const COLUMNS = {
     sort: false,
   },
   entryOrderId: {
-    title: 'OI',
+    title: 'Orden Ingreso',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -146,6 +190,21 @@ export const COLUMNS = {
     sort: false,
     valuePrepareFunction: (text: string) => {
       console.log('text', text);
+      if (!text) return null;
+      const fechaOriginal: any = text;
+
+      // Dividir la fecha en día, mes y año
+      const partesFecha = fechaOriginal.split('-');
+      const dia = partesFecha[0];
+      const mes = partesFecha[1] - 1; // Restamos 1 ya que los arrays en JavaScript comienzan desde 0
+      const ano = partesFecha[2];
+
+      // Obtener el nombre del mes
+      const nombreMes = meses[mes];
+
+      // Crear la nueva fecha en el formato deseado
+      const fechaTransformada = `${dia}-${mes}-${ano}`;
+      // console.log("fechaTransformada", fechaTransformada)
       return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
@@ -212,12 +271,6 @@ export const COLUMNS = {
 };
 
 export const COLUMNS_CARGADOS = {
-  paymentId: {
-    title: 'ID Pago',
-    // width: '15%',
-    type: 'string',
-    sort: false,
-  },
   movementNumber: {
     title: 'No. Movimiento',
     // width: '15%',
@@ -231,6 +284,20 @@ export const COLUMNS_CARGADOS = {
     sort: false,
     valuePrepareFunction: (text: string) => {
       console.log('text', text);
+      if (!text) return null;
+      const fechaOriginal: any = text;
+
+      // Dividir la fecha en día, mes y año
+      const partesFecha = fechaOriginal.split('-');
+      const dia = partesFecha[0];
+      const mes = partesFecha[1] - 1; // Restamos 1 ya que los arrays en JavaScript comienzan desde 0
+      const ano = partesFecha[2];
+
+      // Obtener el nombre del mes
+      const nombreMes = meses[mes];
+
+      // Crear la nueva fecha en el formato deseado
+      const fechaTransformada = `${dia}-${mes}-${ano}`;
       return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
@@ -244,9 +311,20 @@ export const COLUMNS_CARGADOS = {
     type: 'string',
     sort: false,
   },
-
+  bill: {
+    title: 'Cuenta',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+  },
   reference: {
     title: 'Referencia',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  referenceOri: {
+    title: 'Referencia OI',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -262,25 +340,29 @@ export const COLUMNS_CARGADOS = {
     // width: '15%',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+
+      if (!isNaN(numericAmount)) {
+        return numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      } else {
+        return amount;
+      }
+    },
   },
-  bill: {
-    title: 'Cuenta',
-    // width: '15%',
-    type: 'string',
-    sort: false,
-  },
+
   branchOffice: {
     title: 'Sucursal',
     // width: '15%',
     type: 'string',
     sort: false,
   },
-  referenceOri: {
-    title: 'Referencia OI',
-    // width: '15%',
-    type: 'string',
-    sort: false,
-  },
+
   result: {
     title: 'Resultado',
     // width: '15%',
@@ -333,7 +415,12 @@ export const COLUMNS_CARGADOS = {
       }
     },
   },
-
+  paymentId: {
+    title: 'Id Pago',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+  },
   lotPub: {
     title: 'Lote Pub.',
     // width: '15%',
@@ -347,7 +434,7 @@ export const COLUMNS_CARGADOS = {
     sort: false,
   },
   entryOrderId: {
-    title: 'OI',
+    title: 'Orden Ingreso',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -359,6 +446,20 @@ export const COLUMNS_CARGADOS = {
     sort: false,
     valuePrepareFunction: (text: string) => {
       console.log('text', text);
+      if (!text) return null;
+      const fechaOriginal: any = text;
+
+      // Dividir la fecha en día, mes y año
+      const partesFecha = fechaOriginal.split('-');
+      const dia = partesFecha[0];
+      const mes = partesFecha[1] - 1; // Restamos 1 ya que los arrays en JavaScript comienzan desde 0
+      const ano = partesFecha[2];
+
+      // Obtener el nombre del mes
+      const nombreMes = meses[mes];
+
+      // Crear la nueva fecha en el formato deseado
+      const fechaTransformada = `${dia}-${mes}-${ano}`;
       return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {

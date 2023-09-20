@@ -3,6 +3,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 
 //Arrays
 export let goodCheckCustomer: any[] = [];
+export let batchEventCheck: any[] = [];
 
 //COLUMNAS
 export const COLUMNSCUSTOMER = {
@@ -64,7 +65,7 @@ export const COLUMNSCUSTOMER = {
   },
 };
 
-export const COLUMNS_LOT_EVENT = {
+export const COLUMNS_LOT_EVENT_FALSE = {
   publicLot: {
     title: 'Lote',
     type: 'number',
@@ -97,6 +98,39 @@ export const COLUMNS_LOT_EVENT = {
   },
 };
 
+export const COLUMNS_LOT_EVENT_TRUE = {
+  ...COLUMNS_LOT_EVENT_FALSE,
+  check: {
+    title: 'Procesar',
+    type: 'custom',
+    sort: false,
+    hide: false,
+    renderComponent: CheckboxElementComponent,
+    valuePrepareFunction: (isSelected: any, row: any) => {
+      return batchEventCheck.find((e: any) => e.row.lotId == row.lotId)
+        ? true
+        : false;
+    },
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        if (data.row.available) {
+          if (data.toggle) {
+            console.log(batchEventCheck);
+            batchEventCheck.push(data.row.lotId);
+          } else {
+            batchEventCheck = batchEventCheck.filter(valor => {
+              return valor != data.row.lotId;
+            });
+            console.log(batchEventCheck);
+          }
+        } else {
+          data.toggle = false;
+        }
+      });
+    },
+  },
+};
+
 export const COLUMNS_DESERT_LOTS = {
   lotPublic: {
     title: 'Lote',
@@ -110,6 +144,11 @@ export const COLUMNS_DESERT_LOTS = {
   },
 };
 
+function correctDate(date: string) {
+  const dateUtc = new Date(date);
+  return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
+}
+
 export const COLUMNS_CUSTOMER_BANKS = {
   movementNumber: {
     title: 'No. Movimiento',
@@ -120,6 +159,14 @@ export const COLUMNS_CUSTOMER_BANKS = {
     title: 'Lote',
     type: 'number',
     sort: false,
+  },
+  date: {
+    title: 'Fecha',
+    type: 'text',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return format(correctDate(cell), 'dd/MM/yyyy');
+    },
   },
   bankCode: {
     title: 'Banco',
@@ -183,7 +230,7 @@ export const COLUMNS_LOTS_BANKS = {
     sort: false,
   },
   paymentId: {
-    title: 'No.Pago',
+    title: 'No. Pago',
     type: 'number',
     sort: false,
   },
@@ -201,12 +248,12 @@ export const COLUMNS_PAYMENT_LOT = {
     sort: false,
   },
   vat: {
-    title: 'IVA',
+    title: 'Iva',
     type: 'number',
     sort: false,
   },
   amountNoAppVat: {
-    title: 'Monto no Aplica IVA',
+    title: 'Monto no Aplica Iva',
     type: 'number',
     sort: false,
   },

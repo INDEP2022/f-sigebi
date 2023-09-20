@@ -153,4 +153,67 @@ export class AuthorityService
     const route = `${AuthorityEndpoints.Sssubtipe}?filter.numClasifGoods=$eq:${id}`;
     return this.get(route);
   }
+
+  getTranfer(params?: ListParams | string): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.transferent}`;
+    return this.get(route, params);
+  }
+
+  getTranferId(id: number) {
+    const route = `${AuthorityEndpoints.transferent}?filter.id=$eq:${id}`;
+    return this.get(route);
+  }
+
+  getTranferIdandEmisora(
+    params?: ListParams | string
+  ): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.station}`;
+    return this.get(route, params);
+  }
+
+  getstationId(trasnfer: any, emisora: any) {
+    const route = `${AuthorityEndpoints.station}?filter.idTransferent=$eq:${trasnfer}&filter.id=$eq:${emisora}`;
+    return this.get(route);
+  }
+
+  getStrategyFormat(
+    params?: ListParams | string
+  ): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.getTdsau}`;
+    return this.get(route, params);
+  }
+
+  getAllUthorities(
+    params: ListParams | string,
+    params2: any
+  ): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.getAllAutoritiesV2}`;
+    return this.post(route, params2, params);
+  }
+
+  getAllDataQuery(
+    params: ListParams | string,
+    delegation: any
+  ): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.getDataQuery}?virDelegation=${delegation}`;
+    return this.get(route, params);
+  }
+
+  getAuthorities(
+    params: any,
+    Autority: any,
+    transferer: any,
+    station: any
+  ): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.getAllAutoritiesV2}?filter.idAuthority=$eq:${Autority}&filter.idTransferer=$eq:${transferer}&filter.idStation=$eq:${station}`;
+    return this.post(route, params);
+  }
+
+  getDataQuery(
+    delegation: any,
+    noWarehouse: any
+  ): Observable<IListResponse<any>> {
+    const route = `${AuthorityEndpoints.getDataQuery}?virDelegation=${delegation}&noWarehouse=${noWarehouse}`;
+    return this.get(route);
+  }
 }

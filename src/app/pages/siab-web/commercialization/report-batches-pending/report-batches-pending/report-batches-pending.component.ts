@@ -98,6 +98,14 @@ export class reportBatchesPendingComponent extends BasePage implements OnInit {
         this.evento = new DefaultSelect(resp.data, resp.count);
         console.log(this.evento);
       },
+      error: err => {
+        if (err.status === 400) {
+          this.alert('warning', 'No se encontraron registros', '');
+          this.evento = new DefaultSelect();
+          this.form.controls['event'].reset();
+        }
+        console.log(err);
+      },
     });
   }
 

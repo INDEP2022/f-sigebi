@@ -5,7 +5,7 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -24,6 +24,7 @@ import { AccountMovementService } from 'src/app/core/services/ms-account-movemen
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { MsMassivecapturelineService } from 'src/app/core/services/ms-massivecaptureline/ms-massivecaptureline.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
@@ -83,6 +84,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   loading2: boolean = false;
   @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   titleCarga: string = 'PAGOS REFERENCIADOS CARGADOS DESDE EL CSV';
+
   constructor(
     private fb: FormBuilder,
     private paymentService: PaymentService,
@@ -98,7 +100,8 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     private msMassivecapturelineService: MsMassivecapturelineService,
     private elementRef: ElementRef,
     private renderer: Renderer2,
-    private router: Router
+    private router: Router,
+    private lotService: LotService
   ) {
     super();
     this.settings = {
@@ -111,13 +114,28 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         delete: false,
         position: 'right',
       },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-4"></i>',
+      },
+      //
       columns: { ...COLUMNS },
     };
 
     this.settings2 = {
       ...this.settings,
       hideSubHeader: true,
-      actions: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        add: false,
+        delete: true,
+        position: 'right',
+      },
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-2" ></i>',
+      },
       columns: { ...COLUMNS_CARGADOS },
     };
   }
@@ -197,9 +215,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      event: [null],
+      event: [null, Validators.required],
       event_: [null],
-      bank: [null],
+      bank: [null, Validators.required],
       from: [null],
     });
 
@@ -216,21 +234,42 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     } else {
       this.valAcc = event;
     }
-    this.openForm(event, true, false);
+    this.openForm(event, true, false, false);
   }
   add() {
-    this.openForm(null, false, false);
+    this.openForm(null, false, false, false);
   }
 
-  openForm(data: any, editVal: boolean, valScroll: boolean) {
+  openForm(
+    data: any,
+    editVal: boolean,
+    valScroll: boolean,
+    valCargado: boolean,
+    dataTable?: any
+  ) {
     let config: ModalOptions = {
       initialState: {
         data,
         edit: editVal,
         valScroll,
-        callback: (next: boolean) => {
+        valCargado,
+        dataTable,
+        callback: async (next: boolean, dataUpdate: any) => {
           if (next) {
-            this.getPayments('no');
+            if (this.cargado2) {
+              if (editVal) {
+                await this.updatePagoCargado(null, dataUpdate);
+                this.valAccCargado = null;
+              } else {
+                this.dataCargada.add(dataUpdate);
+                this.dataCargada.setSort([
+                  { field: 'paymentId', direction: 'asc' },
+                ]);
+                this.dataCargada.refresh();
+              }
+            } else {
+              this.getPayments('no');
+            }
           }
         },
       },
@@ -243,15 +282,15 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   questionDelete(data: any) {
     console.log(data);
     this.alertQuestion(
-      'warning',
-      'Eliminar',
-      '¿Desea eliminar este registro?'
+      'question',
+      'Se eliminará el registro',
+      '¿Desea continuar?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
         this.paymentService.remove(data.paymentId).subscribe({
           next: response => {
-            this.alert('success', 'El Registro se Eliminó Correctamente', '');
+            this.alert('success', 'El registro se eliminó correctamente', '');
             this.getPayments('no');
           },
           error: error => {
@@ -261,13 +300,13 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             ) {
               this.alert(
                 'error',
-                'Ocurrió un Error al Eliminar el Registro',
-                'Tiene Registros Relacionados en Otras Tablas'
+                'Ocurrió un error al eliminar el registro',
+                'Tiene registros relacionados en otras tablas'
               );
             } else {
               this.alert(
                 'error',
-                'Ocurrió un Error al Eliminar el Registro',
+                'Ocurrió un error al eliminar el registro',
                 ''
               );
             }
@@ -369,7 +408,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         console.log(response);
         if (response.count == 0) {
           if (filter == 'si') {
-            this.alert('warning', 'No se Encontraron Resultados', '');
+            this.alert('warning', 'No se encontraron resultados', '');
           }
           this.data.load([]);
           this.data.refresh();
@@ -388,7 +427,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
               : null;
 
             item['bankAndNumber'] = item.ctrl
-              ? item.ctrl.code + ' - ' + item.ctrl.cveBank
+              ? item.ctrl.code + ' - ' + item.bankKey
               : null;
             item['descriptionSAT'] = item.satInfo
               ? item.satInfo.description
@@ -411,7 +450,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.totalItems = 0;
         if (filter == 'si') {
-          this.alert('warning', 'No se Encontraron Resultados', '');
+          this.alert('warning', 'No se encontraron resultados', '');
         }
         this.loading = false;
         this.valAcc = null;
@@ -431,7 +470,8 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         params.addFilter('id', lparams.text, SearchFilter.EQ);
       } else {
         console.log('NO');
-        params.addFilter('processKey', lparams.text, SearchFilter.ILIKE);
+        params.addFilter('id', lparams.text, SearchFilter.ILIKE);
+        // params.addFilter('processKey', lparams.text, SearchFilter.ILIKE);
       }
 
     params.addFilter('address', this.layout, SearchFilter.EQ);
@@ -458,8 +498,10 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    if (lparams?.text.length > 0)
+    if (lparams?.text.length > 0) {
       params.addFilter('bankCode', lparams.text, SearchFilter.ILIKE);
+      // params.addFilter('name', lparams.text, SearchFilter.OR);
+    }
     // if (!isNaN(parseInt(lparams?.text))) {
     //   console.log('SI');
     //   params.addFilter('code', lparams.text, SearchFilter.EQ);
@@ -515,6 +557,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     this.searchWithEvent = false;
     this.cargado2 = false;
     this.cargado = false;
+    this.settingColumns();
     this.getBanks(new ListParams());
     this.getComerEvents(new ListParams());
   }
@@ -523,27 +566,29 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     if (!this.eventSelected)
       return this.alert(
         'warning',
-        'Es Necesario Especificar un Evento para Realizar la Carga',
+        'Es necesario especificar un Evento para realizar la carga',
         ''
       );
 
-    if (!this.bankSelected) {
-      return this.alert(
-        'warning',
-        'Necesita Indicar de qué Banco va a Cargar Datos',
-        ''
-      );
-    }
     const respEvent: any = await this.getSelectFase(this.eventSelected.id);
 
     if (!respEvent) {
-      return this.alert('warning', 'El Evento no se Encuentra en una fase', '');
+      return this.alert('warning', 'El evento no se encuentra en una fase', '');
     } else {
+      // respEvent.phase
       if (respEvent.phase == 1) {
+        if (!this.bankSelected) {
+          return this.alert(
+            'warning',
+            'Necesita indicar de qué Banco va a cargar datos',
+            ''
+          );
+        }
+
         this.alertQuestion(
           'question',
-          'Carga de Pagos Fase: 1',
-          '¿Desea Continuar?'
+          'Carga de pagos fase: 1',
+          '¿Desea continuar?'
         ).then(async question => {
           if (question.isConfirmed) {
             // PUP_PROC_ANT;
@@ -554,31 +599,101 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       } else if (respEvent.phase == 2) {
         this.alertQuestion(
           'question',
-          'Carga de Pagos Fase: 2',
-          '¿Desea Continuar?'
+          'Carga de pagos fase: 2',
+          '¿Desea continuar?'
         ).then(async question => {
           if (question.isConfirmed) {
             // PUP_PROC_NUEVO;
-            this.titleCarga = 'PAGOS REFERENCIADOS CARGADOS';
             const pupNew: any = await this.PUP_PROC_NUEVO(
               this.eventSelected.id
             );
             if (pupNew.data == null) {
-              this.alert('error', 'Error al Realizar la Carga', '');
+              this.alert('error', 'Error al realizar la carga de pagos', '');
             } else {
               if (pupNew.data.length == 0) {
                 this.alert(
                   'warning',
-                  `No hay Pagos Pendientes del Evento: ${this.eventSelected.id}`,
+                  `No hay pagos pendientes del evento: ${this.eventSelected.id}`,
                   ''
                 );
               } else {
-                this.getPayments('no');
-                this.alert(
-                  'success',
-                  'Proceso Terminado, Referencias Cargadas Correctamente',
-                  ''
-                );
+                // this.getPayments('no');
+                // this.alert('success', 'Archivo Cargado Correctamente', '');
+                this.form2
+                  .get('BLK_CTRL_CUANTOS')
+                  .setValue(pupNew.BLK_CTRL_CUANTOS);
+                this.form2
+                  .get('BLK_CTRL_MONTO')
+                  .setValue(pupNew.BLK_CTRL_MONTO);
+
+                let arr: any = [];
+                let result = pupNew.COMER_PAGOREF.map(async (item: any) => {
+                  let obj: any = {
+                    movementNumber: item.COMER_PAGOREF_NO_MOVIMIENTO,
+                    date: item.COMER_PAGOREF_FECHA,
+                    move: item.COMER_PAGOREF_DESCPAGO,
+                    bill: null,
+                    referenceOri: item.COMER_PAGOREF_REFERENCIAORI,
+                    bankKey: item.COMER_PAGOREF_CVE_BANCO,
+                    branchOffice: item.COMER_PAGOREF_SUCURSAL,
+                    amount: item.COMER_PAGOREF_MONTO,
+                    result: item.COMER_PAGOREF_RESULTADO,
+                    validSistem: item.COMER_PAGOREF_VAL,
+                    paymentId: item.COMER_PAGOREF_ID,
+                    reference: item.COMER_PAGOREF_REFERENCIA,
+                    lotPub: null,
+                    event: null,
+                    entryOrderId: null,
+                    typeSatId: item.COMER_PAGOREF_ID_TIPO_SAT,
+                    code: item.COMER_PAGOREF_CODIGO,
+                    lotId: item.COMER_PAGOREF_ID_LOTE,
+                    inTimeNumber: null,
+                    type: null,
+                    paymentReturnsId: null,
+                    recordDate: item.COMER_PAGOREF_FECHA_REGISTRO,
+                    dateOi: null,
+                    appliedTo: null,
+                    clientId: null,
+                    folioOi: null,
+                    indicator: null,
+                    codeEdoCta: null,
+                    affectationDate: null,
+                    recordNumber: null,
+                    spentId: null,
+                    paymentRequestId: null,
+                    customers: null,
+                    bankAndNumber:
+                      item.COMER_PAGOREF_CODIGO +
+                      ' - ' +
+                      item.COMER_PAGOREF_CVE_BANCO,
+                  };
+                  const desc = await this.gettypeSatIdUpdate(
+                    item.COMER_PAGOREF_ID_TIPO_SAT
+                  );
+                  obj['descriptionSAT'] = !desc ? null : desc;
+                  arr.push(obj);
+                });
+
+                Promise.all(result).then(resp => {
+                  this.dataCargada.load(arr);
+                  this.dataCargada.setSort([
+                    { field: 'paymentId', direction: 'asc' },
+                  ]);
+                  this.dataCargada.refresh();
+                  console.log(this.dataCargada);
+                  // this.getPayments('no');
+                  this.cargado2 = true;
+                  this.cargado = true;
+                  setTimeout(() => {
+                    this.performScroll();
+                  }, 500);
+                  this.loadingBtn = false;
+                  this.alert(
+                    'success',
+                    'Proceso Terminado',
+                    'Referencias cargadas correctamente'
+                  );
+                });
               }
             }
           }
@@ -586,7 +701,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       } else {
         return this.alert(
           'warning',
-          'El Evento no se Encuentra en una fase',
+          'El Evento no se encuentra en una fase',
           ''
         );
       }
@@ -613,27 +728,21 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       if (cargaPagosCSV.status == 200) {
         const data = cargaPagosCSV.data;
         if (data.COMER_PAGOREF.length == 0) {
-          this.alert('warning', 'No se procesó ningún pago', 'Archivo Cargado');
+          this.alert('warning', 'No se procesó ningún pago', '');
           this.form2.get('BLK_CTRL_CUANTOS').setValue(data.BLK_CTRL_CUANTOS);
           this.form2.get('BLK_CTRL_MONTO').setValue(data.BLK_CTRL_MONTO);
           this.dataCargada.load([]);
           this.dataCargada.refresh();
-          this.getPayments('no');
+          // this.getPayments('no');
           this.cargado2 = true;
-          setTimeout(() => {
-            this.cargado = true;
-          }, 1000);
-
+          this.cargado = true;
           this.loadingBtn = false;
-          // BLK_CTRL_CUANTOS
-          // BLK_CTRL_MONTO
         } else {
-          this.alert('success', 'Archivo Cargado Correctamente', '');
           this.form2.get('BLK_CTRL_CUANTOS').setValue(data.BLK_CTRL_CUANTOS);
           this.form2.get('BLK_CTRL_MONTO').setValue(data.BLK_CTRL_MONTO);
 
           let arr: any = [];
-          let result = data.COMER_PAGOREF.map((item: any) => {
+          let result = data.COMER_PAGOREF.map(async (item: any) => {
             let obj: any = {
               movementNumber: item.COMER_PAGOREF_NO_MOVIMIENTO,
               date: item.COMER_PAGOREF_FECHA,
@@ -650,7 +759,6 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
               lotPub: null,
               event: null,
               entryOrderId: null,
-              descriptionSAT: null,
               typeSatId: item.COMER_PAGOREF_ID_TIPO_SAT,
               code: item.COMER_PAGOREF_CODIGO,
               lotId: item.COMER_PAGOREF_ID_LOTE,
@@ -674,33 +782,59 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
                 ' - ' +
                 item.COMER_PAGOREF_CVE_BANCO,
             };
+            obj.bill = await this.getBanksForCreateAndUpdate(
+              item.COMER_PAGOREF_CVE_BANCO
+            );
+            // DESCRIPCIÓN DEL PAGO SAT //
+            const desc = await this.gettypeSatIdUpdate(
+              item.COMER_PAGOREF_ID_TIPO_SAT
+            );
+            obj['descriptionSAT'] = !desc ? null : desc;
+
+            // SETEANDO LOS VALORES DE LOTE PÚBLICO Y EVENTO AL PAGO // (SÓLO PARA MOSTRAR EN LA TABLA)
+            const eventAndLotePublic: any = await this.getEventsAndLotePublic(
+              obj.lotId
+            );
+            if (eventAndLotePublic) {
+              obj.lotPub = eventAndLotePublic.lotPub;
+              obj.event = eventAndLotePublic.eventId;
+            } else {
+              obj.lotPub = null;
+              obj.event = null;
+            }
+
             arr.push(obj);
           });
 
           Promise.all(result).then(resp => {
-            // this.title = 'PAGOS REFERENCIADOS CARGADOS DESDE EL CSV'
             this.dataCargada.load(arr);
+            this.dataCargada.setSort([
+              { field: 'paymentId', direction: 'asc' },
+            ]);
             this.dataCargada.refresh();
-            this.getPayments('no');
+            console.log(this.dataCargada);
             this.cargado2 = true;
+            this.cargado = true;
             setTimeout(() => {
-              this.cargado = true;
-            }, 1000);
+              this.performScroll();
+            }, 500);
             this.loadingBtn = false;
+            this.alert('success', 'Archivo cargado correctamente', '');
           });
         }
         this.clearInput();
       } else {
-        this.alert('error', cargaPagosCSV.data, 'Verifique el Archivo');
+        this.alert('error', cargaPagosCSV.data, 'Verifique el archivo');
         this.dataCargada.load([]);
         this.dataCargada.refresh();
         this.clearInput();
+        this.cargado2 = false;
         this.loadingBtn = false;
       }
 
       this.clearInput();
     } catch (error) {
-      this.alert('error', 'Ocurrió un Error al Leer el Archivo', 'Error');
+      this.alert('error', 'Ocurrió un error al leer el archivo', '');
     }
   }
 
@@ -730,7 +864,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             error.error.message ==
             'duplicate key value violates unique constraint "unique_pago"'
           ) {
-            message = 'Ha Ocurrido un Error, Se han Detectado Pagos Duplicados';
+            message = 'Ha Ocurrido un error, se han detectado pagos duplicados';
           }
           let obj: any = {
             status: error.status,
@@ -781,7 +915,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   async ratificar() {
     console.log(this.valAcc);
     if (!this.valAcc) {
-      this.alert('warning', 'Debe Seleccionar un Pago', '');
+      this.alert('warning', 'Debe seleccionar un pago', '');
       return;
     }
 
@@ -814,14 +948,14 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             result: 'Referencia Invalida',
           };
           await this.updatePago(this.valAcc.paymentId, requestBody);
-          this.alert('warning', 'El Movimiento sigue por Ratificarse', '');
+          this.alert('warning', 'El movimiento sigue por ratificarse', '');
         } else {
           // if (comerLotes.length > 1) {
           this.alert(
             'warning',
             'Referencia: ' +
               this.valAcc.reference +
-              ', Repetida en otro Evento ',
+              ', repetida en otro evento ',
             ''
           );
 
@@ -853,16 +987,16 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       } else if (LLL.reject == 'S') {
         // GO_BLOCK('BLK_DEVO');
         L_IMPORTE = this.valAcc.amount;
-        this.openFormList(this.valAcc, L_IMPORTE);
+        this.openFormList(this.valAcc, L_IMPORTE, false);
       } else {
         // GO_BLOCK('BLK_AUXREF');
-        this.openFormList2(this.valAcc, this.valAcc.reference, false);
+        this.openFormList2(this.valAcc, this.valAcc.reference, false, false);
       }
       console.log('LLL', LLL);
     } else {
       this.alert(
         'warning',
-        'El Movimiento ya no Puede Modificarse, ya fue Asignado',
+        'El movimiento ya no puede modificarse, ya fue asignado',
         ''
       );
       return;
@@ -879,6 +1013,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       },
     });
   }
+
   async getPaymentControl(bankKey: any, idCode: any) {
     const params = new ListParams();
     params['filter.cveBank'] = `$eq:${bankKey}`;
@@ -895,6 +1030,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       });
     });
   }
+
   async getFcomerC3(params: any) {
     return new Promise((resolve, reject) => {
       this.paymentService.getFcomerC3(params).subscribe({
@@ -921,14 +1057,32 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   }
 
   // GO_BLOCK('BLK_DEVO');
-  openFormList(dataParams: any, L_IMPORTE: any) {
+  openFormList(dataParams: any, L_IMPORTE: any, valCargado: boolean) {
     let config: ModalOptions = {
       initialState: {
         dataParams,
         L_IMPORTE,
-        callback: (next: boolean) => {
+        valCargado,
+        callback: async (next: boolean, dataUpdate?: any) => {
           if (next) {
-            this.getPayments('no');
+            if (this.cargado2) {
+              // SETEANDO LOS VALORES DE LOTE PÚBLICO Y EVENTO AL PAGO // (SÓLO PARA MOSTRAR EN LA TABLA)
+              const eventAndLotePublic: any = await this.getEventsAndLotePublic(
+                dataUpdate.lotId
+              );
+              if (eventAndLotePublic) {
+                dataUpdate.lotPub = eventAndLotePublic.lotPub;
+                dataUpdate.event = eventAndLotePublic.eventId;
+              } else {
+                dataUpdate.lotPub = null;
+                dataUpdate.event = null;
+              }
+
+              await this.updatePagoCargado(null, dataUpdate);
+              this.valAccCargado = null;
+            } else {
+              this.getPayments('no');
+            }
           }
         },
       },
@@ -939,15 +1093,26 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   }
 
   // GO_BLOCK('BLK_AUXREF');
-  openFormList2(dataParams: any, REFERENCIA: any, valRef: boolean) {
+  openFormList2(
+    dataParams: any,
+    REFERENCIA: any,
+    valRef: boolean,
+    valCargado: boolean
+  ) {
     let config: ModalOptions = {
       initialState: {
         dataParams,
         REFERENCIA,
         valRef,
-        callback: (next: boolean) => {
+        valCargado,
+        callback: async (next: boolean, dataUpdate?: any) => {
           if (next) {
-            this.getPayments('no');
+            if (this.cargado2) {
+              await this.updatePagoCargado(null, dataUpdate);
+              this.valAccCargado = null;
+            } else {
+              this.getPayments('no');
+            }
           }
         },
       },
@@ -959,19 +1124,30 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
   referencia() {
     console.log(this.valAcc);
-    this.openFormList3(this.valAcc, this.valAcc.reference, true);
+    this.openFormList3(this.valAcc, this.valAcc.reference, true, false);
   }
 
   // GO_BLOCK('BLK_AUXREF');
-  openFormList3(dataParams: any, REFERENCIA: any, valRef: boolean) {
+  openFormList3(
+    dataParams: any,
+    REFERENCIA: any,
+    valRef: boolean,
+    valCargado: boolean
+  ) {
     let config: ModalOptions = {
       initialState: {
         dataParams,
         REFERENCIA,
         valRef,
-        callback: (next: boolean) => {
+        valCargado,
+        callback: async (next: boolean, dataUpdate?: any) => {
           if (next) {
-            this.getPayments('no');
+            if (this.cargado2) {
+              await this.updatePagoCargado(null, dataUpdate);
+              this.valAccCargado = null;
+            } else {
+              this.getPayments('no');
+            }
           }
         },
       },
@@ -982,13 +1158,14 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   }
 
   pago() {
-    this.openForm(this.valAcc, true, true);
+    this.openForm(this.valAcc, true, true, false);
   }
 
   eventSelected: any = null;
   setValuesFormEvent(event?: any) {
     this.eventSelected = event;
   }
+
   bankSelected: any = null;
   setValuesFormBank(event: any) {
     console.log('event', event);
@@ -1007,11 +1184,12 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   async refresh() {
     await this.clearSubheaderFields();
     this.searchWithEvent = false;
-    this.form2.reset();
+    // this.form2.reset();
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getPayments('no'));
   }
+
   goBack() {
     this.router.navigateByUrl(
       '/pages/commercialization/payment-dispersion-monitor'
@@ -1023,5 +1201,317 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     const filterConf = subheaderFields.filterConf;
     filterConf.filters = [];
     this.columnFilters = [];
+  }
+
+  async saveCarga() {
+    if (this.dataCargada.count() == 0) {
+      return this.alert('warning', 'No hay registros para guardar', '');
+    }
+    this.alertQuestion(
+      'question',
+      'Se guardarán los Pagos Referenciados cargados',
+      '¿Desea Continuar?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        const data: any = await this.dataGet();
+        let result = data.map(async (item: any) => {
+          console.log('item', item);
+          // item.recordDate = new Date();
+          delete item.descriptionSAT;
+          delete item.bankAndNumber;
+          await this.saveRegister(item);
+        });
+
+        Promise.all(result).then(resp => {
+          this.alert('success', 'Registros guardados correctamente', '');
+          this.form2.reset();
+          this.settingColumns();
+          this.dataCargada.load([]);
+          this.dataCargada.setSort([{ field: 'paymentId', direction: 'asc' }]);
+          this.dataCargada.refresh();
+          this.getPayments('no');
+          this.cargado2 = false;
+          this.cargado = false;
+        });
+      }
+    });
+  }
+
+  dataGet() {
+    return this.dataCargada.getAll();
+  }
+  async saveRegister(requestBody: any) {
+    return new Promise((resolve, reject) => {
+      this.paymentService.create(requestBody).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+  editCargado(event: any) {
+    console.log('aaa', event);
+    // if (event == this.valAccCargado) {
+    //   this.valAccCargado = null;
+    // } else {
+    this.valAccCargado = event;
+    // }
+    this.openForm(event, true, false, true);
+  }
+
+  addCargado() {
+    this.openForm(null, false, false, true, this.dataCargada);
+  }
+
+  valAccCargado: any = null;
+  rowsSelectedCargado(event: any) {
+    console.log('event.data', event.data);
+    if (event.data == this.valAccCargado) {
+      this.valAccCargado = null;
+    } else {
+      this.valAccCargado = event.data;
+    }
+  }
+
+  referenciaCargado() {
+    console.log(this.valAccCargado);
+    this.openFormList3(
+      this.valAccCargado,
+      this.valAccCargado.reference,
+      true,
+      true
+    );
+  }
+
+  async ratificarCargado() {
+    console.log(this.valAccCargado);
+    if (!this.valAccCargado) {
+      this.alert('warning', 'Debe seleccionar un pago', '');
+      return;
+    }
+
+    let L_LOTE: any = 0;
+    let L_PUBLICO: any = 0;
+    let L_IMPORTE: any = null;
+    if (!this.valAccCargado.entryOrderId) {
+      const LLL: any = await this.getPaymentControl(
+        this.valAccCargado.bankKey,
+        this.valAccCargado.code
+      );
+      if (LLL.reject == 'N') {
+        const comerLotes: any = await this.getFcomerC3(
+          this.valAccCargado.reference
+        );
+        if (comerLotes.count == 0) {
+          L_LOTE = 0;
+          this.valAccCargado.lotId = null;
+          this.valAccCargado.validSistem = 'R';
+          this.valAccCargado.result = 'Referencia Invalida';
+          // const requestBody: any = {
+          //   paymentId: this.valAccCargado.paymentId,
+          //   lotId: null,
+          //   validSistem: 'R',
+          //   result: 'Referencia Invalida',
+          // };
+          const eventAndLotePublic: any = await this.getEventsAndLotePublic(
+            this.valAccCargado.lotId
+          );
+          if (eventAndLotePublic) {
+            this.valAccCargado.lotPub = eventAndLotePublic.lotPub;
+            this.valAccCargado.event = eventAndLotePublic.eventId;
+          } else {
+            this.valAccCargado.lotPub = null;
+            this.valAccCargado.event = null;
+          }
+          await this.updatePagoCargado(
+            this.valAccCargado.paymentId,
+            this.valAccCargado
+          );
+          this.alert('warning', 'El movimiento sigue por ratificarse', '');
+        } else {
+          // if (comerLotes.length > 1) {
+          this.alert(
+            'warning',
+            'Referencia: ' +
+              this.valAccCargado.reference +
+              ', repetida en otro Evento ',
+            ''
+          );
+
+          const comerLotesAndEvent: any = await this.getFcomerC4(
+            this.valAccCargado.reference
+          );
+
+          L_LOTE = comerLotesAndEvent.maxidlote;
+          L_PUBLICO = comerLotesAndEvent.maxlotpub;
+        }
+
+        if (L_LOTE > 0 && L_PUBLICO != 0) {
+          this.valAccCargado.lotId = L_LOTE;
+          this.valAccCargado.validSistem = 'A';
+          this.valAccCargado.result = 'Referencia Valida';
+          // const requestBody: any = {
+          //   paymentId: this.valAccCargado.paymentId,
+          //   lotId: L_LOTE,
+          //   validSistem: 'A',
+          //   result: 'Referencia Valida',
+          // };
+          const eventAndLotePublic: any = await this.getEventsAndLotePublic(
+            this.valAccCargado.lotId
+          );
+          if (eventAndLotePublic) {
+            this.valAccCargado.lotPub = eventAndLotePublic.lotPub;
+            this.valAccCargado.event = eventAndLotePublic.eventId;
+          } else {
+            this.valAccCargado.lotPub = null;
+            this.valAccCargado.event = null;
+          }
+          await this.updatePagoCargado(
+            this.valAccCargado.paymentId,
+            this.valAccCargado
+          );
+        } else if (L_LOTE > 0 && L_PUBLICO == 0) {
+          this.valAccCargado.lotId = L_LOTE;
+          this.valAccCargado.validSistem = 'B';
+          this.valAccCargado.result = 'Referencia Pago Bases';
+
+          const eventAndLotePublic: any = await this.getEventsAndLotePublic(
+            this.valAccCargado.lotId
+          );
+          if (eventAndLotePublic) {
+            this.valAccCargado.lotPub = eventAndLotePublic.lotPub;
+            this.valAccCargado.event = eventAndLotePublic.eventId;
+          } else {
+            this.valAccCargado.lotPub = null;
+            this.valAccCargado.event = null;
+          }
+
+          await this.updatePagoCargado(
+            this.valAccCargado.paymentId,
+            this.valAccCargado
+          );
+        }
+      } else if (LLL.reject == 'S') {
+        // GO_BLOCK('BLK_DEVO');
+        L_IMPORTE = this.valAccCargado.amount;
+        this.openFormList(this.valAccCargado, L_IMPORTE, true);
+      } else {
+        // GO_BLOCK('BLK_AUXREF');
+        this.openFormList2(
+          this.valAccCargado,
+          this.valAccCargado.reference,
+          false,
+          true
+        );
+      }
+      console.log('LLL', LLL);
+    } else {
+      this.alert(
+        'warning',
+        'El movimiento ya no puede modificarse, ya fue asignado',
+        ''
+      );
+      return;
+    }
+  }
+
+  pagoCargado() {
+    this.openForm(this.valAccCargado, true, true, true);
+  }
+
+  async updatePagoCargado(paymentId: any, requestBody: any) {
+    const selectedRow = requestBody;
+    this.dataCargada.update(this.valAccCargado, selectedRow).then(() => {
+      console.log('Registro actualizado:', selectedRow);
+    });
+    this.dataCargada.setSort([{ field: 'paymentId', direction: 'asc' }]);
+    this.dataCargada.refresh();
+  }
+
+  async gettypeSatIdUpdate(id: any) {
+    if (!id) return null;
+    const params = new FilterParams();
+
+    params.addFilter('idType', id, SearchFilter.EQ);
+
+    return new Promise((resolve, reject) => {
+      this.accountMovementService
+        .getPaymentTypeSat(params.getParams())
+        .subscribe({
+          next: response => {
+            // let result = response.data.map(item => {
+            //   item['descriptionSAT'] = item.description;
+            // });
+            // Promise.all(result).then(item => {
+            resolve(response.data[0].description);
+            // })
+          },
+          error: err => {
+            resolve(null);
+          },
+        });
+    });
+  }
+  questionDeleteCargada(data: any) {
+    console.log(data);
+    this.alertQuestion(
+      'question',
+      'Se eliminará el registro',
+      '¿Desea continuar?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.dataCargada.remove(data);
+        this.dataCargada.refresh();
+        this.valAccCargado = null;
+        this.alert('success', 'El registro se eliminó correctamente', '');
+      }
+    });
+  }
+
+  async getEventsAndLotePublic(lot: any) {
+    if (!lot) return null;
+    const params = new FilterParams();
+    params.addFilter('idLot', lot, SearchFilter.EQ);
+    return new Promise((resolve, reject) => {
+      this.lotService.getLotbyEvent_(params.getParams()).subscribe({
+        next: data => {
+          resolve(data.data[0]);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  settingColumns() {
+    this.settings.columns = COLUMNS;
+    this.settings2.columns = COLUMNS_CARGADOS;
+  }
+
+  async getBanksForCreateAndUpdate(bankCode: any) {
+    console.log('bankCode', bankCode);
+    if (!bankCode) return null;
+
+    const params = new FilterParams();
+    params.addFilter('bankCode', bankCode, SearchFilter.EQ);
+    return new Promise((resolve, reject) => {
+      this.bankService.getAll_(params.getParams()).subscribe({
+        next: response => {
+          if (!response.data[0].bankAccount) {
+            resolve(null);
+          } else {
+            resolve(response.data[0].bankAccount.cveAccount);
+          }
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
   }
 }

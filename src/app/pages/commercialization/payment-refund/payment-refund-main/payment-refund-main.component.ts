@@ -10,6 +10,8 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { PaymentDevolutionService } from 'src/app/core/services/ms-paymentdevolution/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { TableCheckboxComponent } from '../../massive-conversion/components/table-checkbox/table-checkbox.component';
@@ -67,6 +69,15 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   totalBank: number = 0;
   testDataBank: any[] = [];
   columnFiltersBank: any = [];
+  // Control Bank
+  dataTableBankAccount: LocalDataSource = new LocalDataSource();
+  dataTableParamsBankAccount = new BehaviorSubject<ListParams>(
+    new ListParams()
+  );
+  loadingBankAccount: boolean = false;
+  totalBankAccount: number = 0;
+  testDataBankAccount: any[] = [];
+  columnFiltersBankAccount: any = [];
   //
   controlForm: FormGroup = new FormGroup({});
   selectedAccounts: any[] = [];
@@ -84,6 +95,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   eventTotalItems: number = 0;
   accountTotalItems: number = 0;
   paymentTotalItems: number = 0;
+  totalAmountAccount: number = 0;
   controlColumns: any[] = [];
   eventColumns: any[] = [];
   accountColumns: any[] = [];
@@ -102,170 +114,21 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     ...TABLE_SETTINGS,
     actions: false,
     // selectMode: 'multi',
+    hideSubHeader: false,
   };
   paymentSettings = {
     ...TABLE_SETTINGS,
     actions: false,
+    hideSubHeader: false,
   };
-
-  controlTestData = [
-    {
-      id: 100,
-      key: 'LP DE MUEBLES 07/18',
-      status: 'PROC',
-      dispersion: 'M',
-      dispersionType: 'Por Cliente',
-      origin: 'Ganadores',
-      createDate: '02/08/2019',
-      endDate: '07/11/2019',
-    },
-    {
-      id: 101,
-      key: 'SMM 07/18',
-      status: 'PROC',
-      dispersion: 'M',
-      dispersionType: 'Por Cliente',
-      origin: 'Ganadores',
-      createDate: '02/08/2019',
-      endDate: '07/11/2019',
-    },
-    {
-      id: 102,
-      key: 'LP DE MUEBLES 07/18',
-      status: 'PROC',
-      dispersion: 'M',
-      dispersionType: 'Por Cliente',
-      origin: 'Ganadores',
-      createDate: '02/08/2019',
-      endDate: '07/11/2019',
-    },
-  ];
-
-  eventTestData = [
-    {
-      id: 17268,
-      cve: 'LP DE MUEBLES 07/18',
-      quantity: 4,
-      amount: 543950,
-    },
-    {
-      id: 17269,
-      cve: 'SMM 07/18',
-      quantity: 5,
-      amount: 516349,
-    },
-  ];
-
-  accountTestData = [
-    {
-      status: 'FIS',
-      cve: 'BANAMEX PS',
-      account: '7007-1894728',
-      quantity: 67,
-      amount: 335000,
-      expenseId: 20397,
-      paymentId: 10137,
-      folioNumber: 13475,
-      paymentDate: '04/09/2021',
-      checkNumber: 1649821,
-      observations: 'OBSERVATIONS TEST DATA',
-    },
-    {
-      status: 'CNT',
-      cve: 'BANCOM PS',
-      account: '1317652',
-      quantity: 186,
-      amount: 930000,
-      expenseId: 20398,
-      paymentId: 10138,
-      folioNumber: 13476,
-      paymentDate: '04/09/2021',
-      checkNumber: 1649822,
-      observations: 'OBSERVATIONS TEST DATA',
-    },
-    {
-      status: 'PTO',
-      cve: 'HSBC PS',
-      account: '4047451869',
-      quantity: 37,
-      amount: 185000,
-      expenseId: 20399,
-      paymentId: 10139,
-      folioNumber: 13477,
-      paymentDate: '04/09/2021',
-      checkNumber: 1649823,
-      observations: 'OBSERVATIONS TEST DATA',
-    },
-    {
-      status: 'TSR',
-      cve: 'SANTAND PS',
-      account: '655034287821',
-      quantity: 2,
-      amount: 10000,
-      expenseId: 20400,
-      paymentId: 10140,
-      folioNumber: 13478,
-      paymentDate: '04/09/2021',
-      checkNumber: 1649824,
-      observations: 'OBSERVATIONS TEST DATA',
-    },
-  ];
-
-  paymentTestData = [
-    {
-      validKey: 'true',
-      transferDate: '04/09/2019',
-      id: 228378,
-      date: '06/07/2018',
-      reference: '15357800199706897572',
-      amount: 5000,
-      batch: 13,
-      clientId: 53578,
-      rfc: 'LUN1618KT91',
-      name: 'IGNACIO MORALES',
-      crossBankKey: 'AEF118BNT64',
-      keyAuthorization: 'VORTEGA',
-      keyChangeObservations: 'OBSERVATIONS TEST DATA',
-      transferDateObservations: 'OBSERVATIONS TEST DATA',
-    },
-    {
-      validKey: 'false',
-      transferDate: '',
-      id: 228379,
-      date: '06/07/2018',
-      reference: '10663200199706897579',
-      amount: 5000,
-      batch: 13,
-      clientId: 6632,
-      rfc: 'LUN1618KT341',
-      name: 'JULIO PALACIOS',
-      crossBankKey: 'AEF118B13PL0',
-      keyAuthorization: 'VORTEGA',
-      keyChangeObservations: 'OBSERVATIONS TEST DATA',
-      transferDateObservations: 'OBSERVATIONS TEST DATA',
-    },
-    {
-      validKey: 'true',
-      transferDate: '04/09/2019',
-      id: 228380,
-      date: '06/07/2018',
-      reference: '15566200199706897593',
-      amount: 5000,
-      batch: 13,
-      clientId: 53579,
-      rfc: 'LUN16GH210ED',
-      name: 'GRACIELA MEJIA',
-      crossBankKey: 'AEF1645RDNIO99',
-      keyAuthorization: 'VORTEGA',
-      keyChangeObservations: 'OBSERVATIONS TEST DATA',
-      transferDateObservations: 'OBSERVATIONS TEST DATA',
-    },
-  ];
+  tokenData: any;
 
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private svPaymentDevolutionService: PaymentDevolutionService
+    private svPaymentDevolutionService: PaymentDevolutionService,
+    private svPaymentService: PaymentService,
+    private authService: AuthService
   ) {
     super();
     this.controlSettings.columns = REFUND_CONTROL_COLUMNS;
@@ -287,6 +150,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     //     renderComponent: CheckValidKeyComponent,
     //   },
     // };
+    this.tokenData = this.authService.decodeToken();
     this.eventsTotalQuantity = 0;
     this.eventsTotalAmount = 0;
     this.prepareForm();
@@ -294,6 +158,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     this.loadingDataTableControl();
     this.loadingDataTableRelationEvent();
     this.loadingDataTableBank();
+    this.loadingDataTableBankAccount();
   }
 
   private prepareForm(): void {
@@ -309,7 +174,6 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     this.accountTotalItems = 0;
     this.paymentColumns = [];
     this.paymentTotalItems = 0;
-    this.controlColumns = this.controlTestData;
     this.controlTotalItems = this.controlColumns.length;
   }
 
@@ -407,26 +271,26 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   }
 
   selectControl(rows: any[]) {
-    this.eventColumns = this.eventTestData;
-    this.eventTotalItems = this.eventColumns.length;
-    this.eventsTotalQuantity = this.getTotalQuantity(this.eventColumns);
-    this.eventsTotalAmount = this.getTotalAmount(this.eventColumns);
-    this.refundTabs.tabs[0].active = true;
-    let { x, y } = this.tabsContainer.nativeElement.getBoundingClientRect();
-    y = y - 300;
-    window.scrollTo(x, y);
+    // this.eventColumns = this.eventTestData;
+    // this.eventTotalItems = this.eventColumns.length;
+    // this.eventsTotalQuantity = this.getTotalQuantity(this.eventColumns);
+    // this.eventsTotalAmount = this.getTotalAmount(this.eventColumns);
+    // this.refundTabs.tabs[0].active = true;
+    // let { x, y } = this.tabsContainer.nativeElement.getBoundingClientRect();
+    // y = y - 300;
+    // window.scrollTo(x, y);
   }
 
   selectRelatedEvent(rows: any[]) {
-    this.accountColumns = this.accountTestData;
-    this.accountColumns = this.modifyStatus(this.accountColumns);
-    this.accountTotalItems = this.accountColumns.length;
-    this.accountsTotalQuantity = this.getTotalQuantity(this.accountColumns);
-    this.accountsTotalAmount = this.getTotalAmount(this.accountColumns);
-    this.paymentColumns = this.paymentTestData;
-    this.paymentTotalItems = this.paymentColumns.length;
-    this.paymentsTotalAmount = this.getTotalAmount(this.paymentColumns);
-    this.refundTabs.tabs[1].active = true;
+    // // this.accountColumns = this.accountTestData;
+    // this.accountColumns = this.modifyStatus(this.accountColumns);
+    // this.accountTotalItems = this.accountColumns.length;
+    // this.accountsTotalQuantity = this.getTotalQuantity(this.accountColumns);
+    // this.accountsTotalAmount = this.getTotalAmount(this.accountColumns);
+    // // this.paymentColumns = this.paymentTestData;
+    // this.paymentTotalItems = this.paymentColumns.length;
+    // this.paymentsTotalAmount = this.getTotalAmount(this.paymentColumns);
+    // this.refundTabs.tabs[1].active = true;
   }
 
   selectAccounts(rows: any[]) {
@@ -438,9 +302,9 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
   }
 
   refreshAccountsPayments() {
-    this.accountColumns = this.accountTestData;
+    // this.accountColumns = this.accountTestData;
     this.accountTotalItems = this.accountColumns.length;
-    this.paymentColumns = this.paymentTestData;
+    // this.paymentColumns = this.paymentTestData;
     this.paymentTotalItems = this.paymentColumns.length;
   }
 
@@ -455,8 +319,35 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
     this.layout = 'MAIN';
   }
 
-  openControlModal() {
+  getComerCreationData() {
+    if (!this.tokenData) {
+      this.alert(
+        'warning',
+        'Datos usuario actual',
+        'Error al obtener la información del usuario actual'
+      );
+      return;
+    }
+    this.svPaymentDevolutionService
+      .getEatCtlCreate(this.tokenData.preferred_username)
+      .subscribe({
+        next: (res: any) => {
+          console.log('DATA Control Modal', res);
+          this.openControlModal(res.data.indGuarantee, res.data.inddisp);
+        },
+        error: error => {
+          console.log(error);
+          this.openControlModal(1, 1);
+        },
+      });
+  }
+
+  openControlModal(ind_garant: number, ind_disp: number) {
     const modalRef = this.modalService.show(CreateControlModalComponent, {
+      initialState: {
+        ind_garant,
+        ind_disp,
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
@@ -563,7 +454,7 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
           ? '$eq:PROC'
           : this.controlForm.get('filter').value == 'C'
           ? '$eq:CONC'
-          : '$null'
+          : '$ilike:'
       }`;
     }
     // this.columnFiltersControl['filter.creationdate'] = `$order:desc`;
@@ -690,8 +581,13 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              eventId: () => (searchFilter = SearchFilter.EQ),
-              numPayments: () => (searchFilter = SearchFilter.EQ),
+              cveBank: () => (searchFilter = SearchFilter.ILIKE),
+              account: () => (searchFilter = SearchFilter.EQ),
+              countPayments: () => (searchFilter = SearchFilter.EQ),
+              idwaste: () => (searchFilter = SearchFilter.EQ),
+              idCtldevpag: () => (searchFilter = SearchFilter.EQ),
+              numberInvoicePay: () => (searchFilter = SearchFilter.EQ),
+              numberCheck: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
 
@@ -720,24 +616,99 @@ export class PaymentRefundMainComponent extends BasePage implements OnInit {
       ...this.dataTableParamsBank.getValue(),
       ...this.columnFiltersBank,
     };
-    this.svPaymentDevolutionService.getEatCtlPagE(params).subscribe({
+    this.svPaymentService.getCtlDevPagBfindAllRegistersV2(params).subscribe({
       next: (res: any) => {
         console.log('DATA Bank', res);
-        this.testDataBank = res.data;
+        this.testDataBank = res.data.map((i: any) => {
+          i['_fis'] = i.indfis;
+          i['_cnt'] = i.indcnt;
+          i['_pto'] = i.indpt;
+          i['_tsr'] = i.indtsr;
+          return i;
+        });
         this.dataTableBank.load(this.testDataBank);
-        this.totalBank = res.count;
-        this.eventsTotalQuantity = res.numPaymentsTotal;
-        this.eventsTotalAmount = res.paymentsAmountTotal;
+        this.accountTotalItems = res.count;
+        this.accountsTotalQuantity = res.totalCountPayments;
+        this.accountsTotalAmount = res.totalAmountPayments;
         this.loadingBank = false;
       },
       error: error => {
         console.log(error);
         this.testDataBank = [];
         this.dataTableBank.load([]);
-        this.totalBank = 0;
-        this.eventsTotalQuantity = 0;
-        this.eventsTotalAmount = 0;
+        this.accountTotalItems = 0;
+        this.accountsTotalQuantity = 0;
+        this.accountsTotalAmount = 0;
         this.loadingBank = false;
+      },
+    });
+  }
+
+  loadingDataTableBankAccount() {
+    //Filtrado por columnas
+    this.dataTableBankAccount
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              eventId: () => (searchFilter = SearchFilter.EQ),
+              numPayments: () => (searchFilter = SearchFilter.EQ),
+            };
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFiltersBankAccount[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersBankAccount[field];
+            }
+          });
+          this.dataTableParamsBankAccount = this.pageFilter(
+            this.dataTableParamsBankAccount
+          );
+          //Su respectivo metodo de busqueda de datos
+          this.getBankAccountData();
+        }
+      });
+    //observador para el paginado
+    this.dataTableParamsBankAccount
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getBankAccountData());
+  }
+
+  getBankAccountData() {
+    this.loadingBankAccount = true;
+    let params = {
+      ...this.dataTableParamsBankAccount.getValue(),
+      ...this.columnFiltersBankAccount,
+    };
+    // CONSULTAR LA VISTA VW_COMER_CTLDEVPAG_P
+    this.svPaymentDevolutionService.getCtlDevPagP(params).subscribe({
+      next: (res: any) => {
+        console.log('DATA BankAccount', res);
+        this.testDataBankAccount = res.data;
+        this.dataTableBankAccount.load(this.testDataBankAccount);
+        this.accountTotalItems = res.count;
+        this.totalAmountAccount = res.paymentsAmountTotal;
+        this.loadingBankAccount = false;
+      },
+      error: error => {
+        console.log(error);
+        this.testDataBankAccount = [];
+        this.dataTableBankAccount.load([]);
+        this.accountTotalItems = 0;
+        this.totalAmountAccount = 0;
+        this.loadingBankAccount = false;
       },
     });
   }

@@ -4,6 +4,9 @@ export const COLUMNS_OTHER_TRANS = {
   labelId: {
     title: 'Etiqueta',
     type: 'string',
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.description : '';
+    },
     sort: false,
   },
   status: {

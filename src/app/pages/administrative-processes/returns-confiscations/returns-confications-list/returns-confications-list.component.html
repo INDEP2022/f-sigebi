@@ -31,7 +31,7 @@
           <button
             class="btn btn-primary active btn-sm w-50"
             (click)="getExpedientById()">
-            Buscar
+            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
         <!--Records Shared Component-->
@@ -82,15 +82,29 @@
               </form-field>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-              <app-user-shared
+              <!-- <app-user-shared
                 [form]="formMA"
                 [userField]="'promoter'"
-                [label]="'Promovente'"></app-user-shared>
+                [label]="'Promovente'"></app-user-shared> -->
+
+              <form-field [control]="formMA.get('promoter')">
+                <ngx-select
+                  (fetchItems)="getAllSegUser1($event)"
+                  [data]="user1"
+                  [form]="formMA"
+                  value="user"
+                  bindLabel="name"
+                  label="Promovente"
+                  control="promoter"
+                  (change)="changeUser1($event)">
+                </ngx-select>
+              </form-field>
             </div>
             <div
               class="col d-flex justify-content-center mb-3 mt-3 align-items-center">
               <button
                 class="btn btn-primary active btn-sm w-50"
+                [disabled]="!this.formMA.valid"
                 (click)="massiveApplication()">
                 Aplicar
               </button>
@@ -99,9 +113,9 @@
         </form>
       </div>
     </div>
-    <!--COLUMNS-->
-    <div class="d-flex justify-content-between mr-1">
-      <!--Info Good-->
+    <!--COLUMNS -->
+    <div class="d-flex justify-content-end mr-1">
+      <!--Info Good
       <div class="col-lg-4 col-md-4 col-sm-12 col-12">
         <label for="">Estatus Bien</label>
         <div class="row mb-3 mt-3">
@@ -132,11 +146,13 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>-->
       <div class="align-self-end">
         <app-columns-select
+          class="mx-1"
           (settingsChange)="settingsChange($event)"
-          [settings]="settings">
+          [settings]="settings"
+          [leftList]="true">
         </app-columns-select>
       </div>
     </div>
@@ -145,10 +161,10 @@
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="data"
-            (editConfirm)="onSaveConfirm($event)"
+            (edit)="openModal($event.data)"
             (userRowSelect)="selectRow($event.data)">
           </ng2-smart-table>
         </div>
@@ -171,7 +187,7 @@
         <div class="mt-4">
           <h5 class="font-size-14 text-danger">
             <i class="bx bxs-circle me-1 text-danger"></i>
-            No disponible
+            No Disponible
           </h5>
         </div>
       </div>

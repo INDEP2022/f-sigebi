@@ -1259,6 +1259,7 @@ export class PerformProgrammingFormComponent
 
   stateSelect(state: IStateOfRepublic) {
     this.idState = Number(state.id);
+
     this.getWarehouseSelect(new ListParams());
     if (this.transferentId) this.getStations(new ListParams());
   }
@@ -1357,7 +1358,8 @@ export class PerformProgrammingFormComponent
   getAuthoritySelect(params?: ListParams) {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idTransferer'] = `$eq:${this.transferentId}`;
-    //params['filter.cveStatus'] = `$eq:${this.idState}`;
+    //params['filter.cveStatus'] = `$eq:${this.stateKey}`;
+    params['filter.cveStatus'] = `$eq:${this.idState}`;
     params['filter.idStation'] = `$eq:${this.idStation}`;
     params['sortBy'] = 'authorityName:ASC';
     delete params['search'];
@@ -1437,7 +1439,7 @@ export class PerformProgrammingFormComponent
     params['filter.stateKey'] = this.stateKey;
     this.municipalityService.getAll(params).subscribe({
       next: response => {
-        console.log('mun', response);
+       
         this.municipailitites = new DefaultSelect(
           response.data,
           response.count
@@ -1596,7 +1598,9 @@ export class PerformProgrammingFormComponent
               });
             }
           },
-          error: error => (this.loadingGoods = false),
+          error: error => {
+            this.loadingGoods = false;
+          },
         });
     }
 
@@ -2273,6 +2277,7 @@ export class PerformProgrammingFormComponent
           storeId: warehouse,
           status: 'VXP',
         };
+
         this.goodService.updateByBody(formData).subscribe({
           next: () => {
             resolve(true);
@@ -3020,6 +3025,7 @@ export class PerformProgrammingFormComponent
               city: this.performForm.get('city').value,
               observation: this.performForm.get('observation').value,
               regionalDelegationNumber: this.delegationId,
+              delregAttentionId: this.delegationId,
               stateKey: this.performForm.get('stateKey').value,
               tranferId: this.performForm.get('tranferId').value,
               startDate: _startDate,
@@ -3028,6 +3034,7 @@ export class PerformProgrammingFormComponent
               autorityId: this.performForm.get('autorityId').value,
               typeRelevantId: this.performForm.get('typeRelevantId').value,
               storeId: this.performForm.get('storeId').value,
+              folio: folio,
             };
 
             this.programmingGoodService

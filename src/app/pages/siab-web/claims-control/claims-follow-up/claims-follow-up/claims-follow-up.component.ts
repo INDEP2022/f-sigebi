@@ -109,7 +109,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           sort: false,
         },
         detallebienoafectadas: {
-          title: 'Det. Bien o Afectadas',
+          title: 'Detalle Bien o Partes Afectadas',
           type: 'string',
           sort: false,
         },
@@ -119,12 +119,12 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           sort: false,
         },
         fechareporteaseguradora: {
-          title: 'Fecha de Reporte de Aseguradora',
+          title: 'Fecha Reporte Aseguradora',
           type: 'string',
           sort: false,
         },
         fechareportecabi: {
-          title: 'Fecha de Reporte a la CAB',
+          title: 'Fecha Reporte CAB',
           type: 'string',
           sort: false,
         },
@@ -136,11 +136,39 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
         montoreclamado: {
           title: 'Monto Reclamado',
           sort: false,
+          valuePrepareFunction: (amount: string) => {
+            const numericAmount = parseFloat(amount);
+
+            if (!isNaN(numericAmount)) {
+              return numericAmount.toLocaleString('en-US', {
+                // style: 'currency',
+                // currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
+            } else {
+              return amount;
+            }
+          },
         },
         montoajustado: {
           title: 'Monto Ajustado',
           type: 'string',
           sort: false,
+          valuePrepareFunction: (amount: string) => {
+            const numericAmount = parseFloat(amount);
+
+            if (!isNaN(numericAmount)) {
+              return numericAmount.toLocaleString('en-US', {
+                // style: 'currency',
+                // currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
+            } else {
+              return amount;
+            }
+          },
         },
         deducible: {
           title: 'Deducible',
@@ -156,6 +184,20 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           title: 'Monto Indemnización',
           type: 'string',
           sort: false,
+          valuePrepareFunction: (amount: string) => {
+            const numericAmount = parseFloat(amount);
+
+            if (!isNaN(numericAmount)) {
+              return numericAmount.toLocaleString('en-US', {
+                // style: 'currency',
+                // currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
+            } else {
+              return amount;
+            }
+          },
         },
         formaconclusion: {
           title: 'Forma Conclusión',
@@ -336,7 +378,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       };
       this.vewReport(res);
     } else {
-      this.alert('warning', 'Oficio Conclusión', 'No se encontró documento');
+      this.alert('warning', 'Sin archivo seleccionado', '');
     }
   }
   seeOfficeMail(data: any) {
@@ -355,7 +397,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       };
       this.vewReport(res);
     } else {
-      this.alert('warning', 'Oficio Correo', 'No se encontró documento.');
+      this.alert('warning', 'Sin archivo seleccionado', '');
     }
   }
   seeClaimLetter(data: any) {
@@ -375,7 +417,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       };
       this.vewReport(res);
     } else {
-      this.alert('warning', 'Oficio Reclamación', 'No se encontró documento');
+      this.alert('warning', 'Sin archivo seleccionado', '');
     }
   }
   vewReport(res: any) {

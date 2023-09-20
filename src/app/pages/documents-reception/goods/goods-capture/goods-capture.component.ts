@@ -309,7 +309,7 @@ export class GoodsCaptureComponent
     this.assetsForm.markAllAsTouched();
     this.assetsForm.updateValueAndValidity();
     if (!this.assetsForm.valid) {
-      this.showError('El formulario no es válido!');
+      this.showError('El formulario no es válido');
       return;
     }
 
@@ -337,9 +337,9 @@ export class GoodsCaptureComponent
           }
           if (!conciliate) {
             const alert = await this.alertQuestion(
-              'info',
-              'Aviso',
-              'No existe ningún depósito para conciliar el numerario capturado,¿Desea capturarlo de todas maneras? '
+              'warning',
+              'Atención',
+              'No existe ningún movimiento relacionado para conciliar el numerario capturado ¿Desea continuar aún así? '
             );
 
             if (alert.isConfirmed) {

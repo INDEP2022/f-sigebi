@@ -10,4 +10,5 @@ export enum SpentEndpoints {
   V2Total = 'comer-payment-ref-gens/V2Total',
   PupObttotDevPenalizes = 'aplication/pup-obttot-dev-penalizes',
   FillExpenses = 'aplication/fill-expenses',
+  GetAllExpensesByFilter = 'aplication/query-spent',
 }

@@ -678,6 +678,7 @@ export class FormalizeProgrammingFormComponent
 
                 goodsInfoGuard.push(response);
                 this.goodsGuards.load(goodsInfoGuard);
+
                 this.totalItemsGuard = this.goodsGuards.count();
                 this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
               },
@@ -1340,18 +1341,133 @@ export class FormalizeProgrammingFormComponent
       typeDoc: typeDoc,
       actId: actId,
       programming: this.programming,
-      callback: (data: boolean, typeFirm: string) => {
+      callback: async (data: boolean, typeFirm: string) => {
         if (data) {
           this.getProccedings();
           this.proceeding.clear();
           this.totalItemsProceedings = 0;
           this.sendEmail();
+          const updateGoodReceiptStatus = await this.updateReceiptStatus();
+          if (updateGoodReceiptStatus) {
+            const updateGoodGuardStatus = await this.updateGuardStatus();
+            if (updateGoodGuardStatus) {
+              const updateGoodWarehouseStatus =
+                await this.updateWarehouseStatus();
+              if (updateGoodWarehouseStatus) {
+                const updateGoodReprogStatus = await this.updateReprogStatus();
+              }
+            }
+          }
           this.formLoading = false;
         }
       },
     };
 
     this.modalService.show(UploadReportReceiptComponent, config);
+  }
+
+  updateReceiptStatus() {
+    return new Promise((resolve, reject) => {
+      if (this.goodsRecepcion.count() > 0) {
+        this.goodsRecepcion.getElements().then((data: any) => {
+          data.map((item: any) => {
+            const formData: Object = {
+              id: item.id,
+              goodId: item.goodId,
+              status: 'ADM',
+            };
+            this.goodService.updateByBody(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {
+                resolve(true);
+              },
+            });
+          });
+        });
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
+  updateGuardStatus() {
+    return new Promise((resolve, reject) => {
+      if (this.goodsGuards.count() > 0) {
+        this.goodsGuards.getElements().then((data: any) => {
+          data.map((item: any) => {
+            const formData: Object = {
+              id: item.id,
+              goodId: item.goodId,
+              status: 'ADM',
+            };
+            this.goodService.updateByBody(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {
+                resolve(true);
+              },
+            });
+          });
+        });
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
+  updateWarehouseStatus() {
+    return new Promise((resolve, reject) => {
+      if (this.goodsWarehouse.count() > 0) {
+        this.goodsWarehouse.getElements().then((data: any) => {
+          data.map((item: any) => {
+            const formData: Object = {
+              id: item.id,
+              goodId: item.goodId,
+              status: 'ADM',
+            };
+            this.goodService.updateByBody(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {
+                resolve(true);
+              },
+            });
+          });
+        });
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
+  updateReprogStatus() {
+    return new Promise((resolve, reject) => {
+      if (this.goodsReprog.count() > 0) {
+        this.goodsReprog.getElements().then((data: any) => {
+          data.map((item: any) => {
+            const formData: Object = {
+              id: item.id,
+              goodId: item.goodId,
+              status: 'VXR',
+            };
+            this.goodService.updateByBody(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {
+                resolve(true);
+              },
+            });
+          });
+        });
+      } else {
+        resolve(true);
+      }
+    });
   }
 
   sendEmail() {
@@ -1429,6 +1545,7 @@ export class FormalizeProgrammingFormComponent
   }
 
   async confirm() {
+    //const sendGoodInventary = await this.sendGoodsGuardInventary();
     this.alertQuestion(
       'question',
       'Confirmación',
@@ -1454,6 +1571,7 @@ export class FormalizeProgrammingFormComponent
               if (updateProgramming) {
                 const sendGoodInventary = await this.sendGoodsGuardInventary();
                 if (sendGoodInventary) {
+                  const updateGoodStatus = await this.updateStatusGoodReceipt();
                   this.alertInfo(
                     'success',
                     'Acción correcta',
@@ -1492,6 +1610,14 @@ export class FormalizeProgrammingFormComponent
           },
         });
     });
+  }
+
+  updateStatusGoodReceipt() {
+    if (this.goodsRecepcion.count() > 0) {
+      this.goodsRecepcion.getElements().then(data => {
+        data.map((item: any) => {});
+      });
+    }
   }
 
   sendGoodsGuardInventary() {
@@ -1582,7 +1708,7 @@ export class FormalizeProgrammingFormComponent
           };
           this.taskService.update(taskInfo.id, body).subscribe({
             next: response => {
-              console.log('cerro la tarea de notificación', response);
+  
               resolve(true);
             },
             error: error => {
@@ -1797,6 +1923,7 @@ export class FormalizeProgrammingFormComponent
 
               goodsInfoRecep.push(response);
               this.goodsRecepcion.load(goodsInfoRecep);
+
               this.totalItemsReception = this.goodsRecepcion.count();
             },
           });

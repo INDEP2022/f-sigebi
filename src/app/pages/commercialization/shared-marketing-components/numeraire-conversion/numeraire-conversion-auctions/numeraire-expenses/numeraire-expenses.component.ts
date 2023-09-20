@@ -1,7 +1,17 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { takeUntil } from 'rxjs';
+import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
+import { IFillExpenseDataCombined } from 'src/app/core/models/ms-spent/comer-expense';
 import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
+import { NumerarieService } from '../../services/numerarie.service';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -10,17 +20,34 @@ import { COLUMNS } from './columns';
   styleUrls: ['./numeraire-expenses.component.scss'],
 })
 export class NumeraireExpensesComponent
-  extends BasePageTableNotServerPagination
+  extends BasePageTableNotServerPagination<IFillExpenseDataCombined>
   implements OnInit
 {
   toggleInformation = true;
-  @Input() event: { id: string; statusVtaId: string };
-  constructor(private dataService: SpentService) {
+  total = 0;
+  @Input() event: IComerEvent;
+  @Input() reload = 0;
+  @Output() selectedRow = new EventEmitter<IFillExpenseDataCombined>();
+  constructor(
+    private dataService: SpentService,
+    private numerarieService: NumerarieService
+  ) {
     super();
     this.settings = {
       ...this.settings,
       columns: COLUMNS,
+      actions: false,
     };
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (
+      changes['reload'] &&
+      changes['reload'].currentValue &&
+      changes['reload'].currentValue > 0
+    ) {
+      this.getData();
+    }
   }
 
   override getData() {
@@ -29,14 +56,19 @@ export class NumeraireExpensesComponent
     this.loading = true;
     this.dataService
       .fillExpenses({
-        idEvent: this.event.id,
+        idEvent: this.event.id + '',
         idStatusVta: this.event.statusVtaId,
       })
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
           if (response) {
+            this.data = response.combined.map((row: any) => {
+              return { ...row };
+            });
+            this.numerarieService.updateAllowed = response.updateAllowed;
             this.totalItems = response.combined.length;
+            this.total = +response.totevent.toFixed(2);
             this.dataTemp = [...response.combined];
             this.getPaginated(this.params.value);
             this.loading = false;
@@ -50,5 +82,9 @@ export class NumeraireExpensesComponent
           this.notGetData();
         },
       });
+  }
+
+  selectExpense(row: IFillExpenseDataCombined) {
+    this.selectedRow.emit(row);
   }
 }

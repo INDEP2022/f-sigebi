@@ -3,13 +3,11 @@
     <h5 class="title">Previsualización de Datos</h5>
   </div>
   <div body>
-    <div class="row d-flex justify-content-end">
-      <div class="col">
-        <app-columns-select
-          [leftList]="true"
-          (settingsChange)="settingsChange($event)"
-          [settings]="settings"></app-columns-select>
-      </div>
+    <div class="row text-end">
+      <app-columns-select
+        [leftList]="true"
+        (settingsChange)="settingsChange($event)"
+        [settings]="settings"></app-columns-select>
     </div>
     <div class="row pt-4">
       <div class="col-md-12">

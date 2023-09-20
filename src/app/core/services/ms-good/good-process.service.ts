@@ -27,6 +27,38 @@ export class GoodProcessService extends HttpService {
     this.microservice = GoodProcessPoints.basepath;
   }
 
+  getReportNingevent(params: ListParams) {
+    return this.get(GoodProcessPoints.ReportNingevent, params);
+  }
+
+  getReportNingeventExcel(params: ListParams) {
+    return this.get(GoodProcessPoints.ReportNingeventExcel, params);
+  }
+
+  getReportMonth(params: ListParams) {
+    return this.get(GoodProcessPoints.ReportMonth, params);
+  }
+
+  getReportMonthExcel(params: ListParams) {
+    return this.get(GoodProcessPoints.ReportMonthExcel, params);
+  }
+
+  getCheckAllGoodPag(params: ListParams) {
+    return this.get(GoodProcessPoints.CheckAllGoodPag, params);
+  }
+
+  getCheckAllGoodPagExcel(params: ListParams) {
+    return this.get(GoodProcessPoints.CheckAllGoodPagExcel, params);
+  }
+
+  getSpObtnxGood(params: ListParams) {
+    return this.get(GoodProcessPoints.SpObtnxGood, params);
+  }
+
+  getSpObtnxGoodExcel(params: ListParams) {
+    return this.get(GoodProcessPoints.SpObtnxGood, params);
+  }
+
   updateFraction(body: { newFraction: string; goodNum: number }) {
     return this.post(GoodProcessPoints.updateFractions, body);
   }
@@ -281,5 +313,15 @@ export class GoodProcessService extends HttpService {
     return this.get(
       `${GoodProcessPoints.GetDataCustom}?tCurrency=${currency}&noGood=${good}`
     );
+  }
+
+  getVGoodTpye(params: ListParams) {
+    const route = `${GoodProcessPoints.VGoodType}`;
+    return this.get<any>(route, params);
+  }
+
+  getVsigLigie(params: ListParams | string): Observable<IListResponse<any>> {
+    const route = GoodProcessPoints.GetVsigLigie;
+    return this.get<IListResponse<any>>(route, params);
   }
 }

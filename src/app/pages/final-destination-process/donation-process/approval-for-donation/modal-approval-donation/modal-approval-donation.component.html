@@ -11,21 +11,25 @@
         [defaultColumns]="4"
         [(settings)]="settings"></app-columns-select>
     </div>
-    <form-loader *ngIf="loading"></form-loader>
-    <div class="col-md-12">
-      <ng-scrollbar
-        [track]="'all'"
-        [ngStyle]="{ height: loading ? '0px' : '300px' }">
-        <ng2-smart-table
-          [attr.class]="'table-responsive table-bordered'"
-          [settings]="settings"
-          [source]="dataGoodTable"
-          (userRowSelect)="onUserRowSelect($event)">
-        </ng2-smart-table>
-      </ng-scrollbar>
-
-      <app-pagination [params]="params" [totalItems]="totalItems2">
-      </app-pagination>
+    <div class="row">
+      <form-loader *ngIf="loading"></form-loader>
+      <div class="col-md-12">
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{
+            height: loading ? '0px' : '500px'
+          }">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="dataTableGood"
+            (userRowSelect)="selectData($event)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+        <app-pagination
+          [params]="paramsList"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
     </div>
   </div>
   <div footer>

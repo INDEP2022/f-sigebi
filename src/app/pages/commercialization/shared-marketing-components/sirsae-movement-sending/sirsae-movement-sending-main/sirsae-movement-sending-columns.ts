@@ -1,6 +1,6 @@
 export const SIRSAE_MOVEMENT_SENDING_COLUMNS = {
   customerId: {
-    title: 'ID Cliente',
+    title: 'Id Cliente',
     type: 'number',
     sort: false,
     width: '12%',
@@ -15,7 +15,7 @@ export const SIRSAE_MOVEMENT_SENDING_COLUMNS = {
     // },
   },
   rfc: {
-    title: 'R.F.C.',
+    title: 'RFC',
     type: 'string',
     sort: false,
     width: '20%',

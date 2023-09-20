@@ -15,6 +15,7 @@
               class="form-control"
               formControlName="numberInGood"
               type="number"
+              style="margin-top: 8%"
               readonly />
           </form-field>
         </div>
@@ -27,6 +28,7 @@
               rows="2"
               type="text"
               formControlName="description"
+              style="margin-top: 2%"
               readonly></textarea>
           </form-field>
         </div>
@@ -119,7 +121,7 @@
             </span>
           </form-field>
         </div>
-        <div class="col-md-5 margin-input">
+        <div class="col-md-5 pt-4">
           <form-field
             label="Fecha Oficio/Correo"
             [control]="claimsFollowUpDetailForm.get('dateOfficeMailIn')">
@@ -128,7 +130,8 @@
               formControlName="dateOfficeMailIn"
               class="form-control"
               bsDatepicker
-              [bsConfig]="{ adaptivePosition: true }" />
+              [bsConfig]="{ adaptivePosition: true }"
+              style="margin-top: 4%" />
           </form-field>
         </div>
       </div>
@@ -178,9 +181,10 @@
             label="Monto Reclamo Segun Carta de Reclamación"
             [control]="claimsFollowUpDetailForm.get('claimedAmountIn')">
             <input
+              currencyMask
               class="form-control"
               formControlName="claimedAmountIn"
-              type="number" />
+              type="text" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -188,9 +192,10 @@
             label="Monto Ajustado"
             [control]="claimsFollowUpDetailForm.get('adjustedAmountIn')">
             <input
+              currencyMask
               class="form-control"
               formControlName="adjustedAmountIn"
-              type="number" />
+              type="text" />
           </form-field>
         </div>
       </div>
@@ -202,7 +207,7 @@
             <input
               class="form-control"
               formControlName="deductibleIn"
-              type="number" />
+              type="text" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -242,7 +247,7 @@
             </span>
           </form-field>
         </div>
-        <div class="col-md-5 margin-input">
+        <div class="col-md-5 pt-4">
           <form-field
             [control]="claimsFollowUpDetailForm.get('letterClaimIn')"
             label="Fecha Carta Reclamación">
@@ -251,7 +256,8 @@
               formControlName="letterClaimIn"
               class="form-control"
               bsDatepicker
-              [bsConfig]="{ adaptivePosition: true }" />
+              [bsConfig]="{ adaptivePosition: true }"
+              style="margin-top: 4%" />
           </form-field>
         </div>
         <div class="col-md-5 margin-input">
@@ -260,8 +266,9 @@
             [control]="claimsFollowUpDetailForm.get('amountIndemnizedIn')">
             <input
               class="form-control"
+              currencyMask
               formControlName="amountIndemnizedIn"
-              type="number" />
+              type="text" />
           </form-field>
         </div>
       </div>
@@ -292,7 +299,7 @@
             </span>
           </form-field>
         </div>
-        <div class="col-md-5 margin-input">
+        <div class="col-md-5 pt-4">
           <form-field
             label="Fecha Oficio de Conclusión/Minuta"
             [control]="claimsFollowUpDetailForm.get('dateOfficeMinConcluIn')">
@@ -301,12 +308,13 @@
               formControlName="dateOfficeMinConcluIn"
               class="form-control"
               bsDatepicker
-              [bsConfig]="{ adaptivePosition: true }" />
+              [bsConfig]="{ adaptivePosition: true }"
+              style="margin-top: 4%" />
           </form-field>
         </div>
       </div>
 
-      <div class="row">
+      <div class="row pt-4">
         <div class="col-md-6">
           <form-field
             label="Orden de Ingreso"

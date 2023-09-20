@@ -44,13 +44,14 @@ export class PaqDestinoDetComponent extends BasePage {
       columns: COLUMNS,
       mode: 'inline',
       hideSubHeader: false,
-      actions: {
+      actions: false,
+/*       actions: {
         columnTitle: 'Acciones',
-        position: 'left',
+        position: 'right',
         add: false,
         edit: true,
         delete: true,
-      },
+      }, */
       edit: {
         ...this.settings.edit,
         saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',

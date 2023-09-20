@@ -10,7 +10,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { takeUntil } from 'rxjs';
+import { catchError, of, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
@@ -24,6 +24,7 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { GoodDataAsetService } from 'src/app/core/services/ms-good/good-data-aset.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -81,6 +82,7 @@ export class ClassifyAssetsTabComponent
   childSaveAction: boolean = false;
   canClean: boolean = false;
   typeTransfer: string = '';
+  domicileSelected: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -94,7 +96,8 @@ export class ClassifyAssetsTabComponent
     private goodFinderService: GoodFinderService,
     private goodDataAsetService: GoodDataAsetService,
     private authService: AuthService,
-    private historyGoodService: HistoryGoodService
+    private historyGoodService: HistoryGoodService,
+    private goodsInvService: GoodsInvService
   ) {
     super();
   }
@@ -700,7 +703,13 @@ export class ClassifyAssetsTabComponent
     params.limit = 100;
     this.fractionService
       .getAll(params)
-      .pipe(takeUntil(this.$unSubscribe))
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        catchError((e: any) => {
+          if (e.status == 400) return of({ data: [], count: 0 });
+          throw e;
+        })
+      )
       .subscribe({
         next: (data: any) => {
           this.selectLevel1 = data.data; //= new DefaultSelect(data.data, data.count);
@@ -832,7 +841,7 @@ export class ClassifyAssetsTabComponent
           //if(next) this.getExample();
         },
       },
-      class: 'modalSizeXL modal-dialog-centered',
+      class: ' modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.bsModalRef = this.modalService.show(AdvancedSearchComponent, config);
@@ -1010,12 +1019,24 @@ export class ClassifyAssetsTabComponent
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
       goods.status = 'ROP';
+      goods.val1 =
+        this.domicileSelected.wayName != null
+          ? this.domicileSelected.wayName
+          : ' ';
+      goods.val2 =
+        this.domicileSelected.colonia != null
+          ? this.domicileSelected.colonia
+          : ' ';
+      goods.val3 = this.domicileSelected.regionalDelegationId.description;
+      goods.val4 = this.domicileSelected.stateOfRepublicName;
+      goods.noState = 0;
 
       goodResult = await this.createGood(goods);
       //CREA HISTORICO DEL STATUS DEL BIEN
       //const history = await this.createHistoricGood('ROP', goodResult.result.id);
       this.updateGoodFindRecord(goodResult.result);
       //manda a guardar los campos de los bienes, domicilio, inmueble
+      console.log(goodResult);
       this.childSaveAction = true;
     } else {
       goodResult = await this.updateGood(goods);
@@ -1073,11 +1094,7 @@ export class ClassifyAssetsTabComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: data => {
-            this.message(
-              'success',
-              'Guardado',
-              `El registro se actualizó exitosamente`
-            );
+            this.message('success', 'El Bien se ha Actualizado', ``);
             this.classiGoodsForm.controls['id'].setValue(data.id);
 
             resolve({ saved: true, result: data });
@@ -1421,61 +1438,6 @@ export class ClassifyAssetsTabComponent
       });
     });
   }
-  //obtenien la unidad de medida
-  /*getUnidMeasure(value: string) {
-    if (value) {
-      if (value.length === 8) {
-        const fractionCode = { fraction: value };
-        this.goodsQueryService
-          .getUnitLigie(fractionCode)
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe({
-            next: (data: any) => {
-              //guarda el no_clasify_good numero clasificacion del bien
-              if (data.clasifGoodNumber !== null) {
-                this.classiGoodsForm.controls['goodClassNumber'].setValue(
-                  data.clasifGoodNumber
-                );
-              } else {
-                this.message(
-                  'warning',
-                  'clasificación de bien nula',
-                  'el bien seleccionado no tiene numero de clasificación de bien'
-                );
-              }
-              //guarda el tipo de unidad
-              this.goodsQueryService
-                .getLigieUnitDescription(data.ligieUnit)
-                .pipe(takeUntil(this.$unSubscribe))
-                .subscribe((data: any) => {
-                  this.classiGoodsForm.controls['ligieUnit'].setValue(
-                    data.description
-                  );
-
-                  if (
-                    this.classiGoodsForm.controls['unitMeasure'].value === null
-                  ) {
-                    const ligieUnit =
-                      this.classiGoodsForm.controls['ligieUnit'].value;
-                    this.classiGoodsForm.controls['unitMeasure'].setValue(
-                      ligieUnit
-                    );
-                  }
-                });
-            },
-            error: error => {
-              console.log('codigo de graccion', value);
-              console.log(error.error.message);
-              this.onLoadToast(
-                'error',
-                '',
-                'El bien no cuenta con su clasificacion del bien'
-              );
-            },
-          });
-      } 
-    }
-  }*/
 
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
@@ -1487,5 +1449,30 @@ export class ClassifyAssetsTabComponent
 
   getDetailInfoEvent(event: any) {
     this.updateClassifyAssetTableEvent.emit(event);
+  }
+
+  getDomicile(event: any) {
+    this.domicileSelected = event;
+    console.log(this.domicileSelected);
+    const stateOfRepId = this.domicileSelected.statusKey;
+    const municipalityId = this.domicileSelected.municipalityKey;
+    const localityKey = this.domicileSelected.localityKey;
+    this.getLocality(Number(municipalityId), stateOfRepId, localityKey);
+  }
+
+  getLocality(municipalityId: number, stateKey: number, localityKey: number) {
+    const params = new ListParams();
+    params['sortBy'] = 'township:ASC';
+    params['filter.municipalityKey'] = `$eq:${municipalityId}`;
+    params['filter.stateKey'] = `$eq:${stateKey}`;
+    params['filter.townshipKey'] = `$eq:${localityKey}`;
+    this.goodsInvService
+      .getAllTownshipByFilter(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: resp => {
+          this.domicileSelected['colonia'] = resp.data[0].township;
+        },
+      });
   }
 }

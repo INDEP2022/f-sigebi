@@ -44,7 +44,7 @@
               </div>
               <div class="card-body">
                 <div class="col-12 col-sm-12 col-md-12 p-2">
-                  <form-field
+                  <!-- <form-field
                     class="col-sm-12 col-12 col-md-4 p-2"
                     [control]="form.get('noBien')"
                     label="No&#46; Bien">
@@ -52,8 +52,34 @@
                       class="form-control"
                       maxlength="11"
                       formControlName="noBien" />
-                  </form-field>
-                  <div class="col-sm-12 col-12 col-md-4 p-2">
+                  </form-field> -->
+
+                  <div class="form-group col-sm-12 col-12 col-md-12 p-2">
+                    <form-field [control]="form.get('noBien')">
+                      <ngx-select
+                        (fetchItems)="getGoodsSheard($event)"
+                        [data]="goods"
+                        [form]="form"
+                        value="id"
+                        bindLabel="description"
+                        label="No&#46; Bien"
+                        control="noBien"
+                        [showTooltip]="true"
+                        termMaxLength="400"
+                        (change)="onChangeGood($event)"
+                        [labelTemplate]="userLabel"
+                        [optionTemplate]="userOption">
+                      </ngx-select>
+                    </form-field>
+                    <ng-template #userLabel let-item="item"
+                      >{{ item.id }} - {{ item.description }}</ng-template
+                    >
+                    <ng-template #userOption let-item="item"
+                      >{{ item.id }} - {{ item.description }}</ng-template
+                    >
+                  </div>
+
+                  <!-- <div class="col-sm-12 col-12 col-md-4 p-2">
                     <button
                       type="button"
                       [disabled]="
@@ -67,7 +93,7 @@
                       Buscar
                       <i class="bx bx-search-alt bx-sm float-icon"></i>
                     </button>
-                  </div>
+                  </div> -->
                 </div>
                 <form-field
                   class="col-sm-12 col-12 col-md-4 p-2"
@@ -328,37 +354,94 @@
         Generando el Reporte de Estado de Cuenta, Espere un momento...
       </div>
       <div class="col-md-12 alert alert-info" *ngIf="loadingSirsaeProcess">
-        Realizando Proceso de Env&oacute; SIRSAE para el registro
-        <strong>
+        Realizando el Proceso de Envi&oacute; SIRSAE
+        <!-- para el registro -->
+        <!-- <strong>
           {{ currentItemSirsae }}
         </strong>
-        de <strong> {{ totalItemsSirsae }}</strong
-        >, Espere un momento...
+        de <strong> {{ totalItemsSirsae }}</strong> -->
+        , Espere un momento...
+        <div
+          class="progress row"
+          role="progressbar"
+          aria-label="Envio Sirsae"
+          style="background-color: lightgrey"
+          [attr.aria-valuenow]="
+            (currentItemSirsae / totalItemsSirsae) * 100 | number : '1.0-0'
+          "
+          aria-valuemin="0"
+          aria-valuemax="100">
+          <div
+            class="progress-bar bg-info"
+            [style.width]="
+              ((currentItemSirsae / totalItemsSirsae) * 100
+                | number : '1.0-0') + '%'
+            ">
+            {{
+              (currentItemSirsae / totalItemsSirsae) * 100 | number : '1.0-0'
+            }}%
+          </div>
+        </div>
+        <!-- <ul class="list-group list-group-flush">
+          <div class="list-group-item">
+          </div>
+        </ul> -->
       </div>
       <div
-        class="col-md-12 alert alert-success"
+        class="col-md-12 alert alert-success alert-dismissible fade show"
+        role="alert"
         *ngIf="errorSirSae > 0 && !loadingSirsaeProcess">
-        Se T&eacute;rmino el Proceso de Env&oacute; SIRSAE, a continuación puede
-        descargar un resumen del Proceso. Se procesaron
+        <button
+          (click)="closeSendSirsae()"
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"></button>
+        <br />
+        <div
+          class="progress row"
+          role="progressbar"
+          aria-label="Envio Sirsae"
+          style="background-color: lightgrey"
+          [attr.aria-valuenow]="
+            (currentItemSirsae / totalItemsSirsae) * 100 | number : '1.0-0'
+          "
+          aria-valuemin="0"
+          aria-valuemax="100">
+          <div
+            class="progress-bar bg-info"
+            [style.width]="
+              ((currentItemSirsae / totalItemsSirsae) * 100
+                | number : '1.0-0') + '%'
+            ">
+            {{
+              (currentItemSirsae / totalItemsSirsae) * 100 | number : '1.0-0'
+            }}%
+          </div>
+        </div>
+        Se Termino el Proceso de Envi&oacute; SIRSAE, a continuación puede
+        descargar un resumen del Proceso.
+        <!-- Se procesaron
         <strong>
           {{ currentItemSirsae }}
         </strong>
-        de <strong> {{ totalItemsSirsae }}</strong> Registros.
+        de <strong> {{ totalItemsSirsae }}</strong> Registros. -->
         <button
           [disabled]="loadingSirsaeProcess"
           type="button"
           class="ml-2 mr-2 btn btn-success btn-sm m-4"
           (click)="exportXlsx()">
-          Exportar Resultado de "Env&oacute; SIRSAE"<i
+          Exportar Resultado de "Envi&oacute; SIRSAE"<i
             class="fa fa-file-excel ml-1"></i>
         </button>
       </div>
       <!-- Pagos Recibidos en el Banco -->
-      <div class="col-12 col-sm-12 col-md-12">
+      <div class="col-12 col-sm-12 col-md-8">
         <h6>Pagos Recibidos en el Banco</h6>
       </div>
-      <div class="col-12 col-sm-12 col-md-12">
+      <div class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
         <app-columns-select
+          [leftList]="true"
           [(settings)]="tableSettingsPagosBanco"></app-columns-select>
       </div>
       <div
@@ -372,7 +455,7 @@
             (userRowSelect)="selectRow($event, $event.data)"></ng2-smart-table>
         </div>
       </div>
-      <div class="col-12">
+      <div class="col-12 mb-5">
         <app-pagination
           [params]="paramsPayBanks"
           [totalItems]="totalItemsPayBanks"></app-pagination>
@@ -393,11 +476,12 @@
       </div>
       <!-- Pagos Recibidos en el Banco -->
       <!-- Composicion de Pagos Recibidos -->
-      <div class="col-12 col-sm-12 col-md-12 mt-5">
+      <div class="col-12 col-sm-12 col-md-8">
         <h6>Composición de Pagos Recibidos</h6>
       </div>
-      <div class="col-12 col-sm-12 col-md-12">
+      <div class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
         <app-columns-select
+          [leftList]="true"
           [(settings)]="tableSettingsPagosRecibidos"></app-columns-select>
       </div>
       <div

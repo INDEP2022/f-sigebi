@@ -64,7 +64,6 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
       .subscribe({
         next: base64 => {
           this.base64 = base64;
-          this.loading = false;
           this.error = false;
           this.base64Change(base64);
           // console.log(this.error);

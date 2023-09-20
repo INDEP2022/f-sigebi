@@ -1,49 +1,305 @@
+import { DatePipe } from '@angular/common';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const UNEXPOSED_GOODS_COLUMNS = {
-  noGood: {
+  no_bien: {
     title: 'No. Bien',
     sort: false,
   },
-  description: {
+  descripcion_bien: {
     title: 'Descripción',
     sort: false,
   },
-  valueBase: {
+  valor_base: {
     title: 'Valor Base',
     sort: false,
   },
-  descriptionTrans: {
+  nombre_transferente: {
     title: 'Desc. Transferente',
     sort: false,
   },
-  idStatusVta: {
+  id_estatusvta: {
     title: 'ID Status VTA',
     sort: false,
   },
-  dateGood: {
+  fecha_bien: {
     title: 'Fecha Bien',
     sort: false,
   },
-  dateFail: {
+  fecha_fallo: {
     title: 'Fecha Fallo',
     sort: false,
   },
-  dateEvent: {
+  fecha_evento: {
     title: 'Fecha Evento',
     sort: false,
   },
-  dateCreation: {
+  fecha_creacion: {
     title: 'Fecha Creación',
     sort: false,
   },
-  typeGood: {
+  tipo_bien: {
     title: 'Tipo Bien',
     sort: false,
   },
-  subTypeGood: {
+  sub_tipo_bien: {
     title: 'Sub tipo Bien',
     sort: false,
   },
-  delegation: {
+  delegacion_admin: {
+    title: 'Delegación Admin',
+    sort: false,
+  },
+};
+
+export const MONTH_COLUMNS = {
+  no_bien: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  descripcion_bien: {
+    title: 'Descripción',
+    sort: false,
+  },
+  valor_base: {
+    title: 'Valor Base',
+    sort: false,
+  },
+  nombre_transferente: {
+    title: 'Desc. Transferente',
+    sort: false,
+  },
+  id_estatusvta: {
+    title: 'ID Status VTA',
+    sort: false,
+  },
+  fecha_bien: {
+    title: 'Fecha Bien',
+    sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  fecha_fallo: {
+    title: 'Fecha Fallo',
+    sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  fecha_evento: {
+    title: 'Fecha Evento',
+    sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  fecha_creacion: {
+    title: 'Fecha Creación',
+    sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  tipo_bien: {
+    title: 'Tipo Bien',
+    sort: false,
+  },
+  sub_tipo_bien: {
+    title: 'Sub tipo Bien',
+    sort: false,
+  },
+  delegacion_admin: {
+    title: 'Delegación Admin',
+    sort: false,
+  },
+};
+
+export const CONSULT_COLUMNS = {
+  no_bien: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  descripcion: {
+    title: 'Descripción',
+    sort: false,
+  },
+  valor_base: {
+    title: 'Valor Base',
+    sort: false,
+  },
+  desc_transferente: {
+    title: 'Desc. Transferente',
+    sort: false,
+  },
+  id_estatusvta: {
+    title: 'ID Status VTA',
+    sort: false,
+  },
+  fecha_bien: {
+    title: 'Fecha Bien',
+    sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  fecha_fallo: {
+    title: 'Fecha Fallo',
+    sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  fecha_evento: {
+    title: 'Fecha Evento',
+    sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  fecha_creacion: {
+    title: 'Fecha Creación',
+    sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  tipo_bien: {
+    title: 'Tipo Bien',
+    sort: false,
+  },
+  sub_tipo_bien: {
+    title: 'Sub tipo Bien',
+    sort: false,
+  },
+  delegacion_admin: {
+    title: 'Delegación Admin',
+    sort: false,
+  },
+};
+
+export const GOOD_COLUMNS = {
+  no_bien: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  descripcion: {
+    title: 'Descripción',
+    sort: false,
+  },
+  valor_base: {
+    title: 'Valor Base',
+    sort: false,
+  },
+  desc_transferente: {
+    title: 'Desc. Transferente',
+    sort: false,
+  },
+  id_estatusvta: {
+    title: 'ID Status VTA',
+    sort: false,
+  },
+  fecha_bien: {
+    title: 'Fecha Bien',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      const parts = cell.split('-');
+      const year = parts[0];
+      const month = parts[1];
+      const day = parts[2];
+      const formattedDate = `${day}/${month}/${year}`;
+      return formattedDate;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  fecha_fallo: {
+    title: 'Fecha Fallo',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      const parts = cell.split('-');
+      const year = parts[0];
+      const month = parts[1];
+      const day = parts[2];
+      const formattedDate = `${day}/${month}/${year}`;
+      return formattedDate;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  fecha_evento: {
+    title: 'Fecha Evento',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      const parts = cell.split('-');
+      const year = parts[0];
+      const month = parts[1];
+      const day = parts[2];
+      const formattedDate = `${day}/${month}/${year}`;
+      return formattedDate;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  fecha_creacion: {
+    title: 'Fecha Creación',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      const parts = cell.split('-');
+      const year = parts[0];
+      const month = parts[1];
+      const day = parts[2];
+      const formattedDate = `${day}/${month}/${year}`;
+      return formattedDate;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  tipo_bien: {
+    title: 'Tipo Bien',
+    sort: false,
+  },
+  sub_tipo_bien: {
+    title: 'Sub tipo Bien',
+    sort: false,
+  },
+  delegacion_admin: {
     title: 'Delegación Admin',
     sort: false,
   },

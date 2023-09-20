@@ -6,7 +6,11 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IServiceVehicle } from '../../models/ms-order-service/order-service-vehicle.model';
-import { IOrderService } from '../../models/ms-order-service/order-service.mode';
+import {
+  IOrderService,
+  IOrderServiceDTO,
+} from '../../models/ms-order-service/order-service.mode';
+import { ISamplingOrderService } from '../../models/ms-order-service/sampling-order-service.model';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +28,26 @@ export class OrderServiceService extends HttpService {
     );
   }
 
+  /* ORDEN DE SERVICIO */
+  createOrderService(
+    body: IOrderServiceDTO
+  ): Observable<IListResponse<IOrderServiceDTO>> {
+    const route = OrderServiceEndpoint.ORDER_SERVICE;
+    return this.post<IListResponse<IOrderServiceDTO>>(route, body);
+  }
+
+  getAllOrderService(
+    params: ListParams | string
+  ): Observable<IListResponse<IOrderServiceDTO>> {
+    const route = OrderServiceEndpoint.ORDER_SERVICE;
+    return this.get<IListResponse<IOrderServiceDTO>>(route, params);
+  }
+
+  updateOrderService(body: IOrderServiceDTO) {
+    const route = `${OrderServiceEndpoint.ORDER_SERVICE}/${body.id}`;
+    return this.put<IListResponse<IOrderServiceDTO>>(route, body);
+  }
+
   getServiceVehicle(
     _params: ListParams
   ): Observable<IListResponse<IServiceVehicle>> {
@@ -35,6 +59,44 @@ export class OrderServiceService extends HttpService {
 
   postServiceVehicle(formVehicle: IServiceVehicle) {
     return this.post(OrderServiceEndpoint.ServiceVehicle, formVehicle);
+  }
+
+  updateServiceVehicle(
+    idTypeVehicle: number,
+    orderServiceId: number,
+    formVehicle: IServiceVehicle
+  ) {
+    const route = `${OrderServiceEndpoint.ServiceVehicle}/${idTypeVehicle}/${orderServiceId}`;
+    return this.put(route, formVehicle);
+  }
+
+  getSamplingOrderView(body: Object, page: number, limit: number) {
+    const route = `${OrderServiceEndpoint.SamplingOrderView}?limit=${limit}&page=${page}`;
+    return this.post(route, body);
+  }
+
+  getAllSamplingOrderService(params: ListParams | string) {
+    const route = `${OrderServiceEndpoint.SamplingOrderService}`;
+    return this.get(route, params);
+  }
+
+  createSamplingOrderService(body: ISamplingOrderService) {
+    const route = `${OrderServiceEndpoint.SamplingOrderService}`;
+    return this.post(route, body);
+  }
+
+  updateSamplingOrderService(
+    sampleOrderId: number,
+    orderServiceId: number,
+    body: ISamplingOrderService
+  ) {
+    const route = `${OrderServiceEndpoint.SamplingOrderService}/${sampleOrderId}/${orderServiceId}`;
+    return this.put(route, body);
+  }
+
+  deleteSamplingOrderService(sampleOrderId: number, orderServiceId: number) {
+    const route = `${OrderServiceEndpoint.SamplingOrderService}/${sampleOrderId}/${orderServiceId}`;
+    return this.delete(route);
   }
 
   private makeParams(params: ListParams): HttpParams {

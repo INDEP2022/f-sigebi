@@ -8,7 +8,14 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  of,
+  takeUntil,
+  tap,
+  throwError,
+} from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -123,7 +130,13 @@ export class DepositaryPaymentChargesComponent
     this.buildForm();
     this.form.controls['numberGood'].setValue(id);
     this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      if (this.form.get('numberGood').value) this.loadTablaDispersiones();
+      if (this.form.get('numberGood').value) {
+        this.filterParams.value.addFilter(
+          'noGood',
+          this.form.get('numberGood').value
+        );
+        this.loadTablaDispersiones();
+      }
     });
   }
   isSelectedValid(_row: any) {
@@ -174,9 +187,8 @@ export class DepositaryPaymentChargesComponent
     this.loading = true;
     const good = this.form.get('numberGood').value;
     const appointment: any = await this.getAppointmentByGoodId(good);
-    this.Service.getRefPayDepositories(
-      this.filterParams.getValue().getParams()
-    ).subscribe({
+    const filter = this.filterParams.getValue().getParams();
+    this.Service.getRefPayDepositories(filter).subscribe({
       next: (resp: any) => {
         console.log('refpayDepositaries', this.data);
         resp.data.map((item: any) => {
@@ -200,7 +212,7 @@ export class DepositaryPaymentChargesComponent
           this.onLoadToast('error', 'Error', error);
           this.data = [];
         } else {
-          this.onLoadToast('error', 'Error', err.error.message);
+          this.onLoadToast('info', err.error.message);
           this.data = [];
         }
       },
@@ -221,7 +233,7 @@ export class DepositaryPaymentChargesComponent
   openFile() {
     this.alertQuestion(
       'warning',
-      'Asegurese que el excel sea el correcto',
+      'Asegurese que el formato del archivo seleccionado sea el correcto',
       ''
     ).then(result => {
       this.fileUpload.nativeElement.value = '';
@@ -255,7 +267,7 @@ export class DepositaryPaymentChargesComponent
             if (resp.ArrayData.length == 0) {
               this.alertInfo(
                 'info',
-                'No Se cargaron los pagos',
+                'No se cargaron los pagos',
                 'El numero de movimiento ya esta registrado'
               );
               return;
@@ -289,6 +301,7 @@ export class DepositaryPaymentChargesComponent
         ],
         {
           queryParams: {
+            p_nom_bien: idBien,
             origin: 'FCONDEPOCARGAPAG',
           },
         }
@@ -305,7 +318,7 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
 
   async onSearch() {
     if (!this.form.get('numberGood').value) {
-      this.alertInfo('info', 'El No. de bien es requerido', '');
+      this.alertInfo('info', 'El No. bien es requerido', '');
       return;
     }
     this.cleanFild();
@@ -514,6 +527,7 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
         indicator: null,
         incomeid: null,
       };
+
       const result: any = await this.saveRefPayDepositaryData(body);
 
       let haveReference: any = await this.getAppointmentByGoodId(item.NO_BIEN);
@@ -573,15 +587,33 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
       params['filter.goodNum'] = `$eq:${id}`;
       params['filter.revocation'] = `$eq:N`;
       params['sortBy'] = 'appointmentNum:DESC';
-      this.nomDepositoryService.getAppointments(params).subscribe({
-        next: resp => {
-          if (resp.data[0].reference != null && resp.data[0].reference != '') {
-            resolve({ data: resp.data[0], result: false });
-          } else {
-            resolve({ data: resp.data[0], result: true });
-          }
-        },
-      });
+      this.nomDepositoryService
+        .getAppointments(params)
+        .pipe(
+          catchError((e: any) => {
+            if (e.status == 400) return of({ data: [], count: 0 });
+            throw e;
+          })
+        )
+        .subscribe({
+          next: resp => {
+            if (resp.data.length != 0) {
+              if (
+                resp.data[0].reference != null &&
+                resp.data[0].reference != ''
+              ) {
+                resolve({ data: resp.data[0], result: false });
+              } else {
+                resolve({ data: resp.data[0], result: true });
+              }
+            } else {
+              resolve(null);
+            }
+          },
+          error: error => {
+            this.loading = false;
+          },
+        });
     });
   }
 }

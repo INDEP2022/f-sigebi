@@ -27,7 +27,12 @@ import { ISendSirsaeLot } from 'src/app/core/services/ms-interfacesirsae/interfa
 import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import {
+  IPupProcDisp,
+  IPupProcEnvSirsae,
+  IPupProcReproc,
   IPupProcSeldisp,
+  IPupProcSelReproceso,
+  IPupProcSelsirsae,
   IPupValidateMandatoNfac,
 } from 'src/app/core/services/ms-lot/models-lots';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
@@ -39,23 +44,25 @@ import { BasePage } from 'src/app/core/shared';
 import { CanLcsWarrantyComponent } from '../can-lcs-warranty/can-lcs-warranty.component';
 import { CanPagosCabComponent } from '../can-pagos-cab/can-pago-cab.component';
 import { CanRelusuComponent } from '../can-relusu/can-relusu.component';
-import { CanUsuSirsaeComponent } from '../can-usu-sirsae/can-usu-sirsae.component';
 import { ComerPaymentVirtComponent } from '../comer-payment-virt/comer-payment-virt.component';
 import { clearGoodCheckCustomer } from '../dispersion-payment-details/customers/columns';
 import {
+  batchEventCheck,
   COLUMNSCUSTOMER,
   COLUMNS_CUSTOMER_BANKS,
   COLUMNS_DESERT_LOTS,
   COLUMNS_LOTS_BANKS,
-  COLUMNS_LOT_EVENT,
+  COLUMNS_LOT_EVENT_FALSE,
+  COLUMNS_LOT_EVENT_TRUE,
   COLUMNS_PAYMENT_LOT,
+  goodCheckCustomer,
   setCheckHide,
 } from './columns';
 
 @Component({
   selector: 'app-dispersion-payment',
   templateUrl: './dispersion-payment.component.html',
-  styles: [],
+  styleUrls: ['dispersion-payment.css'],
 })
 export class DispersionPaymentComponent extends BasePage implements OnInit {
   //Preparar los setting de las tablas
@@ -65,7 +72,12 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   settingsCustomerBanks = this.settings;
   settingsLotsBanks = this.settings;
   settingsPaymentLots = this.settings;
-
+  columnFiltersDesertedLots: any = [];
+  columnFiltersLotsEvent: any = [];
+  columnFiltersLotsBank: any = [];
+  columnFiltersPaymentLots: any = [];
+  ColumnFilterCustomerBank: any = [];
+  ColumnFilterCustomer: any = [];
   loadingCustomer = false;
   loadingLotEvent = false;
   loadingDesertLots = false;
@@ -86,6 +98,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   formLotsBanks: FormGroup;
   formPaymentLots: FormGroup;
   formSirsae: FormGroup;
+  formRbButton: FormGroup;
 
   statusEvent: string = null;
   eventType: string = null;
@@ -124,6 +137,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   statusVtaId: any = null;
   idClientCustomer: any = null;
+  rfcClientCustomer: any = null;
+  eventTpId: any = null;
 
   isAvailableByType: boolean = true;
 
@@ -133,6 +148,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   amountBatch: any = null;
   idPaymentBatch: any = null;
   idOrderBatch: any = null;
+  lotId: any = null;
 
   dataBatch: any = null;
 
@@ -143,6 +159,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   private txt_usu_valido: string = null;
   private id_tipo_disp: number = null;
+
+  //Arrays
+  batchEventSelect: any[];
 
   constructor(
     private fb: FormBuilder,
@@ -186,6 +205,46 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //Navegar en la tabla de clientes
   navigateCustomerXClient() {
+    this.dataCustomer
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'RFC':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'Client':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'Processed':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.ColumnFilterCustomerBank[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.ColumnFilterCustomer[field];
+            }
+          });
+          this.paramsCustomer = this.pageFilter(this.paramsCustomer);
+          this.getDataComerCustomer();
+        }
+      });
+
     this.paramsCustomer.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       console.log(params);
       this.limitCustomer = new FormControl(params.limit);
@@ -204,6 +263,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         row.data.available ? 'bg-success text-white' : 'bg-dark text-white',
       actions: false,
       columns: COLUMNSCUSTOMER,
+      hideSubHeader: false,
     };
 
     this.settingsLotEvent = {
@@ -211,31 +271,51 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       rowClassFunction: (row: { data: { available: any } }) =>
         row.data.available ? 'bg-success text-white' : 'bg-dark text-white',
       actions: false,
-      columns: COLUMNS_LOT_EVENT,
+      columns: COLUMNS_LOT_EVENT_TRUE,
+      hideSubHeader: false,
     };
 
     this.settingsDesertedLots = {
       ...TABLE_SETTINGS,
       actions: false,
       columns: COLUMNS_DESERT_LOTS,
+      hideSubHeader: false,
     };
 
     this.settingsCustomerBanks = {
       ...TABLE_SETTINGS,
+      rowClassFunction: (row: any) => {
+        if (['1', '3'].includes(row.data.id_tipo_disp)) {
+          if (row.data.available) {
+            return 'idDisp';
+          } else {
+            return 'notAS idDisp';
+          }
+        } else {
+          if (row.data.available) {
+            return '';
+          } else {
+            return 'notAS';
+          }
+        }
+      },
       actions: false,
       columns: COLUMNS_CUSTOMER_BANKS,
+      hideSubHeader: false,
     };
 
     this.settingsLotsBanks = {
       ...TABLE_SETTINGS,
       actions: false,
       columns: COLUMNS_LOTS_BANKS,
+      hideSubHeader: false,
     };
 
     this.settingsPaymentLots = {
       ...TABLE_SETTINGS,
       actions: false,
       columns: COLUMNS_PAYMENT_LOT,
+      hideSubHeader: false,
     };
   }
 
@@ -356,6 +436,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       maxDateSirsae: [null],
       reference: [null],
     });
+    //RADIO BUTTONS
+    this.formRbButton = this.fb.group({
+      definitive: ['N'],
+      allBatch: ['N'],
+    });
   }
 
   //Gets
@@ -432,10 +517,109 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
           resp.notificationDate
         );
         this.statusVtaId = resp.statusVtaId;
+        this.eventTpId = resp.eventTpId;
         this.eventManagement = resp.address == 'M' ? 'MUEBLES' : 'INMUEBLES';
         this.getDataComerCustomer();
-        this.getDataLotes(resp.id);
-        this.getDataDesertLots(resp.id);
+
+        this.dataLotEvent
+          .onChanged()
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(change => {
+            if (change.action === 'filter') {
+              let filters = change.filter.filters;
+              filters.map((filter: any) => {
+                let field = ``;
+                let searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                switch (filter.field) {
+                  case 'publicLot':
+                    searchFilter = SearchFilter.EQ;
+                    field = `filter.${filter.field}`;
+                    break;
+                  case 'rfc':
+                    searchFilter = SearchFilter.EQ;
+                    field = `filter.${filter.field}`;
+                    break;
+                  case 'vtaStatusId':
+                    searchFilter = SearchFilter.ILIKE;
+                    field = `filter.${filter.field}`;
+                    break;
+                  case 'guaranteePrice':
+                    searchFilter = SearchFilter.EQ;
+                    field = `filter.${filter.field}`;
+                    break;
+                  case 'advancePayment':
+                    searchFilter = SearchFilter.EQ;
+                    field = `filter.${filter.field}`;
+                    break;
+                  case 'description':
+                    searchFilter = SearchFilter.ILIKE;
+                    field = `filter.${filter.field}`;
+                    break;
+                  default:
+                    searchFilter = SearchFilter.ILIKE;
+                    break;
+                }
+                if (filter.search !== '') {
+                  this.columnFiltersLotsEvent[
+                    field
+                  ] = `${searchFilter}:${filter.search}`;
+                } else {
+                  delete this.columnFiltersLotsEvent[field];
+                }
+              });
+              this.paramsLotEvent = this.pageFilter(this.paramsLotEvent);
+              this.getDataLotes(resp.id);
+            }
+          });
+        this.paramsLotEvent
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(params => {
+            this.getDataLotes(resp.id);
+          });
+        //Filtrosthis.
+        this.dataDesertedLots
+          .onChanged()
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(change => {
+            if (change.action === 'filter') {
+              let filters = change.filter.filters;
+              filters.map((filter: any) => {
+                let field = ``;
+                let searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                switch (filter.field) {
+                  case 'lotPublic':
+                    searchFilter = SearchFilter.EQ;
+                    field = `filter.${filter.field}`;
+                    break;
+                  case 'description':
+                    searchFilter = SearchFilter.ILIKE;
+                    field = `filter.${filter.field}`;
+                    break;
+                  default:
+                    searchFilter = SearchFilter.ILIKE;
+                    break;
+                }
+                if (filter.search !== '') {
+                  this.columnFiltersDesertedLots[
+                    field
+                  ] = `${searchFilter}:${filter.search}`;
+                } else {
+                  delete this.columnFiltersDesertedLots[field];
+                }
+              });
+              this.paramsDesertedLots = this.pageFilter(
+                this.paramsDesertedLots
+              );
+              this.getDataDesertLots(resp.id);
+            }
+          });
+        this.paramsDesertedLots
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(params => {
+            this.getDataDesertLots(resp.id);
+          });
       },
       err => {
         console.log(err);
@@ -561,6 +745,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       columns: {
         ...COLUMNSCUSTOMER,
       },
+      hideSubHeader: false,
     };
   }
 
@@ -574,6 +759,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       columns: {
         ...COLUMNSCUSTOMER,
       },
+      hideSubHeader: false,
     };
   }
   //Data de COMER_CLIENTESXEVENTO
@@ -582,17 +768,22 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.loadingCustomer = true;
     const paramsF = new FilterParams();
     paramsF.addFilter('EventId', this.event.value);
-    if (this.dataCustomer['data'].length > 0) {
-      paramsF.page = this.paramsCustomer.value.page;
-      paramsF.limit = this.paramsCustomer.value.limit;
-    }
+
+    let params = {
+      ...this.paramsCustomer.getValue(),
+      ...this.ColumnFilterCustomer,
+    };
+
+    params['filter.EventId'] = `$eq:${this.event.value}`;
+
     //SentToSIRSAE
     console.log(this.formCustomerEvent.get('inProcess').value);
     this.formCustomerEvent.get('inProcess').value
       ? paramsF.addFilter('SentToSIRSAE', 'S')
       : '';
-    this.comerTpEventsService.getTpEvent2(paramsF.getParams()).subscribe(
+    this.comerTpEventsService.getTpEvent3(params).subscribe(
       async res => {
+        console.log(res);
         const newData = await Promise.all(
           res.data.map(async (e: any) => {
             let disponible: boolean;
@@ -657,39 +848,65 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //LOTES
   getDataLotes(eventId: string | number) {
-    const paramsF = new FilterParams();
-    paramsF.addFilter('eventId', eventId);
-    paramsF.addFilter('clientId', null, SearchFilter.NOT);
-    this.comerLotsService
-      .getComerLotsClientsPayref(paramsF.getParams())
-      .subscribe(
-        async res => {
-          console.log(res);
-          const newData = await Promise.all(
-            res.data.map(async (e: any) => {
-              let disponible: boolean;
-              const validate = await this.postQueryLots(e);
-              disponible = JSON.parse(JSON.stringify(validate)).available;
-              return {
-                ...e,
-                available: disponible,
-                txtCan:
-                  e.exceedsLack == 1 ? 'Lote Cancelado por el Usuario' : '',
-              };
-            })
-          );
-          console.log(newData);
-          this.dataLotEvent.load(newData);
-          this.totalItemsLotEvent = res.count;
-          this.loadingLotEvent = false;
-        },
-        err => {
-          console.log(err);
-          this.loadingLotEvent = false;
-          this.dataLotEvent.load([]);
-          this.totalItemsLotEvent = 0;
-        }
-      );
+    //&filter.clientId=$not:null
+    let params = {
+      ...this.paramsLotEvent.getValue(),
+      ...this.columnFiltersLotsEvent,
+    };
+
+    params['filter.eventId'] = `$eq:${eventId}`;
+
+    this.comerLotsService.getComerLotsClientsPayref2(params).subscribe(
+      async res => {
+        console.log(res);
+        this.comerLotsService.comerLotsClientsPayrefSum(eventId).subscribe(
+          res => {
+            console.log(res);
+            this.formLotEvent
+              .get('totalTableWarranty')
+              .setValue(res.data[0].sumPriceWarranty);
+            this.formLotEvent
+              .get('totalTableAdvance')
+              .setValue(res.data[0].sumAnticipate);
+            this.formLotEvent
+              .get('totalFinalPrice')
+              .setValue(res.data[0].sumPriceEnd);
+            this.formLotEvent
+              .get('totalWarranty')
+              .setValue(res.data[0].sumWarrantyAssig);
+            this.formLotEvent
+              .get('totalLiquidateAmount')
+              .setValue(res.data[0].sumAmountLiq);
+          },
+          err => {
+            console.log(err);
+          }
+        );
+
+        const newData = await Promise.all(
+          res.data.map(async (e: any) => {
+            let disponible: boolean;
+            const validate = await this.postQueryLots(e);
+            disponible = JSON.parse(JSON.stringify(validate)).available;
+            return {
+              ...e,
+              available: disponible,
+              txtCan: e.exceedsLack == 1 ? 'Lote Cancelado por el Usuario' : '',
+            };
+          })
+        );
+        console.log(newData);
+        this.dataLotEvent.load(newData);
+        this.totalItemsLotEvent = res.count;
+        this.loadingLotEvent = false;
+      },
+      err => {
+        console.log(err);
+        this.loadingLotEvent = false;
+        this.dataLotEvent.load([]);
+        this.totalItemsLotEvent = 0;
+      }
+    );
   }
 
   //POSQUERY LOTES
@@ -724,37 +941,78 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
             (n_cont > 0 && n_cont == n_coni && n_sum_pag >= e.finalPrice) ||
             (e.vtaStatusId == 'CAN' && n_cont == n_coni)
           ) {
+            this.settingsLotEvent = {
+              ...TABLE_SETTINGS,
+              rowClassFunction: (row: { data: { available: any } }) =>
+                row.data.available
+                  ? 'bg-success text-white'
+                  : 'bg-dark text-white',
+              actions: false,
+              columns: COLUMNS_LOT_EVENT_FALSE,
+              hideSubHeader: false,
+            };
             resolve({ available: false });
           } else {
+            this.settingsLotEvent = {
+              ...TABLE_SETTINGS,
+              rowClassFunction: (row: { data: { available: any } }) =>
+                row.data.available
+                  ? 'bg-success text-white'
+                  : 'bg-dark text-white',
+              actions: false,
+              columns: COLUMNS_LOT_EVENT_TRUE,
+              hideSubHeader: false,
+            };
             resolve({ available: true });
           }
+        } else {
+          this.settingsLotEvent = {
+            ...TABLE_SETTINGS,
+            rowClassFunction: (row: { data: { available: any } }) =>
+              row.data.available
+                ? 'bg-success text-white'
+                : 'bg-dark text-white',
+            actions: false,
+            columns: COLUMNS_LOT_EVENT_TRUE,
+            hideSubHeader: false,
+          };
+          resolve({ available: true });
         }
       } else {
-        resolve({ available: false });
+        this.settingsLotEvent = {
+          ...TABLE_SETTINGS,
+          rowClassFunction: (row: { data: { available: any } }) =>
+            row.data.available ? 'bg-success text-white' : 'bg-dark text-white',
+          actions: false,
+          columns: COLUMNS_LOT_EVENT_TRUE,
+          hideSubHeader: false,
+        };
+        resolve({ available: true });
       }
     });
   }
 
   //LOTES DESIERTOS
   getDataDesertLots(eventId: string | number) {
-    const paramsF = new FilterParams();
-    paramsF.addFilter('eventId', eventId);
-    this.comerLotsService
-      .getAllComerLotsFilter(`${paramsF.getParams()}&filter.idClient=$null`)
-      .subscribe(
-        res => {
-          console.log(res);
-          this.dataDesertedLots.load(res.data);
-          this.totalItemsDesertedLots = res.count;
-          this.loadingDesertLots = false;
-        },
-        err => {
-          console.log(err);
-          this.dataDesertedLots.load([]);
-          this.totalItemsDesertedLots = 0;
-          this.loadingDesertLots = false;
-        }
-      );
+    let params = {
+      ...this.paramsDesertedLots.getValue(),
+      ...this.columnFiltersDesertedLots,
+    };
+    params['filter.eventId'] = `$eq:${eventId}`;
+    this.comerLotsService.getAllComerLotsFilter2(params).subscribe(
+      res => {
+        console.log(res);
+        this.dataDesertedLots.load(res.data);
+        this.totalItemsDesertedLots = res.count;
+        this.loadingDesertLots = false;
+      },
+      err => {
+        console.log(err);
+        this.dataDesertedLots.load([]);
+        this.totalItemsDesertedLots = 0;
+        this.loadingDesertLots = false;
+      }
+    );
   }
 
   //SELECCIONAR CLIENTES PARTICIPANTES EN EL EVENTO
@@ -762,7 +1020,72 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     console.log(e.data);
     this.loadingCustomerBanks = true;
     this.idClientCustomer = e.data.ClientId;
-    this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
+    this.rfcClientCustomer = e.data.RFC;
+
+    this.dataCustomerBanks
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'movementNumber':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'Public_Batch':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'date':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'bankCode':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'reference':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'amount':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'Income_Order_ID':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'Payment_ID':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.ColumnFilterCustomerBank[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.ColumnFilterCustomerBank[field];
+            }
+          });
+          this.paramsCustomerBanks = this.pageFilter(this.paramsCustomerBanks);
+          this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
+        }
+      });
+    this.paramsCustomerBanks
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
+      });
     this.getTotalSums(e);
   }
 
@@ -796,22 +1119,159 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.formLotEvent.get('warranty').setValue(e.data.guaranteePrice);
     this.formLotEvent.get('liquidateAmount').setValue(e.data.liquidationAmount);
     this.formLotEvent.get('txtCancel').setValue(e.data.txtCan);
-    this.getLotsBanks(e.data.lotId);
-    this.getPaymentLots(e.data.lotId);
+    this.lotId = e.data.lotId;
+
+    this.dataLotsBanks
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'movementNumber':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'date':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'bankKey':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'reference':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'amount':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'entryOrderId':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'paymentId':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFiltersLotsBank[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersLotsBank[field];
+            }
+          });
+          this.paramsLotsBanks = this.pageFilter(this.paramsLotsBanks);
+          this.getLotsBanks(e.data.lotId);
+        }
+      });
+    this.paramsLotsBanks
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.getLotsBanks(e.data.lotId);
+      });
+
+    this.dataPaymentLots
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'reference':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'amountAppVat':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'vat':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'amountNoAppVat':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'desc_tipo':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'transferent.nameTransferent':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFiltersPaymentLots[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersPaymentLots[field];
+            }
+          });
+          this.paramsPaymentLots = this.pageFilter(this.paramsPaymentLots);
+          this.getPaymentLots(e.data.lotId);
+        }
+      });
+
+    this.paramsPaymentLots
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.getPaymentLots(e.data.lotId);
+      });
   }
 
   //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR CLIENTE
   getPaymentByCustomer(clientId: string, eventId: string) {
+    console.log(this.id_tipo_disp);
+    if (['1', '3'].includes(this.id_tipo_disp.toString())) {
+      console.log('Entra');
+    } else {
+      console.log('No entra');
+    }
+
+    let params = {
+      ...this.paramsCustomerBanks.getValue(),
+      ...this.ColumnFilterCustomerBank,
+    };
     this.loadingValidAmount = true;
     this.loadingTotal = true;
 
-    const paramsF = new FilterParams();
-    paramsF.addFilter('Customer_ID', clientId);
-    paramsF.addFilter('Event_ID', eventId);
-    this.comerLotsService.getLotComerPayRef(paramsF.getParams()).subscribe(
+    params['filter.Customer_ID'] = `$eq:${clientId}`;
+    params['filter.Event_ID'] = `$eq:${eventId}`;
+    //paramsF.addFilter('Customer_ID', clientId);
+    //paramsF.addFilter('Event_ID', eventId);
+    this.comerLotsService.getLotComerPayRef2(params).subscribe(
       res => {
         console.log(res);
-        this.dataCustomerBanks.load(res.data);
+        const newData = res.data.map((e: any) => {
+          return {
+            ...e,
+            available: ['A', 'S'].includes(e.System_Valid) ? true : false,
+            id_tipo_disp: this.id_tipo_disp,
+          };
+        });
+        this.dataCustomerBanks.load(newData);
         this.totalItemsCustomerBanks = res.count;
         this.loadingCustomerBanks = false;
       },
@@ -861,13 +1321,21 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     );
   }
 
+  //POSQUERY PAGOS RECIBIDOS EN EL BANCO POR CLIENTE
+  postqueryPaymentByCustomer() {}
+
   //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR LOTE
   getLotsBanks(idLote: string) {
     this.loadingLotBanks = true;
-    const paramsF = new FilterParams();
-    paramsF.addFilter('SystemValid', 'R,D,B', SearchFilter.NOTIN);
-    paramsF.addFilter('BatchID', idLote);
-    this.paymentService.getComerPaymentRef(paramsF.getParams()).subscribe(
+
+    let params = {
+      ...this.paramsLotsBanks.getValue(),
+      ...this.columnFiltersLotsBank,
+    };
+
+    params['filter.BatchID'] = `$eq:${idLote}`;
+
+    this.paymentService.getComerPaymentRef2(params).subscribe(
       res => {
         console.log(res);
         this.dataLotsBanks.load(res.data);
@@ -883,12 +1351,21 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     );
   }
 
+  //POSTQUERY DE PAGOS RECIBIDOS EN EL BANCO POR LOTE
+  postqueryLotBanks() {}
+
   //DATOS DE COMPOSICIÓN DE PAGOS RECIBIDOS POR LOTE
   getPaymentLots(lotId: string) {
     this.loadingPaymentLots = true;
-    const paramsF = new FilterParams();
-    paramsF.addFilter('lotId', lotId);
-    this.spentService.getAllComerPagosRef(paramsF.getParams()).subscribe(
+
+    let params = {
+      ...this.paramsPaymentLots.getValue(),
+      ...this.columnFiltersPaymentLots,
+    };
+
+    params['filter.lotId'] = `$eq:${lotId}`;
+
+    this.spentService.getAllComerPagosRef2(params).subscribe(
       res => {
         console.log(res);
         this.dataPaymentLots.load(res.data);
@@ -1143,6 +1620,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       modalConfig = {
         initialState: {
           dataModel,
+          dateWarrantyLiq: this.form.get('dateMaxPayment').value,
           callback: (e: any) => {
             console.log(e);
           },
@@ -1163,7 +1641,34 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //Enviar a SIRSAE
   sendToSirsae() {
-    if (this.txt_usu_valido != null) {
+    this.alertQuestion(
+      'question',
+      '¿Desea Ejecutar el Proceso de Envío a SIRSAE?',
+      '',
+      'Continuar'
+    ).then(q => {
+      if (q.isConfirmed) {
+        //TODO: PUP_PROC_ENV_SIRSAE
+        const model: IPupProcEnvSirsae = {
+          typeProcess: this.formRbButton.get('definitive').value,
+          lotId: this.lotId,
+          clientId: this.idClientCustomer,
+          typeDispId: this.id_tipo_disp,
+          rfc: this.rfcClientCustomer,
+          saleStatusId: '',
+          address: this.eventManagement == 'MUEBLES' ? 'M' : 'I',
+          comerLotsEventId: '',
+          publicLot: '',
+          comerEventsEventId: this.event.value,
+          rgTotalLots: this.formRbButton.get('allBatch').value,
+          typeEventId: this.eventTpId,
+        };
+
+        console.log(model);
+      }
+    });
+
+    /* if (this.txt_usu_valido != null) {
       this.alertQuestion(
         'question',
         '¿Desea Ejecutar el Proceso de Envío a SIRSAE?',
@@ -1172,6 +1677,22 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       ).then(q => {
         if (q.isConfirmed) {
           //TODO: PUP_PROC_ENV_SIRSAE
+          const model: IPupProcEnvSirsae = {
+            typeProcess: this.formRbButton.get('definitive').value,
+            lotId: this.lotId,
+            clientId: this.idClientCustomer,
+            typeDispId: this.id_tipo_disp,
+            rfc: this.rfcClientCustomer,
+            saleStatusId: '',
+            address: this.eventManagement == 'MUEBLES' ? 'M' : 'I',
+            comerLotsEventId: '',
+            publicLot: '',
+            comerEventsEventId: this.event.value,
+            rgTotalLots: this.formRbButton.get('allBatch').value,
+            typeEventId: this.eventTpId,
+          };
+
+          console.log(model)
         }
       });
     } else {
@@ -1191,7 +1712,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       };
 
       this.modalService.show(CanUsuSirsaeComponent, modalConfig);
-    }
+    }*/
   }
 
   //Ejecutar dispersión
@@ -1204,6 +1725,23 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     ).then(q => {
       if (q.isConfirmed) {
         //TODO: PUP_PROC_DISP
+        const model: IPupProcDisp = {
+          typeDispId: this.id_tipo_disp,
+          comerEventsEventId: this.form.get('event').value,
+          address: this.eventManagement == 'MUEBLES' ? 'M' : 'I',
+          rgTotalLots: this.formRbButton.get('allBatch').value,
+          PROCESAR: batchEventCheck,
+          typeProcess: this.formRbButton.get('definitive').value,
+        };
+        console.log(model);
+        this.comerLotsService.pupProcDisp(model).subscribe(
+          res => {
+            console.log(res);
+          },
+          err => {
+            console.log(err);
+          }
+        );
       }
     });
   }
@@ -1211,13 +1749,34 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   //Reprocesar Dispersión
   reprocessScattering() {
     if (this.id_tipo_disp != null) {
-      let c_message = [1, 3].includes(this.id_tipo_disp)
+      let c_message = ['1', '3'].includes(this.id_tipo_disp.toString())
         ? '¿Desea Ejecutar el Reproceso de Clientes?'
         : '¿Desea Ejecutar el Reproceso de Lotes?';
 
       this.alertQuestion('question', c_message, '', 'Ejecutar').then(q => {
         if (q.isConfirmed) {
-          //TODO: PUP_PROC_REPROC
+          //* PUP_PROC_REPROC
+          const model: IPupProcReproc = {
+            typeDispId: this.id_tipo_disp,
+            comerEventsEventId: this.event.value,
+            PROCESAR: ['1', '3'].includes(this.id_tipo_disp.toString())
+              ? goodCheckCustomer.map((e: any) => {
+                  return e.ClientId;
+                })
+              : batchEventCheck,
+            rgTypeProcess: this.formRbButton.get('definitive').value,
+          };
+          console.log(model);
+          this.comerLotsService.pupProcReproc(model).subscribe(
+            res => {
+              console.log(res);
+            },
+            err => {
+              //!Hay error en el endpoint
+              console.log(err);
+              this.alert('error', 'Se presentó un error inesperado', '');
+            }
+          );
         }
       });
     } else {
@@ -1234,19 +1793,48 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   proposalScattering() {
     this.alertQuestion(
       'question',
-      '¿Desea Ejecutar el Proceso de Propuesta?',
+      '¿Desea Ejecutar el Proceso de Propuesta de Dispersión?',
       '',
       'Ejecutar'
     ).then(q => {
       if (q.isConfirmed) {
+        //* PUP_PROC_SELDISP
         const model: IPupProcSeldisp = {
           saleStatusId: this.statusVtaId,
           typeDispId: this.id_tipo_disp,
-          totalAmount: '',
-          totalClient: '',
+          totalAmount: this.formCustomerEvent.get('totalAmount').value,
+          totalClient: this.formCustomerBanks.get('validAmount').value,
           comerClientXEventsEventId: this.event.value,
-          dateGraceLiq: '',
+          dateGraceLiq: this.form.get('dateMaxPayment').value,
+          comerLotsEventId: this.event.value,
         };
+
+        console.log(model);
+        this.comerLotsService.pupProcSeldisp(model).subscribe(
+          res => {
+            console.log(res);
+            this.alert(
+              'success',
+              'Propuesta de Dispersion Realizada Correctamente',
+              ''
+            );
+          },
+          err => {
+            console.log(err);
+            if (
+              err.error.message ==
+              'Proceso terminado!, no se realizarón acciones, verifique el estatus de la venta ingresado!'
+            ) {
+              this.alert(
+                'error',
+                'No se realizaron acciones',
+                'Verificar el Estatus de la venta ingresada'
+              );
+            } else {
+              this.alert('error', 'Se presentó un Error inesperado', '');
+            }
+          }
+        );
       }
     });
   }
@@ -1255,12 +1843,49 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   proposalSendSirsae() {
     this.alertQuestion(
       'question',
-      '¿Desea Ejecutar el Proceso de Propuesta?',
+      '¿Desea Ejecutar el Proceso de Propuesta de Envio SIRSAE?',
       '',
       'Ejecutar'
     ).then(q => {
       if (q.isConfirmed) {
         //TODO: PUP_PROC_SELSIRSAE
+        const model: IPupProcSelsirsae = {
+          saleStatusId: this.statusVtaId,
+          typeDispId: this.id_tipo_disp,
+          comerClientXEventsEventId: this.event.value,
+          comerLotsEventId: this.event.value,
+          comerEventsEventId: this.event.value,
+        };
+
+        this.comerLotsService.pupProcSelsirsae(model).subscribe(
+          res => {
+            console.log(res);
+            this.alert(
+              'success',
+              'Se proceso la Rropuesta de Envío SIRSAE',
+              ''
+            );
+          },
+          err => {
+            console.log(err);
+            if (
+              err.error.message ==
+              'Proceso terminado!, no se realizarón acciones, verifique el estatus de la venta ingresado!'
+            ) {
+              this.alert(
+                'error',
+                'No se realizaron acciones',
+                'Verificar el Estatus de la venta ingresada'
+              );
+            } else {
+              this.alert(
+                'error',
+                'Se presentó un Error inesperado',
+                'Por favor vuelva a intentarlo'
+              );
+            }
+          }
+        );
       }
     });
   }
@@ -1269,12 +1894,49 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   proposalReprocess() {
     this.alertQuestion(
       'question',
-      '¿Desea Ejecutar el Proceso de Propuesta?',
+      '¿Desea Ejecutar el Proceso de Propuesta de Reproceso?',
       '',
       'Ejecutar'
     ).then(q => {
       if (q.isConfirmed) {
         //TODO: PUP_PROC_SELREPROCESO
+        const model: IPupProcSelReproceso = {
+          saleStatusId: this.statusVtaId,
+          typeDispId: this.id_tipo_disp,
+          comerEventsEventId: this.event.value,
+          totalClient: this.formCustomerBanks.get('validAmount').value,
+          dateGraceLiq: this.form.get('dateMaxPayment').value,
+        };
+
+        this.comerLotsService.pupProcSelReproceso(model).subscribe(
+          res => {
+            this.alert(
+              'success',
+              'Propuesta de Reproceso Realizada Correctamente',
+              ''
+            );
+            console.log(res);
+          },
+          err => {
+            console.log(err);
+            if (
+              err.error.message ==
+              'Proceso terminado!, no se realizarón acciones, verifique el estatus de la venta ingresado!'
+            ) {
+              this.alert(
+                'error',
+                'No se realizaron acciones',
+                'Verificar el Estatus de la venta ingresada'
+              );
+            } else {
+              this.alert(
+                'error',
+                'Se presentó un Error inesperado',
+                'Por favor vuelva a intentarlo'
+              );
+            }
+          }
+        );
       }
     });
   }
@@ -1328,7 +1990,13 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       'Ejecutar'
     ).then(q => {
       if (q.isConfirmed) {
-        let body: ISendSirsaeLot = {};
+        let body: ISendSirsaeLot = {
+          PROCESAR: [],
+          PROCESO: '',
+          COMER_EVENTOS_ID_EVENTO: '',
+          ID_TPEVENTO: '',
+          ID_TIPO_DISP: '',
+        };
         //TODO
         this.interfaceSirsaeService.sendSirsaeLot(body).subscribe(
           res => {
@@ -1362,12 +2030,27 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
       this.comerLotsService.pupValidaMandatoNfac(model).subscribe(
         res => {
+          this.alert('success', 'Se realizó la prueba', '');
           console.log(res);
         },
         err => {
           console.log(err);
+          this.alert('error', 'Se presentó un error inesperado', '');
         }
       );
     }
+  }
+
+  userWithoutBill() {
+    const paramsF = new FilterParams();
+    // paramsF.addFilter()
+    this.paymentService.getComerRelUsuCanc().subscribe(
+      res => {
+        console.log(res);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 }

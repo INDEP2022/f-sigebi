@@ -81,6 +81,16 @@ export enum GoodProcessPoints {
   UpdateMassiveStore = 'application/updateMassiveStore',
   GetGoodsResDevInv = 'application/goods-res-dev-inv-view',
   GetDataCustom = 'application/get-data-custom-by-currency-nogood',
+  VGoodType = 'v-good-type',
+  //Classification View
+  GetVsigLigie = 'application/vsigLigie',
+  ReportNingevent = 'application/report-ningevent',
+  ReportNingeventExcel = 'application/report-ningevent-excel',
+  ReportMonth = 'application/report-months',
+  ReportMonthExcel = 'application/reportMonthsDataExcel',
+  CheckAllGoodPag = 'application/checkAllGoodPag',
+  CheckAllGoodPagExcel = 'application/checkAllGoodPag-export',
+  SpObtnxGood = 'application/spObtnxGood',
 }
 
 export enum GoodFinderEndpoint {
@@ -91,6 +101,7 @@ export enum GoodFinderEndpoint {
   AssignDomicilie = 'good-query/update-domicile',
   UpdateGoodStatus = 'good-query/update-status',
   AbleToSignDistamen = 'good-query/count-request',
+  UpdateClassification = 'good-query/classification/request',
 
   /* Good Data Aset */
   GoodDataAsetBase = 'gooddataset',

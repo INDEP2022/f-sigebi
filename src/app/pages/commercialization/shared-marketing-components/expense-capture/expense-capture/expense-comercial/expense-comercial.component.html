@@ -179,7 +179,8 @@
               secondParamSearch="filter.clkPv"
               secondPrefixSearch="$eq"
               [labelTemplate]="providerLabel"
-              [optionTemplate]="providerOption">
+              [optionTemplate]="providerOption"
+              (valueChange)="updateProvider($event)">
             </ng-custom-select-loading>
             <ng-template #providerLabel let-item="item">
               {{ item.clkPv }} - {{ item.pvName }}

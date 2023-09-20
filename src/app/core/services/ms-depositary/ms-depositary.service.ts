@@ -293,4 +293,28 @@ export class MsDepositaryService extends HttpService {
   getComerDetLcGrief(reference: number | string) {
     return this.get(`application/comer-det-lc-grief/${reference}`);
   }
+
+  insertDispersionDB(params: any): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      DepositaryEndPoints.InsertDispersionDB,
+      params
+    );
+  }
+
+  execDeductions(params: any): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      DepositaryEndPoints.ExecDeductions,
+      params
+    );
+  }
+
+  postFullErase(body: any) {
+    return this.post<IListResponse<any>>(DepositaryEndPoints.FullErase, body);
+  }
+  postCurrentFullErase(body: any) {
+    return this.post<IListResponse<any>>(
+      DepositaryEndPoints.CurrentFullErase,
+      body
+    );
+  }
 }
