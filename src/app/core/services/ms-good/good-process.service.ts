@@ -43,6 +43,14 @@ export class GoodProcessService extends HttpService {
     return this.get(GoodProcessPoints.ReportMonthExcel, params);
   }
 
+  getCheckAllGoodPag(params: ListParams) {
+    return this.get(GoodProcessPoints.CheckAllGoodPag, params);
+  }
+
+  getCheckAllGoodPagExcel(params: ListParams) {
+    return this.get(GoodProcessPoints.CheckAllGoodPagExcel, params);
+  }
+
   updateFraction(body: { newFraction: string; goodNum: number }) {
     return this.post(GoodProcessPoints.updateFractions, body);
   }

@@ -80,13 +80,21 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
+        <!-- <confirm-button
           [type]="'button'"
           [disabled]="contractForm.invalid"
-          (confirm)="confirm()"></confirm-button>
+          (confirm)="confirm()"></confirm-button> -->
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()"
+          [disabled]="contractForm.invalid">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button class="btn btn-danger btn-sm active mr-3" (click)="close()">
           Cancelar
         </button>
       </div>
