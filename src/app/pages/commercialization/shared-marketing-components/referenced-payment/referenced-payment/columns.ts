@@ -163,7 +163,7 @@ export const COLUMNS = {
     },
   },
   paymentId: {
-    title: 'Id. Pago',
+    title: 'Id Pago',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -428,7 +428,7 @@ export const COLUMNS_CARGADOS = {
     },
   },
   paymentId: {
-    title: 'Id. Pago',
+    title: 'Id Pago',
     // width: '15%',
     type: 'string',
     sort: false,

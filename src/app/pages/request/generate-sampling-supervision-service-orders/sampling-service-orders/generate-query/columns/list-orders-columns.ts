@@ -1,41 +1,74 @@
+import * as moment from 'moment';
+
 export const LIST_ORDERS_COLUMNS = {
-  noServiceOrder: {
+  orderServiceId: {
     title: 'No. Ordern Servicio',
     type: 'text',
     sort: false,
   },
-  foilServiceOrder: {
+  orderServiceFolio: {
     title: 'Folio Ordern Servicio',
     type: 'text',
     sort: false,
   },
-  typeServiceOrder: {
+  orderServiceType: {
     title: 'Tipo Ordern Servicio',
     type: 'text',
     sort: false,
   },
-  regionalDelegation: {
+  turnDate: {
+    title: 'Fecha Turnado',
+    type: 'text',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return moment(value).format('DD/MM/YYYY');
+    },
+  },
+  delegationName: {
     title: 'Delegación Regional',
     type: 'text',
     sort: false,
   },
-  transfer: {
+  transferent: {
     title: 'Transferente',
     type: 'text',
     sort: false,
   },
-  noContract: {
+  contractNumber: {
     title: 'No. Contrato',
     type: 'text',
     sort: false,
   },
-  noRequest: {
+  requestId: {
     title: 'No. Solicitud',
     type: 'text',
     sort: false,
   },
-  costServices: {
+  programmationId: {
+    title: 'No. Programación',
+    type: 'text',
+    sort: false,
+  },
+  costService: {
     title: 'Costo Servicio',
+    type: 'text',
+    sort: false,
+  },
+  endAttentionDate: {
+    title: 'Fecha Fin Atención',
+    type: 'text',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return moment(value).format('DD/MM/YYYY');
+    },
+  },
+  orderServiceStatus: {
+    title: 'Estatus Orden Servicio',
+    type: 'text',
+    sort: false,
+  },
+  goodId: {
+    title: 'No. Bien',
     type: 'text',
     sort: false,
   },
