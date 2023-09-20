@@ -218,7 +218,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       ...this.settings,
       rowClassFunction: (row: { data: { available: any } }) =>
         row.data.available ? 'bg-dark text-white' : 'bg-success text-white',
-      actions: { add: false, delete: false, edit: false },
+      /* actions: { add: false, delete: false, edit: false }, */
       columns: COLUMNS,
     };
   }
@@ -650,6 +650,17 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           )
         ) {
           this.form.disable({ onlySelf: true, emitEvent: false });
+          if(['P', 'V', 'A'].includes( res.statuspack.toString().toLocaleUpperCase())){
+            this.form.get('amountKg').enable()
+            this.form.get('paragraph1').enable()
+            this.form.get('paragraph2').enable()
+            this.form.get('paragraph3').enable()
+          }else{
+            this.form.get('amountKg').disable()
+            this.form.get('paragraph1').disable()
+            this.form.get('paragraph2').disable()
+            this.form.get('paragraph3').disable()
+          }
         } else {
           this.form.enable({ onlySelf: true, emitEvent: false });
         }
@@ -1771,10 +1782,12 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   downloadReport() {
     this.loading = true;
     let params: any = {};
-    params['NO_PAQUETE'] = this.form.get('noPackage').value.numberPackage;
-    params['PCLAVE'] = this.form.get('cvePackage').value.cvePackage;
-    params['PDESTINO'] = this.form.get('packageType').value.packageType;
+    params['P_NO_PAQUETE'] = this.form.get('noPackage').value.numberPackage;
+    params['P_CLAVE'] = this.form.get('cvePackage').value;
+    params['P_DESTINO'] = this.form.get('packageType').value;
+    
     console.log('params....', params);
+
     this.loadingText = 'Generando reporte ...';
     this.siabService.fetchReport('RGENACTACONVUNIDAD', params).subscribe({
       next: (response: BlobPart) => {
