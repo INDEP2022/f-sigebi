@@ -409,7 +409,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     this.donationService.getGoodsDonation(params).subscribe({
       next: data => {
         this.goods = data.data;
-        // console.log('Bienes', this.bienes);
+        console.log('Bienes', this.goods);
         let result = data.data.map(async (item: any) => {
           let obj = {
             vcScreen: 'FMCOMDONAC_1',
