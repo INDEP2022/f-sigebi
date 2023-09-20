@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -41,6 +41,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   filterTurn: IStrategyTurn;
   filterCost: IStrateyCost;
   columnFilters: any = [];
+  selectedGooods: any[] = [];
   reportImp: IReportImp;
   area: number = 0;
   data1: any[] = [];
@@ -60,6 +61,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   settings2 = { ...this.settings, actions: false };
   types = new DefaultSelect();
   turns = new DefaultSelect();
+  selectedRow: any | null = null;
   public serviceOrderKey = new DefaultSelect();
   public process = new DefaultSelect<IStrategyProcess>();
   public regionalCoordination = new DefaultSelect();
@@ -76,7 +78,8 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     private indicatorsParametersService: IndicatorsParametersService,
     private datePipe: DatePipe,
     private strategyProcessService: StrategyProcessService,
-    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService
+    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     super();
     this.settings = {
@@ -393,4 +396,14 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       );
     }
   }
+  onUserRowSelect(event: { data: any; selected: any }) {
+    this.selectedRow = event.data;
+    this.selectedGooods = event.selected;
+    console.log(this.selectedGooods);
+    this.changeDetectorRef.detectChanges();
+  }
+  incorporaGoods() {}
+  elimina() {}
+  incorpora() {}
+  costos() {}
 }

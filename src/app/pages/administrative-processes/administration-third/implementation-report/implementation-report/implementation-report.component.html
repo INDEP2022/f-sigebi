@@ -228,26 +228,17 @@
         </div>
       </div>
     </form>
-
-    <div class="row pt-2">
-      <div class="col-md-12 text-center mt-4 mb-4">
-        <div class="col-md-2">
-          <!-- <button
-            type="button"
-            class="btn btn-primary active btn-sm mr-3"
-            (click)="searchActas()"
-            [disabled]="!disabledBtnActas">
-            Buscar Bienes
-            <i class="bx bx-search bx-sm float-icon"></i>
-          </button> -->
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
           <button
-            class="btn btn-primary btn-sm active"
-            (click)="pupGenera()"
-            [disabled]="!disabledBtnActas">
-            Genera
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="pupGenera()">
+            Genera <i class="fas fa-print bx-sm float-icon"></i>
           </button>
         </div>
-        <div class="col-md-2">
+        <div class="m-3">
           <button
             type="button"
             class="btn btn-danger active btn-sm"
@@ -266,6 +257,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
+              (userRowSelect)="onUserRowSelect($event)"
               [source]="dataTableGood">
             </ng2-smart-table>
           </div>
@@ -276,13 +268,24 @@
       </div>
     </div>
 
-    <div class="row pt-2">
-      <div class="col-md-12 text-center mt-4 mb-4">
-        <div class="col-md-2">
-          <button class="btn btn-primary btn-sm active">Incorpora</button>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button
+            (click)="incorporaGoods()"
+            type="button"
+            class="btn btn-info active btn-sm mr-3">
+            Incorpora
+            <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
         </div>
-        <div class="col-md-2">
-          <button class="btn btn-danger btn-sm active">Elimina</button>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm"
+            (click)="elimina()">
+            Elimina <i class="fas fa-trash bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -303,14 +306,23 @@
           [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
-    <div class="row pt-2">
-      <div class="col-md-12 text-center mt-4 mb-4">
-        <div class="col-md-2">
-          <button class="btn btn-primary btn-sm active">Incorpora</button>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="incorpora()">
+            Incorpora <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
         </div>
-
-        <div class="col-md-2">
-          <button class="btn btn-primary btn-sm active">Nuevos Costos</button>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="costos()">
+            Nuevos Costos <i class="fas fa-print bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
     </div>
