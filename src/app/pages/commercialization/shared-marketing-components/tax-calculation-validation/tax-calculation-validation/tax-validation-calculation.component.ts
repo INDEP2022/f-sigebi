@@ -50,9 +50,13 @@ export class TaxValidationCalculationComponent
   columnFilters: any = [];
 
   settings2 = { ...this.settings, actions: false };
-  data2: any[] = [];
+  data2: LocalDataSource = new LocalDataSource();
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
+  Detavaluos: any[] = [];
+
+  appraisal: any;
+  V_VRI: number;
 
   constructor(
     private fb: FormBuilder,
@@ -79,6 +83,7 @@ export class TaxValidationCalculationComponent
   }
 
   ngOnInit(): void {
+    console.log('RespSubstr ->', this.Substr('14.6'));
     /*this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getExample());*/
@@ -292,6 +297,8 @@ export class TaxValidationCalculationComponent
             this.data.refresh();
             this.totalItems = resp.count;
 
+            this.appraisal = resp.data[i].id;
+
             this.getComerDetAvaluo(resp.data[i].id);
           }
         }
@@ -349,10 +356,376 @@ export class TaxValidationCalculationComponent
   }
 
   getComerDetAvaluo(appraisal: number) {
-    this.appraiseService.getComerDetAvaluo(appraisal, 'CPV').subscribe(resp => {
-      if (resp != null && resp != undefined) {
+    let params2 = {
+      ...this.params2.getValue(),
+      ...this.columnFilters,
+    };
+    let v_porcen_aux: any;
+    let v_proc_a: number;
+    let v_proc_b: number;
+    let v_proc_c: number;
+    let v_proc_d: number;
+    let v_proc_e: number;
+    let v_proc_aux: number;
+
+    let terrainRate: any;
+    let terrainIva: any;
+
+    let v_mascara_terreno: string;
+
+    let rateHousing: any;
+    let ivaHousing: any;
+    let v_mascara_habit: string;
+
+    let rateCommercial: any;
+    let ivaCommercial: any;
+    let v_mascara_comer: string;
+    this.appraiseService.getComerDetAvaluo(appraisal, 'CPV', params2).subscribe(
+      resp => {
         console.log('Resp ComerDetAvaluo-> ', resp);
+        for (let i = 0; i < resp.count; i++) {
+          if (resp != null && resp != undefined) {
+            /**INICIO pupValidaReg */
+            this.V_VRI =
+              Number(this.nvl(resp.data[i].vTerrain)) +
+              Number(this.nvl(resp.data[i].vConstruction)) +
+              Number(this.nvl(resp.data[i].vConstructionEat)) +
+              Number(this.nvl(resp.data[i].vInstallationsEsp)) +
+              Number(this.nvl(resp.data[i].vOthers));
+            /** Mapeo de campos operacion servicio Tabla */
+            let porcentTerrain = this.roundPercentage(
+              (resp.data[i].vTerrain * 100) / resp.data[i].vri
+            );
+
+            let porcentHousing = this.roundPercentage(
+              (resp.data[i].vConstruction * 100) / resp.data[i].vri
+            );
+
+            let porcentCommercial = this.roundPercentage(
+              (resp.data[i].vConstructionEat * 100) / resp.data[i].vri
+            );
+
+            let porcentSpecial = this.roundPercentage(
+              (resp.data[i].vInstallationsEsp * 100) / resp.data[i].vri
+            );
+
+            let porcentOthers = this.roundPercentage(
+              (resp.data[i].vOthers * 100) / resp.data[i].vri
+            );
+
+            console.log('Params SalidaRound-> ', porcentTerrain);
+            console.log('Params SalidaRound2-> ', porcentHousing);
+            console.log('Params SalidaRound3-> ', porcentCommercial);
+
+            /**------------------ */
+            let porcentTotal =
+              porcentTerrain +
+              porcentHousing +
+              porcentCommercial +
+              porcentSpecial +
+              porcentOthers;
+
+            if (porcentTotal > 100) {
+              v_porcen_aux = porcentTotal - 100;
+              if (this.nvl(porcentCommercial) > 0) {
+                v_proc_a = porcentCommercial;
+              }
+              if (this.nvl(porcentHousing) > 0) {
+                v_proc_b = porcentHousing;
+              }
+              if (this.nvl(porcentSpecial)) {
+                v_proc_c = porcentSpecial;
+              }
+              if (this.nvl(porcentOthers)) {
+                v_proc_d = porcentOthers;
+              }
+              if (this.nvl(porcentTerrain)) {
+                v_proc_e = porcentTerrain;
+              }
+
+              v_proc_aux = v_proc_a;
+
+              if (v_proc_b >= v_proc_aux) {
+                v_proc_aux = v_proc_b;
+              } else if (v_proc_c >= v_proc_aux) {
+                v_proc_aux = v_proc_c;
+              } else if (v_proc_d >= v_proc_aux) {
+                v_proc_aux = v_proc_d;
+              } else if (v_proc_e >= v_proc_aux) {
+                v_proc_aux = v_proc_e;
+              }
+
+              /**Asignación porcentual del de mayor peso porcentual,  según la siguiente secuencia  (comercial, habitacional, especial, otros, terreno) */
+              if (porcentCommercial == v_proc_aux) {
+                porcentCommercial = porcentCommercial - v_porcen_aux;
+              } else if (porcentSpecial == v_proc_aux) {
+                porcentSpecial = porcentSpecial - v_porcen_aux;
+              } else if (porcentOthers == v_proc_aux) {
+                porcentOthers = porcentOthers - v_porcen_aux;
+              } else if (porcentHousing == v_proc_aux) {
+                porcentHousing = porcentHousing - v_porcen_aux;
+              } else {
+                porcentTerrain = porcentTerrain - v_porcen_aux;
+              }
+
+              porcentOthers =
+                porcentTerrain +
+                porcentCommercial +
+                porcentHousing +
+                porcentSpecial +
+                porcentOthers;
+            } else if (porcentTotal < 100) {
+              v_porcen_aux = 100 - porcentTotal;
+              if (porcentCommercial == 0) {
+                if (porcentSpecial == 0) {
+                  if (porcentOthers == 0) {
+                    if (porcentOthers == 0) {
+                      porcentTerrain = porcentTerrain + v_porcen_aux;
+                    } else {
+                      porcentHousing = porcentHousing + v_porcen_aux;
+                    }
+                  } else {
+                    porcentOthers = porcentOthers + v_porcen_aux;
+                  }
+                } else {
+                  porcentSpecial = porcentSpecial + v_porcen_aux;
+                }
+              } else {
+                porcentCommercial = porcentCommercial + v_porcen_aux;
+              }
+              porcentOthers =
+                porcentTerrain +
+                porcentHousing +
+                porcentCommercial +
+                porcentSpecial +
+                porcentOthers;
+            }
+
+            /**Información convertida a caracter por incluir en su caso leyenda (Para terreno). */
+            if (resp.data[i].rateIvaTerrain == null) {
+              terrainRate = 'EXENTO';
+              terrainIva = 'N/A';
+            } else {
+              terrainRate = String(resp.data[i].rateIvaTerrain * 100);
+              v_mascara_terreno = String(
+                this.roundPercentage(
+                  this.nvl(
+                    (porcentTerrain / 100) *
+                      resp.data[i].rateIvaTerrain *
+                      this.V_VRI
+                  )
+                )
+              );
+
+              if (this.Substr(v_mascara_terreno)) {
+              } else {
+                terrainIva = v_mascara_terreno;
+              }
+
+              /**Información convertida a caracter por incluir en su caso leyenda (Para habitacional). */
+              if (resp.data[i].rateIvaConstrHab == null) {
+                rateHousing = 'EXENTO';
+                ivaHousing = 'N/A';
+              } else {
+                rateHousing = String(resp.data[i].rateIvaConstrHab * 100);
+                v_mascara_habit = String(
+                  this.roundPercentage(
+                    this.nvl(porcentHousing / 100) *
+                      resp.data[i].rateIvaConstrHab *
+                      this.V_VRI
+                  )
+                );
+
+                if (this.Substr(v_mascara_habit)) {
+                } else {
+                  ivaHousing = v_mascara_habit;
+                }
+              }
+
+              /**Información convertida a caracter por incluir en su caso leyenda (Para construción comercial). */
+              if (resp.data[i].rateIvaConstrEat == null) {
+                rateCommercial = 'EXENTO';
+                ivaCommercial = 'N/A';
+              } else {
+                rateCommercial = String(resp.data[i].rateIvaConstrEat * 100);
+                v_mascara_comer = String(
+                  this.roundPercentage(
+                    this.nvl(porcentCommercial / 100) *
+                      resp.data[i].rateIvaConstrEat *
+                      this.V_VRI
+                  )
+                );
+
+                if (this.Substr(v_mascara_comer)) {
+                } else {
+                  ivaCommercial = v_mascara_comer;
+                }
+              }
+            }
+            /**FINAL pupValidaReg */
+            let params2 = {
+              idDetAppraisal: resp.data[i].idDetAppraisal,
+              goodId: resp.data[i].good.goodId,
+              description: resp.data[i].good.description,
+              status: resp.data[i].good.status,
+              goodClassNumber: resp.data[i].good.goodClassNumber,
+              //typeGood:
+              appraisalDate: this.formatDate(
+                new Date(resp.data[i].appraisalDate)
+              ),
+              vigAppraisalDate: this.formatDate(
+                new Date(resp.data[i].good.appraisalVigDate)
+              ),
+              nameAppraiser: resp.data[i].nameAppraiser,
+              refAppraisal: resp.data[i].refAppraisal,
+              //terrainSurface:
+              //surfaceConstru:
+              terrainPorcentage: porcentTerrain,
+              porcentageHousing: porcentHousing,
+              porcentageCommercial: porcentCommercial,
+              porcentageSpecials: porcentSpecial,
+              porcentageOthers: porcentOthers,
+              porcentageTotal: porcentTotal,
+              vri: resp.data[i].vri,
+              vTerrain: resp.data[i].vTerrain,
+              vConstruction: resp.data[i].vConstruction,
+              vConstructionEat: resp.data[i].vConstructionEat,
+              vInstallationsEsp: resp.data[i].vInstallationsEsp,
+              vOthers: resp.data[i].vOthers,
+              /*product: 
+                difference:
+                terrainRate: terrainRate,
+                rateHousing:
+                rateCommercial:
+                rateSpecials:
+                rateOthers:
+                terrainIva: terrainIva,
+                ivaHousing:
+                ivaCommercial:
+                ivaSpecial:
+                ivaOthers:
+                valueIvaTotalCalculated:
+                totalAccount:
+                observation:*/
+            };
+            this.avaluos.push(params2);
+            this.data2.load(this.Detavaluos);
+            this.data2.refresh();
+            this.totalItems2 = resp.count;
+          }
+        }
+      },
+      error => {
+        console.log('Error ComerDetAvaluo-> ', error);
       }
-    });
+    );
+  }
+
+  /*filterTable2() {
+    this.data2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.EQ;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'idDetAppraisal':
+                field = 'filter.idDetAppraisal';
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'goodId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'status':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'goodClassNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'status':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params2 = this.pageFilter(this.params2);
+          this.getComerDetAvaluo(this.appraisal);
+          let i = 0;
+          console.log('entra ', i++);
+        }
+      });
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getComerDetAvaluo(this.appraisal));
+  }*/
+
+  roundPercentage(percentage: number): number {
+    return parseFloat(percentage.toFixed(2));
+  }
+
+  nvl(valor?: number): number {
+    if (valor != null) {
+      return valor;
+    } else {
+      return 0;
+    }
+  }
+
+  Substr(cadena: string) {
+    // Obtener los dos últimos caracteres de la cadena
+    let ultimosDosCaracteres = cadena.slice(-2);
+    let cadenaSinUltimosDos = cadena.slice(0, -2);
+    // Verificar si los dos últimos caracteres son un número del 1 al 9
+    console.log('SUBSTR-> ', ultimosDosCaracteres);
+
+    //return {ultimosDosCaracteres, cadenaSinUltimosDos};
+    if (ultimosDosCaracteres == '.1') {
+      cadenaSinUltimosDos + '0';
+      return cadenaSinUltimosDos;
+    } else if (ultimosDosCaracteres == '.2') {
+      cadenaSinUltimosDos + '0';
+      return cadenaSinUltimosDos;
+    } else if (ultimosDosCaracteres == '.3') {
+      cadenaSinUltimosDos + '0';
+      return cadenaSinUltimosDos;
+    } else if (ultimosDosCaracteres == '.4') {
+      cadenaSinUltimosDos + '0';
+      return cadenaSinUltimosDos;
+    } else if (ultimosDosCaracteres == '.5') {
+      cadenaSinUltimosDos + '0';
+      return cadenaSinUltimosDos;
+    } else if (ultimosDosCaracteres == '.6') {
+      cadenaSinUltimosDos + '0';
+      return cadenaSinUltimosDos;
+    } else if (ultimosDosCaracteres == '.7') {
+      cadenaSinUltimosDos + '0';
+      return cadenaSinUltimosDos;
+    } else if (ultimosDosCaracteres == '.8') {
+      cadenaSinUltimosDos + '0';
+      return cadenaSinUltimosDos;
+    } else if (ultimosDosCaracteres == '.9') {
+      cadenaSinUltimosDos + '0';
+      console.log('Else if-> ', cadenaSinUltimosDos + '0');
+      return cadenaSinUltimosDos;
+    } else {
+      return cadena;
+    }
   }
 }
