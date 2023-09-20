@@ -1,9 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import * as moment from 'moment';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { ZonesService } from 'src/app/core/services/zones/zones.service';
@@ -15,37 +16,13 @@ import { DefaultSelect } from '../../../../../shared/components/select/default-s
 import { AnnexKComponent } from '../annex-k/annex-k.component';
 import { LIST_ORDERS_COLUMNS } from './columns/list-orders-columns';
 
-var data = [
-  {
-    id: 1,
-    noServiceOrder: '1275',
-    foilServiceOrder: 'METROPOLITANA-SAT-1275-08',
-    typeServiceOrder: 'Validación de requerimientos',
-    regionalDelegation: 'METROPOLITANA',
-    transfer: 'SAT-COMERCIO-EXTERIOR',
-    noContract: '124',
-    noRequest: '1428',
-    costServices: '185.14',
-  },
-  {
-    id: 2,
-    noServiceOrder: '1233',
-    foilServiceOrder: 'METROPOLITANA-SAT-1233-08',
-    typeServiceOrder: 'Validación de requerimientos',
-    regionalDelegation: 'METROPOLITANA',
-    transfer: 'SAT-COMERCIO-EXTERIOR',
-    noContract: '122',
-    noRequest: '1422',
-    costServices: '85.14',
-  },
-];
-
 @Component({
   selector: 'app-generate-query',
   templateUrl: './generate-query.component.html',
   styleUrls: ['./generate-query.component.scss'],
 })
 export class GenerateQueryComponent extends BasePage implements OnInit {
+  @ViewChild('table', { static: false }) table: any;
   title: string = 'Genera Consulta';
   orderServiceForm: ModelForm<any>;
   geographicalAreaSelected = new DefaultSelect();
@@ -63,6 +40,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   private zones = inject(ZonesService);
   private orderService = inject(OrderServiceService);
   private authService = inject(AuthService);
+  private deleRegService = inject(RegionalDelegationService);
 
   constructor(
     private fb: FormBuilder,
@@ -98,11 +76,12 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
 
   searchOrders() {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getData();
+      this.getData(data);
     });
   }
 
-  getData() {
+  getData(params: ListParams) {
+    this.loading = true;
     const deleReg = this.getDelegReg();
     const body = {
       contractNumber: this.orderServiceForm.value.contractNumber,
@@ -111,17 +90,40 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       ),
       regionalDelegationId: deleReg,
     };
-    this.orderService.getSamplingOrderView(body).subscribe({
+    const page = params.page;
+    const limit = params.limit;
+    this.orderService.getSamplingOrderView(body, page, limit).subscribe({
       next: resp => {
-        console.log(resp.data);
-        this.paragraphs = resp.data;
-        this.totalItems = resp.count;
+        const result = resp.data.map(async (item: any) => {
+          const delegation: any = await this.getDelegationRegional(
+            item.regionalDelegation
+          );
+          item['delegationName'] = delegation;
+        });
+
+        Promise.all(result).then(() => {
+          this.paragraphs = resp.data;
+          this.totalItems = resp.count;
+          this.loading = false;
+        });
       },
     });
   }
 
   addOrders(): void {
+    if (this.selectedRows.length == 0) {
+      this.onLoadToast('info', 'Seleccione al menos una orden de servicio');
+      return;
+    }
     this.sendData = this.selectedRows;
+    setTimeout(() => {
+      this.selectedRows = [];
+      const table = this.table.grid.getRows();
+      for (let i = 0; i < table.length; i++) {
+        const element = table[i];
+        element.isSelected = false;
+      }
+    }, 500);
   }
 
   rowsSelected(event: any) {
@@ -176,5 +178,15 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.bsModalRef = this.modalService.show(component, config);
+  }
+
+  getDelegationRegional(id: number) {
+    return new Promise((resolve, reject) => {
+      this.deleRegService.getById(id).subscribe({
+        next: resp => {
+          resolve(resp.description);
+        },
+      });
+    });
   }
 }

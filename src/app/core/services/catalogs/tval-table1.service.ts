@@ -111,6 +111,9 @@ export class TvalTable1Service
   }
 
   getAlls2(params?: ListParams): Observable<IListResponse> {
-    return this.Tvaltabla1Repository.getAllPaginated(`${this.route4}?filter.nmtable=$eq:421`, params);
+    return this.Tvaltabla1Repository.getAllPaginated(
+      `${this.route4}?filter.nmtable=$eq:421`,
+      params
+    );
   }
 }

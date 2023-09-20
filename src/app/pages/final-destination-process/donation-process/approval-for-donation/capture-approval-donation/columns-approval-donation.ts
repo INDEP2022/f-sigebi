@@ -211,3 +211,25 @@ export const GODD_ERROR = {
     sort: false,
   },
 };
+export const GOODS = {
+  inventoryNumber: {
+    title: 'No. Inventario',
+    sort: false,
+  },
+  goodId: {
+    title: 'No. Gestión',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+  quantity: {
+    title: 'Cantidad',
+    sort: false,
+  },
+  status: {
+    title: 'Estatus',
+    sort: false,
+  },
+};
