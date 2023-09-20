@@ -115,8 +115,8 @@ export class DataTableComponent extends BasePage implements OnInit {
                 break;
               case 'transfereeId':
                 console.log('-- enttra --');
+                field = 'filter.transfereeId';
                 searchFilter = SearchFilter.EQ;
-                //field = 'transfereeId.transferentId';
                 break;
               case 'desTrans':
                 searchFilter = SearchFilter.ILIKE;
@@ -235,7 +235,7 @@ export class DataTableComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'name':
-                field = `filter.segUser.name`
+                field = `filter.segUser.name`;
                 searchFilter = SearchFilter.ILIKE;
                 break;
               default:
