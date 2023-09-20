@@ -25,7 +25,9 @@
             </div>
           </div>
           <div class="col">
-            <div class="justify-content-start">
+            <div
+              class="justify-content-start"
+              *ngIf="op == 1; else getcontract2">
               <button
                 (click)="getDonacContract()"
                 type="button"
@@ -38,6 +40,21 @@
                 Limpiar <i class="fas fa-eraser"> </i>
               </button>
             </div>
+
+            <ng-template class="justify-content-start" #getcontract2>
+              <button
+                (click)="getIdContract()"
+                type="button"
+                class="btn btn-primary active btn-sm mr-3">
+                Buscar
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                (click)="clean()"
+                class="btn btn-danger btn-sm active mr-3">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+            </ng-template>
           </div>
         </div>
         <div class="row mt-3">
@@ -48,18 +65,10 @@
           </div>
           <div class="col">
             <form-field [control]="form.get('status')" label="Estado">
-              <<<<<<< HEAD
               <input
                 type="text"
                 class="form-control"
                 formControlName="status" />
-              =======
-              <ng-select class="form-control" formControlName="status">
-                <ng-option [value]="'A'">A</ng-option>
-                <ng-option [value]="'RT'">RT</ng-option>
-                <ng-option [value]="'D'">D</ng-option>
-              </ng-select>
-              >>>>>>> eed8343e0bb1da8af5c291595a8e2501c4fe00d3
             </form-field>
           </div>
           <div class="col">
@@ -99,14 +108,7 @@
           </div>
           <div class="col">
             <form-field [control]="form.get('month')" label="Mes">
-              <input
-                type="text"
-                class="form-control"
-                [bsConfig]="bsConfigFromMonth"
-                #dp="bsDatepicker"
-                bsDatepicker
-                [(bsValue)]="bsValueFromMonth"
-                formControlName="month" />
+              <input type="text" class="form-control" formControlName="month" />
             </form-field>
           </div>
         </div>
@@ -150,8 +152,6 @@
               <input
                 type="text"
                 class="form-control"
-                #dp="bsDatepicker"
-                bsDatepicker
                 formControlName="subscribeDate" />
             </form-field>
           </div>
@@ -254,8 +254,6 @@
               <input
                 type="text"
                 class="form-control"
-                #dp="bsDatepicker"
-                bsDatepicker
                 formControlName="deliveryDate" />
             </form-field>
           </div>
@@ -264,9 +262,6 @@
               [control]="form.get('contractStatus')"
               label="Estatus del Contrato Convenio">
               <ng-select class="form-control" formControlName="contractStatus">
-                <ng-option [value]="'C'">CERRADO</ng-option>
-                <ng-option [value]="'P'">BLOQUEADO, EN FIRMA</ng-option>
-                <ng-option [value]="'A'">ABIERTO</ng-option>
               </ng-select>
             </form-field>
           </div>
@@ -318,6 +313,7 @@
         </ng-template>
         <div class="row mt-5">
           <app-scan-file-shared
+            *ngIf="op == 1"
             [replicateFolioView]="false"
             [disabled]="disabledFoli"
             [form]="form"
@@ -348,7 +344,8 @@
                   class="col-md-12"
                   [attr.class]="'table-bordered'"
                   [settings]="settings"
-                  [source]="data">
+                  [source]="data"
+                  (rowSelect)="selectFila1($event)">
                 </ng2-smart-table>
               </div>
             </div>
@@ -357,7 +354,7 @@
         <app-pagination [params]="params" [totalItems]="totalItems">
         </app-pagination>
 
-        <div class="row mb-3">
+        <div *ngIf="op == 1" class="row mb-3">
           <div class="d-flex justify-content-center">
             <div class="m-3">
               <button

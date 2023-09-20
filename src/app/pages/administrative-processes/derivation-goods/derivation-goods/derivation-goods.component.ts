@@ -278,6 +278,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   getAllGoodChild(good: string) {
     this.serviceGood.getGetReferenceGoodgoodI(good).subscribe(
       response => {
+        console.log(response);
         this.dataGoods2 = response.data;
         this.loader.load = false;
       },
@@ -465,7 +466,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.searchStatus(res.data[0]['status']);
             this.classificationOfGoods = Number(res.data[0]['goodClassNumber']);
             if (this.classificationOfGoods) {
-              this.goodChange++;
+              console.log(this.classificationOfGoods);
+              setTimeout(() => {
+                this.goodChange++;
+              }, 1000);
             }
             this.flagCargMasiva = false;
             this.flagCargaImagenes = false;
@@ -851,8 +855,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         let good = this.good;
         delete good.id;
         delete good.goodId;
-        // delete good.statusDetails;
-        // delete good.menaje;
+        delete good.statusDetails;
+        delete good.menaje;
         good.goodReferenceNumber = this.goodFatherNumber$.getValue();
         good.almacen =
           this.good.almacen != null ? this.good.almacen.idWarehouse : '';
@@ -871,7 +875,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         good.description = this.descriptionSon.value;
         good.goodDescription = this.descriptionSon.value;
         good.quantity = this.quantity.value;
-        good.classifier = this.classifier.value;
+        good.goodClassNumber = this.classifier.value;
         good.unit = this.unitOfMeasure.value;
         good.labelNumber = this.destinationLabel.value;
         console.log(good);
@@ -979,7 +983,13 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     this.destinationLabel.setValue(event.data.labelNumber);
     this.selectedRow = event.data;
     this.goodForTableChar = event.data;
-    this.goodChange++;
+    this.classificationOfGoods = event.data.goodClassNumber;
+    if (this.classificationOfGoods) {
+      console.log(this.classificationOfGoods);
+      setTimeout(() => {
+        this.goodChange++;
+      }, 1000);
+    }
     // this.getAttributesGood(event.data.noClassifGood);
   }
   // getAttributesGood(event: any) {
