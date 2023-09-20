@@ -11,6 +11,7 @@ export enum ProceedingsEndpoints {
   DetailProceedingsDeliveryReception = 'detail-proceedings-delivery-reception',
   ProceedingsValidations = 'proceedings-validations',
   ProceedingsDeliveryReception = 'proceedings-delivery-reception',
+  ProceedingsDetailActa = 'aplication/get-detail-acta-ent-recep-closed/',
   ProceedingDeliveryReceptionTranfer = 'proceedings-delivery-reception/get-transferent-number-key-and-name',
   PADelActaEntrega = 'aplication/pa-of-act-delivery',
   MaximunClosingTime = 'maximun-closing-time',

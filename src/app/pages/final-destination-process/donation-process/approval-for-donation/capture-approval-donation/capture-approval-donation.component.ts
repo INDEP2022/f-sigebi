@@ -204,9 +204,11 @@ export class CaptureApprovalDonationComponent
       .subscribe({
         next: global => {
           this.ngGlobal = global;
-          console.log('GLOBAL ', this.ngGlobal);
           if (this.ngGlobal.REL_BIENES) {
-            console.log('GLOBAL ', this.ngGlobal.REL_BIENES);
+            console.log('RASTREADOR ', this.data);
+            this.selectedGooodsValid.push(this.ngGlobal.REL_BIENES);
+            this.dataDetailDonationGood.load(this.selectedGooodsValid);
+            this.dataDetailDonationGood.refresh();
           }
         },
       });
@@ -1281,7 +1283,7 @@ export class CaptureApprovalDonationComponent
     let count = 0;
     data.forEach(good => {
       count = count + 1;
-      this.goodService.getById(good.No_bien).subscribe({
+      this.goodService.getById(good.goodNumber).subscribe({
         next: response => {
           this.goods.push({
             ...JSON.parse(JSON.stringify(response)).data[0],
@@ -1307,17 +1309,17 @@ export class CaptureApprovalDonationComponent
 
   addStatus() {
     /* this.data.load(this.goods); */
-    // this.paginator();
+    this.paginator();
     this.data.refresh();
   }
 
-  //   paginator(noPage: number = 1, elementPerPage: number = 10) {
-  //     const indiceInicial = (noPage - 1) * elementPerPage;
-  //     const indiceFinal = indiceInicial + elementPerPage;
+  paginator(noPage: number = 1, elementPerPage: number = 10) {
+    const indiceInicial = (noPage - 1) * elementPerPage;
+    const indiceFinal = indiceInicial + elementPerPage;
 
-  //     let paginateData = this.goods.slice(indiceInicial, indiceFinal);
-  //     this.data.load(paginateData);
-  //   }
+    let paginateData = this.goods.slice(indiceInicial, indiceFinal);
+    this.data.load(paginateData);
+  }
   searchGoodError(provider?: any) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
