@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { catchError, debounceTime, forkJoin, of, takeUntil } from 'rxjs';
@@ -24,6 +24,7 @@ export class MassiveReclassificationGoodsComponent
   changeDescription: string;
   changeDescriptionAlterning: string;
   contador = 0;
+  @ViewChild('file') file: any;
 
   get pathClasification() {
     return 'catalog/api/v1/good-sssubtype?sortBy=numClasifGoods:ASC';
@@ -121,6 +122,9 @@ export class MassiveReclassificationGoodsComponent
 
   clearFilter() {
     this.form.reset();
+    // this.file.reset();
+    this.file.nativeElement.value = '';
+    // console.log(this.file);
     this.files = [];
     this.changeDescription = null;
     this.service.ids = null;
@@ -241,5 +245,6 @@ export class MassiveReclassificationGoodsComponent
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     this.files = files;
+    console.log(this.file);
   }
 }

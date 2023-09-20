@@ -726,11 +726,40 @@ export class ConciliationDepositaryPaymentsComponent
       'Esta pantalla no esta disponible por el momento',
       'De igual manera el proceso continuará al cerrar este mensaje'
     ).then(() => {
-      this.getPrepOI();
-      // this.insertDispersionDB();
+      // this.getPrepOI();
+      this.execDeductions();
     });
     // this.getPrepOI();
     // FCONDEPOCONDISPAG
+  }
+
+  async execDeductions() {
+    let date = new DatePipe('en-US').transform(new Date(), 'yyyy-MM-dd');
+    console.log(new Date(), date);
+    let params: any = {
+      pOne: Number(this.depositaryAppointment.appointmentNum),
+      pTwo: this.depositaryAppointment.personNumber.id,
+      pDate: date,
+    };
+    console.log(params);
+    await this.svConciliationDepositaryPaymentsService
+      .execDeductions(params)
+      .subscribe({
+        next: res => {
+          this.loading = false;
+          console.log(res.data);
+          this.insertDispersionDB();
+        },
+        error: err => {
+          this.loading = false;
+          console.log(err);
+          this.alertInfo(
+            'warning',
+            'Dispersión de pagos',
+            'Error al procesar la dispersión de pagos'
+          );
+        },
+      });
   }
 
   async insertDispersionDB() {
