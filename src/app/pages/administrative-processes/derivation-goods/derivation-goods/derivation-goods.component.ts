@@ -278,6 +278,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   getAllGoodChild(good: string) {
     this.serviceGood.getGetReferenceGoodgoodI(good).subscribe(
       response => {
+        console.log(response);
         this.dataGoods2 = response.data;
         this.loader.load = false;
       },
@@ -465,7 +466,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.searchStatus(res.data[0]['status']);
             this.classificationOfGoods = Number(res.data[0]['goodClassNumber']);
             if (this.classificationOfGoods) {
-              this.goodChange++;
+              console.log(this.classificationOfGoods);
+              setTimeout(() => {
+                this.goodChange++;
+              }, 1000);
             }
             this.flagCargMasiva = false;
             this.flagCargaImagenes = false;
@@ -719,6 +723,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         console.log('ress historyGoodProcess res:', res);
         if (res) {
           this.updateConversion();
+          this.updateGoodConversion();
         }
       },
       err => {
@@ -752,6 +757,25 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           this.form.reset();
           this.pw();
         }
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  updateGoodConversion() {
+    let conversions = {
+      descriptionConv: this.descriptionSon.value,
+      amountConv: Number(this.quantity.value),
+      noClasifGoodConv: Number(this.classifier.value),
+      unitConv: this.unitOfMeasure.value,
+      noLabelConv: Number(this.destinationLabel.value),
+      conversionId: Number(this.idConversion.value),
+      goodId: Number(this.numberGoodFather.value),
+    };
+    this.convertiongoodService.putAssetConversions(conversions).subscribe(
+      async res => {
+        console.log(res);
       },
       err => {
         console.log(err);
@@ -849,8 +873,9 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           this.good.lotNumber != null ? this.good.lotNumber.id : null;
         good.observations = this.observation.value;
         good.description = this.descriptionSon.value;
+        good.goodDescription = this.descriptionSon.value;
         good.quantity = this.quantity.value;
-        good.classifier = this.classifier.value;
+        good.goodClassNumber = this.classifier.value;
         good.unit = this.unitOfMeasure.value;
         good.labelNumber = this.destinationLabel.value;
         console.log(good);
@@ -958,7 +983,13 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     this.destinationLabel.setValue(event.data.labelNumber);
     this.selectedRow = event.data;
     this.goodForTableChar = event.data;
-    this.goodChange++;
+    this.classificationOfGoods = event.data.goodClassNumber;
+    if (this.classificationOfGoods) {
+      console.log(this.classificationOfGoods);
+      setTimeout(() => {
+        this.goodChange++;
+      }, 1000);
+    }
     // this.getAttributesGood(event.data.noClassifGood);
   }
   // getAttributesGood(event: any) {

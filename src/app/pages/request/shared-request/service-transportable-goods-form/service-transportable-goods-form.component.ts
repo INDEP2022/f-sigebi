@@ -15,7 +15,10 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { orderentryService } from 'src/app/core/services/ms-comersale/orderentry.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { SERVICE_TRANSPORTABLE_COLUMNS } from '../../reception-scheduling-service-order/columns/service-transportable-columns';
+import {
+  SERVICE_TRANSPORTABLE_COLUMNS,
+  SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE,
+} from '../../reception-scheduling-service-order/columns/service-transportable-columns';
 import { CreateManualServiceFormComponent } from '../../reception-scheduling-service-order/components/create-manual-service-form/create-manual-service-form.component';
 import { CreateServiceFormComponent } from '../../reception-scheduling-service-order/components/create-service-form/create-service-form.component';
 
@@ -52,9 +55,9 @@ export class ServiceTransportableGoodsFormComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   ordersSelected: any = [];
-  columns = SERVICE_TRANSPORTABLE_COLUMNS;
-  listforUpdate: any = [];
 
+  listforUpdate: any = [];
+  columns: any;
   data: any[] = [];
   @Output() totEvent: EventEmitter<string> = new EventEmitter();
 
@@ -62,102 +65,115 @@ export class ServiceTransportableGoodsFormComponent
 
   constructor(private modalService: BsModalService) {
     super();
-    this.settings = {
-      ...this.settings,
-      actions: false,
-      selectMode: '',
-      columns: SERVICE_TRANSPORTABLE_COLUMNS,
-    };
   }
 
   ngOnInit(): void {
     this.getOrderServiceProvided();
-    this.titleTab();
-    this.showButtonServiceManual = true;
+    if (this.op != 1 && this.op != 2) {
+      this.columns = SERVICE_TRANSPORTABLE_COLUMNS;
+      this.settings = {
+        ...this.settings,
+        actions: false,
+        selectMode: '',
+        columns: SERVICE_TRANSPORTABLE_COLUMNS,
+      };
 
-    this.columns.selected = {
-      ...this.columns.selected,
-      onComponentInitFunction: this.orderSelected.bind(this),
-    };
+      this.titleTab();
+      this.showButtonServiceManual = true;
 
-    this.columns.commentService = {
-      ...this.columns.commentService,
-      onComponentInitFunction: (instance?: any) => {
-        instance.input.subscribe((data: any) => {
-          this.setCommentService(data);
-        });
-      },
-    };
+      this.columns.selected = {
+        ...this.columns.selected,
+        onComponentInitFunction: this.orderSelected.bind(this),
+      };
 
-    this.columns.durationTime = {
-      ...this.columns.durationTime,
-      onComponentInitFunction: (instance?: any) => {
-        instance.input.subscribe((data: any) => {
-          this.setDurationTime(data);
-        });
-      },
-    };
+      this.columns.commentService = {
+        ...this.columns.commentService,
+        onComponentInitFunction: (instance?: any) => {
+          instance.input.subscribe((data: any) => {
+            this.setCommentService(data);
+          });
+        },
+      };
 
-    this.columns.resourcesNumber = {
-      ...this.columns.resourcesNumber,
-      onComponentInitFunction: (instance?: any) => {
-        instance.input.subscribe((data: any) => {
-          this.setResourcesNumber(data);
-        });
-      },
-    };
+      this.columns.durationTime = {
+        ...this.columns.durationTime,
+        onComponentInitFunction: (instance?: any) => {
+          instance.input.subscribe((data: any) => {
+            this.setDurationTime(data);
+          });
+        },
+      };
 
-    this.columns.resourcesReal = {
-      ...this.columns.resourcesReal,
-      onComponentInitFunction: (instance?: any) => {
-        instance.input.subscribe((data: any) => {
-          this.setResourcesReal(data);
-        });
-      },
-    };
+      this.columns.resourcesNumber = {
+        ...this.columns.resourcesNumber,
+        onComponentInitFunction: (instance?: any) => {
+          instance.input.subscribe((data: any) => {
+            this.setResourcesNumber(data);
+          });
+        },
+      };
 
-    this.columns.descriptionDifference = {
-      ...this.columns.descriptionDifference,
-      onComponentInitFunction: (instance?: any) => {
-        instance.input.subscribe((data: any) => {
-          this.setDescriptionDifference(data);
-        });
-      },
-    };
+      this.columns.resourcesReal = {
+        ...this.columns.resourcesReal,
+        onComponentInitFunction: (instance?: any) => {
+          instance.input.subscribe((data: any) => {
+            this.setResourcesReal(data);
+          });
+        },
+      };
 
-    this.columns.resultAssessment = {
-      ...this.columns.resultAssessment,
-      onComponentInitFunction: (instance?: any) => {
-        instance.input.subscribe((data: any) => {
-          this.setResulAssessment(data);
-        });
-      },
-    };
+      this.columns.descriptionDifference = {
+        ...this.columns.descriptionDifference,
+        onComponentInitFunction: (instance?: any) => {
+          instance.input.subscribe((data: any) => {
+            this.setDescriptionDifference(data);
+          });
+        },
+      };
 
-    this.columns.amountNumbercomplies = {
-      ...this.columns.amountNumbercomplies,
-      onComponentInitFunction: (instance?: any) => {
-        instance.input.subscribe((data: any) => {
-          this.setAmountNumbercomplies(data);
-        });
-      },
-    };
+      this.columns.resultAssessment = {
+        ...this.columns.resultAssessment,
+        onComponentInitFunction: (instance?: any) => {
+          instance.input.subscribe((data: any) => {
+            this.setResulAssessment(data);
+          });
+        },
+      };
 
-    this.columns.porcbreaches = {
-      ...this.columns.porcbreaches,
-      onComponentInitFunction: (instance?: any) => {
-        instance.input.subscribe((data: any) => {
-          this.setPorcbreaches(data);
-        });
-      },
-    };
+      this.columns.amountNumbercomplies = {
+        ...this.columns.amountNumbercomplies,
+        onComponentInitFunction: (instance?: any) => {
+          instance.input.subscribe((data: any) => {
+            this.setAmountNumbercomplies(data);
+          });
+        },
+      };
 
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      //verificar si existe el order service id
-      if (this.orderServiceId != null) {
-        this.getOrderServiceProvided();
-      }
-    });
+      this.columns.porcbreaches = {
+        ...this.columns.porcbreaches,
+        onComponentInitFunction: (instance?: any) => {
+          instance.input.subscribe((data: any) => {
+            this.setPorcbreaches(data);
+          });
+        },
+      };
+
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+        //verificar si existe el order service id
+        if (this.orderServiceId != null) {
+          this.getOrderServiceProvided();
+        }
+      });
+    } else if (this.op == 1 || this.op == 2) {
+      this.titleTab();
+      this.showButtonServiceManual = true;
+      this.settings = {
+        ...this.settings,
+        actions: false,
+        selectMode: '',
+        columns: SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE,
+      };
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -186,8 +202,6 @@ export class ServiceTransportableGoodsFormComponent
       )
       .subscribe({
         next: resp => {
-          console.log('data', resp.data);
-
           let ttotal = 0;
           resp.data.map((item: any) => {
             const resource =
@@ -204,8 +218,14 @@ export class ServiceTransportableGoodsFormComponent
           resp.data.push(bodyTotal);
           this.data = resp.data;
           this.totalItems = resp.count;
-          this.setTableColumnsRows();
-          this.setTableRowTotal();
+
+          if (this.op != 1 && this.op != 2) {
+            this.setTableColumnsRows();
+            this.setTableRowTotal();
+          } else if (this.op == 1 || this.op == 2) {
+            this.setTableRowTotal();
+            this.setTableColumnsRows();
+          }
         },
       });
   }
@@ -217,13 +237,13 @@ export class ServiceTransportableGoodsFormComponent
       let descriptionDifference = tableColumn.find(
         (x: any) => x.id == 'descriptionDifference'
       );
-      noResources.hide = true;
-      descriptionDifference.hide = true;
+      if (this.op != 2) noResources.hide = true;
+      if (this.op != 2) descriptionDifference.hide = true;
 
       //
-      if (this.op == 4 || this.op == 5 || this.op == 14) {
-        noResources.hide = false;
-        descriptionDifference.hide = false;
+      if (this.op == 4 || this.op == 5 || this.op == 14 || this.op == 2) {
+        if (this.op != 2) noResources.hide = false;
+        if (this.op != 2) descriptionDifference.hide = false;
       }
 
       const table = document.getElementById('table');
@@ -237,17 +257,30 @@ export class ServiceTransportableGoodsFormComponent
     } */
 
       //readonly duracion
-      if (this.op == 3 || this.op == 4 || this.op == 5 || this.op == 6) {
+      if (
+        this.op == 3 ||
+        this.op == 4 ||
+        this.op == 5 ||
+        this.op == 6 ||
+        this.op == 2
+      ) {
         for (let index = 0; index < tbody.length; index++) {
           const ele: any = tbody[index];
           //duracion hora
-          ele.children[8].querySelector('#text-input').disabled = true;
+          if (this.op != 2) {
+            ele.children[8].querySelector('#text-input').disabled = true;
+          } else if (this.op == 2) {
+            ele.children[4].querySelector('#text-input').disabled = true;
+            ele.children[5].querySelector('#text-input').disabled = true;
+            ele.children[6].querySelector('#text-input').disabled = true;
+          }
           /* ele.children[5].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
             true; */
           /* ele.children[6].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
             true; */
           //no. recursos
-          ele.children[9].querySelector('#text-input').disabled = true;
+          if (this.op != 2)
+            ele.children[9].querySelector('#text-input').disabled = true;
         }
       }
       //readonly no. recursos
@@ -265,48 +298,69 @@ export class ServiceTransportableGoodsFormComponent
 
   setTableRowTotal() {
     setTimeout(() => {
-      const tableColumn = this.table.grid.getColumns();
-      let noResources = tableColumn.find((x: any) => x.id == 'resourcesReal');
-      let descriptionDifference = tableColumn.find(
-        (x: any) => x.id == 'descriptionDifference'
-      );
-      const resultAssessment = tableColumn.find(
-        (x: any) => x.id == 'resultAssessment'
-      );
-      const amountNumbercomplies = tableColumn.find(
-        (x: any) => x.id == 'amountNumbercomplies'
-      );
-      const porcbreaches = tableColumn.find((x: any) => x.id == 'porcbreaches');
-      const resourcesReal = tableColumn.find(
-        (x: any) => x.id == 'resourcesReal'
-      );
+      if (this.op != 1 && this.op != 2) {
+        const tableColumn = this.table.grid.getColumns();
+        let noResources = tableColumn.find((x: any) => x.id == 'resourcesReal');
+        let descriptionDifference = tableColumn.find(
+          (x: any) => x.id == 'descriptionDifference'
+        );
+        const resultAssessment = tableColumn.find(
+          (x: any) => x.id == 'resultAssessment'
+        );
+        const amountNumbercomplies = tableColumn.find(
+          (x: any) => x.id == 'amountNumbercomplies'
+        );
+        const porcbreaches = tableColumn.find(
+          (x: any) => x.id == 'porcbreaches'
+        );
+        const resourcesReal = tableColumn.find(
+          (x: any) => x.id == 'resourcesReal'
+        );
 
-      const table = document.getElementById('table');
-      const tbody = table.children[0].children[1].children;
-      const row: any = tbody[this.data.length - 1];
-      //select
-      row.children[0].querySelector('#checkbox-input').hidden = true;
-      if (resultAssessment.hide == false)
-        //result evaluacion
-        row.children[1].querySelector('#select-input').hidden = true;
-      if (amountNumbercomplies.hide == false)
-        //bi recur no cumple
-        row.children[2].querySelector('#text-input').hidden = true;
-      if (porcbreaches.hide == false)
-        //incumpli %
+        const table = document.getElementById('table');
+        const tbody = table.children[0].children[1].children;
+        const row: any = tbody[this.data.length - 1];
+        //select
+
+        row.children[0].querySelector('#checkbox-input').hidden = true;
+        if (resultAssessment.hide == false)
+          //result evaluacion
+          row.children[1].querySelector('#select-input').hidden = true;
+        if (amountNumbercomplies.hide == false)
+          //bi recur no cumple
+          row.children[2].querySelector('#text-input').hidden = true;
+        if (porcbreaches.hide == false)
+          //incumpli %
+          row.children[3].querySelector('#text-input').hidden = true;
+        //comentario de servicio
+        row.children[7].querySelector('#text-input').hidden = true;
+        //duracion horas
+        row.children[8].querySelector('#text-input').hidden = true;
+        //no. recurso
+        row.children[9].querySelector('#text-input').hidden = true;
+        if (resourcesReal.hide == false)
+          //recurso real
+          row.children[10].querySelector('#text-input').hidden = true;
+        if (descriptionDifference.hide == false) {
+          //descrip de diferencia
+          row.children[13].querySelector('#text-input').hidden = true;
+        }
+      } else if (this.op == 1 || this.op == 2) {
+        const table = document.getElementById('table');
+        const tbody = table.children[0].children[1].children;
+        const row: any = tbody[this.data.length - 1];
+
+        row.children[0].querySelector('#checkbox-input').hidden = true;
+        row.children[4].querySelector('#text-input').hidden = true;
+        row.children[5].querySelector('#text-input').hidden = true;
+        row.children[6].querySelector('#text-input').hidden = true;
+        /*
+        //select
+        //
+        //comentario de servicio
         row.children[3].querySelector('#text-input').hidden = true;
-      //comentario de servicio
-      row.children[7].querySelector('#text-input').hidden = true;
-      //duracion horas
-      row.children[8].querySelector('#text-input').hidden = true;
-      //no. recurso
-      row.children[9].querySelector('#text-input').hidden = true;
-      if (resourcesReal.hide == false)
-        //recurso real
-        row.children[10].querySelector('#text-input').hidden = true;
-      if (descriptionDifference.hide == false) {
-        //descrip de diferencia
-        row.children[13].querySelector('#text-input').hidden = true;
+        //duracion horas
+        row.children[4].querySelector('#text-input').hidden = true; */
       }
     }, 300);
   }
@@ -335,7 +389,6 @@ export class ServiceTransportableGoodsFormComponent
       typeService: 'EN_TRANSPORTABLE',
       callback: (data: any) => {
         if (data) {
-          console.log(data);
           this.showButtonServiceManual = true;
           this.getOrderServiceProvided();
         }
@@ -353,7 +406,6 @@ export class ServiceTransportableGoodsFormComponent
       orderServiceId: this.orderServiceId,
       callback: (data: any) => {
         if (data) {
-          console.log(data);
           this.getOrderServiceProvided();
         }
       },
@@ -365,7 +417,6 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   deleteService() {
-    console.log(this.ordersSelected);
     if (this.ordersSelected.length == 0 || this.ordersSelected.length > 1) {
       this.onLoadToast('info', 'Seleccione un bien');
       return;
@@ -390,7 +441,6 @@ export class ServiceTransportableGoodsFormComponent
         const index = this.ordersSelected.indexOf(data.row);
         this.ordersSelected.splice(index, 1);
       }
-      console.log('elementos seleccionados', this.ordersSelected);
     });
   }
 
@@ -531,7 +581,6 @@ export class ServiceTransportableGoodsFormComponent
     this.listforUpdate.map(async (item: any, _i: number) => {
       const index = _i + 1;
       delete item.total;
-      console.log(item);
 
       const body: any = {};
       for (const key in item) {
@@ -544,7 +593,7 @@ export class ServiceTransportableGoodsFormComponent
 
       if (this.listforUpdate.length == index) {
         this.isUpdate = false;
-        console.log('BIENES TRANSPORTABLES ACTUALIZADO');
+
         this.getOrderServiceProvided();
       }
     });
@@ -562,7 +611,7 @@ export class ServiceTransportableGoodsFormComponent
         },
         error: error => {
           reject(error);
-          console.log(error);
+
           this.onLoadToast(
             'error',
             'No se pudo actualzar los bienes transportables'
