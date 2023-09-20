@@ -109,4 +109,11 @@ export class TvalTable1Service
   ): Observable<Object> {
     return this.Tvaltablas1Repository.update3(`${this.route5}`, model);
   }
+
+  getAlls2(params?: ListParams): Observable<IListResponse> {
+    return this.Tvaltabla1Repository.getAllPaginated(
+      `${this.route4}?filter.nmtable=$eq:421`,
+      params
+    );
+  }
 }

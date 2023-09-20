@@ -453,7 +453,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
       ...MODAL_CONFIG,
       initialState: {
         accept:
-          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg',
+          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg, image/heif, .heic, .heif',
         uploadFiles: false,
         service: this.filePhotoService,
         identificator: this.goodNumber + '',
@@ -474,7 +474,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
       initialState: {
         accept: '.zip',
         accept2:
-          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg',
+          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg, image/heif',
         uploadFiles: false,
         service: this.filePhotoSaveZipService,
         identificator: [this.goodNumber],
