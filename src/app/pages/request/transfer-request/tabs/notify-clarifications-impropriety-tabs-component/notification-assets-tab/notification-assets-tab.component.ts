@@ -999,26 +999,32 @@ export class NotificationAssetsTabComponent
         notification.clarification.clarification ==
         'INDIVIDUALIZACIÓN DE BIENES'
       ) {
-        const goodCreate = await this.createIndividualizacion(
-          notification.good
-        );
-
-        if (goodCreate) {
-          const updateGoodInitial = await this.updateGoodInitial(
-            notification.good
-          );
-
-          if (updateGoodInitial) {
-            this.alertQuestion(
-              'question',
-              '¿Desea Finalizar la Aclaración?',
-              ''
-            ).then(question => {
-              if (question.isConfirmed) {
-                this.endAclarationInd();
+        if (notification.answered == 'EN ACLARACION') {
+          this.alertQuestion(
+            'question',
+            'Confirmación',
+            '¿Desea Finalizar la Aclaración?'
+          ).then(async question => {
+            if (question.isConfirmed) {
+              const goodCreate = await this.createIndividualizacion(
+                notification.good
+              );
+              if (goodCreate) {
+                const updateGoodInitial = await this.updateGoodInitial(
+                  notification.good
+                );
+                if (updateGoodInitial) {
+                  this.endAclarationInd();
+                }
               }
-            });
-          }
+            }
+          });
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Atención',
+            'Debe aceptar o rechazar primero la Aclaración/Improcedencia'
+          );
         }
       }
     } else {
