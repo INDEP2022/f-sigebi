@@ -23,7 +23,7 @@
         </div>
         <div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
           <form-field label="Lote" [control]="form.get('batch')">
-            <input class="form-control" formControlName="batch" type="number" />
+            <input class="form-control" formControlName="batch" type="text" />
           </form-field>
         </div>
         <!--Events Component-->
@@ -34,7 +34,7 @@
               [data]="eventSelect"
               [form]="form"
               value="id"
-              bindLabel="processKey"
+              bindLabel="keyObservation"
               label="Evento"
               control="event"
               (change)="changeEvent($event)">
@@ -123,7 +123,7 @@
                 <input
                   class="form-control"
                   formControlName="incomeOrder"
-                  type="number" />
+                  type="text" />
               </form-field>
             </div>
           </div>
@@ -159,8 +159,9 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active w-100"
+            [disabled]="form.invalid"
             (click)="report()">
-            Imprimir
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
           </button>
         </div>
       </div>
