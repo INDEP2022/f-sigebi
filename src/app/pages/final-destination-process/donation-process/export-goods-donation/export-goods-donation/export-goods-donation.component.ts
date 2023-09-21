@@ -307,8 +307,8 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'info',
         'Se recuperarán ' +
-          response.data.length +
-          ' registros ¿Deseas continuar? ',
+        response.data.length +
+        ' registros ¿Deseas continuar? ',
         '',
         'Si',
         'No'
@@ -474,7 +474,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     let descripcion = this.form.get('description').value;
     console.log('PASA DESCRIPCION ->', descripcion); // Se obtiene el valor de description del form y se almacena en la variable descripción
     if (descripcion == null) {
-      this.alert('error', 'Error', 'Digite la Descripción');
+      this.alert('error', 'Error', 'Digite la descripción');
       return;
     }
     this.exportToExcelX();
@@ -515,19 +515,19 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
                     this.alert(
                       'success',
                       'Exitoso',
-                      'Se Actualizó Correctamente'
+                      'Se actualizó correctamente'
                     );
                   },
                   error: err => {
                     this.alert(
                       'error',
                       'Error',
-                      'Hubo un Error al Actualizar el Bien'
+                      'Hubo un error al actualizar el bien'
                     );
                   },
                 }),
                 this.historyGoodService.PostStatus(params2).subscribe({
-                  next: response => {},
+                  next: response => { },
                 });
             },
           });
@@ -580,7 +580,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error',
-            'Seleccione un Estado de los Bienes que Quiere Exportar'
+            'Seleccione un estado de los bienes que quiere exportar'
           );
           return;
         }
@@ -593,10 +593,10 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     this.massiveGoodService.exportXlsx(array).subscribe({
       next: response => {
         this.convertAndDownloadExcel(response.base64File, response.fileName);
-        this.alert('success', 'Exportación Excel', 'Generada Correctamente');
+        this.alert('success', 'Exportación excel', 'Generada correctamente');
       },
       error: err => {
-        this.alert('error', 'No se Puede Copiar el Archivo de Excel.', '');
+        this.alert('error', 'No se puede copiar el archivo de excel.', '');
       },
     });
   }

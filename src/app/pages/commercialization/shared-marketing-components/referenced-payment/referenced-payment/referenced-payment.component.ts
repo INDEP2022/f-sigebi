@@ -195,7 +195,14 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (filter.field == 'amount') {
+                this.columnFilters[
+                  field
+                ] = `${searchFilter}:${filter.search.replace(/,/g, '')}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
+              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
