@@ -11,11 +11,11 @@ import { OrderServiceService } from 'src/app/core/services/ms-order-service/orde
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
 import { GenerateReportFormComponent } from '../../reception-scheduling-service-order/components/generate-report-form/generate-report-form.component';
 import { RejectionCommentFormComponent } from '../../reception-scheduling-service-order/components/rejection-comment-form/rejection-comment-form.component';
 import { RejectionJustifyFormComponent } from '../../reception-scheduling-service-order/components/rejection-justify-form/rejection-justify-form.component';
 import { ElectronicSignatureListComponent } from '../../shared-request/electronic-signature-list/electronic-signature-list.component';
-import { ShowProgrammingComponent } from '../../shared-request/show-programming/show-programming.component';
 import { ShowSignatureProgrammingComponent } from '../../shared-request/show-signature-programming/show-signature-programming.component';
 
 @Component({
@@ -372,9 +372,13 @@ export class OrderServiceDeliveryFormComponent
       let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 
       config.initialState = {
-        callback: (data: any) => {
-          if (data) {
-            this.showReport();
+        callback: (next: boolean, infoSign: any) => {
+          if (next) {
+            console.log('infoSign', infoSign);
+            if (infoSign.electronicSignature == true) {
+            } else {
+              this.showReport();
+            }
           }
         },
       };
@@ -390,16 +394,20 @@ export class OrderServiceDeliveryFormComponent
 
   showReport() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-
     config.initialState = {
+      idOrderService: 516,
       callback: (data: any) => {
         if (data) {
-          this.electronicSignture();
+          //this.electronicSignture();
         }
       },
     };
 
-    const showReport = this.modalService.show(ShowProgrammingComponent, config);
+    //const showReport = this.modalService.show(ShowProgrammingComponent, config);
+    const showReport = this.modalService.show(
+      ShowReportComponentComponent,
+      config
+    );
   }
 
   electronicSignture() {

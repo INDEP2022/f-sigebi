@@ -58,6 +58,9 @@ export const COLUMNS = {
         return amount;
       }
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
   bankKey: {
     title: 'Banco',

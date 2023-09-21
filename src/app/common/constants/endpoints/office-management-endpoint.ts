@@ -9,4 +9,5 @@ export enum OfficeManagementEndpoint {
   DeleteJobGestion = 'application/delete-job-gestion',
   MJobManagementExtSSF3 = 'm-job-management-ext-ssf3',
   updateStatusProcess = 'application/updateStatus', // actualiza el estatus del tramite
+  ComerJobs = 'comer-jobs',
 }
