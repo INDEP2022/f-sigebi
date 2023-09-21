@@ -91,6 +91,7 @@ export enum GoodProcessPoints {
   CheckAllGoodPag = 'application/checkAllGoodPag',
   CheckAllGoodPagExcel = 'application/checkAllGoodPag-export',
   ComerDetAvaluoAll = 'application/get-comer-det-avaluo-all',
+  SpObtnxGood = 'application/spObtnxGood',
 }
 
 export enum GoodFinderEndpoint {

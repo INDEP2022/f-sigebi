@@ -7,6 +7,7 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { BinnacleService } from 'src/app/core/services/ms-survillance/Binnacle-survillance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -23,7 +24,7 @@ export class RemittancesRecordedRegionComponent
   coordinationsItems = new DefaultSelect();
   selectedCoordination: any = null;
   form: FormGroup = new FormGroup({});
-
+  delegation: any = [];
   today: Date;
   maxDate: Date;
   minDate: Date;
@@ -35,7 +36,8 @@ export class RemittancesRecordedRegionComponent
     private delegationService: DelegationService,
     private siabService: SiabService,
     private datePipe: DatePipe,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private binnacleService: BinnacleService
   ) {
     super();
     this.today = new Date();
@@ -71,10 +73,24 @@ export class RemittancesRecordedRegionComponent
   }
 
   getDelegations(params: ListParams) {
-    this.delegationService.getAllPaginated(params).subscribe((data: any) => {
-      this.itemsDelegation = new DefaultSelect(data.data, data.count);
-      console.log(this.itemsDelegation);
-    });
+    this.loading = true;
+    this.binnacleService.getDelegations(params).subscribe(
+      (resp: any) => {
+        this.delegation = resp.data.map(async (item: any) => {
+          item['tipoSupbtipoDescription'] =
+            item.delegationNumber + ' - ' + item.description;
+          return item; // Asegurarse de devolver el item modificado.
+        });
+        Promise.all(this.delegation).then((res: any) => {
+          this.itemsDelegation = new DefaultSelect(resp.data, resp.count);
+          console.log(this.itemsDelegation);
+          this.loading = false;
+        });
+      },
+      error => {
+        this.itemsDelegation = new DefaultSelect([], 0);
+      }
+    );
   }
 
   selectCoordination(event: any) {
@@ -86,6 +102,17 @@ export class RemittancesRecordedRegionComponent
     const fechaInicio = this.form.get('f_ini').value;
     const fechaFin = this.form.get('f_fin').value;
 
+    if (fechaInicio > fechaFin) {
+      this.alert(
+        'warning',
+        'La Fecha Inicial no puede ser mayor a la Fecha Fin',
+        ''
+      );
+      return;
+    }
+    const delegation = this.form.get('coordination').value;
+    console.log(delegation);
+
     // Formatear las fechas al formato "dd-mm-yyyy"
     const fechaInicioFormateada = this.datePipe.transform(
       fechaInicio,
@@ -93,7 +120,7 @@ export class RemittancesRecordedRegionComponent
     );
     const fechaFinFormateada = this.datePipe.transform(fechaFin, 'dd-MM-yyyy');
     let params = {
-      DELEGACION: this.itemsDelegation.data[0].id,
+      DELEGACION: delegation,
       P_FECINI: fechaInicioFormateada,
       P_FECFIN: fechaFinFormateada,
     };
@@ -135,6 +162,11 @@ export class RemittancesRecordedRegionComponent
         }
       });
   }
+
+  clean() {
+    this.form.reset();
+  }
+
   coordinationsTestData: any[] = [
     {
       no_delegacion: 0,
