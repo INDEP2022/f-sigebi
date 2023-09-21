@@ -85,23 +85,23 @@ export class ConciliationExecutionMainComponent
   eventsTestData = [
     {
       id: 101,
-      description: 'DESCRIPCION DE EJEMPLO DE EVENTO 101',
+      description: 'DESCRIPCION DE EJEMPLO DE evento 101',
     },
     {
       id: 201,
-      description: 'DESCRIPCION DE EJEMPLO DE EVENTO 201',
+      description: 'DESCRIPCION DE EJEMPLO DE evento 201',
     },
     {
       id: 301,
-      description: 'DESCRIPCION DE EJEMPLO DE EVENTO 301',
+      description: 'DESCRIPCION DE EJEMPLO DE evento 301',
     },
     {
       id: 401,
-      description: 'DESCRIPCION DE EJEMPLO DE EVENTO 401',
+      description: 'DESCRIPCION DE EJEMPLO DE evento 401',
     },
     {
       id: 501,
-      description: 'DESCRIPCION DE EJEMPLO DE EVENTO 501',
+      description: 'DESCRIPCION DE EJEMPLO DE evento 501',
     },
   ];
 
@@ -284,7 +284,7 @@ export class ConciliationExecutionMainComponent
 
   getData() {
     if (!this.selectedEvent) {
-      this.alert('warning', 'Es necesario especificar el Evento', '');
+      this.alert('warning', 'Es necesario especificar el evento', '');
       this.conciliationForm.get('event').markAsTouched();
       return;
     }
@@ -334,7 +334,7 @@ export class ConciliationExecutionMainComponent
       if (!V_PROCESO_FASE) {
         return this.alert(
           'warning',
-          `El Evento ${event.eventId} no está asociado al tipo de proceso, verifique`,
+          `El evento ${event.eventId} no está asociado al tipo de proceso, verifique`,
           ''
         );
         this.conciliationForm.get('description').setValue(event.processKey);
@@ -361,7 +361,7 @@ export class ConciliationExecutionMainComponent
       if (!V_PROCESO_FASE) {
         return this.alert(
           'warning',
-          `El Evento ${event.eventId} no está asociado al tipo de proceso, verifique`,
+          `El evento ${event.eventId} no está asociado al tipo de proceso, verifique`,
           ''
         );
         this.conciliationForm.get('description').setValue(event.processKey);
@@ -401,7 +401,7 @@ export class ConciliationExecutionMainComponent
 
     if (lparams.text)
       params.addFilter('eventId', lparams.text, SearchFilter.EQ);
-    // params.sortBy = `eventId:DESC`;
+    params.sortBy = `eventId:DESC`;
     this.comerEventosService
       .getSelectComerEventFcomer62(params.getParams(), this.layout)
       .subscribe({
@@ -440,7 +440,7 @@ export class ConciliationExecutionMainComponent
     if (!this.selectedEvent)
       return this.alert(
         'warning',
-        'Es necesario especificar un Evento para ejecutar',
+        'Es necesario especificar un evento para ejecutar',
         ''
       );
 
@@ -457,7 +457,7 @@ export class ConciliationExecutionMainComponent
     if (!eventProcess)
       return this.alert(
         'warning',
-        `El Evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
+        `El evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
         ''
       );
 
@@ -501,7 +501,7 @@ export class ConciliationExecutionMainComponent
         if (L_VALMAN > 0) {
           this.alert(
             'warning',
-            `El Lote ${L_VALMAN} no tiene mandato válido, verifique`,
+            `El  lote ${L_VALMAN} no tiene mandato válido, verifique`,
             'Ejecute el botón Act. Mand. en preparación de Eventos'
           );
           this.loadingBtn = false;
@@ -572,14 +572,14 @@ export class ConciliationExecutionMainComponent
 
   async executeInmueble() {
     if (!this.selectedEvent)
-      return this.alert('warning', 'Debe especificar un Evento', '');
+      return this.alert('warning', 'Debe especificar un evento', '');
     this.loadingBtn = true;
     const V_PROCESO_FASE = await this.getType(this.selectedEvent.eventId);
     if (!V_PROCESO_FASE) {
       this.loadingBtn = false;
       return this.alert(
         'warning',
-        `El Evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
+        `El evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
         ''
       );
     } else {
@@ -600,7 +600,7 @@ export class ConciliationExecutionMainComponent
         if (L_VALEST.AUX_EXISTE > 0) {
           this.alert(
             'warning',
-            `Se encontraron bienes con estatus inválidos, verifique`,
+            `El bien ${L_VALEST.AUX_EXISTE} tiene un estatus inválido, verifique`,
             ''
           );
           this.loadingBtn = false;
@@ -616,7 +616,7 @@ export class ConciliationExecutionMainComponent
         if (L_VALMAN > 0) {
           this.alert(
             'warning',
-            `El Lote ${L_VALMAN} no tiene mandato válido, verifique`,
+            `El  lote ${L_VALMAN} no tiene mandato válido, verifique`,
             'Ejecute el botón Act. Mand. en preparación de Eventos'
           );
           this.loadingBtn = false;
@@ -671,7 +671,7 @@ export class ConciliationExecutionMainComponent
         if (L_VALEST.AUX_EXISTE > 0) {
           this.alert(
             'warning',
-            `Se encontraron bienes con estatus inválidos, verifique`,
+            `El bien ${L_VALEST.AUX_EXISTE} tiene un estatus inválido, verifique`,
             ''
           );
           this.loadingBtn = false;
@@ -687,7 +687,7 @@ export class ConciliationExecutionMainComponent
         if (L_VALMAN > 0) {
           this.alert(
             'warning',
-            `El Lote ${L_VALMAN} no tiene mandato válido, verifique`,
+            `El  lote ${L_VALMAN} no tiene mandato válido, verifique`,
             'Ejecute el botón Act. Mand. en preparación de Eventos'
           );
           this.loadingBtn = false;
@@ -788,7 +788,27 @@ export class ConciliationExecutionMainComponent
             L_RECAL = 1;
             if (L_VALIDA == 1) {
               let V_FASEI = 1;
-              await this.functVALIDA_PAGOSREF_ACT();
+              let obj_ACT: any = {
+                event: this.selectedEvent.eventId,
+                phase: V_FASEI,
+                date: this.conciliationForm.get('date').value,
+                lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+                address: 'I',
+              };
+
+              let obj_ACT2: any = {
+                event: this.selectedEvent.eventId,
+                descriptionEvent: this.selectedEvent.processKey,
+                inmueble: 'I',
+                publicLot: this.selectedBatch
+                  ? this.selectedBatch.lotPublic
+                  : null,
+                lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+                phase: V_FASEI,
+                user: this.token.decodeToken().preferred_username,
+              };
+
+              await this.functVALIDA_PAGOSREF_ACT(obj_ACT, obj_ACT2);
               await this.updateEvento(V_FASEI, 1);
             }
           } else {
@@ -801,7 +821,24 @@ export class ConciliationExecutionMainComponent
         L_RECAL = 0;
         if (L_VALIDA == 1) {
           let V_FASEI = 1;
-          await this.functVALIDA_PAGOSREF_ACT();
+          let obj_ACT: any = {
+            event: this.selectedEvent.eventId,
+            phase: V_FASEI,
+            date: this.conciliationForm.get('date').value,
+            lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+            address: 'I',
+          };
+
+          let obj_ACT2: any = {
+            event: this.selectedEvent.eventId,
+            descriptionEvent: this.selectedEvent.processKey,
+            inmueble: 'I',
+            publicLot: this.selectedBatch ? this.selectedBatch.lotPublic : null,
+            lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+            phase: V_FASEI,
+            user: this.token.decodeToken().preferred_username,
+          };
+          await this.functVALIDA_PAGOSREF_ACT(obj_ACT, obj_ACT2);
           await this.updateEvento(V_FASEI, 1);
         }
       }
@@ -834,7 +871,26 @@ export class ConciliationExecutionMainComponent
             L_RECAL = 1;
             if (L_VALIDA == 1) {
               let V_FASEI = 2;
-              await this.functVALIDA_PAGOSREF_ACT();
+              let obj_ACT: any = {
+                event: this.selectedEvent.eventId,
+                phase: V_FASEI,
+                date: this.conciliationForm.get('date').value,
+                lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+                address: 'I',
+              };
+
+              let obj_ACT2: any = {
+                event: this.selectedEvent.eventId,
+                descriptionEvent: this.selectedEvent.processKey,
+                inmueble: 'I',
+                publicLot: this.selectedBatch
+                  ? this.selectedBatch.lotPublic
+                  : null,
+                lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+                phase: V_FASEI,
+                user: this.token.decodeToken().preferred_username,
+              };
+              await this.functVALIDA_PAGOSREF_ACT(obj_ACT, obj_ACT2);
               await this.updateEvento(V_FASEI, 2);
             }
           } else {
@@ -847,7 +903,24 @@ export class ConciliationExecutionMainComponent
         L_RECAL = 0;
         if (L_VALIDA == 1) {
           let V_FASEI = 2;
-          await this.functVALIDA_PAGOSREF_ACT();
+          let obj_ACT: any = {
+            event: this.selectedEvent.eventId,
+            phase: V_FASEI,
+            date: this.conciliationForm.get('date').value,
+            lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+            address: 'I',
+          };
+
+          let obj_ACT2: any = {
+            event: this.selectedEvent.eventId,
+            descriptionEvent: this.selectedEvent.processKey,
+            inmueble: 'I',
+            publicLot: this.selectedBatch ? this.selectedBatch.lotPublic : null,
+            lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+            phase: V_FASEI,
+            user: this.token.decodeToken().preferred_username,
+          };
+          await this.functVALIDA_PAGOSREF_ACT(obj_ACT, obj_ACT2);
           await this.updateEvento(V_FASEI, 2);
         }
       }
@@ -857,9 +930,27 @@ export class ConciliationExecutionMainComponent
   async PROCESA_FASE3_ACT() {
     let L_SIGUE = await this.VALIDA_LIQUIDACION();
     if (L_SIGUE == 1) {
-      await this.functVALIDA_PAGOSREF_ACT();
+      let obj_ACT: any = {
+        event: this.selectedEvent.eventId,
+        phase: 3,
+        date: this.conciliationForm.get('date').value,
+        lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+        address: 'I',
+      };
+
+      let obj_ACT2: any = {
+        event: this.selectedEvent.eventId,
+        descriptionEvent: this.selectedEvent.processKey,
+        inmueble: 'I',
+        publicLot: this.selectedBatch ? this.selectedBatch.lotPublic : null,
+        lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+        phase: 3,
+        user: this.token.decodeToken().preferred_username,
+      };
+      await this.functVALIDA_PAGOSREF_ACT(obj_ACT, obj_ACT2);
       await this.updateEvento(3, 3);
     } else {
+      this.getComerClientsXEvent('no');
       this.alert('success', 'Proceso de ejecución terminado correctamente', '');
       this.loadingBtn = false;
     }
@@ -898,7 +989,25 @@ export class ConciliationExecutionMainComponent
         );
         return;
       }
-      await this.functVALIDA_PAGOSREF_ACT();
+      let obj_ACT: any = {
+        event: this.selectedEvent.eventId,
+        phase: 5,
+        date: this.conciliationForm.get('date').value,
+        lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+        address: 'I',
+      };
+
+      let obj_ACT2: any = {
+        event: this.selectedEvent.eventId,
+        descriptionEvent: this.selectedEvent.processKey,
+        inmueble: 'I',
+        publicLot: this.selectedBatch ? this.selectedBatch.lotPublic : null,
+        lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+        phase: 5,
+        user: this.token.decodeToken().preferred_username,
+      };
+      await this.functVALIDA_PAGOSREF_ACT(obj_ACT, obj_ACT2);
+      this.getComerClientsXEvent('no');
       this.alert('success', 'Proceso de ejecución terminado correctamente', '');
       this.loadingBtn = false;
     }
@@ -935,7 +1044,25 @@ export class ConciliationExecutionMainComponent
         );
         return;
       }
-      await this.functVALIDA_PAGOSREF_ACT();
+      let obj_ACT: any = {
+        event: this.selectedEvent.eventId,
+        phase: 6,
+        date: this.conciliationForm.get('date').value,
+        lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+        address: 'I',
+      };
+
+      let obj_ACT2: any = {
+        event: this.selectedEvent.eventId,
+        descriptionEvent: this.selectedEvent.processKey,
+        inmueble: 'I',
+        publicLot: this.selectedBatch ? this.selectedBatch.lotPublic : null,
+        lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+        phase: 6,
+        user: this.token.decodeToken().preferred_username,
+      };
+      await this.functVALIDA_PAGOSREF_ACT(obj_ACT, obj_ACT2);
+      this.getComerClientsXEvent('no');
       this.alert('success', 'Proceso de ejecución terminado correctamente', '');
       this.loadingBtn = false;
     }
@@ -958,7 +1085,24 @@ export class ConciliationExecutionMainComponent
       L_VALIDA = 1;
       if (L_VALIDA == 1) {
         let V_FASEI = 2;
-        await this.functVALIDA_PAGOSREF_ACT();
+        let obj_ACT: any = {
+          event: this.selectedEvent.eventId,
+          phase: 7,
+          date: this.conciliationForm.get('date').value,
+          lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+          address: 'I',
+        };
+
+        let obj_ACT2: any = {
+          event: this.selectedEvent.eventId,
+          descriptionEvent: this.selectedEvent.processKey,
+          inmueble: 'I',
+          publicLot: this.selectedBatch ? this.selectedBatch.lotPublic : null,
+          lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+          phase: 7,
+          user: this.token.decodeToken().preferred_username,
+        };
+        await this.functVALIDA_PAGOSREF_ACT(obj_ACT, obj_ACT2);
         await this.updateEvento(V_FASEI, 2);
       }
     }
@@ -966,10 +1110,36 @@ export class ConciliationExecutionMainComponent
   // ------------------------------------------ //
   // ------------------------------------------ // FUNCIONES PROCESOS ACTUALES //
 
-  async functVALIDA_PAGOSREF_ACT() {
-    // VALIDA_PAGOSREF.VENTA_INMU_ACT(: BLK_CTRL.EVENTO, : BLK_CTRL.FECHA, : BLK_CTRL.FASE_ACT, : BLK_CTRL.LOTE, L_RECAL, 'I');
-    // VALIDA_PAGOSREF.PREP_OINMU_ACT(: BLK_CTRL.EVENTO, : BLK_CTRL.DESCRIPCION, : BLK_CTRL.DESCRIPCION, : BLK_CTRL.LOTE_PUBLICO, : BLK_CTRL.LOTE, : BLK_CTRL.FASE_ACT);
+  async functVALIDA_PAGOSREF_ACT(body: any, body2: any) {
+    await this.VALIDA_PAGOSREF_VENTA_INMU_ACT(body);
+    await this.VALIDA_PAGOSREF_PREP_OINMU_ACT(body2);
+
     return true;
+  }
+
+  async VALIDA_PAGOSREF_VENTA_INMU_ACT(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.postCurrentRealStateSale(body).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+  async VALIDA_PAGOSREF_PREP_OINMU_ACT(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.postPrepOiInmuAct(body).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
   }
   async updateEvento(V_FASEI: any, phaseInmu: any) {
     let obj_ = {
@@ -995,13 +1165,14 @@ export class ConciliationExecutionMainComponent
     const resp: any = await this.putUpdateBySubquery(obj);
     if (resp) {
       this.loadingBtn = false;
+      this.getComerClientsXEvent('no');
       this.alert('success', 'Proceso de ejecución terminado correctamente', '');
     } else {
       this.loadingBtn = false;
       this.alert(
         'warning',
         'No se completó el proceso de ejecución',
-        'Verifique la tabla Clientes del Evento'
+        'No hay clientes seleccionados para procesar, verifique la tabla Clientes del Evento'
       );
     }
   }
@@ -1070,6 +1241,7 @@ export class ConciliationExecutionMainComponent
               const updatePhase = await this.updatePhase(obj);
               if (updatePhase) {
                 this.loadingBtn = false;
+                this.getComerClientsXEvent('no');
                 this.alert(
                   'success',
                   'Proceso de ejecución terminado correctamente',
@@ -1095,6 +1267,7 @@ export class ConciliationExecutionMainComponent
           const updatePhase = await this.updatePhase(obj);
           if (updatePhase) {
             this.loadingBtn = false;
+            this.getComerClientsXEvent('no');
             this.alert(
               'success',
               'Proceso de ejecución terminado correctamente',
@@ -1163,6 +1336,7 @@ export class ConciliationExecutionMainComponent
       const updatePhase = await this.updatePhase(obj);
       if (updatePhase) {
         this.loadingBtn = false;
+        this.getComerClientsXEvent('no');
         this.alert(
           'success',
           'Proceso de ejecución terminado correctamente',
@@ -1173,6 +1347,7 @@ export class ConciliationExecutionMainComponent
         this.alert('error', 'Error en la ejecución del proceso', '');
       }
     } else {
+      this.getComerClientsXEvent('no');
       this.alert('success', 'Proceso de ejecución terminado correctamente', '');
       this.loadingBtn = false;
     }
@@ -1180,19 +1355,12 @@ export class ConciliationExecutionMainComponent
     console.log('L_SIGUE', L_SIGUE);
   }
   async VALIDA_LIQUIDACION() {
-    // const params = new FilterParams();
-    // params.addFilter('eventId', this.selectedEvent.eventId, SearchFilter.EQ)
-    // params.addFilter('publicLot', this.selectedBatch.lotPublic, SearchFilter.EQ)
     const LIQUIDACION: any = await this.getValidLiquidation();
     if (!LIQUIDACION) {
       this.loadingBtn = false;
       return this.alert('error', 'Error en la ejecución del proceso', '');
     }
-    // const params2 = new FilterParams();
-    // params2.addFilter('lotId', V_.V_IDLOTE, SearchFilter.EQ)
-    // params2.addFilter('validSistem', 'R', SearchFilter.NOT)
-    // params.limit = 100
-    // const V_PAGADO: any = this.getPaymentByLote(params2)
+
     if (LIQUIDACION.v_aliquidar > LIQUIDACION.v_pagado) {
       const a = this.alertQuestion(
         'question',
@@ -1211,12 +1379,10 @@ export class ConciliationExecutionMainComponent
     }
   }
   getValidLiquidation(params?: any) {
+    const lot = this.selectedBatch ? this.selectedBatch.lotPublic : null;
     return new Promise((resolve, reject) => {
       this.comerEventService
-        .getValidLiquidation(
-          this.selectedEvent.eventId,
-          this.selectedBatch.lotPublic
-        )
+        .getValidLiquidation(this.selectedEvent.eventId, lot)
         .subscribe({
           next: response => {
             resolve(response);
@@ -1297,18 +1463,46 @@ export class ConciliationExecutionMainComponent
         );
         return;
       }
-      await this.functVALIDA_PAGOSREF_ANT();
+      let body1: any = {
+        event: this.selectedEvent.eventId,
+        phase: 3,
+        date: this.conciliationForm.get('date').value,
+        lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+      };
+      let body2 = {
+        event: this.selectedEvent.eventId,
+        descriptionEvent: this.selectedEvent.processKey,
+        inmueble: 'I',
+        lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+        phase: 3,
+        user: this.token.decodeToken().preferred_username,
+      };
+      await this.functVALIDA_PAGOSREF_ANT(body1, body2);
+      await this.getComerClientsXEvent('no');
       this.alert('success', 'Proceso de ejecución terminado correctamente', '');
       this.loadingBtn = false;
     }
   }
 
-  async functVALIDA_PAGOSREF_ANT() {
+  async functVALIDA_PAGOSREF_ANT(body: any, body2: any) {
+    await this.VALIDA_PAGOSREF_VENTA_INMU(body);
+    await this.VALIDA_PAGOSREF_PREP_OINMU(body2);
     // VALIDA_PAGOSREF.VENTA_INMU(: BLK_CTRL.EVENTO, : BLK_CTRL.FECHA, : BLK_CTRL.FASE_ANT, : BLK_CTRL.LOTE, 0);
     // VALIDA_PAGOSREF.PREP_OINMU(: BLK_CTRL.EVENTO, : BLK_CTRL.DESCRIPCION, : PARAMETER.P_DIRECCION,: BLK_CTRL.LOTE, 2);
     return true;
   }
-
+  async VALIDA_PAGOSREF_VENTA_INMU(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.postCurrentRealStateSale(body).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
   async getProcessPhase3Ant() {
     return new Promise((resolve, reject) => {
       this.comerEventService
@@ -1332,7 +1526,8 @@ export class ConciliationExecutionMainComponent
     return new Promise((resolve, reject) => {
       this.comerDetailsService.VALIDA_ESTATUS_INMUEBLES(body).subscribe({
         next: response => {
-          resolve(true);
+          console.log('VALIDA', response);
+          resolve(response);
         },
         error: err => {
           resolve(null);
@@ -1535,16 +1730,23 @@ export class ConciliationExecutionMainComponent
           };
           resolve(obj);
         },
-        error: err => {
+        error: async err => {
           console.log(err);
           let obj = {
             status: err.status,
-            message: err.error.message,
+            message: await this.capitalizarPrimeraLetra(err.error.message),
           };
           resolve(obj);
         },
       });
     });
+  }
+
+  async capitalizarPrimeraLetra(texto: string) {
+    if (!texto) {
+      return texto;
+    }
+    return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
   }
 
   getA(id: any) {
@@ -1564,7 +1766,7 @@ export class ConciliationExecutionMainComponent
     if (!this.selectedEvent)
       return this.alert(
         'warning',
-        'Es necesario especificar un Evento para modificar',
+        'Es necesario especificar un evento para modificar',
         ''
       );
 
@@ -1573,7 +1775,7 @@ export class ConciliationExecutionMainComponent
     if (!eventProcess)
       return this.alert(
         'warning',
-        `El Evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
+        `El evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
         ''
       );
     if (this.layout == 'M') {
@@ -1622,7 +1824,7 @@ export class ConciliationExecutionMainComponent
         if (!this.selectedBatch) {
           this.alertQuestion(
             'question',
-            `Se va a ejecutar el proceso de cambio de estatus del Evento ${this.selectedEvent.eventId} de todos los Lotes`,
+            `Se va a ejecutar el proceso de cambio de estatus del evento ${this.selectedEvent.eventId} de todos los Lotes`,
             '¿Está de acuerdo?'
           ).then(async question => {
             if (question.isConfirmed) {
@@ -1656,7 +1858,7 @@ export class ConciliationExecutionMainComponent
         } else {
           this.alertQuestion(
             'question',
-            `Se va a ejecutar el proceso de cambio de estatus del Evento ${this.selectedEvent.eventId} del Lote ${this.selectedBatch.lotPublic}`,
+            `Se va a ejecutar el proceso de cambio de estatus del evento ${this.selectedEvent.eventId} del  lote ${this.selectedBatch.lotPublic}`,
             '¿Está de acuerdo?'
           ).then(async question => {
             if (question.isConfirmed) {
@@ -1699,7 +1901,7 @@ export class ConciliationExecutionMainComponent
       this.loadingBtn2 = false;
       return this.alert(
         'warning',
-        `El Evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
+        `El evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
         ''
       );
     } else {
@@ -1709,16 +1911,57 @@ export class ConciliationExecutionMainComponent
         if (L_VALIDA == 1) {
           if (PFASE == 1) {
             // --FASE DE GARANTIAS
-            await this.VALIDA_PAGOSREF_ACT_EST_GRALI(); // VALIDA_PAGOSREF.ACT_EST_GRALI(: BLK_CTRL.EVENTO, : BLK_CTRL.FASE_ANT, NULL);
-            await this.VALIDA_PAGOSREF_PREP_OINMU(); // VALIDA_PAGOSREF.PREP_OINMU(: BLK_CTRL.EVENTO, : BLK_CTRL.DESCRIPCION, : PARAMETER.P_DIRECCION, NULL, 1);
+            let obj = {
+              user: this.token.decodeToken().preferred_username,
+              event: this.selectedEvent.eventId,
+            };
+            await this.VALIDA_PAGOSREF_ACT_EST_GRALI(obj); // VALIDA_PAGOSREF.ACT_EST_GRALI(: BLK_CTRL.EVENTO, : BLK_CTRL.FASE_ANT, NULL);
+            let obj_ACT2: any = {
+              event: this.selectedEvent.eventId,
+              descriptionEvent: this.selectedEvent.processKey,
+              inmueble: 'I',
+              publicLot: this.selectedBatch
+                ? this.selectedBatch.lotPublic
+                : null,
+              lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+              phase: 1,
+              user: this.token.decodeToken().preferred_username,
+            };
+            await this.VALIDA_PAGOSREF_PREP_OINMU(obj_ACT2); // VALIDA_PAGOSREF.PREP_OINMU(: BLK_CTRL.EVENTO, : BLK_CTRL.DESCRIPCION, : PARAMETER.P_DIRECCION, NULL, 1);
             await this.UTIL_COMER_ENV_FORMALIZAR(); // UTIL_COMER.ENV_FORMALIZAR(: BLK_CTRL.EVENTO);
           } else if (PFASE == 2) {
             //   --FASE DE LIQUIDACION
-            await this.VALIDA_PAGOSREF_ACT_EST_GRALI(); // VALIDA_PAGOSREF.ACT_EST_GRALI(: BLK_CTRL.EVENTO, : BLK_CTRL.FASE_ANT, : BLK_CTRL.LOTE);
-            await this.VALIDA_PAGOSREF_PREP_OINMU(); // VALIDA_PAGOSREF.PREP_OINMU(: BLK_CTRL.EVENTO, : BLK_CTRL.DESCRIPCION, : PARAMETER.P_DIRECCION,: BLK_CTRL.LOTE, : BLK_CTRL.FASE_ANT);
+            let obj = {
+              user: this.token.decodeToken().preferred_username,
+              event: this.selectedEvent.eventId,
+            };
+            await this.VALIDA_PAGOSREF_ACT_EST_GRALI(obj); // VALIDA_PAGOSREF.ACT_EST_GRALI(: BLK_CTRL.EVENTO, : BLK_CTRL.FASE_ANT, : BLK_CTRL.LOTE);
+            let obj_ACT2: any = {
+              event: this.selectedEvent.eventId,
+              descriptionEvent: this.selectedEvent.processKey,
+              inmueble: 'I',
+              publicLot: this.selectedBatch
+                ? this.selectedBatch.lotPublic
+                : null,
+              lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+              phase: 2,
+              user: this.token.decodeToken().preferred_username,
+            };
+            await this.VALIDA_PAGOSREF_PREP_OINMU(obj_ACT2); // VALIDA_PAGOSREF.PREP_OINMU(: BLK_CTRL.EVENTO, : BLK_CTRL.DESCRIPCION, : PARAMETER.P_DIRECCION,: BLK_CTRL.LOTE, : BLK_CTRL.FASE_ANT);
           } else if (PFASE == 3) {
             //   --FASE DE LIQUIDACION
-            await this.VALIDA_PAGOSREF_PREP_OINMU(); // VALIDA_PAGOSREF.PREP_OINMU(: BLK_CTRL.EVENTO, : BLK_CTRL.DESCRIPCION, : PARAMETER.P_DIRECCION,: BLK_CTRL.LOTE, 2);
+            let obj_ACT2: any = {
+              event: this.selectedEvent.eventId,
+              descriptionEvent: this.selectedEvent.processKey,
+              inmueble: 'I',
+              publicLot: this.selectedBatch
+                ? this.selectedBatch.lotPublic
+                : null,
+              lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+              phase: 3,
+              user: this.token.decodeToken().preferred_username,
+            };
+            await this.VALIDA_PAGOSREF_PREP_OINMU(obj_ACT2); // VALIDA_PAGOSREF.PREP_OINMU(: BLK_CTRL.EVENTO, : BLK_CTRL.DESCRIPCION, : PARAMETER.P_DIRECCION,: BLK_CTRL.LOTE, 2);
           }
         }
 
@@ -1727,6 +1970,7 @@ export class ConciliationExecutionMainComponent
 
         if (varCAMBIAR_ESTATUS_BIEN) {
           this.loadingBtn2 = false;
+          this.getComerClientsXEvent('no');
           this.alert('success', 'Proceso terminado correctamente', '');
         }
       } else if (V_PROCESO_FASE == 2) {
@@ -1736,7 +1980,7 @@ export class ConciliationExecutionMainComponent
           if (!this.selectedBatch) {
             this.alertQuestion(
               'question',
-              `Se va a ejecutar el proceso de cambio de estatus del Evento ${this.selectedEvent.eventId} de todos los Lotes`,
+              `Se va a ejecutar el proceso de cambio de estatus del evento ${this.selectedEvent.eventId} de todos los Lotes`,
               '¿Está de acuerdo?'
             ).then(async question => {
               if (question.isConfirmed) {
@@ -1758,6 +2002,7 @@ export class ConciliationExecutionMainComponent
 
                 if (varCAMBIAR_ESTATUS_BIEN) {
                   this.loadingBtn2 = false;
+                  this.getComerClientsXEvent('no');
                   this.alert('success', 'Proceso terminado correctamente', '');
                   // CAMBIAR_ESTATUS_BIEN;
                   // LIP_COMMIT_SILENCIOSO;
@@ -1776,13 +2021,29 @@ export class ConciliationExecutionMainComponent
           } else {
             this.alertQuestion(
               'question',
-              `Se va a ejecutar el proceso de cambio de estatus del Evento ${this.selectedEvent.eventId} del Lote ${this.selectedBatch.lotPublic}`,
+              `Se va a ejecutar el proceso de cambio de estatus del evento ${this.selectedEvent.eventId} del  lote ${this.selectedBatch.lotPublic}`,
               '¿Está de acuerdo?'
             ).then(async question => {
               if (question.isConfirmed) {
                 // VALIDA_PAGOSREF.ACT_EST_GRALI_ACT(: BLK_CTRL.EVENTO, : BLK_CTRL.FASE_ACT, : BLK_CTRL.LOTE_PUBLICO, : BLK_CTRL.LOTE);
                 // VALIDA_PAGOSREF.PREP_OINMU_ACT(: BLK_CTRL.EVENTO, : BLK_CTRL.DESCRIPCION, : PARAMETER.P_DIRECCION, : BLK_CTRL.LOTE_PUBLICO, : BLK_CTRL.LOTE, : BLK_CTRL.FASE_ACT);
-
+                let body = {
+                  user: this.token.decodeToken().preferred_username,
+                  event: this.selectedEvent.eventId,
+                };
+                await this.VALIDA_PAGOSREF_ACT_EST_GRALI_ACT(body);
+                let obj_ACT2: any = {
+                  event: this.selectedEvent.eventId,
+                  descriptionEvent: this.selectedEvent.processKey,
+                  inmueble: 'I',
+                  publicLot: this.selectedBatch
+                    ? this.selectedBatch.lotPublic
+                    : null,
+                  lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+                  phase: 6,
+                  user: this.token.decodeToken().preferred_username,
+                };
+                await this.VALIDA_PAGOSREF_PREP_OINMU_ACT(obj_ACT2);
                 await this.UTIL_COMER_ENV_FORMALIZAR(); // UTIL_COMER.ENV_FORMALIZAR(: BLK_CTRL.EVENTO);
                 // CAMBIAR_ESTATUS_BIEN;
                 const varCAMBIAR_ESTATUS_BIEN =
@@ -1790,6 +2051,7 @@ export class ConciliationExecutionMainComponent
 
                 if (varCAMBIAR_ESTATUS_BIEN) {
                   this.loadingBtn2 = false;
+                  this.getComerClientsXEvent('no');
                   this.alert('success', 'Proceso terminado correctamente', '');
                   // LIP_MENSAJE('PROCESO TERMINADO ', 'A');
                 }
@@ -1808,8 +2070,42 @@ export class ConciliationExecutionMainComponent
       }
     }
   }
-  async VALIDA_PAGOSREF_ACT_EST_GRALI() {}
-  async VALIDA_PAGOSREF_PREP_OINMU() {}
+  async VALIDA_PAGOSREF_ACT_EST_GRALI(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.postActEstGrali(body).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+  async VALIDA_PAGOSREF_ACT_EST_GRALI_ACT(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.postActEstGraliAct(body).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+  async VALIDA_PAGOSREF_PREP_OINMU(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.postPrepOiInmu(body).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
   async UTIL_COMER_ENV_FORMALIZAR() {
     let obj = {
       event: this.selectedEvent.eventId,
@@ -1825,20 +2121,6 @@ export class ConciliationExecutionMainComponent
       });
     });
   }
-  // CAMBIAR_ESTATUS_BIEN() {
-  //   return new Promise((resolve, reject) => {
-  //     this.goodprocessService
-  //       .getChangeStatusGood(this.selectedEvent.eventId)
-  //       .subscribe({
-  //         next: data => {
-  //           resolve(data);
-  //         },
-  //         error: err => {
-  //           resolve(null);
-  //         },
-  //       });
-  //   });
-  // }
 
   CAMBIAR_ESTATUS_BIEN() {
     return new Promise((resolve, reject) => {
@@ -1859,7 +2141,7 @@ export class ConciliationExecutionMainComponent
     if (!this.selectedEvent) {
       this.alert(
         'warning',
-        'Es necesario especificar un Evento para deshacer',
+        'Es necesario especificar un evento para deshacer',
         ''
       );
       return 0;
@@ -1880,7 +2162,7 @@ export class ConciliationExecutionMainComponent
     if (!this.selectedEvent) {
       this.alert(
         'warning',
-        'Es necesario especificar un Evento para deshacer',
+        'Es necesario especificar un evento para deshacer',
         ''
       );
       return 0;
@@ -1988,7 +2270,7 @@ export class ConciliationExecutionMainComponent
     if (!this.selectedEvent)
       return this.alert(
         'warning',
-        'Es necesario especificar un Evento para deshacer',
+        'Es necesario especificar un evento para deshacer',
         ''
       );
     let obj = {
@@ -2007,7 +2289,7 @@ export class ConciliationExecutionMainComponent
       this.loadingBtn3 = false;
       return this.alert(
         'warning',
-        `El Evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
+        `El evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
         ''
       );
     } else {
@@ -2037,7 +2319,7 @@ export class ConciliationExecutionMainComponent
           this.selectedBatch == null
         ) {
           this.loadingBtn3 = false;
-          this.alert('warning', 'Es necesario definir un Lote', '');
+          this.alert('warning', 'Es necesario definir un  lote', '');
           return;
         } else if (
           PFASE != 1 &&
@@ -2069,7 +2351,7 @@ export class ConciliationExecutionMainComponent
           this.selectedBatch == null
         ) {
           this.loadingBtn3 = false;
-          this.alert('warning', 'Es necesario definir un Lote', '');
+          this.alert('warning', 'Es necesario definir un  lote', '');
           return;
         } else if (
           PFASE != 1 ||
@@ -2092,6 +2374,7 @@ export class ConciliationExecutionMainComponent
   alertModal(type: any) {
     if (type) {
       this.loadingBtn3 = false;
+      this.getComerClientsXEvent('no');
       this.alert('success', 'Proceso terminado correctamente', '');
     } else {
       this.loadingBtn3 = false;
@@ -2199,7 +2482,7 @@ export class ConciliationExecutionMainComponent
         if (filter == 'si') {
           this.alert(
             'warning',
-            'No se encontraron clientes para este Evento',
+            'No se encontraron clientes para este evento',
             ''
           );
         }
@@ -2217,7 +2500,7 @@ export class ConciliationExecutionMainComponent
     if (!this.selectedEvent)
       return this.alert(
         'warning',
-        'Es necesario especificar un Evento para consultar',
+        'Es necesario especificar un evento para consultar',
         ''
       );
 
@@ -2260,7 +2543,7 @@ export class ConciliationExecutionMainComponent
   }
   allNo() {
     if (!this.selectedEvent) {
-      this.alert('warning', 'Es necesario especificar un Evento', '');
+      this.alert('warning', 'Es necesario especificar un evento', '');
       return;
     }
 
@@ -2288,7 +2571,7 @@ export class ConciliationExecutionMainComponent
   }
   allYes() {
     if (!this.selectedEvent) {
-      this.alert('warning', 'Es necesario especificar un Evento', '');
+      this.alert('warning', 'Es necesario especificar un evento', '');
       return;
     }
 
@@ -2340,7 +2623,7 @@ export class ConciliationExecutionMainComponent
 
   openForm(data: any, editVal: boolean) {
     if (!this.selectedEvent) {
-      this.alert('warning', 'Es necesario especificar un Evento', '');
+      this.alert('warning', 'Es necesario especificar un evento', '');
       return;
     }
     const modalConfig = MODAL_CONFIG;
@@ -2375,7 +2658,7 @@ export class ConciliationExecutionMainComponent
           this.globalFASES = 1;
           this.alert(
             'warning',
-            'La fase no corresponse con el tipo de Evento',
+            'La fase no corresponse con el tipo de evento',
             ''
           );
           return;
@@ -2385,7 +2668,7 @@ export class ConciliationExecutionMainComponent
           this.globalFASES = 1;
           this.alert(
             'warning',
-            'La fase no corresponse con el tipo de Evento',
+            'La fase no corresponse con el tipo de evento',
             ''
           );
           return;
@@ -2395,7 +2678,7 @@ export class ConciliationExecutionMainComponent
           this.globalFASES = 1;
           this.alert(
             'warning',
-            'La fase no corresponse con el tipo de Evento',
+            'La fase no corresponse con el tipo de evento',
             ''
           );
           return;
@@ -2405,7 +2688,7 @@ export class ConciliationExecutionMainComponent
           this.globalFASES = 1;
           this.alert(
             'warning',
-            'La fase no corresponse con el tipo de Evento',
+            'La fase no corresponse con el tipo de evento',
             ''
           );
           return;
@@ -2419,7 +2702,7 @@ export class ConciliationExecutionMainComponent
           this.globalFASES = 1;
           this.alert(
             'warning',
-            'La fase no corresponse con el tipo de Evento',
+            'La fase no corresponse con el tipo de evento',
             ''
           );
           return;
@@ -2435,7 +2718,7 @@ export class ConciliationExecutionMainComponent
           this.globalFASES = 1;
           this.alert(
             'warning',
-            'La fase no corresponse con el tipo de Evento',
+            'La fase no corresponse con el tipo de evento',
             ''
           );
           return;
@@ -2492,7 +2775,7 @@ export class ConciliationExecutionMainComponent
       },
       error: err => {
         if (filter == 'si') {
-          this.alert('warning', 'No hay lotes disponibles en el Evento', '');
+          this.alert('warning', 'No hay lotes disponibles en el evento', '');
         }
         this.conciliationForm.get('batch').setValue(null);
         this.lotes = new DefaultSelect([], 0);

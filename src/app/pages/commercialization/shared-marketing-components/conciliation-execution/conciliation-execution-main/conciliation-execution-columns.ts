@@ -2,7 +2,7 @@ import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filt
 
 export const CONCILIATION_EXECUTION_COLUMNS = {
   customerId: {
-    title: 'Id. Cliente',
+    title: 'Id Cliente',
     type: 'number',
     sort: false,
   },

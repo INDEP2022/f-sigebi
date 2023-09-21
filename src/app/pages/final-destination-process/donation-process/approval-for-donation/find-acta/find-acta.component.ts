@@ -144,11 +144,13 @@ export class FindActaComponent extends BasePage implements OnInit {
   getStatusDeliveryCve() {
     this.loading = true;
     // console.log(this.providerForm.value.cveActa.replace(/\//g, ''));
-    // this.params.getValue()['filter.actType'] = "COMPDON";
+
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    this.params.getValue()['filter.actType'] = 'COMPDON';
+    params['sortBy'] = `captureDate:DESC`;
     this.donationService.getEventGood(params).subscribe({
       next: data => {
         console.log(data.data);

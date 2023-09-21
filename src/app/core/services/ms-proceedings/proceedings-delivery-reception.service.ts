@@ -271,6 +271,22 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     );
   }
 
+  getAllProceedingsDeliveryReception2(
+    params?: ListParams
+  ): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      ProceedingsEndpoints.ProceedingsDeliveryReception,
+      params
+    );
+  }
+
+  ProceedingsDetailActa(id: string | number, params: ListParams) {
+    return this.get<IListResponse<any>>(
+      'aplication/get-detail-acta-ent-recep-closed/' + id,
+      params
+    );
+  }
+
   getProceedingsByKey(
     id: string | number
   ): Observable<IListResponse<IProceedings>> {

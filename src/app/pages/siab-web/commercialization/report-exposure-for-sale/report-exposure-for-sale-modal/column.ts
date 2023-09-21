@@ -1,3 +1,5 @@
+import { DatePipe } from '@angular/common';
+
 export const DETAIL_COLUMNS = {
   descripcion: {
     title: 'Situación',
@@ -14,6 +16,11 @@ export const DETAIL_COLUMNS = {
   fec_cambio: {
     title: 'Fecha del Cambio',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
   },
   usuario_cambio: {
     title: 'Usuario Cambio',
