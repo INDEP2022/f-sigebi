@@ -23,6 +23,7 @@
             <textarea
               *ngIf="
                 (showForm && op == 1) ||
+                (showForm && op != 5) ||
                 (!showForm && op == 9) ||
                 (!showForm && op == 13)
               "
@@ -50,6 +51,7 @@
               formControlName="notes"
               *ngIf="
                 (showForm && op == 1) ||
+                (showForm && op != 5) ||
                 (!showForm && op == 9) ||
                 (!showForm && op == 9) ||
                 (!showForm && op == 13)
