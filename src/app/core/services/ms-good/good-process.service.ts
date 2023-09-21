@@ -56,7 +56,7 @@ export class GoodProcessService extends HttpService {
   }
 
   getSpObtnxGoodExcel(params: ListParams) {
-    return this.get(GoodProcessPoints.SpObtnxGood, params);
+    return this.get(GoodProcessPoints.SpObtnxGoodExcel, params);
   }
 
   updateFraction(body: { newFraction: string; goodNum: number }) {
