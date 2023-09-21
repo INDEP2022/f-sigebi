@@ -1,45 +1,42 @@
 export const IMPLEMENTATIONREPORT_COLUMNS = {
-  noGoods: {
+  goodNumber: {
     title: 'No.Bien',
-    width: '10%',
     sort: false,
+    valuePrepareFunction(cell: any, row: any) {
+      return row.goodNumber.id;
+    },
   },
   description: {
     title: 'Descripción',
-    width: '30%',
     sort: false,
+    valuePrepareFunction(cell: any, row: any) {
+      return row.goodNumber.description;
+    },
   },
   quantity: {
     title: 'Cantidad',
-    width: '10%',
     sort: false,
-  },
-  volumetry: {
-    title: 'Sel.',
-    width: '5%',
-    sort: false,
+    valuePrepareFunction(cell: any, row: any) {
+      return row.goodNumber.quantity;
+    },
   },
 };
 
 export const IMPLEMENTATION_COLUMNS = {
   service: {
     title: 'Servicio',
-    width: '10%',
     sort: false,
   },
   specification: {
     title: 'Espesificación',
-    width: '10%',
     sort: false,
   },
   turn: {
     title: 'Turno',
-    width: '10%',
     sort: false,
   },
   costVariable: {
     title: 'Variable de costo',
-    width: '10%',
     sort: false,
   },
   observations: {
@@ -49,17 +46,14 @@ export const IMPLEMENTATION_COLUMNS = {
   },
   cost: {
     title: 'Costo',
-    width: '10%',
     sort: false,
   },
   quantity: {
     title: 'Cantidad',
-    width: '10%',
     sort: false,
   },
   amount: {
     title: 'Importe',
-    width: '10%',
     sort: false,
   },
 };

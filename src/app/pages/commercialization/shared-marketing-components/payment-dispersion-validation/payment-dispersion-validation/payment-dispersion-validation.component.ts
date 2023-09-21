@@ -288,7 +288,13 @@ export class PaymentDispersionValidationComponent
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (filter.field == 'finalPrice') {
+                this.columnFilters[
+                  field
+                ] = `${searchFilter}:${filter.search.replace(/,/g, '')}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
             } else {
               delete this.columnFilters[field];
             }
@@ -339,7 +345,14 @@ export class PaymentDispersionValidationComponent
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
-              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
+              if (filter.field == 'finalPrice' || filter.field == 'finalVat') {
+                this.columnFilters2[
+                  field
+                ] = `${searchFilter}:${filter.search.replace(/,/g, '')}`;
+              } else {
+                this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
+              }
+              // this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters2[field];
             }
@@ -381,7 +394,7 @@ export class PaymentDispersionValidationComponent
               bankKey: () => (searchFilter = SearchFilter.ILIKE),
               date: () => (searchFilter = SearchFilter.EQ),
               finalPrice: () => (searchFilter = SearchFilter.EQ),
-              reference: () => (searchFilter = SearchFilter.EQ),
+              reference: () => (searchFilter = SearchFilter.ILIKE),
               amount: () => (searchFilter = SearchFilter.EQ),
               entryOrderId: () => (searchFilter = SearchFilter.EQ),
               paymentId: () => (searchFilter = SearchFilter.EQ),
@@ -390,7 +403,13 @@ export class PaymentDispersionValidationComponent
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
-              this.columnFilters3[field] = `${searchFilter}:${filter.search}`;
+              if (filter.field == 'amount' || filter.field == 'finalPrice') {
+                this.columnFilters3[
+                  field
+                ] = `${searchFilter}:${filter.search.replace(/,/g, '')}`;
+              } else {
+                this.columnFilters3[field] = `${searchFilter}:${filter.search}`;
+              }
             } else {
               delete this.columnFilters3[field];
             }
@@ -440,7 +459,17 @@ export class PaymentDispersionValidationComponent
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
-              this.columnFilters4[field] = `${searchFilter}:${filter.search}`;
+              if (
+                filter.field == 'amountAppVat' ||
+                filter.field == 'amountNoAppVat' ||
+                filter.field == 'vat'
+              ) {
+                this.columnFilters4[
+                  field
+                ] = `${searchFilter}:${filter.search.replace(/,/g, '')}`;
+              } else {
+                this.columnFilters4[field] = `${searchFilter}:${filter.search}`;
+              }
             } else {
               delete this.columnFilters4[field];
             }
@@ -616,6 +645,7 @@ export class PaymentDispersionValidationComponent
     this.form2.get('montoDevolucion').setValue(SPD);
     this.form2.get('montoPenalizacion').setValue(SPP);
   }
+
   getVal1(params: any) {
     return new Promise((resolve, reject) => {
       this.lotService.getPagosRefMonto(params).subscribe({
@@ -752,7 +782,7 @@ export class PaymentDispersionValidationComponent
     link.download = name;
     link.click();
     link.remove();
-    this.alert('success', 'Archivo Descargado Correctamente', '');
+    this.alert('success', 'Archivo descargado correctamente', '');
   }
 
   // -------------- EXPORTACIÓN DE EXCEL MUEBLES -------------- //
@@ -809,7 +839,7 @@ export class PaymentDispersionValidationComponent
 
   async exportAsXLSXLotes() {
     if (!this.eventSelected) {
-      this.alert('warning', `Debe Especificar un Evento`, '');
+      this.alert('warning', `Debe especificar un evento`, '');
       return;
     }
 
@@ -819,7 +849,7 @@ export class PaymentDispersionValidationComponent
       if (!lots) {
         this.alert(
           'error',
-          'Ocurrió un Error al Consultar los Pagos del Evento',
+          'Ocurrió un error al consultar los pagos del evento',
           ''
         );
         this.loadingBtnExcel1 = false;
@@ -828,7 +858,7 @@ export class PaymentDispersionValidationComponent
         if (lots.lotes == 0) {
           this.alert(
             'warning',
-            `No se han Procesado Pagos en el Evento: ${this.eventSelected.id}.`,
+            `No se han procesado pagos en el evento: ${this.eventSelected.id}.`,
             ''
           );
           this.loadingBtnExcel1 = false;
@@ -836,7 +866,7 @@ export class PaymentDispersionValidationComponent
         } else if (lots.lotes > 0) {
           this.alert(
             'success',
-            `El Evento: ${this.eventSelected.id} Cuenta con ${lots.pagos} Pago(s) de ${lots.lotes} Lote(s).`,
+            `El evento: ${this.eventSelected.id} cuenta con ${lots.pagos} pago(s) de ${lots.lotes} lote(s).`,
             ''
           );
 
@@ -862,7 +892,7 @@ export class PaymentDispersionValidationComponent
       if (!lotsPayment) {
         this.alert(
           'error',
-          'Ocurrió un Error al Consultar los Pagos del Evento',
+          'Ocurrió un error al consultar los pagos del evento',
           ''
         );
         this.loadingBtnExcel1 = false;
@@ -871,7 +901,7 @@ export class PaymentDispersionValidationComponent
         if (lotsPayment.vLots == 0) {
           this.alert(
             'warning',
-            `No se han Procesado Pagos en el Evento: ${this.eventSelected.id}.`,
+            `No se han procesado pagos en el evento: ${this.eventSelected.id}.`,
             ''
           );
           this.loadingBtnExcel1 = false;
@@ -879,7 +909,7 @@ export class PaymentDispersionValidationComponent
         } else if (lotsPayment.vLots > 0) {
           this.alert(
             'success',
-            `El Evento: ${this.eventSelected.id} Cuenta con ${lotsPayment.vPayments} Pago(s) de ${lotsPayment.vLots} Lote(s).`,
+            `El evento: ${this.eventSelected.id} cuenta con ${lotsPayment.vPayments} pago(s) de ${lotsPayment.vLots} lote(s).`,
             ''
           );
 
@@ -912,7 +942,7 @@ export class PaymentDispersionValidationComponent
 
   async exportAsXLSXBienes() {
     if (!this.eventSelected) {
-      this.alert('warning', `Debe Especificar un Evento`, '');
+      this.alert('warning', `Debe especificar un evento`, '');
       return;
     }
     this.loadingBtnExcel2 = true;
@@ -931,7 +961,7 @@ export class PaymentDispersionValidationComponent
 
   async exportAsXLSXPagosBanco() {
     if (!this.eventSelected) {
-      this.alert('warning', `Debe Especificar un Evento`, '');
+      this.alert('warning', `Debe especificar un evento`, '');
       return;
     }
 
@@ -963,7 +993,7 @@ export class PaymentDispersionValidationComponent
 
   async exportAsXLSXCompos() {
     if (!this.eventSelected) {
-      this.alert('warning', `Debe Especificar un Evento`, '');
+      this.alert('warning', `Debe especificar un evento`, '');
       return;
     }
     if (this.layout == 'M') {
@@ -1043,6 +1073,7 @@ export class PaymentDispersionValidationComponent
 
     params['filter.idEvent'] = `$eq:${this.eventSelected.id}`;
     params['sortBy'] = 'lotPublic:ASC';
+
     this.lotService.getFindAllRegistersTot(params).subscribe({
       next: response => {
         console.log('LOTES', response);
@@ -1090,7 +1121,7 @@ export class PaymentDispersionValidationComponent
       },
       error: err => {
         if (filter == 'si') {
-          this.alert('warning', 'No hay Lotes Asociados a este Evento', '');
+          this.alert('warning', 'No hay lotes asociados a este evento', '');
         }
         this.amountForm.get('tot_precio_final').setValue(0);
         this.lotByEvent.load([]);

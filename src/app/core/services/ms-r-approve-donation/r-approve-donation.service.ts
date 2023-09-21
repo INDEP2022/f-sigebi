@@ -19,6 +19,10 @@ export class RapproveDonationService extends HttpService {
     return this.get<IListResponse<IRapproveDonation>>(this.endpoint, params);
   }
 
+  getAllT(params?: ListParams): Observable<IListResponse> {
+    return this.get<IListResponse>(this.endpoint, params);
+  }
+
   getAllWhereType(delegation: any) {
     const route = `${RapproveDonationEndpoint.donac}?filter.authorizeType=$ilike:A&filter.regionalDelegationId=$ilike:${delegation}`;
     return this.get(route);
