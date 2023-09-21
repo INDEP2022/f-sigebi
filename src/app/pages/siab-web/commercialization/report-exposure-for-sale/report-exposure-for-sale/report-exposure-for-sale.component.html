@@ -120,7 +120,7 @@
                 (fetchItems)="getStatusGood($event)"
                 label="Estatus"
                 [data]="state"
-                bindLabel="description"
+                bindLabel="statusDescription"
                 [searchOnInit]="true"
                 value="status"
                 (change)="changeStatusGood($event)">
@@ -180,7 +180,7 @@
             <button
               class="btn btn-sm btn-success active mr-3"
               [disabled]="!validate3"
-              (click)="onExportExcel()">
+              (click)="onExportExcelGood()">
               Exportar
               <i class="bx bx-download float-icon"></i>
             </button>
@@ -357,7 +357,7 @@
             <button
               class="btn btn-sm btn-success active mr-3"
               [disabled]="!validate2"
-              (click)="onExportExcelGood()">
+              (click)="onExportExcelConsult()">
               Exportar
               <i class="bx bx-download float-icon"></i>
             </button>
