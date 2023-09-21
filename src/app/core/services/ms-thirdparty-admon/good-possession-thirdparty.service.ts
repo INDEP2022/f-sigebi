@@ -4,7 +4,10 @@ import { ThirdPartyAdmonEndpoints } from 'src/app/common/constants/endpoints/ms-
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGood } from '../../models/good/good.model';
-import { IDelReportImp } from '../../models/ms-strategy-service/strategy-service.model';
+import {
+  ICostReport,
+  IDelReportImp,
+} from '../../models/ms-strategy-service/strategy-service.model';
 import {
   IDetailGoodPossessionThirdParty,
   IGoodPossessionThirdParty,
@@ -145,5 +148,10 @@ export class GoodPosessionThirdpartyService extends HttpService {
   }
   deleteReportGoodImp(params: IDelReportImp) {
     return this.delete<any>(`strategy-goods`, params);
+  }
+
+  getIncCosto(costos: ICostReport) {
+    const route = `${ThirdPartyAdmonEndpoints.CostosGoods}`;
+    return this.post(route, costos);
   }
 }

@@ -64,3 +64,12 @@ export interface IDelReportImp {
   goodNumber: number;
   actNumber: number;
 }
+
+export interface ICostReport {
+  serviceNumber: number;
+  typeServiceNumber: number;
+  turnNumber: number;
+  varCosteNumber: number;
+  importTot: number;
+  amountTot: number;
+}
