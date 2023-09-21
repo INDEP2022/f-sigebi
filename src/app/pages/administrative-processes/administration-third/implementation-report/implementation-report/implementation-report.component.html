@@ -232,11 +232,11 @@
       <div class="d-flex justify-content-center">
         <div class="m-3">
           <button
-            (click)="cargaBienes()"
+            (click)="bitacora()"
             type="button"
-            class="btn btn-info active btn-sm mr-3">
-            Incorpora
-            <i class="bx bx-plus bx-sm float-icon"></i>
+            class="btn btn-primary active btn-sm mr-3">
+            Bitácora
+            <i class="bx bx-clipboard bx-sm float-icon"></i>
           </button>
         </div>
         <div class="m-3">
@@ -249,40 +249,71 @@
         </div>
       </div>
     </div>
-    <div class="margin-input">
+    <div class="col-md-12">
       <h5 class="title">Bienes del Reporte Implementación</h5>
-      <div class="row pt-4">
+      <div class="row">
+        <form-loader *ngIf="loading2"></form-loader>
         <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
+          <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
               (userRowSelect)="onUserRowSelect($event)"
               [source]="dataTableGood">
             </ng2-smart-table>
-          </div>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </ng-scrollbar>
+          <!-- </div> -->
         </div>
-        <app-pagination
-          [params]="params"
-          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button
+            (click)="cargaBienes()"
+            type="button"
+            class="btn btn-info active btn-sm mr-3">
+            Incorporar Bienes
+            <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm"
+            (click)="elimina()">
+            Eliminar Bienes <i class="fas fa-trash bx-sm float-icon"></i>
+          </button>
+        </div>
       </div>
     </div>
 
-    <div class="margin-input">
+    <div class="col-md-12">
       <h5 class="title">Reportes de Implementación</h5>
-      <div class="row pt-4">
+      <div class="row">
+        <form-loader *ngIf="loading2"></form-loader>
         <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
+          <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings2"
               [source]="bienesStrategy">
             </ng2-smart-table>
-          </div>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems2"></app-pagination>
+          </ng-scrollbar>
+          <!-- </div> -->
         </div>
-        <app-pagination
-          [params]="params"
-          [totalItems]="totalItems2"></app-pagination>
       </div>
     </div>
     <div footer>
@@ -292,22 +323,14 @@
             type="button"
             class="btn btn-primary active btn-sm"
             (click)="pupGenera()">
-            Genera <i class="fas fa-print bx-sm float-icon"></i>
-          </button>
-        </div>
-        <div class="m-3">
-          <button
-            type="button"
-            class="btn btn-danger active btn-sm"
-            (click)="elimina()">
-            Elimina <i class="fas fa-trash bx-sm float-icon"></i>
+            Generar <i class="fas fa-print bx-sm float-icon"></i>
           </button>
         </div>
         <div class="m-3">
           <button
             type="button"
             class="btn btn-primary active btn-sm"
-            (click)="incorpora()">
+            (click)="incorporaCostos()">
             Incorpora <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
