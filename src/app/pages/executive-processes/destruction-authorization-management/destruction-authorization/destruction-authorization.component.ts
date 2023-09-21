@@ -96,6 +96,7 @@ export class DestructionAuthorizationComponent
   params4 = new BehaviorSubject<ListParams>(new ListParams());
   params5 = new BehaviorSubject<ListParams>(new ListParams());
   params6 = new BehaviorSubject<ListParams>(new ListParams());
+  params7 = new BehaviorSubject<ListParams>(new ListParams());
 
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   searchFilter: SearchBarFilter;
@@ -125,6 +126,7 @@ export class DestructionAuthorizationComponent
   data: LocalDataSource = new LocalDataSource();
   actaList2: LocalDataSource = new LocalDataSource();
   dictaList2: LocalDataSource = new LocalDataSource();
+  detailProceedingsList2: LocalDataSource = new LocalDataSource();
   actaList: { cve_acta: string }[] = [];
 
   loadingProceedings = false;
@@ -345,7 +347,7 @@ export class DestructionAuthorizationComponent
 
         this.onLoadToast('success', 'Bienes eliminados del acta');
 
-        this.getProceedingGoods(id.value).subscribe();
+        this.getProceedingGoods(id.value);
       },
       error: () => {
         this.loadingGoodsByP = false;
@@ -354,7 +356,7 @@ export class DestructionAuthorizationComponent
           'Error',
           'Ocurrió un error al eliminar los bienes del acta'
         );
-        this.getProceedingGoods(id.value).subscribe();
+        this.getProceedingGoods(id.value);
       },
     });
   }
@@ -418,7 +420,7 @@ export class DestructionAuthorizationComponent
         return;
       }
       this.goodTrackerGoods = trackerGoods;
-      this.getProceedingGoods(id.value).subscribe();
+      this.getProceedingGoods(id.value);
     });
   }
 
@@ -599,7 +601,7 @@ export class DestructionAuthorizationComponent
           this.goodTrackerGoods = [];
           this.loading = false;
           this.proceedingForm.patchValue(proceeding);
-          this.getProceedingGoods(proceeding.id).subscribe();
+          this.getProceedingGoods(proceeding.id);
           this.onLoadToast('success', 'Acta generada correctamente', '');
         },
         error: error => {
@@ -648,7 +650,7 @@ export class DestructionAuthorizationComponent
         this.goodTrackerGoods = [];
         this.onLoadToast('success', 'Acta actualizada correctamente');
         this.findProceeding(keysProceedings.value).subscribe();
-        this.getProceedingGoods(id.value).subscribe();
+        this.getProceedingGoods(id.value);
       },
       error: () => {
         this.loading = false;
@@ -830,36 +832,6 @@ export class DestructionAuthorizationComponent
     this.generateScanRequestReport().subscribe();
   }
 
-  getProceedingGoods(proceedingId: number | string) {
-    this.loadingGoodsByP = true;
-    return this.detailProceeDelRecService
-      .getGoodsByProceedings(proceedingId, this.params2.getValue())
-      .pipe(
-        catchError(error => {
-          this.detailProceedingsList = [];
-          this.totalItems2 = 0;
-          this.loadingGoodsByP = false;
-          if (error.status >= 500) {
-            this.onLoadToast(
-              'error',
-              'Error',
-              'Ocurrió un error al consultar los bienes relacionados al acta'
-            );
-          }
-          return throwError(() => error);
-        }),
-        tap(response => {
-          this.detailProceedingsList = [
-            ...this.goodTrackerGoods,
-            ...response.data,
-          ];
-          this.totalItems2 = response.count;
-          this.loadingGoodsByP = false;
-        }),
-        switchMap(() => this.getDictAndActs())
-      );
-  }
-
   getDictAndActs() {
     const allGoods = this.detailProceedingsList.map(detail => detail.good.id);
     console.log(allGoods);
@@ -951,7 +923,7 @@ export class DestructionAuthorizationComponent
     let params = {
       ...this.params.getValue(),
     };
-
+    params['filter.typeProceedings'] = `$ilike:RGA`;
     params['filter.keysProceedings'] = `$ilike:${keyProceeding}`;
     return this.proceedingsDeliveryReceptionService
       .getAllProceedingsDeliveryReception2(params)
@@ -975,8 +947,9 @@ export class DestructionAuthorizationComponent
         switchMap(proceeding => {
           const getGoods$ = this.getProceedingGoods(proceeding.id);
           const searchActa$ = this.searchActa(proceeding.id);
+          const searchDicta$ = this.searchDicta(proceeding.id);
 
-          return forkJoin([getGoods$, searchActa$]);
+          return forkJoin([getGoods$, searchActa$, searchDicta$]);
         })
       );
   }
@@ -1126,7 +1099,7 @@ export class DestructionAuthorizationComponent
       ...this.params5.getValue(),
     };
     this.proceedingsDeliveryReceptionService
-      .ProceedingsDetailActa(id)
+      .ProceedingsDetailActa(id, params)
       .subscribe({
         next: resp => {
           this.actaList2.load(resp.data);
@@ -1139,14 +1112,41 @@ export class DestructionAuthorizationComponent
   }
 
   searchDicta(id: string) {
-    this.copiesOfficialOpinionService.ProceedingsDetailDicta(id).subscribe({
-      next: (resp: any) => {
-        this.dictaList2.load(resp.data);
-        this.totalItems6 = resp.count;
-      },
-      error: (err: any) => {
-        console.log(err);
-      },
-    });
+    let params = {
+      ...this.params6.getValue(),
+    };
+    this.copiesOfficialOpinionService
+      .ProceedingsDetailDicta(id, params)
+      .subscribe({
+        next: (resp: any) => {
+          this.dictaList2.load(resp.data);
+          this.totalItems6 = resp.count;
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
+  }
+
+  getProceedingGoods(proceedingId: number | string) {
+    this.loadingGoodsByP = true;
+    let params = {
+      ...this.params2.getValue(),
+    };
+    this.detailProceeDelRecService
+      .getGoodsByProceedings(proceedingId, params)
+      .subscribe({
+        next: resp => {
+          console.log(resp.data);
+          this.detailProceedingsList2.load(resp.data);
+          this.totalItems2 = resp.count;
+          this.loadingGoodsByP = false;
+          this.goodTrackerGoods;
+        },
+        error: err => {
+          console.log(err);
+          this.loadingGoodsByP = false;
+        },
+      });
   }
 }
