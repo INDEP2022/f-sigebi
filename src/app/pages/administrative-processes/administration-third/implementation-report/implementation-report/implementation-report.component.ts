@@ -10,6 +10,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import {
+  IDelReportImp,
   IReportImp,
   IStrategyLovSer,
   IStrategyProcess,
@@ -39,6 +40,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   filterType: IStrategyType;
   filterLovSer: IStrategyLovSer;
   filterTurn: IStrategyTurn;
+  lv_VALELI: number = 0;
   filterCost: IStrateyCost;
   totalItems2: number = 0;
   loading2: boolean = false;
@@ -47,6 +49,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   reportImp: IReportImp;
   area: number = 0;
   data1: any[] = [];
+  mEli: IDelReportImp;
   dataTableGood: LocalDataSource = new LocalDataSource();
   actasObject: IProccedingsDeliveryReception;
   desStrategy: string = '';
@@ -338,7 +341,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
         return;
       }
       this.alertQuestion(
-        'warning',
+        'question',
         'Generar',
         '¿Seguro que desea generar el Reporte de Implementación?'
       ).then(question => {
@@ -395,8 +398,8 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       return;
     }
     this.alertQuestion(
-      'warning',
-      'Generar',
+      'question',
+      'Incorporar',
       '¿Seguro que desea Incorporar Bienes al Reporte?'
     ).then(question => {
       if (question.isConfirmed) {
@@ -446,7 +449,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       this.serviceOrdersForm.value.turno == null ||
       this.serviceOrdersForm.value.serviceOrderKey == null
     ) {
-      this.alertInfo(
+      this.alert(
         'info',
         'Debe Seleccionar Prceso, Servicio, Tipo y Turno para generar la Clave',
         ''
@@ -461,7 +464,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   }
   incorporaGoods() {
     if (this.selectedGooods.length == 0) {
-      this.alertInfo(
+      this.alert(
         'info',
         'Es necesario seleccionar Bienes para generar el Reporte',
         ''
@@ -469,7 +472,38 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       return;
     }
   }
-  elimina() {}
+
+  elimina() {
+    if (this.reportImp.reportNumber === null) {
+      this.alert('info', 'No existe el reporte de implementación', '');
+      return;
+    }
+    this.alertQuestion(
+      'question',
+      'Eliminar',
+      `¿Seguro que desea eliminar bienes bien(es) del Reporte de Implementación ${this.serviceOrdersForm.value.reportKey}? `
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.selectedGooods.forEach(good => {
+          const data = {
+            formatNumber: good.formatNumber,
+            goodNumber: good.goodNumber,
+            actNumber: Number(this.reportImp.recordNumber),
+          };
+          this.goodPosessionThirdpartyService
+            .deleteReportGoodImp(this.mEli)
+            .subscribe(res => {
+              console.log(res);
+              this.lv_VALELI = 4;
+            });
+        });
+      } else {
+        this.lv_VALELI = 5;
+      }
+      this.cargaBienes();
+      console.log(this.lv_VALELI);
+    });
+  }
   incorpora() {}
-  costos() {}
+  bitacora() {}
 }

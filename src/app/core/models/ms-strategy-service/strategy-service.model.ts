@@ -58,3 +58,9 @@ export interface IReportImp {
   reportTOKey: string;
   originNb: string;
 }
+
+export interface IDelReportImp {
+  formatNumber: number;
+  goodNumber: number;
+  actNumber: number;
+}
