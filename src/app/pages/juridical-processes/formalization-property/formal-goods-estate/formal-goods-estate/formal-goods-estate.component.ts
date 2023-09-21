@@ -42,7 +42,8 @@ import { FormProcedeFormalizacionComponent } from '../form-procede-formalizacion
 })
 export class FormalGoodsEstateComponent
   extends BasePage
-  implements OnInit, OnDestroy {
+  implements OnInit, OnDestroy
+{
   // ------------------ PROCEDE FORMALIZACIÓN ------------------ //
   _dataTableProcedeFormalizacion: LocalDataSource = new LocalDataSource();
   _tableSettingsProcedeFormalizacion = { ...TABLE_SETTINGS2 };
@@ -158,22 +159,22 @@ export class FormalGoodsEstateComponent
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'processKey':
-                field = 'filter.eventDetails.processKey'
+                field = 'filter.eventDetails.processKey';
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'goodNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'description':
-                field = 'filter.goodDetails.description'
+                field = 'filter.goodDetails.description';
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'status':
-                field = 'filter.lotDetails.idStatusVta'
+                field = 'filter.lotDetails.idStatusVta';
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'idClient':
-                field = 'filter.lotDetails.idClient'
+                field = 'filter.lotDetails.idClient';
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'dateIncorporado':
