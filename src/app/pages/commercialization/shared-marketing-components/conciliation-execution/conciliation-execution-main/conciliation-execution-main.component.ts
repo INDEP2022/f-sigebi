@@ -788,6 +788,26 @@ export class ConciliationExecutionMainComponent
             L_RECAL = 1;
             if (L_VALIDA == 1) {
               let V_FASEI = 1;
+              let obj_ACT = {
+                event: this.selectedEvent.eventId,
+                phase: V_FASEI,
+                date: this.conciliationForm.get('date').value,
+                lot: this.selectedBatch.idLot,
+                address: 'string',
+              };
+
+              let obj_ACT2 = {
+                event: this.selectedEvent.eventId,
+                descriptionEvent: this.selectedEvent.processKey,
+                inmueble: 'I',
+                publicLot: this.selectedBatch.lotPublic,
+                lot: this.selectedBatch.idLot,
+                phase: V_FASEI,
+                user: this.token.decodeToken().preferred_username,
+              };
+              // VALIDA_PAGOSREF.VENTA_INMU_ACT(: BLK_CTRL.EVENTO, : BLK_CTRL.FECHA, : BLK_CTRL.FASE_ACT, : BLK_CTRL.LOTE, L_RECAL, 'I');
+              // VALIDA_PAGOSREF.PREP_OINMU_ACT(: BLK_CTRL.EVENTO, : BLK_CTRL.DESCRIPCION, : BLK_CTRL.DESCRIPCION, : BLK_CTRL.LOTE_PUBLICO, : BLK_CTRL.LOTE, : BLK_CTRL.FASE_ACT);
+
               await this.functVALIDA_PAGOSREF_ACT();
               await this.updateEvento(V_FASEI, 1);
             }
