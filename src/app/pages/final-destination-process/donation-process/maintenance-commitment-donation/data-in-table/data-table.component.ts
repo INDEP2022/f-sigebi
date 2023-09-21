@@ -286,7 +286,8 @@ export class DataTableComponent extends BasePage implements OnInit {
             this.data[i].not = 1;
           }
           this.data[i].labelId = response.data[i].label;
-          this.data[i].transfereeId = response.data[i].transfereeId.transferentId;
+          this.data[i].transfereeId =
+            response.data[i].transfereeId.transferentId;
         }
         this.dataTable1.load(response.data);
         this.dataTable1.refresh();
@@ -339,7 +340,7 @@ export class DataTableComponent extends BasePage implements OnInit {
     });
   }
 
-  getUsers(name: string) { }
+  getUsers(name: string) {}
 
   loadModal(bool: boolean, data: any) {
     if (data != null) {

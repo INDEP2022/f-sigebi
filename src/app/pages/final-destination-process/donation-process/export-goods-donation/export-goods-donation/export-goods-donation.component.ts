@@ -307,8 +307,8 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'info',
         'Se recuperarán ' +
-        response.data.length +
-        ' registros ¿Deseas continuar? ',
+          response.data.length +
+          ' registros ¿Deseas continuar? ',
         '',
         'Si',
         'No'
@@ -527,7 +527,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
                   },
                 }),
                 this.historyGoodService.PostStatus(params2).subscribe({
-                  next: response => { },
+                  next: response => {},
                 });
             },
           });
