@@ -204,7 +204,14 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
             search[filter.field]();
 
             if (filter.search !== '') {
-              this.columnFilters2[field] = `${filter.search}`;
+              if (filter.field == 'sale') {
+                this.columnFilters2[
+                  field
+                ] = `${searchFilter}:${filter.search.replace(/,/g, '')}`;
+              } else {
+                this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
+              }
+              // this.columnFilters2[field] = `${filter.search}`;
               // this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters2[field];
@@ -376,10 +383,13 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
   }
 
   rowsSelectedGetComissions(event: any, filter: any) {
+    console.log('ROW');
     this.totalItems2 = 0;
-    this.params2
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getComPerGood(event, filter));
+    // this.params2
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() =>
+    this.getComPerGood(event, filter);
+    // );
   }
 
   openForm1(calculated?: any) {

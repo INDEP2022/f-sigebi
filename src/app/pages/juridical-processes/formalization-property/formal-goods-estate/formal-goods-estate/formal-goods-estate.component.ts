@@ -159,18 +159,22 @@ export class FormalGoodsEstateComponent
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'processKey':
+                field = 'filter.eventDetails.processKey';
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'goodNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'description':
+                field = 'filter.goodDetails.description';
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'status':
+                field = 'filter.lotDetails.idStatusVta';
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'idClient':
+                field = 'filter.lotDetails.idClient';
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'dateIncorporado':
@@ -395,7 +399,7 @@ export class FormalGoodsEstateComponent
       ...this.params2.getValue(),
       ...this.columnFilters2,
     };
-    params['filter.stage'] = `$eq:${2}`;
+    //params['filter.stage'] = `$eq:${2}`;
 
     this.formalizeProcessService.getAll(params).subscribe(
       (response: any) => {
