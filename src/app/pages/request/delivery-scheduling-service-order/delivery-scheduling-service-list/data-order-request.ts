@@ -164,4 +164,70 @@ export const orderRequestData = [
     task: 'CounterProposalReportImplementRejected',
     numberTask: 9,
   },
+
+  {
+    title: 'Solicitud Orden de Servicio(Captura de Servicios)',
+    number: 512,
+    created: 45018,
+    assigned: '09/04/2018 04:31 PM',
+    priority: 3,
+    process: 'OrdenServicioRecepcion',
+    task: 'PropuestaServicioINDEPEnviada',
+    numberTask: 1,
+  },
+  {
+    title:
+      'Solicitud Orden de Servicio(Validación de Servicios) con folio: METROPOLITANA-SAT-1340-OS',
+    number: 512,
+    created: 45018,
+    assigned: '09/04/2018 04:31 PM',
+    priority: 3,
+    process: 'OrdenServicioRecepcion',
+    task: 'OrdenServicioAutorizado',
+    numberTask: 2,
+  },
+  {
+    title:
+      'Aprobación de servicios (Programación de recepción: METROPOLITANA-SAT-516-OS) para la orden de servicio con folio: METROPOLITANA-SAT-1340-OS',
+    number: 512,
+    created: 45018,
+    assigned: '09/04/2018 04:31 PM',
+    priority: 3,
+    process: 'OrdenServicioRecepcion',
+    task: 'OrdenFirmaPorDeleRegional',
+    numberTask: 3,
+  },
+  {
+    title:
+      'Reporte de Implementación (Programación de recepción: METROPOLITANA-SAT-516-OS) para la orden de servicio con folio: METROPOLITANA-SAT-1340-OS',
+    number: 512,
+    created: 45018,
+    assigned: '09/04/2018 04:31 PM',
+    priority: 3,
+    process: 'OrdenServicioRecepcion',
+    task: 'ReporteImplemenEnviadoINDEP',
+    numberTask: 4,
+  },
+  {
+    title:
+      'Validación de reporte de Implementación (Programación de recepción: METROPOLITANA-SAT-516-OS) Para el orden de servicio con el folio:  METROPOLITANA-SAT-1340-OS',
+    number: 512,
+    created: 45018,
+    assigned: '09/04/2018 04:31 PM',
+    priority: 3,
+    process: 'OrdenServicioRecepcion',
+    task: 'ReporteImplemenAutorizado',
+    numberTask: 5,
+  },
+  {
+    title:
+      'Validación de reporte de Implementación (Programación de recepción: METROPOLITANA-SAT-516-OS) Para el orden de servicio con el folio:  METROPOLITANA-SAT-1340-OS',
+    number: 512,
+    created: 45018,
+    assigned: '09/04/2018 04:31 PM',
+    priority: 3,
+    process: 'OrdenServicioRecepcion',
+    task: 'ReporteImplemenFirmadoDelegReg',
+    numberTask: 6,
+  },
 ];
