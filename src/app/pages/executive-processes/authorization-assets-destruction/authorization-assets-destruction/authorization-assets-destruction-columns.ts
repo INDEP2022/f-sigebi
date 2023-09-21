@@ -1,5 +1,5 @@
 export const ASSETS_DESTRUCTION_COLUMLNS = {
-  id: {
+  numberGood: {
     title: 'No. Bien',
     type: 'string',
     sort: false,
@@ -8,20 +8,17 @@ export const ASSETS_DESTRUCTION_COLUMLNS = {
     title: 'Descripción',
     type: 'string',
     sort: false,
+    /*     valuePrepareFunction: (value: any) => {
+      return value.description;
+    }, */
   },
-  ubicationType: {
+  di_cve_ubicacion: {
+    title: 'Ubicación',
+    type: 'string',
+    sort: false,
+  },
+  di_ubicacion1: {
     title: 'Ubicación Exacta',
-    type: 'string',
-    sort: false,
-  },
-  direction: {
-    title: 'Dirección',
-    type: 'string',
-    sort: false,
-  },
-
-  flyerNumber: {
-    title: 'No. de Autorización',
     type: 'string',
     sort: false,
   },
@@ -30,21 +27,19 @@ export const ASSETS_DESTRUCTION_COLUMLNS = {
     type: 'string',
     sort: false,
   },
-  insertRegDate: {
-    title: 'Fecha',
+  fecha: {
+    title: 'No. Oficio y Fecha',
     type: 'string',
     sort: false,
   },
-
-  extDomProcess: {
+  process: {
     title: 'Ext. Dom',
     type: 'string',
     sort: false,
   },
-  // availability: {
-  //   title: 'Disponibilidad',
-  //   type: 'boolean',
-  //   sort: false,
-  //   hide: true,
-  // },
+  aprobado: {
+    title: 'Aprobado',
+    type: 'string',
+    sort: false,
+  },
 };
