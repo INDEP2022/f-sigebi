@@ -23,4 +23,5 @@ export enum SurvillanceEndpoints {
   GetTransNumerario = 'application/get-trans-numerario-reg',
   VigAllExcel = 'vig-supervision-det/allExcel',
   FaEtapanexo = 'application/get-fa-etapanexo',
+  View_VigDelegations_ = 'views/v-vig-delegations',
 }
