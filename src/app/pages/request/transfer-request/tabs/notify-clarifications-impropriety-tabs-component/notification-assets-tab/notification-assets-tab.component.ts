@@ -41,10 +41,11 @@ import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
+
+import { INotification } from 'src/app/core/models/ms-notification/notification.model';
+import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { InappropriatenessFormComponent } from '../inappropriateness-form/inappropriateness-form.component';
 import { InappropriatenessPgrSatFormComponent } from '../inappropriateness-pgr-sat-form/inappropriateness-pgr-sat-form.component';
-
-import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { NotifyAssetsImproprietyFormComponent } from '../notify-assets-impropriety-form/notify-assets-impropriety-form.component';
 import { PrintSatAnswerComponent } from '../print-sat-answer/print-sat-answer.component';
 import { RecipientsEmailComponent } from '../recipients-email/recipients-email.component';
@@ -102,7 +103,7 @@ export class NotificationAssetsTabComponent
   valueClarification: IClarification;
   valueGood: number;
   valueRejectNotificationId: number;
-  dataNotificationSelected: IClarificationGoodsReject;
+  dataNotificationSelected: any;
   clar: boolean = false;
   imp: boolean = false;
   today: Date;
@@ -202,7 +203,7 @@ export class NotificationAssetsTabComponent
     this.task = JSON.parse(localStorage.getItem('Task'));
 
     //Verifica que la tarea esta FINALIZADA, para ocultar botones
-    this.paramsReject.getValue()['filter.id'] = `$eq:${this.task.id}`;
+    this.paramsReject.getValue()['filter.id'] = `$eq:${this.task?.id}`;
     this.taskService.getAll(this.paramsReject.getValue()).subscribe({
       next: response => {
         this.dataTask = response.data[0];
@@ -232,7 +233,6 @@ export class NotificationAssetsTabComponent
           );
           this.getAffairName(data?.affair);
           this.transferenceId = Number(data?.transferenceId);
-          console.log('ID de la transferente', this.transferenceId);
         });
         this.requestData = data.data[0];
       },
@@ -341,7 +341,6 @@ export class NotificationAssetsTabComponent
         this.loadingGoods = false;
       },
       error: error => {
-        console.log('NO HAY VIENES, SE FINALIZARÁ LA TAREA');
         this.changeStatusTask();
         this.loadingGoods = false;
       },
@@ -400,10 +399,10 @@ export class NotificationAssetsTabComponent
     this.valuesNotifications = event.data;
     const refuseObj = { ...this.valuesNotifications };
     this.dataNotificationSelected = event.data as IClarificationGoodsReject;
+
     this.notifyAssetsSelected = event.selected;
     this.valueGood = event.data.goodId;
     this.valueRejectNotificationId = event.data.rejectNotificationId;
-    console.log('Seleccionada: ', event.data.clarification.clarification);
   }
 
   refuseClarification() {
@@ -628,7 +627,7 @@ export class NotificationAssetsTabComponent
         from,
         to,
         true,
-        this.task.id,
+        this.task?.id,
         user.username,
         'SOLICITUD_TRANSFERENCIA',
         'NotificarAclaracion_Improcedencia',
@@ -814,7 +813,7 @@ export class NotificationAssetsTabComponent
               this.initializeFormclarification(notification);
             }
             //Empieza a llamar modal de ACLARACIONES
-            this.getRequest(this.typeClarification);
+            this.getRequest(this.typeClarification, notification);
           } else {
             this.onLoadToast(
               'warning',
@@ -829,10 +828,6 @@ export class NotificationAssetsTabComponent
             this.requestData.transferent.type === 'A' ||
             this.requestData.transferent.type === 'CE'
           ) {
-            console.log(
-              'Impro para sat y pgr ',
-              this.requestData.transferent.type
-            );
             const token = this.authService.decodeToken();
             this.delegationUser = token.department;
             const delegationUser = this.delegationUser;
@@ -866,7 +861,6 @@ export class NotificationAssetsTabComponent
             this.requestData.transferent.type === 'NO' ||
             this.requestData.typeOfTransfer === 'MANUAL'
           ) {
-            console.log('Abrir formulario para impro manual');
             const token = this.authService.decodeToken();
             this.delegationUser = token.department;
             const delegationUser = this.delegationUser;
@@ -941,13 +935,17 @@ export class NotificationAssetsTabComponent
       generaXML = true;
   }
 
-  FinishClariImpro() {
+  async FinishClariImpro() {
     const notification = this.selectedRow;
     if (notification != null) {
       let improcedencia: boolean = false;
       let aclaracion: boolean = false;
 
-      if (notification.clarificationType == 'SOLICITAR_ACLARACION') {
+      if (
+        notification.clarificationType == 'SOLICITAR_ACLARACION' &&
+        notification.clarification.clarification !=
+          'INDIVIDUALIZACIÓN DE BIENES'
+      ) {
         if (notification.answered == 'EN ACLARACION') {
           aclaracion = true;
         } else {
@@ -957,7 +955,11 @@ export class NotificationAssetsTabComponent
             'Debe aceptar o rechazar primero la Aclaración/Improcedencia'
           );
         }
-      } else if (notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA') {
+      } else if (
+        notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA' &&
+        notification.clarification.clarification !=
+          'INDIVIDUALIZACIÓN DE BIENES'
+      ) {
         if (notification.answered == 'EN ACLARACION') {
           improcedencia = true;
         } else {
@@ -992,12 +994,329 @@ export class NotificationAssetsTabComponent
           });
         }
       }
+
+      if (
+        notification.clarification.clarification ==
+        'INDIVIDUALIZACIÓN DE BIENES'
+      ) {
+        if (notification.answered == 'EN ACLARACION') {
+          this.alertQuestion(
+            'question',
+            'Confirmación',
+            '¿Desea Finalizar la Aclaración?'
+          ).then(async question => {
+            if (question.isConfirmed) {
+              const goodCreate = await this.createIndividualizacion(
+                notification.good
+              );
+              if (goodCreate) {
+                const updateGoodInitial = await this.updateGoodInitial(
+                  notification.good
+                );
+                if (updateGoodInitial) {
+                  this.endAclarationInd();
+                }
+              }
+            }
+          });
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Atención',
+            'Debe aceptar o rechazar primero la Aclaración/Improcedencia'
+          );
+        }
+      }
     } else {
       this.onLoadToast(
         'warning',
         'Atención',
         'Seleccione al menos un registro'
       );
+    }
+  }
+  //REGISTRO_SOLICITUD//
+  createIndividualizacion(good: IGood) {
+    return new Promise((resolve, reject) => {
+      let i = 1;
+      for (i; i <= 2; i++) {
+        const uniqueKey = `${good.uniqueKey}_${i}`;
+
+        const _good = {
+          inventoryNumber: good.inventoryNumber,
+          description: good.description,
+          quantity: 5,
+          dateIn: good.dateIn,
+          dateOut: good.dateOut,
+          expireDate: good.expireDate,
+          ubicationType: good.ubicationType,
+          status: good.status,
+          goodCategory: good.goodCategory,
+          originSignals: good.originSignals,
+          registerInscrSol: good.registerInscrSol,
+          dateOpinion: good.dateOpinion,
+          proficientOpinion: good.proficientOpinion,
+          valuerOpinion: good.valuerOpinion,
+          opinion: good.opinion,
+          appraisedValue: good.appraisedValue,
+          drawerNumber: good.drawerNumber,
+          vaultNumber: good.vaultNumber,
+          goodReferenceNumber: good.goodReferenceNumber,
+          appraisalCurrencyKey: good.appraisalCurrencyKey,
+          appraisalVigDate: good.appraisalVigDate,
+          legalDestApprove: good.legalDestApprove,
+          legalDestApproveUsr: good.legalDestApproveUsr,
+          legalDestApproveDate: good.legalDestApproveDate,
+          complianceLeaveDate: good.complianceLeaveDate,
+          complianceNotifyDate: good.complianceNotifyDate,
+          leaveObservations: good.leaveObservations,
+          judicialLeaveDate: good.judicialLeaveDate,
+          notifyDate: good.notifyDate,
+          notifyA: good.notifyA,
+          placeNotify: good.placeNotify,
+          discardRevRecDate: good.discardRevRecDate,
+          resolutionEmissionRecRevDate: good.resolutionEmissionRecRevDate,
+          admissionAgreementDate: good.admissionAgreementDate,
+          audienceRevRecDate: good.audienceRevRecDate,
+          revRecObservations: good.revRecObservations,
+          leaveCause: good.leaveCause,
+          resolution: good.resolution,
+          fecUnaffordability: good.fecUnaffordability,
+          unaffordabilityJudgment: good.unaffordabilityJudgment,
+          userApproveUse: good.userApproveUse,
+          useApproveDate: good.useApproveDate,
+          useObservations: good.useObservations,
+          dateRequestChangeNumerary: good.dateRequestChangeNumerary,
+          numberChangeRequestUser: good.numberChangeRequestUser,
+          causeNumberChange: good.causeNumberChange,
+          changeRequestNumber: good.changeRequestNumber,
+          authNumberChangeDate: good.authNumberChangeDate,
+          authChangeNumberUser: good.authChangeNumberUser,
+          authChangeNumber: good.authChangeNumber,
+          numberChangeRatifiesDate: good.numberChangeRatifiesDate,
+          numberChangeRatifiesUser: good.numberChangeRatifiesUser,
+          notifyRevRecDate: good.notifyRevRecDate,
+          revRecCause: good.revRecCause,
+          initialAgreement: good.initialAgreement,
+          observations: good.observations,
+          fileNumber: good.fileNumber,
+          associatedFileNumber: good.associatedFileNumber,
+          rackNumber: good.rackNumber,
+          storeNumber: good.storeNumber,
+          lotNumber: good.lotNumber,
+          goodClassNumber: good.goodClassNumber,
+          subDelegationNumber: good.subDelegationNumber,
+          delegationNumber: good.delegationNumber,
+          physicalReceptionDate: good.physicalReceptionDate,
+          statusResourceReview: good.statusResourceReview,
+          judicialDate: good.judicialDate,
+          abandonmentDueDate: good.abandonmentDueDate,
+          destructionApproveDate: good.destructionApproveDate,
+          destructionApproveUser: good.destructionApproveUser,
+          observationDestruction: good.observationDestruction,
+          destinyNumber: good.destinyNumber,
+          registryNumber: good.registryNumber,
+          agreementDate: good.agreementDate,
+          state: good.state,
+          opinionType: good.opinionType,
+          presentationDate: good.presentationDate,
+          revRecRemedyDate: good.revRecRemedyDate,
+          receptionStatus: good.receptionStatus,
+          promoterUserDecoDevo: good.promoterUserDecoDevo,
+          scheduledDateDecoDev: good.scheduledDateDecoDev,
+          goodsPartializationFatherNumber: good.goodsPartializationFatherNumber,
+          seraAbnDeclaration: good.seraAbnDeclaration,
+          identifier: good.identifier,
+          siabiInventoryId: good.siabiInventoryId,
+          cisiPropertyId: good.cisiPropertyId,
+          siabiInvalidId: good.siabiInvalidId,
+          tesofeDate: good.tesofeDate,
+          tesofeFolio: good.tesofeFolio,
+          situation: good.situation,
+          labelNumber: good.labelNumber,
+          flyerNumber: good.flyerNumber,
+          insertRegDate: good.insertRegDate,
+          visportal: good.visportal,
+          //unit: good.unit,
+          referenceValue: good.referenceValue,
+          insertHcDate: good.insertHcDate,
+          extDomProcess: good.extDomProcess,
+          requestId: good.requestId,
+          goodTypeId: good.goodTypeId,
+          subTypeId: good.subTypeId,
+          goodStatus: 'ACLARADO',
+          idGoodProperty: good.idGoodProperty,
+          requestFolio: good.requestFolio,
+          type: good.type,
+          admissionDate: good.admissionDate,
+          locationId: good.locationId,
+          uniqueKey: uniqueKey,
+          fileeNumber: good.fileeNumber,
+          goodDescription: good.goodDescription,
+          physicalStatus: good.physicalStatus,
+          unitMeasure: good.unitMeasure,
+          ligieUnit: good.ligieUnit,
+          quantityy: good.quantityy,
+          destiny: good.destiny,
+          appraisal: good.appraisal,
+          notesTransferringEntity: good.notesTransferringEntity,
+          fractionId: good.fractionId,
+          federalEntity: good.federalEntity,
+          stateConservation: good.stateConservation,
+          armor: good.armor,
+          brand: good.brand,
+          subBrand: good.subBrand,
+          model: good.model,
+          axesNumber: good.axesNumber,
+          engineNumber: good.engineNumber,
+          tuition: good.tuition,
+          serie: good.serie,
+          chassis: good.chassis,
+          cabin: good.cabin,
+          volume: good.volume,
+          origin: good.origin,
+          useType: good.useType,
+          manufacturingYear: good.manufacturingYear,
+          capacity: good.capacity,
+          operationalState: good.operationalState,
+          enginesNumber: good.enginesNumber,
+          dgacRegistry: good.dgacRegistry,
+          airplaneType: good.airplaneType,
+          flag: good.flag,
+          openwork: good.openwork,
+          length: good.length,
+          sleeve: good.sleeve,
+          shipName: good.shipName,
+          publicRegistry: good.publicRegistry,
+          ships: good.ships,
+          caratage: good.caratage,
+          material: good.material,
+          weight: good.weight,
+          satFile: good.satFile,
+          satClassificationId: good.satClassificationId,
+          satSubclassificationId: good.satSubclassificationId,
+          satGuideMaster: good.satGuideMaster,
+          satGuideHouse: good.satGuideHouse,
+          satDepartureNumber: good.satDepartureNumber,
+          satAlmAddress: good.satAlmAddress,
+          satAlmColony: good.satAlmColony,
+          satAlmCityPopulation: good.satAlmCityPopulation,
+          satAlmMunicipalityDelegation: good.satAlmMunicipalityDelegation,
+          satAlmFederativeEntity: good.satAlmFederativeEntity,
+          satAddressDelivery: good.satAddressDelivery,
+          satBreaches: good.satBreaches,
+          userCreation: good.userCreation,
+          creationDate: good.creationDate,
+          userModification: good.userModification,
+          modificationDate: good.modificationDate,
+          ligieSection: good.ligieSection,
+          ligieChapter: good.ligieChapter,
+          ligieLevel1: good.ligieLevel1,
+          ligieLevel2: good.ligieLevel2,
+          ligieLevel3: good.ligieLevel3,
+          ligieLevel4: good.ligieLevel4,
+          satUniqueKey: good.satUniqueKey,
+          unfair: good.unfair,
+          platesNumber: good.platesNumber,
+          clarification: good.clarification,
+          reprogrammationNumber: good.reprogrammationNumber,
+          reasonCancReprog: good.reasonCancReprog,
+          storeId: good.storeId,
+          instanceDate: good.instanceDate,
+          processStatus: 'VERIFICAR_CUMPLIMIENTO',
+          version: good.version,
+          observationss: good.observationss,
+          addressId: good.addressId,
+          compliesNorm: good.compliesNorm,
+          descriptionGoodSae: good.descriptionGoodSae,
+          quantitySae: good.quantitySae,
+          saeMeasureUnit: good.saeMeasureUnit,
+          saePhysicalState: good.saePhysicalState,
+          stateConservationSae: good.stateConservationSae,
+          programmationStatus: good.programmationStatus,
+          executionStatus: good.executionStatus,
+          duplicity: good.duplicity,
+          duplicatedGood: good.duplicatedGood,
+          compensation: good.compensation,
+          validateGood: good.validateGood,
+          ebsStatus: good.ebsStatus,
+          concurrentNumber: good.concurrentNumber,
+          concurrentMsg: good.concurrentMsg,
+          fitCircular: good.fitCircular,
+          theftReport: good.theftReport,
+          transferentDestiny: good.transferentDestiny,
+          saeDestiny: good.saeDestiny,
+          rejectionClarification: good.rejectionClarification,
+          goodResdevId: good.goodResdevId,
+          indClarification: good.indClarification,
+          msgSatSae: good.msgSatSae,
+          color: good.color,
+          doorsNumber: good.doorsNumber,
+          destinationRedress: good.destinationRedress,
+        };
+
+        this.goodService.create(_good).subscribe({
+          next: response => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(false);
+          },
+        });
+      }
+    });
+  }
+
+  updateGoodInitial(good: IGood) {
+    return new Promise((resolve, reject) => {
+      const _good: IGood = {
+        id: good.id,
+        goodId: good.goodId,
+        goodStatus: 'CANCELADO',
+        processStatus: 'SOLICITAR_ACLARACION',
+      };
+
+      this.goodService.updateByBody(_good).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {},
+      });
+    });
+  }
+
+  endAclarationInd() {
+    if (
+      this.selectedRow.clarificationType == 'SOLICITAR_ACLARACION' &&
+      this.selectedRow.answered == 'EN ACLARACION'
+    ) {
+      const data: ClarificationGoodRejectNotification = {
+        rejectNotificationId: this.selectedRow.rejectNotificationId,
+        answered: 'ACLARADA',
+        rejectionDate: new Date(),
+      };
+
+      this.rejectedGoodService
+        .update(this.selectedRow.rejectNotificationId, data)
+        .subscribe({
+          next: async data => {
+            this.checkInfoNotification(this.selectedRow.goodId);
+            this.getGoodsByRequest();
+            this.alert(
+              'success',
+              'Correcto',
+              'Notificación Aclarada Correctamente'
+            );
+            //await this.updateStatusGoodTmp(this.selectedRow.goodId);
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'Error',
+              'Ocurrio un error al actualizar el status de la notifiación'
+            );
+          },
+        });
     }
   }
 
@@ -1009,7 +1328,7 @@ export class NotificationAssetsTabComponent
       const data: ClarificationGoodRejectNotification = {
         rejectNotificationId: this.selectedRow.rejectNotificationId,
         answered: 'ACLARADA',
-        rejectionDate: '2023-04-30',
+        rejectionDate: new Date(),
       };
       this.rejectedGoodService
         .update(this.selectedRow.rejectNotificationId, data)
@@ -1036,7 +1355,7 @@ export class NotificationAssetsTabComponent
       const data: ClarificationGoodRejectNotification = {
         rejectNotificationId: this.selectedRow.rejectNotificationId,
         answered: 'IMPROCEDENTE',
-        rejectionDate: '2023-04-30', //Cambiar fecha
+        rejectionDate: new Date(), //Cambiar fecha
       };
       this.rejectedGoodService
         .update(this.selectedRow.rejectNotificationId, data)
@@ -1073,13 +1392,18 @@ export class NotificationAssetsTabComponent
     });
   }
 
-  getRequest(typeClarification?: number) {
+  getRequest(typeClarification?: number, notification?: INotification) {
     const typeClarifications = typeClarification;
     this.paramsRequest.getValue()['filter.id'] = this.idRequest;
     this.requestService.getAll(this.paramsRequest.getValue()).subscribe({
       next: response => {
         const infoRequest = response.data[0];
-        this.openModal(infoRequest, typeClarifications, typeClarification);
+        this.openModal(
+          infoRequest,
+          typeClarifications,
+          typeClarification,
+          notification
+        );
       },
     });
   }
@@ -1087,7 +1411,8 @@ export class NotificationAssetsTabComponent
   openModal(
     infoRequest?: IRequest,
     idClarification?: number,
-    typeClarification?: number
+    typeClarification?: number,
+    notification?: INotification
   ): void {
     const token = this.authService.decodeToken();
     this.delegationUser = token.department;
@@ -1117,14 +1442,22 @@ export class NotificationAssetsTabComponent
         typeClarifications,
         idSolicitud,
         delegationUser,
+        notification: notification,
         callback: (next: boolean, idGood: number) => {
           if (next) {
-            this.checkInfoNotification(idGood);
-            this.changeStatuesTmp();
+            if (
+              this.dataNotificationSelected?.clarification?.clarification ==
+              'INDIVIDUALIZACIÓN DE BIENES'
+            ) {
+              this.checkInfoNotification(idGood);
+            } else {
+              this.checkInfoNotification(idGood);
+              this.changeStatuesTmp();
+            }
           }
         },
       },
-      class: 'modal-lg modal-dialog-centered',
+      class: 'modal-xl modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.bsModalRef = this.modalService.show(
@@ -1526,7 +1859,7 @@ export class NotificationAssetsTabComponent
   //Cambia el State a FINALIZADA
   changeStatusTask() {
     this.task = JSON.parse(localStorage.getItem('Task'));
-    this.paramsReject.getValue()['filter.id'] = `$eq:${this.task.id}`;
+    this.paramsReject.getValue()['filter.id'] = `$eq:${this.task?.id}`;
     this.taskService.getAll(this.paramsReject.getValue()).subscribe({
       next: response => {
         this.dataTask = response.data[0];
@@ -1673,8 +2006,6 @@ export class NotificationAssetsTabComponent
 
   changeStatuesTmp() {
     if (this.requestData.typeOfTransfer === 'SAT_SAE') {
-      console.log('Soy SAT');
-
       if (this.selectedRow.clarificationType == 'SOLICITAR_ACLARACION') {
         this.updateChatClarificationsTmp();
       } else if (
@@ -1683,7 +2014,6 @@ export class NotificationAssetsTabComponent
         this.updateChatImprClarificationTmp();
       }
     } else {
-      console.log('No soy SAT');
     }
 
     /*if (this.rowSelected == false) {
@@ -1959,7 +2289,7 @@ export class NotificationAssetsTabComponent
     // this.goodsReject.getElements().then(data => {
     //   data.map((item: IGoodresdev) => {
     //     if (item.clarificationstatus == 'ACLARADO') {
-    //       console.log('Abriendo modal de Destinatarios');
+    //
     //       let config = {
     //         ...MODAL_CONFIG,
     //         class: 'modal-lg modal-dialog-centered',

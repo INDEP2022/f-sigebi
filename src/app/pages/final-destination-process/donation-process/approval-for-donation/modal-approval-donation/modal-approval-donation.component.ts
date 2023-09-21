@@ -21,10 +21,62 @@ import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-good
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { IParamsDonac } from '../capture-approval-donation/capture-approval-donation.component';
+
 @Component({
   selector: 'app-modal-approval-donation',
   templateUrl: './modal-approval-donation.component.html',
-  styles: [],
+  styles: [
+    `
+      :host ::ng-deep form-radio .form-group {
+        margin: 0;
+        padding-bottom: 0;
+        padding-top: 0;
+      }
+      .disabled[disabled] {
+        color: red;
+      }
+      .disabled-input {
+        color: #939393;
+        pointer-events: none;
+      }
+      #bienes table:not(.normal-hover) tbody tr:hover {
+        color: black !important;
+        font-weight: bold;
+      }
+      .row-verde {
+        background-color: green;
+        font-weight: bold;
+      }
+
+      .row-negro {
+        background-color: black;
+        font-weight: bold;
+      }
+      .registros-movidos {
+        background-color: yellow;
+      }
+
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class ModalApprovalDonationComponent extends BasePage implements OnInit {
   title: string;
@@ -94,112 +146,34 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onGoodSelectValid(instance),
         },
-        recordId: {
-          title: 'No. Ref',
+        inventoryNumber: {
+          title: 'No. Inventario',
           sort: false,
         },
         goodId: {
-          title: 'No. Bien',
+          title: 'No. Gestión',
           sort: false,
         },
         description: {
           title: 'Descripción',
           sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.good?.description;
-          },
         },
-        amount: {
+        quantity: {
           title: 'Cantidad',
           sort: false,
-        },
-        unit: {
-          title: 'Unidad',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.goodEntity?.unit;
-          },
         },
         status: {
           title: 'Estatus',
           sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.goodEntity?.status;
-          },
-        },
-        noExpediente: {
-          title: 'No. Expediente',
-          type: 'number',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.bienindicadores?.noExpediente;
-          },
-        },
-        noEtiqueta: {
-          title: 'Etiqueta Destino',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.goodEntity?.noEtiqueta;
-          },
-        },
-        idNoWorker1: {
-          title: 'No. Tranf.',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.transference?.id;
-          },
-        },
-        idExpWorker1: {
-          title: 'Des. Tranf.',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.transference?.nameTransferent;
-          },
-        },
-        noClasifBien: {
-          title: 'No. Clasif.',
-          type: 'number',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.good?.clasificationGood;
-          },
-        },
-        procesoExtDom: {
-          title: 'Proceso',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.bienindicadores?.procesoExtDom;
-          },
-        },
-        warehouseNumb: {
-          title: 'No. Almacén',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.warehouse?.id;
-          },
-        },
-        warehouse: {
-          title: 'Descrip. Almacén',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.warehouse?.description;
-          },
-        },
-        warehouseLocat: {
-          title: 'Ubica. Almacén ',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.warehouse?.ubication;
-          },
-        },
-        coordAdmin: {
-          title: 'Coord. Admin.',
-          sort: false,
-          valuePrepareFunction: (cell: any, row: any) => {
-            return row.bienindicadores?.coordination;
-          },
         },
       },
+      // rowClassFunction: (row: any) => {
+      //   if (row.data.di_disponible == 'S') {
+      //     return 'bg-success text-white';
+      //   } else {
+      //     return 'bg-dark text-white';
+      //   }
+      // },
     };
   }
 
@@ -243,23 +217,11 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              recordId: () => (searchFilter = SearchFilter.EQ),
+              inventoryNumber: () => (searchFilter = SearchFilter.ILIKE),
               goodId: () => (searchFilter = SearchFilter.EQ),
-              id: () => (searchFilter = SearchFilter.EQ),
-              description: () => (searchFilter = SearchFilter.ILIKE),
-              amount: () => (searchFilter = SearchFilter.EQ),
-              unit: () => (searchFilter = SearchFilter.EQ),
-              status: () => (searchFilter = SearchFilter.EQ),
-              noExpediente: () => (searchFilter = SearchFilter.EQ),
-              noEtiqueta: () => (searchFilter = SearchFilter.EQ),
-              idNoWorker1: () => (searchFilter = SearchFilter.EQ),
-              idExpWorker1: () => (searchFilter = SearchFilter.EQ),
-              noClasifBien: () => (searchFilter = SearchFilter.EQ),
-              procesoExtDom: () => (searchFilter = SearchFilter.EQ),
-              warehouseNumb: () => (searchFilter = SearchFilter.EQ),
-              warehouse: () => (searchFilter = SearchFilter.EQ),
-              warehouseLocat: () => (searchFilter = SearchFilter.ILIKE),
-              coordAdmin: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.EQ),
+              quantity: () => (searchFilter = SearchFilter.EQ),
+              status: () => (searchFilter = SearchFilter.ILIKE),
             };
 
             search[filter.field]();
@@ -280,13 +242,13 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       .subscribe(() => this.getGoodsByStatus());
   }
 
-  getTempDona() {
+  getListGoods() {
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    // params['sortBy'] = `goodNumber:DESC`;
-    this.donationService.getEventComDonationDetail(params).subscribe({
+    // params['sortBy'] = `inventaryNumber:DESC`;
+    this.goodService.getAll(params).subscribe({
       next: data => {
         console.log(data.data);
         this.totalItems2 = data.count;
@@ -371,7 +333,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     // let result = this.dataRecepcion.map(async good => {
     let obj: any = {
       numberProceedings: this.paramsScreen.recordId,
-      numberGood: good.goodNumber,
+      numberGood: good.goodId,
       amount: good.quantity,
       received: null,
       approvedXAdmon: null,
@@ -412,7 +374,7 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
 
   async selectData(event: { data: IGood; selected: any }) {
     this.selectedRow = event.data;
-    // console.log('select RRR', this.selectedRow);
+    console.log('select RRR', this.selectedRow);
 
     await this.getStatusGoodService(this.selectedRow.status);
     this.selectedGooods = event.selected;
@@ -443,24 +405,36 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
     };
     console.log('1412212', params);
     params['sortBy'] = `goodId:DESC`;
-    // params['filter.recordId'] = this.paramsScreen.recordId;
-    this.donationService.getEventComDonationDetail(params).subscribe({
+    params['filter.status'] != 'ADM';
+    this.goodService.getByGood2(params).subscribe({
       next: data => {
         this.goods = data.data;
-        // console.log('Bienes', this.bienes);
+        console.log('Bienes', this.goods);
         let result = data.data.map(async (item: any) => {
           let obj = {
             vcScreen: 'FMCOMDONAC_1',
             pNumberGood: item.goodId,
           };
+
           const di_dispo = await this.getStatusScreen(obj);
           item['di_disponible'] = di_dispo;
-          if (item.recordId) {
+          if (item.minutesKey) {
             item.di_disponible = 'N';
           }
           item['quantity'] = item.amount;
-          item['di_acta'] = item.recordId;
-          item['id'] = item.goodId;
+          item['di_acta'] = item.minutesKey;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+          // item['id'] = item.goodId;
+
           // const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
           // // console.log('acta', acta);
           // item['acta_'] = acta;

@@ -273,7 +273,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
   }
 
   private selectSituations(vals: any, self: GoodCharacteristicsTable) {
-    // console.log(vals);
+    console.log(vals);
     let newString = '';
     if (isArray(vals)) {
       vals.forEach((val: any, index) => {
@@ -313,13 +313,22 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
         title2: isNormal
           ? 'Seleccione el valor para el atributo'
           : 'Seleccionar los valores para el atributo',
-        columnsType: {
-          otvalor: {
-            title: row.attribute,
-            type: 'string',
-            sort: false,
-          },
-        },
+        columnsType:
+          this.dynamicTablesService.selectedTable === 'CAT_CIUDAD'
+            ? {
+                legendjob: {
+                  title: row.attribute,
+                  type: 'string',
+                  sort: false,
+                },
+              }
+            : {
+                otvalor: {
+                  title: row.attribute,
+                  type: 'string',
+                  sort: false,
+                },
+              },
         type: 'text',
         multi: isNormal ? '' : 'multi',
         permitSelect: this.disabled ? false : true,

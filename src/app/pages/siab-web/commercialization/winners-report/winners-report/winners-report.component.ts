@@ -175,51 +175,56 @@ export class winnersReportComponent extends BasePage implements OnInit {
     });
   }
 
-  async exportarLoser() {
+  exportarLoser() {
     if (this.data1.count() == 0) {
       this.alert('warning', 'No hay Bienes en la Tabla', '');
       return;
     }
-    const filename: string = 'Reporte No Ganadores';
-    const jsonToCsv: any = await this.returnJsonToCsv();
-    let arr: any = [];
-    let result = jsonToCsv.map((item: any) => {
-      let obj = {
-        NO_EVENTO: item.id_evento,
-        LOTE: item.lote,
-        REFERENCIA: item.referencia,
-        MONTO: item.monto,
-        FECHA_PAGO: item.fecha_pago,
-        CLAVE_BANCO: item.cve_banco,
-        CUENTA: item.cuenta,
-        ID_CLIENTE: item.id_cliente,
-        CLIENTE: item.cliente,
-        RFC: item.rfc,
-        TELEFONO: item.telefono,
-        CORREO: item.correoweb,
-        CLABE_INTERBANCARIA: item.clabe_interbancaria,
-        BANCO: item.banco,
-        SUCURSAL: item.sucursal,
-        CUENTA_CHEQUES: item.cuenta_cheques,
-      };
-      arr.push(obj);
-    });
-    Promise.all(result).then(item => {
-      console.log('jsonToCsv', jsonToCsv);
-      this.jsonToCsv = arr;
-      this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
-      this.alert('success', 'Reporte Generado Correctamente', '');
-    });
-  }
 
-  async returnJsonToCsv() {
-    return this.data1.getAll();
-    this.data1.getAll().then(resp => {
-      let arr: any = [];
-      let result = resp.map((item: any) => {
-        arr.push(item);
-      });
-      return arr;
+    const filename = 'Reporte No Ganadores';
+
+    let params = {
+      ...this.params1.getValue(),
+    };
+    let body = {
+      idEventIn: Number(this.form.get('event').value),
+    };
+
+    this.loser.getpaREportLoser(body, params).subscribe({
+      next: resp => {
+        const allData = resp.data;
+
+        // Si hay más páginas de datos, recuperarlas
+        const totalPages = Math.ceil(resp.count / params.pageSize);
+        const additionalRequests = [];
+
+        for (let page = 2; page <= totalPages; page++) {
+          params.page = page;
+          additionalRequests.push(this.loser.getpaREportLoser(body, params));
+        }
+
+        // Combinar todos los registros en this.line
+        forkJoin(additionalRequests).subscribe({
+          next: additionalResponses => {
+            for (const additionalResp of additionalResponses) {
+              allData.push(...additionalResp.data);
+            }
+
+            this.excelService.export(allData, { type: 'csv', filename });
+            this.alert(
+              'success',
+              'Reporte No Ganardores',
+              'Exportado Correctamente'
+            );
+          },
+          error: err => {
+            console.log(err);
+          },
+        });
+      },
+      error: err => {
+        console.log(err);
+      },
     });
   }
 
@@ -257,6 +262,11 @@ export class winnersReportComponent extends BasePage implements OnInit {
             }
 
             this.excelService.export(allData, { type: 'csv', filename });
+            this.alert(
+              'success',
+              'Reporte Ganardores',
+              'Exportado Correctamente'
+            );
           },
           error: err => {
             console.log(err);

@@ -179,12 +179,20 @@ export class FilePhotoService extends HttpService {
   //   );
   // }
 
-  deletePhoto(goodNumber: string, consecNumber: number) {
+  deletePhoto(goodNumber: string, consecNumber: string) {
     const user = localStorage.getItem('username').toUpperCase();
     return this.delete(IDocumentEndpoints.deletePhoto, {
       goodNumber,
       consecNumber,
       user,
+    });
+  }
+
+  deletePhotoDefinitive(goodNumber: string, name: string) {
+    // const user = localStorage.getItem('username').toUpperCase();
+    return this.delete(IDocumentEndpoints.deletePhotoDefinitive, {
+      goodNumber,
+      name,
     });
   }
 

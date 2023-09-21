@@ -92,7 +92,7 @@ export class CreateClassificateVehicleFormComponent
   }
   create() {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Desea crear una clasificación de vehiculos?'
     ).then(question => {

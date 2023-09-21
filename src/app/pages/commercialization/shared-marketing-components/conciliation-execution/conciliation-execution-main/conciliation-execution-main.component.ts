@@ -85,23 +85,23 @@ export class ConciliationExecutionMainComponent
   eventsTestData = [
     {
       id: 101,
-      description: 'DESCRIPCION DE EJEMPLO DE EVENTO 101',
+      description: 'DESCRIPCION DE EJEMPLO DE evento 101',
     },
     {
       id: 201,
-      description: 'DESCRIPCION DE EJEMPLO DE EVENTO 201',
+      description: 'DESCRIPCION DE EJEMPLO DE evento 201',
     },
     {
       id: 301,
-      description: 'DESCRIPCION DE EJEMPLO DE EVENTO 301',
+      description: 'DESCRIPCION DE EJEMPLO DE evento 301',
     },
     {
       id: 401,
-      description: 'DESCRIPCION DE EJEMPLO DE EVENTO 401',
+      description: 'DESCRIPCION DE EJEMPLO DE evento 401',
     },
     {
       id: 501,
-      description: 'DESCRIPCION DE EJEMPLO DE EVENTO 501',
+      description: 'DESCRIPCION DE EJEMPLO DE evento 501',
     },
   ];
 
@@ -284,7 +284,7 @@ export class ConciliationExecutionMainComponent
 
   getData() {
     if (!this.selectedEvent) {
-      this.alert('warning', 'Es necesario especificar el Evento', '');
+      this.alert('warning', 'Es necesario especificar el evento', '');
       this.conciliationForm.get('event').markAsTouched();
       return;
     }
@@ -334,7 +334,7 @@ export class ConciliationExecutionMainComponent
       if (!V_PROCESO_FASE) {
         return this.alert(
           'warning',
-          `El Evento ${event.eventId} no está asociado al tipo de proceso, verifique`,
+          `El evento ${event.eventId} no está asociado al tipo de proceso, verifique`,
           ''
         );
         this.conciliationForm.get('description').setValue(event.processKey);
@@ -361,7 +361,7 @@ export class ConciliationExecutionMainComponent
       if (!V_PROCESO_FASE) {
         return this.alert(
           'warning',
-          `El Evento ${event.eventId} no está asociado al tipo de proceso, verifique`,
+          `El evento ${event.eventId} no está asociado al tipo de proceso, verifique`,
           ''
         );
         this.conciliationForm.get('description').setValue(event.processKey);
@@ -440,7 +440,7 @@ export class ConciliationExecutionMainComponent
     if (!this.selectedEvent)
       return this.alert(
         'warning',
-        'Es necesario especificar un Evento para ejecutar',
+        'Es necesario especificar un evento para ejecutar',
         ''
       );
 
@@ -457,7 +457,7 @@ export class ConciliationExecutionMainComponent
     if (!eventProcess)
       return this.alert(
         'warning',
-        `El Evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
+        `El evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
         ''
       );
 
@@ -501,7 +501,7 @@ export class ConciliationExecutionMainComponent
         if (L_VALMAN > 0) {
           this.alert(
             'warning',
-            `El Lote ${L_VALMAN} no tiene mandato válido, verifique`,
+            `El  lote ${L_VALMAN} no tiene mandato válido, verifique`,
             'Ejecute el botón Act. Mand. en preparación de Eventos'
           );
           this.loadingBtn = false;
@@ -572,14 +572,14 @@ export class ConciliationExecutionMainComponent
 
   async executeInmueble() {
     if (!this.selectedEvent)
-      return this.alert('warning', 'Debe especificar un Evento', '');
+      return this.alert('warning', 'Debe especificar un evento', '');
     this.loadingBtn = true;
     const V_PROCESO_FASE = await this.getType(this.selectedEvent.eventId);
     if (!V_PROCESO_FASE) {
       this.loadingBtn = false;
       return this.alert(
         'warning',
-        `El Evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
+        `El evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
         ''
       );
     } else {
@@ -616,7 +616,7 @@ export class ConciliationExecutionMainComponent
         if (L_VALMAN > 0) {
           this.alert(
             'warning',
-            `El Lote ${L_VALMAN} no tiene mandato válido, verifique`,
+            `El  lote ${L_VALMAN} no tiene mandato válido, verifique`,
             'Ejecute el botón Act. Mand. en preparación de Eventos'
           );
           this.loadingBtn = false;
@@ -687,7 +687,7 @@ export class ConciliationExecutionMainComponent
         if (L_VALMAN > 0) {
           this.alert(
             'warning',
-            `El Lote ${L_VALMAN} no tiene mandato válido, verifique`,
+            `El  lote ${L_VALMAN} no tiene mandato válido, verifique`,
             'Ejecute el botón Act. Mand. en preparación de Eventos'
           );
           this.loadingBtn = false;
@@ -788,6 +788,26 @@ export class ConciliationExecutionMainComponent
             L_RECAL = 1;
             if (L_VALIDA == 1) {
               let V_FASEI = 1;
+              let obj_ACT = {
+                event: this.selectedEvent.eventId,
+                phase: V_FASEI,
+                date: this.conciliationForm.get('date').value,
+                lot: this.selectedBatch.idLot,
+                address: 'string',
+              };
+
+              let obj_ACT2 = {
+                event: this.selectedEvent.eventId,
+                descriptionEvent: this.selectedEvent.processKey,
+                inmueble: 'I',
+                publicLot: this.selectedBatch.lotPublic,
+                lot: this.selectedBatch.idLot,
+                phase: V_FASEI,
+                user: this.token.decodeToken().preferred_username,
+              };
+              // VALIDA_PAGOSREF.VENTA_INMU_ACT(: BLK_CTRL.EVENTO, : BLK_CTRL.FECHA, : BLK_CTRL.FASE_ACT, : BLK_CTRL.LOTE, L_RECAL, 'I');
+              // VALIDA_PAGOSREF.PREP_OINMU_ACT(: BLK_CTRL.EVENTO, : BLK_CTRL.DESCRIPCION, : BLK_CTRL.DESCRIPCION, : BLK_CTRL.LOTE_PUBLICO, : BLK_CTRL.LOTE, : BLK_CTRL.FASE_ACT);
+
               await this.functVALIDA_PAGOSREF_ACT();
               await this.updateEvento(V_FASEI, 1);
             }
@@ -1001,7 +1021,7 @@ export class ConciliationExecutionMainComponent
       this.alert(
         'warning',
         'No se completó el proceso de ejecución',
-        'Verifique la tabla Clientes del Evento'
+        'Verifique la tabla Clientes del evento'
       );
     }
   }
@@ -1564,7 +1584,7 @@ export class ConciliationExecutionMainComponent
     if (!this.selectedEvent)
       return this.alert(
         'warning',
-        'Es necesario especificar un Evento para modificar',
+        'Es necesario especificar un evento para modificar',
         ''
       );
 
@@ -1573,7 +1593,7 @@ export class ConciliationExecutionMainComponent
     if (!eventProcess)
       return this.alert(
         'warning',
-        `El Evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
+        `El evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
         ''
       );
     if (this.layout == 'M') {
@@ -1622,7 +1642,7 @@ export class ConciliationExecutionMainComponent
         if (!this.selectedBatch) {
           this.alertQuestion(
             'question',
-            `Se va a ejecutar el proceso de cambio de estatus del Evento ${this.selectedEvent.eventId} de todos los Lotes`,
+            `Se va a ejecutar el proceso de cambio de estatus del evento ${this.selectedEvent.eventId} de todos los Lotes`,
             '¿Está de acuerdo?'
           ).then(async question => {
             if (question.isConfirmed) {
@@ -1656,7 +1676,7 @@ export class ConciliationExecutionMainComponent
         } else {
           this.alertQuestion(
             'question',
-            `Se va a ejecutar el proceso de cambio de estatus del Evento ${this.selectedEvent.eventId} del Lote ${this.selectedBatch.lotPublic}`,
+            `Se va a ejecutar el proceso de cambio de estatus del evento ${this.selectedEvent.eventId} del  lote ${this.selectedBatch.lotPublic}`,
             '¿Está de acuerdo?'
           ).then(async question => {
             if (question.isConfirmed) {
@@ -1699,7 +1719,7 @@ export class ConciliationExecutionMainComponent
       this.loadingBtn2 = false;
       return this.alert(
         'warning',
-        `El Evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
+        `El evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
         ''
       );
     } else {
@@ -1736,7 +1756,7 @@ export class ConciliationExecutionMainComponent
           if (!this.selectedBatch) {
             this.alertQuestion(
               'question',
-              `Se va a ejecutar el proceso de cambio de estatus del Evento ${this.selectedEvent.eventId} de todos los Lotes`,
+              `Se va a ejecutar el proceso de cambio de estatus del evento ${this.selectedEvent.eventId} de todos los Lotes`,
               '¿Está de acuerdo?'
             ).then(async question => {
               if (question.isConfirmed) {
@@ -1776,7 +1796,7 @@ export class ConciliationExecutionMainComponent
           } else {
             this.alertQuestion(
               'question',
-              `Se va a ejecutar el proceso de cambio de estatus del Evento ${this.selectedEvent.eventId} del Lote ${this.selectedBatch.lotPublic}`,
+              `Se va a ejecutar el proceso de cambio de estatus del evento ${this.selectedEvent.eventId} del  lote ${this.selectedBatch.lotPublic}`,
               '¿Está de acuerdo?'
             ).then(async question => {
               if (question.isConfirmed) {
@@ -1859,7 +1879,7 @@ export class ConciliationExecutionMainComponent
     if (!this.selectedEvent) {
       this.alert(
         'warning',
-        'Es necesario especificar un Evento para deshacer',
+        'Es necesario especificar un evento para deshacer',
         ''
       );
       return 0;
@@ -1880,7 +1900,7 @@ export class ConciliationExecutionMainComponent
     if (!this.selectedEvent) {
       this.alert(
         'warning',
-        'Es necesario especificar un Evento para deshacer',
+        'Es necesario especificar un evento para deshacer',
         ''
       );
       return 0;
@@ -1988,7 +2008,7 @@ export class ConciliationExecutionMainComponent
     if (!this.selectedEvent)
       return this.alert(
         'warning',
-        'Es necesario especificar un Evento para deshacer',
+        'Es necesario especificar un evento para deshacer',
         ''
       );
     let obj = {
@@ -2007,7 +2027,7 @@ export class ConciliationExecutionMainComponent
       this.loadingBtn3 = false;
       return this.alert(
         'warning',
-        `El Evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
+        `El evento ${this.selectedEvent.eventId} no está asociado al tipo de proceso, verifique`,
         ''
       );
     } else {
@@ -2037,7 +2057,7 @@ export class ConciliationExecutionMainComponent
           this.selectedBatch == null
         ) {
           this.loadingBtn3 = false;
-          this.alert('warning', 'Es necesario definir un Lote', '');
+          this.alert('warning', 'Es necesario definir un  lote', '');
           return;
         } else if (
           PFASE != 1 &&
@@ -2069,7 +2089,7 @@ export class ConciliationExecutionMainComponent
           this.selectedBatch == null
         ) {
           this.loadingBtn3 = false;
-          this.alert('warning', 'Es necesario definir un Lote', '');
+          this.alert('warning', 'Es necesario definir un  lote', '');
           return;
         } else if (
           PFASE != 1 ||
@@ -2199,7 +2219,7 @@ export class ConciliationExecutionMainComponent
         if (filter == 'si') {
           this.alert(
             'warning',
-            'No se encontraron clientes para este Evento',
+            'No se encontraron clientes para este evento',
             ''
           );
         }
@@ -2217,7 +2237,7 @@ export class ConciliationExecutionMainComponent
     if (!this.selectedEvent)
       return this.alert(
         'warning',
-        'Es necesario especificar un Evento para consultar',
+        'Es necesario especificar un evento para consultar',
         ''
       );
 
@@ -2260,7 +2280,7 @@ export class ConciliationExecutionMainComponent
   }
   allNo() {
     if (!this.selectedEvent) {
-      this.alert('warning', 'Es necesario especificar un Evento', '');
+      this.alert('warning', 'Es necesario especificar un evento', '');
       return;
     }
 
@@ -2288,7 +2308,7 @@ export class ConciliationExecutionMainComponent
   }
   allYes() {
     if (!this.selectedEvent) {
-      this.alert('warning', 'Es necesario especificar un Evento', '');
+      this.alert('warning', 'Es necesario especificar un evento', '');
       return;
     }
 
@@ -2340,7 +2360,7 @@ export class ConciliationExecutionMainComponent
 
   openForm(data: any, editVal: boolean) {
     if (!this.selectedEvent) {
-      this.alert('warning', 'Es necesario especificar un Evento', '');
+      this.alert('warning', 'Es necesario especificar un evento', '');
       return;
     }
     const modalConfig = MODAL_CONFIG;
@@ -2375,7 +2395,7 @@ export class ConciliationExecutionMainComponent
           this.globalFASES = 1;
           this.alert(
             'warning',
-            'La fase no corresponse con el tipo de Evento',
+            'La fase no corresponse con el tipo de evento',
             ''
           );
           return;
@@ -2385,7 +2405,7 @@ export class ConciliationExecutionMainComponent
           this.globalFASES = 1;
           this.alert(
             'warning',
-            'La fase no corresponse con el tipo de Evento',
+            'La fase no corresponse con el tipo de evento',
             ''
           );
           return;
@@ -2395,7 +2415,7 @@ export class ConciliationExecutionMainComponent
           this.globalFASES = 1;
           this.alert(
             'warning',
-            'La fase no corresponse con el tipo de Evento',
+            'La fase no corresponse con el tipo de evento',
             ''
           );
           return;
@@ -2405,7 +2425,7 @@ export class ConciliationExecutionMainComponent
           this.globalFASES = 1;
           this.alert(
             'warning',
-            'La fase no corresponse con el tipo de Evento',
+            'La fase no corresponse con el tipo de evento',
             ''
           );
           return;
@@ -2419,7 +2439,7 @@ export class ConciliationExecutionMainComponent
           this.globalFASES = 1;
           this.alert(
             'warning',
-            'La fase no corresponse con el tipo de Evento',
+            'La fase no corresponse con el tipo de evento',
             ''
           );
           return;
@@ -2435,7 +2455,7 @@ export class ConciliationExecutionMainComponent
           this.globalFASES = 1;
           this.alert(
             'warning',
-            'La fase no corresponse con el tipo de Evento',
+            'La fase no corresponse con el tipo de evento',
             ''
           );
           return;
@@ -2492,7 +2512,7 @@ export class ConciliationExecutionMainComponent
       },
       error: err => {
         if (filter == 'si') {
-          this.alert('warning', 'No hay lotes disponibles en el Evento', '');
+          this.alert('warning', 'No hay lotes disponibles en el evento', '');
         }
         this.conciliationForm.get('batch').setValue(null);
         this.lotes = new DefaultSelect([], 0);

@@ -13,14 +13,14 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-5">
           <form-field [control]="form.get('batch')">
             <ngx-select
               (fetchItems)="getLot($event)"
               [data]="selectLot"
               [form]="form"
               value="idLot"
-              bindLabel="description"
+              bindLabel="idLotDescription"
               label="Lote"
               control="batch"
               (change)="changeLot($event)">
@@ -39,14 +39,14 @@
           </form-field>
         </div>-->
         <!--Events Component-->
-        <div class="col-md-3">
+        <div class="col-md-5">
           <form-field [control]="form.get('event')">
             <ngx-select
               (fetchItems)="getEvent($event)"
               [data]="eventSelect"
               [form]="form"
               value="id"
-              bindLabel="processKey"
+              bindLabel="keyObservation"
               label="Evento"
               control="event"
               (change)="changeEvent($event)">
@@ -189,7 +189,11 @@
                 <input
                   class="form-control"
                   formControlName="incomeOrder"
-                  type="number" />
+                  type="number"
+                  maxlength="10"
+                  min="1"
+                  [defaultValue]="1"
+                  oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
               </form-field>
             </div>
           </div>

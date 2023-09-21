@@ -259,7 +259,7 @@
         <div class="row pt-4">
           <div class="col-md-6">
             <label for="">Fecha recepci&oacute;n&#58; </label>
-            <span> {{ requestData?.receptionDate | date : 'dd/MM/yyyy' }}</span>
+            <span> {{ requestData?.receptionDate | date: 'dd/MM/yyyy' }}</span>
           </div>
           <div class="col-md-6">
             <label for="">No. Amparo&#58; </label>
@@ -287,7 +287,7 @@
           </div>
           <div class="col-md-6">
             <label for="">Fecha de oficio&#58; </label>
-            <span> {{ requestData?.paperDate | date : 'dd/MM/yyyy' }}</span>
+            <span> {{ requestData?.paperDate | date: 'dd/MM/yyyy' }}</span>
           </div>
         </div>
         <div class="row pt-4">
@@ -484,7 +484,9 @@
                     requestData?.typeOfTransfer == 'MANUAL' ||
                     (requestData?.typeOfTransfer == 'SAT_SAE' &&
                       dataNotificationSelected?.clarificationType ==
-                        'SOLICITAR_IMPROCEDENCIA')
+                        'SOLICITAR_IMPROCEDENCIA') ||
+                    dataNotificationSelected?.clarification?.clarification ==
+                      'INDIVIDUALIZACIÓN DE BIENES'
                   ">
                   <button
                     class="btn btn-success btn-sm active"

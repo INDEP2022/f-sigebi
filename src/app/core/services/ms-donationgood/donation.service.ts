@@ -117,4 +117,21 @@ export class DonationService
   createEventComDonationDetail(body: Object) {
     return this.post(DonationEndPoint.DetailEventComDon, body);
   }
+  getByIdEvent(id: number) {
+    return this.get(`/${DonationEndPoint.eventComDonation}/${id}`);
+  }
+
+  putEvent(goodDon: IGoodDonation, id: number) {
+    const route = `${DonationEndPoint.eventComDonation}/${id}`;
+    return this.put(route, goodDon);
+  }
+  deleteDetailDona(model: any) {
+    return this.delete(DonationEndPoint.DetailEventComDon, model);
+  }
+  putDetailDona(model: any) {
+    return this.put(DonationEndPoint.DetailEventComDon, model);
+  }
+  getGoodsDonation(params: ListParams) {
+    return this.get(DonationEndPoint.GoodsForDonation, params);
+  }
 }

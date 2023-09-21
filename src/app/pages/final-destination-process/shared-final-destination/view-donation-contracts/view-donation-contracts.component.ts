@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -12,6 +13,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { IDonacContract } from 'src/app/core/models/ms-donation/donation-good.model';
 import { GranteeService } from 'src/app/core/services/catalogs/grantees.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DonationRequestService } from 'src/app/core/services/ms-donationgood/donation-requets.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
@@ -36,6 +38,7 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
   form: FormGroup;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  parametros: any;
   dataTable: LocalDataSource = new LocalDataSource();
   data: LocalDataSource = new LocalDataSource();
   bsModalRef?: BsModalRef;
@@ -55,9 +58,11 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
   buttonInsertarParrafo: boolean = false;
   disabledFoli: boolean = false;
   consulto: boolean = false;
+  idContrato: string;
 
   lista: any = [];
   bienSeleccionado: any = {};
+  goodNumber: string;
   datosParaTabla: any[] = [];
 
   constructor(
@@ -69,7 +74,9 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private granteeService: GranteeService,
-    private activateRoute: ActivatedRoute
+    private activateRoute: ActivatedRoute,
+    private goodService: GoodService,
+    private datePipe: DatePipe
   ) {
     super();
     this.parameterTypeDonation =
@@ -78,29 +85,30 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.datosParaTabla = dataMock;
     this.initForm();
     this.configInputsDate();
     this.assignTableColumns();
     console.log(this.op);
-    this.fillTable();
 
-    this.donationService.getAllContracts();
+    // this.donationService.getAllContracts();
 
-    this.donationService.getDataInventario().subscribe({
-      next: data => {
-        console.log(data);
-      },
-      error: error => {
-        console.log(error);
-      },
-    });
+    // this.donationService.getDataInventario().subscribe({
+    //   next: data => {
+    //     console.log(data);
+    //   },
+    //   error: error => {
+    //     console.log(error);
+    //   },
+    // });
+    console.log('El this.idContrato es: ', this.idContrato);
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      this.fillTable();
-    });
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      if (this.consulto) this.getDataTable();
+      if (this.idContrato !== undefined) {
+        this.fillTable();
+      } else {
+        this.clean();
+      }
+      // if (this.consulto) this.getDataTable();
     });
   }
 
@@ -131,7 +139,6 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
     };
     this.donationRequestService.getContractByType(body, param).subscribe({
       next: data => {
-        console.log(data.data);
         this.contract = data.data[0];
         this.desaHabForms();
         this.setForm();
@@ -158,6 +165,7 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
     this.params.getValue()['filter.contractid'] = `$eq:${this.contract.id}`;
     this.donationRequestService.getDonationData2(this.params.value).subscribe({
       next: data => {
+        console.log(data);
         console.error(data.data);
         this.data.load(data.data);
         this.data.refresh();
@@ -346,21 +354,123 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
 
   onSubmit() {}
 
-  onKeyDownIdContract(event: any) {
-    console.log(event.target.value);
-    this.donationService.getContrato(event.target.value).subscribe({
-      next: data => {
-        console.log(data);
-        console.log(data.data[0].donee);
-        this.form.controls['donee'].setValue(data.data[0].donee || null);
-        this.form.controls['reasonSocial'].setValue(
-          data.data[0].doneeId.razonSocial
-        );
-      },
-      error: error => {
-        console.log(error);
-      },
-    });
+  getIdContract() {
+    const { idContract } = this.form.value;
+    this.idContrato = idContract;
+    this.loading = true;
+    if (this.idContrato.length > 2) {
+      this.donationService.getContrato(this.idContrato).subscribe({
+        next: data => {
+          console.log(data);
+          console.log(data.data[0].donee);
+          this.alert(
+            'success',
+            '',
+            'Contrato o Convenio encontrado exitosamente'
+          );
+
+          const receptionDate = new Date(data.data[0].requestId.receptionDate);
+          const formattedreceptionDate = this.datePipe.transform(
+            receptionDate,
+            'yyyy-MM-dd'
+          );
+          const year = receptionDate.getFullYear();
+          const month = receptionDate.getMonth() + 1;
+
+          console.log(month);
+
+          const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+
+          console.log(formattedMonth);
+
+          const deliveryFecha = new Date(
+            data.data[0].requestId.verificationDateCump
+          );
+          const formatteddeliveryFecha = this.datePipe.transform(
+            deliveryFecha,
+            'yyyy-MM-dd'
+          );
+          this.form.controls['year'].setValue(year || null);
+          this.form.controls['month'].setValue(formattedMonth || null);
+          this.form.controls['donee'].setValue(data.data[0].donee || null);
+          this.form.controls['reasonSocial'].setValue(
+            data.data[0].doneeId?.razonSocial || null
+          );
+          this.form.controls['cto'].setValue(
+            data.data[0].requestId.affair || null
+          );
+          this.form.controls['status'].setValue(data.data[0].sunStatus || null);
+          this.form.controls['trans'].setValue(
+            data.data[0].requestId.transferenceId || null
+          );
+          this.form.controls['don'].setValue(data.data[0].doneeId?.col || null);
+          this.form.controls['ctrlAut'].setValue(
+            data.data[0].authorizeType || null
+          );
+          this.form.controls['folio'].setValue(
+            data.data[0].requestId.rulingDocumentId || null
+          );
+          this.form.controls['contractKey'].setValue(
+            data.data[0].authorizeCve || null
+          );
+          this.form.controls['job'].setValue(
+            data.data[0].requestId.reportSheet || null
+          );
+          this.form.controls['subscribeDate'].setValue(
+            formattedreceptionDate || null
+          );
+          this.form.controls['nomrepdona'].setValue(
+            data.data[0].doneeId?.description || null
+          );
+          this.form.controls['home'].setValue(data.data[0].doneeId?.street);
+          this.form.controls['positionDona'].setValue(
+            data.data[0].doneeId?.puesto || null
+          );
+          this.form.controls['usersae'].setValue(
+            data.data[0].requestId.rulingCreatorName || null
+          );
+          this.form.controls['representativeSae'].setValue(
+            data.data[0].requestId.nameOfOwner || null
+          );
+          this.form.controls['puetsosae'].setValue(
+            data.data[0].requestId.holderCharge || null
+          );
+          this.form.controls['witness1'].setValue(
+            data.data[0].requestId.nameRecipientRuling || null
+          );
+          this.form.controls['witness2'].setValue(
+            data.data[0].requestId.nameSignatoryRuling || null
+          );
+          this.form.controls['observations'].setValue(
+            data.data[0].requestId.observations || null
+          );
+          this.form.controls['deliveryDate'].setValue(
+            formatteddeliveryFecha || null
+          );
+          this.form.controls['contractStatus'].setValue(
+            data.data[0].requestId.requestStatus || null
+          );
+          this.form.controls['paragraph1'].setValue(
+            data.data[0].requestId.paragraphOneRuling || null
+          );
+          this.form.controls['paragraph2'].setValue(
+            data.data[0].requestId.paragraphTwoRuling || null
+          );
+
+          this.fillTable();
+        },
+        error: () => {
+          this.alert(
+            'error',
+            'Atención',
+            'Contrato o Convenio no encontrado, verifique'
+          );
+
+          this.clean();
+          this.loading = false;
+        },
+      });
+    }
   }
 
   settingsChange(event: any) {
@@ -384,11 +494,33 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
 
   fillTable() {
     this.loading = true;
+    const parametros = {
+      ...this.params.getValue(),
+      'filter.requestId': `$eq:${this.idContrato}`,
+    };
 
-    this.dataTable.load(this.datosParaTabla);
-    this.totalItems = this.datosParaTabla.length;
+    this.donationRequestService.getDonationData2(parametros).subscribe({
+      next: data => {
+        console.log('parametros enviados: ', parametros);
+        console.log(data);
+        console.error(data.data);
 
-    this.loading = false;
+        this.datosParaTabla = data.data;
+
+        console.log(this.datosParaTabla);
+
+        this.data.load(this.datosParaTabla);
+
+        this.totalItems = data.count;
+        this.loading = false;
+        this.data.refresh();
+      },
+      error: (error: any) => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+      },
+    });
   }
 
   async onInsertarParrafo() {
@@ -730,17 +862,39 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
     return `${day} de ${month} de ${year}`;
   }
 
-  onQuitarBienesSeleccionados() {
-    if (this.bienSeleccionado) {
-      const filtra = this.datosParaTabla.filter((item: any) => {
-        return item.idRequest !== this.bienSeleccionado.idRequest;
-      });
+  selectFila1(event: any) {
+    this.bienSeleccionado = event.data.requestId;
+    this.goodNumber = event.data.goodNumber;
+  }
 
-      this.datosParaTabla = filtra;
-      this.dataTable.load(this.datosParaTabla);
-      this.bienSeleccionado = {};
-      this.totalItems = this.datosParaTabla.length;
-      this.alert('success', 'El contrato seleccionado han sido retirado', '');
+  onQuitarBienesSeleccionados() {
+    if (this.goodNumber) {
+      this.goodService.updateStatus(this.goodNumber, 'ADA').subscribe({
+        next: data => {
+          this.donationService
+            .updateSolicitudDonacion(Number(this.bienSeleccionado))
+            .subscribe({
+              next: data => {
+                this.alert(
+                  'success',
+                  'El contrato seleccionado han sido retirado',
+                  ''
+                );
+              },
+              error: err => {
+                console.log(err);
+                this.alert(
+                  'error',
+                  '',
+                  'Hubo un error actualizando el bien. Verifique'
+                );
+              },
+            });
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
     } else {
       this.alert('warning', '', 'Primero debe seleccionar un contrato');
     }
@@ -770,11 +924,15 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
         contract: this.contract,
         formContract: this.form,
         typeRequest: this.parameterTypeDonation,
-        callback: (next: boolean) => {
+        callback: async (next: any[]) => {
           if (next) {
-            /* this.params
-              .pipe(takeUntil(this.$unSubscribe))
-              .subscribe(() => this.()); */
+            console.error(next);
+            this.loading = true;
+            const data: any[] = await this.data.getAll();
+            const newData: any[] = data.concat(next);
+            this.data.load(newData);
+            this.data.refresh();
+            this.loading = false;
           }
         },
       },
@@ -786,7 +944,10 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
 
   clean() {
     this.form.reset();
+    this.idContrato = undefined;
     this.form.enable();
+    this.data.load([]);
+    this.totalItems = 0;
   }
 
   onImprimir() {
@@ -1101,226 +1262,3 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
     });
   }
 }
-
-const dataMock = [
-  {
-    idRequest: 1,
-    goodNumb: 123,
-    proceedings: 456,
-    quantityWarehouse: 50,
-    quantityToDonate: 30,
-    classifNumbGood: 789,
-    ssSubtype: 111,
-    description: 'Producto 1',
-    delAdmin: 'Admin 1',
-  },
-  {
-    idRequest: 2,
-    goodNumb: 234,
-    proceedings: 567,
-    quantityWarehouse: 75,
-    quantityToDonate: 40,
-    classifNumbGood: 890,
-    ssSubtype: 222,
-    description: 'Producto 2',
-    delAdmin: 'Admin 2',
-  },
-  {
-    idRequest: 3,
-    goodNumb: 345,
-    proceedings: 678,
-    quantityWarehouse: 60,
-    quantityToDonate: 20,
-    classifNumbGood: 901,
-    ssSubtype: 333,
-    description: 'Producto 3',
-    delAdmin: 'Admin 3',
-  },
-  {
-    idRequest: 4,
-    goodNumb: 456,
-    proceedings: 789,
-    quantityWarehouse: 45,
-    quantityToDonate: 25,
-    classifNumbGood: 912,
-    ssSubtype: 444,
-    description: 'Producto 4',
-    delAdmin: 'Admin 4',
-  },
-  {
-    idRequest: 5,
-    goodNumb: 567,
-    proceedings: 890,
-    quantityWarehouse: 70,
-    quantityToDonate: 35,
-    classifNumbGood: 923,
-    ssSubtype: 555,
-    description: 'Producto 5',
-    delAdmin: 'Admin 5',
-  },
-  {
-    idRequest: 6,
-    goodNumb: 678,
-    proceedings: 901,
-    quantityWarehouse: 55,
-    quantityToDonate: 15,
-    classifNumbGood: 934,
-    ssSubtype: 666,
-    description: 'Producto 6',
-    delAdmin: 'Admin 6',
-  },
-  {
-    idRequest: 7,
-    goodNumb: 789,
-    proceedings: 912,
-    quantityWarehouse: 80,
-    quantityToDonate: 50,
-    classifNumbGood: 945,
-    ssSubtype: 777,
-    description: 'Producto 7',
-    delAdmin: 'Admin 7',
-  },
-  {
-    idRequest: 8,
-    goodNumb: 890,
-    proceedings: 923,
-    quantityWarehouse: 65,
-    quantityToDonate: 10,
-    classifNumbGood: 956,
-    ssSubtype: 888,
-    description: 'Producto 8',
-    delAdmin: 'Admin 8',
-  },
-  {
-    idRequest: 9,
-    goodNumb: 901,
-    proceedings: 934,
-    quantityWarehouse: 40,
-    quantityToDonate: 20,
-    classifNumbGood: 967,
-    ssSubtype: 999,
-    description: 'Producto 9',
-    delAdmin: 'Admin 9',
-  },
-  {
-    idRequest: 10,
-    goodNumb: 101,
-    proceedings: 145,
-    quantityWarehouse: 90,
-    quantityToDonate: 60,
-    classifNumbGood: 100,
-    ssSubtype: 11,
-    description: 'Producto 10',
-    delAdmin: 'Admin 10',
-  },
-  {
-    idRequest: 11,
-    goodNumb: 202,
-    proceedings: 255,
-    quantityWarehouse: 35,
-    quantityToDonate: 15,
-    classifNumbGood: 211,
-    ssSubtype: 22,
-    description: 'Producto 11',
-    delAdmin: 'Admin 11',
-  },
-  {
-    idRequest: 12,
-    goodNumb: 303,
-    proceedings: 367,
-    quantityWarehouse: 75,
-    quantityToDonate: 40,
-    classifNumbGood: 322,
-    ssSubtype: 33,
-    description: 'Producto 12',
-    delAdmin: 'Admin 12',
-  },
-  {
-    idRequest: 13,
-    goodNumb: 404,
-    proceedings: 479,
-    quantityWarehouse: 55,
-    quantityToDonate: 30,
-    classifNumbGood: 433,
-    ssSubtype: 44,
-    description: 'Producto 13',
-    delAdmin: 'Admin 13',
-  },
-  {
-    idRequest: 14,
-    goodNumb: 505,
-    proceedings: 591,
-    quantityWarehouse: 95,
-    quantityToDonate: 50,
-    classifNumbGood: 544,
-    ssSubtype: 55,
-    description: 'Producto 14',
-    delAdmin: 'Admin 14',
-  },
-  {
-    idRequest: 15,
-    goodNumb: 606,
-    proceedings: 703,
-    quantityWarehouse: 50,
-    quantityToDonate: 20,
-    classifNumbGood: 655,
-    ssSubtype: 66,
-    description: 'Producto 15',
-    delAdmin: 'Admin 15',
-  },
-  {
-    idRequest: 16,
-    goodNumb: 707,
-    proceedings: 815,
-    quantityWarehouse: 80,
-    quantityToDonate: 40,
-    classifNumbGood: 766,
-    ssSubtype: 77,
-    description: 'Producto 16',
-    delAdmin: 'Admin 16',
-  },
-  {
-    idRequest: 17,
-    goodNumb: 808,
-    proceedings: 927,
-    quantityWarehouse: 60,
-    quantityToDonate: 25,
-    classifNumbGood: 877,
-    ssSubtype: 88,
-    description: 'Producto 17',
-    delAdmin: 'Admin 17',
-  },
-  {
-    idRequest: 18,
-    goodNumb: 909,
-    proceedings: 1039,
-    quantityWarehouse: 85,
-    quantityToDonate: 45,
-    classifNumbGood: 988,
-    ssSubtype: 99,
-    description: 'Producto 18',
-    delAdmin: 'Admin 18',
-  },
-  {
-    idRequest: 19,
-    goodNumb: 1010,
-    proceedings: 1151,
-    quantityWarehouse: 45,
-    quantityToDonate: 15,
-    classifNumbGood: 1055,
-    ssSubtype: 100,
-    description: 'Producto 19',
-    delAdmin: 'Admin 19',
-  },
-  {
-    idRequest: 20,
-    goodNumb: 1111,
-    proceedings: 1263,
-    quantityWarehouse: 70,
-    quantityToDonate: 30,
-    classifNumbGood: 1111,
-    ssSubtype: 111,
-    description: 'Producto 20',
-    delAdmin: 'Admin 20',
-  },
-];

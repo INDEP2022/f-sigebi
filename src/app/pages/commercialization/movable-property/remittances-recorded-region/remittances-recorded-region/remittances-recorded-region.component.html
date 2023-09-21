@@ -15,7 +15,7 @@
               bsDatepicker
               [maxDate]="today"
               [bsConfig]="{
-                dateInputFormat: 'DD-MM-YYYY'
+                dateInputFormat: 'DD/MM/YYYY'
               }" />
           </form-field>
         </div>
@@ -27,7 +27,7 @@
               bsDatepicker
               [maxDate]="today"
               [bsConfig]="{
-                dateInputFormat: 'DD-MM-YYYY'
+                dateInputFormat: 'DD/MM/YYYY'
               }" />
           </form-field>
         </div>
@@ -37,20 +37,23 @@
               [form]="form"
               [data]="itemsDelegation"
               label="Delegación"
-              value="id"
-              bindLabel="description"
+              value="delegationNumber"
+              bindLabel="tipoSupbtipoDescription"
               (fetchItems)="getDelegations($event)"
               control="coordination">
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <button
             type="button"
-            class="btn btn-primary active btn-sm"
+            class="btn btn-primary active btn-sm m-2"
             [disabled]="!form.valid"
             (click)="openPrevPdf()">
             Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+          <button class="btn btn-danger btn-sm active mr-3" (click)="clean()">
+            Limpiar <i class="fas fa-eraser"> </i>
           </button>
         </div>
       </div>
