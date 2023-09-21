@@ -135,6 +135,15 @@ export class StrategyServiceService extends HttpService {
     return this.delete(route);
   }
 
+  getUnitsMedXConv2(
+    _params?: _Params
+  ): Observable<IListResponse<IUnitsMedConv>> {
+    return this.get<IListResponse<IUnitsMedConv>>(
+      `${StrategyEndpoints.UnitsMedConv}`,
+      _params
+    );
+  }
+
   getUnitsMedXConv(
     _params?: ListParams | string
   ): Observable<IListResponse<IUnitsMedConv>> {
