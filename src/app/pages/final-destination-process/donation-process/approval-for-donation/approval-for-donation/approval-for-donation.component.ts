@@ -240,17 +240,17 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     elaborated?: string | number
   ) {
     this.loading = true;
-    this.params.getValue()['filter.actType'] = `$eq:${actType}`;
-    this.params.getValue()['filter.cveAct'] = `$eq:${cveAct}`;
-    if (NoDelegation1) {
-      this.params.getValue()['filter.NoDelegation1'] = `$eq:${NoDelegation1}`;
-    }
+    // this.params.getValue()['filter.actType'] = `$eq:${actType}`;
+    // this.params.getValue()['filter.cveAct'] = `$eq:${cveAct}`;
+    // if (NoDelegation1) {
+    //   this.params.getValue()['filter.NoDelegation1'] = `$eq:${NoDelegation1}`;
+    // }
     if (estatusAct) {
       this.params.getValue()['filter.estatusAct'] = `$eq:${estatusAct}`;
     }
-    if (elaborated) {
-      this.params.getValue()['filter.elaborated'] = `$eq:${elaborated}`;
-    }
+    // if (elaborated) {
+    //   this.params.getValue()['filter.elaborated'] = `$eq:${elaborated}`;
+    // }
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,

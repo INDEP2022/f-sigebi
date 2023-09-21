@@ -105,6 +105,9 @@ export const COLUMNS = {
         return amount;
       }
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
   result: {
     title: 'Resultado',
@@ -353,6 +356,9 @@ export const COLUMNS_CARGADOS = {
       } else {
         return amount;
       }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
   },
 

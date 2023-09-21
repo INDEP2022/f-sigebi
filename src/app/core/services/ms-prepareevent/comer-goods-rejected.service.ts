@@ -27,4 +27,10 @@ export class ComerGoodsRejectedService extends HttpService {
   getFindAllComerGoodXlotTotal(params: _Params) {
     return this.get(PrepareEventEndpoints.getFindAllComerGoodXlotTotal, params);
   }
+
+  getComerEvent(address: string, idEvent: number) {
+    return this.get(
+      `${PrepareEventEndpoints.ComerEvent}?filter.address=$eq:${address}&filter.id=$eq:${idEvent}`
+    );
+  }
 }

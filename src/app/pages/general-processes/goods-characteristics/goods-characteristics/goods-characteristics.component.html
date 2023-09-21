@@ -297,11 +297,11 @@
                       [control]="form.get('cantidad')"
                       label="Cantidad">
                       <input
-                        type="text"
+                        type="number"
                         formControlName="cantidad"
                         class="form-control"
                         [readonly]="disabledBienes"
-                        maxlength="21" />
+                        [max]="getMax()" />
                     </form-field>
                     <form-field
                       class="col-md-4"
