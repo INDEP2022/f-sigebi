@@ -21,4 +21,21 @@ export class ExpenseParametercomerService extends HttpService {
       `${ParameterComerEndpoints.ParameterMod}?limit=0&filter.parameter=$eq:IVA`
     );
   }
+
+  getComerStatusVta(statusVta: string) {
+    return this.get(
+      `${ParameterComerEndpoints.ComerStatusVta}?filter.salesStatusId=$eq:${statusVta}`
+    );
+  }
+
+  getComerParameterMod(
+    idEvent: number,
+    address: string,
+    tpsolavalId: any,
+    parameter: string
+  ) {
+    return this.get(
+      `${ParameterComerEndpoints.ParameterMod}?filter.typeEventId=$eq:${idEvent}&filter.address=$eq:${address}&filter.value=$eq:${tpsolavalId}&filter.parameter=$eq:${parameter}`
+    );
+  }
 }

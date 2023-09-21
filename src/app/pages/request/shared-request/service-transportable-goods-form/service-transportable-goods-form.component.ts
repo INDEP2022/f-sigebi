@@ -226,7 +226,9 @@ export class ServiceTransportableGoodsFormComponent
           if (this.op != 1 && this.op != 2) {
             this.setTableColumnsRows();
             this.setTableRowTotal();
-          } else if (this.op == 1 || this.op == 2) {
+          } else if (this.op == 1) {
+            this.setTableRowTotal();
+          } else if (this.op == 2) {
             this.setTableRowTotal();
             this.setTableColumnsRows();
           }

@@ -164,7 +164,7 @@ export class MaintenanceCommitmentDonationModalComponent
     this.donationService.createApproveDonation(model).subscribe({
       next: () => {
         this.handleSuccess();
-        this.onLoadToast('success', 'Comercio Exterior Kg Creado', '');
+        this.onLoadToast('success', 'Registro creado correctamente', '');
       },
       error: error => {
         this.onLoadToast('error', error.error.message, '');
@@ -327,7 +327,7 @@ export class MaintenanceCommitmentDonationModalComponent
       error: err => {
         let error = '';
         if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
+          error = 'Revise su conexión de internet.';
           this.onLoadToast('error', 'Error', error);
           //this.newOrEdit = false;
         } else {
@@ -361,7 +361,7 @@ export class MaintenanceCommitmentDonationModalComponent
       error: err => {
         let error = '';
         if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
+          error = 'Revise su conexión de internet.';
           this.onLoadToast('error', 'Error', error);
           //this.newOrEdit = false;
         } else {
@@ -388,7 +388,7 @@ export class MaintenanceCommitmentDonationModalComponent
       error: err => {
         let error = '';
         if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
+          error = 'Revise su conexión de internet.';
           this.onLoadToast('error', 'Error', error);
           //this.newOrEdit = false;
         } else {

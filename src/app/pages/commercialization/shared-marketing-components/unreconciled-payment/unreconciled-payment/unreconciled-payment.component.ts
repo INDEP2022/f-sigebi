@@ -129,7 +129,14 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (filter.field == 'amount') {
+                this.columnFilters[
+                  field
+                ] = `${searchFilter}:${filter.search.replace(/,/g, '')}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
+              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
@@ -400,11 +407,7 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
       } else {
         this.loadingBtn = false;
         await this.getPayments();
-        this.alert(
-          'warning',
-          'Proceso Terminado',
-          'No se pudo conciliar el pago'
-        );
+        this.alert('warning', 'Proceso Terminado', 'No se pudo enviar el pago');
       }
     }
     // else if (a && b) {
