@@ -120,27 +120,27 @@ export const MONTH_COLUMNS = {
 };
 
 export const CONSULT_COLUMNS = {
-  no_bien: {
+  goodNumber: {
     title: 'No. Bien',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     sort: false,
   },
-  valor_base: {
+  baseValue: {
     title: 'Valor Base',
     sort: false,
   },
-  desc_transferente: {
+  transfDesc: {
     title: 'Desc. Transferente',
     sort: false,
   },
-  id_estatusvta: {
+  status: {
     title: 'ID Status VTA',
     sort: false,
   },
-  fecha_bien: {
+  goodDate: {
     title: 'Fecha Bien',
     sort: false,
     valuePrepareFunction: (date: Date) => {
@@ -153,7 +153,7 @@ export const CONSULT_COLUMNS = {
       component: CustomDateFilterComponent,
     },
   },
-  fecha_fallo: {
+  failedDate: {
     title: 'Fecha Fallo',
     sort: false,
     valuePrepareFunction: (date: Date) => {
@@ -166,7 +166,7 @@ export const CONSULT_COLUMNS = {
       component: CustomDateFilterComponent,
     },
   },
-  fecha_evento: {
+  eventDate: {
     title: 'Fecha Evento',
     sort: false,
     valuePrepareFunction: (date: Date) => {
@@ -179,7 +179,7 @@ export const CONSULT_COLUMNS = {
       component: CustomDateFilterComponent,
     },
   },
-  fecha_creacion: {
+  creationDate: {
     title: 'Fecha Creación',
     sort: false,
     valuePrepareFunction: (date: Date) => {
@@ -192,15 +192,15 @@ export const CONSULT_COLUMNS = {
       component: CustomDateFilterComponent,
     },
   },
-  tipo_bien: {
+  goodType: {
     title: 'Tipo Bien',
     sort: false,
   },
-  sub_tipo_bien: {
+  goodSubType: {
     title: 'Sub tipo Bien',
     sort: false,
   },
-  delegacion_admin: {
+  coordAdminNumber: {
     title: 'Delegación Admin',
     sort: false,
   },

@@ -173,4 +173,10 @@ export class SurvillanceService extends HttpService {
   getFaEtapaAnexo(date: { faFec: string }) {
     return this.post(this.route.FaEtapanexo, date);
   }
+  getViewVigDelegations_(params?: _Params) {
+    return this.get<IListResponse<IViewVigDelegations>>(
+      this.route.View_VigDelegations_,
+      params
+    );
+  }
 }
