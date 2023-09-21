@@ -106,7 +106,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('idOrderService', this.idOrderService);
     if (this.showTDR) {
       this.title = 'ETIQUETA';
     } else {
@@ -181,18 +180,16 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       }
     }
     if (this.idprogDel && this.typeNotification == 1) {
-      console.log('this.idprogDel', this.idprogDel);
-      console.log('this.typeNotification', this.typeNotification);
       let linkDoc: string = `${this.urlBaseReport}NotificacionParaDestruccion.jasper&ID_PROG_ENTREGA=${this.idprogDel}`;
       this.src = linkDoc;
-      console.log('this.src', this.src);
+
       this.formLoading = false;
     }
 
     if (this.idprogDel && this.typeNotification == 2) {
       let linkDoc: string = `${this.urlBaseReport}NotificacionDestruccionFondos.jasper&ID_PROG_ENTREGA=${this.idprogDel}`;
       this.src = linkDoc;
-      console.log('this.src', this.src);
+
       this.formLoading = false;
     }
 
@@ -326,8 +323,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       (this.idTypeDoc == 103 && this.typeFirm == 'autograf') ||
       (this.idTypeDoc == 107 && this.typeFirm == 'autografa')
     ) {
-      console.log('this.idTypeDoc cerrado', this.idTypeDoc);
-      console.log('this.typeFirm cerrado', this.typeFirm);
+  
       this.modalRef.content.callback(true);
       this.modalRef.hide();
     } else {
@@ -604,8 +600,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       ''
     ).then(question => {
       if (question.isConfirmed) {
-        console.log('this.idTypeDoc', this.idTypeDoc);
-        console.log('this.typeFirm', this.typeFirm);
         if (
           (this.idTypeDoc == 107 && this.typeFirm == 'electronica') ||
           (this.idTypeDoc == 106 && this.typeFirm == 'electronica') ||
@@ -1086,11 +1080,11 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
         this.historyGoodService.create(historyGood).subscribe({
           next: response => {
-            console.log('Historico eliminado', response);
+
             resolve(true);
           },
           error: error => {
-            console.log('error', error);
+           
           },
         });
       });
