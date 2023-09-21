@@ -316,4 +316,8 @@ export class GoodProcessService extends HttpService {
     const route = GoodProcessPoints.GetVsigLigie;
     return this.get<IListResponse<any>>(route, params);
   }
+
+  getComerDetAvaluoAll(goodNumber: number) {
+    return this.get(`${GoodProcessPoints.ComerDetAvaluoAll}/${goodNumber}`);
+  }
 }

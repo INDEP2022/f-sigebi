@@ -1,3 +1,5 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+
 export const COLUMNS = {
   id: {
     title: 'Id Avalúo',
@@ -38,7 +40,7 @@ export const COLUMNS2 = {
     title: 'Clasificación',
     sort: false,
   },
-  typeGood: {
+  desc_tipo: {
     title: 'Tipo',
     sort: false,
   },
@@ -99,11 +101,11 @@ export const COLUMNS2 = {
     sort: false,
   },
   vConstruction: {
-    title: 'Valor Cosntrucción Habitacional',
+    title: 'Valor Construcción Habitacional',
     sort: false,
   },
   vConstructionEat: {
-    title: 'Valor Cosntrucción Comercial',
+    title: 'Valor Construcción Comercial',
     sort: false,
   },
   vInstallationsEsp: {
@@ -127,11 +129,11 @@ export const COLUMNS2 = {
     sort: false,
   },
   rateHousing: {
-    title: 'Tasa Iva Cosntrucción Habitacional',
+    title: 'Tasa Iva Construcción Habitacional',
     sort: false,
   },
   rateCommercial: {
-    title: 'Tasa Iva Cosntrucción Comercial',
+    title: 'Tasa Iva Construcción Comercial',
     sort: false,
   },
   rateSpecials: {
@@ -172,6 +174,28 @@ export const COLUMNS2 = {
   },
   observation: {
     title: 'Observación',
+    sort: false,
+  },
+  validIVA: {
+    title: 'Validación IVA',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+    sort: false,
+  },
+  confirm: {
+    title: 'Confirmado',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
     sort: false,
   },
 };
