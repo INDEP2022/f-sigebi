@@ -40,6 +40,8 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   filterLovSer: IStrategyLovSer;
   filterTurn: IStrategyTurn;
   filterCost: IStrateyCost;
+  totalItems2: number = 0;
+  loading2: boolean = false;
   columnFilters: any = [];
   selectedGooods: any[] = [];
   reportImp: IReportImp;
@@ -110,14 +112,6 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       dateCapture: [null, Validators.required],
       observations: [null, Validators.required],
     });
-    this.dateCapt = this.datePipe.transform(
-      this.serviceOrdersForm.controls['dateCapture'].value,
-      'dd/MM/yyyy'
-    );
-    this.dateClose = this.datePipe.transform(
-      this.serviceOrdersForm.controls['authorizationDate'].value,
-      'dd/MM/yyyy'
-    );
   }
 
   openHistoric(data: any) {
@@ -233,20 +227,61 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     });
   }
 
+  validaForm() {
+    const resullt = true;
+    const process = this.serviceOrdersForm.get('process').value;
+    const serviceOrderKey = this.serviceOrdersForm.get('serviceOrderKey').value;
+    const type = Number(this.serviceOrdersForm.get('type').value);
+    const turno = this.serviceOrdersForm.get('turno').value;
+
+    if (!Boolean(process)) {
+      this.alert('info', 'seleccione el proceso para genera costos', '');
+      return resullt;
+    }
+
+    if (!Boolean(serviceOrderKey)) {
+      this.alert(
+        'info',
+        'seleccione una Clave de orden de servicio para genera costos',
+        ''
+      );
+      return resullt;
+    }
+
+    if (!Boolean(type)) {
+      this.alert('info', 'seleccione un tipo para genera costos', '');
+      return resullt;
+    }
+
+    if (!Boolean(turno)) {
+      this.alert('info', 'seleccione un turno para genera costos', '');
+      return resullt;
+    }
+
+    // Si todos los campos son válidos, llamar a la función getCosts()
+    this.getCosts();
+
+    return resullt;
+  }
+
   getCosts() {
-    // this.strategyServiceService.getCosts()}
+    const process = this.serviceOrdersForm.get('process').value;
+    const serviceOrderKey = this.serviceOrdersForm.get('serviceOrderKey').value;
+    const type = this.serviceOrdersForm.get('type').value;
+    const turno = Number(this.serviceOrdersForm.get('turno').value);
+
     this.filterCost = {
-      pProcessNumber: this.serviceOrdersForm.get('process').value,
-      pServiceNumber: this.serviceOrdersForm.get('serviceOrderKey').value,
-      pServiceTypeNumber: Number(this.serviceOrdersForm.get('type').value),
-      pTurnNumber: this.serviceOrdersForm.get('turno').value,
+      pProcessNumber: process,
+      pServiceNumber: serviceOrderKey,
+      pServiceTypeNumber: type,
+      pTurnNumber: turno,
     };
+
     this.strategyServiceService.getCosts(this.filterCost).subscribe({
       next: data => {
-        // data.data.filter((item: any) => {
-        //   item['turnAndName'] = item.no_tiposervicio + '-' + item.descripcion;
-        // });
-        // this.turns = new DefaultSelect(data.data, data.count);
+        this.bienesStrategy.load(data.data);
+        this.totalItems2 = data.count;
+        this.bienesStrategy.refresh();
         console.log('costos', data);
       },
       error: () => {
@@ -255,6 +290,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       },
     });
   }
+
   getReportImp() {
     // if (this.serviceOrdersForm.value.noFormat == null || 0) {
     //   this.alert('warning', 'Debe ingresar la Clave de Orden de Servicio', '');
@@ -266,8 +302,6 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
         next: data => {
           this.reportImp = data.data;
           console.log(this.reportImp);
-          this.bienesStrategy.load(data.data);
-          this.bienesStrategy.refresh();
           data.data.filter((value: any) => {
             console.log(value);
             this.dateCapt = this.datePipe.transform(
@@ -328,7 +362,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
             );
           }
           if (this.serviceOrdersForm.value.reportKey == null) {
-            this.genClave();
+            // this.genClave();
           } else {
             // this.alert(
             //   'warning',
@@ -338,7 +372,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
             let fechaCapture = this.dateCapt;
             let fechaCierre = this.dateClose;
             let vParUser = this.authService.decodeToken().username;
-            this.cargaBienes();
+
             console.log(
               ' en espera dde funcion para generar',
               this.dateCapt + this.dateClose
@@ -352,28 +386,51 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   }
 
   cargaBienes() {
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-    this.goodPosessionThirdpartyService
-      .getAllStrategyGoodsById(this.serviceOrdersForm.value.noFormat, params)
-      .subscribe({
-        next: data => {
-          console.log(data);
-          this.dataTableGood.load(data.data);
-          this.dataTableGood.refresh();
-          this.totalItems = data.count;
-        },
-        error: () => {
-          console.log('error');
-          this.loading = false;
-        },
-      });
+    if (this.serviceOrdersForm.value.noFormat == null) {
+      this.alert(
+        'warning',
+        'Debe ingresar la Clave de Orden de Servicio para incorporar Bienes',
+        ''
+      );
+      return;
+    }
+    this.alertQuestion(
+      'warning',
+      'Generar',
+      '¿Seguro que desea Incorporar Bienes al Reporte?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        let params = {
+          ...this.params.getValue(),
+          ...this.columnFilters,
+        };
+        this.goodPosessionThirdpartyService
+          .getAllStrategyGoodsById(
+            this.serviceOrdersForm.value.noFormat,
+            params
+          )
+          .subscribe({
+            next: data => {
+              console.log(data);
+              this.dataTableGood.load(data.data);
+              this.dataTableGood.refresh();
+              this.totalItems = data.count;
+            },
+            error: () => {
+              console.log('error');
+              this.loading = false;
+            },
+          });
+      }
+    });
   }
   cleanForm() {
     this.serviceOrdersForm.reset();
     this.reportImp = null;
+    this.dataTableGood.load([]);
+    this.dataTableGood.refresh();
+    this.bienesStrategy.load([]);
+    this.bienesStrategy.refresh();
   }
   formatDate(date: Date): string {
     const day = date.getUTCDate().toString().padStart(2, '0');
@@ -402,7 +459,16 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     console.log(this.selectedGooods);
     this.changeDetectorRef.detectChanges();
   }
-  incorporaGoods() {}
+  incorporaGoods() {
+    if (this.selectedGooods.length == 0) {
+      this.alertInfo(
+        'info',
+        'Es necesario seleccionar Bienes para generar el Reporte',
+        ''
+      );
+      return;
+    }
+  }
   elimina() {}
   incorpora() {}
   costos() {}

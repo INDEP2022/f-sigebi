@@ -107,7 +107,7 @@
               [data]="turnos"
               (fetchItems)="getTurns()"
               bindLabel="turnAndName"
-              control="type"
+              control="turno"
               [searchOnInit]="true"
               [showTooltip]="true"
               termMaxLength="50"
@@ -232,10 +232,11 @@
       <div class="d-flex justify-content-center">
         <div class="m-3">
           <button
+            (click)="cargaBienes()"
             type="button"
-            class="btn btn-primary active btn-sm"
-            (click)="pupGenera()">
-            Genera <i class="fas fa-print bx-sm float-icon"></i>
+            class="btn btn-info active btn-sm mr-3">
+            Incorpora
+            <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
         <div class="m-3">
@@ -248,7 +249,6 @@
         </div>
       </div>
     </div>
-
     <div class="margin-input">
       <h5 class="title">Bienes del Reporte Implementación</h5>
       <div class="row pt-4">
@@ -268,27 +268,6 @@
       </div>
     </div>
 
-    <div footer>
-      <div class="d-flex justify-content-center">
-        <div class="m-3">
-          <button
-            (click)="incorporaGoods()"
-            type="button"
-            class="btn btn-info active btn-sm mr-3">
-            Incorpora
-            <i class="bx bx-plus bx-sm float-icon"></i>
-          </button>
-        </div>
-        <div class="m-3">
-          <button
-            type="button"
-            class="btn btn-danger active btn-sm"
-            (click)="elimina()">
-            Elimina <i class="fas fa-trash bx-sm float-icon"></i>
-          </button>
-        </div>
-      </div>
-    </div>
     <div class="margin-input">
       <h5 class="title">Reportes de Implementación</h5>
       <div class="row pt-4">
@@ -303,11 +282,27 @@
         </div>
         <app-pagination
           [params]="params"
-          [totalItems]="totalItems"></app-pagination>
+          [totalItems]="totalItems2"></app-pagination>
       </div>
     </div>
     <div footer>
       <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="pupGenera()">
+            Genera <i class="fas fa-print bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm"
+            (click)="elimina()">
+            Elimina <i class="fas fa-trash bx-sm float-icon"></i>
+          </button>
+        </div>
         <div class="m-3">
           <button
             type="button"
@@ -320,7 +315,7 @@
           <button
             type="button"
             class="btn btn-primary active btn-sm"
-            (click)="costos()">
+            (click)="validaForm()">
             Nuevos Costos <i class="fas fa-print bx-sm float-icon"></i>
           </button>
         </div>

@@ -652,7 +652,7 @@ export class CaptureApprovalDonationComponent
         if (this.estatus == 'CERRADA') {
           this.alert(
             'warning',
-            'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+            'El Evento ya está Cerrado, no puede Realizar Modificaciones a esta',
             ''
           );
           return;
@@ -662,13 +662,13 @@ export class CaptureApprovalDonationComponent
             if (good.di_acta != null) {
               this.alert(
                 'warning',
-                `Ese Bien ya se Encuentra en el Acta ${good.di_acta}`,
-                'Debe Capturar un Acta.'
+                `Ese Bien ya se Encuentra en el Evento ${good.di_acta}`,
+                'Debe Capturar un Evento.'
               );
             } else if (good.di_disponible == 'N') {
               this.onLoadToast(
                 'warning',
-                `El Bien ${good.id} tiene un Estatus Inválido para ser Asignado a algún Acta`
+                `El Bien ${good.id} tiene un Estatus Inválido para ser Asignado a algún Evento`
               );
               return;
             } else {
@@ -684,7 +684,7 @@ export class CaptureApprovalDonationComponent
                 console.log('indexGood', indexGood);
                 if (indexGood != -1)
                   this.dataTableGood_[indexGood].di_disponible = 'N';
-                await this.updateBienDetalle(good.goodId, 'DON');
+                await this.updateBienDetalle(good.goodId, 'CPD');
                 await this.createDET(good);
               }
             }
@@ -1349,7 +1349,7 @@ export class CaptureApprovalDonationComponent
         received: 1,
         exchangeValue: this.regisForm.get('activeRadio').value | 0,
       };
-      this.updateBienDetalle(good.goodId, 'DON');
+      this.updateBienDetalle(good.goodId, 'CPD');
       // delete this.eventdetailDefault.numDelegation1Description;
       // delete this.eventdetailDefault.numDelegation2Description;
       // delete this.eventdetailDefault.numTransfer_;
