@@ -253,4 +253,15 @@ export const orderRequestData = [
     task: 'PropuestaServicioRechazo',
     numberTask: 8,
   },
+  {
+    title:
+      'Solicitud Orden de Servicio (Rechazo de Orden de Servicio) con el folio:  METROPOLITANA-SAT-1340-OS',
+    number: 512,
+    created: 45018,
+    assigned: '09/04/2018 04:31 PM',
+    priority: 3,
+    process: 'OrdenServicioRecepcion',
+    task: 'PropuestaServicioRechazo',
+    numberTask: 9,
+  },
 ];
