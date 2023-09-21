@@ -37,4 +37,11 @@ export class DonationProcessService extends HttpService {
       `${environment.API_URL}donationgood/api/v1/${this.requets}?filter.requestId.id=$eq:${params}`
     );
   }
+
+  updateSolicitudDonacion(params: number): Observable<any> {
+    return this.httpClient.put<any>(
+      `${environment.API_URL}donationgood/api/v1/donac-request-good`,
+      params
+    );
+  }
 }
