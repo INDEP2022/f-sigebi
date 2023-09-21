@@ -386,7 +386,8 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
     this.eventAppService.postResumen(params).subscribe(
       resp => {
         if (resp != null && resp != undefined) {
-          this.convertBase64ToCsv(resp, 'BienesEvento');
+          console.log('Resp Resumen-> ', resp);
+          this.convertBase64ToCsv(resp, 'Resumen');
         }
       },
       err => {
@@ -399,7 +400,7 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
     this.eventAppService.postDetResumer(params).subscribe(
       resp => {
         if (resp != null && resp != undefined) {
-          this.convertBase64ToCsv(resp, 'BienesEvento');
+          this.convertBase64ToCsv(resp, 'Bienes del Resumen');
         }
       },
       err => {
@@ -412,7 +413,7 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
     this.eventAppService.postDetRemesa(params).subscribe(
       resp => {
         if (resp != null && resp != undefined) {
-          this.convertBase64ToCsv(resp, 'BienesEvento');
+          this.convertBase64ToCsv(resp, 'Bienes en Remesa');
         }
       },
       err => {
@@ -426,7 +427,7 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
       resp => {
         if (resp != null && resp != undefined) {
           console.log('Resp DetEvent->', resp);
-          this.convertBase64ToExcel(resp.base64, 'BienesEvento');
+          this.convertBase64ToExcel(resp.base64, 'Bienes por Tipo de Evento');
         }
       },
       err => {
@@ -440,7 +441,7 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
       resp => {
         if (resp != null && resp != undefined) {
           let base64 = resp.base64;
-          this.convertBase64ToExcel(resp.base64, 'BienesEvento');
+          this.convertBase64ToExcel(resp.base64, 'Resumen ADM y VXR');
         }
       },
       err => {
@@ -453,7 +454,7 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
     this.eventAppService.postResumenRemesa(params).subscribe(
       resp => {
         if (resp != null && resp != undefined) {
-          this.convertBase64ToCsv(resp, 'BienesEvento');
+          this.convertBase64ToCsv(resp, 'Resumen Remesa');
         }
       },
       err => {
@@ -469,7 +470,7 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
         if (resp != null && resp != undefined) {
           let base64 = resp.base64;
           //this.convertBase64ToCsv(resp.base64, 'ResumenEvento');
-          this.convertBase64ToExcel(resp.base64, 'BienesEvento');
+          this.convertBase64ToExcel(resp.base64, 'Resumen por Tipo de Evento');
         }
       },
       err => {
