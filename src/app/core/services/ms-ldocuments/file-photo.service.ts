@@ -188,6 +188,14 @@ export class FilePhotoService extends HttpService {
     });
   }
 
+  deletePhotoDefinitive(goodNumber: string, name: string) {
+    // const user = localStorage.getItem('username').toUpperCase();
+    return this.delete(IDocumentEndpoints.deletePhotoDefinitive, {
+      goodNumber,
+      name,
+    });
+  }
+
   uploadFile(identificator: any, file: File, fileField: string = 'file') {
     const filename = file.name;
     const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';
