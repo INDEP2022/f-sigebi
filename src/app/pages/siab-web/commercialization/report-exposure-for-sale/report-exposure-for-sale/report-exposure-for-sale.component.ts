@@ -116,9 +116,16 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
   totalItems7: number = 0;
   data7: LocalDataSource = new LocalDataSource();
 
+  settings8 = { ...this.settings };
+  columnFilters8: any = [];
+  params8 = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems8: number = 0;
+  data8: LocalDataSource = new LocalDataSource();
+
   result: any;
   result2: any;
   result3: any;
+  result4: any;
 
   validate: boolean = false;
   validate1: boolean = false;
@@ -529,10 +536,15 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
   }
   getStatusGood(params: ListParams) {
     if (params.text) {
-      params['filter.nameGoodType'] = `$ilike:${params.text}`;
+      params['search'] = `${params.text}`;
+      //params['filter.status'] = `$ilike:${params.text}`;
     }
     this.statusGoodService.getAll(params).subscribe({
       next: resp => {
+        console.log(resp.data);
+        this.result4 = resp.data.map(async (item: any) => {
+          item['statusDescription'] = item.status + ' - ' + item.description;
+        });
         this.state = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
@@ -553,6 +565,22 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
   onSubmit() {
     if (this.form.valid) {
       this.form.reset();
+
+      this.data7.load([]);
+      this.data7.refresh();
+      this.totalItems7 = 0;
+
+      this.data.load([]);
+      this.data.refresh();
+      this.totalItems = 0;
+
+      this.data1.load([]);
+      this.data1.refresh();
+      this.totalItems1 = 0;
+
+      this.data5.load([]);
+      this.data5.refresh();
+      this.totalItems5 = 0;
     }
     console.warn('Your order has been submitted');
   }
@@ -652,10 +680,19 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
 
   reportNoAttempt() {
     if (this.idTypeGood) {
+      this.data1.load([]);
+      this.data1.refresh();
+      this.totalItems1 = 0;
+
+      this.data5.load([]);
+      this.data5.refresh();
+      this.totalItems5 = 0;
+
       this.show = true;
       this.showMonth = false;
       this.showConsult = false;
       this.showGood = false;
+
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getReportNoAttempt(this.idTypeGood, '', '', ''));
@@ -708,6 +745,14 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
 
   reporTwoMonths() {
     if (this.idTypeGood) {
+      this.data.load([]);
+      this.data.refresh();
+      this.totalItems = 0;
+
+      this.data5.load([]);
+      this.data5.refresh();
+      this.totalItems5 = 0;
+
       this.showMonth = true;
       this.show = false;
       this.showConsult = false;
@@ -769,6 +814,14 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
   }
 
   consult() {
+    this.data1.load([]);
+    this.data1.refresh();
+    this.totalItems1 = 0;
+
+    this.data.load([]);
+    this.data.refresh();
+    this.totalItems = 0;
+
     this.showMonth = false;
     this.show = false;
     this.showConsult = true;
@@ -800,10 +853,10 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
     //this.totalAssets = count
     this.loading = true;
     if (typeGood && subType && delegation && status) {
-      this.params5.getValue()['filter.no_tipo'] = `$eq:${typeGood}`;
-      this.params5.getValue()['filter.no_subtipo'] = `$eq:${subType}`;
-      this.params5.getValue()['filter.no_coord_admin'] = `$eq:${delegation}`;
-      this.params5.getValue()['filter.estatus'] = `$eq:${status}`;
+      this.params5.getValue()['filter.TypeNumber'] = `$eq:${typeGood}`;
+      this.params5.getValue()['filter.subTypeNumber'] = `$eq:${subType}`;
+      this.params5.getValue()['filter.coordAdminNumber'] = `$eq:${delegation}`;
+      this.params5.getValue()['filter.status'] = `$eq:${status}`;
     }
     let param = {
       ...this.params5.getValue(),
@@ -846,13 +899,38 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
   rowsSelected1(event: any) {}
 
   onExportExcelGood() {
+    if (this.records) {
+      this.params8.getValue()['filter.no_bien'] = `$in:${this.records}`;
+    }
+    let param = {
+      ...this.params8.getValue(),
+      ...this.columnFilters8,
+    };
+    param['limit'] = '';
+    const date = new Date(Date());
+    const dateFormat = this.datePipe.transform(date, 'dd-MM-yyyy HH:mm:ss');
+    this.goodProcessService.getSpObtnxGoodExcel(param).subscribe({
+      next: resp => {
+        this.downloadDocument(
+          `Consulta de bienes sin vender al - ${dateFormat}`,
+          'excel',
+          resp.base64File
+        );
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
+  }
+
+  onExportExcelConsult() {
     if (this.idTypeGood) {
       this.params6.getValue()['filter.no_tipo'] = `$eq:${this.type}`;
       this.params6.getValue()['filter.no_subtipo'] = `$eq:${this.subtype}`;
       this.params6.getValue()[
         'filter.no_coord_admin'
       ] = `$eq:${this.delegation1}`;
-      this.params6.getValue()['filter.estatus'] = `$eq:${this.state1}`;
+      this.params6.getValue()['filter.estatus'] = `$ilike:${this.state1}`;
     }
     let param = {
       ...this.params6.getValue(),
@@ -883,7 +961,7 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
       ...this.params3.getValue(),
       ...this.columnFilters3,
     };
-    param['limit'] = '';
+    //param['limit'] = '';
     const date = new Date(Date());
     const dateFormat = this.datePipe.transform(date, 'dd-MM-yyyy HH:mm:ss');
     this.goodProcessService.getReportNingeventExcel(param).subscribe({
