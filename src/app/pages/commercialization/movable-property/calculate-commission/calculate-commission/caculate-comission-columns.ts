@@ -80,7 +80,7 @@ export const COMISIONESXBIEN_COLUMNS = {
   //   width: '10%'
   // },
   event: {
-    title: 'Id. Evento',
+    title: 'Id Evento',
     type: 'string',
     sort: false,
     width: '10%',
@@ -123,25 +123,28 @@ export const COMISIONESXBIEN_COLUMNS = {
         return amount;
       }
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
   amountCommission: {
     title: 'Monto Comisión',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (amount: string) => {
-      const numericAmount = parseFloat(amount);
+    // valuePrepareFunction: (amount: string) => {
+    //   const numericAmount = parseFloat(amount);
 
-      if (!isNaN(numericAmount)) {
-        return numericAmount.toLocaleString('en-US', {
-          // style: 'currency',
-          // currency: 'USD',
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        });
-      } else {
-        return amount;
-      }
-    },
+    //   if (!isNaN(numericAmount)) {
+    //     return numericAmount.toLocaleString('en-US', {
+    //       // style: 'currency',
+    //       // currency: 'USD',
+    //       minimumFractionDigits: 2,
+    //       maximumFractionDigits: 2,
+    //     });
+    //   } else {
+    //     return amount;
+    //   }
+    // },
   },
   processIt: {
     title: 'Procesa',
