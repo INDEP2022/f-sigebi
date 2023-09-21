@@ -97,6 +97,7 @@ export class DataTableComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
+
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'labelId':
@@ -106,13 +107,14 @@ export class DataTableComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'status':
-                //console.log("ESTATUS -> ");
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'desStatus':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'transfereeId':
+                console.log('-- enttra --');
+                field = 'filter.transfereeId.transferentId';
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'desTrans':
@@ -176,6 +178,7 @@ export class DataTableComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'transfereeId':
+                field = 'filter.transfereeId.transferentId';
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'desTrans':
@@ -232,7 +235,6 @@ export class DataTableComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'name':
-                console.log('NAME -> ');
                 field = `filter.segUser.name`;
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -261,6 +263,7 @@ export class DataTableComponent extends BasePage implements OnInit {
     this.settings = $event;
   }
   getForeignTrade() {
+    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -268,7 +271,7 @@ export class DataTableComponent extends BasePage implements OnInit {
     params['filter.labelId'] = `$eq:${this.type}`;
     //params.getValue()['filter.labelId'] = `$eq:${this.type}`;
     console.log('params 1 -> ', params);
-    this.rapproveDonationService.getAll(params).subscribe({
+    this.rapproveDonationService.getAllT(params).subscribe({
       next: response => {
         console.log('primer tabla -> ', response.data);
         this.data = response.data;
@@ -283,12 +286,14 @@ export class DataTableComponent extends BasePage implements OnInit {
             this.data[i].not = 1;
           }
           this.data[i].labelId = response.data[i].label;
+          this.data[i].transfereeId = response.data[i].transfereeId.transferentId;
         }
         this.dataTable1.load(response.data);
         this.dataTable1.refresh();
         console.log('data after ', this.data);
         this.totalItems = response.count;
         this.loading = false;
+        console.log('primer tabla dataTable1 -> ', this.dataTable1);
       },
       error: error => {
         console.log(error);
@@ -298,6 +303,7 @@ export class DataTableComponent extends BasePage implements OnInit {
   }
 
   getTracker() {
+    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -333,7 +339,7 @@ export class DataTableComponent extends BasePage implements OnInit {
     });
   }
 
-  getUsers(name: string) {}
+  getUsers(name: string) { }
 
   loadModal(bool: boolean, data: any) {
     if (data != null) {
