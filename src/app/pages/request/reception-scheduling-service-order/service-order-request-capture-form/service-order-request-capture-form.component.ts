@@ -322,8 +322,14 @@ export class ServiceOrderRequestCaptureFormComponent
   }
 
   openReport(signatore: ISignatories, signature: boolean) {
+    let idTypeDoc = 221;
+    if (this.task == 2) {
+    } else if (this.task == 3) {
+    } else if (this.task == 5) {
+    } else if (this.task == 6) {
+    }
     const idProg = this.programmingId;
-    const idTypeDoc = 221;
+
     let config: ModalOptions = {
       initialState: {
         idProg,
@@ -358,6 +364,7 @@ export class ServiceOrderRequestCaptureFormComponent
         callback: (next: boolean) => {
           if (next) {
             //this.getProgrammingId();
+            this.isApprove = true;
           }
         },
       },
@@ -412,6 +419,12 @@ export class ServiceOrderRequestCaptureFormComponent
       this.title = `Reporte de implementación (Programación de recepción: ${this.programming.folio}) para la orden de servicio con folio: ${folio}`;
     } else if (this.task == 5) {
       this.title = `Validación de reporte de implementación (Programación de recepción: ${this.programming.folio}) para la orden de servicio con folio: ${folio}`;
+    } else if (this.task == 6) {
+      this.title = `Validación de reporte de Implementación (Programación de recepción: ${this.programming.folio}) para la orden de servicio con folio: ${folio}`;
+    } else if (this.task == 7) {
+      this.title = `Reporte de Implementación aprobado (Programación de recepción: ${this.programming.folio}) para la orden de servicio con folio: ${folio}`;
+    } else if (this.task == 8) {
+      this.title = `Solicitud Orden de Servicio (Validación de Servicio) con el folio: ${folio}`;
     }
   }
 }

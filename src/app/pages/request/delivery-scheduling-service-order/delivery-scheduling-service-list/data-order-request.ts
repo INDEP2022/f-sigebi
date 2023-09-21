@@ -230,4 +230,27 @@ export const orderRequestData = [
     task: 'ReporteImplemenFirmadoDelegReg',
     numberTask: 6,
   },
+
+  {
+    title:
+      'Reporte de Implementación aprobado (Programación de recepción: METROPOLITANA-SAT-516-OS) Para el orden de servicio con el folio:  METROPOLITANA-SAT-1340-OS',
+    number: 512,
+    created: 45018,
+    assigned: '09/04/2018 04:31 PM',
+    priority: 3,
+    process: 'OrdenServicioRecepcion',
+    task: 'AnexoWFirmaTercero',
+    numberTask: 7,
+  },
+  {
+    title:
+      'Solicitud Orden de Servicio (Validación de Servicio) con el folio:  METROPOLITANA-SAT-1340-OS',
+    number: 512,
+    created: 45018,
+    assigned: '09/04/2018 04:31 PM',
+    priority: 3,
+    process: 'OrdenServicioRecepcion',
+    task: 'PropuestaServicioRechazo',
+    numberTask: 8,
+  },
 ];

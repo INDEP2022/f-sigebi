@@ -180,6 +180,26 @@ export class DeliverySchedulingServiceListComponent
         };
         localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
         break;
+      case 'AnexoWFirmaTercero':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 7,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
+      case 'PropuestaServicioRechazo':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 8,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
       default:
         break;
     }

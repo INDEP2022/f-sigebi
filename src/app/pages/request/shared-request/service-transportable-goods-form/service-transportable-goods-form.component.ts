@@ -21,6 +21,7 @@ import {
 } from '../../reception-scheduling-service-order/columns/service-transportable-columns';
 import { CreateManualServiceFormComponent } from '../../reception-scheduling-service-order/components/create-manual-service-form/create-manual-service-form.component';
 import { CreateServiceFormComponent } from '../../reception-scheduling-service-order/components/create-service-form/create-service-form.component';
+import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 
 const testData = [
   {
@@ -63,6 +64,7 @@ export class ServiceTransportableGoodsFormComponent
   @Output() totEvent: EventEmitter<string> = new EventEmitter();
 
   private orderEntryService = inject(orderentryService);
+  private requestHelperService = inject(RequestHelperService);
 
   constructor(private modalService: BsModalService) {
     super();
@@ -205,6 +207,9 @@ export class ServiceTransportableGoodsFormComponent
         next: resp => {
           let ttotal = 0;
           resp.data.map((item: any) => {
+            if (this.op == 6 || this.op == 7 || this.op == 8) {
+              this.requestHelperService.changeReadOnly(true);
+            }
             const resourceNumber =
               Number(item.resourcesNumber) != null
                 ? Number(item.resourcesNumber)
@@ -272,6 +277,7 @@ export class ServiceTransportableGoodsFormComponent
           descriptionDifference.hide = false;
         }
       }
+
       let table = null;
       table = document.getElementById('table');
       const tbody = table.children[0].children[1].children;
@@ -282,6 +288,8 @@ export class ServiceTransportableGoodsFormComponent
         this.op == 4 ||
         this.op == 5 ||
         this.op == 6 ||
+        this.op == 7 ||
+        this.op == 8 ||
         this.op == 2
       ) {
         for (let index = 0; index < tbody.length; index++) {
@@ -308,6 +316,15 @@ export class ServiceTransportableGoodsFormComponent
             }
             ele.children[8].querySelector('#text-input').disabled = true;
             ele.children[9].querySelector('#text-input').disabled = true;
+            ele.children[10].querySelector('#text-input').disabled = true;
+            ele.children[13].querySelector('#text-input').disabled = true;
+          }
+
+          if (this.op == 6 || this.op == 7 || this.op == 8) {
+            //const select = ele.children[1].querySelector('#select-input');
+            ele.children[2].querySelector('#text-input').disabled = true;
+            ele.children[3].querySelector('#text-input').disabled = true;
+            ele.children[7].querySelector('#text-input').disabled = true;
             ele.children[10].querySelector('#text-input').disabled = true;
             ele.children[13].querySelector('#text-input').disabled = true;
           }
