@@ -15,6 +15,7 @@ import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -43,6 +44,8 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
   user2 = new DefaultSelect();
   user3 = new DefaultSelect();
 
+  result1: any;
+
   constructor(
     private fb: FormBuilder,
     private excelService: ExcelService,
@@ -69,14 +72,28 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      batch: [null, [Validators.required]],
+      batch: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(15),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
       event: [null, [Validators.required]],
       startDate: [null, [Validators.required]],
       endDate: [null, [Validators.required]],
       capturingUser: [null, [Validators.required]],
       authorizingUser: [null, [Validators.required]],
       requestingUser: [null, [Validators.required]],
-      incomeOrder: [null, [Validators.required]],
+      incomeOrder: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(15),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
       reportNumber: [null, [Validators.required]],
     });
     this.getEvent(new ListParams());
@@ -98,9 +115,16 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
   }
 
   getEvent(params: ListParams) {
+    if (params.text) {
+      params['search'] = `${params.text}`;
+      //params['filter.status'] = `$ilike:${params.text}`;
+    }
     this.comerEventService.getAllEvent(params).subscribe({
-      next: data => {
-        this.eventSelect = new DefaultSelect(data.data, data.count);
+      next: resp => {
+        this.result1 = resp.data.map(async (item: any) => {
+          item['keyObservation'] = item.processKey + ' - ' + item.observations;
+        });
+        this.eventSelect = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
         this.eventSelect = new DefaultSelect();
@@ -151,6 +175,10 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
   }
 
   getAllSegUser1(params: ListParams) {
+    if (params.text) {
+      params['filter.name'] = `$ilike:${params.text}`;
+      //params['filter.status'] = `$ilike:${params.text}`;
+    }
     this.usersService.getAllSegUsers2(params).subscribe({
       next: resp => {
         this.user1 = new DefaultSelect(resp.data, resp.count);
@@ -166,6 +194,10 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
   }
 
   getAllSegUser2(params: ListParams) {
+    if (params.text) {
+      params['filter.name'] = `$ilike:${params.text}`;
+      //params['filter.status'] = `$ilike:${params.text}`;
+    }
     this.usersService.getAllSegUsers2(params).subscribe({
       next: resp => {
         this.user2 = new DefaultSelect(resp.data, resp.count);
@@ -181,6 +213,10 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
   }
 
   getAllSegUser3(params: ListParams) {
+    if (params.text) {
+      params['filter.name'] = `$ilike:${params.text}`;
+      //params['filter.status'] = `$ilike:${params.text}`;
+    }
     this.usersService.getAllSegUsers2(params).subscribe({
       next: resp => {
         this.user3 = new DefaultSelect(resp.data, resp.count);
