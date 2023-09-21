@@ -123,13 +123,22 @@ export class ListServiceOrdersComponent
   }
 
   uploadExpedient() {
-    this.openModal(UploadExpedientServiceOrderFormComponent, '');
+    if (this.rowSelected.length > 1) {
+      this.onLoadToast('info', 'Seleccione solo un registro');
+      return;
+    }
+
+    this.openModal(
+      UploadExpedientServiceOrderFormComponent,
+      'sample-request',
+      this.rowSelected
+    );
   }
 
-  openModal(component: any, typeComponent?: string) {
+  openModal(component: any, typeComponent?: string, data?: any[]) {
     let config: ModalOptions = {
       initialState: {
-        data: '',
+        data: data,
         typeComponent: typeComponent,
         callback: (next: boolean) => {
           //if (next){ this.getData();}

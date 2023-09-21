@@ -38,4 +38,11 @@ export enum DepositaryEndPoints {
   ExecDeductions = `payment-ref/exec-deductions`,
   FullErase = 'payment-ref/full-erase',
   CurrentFullErase = 'payment-ref/current-full-erase',
+
+  PrepOiInmuAct = 'validate-payments-ref/prep-oi-inmu-act', // VALIDA_PAGOSREF.PREP_OINMU_ACT
+  ActEstGraliAct = 'validate-payments-ref/act-est-grali-act', // VALIDA_PAGOSREF.ACT_EST_GRALI_ACT
+  ActEstGrali = 'validate-payments-ref/act-est-grali', // VALIDA_PAGOSREF.ACT_EST_GRALI
+  PrepOiInmu = 'validate-payments-ref/prep-oi-inmu', // VALIDA_PAGOSREF.PREP_OINMU
+  VentaInmu = 'validate-payments-ref/venta-inmu', // VALIDA_PAGOSREF.VENTA_INMU
+  CurrentRealStateSale = 'validate-payments-ref/current-real-state-sale', // VALIDA_PAGOSREF.VENTA_INMU_ACT
 }
