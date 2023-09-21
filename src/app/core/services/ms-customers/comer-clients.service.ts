@@ -103,4 +103,8 @@ export class ComerClientsService extends HttpService {
       CustomersEndpoints.ApplicationDataCustomers + '/' + idLote
     );
   }
+
+  updateClientXEvent_(params: any) {
+    return this.put(CustomersEndpoints.ComerClientsXEvent, params);
+  }
 }
