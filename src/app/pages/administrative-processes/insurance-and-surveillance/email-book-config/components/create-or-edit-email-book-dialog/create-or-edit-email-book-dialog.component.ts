@@ -158,7 +158,7 @@ export class CreateOrEditEmailBookDialogComponent
   getDelegation(params: ListParams) {
     this.loading = true;
 
-    this.binnacleService.getDelegations(params).subscribe(
+    this.binnacleService.getDelegations2(params).subscribe(
       (resp: any) => {
         console.log(resp);
         this.status = resp.data.map(async (item: any) => {

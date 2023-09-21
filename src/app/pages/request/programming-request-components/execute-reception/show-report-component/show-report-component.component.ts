@@ -106,6 +106,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('idOrderService', this.idOrderService);
     if (this.showTDR) {
       this.title = 'ETIQUETA';
     } else {
@@ -190,6 +191,12 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       let linkDoc: string = `${this.urlBaseReport}NotificacionDestruccionFondos.jasper&ID_PROG_ENTREGA=${this.idprogDel}`;
       this.src = linkDoc;
 
+      this.formLoading = false;
+    }
+
+    if (this.idOrderService) {
+      let linkDoc: string = `${this.urlBaseReport}orden_servicio.jasper&ordenServicioID=${this.idOrderService}`;
+      this.src = linkDoc;
       this.formLoading = false;
     }
 

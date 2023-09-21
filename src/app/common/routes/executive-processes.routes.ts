@@ -12,7 +12,7 @@ export const EXECUTIVE_PROCESSES_ROUTES = [
         link: '/pages/executive-processes/quarterly-accumulated-assets',
       },
       {
-        label: 'Aprobación destrucción',
+        label: 'Autorización destrucción',
         link: '/pages/executive-processes/authorization-assets-destruction',
       },
       {
