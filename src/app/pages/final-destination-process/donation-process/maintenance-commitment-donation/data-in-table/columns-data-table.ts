@@ -21,9 +21,9 @@ export const COLUMNS_DATA_TABLE = {
   },
   transfereeId: {
     title: 'No. Trans.',
-    valuePrepareFunction: (value: ITransferee) => {
-      return value != null ? value.transferentId : '-';
-    },
+    // valuePrepareFunction: (value: ITransferee) => {
+    //   return value != null ? value.transferentId : '';
+    // },
     type: 'number',
     sort: false,
   },
