@@ -16,7 +16,7 @@ import {
 export class BinnacleService extends HttpService {
   private readonly route = SurvillanceEndpoints;
   private readonly route1 = SurvillanceEndpoints.View_VigDelegations;
-  private readonly route2 = SurvillanceEndpoints.View_VigDelegations;
+  private readonly route2 = SurvillanceEndpoints.View_VigDelegations2;
   constructor(
     private binnacle: Repository<IVigBinnacle>,
     private delegation: Repository<IViewVigDelegations>
