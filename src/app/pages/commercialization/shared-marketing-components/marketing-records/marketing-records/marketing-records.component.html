@@ -56,6 +56,16 @@
             </form-field>
             <form-field
               class="col-md-4"
+              label="seRefiereA"
+              [control]="form.get('seRefiereA')"
+              *ngIf="false">
+              <input
+                class="form-control"
+                formControlName="seRefiereA"
+                type="text" />
+            </form-field>
+            <form-field
+              class="col-md-4"
               label="Estatus"
               [control]="form.get('statusOf')">
               <input
@@ -100,7 +110,7 @@
         <!--Users Component-->
         <form-field [control]="form.get('sender')" class="col-md-4">
           <ngx-select
-            (fetchByParamsItems)="getSenders($event)"
+            (fetchItems)="getSenders($event)"
             [data]="senders"
             [form]="form"
             value="id"
@@ -113,7 +123,7 @@
         <!--Users Component-->
         <form-field [control]="form.get('addressee')" class="col-md-4">
           <ngx-select
-            (fetchByParamsItems)="getReceivers($event)"
+            (fetchItems)="getReceivers($event)"
             [data]="receivers"
             [form]="form"
             value="id"
@@ -233,15 +243,6 @@
         <h5 class="title">Documentos para el Oficio de Gestión</h5>
       </div>
     </div>
-    <div class="d-flex justify-content-end mr-1">
-      <div class="col-2">
-        <button
-          class="btn btn-primary active btn-sm w-100"
-          (click)="openModal()">
-          Agregar
-        </button>
-      </div>
-    </div>
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
@@ -258,20 +259,27 @@
       [filterParams]="documentsParams"
       [totalItems]="totalDocuments">
     </app-pagination>
-    <!--C.C.P USERS-->
-    <div class="row">
-      <div class="col-md-6">
-        <form action="" class="form-material" [formGroup]="cppForm">
-          <cpp-form
-            [form]="cppForm"
-            [users]="copies"
-            [disabled]="disableCpp"></cpp-form>
-        </form>
+    <div class="d-flex justify-content-end mr-1">
+      <div class="col-2">
+        <button
+          class="btn btn-primary active btn-sm w-100"
+          (click)="openModal()">
+          Doc.
+        </button>
       </div>
     </div>
-    <!-- <form class="form-material" [formGroup]="formCcp">
+    <!--C.C.P USERS-->
+    <div class="row mb-3 mt-3"></div>
+    <form class="form-material" [formGroup]="formCcp">
       <div class="row mb-3 mt-3">
-        <div class="col-xs-12 col-12 col-md-6 col-lg-6 mb-3 mt-3">
+        <!-- <div class="row">
+          <div class="col-md-12">
+            <form action="" class="form-material" [formGroup]="cppForm">
+              <cpp-form [form]="cppForm" [users]="copies" [disabled]="disableCpp"></cpp-form>
+            </form>
+          </div>
+        </div> -->
+        <!-- <div class="col-xs-12 col-12 col-md-6 col-lg-6 mb-3 mt-3">
           <div class="row mb-3 mt-3">
             <div class="col-md-12 mb-3 mt-3">
               <app-user-shared
@@ -296,11 +304,11 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
         <div
           class="col-xs-12 col-12 col-md-6 col-lg-6 mb-3 mt-3 align-self-center">
           <div class="row mb-3 mt-3">
-            <div class="col-md-12">
+            <!-- <div class="col-md-12">
               <form-field
                 label="Folio Escaner"
                 [control]="formCcp.get('scannerFolio')">
@@ -309,9 +317,71 @@
                   formControlName="scannerFolio"
                   type="text" />
               </form-field>
-            </div>
+            </div> -->
+            <form class="form-material" [formGroup]="formCcp">
+              <div class="row">
+                <div class="col-sm-12 col-12 col-md-4 text-center">
+                  <button
+                    tooltip="Generar Folio de Escaneo y Solicitud"
+                    containerClass="tooltip-style"
+                    class="btn btn-secondary btn-sm active m-1"
+                    (click)="solicitud()">
+                    <i class="bx bxs-file-find"></i>
+                  </button>
+                  <button
+                    tooltip="Escanear"
+                    containerClass="tooltip-style"
+                    class="btn btn-secondary btn-sm active m-1"
+                    (click)="openScannerPage()">
+                    <i class="bx bxs-file"></i>
+                  </button>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 w-100 p-0">
+                  <div class="col-md-12 col-sm-12 col-12 p-0">
+                    <div class="col-md-12 col-sm-12 col-xs-12 p-1">
+                      <form-field
+                        label="Folio De Escaneo"
+                        [control]="formCcp.get('scannerFolio')">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="scannerFolio"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 text-center">
+                  <button
+                    tooltip="Imprimir Solicitud de Escaneo"
+                    containerClass="tooltip-style"
+                    class="btn btn-secondary btn-sm active m-1"
+                    (click)="PupLanzaReporteSolicDigt()">
+                    <i class="bx bxs-printer"></i>
+                  </button>
+                  <button
+                    tooltip="Consulta de Imágenes Escaneadas"
+                    containerClass="tooltip-style"
+                    class="btn btn-secondary btn-sm active m-1">
+                    <i class="bx bxs-file-find" (click)="insertListImg()"></i>
+                  </button>
+                </div>
+                <!-- (click)="getReportViewActa()" -->
+              </div>
+            </form>
           </div>
         </div>
+        <div class="col-md-6">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="ccpSettings"
+              [source]="ccpData">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination [filterParams]="ccpParams" [totalItems]="totalCcp">
+        </app-pagination>
       </div>
 
       <div class="row mb-3 mt-3">
@@ -342,7 +412,7 @@
           </button>
         </div>
       </div>
-    </form> -->
+    </form>
 
     <form [formGroup]="form" class="form-material" *ngIf="showJuridic">
       <div class="row pt-3">
@@ -378,18 +448,14 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <confirm-button [disabled]="!form.valid" [loading]="loading">
-        </confirm-button>
-      </div>
-      <div class="m-3">
+      <!-- <div class="m-3">
         <button
           type="button"
           class="btn btn-danger active"
           (click)="resetForm()">
           Limpiar
-        </button>
-      </div>
+        </button> -->
+      <!-- </div> -->
     </div>
   </div>
 </app-card>

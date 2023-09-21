@@ -94,4 +94,22 @@ export class GoodsJobManagementService extends HttpService {
   }) {
     return this.post<IListResponse<any>>(`goods-job-management`, obj);
   }
+
+  getMJobManagement(proceedingsNumber: any) {
+    const route = `${GoodsJobManagementEndpoints.mJobManagement}?filter.managementNumber=$eq:${proceedingsNumber}`;
+    return this.get(route);
+  }
+
+  getSeq() {
+    return this.get(GoodsJobManagementEndpoints.nextval);
+  }
+
+  postJobManagement(params: any) {
+    const route = `${GoodsJobManagementEndpoints.goodsManagement}`;
+    return this.post(route, params);
+  }
+  postDocumentJobManagement(params: any) {
+    const route = `${GoodsJobManagementEndpoints.documentJobMan}`;
+    return this.post(route, params);
+  }
 }

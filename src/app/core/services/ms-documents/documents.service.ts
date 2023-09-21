@@ -329,4 +329,18 @@ export class DocumentsService extends HttpService {
     const route = `${DocumentsEndpoints.postDocumentsV2}`;
     return this.post(route, params);
   }
+
+  insertDocuments(params: any) {
+    const route = `${DocumentsEndpoints.document}`;
+    return this.post(route, params);
+  }
+
+  insertDocumentsAttached(params: any) {
+    const route = `${DocumentsEndpoints.document}`;
+    return this.post(route, params);
+  }
+
+  postDocumentHAttached(params: any) {
+    return this.post(DocumentsEndpoints.attachedDocument, params);
+  }
 }

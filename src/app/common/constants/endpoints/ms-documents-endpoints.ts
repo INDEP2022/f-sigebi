@@ -23,4 +23,5 @@ export enum DocumentsEndpoints {
   GetDocument = 'application/getDocument-pag',
   postDocumentsV2 = 'application/insertDocumentsV2',
   document = 'documents',
+  attachedDocument = 'attached-documents',
 }

@@ -4,4 +4,7 @@ export enum GoodsJobManagementEndpoints {
   FindByIds = 'goods-job-management/find-by-ids',
   mJobManagement = 'm-job-management',
   OfficeManagementCopies = 'copies-job-management',
+  nextval = 'factadboficiogestrel3/consultation4',
+  goodsManagement = 'goods-job-management',
+  documentJobMan = 'document-job-management',
 }
