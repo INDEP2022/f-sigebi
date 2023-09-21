@@ -172,4 +172,11 @@ export class ComerEventosService extends HttpService {
   getLovEventos2(params: _Params) {
     return this.get(EventEndpoints.LovEventos2, params);
   }
+  getPaLookLots(body: any, params: _Params) {
+    return this.post(EventEndpoints.PaLookLotsChange, body, params);
+  }
+
+  getPaLookLotsExcel(body: any, params: _Params) {
+    return this.post(EventEndpoints.PaLookLotsChangeExcel, body, params);
+  }
 }

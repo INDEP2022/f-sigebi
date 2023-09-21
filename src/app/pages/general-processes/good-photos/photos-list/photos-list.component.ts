@@ -57,6 +57,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
   @ViewChildren('photo') photos: QueryList<PhotoComponent>;
   private _goodNumber: string | number;
+  deleting = false;
   options = [
     { value: 1, label: 'Visualizar' },
     { value: 2, label: 'Editar' },
@@ -226,6 +227,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
     } else {
       this.filesToDelete = this.filesToDelete.filter(file => file != image);
     }
+    // console.log(this.filesToDelete);
   }
 
   private async getData() {
@@ -241,7 +243,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
               // console.log(response);
               if (response) {
                 this.files = [...response];
-                // this.errorMessage = null;
+                this.errorMessage = null;
                 // return;
                 if (!this.errorMessage) {
                   const pufValidaUsuario = await this.pufValidaUsuario();
@@ -272,13 +274,16 @@ export class PhotosListComponent extends BasePage implements OnInit {
   async confirmDelete(all = false) {
     // if (this.disabledDeletePhotos()) return;
     console.log(this.files, this.filesToDelete);
+    this.deleting = true;
     if (all) {
       if (this.disabledDeleteAllPhotos()) {
+        this.deleting = false;
         return;
       }
       this.filesToDelete = [...this.validFilesToDelete];
     }
     if (this.disabledDeletePhotos()) {
+      this.deleting = false;
       return;
     }
     if (this.filesToDelete.length < 1) {
@@ -287,6 +292,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         'Advertencia',
         'Debes seleccionar mínimo un archivo'
       );
+      this.deleting = false;
       return;
     }
 
@@ -299,10 +305,13 @@ export class PhotosListComponent extends BasePage implements OnInit {
     );
     if (result.isConfirmed) {
       this.deleteSelectedFiles();
+    } else {
+      this.deleting = false;
     }
   }
 
   validationUser(file: IPhotoFile) {
+    if (this.errorMessage && this.errorMessage.length > 0) return false;
     if (!file.usuario_creacion) return true;
     if (file.usuario_creacion.length === 0) return true;
     if (file.usuario_creacion.toUpperCase() === this.userName) return true;
@@ -317,24 +326,30 @@ export class PhotosListComponent extends BasePage implements OnInit {
     this.loader.load = false;
     this.filesToDelete = [];
     this.service.deleteEvent.next(true);
+    this.deleting = false;
     this.getData();
   }
 
   private async deleteSelectedFiles() {
     this.errorImages = [];
-    this.loader.load = true;
     let files = this.filesToDelete.map(file => {
       const index = file.name.indexOf('F');
       const finish = file.name.indexOf('.');
       return +file.name.substring(index + 1, finish);
     });
+    // this.deletePhotoDefinitive(this.filesToDelete[0].name).subscribe({
+    //   next: response => {},
+    //   error: err => {
+    //     console.log(err);
+    //   },
+    // });
+    // return;
     this.deleteFile(files.toString()).subscribe({
       next: response => {
         console.log(response);
-        const data = response.data;
-        if (data) {
-          if (data.error && data.error.length > 0) {
-            if (data.correct && data.correct.length > 0) {
+        if (response) {
+          if (response.error && response.error.length > 0) {
+            if (response.correct && response.correct.length > 0) {
               this.alert(
                 'warning',
                 'Fotos a Histórico',
@@ -347,13 +362,15 @@ export class PhotosListComponent extends BasePage implements OnInit {
                 'No se pudieron cambiar a histórico las fotos'
               );
             }
+            this.loader.load = false;
+            this.deleting = false;
             return;
           }
-          if (data.correct && data.correct.length > 0) {
+          if (response.correct && response.correct.length > 0) {
             this.alert(
               'success',
               'Fotos a Histórico',
-              'Las fotos seleccionadas se han eliminado'
+              'Las fotos seleccionadas se han enviado a histórico'
             );
           }
         }
@@ -418,6 +435,13 @@ export class PhotosListComponent extends BasePage implements OnInit {
     //   });
   }
 
+  private deletePhotoDefinitive(name: string) {
+    return this.filePhotoService.deletePhotoDefinitive(
+      this.goodNumber + '',
+      name
+    );
+  }
+
   private deleteFile(consecNumber: string) {
     return this.filePhotoService.deletePhoto(
       this.goodNumber + '',
@@ -444,7 +468,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
       ...MODAL_CONFIG,
       initialState: {
         accept:
-          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg',
+          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg, image/heif, .heic, .heif',
         uploadFiles: false,
         service: this.filePhotoService,
         identificator: this.goodNumber + '',
@@ -465,7 +489,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
       initialState: {
         accept: '.zip',
         accept2:
-          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg',
+          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg, image/heif',
         uploadFiles: false,
         service: this.filePhotoSaveZipService,
         identificator: [this.goodNumber],

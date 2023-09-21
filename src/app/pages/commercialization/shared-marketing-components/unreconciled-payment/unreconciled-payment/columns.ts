@@ -2,7 +2,7 @@ import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filt
 
 export const COLUMNS = {
   paymentId: {
-    title: 'Id. Pago',
+    title: 'Id Pago',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -58,6 +58,9 @@ export const COLUMNS = {
         return amount;
       }
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
   bankKey: {
     title: 'Banco',
@@ -91,7 +94,7 @@ export const COLUMNS = {
   //   sort: false,
   // },
   clientId: {
-    title: 'Id. Cliente',
+    title: 'Id Cliente',
     // width: '15%',
     type: 'string',
     sort: false,

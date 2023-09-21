@@ -12,13 +12,11 @@
               <div class="col-sm-12 col-12 col-md-12 p-2">
                 <h6>Procede Formalizaci&oacute;n</h6>
               </div>
-              <div class="row mb-2">
-                <div class="d-flex justify-content-end">
-                  <app-columns-select
-                    [(settings)]="
-                      _tableSettingsProcedeFormalizacion
-                    "></app-columns-select>
-                </div>
+              <div class="d-flex justify-content-end">
+                <app-columns-select
+                  class="mx-1"
+                  [(settings)]="_tableSettingsProcedeFormalizacion"
+                  [leftList]="true"></app-columns-select>
               </div>
               <div
                 class="col-sm-12 col-12 col-md-12 p-2"
@@ -43,13 +41,11 @@
               <div class="col-sm-12 col-12 col-md-12 p-2">
                 <h6>Asigna Notario</h6>
               </div>
-              <div class="row mb-2">
-                <div class="d-flex justify-content-end col-md-11">
-                  <app-columns-select
-                    [(settings)]="
-                      _tableSettingsAsignaNotario
-                    "></app-columns-select>
-                </div>
+              <div class="d-flex justify-content-end">
+                <app-columns-select
+                  class="mx-1"
+                  [(settings)]="_tableSettingsAsignaNotario"
+                  [leftList]="true"></app-columns-select>
               </div>
               <div
                 class="col-sm-12 col-12 col-md-12 p-2"
@@ -77,13 +73,11 @@
               <div class="col-sm-12 col-12 col-md-12 p-2">
                 <h6>Formaliza Escrituraci&oacute;n</h6>
               </div>
-              <div class="row mb-2">
-                <div class="d-flex justify-content-end">
-                  <app-columns-select
-                    [(settings)]="
-                      _tableSettingsFormalizaEscrituracion
-                    "></app-columns-select>
-                </div>
+              <div class="d-flex justify-content-end">
+                <app-columns-select
+                  class="mx-1"
+                  [(settings)]="_tableSettingsFormalizaEscrituracion"
+                  [leftList]="true"></app-columns-select>
               </div>
               <div
                 class="col-sm-12 col-12 col-md-12 p-2"
@@ -106,11 +100,11 @@
               <div class="col-sm-12 col-12 col-md-12 p-2">
                 <h6>Todos</h6>
               </div>
-              <div class="row mb-2">
-                <div class="d-flex justify-content-end">
-                  <app-columns-select
-                    [(settings)]="_tableSettingsTodos"></app-columns-select>
-                </div>
+              <div class="d-flex justify-content-end">
+                <app-columns-select
+                  class="mx-1"
+                  [(settings)]="_tableSettingsTodos"
+                  [leftList]="true"></app-columns-select>
               </div>
               <div
                 class="col-sm-12 col-12 col-md-12 p-2"

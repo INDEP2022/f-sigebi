@@ -16,6 +16,11 @@
             (click)="queryProceeding()">
             Consultar Acta
           </button>
+          <button
+            class="btn btn-info active btn-sm mr-1"
+            (click)="keyProceedingchange()">
+            Consultar Acta 2
+          </button>
           <confirm-button
             [loading]="loading"
             [disabled]="controls.statusProceedings.value == 'CERRADA'"
@@ -47,10 +52,8 @@
           label="Oficio de solicitud"
           [control]="proceedingForm.get('keysProceedings')">
           <input
-            #focusElement
             type="text"
             [max-length]="60"
-            (change)="keyProceedingchange()"
             class="form-control"
             formControlName="keysProceedings" />
         </form-field>
@@ -91,8 +94,11 @@
             formControlName="elaborationDate"
             bsDatepicker
             [bsConfig]="{
-              dateInputFormat: 'YYYY-MM-DD'
-            }" />
+              dateInputFormat: 'DD/MM/YYYY'
+            }"
+            [value]="
+              formatDateForInput(proceedingForm.get('elaborationDate').value)
+            " />
         </form-field>
         <form-field
           class="col-md-4"
@@ -104,8 +110,13 @@
             formControlName="datePhysicalReception"
             bsDatepicker
             [bsConfig]="{
-              dateInputFormat: 'YYYY-MM-DD'
-            }" />
+              dateInputFormat: 'DD/MM/YYYY'
+            }"
+            [value]="
+              formatDateForInput(
+                proceedingForm.get('datePhysicalReception').value
+              )
+            " />
         </form-field>
         <form-field
           class="col-md-4"
@@ -118,8 +129,11 @@
             formControlName="closeDate"
             bsDatepicker
             [bsConfig]="{
-              dateInputFormat: 'YYYY-MM-DD'
-            }" />
+              dateInputFormat: 'DD/MM/YYYY'
+            }"
+            [value]="
+              formatDateForInput(proceedingForm.get('closeDate').value)
+            " />
         </form-field>
       </div>
       <div class="row pt-4">
@@ -187,8 +201,11 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings4"
-              [source]="actaList"></ng2-smart-table>
+              [source]="actaList2"></ng2-smart-table>
           </div>
+          <app-pagination
+            [params]="params5"
+            [totalItems]="totalItems5"></app-pagination>
         </div>
       </div>
       <div class="col-md-6">
@@ -197,8 +214,11 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings5"
-              [source]="dictaList"></ng2-smart-table>
+              [source]="dictaList2"></ng2-smart-table>
           </div>
+          <app-pagination
+            [params]="params6"
+            [totalItems]="totalItems6"></app-pagination>
         </div>
       </div>
     </div>
@@ -234,18 +254,15 @@
       </div>
       <div class="col-md-6">
         <div class="row">
-          <div
-            [class]="
-              loadingGoodsByP || goodsTrackerLoading ? 'table-loading' : ''
-            ">
+          <div [class]="loadingGoodsByP ? 'table-loading' : ''">
             <!-- <div class="table-responsive"> -->
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings2"
-              [source]="detailProceedingsList"></ng2-smart-table>
+              [source]="detailProceedingsList2"></ng2-smart-table>
             <!-- </div> -->
             <app-pagination
-              [params]="params2"
+              [params]="params7"
               [totalItems]="totalItems2"></app-pagination>
           </div>
         </div>

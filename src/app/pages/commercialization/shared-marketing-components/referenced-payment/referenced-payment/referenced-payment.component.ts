@@ -195,7 +195,14 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (filter.field == 'amount') {
+                this.columnFilters[
+                  field
+                ] = `${searchFilter}:${filter.search.replace(/,/g, '')}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
+              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
@@ -1204,6 +1211,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   }
 
   async saveCarga() {
+    if (this.dataCargada.count() == 0) {
+      return this.alert('warning', 'No hay registros para guardar', '');
+    }
     this.alertQuestion(
       'question',
       'Se guardarán los Pagos Referenciados cargados',
@@ -1463,6 +1473,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         //Ejecutar el servicio
         this.dataCargada.remove(data);
         this.dataCargada.refresh();
+        this.valAccCargado = null;
         this.alert('success', 'El registro se eliminó correctamente', '');
       }
     });

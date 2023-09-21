@@ -22,7 +22,6 @@ export class MassiveReclassificationGoodsService {
       classificationOfGoods: [null],
       goodStatus: [null],
       classificationGoodAlterning: [null],
-      file: [null],
     });
   }
 }

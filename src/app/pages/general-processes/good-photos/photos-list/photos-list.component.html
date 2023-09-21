@@ -90,7 +90,7 @@
           </li>
           <li
             role="menuitem"
-            [class]="disabledDeletePhotos() ? 'disabledDelete' : ''"
+            [class]="disabledDeletePhotos() || deleting ? 'disabledDelete' : ''"
             [tooltip]="errorMessage">
             <a class="dropdown-item" (click)="confirmDelete()"
               >Borrar Seleccionadas</a
@@ -99,7 +99,9 @@
           <li class="divider dropdown-divider"></li>
           <li
             role="menuitem"
-            [class]="disabledDeleteAllPhotos() ? 'disabledDelete' : ''"
+            [class]="
+              disabledDeleteAllPhotos() || deleting ? 'disabledDelete' : ''
+            "
             [tooltip]="errorMessage">
             <a class="dropdown-item" (click)="confirmDelete(true)"
               >Eliminar Todas</a
