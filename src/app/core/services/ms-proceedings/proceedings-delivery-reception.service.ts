@@ -280,9 +280,10 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     );
   }
 
-  ProceedingsDetailActa(id: string | number) {
+  ProceedingsDetailActa(id: string | number, params: ListParams) {
     return this.get<IListResponse<any>>(
-      'aplication/get-detail-acta-ent-recep-closed/' + id
+      'aplication/get-detail-acta-ent-recep-closed/' + id,
+      params
     );
   }
 
@@ -382,12 +383,20 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.get(`${ProceedingsEndpoints.ActasDeliveryReception2}/${id}`);
   }
 
-  //tipo_acta in ('ACIRVEN','ACIRDES','ACIRDEV','ACIRDON','ACIRRES','ACIRSUS')
+  //tipo_acta in ('ACIRVEN','ACIRDES','ACIRDEV','ACIRDON','ACIRRES','AXD')
   getProceeding2(
     id: number
   ): Observable<IListResponse<IProceedingDeliveryReception>> {
     return this.get<IListResponse<IProceedingDeliveryReception>>(
       `${this.endpoint}?filter.numFile=${id}&filter.typeProceedings=$in:ACIRVEN,ACIRDES,ACIRDEV,ACIRDON,ACIRRES,ACIRSUS` //  &filter.typeProceedings='DESTINO'`
+    );
+  }
+
+  getProceeding3(
+    id: number
+  ): Observable<IListResponse<IProceedingDeliveryReception>> {
+    return this.get<IListResponse<IProceedingDeliveryReception>>(
+      `${this.endpoint}?filter.numFile=${id}&filter.typeProceedings=$eq:AXD` //  &filter.typeProceedings='DESTINO'`
     );
   }
 }
