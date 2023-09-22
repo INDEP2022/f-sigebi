@@ -17,6 +17,7 @@ import { ShowReportComponentComponent } from '../../programming-request-componen
 import { ConfirmProgrammingComponent } from '../../shared-request/confirm-programming/confirm-programming.component';
 import { AnnexWFormComponent } from '../components/annex-w-form/annex-w-form.component';
 import { RejectionCommentFormComponent } from '../components/rejection-comment-form/rejection-comment-form.component';
+import { RejectionJustifyFormComponent } from '../components/rejection-justify-form/rejection-justify-form.component';
 
 @Component({
   selector: 'app-service-order-request-capture-form',
@@ -40,7 +41,7 @@ export class ServiceOrderRequestCaptureFormComponent
   ordServform: FormGroup = new FormGroup({});
   parentModal: BsModalRef;
   op: number = null;
-  showForm: boolean = true;
+  showForm: boolean = false;
   orderServiceId: number = null;
   lsProgramming: string = null;
   programmingId: number = null;
@@ -52,6 +53,7 @@ export class ServiceOrderRequestCaptureFormComponent
   isApprove: boolean = false;
   title: string = '';
   typeOrder: string = 'reception';
+  justificationRefused: boolean = false;
 
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);
@@ -139,6 +141,9 @@ export class ServiceOrderRequestCaptureFormComponent
         { value: null, disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ],
+      justification: [null, [Validators.pattern(STRING_PATTERN)]],
+      justificationReport: [null, [Validators.pattern(STRING_PATTERN)]],
+      commentRejection: [null, [Validators.pattern(STRING_PATTERN)]],
       programmingId: [null],
       id: [null],
     });
@@ -322,6 +327,7 @@ export class ServiceOrderRequestCaptureFormComponent
   }
 
   openReport(signatore: ISignatories, signature: boolean) {
+    //task == 8 ||task == 10 ||task == 13 ||task == 11
     let idTypeDoc = 221;
     if (this.task == 2) {
     } else if (this.task == 3) {
@@ -425,6 +431,42 @@ export class ServiceOrderRequestCaptureFormComponent
       this.title = `Reporte de Implementación aprobado (Programación de recepción: ${this.programming.folio}) para la orden de servicio con folio: ${folio}`;
     } else if (this.task == 8) {
       this.title = `Solicitud Orden de Servicio (Validación de Servicio) con el folio: ${folio}`;
+    } else if (this.task == 9) {
+      this.title = `Solicitud Orden de Servicio (Rechazo de Orden de Servicio) con el folio: ${folio}`;
+    } else if (this.task == 10) {
+      this.title = `Solicitud Orden de Servicio (Validación de Servicio) con el folio: ${folio}`;
+    } else if (this.task == 11) {
+      this.title = `Solicitud Orden de Servicio (Validación de Reporte) con el folio: ${folio}`;
+    } else if (this.task == 12) {
+      this.title = `Rechazo de reporte de implementación (Programación de recepción: ${this.programming.folio}) para la orden de servicio con el folio: ${folio}`;
+    } else if (this.task == 13) {
+      this.title = `Validación de reporte de implementación (Programación de recepción: ${this.programming.folio}) para la orden de servicio con el folio: ${folio}`;
+    } else if (this.task == 14) {
+      this.title = `Rechazo de orden de servicios (Programación de recepción: ${this.programming.folio}) con el folio: ${folio}`;
+    } else if (this.task == 15) {
+      this.title = `echazo de reporte de implementación (Programación de recepción: ${this.programming.folio}) para la orden de servicio con folio: ${folio}`;
     }
+  }
+
+  sendJustification() {
+    const folio = this.ordServform.get('serviceOrderFolio').value;
+    let config: ModalOptions = {
+      initialState: {
+        folio: folio,
+        op: this.op,
+        callback: (next: boolean) => {
+          if (next) {
+            //this.getProgrammingId();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(RejectionJustifyFormComponent, config);
+  }
+
+  refuseJustification() {
+    this.justificationRefused = true;
   }
 }

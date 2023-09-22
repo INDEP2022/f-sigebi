@@ -20,7 +20,7 @@
           <form-field
             [control]="ordServform?.get('observation')"
             label="Observaciones">
-            <textarea
+            <!-- <textarea
               *ngIf="
                 (showForm && op == 1) ||
                 (showForm && op != 5 && op != 3 && op != 2) ||
@@ -29,24 +29,16 @@
               "
               class="form-control"
               formControlName="observation"></textarea>
-
+ -->
             <textarea
-              *ngIf="
-                (showForm && op == 2) ||
-                (showForm && op == 3) ||
-                (showForm && op == 5) ||
-                (showForm && op == 8) ||
-                (showForm && op == 13) ||
-                (!showForm && op != 9)
-              "
               class="form-control"
               formControlName="observation"
-              readonly></textarea>
+              [readOnly]="readonly"></textarea>
           </form-field>
         </div>
         <div class="pt-3">
           <form-field [control]="ordServform?.get('notes')" label="Notas">
-            <textarea
+            <!-- <textarea
               class="form-control"
               formControlName="notes"
               *ngIf="
@@ -55,20 +47,42 @@
                 (!showForm && op == 9) ||
                 (!showForm && op == 9) ||
                 (!showForm && op == 13)
-              "></textarea>
+              "></textarea> -->
 
             <textarea
               class="form-control"
               formControlName="notes"
-              readonly
-              *ngIf="
-                (showForm && op == 8) ||
-                (showForm && op == 2) ||
-                (showForm && op == 3) ||
-                (showForm && op == 5) ||
-                (showForm && op == 13) ||
-                (!showForm && op != 9)
-              "></textarea>
+              [readOnly]="readonly"></textarea>
+          </form-field>
+        </div>
+        <div class="pt-3" *ngIf="op == 10">
+          <form-field
+            [control]="ordServform?.get('justification')"
+            label="Justificación">
+            <textarea
+              class="form-control"
+              formControlName="justification"
+              readonly></textarea>
+          </form-field>
+        </div>
+        <div class="pt-3" *ngIf="op == 12 || op == 14 || op == 15">
+          <form-field
+            [control]="ordServform?.get('commentRejection')"
+            label="Comentario de rechazo">
+            <textarea
+              class="form-control"
+              formControlName="commentRejection"
+              readonly></textarea>
+          </form-field>
+        </div>
+        <div class="pt-3" *ngIf="op == 13">
+          <form-field
+            [control]="ordServform?.get('justificationReport')"
+            label="Justificación Reporte">
+            <textarea
+              class="form-control"
+              formControlName="justificationReport"
+              readonly></textarea>
           </form-field>
         </div>
       </form>
