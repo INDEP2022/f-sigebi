@@ -190,7 +190,7 @@ export class EmailBookConfigComponent
   }
 
   getDelegation(params: ListParams) {
-    this.binnacleService.getDelegations(params).subscribe({
+    this.binnacleService.getDelegations2(params).subscribe({
       next: resp => {
         console.log(resp);
 

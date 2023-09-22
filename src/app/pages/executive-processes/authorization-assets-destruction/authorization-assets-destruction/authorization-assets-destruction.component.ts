@@ -15,11 +15,16 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import {
+  ProceedingsDeliveryReceptionService,
+  ProceedingsService,
+} from 'src/app/core/services/ms-proceedings';
 import * as XLSX from 'xlsx';
 //Models
 import { LocalDataSource } from 'ng2-smart-table';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { AuthorizationAssetsDestructionForm } from '../utils/authorization-assets-destruction-form';
 
 @Component({
@@ -43,6 +48,12 @@ export class AuthorizationAssetsDestructionComponent
   selectExpedient = new DefaultSelect<IExpedient>();
   rowSelected: boolean = false;
   selectedRow: any = null;
+  title: string = 'Oficios de Autorización de Destrucción';
+  textButton: string = 'Cerrar';
+  expediente: number;
+  textDisabled: boolean = false;
+  acta: IProceedingDeliveryReception = null;
+  dataFile: any[];
 
   goodsList: IGood[] = [];
 
@@ -58,7 +69,9 @@ export class AuthorizationAssetsDestructionComponent
     private sanitizer: DomSanitizer,
     private expedientService: ExpedientService,
     private goodService: GoodService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private proceedingsDetailDel: ProceedingsDeliveryReceptionService,
+    private proceedingService: ProceedingsService
   ) {
     super();
     this.settings = {
@@ -67,10 +80,10 @@ export class AuthorizationAssetsDestructionComponent
       columns: { ...ASSETS_DESTRUCTION_COLUMLNS },
       mode: '',
       rowClassFunction: (row: any) => {
-        if (row.data.status === 'RGA') {
-          return 'text-success';
+        if (row.data.di_disponible === 'S') {
+          return 'bg-success text-white';
         } else {
-          return 'text-danger';
+          return 'bg-dark text-white';
         }
       },
     };
@@ -78,7 +91,7 @@ export class AuthorizationAssetsDestructionComponent
 
   ngOnInit(): void {}
 
-  expedientChange() {
+  /* expedientChange() {
     const expedientId = this.controls.idExpedient.value;
     if (!expedientId) {
       return;
@@ -94,6 +107,187 @@ export class AuthorizationAssetsDestructionComponent
         }
       },
     });
+  } */
+
+  getDetailProceedingsDevolution(number: number, expedient: boolean = false) {
+    this.loading = true;
+    let params: any = {
+      ...this.params,
+      //...this.columnFilters2,
+    };
+    if (expedient) params['filter.good.fileNumber'] = `$eq:${number}`;
+    if (!expedient) params['filter.numberProceedings'] = `$eq:${number}`;
+    this.proceedingService.getDetailProceedingsDevolution(params).subscribe({
+      next: async response => {
+        console.log(response);
+        const data = await this.postQuery(response.data);
+        this.data.load(data);
+        this.data.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.data.load([]);
+        this.data.refresh();
+        this.loading = false;
+        console.log(error);
+      },
+    });
+  }
+
+  expedientChange() {
+    this.expediente = Number(this.form.controls.idExpedient.value);
+    const params: ListParams = {};
+    params['filter.id'] = `$eq:${this.expediente}`;
+    this.expedientService.getAll(params).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.form.patchValue(resp.data[0]);
+        this.relationsExpedient();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          this.title,
+          'No se encontrarón registros para este expediente',
+          ''
+        );
+      },
+    });
+    //// buscar en el
+  }
+
+  relationsExpedient() {
+    //this.getGoods();
+    this.loading = false;
+    this.proceedingsDetailDel.getProceeding3(this.expediente).subscribe(
+      response => {
+        console.log(response);
+        if (response.data === null) {
+          this.alert('info', this.title, 'No se encontrarón registros', '');
+          return;
+        }
+        this.acta = response.data[0];
+        this.form.controls.noAuth.setValue(this.acta.id);
+        this.form.controls.authNotice.setValue(this.acta.keysProceedings);
+        this.form.controls.fromDate.setValue(
+          this.datePipe.transform(this.acta.elaborationDate, 'yyyy/MM/dd')
+        );
+        this.form.controls.universalFolio.setValue(this.acta.universalFolio);
+        this.form.controls.act.setValue(this.acta.keysProceedings);
+        this.form.controls.statusAct.setValue(this.acta.statusProceedings);
+        console.log(this.form.controls.fromDate.value);
+
+        //receive
+        // receiptKey clave del que recibe
+        const statusAct = this.acta.statusProceedings; //this.form.get('statusAct').value;
+        console.error('ESATUS ACTA ' + statusAct);
+
+        if (['CERRADO', 'CERRADA'].includes(statusAct)) {
+          this.textDisabled = true;
+        } else if (['ABIERTO', 'ABIERTA'].includes(statusAct)) {
+          this.textDisabled = false;
+        } else if (statusAct === null) {
+          this.textDisabled = true;
+        }
+        this.getDetailProceedingsDevolution(this.form.controls.noAuth.value);
+      },
+      error => {
+        this.alert(
+          'error',
+          this.title,
+          'No se encontraron actas con este numero de expediente'
+        );
+      }
+    );
+  }
+
+  async masive() {
+    this.loading = true;
+    const data: any[] = await this.data.getAll();
+    data.forEach(item => {
+      if (
+        item.di_disponible === 'S' &&
+        this.acta.keysProceedings !== null &&
+        this.acta.elaborationDate !== null
+      ) {
+        item.fecha = `${this.acta.keysProceedings} ${this.datePipe.transform(
+          this.acta.elaborationDate,
+          'dd-MM-yyyy'
+        )}`;
+        item.aprobado = 'SI';
+      } else {
+        item.fecha = null;
+        item.aprobado = 'NO';
+      }
+    });
+    this.data.load(data);
+    this.data.refresh();
+    this.loading = false;
+  }
+
+  closed() {}
+
+  addGood() {
+    if (!['CERRADA', 'CERRADO'].includes(this.acta.statusProceedings)) {
+      if (this.expediente) {
+        this.getDetailProceedingsDevolution(this.expediente, true);
+      } else {
+        this.pupBienesrastreador();
+      }
+    }
+  }
+
+  pupBienesrastreador() {
+    this.alert('warning', this.title, 'Lllamando a rastreador');
+  }
+
+  clean() {
+    this.form.reset();
+    this.data.load([]);
+    this.data.refresh();
+  }
+
+  async postQuery(det: any[]) {
+    return await Promise.all(
+      det.map(async (item: any) => {
+        switch (item.good.ubicationType) {
+          case 'A':
+            item.di_cve_ubicacion = 'ALMACEN';
+            item.di_ubicacion1 = `${
+              item.good.almacen ? item.good.almacen.ubication : ''
+            } LOTE ${item.good.lotNumber ? item.good.lotNumber.id : ''} RACK ${
+              item.good.rackNumber
+            }`;
+            break;
+          case 'B':
+            item.di_cve_ubicacion = 'BOVEDA';
+            item.di_ubicacion1 = `${
+              item.good.boveda ? item.good.boveda.ubication : ''
+            } GAVETA ${item.good.lotNumber ? item.good.lotNumber.id : ''}`;
+            break;
+          case 'D':
+            item.di_cve_ubicacion = 'DEPOSITARÍA';
+            break;
+          default:
+            item.di_ubicacion1 = 'UBICACIÓN DESCONOCIDA';
+            break;
+        }
+        item.di_disponible = 'N';
+        item.aprobado = 'SI';
+        item.description = item.good.description;
+        item.status = item.good.status;
+        item.process = item.good.extDomProcess;
+        item.physicalReceptionDate = item.good.physicalReceptionDate;
+        item.fecha = item.good.observationss
+          ? item.good.observationss
+          : `${this.acta.keysProceedings} ${this.datePipe.transform(
+              this.acta.elaborationDate,
+              'dd-MM-yyyy'
+            )}`;
+        return item;
+      })
+    );
   }
 
   findExpedientById(expedientId: number) {
@@ -202,17 +396,29 @@ export class AuthorizationAssetsDestructionComponent
     this.modalService.show(PreviewDocumentsComponent, config);
   }
 
-  ReadExcel(event: any) {
+  async ReadExcel(event: any) {
+    console.log(this.acta.statusProceedings);
+    if (!this.acta) {
+      this.alert(
+        'warning',
+        this.title,
+        'No se puede realizar la operación, el Acta está cerrada'
+      );
+      return;
+    }
+    this.loading = true;
     let file = event.target.files[0];
-
     let fileReader = new FileReader();
     fileReader.readAsBinaryString(file);
-
+    const dataTable: any[] = await this.data.getAll();
     fileReader.onload = e => {
-      var workbook = XLSX.read(fileReader.result, { type: 'binary' });
-      var sheetNames = workbook.SheetNames;
-      // this.data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]]);
-      console.log(this.data);
+      let workbook = XLSX.read(fileReader.result, { type: 'binary' });
+      let sheetNames = workbook.SheetNames;
+      this.dataFile = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]]);
+      const data = dataTable.concat(this.dataFile);
+      this.data.load(data);
+      this.data.refresh();
+      this.loading = false;
     };
   }
 }

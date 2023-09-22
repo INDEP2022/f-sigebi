@@ -38,6 +38,9 @@ export const COLUMNS = {
         return amount;
       }
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
 };
 
@@ -71,6 +74,9 @@ export const ALLOTMENT_COLUMNS = {
         return amount;
       }
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
   finalVat: {
     title: 'IVA',
@@ -89,6 +95,9 @@ export const ALLOTMENT_COLUMNS = {
       } else {
         return amount;
       }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
   },
   camp2: {
@@ -128,6 +137,9 @@ export const BANK_COLUMNS = {
       console.log('text', text);
       return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
     filter: {
       type: 'custom',
       component: CustomDateFilterComponent,
@@ -163,6 +175,9 @@ export const BANK_COLUMNS = {
       } else {
         return amount;
       }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
   },
   entryOrderId: {
@@ -203,6 +218,9 @@ export const RECEIVED_COLUMNS = {
         return amount;
       }
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
   vat: {
     title: 'IVA',
@@ -222,6 +240,9 @@ export const RECEIVED_COLUMNS = {
         return amount;
       }
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
   amountNoAppVat: {
     title: 'Monto no aplica IVA',
@@ -240,6 +261,9 @@ export const RECEIVED_COLUMNS = {
       } else {
         return amount;
       }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
   },
   transference: {

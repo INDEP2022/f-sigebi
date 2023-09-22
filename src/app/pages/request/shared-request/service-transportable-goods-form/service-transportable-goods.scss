@@ -27,7 +27,7 @@ input:checked[type='checkbox'] {
   }
 
   .description {
-    min-width: 30rem;
+    min-width: 37rem;
   }
 
   .amountNumbercomplies {
@@ -43,6 +43,10 @@ input:checked[type='checkbox'] {
   }
 
   .descriptionDifference {
+    min-width: 20rem;
+  }
+
+  .commentService {
     min-width: 20rem;
   }
 }
