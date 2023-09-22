@@ -58,3 +58,18 @@ export interface IReportImp {
   reportTOKey: string;
   originNb: string;
 }
+
+export interface IDelReportImp {
+  formatNumber: number;
+  goodNumber: number;
+  actNumber: number;
+}
+
+export interface ICostReport {
+  serviceNumber: number;
+  typeServiceNumber: number;
+  turnNumber: number;
+  varCosteNumber: number;
+  importTot: number;
+  amountTot: number;
+}
