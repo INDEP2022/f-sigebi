@@ -56,7 +56,7 @@
             </form-field>
             <form-field
               class="col-md-4"
-              label="seRefiereA"
+              label="se Refiere A"
               [control]="form.get('seRefiereA')"
               *ngIf="false">
               <input
@@ -91,6 +91,16 @@
               <input
                 class="form-control"
                 formControlName="portfolio"
+                type="text" />
+            </form-field>
+            <form-field
+              *ngIf="false"
+              class="col-md-4"
+              label="description"
+              [control]="form.get('description')">
+              <input
+                class="form-control"
+                formControlName="description"
                 type="text" />
             </form-field>
 
@@ -389,7 +399,8 @@
           <button
             type="button"
             [disabled]="formType !== 'bie'"
-            class="btn btn-secondary btn-sm active w-100">
+            class="btn btn-secondary btn-sm active w-100"
+            (click)="BtnGoodPreview()">
             Bien Vista Previa
           </button>
         </div>
@@ -397,7 +408,8 @@
           <button
             type="button"
             [disabled]="formType !== 'por'"
-            class="btn btn-secondary btn-sm active w-100">
+            class="btn btn-secondary btn-sm active w-100"
+            (click)="btnPrivous()">
             Pflio. Vista Previa
           </button>
         </div>

@@ -108,8 +108,39 @@ export class GoodsJobManagementService extends HttpService {
     const route = `${GoodsJobManagementEndpoints.goodsManagement}`;
     return this.post(route, params);
   }
+
   postDocumentJobManagement(params: any) {
     const route = `${GoodsJobManagementEndpoints.documentJobMan}`;
     return this.post(route, params);
+  }
+
+  postOficeJobManagement(params: any) {
+    const route = `${GoodsJobManagementEndpoints.copiesJobMana}`;
+    return this.post(route, params);
+  }
+
+  getMJobJuridica3(proceedingsNumber: any) {
+    const route = `${GoodsJobManagementEndpoints.mJobManagement}?filter.managementNumber=$eq:${proceedingsNumber}&filter.problematiclegal=$ilike:juridica 3`;
+    return this.get(route);
+  }
+
+  getMJobJuridica4(proceedingsNumber: any) {
+    const route = `${GoodsJobManagementEndpoints.mJobManagement}?filter.managementNumber=$eq:${proceedingsNumber}&filter.problematiclegal=$ilike:juridica 4`;
+    return this.get(route);
+  }
+
+  deleteOficeJobManagement(params: any) {
+    const route = `${GoodsJobManagementEndpoints.goodsManagement}`;
+    return this.delete(route, params);
+  }
+
+  deleteCopiesJob(id: any) {
+    const route = `${GoodsJobManagementEndpoints.copiesJobMana}/${id}`;
+    return this.delete(route);
+  }
+
+  deleteDocumentJob(params: any) {
+    const route = `${GoodsJobManagementEndpoints.copiesJobMana}`;
+    return this.delete(route, params);
   }
 }

@@ -343,4 +343,9 @@ export class DocumentsService extends HttpService {
   postDocumentHAttached(params: any) {
     return this.post(DocumentsEndpoints.attachedDocument, params);
   }
+
+  getDocumentsdistint(folio: any) {
+    const route = `${DocumentsEndpoints.document}?filter.associateUniversalFolio=$eq:${folio}||filter.file.universalFolio=$eq:${folio}`;
+    return this.get(route);
+  }
 }

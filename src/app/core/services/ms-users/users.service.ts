@@ -209,4 +209,8 @@ export class UsersService extends HttpService {
   getComerUserXCan(params: _Params) {
     return this.get(UserEndpoints.ComerUser, params);
   }
+
+  getUsersbyUSer(user: any) {
+    return this.get(`${UserEndpoints.SegUsers}?filter.id=$eq:${user}`);
+  }
 }

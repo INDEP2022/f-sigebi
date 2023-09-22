@@ -7,4 +7,5 @@ export enum GoodsJobManagementEndpoints {
   nextval = 'factadboficiogestrel3/consultation4',
   goodsManagement = 'goods-job-management',
   documentJobMan = 'document-job-management',
+  copiesJobMana = 'copies-job-management',
 }
