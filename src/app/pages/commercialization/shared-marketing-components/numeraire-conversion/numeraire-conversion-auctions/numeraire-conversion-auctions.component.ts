@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -30,10 +30,9 @@ export class NumeraireConversionAuctionsComponent
   @Input() address: string;
   reloadExpenses = 0;
   form: FormGroup = new FormGroup({});
-
   selectedExpenseData: IFillExpenseDataCombined;
   nameEvent = '';
-  disabledParcial = false;
+  showParcial = true;
   ilikeFilters = ['observations', 'processKey', 'statusVtaId', 'place', 'user'];
   dateFilters = ['eventDate', 'failureDate'];
   eventColumns = { ...COLUMNS };
@@ -54,6 +53,16 @@ export class NumeraireConversionAuctionsComponent
 
   ngOnInit(): void {
     this.prepareForm();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['address'] && changes['address'].currentValue) {
+      if (changes['address'].currentValue === 'M') {
+        this.showParcial = false;
+      } else {
+        this.showParcial = true;
+      }
+    }
   }
 
   get eventService() {
@@ -123,7 +132,7 @@ export class NumeraireConversionAuctionsComponent
 
   validateParcialButtons(event: IComerEvent) {
     if (this.address === 'I') {
-      this.disabledParcial = false;
+      this.showParcial = true;
       const filterParams = new FilterParams();
       filterParams.addFilter('idStatusVta', 'GARA');
       filterParams.addFilter('idEvent', event.id);
@@ -133,7 +142,7 @@ export class NumeraireConversionAuctionsComponent
         .subscribe({
           next: response => {
             if (response && response.data && response.data.length === 0) {
-              this.disabledParcial = true;
+              this.showParcial = false;
             }
           },
         });

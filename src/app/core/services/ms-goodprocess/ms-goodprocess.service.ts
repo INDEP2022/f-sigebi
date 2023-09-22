@@ -297,4 +297,8 @@ export class GoodprocessService extends HttpService {
   getChangeStatusGood(event: any) {
     return this.get(`${GoodprocessEndpoints.ChangeStatusGood}/${event}`);
   }
+
+  updateGoodsByPackage(body: { pacakgeNumber: number; goodNumber: string }) {
+    return this.post(`${GoodprocessEndpoints.UpdateGoodsByPackage}`, body);
+  }
 }
