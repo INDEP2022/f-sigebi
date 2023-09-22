@@ -73,3 +73,13 @@ export interface ICostReport {
   importTot: number;
   amountTot: number;
 }
+
+export interface IBitacora {
+  id: number;
+  formatNumber: number;
+  reportNumber: number;
+  varCosteNumber: number;
+  changeDate: string;
+  justification: string;
+  usrRegister: string;
+}
