@@ -23,6 +23,7 @@
             <textarea
               *ngIf="
                 (showForm && op == 1) ||
+                (showForm && op != 5 && op != 3 && op != 2) ||
                 (!showForm && op == 9) ||
                 (!showForm && op == 13)
               "
@@ -33,6 +34,7 @@
               *ngIf="
                 (showForm && op == 2) ||
                 (showForm && op == 3) ||
+                (showForm && op == 5) ||
                 (showForm && op == 8) ||
                 (showForm && op == 13) ||
                 (!showForm && op != 9)
@@ -49,6 +51,7 @@
               formControlName="notes"
               *ngIf="
                 (showForm && op == 1) ||
+                (showForm && op != 5 && op != 3 && op != 2) ||
                 (!showForm && op == 9) ||
                 (!showForm && op == 9) ||
                 (!showForm && op == 13)
@@ -62,6 +65,7 @@
                 (showForm && op == 8) ||
                 (showForm && op == 2) ||
                 (showForm && op == 3) ||
+                (showForm && op == 5) ||
                 (showForm && op == 13) ||
                 (!showForm && op != 9)
               "></textarea>

@@ -11,7 +11,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class GenerateReportFormComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
-
+  processFirm: string = '';
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
   }
