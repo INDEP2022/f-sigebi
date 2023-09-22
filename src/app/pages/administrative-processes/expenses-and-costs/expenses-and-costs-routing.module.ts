@@ -56,7 +56,10 @@ const routes: Routes = [
               './../insurance-and-surveillance/costs-resume/costs-resume.module'
             )
           ).CostsResumeModule,
-        data: { title: 'Resumen de Gastos' },
+        data: {
+          title: 'Resumen de Gastos',
+          screen: 'FRESUMENCOSTOS',
+        },
       },
       {
         path: 'expenses-format',
@@ -113,4 +116,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ExpensesAndCostsRoutingModule {}
+export class ExpensesAndCostsRoutingModule { }
