@@ -530,7 +530,10 @@
         </button>
       </div>
       <div class="m-3">
-        <button (click)="salvar()" class="btn btn-primary btn-sm active">
+        <button
+          [disabled]="!valForm"
+          (click)="salvar()"
+          class="btn btn-primary btn-sm active">
           Guardar
           <i aria-hidden="true" class="fa fa-save"></i>
         </button>
