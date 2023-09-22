@@ -29,11 +29,9 @@ import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strate
 import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { GASTOS } from '../implementation-report-historic/implementation-report-historic-columns';
 import { ImplementationReportHistoricComponent } from '../implementation-report-historic/implementation-report-historic.component';
-import {
-  IMPLEMENTATIONREPORT_COLUMNS,
-  IMPLEMENTATION_COLUMNS,
-} from './implementation-report-columns';
+import { IMPLEMENTATIONREPORT_COLUMNS } from './implementation-report-columns';
 @Component({
   selector: 'app-implementation-report',
   templateUrl: './implementation-report.component.html',
@@ -101,7 +99,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       selectMode: 'multi',
       columns: IMPLEMENTATIONREPORT_COLUMNS,
     };
-    this.settings2.columns = IMPLEMENTATION_COLUMNS;
+    this.settings2.columns = GASTOS;
   }
 
   ngOnInit(): void {
@@ -291,6 +289,10 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     this.strategyServiceService.getCosts(this.filterCost).subscribe({
       next: data => {
         this.costosDes = data.data;
+        const result = data.data.map((filter: any) => {
+          return filter.no_varcosto;
+        });
+        this.alert('success', `Variable de Costo  ${result}`, '');
       },
       error: () => {
         this.loading = false;
@@ -329,7 +331,9 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
             this.serviceOrdersForm
               .get('observations')
               .setValue(value.observations);
-            this.serviceOrdersForm.get('process').setValue(value.processNumber);
+            this.serviceOrdersForm
+              .get('process')
+              .patchValue(value.processNumber);
           });
         },
       });
@@ -468,7 +472,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     if (this.selectedGooods.length == 0) {
       this.alert(
         'info',
-        'Es necesario seleccionar Bienes para generar el Reporte',
+        'Es necesario seleccionar bienes para generar el reporte',
         ''
       );
       return;
@@ -557,6 +561,22 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       this.alert('warning', 'No existe el reporte de Implementación', '');
       return;
     }
+    if (this.serviceOrdersForm.value.process === null) {
+      this.alert('warning', 'Debe seleccionar el proceso', '');
+      return;
+    }
+    if (this.serviceOrdersForm.value.serviceOrderKey === null) {
+      this.alert('warning', 'Debe seleccionar el servicio', '');
+      return;
+    }
+    if (this.serviceOrdersForm.value.type === null) {
+      this.alert('warning', 'Debe seleccionar el tipo', '');
+      return;
+    }
+    if (this.serviceOrdersForm.value.turno === null) {
+      this.alert('warning', 'Debe seleccionar el turno', '');
+      return;
+    }
     this.alertQuestion(
       'question',
       'Incorporar',
@@ -571,6 +591,22 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
           importTot: this.totalItems,
           amountTot: 2000,
         };
+        let bita = {
+          formatNumber: this.serviceOrdersForm.value.noFormat,
+          reportNumber: this.reportImp.reportNumber,
+          changeDate: new Date(),
+          justification: this.serviceOrdersForm.value.observations,
+          status: this.serviceOrdersForm.get('status').value,
+          usrRegister: this.authService.decodeToken().username,
+          nbOrigin: '',
+        };
+        this.goodPosessionThirdpartyService
+          .posStrategyBitacora(bita)
+          .subscribe({
+            next: response => {
+              console.log('ok bitscora', response);
+            },
+          });
         this.goodPosessionThirdpartyService.getIncCosto(this.costoR).subscribe({
           next: data => {
             console.log(data.data);
