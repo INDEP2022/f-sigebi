@@ -7,6 +7,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IOrderServiceDTO } from 'src/app/core/models/ms-order-service/order-service.mode';
+import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -64,13 +65,13 @@ export class OrderServiceDeliveryFormComponent
     private fb: FormBuilder,
     private programmingService: ProgrammingRequestService,
     private activeRouter: ActivatedRoute,
-    private orderService: OrderServiceService
+    private orderService: OrderServiceService,
+    private signatoriesService: SignatoriesService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    console.log('task', this.task);
     this.op = this.task;
     this.programmingId = this.activeRouter.snapshot.params['id'];
 
@@ -369,27 +370,114 @@ export class OrderServiceDeliveryFormComponent
 
   generateReport() {
     if (this.task != 5 && this.task != 6) {
-      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      if (this.task == 2) {
+        let config = {
+          ...MODAL_CONFIG,
+          class: 'modal-lg modal-dialog-centered',
+        };
 
-      config.initialState = {
-        callback: (next: boolean, infoSign: any) => {
-          if (next) {
-            console.log('infoSign', infoSign);
-            if (infoSign.electronicSignature == true) {
-            } else {
-              this.showReport();
+        config.initialState = {
+          callback: async (next: boolean, infoSign: any) => {
+            if (next) {
+              if (infoSign.electronicSignature == true) {
+                const createSign = await this.createSignature(infoSign);
+                if (createSign) {
+                  this.showReport();
+                } else {
+                  this.alert('error', 'Error', 'Error al crear el firmante');
+                }
+              } else {
+                this.showReport();
+              }
             }
-          }
-        },
-      };
+          },
+        };
 
-      const createService = this.modalService.show(
-        GenerateReportFormComponent,
-        config
-      );
+        this.modalService.show(GenerateReportFormComponent, config);
+      } else if (this.task == 3) {
+        let config = {
+          ...MODAL_CONFIG,
+          class: 'modal-lg modal-dialog-centered',
+        };
+
+        config.initialState = {
+          processFirm: 'firmRegionalDelegation',
+          callback: async (next: boolean, infoSign: any) => {
+            if (next) {
+              if (infoSign.electronicSignature == true) {
+                const createSign = await this.createSignature(infoSign);
+                if (createSign) {
+                  this.showReport();
+                } else {
+                  this.alert('error', 'Error', 'Error al crear el firmante');
+                }
+              } else {
+                this.showReport();
+              }
+            }
+          },
+        };
+
+        const createService = this.modalService.show(
+          GenerateReportFormComponent,
+          config
+        );
+      }
     } else {
       this.showReport();
     }
+  }
+
+  createSignature(infoSign: any) {
+    return new Promise((resolve, reject) => {
+      const learnedType = 245;
+      const learndedId = 516; // Id Orden de Servicio
+
+      this.signatoriesService
+        .getSignatoriesFilter(learnedType, learndedId)
+        .subscribe({
+          next: response => {
+            /*this.signatoriesService
+              .deleteFirmante(Number(response.data[0].signatoryId))
+              .subscribe({
+                next: () => {
+                  
+                },
+              }); */
+
+            const formData: Object = {
+              learnedId: 516, // Orden de servicio
+              learnedType: 245,
+              boardSignatory: 'ORDEN_SERVICIO',
+              columnSignatory: 'TIPO_FIRMA',
+              name: infoSign.responsible,
+              post: infoSign.charge,
+            };
+
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+            });
+          },
+          error: error => {
+            const formData: Object = {
+              learnedId: 516, // Orden de servicio
+              learnedType: 245,
+              boardSignatory: 'ORDEN_SERVICIO',
+              columnSignatory: 'TIPO_FIRMA',
+              name: infoSign.responsible,
+              post: infoSign.charge,
+            };
+
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+            });
+          },
+        });
+    });
   }
 
   showReport() {
