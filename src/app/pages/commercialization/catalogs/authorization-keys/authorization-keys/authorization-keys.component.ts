@@ -59,7 +59,7 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
       },
       error: (error: any) => {
         if (error.status == 400) {
-          this.alert('warning', 'Advertencia', 'No se encontraron registros');
+          this.alert('warning', 'No se encontraron registros', '');
         }
         this.eventForm.controls['processKey'].setValue('');
         this.eventForm.controls['observations'].setValue('');
