@@ -9,4 +9,5 @@ export enum ThirdPartyAdmonEndpoints {
   StrategyGoods = 'strategy-goods',
   StrategyLog = 'strategy-log',
   StrategyFormatV2 = 'strategy-format/getAllV2',
+  CostosGoods = 'aplication/pu-des-imports',
 }

@@ -51,13 +51,17 @@
           *ngIf="
             (!showForm && op == 9) ||
             (!showForm && op == 13) ||
-            (showForm && op != 2)
+            (showForm && op != 2 && showForm && op != 3)
           " />
 
         <input
           class="form-control"
           formControlName="reasonsNotPerform"
-          *ngIf="(!showForm && op != 9) || (showForm && op == 2)"
+          *ngIf="
+            (!showForm && op != 9) ||
+            (showForm && op == 2) ||
+            (showForm && op == 3)
+          "
           readonly />
       </form-field>
       <!--
@@ -74,7 +78,7 @@
     <div class="col-md-4">
       <div class="form-group">
         <label class="ml-3 text-right">Fecha de Turnano&#58;</label>
-        <span> {{ orderService?.shiftDate | date : 'dd/MM/yyyy' }} </span>
+        <span> {{ orderService?.shiftDate | date: 'dd/MM/yyyy' }} </span>
       </div>
     </div>
 
@@ -89,7 +93,7 @@
           *ngIf="
             (showForm && op == 9) ||
             (!showForm && op == 13) ||
-            (showForm && op != 2)
+            (showForm && op != 2 && showForm && op != 3)
           " />
         <input
           type="text"
@@ -98,7 +102,8 @@
           *ngIf="
             (!showForm && op != 9) ||
             (!showForm && op != 9) ||
-            (showForm && op == 2)
+            (showForm && op == 2) ||
+            (showForm && op == 3)
           "
           readonly />
       </form-field>
@@ -115,7 +120,7 @@
       *ngIf="
         (!showForm && op == 9) ||
         (!showForm && op == 13) ||
-        (showForm && op != 2)
+        (showForm && op != 2 && showForm && op != 3)
       ">
       <form-check label="Consolidado con Contenedores" for="checkGood">
         <input
@@ -133,7 +138,8 @@
         (!showForm && op == 9) ||
         (!showForm && op == 13) ||
         (!showForm && op != 9) ||
-        (showForm && op == 2)
+        (showForm && op == 2) ||
+        (showForm && op == 3)
       ">
       <form-check label="Consolidado con Contenedores" for="checkGood">
         <input
@@ -179,14 +185,18 @@
           *ngIf="
             (!showForm && op == 9) ||
             (!showForm && op == 13) ||
-            (showForm && op != 2)
+            (showForm && op != 2 && showForm && op != 3)
           " />
 
         <input
           type="text"
           class="form-control"
           formControlName="folioTlp"
-          *ngIf="(!showForm && op != 9) || (showForm && op == 2)"
+          *ngIf="
+            (!showForm && op != 9) ||
+            (showForm && op == 2) ||
+            (showForm && op == 3)
+          "
           readonly />
       </form-field>
       <!--<div class="form-group">
@@ -201,7 +211,7 @@
       *ngIf="
         (!showForm && op == 9) ||
         (!showForm && op == 13) ||
-        (showForm && op != 2)
+        (showForm && op != 2 && showForm && op != 3)
       ">
       <form-check label="Visita Ocular" for="checkGoodVisit">
         <input
@@ -219,7 +229,8 @@
         (!showForm && op == 9) ||
         (!showForm && op == 13) ||
         (!showForm && op != 9) ||
-        (showForm && op == 2)
+        (showForm && op == 2) ||
+        (showForm && op == 3)
       ">
       <form-check label="Visita Ocular" for="checkGood">
         <input

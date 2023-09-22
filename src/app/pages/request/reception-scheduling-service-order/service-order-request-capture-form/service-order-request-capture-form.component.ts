@@ -39,7 +39,7 @@ export class ServiceOrderRequestCaptureFormComponent
   form: FormGroup = new FormGroup({});
   ordServform: FormGroup = new FormGroup({});
   parentModal: BsModalRef;
-  op: number = 1;
+  op: number = null;
   showForm: boolean = true;
   orderServiceId: number = null;
   lsProgramming: string = null;
@@ -48,6 +48,10 @@ export class ServiceOrderRequestCaptureFormComponent
   isUpdate: boolean = false;
 
   total: string = null;
+  task: any = null;
+  isApprove: boolean = false;
+  title: string = '';
+  typeOrder: string = 'reception';
 
   //private programmingService = inject(ProgrammingRequestService);
   //private router = inject(ActivatedRoute);
@@ -64,6 +68,10 @@ export class ServiceOrderRequestCaptureFormComponent
   }
 
   ngOnInit(): void {
+    const task = JSON.parse(localStorage.getItem('Task'));
+    this.task = task['op'];
+    this.op = this.task;
+    console.log(this.task);
     this.programmingId = +this.activeRouter.snapshot.params['id'];
     this.prepareProgForm();
     this.prepareOrderServiceForm();
@@ -218,25 +226,25 @@ export class ServiceOrderRequestCaptureFormComponent
         let ordServiceForm = this.ordServform.getRawValue();
         this.isUpdate = true;
         this.updateOrderService(ordServiceForm);
-        /*this.onLoadToast(
-          'success',
-          'Orden de servicio guardada correctamente',
-          ''
-        );*/
+        setTimeout(() => {
+          this.isUpdate = false;
+        }, 1000);
       }
     });
   }
 
   setClaimRequest() {
     this.claimRequest = true;
-    this.ordServform.controls['transferLocation'].enable();
-    this.ordServform.controls['transferAddress'].enable();
-    this.ordServform.controls['sourceStore'].enable();
-    this.ordServform.controls['originStreet'].enable();
-    this.ordServform.controls['originPostalCode'].enable();
-    this.ordServform.controls['colonyOrigin'].enable();
-    this.ordServform.controls['notes'].enable();
-    this.ordServform.controls['observation'].enable();
+    if (this.task == 1) {
+      this.ordServform.controls['transferLocation'].enable();
+      this.ordServform.controls['transferAddress'].enable();
+      this.ordServform.controls['sourceStore'].enable();
+      this.ordServform.controls['originStreet'].enable();
+      this.ordServform.controls['originPostalCode'].enable();
+      this.ordServform.controls['colonyOrigin'].enable();
+      this.ordServform.controls['notes'].enable();
+      this.ordServform.controls['observation'].enable();
+    }
   }
 
   getOrderService() {
@@ -255,6 +263,7 @@ export class ServiceOrderRequestCaptureFormComponent
           // setTimeout(() => {
           this.ordServform.patchValue(resp.data[0]);
           this.orderServiceId = resp.data[0].id;
+          this.setTitle();
           // }, 100);
         },
       });
@@ -313,8 +322,14 @@ export class ServiceOrderRequestCaptureFormComponent
   }
 
   openReport(signatore: ISignatories, signature: boolean) {
+    let idTypeDoc = 221;
+    if (this.task == 2) {
+    } else if (this.task == 3) {
+    } else if (this.task == 5) {
+    } else if (this.task == 6) {
+    }
     const idProg = this.programmingId;
-    const idTypeDoc = 221;
+
     let config: ModalOptions = {
       initialState: {
         idProg,
@@ -324,6 +339,7 @@ export class ServiceOrderRequestCaptureFormComponent
         programming: this.programming,
         callback: (next: boolean) => {
           if (next) {
+            this.isApprove = true;
             //this.getProgrammingId();
           }
         },
@@ -348,6 +364,7 @@ export class ServiceOrderRequestCaptureFormComponent
         callback: (next: boolean) => {
           if (next) {
             //this.getProgrammingId();
+            this.isApprove = true;
           }
         },
       },
@@ -377,5 +394,37 @@ export class ServiceOrderRequestCaptureFormComponent
     };
     //RejectionJustifyFormComponent
     this.modalService.show(RejectionCommentFormComponent, config);
+  }
+
+  approve() {
+    const folio = this.ordServform.get('serviceOrderFolio').value;
+    this.alertQuestion(
+      'question',
+      `¿Deseas aprobar la orden de servicio con folio: ${folio}?`,
+      ''
+    ).then(question => {
+      this.onLoadToast('success', 'Solicitud Aprovada', 'falta la logica');
+    });
+  }
+
+  setTitle() {
+    const folio = this.ordServform.get('serviceOrderFolio').value;
+    if (this.task == 1) {
+      this.title = 'Solicitud Orden de Servicio (Captura de Servicios)';
+    } else if (this.task == 2) {
+      this.title = `Solicitud Orden de Servicio (Validación de Servicio) con folio: ${folio}`;
+    } else if (this.task == 3) {
+      this.title = `Aprobación de servicios (Programación de recepción: ${this.programming.folio}) para la orden de servicio con folio: ${folio}`;
+    } else if (this.task == 4) {
+      this.title = `Reporte de implementación (Programación de recepción: ${this.programming.folio}) para la orden de servicio con folio: ${folio}`;
+    } else if (this.task == 5) {
+      this.title = `Validación de reporte de implementación (Programación de recepción: ${this.programming.folio}) para la orden de servicio con folio: ${folio}`;
+    } else if (this.task == 6) {
+      this.title = `Validación de reporte de Implementación (Programación de recepción: ${this.programming.folio}) para la orden de servicio con folio: ${folio}`;
+    } else if (this.task == 7) {
+      this.title = `Reporte de Implementación aprobado (Programación de recepción: ${this.programming.folio}) para la orden de servicio con folio: ${folio}`;
+    } else if (this.task == 8) {
+      this.title = `Solicitud Orden de Servicio (Validación de Servicio) con el folio: ${folio}`;
+    }
   }
 }
