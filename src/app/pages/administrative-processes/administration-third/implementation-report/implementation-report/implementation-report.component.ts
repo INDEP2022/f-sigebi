@@ -1,15 +1,19 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import {
+  ICostReport,
+  IDelReportImp,
   IReportImp,
   IStrategyLovSer,
   IStrategyProcess,
@@ -18,17 +22,16 @@ import {
   IStrateyCost,
 } from 'src/app/core/models/ms-strategy-service/strategy-service.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { IndicatorsParametersService } from 'src/app/core/services/ms-parametergood/indicators-parameter.service';
 import { StrategyProcessService } from 'src/app/core/services/ms-strategy/strategy-process.service';
 import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { GASTOS } from '../implementation-report-historic/implementation-report-historic-columns';
 import { ImplementationReportHistoricComponent } from '../implementation-report-historic/implementation-report-historic.component';
-import {
-  IMPLEMENTATIONREPORT_COLUMNS,
-  IMPLEMENTATION_COLUMNS,
-} from './implementation-report-columns';
+import { IMPLEMENTATIONREPORT_COLUMNS } from './implementation-report-columns';
 @Component({
   selector: 'app-implementation-report',
   templateUrl: './implementation-report.component.html',
@@ -39,7 +42,9 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   filterType: IStrategyType;
   filterLovSer: IStrategyLovSer;
   filterTurn: IStrategyTurn;
+  lv_VALELI: number = 0;
   filterCost: IStrateyCost;
+  costosDes: any[];
   totalItems2: number = 0;
   loading2: boolean = false;
   columnFilters: any = [];
@@ -47,6 +52,8 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   reportImp: IReportImp;
   area: number = 0;
   data1: any[] = [];
+  mEli: IDelReportImp;
+  costoR: ICostReport;
   dataTableGood: LocalDataSource = new LocalDataSource();
   actasObject: IProccedingsDeliveryReception;
   desStrategy: string = '';
@@ -81,7 +88,9 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     private datePipe: DatePipe,
     private strategyProcessService: StrategyProcessService,
     private goodPosessionThirdpartyService: GoodPosessionThirdpartyService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings = {
@@ -90,7 +99,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       selectMode: 'multi',
       columns: IMPLEMENTATIONREPORT_COLUMNS,
     };
-    this.settings2.columns = IMPLEMENTATION_COLUMNS;
+    this.settings2.columns = GASTOS;
   }
 
   ngOnInit(): void {
@@ -279,10 +288,11 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
 
     this.strategyServiceService.getCosts(this.filterCost).subscribe({
       next: data => {
-        this.bienesStrategy.load(data.data);
-        this.totalItems2 = data.count;
-        this.bienesStrategy.refresh();
-        console.log('costos', data);
+        this.costosDes = data.data;
+        const result = data.data.map((filter: any) => {
+          return filter.no_varcosto;
+        });
+        this.alert('success', `Variable de Costo  ${result}`, '');
       },
       error: () => {
         this.loading = false;
@@ -321,7 +331,9 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
             this.serviceOrdersForm
               .get('observations')
               .setValue(value.observations);
-            this.serviceOrdersForm.get('process').setValue(value.processNumber);
+            this.serviceOrdersForm
+              .get('process')
+              .patchValue(value.processNumber);
           });
         },
       });
@@ -338,7 +350,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
         return;
       }
       this.alertQuestion(
-        'warning',
+        'question',
         'Generar',
         '¿Seguro que desea generar el Reporte de Implementación?'
       ).then(question => {
@@ -369,10 +381,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
             //   'El tiempo para Generar la Clave de Reporte a Expirado',
             //   ''
             // );
-            let fechaCapture = this.dateCapt;
-            let fechaCierre = this.dateClose;
-            let vParUser = this.authService.decodeToken().username;
-
+            this.generaReporte();
             console.log(
               ' en espera dde funcion para generar',
               this.dateCapt + this.dateClose
@@ -395,8 +404,8 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       return;
     }
     this.alertQuestion(
-      'warning',
-      'Generar',
+      'question',
+      'Incorporar',
       '¿Seguro que desea Incorporar Bienes al Reporte?'
     ).then(question => {
       if (question.isConfirmed) {
@@ -446,7 +455,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       this.serviceOrdersForm.value.turno == null ||
       this.serviceOrdersForm.value.serviceOrderKey == null
     ) {
-      this.alertInfo(
+      this.alert(
         'info',
         'Debe Seleccionar Prceso, Servicio, Tipo y Turno para generar la Clave',
         ''
@@ -461,15 +470,158 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   }
   incorporaGoods() {
     if (this.selectedGooods.length == 0) {
-      this.alertInfo(
+      this.alert(
         'info',
-        'Es necesario seleccionar Bienes para generar el Reporte',
+        'Es necesario seleccionar bienes para generar el reporte',
         ''
       );
       return;
     }
   }
-  elimina() {}
-  incorpora() {}
-  costos() {}
+
+  elimina() {
+    if (this.reportImp.reportNumber === null) {
+      this.alert('info', 'No existe el reporte de implementación', '');
+      return;
+    }
+    this.alertQuestion(
+      'question',
+      'Eliminar',
+      `¿Seguro que desea eliminar bienes bien(es) del Reporte de Implementación ${this.serviceOrdersForm.value.reportKey}? `
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.selectedGooods.forEach(good => {
+          const data = {
+            formatNumber: good.formatNumber,
+            goodNumber: good.goodNumber.id,
+            actNumber: good.actNumber,
+          };
+          this.goodPosessionThirdpartyService
+            .deleteReportGoodImp(data)
+            .subscribe(res => {
+              console.log(res);
+              this.lv_VALELI = 4;
+            });
+        });
+      } else {
+        this.lv_VALELI = 5;
+      }
+      this.dataTableGood.refresh();
+      console.log(this.lv_VALELI);
+    });
+  }
+  generaReporte(): void {
+    try {
+      if (this.serviceOrdersForm.value.regionalCoordination === null) {
+        this.alert('warning', 'Debe seleccionar la Coordinación Regional', '');
+        return;
+      }
+      let params = {
+        P_ANIO: 2023,
+        P_COORDINACION: this.serviceOrdersForm.value.regionalCoordination,
+        P_MES: 12,
+        P_USUARIO: this.authService.decodeToken().username,
+      };
+      this.siabService
+        // .fetchReport('RINDICA_0006', params)
+        .fetchReport('blank', params)
+        .subscribe(response => {
+          // response=null;
+          if (response !== null) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            // this.onLoadToast(
+            //   'warning',
+            //   'advertencia',
+            //   'Sin Datos Para los Rangos de Fechas Suministrados'
+            // );
+            console.log('error');
+          }
+        });
+    } catch {
+      console.log('error');
+    }
+  }
+
+  incorporaCostos() {
+    if (this.reportImp.reportNumber === null) {
+      this.alert('warning', 'No existe el reporte de Implementación', '');
+      return;
+    }
+    if (this.serviceOrdersForm.value.process === null) {
+      this.alert('warning', 'Debe seleccionar el proceso', '');
+      return;
+    }
+    if (this.serviceOrdersForm.value.serviceOrderKey === null) {
+      this.alert('warning', 'Debe seleccionar el servicio', '');
+      return;
+    }
+    if (this.serviceOrdersForm.value.type === null) {
+      this.alert('warning', 'Debe seleccionar el tipo', '');
+      return;
+    }
+    if (this.serviceOrdersForm.value.turno === null) {
+      this.alert('warning', 'Debe seleccionar el turno', '');
+      return;
+    }
+    this.alertQuestion(
+      'question',
+      'Incorporar',
+      '¿Seguro que desea Incorporar Costos al Reporte?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.costoR = {
+          serviceNumber: this.serviceOrdersForm.value.serviceOrderKey,
+          typeServiceNumber: this.serviceOrdersForm.value.type,
+          turnNumber: this.serviceOrdersForm.value.turno,
+          varCosteNumber: 7,
+          importTot: this.totalItems,
+          amountTot: 2000,
+        };
+        let bita = {
+          formatNumber: this.serviceOrdersForm.value.noFormat,
+          reportNumber: this.reportImp.reportNumber,
+          changeDate: new Date(),
+          justification: this.serviceOrdersForm.value.observations,
+          status: this.serviceOrdersForm.get('status').value,
+          usrRegister: this.authService.decodeToken().username,
+          nbOrigin: '',
+        };
+        this.goodPosessionThirdpartyService
+          .posStrategyBitacora(bita)
+          .subscribe({
+            next: response => {
+              console.log('ok bitscora', response);
+            },
+          });
+        this.goodPosessionThirdpartyService.getIncCosto(this.costoR).subscribe({
+          next: data => {
+            console.log(data.data);
+            this.bienesStrategy.load(data.data);
+            this.totalItems2 = data.count;
+            this.bienesStrategy.refresh();
+            console.log('costos', data);
+          },
+        });
+        console.log('aqui se incorporan');
+      } else {
+        return;
+      }
+    });
+  }
+
+  bitacora() {}
 }

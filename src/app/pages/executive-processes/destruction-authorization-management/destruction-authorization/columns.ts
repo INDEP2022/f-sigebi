@@ -94,7 +94,7 @@ export const DICTATION_COLUMNS = {
 };
 
 export const ACTA_RECEPTION_COLUMNS = {
-  cve_acta: {
+  actaCve: {
     title: 'ACTAS DE RECEPCIÓN',
     sort: false,
   },

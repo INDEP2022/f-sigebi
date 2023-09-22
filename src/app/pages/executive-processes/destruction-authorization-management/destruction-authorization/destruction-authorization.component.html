@@ -4,7 +4,7 @@
       <h5 class="title">
         GESTI&Oacute;N DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N
       </h5>
-      <div class="col-md-5 buttons">
+      <div class="col-md-6 buttons">
         <div>
           <button
             class="btn btn-success active btn-sm mx-1"
@@ -12,14 +12,15 @@
             Nueva Acta
           </button>
           <button
-            class="btn btn-info active btn-sm mr-1"
+            class="btn btn-danger btn-sm active mr-3"
             (click)="queryProceeding()">
-            Consultar Acta
+            Limpiar <i class="fas fa-eraser"> </i>
           </button>
           <button
-            class="btn btn-info active btn-sm mr-1"
+            class="btn btn-primary btn-sm active m-3"
             (click)="keyProceedingchange()">
-            Consultar Acta 2
+            Consultar Acta
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
           <confirm-button
             [loading]="loading"
@@ -224,16 +225,29 @@
     </div>
     <hr />
     <div class="row">
-      <div class="form-material col-md-6">
-        <search-bar
-          [filterParams]="filterParams2"
-          [filterField]="searchFilter2"></search-bar>
-      </div>
-
-      <div class="col-md-6">
-        <button class="btn btn-primary active btn-sm" (click)="deleteGood()">
-          Eliminar
-        </button>
+      <div class="col-md-12">
+        <div class="row pt-2">
+          <div class="col-md-12 text-center mt-4 mb-4">
+            <button
+              tooltip="Agregar Bien"
+              containerClass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+              type="button"
+              (click)="insertDetailFromOn()">
+              <!-- Mover uno -->
+              <i class="bx bx-chevron-down bx-md"></i>
+            </button>
+            <button
+              tooltip="Quitar Bien"
+              containerClass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+              type="button"
+              (click)="deleteGood()">
+              <!-- Quitar uno -->
+              <i class="bx bx-chevron-up bx-md"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     <div class="row pt-5">
@@ -244,10 +258,10 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings3"
-              [source]="goodPDS"></ng2-smart-table>
+              [source]="goodPDS1"></ng2-smart-table>
             <!-- </div> -->
             <app-pagination
-              [filterParams]="filterParams2"
+              [params]="params8"
               [totalItems]="totalItems3"></app-pagination>
           </div>
         </div>
