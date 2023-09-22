@@ -74,58 +74,42 @@
   </div>
   <div class="row">
     <div class="md-tabs">
-      <tabset>
-        <tab heading="Conversión Parcial" id="tab1">
-          <tr>
-            <td colspan="5" align="center">
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm active mr-3"
-                [disabled]="disabledParcial"
-                (click)="calculaParc()">
-                Calcular
-              </button>
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm active mr-3"
-                [disabled]="disabledParcial"
-                (click)="convierteParcial()">
-                Convertir
-              </button>
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm active mr-3"
-                (click)="reporte()">
-                Reporte
-              </button>
-            </td>
-          </tr>
-        </tab>
-        <tab heading="Conversión Total" id="tab1">
-          <tr>
-            <td colspan="5" align="center">
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm active mr-3"
-                (click)="calcula()">
-                Calcular
-              </button>
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm active mr-3"
-                (click)="convierte()">
-                Convertir
-              </button>
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm active mr-3"
-                (click)="reporte()">
-                Reporte
-              </button>
-            </td>
-          </tr>
-        </tab>
-      </tabset>
+      <tr>
+        <td colspan="5" align="center">
+          <button
+            *ngIf="showParcial"
+            type="button"
+            class="btn btn-secondary btn-sm active mr-3"
+            (click)="calculaParc()">
+            Calcular Parcial
+          </button>
+          <button
+            *ngIf="showParcial"
+            type="button"
+            class="btn btn-secondary btn-sm active mr-3"
+            (click)="convierteParcial()">
+            Conversión Parcial
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm active mr-3"
+            (click)="calculaParc()">
+            Calcular
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm active mr-3"
+            (click)="convierteParcial()">
+            Convertir
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm active mr-3"
+            (click)="reporte()">
+            Reporte
+          </button>
+        </td>
+      </tr>
     </div>
   </div>
 </div>
