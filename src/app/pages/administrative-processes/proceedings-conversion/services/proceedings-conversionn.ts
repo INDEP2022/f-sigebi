@@ -16,6 +16,7 @@ export class ActasConvertionCommunicationService {
     null;
   private ejecutarFuncionSource = new Subject<any>();
   private datosEnviadosSource = new Subject<any>();
+  private valFormularioSource = new Subject<any>();
   datosEnviados$ = this.datosEnviadosSource.asObservable();
 
   constructor() {}
@@ -41,6 +42,14 @@ export class ActasConvertionCommunicationService {
     this.datosEnviadosSource.next(datos);
   }
 
+  async valFormulario(datos: any) {
+    console.log('DATOS', datos);
+    this.valFormularioSource.next(datos);
+  }
+
+  getInputValue3() {
+    return this.valFormularioSource;
+  }
   getInputValue2() {
     return this.datosEnviadosSource;
   }
