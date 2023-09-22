@@ -627,6 +627,7 @@ export class VerifyComplianceTabComponent
     const filter = this.params.getValue().getParams();
     this.goodFinderService.goodFinder(filter).subscribe({
       next: resp => {
+        console.log('resp', resp);
         resp.data.map((item: any) => {
           const value = this.goodsSelected.filter((x: any) => x.id == item.id);
           item['selected'] = value.length == 0 ? false : true;
