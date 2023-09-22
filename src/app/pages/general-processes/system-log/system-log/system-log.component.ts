@@ -214,7 +214,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
   }
 
   handleErrorGoHome(message: string) {
-    this.alertInfo('error', 'Error', message).then(() => {
+    this.alertInfo('error', message, '').then(() => {
       this.router.navigate([HOME_DEFAULT]);
     });
   }
