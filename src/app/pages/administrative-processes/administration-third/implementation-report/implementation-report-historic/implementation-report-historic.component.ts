@@ -7,6 +7,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IBitacora } from 'src/app/core/models/ms-strategy-service/strategy-service.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IMPLEMENTATIONREPORTHISTORIC_COLUMNS } from './implementation-report-historic-columns';
@@ -28,7 +29,8 @@ export class ImplementationReportHistoricComponent
   loading3: boolean = false;
   constructor(
     private modalRef: BsModalRef,
-    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService
+    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService,
+    private authService: AuthService
   ) {
     super();
     this.settings = {
@@ -52,12 +54,6 @@ export class ImplementationReportHistoricComponent
             // this.cve = filter.field == 'cveActa';
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'id':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'formatNumber':
-                searchFilter = SearchFilter.EQ;
-                break;
               case 'changeDate':
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -93,6 +89,8 @@ export class ImplementationReportHistoricComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    params['usrRegister.id'] = this.authService.decodeToken().username;
+    params['sortBy'] = 'changeDate:DESC:';
     this.goodPosessionThirdpartyService.getStrategyBitacora(params).subscribe({
       next: (data: any) => {
         const bitacora = data.data;

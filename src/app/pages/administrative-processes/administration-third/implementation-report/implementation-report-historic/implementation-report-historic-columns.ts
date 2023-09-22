@@ -1,15 +1,15 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 export const IMPLEMENTATIONREPORTHISTORIC_COLUMNS = {
-  id: {
-    title: 'Fecha de cambio',
-    sort: false,
-  },
-  formatNumber: {
-    title: 'Fecha de cambio',
-    sort: false,
-  },
+  // id: {
+  //   title: 'No. Bitácora',
+  //   sort: false,
+  // },
+  // formatNumber: {
+  //   title: 'Fecha de cambio',
+  //   sort: false,
+  // },
   changeDate: {
-    title: 'Fecha de cambio',
+    title: 'Fecha de Cambio',
     sort: false,
   },
   justification: {
@@ -92,6 +92,45 @@ export const COPY = {
   amount: {
     title: 'Cantidad',
     type: 'string',
+    sort: false,
+  },
+};
+
+export const GASTOS = {
+  DES_SERVICIO: {
+    title: 'No. Bien',
+    type: 'number',
+    sort: false,
+    ValuePrepareFunction(cell: any, row: any) {
+      return row.descripcion;
+    },
+  },
+  DES_TIPO: {
+    title: 'Descripción',
+    type: 'string',
+    sort: false,
+    ValuePrepareFunction(cell: any, row: any) {
+      return row.descripcion;
+    },
+  },
+  DES_TURNO: {
+    title: 'Cantidad',
+    type: 'string',
+    sort: false,
+    ValuePrepareFunction(cell: any, row: any) {
+      return row.descripcion;
+    },
+  },
+  DES_VARCOSTO: {
+    title: 'Cantidad',
+    type: 'string',
+    sort: false,
+    ValuePrepareFunction(cell: any, row: any) {
+      return row.descripcion;
+    },
+  },
+  TOT_IMP_COSTO: {
+    title: 'Cantidad',
     sort: false,
   },
 };
