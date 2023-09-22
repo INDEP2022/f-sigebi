@@ -289,7 +289,10 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     this.strategyServiceService.getCosts(this.filterCost).subscribe({
       next: data => {
         this.costosDes = data.data;
-        this.alert('success', `Costo generados ${this.costosDes}`, '');
+        const result = data.data.map((filter: any) => {
+          return filter.no_varcosto;
+        });
+        this.alert('success', `Variable de Costo  ${result}`, '');
       },
       error: () => {
         this.loading = false;
@@ -328,7 +331,9 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
             this.serviceOrdersForm
               .get('observations')
               .setValue(value.observations);
-            this.serviceOrdersForm.get('process').setValue(value.processNumber);
+            this.serviceOrdersForm
+              .get('process')
+              .patchValue(value.processNumber);
           });
         },
       });

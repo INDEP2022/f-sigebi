@@ -98,39 +98,39 @@ export const COPY = {
 
 export const GASTOS = {
   DES_SERVICIO: {
-    title: 'No. Bien',
+    title: 'Servicio',
     type: 'number',
     sort: false,
     ValuePrepareFunction(cell: any, row: any) {
-      return row.descripcion;
+      return row.DES_SERVICIO.descripcion;
     },
   },
   DES_TIPO: {
-    title: 'Descripción',
+    title: 'Tipo',
     type: 'string',
     sort: false,
     ValuePrepareFunction(cell: any, row: any) {
-      return row.descripcion;
+      return row.DES_TIPO.descripcion;
     },
   },
   DES_TURNO: {
-    title: 'Cantidad',
+    title: 'Turno',
     type: 'string',
     sort: false,
     ValuePrepareFunction(cell: any, row: any) {
-      return row.descripcion;
+      return row.DES_TURNO.descripcion;
     },
   },
   DES_VARCOSTO: {
-    title: 'Cantidad',
+    title: 'Variable dde Costo',
     type: 'string',
     sort: false,
     ValuePrepareFunction(cell: any, row: any) {
-      return row.descripcion;
+      return row.DES_VARCOSTO.descripcion;
     },
   },
   TOT_IMP_COSTO: {
-    title: 'Cantidad',
+    title: 'Importe de Costo',
     sort: false,
   },
 };
