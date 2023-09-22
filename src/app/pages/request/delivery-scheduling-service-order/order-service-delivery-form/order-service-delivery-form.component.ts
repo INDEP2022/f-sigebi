@@ -370,29 +370,59 @@ export class OrderServiceDeliveryFormComponent
 
   generateReport() {
     if (this.task != 5 && this.task != 6) {
-      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      if (this.task == 2) {
+        let config = {
+          ...MODAL_CONFIG,
+          class: 'modal-lg modal-dialog-centered',
+        };
 
-      config.initialState = {
-        callback: async (next: boolean, infoSign: any) => {
-          if (next) {
-            if (infoSign.electronicSignature == true) {
-              const createSign = await this.createSignature(infoSign);
-              if (createSign) {
-                this.showReport();
+        config.initialState = {
+          callback: async (next: boolean, infoSign: any) => {
+            if (next) {
+              if (infoSign.electronicSignature == true) {
+                const createSign = await this.createSignature(infoSign);
+                if (createSign) {
+                  this.showReport();
+                } else {
+                  this.alert('error', 'Error', 'Error al crear el firmante');
+                }
               } else {
-                this.alert('error', 'Error', 'Error al crear el firmante');
+                this.showReport();
               }
-            } else {
-              this.showReport();
             }
-          }
-        },
-      };
+          },
+        };
 
-      const createService = this.modalService.show(
-        GenerateReportFormComponent,
-        config
-      );
+        this.modalService.show(GenerateReportFormComponent, config);
+      } else if (this.task == 3) {
+        let config = {
+          ...MODAL_CONFIG,
+          class: 'modal-lg modal-dialog-centered',
+        };
+
+        config.initialState = {
+          processFirm: 'firmRegionalDelegation',
+          callback: async (next: boolean, infoSign: any) => {
+            if (next) {
+              if (infoSign.electronicSignature == true) {
+                const createSign = await this.createSignature(infoSign);
+                if (createSign) {
+                  this.showReport();
+                } else {
+                  this.alert('error', 'Error', 'Error al crear el firmante');
+                }
+              } else {
+                this.showReport();
+              }
+            }
+          },
+        };
+
+        const createService = this.modalService.show(
+          GenerateReportFormComponent,
+          config
+        );
+      }
     } else {
       this.showReport();
     }
@@ -407,26 +437,28 @@ export class OrderServiceDeliveryFormComponent
         .getSignatoriesFilter(learnedType, learndedId)
         .subscribe({
           next: response => {
-            this.signatoriesService
+            /*this.signatoriesService
               .deleteFirmante(Number(response.data[0].signatoryId))
               .subscribe({
                 next: () => {
-                  const formData: Object = {
-                    learnedId: 516, // Orden de servicio
-                    learnedType: 245,
-                    boardSignatory: 'ORDEN_SERVICIO',
-                    columnSignatory: 'TIPO_FIRMA',
-                    name: infoSign.responsible,
-                    post: infoSign.charge,
-                  };
-
-                  this.signatoriesService.create(formData).subscribe({
-                    next: response => {
-                      resolve(true);
-                    },
-                  });
+                  
                 },
-              });
+              }); */
+
+            const formData: Object = {
+              learnedId: 516, // Orden de servicio
+              learnedType: 245,
+              boardSignatory: 'ORDEN_SERVICIO',
+              columnSignatory: 'TIPO_FIRMA',
+              name: infoSign.responsible,
+              post: infoSign.charge,
+            };
+
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+            });
           },
           error: error => {
             const formData: Object = {
