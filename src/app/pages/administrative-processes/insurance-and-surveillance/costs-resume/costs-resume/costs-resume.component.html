@@ -38,7 +38,7 @@
 
       <div class="row mt-4">
         <div class="col-md-6">
-          <form-field [control]="form.get('startDate')" label="Fecha page">
+          <form-field [control]="form.get('startDate')" label="Fecha Inicial">
             <input
               type="text"
               formControlName="startDate"
@@ -56,15 +56,15 @@
           </form-field>
         </div>
       </div>
-
-      <div class="row margin-input">
-        <div class="col-md-1">
-          <confirm-button
-            text="IMPRIMIR"
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
             [disabled]="form.invalid"
-            [loading]="loading"
-            (confirm)="send()">
-          </confirm-button>
+            (click)="send()">
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
     </form>

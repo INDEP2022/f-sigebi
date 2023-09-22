@@ -39,4 +39,5 @@ export enum GoodprocessEndpoints {
   GetTypesGoods = 'application/spobtn-typesubtypegoods',
   GetUniRegister = 'application/get-lnu-register',
   ChangeStatusGood = 'application/changeStatusGood',
+  UpdateGoodsByPackage = 'application/updateGoodByPackage',
 }

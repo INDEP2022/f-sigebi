@@ -72,8 +72,9 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   ngOnInit(): void {
-    //this.getOrderServiceProvided();
-    if (this.op != 1 && this.op != 2) {
+    console.log('op', this.op);
+    this.getOrderServiceProvided();
+    if (this.op != 1 && this.op != 2 && this.op != 3) {
       this.columns = SERVICE_TRANSPORTABLE_COLUMNS;
       this.settings = {
         ...this.settings,
@@ -168,7 +169,7 @@ export class ServiceTransportableGoodsFormComponent
           this.getOrderServiceProvided();
         }
       });
-    } else if (this.op == 1 || this.op == 2) {
+    } else if (this.op == 1 || this.op == 2 || this.op == 3) {
       this.titleTab();
       this.showButtonServiceManual = true;
       this.settings = {
@@ -232,12 +233,15 @@ export class ServiceTransportableGoodsFormComponent
           this.data = resp.data;
           this.totalItems = resp.count;
 
-          if (this.op != 1 && this.op != 2) {
+          if (this.op != 1 && this.op != 2 && this.op != 3) {
             this.setTableColumnsRows();
             this.setTableRowTotal();
           } else if (this.op == 1) {
             this.setTableRowTotal();
           } else if (this.op == 2) {
+            this.setTableRowTotal();
+            this.setTableColumnsRows();
+          } else if (this.op == 3) {
             this.setTableRowTotal();
             this.setTableColumnsRows();
           }
@@ -326,11 +330,19 @@ export class ServiceTransportableGoodsFormComponent
         for (let index = 0; index < tbody.length; index++) {
           const ele: any = tbody[index];
           if (this.op != 2) {
-            ele.children[8].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
-              true;
-            //ele.children[8].querySelector('#text-input').disabled = true;
-            ele.children[9].querySelector('#text-input').disabled = true;
+            if (this.op != 3) {
+              ele.children[8].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
+                true;
+              //ele.children[8].querySelector('#text-input').disabled = true;
+              ele.children[9].querySelector('#text-input').disabled = true;
+            }
           } else if (this.op == 2) {
+            ele.children[4].querySelector('#text-input').disabled = true;
+            ele.children[5].querySelector('#text-input').disabled = true;
+            ele.children[6].querySelector('#text-input').disabled = true;
+          }
+
+          if (!this.typeOrder && this.op == 3) {
             ele.children[4].querySelector('#text-input').disabled = true;
             ele.children[5].querySelector('#text-input').disabled = true;
             ele.children[6].querySelector('#text-input').disabled = true;
@@ -388,20 +400,12 @@ export class ServiceTransportableGoodsFormComponent
           }
         }
       }
-      //readonly no. recursos
-      /*if (this.op == 4 || this.op == 5 || this.op == 14) {
-        for (let index = 0; index < tbody.length; index++) {
-          const ele: any = tbody[index];
-          //no. recursos
-          ele.children[9].querySelector('#text-input').disabled = true;
-        }
-      }*/
     }, 300);
   }
 
   setTableRowTotal() {
     setTimeout(() => {
-      if (this.op != 1 && this.op != 2) {
+      if (this.op != 1 && this.op != 2 && this.op != 3) {
         const tableColumn = this.table.grid.getColumns();
         let noResources = tableColumn.find((x: any) => x.id == 'resourcesReal');
         let descriptionDifference = tableColumn.find(
@@ -478,7 +482,7 @@ export class ServiceTransportableGoodsFormComponent
             }
           }
         }
-      } else if (this.op == 1 || this.op == 2) {
+      } else if (this.op == 1 || this.op == 2 || this.op == 3) {
         const table = document.getElementById('table');
         const tbody = table.children[0].children[1].children;
         const row: any = tbody[this.data.length - 1];
