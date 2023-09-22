@@ -735,7 +735,7 @@ export class SirsaeMovementSendingMainComponent
       if (valid_pago == 0) {
         this.alert(
           'warning',
-          'EL evento o lote seleccionado no tiene dispersión de pagos, verifique',
+          'El evento o lote seleccionado no tiene dispersión de pagos, verifique',
           ''
         );
         this.loadingBtnSendIn = false;
@@ -1036,6 +1036,8 @@ export class SirsaeMovementSendingMainComponent
     params.addFilter('idEvent', this.eventSelected.id, SearchFilter.EQ);
     params.addFilter('idStatusVta', 'PAG', SearchFilter.NOT);
     params.addFilter('idClient', '$null', SearchFilter.NOT);
+    params.sortBy = `lotPublic:DESC`;
+
     this.lotService.getLotbyEvent_(params.getParams()).subscribe({
       next: data => {
         console.log('LOTES', data);

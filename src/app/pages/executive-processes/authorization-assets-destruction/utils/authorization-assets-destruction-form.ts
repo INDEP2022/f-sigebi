@@ -27,6 +27,18 @@ export class AuthorizationAssetsDestructionForm {
     { value: null, disabled: true },
     Validators.pattern(STRING_PATTERN)
   );
+  universalFolio = new FormControl(
+    { value: null, disabled: true },
+    Validators.pattern(STRING_PATTERN)
+  );
+  statusAct = new FormControl(
+    { value: null, disabled: true },
+    Validators.pattern(STRING_PATTERN)
+  );
+  act = new FormControl(
+    { value: null, disabled: true },
+    Validators.pattern(STRING_PATTERN)
+  );
   authNotice = new FormControl(null, Validators.pattern(STRING_PATTERN));
   fromDate = new FormControl(null, maxDate(new Date()));
   scanFolio = new FormControl(null, Validators.pattern(KEYGENERATION_PATTERN));
