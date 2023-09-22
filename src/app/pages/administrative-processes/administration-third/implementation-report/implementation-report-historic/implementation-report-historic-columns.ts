@@ -1,8 +1,15 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 export const IMPLEMENTATIONREPORTHISTORIC_COLUMNS = {
+  id: {
+    title: 'Fecha de cambio',
+    sort: false,
+  },
+  formatNumber: {
+    title: 'Fecha de cambio',
+    sort: false,
+  },
   changeDate: {
     title: 'Fecha de cambio',
-    width: '10%',
     sort: false,
   },
   justification: {
@@ -12,13 +19,14 @@ export const IMPLEMENTATIONREPORTHISTORIC_COLUMNS = {
   },
   status: {
     title: 'Estatus',
-    width: '10%',
     sort: false,
   },
-  user: {
+  usrRegister: {
     title: 'Usuario',
-    width: '10%',
     sort: false,
+    valuePrepareFunction(cell: any, row: any) {
+      return row.usrRegister.id;
+    },
   },
 };
 

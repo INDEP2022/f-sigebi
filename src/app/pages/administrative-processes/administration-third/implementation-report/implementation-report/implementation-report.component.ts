@@ -468,7 +468,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     if (this.selectedGooods.length == 0) {
       this.alert(
         'info',
-        'Es necesario seleccionar Bienes para generar el Reporte',
+        'Es necesario seleccionar bienes para generar el reporte',
         ''
       );
       return;
