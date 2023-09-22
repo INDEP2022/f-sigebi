@@ -38,4 +38,8 @@ export class ExpenseParametercomerService extends HttpService {
       `${ParameterComerEndpoints.ParameterMod}?filter.typeEventId=$eq:${idEvent}&filter.address=$eq:${address}&filter.value=$eq:${tpsolavalId}&filter.parameter=$eq:${parameter}`
     );
   }
+
+  postComerParametersMod(body: any) {
+    return this.post(ParameterComerEndpoints.GetvValue, body);
+  }
 }
