@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IVigMailBook } from 'src/app/core/models/ms-email/email-model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
@@ -36,10 +37,8 @@ export class EmailModalComponent extends BasePage implements OnInit {
       Validators.maxLength(50),
       Validators.email,
     ]),
-    body: new FormControl(null, [
-      Validators.maxLength(5000),
-      Validators.pattern(STRING_PATTERN),
-    ]),
+    body: new FormControl(null, [Validators.maxLength(6000)]),
+    asunto: new FormControl('Cambio de Estatus de Bienes a RGA'),
   });
   message: string = null;
   proceeding: Partial<IProccedingsDeliveryReception> = {};
@@ -64,17 +63,17 @@ export class EmailModalComponent extends BasePage implements OnInit {
 
   //Select dinámico para mostrar lista de correos con @indep
   getEmailIndep(params: ListParams) {
-    this.usersService.getEmailIndep(params).subscribe({
+    this.emailService.getVigMailBook(params).subscribe({
       next: data => (this.users = new DefaultSelect(data.data, data.count)),
     });
   }
 
   //Al seleccionar un item del select dinámico se autorellenan los inputs siguientes
-  onValuesChange(usersChange: ISegUsers) {
+  onValuesChange(usersChange: IVigMailBook) {
     console.log(usersChange);
     this.usersValue = usersChange;
-    this.emailForm.controls['userSirsae'].setValue(usersChange.userSirsae);
-    this.emailForm.controls['name'].setValue(usersChange.name);
+    this.emailForm.controls['userSirsae'].setValue(usersChange.id);
+    this.emailForm.controls['name'].setValue(usersChange.bookName);
 
     this.users = new DefaultSelect();
   }
@@ -97,6 +96,7 @@ export class EmailModalComponent extends BasePage implements OnInit {
     formData.append('emails_send', this.emailForm.get('email').value);
     formData.append('user', this.emailForm.get('userSirsae').value);
     formData.append('template', this.emailForm.get('body').value);
+    formData.append('subject', 'Cambio de Estatus de Bienes a RGA');
     this.emailService.sendEmail(formData).subscribe();
   }
 

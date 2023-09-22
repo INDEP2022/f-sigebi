@@ -130,7 +130,7 @@ export enum ENDPOINT_LINKS {
   WarehouseTypeWarehouse = 'parametergood/warehouse-types-warehouse',
   WarehouseClassifyCosts = 'parametergood/warehouse-classif-costs',
   parameterComer = 'parametercomer/api/v1/bank-accounts',
-  Document = 'documents',
+  parameterComerValidBidding = 'parametercomer/api/v1/aplication/validBidding',
   documents = 'documents/api/v1/documents-dictum-x-state-m',
   ZoneGeographic = 'catalog/zone-geographic',
   DocumentsForDictum = 'documents-for-dictum',

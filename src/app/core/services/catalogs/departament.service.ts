@@ -33,6 +33,10 @@ export class DepartamentService
     return this.departamentRepository.getAllPaginated(this.route, params);
   }
 
+  getDepartments(id: number) {
+    return this.get(`${ENDPOINT_LINKS.Departments}/${id}`);
+  }
+
   getById(id: string | number): Observable<IDepartment> {
     return this.departamentRepository.getById(this.route, id);
   }

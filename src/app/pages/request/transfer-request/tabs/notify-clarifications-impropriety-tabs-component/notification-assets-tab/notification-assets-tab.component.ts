@@ -44,6 +44,7 @@ import Swal from 'sweetalert2';
 
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
+import { GoodDataAsetService } from 'src/app/core/services/ms-good/good-data-aset.service';
 import { InappropriatenessFormComponent } from '../inappropriateness-form/inappropriateness-form.component';
 import { InappropriatenessPgrSatFormComponent } from '../inappropriateness-pgr-sat-form/inappropriateness-pgr-sat-form.component';
 import { NotifyAssetsImproprietyFormComponent } from '../notify-assets-impropriety-form/notify-assets-impropriety-form.component';
@@ -138,7 +139,8 @@ export class NotificationAssetsTabComponent
     private stationService: StationService,
     private stateOfRepublicService: StateOfRepublicService,
     private authorityService: AuthorityService,
-    private affairService: AffairService
+    private affairService: AffairService,
+    private GoodDataAsetService: GoodDataAsetService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -1137,7 +1139,7 @@ export class NotificationAssetsTabComponent
           flyerNumber: good.flyerNumber,
           insertRegDate: good.insertRegDate,
           visportal: good.visportal,
-          //unit: good.unit,
+          unit: good.unit,
           referenceValue: good.referenceValue,
           insertHcDate: good.insertHcDate,
           extDomProcess: good.extDomProcess,
@@ -1257,7 +1259,14 @@ export class NotificationAssetsTabComponent
 
         this.goodService.create(_good).subscribe({
           next: response => {
-            resolve(true);
+            this.GoodDataAsetService.updateGoodFinderRecord(
+              response.id,
+              response.goodId
+            ).subscribe({
+              next: response => {
+                resolve(true);
+              },
+            });
           },
           error: error => {
             resolve(false);
@@ -1273,7 +1282,7 @@ export class NotificationAssetsTabComponent
         id: good.id,
         goodId: good.goodId,
         goodStatus: 'CANCELADO',
-        processStatus: 'SOLICITAR_ACLARACION',
+        processStatus: 'CANCELADO',
       };
 
       this.goodService.updateByBody(_good).subscribe({
@@ -1480,7 +1489,7 @@ export class NotificationAssetsTabComponent
             if (data.clarificationType == 'SOLICITAR_IMPROCEDENCIA') {
               data['clarificationTypeName'] = 'IMPROCEDENCIA';
             }
-            const formatDate = moment(data.rejectionDate).format('DD-MM-YYYY');
+            const formatDate = moment(data.rejectionDate).format('DD/MM/YYYY');
             data.rejectionDate = formatDate;
             return data;
           });
