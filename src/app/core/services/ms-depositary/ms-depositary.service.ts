@@ -311,10 +311,45 @@ export class MsDepositaryService extends HttpService {
   postFullErase(body: any) {
     return this.post<IListResponse<any>>(DepositaryEndPoints.FullErase, body);
   }
+
   postCurrentFullErase(body: any) {
     return this.post<IListResponse<any>>(
       DepositaryEndPoints.CurrentFullErase,
       body
     );
+  }
+
+  postPrepOiInmuAct(body: any) {
+    // VALIDA_PAGOSREF.PREP_OINMU_ACT
+    return this.post<IListResponse<any>>(
+      DepositaryEndPoints.PrepOiInmuAct,
+      body
+    );
+  }
+  postActEstGraliAct(body: any) {
+    // VALIDA_PAGOSREF.ACT_EST_GRALI_ACT
+    return this.post<IListResponse<any>>(
+      DepositaryEndPoints.ActEstGraliAct,
+      body
+    );
+  }
+  postPrepOiInmu(body: any) {
+    // VALIDA_PAGOSREF.PREP_OINMU
+    return this.post<IListResponse<any>>(DepositaryEndPoints.PrepOiInmu, body);
+  }
+  postVentaInmu(body: any) {
+    // VALIDA_PAGOSREF.VENTA_INMU
+    return this.post<IListResponse<any>>(DepositaryEndPoints.VentaInmu, body);
+  }
+  postCurrentRealStateSale(body: any) {
+    // VALIDA_PAGOSREF.VENTA_INMU_ACT
+    return this.post<IListResponse<any>>(
+      DepositaryEndPoints.PrepOiInmuAct,
+      body
+    );
+  }
+  postActEstGrali(body: any) {
+    // VALIDA_PAGOSREF.ACT_EST_GRALI
+    return this.post<IListResponse<any>>(DepositaryEndPoints.ActEstGrali, body);
   }
 }

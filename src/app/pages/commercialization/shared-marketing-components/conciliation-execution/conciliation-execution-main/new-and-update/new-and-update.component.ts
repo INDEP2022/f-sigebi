@@ -49,8 +49,8 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       eventId: [null, [Validators.required]],
       customerId: [null, [Validators.required]],
-      process: [null, [Validators.required]],
-      executionDate: [new Date(), [Validators.required]],
+      process: [null],
+      executionDate: [null],
     });
     if (this.data != null) {
       this.edit = true;
@@ -80,12 +80,18 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   update() {
     this.form.value.executionDate = this.dateMovemInicio;
-    if (!this.form.get('executionDate').value) {
-      this.alert('warning', 'Debe especificar la Fecha de Ejecución', '');
-      this.form.get('executionDate').markAsTouched();
-      return;
-    }
-    this.comerClientsService.updateClientXEvent(this.form.value).subscribe({
+    // if (!this.form.get('executionDate').value) {
+    //   this.alert('warning', 'Debe especificar la Fecha de Ejecución', '');
+    //   this.form.get('executionDate').markAsTouched();
+    //   return;
+    // }
+    let obj = {
+      eventId: this.form.get('eventId').value,
+      customerId: this.form.get('customerId').value,
+      process: this.form.get('process').value,
+      executionDate: this.form.get('executionDate').value,
+    };
+    this.comerClientsService.updateClientXEvent_(obj).subscribe({
       next: response => {
         this.handleSuccess();
         this.modalRef.hide();
@@ -101,11 +107,11 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   }
 
   create() {
-    if (!this.form.get('executionDate').value) {
-      this.alert('warning', 'Debe especificar la Fecha de Ejecución', '');
-      this.form.get('executionDate').markAsTouched();
-      return;
-    }
+    // if (!this.form.get('executionDate').value) {
+    //   this.alert('warning', 'Debe especificar la Fecha de Ejecución', '');
+    //   this.form.get('executionDate').markAsTouched();
+    //   return;
+    // }
     this.comerClientsService.createClientXEvent(this.form.value).subscribe({
       next: response => {
         this.handleSuccess();
