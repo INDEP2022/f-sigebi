@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
@@ -95,12 +96,17 @@ export class DocumentShowComponent extends BasePage implements OnInit {
   }
 
   openDocument(event: any) {
-    this.wcontentService.obtainFile(this.docName).subscribe(data => {
-      let blob = this.dataURItoBlob(data);
-      let file = new Blob([blob], { type: 'application/pdf' });
-      const fileURL = URL.createObjectURL(file);
-      this.openPrevPdf(fileURL);
-    });
+    this.wcontentService
+      .obtainFile(this.docName)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(data => {
+        console.log(data);
+
+        let blob = this.dataURItoBlob(data);
+        let file = new Blob([blob], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        this.openPrevPdf(fileURL);
+      });
 
     /*const linkSource =
       'data:application/pdf;base64,' + this.parameter.urlDocument;

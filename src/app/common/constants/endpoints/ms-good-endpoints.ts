@@ -90,7 +90,9 @@ export enum GoodProcessPoints {
   ReportMonthExcel = 'application/reportMonthsDataExcel',
   CheckAllGoodPag = 'application/checkAllGoodPag',
   CheckAllGoodPagExcel = 'application/checkAllGoodPag-export',
+  ComerDetAvaluoAll = 'application/get-comer-det-avaluo-all',
   SpObtnxGood = 'application/spObtnxGood',
+  SpObtnxGoodExcel = 'application/spObtnxGood-csv',
 }
 
 export enum GoodFinderEndpoint {

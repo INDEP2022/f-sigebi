@@ -88,7 +88,11 @@
     <div class="row mb-3 mt-3 justify-content-center">
       <div
         class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col-12 align-self-center">
-        <button type="button" class="btn btn-primary btn-sm active w-100">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active w-100"
+          (click)="search()"
+          [disabled]="this.form.invalid">
           Consultar
         </button>
       </div>
@@ -110,7 +114,7 @@
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="data">
           </ng2-smart-table>
@@ -119,12 +123,6 @@
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
-    <div class="row justify-content-end mr-1">
-      <div class="ch-content">
-        <h5 class="title">Detalle de Aval&uacute;os</h5>
-      </div>
-    </div>
-    <!--Actions-->
     <div class="row mb-3 mt-3 justify-content-center">
       <!--Actions-->
       <div class="col-md-3">
@@ -147,6 +145,12 @@
         </button>
       </div>
     </div>
+    <div class="row justify-content-end mr-1">
+      <div class="ch-content">
+        <h5 class="title">Detalle de Aval&uacute;os</h5>
+      </div>
+    </div>
+    <!--Actions-->
     <!--Value Goods Details Table-->
 
     <div class="d-flex justify-content-end mr-1">
@@ -159,7 +163,7 @@
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings2"
             [source]="data2">
           </ng2-smart-table>

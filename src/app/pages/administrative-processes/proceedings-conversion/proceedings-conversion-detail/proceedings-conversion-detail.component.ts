@@ -42,6 +42,7 @@ export class ProceedingsConversionDetailComponent
   valUpdate: boolean = true;
   cities = new DefaultSelect<ICity>();
   appointedBy = new DefaultSelect<ICity>();
+  valForm: boolean;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -64,6 +65,28 @@ export class ProceedingsConversionDetailComponent
         this.header.value.idConversion =
           this.actasConvertionCommunicationService.setInputValue;
         this.inputDisabled = false;
+      });
+
+    this.actasConvertionCommunicationService
+      .getInputValue3()
+      .subscribe(value => {
+        if (value) {
+          this.closureOfMinutes.enable();
+          this.antecedentThree.enable();
+          this.antecedentTwo.enable();
+          this.antecedent.enable();
+          this.header.enable();
+          this.first.enable();
+          this.valForm = true;
+        } else {
+          this.closureOfMinutes.disable();
+          this.antecedentThree.disable();
+          this.antecedentTwo.disable();
+          this.antecedent.disable();
+          this.header.disable();
+          this.first.disable();
+          this.valForm = false;
+        }
       });
 
     this.actasConvertionCommunicationService

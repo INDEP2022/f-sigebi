@@ -31,11 +31,11 @@ export class GoodprocessService extends HttpService {
     );
   }
 
-  getDistinctTypes(model: ICharacteristicsGoodDTO, listParams: ListParams) {
+  getDistinctTypes(model: ICharacteristicsGoodDTO, _params: _Params) {
     return this.post<IListResponseMessage<any>>(
       GoodprocessEndpoints.GetDistinctTypes,
       model,
-      listParams
+      _params
     );
   }
 

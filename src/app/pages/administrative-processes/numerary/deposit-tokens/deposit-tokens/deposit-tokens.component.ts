@@ -171,12 +171,7 @@ export class DepositTokensComponent
           filterFunction(cell?: any, search?: string): boolean {
             let column = cell;
             console.log(column, '==', search);
-            // if (column?.toUpperCase() >= search.toUpperCase() || search === ''
-            // ) {
             return true;
-            // } else {
-            //   return false;
-            // }
           },
         },
         calculationInterestsDate_: {
@@ -216,6 +211,11 @@ export class DepositTokensComponent
             instance.loadingConciliar.subscribe(() => {
               this.miSegundaFuncion(); // Nueva segunda función independiente
             });
+          },
+          filterFunction(cell?: any, search?: string): boolean {
+            let column = cell;
+            console.log(column, '==', search);
+            return true;
           },
         },
         goodnumber: {
@@ -432,7 +432,15 @@ export class DepositTokensComponent
             search[filter.field]();
 
             if (filter.search !== '') {
-              this.columnFilters[field] = `${filter.search}`;
+              // this.columnFilters[field] = `${filter.search}`;
+              if (filter.field == 'deposit') {
+                this.columnFilters[field] = `${filter.search.replace(
+                  /,/g,
+                  ''
+                )}`;
+              } else {
+                this.columnFilters[field] = `${filter.search}`;
+              }
               // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
 
               // console.log(

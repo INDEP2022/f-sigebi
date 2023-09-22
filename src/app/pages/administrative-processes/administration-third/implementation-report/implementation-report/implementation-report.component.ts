@@ -1,16 +1,19 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import {
+  ICostReport,
+  IDelReportImp,
   IReportImp,
   IStrategyLovSer,
   IStrategyProcess,
@@ -19,16 +22,18 @@ import {
   IStrateyCost,
 } from 'src/app/core/models/ms-strategy-service/strategy-service.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { IndicatorsParametersService } from 'src/app/core/services/ms-parametergood/indicators-parameter.service';
 import { StrategyProcessService } from 'src/app/core/services/ms-strategy/strategy-process.service';
 import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
+import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { FindActaComponent } from '../find-acta/find-acta.component';
-import { COPY } from '../implementation-report-historic/implementation-report-historic-columns';
 import { ImplementationReportHistoricComponent } from '../implementation-report-historic/implementation-report-historic.component';
-import { IMPLEMENTATION_COLUMNS } from './implementation-report-columns';
-
+import {
+  IMPLEMENTATIONREPORT_COLUMNS,
+  IMPLEMENTATION_COLUMNS,
+} from './implementation-report-columns';
 @Component({
   selector: 'app-implementation-report',
   templateUrl: './implementation-report.component.html',
@@ -39,10 +44,18 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   filterType: IStrategyType;
   filterLovSer: IStrategyLovSer;
   filterTurn: IStrategyTurn;
+  lv_VALELI: number = 0;
   filterCost: IStrateyCost;
+  costosDes: any[];
+  totalItems2: number = 0;
+  loading2: boolean = false;
+  columnFilters: any = [];
+  selectedGooods: any[] = [];
   reportImp: IReportImp;
   area: number = 0;
   data1: any[] = [];
+  mEli: IDelReportImp;
+  costoR: ICostReport;
   dataTableGood: LocalDataSource = new LocalDataSource();
   actasObject: IProccedingsDeliveryReception;
   desStrategy: string = '';
@@ -59,6 +72,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   settings2 = { ...this.settings, actions: false };
   types = new DefaultSelect();
   turns = new DefaultSelect();
+  selectedRow: any | null = null;
   public serviceOrderKey = new DefaultSelect();
   public process = new DefaultSelect<IStrategyProcess>();
   public regionalCoordination = new DefaultSelect();
@@ -74,13 +88,18 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     private authService: AuthService,
     private indicatorsParametersService: IndicatorsParametersService,
     private datePipe: DatePipe,
-    private strategyProcessService: StrategyProcessService
+    private strategyProcessService: StrategyProcessService,
+    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: COPY,
+      selectMode: 'multi',
+      columns: IMPLEMENTATIONREPORT_COLUMNS,
     };
     this.settings2.columns = IMPLEMENTATION_COLUMNS;
   }
@@ -104,14 +123,6 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       dateCapture: [null, Validators.required],
       observations: [null, Validators.required],
     });
-    this.dateCapt = this.datePipe.transform(
-      this.serviceOrdersForm.controls['dateCapture'].value,
-      'dd/MM/yyyy'
-    );
-    this.dateClose = this.datePipe.transform(
-      this.serviceOrdersForm.controls['authorizationDate'].value,
-      'dd/MM/yyyy'
-    );
   }
 
   openHistoric(data: any) {
@@ -227,21 +238,59 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     });
   }
 
+  validaForm() {
+    const resullt = true;
+    const process = this.serviceOrdersForm.get('process').value;
+    const serviceOrderKey = this.serviceOrdersForm.get('serviceOrderKey').value;
+    const type = Number(this.serviceOrdersForm.get('type').value);
+    const turno = this.serviceOrdersForm.get('turno').value;
+
+    if (!Boolean(process)) {
+      this.alert('info', 'seleccione el proceso para genera costos', '');
+      return resullt;
+    }
+
+    if (!Boolean(serviceOrderKey)) {
+      this.alert(
+        'info',
+        'seleccione una Clave de orden de servicio para genera costos',
+        ''
+      );
+      return resullt;
+    }
+
+    if (!Boolean(type)) {
+      this.alert('info', 'seleccione un tipo para genera costos', '');
+      return resullt;
+    }
+
+    if (!Boolean(turno)) {
+      this.alert('info', 'seleccione un turno para genera costos', '');
+      return resullt;
+    }
+
+    // Si todos los campos son válidos, llamar a la función getCosts()
+    this.getCosts();
+
+    return resullt;
+  }
+
   getCosts() {
-    // this.strategyServiceService.getCosts()}
+    const process = this.serviceOrdersForm.get('process').value;
+    const serviceOrderKey = this.serviceOrdersForm.get('serviceOrderKey').value;
+    const type = this.serviceOrdersForm.get('type').value;
+    const turno = Number(this.serviceOrdersForm.get('turno').value);
+
     this.filterCost = {
-      pProcessNumber: this.serviceOrdersForm.get('process').value,
-      pServiceNumber: this.serviceOrdersForm.get('serviceOrderKey').value,
-      pServiceTypeNumber: Number(this.serviceOrdersForm.get('type').value),
-      pTurnNumber: this.serviceOrdersForm.get('turno').value,
+      pProcessNumber: process,
+      pServiceNumber: serviceOrderKey,
+      pServiceTypeNumber: type,
+      pTurnNumber: turno,
     };
+
     this.strategyServiceService.getCosts(this.filterCost).subscribe({
       next: data => {
-        // data.data.filter((item: any) => {
-        //   item['turnAndName'] = item.no_tiposervicio + '-' + item.descripcion;
-        // });
-        // this.turns = new DefaultSelect(data.data, data.count);
-        console.log('costos', data);
+        this.costosDes = data.data;
       },
       error: () => {
         this.loading = false;
@@ -249,6 +298,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       },
     });
   }
+
   getReportImp() {
     // if (this.serviceOrdersForm.value.noFormat == null || 0) {
     //   this.alert('warning', 'Debe ingresar la Clave de Orden de Servicio', '');
@@ -260,16 +310,14 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
         next: data => {
           this.reportImp = data.data;
           console.log(this.reportImp);
-          this.bienesStrategy.load(data.data);
-          this.bienesStrategy.refresh();
           data.data.filter((value: any) => {
             console.log(value);
             this.dateCapt = this.datePipe.transform(
-              this.serviceOrdersForm.value.dateCapture,
+              value.captureDate,
               'dd/MM/yyyy'
             );
             this.dateClose = this.datePipe.transform(
-              this.serviceOrdersForm.value.authorizationDate,
+              value.authorizeDate,
               'dd/MM/yyyy'
             );
             this.serviceOrdersForm.get('reportKey').setValue(value.reportKey);
@@ -281,6 +329,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
             this.serviceOrdersForm
               .get('observations')
               .setValue(value.observations);
+            this.serviceOrdersForm.get('process').setValue(value.processNumber);
           });
         },
       });
@@ -297,84 +346,96 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
         return;
       }
       this.alertQuestion(
-        'warning',
+        'question',
         'Generar',
         '¿Seguro que desea generar el Reporte de Implementación?'
       ).then(question => {
         if (question.isConfirmed) {
           if (
-            this.reportImp.reportNumber == null &&
-            this.reportImp.reportKey != null
+            this.serviceOrdersForm.value.status == 'AUTORIZADA' ||
+            this.serviceOrdersForm.value.status == 'CANCELADA'
           ) {
-            this.genClave();
-          } else if (this.reportImp.captureDate == null) {
+            this.alert(
+              'warning',
+              '',
+              `El reporte de Implementaión ya se encuentra ${this.serviceOrdersForm.value.status}`,
+              ''
+            );
+          }
+          if (this.serviceOrdersForm.get('dateCapture').value == null) {
             this.alert(
               'warning',
               'La Clave de Acta aun no se encuentra Cerrada',
               ''
             );
+          }
+          if (this.serviceOrdersForm.value.reportKey == null) {
+            // this.genClave();
           } else {
-            this.alert(
-              'warning',
-              'El tiempo para Generar la Clave de Reporte a Expirado',
-              ''
+            // this.alert(
+            //   'warning',
+            //   'El tiempo para Generar la Clave de Reporte a Expirado',
+            //   ''
+            // );
+            this.generaReporte();
+            console.log(
+              ' en espera dde funcion para generar',
+              this.dateCapt + this.dateClose
             );
           }
         }
       });
-      let fechaCapture = this.dateCapt;
-      let fechaCierre = this.dateClose;
-      let vParUser = this.authService.decodeToken().username;
-      console.log(
-        ' en espera dde funcion para generar',
-        this.dateCapt + this.dateClose
-      );
     } catch {
       console.log('error reporte');
     }
   }
 
   cargaBienes() {
-    //   if : ESTRATEGIA_REP_IMPLEMENTACION.NO_REPORTE is null then
-    //   LIP_MENSAJE('No se pueden incorporar bienes si no hay Reporte de Implementación', 'C');
-    // else
-    // LIP_COMMIT_SILENCIOSO;
-    // PUP_INCORPORA_BIENES;
-    // end if;
-    if (this.reportImp.reportNumber == null) {
+    if (this.serviceOrdersForm.value.noFormat == null) {
       this.alert(
         'warning',
-        'Debe elegir una Estrategia de Administración para Generar la clave de Reporte de Implementación',
+        'Debe ingresar la Clave de Orden de Servicio para incorporar Bienes',
         ''
       );
       return;
     }
     this.alertQuestion(
-      'warning',
-      'Generar',
-      '¿Seguro que desea generar el Reporte de Implementación?'
+      'question',
+      'Incorporar',
+      '¿Seguro que desea Incorporar Bienes al Reporte?'
     ).then(question => {
       if (question.isConfirmed) {
-        // if (this.repImplenta == null) {
-        // }
-        // IF: ESTRATEGIA_REP_IMPLEMENTACION.NO_REPORTE is null then
-        // this.parameterTiieService.remove(tiie.id).subscribe({
-        //   next: data => {
-        //     this.loading = false;
-        //     this.onLoadToast('success', 'Registro Eliminado', '');
-        //     this.getData();
-        //   },
-        //   error: error => {
-        //     this.onLoadToast('error', 'No Se Puede Eliminar Registro', '');
-        //     this.loading = false;
-        //   },
-        // });
+        let params = {
+          ...this.params.getValue(),
+          ...this.columnFilters,
+        };
+        this.goodPosessionThirdpartyService
+          .getAllStrategyGoodsById(
+            this.serviceOrdersForm.value.noFormat,
+            params
+          )
+          .subscribe({
+            next: data => {
+              console.log(data);
+              this.dataTableGood.load(data.data);
+              this.dataTableGood.refresh();
+              this.totalItems = data.count;
+            },
+            error: () => {
+              console.log('error');
+              this.loading = false;
+            },
+          });
       }
     });
   }
   cleanForm() {
     this.serviceOrdersForm.reset();
     this.reportImp = null;
+    this.dataTableGood.load([]);
+    this.dataTableGood.refresh();
+    this.bienesStrategy.load([]);
+    this.bienesStrategy.refresh();
   }
   formatDate(date: Date): string {
     const day = date.getUTCDate().toString().padStart(2, '0');
@@ -383,56 +444,148 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     return `${day}/${month}/${year}`;
   }
 
-  genClave() {}
-
-  actasDefault: any = null;
-  searchActas(actas?: string) {
-    if (this.serviceOrdersForm.value.noFormat == null) {
+  genClave() {
+    if (
+      this.serviceOrdersForm.value.process == null ||
+      this.serviceOrdersForm.value.type == null ||
+      this.serviceOrdersForm.value.turno == null ||
+      this.serviceOrdersForm.value.serviceOrderKey == null
+    ) {
       this.alert(
-        'warning',
-        'Debe ingresar la Clave de Orden de Servicio para seleccionar los Bienes',
+        'info',
+        'Debe Seleccionar Prceso, Servicio, Tipo y Turno para generar la Clave',
+        ''
+      );
+    }
+  }
+  onUserRowSelect(event: { data: any; selected: any }) {
+    this.selectedRow = event.data;
+    this.selectedGooods = event.selected;
+    console.log(this.selectedGooods);
+    this.changeDetectorRef.detectChanges();
+  }
+  incorporaGoods() {
+    if (this.selectedGooods.length == 0) {
+      this.alert(
+        'info',
+        'Es necesario seleccionar Bienes para generar el Reporte',
         ''
       );
       return;
     }
-    actas = this.serviceOrdersForm.value.noFormat;
-    const actaActual = this.actasDefault;
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      actas,
-      actaActual,
-    };
+  }
 
-    let modalRef = this.modalService.show(FindActaComponent, modalConfig);
-    modalRef.content.onSave.subscribe((next: any[] = []) => {
-      console.log(next);
-      if (next) {
-        this.alert(
-          'success',
-          'Se Cargaron los Bienes relacionados con el Acta',
-          ''
-        );
-      }
-
-      if (this.serviceOrdersForm.value.status == 'FINALIZADA') {
-        this.disabledBtnActas = false;
+  elimina() {
+    if (this.reportImp.reportNumber === null) {
+      this.alert('info', 'No existe el reporte de implementación', '');
+      return;
+    }
+    this.alertQuestion(
+      'question',
+      'Eliminar',
+      `¿Seguro que desea eliminar bienes bien(es) del Reporte de Implementación ${this.serviceOrdersForm.value.reportKey}? `
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.selectedGooods.forEach(good => {
+          const data = {
+            formatNumber: good.formatNumber,
+            goodNumber: good.goodNumber.id,
+            actNumber: good.actNumber,
+          };
+          this.goodPosessionThirdpartyService
+            .deleteReportGoodImp(data)
+            .subscribe(res => {
+              console.log(res);
+              this.lv_VALELI = 4;
+            });
+        });
       } else {
-        this.disabledBtnActas = true;
+        this.lv_VALELI = 5;
       }
-
-      // MAPEAR DATOS DATA NEXT CUANDO CONSULTO ACTAS
-      console.log('acta NEXT ', next);
-      this.dataTableGood.load(next);
       this.dataTableGood.refresh();
+      console.log(this.lv_VALELI);
     });
-    modalRef.content.cleanForm.subscribe(async (next: any) => {
-      if (next) {
-        this.cleanForm();
+  }
+  generaReporte(): void {
+    try {
+      if (this.serviceOrdersForm.value.regionalCoordination === null) {
+        this.alert('warning', 'Debe seleccionar la Coordinación Regional', '');
+        return;
+      }
+      let params = {
+        P_ANIO: 2023,
+        P_COORDINACION: this.serviceOrdersForm.value.regionalCoordination,
+        P_MES: 12,
+        P_USUARIO: this.authService.decodeToken().username,
+      };
+      this.siabService
+        // .fetchReport('RINDICA_0006', params)
+        .fetchReport('blank', params)
+        .subscribe(response => {
+          // response=null;
+          if (response !== null) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            // this.onLoadToast(
+            //   'warning',
+            //   'advertencia',
+            //   'Sin Datos Para los Rangos de Fechas Suministrados'
+            // );
+            console.log('error');
+          }
+        });
+    } catch {
+      console.log('error');
+    }
+  }
+
+  incorporaCostos() {
+    if (this.reportImp.reportNumber === null) {
+      this.alert('warning', 'No existe el reporte de Implementación', '');
+      return;
+    }
+    this.alertQuestion(
+      'question',
+      'Incorporar',
+      '¿Seguro que desea Incorporar Costos al Reporte?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.costoR = {
+          serviceNumber: this.serviceOrdersForm.value.serviceOrderKey,
+          typeServiceNumber: this.serviceOrdersForm.value.type,
+          turnNumber: this.serviceOrdersForm.value.turno,
+          varCosteNumber: 7,
+          importTot: this.totalItems,
+          amountTot: 2000,
+        };
+        this.goodPosessionThirdpartyService.getIncCosto(this.costoR).subscribe({
+          next: data => {
+            console.log(data.data);
+            this.bienesStrategy.load(data.data);
+            this.totalItems2 = data.count;
+            this.bienesStrategy.refresh();
+            console.log('costos', data);
+          },
+        });
+        console.log('aqui se incorporan');
+      } else {
+        return;
       }
     });
   }
-  addSelect() {}
-  removeSelect() {}
-  addAll() {}
-  removeAll() {}
+
+  bitacora() {}
 }
