@@ -660,12 +660,14 @@ export class RegistrationInventoriesDonationComponent
           'Para Poder Autorizar la Solicitud es Necesario que se Tengan Bienes Registrados.'
         );
       }
+      window.scrollTo(0, 0);
     } else {
       this.alert(
         'warning',
         '',
         'Para Poder Autorizar la Solicitud es Necesario Haber Generado un Paquete Previamente Además de que los Campos Solicitud, Donatario, Fecha de Solicitud y Justificación Tengan Valor.'
       );
+      window.scrollTo(0, 0);
     }
   }
 

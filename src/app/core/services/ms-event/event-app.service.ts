@@ -63,4 +63,8 @@ export class EventAppService extends HttpService {
   getEvent(id: any) {
     return this.get(`${EventEndpoints.Event}/${id}`);
   }
+
+  getPupRemiEnt(good: any) {
+    return this.get(`${EventEndpoints.PupRemiEnt}/${good}`);
+  }
 }

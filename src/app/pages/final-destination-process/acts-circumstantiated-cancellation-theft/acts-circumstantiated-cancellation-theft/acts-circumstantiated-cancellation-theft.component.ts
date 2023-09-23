@@ -378,18 +378,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
         } else {
           return 'bg-dark text-white';
         }
-
-        // if (row.data.status === 'CNE') {
-        //   return 'bg-success text-white';
-        // } else if (
-        //   row.data.status === 'RRE' ||
-        //   row.data.status === 'VXR' ||
-        //   row.data.status === 'DON'
-        // ) {
-        //   return 'bg-dark text-white';
-        // } else {
-        //   return 'bg-success text-white';
-        // }
       },
     };
     this.settings2 = {

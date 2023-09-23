@@ -32,6 +32,7 @@ export class DeliverySchedulingServiceListComponent
   ngOnInit(): void {}
 
   editRequest(event: any) {
+    let obj2Storage = {};
     switch (event.data.task) {
       case 'captureOrderService':
         this.router.navigate([
@@ -119,6 +120,156 @@ export class DeliverySchedulingServiceListComponent
         ]);
         break;
 
+      case 'PropuestaServicioINDEPEnviada':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 1,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
+      case 'OrdenServicioAutorizado':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 2,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
+      case 'OrdenFirmaPorDeleRegional':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 3,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
+      case 'ReporteImplemenEnviadoINDEP':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 4,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
+      case 'ReporteImplemenAutorizado':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 5,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
+      case 'ReporteImplemenFirmadoDelegReg':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 6,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
+      case 'AnexoWFirmaTercero':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 7,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
+      case 'PropuestaServicioRechazo':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 8,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
+      case 'JustifiPropuestaServiEnviado':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 9,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
+      case 'JustifiPropuestaServicioRechazo':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 10,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
+      case 'PropuestaReporteImplemenNoAceptada':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 11,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
+      case 'JustificaPropuestaReporteImplemenEnviada':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 12,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
+      case 'JustificaPropuestaReporteImplemenRechazo':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 13,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
+      case 'ContrapropuestaServicioEnviado':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 14,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
+      case 'ContrapropuestaReporteImpleEnviada':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.number,
+        ]);
+        obj2Storage = {
+          op: 15,
+        };
+        localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
+        break;
       default:
         break;
     }

@@ -329,4 +329,45 @@ export class DocumentsService extends HttpService {
     const route = `${DocumentsEndpoints.postDocumentsV2}`;
     return this.post(route, params);
   }
+
+  insertDocuments(params: any) {
+    const route = `${DocumentsEndpoints.document}`;
+    return this.post(route, params);
+  }
+
+  insertDocumentsAttached(params: any) {
+    const route = `${DocumentsEndpoints.document}`;
+    return this.post(route, params);
+  }
+
+  postDocumentHAttached(params: any) {
+    return this.post(DocumentsEndpoints.attachedDocument, params);
+  }
+
+  getDocumentsdistint(folio: any) {
+    const route = `${DocumentsEndpoints.document}?filter.associateUniversalFolio=$eq:${folio}||filter.file.universalFolio=$eq:${folio}`;
+    return this.get(route);
+  }
+
+  deleteDocumentHAttached(id: any) {
+    return this.delete(`${DocumentsEndpoints.attachedDocument}/${id}`);
+  }
+
+  postFolioMasive(params: any) {
+    return this.post(DocumentsEndpoints.GenFolioMasive, params);
+  }
+
+  getDocumentInvoiceFolio(folio: any) {
+    const route = `${DocumentsEndpoints.InvoiceUniversal}/${folio}`;
+    return this.get(route);
+  }
+
+  getDocumentInvoiceFolioAsoc(folio: any) {
+    const route = `${DocumentsEndpoints.InvoiceUniversalAsoc}/${folio}`;
+    return this.get(route);
+  }
+
+  deleteDocumentsInvoice(folio: any) {
+    return this.delete(`${DocumentsEndpoints.attachedDocument}/${folio}`);
+  }
 }

@@ -25,7 +25,8 @@
               (click)="signDocument()"
               *ngIf="
                 (typeFirm == 'autografa' && !showTDR) ||
-                (typeFirm == 'autograf' && !showTDR)
+                (typeFirm == 'autograf' && !showTDR) ||
+                idOrderService
               "
               class="btn btn-primary btn-sm active">
               {{ btnTitle }} <i class="fa fa-file"></i>

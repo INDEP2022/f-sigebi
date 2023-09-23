@@ -131,4 +131,7 @@ export class DonationService
   putDetailDona(model: any) {
     return this.put(DonationEndPoint.DetailEventComDon, model);
   }
+  getGoodsDonation(params: ListParams) {
+    return this.get(DonationEndPoint.GoodsForDonation, params);
+  }
 }

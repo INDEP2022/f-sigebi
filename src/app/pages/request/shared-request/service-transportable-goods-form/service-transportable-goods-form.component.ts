@@ -21,6 +21,7 @@ import {
 } from '../../reception-scheduling-service-order/columns/service-transportable-columns';
 import { CreateManualServiceFormComponent } from '../../reception-scheduling-service-order/components/create-manual-service-form/create-manual-service-form.component';
 import { CreateServiceFormComponent } from '../../reception-scheduling-service-order/components/create-service-form/create-service-form.component';
+import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 
 const testData = [
   {
@@ -50,6 +51,8 @@ export class ServiceTransportableGoodsFormComponent
   @Input() rejected: boolean;
   @Input() orderServiceId: number;
   @Input() isUpdate?: boolean = false;
+  @Input() typeOrder?: string = null;
+  @Input() justificationRefused: boolean = false;
   title: string = '';
   showButtonServiceManual: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -62,14 +65,16 @@ export class ServiceTransportableGoodsFormComponent
   @Output() totEvent: EventEmitter<string> = new EventEmitter();
 
   private orderEntryService = inject(orderentryService);
+  private requestHelperService = inject(RequestHelperService);
 
   constructor(private modalService: BsModalService) {
     super();
   }
 
   ngOnInit(): void {
+    console.log('op', this.op);
     this.getOrderServiceProvided();
-    if (this.op != 1) {
+    if (this.op != 1 && this.op != 2 && this.op != 3) {
       this.columns = SERVICE_TRANSPORTABLE_COLUMNS;
       this.settings = {
         ...this.settings,
@@ -164,8 +169,9 @@ export class ServiceTransportableGoodsFormComponent
           this.getOrderServiceProvided();
         }
       });
-    } else if (this.op == 1) {
+    } else if (this.op == 1 || this.op == 2 || this.op == 3) {
       this.titleTab();
+      this.showButtonServiceManual = true;
       this.settings = {
         ...this.settings,
         actions: false,
@@ -176,11 +182,14 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.orderServiceId) {
+    if (this.orderServiceId && this.data.length == 0) {
       this.getOrderServiceProvided();
     }
     if (this.isUpdate == true) {
       this.saveForm();
+    }
+    if (this.justificationRefused == true) {
+      this.enableJustificationRows();
     }
   }
 
@@ -203,11 +212,17 @@ export class ServiceTransportableGoodsFormComponent
         next: resp => {
           let ttotal = 0;
           resp.data.map((item: any) => {
-            const resource =
+            if (this.op == 6 || this.op == 7 || this.op == 8 || this.op == 9) {
+              this.requestHelperService.changeReadOnly(true);
+            }
+            const resourceNumber =
               Number(item.resourcesNumber) != null
                 ? Number(item.resourcesNumber)
                 : 0;
-            item['total'] = Number(item.priceUnitary) * resource;
+            const resourcesReal = item.resourcesReal;
+            const resource =
+              resourcesReal != null ? Number(resourcesReal) : resourceNumber;
+            item['total'] = Number(item.priceUnitary) * Number(resource);
             ttotal = ttotal + item['total'];
           });
 
@@ -218,11 +233,17 @@ export class ServiceTransportableGoodsFormComponent
           this.data = resp.data;
           this.totalItems = resp.count;
 
-          if (this.op != 1) {
+          if (this.op != 1 && this.op != 2 && this.op != 3) {
             this.setTableColumnsRows();
             this.setTableRowTotal();
           } else if (this.op == 1) {
             this.setTableRowTotal();
+          } else if (this.op == 2) {
+            this.setTableRowTotal();
+            this.setTableColumnsRows();
+          } else if (this.op == 3) {
+            this.setTableRowTotal();
+            this.setTableColumnsRows();
           }
         },
       });
@@ -232,50 +253,151 @@ export class ServiceTransportableGoodsFormComponent
     setTimeout(() => {
       const tableColumn = this.table.grid.getColumns();
       let noResources = tableColumn.find((x: any) => x.id == 'resourcesReal');
+      let amountNumbercomplies = tableColumn.find(
+        (x: any) => x.id == 'amountNumbercomplies'
+      );
+      let porcbreaches = tableColumn.find((x: any) => x.id == 'porcbreaches');
+      let resultAssessment = tableColumn.find(
+        (x: any) => x.id == 'resultAssessment'
+      );
       let descriptionDifference = tableColumn.find(
         (x: any) => x.id == 'descriptionDifference'
       );
-      noResources.hide = true;
-      descriptionDifference.hide = true;
 
-      //
-      if (this.op == 4 || this.op == 5 || this.op == 14) {
-        noResources.hide = false;
+      if (
+        this.op == 3 ||
+        this.op == 4 ||
+        this.op == 10 ||
+        this.op == 11 ||
+        this.op == 12 ||
+        this.op == 13 ||
+        this.op == 14 ||
+        this.op == 15
+      ) {
+        noResources.hide = true;
+        resultAssessment.hide = true;
+        amountNumbercomplies.hide = true;
+        porcbreaches.hide = true;
+        descriptionDifference.hide = true;
+      }
+
+      if (this.op == 5 && this.typeOrder != 'reception') {
+        noResources.hide = true;
+        resultAssessment.hide = true;
+        amountNumbercomplies.hide = true;
+        porcbreaches.hide = true;
+        descriptionDifference.hide = true;
+      }
+
+      if (
+        this.op == 4 ||
+        this.op == 5 ||
+        this.op == 2 ||
+        this.op == 13 ||
+        this.op == 15
+      ) {
+        if (this.op != 2) {
+          noResources.hide = false;
+          descriptionDifference.hide = false;
+        }
+      }
+
+      if (this.op == 12) {
         descriptionDifference.hide = false;
       }
 
-      const table = document.getElementById('table');
+      let table = null;
+      table = document.getElementById('table');
       const tbody = table.children[0].children[1].children;
-      //disabled comentarios
-      /* if(this.op != 3 && this.op != 4 && this.op != 5 && this.op != 6){
-      for (let index = 0; index < tbody.length; index++) {
-      const ele:any = tbody[index];
-        ele.children[4].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled = true
-      }
-    } */
 
       //readonly duracion
-      if (this.op == 3 || this.op == 4 || this.op == 5 || this.op == 6) {
+      if (
+        this.op == 3 ||
+        this.op == 4 ||
+        this.op == 5 ||
+        this.op == 6 ||
+        this.op == 7 ||
+        this.op == 8 ||
+        this.op == 9 ||
+        this.op == 10 ||
+        this.op == 11 ||
+        this.op == 12 ||
+        this.op == 13 ||
+        this.op == 14 ||
+        this.op == 15 ||
+        this.op == 2
+      ) {
         for (let index = 0; index < tbody.length; index++) {
           const ele: any = tbody[index];
-          //duracion hora
-          ele.children[8].querySelector('#text-input').disabled = true;
-          /* ele.children[5].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
-            true; */
-          /* ele.children[6].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
-            true; */
-          //no. recursos
-          ele.children[9].querySelector('#text-input').disabled = true;
-        }
-      }
-      //readonly no. recursos
-      if (this.op == 4 || this.op == 5 || this.op == 14) {
-        for (let index = 0; index < tbody.length; index++) {
-          const ele: any = tbody[index];
-          /*  ele.children[6].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
-            true; */
-          //no. recursos
-          ele.children[9].querySelector('#text-input').disabled = true;
+          if (this.op != 2) {
+            if (this.op != 3) {
+              ele.children[8].children[0].children[0].children[0].children[0].children[0].children[0].children[0].disabled =
+                true;
+              //ele.children[8].querySelector('#text-input').disabled = true;
+              ele.children[9].querySelector('#text-input').disabled = true;
+            }
+          } else if (this.op == 2) {
+            ele.children[4].querySelector('#text-input').disabled = true;
+            ele.children[5].querySelector('#text-input').disabled = true;
+            ele.children[6].querySelector('#text-input').disabled = true;
+          }
+
+          if (!this.typeOrder && this.op == 3) {
+            ele.children[4].querySelector('#text-input').disabled = true;
+            ele.children[5].querySelector('#text-input').disabled = true;
+            ele.children[6].querySelector('#text-input').disabled = true;
+          }
+
+          if ((this.op == 3 || this.op == 4) && this.typeOrder == 'reception') {
+            //Comentario de servicio
+            ele.children[7].querySelector('#text-input').disabled = true;
+          }
+
+          if (this.op == 5) {
+            if (this.typeOrder == 'reception') {
+              ele.children[7].querySelector('#text-input').disabled = true;
+            }
+            ele.children[8].querySelector('#text-input').disabled = true;
+            ele.children[9].querySelector('#text-input').disabled = true;
+            ele.children[10].querySelector('#text-input').disabled = true;
+            ele.children[13].querySelector('#text-input').disabled = true;
+          }
+
+          if (this.op == 6 || this.op == 7 || this.op == 8 || this.op == 9) {
+            //const select = ele.children[1].querySelector('#select-input');
+            ele.children[2].querySelector('#text-input').disabled = true;
+            ele.children[3].querySelector('#text-input').disabled = true;
+            ele.children[7].querySelector('#text-input').disabled = true;
+            ele.children[10].querySelector('#text-input').disabled = true;
+            ele.children[13].querySelector('#text-input').disabled = true;
+          }
+
+          if (this.op == 10 || this.op == 11 || this.op == 15) {
+            ele.children[7].querySelector('#text-input').disabled = true;
+            ele.children[8].querySelector('#text-input').disabled = true;
+            ele.children[9].querySelector('#text-input').disabled = true;
+          }
+
+          if (this.op == 12 || this.op == 13) {
+            ele.children[7].querySelector('#text-input').disabled = true;
+            ele.children[8].querySelector('#text-input').disabled = true;
+            ele.children[9].querySelector('#text-input').disabled = false;
+            ele.children[13].querySelector('#text-input').disabled = false;
+          }
+
+          if (this.op == 13) {
+            ele.children[7].querySelector('#text-input').disabled = true;
+            ele.children[8].querySelector('#text-input').disabled = true;
+            ele.children[9].querySelector('#text-input').disabled = true;
+            ele.children[10].querySelector('#text-input').disabled = true;
+            ele.children[13].querySelector('#text-input').disabled = true;
+          }
+
+          if (this.op == 14) {
+            ele.children[7].querySelector('#text-input').disabled = false;
+            ele.children[8].querySelector('#text-input').disabled = false;
+            ele.children[9].querySelector('#text-input').disabled = false;
+          }
         }
       }
     }, 300);
@@ -283,7 +405,7 @@ export class ServiceTransportableGoodsFormComponent
 
   setTableRowTotal() {
     setTimeout(() => {
-      if (this.op != 1) {
+      if (this.op != 1 && this.op != 2 && this.op != 3) {
         const tableColumn = this.table.grid.getColumns();
         let noResources = tableColumn.find((x: any) => x.id == 'resourcesReal');
         let descriptionDifference = tableColumn.find(
@@ -308,29 +430,59 @@ export class ServiceTransportableGoodsFormComponent
         //select
 
         row.children[0].querySelector('#checkbox-input').hidden = true;
-        if (resultAssessment.hide == false)
+        if (resultAssessment.hide == false) {
           //result evaluacion
           row.children[1].querySelector('#select-input').hidden = true;
-        if (amountNumbercomplies.hide == false)
+        }
+        if (amountNumbercomplies.hide == false) {
           //bi recur no cumple
           row.children[2].querySelector('#text-input').hidden = true;
-        if (porcbreaches.hide == false)
+        }
+        if (porcbreaches.hide == false) {
           //incumpli %
           row.children[3].querySelector('#text-input').hidden = true;
-        //comentario de servicio
-        row.children[7].querySelector('#text-input').hidden = true;
-        //duracion horas
-        row.children[8].querySelector('#text-input').hidden = true;
-        //no. recurso
-        row.children[9].querySelector('#text-input').hidden = true;
-        if (resourcesReal.hide == false)
-          //recurso real
-          row.children[10].querySelector('#text-input').hidden = true;
-        if (descriptionDifference.hide == false) {
-          //descrip de diferencia
-          row.children[13].querySelector('#text-input').hidden = true;
         }
-      } else if (this.op == 1) {
+        //Si los 3 campos del principio estan enable
+        if (resultAssessment.hide == false) {
+          //comentario de servicio
+          row.children[7].querySelector('#text-input').hidden = true;
+          //duracion horas
+          row.children[8].querySelector('#text-input').hidden = true;
+          //no. recurso
+          row.children[9].querySelector('#text-input').hidden = true;
+
+          if (resourcesReal.hide == false) {
+            //recurso real
+            row.children[10].querySelector('#text-input').hidden = true;
+          }
+          //Si los 3 primeros campos esta disabled
+        } else {
+          //comentario de servicio
+          row.children[4].querySelector('#text-input').hidden = true;
+          //duracion horas
+          row.children[5].querySelector('#text-input').hidden = true;
+          //no. recurso
+          row.children[6].querySelector('#text-input').hidden = true;
+
+          if (resourcesReal.hide == false) {
+            //recurso real
+            row.children[7].querySelector('#text-input').hidden = true;
+          }
+        }
+
+        if (descriptionDifference.hide == false) {
+          if (this.op == 12) {
+            row.children[9].querySelector('#text-input').hidden = true;
+          } else {
+            //descrip de diferencia
+            if (porcbreaches.hide == false) {
+              row.children[13].querySelector('#text-input').hidden = true;
+            } else {
+              row.children[10].querySelector('#text-input').hidden = true;
+            }
+          }
+        }
+      } else if (this.op == 1 || this.op == 2 || this.op == 3) {
         const table = document.getElementById('table');
         const tbody = table.children[0].children[1].children;
         const row: any = tbody[this.data.length - 1];
@@ -359,10 +511,10 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   titleTab() {
-    if (this.op != 0) {
-      this.title = 'Servicios Prestados';
-    } else {
+    if (this.op == 12 || this.op == 13 || this.op == 14 || this.op == 15) {
       this.title = 'Servicio Bienes Transportables';
+    } else {
+      this.title = 'Servicios Prestados';
     }
   }
 
@@ -578,11 +730,12 @@ export class ServiceTransportableGoodsFormComponent
 
       if (this.listforUpdate.length == index) {
         this.isUpdate = false;
-
-        this.getOrderServiceProvided();
+        this.listforUpdate = [];
+        this.ngOnInit();
       }
     });
   }
+
   /**
    * consultar el campo serviceCost no deveria mostrarse en ordservice provi porque no guarda
    * No carga automativamente los datos en el selector cuando se guardan
@@ -613,5 +766,24 @@ export class ServiceTransportableGoodsFormComponent
         this.getOrderServiceProvided();
       },
     });
+  }
+
+  enableJustificationRows() {
+    let table = null;
+    table = document.getElementById('table');
+    const tbody = table.children[0].children[1].children;
+
+    for (let index = 0; index < tbody.length - 1; index++) {
+      const ele: any = tbody[index];
+
+      if (this.op == 13) {
+        ele.children[7].querySelector('#text-input').disabled = false;
+        ele.children[10].querySelector('#text-input').disabled = false;
+      } else if (this.op == 10) {
+        ele.children[4].querySelector('#text-input').disabled = false;
+        ele.children[5].querySelector('#text-input').disabled = false;
+        ele.children[6].querySelector('#text-input').disabled = false;
+      }
+    }
   }
 }

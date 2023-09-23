@@ -37,9 +37,12 @@ export class OrderServiceFormComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     //this.prepareForm();
+    this.readonly = this.op == 1 ? false : true;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('this.op', this.op);
+    console.log('this.showForm', this.showForm);
     this.orderService = this.ordServform.getRawValue();
 
     this.visitEye = this.orderService.eyeVisit == 'Y' ? true : false;

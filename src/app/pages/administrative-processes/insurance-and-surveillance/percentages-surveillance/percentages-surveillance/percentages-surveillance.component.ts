@@ -384,7 +384,7 @@ export class PercentagesSurveillanceComponent
 
     return new Promise((resolve, reject) => {
       this.survillanceService
-        .getViewVigDelegations(params.getParams())
+        .getViewVigDelegations_(params.getParams())
         .subscribe({
           next: (response: any) => {
             console.log('resss', response);

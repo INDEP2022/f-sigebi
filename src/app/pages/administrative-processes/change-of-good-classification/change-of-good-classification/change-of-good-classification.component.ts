@@ -15,6 +15,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { PreviousRouteService } from 'src/app/common/services/previous-route.service';
+import { IUnitsMedConv } from 'src/app/core/models/administrative-processes/siab-sami-interaction/measurement-units';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
@@ -31,6 +32,7 @@ import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.s
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
+import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -75,6 +77,8 @@ export class ChangeOfGoodClassificationComponent
   service = inject(ChangeOfGoodCharacteristicService);
   initValue = false;
   showExpedient = false;
+  meds: IUnitsMedConv[];
+  medFilters: IUnitsMedConv[];
   // atributActSettings = { ...this.settings };
   // pageSizeOptions = [5, 10, 15, 20];
   // limit: FormControl = new FormControl(5);
@@ -107,6 +111,10 @@ export class ChangeOfGoodClassificationComponent
 
   get numberFile() {
     return this.form.get('numberFile');
+  }
+
+  get unit() {
+    return this.form.get('unit');
   }
 
   //Reactive Forms
@@ -152,6 +160,7 @@ export class ChangeOfGoodClassificationComponent
     private previousRouteService: PreviousRouteService,
     private statusScreenService: StatusXScreenService,
     private segAcessXAreasService: SegAcessXAreasService,
+    private strategyService: StrategyServiceService,
     private router: Router
   ) {
     super();
@@ -163,6 +172,17 @@ export class ChangeOfGoodClassificationComponent
       hideSubHeader: false,
       columns: { ...ATRIBUT_ACT_COLUMNS },
     };
+    this.strategyService
+      .getUnitsMedXConv2()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response && response.data) {
+            this.meds = response.data;
+          }
+        },
+        error: err => {},
+      });
     // this.params.value.limit = 5;
     // this.params2.value.limit = 5;
     // this.atributActSettings.actions = false;
@@ -336,6 +356,7 @@ export class ChangeOfGoodClassificationComponent
       currentClasification: [null, [Validators.pattern(STRING_PATTERN)]],
       descriptionClasification: [null, [Validators.pattern(STRING_PATTERN)]],
       numberFile: [null, [Validators.pattern(STRING_PATTERN)]],
+      unit: [null],
     });
   }
 
@@ -424,6 +445,7 @@ export class ChangeOfGoodClassificationComponent
       this.descriptionGood.setValue(null);
       this.clasification.setValue(null);
       this.numberFile.setValue(null);
+      this.unit.setValue(null);
     }
   }
 
@@ -465,6 +487,11 @@ export class ChangeOfGoodClassificationComponent
     this.descriptionClasification.setValue(clasif.description);
     this.numberFile.setValue(good.fileNumber);
     this.fileNumberNew.setValue(good.fileNumber);
+    this.unit.setValue(good.unit);
+    this.medFilters =
+      good.unit && this.meds
+        ? this.meds.filter(x => x.unit === good.unit)
+        : null;
     // this.onLoadToast(
     //   'success',
     //   'Éxitoso',
@@ -529,6 +556,13 @@ export class ChangeOfGoodClassificationComponent
       this.classificationOfGoods.value,
       SearchFilter.EQ
     );
+    if (this.medFilters && this.medFilters.length > 0) {
+      params.addFilter(
+        'unit',
+        this.medFilters.map(x => x.unit).toString(),
+        SearchFilter.IN
+      );
+    }
     params.addFilter3('sortBy', 'unit:ASC');
     this.classifyGoodServices
       .getUnitiXClasif(params.getParams())

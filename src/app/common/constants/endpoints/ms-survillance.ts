@@ -3,6 +3,7 @@ export enum SurvillanceEndpoints {
   VigProcessPercentages = 'vig-process-percentages',
   VigBinnacle = 'vig-binnacle',
   View_VigDelegations = 'views/v-vig-delegations',
+  View_VigDelegations2 = 'survillance/views/v-vig-delegations',
   DeletePeriod = 'surveillance/delete-period',
   RecordRandom = 'surveillance/record-random',
   ValidPeriod = 'surveillance/valid-period',
@@ -23,4 +24,5 @@ export enum SurvillanceEndpoints {
   GetTransNumerario = 'application/get-trans-numerario-reg',
   VigAllExcel = 'vig-supervision-det/allExcel',
   FaEtapanexo = 'application/get-fa-etapanexo',
+  View_VigDelegations_ = 'views/v-vig-delegations',
 }

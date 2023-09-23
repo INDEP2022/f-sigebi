@@ -41,13 +41,9 @@ export const COLUMNS = {
       const nombreMes = meses[mes];
 
       // Crear la nueva fecha en el formato deseado
-      const fechaTransformada = `${dia}-${nombreMes}-${ano}`;
+      const fechaTransformada = `${dia}-${mes}-${ano}`;
       // console.log("fechaTransformada", fechaTransformada)
-      return `${
-        fechaTransformada
-          ? fechaTransformada.split('T')[0].split('-').reverse().join('/')
-          : ''
-      }`;
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
       type: 'custom',
@@ -108,6 +104,9 @@ export const COLUMNS = {
       } else {
         return amount;
       }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
   },
   result: {
@@ -207,13 +206,9 @@ export const COLUMNS = {
       const nombreMes = meses[mes];
 
       // Crear la nueva fecha en el formato deseado
-      const fechaTransformada = `${dia}-${nombreMes}-${ano}`;
+      const fechaTransformada = `${dia}-${mes}-${ano}`;
       // console.log("fechaTransformada", fechaTransformada)
-      return `${
-        fechaTransformada
-          ? fechaTransformada.split('T')[0].split('-').reverse().join('/')
-          : ''
-      }`;
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
       type: 'custom',
@@ -305,12 +300,8 @@ export const COLUMNS_CARGADOS = {
       const nombreMes = meses[mes];
 
       // Crear la nueva fecha en el formato deseado
-      const fechaTransformada = `${dia}-${nombreMes}-${ano}`;
-      return `${
-        fechaTransformada
-          ? fechaTransformada.split('T')[0].split('-').reverse().join('/')
-          : ''
-      }`;
+      const fechaTransformada = `${dia}-${mes}-${ano}`;
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
       type: 'custom',
@@ -365,6 +356,9 @@ export const COLUMNS_CARGADOS = {
       } else {
         return amount;
       }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
   },
 
@@ -471,12 +465,8 @@ export const COLUMNS_CARGADOS = {
       const nombreMes = meses[mes];
 
       // Crear la nueva fecha en el formato deseado
-      const fechaTransformada = `${dia}-${nombreMes}-${ano}`;
-      return `${
-        fechaTransformada
-          ? fechaTransformada.split('T')[0].split('-').reverse().join('/')
-          : ''
-      }`;
+      const fechaTransformada = `${dia}-${mes}-${ano}`;
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
       type: 'custom',

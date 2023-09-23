@@ -1786,9 +1786,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   downloadReport() {
     this.loading = true;
     let params: any = {};
-    params['NO_PAQUETE'] = this.form.get('noPackage').value.numberPackage;
-    params['PCLAVE'] = this.form.get('cvePackage').value;
-    params['PDESTINO'] = this.form.get('packageType').value;
+    params['P_NO_PAQUETE'] = this.form.get('noPackage').value.numberPackage;
+    params['P_CLAVE'] = this.form.get('cvePackage').value;
+    params['P_DESTINO'] = this.form.get('packageType').value;
 
     console.log('params....', params);
 

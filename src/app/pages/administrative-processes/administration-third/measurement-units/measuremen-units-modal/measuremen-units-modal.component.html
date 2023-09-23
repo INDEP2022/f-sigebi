@@ -9,17 +9,27 @@
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="form.get('unit')" label="Unidad">
-            <input type="text" class="form-control" formControlName="unit" [readonly]="newOrEdit" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="unit"
+              [readonly]="newOrEdit" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('description')" label="Descripción">
-            <input type="text" class="form-control" formControlName="description" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('registryNumber')" label="Número">
-            <input type="text" class="form-control" formControlName="registryNumber" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="registryNumber" />
           </form-field>
         </div>
       </div>
@@ -28,7 +38,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button type="button" class="btn btn-primary btn-sm active" (click)="confirm()">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
           Guardar
           <i aria-hidden="true" class="fa fa-save"></i>
         </button>
