@@ -204,9 +204,11 @@ export class CaptureApprovalDonationComponent
       .subscribe({
         next: global => {
           this.ngGlobal = global;
-          console.log('GLOBAL ', this.ngGlobal);
           if (this.ngGlobal.REL_BIENES) {
-            console.log('GLOBAL ', this.ngGlobal.REL_BIENES);
+            console.log('RASTREADOR ', this.data);
+            this.selectedGooodsValid.push(this.ngGlobal.REL_BIENES);
+            this.dataDetailDonationGood.load(this.selectedGooodsValid);
+            this.dataDetailDonationGood.refresh();
           }
         },
       });
@@ -341,7 +343,7 @@ export class CaptureApprovalDonationComponent
     if (this.eventDonacion.estatusAct === 'CERRADA') {
       this.alert(
         'warning',
-        'El Evento está cerrado, no se pueden consultar bienes',
+        'El evento está cerrado, no se pueden consultar bienes',
         ''
       );
       return;
@@ -577,7 +579,7 @@ export class CaptureApprovalDonationComponent
     document.body.removeChild(a);
     this._toastrService.clear();
     this.excelLoading = true;
-    this.alert('success', 'El Reporte se ha Descargado', '');
+    this.alert('success', 'El reporte se ha descargado', '');
     URL.revokeObjectURL(objURL);
   }
 
@@ -642,15 +644,15 @@ export class CaptureApprovalDonationComponent
       if (this.dataDetailDonation.recordId == null) {
         this.alert(
           'warning',
-          'No Existe un Acta en la cual Asignar el Bien.',
-          'Debe capturar un acta.'
+          'No existe un evento en la cual asignar el bien.',
+          'Debe capturar un evento.'
         );
         return;
       } else {
         if (this.estatus == 'CERRADA') {
           this.alert(
             'warning',
-            'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+            'El evento ya está cerrado, no puede realizar modificaciones',
             ''
           );
           return;
@@ -660,13 +662,13 @@ export class CaptureApprovalDonationComponent
             if (good.di_acta != null) {
               this.alert(
                 'warning',
-                `Ese Bien ya se Encuentra en el Acta ${good.di_acta}`,
-                'Debe Capturar un Acta.'
+                `Ese bien ya se encuentra en el evento ${good.di_acta}`,
+                'Debe capturar un evento.'
               );
             } else if (good.di_disponible == 'N') {
               this.onLoadToast(
                 'warning',
-                `El Bien ${good.id} tiene un Estatus Inválido para ser Asignado a algún Acta`
+                `El bien ${good.id} tiene un estatus Inválido para ser asignado a algún evento`
               );
               return;
             } else {
@@ -682,7 +684,7 @@ export class CaptureApprovalDonationComponent
                 console.log('indexGood', indexGood);
                 if (indexGood != -1)
                   this.dataTableGood_[indexGood].di_disponible = 'N';
-                await this.updateBienDetalle(good.goodId, 'DON');
+                await this.updateBienDetalle(good.goodId, 'CPD');
                 await this.createDET(good);
               }
             }
@@ -708,7 +710,7 @@ export class CaptureApprovalDonationComponent
     if (this.estatus == 'CERRADA') {
       this.alert(
         'warning',
-        'El Evento ya está Cerrado, no puede Realizar Modificaciones',
+        'El evento ya está cerrado, no puede realizar modificaciones',
         ''
       );
       return;
@@ -718,30 +720,30 @@ export class CaptureApprovalDonationComponent
       if (this.dataDetailDonation == null) {
         this.alert(
           'warning',
-          'Debe Especificar/Buscar el Evento para Despues Eliminar el Bien.',
+          'Debe especificar/buscar el evento para despues eliminar el bien.',
           ''
         );
         return;
       } else if (this.selectedGooodsValid.length == 0) {
         this.alert(
           'warning',
-          'Debe Seleccionar un Bien que Forme Parte del Evento Primero',
-          'Debe Capturar un Evento.'
+          'Debe seleccionar un bien que Forme parte del evento primero',
+          'Debe capturar un evento.'
         );
         return;
       } else {
         this.inputVisible = true;
         this.alertQuestion(
           'question',
-          '¿Seguro que Desea Eliminar el Bien del Evento?',
+          '¿Seguro que desea eliminar el bien del evento?',
           ''
         ).then(async question => {
           if (question.isConfirmed) {
             if (this.regisForm.get('observaElimina').value == null) {
               this.alert(
                 'warning',
-                'Debe Llenar las Obervaciones de la eliminación Primero',
-                'Debe Capturar un Evento.'
+                'Debe llenar las obervaciones de la eliminación primero',
+                ''
               );
               return;
             }
@@ -919,7 +921,7 @@ export class CaptureApprovalDonationComponent
       if (next) {
         this.alert(
           'success',
-          'Se Cargó la Información del Evento',
+          'Se cargó la información del evento',
           next.cveAct
         );
       }
@@ -1059,7 +1061,7 @@ export class CaptureApprovalDonationComponent
       if (next) {
         this.alert(
           'success',
-          'Se Cargó la Información del Evento',
+          'Se cargó la información del Evento',
           next.cveAct
         );
       }
@@ -1149,13 +1151,13 @@ export class CaptureApprovalDonationComponent
   async cerrarActa() {
     if (this.eventDonacion != null) {
       if (this.eventDonacion.estatusAct == 'CERRADA') {
-        this.alertInfo('warning', 'El Evento ya se Encuentra Cerrada', '');
+        this.alert('warning', 'el evento ya se encuentra cerrado', '');
         return;
       }
       if (this.dataDetailDonationGood.count() == 0) {
-        this.alertInfo(
+        this.alert(
           'warning',
-          'Para Cerrar un Evento debe Contener al Menos un Bien, por favor Registra este en la Pantalla de Actas.',
+          'Para cerrar un evento debe contener al menos un bien.',
           ''
         );
         return;
@@ -1172,7 +1174,7 @@ export class CaptureApprovalDonationComponent
       } else {
         this.alertQuestion(
           'question',
-          '¿Seguro que Desea Realizar el Cierre de esta Evento?',
+          '¿Seguro que desea realizar el cierre de ésta evento?',
           ''
         ).then(async question => {
           if (question.isConfirmed) {
@@ -1207,8 +1209,8 @@ export class CaptureApprovalDonationComponent
 
                 await this.updateGoodEInsertHistoric(obj);
 
-                this.alertInfo('success', 'El Evento Ha Sido Cerrado', '');
-                this.alert('success', 'Evento Cerrado', '');
+                this.alert('success', 'El evento Ha sido cerrado', '');
+                this.alert('success', 'Evento cerrado', '');
                 this.data1 = 'CERRADA';
                 //this.disabledBtnCerrar = false;
                 this.disabledBtnActas = false;
@@ -1216,7 +1218,7 @@ export class CaptureApprovalDonationComponent
                 await this.getDetailProceedingsDevollution(this.idAct);
               },
               error: error => {
-                this.alert('error', 'Ocurrió un Error al Cerrar el Evento', '');
+                this.alert('error', 'Ocurrió un error al cerrar el evento', '');
               },
             });
           }
@@ -1225,7 +1227,7 @@ export class CaptureApprovalDonationComponent
     } else {
       this.alert(
         'warning',
-        'No Existe Ningún Evento a Cerrar.',
+        'No existe ningún evento a cerrar.',
         // 'El Usuario no está autorizado para cerrar acta',
         ''
       );
@@ -1244,19 +1246,19 @@ export class CaptureApprovalDonationComponent
     if (this.eventDonacion.estatusAct === 'CERRADA') {
       this.alert(
         'warning',
-        'El Evento está cerrado, no se pueden validar bienes',
+        'El evento está cerrado, no se pueden validar bienes',
         ''
       );
       return;
     } else if (this.eventdetailDefault !== null) {
-      this.alert('warning', 'No hay Bienes a validar', '');
+      this.alert('warning', 'No hay bienes a validar', '');
       return;
     } else {
       this.donationService.getApprove(this.params.getValue()).subscribe({
         next: data => {
           console.log(this.dataDetailDonation);
           console.log(data.data);
-          this.alert('success', 'Bienes Validados', '');
+          this.alert('success', 'Bienes validados', '');
         },
       });
     }
@@ -1266,7 +1268,7 @@ export class CaptureApprovalDonationComponent
     if (this.eventDonacion.estatusAct === 'CERRADA') {
       this.alert(
         'warning',
-        'El Evento está cerrado, no se pueden validar bienes',
+        'El evento está cerrado, no se pueden validar bienes',
         ''
       );
       return;
@@ -1281,7 +1283,7 @@ export class CaptureApprovalDonationComponent
     let count = 0;
     data.forEach(good => {
       count = count + 1;
-      this.goodService.getById(good.No_bien).subscribe({
+      this.goodService.getById(good.goodNumber).subscribe({
         next: response => {
           this.goods.push({
             ...JSON.parse(JSON.stringify(response)).data[0],
@@ -1307,17 +1309,17 @@ export class CaptureApprovalDonationComponent
 
   addStatus() {
     /* this.data.load(this.goods); */
-    // this.paginator();
+    this.paginator();
     this.data.refresh();
   }
 
-  //   paginator(noPage: number = 1, elementPerPage: number = 10) {
-  //     const indiceInicial = (noPage - 1) * elementPerPage;
-  //     const indiceFinal = indiceInicial + elementPerPage;
+  paginator(noPage: number = 1, elementPerPage: number = 10) {
+    const indiceInicial = (noPage - 1) * elementPerPage;
+    const indiceFinal = indiceInicial + elementPerPage;
 
-  //     let paginateData = this.goods.slice(indiceInicial, indiceFinal);
-  //     this.data.load(paginateData);
-  //   }
+    let paginateData = this.goods.slice(indiceInicial, indiceFinal);
+    this.data.load(paginateData);
+  }
   searchGoodError(provider?: any) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
@@ -1332,11 +1334,11 @@ export class CaptureApprovalDonationComponent
   }
   actualizarActa() {
     if (this.paramsScreen.recordId == '0' || null) {
-      this.alertInfo('warning', 'Debe Seleccionar un Evento', '');
+      this.alertInfo('warning', 'Debe seleccionar un evento', '');
       return;
     }
     if (this.estatus == 'CERRADA') {
-      this.alertInfo('warning', 'No puede Actualizar un Evento Cerrado', '');
+      this.alertInfo('warning', 'No puede actualizar un evento cerrado', '');
       return;
     }
     this.selectedGooodsValid.forEach(good => {
@@ -1347,17 +1349,17 @@ export class CaptureApprovalDonationComponent
         received: 1,
         exchangeValue: this.regisForm.get('activeRadio').value | 0,
       };
-      this.updateBienDetalle(good.goodId, 'DON');
+      this.updateBienDetalle(good.goodId, 'CPD');
       // delete this.eventdetailDefault.numDelegation1Description;
       // delete this.eventdetailDefault.numDelegation2Description;
       // delete this.eventdetailDefault.numTransfer_;
       this.donationService.putDetailDona(obj).subscribe({
         next: async data => {
-          this.alertInfo('success', 'Se Actualizó el Evento Correctamente', '');
+          this.alertInfo('success', 'Se actualizó el evento correctamente', '');
           await this.generaRepote();
         },
         error: error => {
-          this.alert('error', 'Ocurrió un Error al Actualizar el Evento', '');
+          this.alert('error', 'Ocurrió un error al actualizar el evento', '');
           // this.loading = false
         },
       });
@@ -1405,7 +1407,7 @@ export class CaptureApprovalDonationComponent
           await this.updateGoodEInsertHistoric(obj);
 
           // this.alertInfo('success', 'El Evento Ha Sido Actualizado', '');
-          this.alert('success', 'Evento Actualizado', '');
+          this.alert('success', 'evento actualizado', '');
           this.data1 = 'ABIERTA';
           //this.disabledBtnCerrar = false;
           this.disabledBtnActas = false;
@@ -1413,7 +1415,7 @@ export class CaptureApprovalDonationComponent
           await this.getDetailProceedingsDevollution(this.idAct);
         },
         error: error => {
-          console.log('error', 'Ocurrió un Error al Actualizar el Evento', '');
+          console.log('error', 'Ocurrió un Error al actualizar el evento', '');
         },
       });
     }

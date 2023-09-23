@@ -78,7 +78,7 @@ export class MeasuremenUnitsModalComponent extends BasePage implements OnInit {
     this.goodsQueryService.postUnits(model).subscribe({
       next: () => {
         this.handleSuccess();
-        this.onLoadToast('success', 'Catálogo de Unidad de Medida creado', '');
+        this.onLoadToast('success', 'Catálogo de unidad de medida creado', '');
       },
       error: error => {
         this.onLoadToast('error', error.error.message, '');
@@ -102,7 +102,7 @@ export class MeasuremenUnitsModalComponent extends BasePage implements OnInit {
       error: err => {
         let error = '';
         if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
+          error = 'Revise su conexión de internet.';
           this.onLoadToast('error', 'Error', error);
           //this.newOrEdit = false;
         } else {

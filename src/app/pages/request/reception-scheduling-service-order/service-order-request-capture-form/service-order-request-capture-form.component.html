@@ -1,8 +1,7 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">
-      Solicitud orden de servicio &#40;captura de servicios&#41; con folio&#58;
-      METROPOLITANA&#45;SAT&#45;1340&#46;OS
+      {{ title }}
     </h5>
   </div>
 
@@ -21,7 +20,25 @@
       </button>
 
       <button
-        *ngIf="claimRequest"
+        *ngIf="claimRequest && (task == 10 || task == 13)"
+        class="btn btn-info btn-sm active"
+        (click)="refuseJustification()">
+        Rechazar Justificación <i class="fa fa-reply" aria-hidden="true"></i>
+      </button>
+
+      <button
+        *ngIf="
+          claimRequest &&
+          (task == 2 ||
+            task == 3 ||
+            task == 5 ||
+            task == 6 ||
+            task == 7 ||
+            task == 8 ||
+            task == 10 ||
+            task == 13 ||
+            task == 11)
+        "
         type="button"
         class="btn btn-primary active btn-sm"
         (click)="generateOrdSerReport()">
@@ -31,16 +48,45 @@
 
       <button
         (click)="sendOrderService()"
-        *ngIf="claimRequest"
+        *ngIf="
+          claimRequest &&
+          (task == 1 ||
+            task == 4 ||
+            task == 9 ||
+            task == 12 ||
+            task == 14 ||
+            task == 15)
+        "
         class="btn btn-success btn-sm active">
         Enviar <i class="fa fa-paper-plane" aria-hidden="true"></i>
       </button>
 
       <button
+        (click)="sendJustification()"
+        *ngIf="
+          claimRequest && (task == 9 || task == 12 || task == 14 || task == 15)
+        "
+        class="btn btn-success btn-sm active">
+        Enviar Justificaci&oacute;
+        <i class="fa fa-paper-plane" aria-hidden="true"></i>
+      </button>
+
+      <button
         (click)="rejectOrder()"
-        *ngIf="claimRequest"
+        *ngIf="
+          claimRequest &&
+          (task == 2 || task == 5 || task == 8 || task == 11) &&
+          isApprove == false
+        "
         class="btn btn-success btn-sm active">
         Rechazar <i class="fa fa-times-circle" aria-hidden="true"></i>
+      </button>
+
+      <button
+        (click)="approve()"
+        *ngIf="claimRequest && isApprove == true"
+        class="btn btn-success btn-sm active">
+        Aprobar <i class="fa fa-sign-out" aria-hidden="true"></i>
       </button>
 
       <button
@@ -52,7 +98,7 @@
 
       <button
         (click)="annexWReport()"
-        *ngIf="claimRequest"
+        *ngIf="claimRequest && (task == 5 || task == 7)"
         class="btn btn-primary btn-sm active">
         Anexo W <i class="fa fa-file ml-3" aria-hidden="true"></i>
       </button>
@@ -89,6 +135,8 @@
 
     <app-service-transportable-goods-form
       [op]="op"
+      [typeOrder]="typeOrder"
+      [justificationRefused]="justificationRefused"
       [showForm]="showForm"
       [orderServiceId]="orderServiceId"
       [isUpdate]="isUpdate"

@@ -84,3 +84,9 @@ export interface IComerModifyXML {
   documentId?: string;
   consecutiveNumber?: number;
 }
+
+export interface ISigantureCapture {
+  responsible: string;
+  charge: string;
+  electronicSignature: boolean;
+}

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -7,8 +7,9 @@ import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../common/repository/interfaces/list-params';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
-import { DefaultSelect } from '../../../../../shared/components/select/default-select';
 //import { NewDocumentServiceOrderFormComponent } from '../new-document-form/new-document-form.component';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
+import { DocumentShowComponent } from '../../../shared-request/document-show/document-show.component';
 import { NewDocumentServiceOrderFormComponent } from '../new-document-service-order-form/new-document-service-order-form.component';
 import { LIST_EXPEDIENTS_COLUMN } from './columns/list-expedients-columns';
 
@@ -36,7 +37,7 @@ export class UploadExpedientServiceOrderFormComponent
 {
   showSearchForm: boolean = false;
   expedientForm: ModelForm<any>;
-  typeDocSelected = new DefaultSelect();
+  typeDocSelected: any = [];
 
   paragraphs: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -46,6 +47,8 @@ export class UploadExpedientServiceOrderFormComponent
 
   data: any[] = [];
   typeComponent: string = '';
+
+  private wcontentService = inject(WContentService);
 
   constructor(
     private fb: FormBuilder,
@@ -67,7 +70,7 @@ export class UploadExpedientServiceOrderFormComponent
       onComponentInitFunction: (instance?: any) => {
         instance.btnclick1.subscribe((data: any) => {
           console.log(data);
-          this.openDetail();
+          this.openDetail(data);
         }),
           instance.btnclick2.subscribe((data: any) => {
             this.openDoc();
@@ -75,29 +78,38 @@ export class UploadExpedientServiceOrderFormComponent
       },
     };
     this.initForm();
-    this.paragraphs = data;
+    this.getTypeDocSelect();
   }
 
   initForm(): void {
     this.expedientForm = this.fb.group({
-      text: [null, [Validators.pattern(STRING_PATTERN)]],
-      typeDoc: [null],
-      titleDoc: [null, [Validators.pattern(STRING_PATTERN)]],
-      sender: [null, [Validators.pattern(STRING_PATTERN)]],
-      author: [null, [Validators.pattern(STRING_PATTERN)]],
-      senderInCharge: [null, [Validators.pattern(STRING_PATTERN)]],
-      noDoc: [null],
-      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
-      version: [null],
-      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
-      noRequest: [null],
-      noOfice: [null],
-      typeTranfer: [null, [Validators.pattern(STRING_PATTERN)]],
-      comments: [null, [Validators.pattern(STRING_PATTERN)]],
+      texto: [null, [Validators.pattern(STRING_PATTERN)]],
+      xtipoDocumento: [null],
+      dDocTitle: [null, [Validators.pattern(STRING_PATTERN)]],
+      xremitente: [null, [Validators.pattern(STRING_PATTERN)]],
+      dDocAuthor: [null, [Validators.pattern(STRING_PATTERN)]],
+      xcargoRemitente: [null, [Validators.pattern(STRING_PATTERN)]],
+      dDocName: [null],
+      xresponsable: [null, [Validators.pattern(STRING_PATTERN)]],
+      xversion: [null],
+      xcontribuyente: [null, [Validators.pattern(STRING_PATTERN)]],
+      xidSolicitud: [null],
+      xnoOficio: [null],
+      xtipoTransferencia: [null, [Validators.pattern(STRING_PATTERN)]],
+      xComments: [null, [Validators.pattern(STRING_PATTERN)]],
     });
+
+    this.setValues();
   }
 
-  getTypeDocSelect(event: any) {}
+  getTypeDocSelect(event?: any) {
+    const params = new ListParams();
+    this.wcontentService.getDocumentTypes(params).subscribe({
+      next: resp => {
+        this.typeDocSelected = resp.data;
+      },
+    });
+  }
 
   newDocument() {
     let config: ModalOptions = {
@@ -114,11 +126,55 @@ export class UploadExpedientServiceOrderFormComponent
     this.modalService.show(NewDocumentServiceOrderFormComponent, config);
   }
 
-  openDetail() {}
+  openDetail(event: any) {
+    //this.openModal(DocumentShowComponent, 'doc-buscar', event.data);
+    let config: ModalOptions = {
+      initialState: {
+        parameter: event,
+        typeDoc: 'doc-buscar',
+        callback: (next: boolean) => {
+          //if (next){ this.getData();}
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(DocumentShowComponent, config);
+  }
 
   openDoc() {}
 
+  search() {
+    let form = this.expedientForm.getRawValue();
+    let body: any = {};
+    for (const key in form) {
+      if (form[key] != null) {
+        body[key] = form[key];
+      }
+    }
+    this.wcontentService.getDocumentos(body).subscribe({
+      next: resp => {
+        resp.data.map((item: any) => {
+          const desp = this.typeDocSelected.find(
+            (x: any) => x.ddocType == item.xtipoDocumento
+          );
+          item['typeDescription'] = desp.ddescription;
+        });
+
+        this.paragraphs = resp.data;
+      },
+    });
+  }
+
   close() {
     this.modalRef.hide();
+  }
+
+  setValues() {
+    if (this.typeComponent == 'sample-request') {
+      this.expedientForm.controls['xidSolicitud'].setValue(
+        this.data[0].requestId
+      );
+    }
   }
 }

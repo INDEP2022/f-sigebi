@@ -107,7 +107,7 @@
               [data]="turnos"
               (fetchItems)="getTurns()"
               bindLabel="turnAndName"
-              control="type"
+              control="turno"
               [searchOnInit]="true"
               [showTooltip]="true"
               termMaxLength="50"
@@ -228,20 +228,18 @@
         </div>
       </div>
     </form>
-
-    <div class="row pt-2">
-      <div class="col-md-12 text-center mt-4 mb-4">
-        <div class="col-md-2">
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
           <button
+            (click)="openHistoric($event)"
             type="button"
-            class="btn btn-primary active btn-sm mr-3"
-            (click)="searchActas()"
-            [disabled]="!disabledBtnActas">
-            Buscar Bienes
-            <i class="bx bx-search bx-sm float-icon"></i>
+            class="btn btn-primary active btn-sm mr-3">
+            Bitácora
+            <i class="bx bx-clipboard bx-sm float-icon"></i>
           </button>
         </div>
-        <div class="col-md-2">
+        <div class="m-3">
           <button
             type="button"
             class="btn btn-danger active btn-sm"
@@ -251,67 +249,98 @@
         </div>
       </div>
     </div>
-
-    <div class="margin-input">
+    <div class="col-md-12">
       <h5 class="title">Bienes del Reporte Implementación</h5>
-      <div class="row pt-4">
+      <div class="row">
+        <form-loader *ngIf="loading2"></form-loader>
         <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
+          <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
+              (userRowSelect)="onUserRowSelect($event)"
               [source]="dataTableGood">
             </ng2-smart-table>
-          </div>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </ng-scrollbar>
+          <!-- </div> -->
         </div>
-        <app-pagination
-          [params]="params"
-          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button
+            (click)="cargaBienes()"
+            type="button"
+            class="btn btn-info active btn-sm mr-3">
+            Incorporar Bienes
+            <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm"
+            (click)="elimina()">
+            Eliminar Bienes <i class="fas fa-trash bx-sm float-icon"></i>
+          </button>
+        </div>
       </div>
     </div>
 
-    <div class="row pt-2">
-      <div class="col-md-12 text-center mt-4 mb-4">
-        <div class="col-md-2">
-          <button class="btn btn-primary btn-sm active">Incorpora</button>
-        </div>
-        <div class="col-md-2">
-          <button class="btn btn-danger btn-sm active">Elimina</button>
-        </div>
-      </div>
-    </div>
-    <div class="margin-input">
+    <div class="col-md-12">
       <h5 class="title">Reportes de Implementación</h5>
-      <div class="row pt-4">
+      <div class="row">
+        <form-loader *ngIf="loading2"></form-loader>
         <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
+          <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings2"
               [source]="bienesStrategy">
             </ng2-smart-table>
-          </div>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems2"></app-pagination>
+          </ng-scrollbar>
+          <!-- </div> -->
         </div>
-        <app-pagination
-          [params]="params"
-          [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
-    <div class="row pt-2">
-      <div class="col-md-12 text-center mt-4 mb-4">
-        <div class="col-md-2">
-          <button class="btn btn-primary btn-sm active">Incorpora</button>
-        </div>
-        <div class="col-md-2">
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
           <button
-            class="btn btn-primary btn-sm active"
-            (click)="pupGenera()"
-            [disabled]="!disabledBtnActas">
-            Genera
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="pupGenera()">
+            Generar <i class="fas fa-print bx-sm float-icon"></i>
           </button>
         </div>
-        <div class="col-md-2">
-          <button class="btn btn-primary btn-sm active">Nuevos Costos</button>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="incorporaCostos()">
+            Incorpora <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="validaForm()">
+            Nuevos Costos <i class="fas fa-print bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
     </div>

@@ -11,7 +11,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class GenerateReportFormComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
-
+  processFirm: string = '';
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
   }
@@ -24,12 +24,12 @@ export class GenerateReportFormComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       responsible: [null, [Validators.pattern(STRING_PATTERN)]],
       charge: [null, [Validators.pattern(STRING_PATTERN)]],
-      electronicSignature: [null, [Validators.pattern(STRING_PATTERN)]],
+      electronicSignature: [false, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
   confirm() {
-    this.modalRef.content.callback(true);
+    this.modalRef.content.callback(true, this.form.value);
     this.close();
   }
 

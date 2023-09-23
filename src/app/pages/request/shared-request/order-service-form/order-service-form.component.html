@@ -21,293 +21,115 @@
   </h5>
 </div>
 
-<form
-  [formGroup]="ordServform"
-  class="form-horizontal form-material"
-  style="margin: 0 auto"
-  *ngIf="showOrderservice">
-  <div class="row pt-2">
-    <div class="col-md-4">
-      <div class="form-group">
-        <label class="text-right">Folio Órden Servicio&#58;</label>
-        <span> {{ orderService?.serviceOrderFolio }} </span>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="form-group">
-        <label class="mr-2">No&#46; Contrato&#58;</label>
-        <span> {{ orderService?.contractNumber }} </span>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <form-field
-        [control]="ordServform.get('reasonsNotPerform')"
-        label="Razones no Realizaci&oacute;n">
-        <input
-          class="form-control"
-          formControlName="reasonsNotPerform"
-          *ngIf="
-            (!showForm && op == 9) ||
-            (!showForm && op == 13) ||
-            (showForm && op != 9)
-          " />
-
-        <input
-          class="form-control"
-          formControlName="reasonsNotPerform"
-          *ngIf="!showForm && op != 9"
-          readonly />
-      </form-field>
-      <!--
+<div class="row">
+  <form
+    [formGroup]="ordServform"
+    class="form-horizontal form-material"
+    style="margin: 0 auto"
+    *ngIf="showOrderservice">
+    <div class="row pt-2">
+      <div class="col-md-4">
         <div class="form-group">
-          <label>&#58;</label>
-         
-         
+          <label class="ml-3 text-right">Folio Órden Servicio&#58;</label>
+          <span> {{ orderService?.serviceOrderFolio }} </span>
         </div>
-      -->
-    </div>
-  </div>
+      </div>
 
-  <div class="row pt-4">
-    <div class="col-md-4">
-      <div class="form-group">
-        <label class="col-lg-6 text-right">Fecha de Turnano&#58;</label>
-        <span> {{ orderService?.shiftDate | date: 'dd/MM/yyyy' }} </span>
+      <div class="col-md-3">
+        <div class="form-group">
+          <label class="mr-2">No&#46; Contrato&#58;</label>
+          <span> {{ orderService?.contractNumber }} </span>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <form-field
+          [control]="ordServform.get('reasonsNotPerform')"
+          label="Razones no Realizaci&oacute;n">
+          <input
+            class="form-control"
+            formControlName="reasonsNotPerform"
+            [readOnly]="readonly" />
+        </form-field>
       </div>
     </div>
 
-    <div class="col-md-4">
-      <form-field
-        [control]="ordServform.get('transportationZone')"
-        label="Transporte Zona">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="transportationZone"
-          *ngIf="
-            (showForm && op == 9) ||
-            (!showForm && op == 13) ||
-            (showForm && op != 9)
-          " />
-        <input
-          type="text"
-          class="form-control"
-          formControlName="transportationZone"
-          *ngIf="(!showForm && op != 9) || (!showForm && op != 9)"
-          readonly />
-      </form-field>
-      <!--
+    <div class="row pt-4">
+      <div class="col-md-4">
         <div class="form-group">
-          <label class=" text-right">Tranporte zona&#58;</label>
-          
+          <label class="ml-3 text-right">Fecha de Turnano&#58;</label>
+          <span> {{ orderService?.shiftDate | date : 'dd/MM/yyyy' }} </span>
         </div>
-      -->
-    </div>
+      </div>
 
-    <div
-      class="col-md-3 mt-3 ml-5"
-      *ngIf="
-        (!showForm && op == 9) ||
-        (!showForm && op == 13) ||
-        (showForm && op != 9)
-      ">
-      <form-check label="Consolidado con Contenedores" for="checkGood">
-        <input
-          id="checkGood"
-          type="checkbox"
-          [(ngModel)]="consolideContainer"
-          [ngModelOptions]="{ standalone: true }"
-          (change)="changeConsolidate($event)" />
-      </form-check>
-    </div>
+      <div class="col-md-3">
+        <form-field
+          [control]="ordServform.get('transportationZone')"
+          label="Transporte Zona">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="transportationZone"
+            [readOnly]="readonly" />
+        </form-field>
+      </div>
 
-    <div
-      class="col-md-3 mt-3 ml-5 disabled"
-      *ngIf="
-        (!showForm && op == 9) ||
-        (!showForm && op == 13) ||
-        (!showForm && op != 9)
-      ">
-      <form-check label="Consolidado con Contenedores" for="checkGood">
-        <input
-          id="checkGood"
-          type="checkbox"
-          [(ngModel)]="consolideContainer"
-          [ngModelOptions]="{ standalone: true }"
-          (change)="changeConsolidate($event)"
-          [readOnly]="true" />
-      </form-check>
-    </div>
-    <!--<div class="col-md-4">
-      <div class="form-group">
-        <form-check label="Consolidado con contenedores" for="label2">
+      <div class="col-md-4">
+        <form-check label="Consolidado con Contenedores" for="checkGood">
           <input
-            id="label2"
+            id="checkGood"
             type="checkbox"
-            formControlName="consolidate"
-            *ngIf="(!showForm && op == 9) || (!showForm && op == 13)" /> 
-          <input
-            id="label2"
-            type="checkbox"
-            [disabled]="disableAllChecks == false"
-            formControlName="consolidate" />
+            [(ngModel)]="consolideContainer"
+            [ngModelOptions]="{ standalone: true }"
+            (change)="changeConsolidate($event)"
+            [disabled]="readonly" />
         </form-check>
       </div>
-    </div> -->
-  </div>
+    </div>
 
-  <div class="row pt-4">
-    <div class="col-md-4">
-      <div class="form-group">
-        <label class="text-right">Usuario Turnado&#58;</label>
-        <span> {{ orderService?.shiftUser }} </span>
+    <div class="row pt-4">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="ml-3 text-right">Usuario Turnado&#58;</label>
+          <span> {{ orderService?.shiftUser }} </span>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <form-field [control]="ordServform.get('folioTlp')" label="Folio TLP">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="folioTlp"
+            [readOnly]="readonly" />
+        </form-field>
+      </div>
+
+      <div class="col-md-4">
+        <form-check label="Visita Ocular" for="checkGoodVisit">
+          <input
+            id="checkGoodVisit"
+            type="checkbox"
+            [(ngModel)]="visitEye"
+            [ngModelOptions]="{ standalone: true }"
+            (change)="changeVisitEye($event)"
+            [disabled]="readonly" />
+        </form-check>
       </div>
     </div>
-    <div class="col-md-4">
-      <form-field [control]="ordServform.get('folioTlp')" label="Folio TLP">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="folioTlp"
-          *ngIf="
-            (!showForm && op == 9) ||
-            (!showForm && op == 13) ||
-            (showForm && op != 9)
-          " />
 
-        <input
-          type="text"
-          class="form-control"
-          formControlName="folioTlp"
-          *ngIf="!showForm && op != 9"
-          readonly />
-      </form-field>
-      <!--<div class="form-group">
-        <label class=" text-right">&#58;</label>
-       
-      
-      </div> -->
-    </div>
-
-    <div
-      class="col-md-3 mt-3 ml-5"
-      *ngIf="
-        (!showForm && op == 9) ||
-        (!showForm && op == 13) ||
-        (showForm && op != 9)
-      ">
-      <form-check label="Visita Ocular" for="checkGoodVisit">
-        <input
-          id="checkGoodVisit"
-          type="checkbox"
-          [(ngModel)]="visitEye"
-          [ngModelOptions]="{ standalone: true }"
-          (change)="changeVisitEye($event)" />
-      </form-check>
-    </div>
-
-    <div
-      class="col-md-3 mt-3 ml-5 disabled"
-      *ngIf="
-        (!showForm && op == 9) ||
-        (!showForm && op == 13) ||
-        (!showForm && op != 9)
-      ">
-      <form-check label="Visita Ocular" for="checkGood">
-        <input
-          id="checkGood"
-          type="checkbox"
-          [(ngModel)]="visitEye"
-          [ngModelOptions]="{ standalone: true }"
-          [readOnly]="true" />
-      </form-check>
-    </div>
-
-    <!--<div class="col-md-4">
-      <div class="form-group">
-        <form-check label="Visita ocular" for="label">
-          <input
-            id="label"
-            type="checkbox"
-            formControlName="visit"
-            *ngIf="(!showForm && op == 9) || (!showForm && op == 13)" />
-          <input
-            id="label"
-            type="checkbox"
-            formControlName="visit"
-            readonly
-            *ngIf="
-              (!showForm && op != 9) ||
-              (!showForm && op != 13) ||
-              (showForm && op != 9)
-            " />
-        </form-check>
-      </div> 
-    </div> -->
-  </div>
-
-  <div class="row pt-3">
-    <div class="col-md-4"></div>
-    <div class="col-md-4"></div>
-    <div class="col-md-4">
-      <div class="justify-content-end">
-        <div class="font-size-45">
-          <label class="col-lg-8 text-right"><b>Total&#58;</b></label>
-          <span>
-            <b>{{ total }}</b></span
-          >
+    <div class="row pt-3">
+      <div class="col-md-4"></div>
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+        <div class="justify-content-end">
+          <div class="font-size-45">
+            <label class="col-lg-8 text-right"><b>Total&#58;</b></label>
+            <span>
+              <b>{{ total }}</b></span
+            >
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <!--<div class="col-md-4">
-      
-
-      <div class="form-group" *ngIf="op != 1 && op != 2">
-        <label class=" text-right"
-          >Folio reporte implementación&#58;</label
-        >
-        <span> Metropolitana-SAT-1333-RI </span>
-      </div>
-
-      <div class="form-group">
-        <label class=" text-right">Fecha de turnano&#58;</label>
-        <span> 25-nov-2022 </span>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      
-
-      
-
-      
-      <div class="form-group">
-        <label class=" text-right">Folio TLP&#58;</label>
-        <input
-          type="text"
-          class="form-control"
-          formControlName="folioTlp"
-          style="width: 97px; height: 24px"
-          *ngIf="(!showForm && op == 9) || (!showForm && op == 13)" />
-        <input
-          type="text"
-          class="form-control"
-          formControlName="folioTlp"
-          style="width: 97px; height: 24px"
-          *ngIf="(!showForm && op != 9) || (showForm && op != 9)"
-          readonly />
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      
-
-   
-    
-
-      
-    </div> -->
-</form>
+  </form>
+</div>

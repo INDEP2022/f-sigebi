@@ -20,7 +20,7 @@ export class DetailProceeDelRecService extends HttpService {
   }
 
   getGoodsByProceedings(id: string | number, params?: ListParams) {
-    const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}?filter.numberProceedings=${id}`;
+    const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}?filter.numberProceedings=$eq:${id}`;
     return this.get(route, params);
   }
 

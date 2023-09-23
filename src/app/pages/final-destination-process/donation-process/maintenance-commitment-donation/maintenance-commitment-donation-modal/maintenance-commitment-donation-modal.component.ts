@@ -164,7 +164,7 @@ export class MaintenanceCommitmentDonationModalComponent
     this.donationService.createApproveDonation(model).subscribe({
       next: () => {
         this.handleSuccess();
-        this.onLoadToast('success', 'Comercio Exterior Kg Creado', '');
+        this.onLoadToast('success', 'Registro creado correctamente', '');
       },
       error: error => {
         this.onLoadToast('error', error.error.message, '');
@@ -222,6 +222,26 @@ export class MaintenanceCommitmentDonationModalComponent
       },
     });
   }
+
+  insertPermisosRastreador() {
+    this.newOrEdit = false;
+    const model = {} as any;
+    model.value = this.form.value.value;
+    model.name = this.form.value.name;
+    model.valid = Number(this.form.value.valid);
+
+    //SERVICIO POS PERMISOS
+    this.donationService.createApproveDonation(model).subscribe({
+      next: () => {
+        this.handleSuccess();
+        this.onLoadToast('success', 'Usuario para Rastereador Creado', '');
+      },
+      error: error => {
+        this.onLoadToast('error', error.error.message, '');
+      },
+    });
+  }
+
   getOtKey() {
     // let arr: number[] = [];
     this.tvalTable1Service.getByIdFind(421).subscribe({
@@ -307,7 +327,7 @@ export class MaintenanceCommitmentDonationModalComponent
       error: err => {
         let error = '';
         if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
+          error = 'Revise su conexión de internet.';
           this.onLoadToast('error', 'Error', error);
           //this.newOrEdit = false;
         } else {
@@ -341,7 +361,7 @@ export class MaintenanceCommitmentDonationModalComponent
       error: err => {
         let error = '';
         if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
+          error = 'Revise su conexión de internet.';
           this.onLoadToast('error', 'Error', error);
           //this.newOrEdit = false;
         } else {
@@ -368,7 +388,7 @@ export class MaintenanceCommitmentDonationModalComponent
       error: err => {
         let error = '';
         if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
+          error = 'Revise su conexión de internet.';
           this.onLoadToast('error', 'Error', error);
           //this.newOrEdit = false;
         } else {

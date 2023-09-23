@@ -7,15 +7,16 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IOrderServiceDTO } from 'src/app/core/models/ms-order-service/order-service.mode';
+import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
 import { GenerateReportFormComponent } from '../../reception-scheduling-service-order/components/generate-report-form/generate-report-form.component';
 import { RejectionCommentFormComponent } from '../../reception-scheduling-service-order/components/rejection-comment-form/rejection-comment-form.component';
 import { RejectionJustifyFormComponent } from '../../reception-scheduling-service-order/components/rejection-justify-form/rejection-justify-form.component';
 import { ElectronicSignatureListComponent } from '../../shared-request/electronic-signature-list/electronic-signature-list.component';
-import { ShowProgrammingComponent } from '../../shared-request/show-programming/show-programming.component';
 import { ShowSignatureProgrammingComponent } from '../../shared-request/show-signature-programming/show-signature-programming.component';
 
 @Component({
@@ -56,7 +57,7 @@ export class OrderServiceDeliveryFormComponent
   ordServForm: FormGroup = new FormGroup({});
   form: FormGroup = new FormGroup({});
   programmingId: number = null;
-  op: number = 1;
+  op: number = 0;
   total: string = null;
   programming: Iprogramming;
   constructor(
@@ -64,12 +65,14 @@ export class OrderServiceDeliveryFormComponent
     private fb: FormBuilder,
     private programmingService: ProgrammingRequestService,
     private activeRouter: ActivatedRoute,
-    private orderService: OrderServiceService
+    private orderService: OrderServiceService,
+    private signatoriesService: SignatoriesService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.op = this.task;
     this.programmingId = this.activeRouter.snapshot.params['id'];
 
     this.prepareOrderServiceForm();
@@ -367,37 +370,132 @@ export class OrderServiceDeliveryFormComponent
 
   generateReport() {
     if (this.task != 5 && this.task != 6) {
-      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      if (this.task == 2) {
+        let config = {
+          ...MODAL_CONFIG,
+          class: 'modal-lg modal-dialog-centered',
+        };
 
-      config.initialState = {
-        callback: (data: any) => {
-          if (data) {
-            this.showReport();
-          }
-        },
-      };
+        config.initialState = {
+          callback: async (next: boolean, infoSign: any) => {
+            if (next) {
+              if (infoSign.electronicSignature == true) {
+                const createSign = await this.createSignature(infoSign);
+                if (createSign) {
+                  this.showReport();
+                } else {
+                  this.alert('error', 'Error', 'Error al crear el firmante');
+                }
+              } else {
+                this.showReport();
+              }
+            }
+          },
+        };
 
-      const createService = this.modalService.show(
-        GenerateReportFormComponent,
-        config
-      );
+        this.modalService.show(GenerateReportFormComponent, config);
+      } else if (this.task == 3) {
+        let config = {
+          ...MODAL_CONFIG,
+          class: 'modal-lg modal-dialog-centered',
+        };
+
+        config.initialState = {
+          processFirm: 'firmRegionalDelegation',
+          callback: async (next: boolean, infoSign: any) => {
+            if (next) {
+              if (infoSign.electronicSignature == true) {
+                const createSign = await this.createSignature(infoSign);
+                if (createSign) {
+                  this.showReport();
+                } else {
+                  this.alert('error', 'Error', 'Error al crear el firmante');
+                }
+              } else {
+                this.showReport();
+              }
+            }
+          },
+        };
+
+        const createService = this.modalService.show(
+          GenerateReportFormComponent,
+          config
+        );
+      }
     } else {
       this.showReport();
     }
   }
 
+  createSignature(infoSign: any) {
+    return new Promise((resolve, reject) => {
+      const learnedType = 245;
+      const learndedId = 516; // Id Orden de Servicio
+
+      this.signatoriesService
+        .getSignatoriesFilter(learnedType, learndedId)
+        .subscribe({
+          next: response => {
+            /*this.signatoriesService
+              .deleteFirmante(Number(response.data[0].signatoryId))
+              .subscribe({
+                next: () => {
+                  
+                },
+              }); */
+
+            const formData: Object = {
+              learnedId: 516, // Orden de servicio
+              learnedType: 245,
+              boardSignatory: 'ORDEN_SERVICIO',
+              columnSignatory: 'TIPO_FIRMA',
+              name: infoSign.responsible,
+              post: infoSign.charge,
+            };
+
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+            });
+          },
+          error: error => {
+            const formData: Object = {
+              learnedId: 516, // Orden de servicio
+              learnedType: 245,
+              boardSignatory: 'ORDEN_SERVICIO',
+              columnSignatory: 'TIPO_FIRMA',
+              name: infoSign.responsible,
+              post: infoSign.charge,
+            };
+
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+            });
+          },
+        });
+    });
+  }
+
   showReport() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-
     config.initialState = {
+      idOrderService: 516,
       callback: (data: any) => {
         if (data) {
-          this.electronicSignture();
+          //this.electronicSignture();
         }
       },
     };
 
-    const showReport = this.modalService.show(ShowProgrammingComponent, config);
+    //const showReport = this.modalService.show(ShowProgrammingComponent, config);
+    const showReport = this.modalService.show(
+      ShowReportComponentComponent,
+      config
+    );
   }
 
   electronicSignture() {

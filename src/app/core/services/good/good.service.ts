@@ -259,4 +259,8 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
     const route = `${GoodEndpoints.goodSec}`;
     return this.get(route);
   }
+  getByGood2(params: ListParams) {
+    const route = `${GoodEndpoints.GetAllGoodQuery}`;
+    return this.get(route, params);
+  }
 }

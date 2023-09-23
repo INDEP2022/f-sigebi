@@ -1212,7 +1212,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                       );
                       // this.alert('success', 'Acta cerrada', '');
                       this.loadingBtn = false;
-                      this.disabledBtnCerrar = false;
+                      // this.disabledBtnCerrar = false;
                       this.disabledBtnActas = false;
                       this.getGoodsByStatus(this.fileNumber);
                       await this.getDetailProceedingsDevollution(
@@ -1512,6 +1512,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.actasConvertionCommunicationService.enviarDatos(this.conversion);
   }
 
+  valFormulario(val: boolean) {
+    this.actasConvertionCommunicationService.valFormulario(val);
+  }
+
   cargarData(binaryExcel: any) {
     this.hijoRef.cargarData(binaryExcel);
   }
@@ -1697,11 +1701,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       );
       this.statusConv = next.statusProceedings;
       if (this.statusConv == 'CERRADA') {
-        this.disabledBtnCerrar = false;
+        // this.disabledBtnCerrar = false;
         this.disabledBtnActas = false;
+        this.valFormulario(false);
       } else {
+        this.valFormulario(true);
         this.disabledBtnActas = true;
-        this.disabledBtnCerrar = true;
+        // this.disabledBtnCerrar = true;
       }
 
       this.actaRecepttionForm.patchValue({
@@ -1737,6 +1743,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         this.cleanActa();
       }
     });
+  }
+
+  valForm() {
+    this.actasConvertionCommunicationService.enviarDatos(this.conversion);
   }
 
   getActasByConversion(cve: string) {
@@ -2255,11 +2265,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       // this.fCreate = this.datePipe.transform(next.dateElaborationReceipt,'dd/MM/yyyy');
       this.statusConv = next.statusProceedings;
       if (this.statusConv == 'CERRADA') {
-        this.disabledBtnCerrar = false;
+        // this.disabledBtnCerrar = false;
         this.disabledBtnActas = false;
+        this.valFormulario(false);
       } else {
         this.disabledBtnActas = true;
-        this.disabledBtnCerrar = true;
+        this.valFormulario(true);
+        // this.disabledBtnCerrar = true;
       }
 
       this.actaRecepttionForm.patchValue({

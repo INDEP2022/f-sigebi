@@ -1,30 +1,30 @@
 export const LIST_ORDERS_SELECTED_COLUMNS = {
-  noServiceOrder: {
+  orderServiceId: {
     title: 'No. Ordern Servicio',
     type: 'text',
     sort: false,
   },
-  foilServiceOrder: {
+  orderServiceFolio: {
     title: 'Folio Ordern Servicio',
     type: 'text',
     sort: false,
   },
-  typeServiceOrder: {
+  orderServiceType: {
     title: 'Tipo Ordern Servicio',
     type: 'text',
     sort: false,
   },
-  noContract: {
+  contractNumber: {
     title: 'No. Contrato',
     type: 'text',
     sort: false,
   },
-  noRequest: {
+  requestId: {
     title: 'No. Solicitud',
     type: 'text',
     sort: false,
   },
-  costServices: {
+  costService: {
     title: 'Costo Servicios',
     type: 'text',
     sort: false,
