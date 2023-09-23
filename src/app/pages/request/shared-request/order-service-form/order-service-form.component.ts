@@ -37,6 +37,7 @@ export class OrderServiceFormComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     //this.prepareForm();
+    this.readonly = this.op == 1 ? false : true;
   }
 
   ngOnChanges(changes: SimpleChanges): void {

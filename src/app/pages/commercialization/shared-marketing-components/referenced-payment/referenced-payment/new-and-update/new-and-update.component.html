@@ -9,7 +9,8 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row p-1" style="height: 300px; overflow-y: scroll">
+      <!-- style="height: 300px; overflow-y: scroll" -->
+      <div class="row p-1">
         <div class="col-md-6 mt-3">
           <form-field [control]="form.get('bankKey')">
             <ngx-select
@@ -67,6 +68,26 @@
               formControlName="reference" />
           </form-field>
         </div>
+
+        <!-- <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('appliedTo')" label="Aplicado a">
+            <ng-select formControlName="appliedTo" class="form-control pt-1">
+              <ng-option value="D">Devolución</ng-option>
+              <ng-option value="P">Penalización</ng-option>
+            </ng-select>
+          </form-field>
+        </div> -->
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('amount')" label="Monto">
+            <input
+              [readonly]="valScroll"
+              currencyMask
+              maxlength="17"
+              type="text"
+              class="form-control"
+              formControlName="amount" />
+          </form-field>
+        </div>
         <div *ngIf="edit" class="col-md-6 mt-2">
           <form-field
             [control]="form.get('referenceOri')"
@@ -79,15 +100,6 @@
               formControlName="referenceOri" />
           </form-field>
         </div>
-
-        <!-- <div class="col-md-6 mt-2">
-          <form-field [control]="form.get('appliedTo')" label="Aplicado a">
-            <ng-select formControlName="appliedTo" class="form-control pt-1">
-              <ng-option value="D">Devolución</ng-option>
-              <ng-option value="P">Penalización</ng-option>
-            </ng-select>
-          </form-field>
-        </div> -->
         <div class="col-md-6 mt-2">
           <form-field [control]="form.get('validSistem')" label="Válido">
             <ng-select
@@ -113,17 +125,7 @@
             </ngx-select>
           </form-field>
         </div> -->
-        <div class="col-md-6 mt-2">
-          <form-field [control]="form.get('amount')" label="Monto">
-            <input
-              [readonly]="valScroll"
-              currencyMask
-              maxlength="17"
-              type="text"
-              class="form-control"
-              formControlName="amount" />
-          </form-field>
-        </div>
+
         <!-- <div class="col-md-6 mt-2">
           <form-field [control]="form.get('rfc')" label="RFC">
             <input readonly type="text" class="form-control" formControlName="rfc" />

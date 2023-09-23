@@ -43,4 +43,6 @@ export class MarketingRecordsForm {
     Validators.pattern(STRING_PATTERN),
   ]);
   problematiclegal = new FormControl<1 | 2>(null);
+  seRefiereA = new FormControl(null);
+  description = new FormControl(null);
 }
