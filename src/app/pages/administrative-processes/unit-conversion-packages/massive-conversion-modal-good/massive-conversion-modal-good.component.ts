@@ -8,6 +8,7 @@ import {
   of,
   Subject,
   switchMap,
+  take,
   takeUntil,
 } from 'rxjs';
 import {
@@ -23,6 +24,7 @@ import { LabelOkeyService } from 'src/app/core/services/catalogs/label-okey.serv
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
 import { BasePage } from 'src/app/core/shared';
 import { GOODS_SELECTIONS_COLUMNS } from '../massive-conversion/columns';
@@ -76,7 +78,8 @@ export class MassiveConversionModalGoodComponent
     private transferenteService: TransferenteService,
     private vGoodService: GoodTrackerService,
     private serviceW: WarehouseService,
-    private packageGoodService: PackageGoodService
+    private packageGoodService: PackageGoodService,
+    private goodProcessService: GoodprocessService
   ) {
     super();
     this.settings = {
@@ -362,9 +365,28 @@ export class MassiveConversionModalGoodComponent
           this.packageGoodService.prepDestinationPackage(data).subscribe(
             response => {
               if (response) {
-                this.onSentGoods.next(response.data);
-                this.alert('success', 'Bienes ingresados', '');
-                this.onClose();
+                this.goodProcessService
+                  .updateGoodsByPackage({
+                    pacakgeNumber: this.data.infoPack.package,
+                    goodNumber: goodList.map(x => x.goodNumber).toString(),
+                  })
+                  .pipe(take(1))
+                  .subscribe({
+                    next: response => {
+                      console.log(response);
+                      this.onSentGoods.next(response.data);
+                      this.alert('success', 'Bienes ingresados', '');
+                      this.onClose();
+                    },
+                    error: err => {
+                      this.alert(
+                        'success',
+                        'Bienes ingresados',
+                        'Descripciones no actualizada'
+                      );
+                      this.onClose();
+                    },
+                  });
               }
             },
             error => {

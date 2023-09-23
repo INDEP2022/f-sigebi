@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ThirdPartyAdmonEndpoints } from 'src/app/common/constants/endpoints/ms-third-party-admon-endpoints';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGood } from '../../models/good/good.model';
@@ -153,5 +154,9 @@ export class GoodPosessionThirdpartyService extends HttpService {
   getIncCosto(costos: ICostReport) {
     const route = `${ThirdPartyAdmonEndpoints.CostosGoods}`;
     return this.post(route, costos);
+  }
+  getStrategyBitacora(params: ListParams) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyLog}`;
+    return this.get(route, params);
   }
 }

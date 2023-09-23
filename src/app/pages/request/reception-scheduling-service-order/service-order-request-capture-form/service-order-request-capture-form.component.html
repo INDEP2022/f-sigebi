@@ -20,6 +20,13 @@
       </button>
 
       <button
+        *ngIf="claimRequest && (task == 10 || task == 13)"
+        class="btn btn-info btn-sm active"
+        (click)="refuseJustification()">
+        Rechazar Justificación <i class="fa fa-reply" aria-hidden="true"></i>
+      </button>
+
+      <button
         *ngIf="
           claimRequest &&
           (task == 2 ||
@@ -27,7 +34,10 @@
             task == 5 ||
             task == 6 ||
             task == 7 ||
-            task == 8)
+            task == 8 ||
+            task == 10 ||
+            task == 13 ||
+            task == 11)
         "
         type="button"
         class="btn btn-primary active btn-sm"
@@ -38,16 +48,34 @@
 
       <button
         (click)="sendOrderService()"
-        *ngIf="claimRequest && (task == 1 || task == 4)"
+        *ngIf="
+          claimRequest &&
+          (task == 1 ||
+            task == 4 ||
+            task == 9 ||
+            task == 12 ||
+            task == 14 ||
+            task == 15)
+        "
         class="btn btn-success btn-sm active">
         Enviar <i class="fa fa-paper-plane" aria-hidden="true"></i>
+      </button>
+
+      <button
+        (click)="sendJustification()"
+        *ngIf="
+          claimRequest && (task == 9 || task == 12 || task == 14 || task == 15)
+        "
+        class="btn btn-success btn-sm active">
+        Enviar Justificaci&oacute;
+        <i class="fa fa-paper-plane" aria-hidden="true"></i>
       </button>
 
       <button
         (click)="rejectOrder()"
         *ngIf="
           claimRequest &&
-          (task == 2 || task == 5 || task == 8) &&
+          (task == 2 || task == 5 || task == 8 || task == 11) &&
           isApprove == false
         "
         class="btn btn-success btn-sm active">
@@ -108,6 +136,7 @@
     <app-service-transportable-goods-form
       [op]="op"
       [typeOrder]="typeOrder"
+      [justificationRefused]="justificationRefused"
       [showForm]="showForm"
       [orderServiceId]="orderServiceId"
       [isUpdate]="isUpdate"
