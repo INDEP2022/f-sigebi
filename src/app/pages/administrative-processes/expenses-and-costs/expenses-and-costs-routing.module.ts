@@ -56,7 +56,10 @@ const routes: Routes = [
               './../insurance-and-surveillance/costs-resume/costs-resume.module'
             )
           ).CostsResumeModule,
-        data: { title: 'Resumen de Gastos' },
+        data: {
+          title: 'Resumen de Gastos',
+          screen: 'FRESUMENCOSTOS',
+        },
       },
       {
         path: 'expenses-format',

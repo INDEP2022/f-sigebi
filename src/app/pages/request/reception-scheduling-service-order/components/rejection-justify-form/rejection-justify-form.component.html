@@ -5,9 +5,7 @@
   <div body style="margin-top: -30px">
     <div class="row">
       <form [formGroup]="form" class="form-material">
-        <form-field
-          [control]="form.get('justification')"
-          label="justificaci&oacute;n">
+        <form-field [control]="form.get('justification')" label="{{ label }}">
           <textarea
             class="form-control"
             formControlName="justification"></textarea>

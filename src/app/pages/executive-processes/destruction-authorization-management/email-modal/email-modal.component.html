@@ -12,8 +12,8 @@
               [form]="emailForm"
               control="email"
               [data]="users"
-              value="email"
-              bindLabel="email"
+              value="bookEmail"
+              bindLabel="bookEmail"
               label="Para: "
               (fetchItems)="getEmailIndep($event)"
               (change)="onValuesChange($event)"></ngx-select>
@@ -64,15 +64,25 @@
       </div>
       <div class="row pt-5">
         <div class="col-md-12">
+          <form-field label="Asunto" [control]="emailForm.get('asunto')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="asunto"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-12">
           <form-field
             label="Cuerpo del correo"
             [control]="emailForm.get('body')">
             <textarea
-              [maxlength]="5000"
+              [maxlength]="6000"
               autosize
               class="form-control"
               formControlName="body"
-              rows="6"></textarea>
+              rows="6"
+              readonly></textarea>
           </form-field>
         </div>
       </div>
@@ -81,10 +91,14 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [text]="'Continuar con el proceso'"
-          [type]="'button'"
-          (confirm)="confirm()"></confirm-button>
+        <button
+          type="submit"
+          class="btn btn-primary btn-sm active"
+          tooltip="Enviar"
+          containerClass="tooltip-style"
+          (click)="confirm()">
+          Enviar <i class="bx bx-send"></i>
+        </button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
