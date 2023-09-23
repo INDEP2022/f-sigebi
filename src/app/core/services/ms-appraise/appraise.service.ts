@@ -74,7 +74,7 @@ export class AppraiseService extends HttpService {
     );
   }
 
-  updateEatDetAppraisal(appraisal: number, data: any) {
-    return this.put(`${AppraiseEndpoints.ComerDetAvaluo}/${appraisal}`, data);
+  updateEatDetAppraisal(data: any) {
+    return this.put(AppraiseEndpoints.ComerDetAvaluo, data);
   }
 }

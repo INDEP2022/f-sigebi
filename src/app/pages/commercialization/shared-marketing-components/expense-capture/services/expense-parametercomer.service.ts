@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ParameterComerEndpoints } from 'src/app/common/constants/endpoints/ms-parametercomer-endpoints';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IParameterComerDTO } from '../models/parametercomer';
 
@@ -41,5 +42,17 @@ export class ExpenseParametercomerService extends HttpService {
 
   postComerParametersMod(body: any) {
     return this.post(ParameterComerEndpoints.GetvValue, body);
+  }
+
+  postParametersMod(body: any) {
+    return this.post(ParameterComerEndpoints.ParameterMod, body);
+  }
+
+  deleteParametersMod(body: any) {
+    return this.delete(ParameterComerEndpoints.ParameterMod, body);
+  }
+
+  getParameterModParam(params?: ListParams) {
+    return this.get(`${ParameterComerEndpoints.ParameterMod}`, params);
   }
 }

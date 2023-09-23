@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
@@ -12,13 +12,16 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AppraiseService } from 'src/app/core/services/ms-appraise/appraise.service';
 import { ComerUsuauTxEventService } from 'src/app/core/services/ms-event/comer-usuautxevento.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { ComerGoodsRejectedService } from 'src/app/core/services/ms-prepareevent/comer-goods-rejected.service';
 import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
+import { ERROR_EXPORT } from 'src/app/pages/documents-reception/goods-bulk-load/utils/goods-bulk-load.message';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import * as XLSX from 'xlsx';
 import { ExpenseParametercomerService } from '../../expense-capture/services/expense-parametercomer.service';
 import { COLUMNS, COLUMNS2 } from './columns';
 
@@ -63,6 +66,11 @@ export class TaxValidationCalculationComponent
   v_valor: any;
 
   selectedRows: any[] = [];
+  countParamaterGood: number = 0;
+  dataDet: any;
+  dataDetArr: any[] = [];
+  headerString: string =
+    'NO., NO._BIEN, DESCRIPCION, ESTATUS, CLASIF,  TIPO, FECHA, FECHA_VIG, NOMBRE_VAL., TIPO_REF, SUPERFICIE_TERRENO,  SUPERFICIE_CONSTRUCCION, %_TERRENO,   %_CONSTR_HAB, %_CONSTR_COMER, %_INST_ESP, %_OTROS, %_TOTAL, VALOR_REF_CALCULADO, VALOR_TERRENO,  VALOR_CONSTR_HAB, VALOR_CONSTR_COMER, VALOR_INST_ESP, VALOR_OTROS, DIFERENCIA,   TASA_IVA_TERRENO,  TASA_IVA_CONSTR_HAB,  TASA_IVA_CONSTR_COMERCIAL,  TASA_IVA_INSTALACIONES_ESP,  TASA_IVA_OTROS, IVA_TERRENO,  IVA_CONSTR_HAB,  IVA_CONST_COMERCIAL,  IVA_INSTALACIONES_ESP,  IVA_OTROS,  VALOR_TOTAL_IVA_CALCULADO, VALOR_CON_IVA_INCLUIDO,  OBSERVACIONES,  VALIDACION_IVA, CONFIRMADO';
 
   constructor(
     private fb: FormBuilder,
@@ -73,7 +81,8 @@ export class TaxValidationCalculationComponent
     private comerUsuauTxEventService: ComerUsuauTxEventService,
     private officeManagementService: OfficeManagementService,
     private appraiseService: AppraiseService,
-    private goodProcessService: GoodProcessService
+    private goodProcessService: GoodProcessService,
+    private excelService: ExcelService
   ) {
     super();
     let objBase = this;
@@ -99,6 +108,11 @@ export class TaxValidationCalculationComponent
             console.log('valuePrepareFunction -> ', row);
             return row.validIVA == 'S' ? true : false;
           },
+          onComponentInitFunction(instance: any) {
+            instance.toggle.subscribe((dataIva: any) => {
+              objBase.accionIva(dataIva);
+            });
+          },
         },
         check: {
           title: 'Confirmado',
@@ -106,7 +120,7 @@ export class TaxValidationCalculationComponent
           renderComponent: CheckboxElementComponent,
           valuePrepareFunction: (isSelected: any, row: any) => {
             console.log('valuePrepareFunction -> ', row);
-            return row.check == 'N' ? true : false;
+            return row.check == 'S' ? true : false;
           },
           onComponentInitFunction(instance: any) {
             instance.toggle.subscribe((data: any) => {
@@ -131,7 +145,7 @@ export class TaxValidationCalculationComponent
   accion(data: any) {
     console.log('Data -> ', data.row);
     console.log('Data2 -> ', data.toggle);
-    if (data.toggle == true) {
+    if (data.row.check == 'N') {
       if (data.row.validIVA == 'N') {
         this.alert(
           'warning',
@@ -146,7 +160,14 @@ export class TaxValidationCalculationComponent
         '¿Está seguro de confirmar el registro?'
       ).then(question => {
         if (question.isConfirmed) {
-          this.updateDetailEval(data.row.idDetAppraisal, 'S');
+          let params = {
+            idAppraisal: Number(this.appraisal),
+            idDetAppraisal: Number(data.row.idDetAppraisal1),
+            noGood: Number(data.row.goodId),
+            approved: 'S',
+          };
+          console.log('Params Update S->', params);
+          this.updateDetailEval(params);
           data.toggle = true;
         } else {
           data.toggle = false;
@@ -160,7 +181,14 @@ export class TaxValidationCalculationComponent
       ).then(question => {
         if (question.isConfirmed) {
           data.toggle = false;
-          this.updateDetailEval(data.row.idDetAppraisal, 'N');
+          let body = {
+            idAppraisal: Number(this.appraisal),
+            idDetAppraisal: Number(data.row.idDetAppraisal1),
+            noGood: Number(data.row.goodId),
+            approved: 'N',
+          };
+          console.log('Params Update N->', body);
+          this.updateDetailEval(body);
         } else {
           data.toggle = true;
         }
@@ -168,12 +196,92 @@ export class TaxValidationCalculationComponent
     }
   }
 
-  updateDetailEval(id: number, valor: string) {
-    let item = {
-      approved: valor,
-    };
-    this.appraiseService.updateEatDetAppraisal(id, item).subscribe({
+  accionIva(dataIva: any) {
+    console.log('Data -> ', dataIva.row);
+    if (dataIva.row.check == 'S') {
+      this.alert(
+        'error',
+        '',
+        'El registro ya está confirmado, sólo el administrador puede liberarlo'
+      );
+      return;
+    } else if (dataIva.row.validIVA == 'N' && dataIva.row.observation != null) {
+      this.alert(
+        'error',
+        '',
+        'El registro ya tiene inconsistencias no puede desmarcar hasta no quitar las inconsistencias.'
+      );
+      return;
+    } else {
+      this.getParametersGood(this.appraisal, dataIva.row.goodId, dataIva);
+    }
+  }
+
+  getParametersGood(appraisal: number, value: number, dataIva: any) {
+    const params = new ListParams();
+    params['filter.parameter'] = appraisal;
+    params['filter.value'] = value;
+    console.log('params ', params);
+    this.expenseParametercomerService.getParameterModParam(params).subscribe({
       next: resp => {
+        console.log('data getParametersGood ', resp);
+        this.countParamaterGood = resp.data.length;
+        console.log('countParamaterGood -> ', this.countParamaterGood);
+        if (this.countParamaterGood != 0) {
+          let body = {
+            parameter: appraisal,
+            value: value,
+            address: 'I',
+          };
+          console.log('delete getParametersGood -> ', this.countParamaterGood);
+          this.deleteParametersGood(body);
+        }
+      },
+      error: err => {
+        console.log('data getParametersGood err ', err);
+        this.countParamaterGood = 0;
+        let body = {
+          parameter: this.appraisal,
+          value: dataIva.row.goodId,
+          description: 'S',
+          //typeEventId: Number(this.form.get('eventId').value),
+          address: 'I',
+        };
+        this.createParameterGood(body);
+      },
+    });
+  }
+
+  deleteParametersGood(body: any) {
+    this.expenseParametercomerService.deleteParametersMod(body).subscribe({
+      next: resp => {
+        console.log('registro eliminado');
+      },
+      error: err => {
+        console.log('registro no eliminado');
+      },
+    });
+  }
+
+  createParameterGood(body: any) {
+    this.expenseParametercomerService.postParametersMod(body).subscribe(
+      resp => {
+        if (resp != null && resp != undefined) {
+          console.log('Resp postParametersMod-> ', resp);
+          this.alert('success', '', 'Registro Insertado');
+        }
+      },
+      error => {
+        this.alert('error', '', 'Registro no insertado');
+      }
+    );
+  }
+
+  updateDetailEval(valor: any) {
+    console.log('Body updateDetailEval-> ', valor);
+    this.appraiseService.updateEatDetAppraisal(valor).subscribe({
+      next: resp => {
+        console.log('Resp updateDetailEval-> ', resp);
         this.alert('success', '', 'Registro actualizado correctamente!');
       },
       error: err => {
@@ -183,7 +291,10 @@ export class TaxValidationCalculationComponent
   }
 
   ngOnInit(): void {
-    console.log('RespSubstr ->', this.Substr('14.6'));
+    let text = 'Esto es un ejemplo de "cadena" para CSV';
+    console.log(this.escaparComillas(text));
+    //this.getParametersGood();
+    //console.log('RespSubstr ->', this.Substr('14.6'));
     /*this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getExample());*/
@@ -219,8 +330,23 @@ export class TaxValidationCalculationComponent
     });
 
     modalRef.content.data.subscribe((data: any) => {
-      //if (data)
+      //if (data){}
     });
+  }
+
+  openModalRate(context?: Partial<RateChangeComponent>) {
+    let config: ModalOptions = {
+      initialState: {
+        dataDet: this.dataDet,
+        callback: (next: boolean) => {
+          //if (next) this.find();
+        },
+      },
+      class: 'modal-xl modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    // console.log('Config: ', config);
+    this.modalService.show(RateChangeComponent, config);
   }
 
   openModalInconsistencies(context?: Partial<InconsistenciesComponent>): void {
@@ -410,6 +536,7 @@ export class TaxValidationCalculationComponent
   }
 
   selectRows(rows: any[]) {
+    this.dataDetArr = [];
     console.log('row ', rows);
     if (rows.length > 0) {
       this.selectedRows = rows;
@@ -659,17 +786,17 @@ export class TaxValidationCalculationComponent
                 )
               )
             );
-            console.log('v_mascara_terreno-> ', v_mascara_terreno);
-            console.log('terrainIva-> ', terrainIva);
+            //console.log('v_mascara_terreno-> ', v_mascara_terreno);
+            //console.log('terrainIva-> ', terrainIva);
             let terreno = this.Substr(v_mascara_terreno);
             if (terreno) {
-              console.log('PRueba ---> ', terreno);
+              //console.log('PRueba ---> ', terreno);
               terrainIva = terreno;
             } else {
               terrainIva = v_mascara_terreno;
             }
           }
-          console.log('Resp terrainIva FInal-> ', terrainIva);
+          //console.log('Resp terrainIva FInal-> ', terrainIva);
 
           /**Información convertida a caracter por incluir en su caso leyenda (Para habitacional). */
           if (resp.data[0].rateIvaConstrHab == null) {
@@ -823,16 +950,33 @@ export class TaxValidationCalculationComponent
             totalAccount = null;
           }
           /**Falta Servicio comer_parametrosmod Para botón tabla VALIDACION */
+          let bodyAux = {
+            avaluoNumber: this.appraisal,
+            goodNumber: resp.data[0].good.goodId,
+          };
           let body = {
             avaluoNumber: this.appraisal,
             goodNumber: resp.data[0].good.goodId,
           };
+          const params = new ListParams();
+          params['filter.parameter'] = this.appraisal;
+          params['filter.value'] = resp.data[0].good.goodId;
+          params['filter.address'] = 'I';
+          console.log('params qqq', params);
+          // this.expenseParametercomerService
+          //   .postComerParametersMod(body)
+          //   .subscribe(valid => {
+          //     if (valid != null && valid != undefined) {
+          //       this.v_valor = valid.descripcion;
+          //       console.log('CheckBox-> ', this.v_valor);
+          //     }
+          //   });
           this.expenseParametercomerService
-            .postComerParametersMod(body)
+            .getParameterModParam(params)
             .subscribe(valid => {
               if (valid != null && valid != undefined) {
-                this.v_valor = valid.descripcion;
-                console.log('CheckBox-> ', this.v_valor);
+                this.v_valor = valid.data[0].description;
+                console.log('CheckBox-> ', valid);
               }
             });
           /**FINAL pupValidaReg */
@@ -842,6 +986,7 @@ export class TaxValidationCalculationComponent
               console.log('Resp getComerDetAvaluoAll-> ', response);
 
               let params2 = {
+                idDetAppraisal1: resp.data[0].idDetAppraisal,
                 idDetAppraisal: resp.data[0].idAppraisal,
                 goodId: resp.data[0].good.goodId,
                 description: response.data[0].descripcion,
@@ -890,7 +1035,12 @@ export class TaxValidationCalculationComponent
                 observation: resp.data[0].observations,
                 validIVA: this.v_valor,
                 check: resp.data[0].approved,
+                goodDescription: resp.data[0].good.goodId,
+                auxTasaIvaTerren: terrainRate,
+                auxTerrainIva: terrainIva,
               };
+              this.dataDet = params2;
+              this.dataDetArr.push(params2);
               this.Detavaluos.push(params2);
               this.data2.load(this.Detavaluos);
               this.data2.refresh();
@@ -956,6 +1106,43 @@ export class TaxValidationCalculationComponent
       return cadenaSinUltimosDos;
     } else {
       return cadena;
+    }
+  }
+
+  escaparComillas(cadena: string): string {
+    if (cadena.length > 0) {
+      cadena = cadena.replace(/"/g, '""'); // Escapar comillas dobles
+      cadena = '"' + cadena + '"'; // Agregar comillas dobles al principio y al final
+    } else {
+      cadena = '';
+    }
+    return cadena;
+  }
+
+  generateExcel() {
+    const headerArray = this.headerString.split(',');
+    let aux: any[] = [];
+    aux.push(headerArray);
+    aux.push(this.dataDet);
+    this.exportXlsx('export', aux);
+  }
+
+  exportXlsx(opcion: string, data: any[]) {
+    if (data.length == 0) {
+      this.onLoadToast('warning', 'Archivo', ERROR_EXPORT);
+    } else {
+      //this.excelService.export(data, {
+      // filename: opcion,
+      // });
+
+      //this.getFilterProceedings();
+      const workSheet = XLSX.utils.json_to_sheet(data, {
+        skipHeader: true,
+      });
+      const workBook: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workBook, workSheet, 'Hoja1');
+      let aux = 'export' + '.xlsx';
+      XLSX.writeFile(workBook, aux);
     }
   }
 }
