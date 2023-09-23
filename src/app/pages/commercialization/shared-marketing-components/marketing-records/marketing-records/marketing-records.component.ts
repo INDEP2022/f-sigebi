@@ -38,6 +38,7 @@ import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { AtachedDocumentsService } from 'src/app/core/services/ms-documents/attached-documents.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
 import { CopiesJobManagementService } from 'src/app/core/services/ms-office-management/copies-job-management.service';
@@ -120,6 +121,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
   COPIAS: any;
   COPIAS1: any;
   problematicaJuridica: boolean = false;
+  flyerNumber: any;
   //----------------
 
   usersCcp: any = [];
@@ -171,7 +173,8 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private router: Router,
     private numeraryService: NumeraryService,
-    private tranfergoodService: TranfergoodService
+    private tranfergoodService: TranfergoodService,
+    private eventAppService: EventAppService
   ) {
     super();
     this.settings = {
@@ -634,11 +637,29 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
           for (let i = 0; i < this.goods.length; i++) {
             this.pupGenFolio(this.goods[i].goodId);
             //falta el PUP_GEN_FOLIO_MAS
+            this.PupGenFolioMas();
           }
           this.PupLanzaReporteSolicDigt();
         }
       }
     }
+  }
+
+  PupGenFolioMas() {
+    let NO_OF_GESTION = this.form.get('managementNumber').value;
+    let params = {
+      noOfGestion: NO_OF_GESTION,
+      univFolio: this.folioScan,
+      user: this.user,
+      delegNo: this.delegation,
+      subDelegNo: 0,
+      departmentNo: this.delegation,
+    };
+    this.documentsService.postFolioMasive(params).subscribe({
+      next: response => {
+        console.log('Se gnero el Folio Masivo ', response);
+      },
+    });
   }
 
   PupLanzaReporteSolicDigt() {
@@ -749,6 +770,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     let TIPO_OF = this.form.get('officeTypeCtrl').value;
     let report: any;
     if (TIPO_OF == 'ent') {
+      this.PupRemiEnt();
       report = 'REP_ENTREGA';
     } else if (TIPO_OF == 'esc') {
       report = 'RGEROFGESTION_ESCA';
@@ -969,6 +991,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
                       .setValue(response.data[0].problematiclegal);
                     if (ESTATUS_OF == 'EN REVISION') {
                       //FALTA INTEGRAR PUP_ACTUALIZA(:M_OFICIO_GESTION.NO_OF_GESTION);
+                      this.PupActualiza(NO_OF_GESTION);
                     }
                     this.PupLanzaReporte();
                   }
@@ -1191,6 +1214,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
             },
           });
         //FALTA PUP_ACTUALIZA(:GLOBAL.V_OFICIO);
+        this.PupActualiza(this.V_OFICIO);
         this.PupLanzaReportes();
       } else if (this.BANDERA == 0) {
         if (this.V_BANDERA == 1) {
@@ -1250,6 +1274,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
               });
           } else if (ESTATUS_OF == 'EN REVISION') {
             //FALTA EL PUP_ACTUALIZA(:M_OFICIO_GESTION.NO_OF_GESTION);
+            this.PupActualiza(NO_OF_GESTION);
           }
         }
         if (this.V_BANDERA == 1) {
@@ -1397,6 +1422,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
   closeSend() {
     let vc_pantalla = 'FOFICIOCOMER';
     let EST_FINAL: string;
+    let cveDocument = this.form.get('cveManagement').value;
     let NO_OF_GESTION = this.form.get('managementNumber').value;
     let FOLIO: any;
     let lv_VALFOLUNI: any;
@@ -1439,6 +1465,18 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
 
            ENDIF
           */
+          //son los de abajo ya integrados falta probar
+          this.documentsService
+            .getDocumentInvoiceFolio(this.folioScan)
+            .subscribe({
+              next: response => {
+                this.documentsService
+                  .getDocumentInvoiceFolioAsoc(this.folioScan)
+                  .subscribe({
+                    next: response => {},
+                  });
+              },
+            });
         }
         /*
                 NO_OF_GESTION  := :M_OFICIO_GESTION.NO_OF_GESTION;
@@ -1470,30 +1508,63 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
         */
 
         if (
-          (ESTATUS_OF == 'ENVIADO' && consulta == 'bie') ||
+          (ESTATUS_OF == 'EN REVISION' && consulta == 'bie') ||
           this.CONSULTA == 1
         ) {
+          //FALTA PUP_BUSCA_NUMERO
+          this.form.get('statusOf').patchValue('ENVIADO');
+          /*
+            LIP_COMMIT_SILENCIOSO;
+            Set_Item_Property('enviar',ICON_NAME,'../iconos/rt_lock');
+            SET_ITEM_PROPERTY('ENVIAR',ENABLED,PROPERTY_FALSE);
+            --SET_ITEM_PROPERTY('oficio',ENABLED,PROPERTY_TRUE);
+            SET_ITEM_PROPERTY('BORRAR',ENABLED,PROPERTY_FALSE);
+            --SET_ITEM_PROPERTY('IMPR',ENABLED,PROPERTY_TRUE);
+            SET_ITEM_PROPERTY('DOC',ENABLED,PROPERTY_FALSE);
+            SET_ITEM_PROPERTY('IMG_SOLICITUD',ENABLED,PROPERTY_FALSE);
+            SET_ITEM_PROPERTY('IMG_ESCANEO',ENABLED,PROPERTY_FALSE);
+            --SET_ITEM_PROPERTY('IMG_VER_IMAGENES',ENABLED,PROPERTY_FALSE);
+            SET_ITEM_PROPERTY('IMG_IMP_SOL_DIGIT',ENABLED,PROPERTY_FALSE);
+            Set_Item_Property('enviar',ICON_NAME,'../iconos/rt_lock');
+          */
+          this.PupLanzaReporte();
+          //FALTA PUP_EXTRAE_DATO(:GLOBAL.NO_OF_GESTION);
+        }
+        if (
+          (ESTATUS_OF == 'EN REVISION' && consulta == 'por') ||
+          this.CONSULTA == 2
+        ) {
+          //FALTA PUP_BUSCA_NUMERO
           /*
            UPDATE M_OFICIO_GESTION
            SET CVE_OF_GESTION=:M_OFICIO_GESTION.CVE_OF_GESTION
            WHERE NO_OF_GESTION=:M_OFICIO_GESTION.NO_OF_GESTION;
           */
+          let params = {
+            cveOfGestion: cveDocument,
+            numberOfGestion: NO_OF_GESTION,
+          };
+          this.goodsJobManagementService
+            .updateMJobManagement(params)
+            .subscribe({
+              next: response => {},
+            });
           this.form.get('statusOf').patchValue('ENVIADO');
-
           /*
-          Set_Item_Property('ENVIAR',ICON_NAME,'../iconos/rt_lock');
-        SET_ITEM_PROPERTY('ENVIAR',ENABLED,PROPERTY_FALSE);
-        SET_ITEM_PROPERTY('BORRAR',ENABLED,PROPERTY_FALSE);
-        SET_ITEM_PROPERTY('IMPR',ENABLED,PROPERTY_FALSE);
-        SET_ITEM_PROPERTY('DOC',ENABLED,PROPERTY_FALSE);
-        SET_ITEM_PROPERTY('IMG_SOLICITUD',ENABLED,PROPERTY_FALSE);
-        SET_ITEM_PROPERTY('IMG_ESCANEO',ENABLED,PROPERTY_FALSE);
-         -- SET_ITEM_PROPERTY('IMG_VER_IMAGENES',ENABLED,PROPERTY_FALSE);
-        SET_ITEM_PROPERTY('IMG_IMP_SOL_DIGIT',ENABLED,PROPERTY_FALSE); */
+            Set_Item_Property('ENVIAR',ICON_NAME,'../iconos/rt_lock');
+          SET_ITEM_PROPERTY('ENVIAR',ENABLED,PROPERTY_FALSE);
+          SET_ITEM_PROPERTY('BORRAR',ENABLED,PROPERTY_FALSE);
+          SET_ITEM_PROPERTY('IMPR',ENABLED,PROPERTY_FALSE);
+          SET_ITEM_PROPERTY('DOC',ENABLED,PROPERTY_FALSE);
+          SET_ITEM_PROPERTY('IMG_SOLICITUD',ENABLED,PROPERTY_FALSE);
+          SET_ITEM_PROPERTY('IMG_ESCANEO',ENABLED,PROPERTY_FALSE);
+           -- SET_ITEM_PROPERTY('IMG_VER_IMAGENES',ENABLED,PROPERTY_FALSE);
+          SET_ITEM_PROPERTY('IMG_IMP_SOL_DIGIT',ENABLED,PROPERTY_FALSE); */
 
           this.PupLanzaReportes();
           // FALTA PUP_EXTRAE_DATOS(:GLOBAL.NO_OF_GESTION);
         }
+
         //---------------------COPIAS------------------------
         if (this.data3.length > 0) {
           for (let i = 0; i < this.data3.length; i++) {
@@ -1548,6 +1619,43 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
             console.log('document Job delete error', err);
           },
         });
+        let paramsMJob = {
+          managementNumber: NO_OF_GESTION,
+          flyerNumber: this.flyerNumber,
+        };
+        this.goodsJobManagementService
+          .deleteMJobManagement(paramsMJob)
+          .subscribe({
+            next: response => {
+              console.log('document M Job Management delete Ok', response);
+            },
+            error: err => {
+              console.log('document M Job Management delete error', err);
+            },
+          });
+        this.documentsService.deleteDocumentHAttached(NO_OF_GESTION).subscribe({
+          next: response => {
+            console.log('document attached delete Ok', response);
+          },
+          error: err => {
+            console.log('document attached delete error', err);
+          },
+        });
+        this.documentsService.deleteDocumentsInvoice(this.folioScan).subscribe({
+          next: response => {
+            console.log('document delete Ok', response);
+          },
+          error: err => {
+            console.log('document delete error', err);
+          },
+        });
+        //FALTA INTEGRAR DELETE FROM DOCUMENTOS WHERE FOLIO_UNIVERSAL=:FOLIO_UNIVERSAL OR FOLIO_UNIVERSAL_ASOC=:FOLIO_UNIVERSAL;
+        //PEDIDO A YELTSIN
+        this.form.reset();
+        this.data3 = [];
+        this.ccpData.load(this.data3);
+        this.goods = [];
+        this.docs = [];
       }
     });
   }
@@ -1600,6 +1708,109 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     this.tranfergoodService.sendEmail(params).subscribe({
       next: response => {
         console.log('Se envió el correo ', response);
+      },
+    });
+  }
+
+  PupActualiza(NO_OF_GESTION: any) {
+    let V_NO_REGISTRO: any;
+    //let NO_OF_GESTION = this.form.get('managementNumber').value;
+    let cveDocument = this.form.get('cveManagement').value;
+    let params = {
+      managementNumber: NO_OF_GESTION,
+      cveDocument: cveDocument,
+    };
+    //FALTA
+    /*
+    UPDATE M_OFICIO_GESTION 
+    SET CVE_OF_GESTION=:M_OFICIO_GESTION.CVE_OF_GESTION,REMITENTE=REMITENTE,DESTINATARIO=DESTINATARIO,CIUDAD=CIUDAD,
+    TEXTO1=TEXTO1,TEXTO2=TEXTO2,OFICIO_POR=OFICIO_POR,TEXTO3=TEXTO3
+    WHERE NO_OF_GESTION=OF_GESTION;
+    */
+
+    //------------------DOCUMENTOS-----------------------
+    this.documentsService.deleteDocumentHAttached(NO_OF_GESTION).subscribe({
+      next: response => {
+        console.log('document attached update-delete Ok', response);
+      },
+      error: err => {
+        console.log('document attached update-delete error', err);
+      },
+    });
+    this.goodsJobManagementService.deleteDocumentJob(params).subscribe({
+      next: response => {
+        console.log('document Job update-delete Ok', response);
+      },
+      error: err => {
+        console.log('document Job update-delete error', err);
+      },
+    });
+    if (this.docs.length > 0) {
+      for (let i = 0; i < this.docs.length; i++) {
+        let paramsdocument = {
+          managementNumber: NO_OF_GESTION,
+          cveDocument: this.docs[i].cveDocument,
+          rulingType: this.docs[i].opinionType,
+          recordNumber: '',
+        };
+        this.goodsJobManagementService
+          .postDocumentJobManagement(paramsdocument)
+          .subscribe({
+            next: response => {},
+          });
+
+        this.numeraryService.nexSeqBitacora().subscribe({
+          next: response => {
+            let V_NO_REGISTRO = response.data.nextval;
+            let params = {
+              managementNumber: NO_OF_GESTION,
+              cveDocument: this.docs[i].cveDocument,
+              description: this.docs[i].description,
+              recordNumber: V_NO_REGISTRO,
+              opinionType: 'COMER',
+            };
+            this.documentsService.postDocumentHAttached(params).subscribe({
+              next: response => {},
+            });
+          },
+        });
+      }
+    }
+    //---------------------COPIAS------------------------
+    this.goodsJobManagementService.deleteCopiesJob(NO_OF_GESTION).subscribe({
+      next: response => {
+        console.log('copies Job delete Ok', response);
+      },
+      error: err => {
+        console.log('copies Job delete error', err);
+      },
+    });
+    if (this.data3.length > 0) {
+      for (let i = 0; i < this.data3.length; i++) {
+        let params = {
+          managementNumber: NO_OF_GESTION,
+          addresseeCopy: this.data3[i].destinatario,
+          recordNumber: '',
+        };
+        this.goodsJobManagementService
+          .postOficeJobManagement(params)
+          .subscribe({
+            next: response => {
+              console.log('Ofice Job post Ok', response);
+            },
+            error: err => {
+              console.log('Ofice Job post error', err);
+            },
+          });
+      }
+    }
+  }
+
+  PupRemiEnt() {
+    let noBien = this.form.get('goodId').value;
+    this.eventAppService.getPupRemiEnt(noBien).subscribe({
+      next: response => {
+        console.log('response ----> ', response);
       },
     });
   }

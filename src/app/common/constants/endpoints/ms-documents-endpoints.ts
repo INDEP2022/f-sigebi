@@ -24,4 +24,7 @@ export enum DocumentsEndpoints {
   postDocumentsV2 = 'application/insertDocumentsV2',
   document = 'documents',
   attachedDocument = 'attached-documents',
+  GenFolioMasive = 'application/pup-gen-folm',
+  InvoiceUniversal = 'application/get-documents-invoice-universal',
+  InvoiceUniversalAsoc = 'application/get-documents-invoice-universal-asoc',
 }

@@ -8,4 +8,5 @@ export enum GoodsJobManagementEndpoints {
   goodsManagement = 'goods-job-management',
   documentJobMan = 'document-job-management',
   copiesJobMana = 'copies-job-management',
+  updateMJob = 'application/get-m-job-management-update',
 }

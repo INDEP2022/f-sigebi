@@ -140,7 +140,17 @@ export class GoodsJobManagementService extends HttpService {
   }
 
   deleteDocumentJob(params: any) {
-    const route = `${GoodsJobManagementEndpoints.copiesJobMana}`;
+    const route = `${GoodsJobManagementEndpoints.documentJobMan}`;
     return this.delete(route, params);
+  }
+
+  deleteMJobManagement(params: any) {
+    const route = `${GoodsJobManagementEndpoints.mJobManagement}`;
+    return this.delete(route, params);
+  }
+
+  updateMJobManagement(params: any) {
+    const route = `${GoodsJobManagementEndpoints.updateMJob}`;
+    return this.post(route, params);
   }
 }

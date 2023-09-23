@@ -213,4 +213,11 @@ export class UsersService extends HttpService {
   getUsersbyUSer(user: any) {
     return this.get(`${UserEndpoints.SegUsers}?filter.id=$eq:${user}`);
   }
+
+  getAllSegUsers3(_params: _Params, name: any) {
+    return this.get<IListResponse<any>>(
+      `${UserEndpoints.GetAllSegUser}?filter.name=$ilike:${name}`,
+      _params
+    );
+  }
 }
