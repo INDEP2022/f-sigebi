@@ -53,6 +53,8 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   area: number = 0;
   data1: any[] = [];
   mEli: IDelReportImp;
+  amountGral: number = 0;
+  costoGral: number = 0;
   costoR: ICostReport;
   dataTableGood: LocalDataSource = new LocalDataSource();
   actasObject: IProccedingsDeliveryReception;
@@ -96,6 +98,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: false,
+      hideSubHeader: false,
       selectMode: 'multi',
       columns: IMPLEMENTATIONREPORT_COLUMNS,
     };
@@ -290,8 +293,14 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       next: data => {
         this.costosDes = data.data;
         const result = data.data.map((filter: any) => {
+          filter.no_varcosto;
           return filter.no_varcosto;
         });
+
+        this.costoGral = result.reduce(
+          (sum: any, current: any) => sum + current,
+          0
+        );
         this.alert('success', `Variable de Costo  ${result}`, '');
       },
       error: () => {
@@ -409,27 +418,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       '¿Seguro que desea Incorporar Bienes al Reporte?'
     ).then(question => {
       if (question.isConfirmed) {
-        let params = {
-          ...this.params.getValue(),
-          ...this.columnFilters,
-        };
-        this.goodPosessionThirdpartyService
-          .getAllStrategyGoodsById(
-            this.serviceOrdersForm.value.noFormat,
-            params
-          )
-          .subscribe({
-            next: data => {
-              console.log(data);
-              this.dataTableGood.load(data.data);
-              this.dataTableGood.refresh();
-              this.totalItems = data.count;
-            },
-            error: () => {
-              console.log('error');
-              this.loading = false;
-            },
-          });
+        this.listarBienes();
       }
     });
   }
@@ -500,6 +489,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
             .deleteReportGoodImp(data)
             .subscribe(res => {
               console.log(res);
+              this.listarBienes();
               this.lv_VALELI = 4;
             });
         });
@@ -587,26 +577,10 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
           serviceNumber: this.serviceOrdersForm.value.serviceOrderKey,
           typeServiceNumber: this.serviceOrdersForm.value.type,
           turnNumber: this.serviceOrdersForm.value.turno,
-          varCosteNumber: 7,
+          varCosteNumber: this.costoGral,
           importTot: this.totalItems,
-          amountTot: 2000,
+          amountTot: this.amountGral,
         };
-        let bita = {
-          formatNumber: this.serviceOrdersForm.value.noFormat,
-          reportNumber: this.reportImp.reportNumber,
-          changeDate: new Date(),
-          justification: this.serviceOrdersForm.value.observations,
-          status: this.serviceOrdersForm.get('status').value,
-          usrRegister: this.authService.decodeToken().username,
-          nbOrigin: '',
-        };
-        this.goodPosessionThirdpartyService
-          .posStrategyBitacora(bita)
-          .subscribe({
-            next: response => {
-              console.log('ok bitscora', response);
-            },
-          });
         this.goodPosessionThirdpartyService.getIncCosto(this.costoR).subscribe({
           next: data => {
             console.log(data.data);
@@ -616,11 +590,56 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
             console.log('costos', data);
           },
         });
+        let bita = {
+          formatNumber: this.serviceOrdersForm.value.noFormat,
+          reportNumber: this.reportImp.reportNumber,
+          changeDate: new Date(),
+          justification: this.serviceOrdersForm.value.observations,
+          status: this.serviceOrdersForm.get('status').value,
+          usrRegister: this.authService.decodeToken().username,
+          registerNumber: 0,
+          nbOrigin: '',
+        };
+        this.goodPosessionThirdpartyService
+          .posStrategyBitacora(bita)
+          .subscribe({
+            next: response => {
+              console.log('ok bitscora', response);
+            },
+          });
         console.log('aqui se incorporan');
       } else {
         return;
       }
     });
+  }
+  listarBienes() {
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.goodPosessionThirdpartyService
+      .getAllStrategyGoodsById(this.serviceOrdersForm.value.noFormat, params)
+      .subscribe({
+        next: data => {
+          console.log(data.data);
+          const result = data.data.map((filter: any) => {
+            filter.goodNumber.quantity;
+            return filter.goodNumber.quantity;
+          });
+          this.amountGral = result.reduce(
+            (sum: any, current: any) => sum + current,
+            0
+          );
+          this.dataTableGood.load(data.data);
+          this.dataTableGood.refresh();
+          this.totalItems = data.count;
+        },
+        error: () => {
+          console.log('error');
+          this.loading = false;
+        },
+      });
   }
 
   bitacora() {}
