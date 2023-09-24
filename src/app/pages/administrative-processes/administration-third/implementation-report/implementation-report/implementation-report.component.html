@@ -4,7 +4,10 @@
   </div>
   <div body>
     <h5 class="title">Ordenes de Servicio</h5>
-    <form [formGroup]="serviceOrdersForm" class="form-material">
+    <form
+      [formGroup]="serviceOrdersForm"
+      class="form-material"
+      (ngSubmit)="pupGenera()">
       <div class="row margin-input">
         <div class="col-md-4">
           <form-field
@@ -330,15 +333,15 @@
       <div class="d-flex justify-content-center">
         <div class="m-3">
           <button
-            type="button"
+            type="submit"
             class="btn btn-primary active btn-sm"
-            (click)="pupGenera()">
+            (click)="onChangeStatus()">
             Generar <i class="fas fa-print bx-sm float-icon"></i>
           </button>
         </div>
         <div class="m-3">
           <button
-            type="button"
+            type="submit"
             class="btn btn-primary active btn-sm"
             (click)="incorporaCostos()">
             Incorporar Costos <i class="bx bx-search-alt bx-sm float-icon"></i>

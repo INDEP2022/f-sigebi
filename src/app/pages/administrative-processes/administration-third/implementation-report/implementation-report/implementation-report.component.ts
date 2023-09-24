@@ -249,6 +249,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     const serviceOrderKey = this.serviceOrdersForm.get('serviceOrderKey').value;
     const type = Number(this.serviceOrdersForm.get('type').value);
     const turno = this.serviceOrdersForm.get('turno').value;
+    const coord = this.serviceOrdersForm.get('regionalCoordination').value;
 
     if (!Boolean(process)) {
       this.alert('info', 'seleccione el proceso para genera costos', '');
@@ -274,9 +275,11 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       return resullt;
     }
 
-    // Si todos los campos son válidos, llamar a la función getCosts()
+    if (!Boolean(coord)) {
+      this.alert('warning', 'Debe seleccionar la Coordinación Regional', '');
+      return resullt;
+    }
     this.getCosts();
-
     return resullt;
   }
 
@@ -344,15 +347,13 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
             this.serviceOrdersForm
               .get('observations')
               .setValue(value.observations);
-            this.serviceOrdersForm
-              .get('process')
-              .patchValue(value.processNumber);
+            this.serviceOrdersForm.get('process').patchValue(value.pro);
           });
         },
       });
   }
   pupGenera() {
-    console.log(this.serviceOrdersForm.value.noFormat);
+    // console.log(this.serviceOrdersForm.value.noFormat);
     try {
       if (this.serviceOrdersForm.value.noFormat == null) {
         this.alert(
@@ -506,17 +507,13 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   }
   generaReporte(): void {
     try {
-      if (this.serviceOrdersForm.value.regionalCoordination === null) {
-        this.alert('warning', 'Debe seleccionar la Coordinación Regional', '');
-        return;
-      }
       let params = {
         P_ANIO: 2023,
         P_COORDINACION: this.serviceOrdersForm.value.regionalCoordination,
         P_MES: 12,
         P_USUARIO: this.authService.decodeToken().username,
       };
-      this.onChangeStatus();
+
       this.siabService
         // .fetchReport('RINDICA_0006', params)
         .fetchReport('blank', params)
@@ -553,25 +550,24 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
 
   incorporaCostos() {
     if (this.reportImp.reportNumber === null) {
-      this.alert('warning', 'No existe el reporte de Implementación', '');
+      this.alert('warning', 'Debe ingresar bienes ', '');
       return;
     }
-    if (this.serviceOrdersForm.value.process === null) {
-      this.alert('warning', 'Debe seleccionar el proceso', '');
+    if (
+      this.costoGral === null ||
+      this.serviceOrdersForm.value.serviceOrderKey === null ||
+      this.serviceOrdersForm.value.type === null ||
+      this.serviceOrdersForm.value.process === null ||
+      this.serviceOrdersForm.value.turno === null
+    ) {
+      this.alert(
+        'warning',
+        'Debe ingresar todas las estrategias de admministración ',
+        ''
+      );
       return;
     }
-    if (this.serviceOrdersForm.value.serviceOrderKey === null) {
-      this.alert('warning', 'Debe seleccionar el servicio', '');
-      return;
-    }
-    if (this.serviceOrdersForm.value.type === null) {
-      this.alert('warning', 'Debe seleccionar el tipo', '');
-      return;
-    }
-    if (this.serviceOrdersForm.value.turno === null) {
-      this.alert('warning', 'Debe seleccionar el turno', '');
-      return;
-    }
+
     this.alertQuestion(
       'question',
       'Incorporar',
@@ -584,7 +580,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
           turnNumber: this.serviceOrdersForm.value.turno,
           varCosteNumber: this.costoGral,
           importTot: this.totalItems,
-          amountTot: this.amountGral,
+          amountTot: 4000,
         };
         this.goodPosessionThirdpartyService.getIncCosto(this.costoR).subscribe({
           next: data => {
@@ -611,13 +607,9 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
         next: data => {
           console.log(data.data);
           const result = data.data.map((filter: any) => {
-            filter.goodNumber.quantity;
-            return filter.goodNumber.quantity;
+            this.amountGral = this.amountGral + filter.goodNumber.quantity;
+            return this.amountGral;
           });
-          this.amountGral = result.reduce(
-            (sum: any, current: any) => sum + current,
-            0
-          );
           this.dataTableGood.load(data.data);
           this.dataTableGood.refresh();
           this.totalItems = data.count;
@@ -630,10 +622,17 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   }
   onChangeStatus() {
     this.mostrarJus = !this.mostrarJus;
-    if (this.reportImp.reportNumber === null) {
+    console.log(this.reportImp);
+    if (
+      this.reportImp.reportNumber === null ||
+      this.serviceOrdersForm.value.serviceOrderKey === null ||
+      this.serviceOrdersForm.value.type === null ||
+      this.serviceOrdersForm.value.process === null ||
+      this.serviceOrdersForm.value.turno === null
+    ) {
       this.alert(
         'warning',
-        'No hay bienes registrados en el Reporte de Implementación ',
+        'Debe ingresar todas las estrategias de admministración ',
         ''
       );
       return;
@@ -694,6 +693,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
           console.log('ok bitscora', response);
         },
       });
+      this.pupGenera();
       console.log('aqui se incorporan');
     }
   }
