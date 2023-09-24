@@ -28,3 +28,23 @@ export interface IStrategy {
   cve_reporte_a: string;
   nb_origen: string;
 }
+
+export interface IStrategyReport {
+  reportNumber: number;
+  formatNumber: number;
+  reportKey: string;
+  status: string;
+  captureDate: string;
+  authorizeDate: string;
+  monthNumber: number;
+  yearNumber: number;
+  inTime: string;
+  recordNumber: number;
+  elaboratedUser: string;
+  observations: string;
+  statuslaughedNumber: number;
+  oPobservations: string;
+  UniversalInvoice: number;
+  reportTOKey: string;
+  originNb: string;
+}

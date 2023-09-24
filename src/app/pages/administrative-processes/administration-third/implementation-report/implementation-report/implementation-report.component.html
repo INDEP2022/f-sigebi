@@ -156,10 +156,10 @@
             [control]="serviceOrdersForm.get('status')"
             label="Estatus">
             <ng-select formControlName="status" class="form-control pt-1">
-              <ng-option value="Autorizda">AUTORIZADA</ng-option>
-              <ng-option value="Cancelada">CANCELADA</ng-option>
-              <ng-option value="Proceso">PROCESO</ng-option>
-              <ng-option value="Rechazado">RECHAZADO</ng-option>
+              <ng-option value="AUTORIZADA">AUTORIZADA</ng-option>
+              <ng-option value="CANCELADA">CANCELADA</ng-option>
+              <ng-option value="PROCESO">PROCESO</ng-option>
+              <ng-option value="RECHAZADO">RECHAZADO</ng-option>
             </ng-select>
           </form-field>
         </div>
@@ -224,6 +224,16 @@
             <textarea
               class="form-control"
               formControlName="observations"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="serviceOrdersForm.get('justifications')"
+            label="Justificación"
+            *ngIf="mostrarJus">
+            <textarea
+              class="form-control"
+              formControlName="justifications"></textarea>
           </form-field>
         </div>
       </div>
@@ -331,7 +341,7 @@
             type="button"
             class="btn btn-primary active btn-sm"
             (click)="incorporaCostos()">
-            Incorpora <i class="bx bx-search-alt bx-sm float-icon"></i>
+            Incorporar Costos <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
         <div class="m-3">
