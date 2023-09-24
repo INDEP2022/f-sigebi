@@ -85,13 +85,13 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
     //   this.form.get('executionDate').markAsTouched();
     //   return;
     // }
-    let obj = {
-      eventId: this.form.get('eventId').value,
-      customerId: this.form.get('customerId').value,
-      process: this.form.get('process').value,
-      executionDate: this.form.get('executionDate').value,
-    };
-    this.comerClientsService.updateClientXEvent_(obj).subscribe({
+    // let obj = {
+    //   eventId: this.form.get('eventId').value,
+    //   customerId: this.form.get('customerId').value,
+    //   process: this.form.get('process').value,
+    //   executionDate: this.form.get('executionDate').value,
+    // };
+    this.comerClientsService.updateClientXEvent_(this.form.value).subscribe({
       next: response => {
         this.handleSuccess();
         this.modalRef.hide();

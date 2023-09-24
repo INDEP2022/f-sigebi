@@ -746,7 +746,6 @@ export class ConciliationDepositaryPaymentsComponent
       .execDeductions(params)
       .subscribe({
         next: res => {
-          this.loading = false;
           console.log(res.data);
           this.insertDispersionDB();
         },
@@ -776,7 +775,6 @@ export class ConciliationDepositaryPaymentsComponent
       .insertDispersionDB(params)
       .subscribe({
         next: res => {
-          this.loading = false;
           console.log(res.data);
           this.getPrepOI();
         },
