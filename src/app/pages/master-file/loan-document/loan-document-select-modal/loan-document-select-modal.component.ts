@@ -22,9 +22,8 @@ export class LoanDocumentSelectModalComponent
   columnFilters: any = [];
   selectedRow: any;
   constructor(
-    private modalRef: BsModalRef
-  ) // private goodPosessionThirdpartyService: GoodPosessionThirdpartyService
-  {
+    private modalRef: BsModalRef // private goodPosessionThirdpartyService: GoodPosessionThirdpartyService
+  ) {
     super();
     this.settings = {
       ...this.settings,
