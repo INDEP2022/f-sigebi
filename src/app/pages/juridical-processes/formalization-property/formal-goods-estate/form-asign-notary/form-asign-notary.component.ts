@@ -23,7 +23,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class FormAsignNotaryComponent
   extends BasePage
-  implements OnInit, OnDestroy {
+  implements OnInit, OnDestroy
+{
   @Output() refresh = new EventEmitter<true>();
   form: FormGroup = new FormGroup({});
   dataNotary: any;

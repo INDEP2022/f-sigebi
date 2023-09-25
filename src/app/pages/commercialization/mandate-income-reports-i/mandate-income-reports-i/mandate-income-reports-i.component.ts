@@ -172,6 +172,9 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
     }
     this.usersService.getAllSegUsers2(params).subscribe({
       next: resp => {
+        this.result = resp.data.map(async (item: any) => {
+          item['userName'] = item.user + ' - ' + item.name;
+        });
         this.user1 = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
@@ -194,6 +197,9 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
     }
     this.usersService.getAllSegUsers2(params).subscribe({
       next: resp => {
+        this.result = resp.data.map(async (item: any) => {
+          item['userName'] = item.user + ' - ' + item.name;
+        });
         this.user2 = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
@@ -215,6 +221,9 @@ export class MandateIncomeReportsIComponent extends BasePage implements OnInit {
     }
     this.usersService.getAllSegUsers2(params).subscribe({
       next: resp => {
+        this.result = resp.data.map(async (item: any) => {
+          item['userName'] = item.user + ' - ' + item.name;
+        });
         this.user3 = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {

@@ -42,7 +42,8 @@ import { FormProcedeFormalizacionComponent } from '../form-procede-formalizacion
 })
 export class FormalGoodsEstateComponent
   extends BasePage
-  implements OnInit, OnDestroy {
+  implements OnInit, OnDestroy
+{
   // ------------------ PROCEDE FORMALIZACIÓN ------------------ //
   _dataTableProcedeFormalizacion: LocalDataSource = new LocalDataSource();
   _tableSettingsProcedeFormalizacion = { ...TABLE_SETTINGS2 };
@@ -378,7 +379,6 @@ export class FormalGoodsEstateComponent
     });
   }
 
-
   // ---------- PROCEDE FORMALIZACIÓN ----------//
 
   private getFormalizeProccess() {
@@ -549,10 +549,7 @@ export class FormalGoodsEstateComponent
         Promise.all(result).then(data => {
           this._dataTableAsignaNotario.load(response.data);
           this._dataTableAsignaNotario.refresh();
-          console.log(
-            'Datos regresados: ',
-            this._dataTableAsignaNotario
-          );
+          console.log('Datos regresados: ', this._dataTableAsignaNotario);
           this.totalItems2 = response.count;
           this.loading = false;
         });
