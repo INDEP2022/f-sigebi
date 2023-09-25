@@ -127,7 +127,7 @@ export class FormAsignNotaryComponent
   handleSuccess() {
     this.onLoadToast(
       'success',
-      'ASIGNA NOTARIO',
+      'Asigna Notario',
       `Datos del notario actualizado correctamente`
     );
     this.loading = false;

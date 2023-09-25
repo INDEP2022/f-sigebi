@@ -46,11 +46,9 @@
                 [searchOnInit]="true"
                 [showTooltip]="true"
                 termMaxLength="50"
-                (input)="onSearchAccount($event.target)"
                 [labelTemplate]="bankLabel"
                 [optionTemplate]="bankOption"
-                (change)="onBankAccountSelectChange($event)"
-                (clear)="onClearSelection()">
+                (change)="onBankAccountSelectChange($event)">
               </ngx-select>
               <ng-template #bankLabel let-item="item">
                 {{ item.accountNumber.cveAccount }}
