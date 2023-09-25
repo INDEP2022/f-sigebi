@@ -35,8 +35,21 @@ export const RECORDS_ACCOUNT_STATEMENTS_COLUMNS = {
   },
   deposit: {
     title: 'Abono',
-    type: 'number',
+    type: 'string',
     sort: false,
+    valuePrepareFunction: (amount: string) => {
+      const numericAmount = parseFloat(amount);
+      if (!isNaN(numericAmount)) {
+        return numericAmount.toLocaleString('en-US', {
+          // style: 'currency',
+          // currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      } else {
+        return amount;
+      }
+    },
   },
   passDiverse: {
     title: 'Cargo',
