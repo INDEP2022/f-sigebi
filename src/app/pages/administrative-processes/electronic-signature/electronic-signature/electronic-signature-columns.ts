@@ -29,11 +29,11 @@ export const ELECTRONICSIGNATURE_COLUMNS = {
     width: '10%',
     sort: false,
   },
-  statusof: {
-    title: 'Estatus',
-    width: '10%',
-    sort: false,
-  },
+  // statusof: {
+  //   title: 'Estatus',
+  //   width: '10%',
+  //   sort: false,
+  // },
   signature: {
     title: 'Firma Electrónica',
     width: '20%',
