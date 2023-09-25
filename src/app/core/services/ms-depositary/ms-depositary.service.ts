@@ -344,7 +344,7 @@ export class MsDepositaryService extends HttpService {
   postCurrentRealStateSale(body: any) {
     // VALIDA_PAGOSREF.VENTA_INMU_ACT
     return this.post<IListResponse<any>>(
-      DepositaryEndPoints.PrepOiInmuAct,
+      DepositaryEndPoints.CurrentRealStateSale,
       body
     );
   }

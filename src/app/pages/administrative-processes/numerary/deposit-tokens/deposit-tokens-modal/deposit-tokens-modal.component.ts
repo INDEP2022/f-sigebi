@@ -15,7 +15,7 @@ import { DEPOSIT_TOKENS_MODAL_COLUMNS } from './deposit-tokens-modal-columns';
 @Component({
   selector: 'app-deposit-tokens-modal',
   templateUrl: './deposit-tokens-modal.component.html',
-  styles: [],
+  styles: [``],
 })
 export class DepositTokensModalComponent extends BasePage implements OnInit {
   title: string = 'Movimientos';
@@ -83,7 +83,14 @@ export class DepositTokensModalComponent extends BasePage implements OnInit {
             search[filter.field]();
 
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (filter.field == 'deposit') {
+                this.columnFilters[
+                  field
+                ] = `${searchFilter}:${filter.search.replace(/,/g, '')}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
+              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }

@@ -45,6 +45,9 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
   user3 = new DefaultSelect();
 
   result1: any;
+  result: any;
+  result2: any;
+  result3: any;
 
   constructor(
     private fb: FormBuilder,
@@ -84,8 +87,14 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
       startDate: [null, [Validators.required]],
       endDate: [null, [Validators.required]],
       capturingUser: [null, [Validators.required]],
+      capturingUserName: [null, [Validators.required]],
+      capturingUserPost: [null, [Validators.required]],
       authorizingUser: [null, [Validators.required]],
+      authorizingUserName: [null, [Validators.required]],
+      authorizingUserPost: [null, [Validators.required]],
       requestingUser: [null, [Validators.required]],
+      requestingUserName: [null, [Validators.required]],
+      requestingUserPost: [null, [Validators.required]],
       incomeOrder: [
         null,
         [
@@ -96,10 +105,19 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
       ],
       reportNumber: [null, [Validators.required]],
     });
-    this.getEvent(new ListParams());
-    this.getAllSegUser1(new ListParams());
-    this.getAllSegUser2(new ListParams());
-    this.getAllSegUser3(new ListParams());
+    setTimeout(() => {
+      this.getEvent(new ListParams());
+      this.getAllSegUser1(new ListParams());
+      this.getAllSegUser2(new ListParams());
+      this.getAllSegUser3(new ListParams());
+    }, 1000);
+
+    this.form.get('capturingUserName').disable();
+    this.form.get('capturingUserPost').disable();
+    this.form.get('authorizingUserName').disable();
+    this.form.get('authorizingUserPost').disable();
+    this.form.get('requestingUserName').disable();
+    this.form.get('requestingUserPost').disable();
   }
 
   settingsChange($event: any): void {
@@ -181,6 +199,9 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
     }
     this.usersService.getAllSegUsers2(params).subscribe({
       next: resp => {
+        this.result = resp.data.map(async (item: any) => {
+          item['userName'] = item.user + ' - ' + item.name;
+        });
         this.user1 = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
@@ -191,6 +212,8 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
 
   changeUser1(event: any) {
     console.log(event);
+    this.form.get('capturingUserName').setValue(event.name);
+    this.form.get('capturingUserPost').setValue(event.otvalor);
   }
 
   getAllSegUser2(params: ListParams) {
@@ -200,6 +223,9 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
     }
     this.usersService.getAllSegUsers2(params).subscribe({
       next: resp => {
+        this.result2 = resp.data.map(async (item: any) => {
+          item['userName'] = item.user + ' - ' + item.name;
+        });
         this.user2 = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
@@ -210,6 +236,8 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
 
   changeUser2(event: any) {
     console.log(event);
+    this.form.get('authorizingUserName').setValue(event.name);
+    this.form.get('authorizingUserPost').setValue(event.otvalor);
   }
 
   getAllSegUser3(params: ListParams) {
@@ -219,6 +247,9 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
     }
     this.usersService.getAllSegUsers2(params).subscribe({
       next: resp => {
+        this.result3 = resp.data.map(async (item: any) => {
+          item['userName'] = item.user + ' - ' + item.name;
+        });
         this.user3 = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
@@ -229,5 +260,7 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
 
   changeUser3(event: any) {
     console.log(event);
+    this.form.get('requestingUserName').setValue(event.name);
+    this.form.get('requestingUserPost').setValue(event.otvalor);
   }
 }
