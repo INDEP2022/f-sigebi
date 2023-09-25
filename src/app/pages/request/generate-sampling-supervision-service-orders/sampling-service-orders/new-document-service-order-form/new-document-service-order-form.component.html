@@ -10,21 +10,33 @@
       <form [formGroup]="documentForm" class="form-material">
         <div class="row pt-4">
           <div class="col-md-6">
-            <form-field [control]="documentForm.get('typeDoc')">
-              <ngx-select
-                [form]="documentForm"
-                control="typeDoc"
-                [data]="typeDocSelected"
-                value="id"
-                bindLabel="id"
-                label="Tipo de Documento"
-                (fetchItems)="getTypeDocSelect($event)">
-              </ngx-select>
-            </form-field>
+            <div
+              [formGroup]="documentForm"
+              class="form-group form-secondary form-static-label">
+              <ng-select
+                class="form-control"
+                formControlName="xtipoDocumento"
+                [clearable]="false"
+                [items]="typeDocSelected"
+                [virtualScroll]="true"
+                [loading]="loading"
+                bindLabel="ddescription"
+                bindValue="ddocType">
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                  <div [title]="item.ddescription">
+                    {{ item.ddescription }}
+                  </div>
+                </ng-template>
+              </ng-select>
+              <span class="form-bar"></span>
+              <label class="float-label"
+                >Tipo de Documento <span style="color: #ad4766">*</span></label
+              >
+            </div>
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-6">
+          <div class="col-md-8">
             <form-field [control]="documentForm.get('noDoc')">
               <input
                 type="file"
@@ -42,47 +54,48 @@
         <div class="row pt-4">
           <div class="col-md-6">
             <form-field
-              [control]="documentForm.get('titleDoc')"
+              [control]="documentForm.get('dDocTitle')"
               label="T&iacute;tulo del Documento">
               <input
                 type="text"
                 class="form-control"
-                formControlName="titleDoc" />
+                formControlName="dDocTitle" />
             </form-field>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
             <form-field
-              [control]="documentForm.get('noRequest')"
+              [control]="documentForm.get('xidSolicitud')"
               label="No&#46; Solicitud">
               <input
                 type="text"
                 class="form-control"
-                formControlName="noRequest" />
+                formControlName="xidSolicitud" />
             </form-field>
           </div>
 
           <div class="col-md-4">
             <form-field
-              [control]="documentForm.get('contributor')"
+              [control]="documentForm.get('xcontribuyente')"
               label="Contribuyente">
               <input
                 type="text"
                 class="form-control"
-                formControlName="contributor" />
+                formControlName="xcontribuyente" />
             </form-field>
           </div>
           <div class="col-md-4">
-            <form-field [control]="documentForm.get('regionalDelegation')">
+            <form-field [control]="documentForm.get('xDelegacionRegional')">
               <ngx-select
                 [form]="documentForm"
-                control="regionalDelegation"
+                control="xDelegacionRegional"
                 [data]="regionalDelegationSelected"
                 value="id"
-                bindLabel="id"
+                bindLabel="description"
                 label="Delegación Regional"
-                (fetchItems)="getRegionalDelegationSelect($event)">
+                (fetchItems)="getRegionalDelegationSelect($event)"
+                (change)="changeRegDele($event)">
               </ngx-select>
             </form-field>
           </div>
@@ -91,47 +104,48 @@
         <div class="row pt-4">
           <div class="col-md-4">
             <form-field
-              [control]="documentForm.get('noOfice')"
+              [control]="documentForm.get('xnoOficio')"
               label="No&#46; Oficio">
               <input
                 type="text"
                 class="form-control"
-                formControlName="noOfice" />
+                formControlName="xnoOficio" />
             </form-field>
           </div>
           <div class="col-md-4">
-            <form-field [control]="documentForm.get('state')">
+            <form-field [control]="documentForm.get('xestado')">
               <ngx-select
                 [form]="documentForm"
-                control="state"
+                control="xestado"
                 [data]="stateSelected"
                 value="id"
-                bindLabel="id"
+                bindLabel="descCondition"
                 label="Estado"
-                (fetchItems)="getStateSelect($event)">
+                (fetchItems)="getStateSelect($event)"
+                (change)="changeState($event)">
               </ngx-select>
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="documentForm.get('noProgramming')"
+              [control]="documentForm.get('xNoProgramacion')"
               label="No&#46; Programaci&oacute;n">
               <input
                 type="number"
                 class="form-control"
-                formControlName="noProgramming" />
+                formControlName="xNoProgramacion" />
             </form-field>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-field [control]="documentForm.get('typeTranfer')">
+            <form-field [control]="documentForm.get('xidTransferente')">
               <ngx-select
                 [form]="documentForm"
-                control="typeTranfer"
+                control="xidTransferente"
                 [data]="typeTranferSelected"
                 value="id"
-                bindLabel="id"
+                bindLabel="nameTransferent"
                 label="Transferente"
                 (fetchItems)="getTypeTranferSelect($event)">
               </ngx-select>
@@ -139,53 +153,53 @@
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="documentForm.get('programmingFolio')"
+              [control]="documentForm.get('xFolioProgramacion')"
               label="Folio Programaci&oacute;n">
               <input
                 type="text"
                 class="form-control"
-                formControlName="programmingFolio" />
+                formControlName="xFolioProgramacion" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="documentForm.get('sender')"
+              [control]="documentForm.get('xremitente')"
               label="Remitente">
               <input
                 type="text"
                 class="form-control"
-                formControlName="sender" />
+                formControlName="xremitente" />
             </form-field>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
             <form-field
-              [control]="documentForm.get('senderCharge')"
+              [control]="documentForm.get('xcargoRemitente')"
               label="Cargo Remitente">
               <input
                 type="text"
                 class="form-control"
-                formControlName="senderCharge" />
+                formControlName="xcargoRemitente" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="documentForm.get('responsible')"
+              [control]="documentForm.get('xresponsable')"
               label="Responsable">
               <input
                 type="text"
                 class="form-control"
-                formControlName="responsible" />
+                formControlName="xresponsable" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="documentForm.get('comments')"
+              [control]="documentForm.get('xComments')"
               label="Comentarios">
               <textarea
                 class="form-control"
-                formControlName="comments"></textarea>
+                formControlName="xComments"></textarea>
             </form-field>
           </div>
         </div>

@@ -14,4 +14,5 @@ export enum ParameterComerEndpoints {
   ApplicationUser = 'aplication/get-lval-usu',
   ApplicationSigna = 'aplication/get-full-signatories',
   ComerStatusVta = 'comer-status-vta',
+  GetvValue = 'aplication/get-v-value',
 }
