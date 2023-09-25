@@ -251,16 +251,20 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   }
 
   openEstate(data: any) {
-    let config: ModalOptions = {
-      initialState: {
-        Noformat: this.NoFormat,
-        data,
-        callback: (next: boolean) => {},
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(ServiceOrdersFormatHistoricComponent, config);
+    if (this.NoFormat != null) {
+      let config: ModalOptions = {
+        initialState: {
+          Noformat: this.NoFormat,
+          data,
+          callback: (next: boolean) => {},
+        },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(ServiceOrdersFormatHistoricComponent, config);
+    } else {
+      this.alert('error', 'Error', 'Primero debes seleccionar un Servicio');
+    }
   }
 
   openSelect(data?: any) {

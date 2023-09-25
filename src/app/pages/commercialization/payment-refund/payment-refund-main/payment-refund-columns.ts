@@ -79,6 +79,18 @@ export const REFUND_CONTROL_COLUMNS = {
       return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
     },
   },
+  seleccion: {
+    title: 'Selección',
+    sort: false,
+    type: 'custom',
+    showAlways: true,
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+  },
 };
 
 export const RELATED_EVENT_COLUMNS = {
@@ -114,6 +126,18 @@ export const RELATED_EVENT_COLUMNS = {
     type: 'number',
     sort: false,
     filter: false,
+  },
+  seleccion: {
+    title: 'Selección',
+    sort: false,
+    type: 'custom',
+    showAlways: true,
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
   },
 };
 

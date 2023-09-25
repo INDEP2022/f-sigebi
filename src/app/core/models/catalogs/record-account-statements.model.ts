@@ -1,7 +1,8 @@
+import { IAccountNumber } from '../ms-account-movements/account-movement.model';
 export interface IRecordAccountStatements {
   numberMotion?: number;
   square?: number;
-  accountNumber?: number;
+  accountNumber?: IAccountNumber;
   numberAccount?: number;
   branch?: string;
   accountType?: string;
