@@ -340,9 +340,10 @@ export class RecordAccountStatementsComponent
         .getAccounts(params__)
         .subscribe({
           next: response => {
+            console.log(response);
             const filteredAccounts = response.data.filter(
-              (item: { cveBank: string | any[] }) =>
-                item.cveBank.includes(account)
+              (item: { cveAccount: string | any[] }) =>
+                item.cveAccount.includes(account)
             );
             this.bankAccountSelect = new DefaultSelect(
               filteredAccounts,
