@@ -30,7 +30,6 @@ import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strate
 import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { GASTOS } from '../implementation-report-historic/implementation-report-historic-columns';
 import { ImplementationReportHistoricComponent } from '../implementation-report-historic/implementation-report-historic.component';
 import { IMPLEMENTATIONREPORT_COLUMNS } from './implementation-report-columns';
 @Component({
@@ -64,6 +63,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   turnos = new DefaultSelect();
   totalItems: number = 0;
   delegationUser: any;
+  settings2;
   dateCapt: string = '';
   bienesStrategy: LocalDataSource = new LocalDataSource();
   maxDate = new Date();
@@ -72,10 +72,10 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   dateClose: string = '';
   reportImp2: IStrategyReport;
   delegation = new DefaultSelect();
-  settings2 = { ...this.settings, actions: false };
   types = new DefaultSelect();
   turns = new DefaultSelect();
   selectedRow: any | null = null;
+  idReport: number = 0;
   public serviceOrderKey = new DefaultSelect();
   public process = new DefaultSelect<IStrategyProcess>();
   public regionalCoordination = new DefaultSelect();
@@ -105,7 +105,50 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       selectMode: 'multi',
       columns: IMPLEMENTATIONREPORT_COLUMNS,
     };
-    this.settings2.columns = GASTOS;
+    this.settings2 = {
+      ...this.settings,
+      actions: false,
+      hideSubHeader: false,
+      selectMode: 'multi',
+      columns: {
+        DES_SERVICIO: {
+          title: 'Servicio',
+          type: 'number',
+          sort: false,
+          ValuePrepareFunction(cell: any, row: any) {
+            return row.DES_SERVICIO.descripcion;
+          },
+        },
+        DES_TIPO: {
+          title: 'Tipo',
+          type: 'string',
+          sort: false,
+          ValuePrepareFunction(cell: any, row: any) {
+            return row.DES_TIPO.descripcion;
+          },
+        },
+        DES_TURNO: {
+          title: 'Turno',
+          type: 'string',
+          sort: false,
+          ValuePrepareFunction(cell: any, row: any) {
+            return row.DES_TURNO.descripcion;
+          },
+        },
+        DES_VARCOSTO: {
+          title: 'Variable dde Costo',
+          type: 'string',
+          sort: false,
+          ValuePrepareFunction(cell: any, row: any) {
+            return row.DES_VARCOSTO.descripcion;
+          },
+        },
+        TOT_IMP_COSTO: {
+          title: 'Importe de Costo',
+          sort: false,
+        },
+      },
+    };
   }
 
   ngOnInit(): void {
@@ -347,7 +390,10 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
             this.serviceOrdersForm
               .get('observations')
               .setValue(value.observations);
-            this.serviceOrdersForm.get('process').patchValue(value.pro);
+            this.serviceOrdersForm
+              .get('process')
+              .patchValue(value.pProcessNumber);
+            this.idReport = value.reportNumber;
           });
         },
       });
@@ -474,7 +520,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   }
 
   elimina() {
-    if (this.reportImp.reportNumber === null) {
+    if (this.idReport === null) {
       this.alert('info', 'No existe el reporte de implementación', '');
       return;
     }
@@ -549,7 +595,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   }
 
   incorporaCostos() {
-    if (this.reportImp.reportNumber === null) {
+    if (this.idReport === null) {
       this.alert('warning', 'Debe ingresar bienes ', '');
       return;
     }
@@ -584,11 +630,11 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
         };
         this.goodPosessionThirdpartyService.getIncCosto(this.costoR).subscribe({
           next: data => {
-            console.log(data.data);
-            this.bienesStrategy.load(data.data);
+            console.log(data);
+            this.bienesStrategy.load(data);
             this.totalItems2 = data.count;
             this.bienesStrategy.refresh();
-            console.log('costos', data);
+            this.alert('success', 'Costos incorporados!', '');
           },
         });
       } else {
@@ -622,80 +668,64 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   }
   onChangeStatus() {
     this.mostrarJus = !this.mostrarJus;
-    console.log(this.reportImp);
-    if (
-      this.reportImp.reportNumber === null ||
-      this.serviceOrdersForm.value.serviceOrderKey === null ||
-      this.serviceOrdersForm.value.type === null ||
-      this.serviceOrdersForm.value.process === null ||
-      this.serviceOrdersForm.value.turno === null
-    ) {
-      this.alert(
-        'warning',
-        'Debe ingresar todas las estrategias de admministración ',
-        ''
-      );
-      return;
-    }
     if (this.serviceOrdersForm.value.status === 'AUTORIZADA') {
       this.serviceOrdersForm
         .get('justifications')
         .setValue('Reporte de Implementación Autorizado');
-    } else if (this.serviceOrdersForm.value.status === 'CANCELADA') {
+    }
+    if (this.serviceOrdersForm.value.status === 'CANCELADA') {
       this.serviceOrdersForm
         .get('justifications')
         .setValue('Reporte de Implementación Cancelado');
-    } else {
-      if (this.serviceOrdersForm.value.justifications === null) {
-        this.alert('warning', 'Debe ingresar una justificación ', '');
-        return;
-      }
-      this.reportImp2 = {
-        reportNumber: Number(this.reportImp.reportNumber),
-        formatNumber: this.serviceOrdersForm.value.noFormat,
-        reportKey: this.serviceOrdersForm.value.reportKey,
-        status: this.serviceOrdersForm.value.status,
-        captureDate: this.serviceOrdersForm.value.dateCapture,
-        authorizeDate: this.serviceOrdersForm.value.authorizationDate,
-        monthNumber: 0,
-        yearNumber: 0,
-        inTime: 'Y',
-        recordNumber: 0,
-        elaboratedUser: this.authService.decodeToken().username,
-        observations: this.serviceOrdersForm.value.authorizationDate,
-        statuslaughedNumber: 0,
-        oPobservations: null,
-        UniversalInvoice: null,
-        reportTOKey: null,
-        originNb: null,
-      };
+    }
+    if (this.serviceOrdersForm.value.justifications === null) {
+      this.alert('warning', 'Debe ingresar una justificación ', '');
+      return;
+    }
+    this.reportImp2 = {
+      reportNumber: this.idReport,
+      formatNumber: this.serviceOrdersForm.value.noFormat,
+      reportKey: this.serviceOrdersForm.value.reportKey,
+      status: this.serviceOrdersForm.value.status,
+      captureDate: this.serviceOrdersForm.value.dateCapture,
+      authorizeDate: this.serviceOrdersForm.value.authorizationDate,
+      monthNumber: 0,
+      yearNumber: 0,
+      inTime: 5,
+      recordNumber: 0,
+      elaboratedUser: this.authService.decodeToken().username,
+      observations: this.serviceOrdersForm.value.authorizationDate,
+      statuslaughedNumber: 0,
+      oPobservations: null,
+      UniversalInvoice: null,
+      reportTOKey: null,
+      originNb: null,
+    };
 
-      this.strategyProcessService
-        .updateStrategyReport(this.reportImp2)
-        .subscribe({
-          next: data => {
-            console.log('actualizado');
-          },
-        });
-
-      let bita = {
-        formatNumber: this.serviceOrdersForm.value.noFormat,
-        reportNumber: this.reportImp.reportNumber,
-        changeDate: new Date(),
-        justification: this.serviceOrdersForm.value.justifications,
-        status: this.serviceOrdersForm.get('status').value,
-        usrRegister: this.authService.decodeToken().username,
-        registerNumber: 0,
-        nbOrigin: '',
-      };
-      this.goodPosessionThirdpartyService.posStrategyBitacora(bita).subscribe({
-        next: response => {
-          console.log('ok bitscora', response);
+    this.strategyProcessService
+      .updateStrategyReport(this.reportImp2)
+      .subscribe({
+        next: data => {
+          this.alert('success', 'Reporte actualizado!', '');
+          this.pupGenera();
         },
       });
-      this.pupGenera();
-      console.log('aqui se incorporan');
-    }
+
+    let bita = {
+      formatNumber: this.serviceOrdersForm.value.noFormat,
+      reportNumber: this.idReport,
+      changeDate: new Date(),
+      justification: this.serviceOrdersForm.value.justifications,
+      status: this.serviceOrdersForm.get('status').value,
+      usrRegister: this.authService.decodeToken().username,
+      registerNumber: 0,
+      nbOrigin: '',
+    };
+    this.goodPosessionThirdpartyService.posStrategyBitacora(bita).subscribe({
+      next: response => {
+        console.log('ok bitscora', response);
+      },
+    });
   }
 
   bitacora() {}

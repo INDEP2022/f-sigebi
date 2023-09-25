@@ -38,7 +38,7 @@ export interface IStrategyReport {
   authorizeDate: string;
   monthNumber: number;
   yearNumber: number;
-  inTime: string;
+  inTime: number;
   recordNumber: number;
   elaboratedUser: string;
   observations: string;
