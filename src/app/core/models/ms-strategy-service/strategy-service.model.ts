@@ -49,7 +49,7 @@ export interface IReportImp {
   monthNumber: number;
   yearNumber: number;
   inTime: string;
-  recordNumber: string;
+  recordNumber: number;
   elaboratedUser: string;
   observations: string;
   statuslaughedNumber: number;
