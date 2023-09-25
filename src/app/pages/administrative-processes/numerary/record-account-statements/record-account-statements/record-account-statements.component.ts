@@ -400,7 +400,7 @@ export class RecordAccountStatementsComponent
     }
 
     const model: IDateAccountBalance = {
-      noAccount: this.form.value.account,
+      noAccount: Number(this.cveAccount),
       tiDateCalc: balanceOf,
       tiDateCalcEnd: balanceAt,
     };
