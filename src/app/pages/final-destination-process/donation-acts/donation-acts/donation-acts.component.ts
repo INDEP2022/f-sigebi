@@ -150,7 +150,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
   getAllBLKByFilters() {
     this.resetFormTwo();
     if (this.noExpe == null || '') {
-      this.alert('warning', 'Advertencia', `Por Favor Ingrese un Expediente`);
+      this.alert('warning', 'Advertencia', `Por favor ingrese un expediente`);
     } else {
       if (this.noExpe == '' || undefined || null) {
         this.form.reset();
@@ -178,11 +178,11 @@ export class DonationActsComponent extends BasePage implements OnInit {
               this.alert(
                 'warning',
                 'Advertencia',
-                `No se Encontraron Expedientes Asociados al Número -${this.noExpe}-`
+                `No se encontraron expedientes asociados al número -${this.noExpe}-`
               );
               this.form.reset();
             } else {
-              this.alert('error', 'Error', 'Ha Ocurrido un Error');
+              this.alert('error', 'Error', 'Ha ocurrido un error');
               this.form.reset();
             }
           },
@@ -265,17 +265,17 @@ export class DonationActsComponent extends BasePage implements OnInit {
                 this.alert(
                   'warning',
                   'Advertencia',
-                  `No se Encontraron Registros de Actas de Entrega Recepción`
+                  `No se encontraron registros de actas de entrega recepción`
                 );
                 this.alert(
                   'warning',
                   'Advertencia',
-                  `No se Encontraron Registros de Detalles Actas de Entrega Recepción`
+                  `No se encontraron registros de detalles actas de entrega recepción`
                 );
                 this.data2.load([]);
                 this.actForm.reset();
               } else {
-                this.alert('error', 'Error', 'Ha Ocurrido un Error');
+                this.alert('error', 'Error', 'Ha ocurrido un error');
                 this.actForm.reset();
                 this.data2.load([]);
               }
@@ -287,10 +287,10 @@ export class DonationActsComponent extends BasePage implements OnInit {
 
   closeExp() {
     if (this.noExpe == null || '') {
-      this.alert('warning', 'Advertencia', `Por Favor Ingrese un Expediente`);
+      this.alert('warning', 'Advertencia', `Por favor ingrese un expediente`);
     } else {
       if (this.varOne == null) {
-        this.alert('warning', 'Advertencia', `No Existe Acta Para Cerrar`);
+        this.alert('warning', 'Advertencia', `No existe acta para cerrar`);
       } else if (
         this.actForm.controls['actSelect'].value == null ||
         undefined ||
@@ -303,7 +303,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
         //   this.alert('warning', 'Advertencia', `Indique el Testigo de la Contraloría`);
         // }
 
-        this.alert('warning', 'Advertencia', `No Existe Acta Para Cerrar`);
+        this.alert('warning', 'Advertencia', `No existe acta para cerrar`);
       } else if (this.data2.count() === 0) {
         // if (this.varTwo == null) {
         //   this.alert('warning', 'Advertencia', `Indique el folio de escaneo`);
@@ -314,10 +314,10 @@ export class DonationActsComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Advertencia',
-          `El Acta no Tiene Ningun Bien Asignado, no Se Puede Cerrar`
+          `El acta no tiene ningun bien asignado, no se puede cerrar`
         );
       } else if (this.varFour == 'CERRADA') {
-        this.alert('warning', 'Advertencia', `El Acta ya Esta Cerrada`);
+        this.alert('warning', 'Advertencia', `El acta ya esta cerrada`);
       } else {
         let data: any[] = this.varObjectFinalModal;
         let config: ModalOptions = {
@@ -357,21 +357,21 @@ export class DonationActsComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        `Seleccione Primero el Bien a Asignar`
+        `Seleccione primero el bien a asignar`
       );
     } else {
       if (this.varOne == null) {
         this.alert(
           'warning',
           'Advertencia',
-          `No Existe un Acta, en la Cual Asignar el Bien. Capture Primero el Acta`
+          `No existe un acta, en la cual asignar el bien. capture primero el acta`
         );
       } else {
         if (this.varFour == 'CERRADA') {
           this.alert(
             'warning',
             'Advertencia',
-            `El Acta ya Esta Cerrada, no Puede Realizar Modificaciones a Esta`
+            `El acta ya esta cerrada, no puede realizar modificaciones a esta`
           );
         } else {
           let body: GoodsToReception = new GoodsToReception();
@@ -382,15 +382,15 @@ export class DonationActsComponent extends BasePage implements OnInit {
           this.serviceDetailProceeding.postRegister(body).subscribe({
             next: response => {
               this.varCreateObject = null;
-              this.alert('success', 'Registro Creado Correctamente', '');
+              this.alert('success', 'Registro creado correctamente', '');
               this.getAllBLKByFilters();
               this.getDataTableTwo();
             },
             error: error => {
               if (error.status == 400) {
-                this.alert('warning', 'Advertencia', `El Registro ya Existe`);
+                this.alert('warning', 'Advertencia', `El registro ya existe`);
               } else {
-                this.alert('error', 'Error', 'Ha Ocurrido un Error');
+                this.alert('error', 'Error', 'Ha ocurrido un error');
               }
             },
           });
@@ -401,27 +401,27 @@ export class DonationActsComponent extends BasePage implements OnInit {
 
   deleteTableTwo() {
     if (this.varDeleteObject == null) {
-      this.alert('warning', 'Advertencia', `Debe Seleccionar un Detalle Acta`);
+      this.alert('warning', 'Advertencia', `Debe seleccionar un detalle acta`);
     } else {
       if (this.varDeleteObject.data.numberGood == null) {
         this.alert(
           'warning',
           'Advertencia',
-          `Debe Seleccionar un Bien que Forme Parte del Acta Primero`
+          `Debe seleccionar un bien que forme parte del acta primero`
         );
       } else {
         if (this.varOne == null) {
           this.alert(
             'warning',
             'Advertencia',
-            `Debe Especificar/Buscar el Acta para Despues Eliminar el Bien de Esta`
+            `Debe especificar/buscar el acta para despues eliminar el bien de esta`
           );
         } else {
           if (this.varFour == 'CERRADA') {
             this.alert(
               'warning',
               'Advertencia',
-              `El Acta ya Esta Cerrada, no Puede Realizar Modificaciones a Esta`
+              `El Acta ya Esta cerrada, no puede realizar modificaciones a esta`
             );
           } else {
             let body: GoodsToReception = new GoodsToReception();
@@ -432,14 +432,14 @@ export class DonationActsComponent extends BasePage implements OnInit {
             this.serviceDetailProceeding.deleteRegister(body).subscribe({
               next: response => {
                 this.varDeleteObject = null;
-                this.alert('success', 'Registro Eliminado Correctamente', '');
+                this.alert('success', 'Registro eliminado correctamente', '');
                 this.getAllBLKByFilters();
                 if (this.data2.count() == 1 || 0) {
                   this.data2.load([]);
                 }
               },
               error: error => {
-                this.alert('error', 'Error', 'Ha Ocurrido un Error');
+                this.alert('error', 'Error', 'Ha ocurrido un error');
               },
             });
           }
@@ -464,11 +464,11 @@ export class DonationActsComponent extends BasePage implements OnInit {
             this.alert(
               'warning',
               'Advertencia',
-              `No se Encontraron Registros de Bienes`
+              `No se encontraron registros de bienes`
             );
             this.datas.load([]);
           } else {
-            this.alert('error', 'Error', 'Ha Ocurrido un Error');
+            this.alert('error', 'Error', 'Ha ocurrido un error');
             this.datas.load([]);
           }
           this.loadingOne = false;

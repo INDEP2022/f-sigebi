@@ -2,7 +2,7 @@ import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.co
 
 export const COLUMNS = {
   goodId: {
-    title: 'Bien',
+    title: 'No. Bien',
     sort: false,
   },
   description: {
@@ -28,6 +28,17 @@ export const COLUMNS2 = {
   },
   description: {
     title: 'Documento',
+    sort: false,
+  },
+};
+
+export const COLUMNS3 = {
+  destinatario: {
+    title: 'Destinatario',
+    sort: false,
+  },
+  regional: {
+    title: 'Regional',
     sort: false,
   },
 };

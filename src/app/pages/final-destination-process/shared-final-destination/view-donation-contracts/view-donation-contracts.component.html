@@ -23,6 +23,14 @@
                   formControlName="idContract" />
               </form-field>
             </div>
+            <form-field
+              [control]="form.get('idContract')"
+              label="Id Contrato o Convenio">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="idContract" />
+            </form-field>
           </div>
           <div class="col">
             <div class="justify-content-start">
@@ -48,18 +56,11 @@
           </div>
           <div class="col">
             <form-field [control]="form.get('status')" label="Estado">
-              <<<<<<< HEAD
-              <input
-                type="text"
-                class="form-control"
-                formControlName="status" />
-              =======
               <ng-select class="form-control" formControlName="status">
                 <ng-option [value]="'A'">A</ng-option>
                 <ng-option [value]="'RT'">RT</ng-option>
                 <ng-option [value]="'D'">D</ng-option>
               </ng-select>
-              >>>>>>> eed8343e0bb1da8af5c291595a8e2501c4fe00d3
             </form-field>
           </div>
           <div class="col">

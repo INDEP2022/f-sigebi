@@ -3,7 +3,7 @@
     <h5 class="modal-title">Reporte de orden de servicio</h5>
   </div>
   <div body>
-    <div class="row">
+    <div class="row" *ngIf="processFirm != 'firmRegionalDelegation'">
       <form [formGroup]="form" class="form-material">
         <div>
           <form-field [control]="form.get('responsible')" label="Responsable">
@@ -20,7 +20,36 @@
         </div>
 
         <div class="pt-3">
-          <form-check label="Firma electr&oacute;nica" for="label">
+          <form-check label="Firma Electr&oacute;nica" for="label">
+            <input
+              id="label"
+              type="checkbox"
+              formControlName="electronicSignature" />
+          </form-check>
+        </div>
+      </form>
+    </div>
+
+    <div class="row" *ngIf="processFirm == 'firmRegionalDelegation'">
+      <form [formGroup]="form" class="form-material">
+        <div>
+          <form-field
+            [control]="form.get('responsible')"
+            label="Responsable DR">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="responsible" />
+          </form-field>
+        </div>
+        <div class="pt-3">
+          <form-field [control]="form.get('charge')" label="Cargo DR">
+            <input type="text" class="form-control" formControlName="charge" />
+          </form-field>
+        </div>
+
+        <div class="pt-3">
+          <form-check label="Firma Electr&oacute;nica" for="label">
             <input
               id="label"
               type="checkbox"

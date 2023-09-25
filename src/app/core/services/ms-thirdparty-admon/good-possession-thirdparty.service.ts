@@ -1,14 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ThirdPartyAdmonEndpoints } from 'src/app/common/constants/endpoints/ms-third-party-admon-endpoints';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGood } from '../../models/good/good.model';
 import {
+  ICostReport,
+  IDelReportImp,
+} from '../../models/ms-strategy-service/strategy-service.model';
+import {
   IDetailGoodPossessionThirdParty,
   IGoodPossessionThirdParty,
 } from '../../models/ms-thirdparty-admon/third-party-admon.model';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -142,5 +146,17 @@ export class GoodPosessionThirdpartyService extends HttpService {
   posStrategyBitacora(params: any) {
     const route = `${ThirdPartyAdmonEndpoints.StrategyLog}`;
     return this.post(route, params);
+  }
+  deleteReportGoodImp(params: IDelReportImp) {
+    return this.delete<any>(`strategy-goods`, params);
+  }
+
+  getIncCosto(costos: ICostReport) {
+    const route = `${ThirdPartyAdmonEndpoints.CostosGoods}`;
+    return this.post(route, costos);
+  }
+  getStrategyBitacora(params: ListParams) {
+    const route = `${ThirdPartyAdmonEndpoints.StrategyLog}`;
+    return this.get(route, params);
   }
 }

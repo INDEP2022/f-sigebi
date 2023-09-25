@@ -195,7 +195,14 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (filter.field == 'amount') {
+                this.columnFilters[
+                  field
+                ] = `${searchFilter}:${filter.search.replace(/,/g, '')}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
+              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
@@ -1254,11 +1261,13 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   }
   editCargado(event: any) {
     console.log('aaa', event);
-    // if (event == this.valAccCargado) {
-    //   this.valAccCargado = null;
-    // } else {
-    this.valAccCargado = event;
-    // }
+    console.log('aaa', event);
+
+    if (event == this.valAccCargado) {
+      this.valAccCargado = null;
+    } else {
+      this.valAccCargado = event;
+    }
     this.openForm(event, true, false, true);
   }
 

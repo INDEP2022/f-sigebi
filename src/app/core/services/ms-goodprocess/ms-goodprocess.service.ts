@@ -31,11 +31,11 @@ export class GoodprocessService extends HttpService {
     );
   }
 
-  getDistinctTypes(model: ICharacteristicsGoodDTO, listParams: ListParams) {
+  getDistinctTypes(model: ICharacteristicsGoodDTO, _params: _Params) {
     return this.post<IListResponseMessage<any>>(
       GoodprocessEndpoints.GetDistinctTypes,
       model,
-      listParams
+      _params
     );
   }
 
@@ -296,5 +296,9 @@ export class GoodprocessService extends HttpService {
   }
   getChangeStatusGood(event: any) {
     return this.get(`${GoodprocessEndpoints.ChangeStatusGood}/${event}`);
+  }
+
+  updateGoodsByPackage(body: { pacakgeNumber: number; goodNumber: string }) {
+    return this.post(`${GoodprocessEndpoints.UpdateGoodsByPackage}`, body);
   }
 }

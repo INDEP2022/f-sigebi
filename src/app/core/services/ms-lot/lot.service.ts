@@ -444,4 +444,8 @@ export class LotService extends HttpService {
   pupProcSelReproceso(body: IPupProcSelReproceso) {
     return this.post('apps/pup-proc-selreproceso', body);
   }
+
+  GetCursor(body: any) {
+    return this.post(LotEndpoints.GetCursor, body);
+  }
 }

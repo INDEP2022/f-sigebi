@@ -53,11 +53,12 @@ export class FindInventaryComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              id: () => (searchFilter = SearchFilter.ILIKE),
+              // goodNumber: () => (searchFilter = SearchFilter.EQ),
               inventoryNumber: () => (searchFilter = SearchFilter.ILIKE),
-              goodNumber: () => (searchFilter = SearchFilter.EQ),
+              goodId: () => (searchFilter = SearchFilter.EQ),
               description: () => (searchFilter = SearchFilter.EQ),
               quantity: () => (searchFilter = SearchFilter.EQ),
+              status: () => (searchFilter = SearchFilter.ILIKE),
             };
 
             search[filter.field]();
@@ -84,8 +85,8 @@ export class FindInventaryComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    params['sortBy'] = `inventaryNumber:DESC`;
-    this.goodService.getAll(params).subscribe({
+    // params['sortBy'] = `inventaryNumber:DESC`;
+    this.goodService.getByGood2(params).subscribe({
       next: data => {
         console.log(data);
         this.totalItems2 = data.count;

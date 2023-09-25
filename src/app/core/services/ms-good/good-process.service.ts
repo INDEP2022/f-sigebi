@@ -51,6 +51,14 @@ export class GoodProcessService extends HttpService {
     return this.get(GoodProcessPoints.CheckAllGoodPagExcel, params);
   }
 
+  getSpObtnxGood(params: ListParams) {
+    return this.get(GoodProcessPoints.SpObtnxGood, params);
+  }
+
+  getSpObtnxGoodExcel(params: ListParams) {
+    return this.get(GoodProcessPoints.SpObtnxGoodExcel, params);
+  }
+
   updateFraction(body: { newFraction: string; goodNum: number }) {
     return this.post(GoodProcessPoints.updateFractions, body);
   }
@@ -315,5 +323,9 @@ export class GoodProcessService extends HttpService {
   getVsigLigie(params: ListParams | string): Observable<IListResponse<any>> {
     const route = GoodProcessPoints.GetVsigLigie;
     return this.get<IListResponse<any>>(route, params);
+  }
+
+  getComerDetAvaluoAll(goodNumber: number) {
+    return this.get(`${GoodProcessPoints.ComerDetAvaluoAll}/${goodNumber}`);
   }
 }

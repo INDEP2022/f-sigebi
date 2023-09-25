@@ -16,6 +16,7 @@ import {
 export class BinnacleService extends HttpService {
   private readonly route = SurvillanceEndpoints;
   private readonly route1 = SurvillanceEndpoints.View_VigDelegations;
+  private readonly route2 = SurvillanceEndpoints.View_VigDelegations2;
   constructor(
     private binnacle: Repository<IVigBinnacle>,
     private delegation: Repository<IViewVigDelegations>
@@ -34,5 +35,13 @@ export class BinnacleService extends HttpService {
     console.log(this.route1);
     console.log(this.delegation);
     return this.delegation.getAllPaginated(this.route1, params);
+  }
+
+  getDelegations2(
+    params: ListParams
+  ): Observable<IListResponse<IViewVigDelegations>> {
+    console.log(this.route1);
+    console.log(this.delegation);
+    return this.delegation.getAllPaginated(this.route2, params);
   }
 }

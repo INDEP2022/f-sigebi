@@ -227,6 +227,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
     } else {
       this.filesToDelete = this.filesToDelete.filter(file => file != image);
     }
+    // console.log(this.filesToDelete);
   }
 
   private async getData() {
@@ -243,7 +244,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
               if (response) {
                 this.files = [...response];
                 this.errorMessage = null;
-                return;
+                // return;
                 if (!this.errorMessage) {
                   const pufValidaUsuario = await this.pufValidaUsuario();
                   if (pufValidaUsuario === 1) {
@@ -336,6 +337,13 @@ export class PhotosListComponent extends BasePage implements OnInit {
       const finish = file.name.indexOf('.');
       return +file.name.substring(index + 1, finish);
     });
+    // this.deletePhotoDefinitive(this.filesToDelete[0].name).subscribe({
+    //   next: response => {},
+    //   error: err => {
+    //     console.log(err);
+    //   },
+    // });
+    // return;
     this.deleteFile(files.toString()).subscribe({
       next: response => {
         console.log(response);
@@ -425,6 +433,13 @@ export class PhotosListComponent extends BasePage implements OnInit {
     //       }
     //     },
     //   });
+  }
+
+  private deletePhotoDefinitive(name: string) {
+    return this.filePhotoService.deletePhotoDefinitive(
+      this.goodNumber + '',
+      name
+    );
   }
 
   private deleteFile(consecNumber: string) {
