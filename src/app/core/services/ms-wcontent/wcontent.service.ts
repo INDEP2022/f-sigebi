@@ -91,6 +91,13 @@ export class WContentService extends HttpWContentService {
     return this.get<any>(WContentEndpoint.ObtainFile + '/' + docName);
   }
 
+  obtainFileT(docName: string): any {
+    const value = this.get<any>(
+      WContentEndpoint.ObtainFile + '/' + docName
+    ).toPromise();
+    return value;
+  }
+
   downloadCaratulaINAIFile(reportName: string, idRequest: string) {
     //const httpOptions = new HttpHeaders({
     //responseType: 'application/pdf',

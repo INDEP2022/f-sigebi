@@ -177,6 +177,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   typedocuments(params: ListParams) {
     this.wContentService.getDocumentTypes(params).subscribe({
       next: (resp: any) => {
+        debugger;
         this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
       },
     });
