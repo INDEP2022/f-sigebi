@@ -11,6 +11,10 @@ export const MASTER_FILES = [
         label: 'Monitor de prestamos',
         link: '/pages/master-file/loan-monitor',
       },
+      {
+        label: 'Préstamo de documentos',
+        link: '/pages/master-file/loan-document',
+      },
     ],
   },
 ];

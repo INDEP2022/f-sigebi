@@ -26,7 +26,8 @@
                   [settings]="_tableSettingsProcedeFormalizacion"
                   [source]="_dataTableProcedeFormalizacion"
                   (edit)="edit($event.data)"
-                  (delete)="goNotaries($event.data)">
+                  (delete)="goNotaries($event.data)"
+                  [attr.class]="'table-bordered table-responsive'">
                 </ng2-smart-table>
               </div>
 
@@ -50,16 +51,18 @@
               <div
                 class="col-sm-12 col-12 col-md-12 p-2"
                 [class]="loading ? 'table-loading' : ''">
-                <ng-scrollbar
+                <!-- <ng-scrollbar
                   [track]="'all'"
-                  [ngStyle]="{ height: loading ? '0px' : '400px' }">
-                  <ng2-smart-table
-                    (edit)="editStage2($event.data)"
-                    [attr.class]="'table-bordered'"
-                    [settings]="_tableSettingsAsignaNotario"
-                    [source]="_dataTableAsignaNotario"
-                    (delete)="goEscrituracion($event.data)"></ng2-smart-table>
-                </ng-scrollbar>
+                  [ngStyle]="{ height: loading ? '0px' : '400px' }"> -->
+                <ng2-smart-table
+                  (edit)="editStage2($event.data)"
+                  [attr.class]="'table-bordered'"
+                  [settings]="_tableSettingsAsignaNotario"
+                  [source]="_dataTableAsignaNotario"
+                  (delete)="goEscrituracion($event.data)"
+                  [attr.class]="'table-bordered table-responsive'">
+                </ng2-smart-table>
+                <!-- </ng-scrollbar> -->
               </div>
 
               <app-pagination

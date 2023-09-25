@@ -179,7 +179,26 @@ export class ResquestNumberingChangeComponent
       amount: {
         title: 'Monto',
         width: '30%',
+        type: 'html',
         sort: false,
+        valuePrepareFunction: (amount: string) => {
+          const numericAmount = parseFloat(amount);
+
+          if (!isNaN(numericAmount)) {
+            const a = numericAmount.toLocaleString('en-US', {
+              // style: 'currency',
+              // currency: 'USD',
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+            return '<p class="cell_right">' + a + '</p>';
+          } else {
+            return amount;
+          }
+        },
+        filterFunction(cell?: any, search?: string): boolean {
+          return true;
+        },
       },
       dirInd: {
         title: 'Dir/Ind',
@@ -376,17 +395,56 @@ export class ResquestNumberingChangeComponent
         appraisedValue: {
           title: 'Avalúo Vigente',
           width: '10%',
+          type: 'html',
           sort: false,
+          valuePrepareFunction: (amount: string) => {
+            const numericAmount = parseFloat(amount);
+
+            if (!isNaN(numericAmount)) {
+              const a = numericAmount.toLocaleString('en-US', {
+                // style: 'currency',
+                // currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
+              return '<p class="cell_right">' + a + '</p>';
+            } else {
+              return amount;
+            }
+          },
+          filterFunction(cell?: any, search?: string): boolean {
+            return true;
+          },
         },
-        armor: {
-          title: 'Monto',
+        appraisalCurrencyKey: {
+          title: 'Moneda',
           width: '10%',
+          type: 'string',
           sort: false,
         },
         totalExpenses: {
           title: 'Total Gastos',
           width: '20%',
+          type: 'html',
           sort: false,
+          valuePrepareFunction: (amount: string) => {
+            const numericAmount = parseFloat(amount);
+
+            if (!isNaN(numericAmount)) {
+              const a = numericAmount.toLocaleString('en-US', {
+                // style: 'currency',
+                // currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
+              return '<p class="cell_right">' + a + '</p>';
+            } else {
+              return amount;
+            }
+          },
+          filterFunction(cell?: any, search?: string): boolean {
+            return true;
+          },
         },
         expedienteid: {
           title: 'No. Expediente',
@@ -803,7 +861,17 @@ export class ResquestNumberingChangeComponent
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (
+                filter.field == 'totalExpenses' ||
+                filter.field == 'appraisedValue'
+              ) {
+                this.columnFilters[
+                  field
+                ] = `${searchFilter}:${filter.search.replace(/,/g, '')}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
+              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
@@ -882,11 +950,13 @@ export class ResquestNumberingChangeComponent
             item['di_disponible'] = di_dispo;
           });
 
-          this.dataGood = response.data;
-          this.totalItems = response.count;
-          this.data.load(response.data);
-          this.data.refresh();
-          this.loading = false;
+          Promise.all(result).then(resp => {
+            this.dataGood = response.data;
+            this.totalItems = response.count;
+            this.data.load(response.data);
+            this.data.refresh();
+            this.loading = false;
+          });
         },
         error: err => {
           console.log('error', err);

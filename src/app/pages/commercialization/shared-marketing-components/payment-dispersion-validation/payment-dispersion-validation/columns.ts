@@ -21,19 +21,20 @@ export const COLUMNS = {
   },
   finalPrice: {
     title: 'Precio Final',
-    type: 'string',
-    sort: false,
     width: '20%',
+    type: 'html',
+    sort: false,
     valuePrepareFunction: (amount: string) => {
       const numericAmount = parseFloat(amount);
 
       if (!isNaN(numericAmount)) {
-        return numericAmount.toLocaleString('en-US', {
+        const a = numericAmount.toLocaleString('en-US', {
           // style: 'currency',
           // currency: 'USD',
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
+        return '<p class="cell_right">' + a + '</p>';
       } else {
         return amount;
       }
@@ -58,18 +59,19 @@ export const ALLOTMENT_COLUMNS = {
   },
   finalPrice: {
     title: 'Precio',
-    type: 'string',
+    type: 'html',
     sort: false,
     valuePrepareFunction: (amount: string) => {
       const numericAmount = parseFloat(amount);
 
       if (!isNaN(numericAmount)) {
-        return numericAmount.toLocaleString('en-US', {
+        const a = numericAmount.toLocaleString('en-US', {
           // style: 'currency',
           // currency: 'USD',
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
+        return '<p class="cell_right">' + a + '</p>';
       } else {
         return amount;
       }
@@ -80,18 +82,19 @@ export const ALLOTMENT_COLUMNS = {
   },
   finalVat: {
     title: 'IVA',
-    type: 'string',
+    type: 'html',
     sort: false,
     valuePrepareFunction: (amount: string) => {
       const numericAmount = parseFloat(amount);
 
       if (!isNaN(numericAmount)) {
-        return numericAmount.toLocaleString('en-US', {
+        const a = numericAmount.toLocaleString('en-US', {
           // style: 'currency',
           // currency: 'USD',
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
+        return '<p class="cell_right">' + a + '</p>';
       } else {
         return amount;
       }
@@ -160,18 +163,19 @@ export const BANK_COLUMNS = {
   amount: {
     title: 'Depósito',
     // width: '15%',
-    type: 'string',
+    type: 'html',
     sort: false,
     valuePrepareFunction: (amount: string) => {
       const numericAmount = parseFloat(amount);
 
       if (!isNaN(numericAmount)) {
-        return numericAmount.toLocaleString('en-US', {
+        const a = numericAmount.toLocaleString('en-US', {
           // style: 'currency',
           // currency: 'USD',
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
+        return '<p class="cell_right">' + a + '</p>';
       } else {
         return amount;
       }
@@ -202,18 +206,19 @@ export const RECEIVED_COLUMNS = {
   },
   amountAppVat: {
     title: 'Monto',
-    type: 'string',
+    type: 'html',
     sort: false,
     valuePrepareFunction: (amount: string) => {
       const numericAmount = parseFloat(amount);
 
       if (!isNaN(numericAmount)) {
-        return numericAmount.toLocaleString('en-US', {
+        const a = numericAmount.toLocaleString('en-US', {
           // style: 'currency',
           // currency: 'USD',
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
+        return '<p class="cell_right">' + a + '</p>';
       } else {
         return amount;
       }
@@ -224,18 +229,19 @@ export const RECEIVED_COLUMNS = {
   },
   vat: {
     title: 'IVA',
-    type: 'string',
+    type: 'html',
     sort: false,
     valuePrepareFunction: (amount: string) => {
       const numericAmount = parseFloat(amount);
 
       if (!isNaN(numericAmount)) {
-        return numericAmount.toLocaleString('en-US', {
+        const a = numericAmount.toLocaleString('en-US', {
           // style: 'currency',
           // currency: 'USD',
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
+        return '<p class="cell_right">' + a + '</p>';
       } else {
         return amount;
       }
@@ -246,18 +252,19 @@ export const RECEIVED_COLUMNS = {
   },
   amountNoAppVat: {
     title: 'Monto no aplica IVA',
-    type: 'string',
+    type: 'html',
     sort: false,
     valuePrepareFunction: (amount: string) => {
       const numericAmount = parseFloat(amount);
 
       if (!isNaN(numericAmount)) {
-        return numericAmount.toLocaleString('en-US', {
+        const a = numericAmount.toLocaleString('en-US', {
           // style: 'currency',
           // currency: 'USD',
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
+        return '<p class="cell_right">' + a + '</p>';
       } else {
         return amount;
       }
