@@ -4,7 +4,10 @@ import { StrategyEndpoints } from 'src/app/common/constants/endpoints/ms-strateg
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IStrategyProcess } from '../../models/ms-strategy-process/strategy-process.model';
+import {
+  IStrategyProcess,
+  IStrategyReport,
+} from '../../models/ms-strategy-process/strategy-process.model';
 
 @Injectable({
   providedIn: 'root',
@@ -116,5 +119,9 @@ export class StrategyProcessService extends HttpService {
   getStrategiProcess(id: any) {
     const route = `${StrategyEndpoints.StrategyProcess}?filter.processNumber=$eq:${id}`;
     return this.get(route);
+  }
+  updateStrategyReport(model: IStrategyReport) {
+    const route = `${StrategyEndpoints.StrategyRepIm}`;
+    return this.put(route, model);
   }
 }
