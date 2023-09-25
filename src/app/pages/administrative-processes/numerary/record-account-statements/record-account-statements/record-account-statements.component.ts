@@ -282,9 +282,10 @@ export class RecordAccountStatementsComponent
     this.bankCode = value.accountNumber.cveBank;
     const cveAccount = value.accountNumber.cveAccount;
     this.accountDate = value.accountNumber.dateInsertion;
-    let params = new ListParams();
-    params['accountNumber.cveBank'] = value.accountNumber.cveBank;
-    this.getEvent(params);
+    // let params = new ListParams();
+    // params['accountNumber.cveBank'] = value.accountNumber.cveBank;
+    // this.getEvent(params);
+    this.searchBankAccount(cveAccount);
     const square = value?.accountNumber.square;
     const branch = value?.accountNumber.branch;
     const accountType = value?.accountNumber.accountType;
@@ -292,7 +293,7 @@ export class RecordAccountStatementsComponent
     this.current = currency;
     this.searchCurrent(currency);
     currency = currency.replace(/'/g, '');
-    // this.form.get('account').setValue(value.accountNumber.cveBank);
+    // this.form.get('account').setValue(value.accountNumber.cveAccount);
     this.form.get('square').setValue(square);
     this.form.get('branch').setValue(branch);
     this.form.get('accountType').setValue(accountType);
@@ -427,7 +428,7 @@ export class RecordAccountStatementsComponent
     }
 
     const model: IDateAccountBalance = {
-      noAccount: Number(this.cveAccount),
+      noAccount: this.cveAccount,
       tiDateCalc: balanceOf,
       tiDateCalcEnd: balanceAt,
     };
