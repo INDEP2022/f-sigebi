@@ -1,0 +1,114 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">PRÉSTAMO DE DOCUMENTOS</h5>
+  </div>
+  <div body>
+    <div class="row mt-4 d-flex justify-content-end">
+      <div class="col-md-2">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="openSelect('')">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
+    <div class="row mt-4 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <form-field [control]="form.get('loanFor')">
+              <ngx-select
+                [form]="form"
+                [data]="user1"
+                value="user"
+                bindLabel="name"
+                label="Préstamos para"
+                (fetchItems)="getAllSegUser1($event)"
+                control="loanFor">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('loanTo')" label="Recibe">
+              <ngx-select
+                [form]="form"
+                [data]="user1"
+                value="user"
+                bindLabel="name"
+                label="Recibe"
+                (fetchItems)="getAllSegUser1($event)"
+                control="loanTo">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('area')" label="Area">
+              <input type="text" class="form-control" formControlName="area" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <form-field [control]="form.get('AssignedTo')" label="Adscrito A">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="AssignedTo" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('NoLoans')" label="No. Préstamo">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="NoLoans" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('loanDate')" label="Fecha Préstamo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="loanDate"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <form-field
+              [control]="form.get('observations')"
+              label="Observaciones">
+              <textarea
+                class="form-control"
+                type="text"
+                formControlName="observations"
+                maxlength="600"></textarea>
+            </form-field>
+          </div>
+        </div>
+      </form>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data1">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 p-2 text-right">
+        <div class="form-group">
+          <button type="button" class="btn btn-primary active btn-sm">
+            IMPRIMIR
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

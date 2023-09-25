@@ -11,6 +11,8 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class RejectionJustifyFormComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
+  op: number = null; //tipo de operacion en la que esta
+  label: string = null;
 
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
@@ -18,6 +20,7 @@ export class RejectionJustifyFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.setLabelName();
   }
 
   prepareForm() {
@@ -49,5 +52,13 @@ export class RejectionJustifyFormComponent extends BasePage implements OnInit {
 
   close() {
     this.modalRef.hide();
+  }
+
+  setLabelName() {
+    if (this.op == 12) {
+      this.label = 'Justificación Reporte';
+    } else {
+      this.label = 'Justificación';
+    }
   }
 }
