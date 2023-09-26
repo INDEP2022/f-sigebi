@@ -59,6 +59,7 @@ export class ReceiptDocumentsArchiveComponent
   loadingRecib: boolean = this.loading;
   settingsRecib = this.settings;
   blkGuardaValor: IGuardaValor;
+  document: IDocument;
   get authUser() {
     return this.authService.decodeToken().username;
   }
@@ -115,7 +116,6 @@ export class ReceiptDocumentsArchiveComponent
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
-
             if (filter.search !== '') {
               console.log(
                 (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
@@ -165,8 +165,15 @@ export class ReceiptDocumentsArchiveComponent
     let config: ModalOptions = {
       initialState: {
         blkGuardaValor: this.blkGuardaValor,
-        callback: (next: boolean) => {
+        document: this.document,
+        title: this.title,
+        callback: (next: IDocument) => {
           if (next) {
+            this.document.fileStatus = 'ARCHIVADO';
+            this.document.dateReceivesFile = new Date();
+            this.document.userReceivesFile = this.authUser;
+            this.updateDocuments(this.document);
+
             this.params
               .pipe(takeUntil(this.$unSubscribe))
               .subscribe(() => this.getDocuments());
@@ -246,6 +253,8 @@ export class ReceiptDocumentsArchiveComponent
 
   async check(document: any) {
     //const recibe: string = 'S';
+    this.document = document;
+
     if (document.recibe === 'S' && document.scanStatus === 'ESCANEADO') {
       /// aqui buscar en el servicio
       /// keySaveValue
@@ -273,11 +282,11 @@ export class ReceiptDocumentsArchiveComponent
           '¿Seguro que desea recibir el documento?'
         );
         if (confirm.isConfirmed) {
-          document.fileStatus = 'ARCHIVADO';
-          document.dateReceivesFile = new Date();
-          document.userReceivesFile = this.authUser;
+          this.document.fileStatus = 'ARCHIVADO';
+          this.document.dateReceivesFile = new Date();
+          this.document.userReceivesFile = this.authUser;
           /// Hacer el llamdo al MS
-          this.updateDocuments(document);
+          this.updateDocuments(this.document);
         } else {
           document.recibe === 'N';
         }
