@@ -68,4 +68,10 @@ export class OfficeManagementService extends HttpService {
   getFlyer(body: { noBien: string | number; cveofgestion: string | number }) {
     return this.post('application/get-noVolante', body);
   }
+
+  getComerJobs(typeJobs: number, idEvent: number) {
+    return this.get(
+      `${OfficeManagementEndpoint.ComerJobs}?filter.jobType=$eq:${typeJobs}&filter.eventId=$eq:${idEvent}`
+    );
+  }
 }

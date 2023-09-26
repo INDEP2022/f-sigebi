@@ -2,7 +2,7 @@ import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filt
 
 export const COLUMNS = {
   paymentId: {
-    title: 'Id. Pago',
+    title: 'Id Pago',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -42,21 +42,25 @@ export const COLUMNS = {
   amount: {
     title: 'Monto',
     // width: '15%',
-    type: 'string',
+    type: 'html',
     sort: false,
     valuePrepareFunction: (amount: string) => {
       const numericAmount = parseFloat(amount);
 
       if (!isNaN(numericAmount)) {
-        return numericAmount.toLocaleString('en-US', {
+        const a = numericAmount.toLocaleString('en-US', {
           // style: 'currency',
           // currency: 'USD',
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
+        return '<p class="cell_right">' + a + '</p>';
       } else {
         return amount;
       }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
   },
   bankKey: {
@@ -91,7 +95,7 @@ export const COLUMNS = {
   //   sort: false,
   // },
   clientId: {
-    title: 'Id. Cliente',
+    title: 'Id Cliente',
     // width: '15%',
     type: 'string',
     sort: false,

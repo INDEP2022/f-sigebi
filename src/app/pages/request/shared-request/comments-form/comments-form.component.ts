@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
@@ -20,6 +20,7 @@ export class CommentsFormComponent implements OnInit {
   @Input() ordServform: FormGroup = new FormGroup({});
 
   showComments: boolean = true;
+  readonly: boolean = false;
 
   // commentsForm: FormGroup = new FormGroup({});
 
@@ -27,7 +28,10 @@ export class CommentsFormComponent implements OnInit {
 
   ngOnInit(): void {
     //this.prepareForm();
+    this.readonly = this.op == 1 ? false : true;
   }
+
+  ngOnChanges(changes: SimpleChanges): void {}
 
   /*prepareForm() {
     this.commentsForm = this.fb.group({

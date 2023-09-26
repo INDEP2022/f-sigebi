@@ -2,6 +2,8 @@ export enum ENDPOINT_INVOICE {
   BasePath = 'invoice',
   straInvoice = 'strategies-invoices',
   ComerInovice = 'comer-invoices',
+  GetInvoiceForniture = 'application/getEventmuebles/',
+  GetInvoiceEvent = 'application/get-invoice-ent/',
   ApplicationImpPenalize = 'application/get-obt-imp-penalize',
   ApplicationMaxFolio = 'application/get-id-invoice/',
   DeleteFolio = 'ctrl-invoice/update-folioinvoice',
@@ -35,4 +37,7 @@ export enum ENDPOINT_INVOICE {
   ComerEleBill = 'comer-elec-bill',
   ApplicationFolioSP = 'application/puf-valid-invoice-sp',
   ApplicationEats = 'application/get-data-eats',
+  PkComerVnr = 'pk-comer-vnr/valid-rebilling',
+  PValueSat = 'ctrl-invoice/pvaluesSat',
+  CancelInvoice = 'application/cancel-invoice',
 }

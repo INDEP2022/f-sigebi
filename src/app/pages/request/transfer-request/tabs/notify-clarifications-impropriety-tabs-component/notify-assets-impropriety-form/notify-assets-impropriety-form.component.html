@@ -178,6 +178,26 @@
               formControlName="webMail" />
           </form-field>
         </div>
+
+        <div
+          class="col-md-4"
+          *ngIf="
+            notification?.clarification?.clarification ==
+            'INDIVIDUALIZACIÓN DE BIENES'
+          ">
+          <form-field
+            [control]="clarificationForm.get('keyClarificationPaper')"
+            label="Clave Oficio Aclaración">
+            <input
+              style="text-transform: lowercase"
+              onkeyup="javascript:this.value=this.value.toLowerCase();"
+              type="text"
+              class="form-control"
+              [readOnly]="true"
+              maxlength="100"
+              formControlName="keyClarificationPaper" />
+          </form-field>
+        </div>
       </div>
       <div class="row" *ngIf="infoRequest.typeOfTransfer == 'SAT_SAE'">
         <div class="col-md-12">
@@ -205,21 +225,32 @@
       <div class="row pt-3" *ngIf="infoRequest.typeOfTransfer == 'SAT_SAE'">
         <div class="col-md-6" *ngIf="showSearchForm">
           <form-field
-            [control]="clarificationForm.get('amount')"
-            label="Cantidad">
+            [control]="clarificationForm.get('description')"
+            label="Descripción">
             <input
               type="text"
               class="form-control"
-              maxlength="200"
+              maxlength="4000"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-3" *ngIf="showSearchForm">
+          <form-field
+            [control]="clarificationForm.get('amount')"
+            label="Cantidad">
+            <input
+              type="number"
+              class="form-control"
+              maxlength="10"
               formControlName="amount" />
           </form-field>
         </div>
-        <div class="col-md-6" *ngIf="showSearchForm">
+        <div class="col-md-3" *ngIf="showSearchForm">
           <form-field [control]="clarificationForm.get('unit')" label="Unidad">
             <input
               type="text"
               class="form-control"
-              maxlength="200"
+              maxlength="10"
               formControlName="unit" />
           </form-field>
         </div>

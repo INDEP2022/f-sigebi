@@ -2656,7 +2656,7 @@ export class AppointmentsComponent
     });
   }
   getSaeUserChange(event: any) {
-    console.log(event);
+    console.log('USER DATA', event);
     if (event) {
       this.form.get('nombre').setValue(event.name);
       this.mailSAE = event.email;
@@ -2853,21 +2853,23 @@ export class AppointmentsComponent
       }
       this.appointmentsService.createAppointment(bodySave).subscribe({
         next: (data: any) => {
-          this._saveDataDepositary = false;
           console.log(data);
-          this.alertInfo('success', 'Registro guardado correctamente', '');
-          if (data.data) {
-            this.validGoodNumberInDepositaryAppointment(
-              true,
-              data.data[0].appointmentNum
-            );
-          } else {
-            this.validGoodNumberInDepositaryAppointment(
-              true,
-              data.appointmentNum
-            );
-          }
           this.getPersonXNom();
+          setTimeout(() => {
+            this._saveDataDepositary = false;
+            this.alertInfo('success', 'Registro guardado correctamente', '');
+            if (data.data) {
+              this.validGoodNumberInDepositaryAppointment(
+                true,
+                data.data[0].appointmentNum
+              );
+            } else {
+              this.validGoodNumberInDepositaryAppointment(
+                true,
+                data.appointmentNum
+              );
+            }
+          }, 500);
         },
         error: error => {
           console.log(error);
@@ -2930,40 +2932,49 @@ export class AppointmentsComponent
             this.folios.universalFolio
           );
           this.getDocumentsCount().subscribe(count => {
-            console.log('COUNT ', count);
-            if (count == 0) {
-              this.validGoodNumberInDepositaryAppointment(
-                true,
-                body.appointmentNum
-              );
-              this.alertInfo('success', 'Registro guardado correctamente', '');
-              this.getPersonXNom();
-            } else {
-              let _saveFolioDepositary = localStorage.getItem(
-                '_saveFolioDepositary'
-              );
-              console.log(_saveFolioDepositary);
-              if (
-                this.good.status == 'ADM' &&
-                this.folios.universalFolio &&
-                _saveFolioDepositary == 'A'
-              ) {
-                this.updateGoodStatus('DEP', true);
+            this.getPersonXNom();
+            setTimeout(() => {
+              console.log('COUNT ', count);
+              if (count == 0) {
+                this.validGoodNumberInDepositaryAppointment(
+                  true,
+                  body.appointmentNum
+                );
+                this.alertInfo(
+                  'success',
+                  'Registro guardado correctamente',
+                  ''
+                );
+              } else {
+                let _saveFolioDepositary = localStorage.getItem(
+                  '_saveFolioDepositary'
+                );
+                console.log(_saveFolioDepositary);
+                if (
+                  this.good.status == 'ADM' &&
+                  this.folios.universalFolio &&
+                  _saveFolioDepositary == 'A'
+                ) {
+                  this.updateGoodStatus('DEP', true);
+                }
+                if (
+                  this.good.status == 'DEP' &&
+                  this.folios.returnFolio &&
+                  _saveFolioDepositary == 'R'
+                ) {
+                  this.updateGoodStatus('ADM');
+                }
+                this.validGoodNumberInDepositaryAppointment(
+                  true,
+                  body.appointmentNum
+                );
+                this.alertInfo(
+                  'success',
+                  'Registro guardado correctamente',
+                  ''
+                );
               }
-              if (
-                this.good.status == 'DEP' &&
-                this.folios.returnFolio &&
-                _saveFolioDepositary == 'R'
-              ) {
-                this.updateGoodStatus('ADM');
-              }
-              this.validGoodNumberInDepositaryAppointment(
-                true,
-                body.appointmentNum
-              );
-              this.alertInfo('success', 'Registro guardado correctamente', '');
-              this.getPersonXNom();
-            }
+            }, 500);
           });
         },
         error: error => {
@@ -3064,6 +3075,8 @@ export class AppointmentsComponent
   }
 
   getPersonXNom() {
+    console.log('PERSON X NOM ', this.depositaryAppointment);
+
     const params = new FilterParams();
     params.removeAllFilters();
     params.addFilter(

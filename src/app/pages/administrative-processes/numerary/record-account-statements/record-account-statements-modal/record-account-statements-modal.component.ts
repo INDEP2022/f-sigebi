@@ -34,6 +34,7 @@ export class RecordAccountStatementsModalComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    console.log(this.movimentAccount);
   }
 
   private prepareForm() {
@@ -43,11 +44,11 @@ export class RecordAccountStatementsModalComponent
     );
     this.form = this.fb.group({
       bank: [
-        this.movimentAccount.factasStatusCta.nombre,
+        this.movimentAccount.accountNumber.cveBank,
         Validators.nullValidator,
       ],
       account: [
-        this.movimentAccount.factasStatusCta.cve_cuenta,
+        this.movimentAccount.accountNumber.cveAccount,
         Validators.nullValidator,
       ],
       date: [formattedDate, Validators.nullValidator],

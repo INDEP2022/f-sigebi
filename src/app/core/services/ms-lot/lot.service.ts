@@ -37,6 +37,10 @@ export class LotService extends HttpService {
     return this.get('eat-lots', params);
   }
 
+  getAllComerLotsFilter2(params?: ListParams) {
+    return this.get('eat-lots?filter.idClient=$null', params);
+  }
+
   getAllComerLotsByFilter(params: HttpParams) {
     return this.get('eat-lots', params);
   }
@@ -151,6 +155,13 @@ export class LotService extends HttpService {
     return this.get('apps/get-comer-lots-clients-payref', params);
   }
 
+  getComerLotsClientsPayref2(params?: ListParams) {
+    return this.get(
+      'apps/get-comer-lots-clients-payref?&filter.clientId=$not:null',
+      params
+    );
+  }
+
   getLotById(id: string | number) {
     const route = `eat-lots/${id}`;
     return this.get(route);
@@ -191,6 +202,10 @@ export class LotService extends HttpService {
   }
 
   getLotComerPayRef(params?: string) {
+    return this.get('apps/get-lot-comer-pay-ref', params);
+  }
+
+  getLotComerPayRef2(params?: ListParams) {
     return this.get('apps/get-lot-comer-pay-ref', params);
   }
 
@@ -428,5 +443,9 @@ export class LotService extends HttpService {
 
   pupProcSelReproceso(body: IPupProcSelReproceso) {
     return this.post('apps/pup-proc-selreproceso', body);
+  }
+
+  GetCursor(body: any) {
+    return this.post(LotEndpoints.GetCursor, body);
   }
 }

@@ -3,9 +3,6 @@
     <h5 class="title">Catálogo de procesos para precios unitarios</h5>
     <div class="mt-2 mr-5">
       <div class="col-md-5 buttons">
-        <app-columns-select
-          [defaultColumns]="6"
-          [(settings)]="settings"></app-columns-select>
         <!-- <div>
         <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
           Nuevo
@@ -18,8 +15,15 @@
     <!-- <div class="row">
       <h5 class="title">Procesos</h5>
     </div> -->
-    <div class="row pt-4">
+    <div class="row">
       <div class="col-md-12">
+        <div class="d-flex mb-3">
+          <div class="ml-auto">
+            <app-columns-select
+              [defaultColumns]="6"
+              [(settings)]="settings"></app-columns-select>
+          </div>
+        </div>
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"

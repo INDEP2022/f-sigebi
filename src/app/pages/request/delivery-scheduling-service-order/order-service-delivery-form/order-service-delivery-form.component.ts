@@ -6,15 +6,18 @@ import { catchError, of } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
+import { IOrderServiceDTO } from 'src/app/core/models/ms-order-service/order-service.mode';
+import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { ShowReportComponentComponent } from '../../programming-request-components/execute-reception/show-report-component/show-report-component.component';
 import { GenerateReportFormComponent } from '../../reception-scheduling-service-order/components/generate-report-form/generate-report-form.component';
 import { RejectionCommentFormComponent } from '../../reception-scheduling-service-order/components/rejection-comment-form/rejection-comment-form.component';
 import { RejectionJustifyFormComponent } from '../../reception-scheduling-service-order/components/rejection-justify-form/rejection-justify-form.component';
 import { ElectronicSignatureListComponent } from '../../shared-request/electronic-signature-list/electronic-signature-list.component';
-import { ShowProgrammingComponent } from '../../shared-request/show-programming/show-programming.component';
 import { ShowSignatureProgrammingComponent } from '../../shared-request/show-signature-programming/show-signature-programming.component';
 
 @Component({
@@ -51,10 +54,11 @@ export class OrderServiceDeliveryFormComponent
   buttonSaveFalse: boolean = false;
   buttonAnnexedW: boolean = false;
   orderServiceId: number = null;
+  orderserviceData: IOrderServiceDTO;
   ordServForm: FormGroup = new FormGroup({});
   form: FormGroup = new FormGroup({});
   programmingId: number = null;
-  op: number = 1;
+  op: number = 0;
   total: string = null;
   programming: Iprogramming;
   constructor(
@@ -62,14 +66,16 @@ export class OrderServiceDeliveryFormComponent
     private fb: FormBuilder,
     private programmingService: ProgrammingRequestService,
     private activeRouter: ActivatedRoute,
-    private orderService: OrderServiceService
+    private orderService: OrderServiceService,
+    private signatoriesService: SignatoriesService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.op = this.task;
     this.programmingId = this.activeRouter.snapshot.params['id'];
-    this.processTitle();
+
     this.prepareOrderServiceForm();
     this.prepareProgForm();
     this.getProgramming();
@@ -112,7 +118,9 @@ export class OrderServiceDeliveryFormComponent
         next: (resp: any) => {
           // setTimeout(() => {
           this.ordServForm.patchValue(resp.data[0]);
+          this.orderserviceData = resp.data[0];
           this.orderServiceId = resp.data[0].id;
+          this.processTitle();
           // }, 100);
         },
       });
@@ -172,20 +180,17 @@ export class OrderServiceDeliveryFormComponent
 
   processTitle() {
     if (this.task == 1) {
-      this.title =
-        'Captura de orden de servicio (Programación de entrega: E-METROPOLITANA-335) con folio: METROPOLITANA-1340-OS';
+      this.title = `Captura de orden de servicio (Programación de entrega: E-METROPOLITANA-335) con folio: ${this.orderserviceData?.serviceOrderFolio}`;
       this.buttonClaim = true;
       this.buttonSend = true;
     } else if (this.task == 2) {
-      this.title =
-        'Validación de servicios (Programación de entrega: E-METROPOLITANA-335) para la orden de servicio con folio: METROPOLITANA-1545-OS';
+      this.title = `Validación de servicios (Programación de entrega: E-METROPOLITANA-335) para la orden de servicio con folio: ${this.orderserviceData?.serviceOrderFolio}`;
       this.buttonClaim = true;
       this.buttonGenerateReport = true;
       this.buttonAprobateView2 = true;
       this.buttonReject = true;
     } else if (this.task == 3 || this.task == 6) {
-      this.title =
-        'Aprobración de servicios (Programación de recepción: Programación de entrega E-METROPOLITANA-335) para la orden de servicio con folio: METROPOLITANA-1545-OS';
+      this.title = `Aprobración de servicios (Programación de recepción: Programación de entrega E-METROPOLITANA-335) para la orden de servicio con folio: ${this.orderserviceData?.serviceOrderFolio}`;
 
       if (this.task == 6) {
         this.buttonGenerateReportFalse = true;
@@ -196,13 +201,11 @@ export class OrderServiceDeliveryFormComponent
         this.buttonAprobate = true;
       }
     } else if (this.task == 4) {
-      this.title =
-        'Reporte de implementación (Programación de entrega E-METROPOLITANA-335) para la orden de servicio con folio: METROPOLITANA-1545-OS';
+      this.title = `Reporte de implementación (Programación de entrega E-METROPOLITANA-335) para la orden de servicio con folio: ${this.orderserviceData?.serviceOrderFolio}`;
       this.buttonSendFalse = true;
       this.buttonSaveFalse = true;
     } else if (this.task == 5 || this.task == 11) {
-      this.title =
-        'Validación de reporte de implementación (Programación de entrega: E-METROPOLITANA-335) para la orden de servicio con folio: METROPOLITANA-1545-OS';
+      this.title = `Validación de reporte de implementación (Programación de entrega: E-METROPOLITANA-335) para la orden de servicio con folio: ${this.orderserviceData?.serviceOrderFolio}`;
       if (this.task == 5) {
         this.buttonGenerateReportFalse = true;
         this.buttonAprobateView2 = true;
@@ -217,14 +220,12 @@ export class OrderServiceDeliveryFormComponent
         this.buttonAnnexedW = true;
       }
     } else if (this.task == 7) {
-      this.title =
-        'Reporte de implementación aprobado (Programación de entrega E-METROPOLITANA-335) para la orden de servicio con folio: METROPOLITANA-1545-OS';
+      this.title = `Reporte de implementación aprobado (Programación de entrega E-METROPOLITANA-335) para la orden de servicio con folio: ${this.orderserviceData?.serviceOrderFolio}`;
       this.buttonGenerateReportFalse = true;
       this.buttonAprobateView3 = true;
       this.buttonAnnexedW = true;
     } else if (this.task == 8 || this.task == 10) {
-      this.title =
-        'Validación de servicios (Programación de entrega: E-METROPOLITANA-335) para la orden de servicio con folio: METROPOLITANA-1545-OS';
+      this.title = `Validación de servicios (Programación de entrega: E-METROPOLITANA-335) para la orden de servicio con folio: ${this.orderserviceData?.serviceOrderFolio}`;
       if (this.task == 10) {
         this.buttonGenerateReportFalse = true;
         this.buttonAprobateView5 = true;
@@ -237,14 +238,12 @@ export class OrderServiceDeliveryFormComponent
         this.buttonSave = true;
       }
     } else if (this.task == 9 || this.task == 13) {
-      this.title =
-        'Rechazo de orden de servicios (Programación de entrega: E-METROPOLITANA-335) con folio: METROPOLITANA-1545-OS';
+      this.title = `Rechazo de orden de servicios (Programación de entrega: E-METROPOLITANA-335) con folio: ${this.orderserviceData?.serviceOrderFolio}`;
       this.buttonSendFalse = true;
       this.sendNotification = true;
       this.buttonSaveFalse = true;
     } else if (this.task == 12 || this.task == 14) {
-      this.title =
-        'Rechazo de reporte de implementación (Programación de entrega: E-METROPOLITANA-335) para la orden de servicio con folio: METROPOLITANA-1545-OS';
+      this.title = `Rechazo de reporte de implementación (Programación de entrega: E-METROPOLITANA-335) para la orden de servicio con folio: ${this.orderserviceData?.serviceOrderFolio}`;
       if (this.task == 14) {
         this.sendNotification = true;
         this.buttonSaveFalse = true;
@@ -258,7 +257,7 @@ export class OrderServiceDeliveryFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Desea liberar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+      `¿Desea liberar la orden de servicio con folio ${this.orderserviceData?.serviceOrderFolio}?`
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -275,7 +274,7 @@ export class OrderServiceDeliveryFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Desea enviar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+      `¿Desea enviar la orden de servicio con folio ${this.orderserviceData?.serviceOrderFolio}?`
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -292,15 +291,29 @@ export class OrderServiceDeliveryFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Desea guardar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+      `¿Desea guardar la orden de servicio con folio ${this.orderserviceData?.serviceOrderFolio}?`
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
-        this.onLoadToast(
-          'success',
-          'Orden de servicio guardada correctamente',
-          ''
-        );
+        const infoOrderService: IOrderServiceDTO = {
+          id: this.orderserviceData?.id,
+          transportationZone: this.ordServForm.get('transportationZone').value,
+          folioTlp: this.ordServForm.get('folioTlp').value,
+          reasonsNotPerform: this.ordServForm.get('reasonsNotPerform').value,
+          userContainers:
+            this.ordServForm.get('userContainers').value == null ? 'N' : 'Y',
+          eyeVisit: this.ordServForm.get('eyeVisit').value,
+        };
+
+        this.orderService.updateOrderService(infoOrderService).subscribe({
+          next: response => {
+            this.onLoadToast(
+              'success',
+              'Orden de servicio guardada correctamente',
+              ''
+            );
+          },
+          error: error => {},
+        });
       }
     });
   }
@@ -309,7 +322,7 @@ export class OrderServiceDeliveryFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Desea aprobar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+      `¿Desea aprobar la orden de servicio con folio ${this.orderserviceData?.serviceOrderFolio}?`
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -326,7 +339,7 @@ export class OrderServiceDeliveryFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Desea rechazar la justificacion con el folio METROPOLITANA-SAT-1340-OS?'
+      `¿Desea rechazar la justificacion con el folio ${this.orderserviceData?.serviceOrderFolio}?`
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -346,7 +359,6 @@ export class OrderServiceDeliveryFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
         }
       },
     };
@@ -359,39 +371,152 @@ export class OrderServiceDeliveryFormComponent
 
   generateReport() {
     if (this.task != 5 && this.task != 6) {
-      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      if (this.task == 2) {
+        let config = {
+          ...MODAL_CONFIG,
+          class: 'modal-lg modal-dialog-centered',
+        };
 
-      config.initialState = {
-        callback: (data: any) => {
-          if (data) {
-            console.log(data);
-            this.showReport();
-          }
-        },
-      };
+        config.initialState = {
+          callback: async (next: boolean, infoSign: any) => {
+            if (next) {
+              if (infoSign.electronicSignature == true) {
+                const createSign = await this.createSignature(infoSign);
+                if (createSign) {
+                  this.showReport();
+                } else {
+                  this.alert('error', 'Error', 'Error al crear el firmante');
+                }
+              } else {
+                this.showReport();
+              }
+            }
+          },
+        };
 
-      const createService = this.modalService.show(
-        GenerateReportFormComponent,
-        config
-      );
+        this.modalService.show(GenerateReportFormComponent, config);
+      } else if (this.task == 3) {
+        let config = {
+          ...MODAL_CONFIG,
+          class: 'modal-lg modal-dialog-centered',
+        };
+
+        config.initialState = {
+          processFirm: 'firmRegionalDelegation',
+          callback: async (next: boolean, infoSign: any) => {
+            if (next) {
+              if (infoSign.electronicSignature == true) {
+                const createSign = await this.createSignature(infoSign);
+                if (createSign) {
+                  this.showReport();
+                } else {
+                  this.alert('error', 'Error', 'Error al crear el firmante');
+                }
+              } else {
+                this.showReport();
+              }
+            }
+          },
+        };
+
+        const createService = this.modalService.show(
+          GenerateReportFormComponent,
+          config
+        );
+      }
     } else {
       this.showReport();
     }
   }
 
+  createSignature(infoSign: any) {
+    return new Promise((resolve, reject) => {
+      const learnedType = 245;
+      const learndedId = 516; // Id Orden de Servicio
+
+      this.signatoriesService
+        .getSignatoriesFilter(learnedType, learndedId)
+        .subscribe({
+          next: response => {
+            /*this.signatoriesService
+              .deleteFirmante(Number(response.data[0].signatoryId))
+              .subscribe({
+                next: () => {
+                  
+                },
+              }); */
+
+            const formData: Object = {
+              learnedId: 516, // Orden de servicio
+              learnedType: 245,
+              boardSignatory: 'ORDEN_SERVICIO',
+              columnSignatory: 'TIPO_FIRMA',
+              name: infoSign.responsible,
+              post: infoSign.charge,
+            };
+
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+            });
+          },
+          error: error => {
+            const formData: Object = {
+              learnedId: 516, // Orden de servicio
+              learnedType: 245,
+              boardSignatory: 'ORDEN_SERVICIO',
+              columnSignatory: 'TIPO_FIRMA',
+              name: infoSign.responsible,
+              post: infoSign.charge,
+            };
+
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+            });
+          },
+        });
+    });
+  }
+
   showReport() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-
     config.initialState = {
+      idOrderService: 516,
       callback: (data: any) => {
         if (data) {
-          console.log(data);
-          this.electronicSignture();
+          //this.electronicSignture();
         }
       },
     };
 
-    const showReport = this.modalService.show(ShowProgrammingComponent, config);
+    //const showReport = this.modalService.show(ShowProgrammingComponent, config);
+    const showReport = this.modalService.show(
+      ShowReportComponentComponent,
+      config
+    );
+  }
+
+  showReportAnnexW() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      idOrderService: 516,
+      idTypeDoc: 198,
+      annexW: true,
+      callback: (data: any) => {
+        if (data) {
+          //this.electronicSignture();
+        }
+      },
+    };
+
+    //const showReport = this.modalService.show(ShowProgrammingComponent, config);
+    const showReport = this.modalService.show(
+      ShowReportComponentComponent,
+      config
+    );
   }
 
   electronicSignture() {
@@ -400,7 +525,6 @@ export class OrderServiceDeliveryFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
           this.showSignProg();
         }
       },
@@ -418,7 +542,6 @@ export class OrderServiceDeliveryFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
           this.aprobateService = true;
         }
       },
@@ -434,10 +557,16 @@ export class OrderServiceDeliveryFormComponent
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 
     config.initialState = {
-      callback: (data: any) => {
-        if (data) {
-          console.log(data);
-          this.showReport();
+      processFirm: 'AnnexW',
+      callback: async (next: boolean, signatorie: ISignatories) => {
+        if (next) {
+          const createSignatureAnnexW = await this.createSignatureAnnexW(
+            signatorie
+          );
+
+          if (createSignatureAnnexW) {
+            this.showReport();
+          }
         }
       },
     };
@@ -448,13 +577,64 @@ export class OrderServiceDeliveryFormComponent
     );
   }
 
+  createSignatureAnnexW(infoSign: any) {
+    return new Promise((resolve, reject) => {
+      const learnedType = 198;
+      const learndedId = 516; // Id Orden de Servicio
+
+      this.signatoriesService
+        .getSignatoriesFilter(learnedType, learndedId)
+        .subscribe({
+          next: response => {
+            /*this.signatoriesService
+              .deleteFirmante(Number(response.data[0].signatoryId))
+              .subscribe({
+                next: () => {
+                  
+                },
+              }); */
+
+            const formData: Object = {
+              learnedId: 516, // Orden de servicio
+              learnedType: 198,
+              boardSignatory: 'ORDEN_SERVICIO',
+              columnSignatory: 'TIPO_FIRMA',
+              name: infoSign.responsible,
+              post: infoSign.charge,
+            };
+
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+            });
+          },
+          error: error => {
+            const formData: Object = {
+              learnedId: 516, // Orden de servicio
+              learnedType: 198,
+              boardSignatory: 'ORDEN_SERVICIO',
+              columnSignatory: 'TIPO_FIRMA',
+              name: infoSign.responsible,
+              post: infoSign.charge,
+            };
+
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+            });
+          },
+        });
+    });
+  }
+
   sendJustify() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 
     config.initialState = {
       callback: (data: any) => {
         if (data) {
-          console.log(data);
         }
       },
     };

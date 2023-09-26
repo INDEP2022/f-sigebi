@@ -71,6 +71,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   guardReception: any;
   proceedingInfo: IProceedings;
   userInfo: any;
+  idOrderService: number = 0;
+  annexW: boolean = false;
   constructor(
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
@@ -179,20 +181,34 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       }
     }
     if (this.idprogDel && this.typeNotification == 1) {
-      console.log('this.idprogDel', this.idprogDel);
-      console.log('this.typeNotification', this.typeNotification);
       let linkDoc: string = `${this.urlBaseReport}NotificacionParaDestruccion.jasper&ID_PROG_ENTREGA=${this.idprogDel}`;
       this.src = linkDoc;
-      console.log('this.src', this.src);
+
       this.formLoading = false;
     }
 
     if (this.idprogDel && this.typeNotification == 2) {
-      console.log('this.idprogDel', this.idprogDel);
-      console.log('this.typeNotification', this.typeNotification);
       let linkDoc: string = `${this.urlBaseReport}NotificacionDestruccionFondos.jasper&ID_PROG_ENTREGA=${this.idprogDel}`;
       this.src = linkDoc;
-      console.log('this.src', this.src);
+
+      this.formLoading = false;
+    }
+
+    if (this.idOrderService) {
+      let linkDoc: string = `${this.urlBaseReport}orden_servicio.jasper&ordenServicioID=${this.idOrderService}`;
+      this.src = linkDoc;
+      this.formLoading = false;
+    }
+
+    if (this.idOrderService) {
+      let linkDoc: string = `${this.urlBaseReport}orden_servicio.jasper&ordenServicioID=${this.idOrderService}`;
+      this.src = linkDoc;
+      this.formLoading = false;
+    }
+
+    if (this.idTypeDoc == 198 && this.annexW == true) {
+      let linkDoc: string = `${this.urlBaseReport}AnexoOrdenesW.jasper&ID_ORDE_SERVICIO=${this.idOrderService}&ID_TIPO_DOCTO=2`;
+      this.src = linkDoc;
       this.formLoading = false;
     }
   }
@@ -320,8 +336,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       (this.idTypeDoc == 103 && this.typeFirm == 'autograf') ||
       (this.idTypeDoc == 107 && this.typeFirm == 'autografa')
     ) {
-      console.log('this.idTypeDoc cerrado', this.idTypeDoc);
-      console.log('this.typeFirm cerrado', this.typeFirm);
+  
       this.modalRef.content.callback(true);
       this.modalRef.hide();
     } else {
@@ -598,8 +613,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       ''
     ).then(question => {
       if (question.isConfirmed) {
-        console.log('this.idTypeDoc', this.idTypeDoc);
-        console.log('this.typeFirm', this.typeFirm);
         if (
           (this.idTypeDoc == 107 && this.typeFirm == 'electronica') ||
           (this.idTypeDoc == 106 && this.typeFirm == 'electronica') ||
@@ -1080,11 +1093,11 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
         this.historyGoodService.create(historyGood).subscribe({
           next: response => {
-            console.log('Historico eliminado', response);
+
             resolve(true);
           },
           error: error => {
-            console.log('error', error);
+           
           },
         });
       });

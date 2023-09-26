@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ParameterComerEndpoints } from 'src/app/common/constants/endpoints/ms-parametercomer-endpoints';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IParameterComerDTO } from '../models/parametercomer';
 
@@ -14,5 +15,44 @@ export class ExpenseParametercomerService extends HttpService {
 
   getValidGoods(body: IParameterComerDTO) {
     return this.post('aplication/get-bienes-validados', body);
+  }
+
+  getParameterMod() {
+    return this.get(
+      `${ParameterComerEndpoints.ParameterMod}?limit=0&filter.parameter=$eq:IVA`
+    );
+  }
+
+  getComerStatusVta(statusVta: string) {
+    return this.get(
+      `${ParameterComerEndpoints.ComerStatusVta}?filter.salesStatusId=$eq:${statusVta}`
+    );
+  }
+
+  getComerParameterMod(
+    idEvent: number,
+    address: string,
+    tpsolavalId: any,
+    parameter: string
+  ) {
+    return this.get(
+      `${ParameterComerEndpoints.ParameterMod}?filter.typeEventId=$eq:${idEvent}&filter.address=$eq:${address}&filter.value=$eq:${tpsolavalId}&filter.parameter=$eq:${parameter}`
+    );
+  }
+
+  postComerParametersMod(body: any) {
+    return this.post(ParameterComerEndpoints.GetvValue, body);
+  }
+
+  postParametersMod(body: any) {
+    return this.post(ParameterComerEndpoints.ParameterMod, body);
+  }
+
+  deleteParametersMod(body: any) {
+    return this.delete(ParameterComerEndpoints.ParameterMod, body);
+  }
+
+  getParameterModParam(params?: ListParams) {
+    return this.get(`${ParameterComerEndpoints.ParameterMod}`, params);
   }
 }

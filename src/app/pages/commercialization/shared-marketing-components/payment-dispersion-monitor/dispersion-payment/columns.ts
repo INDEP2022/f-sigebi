@@ -230,7 +230,7 @@ export const COLUMNS_LOTS_BANKS = {
     sort: false,
   },
   paymentId: {
-    title: 'No.Pago',
+    title: 'No. Pago',
     type: 'number',
     sort: false,
   },
@@ -248,12 +248,12 @@ export const COLUMNS_PAYMENT_LOT = {
     sort: false,
   },
   vat: {
-    title: 'IVA',
+    title: 'Iva',
     type: 'number',
     sort: false,
   },
   amountNoAppVat: {
-    title: 'Monto no Aplica IVA',
+    title: 'Monto no Aplica Iva',
     type: 'number',
     sort: false,
   },

@@ -2,8 +2,12 @@
   <div header>
     <h5 class="modal-title">Reporte de orden de servicio</h5>
   </div>
-  <div body>
-    <div class="row">
+  <div body style="margin-top: -30px">
+    <div
+      class="row"
+      *ngIf="
+        processFirm != 'firmRegionalDelegation' && processFirm != 'AnnexW'
+      ">
       <form [formGroup]="form" class="form-material">
         <div>
           <form-field [control]="form.get('responsible')" label="Responsable">
@@ -20,12 +24,196 @@
         </div>
 
         <div class="pt-3">
-          <form-check label="Firma electr&oacute;nica" for="label">
+          <form-check label="Firma Electr&oacute;nica" for="label">
             <input
               id="label"
               type="checkbox"
               formControlName="electronicSignature" />
           </form-check>
+        </div>
+      </form>
+    </div>
+
+    <div class="row" *ngIf="processFirm == 'firmRegionalDelegation'">
+      <form [formGroup]="form" class="form-material">
+        <div>
+          <form-field
+            [control]="form.get('responsible')"
+            label="Responsable DR">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="responsible" />
+          </form-field>
+        </div>
+        <div class="pt-3">
+          <form-field [control]="form.get('charge')" label="Cargo DR">
+            <input type="text" class="form-control" formControlName="charge" />
+          </form-field>
+        </div>
+
+        <div class="pt-3">
+          <form-check label="Firma Electr&oacute;nica" for="label">
+            <input
+              id="label"
+              type="checkbox"
+              formControlName="electronicSignature" />
+          </form-check>
+        </div>
+      </form>
+    </div>
+
+    <div class="row" *ngIf="processFirm == 'AnnexW'">
+      <form [formGroup]="formAnnexW" class="form-material">
+        <h6 class="title">Información Anexo W</h6>
+        <div class="row pt-5">
+          <div class="col-md-6">
+            <form-field
+              [control]="formAnnexW.get('dateBenefit')"
+              label="Fecha Prestación">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dateBenefit"
+                [daysDisabled]="[6, 0]"
+                [minDate]="minDate"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="formAnnexW.get('representativeRegional')"
+              label="Representante Regional">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                formControlName="representativeRegional" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-5">
+          <div class="col-md-6">
+            <form-field
+              [control]="formAnnexW.get('placeBenefit')"
+              label="Lugar Prestación">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="300"
+                formControlName="placeBenefit" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="formAnnexW.get('dateCommitmentrep')"
+              label="Fecha Compromiso Rep">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dateCommitmentrep"
+                [daysDisabled]="[6, 0]"
+                [minDate]="minDate"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-5">
+          <div class="col-md-6">
+            <form-field
+              [control]="formAnnexW.get('nameSupplier')"
+              label="Nombre Provedor">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="100"
+                formControlName="nameSupplier" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="formAnnexW.get('dateNotification')"
+              label="Fecha Notificación">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dateNotification"
+                [daysDisabled]="[6, 0]"
+                [minDate]="minDate"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-5">
+          <div class="col-md-6">
+            <form-field
+              [control]="formAnnexW.get('processBenefit')"
+              label="Proceso Prestación">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="30"
+                formControlName="processBenefit" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="formAnnexW.get('dateElaboration')"
+              label="Fecha Elaboración">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dateElaboration"
+                [daysDisabled]="[6, 0]"
+                [minDate]="minDate"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-5">
+          <div class="col-md-6">
+            <form-field
+              [control]="formAnnexW.get('descriptionServices')"
+              label="Descripción Servicios">
+              <textarea
+                type="text"
+                maxlength="2000"
+                class="form-control"
+                formControlName="descriptionServices">
+              </textarea>
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="formAnnexW.get('descriptionBreach')"
+              label="Descripción Incumplimiento">
+              <textarea
+                type="text"
+                maxlength="2000"
+                class="form-control"
+                formControlName="descriptionBreach">
+              </textarea>
+            </form-field>
+          </div>
+        </div>
+      </form>
+
+      <form [formGroup]="form" class="form-material">
+        <h6 class="title pt-5">Firmante</h6>
+        <div class="pt-3">
+          <form-field
+            [control]="form.get('responsible')"
+            label="Responsable INDEP">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="responsible" />
+          </form-field>
+        </div>
+        <div class="pt-3">
+          <form-field [control]="form.get('charge')" label="Cargo INDEP">
+            <input type="text" class="form-control" formControlName="charge" />
+          </form-field>
         </div>
       </form>
     </div>

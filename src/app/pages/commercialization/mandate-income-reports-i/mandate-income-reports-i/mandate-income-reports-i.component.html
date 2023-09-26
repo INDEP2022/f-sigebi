@@ -13,14 +13,14 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-5">
           <form-field [control]="form.get('batch')">
             <ngx-select
               (fetchItems)="getLot($event)"
               [data]="selectLot"
               [form]="form"
               value="idLot"
-              bindLabel="description"
+              bindLabel="idLotDescription"
               label="Lote"
               control="batch"
               (change)="changeLot($event)">
@@ -39,14 +39,14 @@
           </form-field>
         </div>-->
         <!--Events Component-->
-        <div class="col-md-3">
+        <div class="col-md-5">
           <form-field [control]="form.get('event')">
             <ngx-select
               (fetchItems)="getEvent($event)"
               [data]="eventSelect"
               [form]="form"
               value="id"
-              bindLabel="processKey"
+              bindLabel="keyObservation"
               label="Evento"
               control="event"
               (change)="changeEvent($event)">
@@ -56,7 +56,7 @@
       </div>
       <div class="row mb-3 mt-3">
         <!--Employees Component-->
-        <div class="col-md-4">
+        <div class="col-md-5">
           <!--<app-user-shared
             [form]="form"
             [userField]="'capturingUser'"
@@ -67,7 +67,7 @@
               [data]="user1"
               [form]="form"
               value="user"
-              bindLabel="user"
+              bindLabel="userName"
               label="Usuario que Captura"
               control="capturingUser"
               (change)="changeUser1($event)">
@@ -75,15 +75,15 @@
           </form-field>
         </div>
         <!--Employees Component-->
-        <div class="col-md-4">
+        <!--<div class="col-md-4">
           <form-field label="Nombre" [control]="form.get('capturingUserName')">
             <input
               class="form-control"
               formControlName="capturingUserName"
               type="text" />
           </form-field>
-        </div>
-        <div class="col-md-4">
+        </div>-->
+        <div class="col-md-7">
           <form-field label="Cargo" [control]="form.get('capturingUserPost')">
             <input
               class="form-control"
@@ -93,14 +93,14 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+        <div class="col-md-5">
           <form-field [control]="form.get('authorizingUser')">
             <ngx-select
               (fetchItems)="getAllSegUser2($event)"
               [data]="user2"
               [form]="form"
               value="user"
-              bindLabel="name"
+              bindLabel="userName"
               label="Usuario que Autoriza"
               control="authorizingUser"
               (change)="changeUser2($event)">
@@ -112,7 +112,7 @@
             [label]="'Usuario que Autoriza'"></app-user-shared>-->
         </div>
 
-        <div class="col-md-4">
+        <!--<div class="col-md-4">
           <form-field
             label="Nombre"
             [control]="form.get('authorizingUserName')">
@@ -121,8 +121,8 @@
               formControlName="authorizingUserName"
               type="text" />
           </form-field>
-        </div>
-        <div class="col-md-4">
+        </div>-->
+        <div class="col-md-7">
           <form-field label="Cargo" [control]="form.get('authorizingUserPost')">
             <input
               class="form-control"
@@ -133,14 +133,14 @@
       </div>
       <div class="row">
         <!--Employees Component-->
-        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+        <div class="col-md-5">
           <form-field [control]="form.get('requestingUser')">
             <ngx-select
               (fetchItems)="getAllSegUser3($event)"
               [data]="user3"
               [form]="form"
               value="user"
-              bindLabel="name"
+              bindLabel="userName"
               label="Usuario que Solicita"
               control="requestingUser"
               (change)="changeUser3($event)">
@@ -153,15 +153,15 @@
             [label]="'Usuario que Solicita'"></app-user-shared>-->
         </div>
 
-        <div class="col-md-4">
+        <!--<div class="col-md-4">
           <form-field label="Nombre" [control]="form.get('requestingUserName')">
             <input
               class="form-control"
               formControlName="requestingUserName"
               type="text" />
           </form-field>
-        </div>
-        <div class="col-md-4">
+        </div>-->
+        <div class="col-md-7">
           <form-field label="Cargo" [control]="form.get('requestingUserPost')">
             <input
               class="form-control"
@@ -189,7 +189,11 @@
                 <input
                   class="form-control"
                   formControlName="incomeOrder"
-                  type="number" />
+                  type="number"
+                  maxlength="10"
+                  min="1"
+                  [defaultValue]="1"
+                  oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
               </form-field>
             </div>
           </div>

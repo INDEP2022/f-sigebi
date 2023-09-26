@@ -23,3 +23,10 @@ export interface IDivideCommandsDTO {
   withholding_vat2: string;
   expenseId: string;
 }
+
+export interface ILoadLotDTO {
+  pEventId: number;
+  pBatchId: number;
+  pConceptoId: number;
+  pScreen: string;
+}

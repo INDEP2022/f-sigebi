@@ -347,11 +347,15 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         params.addFilter('description', lparams.text, SearchFilter.ILIKE);
         // params.addFilter('cve_banco', lparams.text);
       }
-    params.sortBy = `idLot:DESC`;
-    // if (this.valEvent) {
-    //   params.addFilter('eat_events.address', this.layout, SearchFilter.EQ);
-    // }
 
+    params.sortBy = `idLot:DESC`;
+    if (this.valEvent) {
+      params.addFilter('eat_events.address', this.layout, SearchFilter.EQ);
+      params.addFilter('eat_events.idEventType', `1,2,3,4,5`, SearchFilter.IN);
+
+      if (this.layout == 'I')
+        params.addFilter('idClient', `$null`, SearchFilter.NOT);
+    }
     this.lotService.getLotbyEvent_(params.getParams()).subscribe({
       next: data => {
         console.log('EVENT', data);

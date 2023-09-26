@@ -452,6 +452,12 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
     this.getparEportAttemptsVta.getpaREportAttemptsVta(body, params).subscribe({
       next: resp => {
         console.log(resp);
+
+        if (this.totalItems2 === 0) {
+          this.alert('error', 'No se encontraron registros', '');
+          this.loadingBtn3 = false;
+          return;
+        }
         // Contar la cantidad de veces que aparece "no_bien" en la respuesta
         // Crear un objeto para almacenar las ocurrencias de cada valor en no_bien
         const countMap: { [key: string]: number } = {}; // Anotación de tipo para countMap
@@ -489,7 +495,6 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
-        this.alert('error', 'No se Encontraron Registros', '');
       },
     });
   }

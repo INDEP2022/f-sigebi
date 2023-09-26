@@ -69,6 +69,10 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
     );
   }
 
+  getAllStatusGood(params: ListParams) {
+    return this.get(`${GoodEndpoints.OnlyStatus}`, params);
+  }
+
   getGoodByIds(id: string | number): Observable<any> {
     const route = `good/good/getGoodById/${id}/${id}`;
     return this.goodRepository.getGoodByIds(route);
@@ -254,5 +258,9 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
   getGoodCount() {
     const route = `${GoodEndpoints.goodSec}`;
     return this.get(route);
+  }
+  getByGood2(params: ListParams) {
+    const route = `${GoodEndpoints.GetAllGoodQuery}`;
+    return this.get(route, params);
   }
 }

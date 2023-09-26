@@ -11,6 +11,7 @@ import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { IFillExpenseDataCombined } from 'src/app/core/models/ms-spent/comer-expense';
 import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
+import { NumerarieService } from '../../services/numerarie.service';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -27,7 +28,10 @@ export class NumeraireExpensesComponent
   @Input() event: IComerEvent;
   @Input() reload = 0;
   @Output() selectedRow = new EventEmitter<IFillExpenseDataCombined>();
-  constructor(private dataService: SpentService) {
+  constructor(
+    private dataService: SpentService,
+    private numerarieService: NumerarieService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -59,6 +63,10 @@ export class NumeraireExpensesComponent
       .subscribe({
         next: response => {
           if (response) {
+            this.data = response.combined.map((row: any) => {
+              return { ...row };
+            });
+            this.numerarieService.updateAllowed = response.updateAllowed;
             this.totalItems = response.combined.length;
             this.total = +response.totevent.toFixed(2);
             this.dataTemp = [...response.combined];

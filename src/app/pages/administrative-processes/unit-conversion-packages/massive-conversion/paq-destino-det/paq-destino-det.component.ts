@@ -44,13 +44,14 @@ export class PaqDestinoDetComponent extends BasePage {
       columns: COLUMNS,
       mode: 'inline',
       hideSubHeader: false,
-      actions: {
+      actions: false,
+      /*       actions: {
         columnTitle: 'Acciones',
         position: 'right',
         add: false,
         edit: true,
         delete: true,
-      },
+      }, */
       edit: {
         ...this.settings.edit,
         saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
@@ -237,6 +238,14 @@ export class PaqDestinoDetComponent extends BasePage {
         this.clearTable();
         return;
       }
+      // this.goodProcessService
+      //   .updateGoodsByPackage(this.noPackage.value.numberPackage)
+      //   .pipe(take(1))
+      //   .subscribe({
+      //     next: response => {
+      //       console.log(response);
+      //     },
+      //   });
       this.loading = true;
       const newParams = new ListParams();
       newParams['filter.numberPackage'] = this.noPackage.value.numberPackage;

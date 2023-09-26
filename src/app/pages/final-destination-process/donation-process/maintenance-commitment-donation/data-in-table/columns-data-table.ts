@@ -1,8 +1,10 @@
-import { ITransferee } from 'src/app/core/models/ms-r-approve-donation/r-approve-donation.model';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 export const COLUMNS_DATA_TABLE = {
   labelId: {
     title: 'Etiqueta',
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.description : '';
+    },
     type: 'string',
     sort: false,
   },
@@ -18,9 +20,9 @@ export const COLUMNS_DATA_TABLE = {
   },
   transfereeId: {
     title: 'No. Trans.',
-    valuePrepareFunction: (value: ITransferee) => {
-      return value != null ? value.transferentId : '-';
-    },
+    // valuePrepareFunction: (value: ITransferee) => {
+    //   return value != null ? value.transferentId : '';
+    // },
     type: 'number',
     sort: false,
   },
@@ -69,15 +71,4 @@ export const COLUMNS_DATA_TABLE = {
     },
     sort: false,
   },
-  /* null: {
-     title: '',
-     type: 'custom',
-     renderComponent: CheckboxElementComponent,
-     onComponentInitFunction(instance: any) {
-       instance.toggle.subscribe((data: any) => {
-         data.row.to = data.toggle;
-       });
-     },
-     sort: false,
-   },*/
 };
