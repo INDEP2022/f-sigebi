@@ -27,4 +27,5 @@ export enum DocumentsEndpoints {
   GenFolioMasive = 'application/pup-gen-folm',
   InvoiceUniversal = 'application/get-documents-invoice-universal',
   InvoiceUniversalAsoc = 'application/get-documents-invoice-universal-asoc',
+  loanDocument = 'documents-loans',
 }
