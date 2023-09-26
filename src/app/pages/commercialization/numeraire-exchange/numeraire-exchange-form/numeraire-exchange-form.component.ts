@@ -693,6 +693,12 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       count: false,
       screen: this.NAME_CURRENT_FORM,
     };
+    //goodprocess/application/getExistsGoodxStatusXtypeNumber
+    // {
+    // "pVcScreem": "VTAINMUTOT",
+    // "goodNumber": 12215
+    // }
+    //arreglo
     const numeraryAvailable = await firstValueFrom(
       this.statusScreenService.getStatus(body).pipe(
         map(res => (res.data.length > 0 ? true : false)),

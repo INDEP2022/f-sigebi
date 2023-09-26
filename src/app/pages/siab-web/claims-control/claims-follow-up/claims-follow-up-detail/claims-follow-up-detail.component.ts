@@ -746,11 +746,7 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert(
-      'success',
-      'Siniestros Seguimiento',
-      `Registro ${message} Correctamente`
-    );
+    this.alert('success', `El elemento ha sido ${message} Correctamente`, ``);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
