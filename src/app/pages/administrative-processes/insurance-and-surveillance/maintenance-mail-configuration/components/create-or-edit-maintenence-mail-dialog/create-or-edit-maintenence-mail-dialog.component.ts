@@ -54,7 +54,6 @@ export class CreateOrEditEmailMaintenencekDialogComponent
       console.log('VAINA', this.emailSend);
       //console.log(this.state);
       this.form.patchValue(this.emailSend);
-      this.form.controls['id'].disable();
     }
   }
 
@@ -72,7 +71,7 @@ export class CreateOrEditEmailMaintenencekDialogComponent
       next: data => this.handleSuccess(),
       error: error => {
         (this.loading = false),
-          this.alert('warning', 'El Correo Ingresado ya Existe', '');
+          this.alert('warning', 'El correo ingresado ya existe', '');
       },
     });
   }
@@ -89,7 +88,11 @@ export class CreateOrEditEmailMaintenencekDialogComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', this.title, `${message} Correctamente`);
+    this.alert(
+      'success',
+      'Correo de responsables de envío',
+      `${message} correctamente`
+    );
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
