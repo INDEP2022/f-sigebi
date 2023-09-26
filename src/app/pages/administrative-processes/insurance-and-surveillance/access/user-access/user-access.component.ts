@@ -31,19 +31,13 @@ export class UserAccessComponent extends BasePage implements OnInit {
     private modalService: BsModalService
   ) {
     super();
-    // this.settings = {
-    //   ...this.settings,
-
-    //   hideSubHeader: false,
-    //   actions: {
-    //     columnTitle: 'Acciones',
-    //     edit: true,
-    //     delete: true,
-    //     add: false,
-    //   },
-
-    //   columns: USER_ACCESS_COLUMNS,
-    // };
+    this.settings = {
+      ...this.settings,
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-2"></i>',
+      },
+    };
 
     this.settings.columns = USER_ACCESS_COLUMNS;
 
@@ -114,7 +108,7 @@ export class UserAccessComponent extends BasePage implements OnInit {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-    params[`sortBy`] = `userKey:DESC`;
+    // params[`sortBy`] = `userKey:ASC`;
 
     this.userService.getAccessUsers(params).subscribe({
       next: response => {
@@ -143,7 +137,11 @@ export class UserAccessComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.userService.deleteAccessUsers(event.data.userKey).subscribe({
           next: response => {
-            this.alert('success', 'Registro eliminado correctamente', '');
+            this.alert(
+              'success',
+              'El registro se ha eliminado correctamente',
+              ''
+            );
             this.getAccessUsers();
             // this.loading = false;
           },

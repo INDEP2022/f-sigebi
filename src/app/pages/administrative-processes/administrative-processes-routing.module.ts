@@ -792,6 +792,20 @@ export const routes: Routes = [
           screen: 'FCAMNOCLASIFBIEN',
         },
       },
+      {
+        //!SIRVIO
+        path: 'receipt-documents-archive',
+        loadChildren: async () =>
+          (
+            await import(
+              './receipt-documents-archivep/receipt-documents-archivep.module'
+            )
+          ).ReceiptDocumentsArchivepModule,
+        data: {
+          title: 'Recepción de documentos en el archivo',
+          screen: 'FACTARGRECEPDOCS',
+        },
+      },
     ],
   },
 ];
