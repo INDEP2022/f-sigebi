@@ -617,7 +617,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
       if (createVIG_SUPERVISION_TMP_) {
         this.loadingBtn = false;
-        this.alert('success', 'Archivo cargado correctamente', '');
+        this.alert('success', 'El archivo se ha cargado', '');
         this.clearInput();
       } else {
         this.loadingBtn = false;
@@ -1085,7 +1085,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
         console.log('RESPUESTA', response);
         this.loadingBtn1 = false;
-        this.alert('success', 'Se generaron los aleatorios correctamente', '');
+        this.alert('success', 'Los aleatorios se han generado', '');
 
         // resolve(response.data[0]);
       },
@@ -1204,7 +1204,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     link.click();
     link.remove();
     this.loadingBtn2 = false;
-    this.alert('success', 'Archivo descargado correctamente', '');
+    this.alert('success', 'El archivo se ha descargado', '');
   }
 
   async revisarCarga() {
