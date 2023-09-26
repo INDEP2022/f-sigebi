@@ -42,18 +42,19 @@ export const COLUMNS = {
   amount: {
     title: 'Monto',
     // width: '15%',
-    type: 'string',
+    type: 'html',
     sort: false,
     valuePrepareFunction: (amount: string) => {
       const numericAmount = parseFloat(amount);
 
       if (!isNaN(numericAmount)) {
-        return numericAmount.toLocaleString('en-US', {
+        const a = numericAmount.toLocaleString('en-US', {
           // style: 'currency',
           // currency: 'USD',
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
+        return '<p class="cell_right">' + a + '</p>';
       } else {
         return amount;
       }

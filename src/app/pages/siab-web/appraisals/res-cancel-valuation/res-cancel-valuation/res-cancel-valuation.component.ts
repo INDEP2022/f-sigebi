@@ -1,13 +1,15 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as FileSaver from 'file-saver';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { AppraiseService } from 'src/app/core/services/ms-appraise/appraise.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
 import { GenerateCveService } from 'src/app/core/services/ms-security/application-generate-clave';
@@ -36,6 +38,11 @@ import {
 export class resCancelValuationComponent extends BasePage implements OnInit {
   //
 
+  //#region Vars
+  // Modal
+  @ViewChild('modalRev', { static: true })
+  miModalRev: TemplateRef<any>;
+
   arrayResponseOffice: any[] = [];
   arrayResponseOfficeTwo: any[] = [];
   array: any[] = [];
@@ -52,6 +59,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   fullUsersTwo = new DefaultSelect();
   fullUsers = new DefaultSelect();
   fullDelegations = new DefaultSelect();
+  fullDepartments = new DefaultSelect();
   usersList = new DefaultSelect();
   lsbConCopiaList: any[] = [];
 
@@ -85,6 +93,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   //Var Validation
   radioValueOne: boolean = false;
   redioValueTwo: boolean = false;
+  radioValueThree: boolean = false;
   pnlControles: boolean = true;
   pnlControles2: boolean = true;
   btnVerOficio: boolean = true;
@@ -93,6 +102,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   btnGuardar: boolean = true;
   btnMotCan: boolean = true;
   byUser: boolean = false;
+  visibleUserName: boolean = true;
+  visibleDelegation: boolean = true;
+  visibleTxtCopy: boolean = true;
+  visibleDepartments: boolean = true;
 
   // Modal #1
   formDialogOne: FormGroup;
@@ -102,9 +115,11 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   settingsModal: any;
   paramsModal = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsModal: number = 0;
+  //#endregion
 
   //
 
+  //#region Initialization
   constructor(
     private fb: FormBuilder,
     private serviceJobs: JobsService,
@@ -115,7 +130,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private serviceUser: GenerateCveService,
-    private serviceDelegations: DelegationService
+    private serviceDelegations: DelegationService,
+    private serviceDepartments: DepartamentService,
+    private modalService: BsModalService
   ) {
     super();
     this.settings = {
@@ -168,6 +185,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       }
     });
   }
+
+  //#endregion
 
   //
 
@@ -267,8 +286,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   //#endregion
 
   //#region Delegations
-  queryDelegations(params?: any) {
-    this.serviceDelegations.getAllTwo().subscribe({
+  queryDelegations(params?: ListParams) {
+    this.serviceDelegations.getAllThree().subscribe({
       next: response => {
         this.fullDelegations = new DefaultSelect(response.data, response.count);
       },
@@ -279,18 +298,49 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
   //#endregion
 
+  //#region Departments
+  getDepartments(event?: any) {
+    console.log('Este es el valor: ', this.formThree.controls['del'].value);
+    if (this.formThree.controls['del'].valid) {
+      console.log(
+        'Este es el valor: ',
+        this.formThree.controls['del'].value?.delegationId
+      );
+      this.serviceDepartments
+        .getDepartments(this.formThree.controls['del'].value?.delegationId)
+        .subscribe({
+          next: response => {
+            console.log(
+              'Esta es la respuesta de los departementos: ',
+              response.data
+            );
+            this.fullDepartments = new DefaultSelect(
+              response.data,
+              response.count || 0
+            );
+          },
+          error: error => {
+            this.fullDepartments = new DefaultSelect([], 0);
+          },
+        });
+    }
+  }
+  //#endregion
+
   onRadioChange() {
     this.radioValueOne = true;
     if (this.event != '' && this.event != null) {
       this.btnMotCan = false;
       this.resetVariables();
+      this.loadOffice(this.event, 2);
       this.setButtons(3);
     } else {
       this.alert(
         'warning',
         'Advertencia',
-        `Inserta un Evento Para Poder Continuar`
+        `Inserta un evento para poder continuar`
       );
+      this.form.controls['radioOne'].reset();
     }
   }
 
@@ -299,13 +349,31 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     if (this.event != '' && this.event != null) {
       this.btnMotCan = false;
       this.resetVariables();
+      this.loadOffice(this.event, 3);
       this.setButtons(3);
     } else {
       this.alert(
         'warning',
         'Advertencia',
-        `Inserta un Evento Para Poder Continuar`
+        `Inserta un evento para poder continuar`
       );
+      this.form.controls['radioTwo'].reset();
+    }
+  }
+
+  onRadioChangeThree() {
+    if (this.byUser == false) {
+      this.visibleUserName = true;
+      this.visibleDelegation = false;
+      this.visibleTxtCopy = true;
+      this.visibleDepartments = false;
+      this.byUser = true;
+    } else {
+      this.visibleUserName = false;
+      this.visibleDelegation = false;
+      this.visibleTxtCopy = false;
+      this.byUser = false;
+      this.visibleDepartments = true;
     }
   }
 
@@ -321,33 +389,16 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   resetVariables() {
-    this.arrayResponseOffice = [];
-    this.form.reset();
-    this.formTwo.reset();
-    this.formDialogOne.reset();
-    this.data = new LocalDataSource();
-    this.dataTwo = new LocalDataSource();
-    this.fullCyties = new DefaultSelect();
-    this.columns = [];
-    this.totalItems = 0;
-    this.params.next(new ListParams());
-    this.totalItemsTwo = 0;
-    this.paramsTwo.next(new ListParams());
-    this.dateNow = new Date();
-    this.listCitys = null;
-    this.listKeyOffice = null;
-    this.settingsTwo = null;
-    this.city = null;
-    this.event = null;
-
-    // Resetting validation variables
-    this.pnlControles = false;
-    this.pnlControles2 = false;
-    this.btnVerOficio = false;
-    this.btnEnviar = false;
-    this.btnModificar = false;
-    this.btnGuardar = false;
-    this.getOffices();
+    console.log('Algo nuevo jujujuju');
+    this.byUser = true;
+    this.form.controls['ref'].reset();
+    this.form.controls['espe'].reset();
+    this.form.controls['aten'].reset();
+    this.form.controls['key'].reset();
+    this.formTwo.controls['allGood'].reset();
+    this.formTwo.controls['selectedGood'].reset();
+    this.visibleUserName = true;
+    this.visibleDelegation = false;
   }
 
   getCityById(id: any): Promise<any> {
@@ -440,7 +491,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         }
       }
     } catch (e: any) {
-      this.alert('warning', 'Advertencia', 'Problema Para Visualizar Oficio');
+      this.alert('warning', '', 'Problema para visualizar oficio');
     }
   }
 
@@ -565,7 +616,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        'No Existe Ninguna Solicitud de Oficio Para Este Evento. Verifique que se Haya Realizado la Solicitud Para Poder Continuar'
+        'No existe ninguna solicitud de oficio para este evento. verifique que se haya realizado la solicitud para poder continuar'
       );
     }
   }
@@ -725,6 +776,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.formThree = this.fb.group({
       user: [null],
       del: [null],
+      depar: [null],
+      copy: [null],
+      radioThree: [null],
     });
     this.subscribeDelete = this.form
       .get('office')
@@ -772,7 +826,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           this.alert(
             'warning',
             'Advertencia',
-            'No hay Bienes Para Realizar el Oficio de Respuesta'
+            'No hay bienes para realizar el oficio de respuesta'
           );
         }
         this.loader.load = false;
@@ -807,7 +861,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
           this.alert(
             'warning',
             'Advertencia',
-            'No hay Bienes Para Realizar el Oficio de Cancelación'
+            'No hay bienes para realizar el oficio de cancelación'
           );
         }
         this.loader.load = false;
@@ -838,33 +892,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     return dateLocal;
   }
 
+  //#region Excel
   //Export and Import Excel
-  exportExcel() {
-    this.data.getAll().then(data => {
-      import('xlsx').then(xlsx => {
-        const worksheet = xlsx.utils.json_to_sheet(data);
-        const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
-        const excelBuffer: any = xlsx.write(workbook, {
-          bookType: 'xlsx',
-          type: 'array',
-        });
-        this.saveAsExcelFile(excelBuffer, 'products');
-      });
-    });
-  }
-
-  saveAsExcelFile(buffer: any, fileName: string): void {
-    let EXCEL_TYPE =
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-    let EXCEL_EXTENSION = '.xlsx';
-    const data: Blob = new Blob([buffer], {
-      type: EXCEL_TYPE,
-    });
-    FileSaver.saveAs(
-      data,
-      fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION
-    );
-  }
+  exportExcel() {}
+  //#endregion
 
   // Metodo del modal #2
   getReasonsChange() {
@@ -917,6 +948,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   //
 
   reasonsForChange() {
+    this.modalService.show(this.miModalRev, {
+      ...MODAL_CONFIG,
+      class: 'modal-xl modal-dialog-centered',
+    });
     this.getReasonsChange();
   }
 
@@ -929,7 +964,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Advertencia',
-          'Para Continuar es Necesario Seleccionar Bienes'
+          'Para continuar es necesario seleccionar bienes'
         );
       }
     } else if (typeOffice == 3) {
@@ -938,7 +973,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Advertencia',
-          'Para Continuar es Necesario Seleccionar Bienes'
+          'Para continuar es necesario seleccionar bienes'
         );
       }
       let countOne: number = 0;
@@ -953,7 +988,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Advertencia',
-          'Para Continuar es Necesario que Seleccione los Motivos por los Cuales se va a Enviar a REV el Bien'
+          'Para continuar es necesario que seleccione los motivos por los cuales se va a enviar a REV el bien'
         );
       }
     }
@@ -975,7 +1010,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Advertencia',
-          'Para Continuar es Necesario que Seleccione los Motivos por los Cuales se va a Enviar a REV el Bien'
+          'Para continuar es necesario que seleccione los motivos por los cuales se va a enviar a REV el bien'
         );
       }
     }
@@ -1028,6 +1063,10 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     }
 
     return chain;
+  }
+
+  closeModalSubtype() {
+    this.modalService.hide();
   }
 
   //

@@ -385,16 +385,16 @@ export class CentralOfficesTransferenceComponent
         this.dataTabla.load([]);
         this.dataTabla.refresh();
         this.totalItems = 0;
-        // if (err.status == 400) {
-        //   this.alert('error', 'Error', err.error.message);
-        //   this.alert(
-        //     'error',
-        //     'Error',
-        //     'Este bien no se encuentra en una solicitud de numerario'
-        //   );
-        // } else {
-        //   this.alert('error', 'Error', err.error.message);
-        // }
+        if (err.status == 400) {
+          this.alert('error', 'Error', err.error.message);
+          this.alert(
+            'error',
+            'Error',
+            'Este bien no se encuentra en una solicitud de numerario'
+          );
+        } else {
+          this.alert('error', 'Error', err.error.message);
+        }
       },
     });
   }

@@ -97,4 +97,8 @@ export class ComerDetailsService extends HttpService {
   VALIDA_GARANTIA_INMUEBLES(body: any): Observable<IListResponse<any>> {
     return this.get<IListResponse<any>>(`application/validWarranty/${body}`);
   }
+
+  PROCESA_FASE4_ACT(body: any) {
+    return this.post(`application/processPhase4Act`, body);
+  }
 }
