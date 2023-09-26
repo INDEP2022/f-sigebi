@@ -57,7 +57,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any = [];
   totalItems: number = 0;
-
+  maxDate = new Date();
   jsonToCsv = JSON_TO_CSV;
 
   displaySearchAssetsBtn: boolean = false;
@@ -143,12 +143,22 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.paragraphsDeductivas = data;
   }
 
+  get initialDate() {
+    return this.dateForm.get('initialDate');
+  }
+
+  get finalDate() {
+    return this.dateForm.get('finalDate');
+  }
+
   initDateForm() {
     this.dateForm = this.fb.group({
       initialDate: [null, [Validators.required]],
       finalDate: [null, [Validators.required]],
       transferent: [null],
     });
+
+    this.finalDate.disable();
     //this.paragraphs = data;
     //this.paragraphs2 = data2;
   }
@@ -162,6 +172,16 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     });
   }
 
+  public enableFinalDate(event: any) {
+    if (event != undefined) {
+      if (this.finalDate.value == null) {
+        this.finalDate.enable();
+      } else {
+        this.finalDate.setValue('');
+      }
+    }
+  }
+
   selectWarehouse(event: any): any {
     this.displaySearchAssetsBtn = event.isSelected ? true : false;
     console.log(event);
@@ -171,8 +191,9 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   goodSearch() {
     const dates = this.dateForm.value;
     if (!dates.initialDate && !dates.finalDate) {
-      this.onLoadToast(
+      this.alert(
         'info',
+        'Error muestreo',
         'Debe capturar los campos requeridos para el muestreo'
       );
       return;
@@ -241,9 +262,10 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   uploadExpedient() {
     if (this.listAssetsCopiedSelected.length == 0) {
-      this.onLoadToast(
-        'info',
-        'Se tiene que tener seleccionado al menos un registro'
+      this.alert(
+        'warning',
+        'Se debe que tener seleccionado al menos un registro',
+        ''
       );
       return;
     }
@@ -305,17 +327,23 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
               .addFilter('stockSiabNumber', searchform[key]);
             break;
           case 'code':
-            this.params.getValue().addFilter('postalCode', searchform[key]);
+            if (searchform[key] !== '') {
+              this.params.getValue().addFilter('postalCode', searchform[key]);
+            }
             break;
           case 'nameWarehouse':
-            this.params
-              .getValue()
-              .addFilter('name', searchform[key], SearchFilter.ILIKE);
+            if (searchform[key] !== '') {
+              this.params
+                .getValue()
+                .addFilter('name', searchform[key], SearchFilter.ILIKE);
+            }
             break;
           case 'address':
-            this.params
-              .getValue()
-              .addFilter('address1', searchform[key], SearchFilter.ILIKE);
+            if (searchform[key] !== '') {
+              this.params
+                .getValue()
+                .addFilter('address1', searchform[key], SearchFilter.ILIKE);
+            }
             break;
           default:
             break;
@@ -369,8 +397,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.params.getValue().removeAllFilters();
-        console.log('tabla domicilio ', error);
-        this.onLoadToast('info', 'No se encontraron registros');
+        this.alert('warning', 'No se encontraron registros', '');
         this.loading = false;
       },
     });
@@ -386,7 +413,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.log(error);
-        this.onLoadToast('info', 'No se encontraron registros');
+        this.alert('warning', 'No se encontraron registros', '');
       },
     });
   }
@@ -409,14 +436,16 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
         const evaResult = this.paragraphs3.filter(x => x.resultTest != null);
         debugger;
         if (size == 0) {
-          this.onLoadToast('info', 'No hay bienes agregados');
+          this.alert('warning', 'No hay bienes agregados', '');
+
           return;
         }
 
         if (size != evaResult.length) {
-          this.onLoadToast(
-            'info',
-            'Todos los bienes deben contar con un Resultado de Evaluación'
+          this.alert(
+            'warning',
+            'Todos los bienes deben contar con un Resultado de Evaluación',
+            ''
           );
           return;
         }
@@ -457,7 +486,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
           );
 
           if (deductivesSelected.length == 0) {
-            this.onLoadToast('info', 'Seleccione al menos una deductiva');
+            this.alert('warning', 'Seleccione al menos una deductiva', '');
             return;
           } else {
             this.openModals(TurnModalComponent, '', 'popTurna', 'modal-lg');
@@ -495,7 +524,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   removeGood() {
     if (this.listAssetsCopiedSelected.length == 0) {
-      this.onLoadToast('info', 'Seleccione al menos un bien');
+      this.alert('warning', 'Seleccione al menos un bien', '');
       return;
     }
     this.listAssetsCopiedSelected.map(item => {
@@ -512,7 +541,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   meetGood(value: string) {
     if (this.listAssetsCopiedSelected.length == 0) {
-      this.onLoadToast('info', 'Debe tener selecionado al menos un Bien');
+      this.alert('warning', 'Debe tener seleccionado al menos un Bien', '');
+
       return;
     }
 

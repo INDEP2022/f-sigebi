@@ -4,28 +4,28 @@ export const LIST_ASSETS_COLUMN = {
     type: 'string',
     sort: false,
   },
-  goodId: {
+  managementNumber: {
     title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
-  siabiInventoryId: {
+  goodSiabNumber: {
     title: 'Número Siab',
     type: 'string',
     sort: false,
   },
-  goodDescription: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  regionalDelegation: {
+  delRegionalId: {
     title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
   quantity: {
-    title: 'cantidad',
+    title: 'Cantidad',
     type: 'string',
     sort: false,
   },
