@@ -72,7 +72,6 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   ngOnInit(): void {
-    console.log('op', this.op);
     this.getOrderServiceProvided();
     if (this.op != 1 && this.op != 2 && this.op != 3) {
       this.columns = SERVICE_TRANSPORTABLE_COLUMNS;
@@ -356,11 +355,13 @@ export class ServiceTransportableGoodsFormComponent
           if (this.op == 5) {
             if (this.typeOrder == 'reception') {
               ele.children[7].querySelector('#text-input').disabled = true;
+            } else {
+              ele.children[7].querySelector('#text-input').disabled = true;
+              ele.children[8].querySelector('#text-input').disabled = true;
+              ele.children[9].querySelector('#text-input').disabled = true;
+              ele.children[10].querySelector('#text-input').disabled = true;
+              ele.children[13].querySelector('#text-input').disabled = true;
             }
-            ele.children[8].querySelector('#text-input').disabled = true;
-            ele.children[9].querySelector('#text-input').disabled = true;
-            ele.children[10].querySelector('#text-input').disabled = true;
-            ele.children[13].querySelector('#text-input').disabled = true;
           }
 
           if (this.op == 6 || this.op == 7 || this.op == 8 || this.op == 9) {
