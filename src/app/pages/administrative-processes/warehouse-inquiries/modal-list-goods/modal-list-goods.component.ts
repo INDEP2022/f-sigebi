@@ -21,6 +21,8 @@ export class ModalListGoodsComponent extends BasePage implements OnInit {
   goods: IGood[] = [];
   dataFactGood: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
+  idWarehouse: any;
+
   constructor(
     private bsModalRef: BsModalRef,
     private opcion: ModalOptions,
@@ -44,12 +46,7 @@ export class ModalListGoodsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    const idWarehouse = this.opcion.initialState;
-    // this.params
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() =>
-    //     this.getGoodByWarehouses({ ids: [Number(idWarehouse)] })
-    //   );
+    console.error(this.idWarehouse);
     this.dataFactGood
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -73,13 +70,13 @@ export class ModalListGoodsComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getGoodByWarehouses({ ids: [Number(idWarehouse)] });
+          this.getGoodByWarehouses({ ids: [Number(this.idWarehouse)] });
         }
       });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() =>
-        this.getGoodByWarehouses({ ids: [Number(idWarehouse)] })
+        this.getGoodByWarehouses({ ids: [Number(this.idWarehouse)] })
       );
   }
 
