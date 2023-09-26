@@ -1,24 +1,42 @@
-<app-card [header]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Histórico de Estatus</h5>
+<app-modal>
+  <div header class="d-flex justify-content-between">
+    <div>
+      <h5 class="modal-title">Histórico de Estatus</h5>
+    </div>
   </div>
   <div body>
-    <div class="row pt-4">
-      <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data1">
-          </ng2-smart-table>
-        </div>
-      </div>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
+    <div class="table-padding"></div>
+    <div class="justify-content-end d-flex mb-2">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
     </div>
-    <button class="btn btn-primary btn-sm active" (click)="close()">
-      Salir
-    </button>
+    <!-- <ng-scrollbar track="horizontal" [autoHeightDisabled]="false"> -->
+    <form-loader *ngIf="loading"></form-loader>
+    <div class="col-md-12">
+      <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{ height: loading ? '0px' : '300px' }">
+        <ng2-smart-table
+          [attr.class]="'table-responsive table-bordered'"
+          [settings]="settings"
+          [source]="bitacoraLoad">
+        </ng2-smart-table>
+      </ng-scrollbar>
+      <!-- </div> -->
+      <app-pagination [params]="params" [totalItems]="totalItems3">
+      </app-pagination>
+    </div>
   </div>
-</app-card>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
+          Regresar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

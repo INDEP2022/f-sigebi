@@ -49,7 +49,7 @@ export interface IReportImp {
   monthNumber: number;
   yearNumber: number;
   inTime: string;
-  recordNumber: string;
+  recordNumber: number;
   elaboratedUser: string;
   observations: string;
   statuslaughedNumber: number;
@@ -57,4 +57,29 @@ export interface IReportImp {
   UniversalInvoice: string;
   reportTOKey: string;
   originNb: string;
+}
+
+export interface IDelReportImp {
+  formatNumber: number;
+  goodNumber: number;
+  actNumber: number;
+}
+
+export interface ICostReport {
+  serviceNumber: number;
+  typeServiceNumber: number;
+  turnNumber: number;
+  varCosteNumber: number;
+  importTot: number;
+  amountTot: number;
+}
+
+export interface IBitacora {
+  id: number;
+  formatNumber: number;
+  reportNumber: number;
+  varCosteNumber: number;
+  changeDate: string;
+  justification: string;
+  usrRegister: string;
 }

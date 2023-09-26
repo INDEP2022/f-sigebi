@@ -585,12 +585,11 @@ export class ConciliationExecutionMainComponent
     } else {
       if (V_PROCESO_FASE == 1) {
         const PFASE = this.conciliationForm.get('phaseAnt').value;
-        if (!PFASE)
-          return (
-            (this.loadingBtn = false),
-            this.alert('warning', 'Debe especificar una fase', '')
-          );
-
+        if (!PFASE) {
+          this.loadingBtn = false;
+          this.alert('warning', 'Debe especificar una fase', '');
+          return;
+        }
         // VALIDA_ESTATUS - INMUEBLE //
         let obj1: any = {
           event: this.selectedEvent.eventId,
@@ -659,8 +658,10 @@ export class ConciliationExecutionMainComponent
         }
       } else if (V_PROCESO_FASE == 2) {
         const PFASE = this.conciliationForm.get('phaseAct').value;
-        if (!PFASE)
+        if (!PFASE) {
+          this.loadingBtn = false;
           return this.alert('warning', 'Debe especificar una fase', '');
+        }
 
         // VALIDA_ESTATUS - INMUEBLE //
         let obj1: any = {
@@ -956,7 +957,52 @@ export class ConciliationExecutionMainComponent
     }
   }
 
-  async PROCESA_FASE4_ACT() {}
+  async PROCESA_FASE4_ACT() {
+    let L_SIGUE = await this.VALIDA_LIQUIDACION();
+    let body = {
+      event: this.selectedEvent.eventId,
+      publicLot: this.selectedBatch.lotPublic,
+      phaseAct: 4,
+      lot: this.selectedBatch.idLot,
+      date: this.conciliationForm.get('date').value,
+      user: this.token.decodeToken().preferred_username,
+      description: this.selectedEvent.processKey,
+      validate: L_SIGUE,
+    };
+    const resp: any = await this.endpointPROCESA_FASE4_ACT(body);
+    if (resp.status != 200) {
+      this.loadingBtn = false;
+      this.alert(
+        'error',
+        'No se completó el proceso de ejecución',
+        resp.message
+      );
+    } else {
+      this.loadingBtn = false;
+      this.alert('success', 'Proceso de ejecución terminado correctamente', '');
+    }
+  }
+  endpointPROCESA_FASE4_ACT(body: any) {
+    return new Promise((resolve, reject) => {
+      this.comerDetailsService.PROCESA_FASE4_ACT(body).subscribe({
+        next: async data => {
+          console.log('data', data);
+          let obj = {
+            status: 200,
+            message: 'OK',
+          };
+          resolve(obj);
+        },
+        error: async err => {
+          let obj = {
+            status: err.status,
+            message: await this.capitalizarPrimeraLetra(err.error.message),
+          };
+          resolve(obj);
+        },
+      });
+    });
+  }
   async PROCESA_FASE5_ACT() {
     const constProcessPhase3Ant: any = await this.getProcessPhase3Ant();
     if (!constProcessPhase3Ant) {
@@ -1111,6 +1157,7 @@ export class ConciliationExecutionMainComponent
   // ------------------------------------------ // FUNCIONES PROCESOS ACTUALES //
 
   async functVALIDA_PAGOSREF_ACT(body: any, body2: any) {
+    console.log('body', body);
     await this.VALIDA_PAGOSREF_VENTA_INMU_ACT(body);
     await this.VALIDA_PAGOSREF_PREP_OINMU_ACT(body2);
 
@@ -1121,6 +1168,7 @@ export class ConciliationExecutionMainComponent
     return new Promise((resolve, reject) => {
       this.msDepositaryService.postCurrentRealStateSale(body).subscribe({
         next: data => {
+          console.log('data', data);
           resolve(data);
         },
         error: err => {
@@ -1172,7 +1220,8 @@ export class ConciliationExecutionMainComponent
       this.alert(
         'warning',
         'No se completó el proceso de ejecución',
-        'No hay clientes seleccionados para procesar, verifique la tabla Clientes del Evento'
+        ''
+        // 'No hay clientes seleccionados para procesar, verifique la tabla Clientes del Evento'
       );
     }
   }
@@ -1980,21 +2029,18 @@ export class ConciliationExecutionMainComponent
           if (!this.selectedBatch) {
             this.alertQuestion(
               'question',
-              `Se va a ejecutar el proceso de cambio de estatus del evento ${this.selectedEvent.eventId} de todos los Lotes`,
+              `Se va a ejecutar el proceso de cambio de estatus del evento ${this.selectedEvent.eventId} de todos los lotes`,
               '¿Está de acuerdo?'
             ).then(async question => {
               if (question.isConfirmed) {
-                // OPEN LOTES_INM;
-                //       LOOP
-                //   FETCH LOTES_INM INTO V_ID_LOTE_PUBLICO, V_ID_LOTE;
-                //   EXIT WHEN LOTES_INM % NOTFOUND;
-
-                //       VALIDA_PAGOSREF.ACT_EST_GRALI_ACT(: BLK_CTRL.EVENTO, : BLK_CTRL.FASE_ACT, V_ID_LOTE_PUBLICO, V_ID_LOTE);
-                //       VALIDA_PAGOSREF.PREP_OINMU_ACT(: BLK_CTRL.EVENTO, : BLK_CTRL.DESCRIPCION, : PARAMETER.P_DIRECCION, V_ID_LOTE_PUBLICO, V_ID_LOTE, : BLK_CTRL.FASE_ACT);
-                //       LIP_COMMIT_SILENCIOSO;
-                // END LOOP;
-                // CLOSE LOTES_INM;
-
+                let body = {
+                  event: this.selectedEvent.eventId,
+                  phaseAct: PFASE,
+                  description: this.selectedEvent.processKey,
+                  address: 'I',
+                  user: this.token.decodeToken().preferred_username,
+                };
+                await this.GET_CURSOR(body);
                 await this.UTIL_COMER_ENV_FORMALIZAR(); // UTIL_COMER.ENV_FORMALIZAR(: BLK_CTRL.EVENTO);
                 // CAMBIAR_ESTATUS_BIEN
                 const varCAMBIAR_ESTATUS_BIEN =
@@ -2069,6 +2115,18 @@ export class ConciliationExecutionMainComponent
         }
       }
     }
+  }
+  async GET_CURSOR(body: any) {
+    return new Promise((resolve, reject) => {
+      this.lotService.GetCursor(body).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
   }
   async VALIDA_PAGOSREF_ACT_EST_GRALI(body: any) {
     return new Promise((resolve, reject) => {
@@ -2761,7 +2819,7 @@ export class ConciliationExecutionMainComponent
 
     params.addFilter('idEvent', this.selectedEvent.eventId, SearchFilter.EQ);
     params.addFilter('idStatusVta', 'VEN', SearchFilter.EQ);
-
+    params.sortBy = `lotPublic:DESC`;
     this.lotService.getLotbyEvent_(params.getParams()).subscribe({
       next: data => {
         console.log('EVENT', data);

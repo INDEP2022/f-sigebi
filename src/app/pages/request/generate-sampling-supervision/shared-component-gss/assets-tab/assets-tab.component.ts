@@ -1,12 +1,16 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatTableDataSource } from '@angular/material/table';
 import { Store } from '@ngrx/store';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BasePage, TABLE_SETTINGS } from 'src/app/core/shared';
 import { ExcelService } from '../../../../../common/services/excel.service';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { JSON_TO_CSV } from '../../../../admin/home/constants/json-to-csv';
 import { listAssets } from '../../generate-formats-verify-noncompliance/store/actions';
 import { Item } from '../../generate-formats-verify-noncompliance/store/item.module';
+import { LIST_PAYMENT_VALIDATIONS } from '../../sampling-assets/sampling-assets-form/columns/list-validation';
+import { LIST_VERIFY_NONCOMPLIANCE } from '../../sampling-assets/sampling-assets-form/columns/list-verify-noncompliance';
 import { UploadExpedientFormComponent } from '../upload-expedient-form/upload-expedient-form.component';
 import { UploadImagesFormComponent } from '../upload-images-form/upload-images-form.component';
 
@@ -42,30 +46,43 @@ var data = [
   templateUrl: './assets-tab.component.html',
   styleUrls: ['./assets-tab.component.scss'],
 })
-export class AssetsTabComponent implements OnInit {
+export class AssetsTabComponent extends BasePage implements OnInit {
   @Input() willSave: boolean = false;
   @Input() typeTask: string = '';
   bsModalRef: BsModalRef;
   assetsForm: ModelForm<any>;
   assetsArray: any[] = [];
   assetsSelected: Item[] = [];
+  paragraphs3: any[] = [];
   jsonToCsv = JSON_TO_CSV;
   isReadonly: boolean = false;
   isCheckboxReadonly: boolean = false;
   checkboxTitle: string = '';
+  settings3 = {
+    ...TABLE_SETTINGS,
+    actions: false,
+    selectMode: 'multi',
+    columns: LIST_VERIFY_NONCOMPLIANCE,
+  };
+
+  dataSource = new MatTableDataSource(this.assetsSelected);
 
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private excelService: ExcelService,
     private store: Store
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     console.log(this.typeTask);
     this.setEnableInputs();
     this.assetsArray = data;
+    this.paragraphs3 = data;
     //console.log(this.willSave);
+    this.changeSettingTable();
   }
 
   initAssetForm(): void {
@@ -81,7 +98,23 @@ export class AssetsTabComponent implements OnInit {
       observationsAsset: [null],
     });
   }
-
+  changeSettingTable() {
+    if (this.typeTask == 'payment-validatios') {
+      this.settings3 = {
+        ...TABLE_SETTINGS,
+        actions: false,
+        selectMode: 'multi',
+        columns: LIST_PAYMENT_VALIDATIONS,
+      };
+    } else {
+      this.settings3 = {
+        ...TABLE_SETTINGS,
+        actions: false,
+        selectMode: 'multi',
+        columns: LIST_VERIFY_NONCOMPLIANCE,
+      };
+    }
+  }
   setEnableInputs(): void {
     if (this.typeTask === 'verify-warehouse-assets') {
       this.checkboxTitle = 'Localizado';
@@ -117,6 +150,48 @@ export class AssetsTabComponent implements OnInit {
   uploadImages(): void {
     //if (this.listAssetsCopiedSelected.length == 0) return;
     this.openModals(UploadImagesFormComponent, '');
+  }
+
+  changeStatusGood(value: string) {
+    if (this.assetsSelected.length == 0) {
+      this.onLoadToast('info', 'Debe tener selecionado al menos un Bien');
+      return;
+    }
+    console.log(this.assetsSelected);
+    console.log(this.paragraphs3);
+    this.assetsSelected.map(item => {
+      const index = this.paragraphs3.indexOf(item);
+      if (value == 'F') {
+        this.paragraphs3[index].statusAsset = 'FALTANTE';
+      } else if (value == 'D') {
+        this.paragraphs3[index].statusAsset = 'DAÑADO';
+      }
+    });
+    this.paragraphs3 = [...this.paragraphs3];
+    this.assetsSelected = [];
+  }
+
+  changeStatusGoodAproval(value: string) {
+    if (this.assetsSelected.length == 0) {
+      this.onLoadToast('info', 'Debe tener seleccionado al menos un Bien');
+      return;
+    }
+    console.log(this.assetsSelected);
+    console.log(this.paragraphs3);
+    this.assetsSelected.map(item => {
+      const index = this.paragraphs3.indexOf(item);
+      if (value == 'A') {
+        this.paragraphs3[index].statusEvaluation = 'APROBAR';
+      } else if (value == 'R') {
+        this.paragraphs3[index].statusEvaluation = 'RECHAZAR';
+      }
+    });
+    this.paragraphs3 = [...this.paragraphs3];
+    this.assetsSelected = [];
+  }
+
+  selectAsstsCopy(event: any) {
+    this.assetsSelected = event.selected;
   }
 
   exportCsv() {
