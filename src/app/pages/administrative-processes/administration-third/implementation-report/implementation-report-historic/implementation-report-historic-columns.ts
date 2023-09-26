@@ -1,3 +1,4 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 export const IMPLEMENTATIONREPORTHISTORIC_COLUMNS = {
   // id: {
@@ -11,6 +12,19 @@ export const IMPLEMENTATIONREPORTHISTORIC_COLUMNS = {
   changeDate: {
     title: 'Fecha de Cambio',
     sort: false,
+    valuePrepareFunction: (value: string) => formatDate(value),
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   justification: {
     title: 'Justificación',
@@ -55,28 +69,6 @@ export const ACTAS = {
     type: 'number',
     sort: false,
   },
-  // numeraryFolio: {
-  //   title: 'Folio',
-  //   type: 'string',
-  //   sort: false,
-  // },
-  // numTransfer_: {
-  //   title: 'Transferente',
-  //   type: 'number',
-  //   sort: false,
-  // },
-  // elaborationDate: {
-  //   title: 'Fecha de Elaboración',
-  //   type: 'html',
-  //   sort: false,
-  //   valuePrepareFunction: (text: string) => {
-  //     return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
-  //   },
-  //   filter: {
-  //     type: 'custom',
-  //     component: CustomDateFilterComponent,
-  //   },
-  // },
 };
 export const COPY = {
   numberGood: {
@@ -134,3 +126,11 @@ export const GASTOS = {
     sort: false,
   },
 };
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${day}/${month}/${year}`;
+}
