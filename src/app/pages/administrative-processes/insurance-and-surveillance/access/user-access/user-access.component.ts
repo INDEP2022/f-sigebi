@@ -137,11 +137,7 @@ export class UserAccessComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.userService.deleteAccessUsers(event.data.userKey).subscribe({
           next: response => {
-            this.alert(
-              'success',
-              'El registro se ha eliminado correctamente',
-              ''
-            );
+            this.alert('success', 'El registro se ha eliminado', '');
             this.getAccessUsers();
             // this.loading = false;
           },
