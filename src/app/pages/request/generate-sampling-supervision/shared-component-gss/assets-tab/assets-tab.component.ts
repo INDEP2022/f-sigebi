@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatTableDataSource } from '@angular/material/table';
 import { Store } from '@ngrx/store';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BasePage, TABLE_SETTINGS } from 'src/app/core/shared';
@@ -64,8 +63,6 @@ export class AssetsTabComponent extends BasePage implements OnInit {
     selectMode: 'multi',
     columns: LIST_VERIFY_NONCOMPLIANCE,
   };
-
-  dataSource = new MatTableDataSource(this.assetsSelected);
 
   constructor(
     private fb: FormBuilder,
