@@ -81,11 +81,7 @@ export class AdduserComponent extends BasePage implements OnInit {
     if (this.editDialogData === true) {
       this.userService.editAccessUsers(obj).subscribe({
         next: response => {
-          this.alert(
-            'success',
-            'El registro se ha actualizado correctamente',
-            ''
-          );
+          this.alert('success', 'El registro se ha actualizado', '');
           this.modalRef.content.callback(true);
           this.close();
         },
@@ -97,7 +93,7 @@ export class AdduserComponent extends BasePage implements OnInit {
     } else {
       this.userService.createAccessUsers(obj).subscribe({
         next: response => {
-          this.alert('success', 'El registro se ha creado correctamente', '');
+          this.alert('success', 'El registro se ha creado', '');
           this.modalRef.content.callback(true);
           this.close();
         },
