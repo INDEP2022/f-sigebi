@@ -11,6 +11,7 @@ export enum PaymentEndPoints {
   getFcomerC2 = 'comer-payment-ref/get-fcomer-c2',
   getFcomerC3 = 'comer-payment-ref/get-fcomer-c3',
   getFcomerC4 = 'comer-payment-ref/get-fcomer-c4',
+  desagregarPagos = 'payment/pup-applied',
   BusquedaPagosDet = 'search-payments-det',
   BusquedaPagosMae = 'search-payments-mae',
   getOI = 'application/obtener-oi',

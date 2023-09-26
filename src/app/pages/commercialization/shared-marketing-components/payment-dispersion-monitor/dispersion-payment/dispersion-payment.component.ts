@@ -143,6 +143,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   amountBatch: any = null;
   idPaymentBatch: any = null;
   idOrderBatch: any = null;
+  lote_publico: any = null;
   lotId: any = null;
 
   dataBatch: any = null;
@@ -1169,6 +1170,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   //Seleccionar PAGOREF_CLI
   selectRowCustomerBanks(e: any) {
     console.log(e.data);
+    this.lote_publico = e.data.Public_Batch;
     this.dataBatch = e.data;
     this.idBatch = e.data.batchId;
   }
@@ -1258,9 +1260,17 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     if (this.dataBatch != null) {
       const dataModel = await this.unbundlePaymentsFn();
       let modalConfig = MODAL_CONFIG;
+      let id_tipo_disp = this.id_tipo_disp;
+      let address = this.eventManagement;
+      let eventTpId = this.eventTpId;
+      let lote_publico = this.lote_publico;
       modalConfig = {
         initialState: {
           dataModel,
+          id_tipo_disp,
+          address,
+          eventTpId,
+          lote_publico,
           dateWarrantyLiq: this.form.get('dateMaxPayment').value,
           callback: (e: any) => {
             console.log(e);
