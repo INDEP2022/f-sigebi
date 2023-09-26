@@ -52,6 +52,7 @@ export class ServiceTransportableGoodsFormComponent
   @Input() orderServiceId: number;
   @Input() isUpdate?: boolean = false;
   @Input() typeOrder?: string = null;
+  @Input() justificationRefused: boolean = false;
   title: string = '';
   showButtonServiceManual: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -186,6 +187,9 @@ export class ServiceTransportableGoodsFormComponent
     if (this.isUpdate == true) {
       this.saveForm();
     }
+    if (this.justificationRefused == true) {
+      this.enableJustificationRows();
+    }
   }
 
   getOrderServiceProvided() {
@@ -207,7 +211,7 @@ export class ServiceTransportableGoodsFormComponent
         next: resp => {
           let ttotal = 0;
           resp.data.map((item: any) => {
-            if (this.op == 6 || this.op == 7 || this.op == 8) {
+            if (this.op == 6 || this.op == 7 || this.op == 8 || this.op == 9) {
               this.requestHelperService.changeReadOnly(true);
             }
             const resourceNumber =
@@ -259,13 +263,23 @@ export class ServiceTransportableGoodsFormComponent
         (x: any) => x.id == 'descriptionDifference'
       );
 
-      if ((this.op == 3 && this.typeOrder == 'reception') || this.op == 4) {
+      if (
+        this.op == 3 ||
+        this.op == 4 ||
+        this.op == 10 ||
+        this.op == 11 ||
+        this.op == 12 ||
+        this.op == 13 ||
+        this.op == 14 ||
+        this.op == 15
+      ) {
         noResources.hide = true;
         resultAssessment.hide = true;
         amountNumbercomplies.hide = true;
         porcbreaches.hide = true;
         descriptionDifference.hide = true;
       }
+
       if (this.op == 5 && this.typeOrder != 'reception') {
         noResources.hide = true;
         resultAssessment.hide = true;
@@ -274,11 +288,21 @@ export class ServiceTransportableGoodsFormComponent
         descriptionDifference.hide = true;
       }
 
-      if (this.op == 4 || this.op == 5 || this.op == 14 || this.op == 2) {
+      if (
+        this.op == 4 ||
+        this.op == 5 ||
+        this.op == 2 ||
+        this.op == 13 ||
+        this.op == 15
+      ) {
         if (this.op != 2) {
           noResources.hide = false;
           descriptionDifference.hide = false;
         }
+      }
+
+      if (this.op == 12) {
+        descriptionDifference.hide = false;
       }
 
       let table = null;
@@ -293,6 +317,13 @@ export class ServiceTransportableGoodsFormComponent
         this.op == 6 ||
         this.op == 7 ||
         this.op == 8 ||
+        this.op == 9 ||
+        this.op == 10 ||
+        this.op == 11 ||
+        this.op == 12 ||
+        this.op == 13 ||
+        this.op == 14 ||
+        this.op == 15 ||
         this.op == 2
       ) {
         for (let index = 0; index < tbody.length; index++) {
@@ -333,7 +364,7 @@ export class ServiceTransportableGoodsFormComponent
             }
           }
 
-          if (this.op == 6 || this.op == 7 || this.op == 8) {
+          if (this.op == 6 || this.op == 7 || this.op == 8 || this.op == 9) {
             //const select = ele.children[1].querySelector('#select-input');
             ele.children[2].querySelector('#text-input').disabled = true;
             ele.children[3].querySelector('#text-input').disabled = true;
@@ -341,16 +372,35 @@ export class ServiceTransportableGoodsFormComponent
             ele.children[10].querySelector('#text-input').disabled = true;
             ele.children[13].querySelector('#text-input').disabled = true;
           }
+
+          if (this.op == 10 || this.op == 11 || this.op == 15) {
+            ele.children[7].querySelector('#text-input').disabled = true;
+            ele.children[8].querySelector('#text-input').disabled = true;
+            ele.children[9].querySelector('#text-input').disabled = true;
+          }
+
+          if (this.op == 12 || this.op == 13) {
+            ele.children[7].querySelector('#text-input').disabled = true;
+            ele.children[8].querySelector('#text-input').disabled = true;
+            ele.children[9].querySelector('#text-input').disabled = false;
+            ele.children[13].querySelector('#text-input').disabled = false;
+          }
+
+          if (this.op == 13) {
+            ele.children[7].querySelector('#text-input').disabled = true;
+            ele.children[8].querySelector('#text-input').disabled = true;
+            ele.children[9].querySelector('#text-input').disabled = true;
+            ele.children[10].querySelector('#text-input').disabled = true;
+            ele.children[13].querySelector('#text-input').disabled = true;
+          }
+
+          if (this.op == 14) {
+            ele.children[7].querySelector('#text-input').disabled = false;
+            ele.children[8].querySelector('#text-input').disabled = false;
+            ele.children[9].querySelector('#text-input').disabled = false;
+          }
         }
       }
-      //readonly no. recursos
-      /*if (this.op == 4 || this.op == 5 || this.op == 14) {
-        for (let index = 0; index < tbody.length; index++) {
-          const ele: any = tbody[index];
-          //no. recursos
-          ele.children[9].querySelector('#text-input').disabled = true;
-        }
-      }*/
     }, 300);
   }
 
@@ -422,11 +472,15 @@ export class ServiceTransportableGoodsFormComponent
         }
 
         if (descriptionDifference.hide == false) {
-          //descrip de diferencia
-          if (porcbreaches.hide == false) {
-            row.children[13].querySelector('#text-input').hidden = true;
+          if (this.op == 12) {
+            row.children[9].querySelector('#text-input').hidden = true;
           } else {
-            row.children[10].querySelector('#text-input').hidden = true;
+            //descrip de diferencia
+            if (porcbreaches.hide == false) {
+              row.children[13].querySelector('#text-input').hidden = true;
+            } else {
+              row.children[10].querySelector('#text-input').hidden = true;
+            }
           }
         }
       } else if (this.op == 1 || this.op == 2 || this.op == 3) {
@@ -458,10 +512,10 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   titleTab() {
-    if (this.op != 0) {
-      this.title = 'Servicios Prestados';
-    } else {
+    if (this.op == 12 || this.op == 13 || this.op == 14 || this.op == 15) {
       this.title = 'Servicio Bienes Transportables';
+    } else {
+      this.title = 'Servicios Prestados';
     }
   }
 
@@ -713,5 +767,24 @@ export class ServiceTransportableGoodsFormComponent
         this.getOrderServiceProvided();
       },
     });
+  }
+
+  enableJustificationRows() {
+    let table = null;
+    table = document.getElementById('table');
+    const tbody = table.children[0].children[1].children;
+
+    for (let index = 0; index < tbody.length - 1; index++) {
+      const ele: any = tbody[index];
+
+      if (this.op == 13) {
+        ele.children[7].querySelector('#text-input').disabled = false;
+        ele.children[10].querySelector('#text-input').disabled = false;
+      } else if (this.op == 10) {
+        ele.children[4].querySelector('#text-input').disabled = false;
+        ele.children[5].querySelector('#text-input').disabled = false;
+        ele.children[6].querySelector('#text-input').disabled = false;
+      }
+    }
   }
 }

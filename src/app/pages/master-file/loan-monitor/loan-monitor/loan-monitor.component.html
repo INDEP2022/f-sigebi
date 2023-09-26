@@ -4,20 +4,21 @@
   </div>
   <div body>
     <div class="row mt-4 mb-3">
-      <form action="" class="form-material" [formGroup]="form">
+      <form
+        action=""
+        class="form-material"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit($event)">
         <div class="row mt-4">
           <div class="col-md-6">
             <form-field [control]="form.get('file')" label="No expediente">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="file" />
+              <input type="text" class="form-control" formControlName="file" />
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field [control]="form.get('borrowedTo')" label="Prestado a">
               <input
-                type="number"
+                type="text"
                 class="form-control"
                 formControlName="borrowedTo" />
             </form-field>
@@ -27,7 +28,7 @@
           <div class="col-md-6">
             <form-field [control]="form.get('document')" label="Documento">
               <input
-                type="number"
+                type="text"
                 class="form-control"
                 formControlName="document" />
             </form-field>
@@ -35,7 +36,7 @@
           <div class="col-md-6">
             <form-field [control]="form.get('adscritTo')" label="Adscrito a">
               <input
-                type="number"
+                type="text"
                 class="form-control"
                 formControlName="adscritTo" />
             </form-field>
@@ -43,7 +44,7 @@
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2 text-right">
           <div class="form-group">
-            <button type="button" class="btn btn-primary active btn-sm">
+            <button type="submit" class="btn btn-primary active btn-sm">
               CONSULTAR
             </button>
           </div>

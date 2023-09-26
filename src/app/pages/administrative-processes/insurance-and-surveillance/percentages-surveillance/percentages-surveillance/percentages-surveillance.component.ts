@@ -62,7 +62,13 @@ export class PercentagesSurveillanceComponent
     private dialogService: BsModalService
   ) {
     super();
-
+    this.settings = {
+      ...this.settings,
+      edit: {
+        editButtonContent:
+          '<i class="fa fa-pencil-alt text-warning mx-2 pl-3"></i>',
+      },
+    };
     this.settings.columns = PERCENTAGE_COLUMNS;
 
     this.settings.hideSubHeader = false;
@@ -264,7 +270,7 @@ export class PercentagesSurveillanceComponent
       next: response => {
         console.log(response);
 
-        this.alert('success', 'Registro eliminado correctamente', '');
+        this.alert('success', 'El registro se ha eliminado', '');
         this.getPercentages();
         // this.loading = false;
       },
@@ -325,7 +331,7 @@ export class PercentagesSurveillanceComponent
         .putVigProcessPercentages(this.editDialogData.cveProcess as any, values)
         .subscribe({
           next: () => {
-            this.alert('success', 'Registro actualizado correctamente', '');
+            this.alert('success', 'El registro se ha actualizado', '');
             this.closeDialogPercentage();
             this.getPercentages();
             // this.sources.update(this.editDialogData, values);
@@ -342,7 +348,7 @@ export class PercentagesSurveillanceComponent
       next: response => {
         console.log('treu', response);
         if (response) {
-          this.alert('success', 'Registro creado correctamente', '');
+          this.alert('success', 'El registro se ha creado', '');
           this.closeDialogPercentage();
           this.getPercentages();
           // this.totalItems++;

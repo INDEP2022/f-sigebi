@@ -107,6 +107,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
     this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
       queryParams: {},
     });
+    // this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
   payload: any;
@@ -493,6 +494,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
             },
           }
         );
+        this.modalRef.content.callback(true);
         this.modalRef.hide();
       },
       error: error => {
@@ -535,6 +537,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
             },
           }
         );
+        this.modalRef.content.callback(true);
         this.modalRef.hide();
       },
       error: error => {

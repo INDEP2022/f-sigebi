@@ -25,7 +25,7 @@ export class CostsResumeComponent extends BasePage implements OnInit {
     private datePipe: DatePipe,
     private jasperService: SiabService,
     private sanitizer: DomSanitizer,
-    private modalService: BsModalService,
+    private modalService: BsModalService
   ) {
     super();
   }
@@ -92,7 +92,7 @@ export class CostsResumeComponent extends BasePage implements OnInit {
       ),
     };
 
-    console.log("param -> ", params);
+    console.log('param -> ', params);
 
     this.jasperService
       //.fetchReport('RRESUMENCOSTOS', params)
@@ -107,7 +107,7 @@ export class CostsResumeComponent extends BasePage implements OnInit {
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => { },
+              callback: (data: any) => {},
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
