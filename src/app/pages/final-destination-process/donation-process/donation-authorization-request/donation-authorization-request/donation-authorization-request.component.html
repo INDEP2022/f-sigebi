@@ -8,6 +8,18 @@
       class="form-material form-horizontal"
       [formGroup]="form"
       (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="d-flex justify-content-end mb-2">
+          <div>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="findPropose()">
+              <i class="bx bx-list-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="row mt-5">
         <div class="col-12 col-md-4">
           <div class="mb-3 pl-4 pr-4">
@@ -15,7 +27,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="proposal" />
+                formControlName="proposal"
+                readonly />
             </form-field>
           </div>
         </div>
@@ -27,7 +40,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="classifNumbGood" />
+                formControlName="classifNumbGood"
+                readonly />
             </form-field>
           </div>
         </div>
@@ -39,7 +53,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="descripClassif" />
+                formControlName="descripClassif"
+                readonly />
             </form-field>
           </div>
         </div>

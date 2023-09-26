@@ -46,19 +46,19 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
   },
 
   andmidserv: {
-    title: 'Únidad de medida de servico',
+    title: 'Únidad de Medida de Servico',
     type: 'string',
     sort: false,
   },
 
   classificationService: {
-    title: 'Clasificación de servicio',
+    title: 'Clasificación de Servicio',
     type: 'string',
     sort: false,
   },
 
   commentService: {
-    title: 'Comentarios de servico',
+    title: 'Comentarios de Servico',
     type: 'custom',
     class: 'custom',
     filter: false,
@@ -70,17 +70,19 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
   durationTime: {
     title: 'Duración (Horas)',
     type: 'custom',
-    class: 'custom-field',
+    class: 'custom',
     filter: false,
+    sort: false,
     renderComponent: InputFieldComponent,
     onComponentInitFunction(instance?: any) {},
   },
 
   resourcesNumber: {
-    title: 'No. resources',
+    title: 'No. Recursos',
     type: 'custom',
-    class: 'custom-field',
+    class: 'custom',
     filter: false,
+    sort: false,
     renderComponent: InputFieldComponent,
     onComponentInitFunction(instance?: any) {},
   },
@@ -89,14 +91,15 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
   resourcesReal: {
     title: 'Recurso Real',
     type: 'custom',
-    class: 'custom-field',
+    class: 'custom',
     filter: false,
+    sort: false,
     renderComponent: InputFieldComponent,
     onComponentInitFunction(instance?: any) {},
   },
 
   priceUnitary: {
-    title: 'Precio unitario',
+    title: 'Precio Unitario',
     type: 'string',
     sort: false,
   },
@@ -111,8 +114,9 @@ export const SERVICE_TRANSPORTABLE_COLUMNS = {
   descriptionDifference: {
     title: 'Descripción de Diferencia',
     type: 'custom',
-    class: 'custom-field',
+    class: 'custom',
     filter: false,
+    sort: false,
     renderComponent: InputFieldComponent,
     onComponentInitFunction(instance?: any) {},
   },
@@ -163,7 +167,7 @@ export const SERVICE_TRANSPORTABLE_COLUMNS_CAPTURE = {
   },
 
   andmidserv: {
-    title: 'Únidad de medida de servico',
+    title: 'Únidad de Medida de Servico',
     type: 'string',
     sort: false,
   },

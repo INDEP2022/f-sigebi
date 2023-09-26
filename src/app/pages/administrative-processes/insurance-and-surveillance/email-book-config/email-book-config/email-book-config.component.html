@@ -1,12 +1,9 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">LIBRETA DE DIRECCIONES ELECTRÓNICAS</h5>
+    <h5 class="title">LIBRETA DE CORREOS</h5>
   </div>
 
   <div body>
-    <div class="ch-content">
-      <h5 class="title">DELEGACIONES</h5>
-    </div>
     <form class="form-material">
       <div class="row mt-4">
         <div class="col-md-6">
@@ -35,10 +32,12 @@
       </div>
       <div>
         <button
-          (click)="createEmailBook()"
-          class="btn btn-sm btn-primary shadow-none active">
-          <i class="fas fa-plus"></i> Agregar Libreta de Direcciones
-          Electrónicas
+          type="button"
+          tooltip="Agregar"
+          containerClass="tooltip-style"
+          class="btn btn-info btn-sm active ml-2 mr-2"
+          (click)="createEmailBook()">
+          Agregar <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
       </div>
       <div class="row pt-4 table-container">
@@ -55,7 +54,6 @@
         </div>
       </div>
       <app-pagination
-        [pageSizeOptions]="[1, 3, 5]"
         [params]="params"
         [totalItems]="totalItems"></app-pagination>
     </form>

@@ -17,7 +17,7 @@
             Limpiar <i class="fas fa-eraser"> </i>
           </button>
           <button
-            class="btn btn-primary btn-sm active m-3"
+            class="btn btn-primary btn-sm active m-1"
             (click)="keyProceedingchange()">
             Consultar Acta
             <i class="bx bx-search-alt bx-sm float-icon"></i>
@@ -50,7 +50,7 @@
 
         <form-field
           class="col-md-4"
-          label="Oficio de solicitud"
+          label="Oficio de Solicitud"
           [control]="proceedingForm.get('keysProceedings')">
           <input
             type="text"
@@ -87,7 +87,7 @@
       <div class="row pt-4">
         <form-field
           class="col-md-4"
-          label="Fecha de recepción"
+          label="Fecha de Recepción"
           [control]="proceedingForm.get('elaborationDate')">
           <input
             type="text"
@@ -103,7 +103,7 @@
         </form-field>
         <form-field
           class="col-md-4"
-          label="Fecha de alcance"
+          label="Fecha de Alcance"
           [control]="proceedingForm.get('datePhysicalReception')">
           <input
             type="text"
@@ -121,7 +121,7 @@
         </form-field>
         <form-field
           class="col-md-4"
-          label="Fecha de intergracion"
+          label="Fecha de Intergracion"
           [control]="proceedingForm.get('closeDate')">
           <input
             type="text"
@@ -166,7 +166,7 @@
     <div class="row">
       <div class="col d-flex justify-content-between">
         <div>
-          <h5>Folio de escaneo: {{ controls.universalFolio.value }}</h5>
+          <h5>Folio de Escaneo: {{ controls.universalFolio.value }}</h5>
         </div>
         <div>
           <button
