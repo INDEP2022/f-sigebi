@@ -153,7 +153,7 @@ export class ChangePeriodComponent extends BasePage {
     params.sortBy = `delegationNumber:ASC`;
     return new Promise((resolve, reject) => {
       this.survillanceService
-        .getViewVigDelegations(params.getParams())
+        .getViewVigDelegations_(params.getParams())
         .subscribe({
           next: async (response: any) => {
             console.log('resss', response);

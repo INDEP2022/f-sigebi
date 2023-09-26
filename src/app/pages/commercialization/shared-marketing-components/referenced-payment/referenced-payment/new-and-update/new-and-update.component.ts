@@ -554,7 +554,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
         // params.addFilter('cve_banco', lparams.text);
       }
-
+    params.sortBy = 'idCode:ASC';
     // this.hideError();
     return new Promise((resolve, reject) => {
       this.accountMovementService

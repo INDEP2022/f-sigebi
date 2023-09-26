@@ -7,4 +7,5 @@ export enum AppraiseEndpoints {
   Delegation = 'application/desCordination',
   ComerAvaluo = 'eat-appraisal',
   ComerDetAvaluo = 'eat-det-appraisal',
+  ComerAvaluoWhere = 'application/get-comer-avaluo-where',
 }

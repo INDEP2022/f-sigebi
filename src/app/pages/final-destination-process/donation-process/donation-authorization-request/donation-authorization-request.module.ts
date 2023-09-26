@@ -5,10 +5,15 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DonationAuthorizationRequestRoutingModule } from './donation-authorization-request-routing.module';
 import { DonationAuthorizationRequestComponent } from './donation-authorization-request/donation-authorization-request.component';
+import { FindProposeComponent } from './find-propose/find-propose.component';
 import { ModalViewComponent } from './modal-view/modal-view.component';
 
 @NgModule({
-  declarations: [DonationAuthorizationRequestComponent, ModalViewComponent],
+  declarations: [
+    DonationAuthorizationRequestComponent,
+    ModalViewComponent,
+    FindProposeComponent,
+  ],
   imports: [
     CommonModule,
     DonationAuthorizationRequestRoutingModule,

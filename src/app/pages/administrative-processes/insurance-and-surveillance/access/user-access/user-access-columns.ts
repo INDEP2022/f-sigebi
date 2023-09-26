@@ -3,11 +3,13 @@ export const USER_ACCESS_COLUMNS = {
     title: 'Usuario',
     type: 'string',
     sort: false,
+    width: '50%',
   },
   userRole: {
     title: 'Rol',
     type: 'number',
     sort: false,
+    width: '25%',
     filter: {
       type: 'list',
       config: {
@@ -30,6 +32,7 @@ export const USER_ACCESS_COLUMNS = {
     title: 'Estatus',
     type: 'number',
     sort: false,
+    width: '25%',
     filter: {
       type: 'list',
       config: {

@@ -82,8 +82,18 @@ export class AppraiseService extends HttpService {
 
   getComerDetAvaluo(appraisal: number, status: string, params: any) {
     return this.get(
-      `${AppraiseEndpoints.ComerDetAvaluo}?filter.idAppraisal=$eq:${appraisal}&filter.good.status=$ilike:${status}`,
+      `${AppraiseEndpoints.ComerDetAvaluo}?filter.idAppraisal=$eq:${appraisal}`, //&filter.good.status=$ilike:${status}
       params
     );
+  }
+
+  getComerAvaluoWhere(appraisal: number, address: string) {
+    return this.get(
+      `${AppraiseEndpoints.ComerAvaluoWhere}/${appraisal}/${address}`
+    );
+  }
+
+  updateEatDetAppraisal(data: any) {
+    return this.put(AppraiseEndpoints.ComerDetAvaluo, data);
   }
 }

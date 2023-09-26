@@ -177,18 +177,35 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       );
       return;
     }
-    const initDate = moment(dates.initialDate).format('YYYY-MM-DD');
-    const endDate = moment(dates.finalDate).format('YYYY-MM-DD');
 
-    this.params2
-      .getValue()
-      .addFilter('creationDate', `${initDate},${endDate}`, SearchFilter.BTW);
+    this.addParametersFilter(dates);
+
     console.log(this.storeSelected);
 
     //this.params2.getValue().addFilter('requestId', event.data.requestId.id);
-    /*this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getGoods();
-    });*/
+    });
+  }
+
+  addParametersFilter(dates: any) {
+    this.params2 = new BehaviorSubject<FilterParams>(new FilterParams());
+    const initDate = moment(dates.initialDate).format('DD/MM/YYYY');
+    const endDate = moment(dates.finalDate).format('DD/MM/YYYY');
+
+    this.params2.getValue().addFilter3('sortBy', `organizationCode:ASC`);
+
+    this.params2.getValue().addFilter('organizationId', 191, SearchFilter.EQ);
+
+    this.params2.getValue().addFilter('entTransferentId', 643, SearchFilter.EQ);
+
+    this.params2
+      .getValue()
+      .addFilter('initialPeriod', `${initDate},${endDate}`, SearchFilter.BTW);
+
+    this.params2
+      .getValue()
+      .addFilter('finalPeriod', `${initDate},${endDate}`, SearchFilter.BTW);
   }
 
   selectAssts(event: any) {

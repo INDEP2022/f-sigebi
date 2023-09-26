@@ -238,6 +238,14 @@ export class PaqDestinoDetComponent extends BasePage {
         this.clearTable();
         return;
       }
+      // this.goodProcessService
+      //   .updateGoodsByPackage(this.noPackage.value.numberPackage)
+      //   .pipe(take(1))
+      //   .subscribe({
+      //     next: response => {
+      //       console.log(response);
+      //     },
+      //   });
       this.loading = true;
       const newParams = new ListParams();
       newParams['filter.numberPackage'] = this.noPackage.value.numberPackage;
