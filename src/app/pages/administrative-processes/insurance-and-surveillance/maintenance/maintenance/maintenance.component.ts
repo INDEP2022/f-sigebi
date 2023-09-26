@@ -128,7 +128,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
             'Verifique que estos pertenezcan a la delegación seleccionada'
           );
         } else {
-          this.alert('error', 'Ha Ocurrido un Error', error.error.message);
+          this.alert('error', 'Ha ocurrido un error', error.error.message);
         }
       },
     });
@@ -165,11 +165,11 @@ export class MaintenanceComponent extends BasePage implements OnInit {
         ) {
           this.alert(
             'error',
-            'Ha Ocurrido un Error',
+            'Ha ocurrido un error',
             'Ya existe el período destino indicado'
           );
         } else {
-          this.alert('error', 'Ha Ocurrido un Error', error.error.message);
+          this.alert('error', 'Ha ocurrido un error', error.error.message);
         }
       },
     });
@@ -189,7 +189,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Cambio Bienes de Número Aleatorio',
-            `Se Realizó el Cambio de Bien ${params.pGoodNumber} en el Número Aleatorio ${params.pRandom}, para la ${delegationName} del proceso de ${proceso}`
+            `Se realizó el cambio del Bien ${params.pGoodNumber} en el número aleatorio ${params.pRandom}, para la ${delegationName} del proceso de ${proceso}`
           );
         } else {
           let proceso = null;
@@ -201,7 +201,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Cambio Bienes de Número Aleatorio',
-            `Se Realizó el Cambio de Bien ${params.pGoodNumber} en el Número Aleatorio ${params.pRandom}, para la ${delegationName} del proceso de ${proceso}`
+            `Se realizó el cambio de Bien ${params.pGoodNumber} en el número aleatorio ${params.pRandom}, para la ${delegationName} del proceso de ${proceso}`
           );
         }
       },
@@ -217,7 +217,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
             'Verifique que estos pertenezcan a la delegación seleccionada'
           );
         } else {
-          this.alert('error', 'Ha Ocurrido un Error', error.error.message);
+          this.alert('error', 'Ha ocurrido un error', error.error.message);
         }
       },
     });

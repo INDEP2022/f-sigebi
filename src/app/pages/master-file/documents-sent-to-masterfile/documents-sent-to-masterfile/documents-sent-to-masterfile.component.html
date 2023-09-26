@@ -7,64 +7,87 @@
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-md-6">
-            <div class="ch-content">
-              <h5 class="title">ENVIO</h5>
-            </div>
-            <div class="mt-4">
-              <form-field [control]="form.get('file')" label="No expediente">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="file"
-                  (change)="onFilterChange($event)" />
-              </form-field>
-            </div>
-            <div class="mt-4">
-              <form-field [control]="form.get('area')" label="Area">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="area"
-                  (change)="onFilterChange($event)" />
-              </form-field>
-            </div>
-            <div class="mt-4">
-              <form-field [control]="form.get('sentBy')" label="Enviado por">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="sentBy"
-                  (change)="onFilterChange($event)" />
-              </form-field>
-            </div>
+            <app-card [header]="true">
+              <div class="ch-content" header>
+                <h5 class="title">ENVIO</h5>
+              </div>
+              <div body>
+                <div class="mt-4">
+                  <form-field
+                    [control]="form.get('file')"
+                    label="No expediente">
+                    <input
+                      type="number"
+                      class="form-control"
+                      formControlName="file" />
+                  </form-field>
+                </div>
+                <div class="mt-4">
+                  <form-field [control]="form.get('area')" label="Area">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="area" />
+                  </form-field>
+                </div>
+                <div class="mt-4">
+                  <form-field
+                    [control]="form.get('sentBy')"
+                    label="Enviado por">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="sentBy" />
+                  </form-field>
+                </div>
+              </div>
+            </app-card>
           </div>
           <div class="col-md-6">
-            <div class="ch-content">
-              <h5 class="title">ARCHIVO GENERAL</h5>
-            </div>
-            <div class="mt-4">
-              <form-field [control]="form.get('record')" label="Archivo">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="record"
-                  (change)="onFilterChange($event)" />
-              </form-field>
-            </div>
-            <div class="mt-4">
-              <form-field
-                [control]="form.get('responsible')"
-                label="Responsable">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="responsible"
-                  (change)="onFilterChange($event)" />
-              </form-field>
-            </div>
+            <app-card [header]="true">
+              <div class="ch-content" header>
+                <h5 class="title">ARCHIVO GENERAL</h5>
+              </div>
+              <div body>
+                <div class="mt-4">
+                  <form-field [control]="form.get('record')" label="Archivo">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="record" />
+                  </form-field>
+                </div>
+                <div class="mt-4">
+                  <form-field
+                    [control]="form.get('responsible')"
+                    label="Responsable">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="responsible" />
+                  </form-field>
+                </div>
+              </div>
+            </app-card>
           </div>
         </div>
-
+        <!--  -->
+        <div id="buttons" class="d-flex">
+          <div class="ml-auto">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="onFilterChange()">
+              Buscar
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+            <!--  -->
+            <button class="btn btn-danger btn-sm active ml-3" (click)="reset()">
+              Limpiar <i class="fas fa-eraser"> </i>
+            </button>
+          </div>
+        </div>
+        <!--  -->
         <div class="row pt-4">
           <div class="col-md-12">
             <div [class]="loading ? 'table-loading' : ''">

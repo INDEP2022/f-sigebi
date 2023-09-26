@@ -761,10 +761,6 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       }
     } catch (err) {
       // Verificar si err es de tipo HttpErrorResponse
-      if (err instanceof HttpErrorResponse) {
-      } else {
-        this.alert('error', 'Error desconocido.', '');
-      }
     }
     if (duplicateNumbers.length > 0) {
       this.alert(
@@ -776,6 +772,9 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       this.file.get('processed').patchValue('0');
       this.file.get('recordsProcessed').patchValue(insertResp['total']);
       return;
+    }
+    if (this.file.get('wrong').value > 0) {
+      this.alert('error', 'Error desconocido.', '');
     }
   }
 
