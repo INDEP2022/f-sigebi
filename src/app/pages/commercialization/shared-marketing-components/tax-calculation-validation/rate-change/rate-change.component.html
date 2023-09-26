@@ -6,7 +6,9 @@
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
         <div class="col-md-6">
-          <app-goods-shared [form]="form"></app-goods-shared>
+          <app-goods-shared
+            [form]="form"
+            [patchValue]="true"></app-goods-shared>
         </div>
       </div>
       <div class="row mb-3 mt-3">

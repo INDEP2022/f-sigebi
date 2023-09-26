@@ -3,22 +3,22 @@
     <h5 class="modal-title">{{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <!-- <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
         <div class="col-md-6">
           <app-goods-shared [form]="form"></app-goods-shared>
         </div>
       </div>
-    </form>
+    </form> -->
     <!--TABLE-->
-    <div class="row pt-4">
+    <div class="row pt-1">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="data"
-            (userRowSelect)="selectRow($event.data)">
+            (userRowSelect)="selectRow($event)">
           </ng2-smart-table>
         </div>
       </div>
@@ -29,7 +29,21 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          [loading]="loading"
+          text="Aceptar"
+          [loadingText]="'Aceptando'"
+          (confirm)="accept()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          text="Confirmar"
+          [disabled]="!flagSubmit"
+          icon="fa fa-check"
+          [loadingText]="'Confirmando'"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

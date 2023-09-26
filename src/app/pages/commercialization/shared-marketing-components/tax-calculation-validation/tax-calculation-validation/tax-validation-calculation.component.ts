@@ -72,6 +72,8 @@ export class TaxValidationCalculationComponent
   headerString: string =
     'NO., NO._BIEN, DESCRIPCION, ESTATUS, CLASIF,  TIPO, FECHA, FECHA_VIG, NOMBRE_VAL., TIPO_REF, SUPERFICIE_TERRENO,  SUPERFICIE_CONSTRUCCION, %_TERRENO,   %_CONSTR_HAB, %_CONSTR_COMER, %_INST_ESP, %_OTROS, %_TOTAL, VALOR_REF_CALCULADO, VALOR_TERRENO,  VALOR_CONSTR_HAB, VALOR_CONSTR_COMER, VALOR_INST_ESP, VALOR_OTROS, DIFERENCIA,   TASA_IVA_TERRENO,  TASA_IVA_CONSTR_HAB,  TASA_IVA_CONSTR_COMERCIAL,  TASA_IVA_INSTALACIONES_ESP,  TASA_IVA_OTROS, IVA_TERRENO,  IVA_CONSTR_HAB,  IVA_CONST_COMERCIAL,  IVA_INSTALACIONES_ESP,  IVA_OTROS,  VALOR_TOTAL_IVA_CALCULADO, VALOR_CON_IVA_INCLUIDO,  OBSERVACIONES,  VALIDACION_IVA, CONFIRMADO';
 
+  flagDetail: boolean = true;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -350,6 +352,21 @@ export class TaxValidationCalculationComponent
   }
 
   openModalInconsistencies(context?: Partial<InconsistenciesComponent>): void {
+    let config: ModalOptions = {
+      initialState: {
+        dataDet: this.dataDet,
+        callback: (next: boolean) => {
+          //if (next) this.find();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    // console.log('Config: ', config);
+    this.modalService.show(InconsistenciesComponent, config);
+  }
+
+  openModalInconsistencies2(context?: Partial<InconsistenciesComponent>): void {
     const modalRef = this.modalService.show(InconsistenciesComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',
@@ -539,6 +556,7 @@ export class TaxValidationCalculationComponent
     this.dataDetArr = [];
     console.log('row ', rows);
     if (rows.length > 0) {
+      this.flagDetail = false;
       this.selectedRows = rows;
       console.log('Rows Selected->', this.selectedRows);
       console.log('SelectRows', this.selectedRows[0].id);
@@ -546,6 +564,7 @@ export class TaxValidationCalculationComponent
       this.getComerDetAvaluo(this.appraisal);
     } else {
       this.selectedRows = [];
+      this.flagDetail = true;
     }
   }
 
@@ -1120,14 +1139,81 @@ export class TaxValidationCalculationComponent
   }
 
   generateExcel() {
-    const headerArray = this.headerString.split(',');
-    let aux: any[] = [];
-    aux.push(headerArray);
-    aux.push(this.dataDet);
-    this.exportXlsx('export', aux);
+    this.alertQuestion(
+      'question',
+      '¿Descargar el Formato de Avaluo? ',
+      '¿Está de acuerdo?'
+    ).then(q => {
+      if (q.isConfirmed) {
+        const headerArray = this.headerString.split(',');
+        console.log('Const headerArray-> ', headerArray);
+        let aux: any[] = [];
+        //aux.push(headerArray);
+        //aux.push({ name: 'John', city: 'Seattle' });
+        //aux.push({ name: 'Mike', city: 'Los Angeles' });
+        //aux.push({ name: 'Zach', city: 'New York' });
+        //aux.push(headerArray);
+        let item = {
+          'NO.': 12,
+          'NO._BIEN': 150,
+        };
+
+        //aux.push(item);
+        aux = [
+          /*  {
+              "NO." : this.dataDet.idDetAppraisal,
+      			  "NO._BIEN": 	 
+      			  "DESCRIPCION":	 
+      			  "ESTATUS": 
+      			  "CLASIF":	  
+      			  "TIPO":
+      			  "FECHA": 
+      			  "FECHA_VIG":	 
+      			  "NOMBRE_VAL.":	 
+      			  "TIPO_REF":	 
+      			  "SUPERFICIE_TERRENO":	  
+      			  "SUPERFICIE_CONSTRUCCION":	 
+      			  "%_TERRENO"	:   
+      			  "%_CONSTR_HAB":	 
+      			  "%_CONSTR_COMER":	 
+      			  "%_INST_ESP":	 
+      			  "%_OTROS":	 
+      			  "%_TOTAL":	 
+      			  "VALOR_REF_CALCULADO":	 
+      			  "VALOR_TERRENO":	  
+      			  "VALOR_CONSTR_HAB":	 
+      			  "VALOR_CONSTR_COMER":	 
+      			  "VALOR_INST_ESP":	 
+      			  "VALOR_OTROS":	 
+      			  "DIFERENCIA":	   
+      			  "TASA_IVA_TERRENO":	  
+      			  "TASA_IVA_CONSTR_HAB"	:  
+      			  "TASA_IVA_CONSTR_COMERCIAL":	  
+      			  "TASA_IVA_INSTALACIONES_ESP":	  
+      			  "TASA_IVA_OTROS":	 
+      			  "IVA_TERRENO":	  
+      			  "IVA_CONSTR_HAB":	  
+      			  "IVA_CONST_COMERCIAL":	  
+      			  "IVA_INSTALACIONES_ESP":	  
+      			  "IVA_OTROS":	  
+      			  "VALOR_TOTAL_IVA_CALCULADO":	 
+      			  "VALOR_CON_IVA_INCLUIDO":	  
+      			  "OBSERVACIONES":	  
+      			  "VALIDACION_IVA":	 
+      			  "CONFIRMADO":
+            } */
+        ];
+        console.log('Data let Aux-> ', aux);
+        console.log('Data let Aux-> ', this.dataDet);
+        this.exportXlsx('export', aux);
+      } else {
+        return;
+      }
+    });
   }
 
   exportXlsx(opcion: string, data: any[]) {
+    console.log('exportXlsx Data-> ', data);
     if (data.length == 0) {
       this.onLoadToast('warning', 'Archivo', ERROR_EXPORT);
     } else {
@@ -1136,8 +1222,9 @@ export class TaxValidationCalculationComponent
       // });
 
       //this.getFilterProceedings();
+
       const workSheet = XLSX.utils.json_to_sheet(data, {
-        skipHeader: true,
+        skipHeader: false,
       });
       const workBook: XLSX.WorkBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workBook, workSheet, 'Hoja1');

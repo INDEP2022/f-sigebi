@@ -94,6 +94,7 @@
           (click)="search()"
           [disabled]="this.form.invalid">
           Consultar
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
       </div>
     </div>
@@ -142,9 +143,11 @@
       </div>
       <div class="col-md-3">
         <button
-          class="btn btn-secondary btn-sm active w-100"
+          class="btn btn-sm btn-success active w-100"
+          [disabled]="flagDetail"
           (click)="generateExcel()">
           Descargar Formato
+          <i class="bx bx-download float-icon"></i>
         </button>
       </div>
     </div>
