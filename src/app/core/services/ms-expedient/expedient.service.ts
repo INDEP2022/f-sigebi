@@ -88,4 +88,19 @@ export class ExpedientService extends HttpService {
     const route = `${ExpedientEndpoints.Base}?filter.id=$eq:${expedient}`;
     return this.get(route);
   }
+
+  getDocumentsLoans(id: any, params: any) {
+    const route = `${ExpedientEndpoints.documentsLoans}?filter.no_loan=$eq:${id}`;
+    return this.get(route, params);
+  }
+
+  postDocumentLoan(params: any) {
+    const route = `${ExpedientEndpoints.documentLoan}`;
+    return this.post(route, params);
+  }
+
+  updateDocumentLoan(params: any) {
+    const route = `${ExpedientEndpoints.documentLoan}`;
+    return this.put(route, params);
+  }
 }

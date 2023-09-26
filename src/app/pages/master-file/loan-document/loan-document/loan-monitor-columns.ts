@@ -1,3 +1,5 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const LOAN_DOCUMENT_COLUMNS = {
   noRecord: {
     title: 'No Expediente.',
@@ -16,12 +18,26 @@ export const LOAN_DOCUMENT_COLUMNS = {
   },
   devolutionDate: {
     title: 'Fecha de devolución teorica',
-    type: 'string',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   devolutionDateReal: {
     title: 'Fecha de devolución real',
-    type: 'string',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
 };

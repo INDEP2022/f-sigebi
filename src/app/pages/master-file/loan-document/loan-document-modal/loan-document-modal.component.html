@@ -1,0 +1,81 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">{{ title }}</h5>
+  </div>
+  <div body>
+    <div class="row mt-4 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <form-field [control]="form.get('Noloan')" label="No. Prestamo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="Noloan"
+                readOnly />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('folio')" label="No. Folio">
+              <input type="text" class="form-control" formControlName="folio" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('proceeding')"
+              label="No. Expediente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="proceeding" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-2"></div>
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('devDate')"
+              label="Fecha de devolución teórica">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="devDate"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('loanDate')"
+              label="Fecha de devolución real">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="loanDate"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-2"></div>
+        </div>
+      </form>
+    </div>
+    <div class="row d-flex justify-contend-center">
+      <div class="col-md-4"></div>
+      <div class="col-md-2">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="saveEdit()">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-danger btn-sm active mr-3" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+      <div class="col-md-4"></div>
+    </div>
+  </div>
+</app-card>
