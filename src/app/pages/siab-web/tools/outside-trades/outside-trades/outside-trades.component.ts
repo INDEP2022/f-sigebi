@@ -43,6 +43,7 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
   maxDate = new Date();
   noGes: number;
   valid1: boolean;
+  enabled = false;
 
   ngOnInit(): void {
     this.createForm();
@@ -66,8 +67,7 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
     });
   }
   async getData() {
-    //console.log(this.authService.decodeToken());
-    //verificar si la autenticacion es correcta
+    this.form.disable();
     if (this.authService.decodeToken().azp === 'indep-auth') {
       /*this.activatedRoute.queryParams
         .pipe(takeUntil(this.$unSubscribe))
@@ -78,13 +78,12 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
         });*/
 
       this.a = localStorage.getItem('VEROFICIOS'); // no se en el Token que exactamente seria el veroficios--- this.authService.decodeToken().exp
-      //this.a = 'XD'; // no se en el Token que exactamente seria el veroficios--- this.authService.decodeToken().exp
       if (this.noGes) {
         this.val_no_ges = this.noGes;
+        this.enabled = true;
       } else {
         this.val_no_ges = null;
       }
-      console.log('this.a', this.a);
       try {
         if (this.val_no_ges == null) {
           if (this.a === 'SIABWEB') {
@@ -120,11 +119,9 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
           this.sessionInvalid = true;
           this.tip = await this.getTipoOficio(this.val_no_ges);
           this.tipos_oficio = this.tip;
-          console.log(this.tipos_oficio);
 
           if (this.tipos_oficio == 'EXTERNO') {
             this.principal = await this.getBasicBody(this.noOFGestion);
-            console.log(this.principal);
 
             this.form.controls['cve_of_gestion'].setValue(
               this.principal.cve_of_gestion
@@ -201,9 +198,6 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
       }
     } else {
       this.sessionInvalid = true;
-      //this.onLoadToast('success', 'ay caramba', 'Actualizado Correctamente');
-      console.log('aqui');
-      //this.router.navigate([`/auth/login`]);
       localStorage.clear();
     }
   }
@@ -304,7 +298,6 @@ export class OutsideTradesComponent extends BasePage implements OnInit {
   printReport(report: string, params: any) {
     this.siabService.fetchReport(report, params).subscribe({
       next: response => {
-        //  console.log('habemus pdf');
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         let config = {
