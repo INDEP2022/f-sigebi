@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
@@ -148,18 +148,44 @@ export class WarehouseInquiriesComponent extends BasePage implements OnInit {
   }
 
   select(event: IWarehouse) {
-    event
-      ? this.openModal(event.idWarehouse)
-      : this.alert('info', 'Ooop...', 'Éste Almacén no contiene Bienes');
+    console.error(event);
+    this.openModal(event.idWarehouse);
   }
 
-  openModal(idWarehouse: any): void {
+  /*   openModal1(idWarehouse: any): void {
     this.modalService.show(ModalListGoodsComponent, {
       initialState: idWarehouse,
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
   }
+
+  openModal12(idWarehouse: any) {
+    let config: ModalOptions = {
+      initialState: {
+        idWarehouse: idWarehouse,
+        callback: (data: any) => {
+          console.log(data);
+        },
+      }, //pasar datos por aca
+      class: 'modal-sm', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(ModalListGoodsComponent, config);
+  } */
+
+  openModal(idWarehouse: any) {
+    let config: ModalOptions = {
+      initialState: {
+        idWarehouse,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ModalListGoodsComponent, config);
+  }
+
   getWarehouses() {
     this.loading = true;
     let params = {
