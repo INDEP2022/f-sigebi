@@ -204,8 +204,8 @@ export class MaintenanceMailConfigurationComponent
     const message: string = 'Actualizado';
     this.alert(
       'success',
-      'Datos generales del correo',
-      'Registro actualizado correctamente'
+      'El correo de responsables de envío ha sido actualizado',
+      ''
     );
     this.loading = false;
     this.modalRef.content.callback(true);
