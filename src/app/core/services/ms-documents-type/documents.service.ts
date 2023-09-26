@@ -59,6 +59,13 @@ export class DocumentsService implements ICrudMethods<IDocument> {
     return this.requestRepository.update(this.route, id, model);
   }
 
+  updateDocument2(
+    id: string | number,
+    model: IDocument
+  ): Observable<IListResponse<IDocument>> {
+    return this.requestRepository.update(this.route, id, model);
+  }
+
   delete(id: string | number): Observable<IListResponse<IDocument>> {
     return this.requestRepository.remove(this.route, id);
   }
