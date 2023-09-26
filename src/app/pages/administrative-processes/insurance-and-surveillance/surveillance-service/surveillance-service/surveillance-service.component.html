@@ -53,7 +53,7 @@
                     [form]="form"
                     [data]="periods"
                     bindLabel="cvePeriod"
-                    label="Clave Periodo"
+                    label="Cve. Periodo"
                     value="cvePeriod"
                     (fetchItems)="getPeriods($event)"
                     control="period"></ngx-select>
@@ -183,14 +183,17 @@
                       Cargar Archivo
                       <i
                         *ngIf="!loadingBtn"
-                        class="bi bi-file-earmark-excel-fill"></i>
+                        class="bx bx-download float-icon"></i>
+                      <!-- <i
+                        *ngIf="!loadingBtn"
+                        class="bi bi-file-earmark-excel-fill"></i> -->
                     </button>
                     <input
                       type="file"
                       name="file"
                       #file
                       class="d-none"
-                      accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                      accept=".csv"
                       (change)="onFileChange($event)" />
                     <button
                       (click)="revisarCarga()"
