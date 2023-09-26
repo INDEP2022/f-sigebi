@@ -119,4 +119,34 @@ export class DepartamentService
   getDeparmentById(model: any): Observable<IDepartment> {
     return this.departamentRepository.create(this.route + '/id', model);
   }
+
+  getAllDepartament(params: any, name: any) {
+    const route = `${DepartamentEndpoints.Departament}?filter.dsarea=$ilike:${name}`;
+    return this.get(route, params);
+  }
+
+  getAllDepartamentByparams(
+    id: any,
+    numDelegation: any,
+    numSubDelegation: any,
+    phaseEdo: any
+  ) {
+    const route = `${DepartamentEndpoints.Departament}?filter.id=$eq:${id}&filter.numDelegation=$eq:${numDelegation}&filter.numSubDelegation.id=$eq:${numSubDelegation}&filter.phaseEdo=$eq:${phaseEdo}`;
+    return this.get(route);
+  }
+
+  getDepartamentBycve(id: any) {
+    const route = `${DepartamentEndpoints.Departament}?filter.dsarea=$eq:${id}`;
+    return this.get(route);
+  }
+
+  getAllDepartamentByname(params: any, name: any) {
+    const route = `${DepartamentEndpoints.Departament}?filter.description=$ilike:${name}`;
+    return this.get(route, params);
+  }
+
+  getDepartamentById(id: any) {
+    const route = `${DepartamentEndpoints.Departament}?filter.id=$eq:${id}`;
+    return this.get(route);
+  }
 }
