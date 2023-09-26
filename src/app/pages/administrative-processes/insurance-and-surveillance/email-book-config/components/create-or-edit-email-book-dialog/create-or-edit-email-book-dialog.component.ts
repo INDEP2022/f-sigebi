@@ -22,7 +22,6 @@ export class CreateOrEditEmailBookDialogComponent
   implements OnInit
 {
   form = new FormGroup({
-    id: new FormControl(),
     bookName: new FormControl('', [
       Validators.required,
       Validators.pattern(STRING_PATTERN),
@@ -135,9 +134,8 @@ export class CreateOrEditEmailBookDialogComponent
         console.log(error);
         if (error['status'] === 400) {
           this.alert('warning', 'El correo y estatus ya se ha agregado', '');
-          return;
+          this.isLoading = false;
         }
-        this.alert('error', 'Error al Guardar Registros', '');
         this.isLoading = false;
       },
     });

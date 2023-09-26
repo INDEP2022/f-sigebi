@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IVigEmailSend } from 'src/app/core/models/ms-email/email-model';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
@@ -24,7 +26,10 @@ export class CreateOrEditEmailMaintenencekDialogComponent
   emailSend: IVigEmailSend;
   data: any;
   email: any;
+  sendMail: IVigEmailSend[] = [];
+  params = new BehaviorSubject<ListParams>(new ListParams());
   valEdit: boolean;
+  totalItems: number = 0;
   maintenanceMailConfigurationComponent: MaintenanceMailConfigurationComponent;
   constructor(
     private modalRef: BsModalRef,
@@ -62,7 +67,37 @@ export class CreateOrEditEmailMaintenencekDialogComponent
   }
 
   confirm() {
-    this.edit ? this.update() : this.create();
+    this.edit ? this.update() : this.alerta();
+  }
+
+  alerta() {
+    this.loading = true;
+
+    const mail = this.form.get('emailSend').value;
+    const status = this.form.get('status').value;
+    let params = {
+      ...this.params.getValue(),
+    };
+
+    params['filter.emailSend'] = `$ilike:${mail}`;
+    params['filter.status'] = `$eq:${status}`;
+    this.emailService.getVigEmailSend(params).subscribe({
+      next: async (res: any) => {
+        if (res.data[0].emailSend === mail && res.data[0].status === status) {
+          console.log(res.data[0].emailSend);
+          this.alert('warning', 'El correo y estatus ya se ha agregado', '');
+          this.loading = false;
+          return;
+        }
+
+        this.loading = false;
+        console.log(res);
+      },
+      error: () => {
+        this.create();
+        this.loading = false;
+      },
+    });
   }
 
   create() {
@@ -87,11 +122,11 @@ export class CreateOrEditEmailMaintenencekDialogComponent
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'actualizado' : 'creado';
     this.alert(
       'success',
-      'Correo de responsables de envío',
-      `${message} correctamente`
+      `El correo de responsables de envío ha sido ${message}`,
+      ''
     );
     this.loading = false;
     this.modalRef.content.callback(true);
