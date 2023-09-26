@@ -1,5 +1,11 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -61,7 +67,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   fullDelegations = new DefaultSelect();
   fullDepartments = new DefaultSelect();
   usersList = new DefaultSelect();
+  usersCopyList = new DefaultSelect();
   lsbConCopiaList: any[] = [];
+  arrayCopy: string[] = [];
 
   columns: any[] = [];
   totalItems: number = 0;
@@ -76,6 +84,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   subscribeDelete: Subscription;
   city: any;
   event: any;
+  rowCopySelect: any;
   varCount: number = 0;
   idOficio: any = 0;
 
@@ -89,6 +98,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   lblDireccion: any = '-';
   lblCvlOfocio: any = '-';
   idOffice: number;
+  countCopy: number = 0;
 
   //Var Validation
   radioValueOne: boolean = false;
@@ -103,9 +113,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   btnMotCan: boolean = true;
   byUser: boolean = false;
   visibleUserName: boolean = true;
-  visibleDelegation: boolean = true;
+  visibleDelegation: boolean = false;
   visibleTxtCopy: boolean = true;
-  visibleDepartments: boolean = true;
+  visibleDepartments: boolean = false;
 
   // Modal #1
   formDialogOne: FormGroup;
@@ -132,7 +142,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     private serviceUser: GenerateCveService,
     private serviceDelegations: DelegationService,
     private serviceDepartments: DepartamentService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private cdr: ChangeDetectorRef
   ) {
     super();
     this.settings = {
@@ -190,23 +201,60 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
   //
 
-  getAddUser() {
-    if (this.form.controls['user'].value) {
-      let usuariocopia: string = '';
-      let verificauser: boolean = false;
-      if (this.lsbConCopiaList.length > 0) {
-        for (const value of this.lsbConCopiaList) {
-          usuariocopia = value.splint('-').toString();
-          if (usuariocopia == this.form.controls['user'].value) {
-            verificauser = true;
-          }
-        }
-        if (verificauser != true) {
-          this.lsbConCopiaList.push(this.form.controls['user'].value);
-        }
-      }
+  getAddUser(event?: any) {
+    // if (this.form.controls['user'].value) {
+    //   let usuariocopia: string = '';
+    //   let verificauser: boolean = false;
+    //   if (this.lsbConCopiaList.length > 0) {
+    //     for (const value of this.lsbConCopiaList) {
+    //       usuariocopia = value.splint('-').toString();
+    //       if (usuariocopia == this.form.controls['user'].value) {
+    //         verificauser = true;
+    //       }
+    //     }
+    //     if (verificauser != true) {
+    //       this.lsbConCopiaList.push(this.form.controls['user'].value);
+    //     }
+    //   }
+    // } else {
+    //   this.alert('warning', 'Debe seleccionar un usuario', '');
+    // }
+    let countCopyLocal = this.countCopy + 1;
+    this.countCopy = countCopyLocal;
+    if (this.radioValueThree == false) {
+      this.arrayCopy.push(
+        `${countCopyLocal}/${this.formThree.controls['user'].value}`
+      );
     } else {
-      this.alert('warning', 'Debe seleccionar un usuario', '');
+      this.arrayCopy.push(
+        `${countCopyLocal}/EXTERNO-${this.formThree.controls['depar'].value?.descripcion}`
+      );
+    }
+  }
+
+  removeUserCopy() {
+    if (this.formThree.controls['copy'].value != null) {
+      let indice = Number(
+        String(this.formThree.controls['copy'].value).charAt(0)
+      );
+      console.log('Este es el índice: ', indice - 1);
+      console.log('Este es el array: ', this.arrayCopy);
+      this.arrayCopy.splice(indice - 1, 1);
+    } else {
+      this.alert('info', 'Selecciona un registro', '');
+    }
+
+    const valorFormulario = this.formThree.controls['copy'].value;
+
+    // Encuentra el índice del elemento que coincide con el valor del formulario
+    const indice = this.arrayCopy.indexOf(valorFormulario);
+
+    // Si se encuentra el elemento, elimínalo
+    if (indice !== -1) {
+      this.arrayCopy.splice(indice, 1);
+    } else {
+      // Aquí puedes manejar el caso en que el elemento no se encuentra
+      console.log('Elemento no encontrado');
     }
   }
 
@@ -362,6 +410,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   onRadioChangeThree() {
+    this.radioValueThree = true;
     if (this.byUser == false) {
       this.visibleUserName = true;
       this.visibleDelegation = false;
@@ -370,7 +419,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       this.byUser = true;
     } else {
       this.visibleUserName = false;
-      this.visibleDelegation = false;
+      this.visibleDelegation = true;
       this.visibleTxtCopy = false;
       this.byUser = false;
       this.visibleDepartments = true;
@@ -389,7 +438,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   }
 
   resetVariables() {
-    console.log('Algo nuevo jujujuju');
     this.byUser = true;
     this.form.controls['ref'].reset();
     this.form.controls['espe'].reset();
@@ -399,6 +447,12 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.formTwo.controls['selectedGood'].reset();
     this.visibleUserName = true;
     this.visibleDelegation = false;
+    this.redioValueTwo = false;
+    this.visibleDelegation = false;
+    this.visibleDepartments = false;
+    this.formThree.controls['radioThree'].setValue(false);
+    this.rowCopySelect = '';
+    this.countCopy = 0;
   }
 
   getCityById(id: any): Promise<any> {
@@ -1067,6 +1121,12 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
 
   closeModalSubtype() {
     this.modalService.hide();
+  }
+
+  reset() {
+    this.form.reset();
+    this.formTwo.reset();
+    this.formThree.reset();
   }
 
   //
