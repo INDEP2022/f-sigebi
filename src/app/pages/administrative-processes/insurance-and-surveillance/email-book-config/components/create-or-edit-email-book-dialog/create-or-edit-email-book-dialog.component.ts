@@ -9,6 +9,7 @@ import { IVigMailBook } from 'src/app/core/models/ms-email/email-model';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { BinnacleService } from 'src/app/core/services/ms-survillance/Binnacle-survillance.service';
 import { BasePage } from 'src/app/core/shared';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //import { ModelForm } from 'src/app/core/interfaces/model-form';
 @Component({
@@ -22,7 +23,11 @@ export class CreateOrEditEmailBookDialogComponent
 {
   form = new FormGroup({
     id: new FormControl(),
-    bookName: new FormControl('', [Validators.required]),
+    bookName: new FormControl('', [
+      Validators.required,
+      Validators.pattern(STRING_PATTERN),
+      Validators.maxLength(100),
+    ]),
     bookEmail: new FormControl('', [Validators.required, Validators.email]),
     bookType: new FormControl('', [Validators.required]),
     delegationNumber: new FormControl(null, [Validators.required]),
@@ -97,7 +102,7 @@ export class CreateOrEditEmailBookDialogComponent
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       this.alert(
-        'error',
+        'warning',
         'Formulario Invalido, Complete los Campos Requeridos',
         ''
       );
@@ -127,6 +132,11 @@ export class CreateOrEditEmailBookDialogComponent
         this.isLoading = false;
       },
       error: error => {
+        console.log(error);
+        if (error['status'] === 400) {
+          this.alert('warning', 'El correo y estatus ya se ha agregado', '');
+          return;
+        }
         this.alert('error', 'Error al Guardar Registros', '');
         this.isLoading = false;
       },

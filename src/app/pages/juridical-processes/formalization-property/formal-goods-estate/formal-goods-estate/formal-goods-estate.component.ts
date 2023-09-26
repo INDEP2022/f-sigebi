@@ -54,7 +54,7 @@ export class FormalGoodsEstateComponent
   // ------------------ ASIGNA NOTARIO ------------------ //
   _dataTableAsignaNotario: LocalDataSource = new LocalDataSource();
   _tableSettingsAsignaNotario = { ...TABLE_SETTINGS2 };
-  columnFilters2: any = [];
+  //columnFilters2: any = [];
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -118,16 +118,8 @@ export class FormalGoodsEstateComponent
   ngOnInit(): void {
     this.settingColumns();
     this.filterFor();
-    this.filter2();
-
-    this.params3
-      .pipe(
-        takeUntil(this.$unSubscribe),
-        tap(() => {
-          this.getStage3();
-        })
-      )
-      .subscribe();
+    this.filterAsigNot();
+    this.filterFormaEsc();
     this.params4
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -204,7 +196,7 @@ export class FormalGoodsEstateComponent
   }
 
   // ----------FILTER ASIGNAR NOTARIOS ----------//
-  filter2() {
+  filterAsigNot() {
     this._dataTableAsignaNotario
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -220,13 +212,15 @@ export class FormalGoodsEstateComponent
             console.log('filtr- ', filter.field);
             switch (filter.field) {
               case 'goodNumber':
+                console.log('goodNumber', filter.field);
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'eventId':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'processKey':
-                searchFilter = SearchFilter.EQ;
+                field = 'filter.eventDetails.processKey';
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'dateIncorporado':
                 searchFilter = SearchFilter.ILIKE;
@@ -254,18 +248,134 @@ export class FormalGoodsEstateComponent
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
-              delete this.columnFilters2[field];
+              delete this.columnFilters[field];
             }
           });
-          this.params2 = this.pageFilter(this.params2);
+          this.params3 = this.pageFilter(this.params3);
           this.getStage2();
         }
       });
 
     this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       this.getStage2();
+    });
+  }
+
+  // ----------FILTER FORMALIZA ESCRITURACIÓN ----------//
+  filterFormaEsc() {
+    this._dataTableFormalizaEscrituracion
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change2 => {
+        console.log('FILTRO 3 - ', change2);
+        if (change2.action === 'filter') {
+          let filters = change2.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'goodNumber':
+                console.log('goodNumber --:', filter.field);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'eventId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'processKey':
+                field = 'filter.eventDetails.processKey';
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'dateIncorporado':
+                field = 'filter.date';
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'writingNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'dateWritingAntDate':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'writingAntNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'dateWritingDate':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params3 = this.pageFilter(this.params3);
+          this.getStage3();
+        }
+      });
+
+    this.params3.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getStage3();
+    });
+  }
+
+  // ----------FILTER TODOS ----------//
+  filterTodos() {
+    this._dataTableTodos
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change2 => {
+        console.log('FILTRO 4 - ', change2);
+        if (change2.action === 'filter') {
+          let filters = change2.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'goodNumber':
+                console.log('goodNumber --:', filter.field);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'notary':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'formalizes':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'writing':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'days':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params4 = this.pageFilter(this.params4);
+          this.getTodos();
+        }
+      });
+
+    this.params4.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getTodos();
     });
   }
 
@@ -277,11 +387,11 @@ export class FormalGoodsEstateComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    //params['filter.stage'] = `$eq:${1}`;
+    params['filter.stage'] = `$eq:${1}`;
     console.log('PAR -> ', params);
     this.formalizeProcessService.getAll(params).subscribe(
       (response: any) => {
-        console.log('AQUIIIII', response);
+        console.log('AQUI - 1', response);
         let result = response.data.map(async (item: any) => {
           const client: any = await this.getClient(
             item.lotId == null ? '' : item.lotDetails.idClient
@@ -294,6 +404,12 @@ export class FormalGoodsEstateComponent
             item.goodDetails.description == null
               ? 'SIN DESCRIPCIÓN'
               : item.goodDetails.description;
+          console.log('ENTRA DES -->', item.goodDetails.description);
+          // if (item.goodDetails && item.goodDetails.description != null) {
+          //   item['description'] = item.goodDetails.description;
+          // } else {
+          //   item['description'] = '';
+          // }
 
           if (item.lotId) {
             item['status'] =
@@ -364,7 +480,7 @@ export class FormalGoodsEstateComponent
           this.getTodos();
           let obj = {
             icon: 'success',
-            title: 'PROCEDE FORMALIZACIÓN',
+            title: 'Procede Formalización',
             message: 'Enviado correctamente a la siguiente etapa',
           };
 
@@ -373,7 +489,7 @@ export class FormalGoodsEstateComponent
         error: error => {
           let obj = {
             icon: 'error',
-            title: 'ERROR',
+            title: 'Error',
             message: error.error.message,
           };
 
@@ -397,13 +513,13 @@ export class FormalGoodsEstateComponent
     this.loading = true;
     let params = {
       ...this.params2.getValue(),
-      ...this.columnFilters2,
+      ...this.columnFilters,
     };
-    //params['filter.stage'] = `$eq:${2}`;
-
+    params['filter.stage'] = `$eq:${2}`;
+    console.log('PAR 2 -> ', params);
     this.formalizeProcessService.getAll(params).subscribe(
       (response: any) => {
-        console.log('RES', response);
+        console.log('AQUI - 2', response);
         let result = response.data.map(async (item: any) => {
           item['processKey'] =
             item.eventId == null
@@ -431,8 +547,9 @@ export class FormalGoodsEstateComponent
         });
 
         Promise.all(result).then(data => {
-          this._dataTableAsignaNotario = response.data;
-          // console.log('Datos regresados2: ', this._dataTableAsignaNotario);
+          this._dataTableAsignaNotario.load(response.data);
+          this._dataTableAsignaNotario.refresh();
+          console.log('Datos regresados: ', this._dataTableAsignaNotario);
           this.totalItems2 = response.count;
           this.loading = false;
         });
@@ -481,7 +598,7 @@ export class FormalGoodsEstateComponent
               this.getTodos();
               let obj = {
                 icon: 'success',
-                title: 'ASIGNA NOTARIO',
+                title: 'Asigna Notario',
                 message: 'Enviado correctamente a la siguiente etapa',
               };
 
@@ -490,7 +607,7 @@ export class FormalGoodsEstateComponent
             error: error => {
               let obj = {
                 icon: 'error',
-                title: 'ERROR',
+                title: 'Error',
                 message: error.error.message,
               };
 
@@ -503,7 +620,7 @@ export class FormalGoodsEstateComponent
         error: error => {
           this.alert(
             'warning',
-            'ERROR',
+            'Error',
             'El bien no ha sido liquidado, y no se puede proceder a la escrituración'
           );
           this.ngOnInit();
@@ -514,8 +631,8 @@ export class FormalGoodsEstateComponent
     } else {
       let obj = {
         icon: 'warning',
-        title: 'ID DEL LOTE',
-        message: 'ID del Lote Vacío',
+        title: 'ID del Lote',
+        message: 'ID del lote vacío',
       };
       this.handleSuccess(obj);
     }
@@ -526,10 +643,9 @@ export class FormalGoodsEstateComponent
     this.loading = true;
     let params = {
       ...this.params3.getValue(),
-      ...this.columnFilters3,
+      ...this.columnFilters,
     };
     params['filter.stage'] = `$eq:${3}`;
-
     this.formalizeProcessService.getAll(params).subscribe(
       (response: any) => {
         let result = response.data.map(async (item: any) => {
@@ -561,9 +677,10 @@ export class FormalGoodsEstateComponent
         });
 
         Promise.all(result).then(data => {
-          this._dataTableFormalizaEscrituracion = response.data;
+          this._dataTableFormalizaEscrituracion.load(response.data);
+          this._dataTableFormalizaEscrituracion.refresh();
           console.log(
-            'Datos regresados3: ',
+            'Datos regresados 3 : ',
             this._dataTableFormalizaEscrituracion
           );
           this.totalItems3 = response.count;
@@ -592,7 +709,7 @@ export class FormalGoodsEstateComponent
     this.loading = true;
     let params = {
       ...this.params4.getValue(),
-      ...this.columnFilters4,
+      ...this.columnFilters,
     };
 
     this.goodprocessService.getTodos(params).subscribe(
@@ -620,7 +737,7 @@ export class FormalGoodsEstateComponent
           resolve(data);
         },
         error: (error: any) => {
-          resolve('SIN CLIENTE');
+          resolve('Sin cliente');
         },
       });
     });

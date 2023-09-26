@@ -215,4 +215,8 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
   reqNumEnc(params: string) {
     return this.get('application/reqNumEnc', params);
   }
+
+  nexSeqBitacora() {
+    return this.get(NumeraryEndpoints.seqBitacora);
+  }
 }

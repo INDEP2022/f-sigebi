@@ -1082,8 +1082,10 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
             user: this.infoToken.preferred_username.toUpperCase(),
             fileNumber: item.no_expediente,
             spentId: '',
-            delegationNumber: item.no_delegacion,
-            subDelegationNumber: item.no_subdelegacion,
+            delegationNumber:
+              item.no_delegacion != null ? item.no_delegacion : null,
+            subDelegationNumber:
+              item.no_subdelegacion != null ? item.no_subdelegacion : null,
             flyerNumber: item.no_volante,
             associatedExpNumber: item.no_exp_asociado,
             moneyNew:

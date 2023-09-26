@@ -25,6 +25,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
+import { IDetailProceedingsDevollutionDelete } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthorizationAssetsDestructionForm } from '../utils/authorization-assets-destruction-form';
 
 @Component({
@@ -54,6 +55,7 @@ export class AuthorizationAssetsDestructionComponent
   textDisabled: boolean = false;
   acta: IProceedingDeliveryReception = null;
   dataFile: any[];
+  consult: boolean = false;
 
   goodsList: IGood[] = [];
 
@@ -89,7 +91,13 @@ export class AuthorizationAssetsDestructionComponent
     };
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (this.consult) {
+        this.getDetailProceedingsDevolution(this.form.controls.noAuth.value);
+      }
+    });
+  }
 
   /* expedientChange() {
     const expedientId = this.controls.idExpedient.value;
@@ -112,7 +120,7 @@ export class AuthorizationAssetsDestructionComponent
   getDetailProceedingsDevolution(number: number, expedient: boolean = false) {
     this.loading = true;
     let params: any = {
-      ...this.params,
+      ...this.params.getValue(),
       //...this.columnFilters2,
     };
     if (expedient) params['filter.good.fileNumber'] = `$eq:${number}`;
@@ -136,6 +144,7 @@ export class AuthorizationAssetsDestructionComponent
   }
 
   expedientChange() {
+    this.consult = true;
     this.expediente = Number(this.form.controls.idExpedient.value);
     const params: ListParams = {};
     params['filter.id'] = `$eq:${this.expediente}`;
@@ -226,7 +235,35 @@ export class AuthorizationAssetsDestructionComponent
     this.loading = false;
   }
 
-  closed() {}
+  async closed() {
+    const detail: any[] = await this.data.getAll();
+    if (detail.length === 0) {
+      return;
+    }
+    detail.forEach(async (element: any) => {
+      const model: IDetailProceedingsDevollutionDelete = {
+        numberGood: element.numberGood,
+        numberProceedings: element.numberProceedings,
+      };
+      await this.pupDepuraDetalle(model);
+    });
+    this.getDetailProceedingsDevolution(this.form.controls.noAuth.value);
+  }
+
+  pupDepuraDetalle(model: IDetailProceedingsDevollutionDelete) {
+    return new Promise((resolve, _reject) => {
+      this.proceedingService
+        .deleteDetailProceedingsDevolution(model)
+        .subscribe({
+          next: (resp: any) => {
+            resolve(true);
+          },
+          error: (err: any) => {
+            resolve(false);
+          },
+        });
+    });
+  }
 
   addGood() {
     if (!['CERRADA', 'CERRADO'].includes(this.acta.statusProceedings)) {

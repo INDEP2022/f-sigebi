@@ -31,4 +31,5 @@ export enum EventEndpoints {
   LovEventos2 = 'application/lov-eventos-2',
   PaLookLotsChange = 'application/pa-look-lots-change-status2',
   PaLookLotsChangeExcel = 'application/paLookLotsChangeStatusDataExcel',
+  PupRemiEnt = 'application/pup-remi-ent',
 }

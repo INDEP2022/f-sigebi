@@ -75,6 +75,7 @@
 
         <div class="col">
           <button
+            [disabled]="textDisabled"
             (click)="addGood()"
             type="button"
             tooltip="Agregar"
@@ -91,7 +92,7 @@
     <div body>
       <div class="row pt-5">
         <div class="col-md-2">
-          <form-field [control]="form.get('noAuth')" label="No">
+          <form-field [control]="form.get('noAuth')" label="No. Acta">
             <input
               type="text"
               class="form-control"
@@ -121,18 +122,18 @@
           </form-field>
         </div>
         <div class="col">
-          <button (click)="masive()" class="btn btn-sm btn-info">
-            <i class="fa fa-arrow-down"></i>
-          </button>
-        </div>
-        <div class="col-md-2">
-          <button
-            (click)="closed()"
-            type="button"
-            class="btn btn-sm btn-danger active"
-            [disabled]="textDisabled">
-            {{ textButton }}
-          </button>
+          <div class="justify-content-start">
+            <button (click)="masive()" class="btn btn-sm btn-info mr-3">
+              <i class="fa fa-arrow-down"></i>
+            </button>
+            <button
+              (click)="closed()"
+              type="button"
+              class="btn btn-sm btn-danger active"
+              [disabled]="textDisabled">
+              {{ textButton }}
+            </button>
+          </div>
         </div>
       </div>
 
