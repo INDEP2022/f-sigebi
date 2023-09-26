@@ -1030,42 +1030,6 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   async pupValidateMassive(): Promise<void> {
     try {
       this.loader.load = true;
-      // const body = {
-      //   availableMasive: this.dataTableMassive.map(item => {
-      //     return {
-      //       available: item.disponible,
-      //       goodNumber: item.no_bien,
-      //       sellPrice: item.precio_venta,
-      //       screenKey: 'FACTADBCAMBIONUME',
-      //       salePrice: item.precio_venta,
-      //       typeConv: this.formBlkControl.value.typeConversion,
-      //       // spentId,
-      //       ivavta: item.ivavta,
-      //       amount: item.importe,
-      //       commission: item.comision,
-      //       ivacom: item.ivacom,
-      //       goodTransP: this.getTransGood(),
-      //       identificator: item.identificador,
-      //       description: item.descripcion,
-      //       statusGood: item.estatus,
-      //       Comment: item.comentario,
-      //       bankNew: this.formBlkControl.value.tiNewBank,
-      //       moneyNew: this.formBlkControl.value.diNewCurrency.replaceAll(
-      //         "'",
-      //         ''
-      //       ),
-      //       accountNew: this.formBlkControl.value.diNewAccount,
-      //       user: this.infoToken.preferred_username.toUpperCase(),
-      //       token: this.formBlkControl.value.tiNewFile,
-      //       // amountevta,
-      //       // fileNumber
-      //     };
-      //   }),
-      //   diCoinNew: this.formBlkControl.value.diNewCurrency.replaceAll("'", ''),
-      //   screenKey: 'FACTADBCAMBIONUME',
-      //   convType: this.formBlkControl.value.typeConversion,
-      //   pTransGood: this.getTransGood(),
-      // };
       const body = {
         availableMasive: this.dataTableMassive.map(item => {
           return {
