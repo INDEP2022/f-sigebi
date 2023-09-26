@@ -52,6 +52,25 @@ export class AppraisalDetailActionsComponent
     this.$downloadGoodsFormat.next();
   }
 
+  // ?-------------------------- INSERTAR AVALUOS
+  async onInsertAppraissal() {
+    const body = this.getPufValEventBody('I');
+    await this.pufValEvent(body);
+    const { id_evento, item_desc_tpsolaval } = this.controls;
+    const { isConfirmed } = await this.alertQuestion(
+      'question',
+      `¿Ingresar Avalúos del evento ${id_evento.value}, referencia ${item_desc_tpsolaval.value}?`,
+      ''
+    );
+    if (!isConfirmed) {
+      return;
+    }
+    this.$file.next(this.insertAppraisal);
+    this.inputFile.nativeElement.click();
+  }
+
+  insertAppraisal(file: File) {}
+
   // ? ------------------------- VALIDAR ARCHIVO DESCUENTO
   async onValidDisscountFile() {
     const { isConfirmed } = await this.alertQuestion(
@@ -102,11 +121,7 @@ export class AppraisalDetailActionsComponent
   // ? -----------------------  APLICAR DESCUENTO
   async onApplyDisscount() {
     const body = this.getPufValEventBody('D');
-    const invalidStatus = await this.pufValEvent(body);
-    if (invalidStatus) {
-      this.onLoadToast('warning', invalidStatus, '');
-      return;
-    }
+    await this.pufValEvent(body);
     const { isConfirmed } = await this.alertQuestion(
       'question',
       '¿Desea Aplicar el descuento de los bienes del Avaluó?',

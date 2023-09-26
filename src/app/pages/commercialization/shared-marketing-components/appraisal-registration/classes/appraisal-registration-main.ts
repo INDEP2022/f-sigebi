@@ -6,14 +6,14 @@ import { BasePage } from 'src/app/core/shared';
 import { AppraisalEventForm } from '../utils/appaisal-event-form';
 export interface IAppraisalRegGlobal {
   direction: 'M' | 'I';
-  vIva: string;
-  vColumnNum: string;
+  vIva: number;
+  vColumnNum: number;
 }
 export class AppraisalRegistrationMain extends BasePage {
   global: IAppraisalRegGlobal = {
     direction: null,
-    vIva: '',
-    vColumnNum: '',
+    vIva: null,
+    vColumnNum: null,
   };
   fb = inject(FormBuilder);
   comerEventForm = this.fb.group(new AppraisalEventForm());

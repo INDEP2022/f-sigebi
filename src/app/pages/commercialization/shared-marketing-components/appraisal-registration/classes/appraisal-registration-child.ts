@@ -56,7 +56,17 @@ export class AppraisalRegistrationChild extends BasePage {
           this.onLoadToast('error', UNEXPECTED_ERROR, '');
           return throwError(() => error);
         }),
-        map(response => response?.data ?? null)
+        map(async error => {
+          if (typeof error != 'string') {
+            return null;
+          }
+          const errors = error.split('/').filter(val => val);
+          for (let index = 0; index < errors.length; index++) {
+            const _err = errors[index];
+            await this.alertInfo('warning', _err, '');
+          }
+          throw new Error('Invalid status');
+        })
       )
     );
   }
@@ -71,7 +81,7 @@ export class AppraisalRegistrationChild extends BasePage {
       pTpevent: id_tpevento.value,
       pCveAppraisal: '',
       pDirection: this.global.direction,
-      ptpoAvalue: item_desc_tpsolaval.value,
+      ptpoAvalue: item_desc_tpsolaval.value ?? 'AVALUO',
       pTpodocument,
       pEstevent,
     };

@@ -7,6 +7,7 @@ import { Repository } from 'src/app/common/repository/repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ParameterComerEndpoints } from '../../../common/constants/endpoints/ms-parametercomer-endpoints';
+import { IParameterMod } from '../../models/ms-comer-concepts/parameter-mod.model';
 import { IComerEventApp } from '../../models/ms-parametercomer/comer-event-pq.model';
 import {
   IParameter,
@@ -73,7 +74,7 @@ export class ParameterModService
 
   //COMER_PARAMETROSMOD
   getParamterMod(params?: any) {
-    return this.get(`parameters-mod`, params);
+    return this.get<IListResponse<IParameterMod>>(`parameters-mod`, params);
   }
 
   //COMER_STATUS_VTA
@@ -168,7 +169,10 @@ export class ParameterModService
     pTpodocument: string | number;
     pEstevent: string | number;
   }) {
-    return this.post<{ data: string }>('aplication/puf-val-event', body);
+    return this.post<string | { data: string }>(
+      'aplication/puf-val-event',
+      body
+    );
   }
 
   applyDisscount(
