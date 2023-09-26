@@ -321,7 +321,11 @@ export class RateCatalogComponent extends BasePage implements OnInit {
 
             this.numeraryServ.update(data.tasintId, data).subscribe({
               next: () => {
-                this.alert('success', 'Tesa interés se actualizó', '');
+                this.alert(
+                  'success',
+                  'La Tasa de interés se ha actualizado',
+                  ''
+                );
                 this.getAllNumeraryRate();
               },
               error: () => {
