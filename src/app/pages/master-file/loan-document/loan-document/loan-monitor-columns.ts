@@ -2,7 +2,7 @@ import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filt
 
 export const LOAN_DOCUMENT_COLUMNS = {
   noRecord: {
-    title: 'No Expediente.',
+    title: 'No. Expediente',
     type: 'string',
     sort: false,
   },
@@ -12,7 +12,7 @@ export const LOAN_DOCUMENT_COLUMNS = {
     sort: false,
   },
   documentDescription: {
-    title: 'Descripcion del documento',
+    title: 'Descripción del documento',
     type: 'string',
     sort: false,
   },
