@@ -45,8 +45,17 @@ export class MaintenanceMailConfigurationComponent
     private fb: FormBuilder
   ) {
     super();
-    this.settings.columns = EMAIL_CONFIG_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings = {
+      ...this.settings,
+      actions: {
+        delete: true,
+        edit: true,
+        add: false,
+        position: 'right',
+      },
+      columns: EMAIL_CONFIG_COLUMNS,
+      hideSubHeader: false,
+    };
   }
 
   ngOnInit(): void {
@@ -57,11 +66,35 @@ export class MaintenanceMailConfigurationComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
+            //console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+
+              case 'nameSend':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+
+              case 'postSend':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+
+              case 'emailSend':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+
+              case 'status':
+                searchFilter = SearchFilter.EQ;
+                break;
+
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -83,6 +116,7 @@ export class MaintenanceMailConfigurationComponent
     this.loading = true;
     let params = {
       ...this.params.getValue(),
+      ...this.columnFilters,
     };
     this.emailService.getVigEmailSend(params).subscribe({
       next: async (res: any) => {
@@ -141,7 +175,7 @@ export class MaintenanceMailConfigurationComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar este Registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.deleteEmail(Email.id);
@@ -153,7 +187,7 @@ export class MaintenanceMailConfigurationComponent
     this.emailService.deleteSendMail(id).subscribe({
       next: () => {
         this.getEmailSend(),
-          this.alert('success', 'Registro Eliminado Correctamente', '');
+          this.alert('success', 'Registro eliminado correctamente', '');
       },
       error: error => {
         this.alert(
@@ -170,8 +204,8 @@ export class MaintenanceMailConfigurationComponent
     const message: string = 'Actualizado';
     this.alert(
       'success',
-      'Datos Generales del Correo',
-      'Registro Actualizado Correctamente'
+      'El correo de responsables de envío ha sido actualizado',
+      ''
     );
     this.loading = false;
     this.modalRef.content.callback(true);
@@ -196,7 +230,7 @@ export class MaintenanceMailConfigurationComponent
         },
         error: error => {
           this.loading = false;
-          this.alert('warning', 'Error al Actualizar Registros', '');
+          this.alert('warning', 'Error al actualizar registros', '');
           this.data.refresh();
         },
       });

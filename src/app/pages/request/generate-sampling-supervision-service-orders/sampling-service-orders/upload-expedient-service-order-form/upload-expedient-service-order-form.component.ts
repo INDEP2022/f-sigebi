@@ -8,6 +8,8 @@ import { ListParams } from '../../../../../common/repository/interfaces/list-par
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
 //import { NewDocumentServiceOrderFormComponent } from '../new-document-form/new-document-form.component';
+import { DomSanitizer } from '@angular/platform-browser';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { DocumentShowComponent } from '../../../shared-request/document-show/document-show.component';
 import { NewDocumentServiceOrderFormComponent } from '../new-document-service-order-form/new-document-service-order-form.component';
@@ -53,7 +55,8 @@ export class UploadExpedientServiceOrderFormComponent
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer
   ) {
     super();
   }
@@ -73,7 +76,7 @@ export class UploadExpedientServiceOrderFormComponent
           this.openDetail(data);
         }),
           instance.btnclick2.subscribe((data: any) => {
-            this.openDoc();
+            this.openDoc(data);
           });
       },
     };
@@ -114,7 +117,7 @@ export class UploadExpedientServiceOrderFormComponent
   newDocument() {
     let config: ModalOptions = {
       initialState: {
-        data: '',
+        data: this.data[0],
         typeComponent: this.typeComponent,
         callback: (next: boolean) => {
           //if (next){ this.getData();}
@@ -142,7 +145,49 @@ export class UploadExpedientServiceOrderFormComponent
     this.modalService.show(DocumentShowComponent, config);
   }
 
-  openDoc() {}
+  openDoc(data: any) {
+    this.wcontentService.obtainFile(data.dDocName).subscribe(data => {
+      console.log(data);
+      let blob = this.dataURItoBlob(data);
+      let file = new Blob([blob], { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      this.openPrevPdf(fileURL);
+      /*const linkSource =
+            'data:application/pdf;base64,' + this.parameter.urlDocument;
+          const downloadLink = document.createElement('a');
+          const fileName = `${this.parameter.dDocName}.pdf`;
+
+          downloadLink.href = linkSource;
+          downloadLink.download = fileName;
+          downloadLink.click();*/
+    });
+  }
+
+  dataURItoBlob(dataURI: any) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'image/png' });
+    return blob;
+  }
+
+  openPrevPdf(pdfUrl: string) {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {},
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
+  }
 
   search() {
     let form = this.expedientForm.getRawValue();
@@ -152,6 +197,7 @@ export class UploadExpedientServiceOrderFormComponent
         body[key] = form[key];
       }
     }
+
     this.wcontentService.getDocumentos(body).subscribe({
       next: resp => {
         resp.data.map((item: any) => {

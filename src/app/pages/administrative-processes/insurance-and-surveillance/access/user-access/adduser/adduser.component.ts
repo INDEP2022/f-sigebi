@@ -68,7 +68,7 @@ export class AdduserComponent extends BasePage implements OnInit {
   guardarRegistro() {
     if (this.form.value.userRole != 1 && this.form.value.userRole != 2) {
       this.form.get('userRole').markAsUntouched();
-      this.alert('warning', 'Debe seleccionar un Rol', '');
+      this.alert('warning', 'Debe seleccionar un rol', '');
       return;
     }
     let obj = {
@@ -81,7 +81,7 @@ export class AdduserComponent extends BasePage implements OnInit {
     if (this.editDialogData === true) {
       this.userService.editAccessUsers(obj).subscribe({
         next: response => {
-          this.alert('success', 'Registro actualizado correctamente', '');
+          this.alert('success', 'El registro se ha actualizado', '');
           this.modalRef.content.callback(true);
           this.close();
         },
@@ -93,7 +93,7 @@ export class AdduserComponent extends BasePage implements OnInit {
     } else {
       this.userService.createAccessUsers(obj).subscribe({
         next: response => {
-          this.alert('success', 'Registro creado correctamente', '');
+          this.alert('success', 'El registro se ha creado', '');
           this.modalRef.content.callback(true);
           this.close();
         },
@@ -102,7 +102,11 @@ export class AdduserComponent extends BasePage implements OnInit {
             (error.error.message =
               'Datos duplicados. Clave pantalla duplicada.')
           ) {
-            this.alert('error', 'Este usuario ya se encuentra registrado', '');
+            this.alert(
+              'warning',
+              'Este usuario ya se encuentra registrado',
+              ''
+            );
           } else {
             this.alert('error', 'Error al crear el registro', '');
           }
@@ -122,6 +126,7 @@ export class AdduserComponent extends BasePage implements OnInit {
     if (lparams.text) params.search = lparams.text;
     // params.addFilter('user', lparams.text, SearchFilter.ILIKE);
 
+    params.sortBy = `user:ASC`;
     return new Promise((resolve, reject) => {
       this.securityService.getAllUsersTracker(params.getParams()).subscribe({
         next: async (response: any) => {

@@ -1261,11 +1261,13 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   }
   editCargado(event: any) {
     console.log('aaa', event);
-    // if (event == this.valAccCargado) {
-    //   this.valAccCargado = null;
-    // } else {
-    this.valAccCargado = event;
-    // }
+    console.log('aaa', event);
+
+    if (event == this.valAccCargado) {
+      this.valAccCargado = null;
+    } else {
+      this.valAccCargado = event;
+    }
     this.openForm(event, true, false, true);
   }
 

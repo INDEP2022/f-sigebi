@@ -26,5 +26,15 @@ export const EMAIL_CONFIG_COLUMNS = {
     valuePrepareFunction: (_cell: any, row: any) => {
       return row.status == '1' ? 'Activo' : 'Inactivo';
     },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: '1', title: 'Activo' },
+          { value: '0', title: 'Inactivo' },
+        ],
+      },
+    },
   },
 };

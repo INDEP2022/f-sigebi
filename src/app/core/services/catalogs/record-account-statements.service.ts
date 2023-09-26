@@ -53,6 +53,15 @@ export class RecordAccountStatementsService
       params
     );
   }
+  getAllDinamicName2(
+    params?: ListParams
+  ): Observable<IListResponse<IRecordAccountStatements>> {
+    const route = `${this.route}`;
+    return this.recordAccountStatementsServiceRepository.getAllPaginated(
+      route,
+      params
+    );
+  }
 }
 
 //http://sigebimsqa.indep.gob.mx/catalog/api/v1/bank
