@@ -29,6 +29,7 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
       const formatter = new Intl.NumberFormat('en-US', {
         currency: 'USD',
         minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
       });
 
       return formatter.format(Number(val));
@@ -63,6 +64,7 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
       const formatter = new Intl.NumberFormat('en-US', {
         currency: 'USD',
         minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
       });
 
       return formatter.format(Number(val));
