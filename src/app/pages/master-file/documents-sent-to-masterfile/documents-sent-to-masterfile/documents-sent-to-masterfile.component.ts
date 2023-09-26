@@ -42,6 +42,7 @@ export class DocumentsSentToMasterfileComponent
     let objBase = this;
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: false,
 
       columns: {
@@ -118,7 +119,7 @@ export class DocumentsSentToMasterfileComponent
     });
   }
 
-  onFilterChange(event: any) {
+  onFilterChange() {
     let filtros = [];
 
     const expediente = this.form.get('file').value;
@@ -368,5 +369,9 @@ export class DocumentsSentToMasterfileComponent
     this.blk_doc.vigencia = null;
     this.blk_doc.vigencia_fin = null;
     this.blk_doc.vigencia_inicio = null;
+  }
+
+  reset() {
+    this.form.reset();
   }
 }
