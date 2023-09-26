@@ -996,7 +996,6 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       }
     });
 
-    // Actualiza la fuente de datos de la tabla si es necesario
     this.dataTwo.refresh();
   }
   //
