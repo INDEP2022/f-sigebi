@@ -171,7 +171,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settings2"
-            [source]="data2">
+            [source]="data2"
+            (userRowSelect)="selectRows2($event.selected)">
           </ng2-smart-table>
         </div>
       </div>

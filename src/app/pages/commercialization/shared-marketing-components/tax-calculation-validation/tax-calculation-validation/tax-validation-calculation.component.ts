@@ -206,6 +206,7 @@ export class TaxValidationCalculationComponent
         '',
         'El registro ya está confirmado, sólo el administrador puede liberarlo'
       );
+      this.getComerDetAvaluo(this.appraisal);
       return;
     } else if (dataIva.row.validIVA == 'N' && dataIva.row.observation != null) {
       this.alert(
@@ -213,6 +214,7 @@ export class TaxValidationCalculationComponent
         '',
         'El registro ya tiene inconsistencias no puede desmarcar hasta no quitar las inconsistencias.'
       );
+      this.getComerDetAvaluo(this.appraisal);
       return;
     } else {
       this.getParametersGood(this.appraisal, dataIva.row.goodId, dataIva);
@@ -237,6 +239,7 @@ export class TaxValidationCalculationComponent
           };
           console.log('delete getParametersGood -> ', this.countParamaterGood);
           this.deleteParametersGood(body);
+          this.getComerDetAvaluo(this.appraisal);
         }
       },
       error: err => {
@@ -284,6 +287,7 @@ export class TaxValidationCalculationComponent
     this.appraiseService.updateEatDetAppraisal(valor).subscribe({
       next: resp => {
         console.log('Resp updateDetailEval-> ', resp);
+        this.getComerDetAvaluo(this.appraisal);
         this.alert('success', '', 'Registro actualizado correctamente!');
       },
       error: err => {
@@ -556,13 +560,31 @@ export class TaxValidationCalculationComponent
     this.dataDetArr = [];
     console.log('row ', rows);
     if (rows.length > 0) {
-      this.flagDetail = false;
+      //this.flagDetail = false;
       this.selectedRows = rows;
       console.log('Rows Selected->', this.selectedRows);
       console.log('SelectRows', this.selectedRows[0].id);
       this.appraisal = this.selectedRows[0].id;
       this.getComerDetAvaluo(this.appraisal);
     } else {
+      this.selectedRows = [];
+      //this.flagDetail = true;
+    }
+  }
+
+  selectRows2(rows: any[]) {
+    this.dataDetArr = [];
+    this.selectedRows = null;
+    console.log('row ', rows);
+    if (rows.length > 0) {
+      this.flagDetail = false;
+      this.selectedRows = rows;
+      console.log('Rows Selected->', this.selectedRows);
+      //console.log('SelectRows', this.selectedRows[0].id);
+      //.appraisal = this.selectedRows[0].id;
+      //this.getComerDetAvaluo(this.appraisal);
+    } else {
+      console.log('row ', this.selectedRows);
       this.selectedRows = [];
       this.flagDetail = true;
     }
@@ -619,6 +641,7 @@ export class TaxValidationCalculationComponent
     this.data2.load(this.Detavaluos);
     this.data2.refresh();
     this.totalItems2 = 0;
+    console.log('this.appraisal', this.appraisal);
     let params2 = {
       ...this.params2.getValue(),
       ...this.columnFilters,
@@ -1054,9 +1077,10 @@ export class TaxValidationCalculationComponent
                 observation: resp.data[0].observations,
                 validIVA: this.v_valor,
                 check: resp.data[0].approved,
-                goodDescription: resp.data[0].good.goodId,
+                goodDescription: resp.data[0].good.description,
                 auxTasaIvaTerren: terrainRate,
                 auxTerrainIva: terrainIva,
+                vriIva: resp.data[0].vriIva,
               };
               this.dataDet = params2;
               this.dataDetArr.push(params2);
@@ -1159,49 +1183,55 @@ export class TaxValidationCalculationComponent
         };
 
         //aux.push(item);
+        console.log('selected impr ', this.selectedRows[0]);
         aux = [
-          /*  {
-              "NO." : this.dataDet.idDetAppraisal,
-      			  "NO._BIEN": 	 
-      			  "DESCRIPCION":	 
-      			  "ESTATUS": 
-      			  "CLASIF":	  
-      			  "TIPO":
-      			  "FECHA": 
-      			  "FECHA_VIG":	 
-      			  "NOMBRE_VAL.":	 
-      			  "TIPO_REF":	 
-      			  "SUPERFICIE_TERRENO":	  
-      			  "SUPERFICIE_CONSTRUCCION":	 
-      			  "%_TERRENO"	:   
-      			  "%_CONSTR_HAB":	 
-      			  "%_CONSTR_COMER":	 
-      			  "%_INST_ESP":	 
-      			  "%_OTROS":	 
-      			  "%_TOTAL":	 
-      			  "VALOR_REF_CALCULADO":	 
-      			  "VALOR_TERRENO":	  
-      			  "VALOR_CONSTR_HAB":	 
-      			  "VALOR_CONSTR_COMER":	 
-      			  "VALOR_INST_ESP":	 
-      			  "VALOR_OTROS":	 
-      			  "DIFERENCIA":	   
-      			  "TASA_IVA_TERRENO":	  
-      			  "TASA_IVA_CONSTR_HAB"	:  
-      			  "TASA_IVA_CONSTR_COMERCIAL":	  
-      			  "TASA_IVA_INSTALACIONES_ESP":	  
-      			  "TASA_IVA_OTROS":	 
-      			  "IVA_TERRENO":	  
-      			  "IVA_CONSTR_HAB":	  
-      			  "IVA_CONST_COMERCIAL":	  
-      			  "IVA_INSTALACIONES_ESP":	  
-      			  "IVA_OTROS":	  
-      			  "VALOR_TOTAL_IVA_CALCULADO":	 
-      			  "VALOR_CON_IVA_INCLUIDO":	  
-      			  "OBSERVACIONES":	  
-      			  "VALIDACION_IVA":	 
-      			  "CONFIRMADO":
-            } */
+          {
+            'NO.': this.selectedRows[0].idDetAppraisal,
+            'NO._BIEN': this.selectedRows[0].goodId,
+            DESCRIPCION: this.selectedRows[0].description,
+            ESTATUS: this.selectedRows[0].status,
+            CLASIF: this.selectedRows[0].goodClassNumber,
+            TIPO: this.selectedRows[0].desc_tipo,
+            FECHA: this.selectedRows[0].appraisalDate,
+            FECHA_VIG: this.selectedRows[0].vigAppraisalDate,
+            'NOMBRE_VAL.': this.selectedRows[0].nameAppraiser,
+            TIPO_REF: this.selectedRows[0].refAppraisal,
+            SUPERFICIE_TERRENO: this.selectedRows[0].terrainSurface,
+            SUPERFICIE_CONSTRUCCION: this.selectedRows[0].surfaceConstru,
+            '%_TERRENO': this.selectedRows[0].terrainPorcentage,
+            '%_CONSTR_HAB': this.selectedRows[0].porcentageHousing,
+            '%_CONSTR_COMER': this.selectedRows[0].porcentageCommercial,
+            '%_INST_ESP': this.selectedRows[0].porcentageSpecials,
+            '%_OTROS': this.selectedRows[0].porcentageOthers,
+            '%_TOTAL': this.selectedRows[0].porcentageTotal,
+            VALOR_REF_CALCULADO: this.selectedRows[0].vri,
+            VALOR_TERRENO: this.selectedRows[0].vTerrain,
+            VALOR_CONSTR_HAB: this.selectedRows[0].vConstruction,
+            VALOR_CONSTR_COMER: this.selectedRows[0].vConstructionEat,
+            VALOR_INST_ESP: this.selectedRows[0].vInstallationsEsp,
+            VALOR_OTROS: this.selectedRows[0].vOthers,
+            DIFERENCIA: this.selectedRows[0].difference,
+            TASA_IVA_TERRENO: this.selectedRows[0].terrainRate,
+            TASA_IVA_CONSTR_HAB: this.selectedRows[0].rateHousing,
+            TASA_IVA_CONSTR_COMERCIAL: this.selectedRows[0].rateCommercial,
+            TASA_IVA_INSTALACIONES_ESP: this.selectedRows[0].rateSpecials,
+            TASA_IVA_OTROS: this.selectedRows[0].rateOthers,
+            IVA_TERRENO: this.selectedRows[0].terrainIva,
+            IVA_CONSTR_HAB: this.selectedRows[0].ivaHousing,
+            IVA_CONST_COMERCIAL: this.selectedRows[0].ivaCommercial,
+            IVA_INSTALACIONES_ESP: this.selectedRows[0].ivaSpecial,
+            IVA_OTROS: this.selectedRows[0].ivaOthers,
+            VALOR_TOTAL_IVA_CALCULADO:
+              this.selectedRows[0].valueIvaTotalCalculated,
+            VALOR_CON_IVA_INCLUIDO: this.selectedRows[0].totalAccount,
+            OBSERVACIONES: this.selectedRows[0].dataDetobservation,
+            VALIDACION_IVA:
+              this.selectedRows[0].validIVA != null
+                ? this.dataDet.validIVA
+                : 'N',
+            CONFIRMADO:
+              this.selectedRows[0].check != null ? this.dataDet.check : 'N',
+          },
         ];
         console.log('Data let Aux-> ', aux);
         console.log('Data let Aux-> ', this.dataDet);
@@ -1228,7 +1258,7 @@ export class TaxValidationCalculationComponent
       });
       const workBook: XLSX.WorkBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workBook, workSheet, 'Hoja1');
-      let aux = 'export' + '.xlsx';
+      let aux = 'Avalúos' + '.xlsx';
       XLSX.writeFile(workBook, aux);
     }
   }

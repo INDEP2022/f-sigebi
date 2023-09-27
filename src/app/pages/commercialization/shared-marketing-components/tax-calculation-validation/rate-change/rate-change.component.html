@@ -5,10 +5,19 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
-        <div class="col-md-6">
-          <app-goods-shared
-            [form]="form"
-            [patchValue]="true"></app-goods-shared>
+        <div class="col-md-3">
+          <form-field label="Bien" [control]="form.get('goodId')">
+            <input class="form-control" formControlName="goodId" type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-9">
+          <form-field
+            label="Descripción de Bien"
+            [control]="form.get('goodDescription')">
+            <textarea
+              class="form-control"
+              formControlName="goodDescription"></textarea>
+          </form-field>
         </div>
       </div>
       <div class="row mb-3 mt-3">
