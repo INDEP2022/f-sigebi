@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { IProposel } from 'src/app/core/models/sirsae-model/proposel-model/proposel-model';
+import { ProposelServiceService } from 'src/app/core/services/ms-proposel/proposel-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { FindProposeComponent } from '../find-propose/find-propose.component';
@@ -29,10 +31,15 @@ export class DonationAuthorizationRequestComponent
   requestId: number = 0;
   data: any = [];
   totalItems: number = 0;
+  proposal: IProposel;
   params = new BehaviorSubject<ListParams>(new ListParams());
   bsModalRef?: BsModalRef;
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private proposelServiceService: ProposelServiceService
+  ) {
     super();
     this.settings = { ...this.settings, actions: false };
     this.settings.columns = REQUEST_COLUMNS;
@@ -92,19 +99,9 @@ export class DonationAuthorizationRequestComponent
     this.bsModalRef.setClass('modal-lg');
     this.bsModalRef.content.closeBtnName = 'Close';
   }
-  findPropose() {}
 
   proposeDefault: any = null;
-  searchActas(propose?: string) {
-    if (this.requestId == 0 || this.requestId == null) {
-      this.alertInfo(
-        'warning',
-        'No se puede buscar propuesta sin selecccionarla soliitud',
-        ''
-      );
-      return;
-    }
-
+  findPropose(propose?: string) {
     const regActual = this.proposeDefault;
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
@@ -118,13 +115,11 @@ export class DonationAuthorizationRequestComponent
       if (next) {
         this.alert(
           'success',
-          'Se cargó la información del acta',
-          next.keysProceedings
+          'Se cargó la información de la Propuesta',
+          next.ID_PROPUESTA
         );
       }
-      // Limpiar formulario una vez consulte
-      // this.actaRecepttionForm.reset();
-      // this.formScan.reset();
+      this.form.reset();
       this.proposeDefault = next;
       // this.statusCanc = next.statusProceedings;
       // if (this.statusCanc == 'CERRADA') {
@@ -134,24 +129,21 @@ export class DonationAuthorizationRequestComponent
       //   this.disabledBtnActas = true;
       //   //this.disabledBtnCerrar = true;
       // }
-
       // console.log('acta NEXT ', next);
-      // this.form.patchValue({
-      //   cvePropose
-      // });
+      this.form.patchValue({
+        proposal: next.ID_PROPUESTA,
+      });
 
-      // this.data1 = next.statusProceedings;
-      // this.formScan.get('scanningFoli').patchValue(next.universalFolio);
-      // // Pasar clave a esta función
+      // this.status = next.statusProceedings;
       // this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
 
-      // await this.getDetailProceedingsDevollution(this.actasDefault.id);
+      await this.getProposalId(this.proposeDefault.ID_PROPUESTA);
     });
-    // modalRef.content.cleanForm.subscribe(async (next: any) => {
-    //   if (next) {
-    //     this.cleanPropose();
-    //   }
-    // });
+    modalRef.content.cleanForm.subscribe(async (next: any) => {
+      if (next) {
+        this.cleanPropose();
+      }
+    });
   }
   cleanPropose() {
     this.form.reset();
@@ -160,8 +152,13 @@ export class DonationAuthorizationRequestComponent
 
   cleanForm() {
     this.form.reset();
-    // this.dataTableGood_ = [];
-    // this.dataTableGood.load([]);
-    // this.dataTableGood.reset();
+  }
+  getProposalId(params: ListParams) {
+    this.proposelServiceService.getIdPropose(params).subscribe({
+      next: data => {
+        this.proposal = data;
+        console.log(this.proposal);
+      },
+    });
   }
 }

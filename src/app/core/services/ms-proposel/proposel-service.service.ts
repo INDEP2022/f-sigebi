@@ -18,7 +18,11 @@ export class ProposelServiceService extends HttpService {
   getAll(params?: ListParams): Observable<IListResponse<IProposel>> {
     return this.get<IListResponse<IProposel>>(this.route, params);
   }
-  getById(id: string) {
-    return this.httpClient.get(`${this.route}/${id}`);
+  getById(params?: ListParams): Observable<IListResponse<IProposel>> {
+    return this.get<IListResponse<IProposel>>(`${this.route}?`);
+  }
+  getIdPropose(params?: ListParams, id?: any) {
+    const route = `${ProposelEndpoint.Proposel}?filter.ID_PROPUESTA=$eq:${id}`;
+    return this.get(route, params);
   }
 }
