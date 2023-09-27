@@ -270,7 +270,7 @@ export class PercentagesSurveillanceComponent
       next: response => {
         console.log(response);
 
-        this.alert('success', 'El registro se ha eliminado correctamente', '');
+        this.alert('success', 'El registro se ha eliminado', '');
         this.getPercentages();
         // this.loading = false;
       },
@@ -331,11 +331,7 @@ export class PercentagesSurveillanceComponent
         .putVigProcessPercentages(this.editDialogData.cveProcess as any, values)
         .subscribe({
           next: () => {
-            this.alert(
-              'success',
-              'El registro se ha actualizado correctamente',
-              ''
-            );
+            this.alert('success', 'El registro se ha actualizado', '');
             this.closeDialogPercentage();
             this.getPercentages();
             // this.sources.update(this.editDialogData, values);
@@ -352,7 +348,7 @@ export class PercentagesSurveillanceComponent
       next: response => {
         console.log('treu', response);
         if (response) {
-          this.alert('success', 'El registro se ha creado correctamente', '');
+          this.alert('success', 'El registro se ha creado', '');
           this.closeDialogPercentage();
           this.getPercentages();
           // this.totalItems++;

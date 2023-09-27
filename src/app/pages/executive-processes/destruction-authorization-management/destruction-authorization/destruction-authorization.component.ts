@@ -692,18 +692,19 @@ export class DestructionAuthorizationComponent
 
   insertFromGoodsTracker() {
     if (this.controls.statusProceedings.value == 'CERRADA') {
-      this.onLoadToast('error', 'Error', 'La Solicitud ya esta cerrada');
+      this.alert('warning', 'Error', 'La Solicitud ya esta cerrada');
       return;
     }
 
     if (!this.controls.keysProceedings.value) {
-      this.onLoadToast(
-        'error',
+      this.alert(
+        'warning',
         'Error',
         'No se ha especificado el Oficio de Solicitud'
       );
       return;
     }
+
     this.conserveState = true;
     this.router.navigate([GOODS_TACKER_ROUTE], {
       queryParams: {
@@ -766,6 +767,8 @@ export class DestructionAuthorizationComponent
           this.onLoadToast('success', 'Acta generada correctamente', '');
         },
         error: error => {
+          console.log(error);
+
           this.loading = false;
           this.onLoadToast(
             'error',
@@ -1050,7 +1053,6 @@ export class DestructionAuthorizationComponent
 
   queryProceeding() {
     this.resetAll();
-    this.focusElement.nativeElement.focus();
     this.queryMode = true;
   }
 
