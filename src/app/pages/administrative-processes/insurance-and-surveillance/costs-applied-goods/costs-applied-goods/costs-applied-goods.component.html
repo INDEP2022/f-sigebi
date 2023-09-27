@@ -36,39 +36,68 @@
               type="number"
               formControlName="toFile"
               class="form-control"
-              min="1"
-              pattern="^[0-9]+" />
+              pattern="^[0-9]+"
+              [min]="form.get('file').value" />
           </form-field>
         </div>
       </div>
       <div class="row mt-4">
         <div class="col-md-6">
-          <form-field [control]="form.get('noBien')">
-            <ngx-select
+          <form-field [control]="form.get('noBien')" label="No Bien">
+            <!-- <ngx-select
               [form]="form"
               [data]="good"
               bindLabel="description"
               label="No Bien"
               value="goodId"
               (fetchItems)="getGood($event)"
-              control="noBien"></ngx-select>
+              control="noBien"></ngx-select> -->
+            <input
+              type="number"
+              formControlName="noBien"
+              class="form-control"
+              (input)="getGood()"
+              min="1" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('alGood')">
-            <ngx-select
+          <form-field [control]="form.get('alGood')" label="Al No Bien">
+            <!-- <ngx-select
               [form]="form"
               [data]="good"
               bindLabel="description"
               label="Al No Bien"
               value="goodId"
               (fetchItems)="getGood($event)"
-              control="alGood"></ngx-select>
+              control="alGood"></ngx-select> -->
+            <input
+              type="number"
+              formControlName="alGood"
+              class="form-control"
+              (input)="getGoodTo()"
+              [min]="form.get('noBien').value" />
           </form-field>
         </div>
       </div>
-      <div class="ch-content">
-        <h5 class="title">TIPO DE GASTOS</h5>
+      <div class="row mt-4">
+        <div class="col-md-2">
+          <h6>Tipo de gastos:</h6>
+        </div>
+        <div class="col-md-2">
+          <form-radio label="Directos">
+            <input type="radio" value="D" formControlName="typecost" />
+          </form-radio>
+        </div>
+        <div class="col-md-2">
+          <form-radio label="Indirectos">
+            <input type="radio" value="I" formControlName="typecost" />
+          </form-radio>
+        </div>
+        <div class="col-md-2">
+          <form-radio label="Ambos">
+            <input type="radio" value="null" formControlName="typecost" />
+          </form-radio>
+        </div>
       </div>
 
       <!-- <div class="row">
@@ -90,22 +119,19 @@
       </div> -->
 
       <div class="row mt-4">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <form-field [control]="form.get('goodType')">
             <ngx-select
               [form]="form"
               [data]="goodTypes"
               bindLabel="nameGoodType"
               label="Tipo de Bien"
-              value="nameGoodType"
+              value="id"
               (fetchItems)="getGoodType($event)"
               control="goodType"></ngx-select>
           </form-field>
         </div>
-      </div>
-
-      <div class="row mt-4">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <form-field [control]="form.get('costConcept')">
             <ngx-select
               [form]="form"
@@ -117,7 +143,7 @@
               control="costConcept"></ngx-select>
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <form-field [control]="form.get('to')">
             <ngx-select
               [form]="form"
@@ -133,7 +159,7 @@
 
       <div class="row mt-4">
         <div class="col-md-6">
-          <form-field [control]="form.get('startDate')" label="Fecha page">
+          <form-field [control]="form.get('startDate')" label="Fecha inicial">
             <input
               type="text"
               formControlName="startDate"
@@ -142,26 +168,36 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field
-            [control]="form.get('finishDate')"
-            label="Fecha de Termino">
+          <form-field [control]="form.get('finishDate')" label="Fecha final">
             <input
               type="text"
               formControlName="finishDate"
               class="form-control"
+              [minDate]="form.get('startDate').value"
               bsDatepicker />
           </form-field>
         </div>
       </div>
 
-      <div class="row mt-4 float-right">
+      <div class="row mt-4 d-flex justify-content-center">
         <div class="col-md-2">
-          <confirm-button
-            text="Enviar"
-            [disabled]="form.invalid"
-            [loading]="loading"
-            (confirm)="send()">
-          </confirm-button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="!form.valid"
+            (click)="genExcel()">
+            Guardar
+            <i aria-hidden="true" class="fa fa-save"></i>
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            [disabled]="!form.valid"
+            (click)="send()">
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
     </form>
