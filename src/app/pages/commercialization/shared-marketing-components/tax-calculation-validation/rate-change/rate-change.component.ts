@@ -58,6 +58,8 @@ export class RateChangeComponent extends BasePage implements OnInit {
   vriIva: any;
   totalAccount: any;
 
+  dataComple: any[] = [];
+
   @Output() data = new EventEmitter<{}>();
   @Input() patchValue: boolean = false;
 
@@ -73,10 +75,26 @@ export class RateChangeComponent extends BasePage implements OnInit {
     this.prepareForm();
     if (this.dataDet) {
       console.log('data dataDet ', this.dataDet);
+      console.log('Tasa terreno ', this.dataDet.terrainRate);
+      console.log('Tasa constucción habitacional ', this.dataDet.rateHousing);
+      console.log('Tasa construcción comercial ', this.dataDet.rateCommercial);
+      console.log('Tasa Instalaciones espeaciales ', this.dataDet.rateSpecials);
+      console.log('Tasa Otros ', this.dataDet.rateOthers);
       this.form.patchValue({
         goodId: this.dataDet.goodId,
         goodDescription: this.dataDet.goodDescription,
       });
+
+      this.form.get('rateBatch').patchValue(this.dataDet.terrainRate);
+      this.form
+        .get('rateResiConstruction')
+        .patchValue(this.dataDet.rateHousing);
+      this.form
+        .get('rateCommerConstruction')
+        .patchValue(this.dataDet.rateCommercial);
+      this.form.get('rateSpecialPlants').patchValue(this.dataDet.rateSpecials);
+      this.form.get('otherRate').patchValue(this.dataDet.rateOthers);
+
       if (
         this.dataDet.observations == null ||
         this.dataDet.observations == ''
@@ -151,12 +169,11 @@ export class RateChangeComponent extends BasePage implements OnInit {
       this.TASA_IVA_TERRENO = null;
     } else {
       this.IVA_TERRENO = String(
-        Number(this.extPorc(this.form.get('rateBatch').value)) *
+        Number(this.form.get('rateBatch').value) *
           this.nvl(this.dataDet.vTerrain)
       );
       this.AUX_TASA_IVA_TERRENO =
-        String(Number(this.extPorc(this.form.get('rateBatch').value)) * 100) +
-        '%';
+        String(Number(this.form.get('rateBatch').value) * 100) + '%';
       this.TASA_IVA_TERRENO = Number(this.form.get('rateBatch').value);
     }
     /**--*************************** TASA_CONSTR_HAB *********************** */
@@ -166,7 +183,7 @@ export class RateChangeComponent extends BasePage implements OnInit {
       this.TASA_IVA_CONSTR_HAB = null;
     } else {
       this.IVA_CONS_HABITACIONAL = String(
-        Number(this.extPorc(this.form.get('rateResiConstruction').value)) *
+        Number(this.form.get('rateResiConstruction').value) *
           this.nvl(this.dataDet.vConstruction)
       );
       this.AUX_TASA_IVA_CONS_HABITACIONAL =
@@ -182,14 +199,12 @@ export class RateChangeComponent extends BasePage implements OnInit {
       this.TASA_IVA_CONSTR_COMER = null;
     } else {
       this.IVA_CONSTRUCION = String(
-        Number(this.extPorc(this.form.get('rateCommerConstruction').value)) *
+        Number(this.form.get('rateCommerConstruction').value) *
           this.nvl(this.dataDet.vConstructionEat)
       );
       this.AUX_TASA_IVA_CONSTRUCION =
-        String(
-          Number(this.extPorc(this.form.get('rateCommerConstruction').value)) *
-            100
-        ) + '%';
+        String(Number(this.form.get('rateCommerConstruction').value) * 100) +
+        '%';
       this.TASA_IVA_CONSTR_COMER = Number(
         this.form.get('rateCommerConstruction').value
       );
@@ -201,7 +216,7 @@ export class RateChangeComponent extends BasePage implements OnInit {
       this.TASA_IVA_INST_ESP = null;
     } else {
       this.IVA_INSTALACIONES_ESP = String(
-        Number(this.extPorc(this.form.get('rateSpecialPlants').value)) *
+        Number(this.form.get('rateSpecialPlants').value) *
           this.nvl(this.dataDet.vInstallationsEsp)
       );
       this.AUX_TASA_IVA_INSTALACIONES_ESP =
@@ -215,7 +230,7 @@ export class RateChangeComponent extends BasePage implements OnInit {
       this.TASA_IVA_OTROS = null;
     } else {
       this.IVA_OTROS = String(
-        Number(this.extPorc(this.form.get('otherRate').value)) *
+        Number(this.form.get('otherRate').value) *
           this.nvl(this.dataDet.vOthers)
       );
       this.AUX_TASA_IVA_OTROS =
@@ -223,81 +238,108 @@ export class RateChangeComponent extends BasePage implements OnInit {
       this.TASA_IVA_OTROS = Number(this.form.get('otherRate').value);
     }
     /********************************************************************* */
-    if (
-      this.form.get('rateBatch').value != this.AUX_TASA_TERRENO ||
-      this.form.get('rateResiConstruction').value != this.AUX_TASA_CONSTR_HAB ||
-      this.form.get('rateCommerConstruction').value !=
-        this.AUX_TASA_CONSTR_COMER ||
-      this.form.get('rateSpecialPlants').value != this.AUX_TASA_INST_ESP ||
-      this.form.get('otherRate').value != this.AUX_TASA_OTROS
-    ) {
-      this.v_cambio = 'S';
-    }
+    // if (
+    //   this.form.get('rateBatch').value != this.AUX_TASA_TERRENO ||
+    //   this.form.get('rateResiConstruction').value != this.AUX_TASA_CONSTR_HAB ||
+    //   this.form.get('rateCommerConstruction').value !=
+    //     this.AUX_TASA_CONSTR_COMER ||
+    //   this.form.get('rateSpecialPlants').value != this.AUX_TASA_INST_ESP ||
+    //   this.form.get('otherRate').value != this.AUX_TASA_OTROS
+    // ) {
+    //   this.v_cambio = 'S';
+    // }
     /********************************************************************* */
-    if (this.v_cambio == 'S') {
-      this.v_vri =
-        this.nvl(this.dataDet.vTerrain) +
-        this.nvl(this.dataDet.vConstruction) +
-        this.nvl(this.dataDet.vConstructionEat) +
-        this.nvl(this.dataDet.vInstallationsEsp) +
-        this.nvl(this.dataDet.vOthers);
+    // if (this.v_cambio == 'S') {
+    this.v_vri =
+      this.nvl(this.dataDet.vTerrain) +
+      this.nvl(this.dataDet.vConstruction) +
+      this.nvl(this.dataDet.vConstructionEat) +
+      this.nvl(this.dataDet.vInstallationsEsp) +
+      this.nvl(this.dataDet.vOthers);
 
-      if (
-        this.form.get('rateBatch').value != 1000 &&
-        this.form.get('rateBatch').value != null
-      ) {
-        this.v_iva = Number(this.dataDet.terrainIva);
-      }
-
-      if (
-        this.form.get('rateResiConstruction').value != 1000 &&
-        this.form.get('rateResiConstruction').value != null
-      ) {
-        this.v_iva = this.v_iva + Number(this.dataDet.ivaHousing);
-      }
-
-      if (
-        this.form.get('rateCommerConstruction').value != 1000 &&
-        this.form.get('rateCommerConstruction').value != null
-      ) {
-        this.v_iva = this.v_iva + Number(this.dataDet.ivaCommercial);
-      }
-
-      if (
-        this.form.get('rateSpecialPlants').value != 1000 &&
-        this.form.get('rateSpecialPlants').value != null
-      ) {
-        this.v_iva = this.v_iva + Number(this.dataDet.ivaSpecial);
-      }
-
-      if (
-        this.form.get('otherRate').value != 1000 &&
-        this.form.get('otherRate').value != null
-      ) {
-        this.v_iva = this.v_iva + Number(this.dataDet.ivaOthers);
-      }
-
-      this.totalAccount = this.v_vri + this.v_iva;
-
-      this.vriIva =
-        this.nvl(this.TASA_IVA_TERRENO) * this.dataDet.vTerrain +
-        this.nvl(this.TASA_IVA_CONSTR_HAB) * this.dataDet.vConstruction +
-        this.nvl(this.TASA_IVA_CONSTR_COMER) * this.dataDet.vConstructionEat +
-        this.nvl(this.TASA_IVA_INST_ESP) * this.dataDet.vInstallationsEsp +
-        this.nvl(this.TASA_IVA_OTROS) +
-        this.dataDet.vOthers;
+    if (
+      this.form.get('rateBatch').value != 1000 &&
+      this.form.get('rateBatch').value != null
+    ) {
+      this.v_iva = Number(this.dataDet.terrainIva);
     }
+
+    if (
+      this.form.get('rateResiConstruction').value != 1000 &&
+      this.form.get('rateResiConstruction').value != null
+    ) {
+      this.v_iva = this.v_iva + Number(this.dataDet.ivaHousing);
+    }
+
+    if (
+      this.form.get('rateCommerConstruction').value != 1000 &&
+      this.form.get('rateCommerConstruction').value != null
+    ) {
+      this.v_iva = this.v_iva + Number(this.dataDet.ivaCommercial);
+    }
+
+    if (
+      this.form.get('rateSpecialPlants').value != 1000 &&
+      this.form.get('rateSpecialPlants').value != null
+    ) {
+      this.v_iva = this.v_iva + Number(this.dataDet.ivaSpecial);
+    }
+
+    if (
+      this.form.get('otherRate').value != 1000 &&
+      this.form.get('otherRate').value != null
+    ) {
+      this.v_iva = this.v_iva + Number(this.dataDet.ivaOthers);
+    }
+
+    this.totalAccount = this.v_vri + this.v_iva;
+
+    this.vriIva =
+      this.nvl(this.TASA_IVA_TERRENO) * this.dataDet.vTerrain +
+      this.nvl(this.TASA_IVA_CONSTR_HAB) * this.dataDet.vConstruction +
+      this.nvl(this.TASA_IVA_CONSTR_COMER) * this.dataDet.vConstructionEat +
+      this.nvl(this.TASA_IVA_INST_ESP) * this.dataDet.vInstallationsEsp +
+      this.nvl(this.TASA_IVA_OTROS) +
+      this.dataDet.vOthers;
+    //}
 
     //this.data.emit(data);
     //this.modalRef.hide();
+
+    let modal = {
+      IVA_TERRENO: this.IVA_TERRENO,
+      terrainRate: this.form.get('rateBatch').value,
+
+      IVA_CONS_HABITACIONAL: this.IVA_CONS_HABITACIONAL,
+      rateHousing: Number(this.form.get('rateResiConstruction').value),
+
+      IVA_CONSTRUCION: this.IVA_CONSTRUCION,
+      rateCommercial: this.form.get('rateCommerConstruction').value,
+
+      IVA_INSTALACIONES_ESP: this.IVA_INSTALACIONES_ESP,
+      rateSpecials: Number(this.form.get('rateSpecialPlants').value),
+
+      IVA_OTROS: this.IVA_OTROS,
+      rateOthers: Number(this.form.get('otherRate').value),
+    };
+    this.dataComple.push(modal);
+
     let body = {
       idAppraisal: Number(this.dataDet.idDetAppraisal),
       idDetAppraisal: Number(this.dataDet.idDetAppraisal1),
       noGood: Number(this.dataDet.goodId),
       vcIva: this.v_iva,
-      vriIva: this.vriIva,
+      vriIva: this.vriIva != null ? Number(this.vriIva) : this.vriIva,
+
+      rateIvaTerrain: this.TASA_IVA_TERRENO,
+      rateIvaConstrHab: this.TASA_IVA_CONSTR_HAB,
+      rateIvaConstrEat: this.TASA_IVA_CONSTR_COMER,
+      rateIvaInstEsp: this.TASA_IVA_INST_ESP,
+      rateIvaOtros: this.TASA_IVA_OTROS,
     };
-    //this.updateDetailEval(body);
+
+    console.log('data update -> ', body);
+    this.updateDetailEval(body);
   }
 
   nvl(valor?: number): number {
@@ -305,15 +347,6 @@ export class RateChangeComponent extends BasePage implements OnInit {
       return valor;
     } else {
       return 0;
-    }
-  }
-
-  extPorc(cadena: string): string | null {
-    if (cadena.includes('%')) {
-      const cadenaSinPorcentaje = cadena.replace('%', '');
-      return cadenaSinPorcentaje;
-    } else {
-      return cadena;
     }
   }
 

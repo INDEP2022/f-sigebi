@@ -206,3 +206,46 @@ export const COLUMNS2 = {
   //   },
   // },
 };
+
+export const COLUMNS3 = {
+  totalRecords: {
+    title: 'Total de Registros',
+    sort: false,
+  },
+  totalAppraisal: {
+    title: 'Total Valor de Referencia o Avalúo',
+    sort: false,
+  },
+  totalTerrain: {
+    title: 'Total Valor Terreno',
+    sort: false,
+  },
+  totalHousing: {
+    title: 'Total Valor Construcción Habitacional',
+    sort: false,
+  },
+  totalCommercial: {
+    title: 'Total Valor Construcción Comercial',
+    sort: false,
+  },
+  totalSpecial: {
+    title: 'Total Valor Instalaciones Especiales',
+    sort: false,
+  },
+  totalOthers: {
+    title: 'Total Valor Otros',
+    sort: false,
+  },
+  totalDifference: {
+    title: 'Total Diferencia',
+    sort: false,
+  },
+  valueCalculated: {
+    title: 'Valor Total de Iva Calculado',
+    sort: false,
+  },
+  calueIncluding: {
+    title: 'Valor con Iva Incluido',
+    sort: false,
+  },
+};
