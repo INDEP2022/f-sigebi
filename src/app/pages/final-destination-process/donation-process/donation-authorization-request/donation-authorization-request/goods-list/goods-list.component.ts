@@ -60,25 +60,7 @@ export class GoodsListComponent
     fileReader.readAsBinaryString(files[0]);
     fileReader.onload = () => this.readExcel(fileReader.result);
   }
-  @Input()
-  set changeMode(value: 'I' | 'E') {
-    if (!value) return;
-    if (value === 'E') {
-      let columns = { ...COLUMNS };
-      // delete columns.changeDescription;
-      this.settings = {
-        ...this.settings,
-        columns,
-      };
-      this.changeSettings++;
-    } else {
-      this.settings = {
-        ...this.settings,
-        columns: COLUMNS,
-      };
-      this.changeSettings++;
-    }
-  }
+
   @ViewChild('table') table: Ng2SmartTableComponent;
   constructor(
     private donAuthorizaService: DonAuthorizaService,
@@ -98,17 +80,6 @@ export class GoodsListComponent
       actions: false,
       selectMode: 'multi',
       columns: {
-        // name: {
-        //   title: 'Reclasificar',
-        //   sort: false,
-        //   type: 'custom',
-        //   showAlways: true,
-        //   valuePrepareFunction: (isSelected: boolean, row: IGood) =>
-        //     this.isGoodSelected(row),
-        //   renderComponent: CheckboxElementComponent,
-        //   onComponentInitFunction: (instance: CheckboxElementComponent) =>
-        //     this.onGoodSelect(instance),
-        // },
         ...COLUMNS,
       },
       rowClassFunction: (row: any) => {
@@ -320,6 +291,7 @@ export class GoodsListComponent
             this.loader.load = true;
             const paramsF = new FilterParams();
             paramsF.addFilter('identificator', this.ngGlobal.REL_BIENES);
+            paramsF.addFilter('status', 'DON' || 'ADA');
             paramsF.limit = 100000000;
             this.goodTrackerService
               .getAllTmpTracker(paramsF.getParams())
@@ -391,10 +363,9 @@ export class GoodsListComponent
         }),
         map(response =>
           response.data.map(good => {
-            if (good.goodClassNumber + '' !== '1575') {
+            if (good.status + 'DON' || 'ADA') {
               return of({
                 ...good,
-                changeDescription: this.changeDescription,
                 notSelect: false,
               });
             } else {
@@ -416,7 +387,6 @@ export class GoodsListComponent
                   map(gestionTramite => {
                     return {
                       ...good,
-                      changeDescription: this.changeDescription,
                       notSelect: gestionTramite > 0,
                     };
                   })

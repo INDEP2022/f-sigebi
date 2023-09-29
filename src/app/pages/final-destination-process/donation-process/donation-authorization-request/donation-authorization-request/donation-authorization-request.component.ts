@@ -157,6 +157,7 @@ export class DonationAuthorizationRequestComponent
 
   cleanForm() {
     this.form.reset();
+    this.file = [];
   }
   async getProposalId(params: ListParams) {
     this.proposelServiceService.getIdPropose(params).subscribe({
