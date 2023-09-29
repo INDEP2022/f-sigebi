@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { IProposel } from 'src/app/core/models/sirsae-model/proposel-model/proposel-model';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { ProposelServiceService } from 'src/app/core/services/ms-proposel/proposel-service.service';
@@ -18,6 +20,7 @@ import {
   DISTRIBUTION_COLUMNS,
   REQUEST_GOOD_COLUMN,
 } from './distribution-columns';
+import { DonAuthorizaService } from './service/don-authoriza.service';
 @Component({
   selector: 'app-donation-authorization-request',
   templateUrl: './donation-authorization-request.component.html',
@@ -35,6 +38,7 @@ export class DonationAuthorizationRequestComponent
   donationGood: IGoodDonation[] = [];
   settings2: any;
   settings3: any;
+  goods: any[];
   requestId: number = 0;
   data: any = [];
   columnFilters: any[] = [];
@@ -46,13 +50,22 @@ export class DonationAuthorizationRequestComponent
   status: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
   bsModalRef?: BsModalRef;
+  files: any = [];
+  goodNotValid: IGood[] = [];
+  origin: string = null;
+  changeDescription: string;
+  changeDescriptionAlterning: string;
+  contador = 0;
+  @ViewChild('file') file: any;
 
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private proposelServiceService: ProposelServiceService,
     private donationService: DonationService,
-    private donationProcessService: DonationProcessService
+    private donationProcessService: DonationProcessService,
+    private donAuthorizaService: DonAuthorizaService,
+    private router: Router
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -91,6 +104,9 @@ export class DonationAuthorizationRequestComponent
 
   settingsChange(event: any) {
     this.settings = event;
+  }
+  loadGoods() {
+    this.donAuthorizaService.loadGoods.next(true);
   }
 
   openModal(op: number) {
@@ -179,6 +195,17 @@ export class DonationAuthorizationRequestComponent
         this.loadingReq = false;
         console.log(data.data);
       },
+    });
+  }
+
+  agregarBienes() {
+    if (this.proposeDefault === null) {
+      this.alert('warning', 'Debe seleccionar la propuesta', '');
+      return;
+    }
+    // this.data.load([]);
+    this.router.navigate(['/pages/general-processes/goods-tracker'], {
+      queryParams: { origin: 'FDONSOLAUTORIZA' },
     });
   }
 }
