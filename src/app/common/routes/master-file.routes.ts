@@ -15,6 +15,10 @@ export const MASTER_FILES = [
         label: 'Préstamo de documentos',
         link: '/pages/master-file/loan-document',
       },
+      {
+        label: 'Ubicación en el archivo general',
+        link: '/pages/master-file/location-general-archive',
+      },
     ],
   },
 ];

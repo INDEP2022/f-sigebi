@@ -25,6 +25,10 @@ export class SaveValueService
     return this.saveValueRepository.getAllPaginated(this.route, params);
   }
 
+  getAllTwo(params?: ListParams) {
+    return this.get('save-values', params);
+  }
+
   getById(id: string | number): Observable<ISaveValue> {
     return this.saveValueRepository.getById(this.route, id);
   }

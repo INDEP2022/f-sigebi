@@ -12,17 +12,22 @@ import { DOCUMENTS_SENT_COLUMNS } from './documents-sent-columns';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { HttpParams } from '@angular/common/http';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 
 @Component({
   selector: 'app-documents-sent-to-masterfile',
   templateUrl: './documents-sent-to-masterfile.component.html',
-  styles: [],
+  styleUrls: ['./documents-sent-to-masterfile.component.css'],
 })
 export class DocumentsSentToMasterfileComponent
   extends BasePage
   implements OnInit
 {
+  //
+
   form: FormGroup;
 
   data: LocalDataSource = new LocalDataSource();
@@ -34,9 +39,21 @@ export class DocumentsSentToMasterfileComponent
   columnFilters: any = [];
 
   blk_doc: any = {};
+
+  // Token
+  dataUserToken: any;
+
+  // Any
+  area: any;
+
+  //
+
   constructor(
     private fb: FormBuilder,
-    private documentsService: DocumentsService
+    private documentsService: DocumentsService,
+    private authService: AuthService,
+    private serviceDeparmentsAndSecurity: DepartamentService,
+    private serviceUserSecurity: UsersService
   ) {
     super();
     let objBase = this;
@@ -44,34 +61,44 @@ export class DocumentsSentToMasterfileComponent
       ...this.settings,
       hideSubHeader: false,
       actions: false,
-
       columns: {
         ...DOCUMENTS_SENT_COLUMNS,
-        check: {
-          title: 'Check',
-          type: 'custom',
-          renderComponent: CheckboxElementComponent,
-          onComponentInitFunction(instance: any) {
-            instance.toggle.subscribe((data: any) => {
-              objBase.enviarDocumento(data);
-              /*
+        // check: {
+        //   title: 'Check',
+        //   type: 'custom',
+        //   filter: false,
+        //   renderComponent: CheckboxElementComponent,
+        //   onComponentInitFunction(instance: any) {
+        //     instance.toggle.subscribe((data: any) => {
+        //       objBase.enviarDocumento(data);
+        /*
               this.enviarDocumento(data);
               
               if (data.toggle) {
                 goodCheck.push(data);
               } else {
                 goodCheck = goodCheck.filter(valor => valor.row.id != data.row.id);
-              }
+              } 
               */
-            });
-          },
-          sort: false,
-        },
+        //     });
+        //   },
+        //   sort: false,
+        // },
+      },
+      rowClassFunction: (row: any) => {
+        if (true) {
+          return 'escaneado';
+        } else {
+          return 'red-row';
+        }
       },
     };
   }
 
   ngOnInit(): void {
+    this.dataUserToken = this.authService.decodeToken();
+    this.postDepartmentsAndSecurity();
+    this.portUserSecurity();
     this.prepareForm();
     this.objblk();
     //this.getDocument();
@@ -106,6 +133,48 @@ export class DocumentsSentToMasterfileComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDocument());
+  }
+
+  //
+
+  postDepartmentsAndSecurity() {
+    const dataUser = this.dataUserToken;
+    let params: HttpParams = new HttpParams();
+
+    params = params.append('delegationNumber', dataUser?.department);
+    params = params.append('subdelegationNumber', 0);
+    params = params.append('departamentNumber', dataUser?.department);
+    params = params.append('user', dataUser?.preferred_username);
+
+    this.serviceDeparmentsAndSecurity
+      .portDeparmentsAndSecurity(params)
+      .subscribe({
+        next: response => {
+          this.area = response.data;
+          this.form.controls['area'].setValue(response?.data);
+        },
+        error: error => {},
+      });
+  }
+
+  portUserSecurity() {
+    const dataUser = this.dataUserToken;
+    let params: HttpParams = new HttpParams();
+    let responseData: string = '';
+
+    params = params.append(
+      'filter.id',
+      `$ilike:${dataUser?.preferred_username}`
+    );
+
+    this.serviceUserSecurity.getAllSegUsers(params).subscribe({
+      next: response => {
+        for (const x of response?.data) {
+          responseData = responseData + ' - ' + x?.name;
+        }
+        this.form.controls['sentBy'].setValue(responseData);
+      },
+    });
   }
 
   prepareForm() {
@@ -154,8 +223,22 @@ export class DocumentsSentToMasterfileComponent
       ...this.columnFilters,
     };
 
+    let data: any[] = [];
+
     this.documentsService.getAll(params).subscribe({
       next: response => {
+        // for (const x of response.data) {
+        //   let params: HttpParams = new HttpParams();
+        //   params = params.append('sendArea', x?.areaSends);
+        //   params = params.append('sendUser', x?.userSend);
+        //   this.serviceDeparmentsAndSecurity.portDeparmentsAndSecurity2(params).subscribe({
+        //     next: response => {
+        //       x.
+        //     }, error: error => {
+
+        //     }
+        //   })
+        // }
         this.columns = response.data;
         this.totalItems = response.count || 0;
 
@@ -273,9 +356,7 @@ export class DocumentsSentToMasterfileComponent
           .then(() => {
             alert('Documento enviado correctamente.');
           })
-          .catch(error => {
-            console.error('Error al enviar el documento:', error);
-          });
+          .catch(error => {});
       }
     } else {
       /*

@@ -27,6 +27,19 @@ const routes: Routes = [
       (await import('./loan-document/loan-document.module')).LoanDocumentModule,
     data: { title: 'Préstamo de documentos', screen: 'FACTARGPRESTADOCS' },
   },
+  {
+    path: 'location-general-archive',
+    loadChildren: async () =>
+      (
+        await import(
+          './location-general-archive/location-general-archive.module'
+        )
+      ).LocationGeneralArchiveModule,
+    data: {
+      title: 'Ubicación en el archivo general',
+      screen: 'FCONARGGUARDAVALO',
+    },
+  },
 ];
 
 @NgModule({

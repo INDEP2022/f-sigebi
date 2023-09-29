@@ -1,3 +1,5 @@
+import { ComponentRenderDocumentSentComponent } from './render-component/component-render-document-sent/component-render-document-sent.component';
+
 export const DOCUMENTS_SENT_COLUMNS = {
   id: {
     title: 'Exp.',
@@ -33,5 +35,15 @@ export const DOCUMENTS_SENT_COLUMNS = {
     title: 'Natural',
     type: 'string',
     sort: false,
+  },
+  status: {
+    title: 'Estado',
+    type: 'custom',
+    sort: false,
+    filter: false,
+    renderComponent: ComponentRenderDocumentSentComponent,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return { value: cell, type: '', rowData: row };
+    },
   },
 };

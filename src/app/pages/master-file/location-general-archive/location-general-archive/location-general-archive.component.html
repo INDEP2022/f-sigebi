@@ -1,0 +1,137 @@
+<app-card [header]="true" [footer]="true">
+  <!--  -->
+  <div class="ch-content" header>
+    <h5 class="title">Ubicación en el archivo general</h5>
+  </div>
+  <!--  -->
+  <div body>
+    <div>
+      <h5>Lienzo #1</h5>
+      <div>
+        <div>
+          <div class="row">
+            <!--  -->
+            <!--  -->
+            <div class="col-md-3">
+              <h5 class="text-center">Archivo General</h5>
+              <!--  -->
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="dataOne">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="paramsOne"
+                [totalItems]="totalItemsOne"></app-pagination>
+            </div>
+            <!--  -->
+            <!--  -->
+            <div class="col-md-3">
+              <h5 class="text-center">Bateria</h5>
+              <!--  -->
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsTwo"
+                [source]="dataTwo">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="paramsTwo"
+                [totalItems]="totalItemsTwo"></app-pagination>
+            </div>
+            <!--  -->
+            <!--  -->
+            <div class="col-md-3">
+              <h5 class="text-center">Entrepaño</h5>
+              <!--  -->
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsThree"
+                [source]="dataThree">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="paramsThree"
+                [totalItems]="totalItemsThree"></app-pagination>
+            </div>
+            <!--  -->
+            <!--  -->
+            <div class="col-md-3">
+              <h5 class="text-center">Anaquel</h5>
+              <!--  -->
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsFour"
+                [source]="dataFour">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="paramsFour"
+                [totalItems]="totalItemsFour"></app-pagination>
+            </div>
+            <!--  -->
+            <!--  -->
+          </div>
+          <div class="text-right">
+            <span class="mr-5"
+              ><i class="fa fa-square" style="color: green"></i> No
+              Contenido</span
+            >
+            <span class="mr-5"
+              ><i class="fa fa-square" style="color: red"></i> Si
+              Contenido</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--  -->
+    <br />
+    <br />
+    <br />
+    <div>
+      <h5>Lienzo #2</h5>
+      <div>
+        <div class="col-md-12">
+          <h5 class="text-center">Expedientes</h5>
+          <!--  -->
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settingsFive"
+            [source]="dataFive">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsFive"
+            [totalItems]="totalItemsFive"></app-pagination>
+        </div>
+      </div>
+    </div>
+    <!--  -->
+    <br />
+    <br />
+    <br />
+    <div>
+      <h5>Lienzo #3</h5>
+      <div>
+        <div class="col-md-12">
+          <h5 class="text-center">Documentos</h5>
+          <!--  -->
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settingsSix"
+            [source]="dataSix">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsSix"
+            [totalItems]="totalItemsSix"></app-pagination>
+        </div>
+        <div class="text-right">
+          <span class="mr-5"
+            ><i class="fa fa-square" style="color: green"></i>Recibidos</span
+          >
+          <span class="mr-5"
+            ><i class="fa fa-square" style="color: red"></i>Prestados</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--  -->
+</app-card>

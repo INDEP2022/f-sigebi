@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DepartamentEndpoints } from 'src/app/common/constants/endpoints/departament-endpoint';
@@ -118,5 +119,19 @@ export class DepartamentService
 
   getDeparmentById(model: any): Observable<IDepartment> {
     return this.departamentRepository.create(this.route + '/id', model);
+  }
+
+  portDeparmentsAndSecurity(params: HttpParams) {
+    return this.post(
+      DepartamentEndpoints.GetInCatDepartamentsAndSecurity,
+      params
+    );
+  }
+
+  portDeparmentsAndSecurity2(params: HttpParams) {
+    return this.post(
+      DepartamentEndpoints.GetInCatDepartamentsAndSecurity2,
+      params
+    );
   }
 }
