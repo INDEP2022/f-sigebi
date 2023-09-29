@@ -14,8 +14,10 @@ import { FindProposeComponent } from '../find-propose/find-propose.component';
 import { ModalViewComponent } from '../modal-view/modal-view.component';
 import { ListParams } from './../../../../../common/repository/interfaces/list-params';
 import { COLUMNS_GOODS } from './columns-goods';
-import { DISTRIBUTION_COLUMNS } from './distribution-columns';
-import { REQUEST_COLUMNS } from './request-columns';
+import {
+  DISTRIBUTION_COLUMNS,
+  REQUEST_GOOD_COLUMN,
+} from './distribution-columns';
 @Component({
   selector: 'app-donation-authorization-request',
   templateUrl: './donation-authorization-request.component.html',
@@ -35,7 +37,9 @@ export class DonationAuthorizationRequestComponent
   settings3: any;
   requestId: number = 0;
   data: any = [];
+  columnFilters: any[] = [];
   totalItems: number = 0;
+  loadingReq: boolean = true;
   itemRequest: number = 0;
   proposal: IProposel;
   dataFacRequest: LocalDataSource = new LocalDataSource();
@@ -52,9 +56,9 @@ export class DonationAuthorizationRequestComponent
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
-    this.settings.columns = REQUEST_COLUMNS;
+    this.settings.columns = DISTRIBUTION_COLUMNS;
     this.settings2 = { ...this.settings, actions: false };
-    this.settings2.columns = DISTRIBUTION_COLUMNS;
+    this.settings2.columns = REQUEST_GOOD_COLUMN;
     this.settings3 = { ...this.settings, actions: false };
     this.settings3.columns = COLUMNS_GOODS;
   }
@@ -147,7 +151,6 @@ export class DonationAuthorizationRequestComponent
     });
   }
   async getRequest(proposal: number) {
-    console.log(proposal);
     this.donationProcessService.getRequestId(proposal).subscribe({
       next: data => {
         this.request = data.data;
@@ -161,16 +164,20 @@ export class DonationAuthorizationRequestComponent
           classifNumbGood: this.request[0].clasifGood.clasifGoodNumber,
           descripClassif: this.request[0].justification,
         });
-
-        // this.statusCanc = next.statusProceedings;
-        // if (this.statusCanc == 'CERRADA') {
-        //   //this.disabledBtnCerrar = false;
-        //   this.disabledBtnActas = false;
-        // } else {
-        //   this.disabledBtnActas = true;
-        //   //this.disabledBtnCerrar = true;
-        // }
-        // console.log('acta NEXT ', next);
+        this.getRequestGood();
+      },
+    });
+  }
+  getRequestGood() {
+    this.loadingReq = true;
+    // this.params.getValue()['filter.numFile'] = this.expedienteNumber;
+    let params = new ListParams();
+    params['?filter.requestId.id'] = this.requestId;
+    params['requestTypeId'] = 'SD';
+    this.donationService.getGoodRequest(params).subscribe({
+      next: data => {
+        this.loadingReq = false;
+        console.log(data.data);
       },
     });
   }

@@ -12,4 +12,5 @@ export enum DonationEndPoint {
   fdonacDocumAdm1 = 'fdonacDocumAdm1',
   ApproveDnation = 'r-approve-donation',
   GoodsForDonation = 'admon-donation',
+  RequestGoodDon = 'donac-request-good',
 }

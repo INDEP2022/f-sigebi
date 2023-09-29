@@ -15,6 +15,7 @@ import {
 const api: string = DonationEndPoint.donation;
 const donationEvent = DonationEndPoint.eventComDonation;
 const endpoint: string = DonationEndPoint.eventComDonation;
+const route: string = DonationEndPoint.RequestGoodDon;
 @Injectable({
   providedIn: 'root',
 })
@@ -133,5 +134,8 @@ export class DonationService
   }
   getGoodsDonation(params: ListParams) {
     return this.get(DonationEndPoint.GoodsForDonation, params);
+  }
+  getGoodRequest(parmas: ListParams) {
+    return this.get(route, parmas);
   }
 }
