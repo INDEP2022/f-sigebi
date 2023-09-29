@@ -59,7 +59,7 @@ export class CostsAppliedGoodsComponent extends BasePage implements OnInit {
 
       startDate: [null, Validators.required],
       finishDate: [null, Validators.required],
-      typecost: ['null'],
+      typecost: ['A'],
     });
   }
 
@@ -88,9 +88,8 @@ export class CostsAppliedGoodsComponent extends BasePage implements OnInit {
       } else {
         console.log('no entra en el segundo');
       }
-    } else {
-      console.log('no entra en el primero');
     }
+    this.LanzaReporte();
   }
 
   LanzaReporte() {
@@ -215,7 +214,7 @@ export class CostsAppliedGoodsComponent extends BasePage implements OnInit {
     const day = date.getUTCDate().toString().padStart(2, '0');
     const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
     const year = date.getUTCFullYear().toString();
-    return `${day}-${month}-${year}`;
+    return `${year}-${month}-${day}`;
   }
 
   genExcel() {
@@ -245,24 +244,42 @@ export class CostsAppliedGoodsComponent extends BasePage implements OnInit {
         //----------------------
         const Fin = finishDate != null ? new Date(finishDate) : null;
         const formattedfecFin = Fin != null ? this.formatDate(Fin) : null;
-        aux = [
-          {
-            CONCEPTO: '',
-            'NO._BIEN': '',
-            'VALOR AVALUO': '',
-            MONEDA: '',
-            'VALOR PARA COSTO': '',
-            CANTIDAD: '',
-            'FECHA GASTO': '',
-            IMPORTE: '',
-            'D/I': '',
-            'NUM.GASTO': '',
-            TIPOBIEN: '',
-            CLASIF: '',
+        let params = {
+          pDate1: formattedfecstart,
+          pDate2: formattedfecFin,
+          pConcept: Number(costConcept),
+          pConcept2: Number(to),
+          pDirInd: typecost,
+          pTypeGood: goodType,
+          pDelegation: delegation,
+          pFile: file,
+          pFile2: toFile,
+          pGood: noBien,
+          pGood2: alGood,
+        };
+        this.expenseService.getOpenCurReport(params).subscribe({
+          next: response => {
+            console.log('Respuesta Función, ', response);
+            aux = [
+              {
+                CONCEPTO: '',
+                'NO._BIEN': '',
+                'VALOR AVALUO': '',
+                MONEDA: '',
+                'VALOR PARA COSTO': '',
+                CANTIDAD: '',
+                'FECHA GASTO': '',
+                IMPORTE: '',
+                'D/I': '',
+                'NUM.GASTO': '',
+                TIPOBIEN: '',
+                CLASIF: '',
+              },
+            ];
+            console.log('Data let Aux-> ', aux);
+            this.exportXlsx('export', aux);
           },
-        ];
-        console.log('Data let Aux-> ', aux);
-        this.exportXlsx('export', aux);
+        });
       } else {
         return;
       }

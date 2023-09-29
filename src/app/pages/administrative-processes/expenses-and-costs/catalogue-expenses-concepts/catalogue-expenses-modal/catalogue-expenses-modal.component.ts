@@ -85,19 +85,32 @@ export class CatalogueExpensesModalComponent
   }
 
   newRegister() {
-    let params = {
-      notConceptSpent: '',
-      description: this.form.get('description').value,
-      notCriterionApplicationSpent: this.form.get('criterio').value,
-    };
-    this.expenseService.insertDataExpense(params).subscribe({
+    this.expenseService.getSeqExpense().subscribe({
       next: response => {
-        this.alert('success', 'Exitoso', 'Se creo el registro exitosamente.');
-        this.modalRef.content.callback(true, true);
-        this.modalRef.hide();
-      },
-      error: err => {
-        this.alert('error', 'Error', 'Hubo un error, intentelo nuevamente.');
+        console.log('response seq -> ', response);
+        let params = {
+          notConceptSpent: response,
+          description: this.form.get('description').value,
+          notCriterionApplicationSpent: this.form.get('criterio').value,
+        };
+        this.expenseService.insertDataExpense(params).subscribe({
+          next: response => {
+            this.alert(
+              'success',
+              'Exitoso',
+              'Se creo el registro exitosamente.'
+            );
+            this.modalRef.content.callback(true, true);
+            this.modalRef.hide();
+          },
+          error: err => {
+            this.alert(
+              'error',
+              'Error',
+              'Hubo un error, intentelo nuevamente.'
+            );
+          },
+        });
       },
     });
   }

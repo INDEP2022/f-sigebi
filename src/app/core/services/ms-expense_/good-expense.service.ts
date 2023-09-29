@@ -48,4 +48,9 @@ export class ExpenseService extends HttpService {
     const route = `concept-expense/${id}`;
     return this.delete(route);
   }
+
+  getSeqExpense(params?: any) {
+    const route = `concept-expense/getSecuence`;
+    return this.post(route, params);
+  }
 }

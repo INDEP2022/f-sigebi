@@ -6,7 +6,9 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ExpenseService } from 'src/app/core/services/ms-expense_/good-expense.service';
+import { GoodSpentService } from 'src/app/core/services/ms-spent/good-spent.service';
 import { BasePage } from 'src/app/core/shared';
 import {
   FIGURES_PERIOD_COLUMNS,
@@ -33,6 +35,8 @@ export class ClosureMonthlyComponent extends BasePage implements OnInit {
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   btnOpen: boolean = false;
   btnClose: boolean = false;
+  user: any;
+  delegation: any;
 
   settings2 = {
     ...this.settings,
@@ -41,7 +45,12 @@ export class ClosureMonthlyComponent extends BasePage implements OnInit {
     columns: FIGURES_PERIOD_COLUMNS,
   };
 
-  constructor(private fb: FormBuilder, private expenseService: ExpenseService) {
+  constructor(
+    private fb: FormBuilder,
+    private expenseService: ExpenseService,
+    private goodSpentService: GoodSpentService,
+    private authService: AuthService
+  ) {
     super();
     this.settings.columns = PERIOD_STATUS_COLUMNS;
     this.settings.actions = false;
@@ -51,6 +60,13 @@ export class ClosureMonthlyComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.filterColumnsTableState();
     this.filterColumnsTableFigures();
+    this.getuser();
+  }
+
+  getuser() {
+    let token = this.authService.decodeToken();
+    this.user = token.username.toUpperCase();
+    this.delegation = token.department.toUpperCase();
   }
 
   selectRow(row: any) {
@@ -108,9 +124,55 @@ export class ClosureMonthlyComponent extends BasePage implements OnInit {
       });
   }
 
-  open() {}
+  open() {
+    const dateRangeString = this.selectedRow.period;
+    const lastDaysOfMonth = this.getLastDayOfMonth(dateRangeString);
+    let params = {
+      pDate: lastDaysOfMonth,
+    };
+    this.goodSpentService.openPerid(params).subscribe({
+      next: response => {
+        this.pupActivaBtn;
+        this.loadStateTable();
+      },
+    });
+  }
 
-  close() {}
+  getLastDayOfMonth(dateRangeString: string): Date[] {
+    const dateRanges = dateRangeString.split(' al ');
+
+    const lastDaysOfMonth: Date[] = [];
+
+    for (const dateString of dateRanges) {
+      const [year, month, day] = dateString.split('-').map(Number);
+
+      // Crear un objeto Date con el último día del mes
+      const lastDayOfMonth = new Date(year, month - 1, day);
+
+      // Establecer el día al último día del mes
+      lastDayOfMonth.setMonth(lastDayOfMonth.getMonth() + 1);
+      lastDayOfMonth.setDate(0);
+
+      lastDaysOfMonth.push(lastDayOfMonth);
+    }
+
+    return lastDaysOfMonth;
+  }
+
+  close() {
+    const dateRangeString = this.selectedRow.period;
+    const lastDaysOfMonth = this.getLastDayOfMonth(dateRangeString);
+    let params = {
+      pDate: lastDaysOfMonth,
+      pUser: this.user,
+    };
+    this.goodSpentService.sumarize(params).subscribe({
+      next: response => {
+        console.log('respuesta Sumarize ', response);
+      },
+    });
+    //FALTA FUNCION
+  }
 
   pupActivaBtn() {
     if ((this.selectedRow.status = 'CERRADO')) {
