@@ -58,7 +58,7 @@ export class RateChangeComponent extends BasePage implements OnInit {
   vriIva: any;
   totalAccount: any;
 
-  dataComple: any[] = [];
+  dataComple: any;
 
   @Output() data = new EventEmitter<{}>();
   @Input() patchValue: boolean = false;
@@ -312,17 +312,15 @@ export class RateChangeComponent extends BasePage implements OnInit {
 
       IVA_CONS_HABITACIONAL: this.IVA_CONS_HABITACIONAL,
       rateHousing: Number(this.form.get('rateResiConstruction').value),
-
       IVA_CONSTRUCION: this.IVA_CONSTRUCION,
       rateCommercial: this.form.get('rateCommerConstruction').value,
-
       IVA_INSTALACIONES_ESP: this.IVA_INSTALACIONES_ESP,
       rateSpecials: Number(this.form.get('rateSpecialPlants').value),
 
       IVA_OTROS: this.IVA_OTROS,
       rateOthers: Number(this.form.get('otherRate').value),
     };
-    this.dataComple.push(modal);
+    this.dataComple = modal;
 
     let body = {
       idAppraisal: Number(this.dataDet.idDetAppraisal),
@@ -340,6 +338,9 @@ export class RateChangeComponent extends BasePage implements OnInit {
 
     console.log('data update -> ', body);
     this.updateDetailEval(body);
+    console.log('this.dataComple ', this.dataComple);
+    this.modalRef.content.callback(true, this.dataComple);
+    this.close();
   }
 
   nvl(valor?: number): number {
@@ -362,4 +363,9 @@ export class RateChangeComponent extends BasePage implements OnInit {
       },
     });
   }
+
+  /*deletDecim(numero: number): number {
+    console.log('deletDecim-> ', Math.floor(numero));
+    return numero / 100;
+  }*/
 }

@@ -169,8 +169,9 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
         this.dataDet.goodId
       );
     }
-    // this.selected.emit(this.selectedRow);
-    // this.modalRef.hide();
+
+    this.selected.emit(this.selectedRow);
+    this.modalRef.hide();
   }
 
   getComerParameter() {
@@ -205,6 +206,11 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
 
   accept() {
     if (this.dataDet != null) {
+      console.log('data det ', this.dataDet);
+      this.getComerParameterFilterSumitSearch(
+        this.dataDet.idDetAppraisal,
+        this.dataDet.goodId
+      );
     }
   }
 
@@ -324,8 +330,8 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
 
   validateRow(total: number) {
     if (
-      (total > 0 && this.dataDet.check == 'N') ||
-      this.dataDet.check == null
+      total > 0 &&
+      (this.dataDet.check == 'N' || this.dataDet.check == null)
     ) {
       let params = {
         idAppraisal: Number(this.dataDet.idDetAppraisal),
@@ -343,6 +349,8 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
         };
         this.deleteParametersGood(body);
       }
+    } else {
+      this.alert('error', 'Registro no encontrado', '');
     }
   }
 
@@ -368,6 +376,75 @@ export class InconsistenciesComponent extends BasePage implements OnInit {
       },
       error: err => {
         this.alert('error', '', 'Registro no actualizado!');
+      },
+    });
+  }
+
+  getComerParameterFilterSumitSearch(idAvaluo: number, goodId: number) {
+    const params = new ListParams();
+    params['filter.description'] = '$eq:S';
+    params['filter.parameter'] = `$eq:${idAvaluo}`;
+    params['filter.value'] = `$eq:${goodId}`;
+    console.log('params send 1', this.params.getValue());
+    console.log('params send 2', params);
+    this.parameterBrandsService.getSuperUserFilter(params).subscribe({
+      next: response => {
+        console.log('response submit ', response);
+        this.validateRowSearch(response.count, idAvaluo, goodId);
+      },
+      error: err => {
+        console.log('error ', err);
+        this.validateRowSearch(0, idAvaluo, goodId);
+      },
+    });
+  }
+
+  validateRowSearch(total: number, idAvaluo: number, goodId: number) {
+    if (
+      (total == 0 && this.dataDet.check == 'N') ||
+      this.dataDet.check == null
+    ) {
+      this.postComerParameterMod();
+      if (this.selectedRow.option == 'S') {
+      }
+    } else {
+      if (total > 0 && this.dataDet.check == 'S') {
+        /**Insert Delete */
+        let body = {
+          parameter: idAvaluo,
+          value: goodId,
+          address: 'I',
+        };
+
+        this.deleteParametersGood(body);
+        let params = {
+          idAppraisal: idAvaluo,
+          idDetAppraisal: this.dataDet.idDetAppraisal1,
+          noGood: goodId,
+          observations: '',
+          //approved: 'S',
+        };
+        console.log('Params Update S->', params);
+        this.updateDetailEval(params);
+      }
+    }
+  }
+
+  postComerParameterMod() {
+    let body = {
+      parameter: Number(this.dataDet.idDetAppraisal),
+      value: Number(this.dataDet.goodId),
+      description: 'S',
+      address: 'I',
+      // typeEventId: null,
+      // nbOrigin: 'Dato de tipo texto',
+    };
+    this.expenseParametercomerService.postComerParametersMod(body).subscribe({
+      next: resp => {
+        this.alert('success', 'Registro guardado correctamente', '');
+      },
+      error: err => {
+        this.alert('error', 'Error al guardar el registro', '');
       },
     });
   }

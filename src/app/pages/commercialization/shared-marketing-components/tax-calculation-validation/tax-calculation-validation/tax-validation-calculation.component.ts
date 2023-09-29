@@ -17,6 +17,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AppraiseService } from 'src/app/core/services/ms-appraise/appraise.service';
 import { ComerUsuauTxEventService } from 'src/app/core/services/ms-event/comer-usuautxevento.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ComerGoodsRejectedService } from 'src/app/core/services/ms-prepareevent/comer-goods-rejected.service';
 import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
 import { ERROR_EXPORT } from 'src/app/pages/documents-reception/goods-bulk-load/utils/goods-bulk-load.message';
@@ -81,7 +82,20 @@ export class TaxValidationCalculationComponent
   totalItems3: number = 0;
   params3 = new BehaviorSubject<ListParams>(new ListParams());
 
-  falgTotal: boolean = false;
+  flagTotal: boolean = false;
+  flagCambio: boolean = false;
+
+  rateCommercial: number;
+  rateHousing: number;
+  rateOthers: number;
+  rateSpecials: number;
+  terrainRate: number;
+
+  IVA_CONSTRUCION: number;
+  IVA_CONS_HABITACIONAL: number;
+  IVA_INSTALACIONES_ESP: number;
+  IVA_OTROS: number;
+  IVA_TERRENO: number;
 
   constructor(
     private fb: FormBuilder,
@@ -93,7 +107,8 @@ export class TaxValidationCalculationComponent
     private officeManagementService: OfficeManagementService,
     private appraiseService: AppraiseService,
     private goodProcessService: GoodProcessService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private goodService: GoodService
   ) {
     super();
     let objBase = this;
@@ -361,8 +376,22 @@ export class TaxValidationCalculationComponent
     let config: ModalOptions = {
       initialState: {
         dataDet: this.dataDet,
-        callback: (next: boolean) => {
-          //if (next) this.find();
+        callback: (next: boolean, data: any) => {
+          if (next) {
+            console.log('DataCallBack->', data);
+            console.log('DataPASAR-> ', data.rateCommercial);
+            this.rateCommercial = data.rateCommercial;
+            this.rateHousing = data.rateHousing;
+            this.rateOthers = data.rateOthers;
+            this.rateSpecials = data.rateSpecials;
+            this.terrainRate = data.terrainRate;
+
+            this.IVA_TERRENO = data.IVA_TERRENO;
+
+            this.data2.load([]);
+            this.data2.refresh();
+            this.getallCondition();
+          }
         },
       },
       class: 'modal-xl modal-dialog-centered',
@@ -582,12 +611,14 @@ export class TaxValidationCalculationComponent
     console.log('row ', rows);
     if (rows.length > 0) {
       //this.flagDetail = false;
+      this.flagCambio = true;
       this.selectedRows = rows;
       console.log('Rows Selected->', this.selectedRows);
       console.log('SelectRows', this.selectedRows[0].id);
       this.appraisal = this.selectedRows[0].id;
       this.getComerDetAvaluo(this.appraisal);
     } else {
+      this.flagCambio = false;
       this.selectedRows = [];
       //this.flagDetail = true;
     }
@@ -598,7 +629,7 @@ export class TaxValidationCalculationComponent
     this.selectedRows = null;
     console.log('row ', rows);
     if (rows.length > 0) {
-      this.falgTotal = true;
+      this.flagTotal = true;
       this.flagDetail = false;
       this.selectedRows = rows;
       console.log('Rows Selected->', this.selectedRows);
@@ -622,7 +653,7 @@ export class TaxValidationCalculationComponent
       this.data3.load(aux);
       this.data3.refresh;
     } else {
-      this.falgTotal = false;
+      this.flagTotal = false;
       console.log('row ', this.selectedRows);
       this.selectedRows = [];
       this.flagDetail = true;
@@ -681,6 +712,7 @@ export class TaxValidationCalculationComponent
   getallCondition() {
     this.flagCount = true;
     this.listAppraisal(this.flagCount);
+    this.flagCambio = false;
   }
 
   listAppraisal(flagCount: boolean) {
@@ -1100,8 +1132,8 @@ export class TaxValidationCalculationComponent
                 ),
                 nameAppraiser: resp.data[0].nameAppraiser,
                 refAppraisal: resp.data[0].refAppraisal,
-                terrainSurface: resp.data[0].good.val5,
-                surfaceConstru: resp.data[0].good.val5,
+                terrainSurface: this.split(resp.data[0].good.val5),
+                surfaceConstru: this.split(resp.data[0].good.val5),
                 terrainPorcentage: porcentTerrain,
                 porcentageHousing: porcentHousing,
                 porcentageCommercial: porcentCommercial,
@@ -1116,16 +1148,41 @@ export class TaxValidationCalculationComponent
                 vOthers: resp.data[0].vOthers,
                 product: product,
                 difference: difference,
-                terrainRate: terrainRate,
-                rateHousing: rateHousing,
-                rateCommercial: rateCommercial,
-                rateSpecials: rateSpecials,
-                rateOthers: rateOthers,
-                terrainIva: terrainIva,
-                ivaHousing: ivaHousing,
-                ivaCommercial: ivaCommercial,
-                ivaSpecial: ivaSpecial,
-                ivaOthers: ivaOthers,
+                terrainRate:
+                  this.terrainRate != null
+                    ? this.rateCommercial
+                    : this.deletDecim(rateCommercial),
+                rateHousing:
+                  this.rateHousing != null
+                    ? this.rateCommercial
+                    : this.deletDecim(rateCommercial),
+                rateCommercial:
+                  this.rateCommercial != null
+                    ? this.rateCommercial
+                    : this.deletDecim(terrainRate),
+                rateSpecials:
+                  this.rateSpecials != null
+                    ? this.rateCommercial
+                    : this.deletDecim(rateCommercial),
+                rateOthers:
+                  this.rateOthers != null
+                    ? this.rateCommercial
+                    : this.deletDecim(rateCommercial),
+                terrainIva:
+                  this.IVA_TERRENO != null ? this.IVA_TERRENO : terrainIva,
+                ivaHousing:
+                  this.IVA_CONS_HABITACIONAL != null
+                    ? this.IVA_CONS_HABITACIONAL
+                    : ivaHousing,
+                ivaCommercial:
+                  this.IVA_CONSTRUCION != null
+                    ? this.IVA_CONSTRUCION
+                    : ivaCommercial,
+                ivaSpecial:
+                  this.IVA_INSTALACIONES_ESP != null
+                    ? this.IVA_INSTALACIONES_ESP
+                    : ivaSpecial,
+                ivaOthers: this.IVA_OTROS != null ? this.IVA_OTROS : ivaOthers,
                 valueIvaTotalCalculated: valueIvaTotalCalculated,
                 totalAccount: totalAccount,
                 observation: resp.data[0].observations,
@@ -1135,6 +1192,7 @@ export class TaxValidationCalculationComponent
                 auxTasaIvaTerren: terrainRate,
                 auxTerrainIva: terrainIva,
                 vriIva: resp.data[0].vriIva,
+                //auxObservations:
               };
               this.dataDet = params2;
               this.dataDetArr.push(params2);
@@ -1314,6 +1372,26 @@ export class TaxValidationCalculationComponent
       XLSX.utils.book_append_sheet(workBook, workSheet, 'Hoja1');
       let aux = 'Avalúos' + '.xlsx';
       XLSX.writeFile(workBook, aux);
+    }
+  }
+
+  deletDecim(numero: number): number {
+    console.log('deletDecim-> ', Math.floor(numero));
+    return numero / 100;
+  }
+
+  split(cadena: string): number | null {
+    console.log('Split sin proc-> ', cadena);
+    const cadenaSinGuiones = cadena.replace(/-/g, '');
+
+    // Convierte la cadena en un número decimal
+    const numero: number = parseFloat(cadenaSinGuiones);
+    console.log('Split Numero-> ', numero);
+    // Verifica si la conversión fue exitosa
+    if (!isNaN(numero)) {
+      return numero;
+    } else {
+      return null; // Devuelve null si no se pudo convertir
     }
   }
 }
