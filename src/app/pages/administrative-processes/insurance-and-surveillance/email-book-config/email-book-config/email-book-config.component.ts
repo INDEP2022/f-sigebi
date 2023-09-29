@@ -113,8 +113,8 @@ export class EmailBookConfigComponent
       this.alert(
         'success',
         res.action === 'create'
-          ? 'Se ha creado el libro de correos correctamente'
-          : 'Se ha editado el libro de correos correctamente',
+          ? 'El libro de correos se ha creado'
+          : 'El libro de correos ha sido editado',
         ''
       );
       if (res.newData.delegationNumber !== this.form.get('delegation').value) {
