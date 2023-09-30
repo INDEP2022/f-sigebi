@@ -1,0 +1,91 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">{{ title }}</h5>
+  </div>
+  <div body>
+    <div class="row mt-4 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('number')" label="Número">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="number" />
+            </form-field>
+          </div>
+          <!-- <div class="col-md-6">
+            <form-field [control]="form.get('concept')" label="Concepto">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="concept" />
+            </form-field>
+          </div> -->
+          <div class="col-md-6">
+            <form-field [control]="form.get('concept')">
+              <ngx-select
+                [form]="form"
+                [data]="eventItems"
+                value="notConceptSpent"
+                bindLabel="description"
+                label="Concepto"
+                (fetchItems)="serviceConcept($event)"
+                control="concept">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('import')" label="Importe">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="import" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('date')" label="Fecha">
+              <input
+                type="text"
+                formControlName="date"
+                class="form-control"
+                bsDatepicker
+                [maxDate]="maxDate" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('user')">
+              <ngx-select
+                [form]="form"
+                [data]="user1"
+                value="user"
+                bindLabel="name"
+                label="Usuario"
+                (fetchItems)="getAllSegUser1($event)"
+                control="user">
+              </ngx-select>
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="d-flex justify-contend-center">
+      <div class="col-md-3"></div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="saveEdit()">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-danger btn-sm active mr-3" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+      <div class="col-md-3"></div>
+    </div>
+  </div>
+</app-card>

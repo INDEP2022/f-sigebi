@@ -45,4 +45,8 @@ export class SpentService extends HttpService {
   fillExpenses(body: IFillExpensesDTO) {
     return this.post<IFillExpenseData>(SpentEndpoints.FillExpenses, body);
   }
+
+  getExpenditureExpended(params?: ListParams) {
+    return this.get(`expenditure-exerted`, params);
+  }
 }

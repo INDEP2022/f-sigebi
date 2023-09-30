@@ -1,6 +1,6 @@
 export const CENTRALIZED_EXPENSES_COLUMNS = {
   num: {
-    title: 'Numero',
+    title: 'Número',
     type: 'number',
     sort: false,
   },
@@ -10,7 +10,7 @@ export const CENTRALIZED_EXPENSES_COLUMNS = {
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },

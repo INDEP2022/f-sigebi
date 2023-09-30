@@ -18,4 +18,16 @@ export class ExpenseService extends HttpService {
       params
     );
   }
+
+  getDataFilter(params: _Params) {
+    return this.get<IListResponse<any>>(`/expense-exercised`, params);
+  }
+
+  getExpenseConcep(params: _Params) {
+    return this.get(`concept-expense`, params);
+  }
+
+  putExpenseConcept(body: any) {
+    return this.put(`expense-exercised`, body);
+  }
 }
