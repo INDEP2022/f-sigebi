@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -56,8 +56,12 @@ export class DonationAuthorizationRequestComponent
   changeDescription: string;
   changeDescriptionAlterning: string;
   contador = 0;
+  proposalId: string = '';
   @ViewChild('file') file: any;
-
+  paramsScreen: IParamsAuth = {
+    origin: '',
+    proposal: '',
+  };
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -65,7 +69,8 @@ export class DonationAuthorizationRequestComponent
     private donationService: DonationService,
     private donationProcessService: DonationProcessService,
     private donAuthorizaService: DonAuthorizaService,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -77,7 +82,38 @@ export class DonationAuthorizationRequestComponent
   }
 
   ngOnInit(): void {
+    if (typeof Storage !== 'undefined') {
+      const o = localStorage.getItem('proposalId');
+      const r = localStorage.getItem('request');
+      console.log(o);
+      let params = new ListParams();
+      params['proposal'] = o;
+      this.getProposalId(params);
+      this.requestId = Number(r);
+      this.getRequest(this.requestId);
+    } else {
+      console.log('sin paarametro', this.proposalId);
+    }
     this.initForm();
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(paramsQuery => {
+        this.origin = paramsQuery['origin'] ?? null;
+        this.paramsScreen.proposal = paramsQuery['proposal'] ?? null;
+        // this.paramsScreen.cveEvent = paramsQuery['cveEvent'] ?? null;
+        if (this.origin == 'FDONSOLAUTORIZA') {
+          for (const key in this.paramsScreen) {
+            if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
+              this.paramsScreen[key as keyof typeof this.paramsScreen] =
+                paramsQuery[key] ?? null;
+            }
+          }
+          // this.origin2 = paramsQuery['origin2'] ?? null;
+        }
+        if (this.origin != null && this.paramsScreen.proposal != null) {
+          console.log(this.paramsScreen);
+        }
+      });
   }
 
   initForm() {
@@ -140,6 +176,8 @@ export class DonationAuthorizationRequestComponent
       }
       this.form.reset();
       this.proposeDefault = next;
+      localStorage.setItem('proposalId', this.proposeDefault.ID_PROPUESTA);
+      localStorage.setItem('request', this.proposeDefault.ID_SOLICITUD);
       await this.getProposalId(this.proposeDefault.ID_PROPUESTA);
       this.requestId = this.proposeDefault.ID_SOLICITUD;
       await this.getRequest(this.requestId);
@@ -153,6 +191,9 @@ export class DonationAuthorizationRequestComponent
   cleanPropose() {
     this.form.reset();
     this.proposeDefault = null;
+    this.dataFacRequest.load([]);
+    localStorage.setItem('proposal', '');
+    localStorage.setItem('request', '');
   }
 
   cleanForm() {
@@ -176,8 +217,9 @@ export class DonationAuthorizationRequestComponent
         this.itemRequest = data.count;
         console.log(this.request);
         this.status = this.request.requestStatus;
+        const o = localStorage.getItem('proposalId');
         this.form.patchValue({
-          proposal: this.proposeDefault.ID_PROPUESTA,
+          proposal: o,
           classifNumbGood: this.request[0].clasifGood.clasifGoodNumber,
           descripClassif: this.request[0].justification,
         });
@@ -200,13 +242,14 @@ export class DonationAuthorizationRequestComponent
   }
 
   agregarBienes() {
-    if (this.proposeDefault === null) {
-      this.alert('warning', 'Debe seleccionar la propuesta', '');
-      return;
-    }
-    // this.data.load([]);
     this.router.navigate(['/pages/general-processes/goods-tracker'], {
       queryParams: { origin: 'FDONSOLAUTORIZA' },
     });
+    console.log(this.proposal);
   }
+}
+
+export interface IParamsAuth {
+  origin: string;
+  proposal: string;
 }
