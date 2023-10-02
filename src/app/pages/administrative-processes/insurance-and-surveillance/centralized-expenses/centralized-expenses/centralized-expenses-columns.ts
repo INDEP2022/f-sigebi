@@ -1,10 +1,10 @@
 export const CENTRALIZED_EXPENSES_COLUMNS = {
-  num: {
+  id: {
     title: 'Número',
     type: 'number',
     sort: false,
   },
-  concept: {
+  expenseConceptNumber: {
     title: 'Concepto',
     type: 'string',
     sort: false,
@@ -14,17 +14,17 @@ export const CENTRALIZED_EXPENSES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  import: {
+  amount: {
     title: 'Importe',
     type: 'string',
     sort: false,
   },
-  date: {
+  exercisedDate: {
     title: 'Fecha de gasto',
     type: 'string',
     sort: false,
   },
-  user: {
+  userName: {
     title: 'Usuario',
     type: 'string',
     sort: false,

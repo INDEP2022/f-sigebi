@@ -63,13 +63,13 @@ export class CentralizedExpensesModalComponent
 
   loadData() {
     this.form.patchValue({
-      number: this.newOrEdit.num,
+      number: this.newOrEdit.id,
       description: this.newOrEdit.description,
-      import: this.newOrEdit.import,
-      date: this.newOrEdit.date,
+      import: this.newOrEdit.amount,
+      date: this.newOrEdit.exercisedDate,
     });
-    if (this.newOrEdit.concept != null) {
-      this.loadTranfer(this.newOrEdit.concept);
+    if (this.newOrEdit.expenseConceptNumber != null) {
+      this.loadTranfer(this.newOrEdit.expenseConceptNumber);
     } else {
       console.log('No data');
     }
@@ -78,15 +78,20 @@ export class CentralizedExpensesModalComponent
 
   saveEdit() {
     const { number, concept, date, user } = this.form.value;
+    console.log('Date Save 1->', date);
+    console.log('Date Save 2->', this.formatDate(new Date(date)));
     if (this.newOrEdit != null) {
       let body = {
         id: number,
         expenseConceptNumber: concept,
         amount: this.form.get('import').value,
-        exercisedDate: this.formatDate(new Date(date)),
+        exercisedDate:
+          this.formatDate(new Date(date)) == 'NaN-NaN-NaN'
+            ? null
+            : this.formatDate(new Date(date)),
         user: user,
       };
-      console.log('Update-> ', body);
+      console.log('Update 3-> ', body);
       this.update(body);
     } else {
       let body = {
@@ -134,10 +139,13 @@ export class CentralizedExpensesModalComponent
     this.pentService.putExpedientureExpended(body).subscribe({
       next: resp => {
         if (resp != null && resp != undefined) {
+          this.alert('success', 'Registro actualizado correctamente', '');
           console.log('Resp Update-> ', resp);
+          this.close();
         }
       },
       error: err => {
+        this.alert('error', 'Error al actualizar', '');
         console.log('Err Update-> ', err);
       },
     });
@@ -183,9 +191,12 @@ export class CentralizedExpensesModalComponent
   newRegister(body: any) {
     this.pentService.postExpedientureExpended(body).subscribe({
       next: resp => {
+        this.alert('success', 'Registro guardado correctamente', '');
         console.log('PostNewRegister-> ', resp);
+        this.close();
       },
       error: err => {
+        this.alert('error', 'Error al guardar', '');
         console.log('ErrorNewRegister-> ', err);
       },
     });
