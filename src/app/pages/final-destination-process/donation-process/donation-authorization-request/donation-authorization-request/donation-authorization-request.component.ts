@@ -15,6 +15,7 @@ import { DonationService } from 'src/app/core/services/ms-donationgood/donation.
 import { ProposelServiceService } from 'src/app/core/services/ms-proposel/proposel-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DonationProcessService } from '../../../shared-final-destination/view-donation-contracts/donation-process.service';
+import { CreateRequestComponent } from '../create-request/create-request.component';
 import { FindProposeComponent } from '../find-propose/find-propose.component';
 import { ModalViewComponent } from '../modal-view/modal-view.component';
 import { ListParams } from './../../../../../common/repository/interfaces/list-params';
@@ -24,6 +25,7 @@ import {
   REQUEST_GOOD_COLUMN,
 } from './distribution-columns';
 import { DonAuthorizaService } from './service/don-authoriza.service';
+
 @Component({
   selector: 'app-donation-authorization-request',
   templateUrl: './donation-authorization-request.component.html',
@@ -45,6 +47,7 @@ export class DonationAuthorizationRequestComponent
   requestModel: IRequest;
   requestId: number = 0;
   data: any = [];
+  goodsTotals: number = 0;
   columnFilters: any[] = [];
   totalItems: number = 0;
   loadingReq: boolean = true;
@@ -228,6 +231,7 @@ export class DonationAuthorizationRequestComponent
           (acc: any, item: any) => acc + item.sunQuantity,
           0
         );
+
         this.status = this.request.requestStatus;
         const o = localStorage.getItem('proposalId');
         this.form.patchValue({
@@ -260,9 +264,32 @@ export class DonationAuthorizationRequestComponent
       queryParams: { origin: 'FDONSOLAUTORIZA' },
     });
   }
-  addrequest() {
+  addrequest(request?: any) {
+    const o = localStorage.getItem('proposalId');
+    if (o == null) {
+      this.alertInfo(
+        'warning',
+        'No se puede crear una nueva solicitud sin selecccionar ela propuesta',
+        ''
+      );
+      return;
+    }
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      request,
+    };
+    let modalRef = this.modalService.show(CreateRequestComponent, modalConfig);
+    modalRef.content.onSave.subscribe(async (next: any) => {
+      if (next) {
+        this.alert(
+          'success',
+          'Se cargó la información de la solicitud',
+          next.proposalCve
+        );
+      }
+    });
     // this.requestModel = {
-    //   solQuantity: this.totalItems;
+    //   solQuantity: this.totalItems,
     //   requestId: number;
     //   entFedKey: number;
     //   requestDate: string;

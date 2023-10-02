@@ -396,6 +396,7 @@ export class GoodsListComponent
           this.data.load(response);
           this.data.refresh();
           this.fillSelectedRows();
+          this.goods = response;
           // if (response.data && response.data.length > 0) {
           //   this.listGood = response.data;
           //   this.totalItems = response.count;
