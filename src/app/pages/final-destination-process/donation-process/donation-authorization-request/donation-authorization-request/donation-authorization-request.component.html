@@ -61,22 +61,29 @@
       <div class="col-4"></div>
       <div class="col-md-12 text-center">
         <button
-          (click)="agregarBienes()"
+          (click)="addrequest()"
           type="button"
           class="btn btn-info active btn-sm mr-3">
-          Agregar Bienes
+          Nueva Solicitud
           <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
         <button
           type="button"
           class="btn btn-primary active btn-sm mr-3"
           (click)="findPropose()">
-          Buscar Propuesta
+          Propuesta
           <i class="bx bx-search bx-sm float-icon"></i>
         </button>
         <button type="button" class="btn btn-primary active btn-sm mr-3">
           Cerrar
           <i class="fas fa-close bx-sm float-icon"></i>
+        </button>
+        <button
+          (click)="agregarBienes()"
+          type="button"
+          class="btn btn-sm btn-success active btn-sm mr-3">
+          Agregar Bienes
+          <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
         <button
           (click)="cleanPropose()"
@@ -87,46 +94,10 @@
         </button>
       </div>
     </div>
-    <!-- <div class="row mt-5">
-      <div class="col-12 col-md-3 text-center">
-        <button class="btn btn-secondary btn-sm active" (click)="openModal(1)">
-          Incorporar
-        </button>
-      </div>
-      <div class="col-12 col-md-3 text-center">
-        <button class="btn btn-secondary btn-sm active" (click)="openModal(2)">
-          Asociar
-        </button>
-      </div>
-      <div class="col-12 col-md-3 text-center">
-        <button class="btn btn-secondary btn-sm active">Actualizar</button>
-      </div>
-      <div class="col-12 col-md-3 text-center">
-        <button class="btn btn-secondary btn-sm active">Propuesta</button>
-      </div>
-    </div> -->
-
-    <!-- <div class="row mt-5">
-      <div class="col-12 col-md-6 text-center">
-        <button class="btn btn-secondary btn-sm active">Agregar Bienes</button>
-      </div>
-      <div class="col-12 col-md-6 text-center">
-        <button class="btn btn-secondary btn-sm active">
-          Aplicar Estatus y Parcializaci&oacute;n
-        </button>
-      </div>
-    </div> -->
 
     <app-divider></app-divider>
 
     <h5 class="mt-5">Solicitudes y Donatarios</h5>
-
-    <!-- <div class="row justify-content-end mt-3">
-      <div class="col-md-5 buttons pt-3 text-right">
-        <app-columns-select (settingsChange)="settingsChange($event)" [settings]="settings">
-        </app-columns-select>
-      </div>
-    </div> -->
 
     <div class="row mt-5">
       <ng2-smart-table

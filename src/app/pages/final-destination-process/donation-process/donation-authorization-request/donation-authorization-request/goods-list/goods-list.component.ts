@@ -46,7 +46,8 @@ export class GoodsListComponent
   changeSettings: number = 0;
   chargedByExcelOrRastrer = false;
   _changeDescription: string;
-
+  goodsTotals: number = 0;
+  goods: any[];
   availableToUpdate: any[] = [];
   idsNotExist: NotData[] = [];
   showError: boolean = false;
@@ -234,16 +235,6 @@ export class GoodsListComponent
     this.previousSelecteds = [...selecteds];
   }
 
-  // goodSelectedChange(good: IGood, selected: boolean) {
-  //   if (selected) {
-  //     this.selectedGooods.push(good);
-  //   } else {
-  //     this.selectedGooods = this.selectedGooods.filter(
-  //       _good => _good.id != good.id
-  //     );
-  //   }
-  // }
-
   isGoodSelected(_good: IGood) {
     const exists = this.selectedGooods.find(good => good.id == _good.id);
     return !exists ? false : true;
@@ -422,6 +413,17 @@ export class GoodsListComponent
           this.loading = false;
         },
       });
+  }
+  formatNumber(amount: string) {
+    const numericAmount = parseFloat(amount);
+    if (!isNaN(numericAmount)) {
+      return numericAmount.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    } else {
+      return amount;
+    }
   }
 
   override getData() {

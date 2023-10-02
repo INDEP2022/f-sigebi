@@ -7,7 +7,10 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
-import { IProposel } from 'src/app/core/models/sirsae-model/proposel-model/proposel-model';
+import {
+  IProposel,
+  IRequest,
+} from 'src/app/core/models/sirsae-model/proposel-model/proposel-model';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { ProposelServiceService } from 'src/app/core/services/ms-proposel/proposel-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -39,6 +42,7 @@ export class DonationAuthorizationRequestComponent
   settings2: any;
   settings3: any;
   goods: any[];
+  requestModel: IRequest;
   requestId: number = 0;
   data: any = [];
   columnFilters: any[] = [];
@@ -46,6 +50,8 @@ export class DonationAuthorizationRequestComponent
   loadingReq: boolean = true;
   itemRequest: number = 0;
   proposal: IProposel;
+  totalSunQuantity: number = 0;
+  totalGoods: number = 0;
   dataFacRequest: LocalDataSource = new LocalDataSource();
   status: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -199,6 +205,9 @@ export class DonationAuthorizationRequestComponent
   cleanForm() {
     this.form.reset();
     this.file = [];
+    this.dataFacRequest.load([]);
+    localStorage.setItem('proposal', '');
+    localStorage.setItem('request', '');
   }
   async getProposalId(params: ListParams) {
     this.proposelServiceService.getIdPropose(params).subscribe({
@@ -215,7 +224,10 @@ export class DonationAuthorizationRequestComponent
         this.dataFacRequest.load(this.request);
         this.dataFacRequest.refresh();
         this.itemRequest = data.count;
-        console.log(this.request);
+        this.totalSunQuantity = this.request.reduce(
+          (acc: any, item: any) => acc + item.sunQuantity,
+          0
+        );
         this.status = this.request.requestStatus;
         const o = localStorage.getItem('proposalId');
         this.form.patchValue({
@@ -223,6 +235,7 @@ export class DonationAuthorizationRequestComponent
           classifNumbGood: this.request[0].clasifGood.clasifGoodNumber,
           descripClassif: this.request[0].justification,
         });
+        this.formTable1.get('totals').setValue(Number(this.totalSunQuantity));
         this.getRequestGood();
       },
     });
@@ -233,10 +246,11 @@ export class DonationAuthorizationRequestComponent
     let params = new ListParams();
     params['?filter.requestId.id'] = this.requestId;
     params['requestTypeId'] = 'SD';
+    params['sunStatus'] = 'A';
     this.donationService.getGoodRequest(params).subscribe({
       next: data => {
         this.loadingReq = false;
-        console.log(data.data);
+        // this.totalGoods = data.data.reduce((acc: any, item: any) => acc + item.qua, 0);
       },
     });
   }
@@ -245,7 +259,24 @@ export class DonationAuthorizationRequestComponent
     this.router.navigate(['/pages/general-processes/goods-tracker'], {
       queryParams: { origin: 'FDONSOLAUTORIZA' },
     });
-    console.log(this.proposal);
+  }
+  addrequest() {
+    // this.requestModel = {
+    //   solQuantity: this.totalItems;
+    //   requestId: number;
+    //   entFedKey: number;
+    //   requestDate: string;
+    //   clasifGood: number;
+    //   justification: string;
+    //   sunStatus: string;
+    //   proposalCve: string;
+    //   requestTypeId: string;
+    // }
+    // this.proposelServiceService.create().subscribe({
+    //   next: data => {
+    //     console.log(data)
+    //   }, error: () => console.log('no se guardó')
+    // })
   }
 }
 
