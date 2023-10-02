@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExpenseService } from 'src/app/core/services/ms-expense_/good-expense.service';
+import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -28,7 +29,8 @@ export class CentralizedExpensesModalComponent
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private expenseService: ExpenseService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private pentService: SpentService
   ) {
     super();
   }
@@ -75,19 +77,27 @@ export class CentralizedExpensesModalComponent
   }
 
   saveEdit() {
-    const { number, concept, description, date, user } = this.form.value;
+    const { number, concept, date, user } = this.form.value;
     if (this.newOrEdit != null) {
       let body = {
-        spentexercisedNot: number,
-        conceptSpentNot: concept,
+        id: number,
+        expenseConceptNumber: concept,
         amount: this.form.get('import').value,
-        exercisedDate: date,
+        exercisedDate: this.formatDate(new Date(date)),
         user: user,
       };
-      console.log('Body-> ', body);
+      console.log('Update-> ', body);
       this.update(body);
     } else {
-      //this.newRegister();
+      let body = {
+        id: number,
+        expenseConceptNumber: concept,
+        amount: this.form.get('import').value,
+        exercisedDate: this.formatDate(new Date(date)),
+        user: user,
+      };
+      console.log('Create-> ', body);
+      this.newRegister(body);
     }
   }
 
@@ -120,7 +130,8 @@ export class CentralizedExpensesModalComponent
   }
 
   update(body: any) {
-    this.expenseService.putExpenseConcept(body).subscribe({
+    console.log('Update-> ', body);
+    this.pentService.putExpedientureExpended(body).subscribe({
       next: resp => {
         if (resp != null && resp != undefined) {
           console.log('Resp Update-> ', resp);
@@ -165,6 +176,17 @@ export class CentralizedExpensesModalComponent
       },
       error: err => {
         this.user1 = new DefaultSelect();
+      },
+    });
+  }
+
+  newRegister(body: any) {
+    this.pentService.postExpedientureExpended(body).subscribe({
+      next: resp => {
+        console.log('PostNewRegister-> ', resp);
+      },
+      error: err => {
+        console.log('ErrorNewRegister-> ', err);
       },
     });
   }

@@ -28,7 +28,7 @@ export class CentralizedExpensesComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = CENTRALIZED_EXPENSES_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions = true;
   }
 
   ngOnInit(): void {
@@ -48,18 +48,18 @@ export class CentralizedExpensesComponent extends BasePage implements OnInit {
       response => {
         for (let i = 0; i < response.data.length; i++) {
           //this.lawyers = response.data;
-          if (response.data[i].conceptSpentNot != null) {
+          if (response.data[i].expenseConceptNumber != null) {
             _params['filter.notConceptSpent'] =
-              response.data[i].conceptSpentNot != null
-                ? response.data[i].conceptSpentNot
+              response.data[i].expenseConceptNumber != null
+                ? response.data[i].expenseConceptNumber
                 : 0;
             console.log('_Params-> ', _params);
             this.expenseService.getExpenseConcep(_params).subscribe({
               next: resp => {
                 console.log('Resp getExpenseConcep-> ', resp);
                 let item = {
-                  num: response.data[i].spentexercisedNot,
-                  concept: response.data[i].conceptSpentNot,
+                  num: response.data[i].id,
+                  concept: response.data[i].expenseConceptNumber,
                   description:
                     resp.data[0].description != null
                       ? resp.data[0].description
@@ -83,8 +83,8 @@ export class CentralizedExpensesComponent extends BasePage implements OnInit {
             });
           } else {
             let item = {
-              num: response.data[i].spentexercisedNot,
-              concept: response.data[i].conceptSpentNot,
+              num: response.data[i].id,
+              concept: response.data[i].expenseConceptNumber,
               description: '',
               import: response.data[i].amount,
               date: this.formatDate(new Date(response.data[i].exercisedDate)),

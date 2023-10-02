@@ -49,4 +49,12 @@ export class SpentService extends HttpService {
   getExpenditureExpended(params?: ListParams) {
     return this.get(`expenditure-exerted`, params);
   }
+
+  putExpedientureExpended(body: any) {
+    return this.put('expenditure-exerted', body);
+  }
+
+  postExpedientureExpended(body: any) {
+    return this.post(`expenditure-exerted`, body);
+  }
 }
