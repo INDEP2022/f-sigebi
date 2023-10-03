@@ -29,34 +29,42 @@
           </form-field>
         </div>
       </div>
-      <div class="row mb-3 mt-3">
+      <div class="row mb-3">
         <!--Delegation Component-->
-        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+        <div class="row margin-input">
           <app-delegation-shared
-            [form]="form"
-            [showSubdelegation]="false"></app-delegation-shared>
-        </div>
-        <!--SubDelegation Component-->
-        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-delegation-shared
-            [form]="form"
-            [showDelegation]="false"></app-delegation-shared>
+            [showSubdelegation]="true"
+            [form]="form"></app-delegation-shared>
         </div>
         <!--Crimes Component-->
-        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-crimes-shared [form]="form"></app-crimes-shared>
+        <div class="col-md-4 col-sm-12 col-xs-12 mb-3">
+          <form-field [control]="form.get('crime')">
+            <app-crimes-shared [form]="form"></app-crimes-shared>
+          </form-field>
         </div>
         <!--Goods Type Component-->
-        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-goods-types-shared
+        <div class="col-md-4 col-sm-12 col-xs-12 mb-3 mt-2">
+          <!-- <app-goods-types-shared
             [form]="form"
             [subTypeShow]="false"
             [ssubTypeShow]="false"
-            [sssubTypeShow]="false"></app-goods-types-shared>
+            [sssubTypeShow]="false"></app-goods-types-shared> -->
+          <form-field [control]="form.get('goodType')">
+            <ngx-select
+              [form]="form"
+              [data]="goodTypes"
+              bindLabel="nameGoodType"
+              label="Tipo de Bien"
+              value="id"
+              (fetchItems)="getGoodType($event)"
+              control="goodType"></ngx-select>
+          </form-field>
         </div>
         <!--Areas Component-->
-        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-areas-shared [form]="form"> </app-areas-shared>
+        <div class="col-md-4 col-sm-12 col-xs-12 mb-3">
+          <form-field [control]="form.get('requestArea')">
+            <app-areas-shared [form]="form"> </app-areas-shared>
+          </form-field>
         </div>
       </div>
     </form>
@@ -68,6 +76,7 @@
           text="Imprimir"
           [disabled]="form.invalid"
           [loading]="loading"
+          icon="bx bx-printer bx-sm float-icon"
           (confirm)="confirm()">
         </confirm-button>
       </div>
