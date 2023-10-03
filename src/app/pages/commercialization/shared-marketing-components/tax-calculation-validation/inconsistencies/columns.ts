@@ -1,6 +1,6 @@
 export const COLUMNS = {
-  id: {
-    title: 'Id',
+  value: {
+    title: 'Valor',
     sort: false,
     editable: false,
     addable: false,
