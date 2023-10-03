@@ -30,7 +30,7 @@ export class ExpenseService extends HttpService {
   putExpenseConcept(body: any) {
     return this.put(`expense-exercised`, body);
   }
-  
+
   getDataState(params: any) {
     const route = `aplication/getPeridoState`;
     return this.get(route, params);
