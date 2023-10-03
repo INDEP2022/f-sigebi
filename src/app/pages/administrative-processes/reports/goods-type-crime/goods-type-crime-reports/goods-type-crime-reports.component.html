@@ -43,7 +43,7 @@
           </form-field>
         </div>
         <!--Goods Type Component-->
-        <div class="col-md-4 col-sm-12 col-xs-12 mb-3 mt-2">
+        <div class="col-md-4 col-sm-12 col-xs-12 mb-3 mt-3">
           <!-- <app-goods-types-shared
             [form]="form"
             [subTypeShow]="false"
@@ -81,7 +81,9 @@
         </confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active">Limpiar</button>
+        <button type="button" class="btn btn-danger active" (click)="clear()">
+          Limpiar
+        </button>
       </div>
     </div>
   </div>

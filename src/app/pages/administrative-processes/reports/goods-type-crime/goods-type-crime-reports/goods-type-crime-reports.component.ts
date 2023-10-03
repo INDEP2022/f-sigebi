@@ -148,4 +148,8 @@ export class GoodsTypeCrimeReportsComponent extends BasePage implements OnInit {
       }
     );
   }
+
+  clear() {
+    this.form.reset();
+  }
 }
