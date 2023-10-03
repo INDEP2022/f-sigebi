@@ -11,6 +11,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { format } from 'date-fns';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
@@ -42,6 +43,7 @@ import { DictationXGoodService } from 'src/app/core/services/ms-dictation/dictat
 import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation/ms-copies-official-opinion.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
@@ -118,10 +120,10 @@ export class DestructionAuthorizationComponent
 
   goods: IDetailProceedingsDeliveryReception;
 
-  settings2;
-  settings3;
-  settings4;
-  settings5;
+  settings2: any = [];
+  settings3: any = [];
+  settings4: any = [];
+  settings5: any = [];
 
   rowSelected: boolean = false;
   selectedRow: any = null;
@@ -212,6 +214,7 @@ export class DestructionAuthorizationComponent
     private siabService: SiabService,
     private massiveGoodService: MassiveGoodService,
     private datePipe: DatePipe,
+    private goodprocessService: GoodprocessService,
     private copiesOfficialOpinionService: CopiesOfficialOpinionService
   ) {
     super();
@@ -241,19 +244,18 @@ export class DestructionAuthorizationComponent
 
     this.settings2 = {
       //Bienes por actas
-      ...this.settings,
+      ...this.settings2,
       actions: false,
       columns: {
         ...DETAIL_PROCEEDINGS_DELIVERY_RECEPTION,
         selection: {
           title: '',
-          sort: false,
           type: 'custom',
-          valuePrepareFunction: (value: any, row: any) =>
-            this.isGoodSelected(row),
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onSelectGood(instance),
+          filter: false,
+          sort: false,
         },
       },
       hideSubHeader: false,
@@ -261,7 +263,7 @@ export class DestructionAuthorizationComponent
 
     this.settings3 = {
       //Bienes en estatus PDS
-      ...this.settings,
+      ...this.settings3,
       actions: false,
       columns: {
         ...GOODS_COLUMNS,
@@ -269,19 +271,28 @@ export class DestructionAuthorizationComponent
           title: '',
           sort: false,
           type: 'custom',
-          valuePrepareFunction: (value: any, row: any) =>
-            this.isGoodSelectedPDS(row),
+          filter: false,
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onSelectGoodPSD(instance),
         },
       },
       hideSubHeader: false,
+      rowClassFunction: (row: any) => {
+        const di_disponible = row.data.di_disponible;
+        console.log(row.data);
+
+        if (di_disponible === 'S') {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+      },
     };
 
     this.settings4 = {
       //Actas de recepción
-      ...this.settings,
+      ...this.settings4,
       actions: false,
       columns: { ...ACTA_RECEPTION_COLUMNS },
       hideSubHeader: false,
@@ -289,11 +300,19 @@ export class DestructionAuthorizationComponent
 
     this.settings5 = {
       //dictaminaciones
-      ...this.settings,
+      ...this.settings5,
       actions: false,
       columns: { ...DICTATION_COLUMNS },
       hideSubHeader: false,
     };
+  }
+
+  formatDateForInput(dateString: string): string {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    return `${day}/${month}/${year}`;
   }
 
   onSelectGood(instance: CheckboxElementComponent) {
@@ -310,9 +329,9 @@ export class DestructionAuthorizationComponent
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: data => {
         this.selectGoodPSD(data.row.goodId, data.toggle);
-        console.log(data.row.goodId, data.toggle);
+
         this.tempArray = [...this.array];
-        console.log(data.toggle, data.row.goodId);
+
         if (data.toggle) {
           // Si el checkbox se selecciona, agregar el elemento al array
           if (!this.array.includes(data.row.goodId)) {
@@ -325,7 +344,6 @@ export class DestructionAuthorizationComponent
             this.array.splice(index, 1);
           }
         }
-        console.log(this.array);
       },
     });
   }
@@ -424,33 +442,14 @@ export class DestructionAuthorizationComponent
   selectGoodPSD(good: IGood, selected: boolean) {
     if (selected) {
       this.good.push(good);
-      console.log(this.good.push(good));
     } else {
       this.good = this.good.filter(
         _detail => _detail['goodNumber'] != good['goodNumber']
       );
-      console.log(this.good);
     }
-    console.log(selected);
   }
   proceedingDetail(): any[] {
     return [...this.detailProceedingsList, ...this.goodTrackerGoods];
-  }
-
-  isGoodSelected(detail: IDetailProceedingsDeliveryReception) {
-    const exists = this.selectedGoods.find(
-      _detail => _detail.good.id == detail.good.id
-    );
-    return exists ? true : false;
-  }
-
-  isGoodSelectedPDS(detail: IGood) {
-    const exists = this.good.find(
-      _detail => _detail.goodId == detail['goodNumber']
-    );
-    console.log(exists);
-
-    return exists ? true : false;
   }
 
   getUserInfo() {
@@ -485,6 +484,8 @@ export class DestructionAuthorizationComponent
       }
       this.goodTrackerGoods = trackerGoods;
       this.getProceedingGoods(id.value);
+      this.searchActa(id.value);
+      this.searchDicta(id.value);
     });
   }
 
@@ -517,6 +518,7 @@ export class DestructionAuthorizationComponent
           this.ngGlobal = global;
           if (this.ngGlobal.REL_BIENES) {
             this.insertDetailFromGoodsTracker();
+            this.getDictAndActs().subscribe();
           }
         },
       });
@@ -610,8 +612,14 @@ export class DestructionAuthorizationComponent
           message += `<p>Se rechazaron <b>${response.rechazados}</b> bienes</p>`;
         }
         this.alert('info', 'Info', null, message);
+        this.keyProceedingchange();
+        this.getDictAndActs().subscribe(result => {
+          // Manejar los datos de result aquí
+          console.log(result);
+        });
 
-        this.getDictAndActs().subscribe();
+        console.log(this.getDictAndActs());
+
         if (response.rechazados > 0) {
           const modalConfig = {
             ...MODAL_CONFIG,
@@ -622,6 +630,10 @@ export class DestructionAuthorizationComponent
       },
       error: () => {
         this.goodsTrackerLoading = false;
+        this.getDictAndActs().subscribe(result => {
+          // Manejar los datos de result aquí
+          console.log(result);
+        });
       },
     });
   }
@@ -629,7 +641,6 @@ export class DestructionAuthorizationComponent
   insertDetailFromOn() {
     let dato: string = '';
     dato = this.array[0];
-    console.log(dato);
 
     const body = {
       keyAct: this.controls.keysProceedings.value,
@@ -714,7 +725,6 @@ export class DestructionAuthorizationComponent
   }
 
   save() {
-    console.log(this.proceedingForm.value);
     if (!this.proceedingForm.valid) {
       this.onLoadToast('error', 'Error', 'El formulario es invalido');
       return;
@@ -767,8 +777,6 @@ export class DestructionAuthorizationComponent
           this.onLoadToast('success', 'Acta generada correctamente', '');
         },
         error: error => {
-          console.log(error);
-
           this.loading = false;
           this.onLoadToast(
             'error',
@@ -828,12 +836,13 @@ export class DestructionAuthorizationComponent
     const folio = universalFolio.value;
     const expedient = numFile.value;
     if (!id.value) {
-      this.alert('error', 'Error', 'No hay un acta guardado aún');
+      this.alert('warning', 'No hay un acta guardada aún', '');
       return;
     }
+
     if (status == 'CERRADA' || !status) {
       this.alert(
-        'error',
+        'warning',
         'Error',
         'No se puede generar el folio de escaneo en una Solicitud ya cerrada o clave inválida'
       );
@@ -853,7 +862,6 @@ export class DestructionAuthorizationComponent
       );
       return;
     }
-    console.log(this.detailProceedingsList);
 
     if (this.detailProceedingsList.length == 0) {
       this.alert(
@@ -878,7 +886,7 @@ export class DestructionAuthorizationComponent
     }
 
     const flyerNumber = this.detailProceedingsList[0].good.flyerNumber;
-    console.log(flyerNumber);
+
     if (!flyerNumber) {
       this.alert(
         'error',
@@ -903,7 +911,6 @@ export class DestructionAuthorizationComponent
       numberDepartmentRequest: this.department,
       flyerNumber,
     };
-
     this.createDocument(document)
       .pipe(
         tap(_document => this.controls.universalFolio.setValue(_document.id)),
@@ -995,54 +1002,17 @@ export class DestructionAuthorizationComponent
       return;
     }
 
-    this.generateScanRequestReport().subscribe();
+    //this.generateScanRequestReport().subscribe();
   }
 
   getDictAndActs() {
     const allGoods = this.detailProceedingsList.map(detail => detail.good.id);
-    console.log(allGoods);
 
     // Usar mergeMap para ejecutar las solicitudes en paralelo
     return forkJoin(
       allGoods.map(arg =>
         forkJoin([this.searchActa(arg), this.searchDicta(arg)])
       )
-    );
-  }
-
-  getActs(goodNumbers: number[]) {
-    return this.dictationXGoodService.getByAct(goodNumbers).pipe(
-      catchError(error => {
-        if (error.status >= 500) {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Ocurrió un error al obtener las actas de recepci+on'
-          );
-        }
-        return throwError(() => error);
-      }),
-      tap(response => {
-        this.actaList = response.data;
-      })
-    );
-  }
-
-  getDicts(goodNumbers: number[]) {
-    return this.dictationXGoodService.getByDictation(goodNumbers).pipe(
-      catchError(error => {
-        if (error.status >= 500) {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Ocurrió un error al obtener las dictaminaciones'
-          );
-        }
-        return throwError(() => error);
-      }),
-      tap(response => {
-        this.dictaList = response.data;
-      })
     );
   }
 
@@ -1065,36 +1035,19 @@ export class DestructionAuthorizationComponent
 
   keyProceedingchange() {
     const keyProceeding = this.controls.keysProceedings.value;
-    console.log(keyProceeding);
-
-    // if (!this.queryMode) {
-    //   console.log(!this.queryMode);
-    //   return;
-    // }
-    // if (!keyProceeding) {
-    //   return;
-    // }
 
     this.findProceeding(keyProceeding).subscribe();
   }
 
-  formatDateForInput(dateString: string): string {
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear().toString();
-    return `${day}/${month}/${year}`;
-  }
-
   findProceeding(keyProceeding: string) {
-    //params.addFilter('typeProceedings', 'RGA');
-    //params.addFilter('keysProceedings', keyProceeding);
-
     let params = {
       ...this.params.getValue(),
     };
+
     params['filter.typeProceedings'] = `$ilike:RGA`;
+
     params['filter.keysProceedings'] = `$ilike:${keyProceeding}`;
+
     return this.proceedingsDeliveryReceptionService
       .getAllProceedingsDeliveryReception2(params)
       .pipe(
@@ -1113,14 +1066,29 @@ export class DestructionAuthorizationComponent
           return throwError(() => error);
         }),
         map(response => response.data[0]),
-        tap((proceeding: any) => this.proceedingForm.patchValue(proceeding)),
-        switchMap(proceeding => {
-          const getGoods$ = this.getProceedingGoods(proceeding.id);
-          const searchActa$ = this.searchActa(proceeding.id);
-          const searchDicta$ = this.searchDicta(proceeding.id);
+        tap((proceeding: any) => {
+          proceeding.elaborationDate = moment(
+            proceeding.elaborationDate
+          ).format('DD/MM/YYYY');
+          proceeding.datePhysicalReception = moment(
+            proceeding.datePhysicalReception
+          ).format('DD/MM/YYYY');
+          proceeding.closeDate = moment(proceeding.closeDate).format(
+            'DD/MM/YYYY'
+          );
 
-          return forkJoin([getGoods$, searchActa$, searchDicta$]);
+          this.proceedingForm.patchValue(proceeding);
+          this.getProceedingGoods(proceeding.id);
+          this.searchActa(proceeding.id);
+          this.searchDicta(proceeding.id);
         })
+        // switchMap(proceeding => {
+        //   const getGoods$ = this.getProceedingGoods(proceeding.id);
+        //   const searchActa$ = this.searchActa(proceeding.id);
+        //   const searchDicta$ = this.searchDicta(proceeding.id);
+
+        //   return forkJoin([getGoods$, searchActa$, searchDicta$]);
+        // })
       );
   }
 
@@ -1168,11 +1136,8 @@ export class DestructionAuthorizationComponent
       this.closeDate.nativeElement.focus();
       return;
     }
-    console.log(universalFolio.value);
 
     if (!universalFolio.value) {
-      console.log(!universalFolio.value);
-
       this.onLoadToast(
         'error',
         'Error',
@@ -1245,7 +1210,7 @@ export class DestructionAuthorizationComponent
   // -----old
 
   //Trae todos los bienes con estado PDS
-  getGoodByStatusPDS() {
+  async getGoodByStatusPDS() {
     this.loadingGoods = true;
 
     let params = {
@@ -1255,7 +1220,18 @@ export class DestructionAuthorizationComponent
 
     params['filter.status'] = `$ilike:PDS`;
     this.goodService.getGoodByStatusPDS(params).subscribe({
-      next: response => {
+      next: async (response: any) => {
+        let result = response.data.map(async (item: any) => {
+          let obj = {
+            vcScreen: 'FESTATUSRGA',
+            goodNumber: item.id,
+          };
+
+          const di_dispo = await this.goodStatus(obj);
+          item['di_disponible'] = di_dispo;
+          console.log(item['di_disponible']);
+        });
+        await Promise.all(result);
         this.show2 = false;
         this.goodPDS = response.data;
         this.goodPDS1.load(response.data);
@@ -1277,9 +1253,7 @@ export class DestructionAuthorizationComponent
           this.actaList2.load(resp.data);
           this.totalItems5 = resp.count;
         },
-        error: err => {
-          console.log(err);
-        },
+        error: err => {},
       });
   }
 
@@ -1294,9 +1268,7 @@ export class DestructionAuthorizationComponent
           this.dictaList2.load(resp.data);
           this.totalItems6 = resp.count;
         },
-        error: (err: any) => {
-          console.log(err);
-        },
+        error: (err: any) => {},
       });
   }
 
@@ -1309,7 +1281,6 @@ export class DestructionAuthorizationComponent
       .getGoodsByProceedings(proceedingId, params)
       .subscribe({
         next: resp => {
-          console.log(resp.data);
           this.detailProceedingsList = resp.data;
           this.detailProceedingsList2.load(resp.data);
           this.totalItems2 = resp.count;
@@ -1317,9 +1288,26 @@ export class DestructionAuthorizationComponent
           this.goodTrackerGoods;
         },
         error: err => {
-          console.log(err);
           this.loadingGoodsByP = false;
         },
       });
+  }
+
+  //StatusBien
+  async goodStatus(id: any): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.goodprocessService.getScreenGood2(id).subscribe({
+        next: async (response: any) => {
+          if (response.data) {
+            resolve('S');
+          } else {
+            resolve('N');
+          }
+        },
+        error: () => {
+          resolve('N');
+        },
+      });
+    });
   }
 }
