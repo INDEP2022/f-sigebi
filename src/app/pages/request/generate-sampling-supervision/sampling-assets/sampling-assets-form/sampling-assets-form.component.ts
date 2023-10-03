@@ -218,7 +218,13 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
     this.params2.getValue().addFilter('organizationId', 191, SearchFilter.EQ);
 
-    this.params2.getValue().addFilter('entTransferentId', 643, SearchFilter.EQ);
+    this.params2
+      .getValue()
+      .addFilter(
+        'entTransferentId',
+        this.dateForm.get('transferent').value,
+        SearchFilter.EQ
+      );
 
     this.params2
       .getValue()
@@ -247,9 +253,10 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
     if (ids.length > 0) {
       const idsg = ids.join(',');
-      this.onLoadToast(
+      this.alert(
         'info',
-        `Los bienes con el No. de Gestion ${idsg}, ya se encuantran agregados`
+        `Los bienes con el No. de Gestion ${idsg}, ya se encuantran agregados`,
+        ''
       );
       ids = [];
     }
@@ -277,9 +284,10 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   uploadImages(): void {
     if (this.listAssetsCopiedSelected.length == 0) {
-      this.onLoadToast(
-        'info',
-        'Se tiene que tener seleccionado al menos un registro'
+      this.alert(
+        'warning',
+        'Se debe que tener seleccionado al menos un registro',
+        ''
       );
       return;
     }
@@ -358,6 +366,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   getRegionalDelegationId() {
+    console.log('info token: ' + this.authService.decodeToken());
     const id = this.authService.decodeToken().department;
     return id;
   }
