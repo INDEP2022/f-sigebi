@@ -44,4 +44,9 @@ export class DonationProcessService extends HttpService {
       params
     );
   }
+
+  getRequestId(id: number) {
+    const route = `${this.requets}?filter.requestId.id=$eq:${id}`;
+    return this.get(route);
+  }
 }

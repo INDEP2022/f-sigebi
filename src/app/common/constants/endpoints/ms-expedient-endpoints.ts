@@ -21,4 +21,6 @@ export enum ExpedientEndpoints {
 
   expedientePrueba = 'application/get-sol-servicios-nobien',
   SelectNoTransfer = 'application/get-no-transf',
+  documentsLoans = 'documents-loans-detail/get-all-custom-documents-loans-detail',
+  documentLoan = 'documents-loans-detail',
 }
