@@ -52,7 +52,7 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
-      actions: { add: true, delete: true },
+      actions: { add: true, delete: true, position: 'right' },
       columns: COLUMNS,
     };
   }
