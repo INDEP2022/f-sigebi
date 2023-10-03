@@ -77,6 +77,16 @@ const routes: Routes = [
     data: { title: 'Consulta de Avalúo', screen: 'FCOMERCONSAVALUO' },
   },
   {
+    path: 'appraisal-consultation-i',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/appraisal-consultation/appraisal-consultation.module'
+        )
+      ).AppraisalConsultationModule,
+    data: { title: 'Consulta de Avalúo', screen: 'FCOMERCONSAVALUO_I' },
+  },
+  {
     path: 'appraisal-registration',
     loadChildren: async () =>
       (
@@ -85,6 +95,16 @@ const routes: Routes = [
         )
       ).AppraisalRegistrationModule,
     data: { title: 'Registro de Avalúos', screen: 'FCOMERREGAVALUO' },
+  },
+  {
+    path: 'appraisal-registration-i',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/appraisal-registration/appraisal-registration.module'
+        )
+      ).AppraisalRegistrationModule,
+    data: { title: 'Registro de Avalúos', screen: 'FCOMERREGAVALUO_I' },
   },
   {
     path: 'expense-capture',
