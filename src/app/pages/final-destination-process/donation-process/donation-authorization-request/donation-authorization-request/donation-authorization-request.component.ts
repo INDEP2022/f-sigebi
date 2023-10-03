@@ -56,6 +56,7 @@ export class DonationAuthorizationRequestComponent
   totalSunQuantity: number = 0;
   totalGoods: number = 0;
   dataFacRequest: LocalDataSource = new LocalDataSource();
+  dataGoodsFact: LocalDataSource = new LocalDataSource();
   status: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
   bsModalRef?: BsModalRef;
@@ -65,6 +66,7 @@ export class DonationAuthorizationRequestComponent
   changeDescription: string;
   changeDescriptionAlterning: string;
   contador = 0;
+  selectedRow: any | null = null;
   proposalId: string = '';
   @ViewChild('file') file: any;
   paramsScreen: IParamsAuth = {
@@ -86,8 +88,15 @@ export class DonationAuthorizationRequestComponent
     this.settings.columns = DISTRIBUTION_COLUMNS;
     this.settings2 = { ...this.settings, actions: false };
     this.settings2.columns = REQUEST_GOOD_COLUMN;
-    this.settings3 = { ...this.settings, actions: false };
-    this.settings3.columns = COLUMNS_GOODS;
+    this.settings3 = {
+      ...this.settings,
+      selectMode: 'multi',
+      hideSubHeader: false,
+      actions: false,
+      columns: {
+        ...COLUMNS_GOODS,
+      },
+    };
   }
 
   ngOnInit(): void {
@@ -237,7 +246,7 @@ export class DonationAuthorizationRequestComponent
         this.form.patchValue({
           proposal: o,
           classifNumbGood: this.request[0].clasifGood.clasifGoodNumber,
-          descripClassif: this.request[0].justification,
+          descripClassif: null,
         });
         this.formTable1.get('totals').setValue(Number(this.totalSunQuantity));
         this.getRequestGood();
@@ -254,6 +263,8 @@ export class DonationAuthorizationRequestComponent
     this.donationService.getGoodRequest(params).subscribe({
       next: data => {
         this.loadingReq = false;
+        this.dataGoodsFact.load(data.data);
+        console.log(data.data);
         // this.totalGoods = data.data.reduce((acc: any, item: any) => acc + item.qua, 0);
       },
     });
@@ -304,6 +315,18 @@ export class DonationAuthorizationRequestComponent
     //     console.log(data)
     //   }, error: () => console.log('no se guardó')
     // })
+  }
+  removeSelect() {}
+
+  onUserRowSelect(row: any): void {
+    if (row.isSelected) {
+      this.selectedRow = row.data;
+      console.log(this.selectedRow);
+    } else {
+      this.selectedRow = null;
+    }
+
+    console.log(this.selectedRow);
   }
 }
 

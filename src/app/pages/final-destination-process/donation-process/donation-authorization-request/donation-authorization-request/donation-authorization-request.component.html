@@ -74,16 +74,16 @@
           Propuesta
           <i class="bx bx-search bx-sm float-icon"></i>
         </button>
-        <button type="button" class="btn btn-primary active btn-sm mr-3">
-          Cerrar
-          <i class="fas fa-close bx-sm float-icon"></i>
-        </button>
         <button
           (click)="agregarBienes()"
           type="button"
-          class="btn btn-sm btn-success active btn-sm mr-3">
-          Agregar Bienes
+          class="btn btn-sm btn-sucess active btn-sm mr-3">
+          Rastreador de Bienes
           <i class="bx bx-plus bx-sm float-icon"></i>
+        </button>
+        <button type="button" class="btn btn-info active btn-sm mr-3">
+          Asociar
+          <i class="fas fa-close bx-sm float-icon"></i>
         </button>
         <button
           (click)="cleanPropose()"
@@ -135,13 +135,14 @@
         </app-columns-select>
       </div>
     </div> -->
-    <!-- <div class="row mt-5">
-      <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings2" [source]="data">
+    <div class="row mt-5">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings3"
+        [source]="dataGoodsFact">
       </ng2-smart-table>
-    </div> -->
-    <app-goods-list
-      [files]="files"
-      [changeDescription]="changeDescription"></app-goods-list>
+    </div>
+    <!-- <app-goods-list [files]="files" [changeDescription]="changeDescription"></app-goods-list> -->
     <div class="">
       <form class="form-material form-horizontal" [formGroup]="formTable2">
         <div class="row mt-5">
@@ -164,6 +165,14 @@
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
 
+    <div class="row m-3">
+      <div class="col-4"></div>
+      <div class="col-md-12 text-center">
+        <button class="btn btn-warning btn-sm active" (click)="removeSelect()">
+          Elimina Bienes <i class="fa fa-trash-alt"></i>
+        </button>
+      </div>
+    </div>
     <h5 class="mt-5">Bienes del Inventario de Donaciones</h5>
 
     <!-- <div class="row justify-content-end mt-3">
