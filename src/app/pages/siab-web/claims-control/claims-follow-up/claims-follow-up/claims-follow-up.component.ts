@@ -441,11 +441,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
         }
       },
       error => {
-        this.alert(
-          'warning',
-          'Siniestros Seguimiento',
-          'El Documento no Existe.'
-        );
+        this.alert('warning', 'El Documento no Existe.', '');
       }
     );
   }
@@ -459,11 +455,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
         this._downloadExcelFromBase64(response, `SINIESTROS SEGUIMIENTO`);
       },
       error => {
-        this.alert(
-          'warning',
-          'Siniestros Seguimiento',
-          'Error al Generar el Archivo Excel.'
-        );
+        this.alert('warning', 'Error al Generar el Archivo Excel.', '');
       }
     );
   }
@@ -480,11 +472,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
         );
       },
       error => {
-        this.alert(
-          'warning',
-          'Siniestros Seguimiento',
-          'Error al Generar el Archivo Excel.'
-        );
+        this.alert('warning', 'Error al Generar el Archivo Excel.', '');
       }
     );
   }

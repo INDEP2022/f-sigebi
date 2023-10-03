@@ -8,18 +8,15 @@
       class="form-material form-horizontal"
       [formGroup]="form"
       (ngSubmit)="onSubmit()">
-      <div class="row">
+      <!-- <div class="row">
         <div class="d-flex justify-content-end mb-2">
           <div>
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              (click)="findPropose()">
+            <button type="button" class="btn btn-primary btn-sm active" (click)="findPropose()">
               <i class="bx bx-list-plus bx-sm float-icon"></i>
             </button>
           </div>
         </div>
-      </div>
+      </div> -->
       <div class="row mt-5">
         <div class="col-12 col-md-4">
           <div class="mb-3 pl-4 pr-4">
@@ -60,33 +57,40 @@
         </div>
       </div>
     </form>
-
-    <div class="row mt-5">
-      <div class="col-12 col-md-3 text-center">
-        <button class="btn btn-secondary btn-sm active" (click)="openModal(1)">
-          Incorporar
+    <div class="row m-3">
+      <div class="col-4"></div>
+      <div class="col-md-12 text-center">
+        <button
+          (click)="addrequest()"
+          type="button"
+          class="btn btn-info active btn-sm mr-3">
+          Nueva Solicitud
+          <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
-      </div>
-      <div class="col-12 col-md-3 text-center">
-        <button class="btn btn-secondary btn-sm active" (click)="openModal(2)">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm mr-3"
+          (click)="findPropose()">
+          Propuesta
+          <i class="bx bx-search bx-sm float-icon"></i>
+        </button>
+        <button
+          (click)="agregarBienes()"
+          type="button"
+          class="btn btn-sm btn-sucess active btn-sm mr-3">
+          Rastreador de Bienes
+          <i class="bx bx-plus bx-sm float-icon"></i>
+        </button>
+        <button type="button" class="btn btn-info active btn-sm mr-3">
           Asociar
+          <i class="fas fa-close bx-sm float-icon"></i>
         </button>
-      </div>
-      <div class="col-12 col-md-3 text-center">
-        <button class="btn btn-secondary btn-sm active">Actualizar</button>
-      </div>
-      <div class="col-12 col-md-3 text-center">
-        <button class="btn btn-secondary btn-sm active">Propuesta</button>
-      </div>
-    </div>
-
-    <div class="row mt-5">
-      <div class="col-12 col-md-6 text-center">
-        <button class="btn btn-secondary btn-sm active">Agregar Bienes</button>
-      </div>
-      <div class="col-12 col-md-6 text-center">
-        <button class="btn btn-secondary btn-sm active">
-          Aplicar Estatus y Parcializaci&oacute;n
+        <button
+          (click)="cleanPropose()"
+          type="button"
+          class="btn btn-danger active btn-sm mr-3">
+          Limpiar
+          <i class="fa fa-eraser" aria-hidden="true"></i>
         </button>
       </div>
     </div>
@@ -95,19 +99,14 @@
 
     <h5 class="mt-5">Solicitudes y Donatarios</h5>
 
-    <!-- <div class="row justify-content-end mt-3">
-      <div class="col-md-5 buttons pt-3 text-right">
-        <app-columns-select (settingsChange)="settingsChange($event)" [settings]="settings">
-        </app-columns-select>
-      </div>
-    </div> -->
-
     <div class="row mt-5">
       <ng2-smart-table
         [attr.class]="'table-bordered'"
         [settings]="settings"
-        [source]="data">
+        [source]="dataFacRequest">
       </ng2-smart-table>
+      <app-pagination [params]="params" [totalItems]="itemRequest">
+      </app-pagination>
     </div>
     <div class="">
       <form class="form-material form-horizontal" [formGroup]="formTable1">
@@ -139,10 +138,11 @@
     <div class="row mt-5">
       <ng2-smart-table
         [attr.class]="'table-bordered'"
-        [settings]="settings2"
-        [source]="data">
+        [settings]="settings3"
+        [source]="dataGoodsFact">
       </ng2-smart-table>
     </div>
+    <!-- <app-goods-list [files]="files" [changeDescription]="changeDescription"></app-goods-list> -->
     <div class="">
       <form class="form-material form-horizontal" [formGroup]="formTable2">
         <div class="row mt-5">
@@ -165,6 +165,14 @@
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
 
+    <div class="row m-3">
+      <div class="col-4"></div>
+      <div class="col-md-12 text-center">
+        <button class="btn btn-warning btn-sm active" (click)="removeSelect()">
+          Elimina Bienes <i class="fa fa-trash-alt"></i>
+        </button>
+      </div>
+    </div>
     <h5 class="mt-5">Bienes del Inventario de Donaciones</h5>
 
     <!-- <div class="row justify-content-end mt-3">

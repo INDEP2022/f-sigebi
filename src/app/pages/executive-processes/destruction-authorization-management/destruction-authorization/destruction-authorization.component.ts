@@ -777,6 +777,8 @@ export class DestructionAuthorizationComponent
           this.onLoadToast('success', 'Acta generada correctamente', '');
         },
         error: error => {
+          console.log(error);
+
           this.loading = false;
           this.onLoadToast(
             'error',
