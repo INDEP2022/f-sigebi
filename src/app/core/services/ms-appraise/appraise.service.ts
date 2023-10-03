@@ -68,9 +68,10 @@ export class AppraiseService extends HttpService {
     );
   }
 
-  getComerAvaluoWhere(appraisal: number, address: string) {
+  getComerAvaluoWhere(appraisal: number, address: string, params: any) {
     return this.get(
-      `${AppraiseEndpoints.ComerAvaluoWhere}/${appraisal}/${address}`
+      `${AppraiseEndpoints.ComerAvaluoWhere}/${appraisal}/${address}`,
+      params
     );
   }
 
