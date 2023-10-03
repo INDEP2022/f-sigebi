@@ -1,16 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
+import { IProposel } from 'src/app/core/models/sirsae-model/proposel-model/proposel-model';
+import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
+import { ProposelServiceService } from 'src/app/core/services/ms-proposel/proposel-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DonationProcessService } from '../../../shared-final-destination/view-donation-contracts/donation-process.service';
 import { FindProposeComponent } from '../find-propose/find-propose.component';
 import { ModalViewComponent } from '../modal-view/modal-view.component';
 import { ListParams } from './../../../../../common/repository/interfaces/list-params';
 import { COLUMNS_GOODS } from './columns-goods';
-import { DISTRIBUTION_COLUMNS } from './distribution-columns';
-import { REQUEST_COLUMNS } from './request-columns';
+import {
+  DISTRIBUTION_COLUMNS,
+  REQUEST_GOOD_COLUMN,
+} from './distribution-columns';
 @Component({
   selector: 'app-donation-authorization-request',
   templateUrl: './donation-authorization-request.component.html',
@@ -24,20 +31,34 @@ export class DonationAuthorizationRequestComponent
   formTable1: FormGroup;
   formTable2: FormGroup;
   formTable3: FormGroup;
+  request: any;
+  donationGood: IGoodDonation[] = [];
   settings2: any;
   settings3: any;
   requestId: number = 0;
   data: any = [];
+  columnFilters: any[] = [];
   totalItems: number = 0;
+  loadingReq: boolean = true;
+  itemRequest: number = 0;
+  proposal: IProposel;
+  dataFacRequest: LocalDataSource = new LocalDataSource();
+  status: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
   bsModalRef?: BsModalRef;
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private proposelServiceService: ProposelServiceService,
+    private donationService: DonationService,
+    private donationProcessService: DonationProcessService
+  ) {
     super();
     this.settings = { ...this.settings, actions: false };
-    this.settings.columns = REQUEST_COLUMNS;
+    this.settings.columns = DISTRIBUTION_COLUMNS;
     this.settings2 = { ...this.settings, actions: false };
-    this.settings2.columns = DISTRIBUTION_COLUMNS;
+    this.settings2.columns = REQUEST_GOOD_COLUMN;
     this.settings3 = { ...this.settings, actions: false };
     this.settings3.columns = COLUMNS_GOODS;
   }
@@ -48,19 +69,9 @@ export class DonationAuthorizationRequestComponent
 
   initForm() {
     this.form = this.fb.group({
-      proposal: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(20),
-        ],
-      ],
-      classifNumbGood: [null, []],
-      descripClassif: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(10)],
-      ],
+      proposal: [null],
+      classifNumbGood: [null],
+      descripClassif: [null],
     });
 
     this.formTable1 = this.fb.group({
@@ -92,19 +103,9 @@ export class DonationAuthorizationRequestComponent
     this.bsModalRef.setClass('modal-lg');
     this.bsModalRef.content.closeBtnName = 'Close';
   }
-  findPropose() {}
 
   proposeDefault: any = null;
-  searchActas(propose?: string) {
-    if (this.requestId == 0 || this.requestId == null) {
-      this.alertInfo(
-        'warning',
-        'No se puede buscar propuesta sin selecccionarla soliitud',
-        ''
-      );
-      return;
-    }
-
+  findPropose(propose?: string) {
     const regActual = this.proposeDefault;
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
@@ -114,44 +115,24 @@ export class DonationAuthorizationRequestComponent
 
     let modalRef = this.modalService.show(FindProposeComponent, modalConfig);
     modalRef.content.onSave.subscribe(async (next: any) => {
-      console.log(next);
       if (next) {
         this.alert(
           'success',
-          'Se cargó la información del acta',
-          next.keysProceedings
+          'Se cargó la información de la Propuesta',
+          next.ID_PROPUESTA
         );
       }
-      // Limpiar formulario una vez consulte
-      // this.actaRecepttionForm.reset();
-      // this.formScan.reset();
+      this.form.reset();
       this.proposeDefault = next;
-      // this.statusCanc = next.statusProceedings;
-      // if (this.statusCanc == 'CERRADA') {
-      //   //this.disabledBtnCerrar = false;
-      //   this.disabledBtnActas = false;
-      // } else {
-      //   this.disabledBtnActas = true;
-      //   //this.disabledBtnCerrar = true;
-      // }
-
-      // console.log('acta NEXT ', next);
-      // this.form.patchValue({
-      //   cvePropose
-      // });
-
-      // this.data1 = next.statusProceedings;
-      // this.formScan.get('scanningFoli').patchValue(next.universalFolio);
-      // // Pasar clave a esta función
-      // this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
-
-      // await this.getDetailProceedingsDevollution(this.actasDefault.id);
+      await this.getProposalId(this.proposeDefault.ID_PROPUESTA);
+      this.requestId = this.proposeDefault.ID_SOLICITUD;
+      await this.getRequest(this.requestId);
     });
-    // modalRef.content.cleanForm.subscribe(async (next: any) => {
-    //   if (next) {
-    //     this.cleanPropose();
-    //   }
-    // });
+    modalRef.content.cleanForm.subscribe(async (next: any) => {
+      if (next) {
+        this.cleanPropose();
+      }
+    });
   }
   cleanPropose() {
     this.form.reset();
@@ -160,8 +141,44 @@ export class DonationAuthorizationRequestComponent
 
   cleanForm() {
     this.form.reset();
-    // this.dataTableGood_ = [];
-    // this.dataTableGood.load([]);
-    // this.dataTableGood.reset();
+  }
+  async getProposalId(params: ListParams) {
+    this.proposelServiceService.getIdPropose(params).subscribe({
+      next: data => {
+        this.proposal = data;
+      },
+      error: () => console.log('error in proposal'),
+    });
+  }
+  async getRequest(proposal: number) {
+    this.donationProcessService.getRequestId(proposal).subscribe({
+      next: data => {
+        this.request = data.data;
+        this.dataFacRequest.load(this.request);
+        this.dataFacRequest.refresh();
+        this.itemRequest = data.count;
+        console.log(this.request);
+        this.status = this.request.requestStatus;
+        this.form.patchValue({
+          proposal: this.proposeDefault.ID_PROPUESTA,
+          classifNumbGood: this.request[0].clasifGood.clasifGoodNumber,
+          descripClassif: this.request[0].justification,
+        });
+        this.getRequestGood();
+      },
+    });
+  }
+  getRequestGood() {
+    this.loadingReq = true;
+    // this.params.getValue()['filter.numFile'] = this.expedienteNumber;
+    let params = new ListParams();
+    params['?filter.requestId.id'] = this.requestId;
+    params['requestTypeId'] = 'SD';
+    this.donationService.getGoodRequest(params).subscribe({
+      next: data => {
+        this.loadingReq = false;
+        console.log(data.data);
+      },
+    });
   }
 }
