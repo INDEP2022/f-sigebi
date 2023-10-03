@@ -1,161 +1,140 @@
 import { DecimalPipe } from '@angular/common';
 import { format } from 'date-fns';
+import { SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
-export const APPRAISAL_COLUMNS = {
-  // idEvent: {
-  //   title: 'ID Evento',
-  //
-  //   sort: false,
-  // },
-  idAppraisal: {
-    title: 'Id Avalúo',
-    sort: false,
-  },
-  keyAppraisal: {
-    title: 'Clave Avalúo',
-    sort: false,
-  },
-  keyOffice: {
-    title: 'Clave Oficio',
-    sort: false,
-  },
-  userInsert: {
-    title: 'Usuario Captura',
-    sort: false,
-  },
-  insertDate: {
-    title: 'Fecha captura',
-    sort: false,
-    valuePrepareFunction: (value: string) =>
-      value ? format(new Date(value), 'dd/MM/yyyy') : '',
-  },
-  idDetAppraisal: {
+export const APPRAISAL_DETAIL_COLUMNS = {
+  idDetavaluo: {
     title: 'No.',
     sort: false,
   },
-  noGood: {
+  noBien: {
     title: 'No. Bien',
     sort: false,
   },
-  description: {
+  descripcion: {
     title: 'Descripción',
     sort: false,
+    type: 'custom',
+    renderComponent: SeeMoreComponent,
+    operator: SearchFilter.ILIKE,
   },
-  status: {
+  estatus: {
     title: 'Estatus',
     sort: false,
   },
-  noClasifGood: {
+  noClasifBien: {
     title: 'No. Clasif.',
     sort: false,
   },
-  descSssubType: {
-    title: 'Descripción Sub Sub Sub Tipo',
+  descSssubtipo: {
+    title: 'Sub Sub Sub Tipo',
     sort: false,
+    operator: SearchFilter.ILIKE,
   },
-  descSsubtype: {
-    title: 'Descripción Sub Sub Tipo',
+  descSsubtipo: {
+    title: 'Sub Sub Tipo',
     sort: false,
+    operator: SearchFilter.ILIKE,
   },
-  descSubtype: {
-    title: 'Descripción Sub Tipo',
+  descSubtipo: {
+    title: 'Sub Tipo',
     sort: false,
+    operator: SearchFilter.ILIKE,
   },
-  descType: {
-    title: 'Descripción Tipo',
+  descTipo: {
+    title: 'Tipo',
     sort: false,
+    operator: SearchFilter.ILIKE,
   },
-  apraisalDate: {
-    title: 'Fecha de Avalúo',
+  fechaAvaluo: {
+    title: 'Fecha Avalúo',
     sort: false,
     valuePrepareFunction: (value: string) =>
       value ? format(new Date(value), 'dd/MM/yyyy') : '',
   },
-  dateVigAppraisal: {
-    title: 'Fecha Vigente de Avalúo',
+  fechaVigAvaluo: {
+    title: 'Fecha Vig.',
     sort: false,
     valuePrepareFunction: (value: string) =>
       value ? format(new Date(value), 'dd/MM/yyyy') : '',
   },
-  statusAppraisal: {
-    title: 'Estado de Avalúo',
+  nombreValuador: {
+    title: 'Nombre Val.',
     sort: false,
+    operator: SearchFilter.ILIKE,
   },
-  daysLeft: {
-    title: 'Días Restantes',
+  refAvaluo: {
+    title: 'Referencia',
     sort: false,
+    operator: SearchFilter.ILIKE,
   },
-  nameAppraiser: {
-    title: 'Nombre Valuador',
+  apto: {
+    title: 'Apto',
     sort: false,
-  },
-  typeReference: {
-    title: 'Tipo Referencia',
-    sort: false,
-  },
-  descApt: {
-    title: 'Desc. Apto.',
-    sort: false,
+    operator: SearchFilter.ILIKE,
   },
   iva: {
     title: 'IVA',
     sort: false,
   },
-  valorRefInmediate: {
-    title: 'Valor Referencia Inmediata',
+  vri: {
+    title: 'Valor de Ref. Inmediata',
     sort: false,
     valuePrepareFunction: (value: string) =>
       new DecimalPipe('en-US').transform(value),
   },
-  valor_ref_inmediata_iva: {
-    title: 'Valor Referencia Inmediata IVA',
+  vriIva: {
+    title: 'Valor de Ref. Inmediata IVA',
     sort: false,
     valuePrepareFunction: (value: string) =>
       new DecimalPipe('en-US').transform(value),
   },
-  valor_ref_inmediata_redondeado: {
-    title: 'Valor Referencia Inmediata Redondeado',
+  vriIvaRedondeado: {
+    title: 'VRI IVA Redondeado',
     sort: false,
     valuePrepareFunction: (value: string) =>
       new DecimalPipe('en-US').transform(value),
   },
-  valueCommercial: {
+  vc: {
     title: 'Valor Comercial',
     sort: false,
     valuePrepareFunction: (value: string) =>
       new DecimalPipe('en-US').transform(value),
   },
-  valueCommercialIva: {
+  vcIva: {
     title: 'Valor Comercial IVA',
     sort: false,
     valuePrepareFunction: (value: string) =>
       new DecimalPipe('en-US').transform(value),
   },
-  opinion: {
+  dictamen: {
     title: 'Dictamen',
     sort: false,
+    operator: SearchFilter.ILIKE,
   },
-  opinionDate: {
+  fechaDictamen: {
     title: 'Fecha Dictamen',
     sort: false,
     valuePrepareFunction: (value: string) =>
       value ? format(new Date(value), 'dd/MM/yyyy') : '',
   },
-  vigOpenDate: {
+  fechaVigDictamen: {
     title: 'Fecha Vig. Dictamen',
     sort: false,
+    valuePrepareFunction: (value: string) =>
+      value ? format(new Date(value), 'dd/MM/yyyy') : '',
   },
-  discountVri: {
+  descuentoVri: {
     title: 'VRI con Descuento',
     sort: false,
     valuePrepareFunction: (value: string) =>
       new DecimalPipe('en-US').transform(value),
   },
-  discountIva: {
-    title: 'IVA VRI con Descuento',
+  descuentoIva: {
+    title: 'VRI IVA con Descuento',
     sort: false,
     valuePrepareFunction: (value: string) =>
       new DecimalPipe('en-US').transform(value),
   },
-  //Faltan más columnas por agregar
 };
