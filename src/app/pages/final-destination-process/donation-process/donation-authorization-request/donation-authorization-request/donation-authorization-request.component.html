@@ -106,8 +106,10 @@
       <ng2-smart-table
         [attr.class]="'table-bordered'"
         [settings]="settings"
-        [source]="data">
+        [source]="dataFacRequest">
       </ng2-smart-table>
+      <app-pagination [params]="params" [totalItems]="itemRequest">
+      </app-pagination>
     </div>
     <div class="">
       <form class="form-material form-horizontal" [formGroup]="formTable1">

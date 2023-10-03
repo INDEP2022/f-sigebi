@@ -4,13 +4,15 @@
   </div>
 
   <div body>
-    <div class="row mt-4">
-      <div class="">
+    <div class="row buttons">
+      <div class="ml-auto" style="width: auto">
         <button
           type="button"
-          (click)="openForm()"
-          class="btn btn-primary btn-sm active mx-4">
-          AGREGAR
+          tooltip="Nuevo"
+          containerClass="tooltip-style"
+          class="btn btn-info btn-sm active ml-2 mr-2"
+          (click)="openForm()">
+          Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
       </div>
     </div>
@@ -23,7 +25,6 @@
               [settings]="settings"
               [source]="exchangeTypes"
               (edit)="openForm($event.data)">
-              >
             </ng2-smart-table>
           </div>
         </div>
