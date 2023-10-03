@@ -186,4 +186,18 @@ export class MassiveGoodService extends HttpService {
   postExportDataExcel(params: any) {
     return this.post(MassiveGoodEndpoints.ExportDataExcel, params);
   }
+
+  importExcellGoodsInvoice(data: {
+    pSession: number;
+    user: string;
+    file: any;
+  }) {
+    const formData = new FormData();
+
+    formData.append('file', data.file);
+    formData.append('user', data.user);
+    formData.append('pSession', String(data.pSession));
+
+    return this.post(MassiveGoodEndpoints.ImportGoodsInvoice, formData);
+  }
 }

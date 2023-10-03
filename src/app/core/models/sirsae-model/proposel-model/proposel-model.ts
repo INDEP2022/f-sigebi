@@ -9,3 +9,15 @@ export interface IProposel {
   FEC_AUTORIZA: string;
   PRP_ESTATUS: string;
 }
+
+export interface IRequest {
+  solQuantity: number;
+  requestId: number;
+  entFedKey: number;
+  requestDate: string;
+  clasifGood: number;
+  justification: string;
+  sunStatus: string;
+  proposalCve: string;
+  requestTypeId: string;
+}

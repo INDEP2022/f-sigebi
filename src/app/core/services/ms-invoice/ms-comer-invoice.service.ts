@@ -218,4 +218,69 @@ export class ComerInvoiceService extends HttpService {
   cancelInvoice(data: { invoiceId: number; eventId: number; batchId: number }) {
     return this.put(ENDPOINT_INVOICE.CancelInvoice, data);
   }
+
+  getCountBatch(event: number, batch: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.CountBatch}?eventId=${event}&batch=${batch}`
+    );
+  }
+
+  getValidBatch(event: number, batch: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.ValidBatch}?eventId=${event}&batch=${batch}`
+    );
+  }
+
+  updateEvent(event: number) {
+    return this.put(`${ENDPOINT_INVOICE.UpdateEvent}/${event}`);
+  }
+
+  getCursosData(event: number, status: string, batchId: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.CursorData}?eventId=${event}&statusFact=${status}&batchId=${batchId}`
+    );
+  }
+
+  updateEventCursor(data: {
+    billId: number;
+    eventId: number;
+    process: string;
+  }) {
+    return this.put(ENDPOINT_INVOICE.UpdateProcess, data);
+  }
+
+  checkFolSubTotal(data: { eventId: number; batchId: number }) {
+    return this.post(ENDPOINT_INVOICE.ApplicationSubTotal, data);
+  }
+
+  exportExcell(eventId: number) {
+    return this.post(ENDPOINT_INVOICE.ExportExcellFcomer, { eventId });
+  }
+
+  getAllSumInvoice(params: _Params) {
+    return this.get(ENDPOINT_INVOICE.ApplicationInvoice, params);
+  }
+
+  getSumTotal(params: _Params) {
+    return this.get(ENDPOINT_INVOICE.ApplicationSum, params);
+  }
+
+  getDescInvoice(params: _Params) {
+    return this.get(ENDPOINT_INVOICE.ApplicationDescInvoice, params);
+  }
+
+  updateEventByDate(
+    params: _Params,
+    data: {
+      impressionDate: string;
+    }
+  ) {
+    return this.put(ENDPOINT_INVOICE.UpdateDateImpression, data, params);
+  }
+
+  maxPayment(event: number, batchId: number) {
+    return this.get(
+      `${ENDPOINT_INVOICE.MaxPayment}?eventId=${event}&publicLot=${batchId}`
+    );
+  }
 }
