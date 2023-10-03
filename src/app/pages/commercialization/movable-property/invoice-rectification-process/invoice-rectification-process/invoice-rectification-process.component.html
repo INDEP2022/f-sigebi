@@ -15,15 +15,9 @@
           [btnSmall]="true"
           [loading]="loadingSearch"
           (confirm)="searchData()"></confirm-button>
-        <button
-          type="button"
-          class="btn btn-info btn-sm active mr-3"
-          (click)="newData()">
-          Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
-        </button>
-        <!-- <button class="btn btn-danger btn-sm active" (click)="cleanData()">
+        <button class="btn btn-danger btn-sm active mr-3" (click)="newData()">
           Limpiar <i class="fas fa-eraser"> </i>
-        </button> -->
+        </button>
       </div>
     </div>
     <form class="form-material mt-5" [formGroup]="form">
