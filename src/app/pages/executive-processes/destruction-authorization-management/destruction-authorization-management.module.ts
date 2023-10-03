@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { StoreModule } from '@ngrx/store';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
@@ -28,6 +29,7 @@ import { ProceedingsModalComponent } from './proceedings-modal/proceedings-modal
     SharedModule,
     ModalModule.forChild(),
     AlertModule.forRoot(),
+    Ng2SmartTableModule,
     StoreModule.forFeature('destructionAuth', destructionAuthReducer),
     PreviewDocumentsComponent,
     TooltipModule.forRoot(),

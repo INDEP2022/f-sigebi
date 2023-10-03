@@ -25,4 +25,9 @@ export class StatusDispService extends HttpService {
   remove(body: Partial<any>) {
     return this.delete(this.route.StationDisp, body);
   }
+
+  validBidding(params: any) {
+    const route = `${StatusDisp.validBidding}`;
+    return this.post(route, params);
+  }
 }

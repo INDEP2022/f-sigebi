@@ -1,1 +1,112 @@
-<p>appraisal-event-form works!</p>
+<div class="row">
+  <div class="col-md-12">
+    <h5 class="title">Evento</h5>
+  </div>
+</div>
+<hr class="row" />
+<form [formGroup]="comerEventForm" class="form-material">
+  <div class="row">
+    <form-field
+      class="col-md-2"
+      [control]="comerEventForm.get('id_evento')"
+      label="No. Evento">
+      <input class="form-control" type="number" formControlName="id_evento" />
+    </form-field>
+    <div class="col-md-2 d-flex">
+      <div class="mr-2">
+        <button
+          (click)="onFindComerEvent()"
+          tooltip="Buscar"
+          type="button"
+          class="btn btn-primary active btn-sm">
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div>
+        <button
+          (click)="cleanForm()"
+          tooltip="Limpiar"
+          class="btn btn-danger btn-sm active mr-3">
+          <i class="fas fa-eraser"> </i>
+        </button>
+      </div>
+    </div>
+    <form-field
+      class="col-md-3"
+      [control]="comerEventForm.get('cve_proceso')"
+      label="Cve. Proceso">
+      <input class="form-control" formControlName="cve_proceso" />
+    </form-field>
+
+    <form-field
+      class="col-md-2"
+      [control]="comerEventForm.get('fec_evento')"
+      label="Fecha Evento">
+      <input class="form-control" formControlName="fec_evento" bsDatepicker />
+    </form-field>
+
+    <form-field
+      class="col-md-3"
+      [control]="comerEventForm.get('item_desc_estatus')"
+      label="Estatus">
+      <input class="form-control" formControlName="item_desc_estatus" />
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field
+      [control]="comerEventForm.get('observaciones')"
+      label="Observaciones">
+      <textarea class="form-control" formControlName="observaciones"></textarea>
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field
+      class="col-md-2"
+      [control]="comerEventForm.get('item_fec_solicitud')"
+      label="Fecha Solicitud">
+      <input
+        class="form-control"
+        formControlName="item_fec_solicitud"
+        bsDatepicker />
+    </form-field>
+
+    <form-field
+      class="col-md-3"
+      [control]="comerEventForm.get('item_desc_tipo')"
+      label="Tipo">
+      <input class="form-control" formControlName="item_desc_tipo" />
+    </form-field>
+
+    <form-field
+      class="col-md-3"
+      [control]="comerEventForm.get('item_desc_tpsolaval')"
+      label="Referencia">
+      <input class="form-control" formControlName="item_desc_tpsolaval" />
+    </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-field [control]="comerEventForm.get('documentType')" class="col-md-4">
+      <ngx-select
+        [form]="comerEventForm"
+        control="documentType"
+        (fetchItems)="getDocumentTypes()"
+        [data]="documentTypes"
+        [searchOnInit]="true"
+        value="value"
+        bindLabel="description"
+        label="Tipo de Oficio"></ngx-select>
+    </form-field>
+
+    <div class="col-3">
+      <button
+        containerClass="tooltip-style"
+        class="btn btn-secondary btn-sm active m-1">
+        Generar Oficio
+        <i class="bx bxs-file-find"></i>
+      </button>
+    </div>
+  </div>
+</form>

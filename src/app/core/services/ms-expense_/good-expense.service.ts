@@ -18,4 +18,51 @@ export class ExpenseService extends HttpService {
       params
     );
   }
+
+  getDataFilter(params: _Params) {
+    return this.get<IListResponse<any>>(`/expense-exercised`, params);
+  }
+
+  getExpenseConcep(params: _Params) {
+    return this.get(`concept-expense`, params);
+  }
+
+  putExpenseConcept(body: any) {
+    return this.put(`expense-exercised`, body);
+  }
+
+  getDataState(params: any) {
+    const route = `aplication/getPeridoState`;
+    return this.get(route, params);
+  }
+
+  getDataPeriod(params: any, period: any) {
+    const route = `aplication/getDirectIndirect?filter.period=$eq:${period}`;
+    return this.get(route, params);
+  }
+
+  getDataExpense(params: any) {
+    const route = `concept-expense`;
+    return this.get(route, params);
+  }
+
+  updateDataExpense(params: any, id: any) {
+    const route = `concept-expense/${id}`;
+    return this.put(route, params);
+  }
+
+  insertDataExpense(params: any) {
+    const route = `concept-expense`;
+    return this.post(route, params);
+  }
+
+  deleteDataExpense(id: any) {
+    const route = `concept-expense/${id}`;
+    return this.delete(route);
+  }
+
+  getSeqExpense(params?: any) {
+    const route = `concept-expense/getSecuence`;
+    return this.post(route, params);
+  }
 }
