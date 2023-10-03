@@ -22,6 +22,10 @@ export class BatterysService extends HttpService {
     return this.batteryRepository.getAll(this.route.FilterStoreCode, params);
   }
 
+  getAllTwo(params?: ListParams) {
+    return this.get(BatteryEndpoints.Battery, params);
+  }
+
   getByCveSaveValues(
     id: string | number,
     params?: ListParams

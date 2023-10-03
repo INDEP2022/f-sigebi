@@ -18,7 +18,8 @@
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settings"
-                [source]="dataOne">
+                [source]="dataOne"
+                (userRowSelect)="fullBatteryArchive($event)">
               </ng2-smart-table>
               <app-pagination
                 [params]="paramsOne"
@@ -32,7 +33,8 @@
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settingsTwo"
-                [source]="dataTwo">
+                [source]="dataTwo"
+                (userRowSelect)="fullShelf($event)">
               </ng2-smart-table>
               <app-pagination
                 [params]="paramsTwo"
@@ -46,7 +48,8 @@
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settingsThree"
-                [source]="dataThree">
+                [source]="dataThree"
+                (userRowSelect)="fullShelfFour($event)">
               </ng2-smart-table>
               <app-pagination
                 [params]="paramsThree"

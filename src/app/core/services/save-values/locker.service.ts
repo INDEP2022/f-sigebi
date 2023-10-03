@@ -22,6 +22,10 @@ export class LockersService extends HttpService {
     return this.lockerRepository.getAll(this.route.FilterSaveValueKey, params);
   }
 
+  getAllTwo(params?: ListParams) {
+    return this.get(LockerEndpoints.Locker, params);
+  }
+
   getByCveSaveValues(
     saveValueKey: string | number,
     numBattery: string | number,

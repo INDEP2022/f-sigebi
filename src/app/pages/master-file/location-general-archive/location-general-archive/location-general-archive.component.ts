@@ -3,6 +3,9 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { SaveValueService } from 'src/app/core/services/catalogs/save-value.service';
+import { BatterysService } from 'src/app/core/services/save-values/battery.service';
+import { LockersService } from 'src/app/core/services/save-values/locker.service';
+import { ShelvessService } from 'src/app/core/services/save-values/shelves.service';
 import { BasePage } from 'src/app/core/shared';
 import {
   ARCHIVE_BATTERY,
@@ -57,7 +60,12 @@ export class LocationGeneralArchiveComponent
   dataFive: LocalDataSource = new LocalDataSource();
   dataSix: LocalDataSource = new LocalDataSource();
 
-  constructor(private serviceSave: SaveValueService) {
+  constructor(
+    private serviceSave: SaveValueService,
+    private serviceBattery: BatterysService,
+    private serviceShelfOne: ShelvessService,
+    private serviceShelfTwo: LockersService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -102,6 +110,18 @@ export class LocationGeneralArchiveComponent
     this.paramsOne.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       this.fullGeneralArchive();
     });
+    //
+    this.paramsTwo.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.fullBatteryArchive();
+    });
+    //
+    this.paramsThree.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.fullShelf();
+    });
+    //
+    this.paramsFour.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.fullShelfFour();
+    });
 
     // Load
     this.fullGeneralArchive();
@@ -109,6 +129,7 @@ export class LocationGeneralArchiveComponent
 
   //
 
+  //#region GetData Table Main
   fullGeneralArchive() {
     let params = {
       ...this.paramsOne.getValue(),
@@ -125,6 +146,67 @@ export class LocationGeneralArchiveComponent
       },
     });
   }
+
+  fullBatteryArchive(event?: any) {
+    let params = {
+      ...this.paramsTwo.getValue(),
+    };
+    if (Number(event?.data?.id) > 0 && Number(event?.data?.id) != null)
+      params['filter.storeCode'] = Number(event?.data?.id);
+    this.serviceBattery.getAllTwo(params).subscribe({
+      next: response => {
+        this.totalItemsTwo = response.count || 0;
+        this.dataTwo.load(response.data);
+        this.dataTwo.refresh();
+      },
+      error: error => {
+        this.dataTwo.load([]);
+        this.dataTwo.refresh();
+      },
+    });
+  }
+
+  fullShelf(event?: any) {
+    let params = {
+      ...this.paramsThree.getValue(),
+    };
+    if (
+      Number(event?.data?.idBattery) > 0 &&
+      Number(event?.data?.idBattery) != null
+    )
+      params['filter.batteryNumber'] = Number(event?.data?.idBattery);
+    this.serviceShelfOne.getAllTwo(params).subscribe({
+      next: response => {
+        this.totalItemsThree = response.count || 0;
+        this.dataThree.load(response.data);
+        this.dataThree.refresh();
+      },
+      error: error => {
+        this.dataThree.load([]);
+        this.dataThree.refresh();
+      },
+    });
+  }
+
+  fullShelfFour(event?: any) {
+    let params = {
+      ...this.paramsFour.getValue(),
+    };
+    if (Number(event?.data?.id) > 0 && Number(event?.data?.id) != null)
+      params['filter.numShelf'] = Number(event?.data?.id);
+    this.serviceShelfOne.getAllTwo(params).subscribe({
+      next: response => {
+        this.totalItemsFour = response.count || 0;
+        this.dataFour.load(response.data);
+        this.dataFour.refresh();
+      },
+      error: error => {
+        this.dataFour.load([]);
+        this.dataFour.refresh();
+      },
+    });
+  }
+  //#endregion
 
   //
 }

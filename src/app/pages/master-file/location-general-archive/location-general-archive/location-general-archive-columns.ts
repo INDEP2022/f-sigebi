@@ -17,12 +17,12 @@ export const ARCHIVE_GENERAL = {
 };
 //
 export const ARCHIVE_BATTERY = {
-  areaSends: {
+  idBattery: {
     title: 'No.',
     type: 'string',
     sort: false,
   },
-  userRequestsScan: {
+  description: {
     title: 'Description',
     type: 'string',
     sort: false,
@@ -30,12 +30,12 @@ export const ARCHIVE_BATTERY = {
 };
 //
 export const ARCHIVE_SHELF = {
-  areaSends: {
+  id: {
     title: 'No.',
     type: 'string',
     sort: false,
   },
-  userRequestsScan: {
+  description: {
     title: 'Description',
     type: 'string',
     sort: false,
@@ -43,12 +43,12 @@ export const ARCHIVE_SHELF = {
 };
 //
 export const ARCHIVE_SHELF_FOUR = {
-  areaSends: {
+  id: {
     title: 'No.',
     type: 'string',
     sort: false,
   },
-  userRequestsScan: {
+  description: {
     title: 'Description',
     type: 'string',
     sort: false,

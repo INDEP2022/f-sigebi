@@ -23,6 +23,10 @@ export class ShelvessService extends HttpService {
     return this.shelvesRepository.getAll(this.route.ShelvesByKey, params);
   }
 
+  getAllTwo(params?: ListParams) {
+    return this.get(ShelvesEndpoints.Shelves, params);
+  }
+
   getByCveSaveValues(
     idSaveValues: string | number,
     batteryNumber: string | number,
