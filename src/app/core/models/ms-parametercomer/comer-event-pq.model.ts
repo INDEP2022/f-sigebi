@@ -1,0 +1,35 @@
+export interface IComerEventApp {
+  id_evento: string;
+  id_tpevento: string;
+  id_estatusvta: string;
+  cve_proceso: string;
+  observaciones: string;
+  direccion: string;
+  fec_fallo: any;
+  lugar: string;
+  fec_evento: any;
+  texto1: any;
+  texto2: any;
+  firmante: any;
+  firmante_cargo: any;
+  notas: any;
+  textofin3: any;
+  textofin4: any;
+  costo_base: any;
+  num_base_vend: any;
+  usuario: string;
+  mes: string;
+  anio: string;
+  no_delegacion: string;
+  fase_inmu: any;
+  id_tercerocomer: any;
+  fecha_notificacion: any;
+  fecha_cierre_evento: any;
+  id_tpsolaval: any;
+  aplica_iva: string;
+  item_desc_tipo: string;
+  item_desc_estatus: string;
+  item_desc_tpsolaval: any;
+  item_fec_solicitud: any;
+  item_tipo_proceso: any;
+}

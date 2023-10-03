@@ -1,0 +1,51 @@
+<li role="menuitem">
+  <button type="button" class="dropdown-item" (click)="onDownloadFormat()">
+    Descargar Formato
+  </button>
+</li>
+<li role="menuitem">
+  <button type="button" class="dropdown-item">Validar Archivo</button>
+</li>
+<li role="menuitem">
+  <button type="button" class="dropdown-item">Avalúos Rechazados</button>
+</li>
+<li role="menuitem">
+  <button type="button" class="dropdown-item" (click)="onInsertAppraissal()">
+    Insertar Avalúo
+  </button>
+</li>
+<li role="menuitem">
+  <button type="button" class="dropdown-item">Agregar Avalúo</button>
+</li>
+<li role="menuitem">
+  <button type="button" class="dropdown-item">Actualizar Avalúo</button>
+</li>
+<li class="divider dropdown-divider"></li>
+<li role="menuitem">
+  <a class="dropdown-item" href="assets/csv/Comer_Descuento_Avaluos.csv">
+    Descargar Formato Descuento
+  </a>
+</li>
+<li role="menuitem">
+  <button type="button" class="dropdown-item" (click)="onValidDisscountFile()">
+    Validar Archivo Descuento
+  </button>
+</li>
+<li role="menuitem">
+  <button type="button" class="dropdown-item" (click)="onRejectedDiscounts()">
+    Descuentos Rechazados
+  </button>
+</li>
+<li role="menuitem">
+  <button type="button" class="dropdown-item" (click)="onApplyDisscount()">
+    Aplicar Descuento
+  </button>
+</li>
+
+<input
+  [style.display]="'none'"
+  #inputFile
+  type="file"
+  [formControl]="fileControl"
+  (change)="onFileChange($event)"
+  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
