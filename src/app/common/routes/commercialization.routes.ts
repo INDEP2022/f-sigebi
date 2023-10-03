@@ -171,11 +171,11 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Consulta de Avalúo',
-            link: '/pages/commercialization/appraisal-consultation',
+            link: '/pages/commercialization/appraisal-consultation-i',
           },
           {
             label: 'Registro de Avalúo',
-            link: '/pages/commercialization/appraisal-registration',
+            link: '/pages/commercialization/appraisal-registration-i',
           },
           {
             label: 'Captura de Gastos',

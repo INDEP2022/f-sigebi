@@ -48,7 +48,9 @@
                 termMaxLength="50"
                 [labelTemplate]="bankLabel"
                 [optionTemplate]="bankOption"
-                (change)="onBankAccountSelectChange($event)">
+                (change)="onBankAccountSelectChange($event)"
+                (input)="onSearchAccount($event.target)"
+                (clear)="onClearSelection()">
               </ngx-select>
               <ng-template #bankLabel let-item="item">
                 {{ item.accountNumber.cveAccount }}

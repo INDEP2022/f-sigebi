@@ -1,117 +1,76 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-
-import { APPRAISAL_REGISTRATION_APPRAISALS_COLUMNS } from './appraisal-registration-appraisals-columns';
-import { APPRAISAL_REGISTRATION_DETAIL_COLUMNS } from './appraisal-registration-detail-columns';
-import { APPRAISAL_REGISTRATION_GOODS_COLUMNS } from './appraisal-registration-goods-columns';
-
+import { ActivatedRoute } from '@angular/router';
+import { catchError, tap, throwError } from 'rxjs';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { IParameters } from 'src/app/core/models/ms-parametergood/parameters.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { AppraisalRegistrationMain } from '../classes/appraisal-registration-main';
+const IVA = 'IVA';
+const COLUMN_NUM = 'AVALUOM_NOCOLUM';
+const NO_PARAMETERS_ERROR =
+  'Ocurrió un error al obtener parámetros para el funcionamiento de la pantalla';
 @Component({
   selector: 'app-appraisal-registration',
   templateUrl: './appraisal-registration.component.html',
   styles: [],
 })
-export class AppraisalRegistrationComponent extends BasePage implements OnInit {
-  settings1 = {
-    ...this.settings,
-    actions: false,
-  };
-  settings2 = {
-    ...this.settings,
-    actions: false,
-  };
-  settings3 = {
-    ...this.settings,
-    actions: false,
-  };
-
-  form: FormGroup = new FormGroup({});
-  constructor(private fb: FormBuilder) {
+export class AppraisalRegistrationComponent
+  extends AppraisalRegistrationMain
+  implements OnInit
+{
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private parametersModService: ParameterModService,
+    private parameterService: ParametersService,
+    private authService: AuthService
+  ) {
     super();
-    this.settings1.columns = APPRAISAL_REGISTRATION_GOODS_COLUMNS;
-    this.settings2.columns = APPRAISAL_REGISTRATION_APPRAISALS_COLUMNS;
-    this.settings3.columns = APPRAISAL_REGISTRATION_DETAIL_COLUMNS;
+    const screen = this.activatedRoute.snapshot.data['screen'];
+    this.global.direction = screen == 'FCOMERREGAVALUO' ? 'M' : 'I';
+    this.screen = screen;
   }
 
   ngOnInit(): void {
-    this.prepareForm();
+    this.getIvaParameter().subscribe();
+    this.getColumnNum().subscribe();
+    console.log(this.authService.decodeToken());
   }
 
-  private prepareForm() {
-    this.form = this.fb.group({
-      idEvento: ['', [Validators.required]],
-      descriptionEvent: [
-        '',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      eventDate: ['', [Validators.required]],
-      observations: [
-        '',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      appDate: ['', [Validators.required]],
-      type: ['', [Validators.required]],
-      status: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      reference: [
-        '',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      typeEvent: ['', [Validators.required]],
-    });
+  getColumnNum() {
+    return this.parameterService.getById(COLUMN_NUM).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', NO_PARAMETERS_ERROR);
+        return throwError(() => error);
+      }),
+      tap((response: any) => {
+        const parameter = response as IParameters;
+        if (!parameter) {
+          this.alert('error', 'Error', NO_PARAMETERS_ERROR);
+          return;
+        }
+        this.global.vIva = Number(parameter.initialValue);
+      })
+    );
   }
 
-  //Datos de prueba de bienes
-  data1 = [
-    {
-      noBienes: '3651459',
-      estatus: 'CPV',
-      valorAvaluo: '$369,553.18',
-      descripcion: 'ESCURRIDORES DE PLATOS',
-      situacionJuridica: ' ',
-      incidencia: ' ',
-    },
-    {
-      noBienes: '3651460',
-      estatus: 'CPV',
-      valorAvaluo: '$440,496.63',
-      descripcion: 'ESCURRIDORES DE PLATOS',
-      situacionJuridica: ' ',
-      incidencia: ' ',
-    },
-  ];
-
-  //Datos de prueba de avaluos
-  data2 = [
-    {
-      id: '32243',
-      claveAvaluo: 'IEV_DIV_186_E21673',
-      claveOficio: '77',
-      fechaInsert: '10/09/2020',
-    },
-  ];
-
-  //Datos de prueba de detalles de avaluo
-  data3 = [
-    {
-      no: '1',
-      noBien: '3651460',
-      descripcion: 'ESCURRIDORES DE PLATOS',
-      estatus: 'CPV',
-      clasif: '1365',
-      sub3tipo: 'ARTICULOS',
-      sub2tipo: 'REFACCIONES',
-      subTipo: 'REFACCIONES',
-    },
-    {
-      no: '2',
-      noBien: '3651459',
-      descripcion: 'ESCURRIDORES DE PLATOS (MERCANCIA PESADA)',
-      estatus: 'CPV',
-      clasif: '1365',
-      sub3tipo: 'ARTICULOS',
-      sub2tipo: 'REFACCIONES',
-      subTipo: 'REFACCIONES',
-    },
-  ];
+  getIvaParameter() {
+    const params = new FilterParams();
+    params.addFilter('parameter', IVA);
+    return this.parametersModService.getParamterMod(params.getParams()).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', NO_PARAMETERS_ERROR);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        const iva = response?.data[0]?.value;
+        if (!iva) {
+          this.alert('error', 'Error', NO_PARAMETERS_ERROR);
+          return;
+        }
+        this.global.vIva = Number(`.${iva}`);
+      })
+    );
+  }
 }

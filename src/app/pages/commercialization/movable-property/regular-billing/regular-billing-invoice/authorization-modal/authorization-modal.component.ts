@@ -202,6 +202,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
               'Atención',
               `No se puede cancelar una factura sin folio para el evento: ${invoice.eventId} y lote ${invoice.batchId}`
             );
+            this.loading = false;
           } else {
             if (String(invoice.series ?? '').length > 1) {
               cf_leyenda = `Este CFDI refiere al CFDI ${invoice.series} - ${invoice.Invoice}`;
@@ -484,6 +485,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
 
     if (!data.aux_dominio && !data.aux_user) {
       this.alert('warning', 'Atención', 'Usuario no autorizado');
+      this.loading = false;
       return 0;
     }
 
@@ -500,6 +502,7 @@ export class AuthorizationModalComponent extends BasePage implements OnInit {
           'Atención',
           'El usuario no tiene atributos sobre la regional de la factura'
         );
+        this.loading = false;
         return 0;
       }
     }

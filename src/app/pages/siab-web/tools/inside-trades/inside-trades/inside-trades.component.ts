@@ -37,6 +37,7 @@ export class InsideTradesComponent extends BasePage implements OnInit {
   sessionInvalid: Boolean;
   noGes: number;
   valid1: boolean;
+  enabled = false;
 
   ngOnInit(): void {
     this.createForm();
@@ -60,6 +61,7 @@ export class InsideTradesComponent extends BasePage implements OnInit {
     });
   }
   async getData() {
+    this.form.disable();
     if (this.authService.decodeToken().azp === 'indep-auth') {
       /*this.activatedRoute.queryParams
         .pipe(takeUntil(this.$unSubscribe))
@@ -70,6 +72,7 @@ export class InsideTradesComponent extends BasePage implements OnInit {
         });*/
       if (this.noGes) {
         this.val_no_ges = this.noGes;
+        this.enabled = true;
       } else {
         this.val_no_ges = null;
       }

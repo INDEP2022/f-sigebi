@@ -39,7 +39,7 @@ export interface IFactasStatusCta {
 }
 
 export interface IDateAccountBalance {
-  noAccount?: number;
+  noAccount?: string;
   tiDateCalc?: string;
   tiDateCalcEnd?: string;
   result?: number;

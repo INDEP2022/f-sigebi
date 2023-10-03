@@ -370,4 +370,19 @@ export class DocumentsService extends HttpService {
   deleteDocumentsInvoice(folio: any) {
     return this.delete(`${DocumentsEndpoints.attachedDocument}/${folio}`);
   }
+
+  getAllDocumentsLoan(params: any) {
+    const route = `${DocumentsEndpoints.loanDocument}`;
+    return this.get(route, params);
+  }
+
+  getDocumentLoanByRecordAndLoan(loanNumber: number, recordNumber: number) {
+    const route = `${DocumentsEndpoints.loanDocument}?filter.loanNumber=$eq:${loanNumber}`;
+    return this.get(route);
+  }
+
+  postDocumentsLoan(params: any) {
+    const route = `${DocumentsEndpoints.loanDocument}`;
+    return this.post(route, params);
+  }
 }
