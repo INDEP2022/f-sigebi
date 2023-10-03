@@ -1,0 +1,47 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">{{ title }}</h5>
+  </div>
+  <div body>
+    <div class="row mt-4 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('description')" label="Descripción">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="description" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('criterio')" label="No. Criterio">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="criterio" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="row d-flex justify-contend-center">
+      <div class="col-md-4"></div>
+      <div class="col-md-2">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="saveEdit()">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-danger btn-sm active mr-3" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+      <div class="col-md-4"></div>
+    </div>
+  </div>
+</app-card>
