@@ -1,0 +1,97 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Vale de préstamo de documento</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4" style="margin-top: -0.7%">
+          <!-- <app-delegation-shared 
+                    [form]="form" 
+                    [delegationField]="'delegation'"
+                    [subdelegationField]="'subdelegation'" 
+                    [showDelegation]="true"
+                    [showSubdelegation]="true" 
+                    (emitSubdelegation)="seleccionarSubDelegation($event)"
+                    (emitDelegation)="seleccionarDelegation($event)">
+                    </app-delegation-shared> -->
+          <app-delegation-shared
+            [form]="form"
+            [delegationField]="'delegation'"
+            [showDelegation]="true"
+            [showSubdelegation]="false"
+            (emitSubdelegation)="seleccionarSubDelegation($event)"
+            (emitDelegation)="seleccionarDelegation($event)">
+          </app-delegation-shared>
+        </div>
+        <div class="col-md-4">
+          <ngx-select
+            [form]="form"
+            [data]="areaSele"
+            value="dsarea"
+            bindLabel="description"
+            label="Área de adscripción"
+            (fetchItems)="getAllAreaDepataments($event)"
+            control="area">
+          </ngx-select>
+        </div>
+        <div class="col-md-4">
+          <ngx-select
+            [form]="form"
+            [data]="user1"
+            value="user"
+            bindLabel="name"
+            label="Prestado a"
+            (fetchItems)="getAllSegUser1($event)"
+            control="loanedto">
+          </ngx-select>
+        </div>
+      </div>
+      <div class="row margin-input d-flex justify-content-end">
+        <div class="col-md-4" style="margin-top: -0.7%">
+          <app-delegation-shared
+            [form]="form"
+            [subdelegationField]="'subdelegation'"
+            [showDelegation]="false"
+            [showSubdelegation]="true"
+            (emitSubdelegation)="seleccionarSubDelegation($event)"
+            (emitDelegation)="seleccionarDelegation($event)">
+          </app-delegation-shared>
+        </div>
+        <div class="col-md-4 mb-4">
+          <form-field [control]="form.get('expedient')" label="No. Expediente">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="expedient" />
+          </form-field>
+        </div>
+        <div class="col-md-4 mb-4">
+          <form-field [control]="form.get('NoLoans')" label="No. Préstamo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="NoLoans" />
+          </form-field>
+        </div>
+      </div>
+      <div
+        class="col-sm-12 col-12 col-md-12 p-2 text-center d-flex justify-content-center">
+        <div class="col-md-2">
+          <button class="btn btn-danger btn-sm active mr-3" (click)="clear()">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+        </div>
+        <div class="col-md-2 form-group">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="imprimir()"
+            [disabled]="!form.valid">
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

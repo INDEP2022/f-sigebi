@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BiddingService } from 'src/app/core/services/ms-bidding/bidding.service';
+import { StatusDispService } from 'src/app/core/services/ms-status-disp/status-disp.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -150,7 +152,11 @@ export class PartialityDirectAdjudicationMainComponent
     },
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private biddingService: BiddingService,
+    private statusDispService: StatusDispService
+  ) {
     super();
   }
 
@@ -174,9 +180,9 @@ export class PartialityDirectAdjudicationMainComponent
       paymentNumber: [null, [Validators.required]],
     });
     this.adjudicationForm = this.fb.group({
-      event: [null, [Validators.required]],
-      batchId: [null, [Validators.required]],
-      clientId: [null, [Validators.required]],
+      event: [null],
+      batchId: [null],
+      clientId: [null],
       partialityQuantity: [null, [Validators.required]],
       advancePercent: [null, [Validators.required]],
       exemptSP: [null, [Validators.required]],
@@ -294,5 +300,125 @@ export class PartialityDirectAdjudicationMainComponent
       );
       return;
     }
+  }
+  //--------------PRIMER BLOQUE--------------//
+
+  getBidding() {
+    let id = this.licitacionForm.get('licitacionNumber').value;
+    this.biddingService.getBigging(id).subscribe({
+      next: response => {
+        this.getTender(id);
+        console.log('response licitacionNumber ', response);
+        let params = {
+          eventId: response.data[0].eventId,
+          publicLot: response.data[0].lotId,
+          salesTaxExempt: response.data[0].taxSaleExempt,
+          impTaxedSale: response.data[0].taxSaleTaxed,
+          impIvaSale: response.data[0].taxSaleIva,
+          advanceTaxExempt: response.data[0].taxAdvanceExempt,
+          impTaxedAdvance: response.data[0].taxAdvanceTaxed,
+          impAdvanceVat: response.data[0].taxAdvanceIva,
+          impBalanceExempt: response.data[0].taxExemptBalance,
+          impBalanceTaved: response.data[0].taxTaxedBalance,
+          impBalanceVat: response.data[0].taxIvaBalance,
+        };
+        this.statusDispService.validBidding(params).subscribe({
+          next: respon => {
+            console.log('respuesta del postQuery ', respon);
+            //---Evento
+            this.adjudicationForm
+              .get('event')
+              .setValue(response.data[0].eventId);
+            this.selectedEvent = {
+              id: response.data[0].eventId,
+              cve: respon.processCve,
+              type: respon.type,
+              status: respon.eventStatus,
+              observations: respon.observations,
+            };
+            //----Lote
+            this.adjudicationForm
+              .get('batchId')
+              .setValue(response.data[0].publicLot);
+            this.selectedBatch = {
+              id: response.data[0].publicLot,
+              description: respon.description,
+            };
+            this.adjudicationForm.patchValue({
+              clientId: respon.customerId,
+            });
+            this.selectedClient = {
+              id: respon.customerId,
+              name: respon.reasonName,
+              rfc: respon.rfc,
+              blacklisted: respon.blackList,
+            };
+          },
+        });
+      },
+      error: err => {
+        this.alert('error', 'Error', 'No se encuentra la licitación');
+        this.licitacionForm
+          .get('licitacionNumber')
+          .setErrors({ customErrorKey: true });
+      },
+    });
+  }
+
+  //--------------SEGUNDO BLOQUE--------------//
+
+  getTender(id: any) {
+    this.biddingService.getComerTender(id).subscribe({
+      next: response => {
+        console.log('Response Comer Tender ', response);
+        const Real =
+          response.data[0].programmedDate != null
+            ? new Date(response.data[0].programmedDate)
+            : null;
+        const formattedfecReal = Real != null ? this.formatDate(Real) : null;
+
+        const Ref =
+          response.data[0].generatesRefDate != null
+            ? new Date(response.data[0].generatesRefDate)
+            : null;
+        const formattedfecRef = Ref != null ? this.formatDate(Ref) : null;
+
+        this.clTestData = [
+          {
+            paymentId: response.data[0].paymentId,
+            scheduledDate: formattedfecReal,
+            icbExempt: response.data[0].exemptBalanceImp,
+            icbEngraved: response.data[0].encumberedBalanceImp,
+            nominalRate: response.data[0].nominalRate,
+            daysYear: response.data[0].fiscalYearDays,
+            daysMonth: response.data[0].monthDays,
+            interestExempt: response.data[0].exemptInterestImp,
+            interestEngraved: response.data[0].encumberedInterestImp,
+            interestTax: response.data[0].ivaInterestImp,
+            ceExempt: response.data[0].expirationExemptImp,
+            ceEngraved: response.data[0].expirationEncumberedImp,
+            ceTax: response.data[0].expirationIvaImp,
+            moratoriumExempt: response.data[0].moratoriumDays,
+            moratoriumEngraved: response.data[0].moratoriumImp,
+            moratoriumTax: response.data[0].moratoriumIvaImp,
+            totalTax: response.data[0].totalIvaImp,
+            totalAmount: response.data[0].totalPayImp,
+            referenceDate: formattedfecRef,
+            reference: response.data[0].reference,
+            status: response.data[0].status,
+          },
+        ];
+        this.generateCl();
+      },
+    });
+  }
+
+  //-------------------------
+
+  formatDate(date: Date): string {
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear().toString();
+    return `${day}/${month}/${year}`;
   }
 }

@@ -402,13 +402,24 @@ export class LoanDocumentComponent extends BasePage implements OnInit {
         console.log('response Post -->', response);
         this.alert('success', 'Exitoso!', 'Se creo el registro exitosamente!');
         this.neworsave = 'Nuevo';
-        this.idfile = response.data.recordNumber;
+        this.idfile = response.recordNumber;
+        this.idloan = response.loanNumber;
+        const Real =
+          response.loanDate != null ? new Date(response.loanDate) : null;
+        const formattedfecReal = Real != null ? this.formatDate(Real) : null;
         this.form.patchValue({
-          NoLoans: response.data.loanNumber,
-          loanDate: response.data.loanDate,
+          NoLoans: response.loanNumber,
+          loanDate: formattedfecReal,
         });
       },
     });
+  }
+
+  formatDate(date: Date): string {
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear().toString();
+    return `${year}-${month}-${day}`;
   }
 
   cancelSave() {
