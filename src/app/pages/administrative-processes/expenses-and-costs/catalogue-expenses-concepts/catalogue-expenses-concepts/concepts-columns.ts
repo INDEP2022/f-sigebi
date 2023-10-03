@@ -1,16 +1,16 @@
 export const CONCEPTS_COLUMNS = {
-  number: {
-    title: 'Numero',
+  notConceptSpent: {
+    title: 'No. Concepto',
     type: 'number',
     sort: false,
   },
-  concept: {
+  description: {
     title: 'Concepto de Gasto',
     type: 'string',
     sort: false,
   },
-  criteria: {
-    title: 'No Criterio',
+  notCriterionApplicationSpent: {
+    title: 'No. Criterio',
     type: 'number',
     sort: false,
   },

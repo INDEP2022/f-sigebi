@@ -17,4 +17,14 @@ export class BiddingService extends HttpService {
   getAllTenders(params: _Params): Observable<IListResponse<ITenders>> {
     return this.get<IListResponse<ITenders>>(BiddingEndPoint.Tenders, params);
   }
+
+  getBigging(id: number) {
+    const route = `${BiddingEndPoint.biddingGood}/custom?filter.biddingId=$eq:${id}`;
+    return this.get(route);
+  }
+
+  getComerTender(id: number) {
+    const route = `${BiddingEndPoint.comerTender}?filter.biddingId=$eq:${id}`;
+    return this.get(route);
+  }
 }

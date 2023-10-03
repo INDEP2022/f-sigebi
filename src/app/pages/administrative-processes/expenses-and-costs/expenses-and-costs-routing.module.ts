@@ -108,6 +108,16 @@ const routes: Routes = [
           screen: 'CLASIFICACIÓN_COSTOS',
         },
       },
+      {
+        path: 'closure-monthly',
+        loadChildren: async () =>
+          (await import('./closure-monthly/closure-monthly.module'))
+            .ClosureMonthlyModule,
+        data: {
+          title: 'Cierre Mensual',
+          screen: 'FGERADBPROCCOSTOS',
+        },
+      },
     ],
   },
 ];

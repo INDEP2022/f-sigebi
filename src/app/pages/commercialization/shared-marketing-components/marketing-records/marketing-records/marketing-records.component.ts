@@ -1810,7 +1810,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     let noBien = this.form.get('goodId').value;
     this.eventAppService.getPupRemiEnt(noBien).subscribe({
       next: response => {
-        console.log('response ----> ', response);
+        console.log('response -----> ', response);
       },
     });
   }
