@@ -1,5 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
+import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 
@@ -8,24 +10,48 @@ import { ModelForm } from '../../../../../core/interfaces/model-form';
   templateUrl: './annex-data.component.html',
   styles: [],
 })
-export class AnnexDataComponent implements OnInit {
+export class AnnexDataComponent extends BasePage implements OnInit {
   @Input() dataAnnex: any;
-  annexForm: ModelForm<any>;
+  @Input() sampleOrderForm: ModelForm<any>;
+  @Input() SampleOrderId: number = null;
 
-  constructor(private fb: FormBuilder) {}
+  private orderService = inject(OrderServiceService);
+
+  constructor(private fb: FormBuilder) {
+    super();
+  }
 
   ngOnInit(): void {
-    this.initForm();
+    //this.initForm();
+    console.log(this.sampleOrderForm);
   }
 
   initForm() {
-    this.annexForm = this.fb.group({
-      relevantFacts: [null, [Validators.pattern(STRING_PATTERN)]],
-      noncomplianceDescription: [null, [Validators.pattern(STRING_PATTERN)]],
+    this.sampleOrderForm = this.fb.group({
+      factsrelevant: [null, [Validators.pattern(STRING_PATTERN)]],
+      downloadbreaches: [null, [Validators.pattern(STRING_PATTERN)]],
       datenoncompliance: [null],
       agreements: [null, [Validators.pattern(STRING_PATTERN)]],
-      dateRepositionServices: [null],
-      warehouseManagement: [null, [Validators.pattern(STRING_PATTERN)]],
+      daterepService: [null],
+      nameManagersoul: [null, [Validators.pattern(STRING_PATTERN)]],
+    });
+  }
+
+  save() {
+    if (this.SampleOrderId == null) {
+      this.onLoadToast('error', 'No tiene el Id de la orden de muestreo');
+      return;
+    }
+    const form = this.sampleOrderForm.getRawValue();
+    form.idSamplingOrder = this.SampleOrderId;
+
+    this.orderService.updateSampleOrder(form).subscribe({
+      next: resp => {
+        this.onLoadToast('success', 'Se guardaron los cambios');
+      },
+      error: error => {
+        this.onLoadToast('error', 'No se pudo guardar el formulario');
+      },
     });
   }
 }
