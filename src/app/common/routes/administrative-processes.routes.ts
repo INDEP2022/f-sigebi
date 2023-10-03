@@ -192,6 +192,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Clasificación costos',
             link: '/pages/administrative-processes/costs-clasification',
           },
+          {
+            label: 'Cierre mensual',
+            link: '/pages/administrative-processes/closure-monthly',
+          },
         ],
       },
       /**

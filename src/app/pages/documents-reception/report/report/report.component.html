@@ -69,19 +69,23 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
+        <!-- <confirm-button
           text="Imprimir"
-          [disabled]="reportForm.invalid"
+          
           [loading]="loading"
           (confirm)="Generar()">
-        </confirm-button>
-      </div>
-      <div class="m-3">
+        </confirm-button> -->
         <button
           type="button"
-          class="btn btn-danger active"
-          (click)="cleanForm()">
-          Limpiar
+          class="btn btn-primary active btn-sm"
+          (click)="Generar()"
+          [disabled]="reportForm.invalid">
+          Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-danger btn-sm active mr-3" (click)="cleanForm()">
+          Limpiar <i class="fas fa-eraser"> </i>
         </button>
       </div>
     </div>

@@ -568,6 +568,26 @@ export class OrderServiceDeliveryFormComponent
     );
   }
 
+  /*showReportAnnexW() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      idOrderService: 516,
+      idTypeDoc: 198,
+      annexW: true,
+      callback: (data: any) => {
+        if (data) {
+          //this.electronicSignture();
+        }
+      },
+    };
+
+    //const showReport = this.modalService.show(ShowProgrammingComponent, config);
+    const showReport = this.modalService.show(
+      ShowReportComponentComponent,
+      config
+    );
+  } */
+
   electronicSignture() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 
@@ -696,6 +716,58 @@ export class OrderServiceDeliveryFormComponent
         });
     });
   }
+
+  /*createSignatureAnnexW(infoSign: any) {
+    return new Promise((resolve, reject) => {
+      const learnedType = 198;
+      const learndedId = 516; // Id Orden de Servicio
+
+      this.signatoriesService
+        .getSignatoriesFilter(learnedType, learndedId)
+        .subscribe({
+          next: response => {
+            /*this.signatoriesService
+              .deleteFirmante(Number(response.data[0].signatoryId))
+              .subscribe({
+                next: () => {
+                  
+                },
+              }); 
+
+            const formData: Object = {
+              learnedId: 516, // Orden de servicio
+              learnedType: 198,
+              boardSignatory: 'ORDEN_SERVICIO',
+              columnSignatory: 'TIPO_FIRMA',
+              name: infoSign.responsible,
+              post: infoSign.charge,
+            };
+
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+            });
+          },
+          error: error => {
+            const formData: Object = {
+              learnedId: 516, // Orden de servicio
+              learnedType: 198,
+              boardSignatory: 'ORDEN_SERVICIO',
+              columnSignatory: 'TIPO_FIRMA',
+              name: infoSign.responsible,
+              post: infoSign.charge,
+            };
+
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                resolve(true);
+              },
+            });
+          },
+        });
+    });
+  } */
 
   sendJustify() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };

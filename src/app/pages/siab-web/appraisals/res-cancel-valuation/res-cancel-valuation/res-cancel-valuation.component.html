@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-end">
       <div class="ml-auto" style="margin-top: -20px">
         <p class="font-weight-bold" style="border-bottom: 1px solid black">
-          {{ dateNow | date : 'dd/MM/yyyy - HH:mm:ss' }}
+          {{ dateNow | date: 'dd/MM/yyyy - HH:mm:ss' }}
         </p>
       </div>
     </div>
@@ -201,6 +201,14 @@
     </div>
     <br />
     <!--  -->
+    <div class="d-flex justify-content-end">
+      <div class="ml-auto">
+        <button class="btn btn-danger btn-sm active" (click)="reset()">
+          Limpiar <i class="fas fa-eraser"> </i>
+        </button>
+      </div>
+    </div>
+    <!--  -->
     <div class="mt-5">
       <div>
         <ng2-smart-table
@@ -321,7 +329,7 @@
                         [(ngModel)]="radioValueThree"
                         (change)="onRadioChangeThree()"
                         [value]="true"
-                        formControlName="C" />
+                        formControlName="radioThree" />
                     </form-radio>
                   </div>
                   <!--  -->
@@ -336,6 +344,7 @@
                           value="usuario"
                           label="Usuario y Nombre"
                           bindLabel="nombre"
+                          [(ngModel)]="rowCopySelect"
                           control="user"
                           (change)="getUsersDesList()"
                           [labelTemplate]="userLabel"
@@ -358,6 +367,7 @@
                           [data]="fullDelegations"
                           [form]="formThree"
                           bindLabel="description"
+                          [(ngModel)]="rowCopySelect"
                           control="del"
                           (change)="getDepartments()">
                         </ngx-select>
@@ -393,7 +403,10 @@
                     </div>
                     <div class="ml-3">
                       <div class="justify-content-center">
-                        <button type="button" class="btn btn-red btn-sm active">
+                        <button
+                          type="button"
+                          class="btn btn-red btn-sm active"
+                          (click)="removeUserCopy()">
                           Quitar Usuario
                           <i class="fa fa-trash" aria-hidden="true"></i>
                         </button>
@@ -401,27 +414,14 @@
                     </div>
                   </div>
                   <!--  -->
-                  <div *ngIf="visibleTxtCopy">
-                    <form-field [control]="formThree.get('copy')">
-                      <ngx-select
-                        (fetchItems)="getUsersDesList($event)"
-                        [searchOnInit]="true"
-                        [data]="usersList"
-                        [form]="formThree"
-                        value="usuario"
-                        label="Usuario y Nombre Copia"
-                        bindLabel="nombre"
-                        control="copy"
-                        (change)="getUsersDesList()"
-                        [labelTemplate]="userLabel"
-                        [optionTemplate]="userOption">
-                      </ngx-select>
-                      <ng-template #userLabel let-item="item"
-                        >{{ item.usuario }} - {{ item.nombre }}</ng-template
-                      >
-                      <ng-template #userOption let-item="item"
-                        >{{ item.usuario }} - {{ item.nombre }}</ng-template
-                      >
+                  <div>
+                    <form-field [control]="formThree.get('copy')" label="Copia">
+                      <select class="form-control" formControlName="copy">
+                        <option><small> Seleccione </small></option>
+                        <option *ngFor="let item of arrayCopy">
+                          {{ item }}
+                        </option>
+                      </select>
                     </form-field>
                   </div>
                   <!--  -->
