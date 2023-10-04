@@ -57,8 +57,8 @@ export class ModalGuardaValorComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getGuardador({ page: 1, limit: 10 });
   }
-
   prepareForm() {
     this.form = this.fb.group({
       guardador: [null, [Validators.required]],
@@ -139,9 +139,14 @@ export class ModalGuardaValorComponent extends BasePage implements OnInit {
     });
   }
   getEmpanios(params: ListParams) {
+    if (this.form.get('guardador').value)
+      params['filter.key.id'] = `$eq:${this.form.get('guardador').value}`;
+    if (this.form.get('bateria').value)
+      params['filter.batteryNumber'] = `$eq:${this.form.get('bateria').value}`;
     params['filter.status'] = `$neq:L`;
     this.shelvesService.getAll(params).subscribe({
       next: response => {
+        console.log(response.data);
         this.empanios = new DefaultSelect(response.data, response.count);
       },
       error: err => {
@@ -156,25 +161,44 @@ export class ModalGuardaValorComponent extends BasePage implements OnInit {
     });
   }
   getAnaqueles(params: ListParams) {
+    if (this.form.get('guardador').value)
+      params['filter.saveValueKey'] = `$eq:${this.form.get('guardador').value}`;
+    if (this.form.get('bateria').value)
+      params['filter.numBattery'] = `$eq:${this.form.get('bateria').value}`;
+    if (this.form.get('empanio').value)
+      params['filter.numShelf'] = `$eq:${this.form.get('empanio').value}`;
     params['filter.status'] = `$neq:L`;
     this.lockerService.getAll(params).subscribe({
       next: response => {
         this.anaqueles = new DefaultSelect(response.data, response.count);
       },
       error: err => {
-        let error = '';
         if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
+          const error = 'Revise su conexión de Internet.';
+          this.onLoadToast('error', 'Error', error);
         } else {
-          error = err.message;
+          this.onLoadToast('warning', 'Error', 'No se Encontraron Registros');
         }
-        this.onLoadToast('error', 'Error', error);
       },
     });
   }
 
-  onGuardadorChange(events: any) {}
-  onBateriaChange(events: any) {}
-  onEmpanioChange(events: any) {}
-  onAnaquelChange(events: any) {}
+  onGuardadorChange(events: any) {
+    this.form.get('guardador').setValue(events.id);
+    this.getBaterias({ page: 1, limit: 10 });
+  }
+
+  onBateriaChange(events: any) {
+    this.form.get('bateria').setValue(events.idBattery);
+    this.getEmpanios({ page: 1, limit: 10 });
+  }
+
+  onEmpanioChange(events: any) {
+    this.form.get('guardador').setValue(events.id);
+    //this.getAnaqueles({ page: 1, limit: 10 })
+  }
+
+  onAnaquelChange(events: any) {
+    this.form.get('guardador').setValue(events.id);
+  }
 }
