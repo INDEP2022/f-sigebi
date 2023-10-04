@@ -7,4 +7,5 @@ export enum ConfiscationEndpoints {
   filterInsert = 'application/filter-insert',
   identifier = 'application/identifierFurtherRelationshipForfeiture',
   getData = 'application/get-data-custom-query-bygood/',
+  validateMoney = 'application/filter-insert-custom-status-end',
 }
