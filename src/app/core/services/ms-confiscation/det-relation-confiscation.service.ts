@@ -46,6 +46,13 @@ export class DetRelationConfiscationService extends HttpService {
     );
   }
 
+  money(id?: any): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      ConfiscationEndpoints.validateMoney,
+      id
+    );
+  }
+
   getAllMore(
     params?: _Params
   ): Observable<IListResponse<IMoreRelationConfiscation>> {
