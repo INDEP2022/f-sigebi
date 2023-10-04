@@ -47,14 +47,10 @@
                 </p>
               </div>
             </div>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
           </form>
-
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"></app-pagination>
-          <div>
-            <button (click)="openModal()">mo</button>
-          </div>
         </tab>
         <tab heading="Recibidos">
           <div class="row">
@@ -97,10 +93,10 @@
                 </p>
               </div>
             </div>
+            <app-pagination
+              [params]="paramsRecib"
+              [totalItems]="totalItemsRecib"></app-pagination>
           </form>
-          <app-pagination
-            [params]="paramsRecib"
-            [totalItems]="totalItemsRecib"></app-pagination>
         </tab>
       </tabset>
     </div>
