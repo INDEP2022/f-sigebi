@@ -39,11 +39,20 @@ export class AuthorizationAssetsDestructionForm {
     { value: null, disabled: true },
     Validators.pattern(STRING_PATTERN)
   );
-  authNotice = new FormControl(null, Validators.pattern(STRING_PATTERN));
-  fromDate = new FormControl(null, maxDate(new Date()));
-  scanFolio = new FormControl(null, Validators.pattern(KEYGENERATION_PATTERN));
+  authNotice = new FormControl(
+    { value: null, disabled: true },
+    Validators.pattern(STRING_PATTERN)
+  );
+  fromDate = new FormControl(
+    { value: null, disabled: true },
+    maxDate(new Date())
+  );
+  scanFolio = new FormControl(
+    { value: null, disabled: true },
+    Validators.pattern(KEYGENERATION_PATTERN)
+  );
   cancelSheet = new FormControl(
-    null,
+    { value: null, disabled: true },
     Validators.pattern(KEYGENERATION_PATTERN)
   );
 }
