@@ -39,6 +39,7 @@ import { IMPLEMENTATIONREPORT_COLUMNS } from './implementation-report-columns';
 })
 export class ImplementationReportComponent extends BasePage implements OnInit {
   serviceOrdersForm: FormGroup;
+  form: FormGroup;
   filterType: IStrategyType;
   filterLovSer: IStrategyLovSer;
   filterTurn: IStrategyTurn;
@@ -65,7 +66,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
   delegationUser: any;
   settings2;
   dateCapt: string = '';
-  bienesStrategy: LocalDataSource = new LocalDataSource();
+  bienesStrategy: any[];
   maxDate = new Date();
   disabledBtnActas: boolean = true;
   mostrarJus: boolean = false;
@@ -115,33 +116,21 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
           title: 'Servicio',
           type: 'number',
           sort: false,
-          ValuePrepareFunction(cell: any, row: any) {
-            return row.DES_SERVICIO.descripcion;
-          },
         },
         DES_TIPO: {
           title: 'Tipo',
           type: 'string',
           sort: false,
-          ValuePrepareFunction(cell: any, row: any) {
-            return row.DES_TIPO.descripcion;
-          },
         },
         DES_TURNO: {
           title: 'Turno',
           type: 'string',
           sort: false,
-          ValuePrepareFunction(cell: any, row: any) {
-            return row.DES_TURNO.descripcion;
-          },
         },
         DES_VARCOSTO: {
           title: 'Variable dde Costo',
           type: 'string',
           sort: false,
-          ValuePrepareFunction(cell: any, row: any) {
-            return row.DES_VARCOSTO.descripcion;
-          },
         },
         TOT_IMP_COSTO: {
           title: 'Importe de Costo',
@@ -153,6 +142,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.reportForm();
     this.initForm();
     this.getProcess(new ListParams());
   }
@@ -170,6 +160,16 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       dateCapture: [null, Validators.required],
       observations: [null, Validators.required],
       justifications: [null],
+    });
+  }
+
+  private reportForm() {
+    this.form = this.fb.group({
+      DES_SERVICIO: [null],
+      DES_TIPO: [null],
+      DES_TURNO: [null],
+      DES_VARCOSTO: [null],
+      TOT_IMP_COSTO: [null],
     });
   }
 
@@ -478,8 +478,8 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     this.reportImp = null;
     this.dataTableGood.load([]);
     this.dataTableGood.refresh();
-    this.bienesStrategy.load([]);
-    this.bienesStrategy.refresh();
+    // this.bienesStrategy.load([]);
+    // this.bienesStrategy.refresh();
   }
   formatDate(date: Date): string {
     const day = date.getUTCDate().toString().padStart(2, '0');
@@ -630,11 +630,16 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
         };
         this.goodPosessionThirdpartyService.getIncCosto(this.costoR).subscribe({
           next: data => {
-            console.log(data);
-            this.bienesStrategy.load(data);
+            this.bienesStrategy = data;
+            // this.bienesStrategy.load(data);
             this.totalItems2 = data.count;
-            this.bienesStrategy.refresh();
-            this.alert('success', 'Costos incorporados!', '');
+            // this.bienesStrategy.refresh();
+            this.form.get('DES_SERVICIO').setValue(data.DES_SERVICIO);
+            this.form.get('DES_TIPO').setValue(data.DES_TIPO);
+            this.form.get('DES_TURNO').setValue(data.DES_TURNO);
+            this.form.get('DES_VARCOSTO').setValue(data.DES_VARCOSTO);
+            this.form.get('TOT_IMP_COSTO').setValue(data.TOT_IMP_COSTO);
+            this.alert('success', 'Costos incorporados al reporte!', '');
           },
         });
       } else {

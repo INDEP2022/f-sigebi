@@ -194,10 +194,10 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.form.get('tipo').markAsTouched();
         console.log(response);
         this.good = response.data[0];
-        this.loadActER(this.good.id);
-        this.loadDescriptionStatus(this.good.id);
-        this.setGood(this.good);
-        this.getConversion(this.good.id);
+        this.noBien.setValue(this.good.id);
+        this.noExpediente.setValue(this.good.fileNumber);
+        this.description.setValue(this.good.description);
+        this.loadActER(this.good);
       },
       error: err => {
         this.alert('warning', 'No existe el No. Bien', '');
@@ -206,13 +206,33 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
       },
     });
   }
-
-  setGood(good: IGood) {
-    this.noBien.setValue(good.id);
-    this.noExpediente.setValue(good.fileNumber);
-    this.description.setValue(good.description);
+  loadActER(good: any) {
+    this.conversiongoodServices.getActsByGood(good.id).subscribe({
+      next: response => {
+        this.actaER.setValue(response.cve_acta);
+        console.log(response);
+        console.log(this.formatDate(response.fec_elaboracion));
+        this.actaERDate.setValue(
+          response.fec_elaboracion === undefined
+            ? null
+            : this.formatDate(response.fec_elaboracion)
+        );
+        this.loadDescriptionStatus(good.id);
+        this.getConversion(good.id, good.state);
+      },
+      error: err => {
+        this.actaER.setValue('');
+        this.actaERDate.setValue('');
+        this.alert(
+          'warning',
+          'Administración de Conversión de Bienes',
+          'Este Bien no tiene Acta E/R Asociada'
+        );
+        this.view = false;
+        console.log(err);
+      },
+    });
   }
-
   loadDescriptionStatus(idGood: number | string) {
     this.goodServices.getStatusByGood(idGood).subscribe({
       next: response => {
@@ -229,31 +249,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     });
   }
 
-  loadActER(idGood: number | string) {
-    this.conversiongoodServices.getActsByGood(idGood).subscribe({
-      next: response => {
-        this.actaER.setValue(response.cve_acta);
-        console.log(response);
-        console.log(this.formatDate(response.fec_elaboracion));
-        this.actaERDate.setValue(
-          response.fec_elaboracion === undefined
-            ? null
-            : this.formatDate(response.fec_elaboracion)
-        );
-      },
-      error: err => {
-        this.actaER.setValue('');
-        this.actaERDate.setValue('');
-        this.alert(
-          'warning',
-          'Administración de Conversión de Bienes',
-          'Este Bien no tiene Acta E/R Asociada'
-        );
-        console.log(err);
-      },
-    });
-  }
-  getConversion(idGood: number | string) {
+  getConversion(idGood: number | string, state: string) {
     const params = new ListParams();
     params['filter.goodFatherNumber'] = `$eq:${idGood}`;
     console.log(idGood);
@@ -263,7 +259,11 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.conversion = response.data[0];
         console.log(this.conversion);
         this.idConversion.setValue(Number(response.data[0].id));
-        this.view = true;
+        if (state == 'CVD') {
+          this.view = false;
+        } else {
+          this.view = true;
+        }
         if (response.data[0].fCreate != null) {
           this.date.setValue(this.formatDate(response.data[0].fCreate));
         }

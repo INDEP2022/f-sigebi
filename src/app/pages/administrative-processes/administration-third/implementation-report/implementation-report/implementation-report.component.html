@@ -4,10 +4,7 @@
   </div>
   <div body>
     <h5 class="title">Ordenes de Servicio</h5>
-    <form
-      [formGroup]="serviceOrdersForm"
-      class="form-material"
-      (ngSubmit)="pupGenera()">
+    <form [formGroup]="serviceOrdersForm" class="form-material">
       <div class="row margin-input">
         <div class="col-md-4">
           <form-field
@@ -307,12 +304,10 @@
       </div>
     </div>
 
-    <div class="col-md-12">
-      <h5 class="title">Reportes de Implementación</h5>
-      <div class="row">
+    <!-- <div class="row">
         <form-loader *ngIf="loading2"></form-loader>
         <div class="col-md-12">
-          <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+          <div [class]="loading ? 'table-loading' : ''"> 
           <ng-scrollbar
             [track]="'all'"
             [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
@@ -325,10 +320,99 @@
               [params]="params"
               [totalItems]="totalItems2"></app-pagination>
           </ng-scrollbar>
-          <!-- </div> -->
+          </div>
+        </div>
+      </div> -->
+    <form [formGroup]="form" class="form-material">
+      <h5 class="title">Reportes de Implementación</h5>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="form.get('DES_SERVICIO')"
+                        label="Servicio">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="DES_SERVICIO"
+                          class="form-control"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="form.get('DES_TIPO')"
+                        label="Especificación">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="DES_TIPO"
+                          class="form-control"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="form.get('DES_TURNO')"
+                        label="Turno">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="DES_TURNO"
+                          class="form-control"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="form.get('DES_VARCOSTO')"
+                        label="Variable de Costo">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="DES_VARCOSTO"
+                          class="form-control"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="form.get('TOT_IMP_COSTO')"
+                        label="Costo">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="TOT_IMP_COSTO"
+                          class="form-control"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </form>
     <div footer>
       <div class="d-flex justify-content-center">
         <div class="m-3">

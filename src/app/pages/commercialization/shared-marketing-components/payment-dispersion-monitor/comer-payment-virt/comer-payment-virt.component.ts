@@ -27,7 +27,16 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
   data = new LocalDataSource();
 
   dataModel: any;
+  id_tipo_disp: any;
+  address: any;
+  restore: any;
+  montoTolat: any;
+  montoPena: any;
+  eventTpId: any;
+  restoreNumber = 0;
+  deletedNumber = 0;
   dateWarrantyLiq: any;
+  lote_publico: any;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -57,6 +66,10 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    console.log(this.id_tipo_disp);
+    console.log(this.eventTpId);
+    console.log(this.address);
+    console.log(this.lote_publico);
     console.log(this.dataModel);
     console.log(this.dateWarrantyLiq);
     this.fillAndGetData();
@@ -127,6 +140,7 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
         );
         console.log(newData);
         this.data.load(newData);
+        this.restoreFuntion();
         this.totalItems = res.count;
         this.loading = false;
       },
@@ -138,6 +152,29 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
         this.alert('warning', 'No hay Pagos para Desagregar', '');
       }
     );
+  }
+  restoreFuntion() {
+    console.log('----------------------', this.restoreNumber, this.restore);
+    if (this.restoreNumber == 0) {
+      this.restore = this.data['data'];
+      this.restoreNumber++;
+      console.log('----------------------', this.restoreNumber, this.restore);
+    }
+  }
+  calcularMonto(amount: number) {
+    console.log(this.data['data'].length);
+    let monto = 0;
+    let nuevoMonto = 0;
+    for (let i = 0; i < this.data['data'].length; ++i) {
+      monto += JSON.parse(this.data['data'][i].amount);
+    }
+    console.log(monto, this.data['data'].length, amount);
+    monto += amount;
+    nuevoMonto = monto / this.data['data'].length;
+    console.log(nuevoMonto);
+    for (let i = 0; i < this.data['data'].length; ++i) {
+      this.data['data'][i].amount = JSON.stringify(nuevoMonto.toFixed(2));
+    }
   }
 
   private prepareForm() {
@@ -158,6 +195,7 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       const paramsF = new FilterParams();
       paramsF.addFilter('idLot', idLote);
+      console.log(paramsF.getParams());
       this.comerLotsService
         .getAllComerLotsFilter(paramsF.getParams())
         .subscribe(
@@ -227,6 +265,7 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
       };
 
       this.modalService.show(CanTimesComponent, modalConfig);
+      this.dataPaymentVirt = null;
     } else {
       this.alert('warning', 'Debe Seleccionar un Registro', '');
     }
@@ -285,7 +324,260 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
   }
 
   //Función de Eliminar
-  deleteFn() {}
+  deleteFn() {
+    this.alertQuestion('warning', 'Se Eliminará la División del Pago', '').then(
+      q => {
+        if (q.isConfirmed) {
+          if (this.dataPaymentVirt != null) {
+            console.log('deleteFn', this.data['data']);
+            console.log(
+              'Selccionado',
+              this.dataPaymentVirt.position,
+              this.deletedNumber
+            );
+            for (let i = 0; i < this.data['data'].length; ++i) {
+              //console.log(this.data['data'][i].position,this.dataPaymentVirt.position )
+              if (this.data['data'].length == 1) {
+                this.alert(
+                  'warning',
+                  'Lo Sentimos no se Puede Eliminar el Único pago',
+                  ''
+                );
+                break;
+              } else {
+                if (this.dataPaymentVirt.position == undefined) {
+                  console.log('que gono');
+                  this.deletedNumber++;
+                  console.log(
+                    this.data['data'][i].position,
+                    this.dataPaymentVirt.position,
+                    this.data['data']
+                  );
+                  this.data['data'].splice(i, 1);
+                  this.calcularMonto(JSON.parse(this.dataPaymentVirt.amount));
+                  break;
+                }
+
+                if (
+                  this.data['data'][i].position == this.dataPaymentVirt.position
+                ) {
+                  this.deletedNumber++;
+                  console.log(
+                    this.data['data'][i].position,
+                    this.dataPaymentVirt.position,
+                    this.data['data']
+                  );
+                  this.data['data'].splice(i, 1);
+                  this.calcularMonto(JSON.parse(this.dataPaymentVirt.amount));
+                  break;
+                }
+                console.log(
+                  this.data['data'][i].position,
+                  this.dataPaymentVirt.position
+                );
+              }
+            }
+            console.log(this.data);
+            this.data.load(this.data['data']);
+            // this.calcularMonto();
+          } else {
+            this.alert('warning', 'Debe Seleccionar un Registro', '');
+          }
+        }
+        this.dataPaymentVirt = null;
+      }
+    );
+  }
+  async aplicar() {
+    console.log(this.data['data']);
+    let lote: number[] = [];
+    let loteRepited = false;
+
+    this.alertQuestion(
+      'warning',
+      'Se Aplicarán los cambios al Deposito?',
+      ''
+    ).then(async q => {
+      if (q.isConfirmed) {
+        for (let i = 0; i < this.data['data'].length; ++i) {
+          console.log(this.data['data'][i].publicBatch);
+
+          loteRepited = lote.includes(this.data['data'][i].batchId);
+          console.log(lote, loteRepited);
+          if (loteRepited) {
+            this.alert(
+              'warning',
+              'Registros repetidos, favor de verificar.',
+              ''
+            );
+            return;
+          } else {
+            lote.push(this.data['data'][i].batchId);
+            if (
+              this.data['data'][i].publicBatch == '' ||
+              this.data['data'][i].publicBatch == null
+            ) {
+              this.alert(
+                'warning',
+                'Sin registros a aplicar, favor de verificar.',
+                ''
+              );
+              return;
+            }
+          }
+        }
+
+        let desagregarPagos = await this.desagregarPagos();
+
+        console.log('aplicar');
+      }
+    });
+  }
+  restaurar() {
+    console.log(this.restore);
+    //this.calcularMonto('1', 0,  this.restore);
+    this.alertQuestion(
+      'warning',
+      '¿Se ejecuta la Restauración del Depósito?',
+      ''
+    ).then(q => {
+      if (q.isConfirmed) {
+        console.log(this.restore);
+        this.data.load(this.restore);
+        console.log('restaurar');
+      }
+
+      for (let i = 0; i < this.data['data'].length; ++i) {
+        let body: any = {};
+        let body2: any = {};
+
+        body2['id_lote'] = JSON.parse(
+          this.data['data'][i].comerPaymentRef.lotId
+        );
+        body2['monto'] = JSON.parse(this.data['data'][i].amount);
+        body2['tipo_ref'] = 4; //JSON.parse(this.data['data'][i].comerPaymentRef.reference);
+        body2['monto_pena'] = JSON.parse(this.data['data'][i].amountGrief);
+        body2['lote_publico'] = this.data['data'][i].publicBatch;
+
+        body['dataVirt'] = [body2];
+        body['action'] = 2;
+        body['eventId'] = 15050;
+        body['payId'] = JSON.parse(this.data['data'][i].payId);
+        body['lotId'] = JSON.parse(this.data['data'][i].comerPaymentRef.lotId);
+        body['clientId'] = JSON.parse(
+          this.data['data'][i].comerPaymentRef.clientId
+        );
+        body['amount'] = JSON.parse(this.data['data'][i].amount);
+        body['typeDistId'] = JSON.parse(this.id_tipo_disp);
+        body['ref'] = this.data['data'][i].comerPaymentRef.reference;
+        body['address'] = this.address;
+        body['idTpEvent'] = JSON.parse(this.eventTpId);
+
+        console.log(JSON.stringify(body));
+
+        this.comerPaymentService.desagregarPagos(body).subscribe({
+          next: data => {
+            console.log(data);
+          },
+          error: err => {
+            console.log(err);
+          },
+        });
+        /*if(body2.monto_pena == this.restore[i].amountGrief){
+            this.alert('warning', 'Debe Seleccionar un Registro', '');
+          
+        }*/
+      }
+    });
+  }
+  async desagregarPagos() {
+    /* console.log(this.data['data'])
+    let lote = [];
+    let loteRepited= false;
+    for(let i = 0 ; i < this.data['data'].length;++i){
+      loteRepited = lote.includes(this.data['data'][i].comerPaymentRef.lotId);
+      console.log(lote, loteRepited);
+      if (loteRepited){
+            this.alert('warning', 'Registros repetidos, favor de verificar.', '');
+            break;
+
+      }else{
+      lote.push(this.data['data'][i].comerPaymentRef.lotId);
+      }
+
+      if(this.data['data'][i].publicBatch =='' || this.data['data'][i].publicBatch == null){
+            this.alert('warning', 'Sin registros a aplicar, favor de verificar.', '');
+            break;
+        }
+    }*/
+
+    for (let i = 0; i < this.data['data'].length; ++i) {
+      let body: any = {};
+      let body2: any = {};
+
+      /* if(this.data['data'][i].batchId == undefined){
+      body2['id_lote'] = 4;
+      }else{
+      body2['id_lote'] = JSON.parse(this.data['data'][i].comerPaymentRef.lotId);
+
+      }*/
+      body2['id_lote'] = JSON.parse(this.data['data'][i].comerPaymentRef.lotId);
+      body2['monto'] = JSON.parse(this.data['data'][i].amount);
+      body2['tipo_ref'] = JSON.parse(this.data['data'][i].typereference);
+      body2['monto_pena'] = JSON.parse(this.data['data'][i].amountGrief);
+      body2['lote_publico'] = this.data['data'][i].publicBatch;
+
+      body['dataVirt'] = [body2];
+      body['action'] = 1;
+      body['eventId'] = 15050;
+      body['payId'] = JSON.parse(this.data['data'][i].payId);
+      body['lotId'] = JSON.parse(this.data['data'][i].comerPaymentRef.lotId);
+      body['clientId'] = JSON.parse(
+        this.data['data'][i].comerPaymentRef.clientId
+      );
+      body['amount'] = JSON.parse(this.data['data'][i].amount);
+      body['typeDistId'] = JSON.parse(this.id_tipo_disp);
+      body['ref'] = this.data['data'][i].comerPaymentRef.reference;
+      body['address'] = this.address;
+      body['idTpEvent'] = JSON.parse(this.eventTpId);
+      console.log(JSON.stringify(body));
+
+      /* if(body.amount == this.restore[i].amount){
+            this.alert('warning', 'La Sumatoria del Monto del desglose no concuerda con el Depósito, favor de verificar.', '');
+            break;
+        } */
+
+      this.comerPaymentService.desagregarPagos(body).subscribe({
+        next: data => {
+          console.log(data);
+          console.log(this.data['data'].length, i);
+
+          /* if(this.data['data'].length-1 == i){
+      this.bsModel.hide();
+      }*/
+        },
+        error: err => {
+          console.log(err);
+          if (err == '0: Lote inválido') {
+            this.alert('warning', 'Lo Sentimos, Lote Invalido', '');
+            return;
+          }
+          if (err == '0: Tipo inválido') {
+            this.alert(
+              'warning',
+              'Lo Sentimos, Tipo de Referencia Invalido',
+              ''
+            );
+            return;
+          }
+          if (err == '0: Monto inválido') {
+            this.alert('warning', 'Lo Sentimos, Monto Invalido', '');
+            return;
+          }
+        },
+      });
+    }
+  }
 
   //gets
   get rfc() {
