@@ -24,11 +24,11 @@ export const COLUMNS = {
     type: 'number',
     sort: false,
   },
-  recibe: {
+  /* recibe: {
     title: '¿Se Recibe?',
     type: 'number',
     sort: false,
-  },
+  }, */
 };
 
 export const COLUMNS_RECIB = {
