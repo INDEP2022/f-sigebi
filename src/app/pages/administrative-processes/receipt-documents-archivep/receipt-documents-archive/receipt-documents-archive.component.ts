@@ -12,6 +12,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents-type/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { BasePage } from 'src/app/core/shared';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { ModalGuardaValorComponent } from '../modal-guarda-valor/modal-guarda-valor.component';
 import { COLUMNS } from './columns';
 
@@ -59,6 +60,7 @@ export class ReceiptDocumentsArchiveComponent
   loadingRecib: boolean = this.loading;
   settingsRecib = this.settings;
   blkGuardaValor: IGuardaValor;
+  document: IDocument;
   get authUser() {
     return this.authService.decodeToken().username;
   }
@@ -81,7 +83,21 @@ export class ReceiptDocumentsArchiveComponent
         add: false,
         position: 'right',
       },
-      columns: { ...COLUMNS },
+      columns: {
+        ...COLUMNS,
+        recibe: {
+          title: '¿Se Recibe?',
+          sort: false,
+          type: 'custom',
+          valuePrepareFunction: (value: boolean, data: any) => {
+            console.log(data);
+          },
+          //this.isDelegationSelected(delegation),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onSelect(instance),
+        },
+      },
       noDataMessage: 'No se encontrarón registros',
       rowClassFunction: (row: any) => {
         if (row.data.scanStatus !== null) {
@@ -115,7 +131,6 @@ export class ReceiptDocumentsArchiveComponent
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
-
             if (filter.search !== '') {
               console.log(
                 (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
@@ -138,8 +153,13 @@ export class ReceiptDocumentsArchiveComponent
       .subscribe(() => this.getDocumentsRecib());
   }
 
+  onSelect(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.check(data.row, data.toggle),
+    });
+  }
+
   select(event: any) {
-    console.error(event);
     this.form.get('descriptionDocument').setValue(event.descriptionDocument);
   }
 
@@ -165,8 +185,15 @@ export class ReceiptDocumentsArchiveComponent
     let config: ModalOptions = {
       initialState: {
         blkGuardaValor: this.blkGuardaValor,
-        callback: (next: boolean) => {
+        document: this.document,
+        title: this.title,
+        callback: (next: IDocument) => {
           if (next) {
+            this.document.fileStatus = 'ARCHIVADO';
+            this.document.dateReceivesFile = new Date();
+            this.document.userReceivesFile = this.authUser;
+            this.updateDocuments(this.document);
+
             this.params
               .pipe(takeUntil(this.$unSubscribe))
               .subscribe(() => this.getDocuments());
@@ -244,50 +271,48 @@ export class ReceiptDocumentsArchiveComponent
     });
   }
 
-  async check(document: any) {
-    //const recibe: string = 'S';
-    if (document.recibe === 'S' && document.scanStatus === 'ESCANEADO') {
-      /// aqui buscar en el servicio
-      /// keySaveValue
-      const ubication = await this.getExpedient(document.numberProceedings);
-      if (ubication === 'S') {
-        /// llamar al modal
-        this.blkGuardaValor = {
-          estatus_estante: 'N',
-          estatus_casillero: 'N',
-          estatus_bateria: 'N',
-          cve_guardavalor: null,
-          desc_guardavalor: null,
-          no_bateria: null,
-          desc_bateria: null,
-          no_estante: null,
-          desc_estante: null,
-          no_casillero: null,
-          desc_casillero: null,
-        };
-        this.openModal();
-      } else {
-        const confirm = await this.alertQuestion(
-          'question',
-          this.title,
-          '¿Seguro que desea recibir el documento?'
-        );
-        if (confirm.isConfirmed) {
-          document.fileStatus = 'ARCHIVADO';
-          document.dateReceivesFile = new Date();
-          document.userReceivesFile = this.authUser;
-          /// Hacer el llamdo al MS
-          this.updateDocuments(document);
+  async check(document: any, selected: boolean) {
+    if (selected) {
+      if (document.scanStatus === 'ESCANEADO') {
+        const ubication = await this.getExpedient(document.numberProceedings);
+        if (ubication === 'S') {
+          /// llamar al modal
+          this.blkGuardaValor = {
+            estatus_estante: 'N',
+            estatus_casillero: 'N',
+            estatus_bateria: 'N',
+            cve_guardavalor: null,
+            desc_guardavalor: null,
+            no_bateria: null,
+            desc_bateria: null,
+            no_estante: null,
+            desc_estante: null,
+            no_casillero: null,
+            desc_casillero: null,
+          };
+          this.openModal();
         } else {
-          document.recibe === 'N';
+          const confirm = await this.alertQuestion(
+            'question',
+            this.title,
+            '¿Seguro que Desea Recibir el Documento?'
+          );
+          if (confirm.isConfirmed) {
+            this.document.fileStatus = 'ARCHIVADO';
+            this.document.dateReceivesFile = new Date();
+            this.document.userReceivesFile = this.authUser;
+            /// Hacer el llamdo al MS
+            this.updateDocuments(this.document);
+          } else {
+            document.recibe === 'N';
+          }
         }
       }
     } else {
-      document.recibe === 'N';
       this.alert(
         'warning',
         this.title,
-        'Documento pendiente de Digitalizar, para archivarlo debe digitalizarlo.'
+        'Documento Pendiente de Digitalizar, Para Archivarlo Debe Digitalizarlo.'
       );
     }
   }
