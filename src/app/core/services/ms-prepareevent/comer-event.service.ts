@@ -137,4 +137,10 @@ export class ComerEventService extends HttpService {
   getEnvFormalize(body: any) {
     return this.post(PrepareEventEndpoints.EnvFormalize, body);
   }
+
+  validateLiq(eventId: number, batchId: number) {
+    return this.get(
+      `${PrepareEventEndpoints.ApplicationValidationLiq}?eventId=${eventId}&batchId=${batchId}`
+    );
+  }
 }
