@@ -24,7 +24,8 @@
                 [searchOnInit]="true"
                 termMaxLength="30"
                 (change)="onBankSelectChange($event)"
-                (input)="onSearchNameAccount($event.target)">
+                (input)="onSearchNameAccount($event.target)"
+                (clear)="onClearBankSelection()">
               </ngx-select>
             </form-field>
           </div>
