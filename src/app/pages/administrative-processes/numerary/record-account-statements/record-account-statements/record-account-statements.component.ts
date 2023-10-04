@@ -659,6 +659,8 @@ export class RecordAccountStatementsComponent
     this.balance = null;
     this.itemSelected = '';
     this.dataAccount.load([]);
+    localStorage.setItem('cveBank', '');
+    localStorage.setItem('cveAccount', 'value.accountNumber.cveAccount');
   }
 
   cleandInfo() {
@@ -667,6 +669,8 @@ export class RecordAccountStatementsComponent
     this.getBanks(new ListParams());
     this.itemSelected = '';
     this.dataAccount.load([]);
+    localStorage.setItem('cveBank', '');
+    localStorage.setItem('cveAccount', 'value.accountNumber.cveAccount');
   }
 
   cleandInfoDate() {
