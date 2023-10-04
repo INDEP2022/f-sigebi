@@ -17,8 +17,16 @@ export const COLUMNS = {
     title: 'No. Bien',
     sort: false,
   },
+  descriptionGood: {
+    title: 'Descripción',
+    sort: false,
+  },
   service: {
     title: 'Servicio',
+    sort: false,
+  },
+  descriptionService: {
+    title: 'Descripción',
     sort: false,
   },
 
@@ -26,10 +34,10 @@ export const COLUMNS = {
     title: 'Fecha de Solicitud',
     sort: false,
   },
-  paymentDate: {
-    title: 'Fecha de Pago',
-    sort: false,
-  },
+  // paymentDate: {
+  //   title: 'Fecha de Pago',
+  //   sort: false,
+  // },
   amount: {
     title: 'Importe',
     sort: false,

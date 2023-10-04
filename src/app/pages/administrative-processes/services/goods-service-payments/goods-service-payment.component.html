@@ -4,7 +4,7 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row mb-3 mt-3">
+      <!-- <div class="row mb-3 mt-3">
         <div class="form-material col-xs-12 col-12 col-md-3">
           <form-field
             label="Fecha de Solicitud"
@@ -15,7 +15,7 @@
               bsDatepicker />
           </form-field>
         </div>
-      </div>
+      </div> -->
       <div class="row mb-3 mt-3">
         <!--Records Shared Component-->
         <app-records-shared [form]="form"></app-records-shared>
@@ -41,7 +41,7 @@
           [disabled]="!form.valid"
           type="button"
           class="btn btn-primary btn-sm active"
-          (click)="close()">
+          (click)="confirm()">
           Aceptar
         </button>
       </div>
