@@ -1,41 +1,62 @@
+import { CustomFilterComponent } from 'src/app/@standalone/shared-forms/input-number/input-number';
+
 export const REGULAR_BILLING_GENERATION_ASSETS_COLUMNS = {
-  noBien: {
+  notGood: {
     title: 'No. Bien',
     sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomFilterComponent,
+    },
   },
-  serie: {
+  series: {
     title: 'Serie',
     sort: false,
   },
-  invoice: {
+  Invoice: {
     title: 'Folio',
     sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomFilterComponent,
+    },
   },
-  observation: {
+  observations: {
     title: 'Observaciones',
     sort: false,
   },
-  event: {
+  eventId: {
     title: 'Evento',
     sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomFilterComponent,
+    },
   },
-  allotment: {
+  lotPublic: {
     title: 'lote',
     sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomFilterComponent,
+    },
   },
   status: {
     title: 'Estatus',
     sort: false,
   },
-  validation: {
+  downloadValidation: {
     title: 'Validación/Motivo',
     sort: false,
   },
-  dateProccess: {
+  insertDate: {
     title: 'Fecha Proceso',
     sort: false,
+    valuePrepareFunction: (date: string) => {
+      return date ? date.split('-').reverse().join('/') : date;
+    },
   },
-  user: {
+  userinsert: {
     title: 'Usuario',
     sort: false,
   },

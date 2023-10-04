@@ -10,7 +10,7 @@ export class RegularBillingTabComponent implements OnInit {
   event: number;
   invoices: any[] = [];
   count: number = 0;
-  filter: any = {};
+  filter: any = null;
   form: FormGroup;
   values: any = {
     sum1: 0,

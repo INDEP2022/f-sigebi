@@ -1,0 +1,89 @@
+<div class="row pt-5">
+  <div class="ch-content">
+    <h5 class="title">Avalúos</h5>
+    <div class="col-md-5 buttons">
+      <app-columns-select
+        [(settings)]="settings"
+        class="row justify-content-end">
+      </app-columns-select>
+      <div class="ml-3">
+        <button
+          (click)="onExportToExcel()"
+          class="btn btn-sm btn-success active">
+          Exportar a Excel
+          <i class="bx bx-download float-icon"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div [class]="loading ? 'table-loading' : ''">
+    <div class="table-responsive">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="appraisals">
+      </ng2-smart-table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 d-flex justify-content-between">
+      <div class="mt-5">
+        <table class="table table-bordered">
+          <thead>
+            <tr class="bt-none">
+              <th class="text-center" colspan="2">Totales</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left">Valor de Referencia Inmediata</td>
+              <td class="font-weight-bold text-right">
+                {{ sumControls.total_vri.value | number }}
+              </td>
+            </tr>
+            <tr>
+              <td class="text-left">Valor Referencia Inmediata IVA</td>
+              <td class="font-weight-bold text-right">
+                {{ sumControls.total_vri_iva.value | number }}
+              </td>
+            </tr>
+            <tr>
+              <td class="text-left">Valor Referencia Inmediata Redondeado</td>
+              <td class="font-weight-bold text-right">
+                {{ sumControls.total_vri_redondeado.value | number }}
+              </td>
+            </tr>
+            <tr>
+              <td class="text-left">Valor Comercial</td>
+              <td class="font-weight-bold text-right">
+                {{ sumControls.total_vc.value | number }}
+              </td>
+            </tr>
+            <tr>
+              <td class="text-left">Valor Comercial IVA</td>
+              <td class="font-weight-bold text-right">
+                {{ sumControls.tot_vc_iva.value | number }}
+              </td>
+            </tr>
+            <tr>
+              <td class="text-left">VRI con Descuento</td>
+              <td class="font-weight-bold text-right">
+                {{ sumControls.tot_vri_con_desc.value | number }}
+              </td>
+            </tr>
+            <tr>
+              <td class="text-left">IVA VRI con Descuento</td>
+              <td class="font-weight-bold text-right">
+                {{ sumControls.tot_iva_vri_desc.value | number }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <app-pagination [filterParams]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+</div>
