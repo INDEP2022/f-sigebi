@@ -12,11 +12,11 @@ export const APPRAISAL_COLUMNS = {
     sort: false,
   },
   keyAppraisal: {
-    title: 'Clave Avalúo',
+    title: 'Cve. Avalúo',
     sort: false,
   },
   keyOffice: {
-    title: 'Clave Oficio',
+    title: 'Cve. Oficio',
     sort: false,
   },
   userInsert: {
