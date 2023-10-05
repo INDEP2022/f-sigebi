@@ -69,4 +69,8 @@ export const EVENT_LOT_LIST_COLUMNS = {
     title: 'Chatarra',
     sort: false,
   },
+  vatA: {
+    title: 'Aplica IVA',
+    sort: false,
+  },
 };
