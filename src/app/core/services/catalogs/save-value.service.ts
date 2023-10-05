@@ -7,7 +7,10 @@ import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { ISaveValue } from '../../models/catalogs/save-value.model';
+import {
+  ISaveValue,
+  IUpdateMassive,
+} from '../../models/catalogs/save-value.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -52,5 +55,9 @@ export class SaveValueService
   remove2(model: ISaveValue) {
     const route = `${SaveValuesEndpoints.SaveValue}`;
     return this.delete(route, model);
+  }
+
+  massiveUpdate(model: IUpdateMassive) {
+    return this.post('apps/massiveUpdate', model);
   }
 }

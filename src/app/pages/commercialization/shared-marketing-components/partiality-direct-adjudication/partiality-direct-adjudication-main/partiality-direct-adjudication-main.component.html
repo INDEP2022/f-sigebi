@@ -6,75 +6,42 @@
     <div
       class="row row-cols-sm-1 row row-cols-1 row-cols-md-2 row row-cols-lg-3 row-cols-xl-4 g-3">
       <form class="form-material" [formGroup]="licitacionForm">
-        <form-field
-          [control]="licitacionForm.get('licitacionNumber')"
-          label="Id. Licitación">
-          <input
-            type="number"
-            formControlName="licitacionNumber"
-            class="form-control" />
-        </form-field>
+        <div class="col-md-8">
+          <form-field
+            [control]="licitacionForm.get('licitacionNumber')"
+            label="Id. Licitación">
+            <input
+              type="number"
+              formControlName="licitacionNumber"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="getBidding()">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
       </form>
     </div>
+    <br />
     <div class="md-tabs mt-n3" #tabsContainer>
       <tabset #directAdjudicationTabs>
         <tab heading="Adjudicaciones" id="adjudicationTab">
           <form class="form-material" [formGroup]="adjudicationForm">
-            <div
-              class="row row-cols-sm-1 row row-cols-1 row-cols-md-2 row row-cols-lg-3 row-cols-xl-4 g-3">
-              <div class="col">
-                <button
-                  class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
-                  (click)="generarAdjudicacion()">
-                  Generar Adjudicación
-                </button>
-              </div>
-              <div class="col">
-                <button
-                  class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
-                  (click)="(true)"
-                  [disabled]="">
-                  Autorizar Adjudicación
-                </button>
-              </div>
-              <div class="col">
-                <button
-                  class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
-                  (click)="generateCl()"
-                  [disabled]="">
-                  Generar Línea Captura
-                </button>
-              </div>
-              <div class="col">
-                <button
-                  class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
-                  (click)="cleanForm()">
-                  Limpiar Datos
-                </button>
-              </div>
-              <div class="col">
-                <button
-                  class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
-                  (click)="deleteAdjudication()">
-                  Eliminar Adjudicación
-                </button>
-              </div>
-              <div class="col">
-                <button
-                  class="btn btn-sm btn-secondary btn-block active me-2 font-size-13"
-                  (click)="(true)">
-                  Intereses Moratorios
-                </button>
-              </div>
-            </div>
             <div class="md-tabs mt-5" #tabsContainer2>
               <tabset #adjudicationTabs>
                 <tab heading="Evento" id="eventTab">
                   <div class="row mt-5">
                     <div class="col-sm-12 col-md-4">
                       <div class="row">
-                        <form-field [control]="adjudicationForm.get('event')">
-                          <ngx-select
+                        <form-field
+                          [control]="adjudicationForm.get('event')"
+                          label="No. Evento">
+                          <!-- <ngx-select
                             [form]="paramsForm"
                             [data]="eventItems"
                             value="id"
@@ -83,7 +50,12 @@
                             (fetchItems)="getEvents($event)"
                             control="event"
                             (change)="selectEvent($event)">
-                          </ngx-select>
+                          </ngx-select> -->
+                          <input
+                            type="text"
+                            formControlName="event"
+                            class="form-control"
+                            readOnly />
                         </form-field>
                       </div>
                     </div>
@@ -128,8 +100,10 @@
                   <div class="row mt-5">
                     <div class="col-sm-12 col-md-6">
                       <div class="row">
-                        <form-field [control]="adjudicationForm.get('batchId')">
-                          <ngx-select
+                        <form-field
+                          [control]="adjudicationForm.get('batchId')"
+                          label="Lote Público">
+                          <!-- <ngx-select
                             [form]="paramsForm"
                             [data]="batchItems"
                             value="id"
@@ -138,7 +112,12 @@
                             (fetchItems)="getBatches($event)"
                             control="batchId"
                             (change)="selectBatch($event)">
-                          </ngx-select>
+                          </ngx-select> -->
+                          <input
+                            type="text"
+                            formControlName="batchId"
+                            class="form-control"
+                            readOnly />
                         </form-field>
                       </div>
                     </div>
@@ -156,8 +135,9 @@
                     <div class="col-sm-12 col-md-4">
                       <div class="row">
                         <form-field
-                          [control]="adjudicationForm.get('clientId')">
-                          <ngx-select
+                          [control]="adjudicationForm.get('clientId')"
+                          label="Id Cliente">
+                          <!-- <ngx-select
                             [form]="paramsForm"
                             [data]="clientItems"
                             value="id"
@@ -166,7 +146,12 @@
                             (fetchItems)="getClients($event)"
                             control="clientId"
                             (change)="selectClient($event)">
-                          </ngx-select>
+                          </ngx-select> -->
+                          <input
+                            type="text"
+                            formControlName="clientId"
+                            class="form-control"
+                            readOnly />
                         </form-field>
                       </div>
                     </div>
@@ -218,7 +203,9 @@
                         <input
                           type="number"
                           formControlName="advancePercent"
-                          class="form-control" />
+                          class="form-control"
+                          [minlength]="40"
+                          [maxlength]="100" />
                       </form-field>
                     </div>
                   </div>
@@ -431,8 +418,8 @@
           <form class="form-material" [formGroup]="paramsForm">
             <div class="row mt-3">
               <div class="col-sm-6 col-md-4">
-                <form-field [control]="paramsForm.get('event')">
-                  <ngx-select
+                <form-field [control]="paramsForm.get('event')" label="Evento">
+                  <!-- <ngx-select
                     [form]="paramsForm"
                     [data]="eventItems"
                     value="id"
@@ -441,12 +428,18 @@
                     (fetchItems)="getEvents($event)"
                     control="event"
                     (change)="selectEvent($event)">
-                  </ngx-select>
+                  </ngx-select> -->
+                  <input
+                    type="number"
+                    formControlName="event"
+                    class="form-control" />
                 </form-field>
               </div>
               <div class="col-sm-6 col-md-4">
-                <form-field [control]="paramsForm.get('batchId')">
-                  <ngx-select
+                <form-field
+                  [control]="paramsForm.get('batchId')"
+                  label="Lote Público">
+                  <!-- <ngx-select
                     [form]="paramsForm"
                     [data]="batchItems"
                     value="id"
@@ -455,21 +448,36 @@
                     (fetchItems)="getBatches($event)"
                     control="batchId"
                     (change)="selectBatch($event)">
-                  </ngx-select>
+                  </ngx-select> -->
+                  <input
+                    type="number"
+                    formControlName="batchId"
+                    class="form-control" />
                 </form-field>
               </div>
               <div class="col-sm-6 col-md-4">
                 <form-field [control]="paramsForm.get('clientId')">
-                  <ngx-select
+                  <!-- <ngx-select
                     [form]="paramsForm"
                     [data]="clientItems"
                     value="id"
-                    bindLabel="id"
+                    bindLabel="reasonName"
                     label="Cliente"
                     (fetchItems)="getClients($event)"
                     control="clientId"
                     (change)="selectClient($event)">
+                  </ngx-select>  -->
+                  <ngx-select
+                    [searchOnInit]="true"
+                    [form]="paramsForm"
+                    control="clientId"
+                    [data]="clientItems"
+                    value="id"
+                    bindLabel="idAndName"
+                    label="Cliente"
+                    (fetchItems)="getClients($event)">
                   </ngx-select>
+                  <!-- <input type="text" formControlName="clientId" class="form-control" /> -->
                 </form-field>
               </div>
             </div>
@@ -534,13 +542,63 @@
               <div class="col-sm-6 col-md-4">
                 <form-field
                   [control]="paramsForm.get('paymentNumber')"
-                  label="Número de Pago">
+                  label="No. de Pago">
                   <input
                     type="number"
                     [maxlength]="2"
                     formControlName="paymentNumber"
                     class="form-control" />
                 </form-field>
+              </div>
+            </div>
+            <hr />
+            <div
+              class="row row-cols-sm-1 row row-cols-1 row-cols-md-3 row row-cols-lg-3 row-cols-xl-4 g-3">
+              <div class="col">
+                <button
+                  class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
+                  (click)="generarAdjudicacion()">
+                  Generar Adjudicación
+                </button>
+              </div>
+              <div class="col">
+                <button
+                  class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
+                  (click)="(true)"
+                  [disabled]=""
+                  (click)="updateAdjudication()">
+                  Autorizar Adjudicación
+                </button>
+              </div>
+              <div class="col">
+                <button
+                  class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
+                  (click)="generateCaptureLine()"
+                  [disabled]="">
+                  Generar Línea Captura
+                </button>
+              </div>
+              <div class="col">
+                <button
+                  class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
+                  (click)="cleanForm()">
+                  Limpiar Datos
+                </button>
+              </div>
+              <div class="col">
+                <button
+                  class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
+                  (click)="deleteAdjudication()">
+                  Eliminar Adjudicación
+                </button>
+              </div>
+              <div class="col">
+                <button
+                  class="btn btn-sm btn-secondary btn-block active me-2 font-size-13"
+                  (click)="(true)"
+                  (click)="defaultInterests()">
+                  Intereses Moratorios
+                </button>
               </div>
             </div>
           </form>

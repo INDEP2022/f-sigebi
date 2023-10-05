@@ -36,13 +36,16 @@ import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-m
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { AtachedDocumentsService } from 'src/app/core/services/ms-documents/attached-documents.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
 import { CopiesJobManagementService } from 'src/app/core/services/ms-office-management/copies-job-management.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
+import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
 import { TranfergoodService } from 'src/app/core/services/ms-transfergood/transfergood.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -122,6 +125,9 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
   COPIAS1: any;
   problematicaJuridica: boolean = false;
   flyerNumber: any;
+  V_VALBIEN: any;
+  NO_OF_GESTION: any;
+  NO_BIEN: any;
   //----------------
 
   usersCcp: any = [];
@@ -174,7 +180,10 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     private router: Router,
     private numeraryService: NumeraryService,
     private tranfergoodService: TranfergoodService,
-    private eventAppService: EventAppService
+    private eventAppService: EventAppService,
+    private goodprocessService: GoodprocessService,
+    private jobDictumTextsService: JobDictumTextsService,
+    private comerClientsService: ComerClientsService
   ) {
     super();
     this.settings = {
@@ -229,6 +238,7 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
       .pipe(
         catchError(error => {
           this.onLoadToast('error', 'Error', 'El bien no existe');
+          this.form.get('goodId').setErrors({ customErrorKey: true });
           return throwError(() => error);
         }),
         switchMap(() => {
@@ -248,8 +258,98 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
   }
 
   handleDocumentsCount(count: number, documents: IMJobManagement[]) {
+    let VAL_TIPOF2: any;
+    let VAL_TIPOF: any;
+    let TIPO_OF: any;
+    console.log('count ----> ', count);
     if (count == 2) {
       this.chooseDocument(documents);
+    } else if (count == 1) {
+      //servicio pedido a Eduardo
+      if ((VAL_TIPOF = 'ENT')) {
+        VAL_TIPOF = 'ENTREGA';
+        VAL_TIPOF2 = 'ESCRITURACION';
+      } else if ((VAL_TIPOF = 'ESC')) {
+        VAL_TIPOF = 'ESCRITURACION';
+        VAL_TIPOF2 = 'ENTREGA';
+      }
+    }
+    if (count < 2) {
+      let good = this.form.get('goodId').value;
+      this.goodsJobManagementService.getblokOffice1(good).subscribe({
+        next: response => {
+          console.log('Respuesta de getblockOffice1 ', response);
+          this.V_VALBIEN = response.data;
+          this.alertQuestion(
+            'info',
+            'Este bien tiene un oficio de: ' +
+              VAL_TIPOF +
+              ' generar el oficio de: ' +
+              VAL_TIPOF2 +
+              '. ¿Deseas continuar?',
+            '',
+            'Aceptar',
+            'Cancelar'
+          ).then(res => {
+            console.log(res);
+            if (res.isConfirmed) {
+              this.goodsJobManagementService
+                .getOficeJobManagementbyGood(this.V_VALBIEN)
+                .subscribe({
+                  next: respon => {
+                    console.log('Office Job --> ', respon);
+                    let managementNumber: any = respon.data[0].managementNumber;
+                    this.goodsJobManagementService
+                      .getMJobJobManagement(managementNumber)
+                      .subscribe({
+                        next: response => {
+                          console.log(
+                            'respuensta GetMJobJobManagement --> ',
+                            response
+                          );
+                          this.V_OFICIO = response.data[0].managementNumber;
+                          this.BANDERA = 1;
+                          this.NO_OF_GESTION = this.V_OFICIO;
+                          //falta PUP_EXTRAE_DATO(:GLOBAL.V_OFICIO);
+                          this.PupExtraeDato(this.V_OFICIO);
+                          if (VAL_TIPOF2 == 'ESCRITURACION') {
+                            TIPO_OF = 'ESC';
+                            //Falta PUP_AGREGA_TEXTO
+                          } else if (VAL_TIPOF2 == 'ENTREGA') {
+                            TIPO_OF = 'ENT';
+                            //Falta PUP_AGREGA_TEXTO
+                          }
+                          this.V_VALBIEN = null;
+                          if (this.V_VALBIEN == null) {
+                            this.BANDERA = 0;
+                            this.NO_BIEN = this.form.get('goodId').value;
+                            let VC_PANTALLA = 'FOFICIOCOMER';
+                            let params = {
+                              goodNo: this.NO_BIEN,
+                              screen: VC_PANTALLA,
+                            };
+                            this.goodprocessService
+                              .postBlokOffice3(params)
+                              .subscribe({
+                                next: resp => {
+                                  console.log(
+                                    'respuesta de BlokOFfice3 --> ',
+                                    resp
+                                  );
+                                },
+                              });
+                          }
+                        },
+                      });
+                  },
+                });
+            }
+          });
+        },
+        error: err => {
+          this.V_VALBIEN = null;
+        },
+      });
     }
   }
 
@@ -489,6 +589,10 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     params.addFilter('managementNumber', ids.join(','), SearchFilter.IN);
     params.addFilter(filter, value, SearchFilter.ILIKE);
     this.showHide.showHideError(false);
+    console.log(
+      'this.mJobManagement.getAllFiltered(params.getParams()); --> ',
+      this.mJobManagement.getAllFiltered(params.getParams())
+    );
     return this.mJobManagement.getAllFiltered(params.getParams());
   }
 
@@ -1810,7 +1914,141 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     let noBien = this.form.get('goodId').value;
     this.eventAppService.getPupRemiEnt(noBien).subscribe({
       next: response => {
-        console.log('response ----> ', response);
+        console.log('response -----> ', response);
+      },
+    });
+  }
+
+  PupAgregaTexto() {
+    //Params-------------
+
+    //-------------------
+    let noBien = this.form.get('goodId').value;
+    // //Cursor A
+    // this.comerClientsService.getCursorA(noBien).subscribe({
+    //   next: response => {
+    //     console.log("response Cursor A-->", response);
+    //   }
+    // })
+    // //Cursor B
+    // this.comerClientsService.getCursorB(noBien).subscribe({
+    //   next: response => {
+    //     console.log("response Cursor B-->", response);
+    //   }
+    // })
+    let lote = this.form.get('lot').value;
+    let evento = this.form.get('event').value;
+    let paramsBB = {
+      publicLot: lote,
+      eventId: evento,
+    };
+    this.comerClientsService.getCursorBB(noBien).subscribe({
+      next: response => {
+        console.log('response Cursor BB-->', response);
+      },
+    });
+    let paramsAptFolio = {
+      publicLot: lote,
+      eventId: evento,
+    };
+    this.comerClientsService.getCursorAptFolio(paramsAptFolio).subscribe({
+      next: response => {
+        console.log('response Cursor AptFolio-->', response);
+      },
+    });
+    let recordCommerType = this.form.get('recordCommerType').value;
+    let officeTypeCtrl = this.form.get('officeTypeCtrl').value;
+
+    if (recordCommerType == 'bie' && officeTypeCtrl == 'ENT') {
+      let noBien = this.form.get('goodId').value;
+      //Cursor A
+      this.comerClientsService.getCursorA(noBien).subscribe({
+        next: response => {
+          console.log('response Cursor A-->', response);
+          //Cursor B
+          this.comerClientsService.getCursorB(noBien).subscribe({
+            next: resp => {
+              console.log('response Cursor B-->', resp);
+              let text1 =
+                'Con relacion a los inmuebles, bajo administracion del SAE te informo que el precio de venta del/los bienes descrito en próximas líneas ha sido cubierto en su totalidad, por lo que requiero tu apoyo para coordinar las acciones que permitan llevar a cabo la entrega física del bien al comprador, asimismo se remita a esta Dirección, copia simple del documento comprobatorio "Acta".';
+              let text2 =
+                'GENERALIDADES DEL COMPRADOR:\n\n' +
+                'CLIENTE: ' +
+                response.data[0].nom_razon +
+                '\n' +
+                'RFC: ' +
+                response.data[0].rfc +
+                '\n' +
+                'Domicilio: ' +
+                '\n' +
+                'Calle: ' +
+                response.data[0].calle +
+                '\n' +
+                'Colonia: ' +
+                response.data[0].colonia +
+                '\n' +
+                'Cp: ' +
+                response.data[0].cp +
+                '\n' +
+                'Entidad: ' +
+                response.data[0].ciudad +
+                '\n' +
+                'Tel: ' +
+                response.data[0].telefono +
+                '\n' +
+                'Correo Web: ' +
+                response.data[0].correoweb +
+                '\n' +
+                //falta
+                'CARACTERISTICAS DEL INMUEBLE:\n\n' +
+                'No. de Bien: ' +
+                response.data[0].nom_razon +
+                '\n' +
+                'NO. Inv.____ ' +
+                response.data[0].rfc +
+                '\n' +
+                'Estatus: ' +
+                '\n' +
+                'Descripcion: ' +
+                response.data[0].calle +
+                '\n' +
+                'Transferente: ' +
+                response.data[0].colonia +
+                '\n' +
+                'Cve. Evento: ' +
+                response.data[0].cp +
+                '\n';
+            },
+          });
+        },
+      });
+    }
+  }
+
+  PupExtraeDato(OF_GESTION: number) {
+    let noBien = this.form.get('goodId').value;
+    let params = {
+      ofManagement: OF_GESTION,
+      goodNumber: noBien,
+    };
+    this.jobDictumTextsService.pupExtractData(params).subscribe({
+      next: response => {
+        console.log('response Extrae Data--> ', response);
+      },
+    });
+  }
+
+  PupExtraeDatos(OF_GESTION: number) {
+    let lote = this.form.get('lot').value;
+    let evento = this.form.get('event').value;
+    let params = {
+      ofManagement: OF_GESTION,
+      lot: lote,
+      event: evento,
+    };
+    this.jobDictumTextsService.pupExtractDatas(params).subscribe({
+      next: response => {
+        console.log('response Extrae Datas --> ', response);
       },
     });
   }

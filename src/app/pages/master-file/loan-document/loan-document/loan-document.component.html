@@ -26,7 +26,8 @@
         <button
           type="button"
           class="btn btn-primary active btn-sm"
-          (click)="openSelect('')">
+          (click)="openSelect('')"
+          [disabled]="neworsave == 'Guardar'">
           Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
         </button>
       </div>

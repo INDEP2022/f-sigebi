@@ -801,6 +801,7 @@ export class ConciliationDepositaryPaymentsComponent
         next: res => {
           this.loading = false;
           console.log(res.data);
+          this.ngOnInit();
           this.alert('success', 'Proceso completado correctamente', '');
         },
         error: err => {

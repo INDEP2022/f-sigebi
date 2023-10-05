@@ -190,11 +190,7 @@ export class MaintenanceMailConfigurationComponent
           this.alert('success', 'Registro eliminado correctamente', '');
       },
       error: error => {
-        this.alert(
-          'warning',
-          'Estados',
-          'No se puede eliminar el objeto debido a una relación con otra tabla.'
-        );
+        this.alert('warning', 'El correo no puede ser eliminado', '');
         console.log(error);
       },
     });

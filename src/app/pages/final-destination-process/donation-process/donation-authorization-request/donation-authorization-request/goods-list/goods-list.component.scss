@@ -1,0 +1,25 @@
+:host ::ng-deep ng2-smart-table table tr {
+  &.notSelect {
+    td:first-child app-checkbox-element {
+      display: none;
+    }
+  }
+
+  &.ng2-smart-filters {
+    th:first-child ng2-smart-table-filter {
+      display: none;
+    }
+  }
+}
+
+:host ::ng-deep app-card {
+  .card-block {
+    padding-top: 0px !important;
+  }
+}
+
+:host ::ng-deep app-columns-select {
+  #dropdown-basic {
+    left: -107px !important;
+  }
+}

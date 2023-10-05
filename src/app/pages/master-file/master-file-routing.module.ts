@@ -40,6 +40,19 @@ const routes: Routes = [
       screen: 'FCONARGGUARDAVALO',
     },
   },
+  {
+    path: 'report-document-location',
+    loadChildren: async () =>
+      (
+        await import(
+          './report-document-location/report-document-location.module'
+        )
+      ).ReportDocumentLocationModule,
+    data: {
+      title: 'Reporte de Ubicación de Documentos',
+      screen: 'FGERARGGUARDAVALO',
+    },
+  },
 ];
 
 @NgModule({

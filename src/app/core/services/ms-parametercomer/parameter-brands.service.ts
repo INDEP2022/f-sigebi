@@ -3,6 +3,8 @@ import { Observable } from 'rxjs';
 import { ParameterComerEndpoints } from 'src/app/common/constants/endpoints/ms-parametercomer-endpoints';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
+
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
   IBrand,
   ISubBrandsModel,
@@ -58,6 +60,10 @@ export class ParameterBrandsService extends HttpService {
 
   getSuperUser(params?: string) {
     console.log(params);
+    return this.get(ParameterComerEndpoints.ParameterMod, params);
+  }
+
+  getSuperUserFilter(params: ListParams) {
     return this.get(ParameterComerEndpoints.ParameterMod, params);
   }
 }

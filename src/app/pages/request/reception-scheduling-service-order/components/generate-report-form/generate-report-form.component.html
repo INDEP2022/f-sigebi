@@ -23,7 +23,7 @@
           </form-field>
         </div>
 
-        <div class="pt-3">
+        <div class="pt-3" *ngIf="task != 5">
           <form-check label="Firma Electr&oacute;nica" for="label">
             <input
               id="label"
@@ -63,7 +63,7 @@
       </form>
     </div>
 
-    <div class="row" *ngIf="processFirm == 'AnnexW'">
+    <div class="row" *ngIf="processFirm == 'AnnexW' && typeSig != 'TE'">
       <form [formGroup]="formAnnexW" class="form-material">
         <h6 class="title">Información Anexo W</h6>
         <div class="row pt-5">
@@ -198,6 +198,27 @@
         </div>
       </form>
 
+      <form [formGroup]="form" class="form-material">
+        <h6 class="title pt-5">Firmante</h6>
+        <div class="pt-3">
+          <form-field
+            [control]="form.get('responsible')"
+            label="Responsable INDEP">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="responsible" />
+          </form-field>
+        </div>
+        <div class="pt-3">
+          <form-field [control]="form.get('charge')" label="Cargo INDEP">
+            <input type="text" class="form-control" formControlName="charge" />
+          </form-field>
+        </div>
+      </form>
+    </div>
+
+    <div class="row" *ngIf="processFirm == 'AnnexW' && typeSig == 'TE'">
       <form [formGroup]="form" class="form-material">
         <h6 class="title pt-5">Firmante</h6>
         <div class="pt-3">

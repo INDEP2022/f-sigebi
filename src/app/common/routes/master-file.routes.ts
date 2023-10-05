@@ -19,6 +19,10 @@ export const MASTER_FILES = [
         label: 'Ubicación en el archivo general',
         link: '/pages/master-file/location-general-archive',
       },
+      {
+        label: 'Reporte de ubicación de documentos',
+        link: '/pages/master-file/report-document-location',
+      },
     ],
   },
 ];

@@ -1,0 +1,67 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CIERRE MENSUAL</h5>
+  </div>
+
+  <div body>
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="ch-content">
+          <h5 class="title">Estado de los periodos</h5>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="LocalDataExchange"
+                (userRowSelect)="selectRow($event)">
+              </ng2-smart-table>
+            </div>
+          </div>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+      <div class="col-md-6">
+        <div class="ch-content">
+          <h5 class="title">Cifras del periodo</h5>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings2"
+                [source]="localDataFigures">
+              </ng2-smart-table>
+            </div>
+          </div>
+        </div>
+        <app-pagination
+          [params]="Figuresparams"
+          [totalItems]="FigurestotalItems"></app-pagination>
+      </div>
+    </div>
+    <div class="row mt-2 d-flex justify-content-center">
+      <div class="col-md-2">
+        <button
+          class="btn btn-primary btn-sm active mr-3"
+          (click)="open()"
+          [disabled]="!btnOpen">
+          Abrir
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button
+          class="btn btn-primary btn-sm active mr-3"
+          (click)="close()"
+          [disabled]="!btnClose">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>
