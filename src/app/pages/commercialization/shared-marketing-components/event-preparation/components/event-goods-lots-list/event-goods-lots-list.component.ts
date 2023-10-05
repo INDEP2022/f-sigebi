@@ -316,9 +316,11 @@ export class EventGoodsLotsListComponent
       }),
       tap(res => {
         this.loading = false;
-        this.alert('success', 'Error', 'El Bien ha sido Eliminado');
+        this.alert('success', 'El Bien ha sido Eliminado', '');
         this.updateMand().subscribe();
         this.afterRemoveGoods(good).subscribe();
+        const params = new FilterParams();
+        this.params.next(params);
       })
     );
   }
