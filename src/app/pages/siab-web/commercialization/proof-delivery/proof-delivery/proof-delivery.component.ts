@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -16,11 +17,17 @@ import { PROOF_DELIVERY_COLUMNS } from './proof-delivery-columns';
 export class proofDeliveryComponent extends BasePage implements OnInit {
   //
 
+  // #region Vars
+  // Form
   form: FormGroup = new FormGroup({});
 
+  // Boolean
   show: boolean = false;
 
+  // Table
   data: LocalDataSource = new LocalDataSource();
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
 
   //Array
   dataFilter: any[] = [];
@@ -33,9 +40,7 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
 
   //String
   year: string = '';
-
-  //Number
-  totalItems: number = 0;
+  //#endregion
 
   //
 
@@ -46,6 +51,7 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: false,
       columns: { ...PROOF_DELIVERY_COLUMNS },
       selectMode: 'multi',
@@ -63,12 +69,11 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
   //
 
   loadDataEventSelected(event: any) {
-    console.log('Esto trae la seleccion: ', event);
     this.serviceInvoice.getInvoiceByEvent(event.id_evento).subscribe({
       next: response => {
         this.getRrcs(this.array('rfc', response.data));
         this.getPublic(this.array('lote_publico', response.data));
-        this.getDelegations(this.array('no_delegacion', response.data));
+        this.getDelegations(this.array('delegacion_desc', response.data));
         this.fillGridInvoces(response.data);
         this.dataFilter = response.data;
         this.filterInvoices();
@@ -102,7 +107,9 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
         console.log('El arreglo filtrado: ', this.dataFilter);
       }
       this.fillGridInvoces(this.dataFilter);
-      this.form.reset();
+      this.form.get('delegation').reset();
+      this.form.get('allotment').reset();
+      this.form.get('rfc').reset();
     }
   }
 
@@ -194,6 +201,10 @@ export class proofDeliveryComponent extends BasePage implements OnInit {
       this.form.reset();
     }
     console.warn('Your order has been submitted');
+  }
+
+  resetForm() {
+    this.form.reset();
   }
 
   //

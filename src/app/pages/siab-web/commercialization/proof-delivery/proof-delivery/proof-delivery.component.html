@@ -44,7 +44,7 @@
                 (change)="delegationChangeIndex()">
                 <option></option>
                 <option *ngFor="let item of delegations">
-                  {{ item.no_delegacion }}
+                  {{ item.delegacion_desc }}
                 </option>
               </select>
             </form-field>
@@ -87,7 +87,7 @@
     <!--  -->
     <div class="d-flex mb-3">
       <div class="ml-auto">
-        <button class="btn btn-danger btn-sm active mr-3">
+        <button class="btn btn-danger btn-sm active mr-3" (click)="resetForm()">
           Limpiar Filtros <i class="fas fa-eraser"> </i>
         </button>
         <button
@@ -100,16 +100,23 @@
       </div>
     </div>
     <!--  -->
-    <div class="mt-3" *ngIf="true">
+    <div class="d-flex mt-3" *ngIf="true">
       <div class="ml-auto mb-3">
         <div>
-          <app-columns-select [(settings)]="settings"></app-columns-select>
+          <app-columns-select
+            [(settings)]="settings"
+            [leftList]="true"></app-columns-select>
         </div>
       </div>
+    </div>
+    <div>
       <div>
         <ng2-smart-table
           [settings]="settings"
           [source]="data"></ng2-smart-table>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
   </div>
