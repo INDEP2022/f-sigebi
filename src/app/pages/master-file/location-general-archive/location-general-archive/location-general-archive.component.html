@@ -12,7 +12,7 @@
           <div class="row">
             <!--  -->
             <!--  -->
-            <div class="col-md-3">
+            <div class="col-md-6">
               <h5 class="text-center">Archivo General</h5>
               <!--  -->
               <ng2-smart-table
@@ -27,7 +27,7 @@
             </div>
             <!--  -->
             <!--  -->
-            <div class="col-md-3">
+            <div class="col-md-6">
               <h5 class="text-center">Bateria</h5>
               <!--  -->
               <ng2-smart-table
@@ -41,8 +41,10 @@
                 [totalItems]="totalItemsTwo"></app-pagination>
             </div>
             <!--  -->
+          </div>
+          <div class="row">
             <!--  -->
-            <div class="col-md-3">
+            <div class="col-md-6">
               <h5 class="text-center">Entrepaño</h5>
               <!--  -->
               <ng2-smart-table
@@ -57,7 +59,7 @@
             </div>
             <!--  -->
             <!--  -->
-            <div class="col-md-3">
+            <div class="col-md-6">
               <h5 class="text-center">Anaquel</h5>
               <!--  -->
               <ng2-smart-table
@@ -84,13 +86,18 @@
           </div>
         </div>
       </div>
+      <div class="d-flex">
+        <div class="ml-auto mt-5">
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="openModalExp()">
+            Ver Expedientes
+          </button>
+        </div>
+      </div>
     </div>
     <!--  -->
-    <br />
-    <br />
-    <br />
-    <div>
-      <h5>Lienzo #2</h5>
+    <ng-template #myModalExp>
       <div>
         <div class="col-md-12">
           <h5 class="text-center">Expedientes</h5>
@@ -105,13 +112,23 @@
             [totalItems]="totalItemsFive"></app-pagination>
         </div>
       </div>
-    </div>
+      <div class="d-flex">
+        <div class="ml-auto mb-3 mt-3">
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="openModalDoc()">
+            Ver Entradas Documentos
+          </button>
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="closeModal()">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </ng-template>
     <!--  -->
-    <br />
-    <br />
-    <br />
-    <div>
-      <h5>Lienzo #3</h5>
+    <ng-template #myModalDoc>
       <div>
         <div class="col-md-12">
           <h5 class="text-center">Documentos</h5>
@@ -134,7 +151,16 @@
           >
         </div>
       </div>
-    </div>
+      <div class="d-flex">
+        <div class="ml-auto mb-3 mt-3">
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="closeModal()">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </ng-template>
   </div>
   <!--  -->
 </app-card>

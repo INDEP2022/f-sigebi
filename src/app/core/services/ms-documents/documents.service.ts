@@ -33,6 +33,10 @@ export class DocumentsService extends HttpService {
     );
   }
 
+  getAllTwo(params?: ListParams) {
+    return this.get(DocumentsEndpoints.Documents, params);
+  }
+
   getAllFlyerNumber(
     flyerNumber: number,
     params?: ListParams | string

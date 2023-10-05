@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { SaveValueService } from 'src/app/core/services/catalogs/save-value.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { BatterysService } from 'src/app/core/services/save-values/battery.service';
 import { LockersService } from 'src/app/core/services/save-values/locker.service';
 import { ShelvessService } from 'src/app/core/services/save-values/shelves.service';
@@ -26,6 +30,13 @@ export class LocationGeneralArchiveComponent
   implements OnInit
 {
   //
+
+  //#region Vars
+  // Modal
+  @ViewChild('myModalExp', { static: true })
+  miModalExp: TemplateRef<any>;
+  @ViewChild('myModalDoc', { static: true })
+  miModalDoc: TemplateRef<any>;
 
   // Settings
   settingsTwo: any;
@@ -59,12 +70,17 @@ export class LocationGeneralArchiveComponent
   dataFour: LocalDataSource = new LocalDataSource();
   dataFive: LocalDataSource = new LocalDataSource();
   dataSix: LocalDataSource = new LocalDataSource();
+  //#endregion
 
+  //#region Initialization
   constructor(
     private serviceSave: SaveValueService,
     private serviceBattery: BatterysService,
     private serviceShelfOne: ShelvessService,
-    private serviceShelfTwo: LockersService
+    private serviceShelfTwo: LockersService,
+    private modalService: BsModalService,
+    private serviceExpedient: ExpedientService,
+    private serviceDocument: DocumentsService
   ) {
     super();
     this.settings = {
@@ -122,10 +138,19 @@ export class LocationGeneralArchiveComponent
     this.paramsFour.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       this.fullShelfFour();
     });
+    //
+    this.paramsFive.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.fullExpedient();
+    });
+    //
+    this.paramsSix.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.fullDocuments();
+    });
 
     // Load
     this.fullGeneralArchive();
   }
+  //#endregion
 
   //
 
@@ -205,6 +230,63 @@ export class LocationGeneralArchiveComponent
         this.dataFour.refresh();
       },
     });
+  }
+  //#endregion
+
+  //#region Modals
+  // Expedient
+  fullExpedient() {
+    let params = {
+      ...this.paramsFive.getValue(),
+    };
+    this.serviceExpedient.getAllTwo(params).subscribe({
+      next: response => {
+        this.totalItemsFive = response.count || 0;
+        this.dataFive.load(response.data);
+        this.dataFive.refresh();
+      },
+      error: error => {
+        this.dataFive.load([]);
+        this.dataFive.refresh();
+      },
+    });
+  }
+  openModalExp() {
+    this.modalService.show(this.miModalExp, {
+      ...MODAL_CONFIG,
+      class: 'modal-xl modal-dialog-centered',
+    });
+  }
+
+  // Documents
+  fullDocuments() {
+    let params = {
+      ...this.paramsSix.getValue(),
+    };
+    this.serviceDocument.getAllTwo(params).subscribe({
+      next: response => {
+        this.totalItemsSix = response.count || 0;
+        this.dataSix.load(response.data);
+        this.dataSix.refresh();
+      },
+      error: error => {
+        this.dataSix.load([]);
+        this.dataSix.refresh();
+      },
+    });
+  }
+  openModalDoc() {
+    this.closeModal();
+    setTimeout(() => {
+      this.modalService.show(this.miModalDoc, {
+        ...MODAL_CONFIG,
+        class: 'modal-xl modal-dialog-centered',
+      });
+    }, 1000);
+  }
+
+  closeModal() {
+    this.modalService.hide();
   }
   //#endregion
 

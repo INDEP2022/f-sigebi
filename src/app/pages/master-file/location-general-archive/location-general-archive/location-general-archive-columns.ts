@@ -1,3 +1,5 @@
+import { LocationGeneralRenderComponent } from './render-component/location-general-render/location-general-render.component';
+
 export const ARCHIVE_GENERAL = {
   id: {
     title: 'Cve.',
@@ -27,6 +29,16 @@ export const ARCHIVE_BATTERY = {
     type: 'string',
     sort: false,
   },
+  status: {
+    title: 'Estado',
+    type: 'custom',
+    sort: false,
+    filter: false,
+    renderComponent: LocationGeneralRenderComponent,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return { value: cell, type: 'battery', rowData: row };
+    },
+  },
 };
 //
 export const ARCHIVE_SHELF = {
@@ -39,6 +51,16 @@ export const ARCHIVE_SHELF = {
     title: 'Description',
     type: 'string',
     sort: false,
+  },
+  status: {
+    title: 'Estado',
+    type: 'custom',
+    sort: false,
+    filter: false,
+    renderComponent: LocationGeneralRenderComponent,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return { value: cell, type: 'battery', rowData: row };
+    },
   },
 };
 //
@@ -53,20 +75,30 @@ export const ARCHIVE_SHELF_FOUR = {
     type: 'string',
     sort: false,
   },
+  status: {
+    title: 'Estado',
+    type: 'custom',
+    sort: false,
+    filter: false,
+    renderComponent: LocationGeneralRenderComponent,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return { value: cell, type: 'battery', rowData: row };
+    },
+  },
 };
 //
 export const ARCHIVE_FILES = {
-  areaSends: {
+  id: {
     title: 'No. Expediente',
     type: 'string',
     sort: false,
   },
-  userRequestsScan: {
+  criminalCase: {
     title: 'Causa Penal',
     type: 'string',
     sort: false,
   },
-  files: {
+  preliminaryInquiry: {
     title: 'Averiguación Previa',
     type: 'string',
     sort: false,
@@ -74,29 +106,39 @@ export const ARCHIVE_FILES = {
 };
 //
 export const ARCHIVE_DOCUMENTS = {
-  areaSends: {
+  keyTypeDocument: {
     title: 'Tipo Documento',
     type: 'string',
     sort: false,
   },
-  userRequestsScan: {
+  descriptionDocument: {
     title: 'Descripción del Documento',
     type: 'string',
     sort: false,
   },
-  files: {
+  userRequestsScan: {
     title: 'Usuario',
     type: 'string',
     sort: false,
   },
-  filesReception: {
+  dateReceivesFile: {
     title: 'Fecha Recepción',
     type: 'string',
     sort: false,
   },
-  filesNatural: {
+  natureDocument: {
     title: 'Naturaleza',
     type: 'string',
     sort: false,
+  },
+  status: {
+    title: 'Estado',
+    type: 'custom',
+    sort: false,
+    filter: false,
+    renderComponent: LocationGeneralRenderComponent,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return { value: cell, type: 'documents', rowData: row };
+    },
   },
 };
