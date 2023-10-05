@@ -72,9 +72,9 @@
       <button
         (click)="sendJustify()"
         *ngIf="!showForm && sendNotification"
-        class="btn btn-pink btn-sm active">
+        class="btn btn-success btn-sm active">
         Enviar justificaci&oacute;n
-        <i class="fa fa-send" aria-hidden="true"></i>
+        <i class="bx bx-send" aria-hidden="true"></i>
       </button>
 
       <button
@@ -119,9 +119,9 @@
     </div>
 
     <app-comments-form
-      [ordServform]="ordServForm"
       [op]="op"
-      [showForm]="showForm"></app-comments-form>
+      [showForm]="showForm"
+      [programmingId]="programmingId"></app-comments-form>
 
     <app-event-detail-form [op]="task"></app-event-detail-form>
 
