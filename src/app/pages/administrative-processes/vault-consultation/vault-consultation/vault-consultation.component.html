@@ -17,6 +17,13 @@
             *ngIf="origin != null">
             Regresar <i class="bx bx-arrow-back bx-sm float-icon"></i>
           </button>
+          <button
+            class="btn btn-success btn-sm ml-2 active"
+            type="button"
+            (click)="exportAll()">
+            Exportar a Excel
+            <i class="bx bx-download float-icon"></i>
+          </button>
         </div>
       </div>
     </div>

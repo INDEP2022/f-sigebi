@@ -40,4 +40,5 @@ export enum GoodprocessEndpoints {
   GetUniRegister = 'application/get-lnu-register',
   ChangeStatusGood = 'application/changeStatusGood',
   UpdateGoodsByPackage = 'application/updateGoodByPackage',
+  blokOffice3 = 'application/blokOffice3',
 }
