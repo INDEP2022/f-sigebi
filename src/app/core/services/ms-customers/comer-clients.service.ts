@@ -112,4 +112,29 @@ export class ComerClientsService extends HttpService {
     const route = `${CustomersEndpoints.ComerClients}?filter.reasonName=$ilike:${client}`;
     return this.get(route, params);
   }
+
+  getCursorA(good: any) {
+    const route = `${CustomersEndpoints.cursorA}/${good}`;
+    return this.get(route);
+  }
+
+  getCursorB(good: any) {
+    const route = `${CustomersEndpoints.cursorB}/${good}`;
+    return this.get(route);
+  }
+
+  getCursorDesBienes(good: any) {
+    const route = `${CustomersEndpoints.cursorDesBienes}/${good}`;
+    return this.get(route);
+  }
+
+  getCursorBB(params: any) {
+    const route = `${CustomersEndpoints.cursorDesBienes}`;
+    return this.post(route, params);
+  }
+
+  getCursorAptFolio(params: any) {
+    const route = `${CustomersEndpoints.cursorAptFolio}`;
+    return this.post(route, params);
+  }
 }

@@ -301,4 +301,9 @@ export class GoodprocessService extends HttpService {
   updateGoodsByPackage(body: { pacakgeNumber: number; goodNumber: string }) {
     return this.post(`${GoodprocessEndpoints.UpdateGoodsByPackage}`, body);
   }
+
+  postBlokOffice3(params: any) {
+    const route = `${GoodprocessEndpoints.blokOffice3}`;
+    return this.post(route, params);
+  }
 }
