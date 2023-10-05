@@ -5,3 +5,14 @@ export interface ISaveValue {
   responsible?: string;
   noRegistration?: string;
 }
+
+export interface IUpdateMassive {
+  valueGuardKey: string;
+  batteryStatus: string;
+  shelfStatus: string;
+  lockerStatus: string;
+  batteryNumber: number;
+  shelfNumber: number;
+  lockerNumber: number;
+  fileNumber: number | string;
+}

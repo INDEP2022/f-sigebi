@@ -294,7 +294,7 @@ export class AuthorizationAssetsDestructionComponent
             item.di_ubicacion1 = `${
               item.good.almacen ? item.good.almacen.ubication : ''
             } LOTE ${item.good.lotNumber ? item.good.lotNumber.id : ''} RACK ${
-              item.good.rackNumber
+              item.good.rackNumber ?? ''
             }`;
             break;
           case 'B':
