@@ -3,11 +3,30 @@
     <h5 class="title">SOLICITUD PARA PAGO DE SERVICIOS</h5>
   </div>
   <div body>
-    <!-- <div class="row">
-      <div class="form-material col-md-4">
-        <search-bar [params]="params"></search-bar>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-xs-12 col-12 col-md-3 align-self-center">
+          <form-field
+            [control]="form.get('fechaSol')"
+            label="Fecha de Solicitud">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="fechaSol" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <app-services-shared
+            [form]="form"
+            [label]="'Servicios'"></app-services-shared>
+        </div>
+        <div class="col-md-3">
+          <button class="btn btn-primary active btn-sm" (click)="search()">
+            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
       </div>
-    </div> -->
+    </form>
     <div class="row pt-4">
       <div class="ch-content mb-2">
         <div class="col-12 buttons p-0">
@@ -39,6 +58,7 @@
             [settings]="settings"
             [source]="localdata"
             (edit)="openGlobal($event.data.request)"
+            (delete)="deleteFile($event.data)"
             (userRowSelect)="selectRows($event.selected)">
           </ng2-smart-table>
         </div>
@@ -47,15 +67,15 @@
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
 
-    <!-- <div class="row mb-3 mt-3">
+    <div class="row mb-3 mt-3">
       <div class="col-lg-3 col-md-6 col-sm-12 col-12">
         <div class="mt-4">
           <h5 class="font-size-14">Estatus</h5>
           <p class="text-muted mb-0">
-            {{ selectedRow?.estatus.descriptionStatus }}
+            {{ selectedRow?.status }}
           </p>
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
 </app-card>

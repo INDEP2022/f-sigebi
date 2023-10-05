@@ -6,6 +6,9 @@ export const COLUMNS = {
     title: 'Pagado',
     type: 'custom',
     renderComponent: CheckboxElementComponent,
+    valuePrepareFunction: (isSelected: any, row: any) => {
+      return row.isPayment == 'S' ? true : false;
+    },
     onComponentInitFunction: (instance: any) => {},
     sort: false,
   },

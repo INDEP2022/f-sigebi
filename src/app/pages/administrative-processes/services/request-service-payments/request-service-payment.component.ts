@@ -11,6 +11,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 //Components
 import { LocalDataSource } from 'ng2-smart-table';
+import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { PaymentServicesService } from 'src/app/core/services/ms-paymentservices/payment-services.service';
 import { GoodsServicePaymentComponent } from '../goods-service-payments/goods-service-payment.component';
 import { RequestServiceFormComponent } from '../request-service-form/request-service-form.component';
@@ -39,12 +41,15 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private modalService: BsModalService,
-    private paymentServicesService: PaymentServicesService
+    private paymentServicesService: PaymentServicesService,
+    private authorityService: AuthorityService,
+    private goodService: GoodService
   ) {
     super();
     this.settings = {
       ...this.settings,
-      actions: { add: true, delete: true, position: 'right' },
+      hideSubHeader: false,
+      actions: { add: false, delete: true, position: 'right' },
       columns: COLUMNS,
     };
   }
@@ -78,12 +83,14 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'request':
+                field = 'filter.payServiceNumber';
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'goodNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'service':
+                field = 'filter.serviceKey';
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'requestDate':
@@ -93,6 +100,7 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'amount':
+                field = 'filter.cost';
                 searchFilter = SearchFilter.ILIKE;
                 break;
               default:
@@ -117,7 +125,8 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.form = this.fb.group({
       applicationDate: [null, [Validators.required]],
-      pb_type: ['pb_lista', [Validators.required]],
+      service: [null, [Validators.required]],
+      fechaSol: [null, [Validators.required]],
     });
   }
 
@@ -133,11 +142,12 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
     ]);
   }
 
-  selectRows(rows: any[]) {
+  selectRows(rows: any) {
     console.log('row ', rows);
     if (rows.length > 0) {
-      this.selectedRow = rows;
+      this.selectedRow = rows[0];
       console.log('Rows Selected->', this.selectedRow);
+      this.statusGood(this.selectedRow.service);
       this.flagGoods = true;
     } else {
       this.flagGoods = false;
@@ -177,42 +187,81 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
   }
 
   getTableData() {
-    /**this.dataRows = [];*/
+    this.dataRows = [];
     const params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    /**Data de la tabla de el microservicio que está caido */
-    /**Falta el agregar nuevo registro a la tabla */
-    /**this.dataRows.push(item);
-                    this.localdata.load(this.dataRows);
-                    console.log('this dataRows: ', this.dataRows);
-                    console.log('this localData: ', this.localdata);
-                    this.totalItems = res.count; */
     this.paymentServicesService.getPayment(params).subscribe({
       next: resp => {
         if (resp != null && resp != undefined) {
+          const params = new ListParams();
           console.log('Resp Data-> ', resp);
+          const _params: any = params;
+
           for (let i = 0; i < resp.data.length; i++) {
-            let item = {
-              request: resp.data[i].payServiceNumber,
-              goodNumber: resp.data[i].goodNumber,
-              descriptionGood: 'data del bien',
-              service: resp.data[i].serviceKey,
-              descriptionService: 'data del servicio',
-              requestDate: resp.data[i].applicationDate,
-              paymentDate: resp.data[i].payDate,
-              amount: resp.data[i].cost,
-              goodStatus: 'status goo',
-            };
-            this.dataRows.push(item);
-            this.localdata.load(this.dataRows);
-            this.localdata.refresh();
+            _params['filter.code'] = `$eq:${resp.data[i].serviceKey}`;
+            this.authorityService
+              .getDescriptionService(_params)
+              .subscribe(response => {
+                this.goodService
+                  .getStatus(resp.data[i].good.status)
+                  .subscribe(status => {
+                    let item = {
+                      request: resp.data[i].payServiceNumber,
+                      goodNumber: resp.data[i].goodNumber,
+                      descriptionGood: resp.data[i].good.description,
+                      service: resp.data[i].serviceKey,
+                      descriptionService: response.data[0].description,
+                      requestDate: resp.data[i].applicationDate,
+                      paymentDate: resp.data[i].payDate,
+                      amount: resp.data[i].cost,
+                      isPayment: resp.data[i].payDate != null ? 'S' : 'N',
+                      goodStatus: resp.data[i].good.status,
+
+                      status: status.description,
+                    };
+                    this.dataRows.push(item);
+                    this.localdata.load(this.dataRows);
+                    this.localdata.refresh();
+                  });
+              });
           }
+          console.log('Total items-> ', this.dataRows);
           this.totalItems = resp.count;
         }
       },
       error: err => {},
     });
+  }
+
+  statusGood(status: any) {
+    this.goodService.getStatus(status).subscribe({
+      next: resp => {
+        console.log('statusGood-> ', resp);
+      },
+      error: err => {},
+    });
+  }
+
+  search() {}
+
+  deleteFile(params: any) {
+    console.log('paramsDelete->', params);
+    if (params.paymentDate != null) {
+      this.alert(
+        'error',
+        'No puede eliminar una solicitud que ya fue atendida',
+        ''
+      );
+    } else {
+      /**Delete */
+      this.paymentServicesService.deletePayment(params.request).subscribe({
+        next: resp => {
+          console.log('Delete-> ', resp);
+        },
+        error: err => {},
+      });
+    }
   }
 }

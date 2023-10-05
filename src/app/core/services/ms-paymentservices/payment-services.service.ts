@@ -20,4 +20,8 @@ export class PaymentServicesService extends HttpService {
   getPayment(params?: _Params) {
     return this.get(PaymentServicesEndPoints.Payment, params);
   }
+
+  deletePayment(id: number) {
+    return this.delete(`${PaymentServicesEndPoints.Payment}/${id}`);
+  }
 }

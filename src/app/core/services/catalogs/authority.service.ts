@@ -216,4 +216,8 @@ export class AuthorityService
     const route = `${AuthorityEndpoints.getDataQuery}?virDelegation=${delegation}&noWarehouse=${noWarehouse}`;
     return this.get(route);
   }
+
+  getDescriptionService(params: ListParams) {
+    return this.get(AuthorityEndpoints.ServiceCat, params);
+  }
 }
