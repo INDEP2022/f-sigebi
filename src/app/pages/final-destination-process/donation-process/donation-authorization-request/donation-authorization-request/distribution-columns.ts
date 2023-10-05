@@ -29,8 +29,6 @@ export const DISTRIBUTION_COLUMNS = {
       const numericAmount = parseFloat(amount);
       if (!isNaN(numericAmount)) {
         return numericAmount.toLocaleString('en-US', {
-          // style: 'currency',
-          // currency: 'USD',
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
@@ -116,61 +114,61 @@ export const PROPOSEL_COLUMN = {
 };
 
 export const REQUEST_GOOD_COLUMN = {
-  // goodNumber : {
-  //   title: 'Id. Propuesta',
-  //   sort: false,
-  // },
-  // ID_SOLICITUD: {
-  //   title: 'No. Solicitud',
-  //   sort: false,
-  // },
-  // FEC_PROPUESTA: {
-  //   title: 'Fecha de Propuesta',
-  //   sort: false,
-  //   valuePrepareFunction: (text: string) => {
-  //     return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
-  //   },
-  //   filter: {
-  //     type: 'custom',
-  //     component: CustomDateFilterComponent,
-  //   },
-  // },
-  // CANT_SOLICITADA: {
-  //   title: 'Cantidad Solicitada',
-  //   sort: false,
-  // },
-  // CANT_PROPUESTA: {
-  //   title: 'Cantidad de Propuesta',
-  //   sort: false,
-  // },
-  // CANT_DONADA: {
-  //   title: 'Cantidad Donada',
-  //   sort: false,
-  // },
-  // FEC_ENTREGA: {
-  //   title: 'Fecha de Entrega',
-  //   sort: false,
-  //   valuePrepareFunction: (text: string) => {
-  //     return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
-  //   },
-  //   filter: {
-  //     type: 'custom',
-  //     component: CustomDateFilterComponent,
-  //   },
-  // },
-  // FEC_AUTORIZA: {
-  //   title: 'Fecha Autorizada',
-  //   sort: false,
-  //   valuePrepareFunction: (text: string) => {
-  //     return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
-  //   },
-  //   filter: {
-  //     type: 'custom',
-  //     component: CustomDateFilterComponent,
-  //   },
-  // },
-  // PRP_ESTATUS: {
-  //   title: 'Estatus de Propuesta',
-  //   sort: false,
-  // },
+  goodNumber: {
+    title: 'Id. Propuesta',
+    sort: false,
+  },
+  ID_SOLICITUD: {
+    title: 'No. Solicitud',
+    sort: false,
+  },
+  FEC_PROPUESTA: {
+    title: 'Fecha de Propuesta',
+    sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  CANT_SOLICITADA: {
+    title: 'Cantidad Solicitada',
+    sort: false,
+  },
+  CANT_PROPUESTA: {
+    title: 'Cantidad de Propuesta',
+    sort: false,
+  },
+  CANT_DONADA: {
+    title: 'Cantidad Donada',
+    sort: false,
+  },
+  FEC_ENTREGA: {
+    title: 'Fecha de Entrega',
+    sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  FEC_AUTORIZA: {
+    title: 'Fecha Autorizada',
+    sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  PRP_ESTATUS: {
+    title: 'Estatus de Propuesta',
+    sort: false,
+  },
 };

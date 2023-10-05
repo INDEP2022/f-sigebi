@@ -135,7 +135,10 @@ export class DonationService
   getGoodsDonation(params: ListParams) {
     return this.get(DonationEndPoint.GoodsForDonation, params);
   }
-  getGoodRequest(parmas: ListParams) {
-    return this.get(route, parmas);
+  getGoodRequest(requestId: number, parmas: ListParams) {
+    return this.get(
+      `donac-request-good?filter.requestId.id=$eq:${requestId}`,
+      parmas
+    );
   }
 }
