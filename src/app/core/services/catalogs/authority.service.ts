@@ -217,6 +217,10 @@ export class AuthorityService
     return this.get(route);
   }
 
+  getDescriptionService(params: ListParams) {
+    return this.get(AuthorityEndpoints.ServiceCat, params);
+  }
+
   getobtnCityQuery(Nogestion: any) {
     const route = `${AuthorityEndpoints.getDataQuery}/${Nogestion}`;
     return this.get(route);
