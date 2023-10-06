@@ -22,4 +22,5 @@ export enum UserEndpoints {
   GetUserOt = 'seg-users/getuserOt',
   SpInsertWithcopyOfficial = 'seg-users/sp-insert-withcopy-official',
   ComerUser = 'comer-usersautxcanc',
+  viewPrev = 'application/btnViewPrev',
 }

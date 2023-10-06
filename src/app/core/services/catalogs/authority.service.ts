@@ -216,4 +216,9 @@ export class AuthorityService
     const route = `${AuthorityEndpoints.getDataQuery}?virDelegation=${delegation}&noWarehouse=${noWarehouse}`;
     return this.get(route);
   }
+
+  getobtnCityQuery(Nogestion: any) {
+    const route = `${AuthorityEndpoints.getDataQuery}/${Nogestion}`;
+    return this.get(route);
+  }
 }
