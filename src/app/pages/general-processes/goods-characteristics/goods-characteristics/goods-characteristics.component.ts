@@ -335,23 +335,24 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         }
       },
     });
-    this.goodUnit.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: unit => {
-        let results = this.medFilters.filter(x => x.idUnitDestine === unit);
-        if (results && results.length > 0) {
-          this.resetValidatorsQuantity();
-          if (results[0].decimals === 'S') {
-            this.goodQuantity.addValidators(
-              Validators.pattern(DOUBLE_POSITIVE_PATTERN)
-            );
-          } else {
-            this.goodQuantity.addValidators(
-              Validators.pattern(POSITVE_NUMBERS_PATTERN)
-            );
-          }
-        }
-      },
-    });
+  }
+
+  updateQuantity(event: any) {
+    if (event === null) {
+      return;
+    }
+    this.resetValidatorsQuantity();
+    if (event.medUnitsEntity && event.medUnitsEntity[0]) {
+      if (event.medUnitsEntity[0].decimals === 'S') {
+        this.goodQuantity.addValidators(
+          Validators.pattern(DOUBLE_POSITIVE_PATTERN)
+        );
+      } else {
+        this.goodQuantity.addValidators(
+          Validators.pattern(POSITVE_NUMBERS_PATTERN)
+        );
+      }
+    }
   }
 
   override ngAfterViewInit(): void {
@@ -921,7 +922,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   private fillParams(byPage = false) {
     // debugger;
-    this.bodyGoodCharacteristics = {};
+    // this.bodyGoodCharacteristics = {};
     if (byPage) {
       this.filterParams.page = this.params.getValue().page;
       return true;
@@ -1023,7 +1024,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
     this.medFilters =
       item.unit && this.meds
-        ? this.meds.filter(x => x.idUnitDestine === item.unit)
+        ? this.meds.filter(x => x.unit === item.unit)
         : null;
     console.log(this.medFilters);
     if (this.medFilters) {
@@ -1067,9 +1068,11 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   getMax() {
-    let results = this.medFilters.filter(
-      x => x.idUnitDestine === this.goodUnit.value
-    );
+    let results = this.medFilters
+      ? [...this.medFilters].filter(
+          x => x.idUnitDestine === this.goodUnit.value
+        )
+      : null;
     return results
       ? results.length > 0
         ? results[0].tpUnitGreater === 'N'
