@@ -1117,7 +1117,10 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
           }),
           catchError(err => {
             if (
-              err.error.message == 'Se requiere delegationNumber en el objeto 0'
+              err.error.message ==
+                'Se requiere delegationNumber en el objeto 0' ||
+              err.error.message ==
+                'Se requiere subDelegationNumber en el objeto 0'
             ) {
               this.alert('warning', 'Bienes no validos', '');
               this.clear();
