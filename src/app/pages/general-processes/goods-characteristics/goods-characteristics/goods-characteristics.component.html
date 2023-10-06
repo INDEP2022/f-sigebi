@@ -291,7 +291,8 @@
                         value="unit"
                         bindLabel="unit"
                         paramSearch="filter.unit"
-                        prefixSearch="$ilike">
+                        prefixSearch="$ilike"
+                        (valueChange)="updateQuantity($event)">
                       </ng-custom-select-loading>
                     </div>
 

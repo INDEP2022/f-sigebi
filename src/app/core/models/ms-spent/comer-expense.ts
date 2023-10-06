@@ -1,4 +1,4 @@
-export interface IComerExpense {
+export interface IComerExpenseDTO {
   expenseNumber: string;
   conceptNumber: string;
   comment: string;
@@ -55,6 +55,9 @@ export interface IComerExpense {
   adj?: any;
   spFolio?: any;
   indicator?: any;
+}
+
+export interface IComerExpense extends IComerExpenseDTO {
   comerLot: IComerLot;
   concepts: IConcepts;
   comerEven: IComerEven;
