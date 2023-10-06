@@ -35,7 +35,7 @@
               <input
                 class="form-control"
                 formControlName="goodId"
-                (change)="goodNumChange()"
+                (input)="goodNumChange()"
                 type="number" />
             </form-field>
             <form-field
@@ -52,7 +52,8 @@
               <input
                 class="form-control"
                 formControlName="cveManagement"
-                type="text" />
+                type="text"
+                readonly />
             </form-field>
             <form-field
               class="col-md-4"
@@ -71,7 +72,8 @@
               <input
                 class="form-control"
                 formControlName="statusOf"
-                type="text" />
+                type="text"
+                readonly />
             </form-field>
           </div>
           <div class="row pt-4">
@@ -80,7 +82,11 @@
               class="col-md-4"
               label="Evento"
               [control]="form.get('event')">
-              <input class="form-control" formControlName="event" type="text" />
+              <input
+                class="form-control"
+                formControlName="event"
+                type="text"
+                (input)="eventInput()" />
             </form-field>
 
             <form-field
@@ -240,13 +246,37 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="goods">
+            [source]="localGoods">
           </ng2-smart-table>
         </div>
       </div>
     </div>
     <app-pagination [filterParams]="goodsParams" [totalItems]="totalGoods">
     </app-pagination>
+    <form class="form-material" [formGroup]="form">
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field label="Estado" [control]="form.get('status')">
+            <input
+              class="form-control"
+              formControlName="status"
+              type="text"
+              readOnly />
+          </form-field>
+        </div>
+        <div class="col-md-8">
+          <form-field
+            label="Descripción Estado"
+            [control]="form.get('desStatus')">
+            <input
+              class="form-control"
+              formControlName="desStatus"
+              type="text"
+              readOnly />
+          </form-field>
+        </div>
+      </div>
+    </form>
     <!--DOCS TABLE-->
     <div class="row justify-content-end mr-1">
       <div class="ch-content">

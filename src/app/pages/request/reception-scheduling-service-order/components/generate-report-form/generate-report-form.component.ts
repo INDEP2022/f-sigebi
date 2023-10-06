@@ -14,7 +14,9 @@ export class GenerateReportFormComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   formAnnexW: FormGroup = new FormGroup({});
   processFirm: string = '';
+  task: number = 0;
   minDate = new Date();
+  typeSig: string = '';
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -61,6 +63,7 @@ export class GenerateReportFormComponent extends BasePage implements OnInit {
         error: error => {},
       });
     } else {
+      if (this.task == 5) this.form.get('electronicSignature').setValue(true);
       this.modalRef.content.callback(true, this.form.value);
       this.close();
     }

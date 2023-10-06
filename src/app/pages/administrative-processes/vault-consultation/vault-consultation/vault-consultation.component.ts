@@ -140,6 +140,7 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
       },
     });
   }
+  exportAll() {}
 
   openForm(provider?: ISafe) {
     const modalConfig = MODAL_CONFIG;

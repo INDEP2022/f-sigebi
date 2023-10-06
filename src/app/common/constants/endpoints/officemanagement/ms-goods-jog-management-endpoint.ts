@@ -9,4 +9,6 @@ export enum GoodsJobManagementEndpoints {
   documentJobMan = 'document-job-management',
   copiesJobMana = 'copies-job-management',
   updateMJob = 'application/get-m-job-management-update',
+  blockOfficel = 'application/blokOffice1',
+  getallV2 = 'goods-job-management/getAllV2',
 }

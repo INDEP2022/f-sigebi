@@ -126,8 +126,8 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
       noBienNum: [null, Validators.required],
       statusBien: ['', Validators.required, Validators.pattern(STRING_PATTERN)],
       date: ['', [Validators.required]],
-      price: [null, Validators.required],
-      spend: [null, [Validators.required]],
+      price: [null],
+      spend: [null],
       totalIva: [null],
       total: [null],
     });
@@ -176,7 +176,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
           this.validPermisos = false;
           console.log('sin permisos');
           this.alert(
-            'info',
+            'warning',
             'No tiene permiso de Lectura y/o Escritura sobre la Pantalla',
             ''
           );
@@ -224,10 +224,10 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
       title: 'Seleccionar bien',
       ms: 'good',
       columns: {
-        id: { title: 'No. Bien' },
-        description: { title: 'Descripción' },
-        status: { title: 'Estatus' },
-        fileNumber: { title: 'No. Expediente' },
+        id: { title: 'No. Bien', sort: false },
+        description: { title: 'Descripción', sort: false },
+        status: { title: 'Estatus', sort: false },
+        fileNumber: { title: 'No. Expediente', sort: false },
       },
       path: 'good',
       queryParams: { 'filter.goodReferenceNumber': this.formGood.value.id },

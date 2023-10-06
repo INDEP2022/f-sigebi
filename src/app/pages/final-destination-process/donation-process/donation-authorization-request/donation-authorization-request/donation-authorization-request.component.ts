@@ -210,16 +210,16 @@ export class DonationAuthorizationRequestComponent
     this.form.reset();
     this.proposeDefault = null;
     this.dataFacRequest.load([]);
-    localStorage.setItem('proposal', '');
-    localStorage.setItem('request', '');
+    localStorage.removeItem('proposal');
+    localStorage.removeItem('request');
   }
 
   cleanForm() {
     this.form.reset();
     this.file = [];
     this.dataFacRequest.load([]);
-    localStorage.setItem('proposal', '');
-    localStorage.setItem('request', '');
+    localStorage.removeItem('proposal');
+    localStorage.removeItem('request');
   }
   async getProposalId(params: ListParams) {
     this.proposelServiceService.getIdPropose(params).subscribe({
@@ -257,15 +257,19 @@ export class DonationAuthorizationRequestComponent
     this.loadingReq = true;
     // this.params.getValue()['filter.numFile'] = this.expedienteNumber;
     let params = new ListParams();
-    params['?filter.requestId.id'] = this.requestId;
+    console.log(this.requestId);
     params['requestTypeId'] = 'SD';
     params['sunStatus'] = 'A';
-    this.donationService.getGoodRequest(params).subscribe({
+    this.donationService.getGoodRequest(this.requestId, params).subscribe({
       next: data => {
         this.loadingReq = false;
         this.dataGoodsFact.load(data.data);
         console.log(data.data);
-        // this.totalGoods = data.data.reduce((acc: any, item: any) => acc + item.qua, 0);
+        this.totalGoods = data.data.reduce(
+          (acc: any, item: any) => acc + (item.gppdId.quantity ?? 0),
+          0
+        );
+        console.log(this.totalGoods);
       },
     });
   }
