@@ -137,14 +137,20 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
   loadFinancial(idGood: number | string) {
     this.finantialInformationService.findGood(idGood).subscribe({
       next: response => {
-        this.finantialList = response.data;
-        // console.log(this.finantialList);
-        this.finantialList.forEach(date => {
-          this.date = this.datePipe.transform(date.idInfoDate, 'dd/MM/yyyy');
-        });
-        this.searchGoods(idGood);
-        this.form.controls['date'].setValue(this.date);
-        this.totalItems2 = response.count;
+        console.log('loadFinancialTbl1-> ', response);
+        for (let i = 0; i < response.data.length; i++) {
+          this.finantialInformationService
+            .getAttributesInfoFinancial(response.data[0].idAttributeNumber)
+            .subscribe(resp => {
+              /*let data1 = {
+              idGoodNumber: ,
+              description: ,
+              value:
+            };*/
+            });
+          this.form.controls['date'].setValue(this.date);
+          this.totalItems2 = response.count;
+        }
       },
       error: err => {
         this.onLoadToast(
