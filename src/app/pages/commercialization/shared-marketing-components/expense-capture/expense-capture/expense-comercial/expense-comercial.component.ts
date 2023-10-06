@@ -24,6 +24,7 @@ import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/p
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
+import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared';
 import { secondFormatDateToDate } from 'src/app/shared/utils/date';
@@ -79,6 +80,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     private dataService: ExpenseCaptureDataService,
     private spentMService: SpentMService,
     private spentIService: SpentIService,
+    private spentService2: SpentService,
     private comerEventService: ComerEventosService,
     private screenService: ExpenseScreenService,
     private modalService: BsModalService,
@@ -113,6 +115,46 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       });
     // console.log(user);
     this.prepareForm();
+  }
+
+  save() {
+    if (this.expenseNumber.value === null) {
+      this.spentService2
+        .save(this.form.value)
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            if (response && response.data) {
+              this.alert(
+                'success',
+                'Captura de Gastos',
+                'Gasto creado correctamente'
+              );
+            }
+          },
+          error: err => {
+            this.alert('error', 'Creación de Gasto', err.error.message);
+          },
+        });
+    } else {
+      this.spentService2
+        .edit(this.form.value)
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            if (response && response.data) {
+              this.alert(
+                'success',
+                'Captura de Gastos',
+                'Gasto actualizado correctamente'
+              );
+            }
+          },
+          error: err => {
+            this.alert('error', 'Actualización de Gasto', err.error.message);
+          },
+        });
+    }
   }
 
   get spentService() {
