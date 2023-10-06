@@ -24,4 +24,8 @@ export class PaymentServicesService extends HttpService {
   deletePayment(id: number) {
     return this.delete(`${PaymentServicesEndPoints.Payment}/${id}`);
   }
+
+  postPayment(body: any) {
+    return this.post(PaymentServicesEndPoints.Payment, body);
+  }
 }

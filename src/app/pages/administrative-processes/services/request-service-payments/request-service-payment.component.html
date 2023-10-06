@@ -15,13 +15,11 @@
               formControlName="fechaSol" />
           </form-field>
         </div>
-        <div class="col-md-6">
-          <app-services-shared
-            [form]="form"
-            [label]="'Servicios'"></app-services-shared>
-        </div>
-        <div class="col-md-3">
-          <button class="btn btn-primary active btn-sm" (click)="search()">
+        <div class="col-md-3 mt-3">
+          <button
+            class="btn btn-primary active btn-sm"
+            (click)="getallCondition()"
+            [disabled]="this.form.invalid">
             Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>

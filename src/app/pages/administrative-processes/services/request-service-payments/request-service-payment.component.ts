@@ -33,6 +33,8 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
 
   flagGoods: boolean = false;
 
+  flagData: boolean = false;
+
   selectedRow: any;
   //Columns
   columns = COLUMNS;
@@ -67,6 +69,10 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
         });
       }
     }*/
+    this.filterTable();
+  }
+
+  filterTable() {
     this.localdata
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -114,18 +120,29 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getTableData();
+          this.listAppraisal(this.flagData);
         }
       });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getTableData());
+      .subscribe(() => this.listAppraisal(this.flagData));
+  }
+
+  listAppraisal(flagData: boolean) {
+    if (flagData != true) {
+      return;
+    }
+    this.search();
+  }
+
+  getallCondition() {
+    this.flagData = true;
+    this.listAppraisal(this.flagData);
   }
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      applicationDate: [null, [Validators.required]],
-      service: [null, [Validators.required]],
+      applicationDate: [null],
       fechaSol: [null, [Validators.required]],
     });
   }
@@ -156,6 +173,8 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
   }
 
   openModal(modData?: any) {
+    let dateSol = this.form.get('fechaSol').value;
+    this.selectedRow.fechaSol = dateSol;
     modData = this.selectedRow;
     const modalRef = this.modalService.show(GoodsServicePaymentComponent, {
       initialState: {
@@ -188,11 +207,18 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
 
   getTableData() {
     this.dataRows = [];
-    const params = {
+    const { fechaSol } = this.form.value;
+    // const params = {
+    //   ...this.params.getValue(),
+    //   ...this.columnFilters,
+    // };
+
+    const parametros = {
       ...this.params.getValue(),
-      ...this.columnFilters,
+      'filter.applicationDate': `$eq:${this.formatDate(fechaSol)}`,
     };
-    this.paymentServicesService.getPayment(params).subscribe({
+
+    this.paymentServicesService.getPayment(parametros).subscribe({
       next: resp => {
         if (resp != null && resp != undefined) {
           const params = new ListParams();
@@ -244,7 +270,9 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
     });
   }
 
-  search() {}
+  search() {
+    this.getTableData();
+  }
 
   deleteFile(params: any) {
     console.log('paramsDelete->', params);
@@ -263,5 +291,12 @@ export class RequestServicePaymentComponent extends BasePage implements OnInit {
         error: err => {},
       });
     }
+  }
+
+  formatDate(date: Date): string {
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear().toString();
+    return `${year}-${month}-${day}`;
   }
 }
