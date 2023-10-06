@@ -41,4 +41,5 @@ export enum GoodprocessEndpoints {
   ChangeStatusGood = 'application/changeStatusGood',
   UpdateGoodsByPackage = 'application/updateGoodByPackage',
   PostPupInsertGoods = 'fconadbmonavaluos/pup-insert-goods-aux-v2',
+  blokOffice3 = 'application/blokOffice3',
 }

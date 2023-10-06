@@ -305,4 +305,9 @@ export class GoodprocessService extends HttpService {
   postPupInsertGoodsAux(body: any) {
     return this.post(`${GoodprocessEndpoints.PostPupInsertGoods}`, body);
   }
+
+  postBlokOffice3(params: any) {
+    const route = `${GoodprocessEndpoints.blokOffice3}`;
+    return this.post(route, params);
+  }
 }
