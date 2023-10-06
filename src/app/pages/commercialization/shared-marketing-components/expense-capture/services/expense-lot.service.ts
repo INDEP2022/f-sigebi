@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import {
   ICancelVtaDTO,
   IDivideCommandsDTO,
@@ -18,6 +18,10 @@ export class ExpenseLotService extends HttpService {
   constructor() {
     super();
     this.microservice = LotEndpoints.BasePath;
+  }
+
+  getAll(_params: _Params) {
+    return this.get(this.endpoint, _params);
   }
 
   PUF_VALIDA_PAGOXEVENTO(body: ILotDTO) {
