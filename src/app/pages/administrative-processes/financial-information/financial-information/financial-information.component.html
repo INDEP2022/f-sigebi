@@ -19,6 +19,17 @@
               [placeholder]="'N&uacute;mero de Bien'">
             </search-bar-simple>
           </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('goodDescription')"
+              label="Descripción">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="goodDescription"
+                readonly />
+            </form-field>
+          </div>
         </div>
         <br /><br /><br /><br />
         <div class="row mt-4">

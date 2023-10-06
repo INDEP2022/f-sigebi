@@ -101,6 +101,7 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
       dictaminatedBy: [null],
       avaluo: [null],
       observations: [null],
+      goodDescription: [null],
     });
   }
   onChangeGood() {
@@ -119,11 +120,12 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
         this.form.controls['dictaminatedBy'].setValue(this.proficientOpinion);
         this.form.controls['avaluo'].setValue(this.valuerOpinion);
         this.form.controls['observations'].setValue(this.observations);
+        this.form.controls['goodDescription'].setValue(this.description);
         this.goodList.push(this.good);
         this.goodList.map(function (data) {
           return { value: data, title: data };
         });
-        console.log(this.goodList);
+        console.log('data-> ', this.goodList);
       },
       error: err => {
         this.onLoadToast('error', 'ERROR', 'Bien no existe');
