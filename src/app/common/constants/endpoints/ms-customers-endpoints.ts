@@ -13,4 +13,5 @@ export enum CustomersEndpoints {
   cursorDesBienes = 'application/cursorDesBienes',
   cursorBB = 'application/cursorBB',
   cursorAptFolio = 'application/cursorAptFolio',
+  cursor1 = 'application/cursor1',
 }
