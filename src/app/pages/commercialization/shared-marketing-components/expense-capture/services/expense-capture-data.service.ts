@@ -645,6 +645,28 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       return false;
     }
     if (this.PDEVPARCIAL === 'S') {
+      let filterParams = new FilterParams();
+      filterParams.addFilter('idEvent', this.eventNumber.value);
+      filterParams.addFilter('idLot', this.lotNumber.value);
+      filterParams.addFilter('idStatusvtant', 'PAG');
+
+      let lotes = await firstValueFrom(
+        this.lotService.getAll(filterParams.getParams()).pipe(
+          take(1),
+          catchError(x => of({ data: [] })),
+          map(x => x.data)
+        )
+      );
+      if (lotes && lotes.length > 0) {
+        return true;
+      } else {
+        this.alert(
+          'warning',
+          'Validación Lote',
+          'El lote especificado no es válido para devolución parcial no se puede proceder'
+        );
+        return false;
+      }
     }
     // SearchFilter;
     return true;
