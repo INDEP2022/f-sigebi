@@ -12,6 +12,7 @@ import {
   IFilterDonation,
   IGoodDonation,
 } from '../../models/ms-donation/donation.model';
+import { IDeleteGoodDon } from '../../models/sirsae-model/proposel-model/proposel-model';
 
 const api: string = DonationEndPoint.donation;
 const donationEvent = DonationEndPoint.eventComDonation;
@@ -144,5 +145,8 @@ export class DonationService
   }
   createDetail(body: IDetailDonation) {
     return this.post(DonationEndPoint.DetailEventComDon, body);
+  }
+  deleteGoodDon(body: IDeleteGoodDon) {
+    return this.post(DonationEndPoint.DeleteGoodDon, body);
   }
 }

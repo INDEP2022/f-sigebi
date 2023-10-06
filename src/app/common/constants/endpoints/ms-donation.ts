@@ -13,4 +13,5 @@ export enum DonationEndPoint {
   ApproveDnation = 'r-approve-donation',
   GoodsForDonation = 'admon-donation',
   RequestGoodDon = 'donac-request-good',
+  DeleteGoodDon = 'pup-delete-detail',
 }

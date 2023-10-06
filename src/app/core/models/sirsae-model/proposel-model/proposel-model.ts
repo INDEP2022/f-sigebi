@@ -21,3 +21,10 @@ export interface IRequest {
   proposalCve: string;
   requestTypeId: string;
 }
+
+export interface IDeleteGoodDon {
+  pRequestId: number;
+  pGoodNumber: number;
+  pStatus: string;
+  pUser: string;
+}

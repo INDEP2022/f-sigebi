@@ -74,12 +74,13 @@
           Propuesta
           <i class="bx bx-search bx-sm float-icon"></i>
         </button>
+
         <button
-          (click)="agregarBienes()"
+          class="btn btn-success btn-sm active me-2"
           type="button"
-          class="btn btn-sucess active btn-sm mr-3">
+          (click)="agregarBienes()">
           Rastreador de Bienes
-          <i class="bx bx-plus bx-sm float-icon"></i>
+          <i class="bx bx-find float-icon"></i>
         </button>
         <button type="button" class="btn btn-info active btn-sm mr-3">
           Asociar
@@ -125,8 +126,6 @@
         </div>
       </form>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
 
     <h5 class="mt-5">Distribuci&oacute;n de Solicitudes con Bienes</h5>
     <!-- <div class="row justify-content-end mt-3">
@@ -139,10 +138,11 @@
       <ng2-smart-table
         [attr.class]="'table-bordered'"
         [settings]="settings3"
-        [source]="dataGoodsFact">
+        [source]="dataGoodsFact"
+        (userRowSelect)="onUserRowSelect($event)">
       </ng2-smart-table>
     </div>
-    <!-- <app-goods-list [files]="files" [changeDescription]="changeDescription"></app-goods-list> -->
+
     <div class="">
       <form class="form-material form-horizontal" [formGroup]="formTable2">
         <div class="row mt-5">

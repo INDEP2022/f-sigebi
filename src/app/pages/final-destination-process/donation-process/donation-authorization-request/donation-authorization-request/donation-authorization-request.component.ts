@@ -8,9 +8,11 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IGoodDonation } from 'src/app/core/models/ms-donation/donation.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import {
+  IDeleteGoodDon,
   IProposel,
   IRequest,
 } from 'src/app/core/models/sirsae-model/proposel-model/proposel-model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { ProposelServiceService } from 'src/app/core/services/ms-proposel/proposel-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -25,7 +27,6 @@ import {
   REQUEST_GOOD_COLUMN,
 } from './distribution-columns';
 import { DonAuthorizaService } from './service/don-authoriza.service';
-
 @Component({
   selector: 'app-donation-authorization-request',
   templateUrl: './donation-authorization-request.component.html',
@@ -39,6 +40,7 @@ export class DonationAuthorizationRequestComponent
   formTable1: FormGroup;
   formTable2: FormGroup;
   formTable3: FormGroup;
+  dataTableGood_: any[] = [];
   request: any;
   donationGood: IGoodDonation[] = [];
   settings2: any;
@@ -61,11 +63,13 @@ export class DonationAuthorizationRequestComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   bsModalRef?: BsModalRef;
   files: any = [];
+  Exportdate: boolean = false;
   goodNotValid: IGood[] = [];
   origin: string = null;
   changeDescription: string;
   changeDescriptionAlterning: string;
   contador = 0;
+  dataTableGood: LocalDataSource = new LocalDataSource();
   selectedRow: any | null = null;
   proposalId: string = '';
   @ViewChild('file') file: any;
@@ -81,7 +85,8 @@ export class DonationAuthorizationRequestComponent
     private donationProcessService: DonationProcessService,
     private donAuthorizaService: DonAuthorizaService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private authService: AuthService
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -263,10 +268,12 @@ export class DonationAuthorizationRequestComponent
     this.donationService.getGoodRequest(this.requestId, params).subscribe({
       next: data => {
         this.loadingReq = false;
-        this.dataGoodsFact.load(data.data);
+        this.goods = data.data;
+        this.dataGoodsFact.load(this.goods);
         console.log(data.data);
         this.totalGoods = data.data.reduce(
-          (acc: any, item: any) => acc + (item.gppdId.quantity ?? 0),
+          (acc: any, item: any) =>
+            acc + this.convert(item.goodId.quantity) ?? 0,
           0
         );
         console.log(this.totalGoods);
@@ -320,7 +327,80 @@ export class DonationAuthorizationRequestComponent
     //   }, error: () => console.log('no se guardó')
     // })
   }
-  removeSelect() {}
+
+  selectedGooodsValid: any[] = [];
+  selectedGooods: any[] = [];
+  goodsValid: any;
+  removeSelect() {
+    if (this.proposal == null) {
+      this.alert(
+        'warning',
+        'Debe especificar/buscar la propuesta para luego eliminar el bien.',
+        ''
+      );
+      return;
+    } else if (this.goods.length == 0) {
+      this.alert(
+        'warning',
+        'Debe seleccionar un bien que Forme parte de la solicitud primero',
+        'Debe capturar el bien.'
+      );
+      return;
+    } else {
+      this.alertQuestion(
+        'question',
+        '¿Seguro que desea eliminar el bien de la solicitud?',
+        ''
+      ).then(async question => {
+        if (question.isConfirmed) {
+          this.loading = true;
+          if (this.goods.length > 0) {
+            // this.goods = this.goods.concat(this.selectedGooodsValid);
+            let result = this.goods.map(async good => {
+              console.log('good', good);
+              this.goods = this.goods.filter(
+                (_good: any) => _good.id != good.goodId
+              );
+              let index = this.dataTableGood_.findIndex(
+                g => g.id === good.goodId
+              );
+              // await this.updateBienDetalle(good.goodId, 'ADA');
+
+              //ACTUALIZA COLOR
+              this.dataTableGood_ = [];
+              this.dataTableGood.load(this.dataTableGood_);
+              this.dataTableGood.refresh();
+
+              let obj = {
+                pActaNumber: this.requestId,
+                pStatusActa: 'AUTORIZADA',
+                pVcScreen: 'FDONSOLAUTORIZA',
+                pUser: this.authService.decodeToken().preferred_username,
+              };
+              await this.updateGoodEInsertHistoric(obj);
+              await this.deleteDET(good);
+            });
+
+            Promise.all(result).then(async item => {
+              await this.getRequest(Number(localStorage.getItem('proposal')));
+
+              // this.getGoodsByStatus(Number(this.fileNumber));
+            });
+            this.Exportdate = false;
+            this.selectedGooodsValid = [];
+          }
+        }
+      });
+    }
+  }
+  async updateGoodEInsertHistoric(obj: {
+    pActaNumber: any;
+    pStatusActa: string;
+    pVcScreen: string;
+    pUser: string;
+  }) {
+    //throw new Error('Method not implemented.');
+  }
 
   onUserRowSelect(row: any): void {
     if (row.isSelected) {
@@ -329,8 +409,64 @@ export class DonationAuthorizationRequestComponent
     } else {
       this.selectedRow = null;
     }
+  }
 
-    console.log(this.selectedRow);
+  convert(amount: number) {
+    const numericAmount = parseFloat(String(amount));
+    if (!isNaN(numericAmount)) {
+      return numericAmount.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: true,
+      });
+    } else {
+      return amount;
+    }
+  }
+
+  async deleteDET(good: any) {
+    console.log(good);
+    const valid: any = await this.getGoodsDelete(good.numberGood);
+    if (valid != null) {
+      let objDelete = {
+        pRequestId: this.requestId,
+        pGoodNumber: good.goodId.goodNumber,
+        pStatus: 'ADA',
+        pUser: this.authService.decodeToken().preferred_username,
+      };
+
+      await this.deleteDetailProcee(objDelete);
+    }
+  }
+  async getGoodsDelete(id: any) {
+    const params = new ListParams();
+    params['filter.requestId.id'] = `$eq:${id}`;
+    return new Promise((resolve, reject) => {
+      this.donationService.getGoodRequest(this.requestId, params).subscribe({
+        next: data => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async deleteDetailProcee(body: IDeleteGoodDon) {
+    return new Promise((resolve, reject) => {
+      this.donationService.deleteGoodDon(body).subscribe({
+        next: data => {
+          console.log('data', data);
+          // this.loading2 = false;
+          resolve(true);
+        },
+        error: error => {
+          // this.loading2 = false;
+          resolve(false);
+        },
+      });
+    });
   }
 }
 
