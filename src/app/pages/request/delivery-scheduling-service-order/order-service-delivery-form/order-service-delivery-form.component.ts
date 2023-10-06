@@ -74,7 +74,6 @@ export class OrderServiceDeliveryFormComponent
 
   ngOnInit(): void {
     this.op = this.task;
-    console.log('this.op', this.op);
     this.programmingId = this.activeRouter.snapshot.params['id'];
 
     this.prepareOrderServiceForm();
@@ -358,16 +357,14 @@ export class OrderServiceDeliveryFormComponent
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 
     config.initialState = {
+      orderServiceId: 516,
       callback: (data: any) => {
         if (data) {
         }
       },
     };
 
-    const rejectionComment = this.modalService.show(
-      RejectionCommentFormComponent,
-      config
-    );
+    this.modalService.show(RejectionCommentFormComponent, config);
   }
 
   generateReport() {
@@ -433,8 +430,6 @@ export class OrderServiceDeliveryFormComponent
         task: this.op,
         callback: async (next: boolean, infoSign: any) => {
           if (next) {
-            console.log('infoSign', infoSign);
-
             const createSign = await this.createSignature(infoSign, 246);
             if (createSign) {
               this.showReport('validation-report');
@@ -773,15 +768,14 @@ export class OrderServiceDeliveryFormComponent
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 
     config.initialState = {
+      orderServiceId: this.orderServiceId,
+      folioOrderservice: this.orderserviceData.serviceOrderFolio,
       callback: (data: any) => {
         if (data) {
         }
       },
     };
 
-    const showReport = this.modalService.show(
-      RejectionJustifyFormComponent,
-      config
-    );
+    this.modalService.show(RejectionJustifyFormComponent, config);
   }
 }

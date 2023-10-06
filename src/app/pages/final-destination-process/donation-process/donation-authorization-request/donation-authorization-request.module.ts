@@ -27,5 +27,6 @@ import { ModalViewComponent } from './modal-view/modal-view.component';
     NgScrollbarModule,
     FormLoaderComponent,
   ],
+  exports: [GoodsListComponent],
 })
 export class DonationAuthorizationRequestModule {}

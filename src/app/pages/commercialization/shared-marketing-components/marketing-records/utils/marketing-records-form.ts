@@ -45,4 +45,6 @@ export class MarketingRecordsForm {
   problematiclegal = new FormControl<1 | 2>(null);
   seRefiereA = new FormControl(null);
   description = new FormControl(null);
+  status = new FormControl(null);
+  desStatus = new FormControl(null);
 }

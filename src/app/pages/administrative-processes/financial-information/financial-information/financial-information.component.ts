@@ -28,8 +28,8 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
   finantialList: IFinancialInformationT[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems1: number = 0;
-  settings1;
-  settings2;
+  settings1: any;
+  settings2: any;
   data2: any[] = [];
   datalocal: LocalDataSource = new LocalDataSource();
   ids: string;

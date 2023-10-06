@@ -247,7 +247,8 @@ export class ModalApprovalDonationComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    // params['sortBy'] = `inventaryNumber:DESC`;
+    params['filter.status'] = 'DON';
+    // params['sortBy'] = `goodId:DESC`;
     this.goodService.getAll(params).subscribe({
       next: data => {
         console.log(data.data);

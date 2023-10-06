@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { IRevisionReason } from 'src/app/core/models/catalogs/revision-reason.model';
 import { RevisionReason2Service } from 'src/app/core/services/catalogs/revision-reason2.service';
 import { OpenModalListFiltered } from 'src/app/core/shared/open-modal-select';
 
@@ -9,7 +10,7 @@ import { OpenModalListFiltered } from 'src/app/core/shared/open-modal-select';
   providedIn: 'root',
 })
 export class ExpenseModalService extends OpenModalListFiltered {
-  selectedMotives: any;
+  selectedMotives: IRevisionReason[] = [];
   selectedMotivesSubject = new Subject();
   constructor(
     protected override modalService: BsModalService,
@@ -19,7 +20,7 @@ export class ExpenseModalService extends OpenModalListFiltered {
   }
   openModal() {}
 
-  openModalMotives() {
+  openModalMotives(address: string) {
     let context: any = {
       title2: 'Seleccione uno o varios Motivos',
       columnsType: {
@@ -30,8 +31,13 @@ export class ExpenseModalService extends OpenModalListFiltered {
         },
       },
       service: this.revisionReasonService,
-      settings: { ...TABLE_SETTINGS, selectMode: 'multi' },
-      dataObservableListParamsFn: this.revisionReasonService.getAllFilterSelf2,
+      multi: 'multi',
+      selecteds: { column: 'id', data: this.selectedMotives },
+      settings: { ...TABLE_SETTINGS },
+      dataObservableListParamsFn:
+        address === 'M'
+          ? this.revisionReasonService.getAllFilterSelf2
+          : this.revisionReasonService.getAllFilterSelf3,
     };
     // if (this.searchField) {
     //   context = {
