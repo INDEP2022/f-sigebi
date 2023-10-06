@@ -255,7 +255,7 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.paramsList.getValue().limit = 500;
-    this.paramsList.getValue().take = 500;
+    this.paramsList2.getValue().limit = 500;
     this.prepareForm();
 
     this.dataFilter
@@ -360,53 +360,20 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     const params = {
       ...this.paramsList2.getValue(),
       ...this.columnFilters2,
-      ...{ sortBy: 'batchId:ASC' },
+      // ...{ sortBy: 'batchId:ASC' },
     };
 
     this.loading2 = true;
-    this.comerDetInvoice.getAll(params).subscribe({
-      next: async resp => {
+    this.comerDetInvoice.getAllCustom(params).subscribe({
+      next: async (resp: any) => {
         this.loading2 = false;
-        let sum1: number = 0,
-          sum2: number = 0,
-          sum3: number = 0,
-          sum4: number = 0;
-        for (let data of resp.data) {
-          const value = await this.postQueryDet({
-            cveProdservSat: data.prodservSatKey,
-            cveUnidSat: data.unitSatKey,
-            noTransferee: data.transfereeNot,
-          });
-
-          if (value) {
-            // data.tuitionMod = data.tuition;
-            data.downloadcvman = value.mandato;
-            data.desc_unidad_det = value.desc_unidad_det;
-            data.desc_producto_det = value.desc_producto_det;
-
-            if (value.mandato == 'SIN MANDATO') {
-              data.modmandato = data.tuition;
-            }
-          }
-
-          sum1 = sum1 + Number(data.price);
-          sum2 = sum2 + Number(data.vat);
-          sum3 = sum3 + Number(data.total);
-          sum4 = sum4 + Number(data.amount);
-        }
-
-        sum1 = Number(sum1.toFixed(2));
-        sum2 = Number(sum2.toFixed(2));
-        sum3 = Number(sum3.toFixed(2));
-        sum4 = Number(sum4.toFixed(2));
-
-        this.formDetalle.get('count').patchValue(resp.data.length);
-        this.formDetalle.get('totalI').patchValue(sum1);
-        this.formDetalle.get('totalIva').patchValue(sum2);
-        this.formDetalle.get('total').patchValue(sum3);
-        this.formDetalle.get('countTotal').patchValue(sum4);
+        this.formDetalle.get('count').patchValue(resp.count);
+        this.formDetalle.get('totalI').patchValue(resp.data[0].sum.importe);
+        this.formDetalle.get('totalIva').patchValue(resp.data[0].sum.iva);
+        this.formDetalle.get('total').patchValue(resp.data[0].sum.total);
+        this.formDetalle.get('countTotal').patchValue(resp.data[0].sum.amount);
         this.totalItems2 = resp.count;
-        this.dataFilter2.load(resp.data);
+        this.dataFilter2.load(resp.data[0].result);
         this.dataFilter2.refresh();
       },
       error: () => {
@@ -531,16 +498,35 @@ export class RegularBillingInvoiceComponent extends BasePage implements OnInit {
     ).then(async ans => {
       if (ans.isConfirmed) {
         //en espera de revision de creacion facturas e inconsitencias
-        await this.packageInvoice({});
+        const pk_comer = await this.packageInvoice({
+          eventId: event,
+          option: 0,
+          publicLot: idAllotment,
+          cveDisplay: 'FCOMER086_I',
+          invoiceId: null,
+          paymentId: null,
+          document: 'FAC',
+          secdoc: 'M',
+          indGendet: 1,
+          delegationNumber: null,
+          command: null,
+          partiality: null,
+          type: null,
+        });
+
+        console.log(pk_comer);
       } else {
       }
     });
   }
 
   async packageInvoice(data: any) {
-    // return firstValueFrom(
-    //   )
-    // )
+    return firstValueFrom(
+      this.comerInvoice.generatePreInvoice(data).pipe(
+        map(resp => resp),
+        catchError(() => of(null))
+      )
+    );
   }
 
   async getCountBatch(event: number, lote: number) {

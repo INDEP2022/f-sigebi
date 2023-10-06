@@ -31,6 +31,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import {
   DATA_BY,
+  DATA_BY_MULTIPLE,
   EXCEL_TO_JSON,
 } from 'src/app/pages/admin/home/constants/excel-to-json-columns';
 import { JSON_TO_CSV_FRELDECOMISO } from 'src/app/pages/admin/home/constants/json-to-csv';
@@ -68,7 +69,10 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   file: FormGroup;
   formaplicationData: FormGroup;
   settings1: any = [];
+  settings2: any = [];
   dataOnly: any = [];
+  dataOnly2: any = [];
+  goodIds: any = [];
   Only: FormGroup;
   jsonToCsv = JSON_TO_CSV_FRELDECOMISO;
   dataExcel: any = [];
@@ -81,6 +85,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   binaryExcel: string | ArrayBuffer;
   currentPage = 1;
   pageSize = 10;
+  loading2: boolean = false;
   flag: number = 0;
   paginatedData: any[] = [];
   fileReader = new FileReader();
@@ -88,6 +93,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   filterParams = new BehaviorSubject<ListParams>(new ListParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
   source: LocalDataSource = new LocalDataSource();
+  dato: LocalDataSource = new LocalDataSource();
   sourceby: LocalDataSource = new LocalDataSource();
   goods: DefaultSelect<IGood>;
   columnFilters: any = [];
@@ -123,6 +129,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     private goodProcessService: GoodProcessService,
     private authorityService: AuthorityService,
     private excelService: ExcelService,
+    private readonly goodServices: GoodService,
     private accountMovementService: AccountMovementService,
     private authService: AuthService
   ) {
@@ -136,6 +143,11 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       ...this.settings1,
       actions: false,
       columns: DATA_BY,
+    };
+    this.settings2 = {
+      ...this.settings2,
+      actions: false,
+      columns: DATA_BY_MULTIPLE,
     };
   }
   token: TokenInfoModel;
@@ -326,6 +338,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
           causa_penal: this.dataExcel[i].causa_penal,
         });
       }
+      console.log(mappedData);
       this.source.load(mappedData);
       this.unt = true;
       this.source.refresh();
@@ -524,31 +537,6 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     });
   }
 
-  getCpAp() {
-    //Endpoint pendiente
-  }
-
-  getAuthority() {
-    //Preguntar
-  }
-
-  // getDTransfer(goodNumber?: number | string) {
-  //   if (goodNumber) {
-  //     this.params.getValue()['filter.numberAccount'] = goodNumber;
-  //   }
-  //   let params = {
-  //     ...this.params.getValue(),
-  //   };
-  //   this.accountMovementService.getAllRatio(params).subscribe({
-  //     next: resp => {
-  //       console.log(resp);
-  //     },
-  //     error: err => {
-  //       console.log(err);
-  //     },
-  //   });
-  // }
-
   getConsecutive(year?: number | string) {
     this.detRelationConfiscationService.getAllMaxNoRelDec(year).subscribe({
       next: resp => {
@@ -617,6 +605,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     this.Only.get('radio').setValue(null);
     this.Only.get('nobien').setValue(null);
     this.until = false;
+    this.dato.reset();
     this.file.get('recordsProcessed').setValue(null);
     this.file.get('processed').setValue(null);
     this.file.get('wrong').setValue(null);
@@ -629,32 +618,79 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   }
 
   validateMoney() {
-    let body = {
-      screenkey: 'FRELDECOMISO',
-      no_bien: this.Only.get('nobien').value,
-      money: this.Only.get('radio').value,
+    if (this.Only.get('radio').value === null) {
+      this.alert('warning', 'Se debe seleccionar un tipo de modena', '');
+      return;
+    }
+
+    if (this.Only.get('nobien').value === null) {
+      this.alert('warning', 'Debe ingresar el No. Bien.', '');
+      return;
+    }
+    const bien = this.Only.get('nobien').value.join(',');
+    let params = {
+      ...this.params.getValue(),
     };
 
-    this.detRelationConfiscationService.money(body).subscribe({
-      next: (resp: any) => {
-        console.log(resp);
-        this.only();
-      },
-      error: err => {
-        console.log(err);
-        if (err.status === 400) {
-          console.log(err.status);
-          this.alert('warning', 'Modena incorrecta', '');
-          this.flag = 0;
-          return;
+    params['filter.goodId'] = `$in:${this.Only.get('nobien').value}`;
+    params['filter.goodClassNumber'] = `$eq:${this.Only.get('radio').value}`;
+    let showAlert = true;
+    let alerta = true;
+    const mon: any = [];
+    this.goodServices.getByExpedientAndParams_(params).subscribe({
+      next: resp => {
+        for (let i = 0; i < resp.data.length; i++) {
+          if (resp.data[i].status === 'NET' || resp.data[i].status === 'PEA') {
+            const dat = resp.data[i].goodId;
+            console.log(resp.data[i].goodId);
+            mon.push(dat);
+            alerta = false;
+          }
+        }
+        console.log(alerta);
+        if (alerta === false) {
+          this.alert(
+            'warning',
+            'El estatus del Bien no es válido',
+            mon.join(', ')
+          );
+        } else {
+          this.only();
         }
       },
+      error: err => {
+        this.alert('warning', 'El clasificador del Bien no es válido', '');
+        showAlert = false;
+        return;
+      },
     });
-
     console.log(this.flag);
   }
 
+  validateStatus() {
+    let params = {
+      ...this.params.getValue(),
+    };
+
+    params['filter.goodId'] = `$in:${this.Only.get('nobien').value}`;
+    let showAlert = true;
+
+    this.goodServices.getByExpedientAndParams_(params).subscribe({
+      next: resp => {
+        for (let i = 0; i < resp.data.length; i++) {
+          if (resp.data[i].status === 'NET') {
+            this.alert('warning', 'El estatus del Bien no es válido', '');
+            showAlert = false;
+            return;
+          }
+        }
+      },
+      error: err => {},
+    });
+  }
+
   only() {
+    this.loading2 = true;
     console.log(this.Only.get('radio').value);
     console.log(this.form.get('forfeitureKey').value);
     console.log(this.Only.get('nobien').value);
@@ -680,45 +716,47 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
     };
 
-    params['filter.goodId'] = `$eq:${this.Only.get('nobien').value}`;
+    params['filter.goodId'] = `$in:${this.Only.get('nobien').value}`;
     console.log(params);
     //this.
-    this.detRelationConfiscationService
-      .getByGood(this.Only.get('nobien').value)
-      .subscribe({
-        next: (resp: any) => {
-          console.log(resp);
-          const fechaOriginal = resp.fec_transferencia;
-          const fechaFormateada = new Date(fechaOriginal).toLocaleDateString();
+    this.goodServices.getByExpedientAndParams__(params).subscribe({
+      next: (resp: any) => {
+        console.log(resp);
+        this.dataOnly2 = resp.data;
+        this.dato.load(resp.data);
+        this.until = true;
+        this.loading2 = false;
+        // Declarar un array para almacenar los valores
+        for (let i = 0; i < this.dataOnly2.length; i++) {
+          const value = this.dataOnly2[i].goodId;
+          const fechaOriginal = this.dataOnly2[i].judicialDate;
+          const fechaFormateada = new Date(fechaOriginal).toLocaleDateString(
+            'es-ES'
+          );
           console.log(fechaFormateada);
+          console.log(value);
+          this.goodIds.push({
+            money: this.dataOnly2[i].goodClassNumber,
+            no_bien: this.dataOnly2[i].goodId,
+            fec_transferencia: fechaFormateada,
+            fec_sentencia: this.dataOnly2[i].judicialLeaveDate,
+            intereses: this.dataOnly2[i].quantityy,
+            fec_of_tesofe: this.dataOnly2[i].tesofeDate,
+            causa_penal: this.dataOnly2[i].expediente.preliminaryInquiry,
+            autoridad: this.dataOnly2[i].expediente.authorityNumber,
+            oficio_tesofe: this.dataOnly2[i].tesofeFolio,
+          }); // Almacena el valor en el array
+        }
 
-          this.sourceby = resp.data;
-          this.totalItems1 = 1;
-          console.log(this.totalItems);
-
-          this.file.get('recordRead').patchValue(this.totalItems1);
-          this.formaplicationData
-            .get('NoBien')
-            .patchValue(this.Only.get('nobien').value);
-          this.formaplicationData.get('f_trnas').patchValue(fechaFormateada);
-          this.formaplicationData.get('f_sent').patchValue(null);
-          this.formaplicationData.get('Inte').patchValue(null);
-          this.formaplicationData.get('tesofeDate').patchValue(null);
-          this.formaplicationData.get('tesofeFolio').patchValue(null);
-          this.formaplicationData
-            .get('appraisalCurrencyKey')
-            .patchValue(this.Only.get('radio').value);
-          this.formaplicationData.get('aut').patchValue(resp.autoridad);
-          this.formaplicationData
-            .get('expedientecriminalCase')
-            .patchValue(resp.causa_penal);
-          this.until = true;
-        },
-        error: err => {
-          console.log(err);
-          this.alert('warning', 'No se encontraron registros', '');
-        },
-      });
+        // Imprime todos los valores almacenados en el array
+        console.log(this.goodIds);
+      },
+      error: (err: any) => {
+        console.log(err);
+        this.loading2 = false;
+        this.alert('warning', 'No se encontraron registros', '');
+      },
+    });
   }
 
   dataIdentifier() {
@@ -752,39 +790,19 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       return;
     }
 
+    const array: any = [];
     const user = this.authService.decodeToken();
     const clave = this.form.get('forfeitureKey').value;
-    const moneda = this.Only.get('radio').value;
     const useri = user.username.toUpperCase();
-    const no_bien = this.formaplicationData.get('NoBien').value;
-    const fec_transferencia = this.formaplicationData.get('f_trnas').value;
-    const fec_sentencia = this.formaplicationData.get('f_sent').value;
-    const intereses = this.formaplicationData.get('Inte').value;
-    const fec_of_tesofe = this.formaplicationData.get('tesofeDate').value;
-    const causa_penal = this.formaplicationData.get(
-      'expedientecriminalCase'
-    ).value;
-    const autoridad = this.formaplicationData.get('aut').value;
-    const tesofeFolio = this.formaplicationData.get('tesofeFolio').value;
 
-    let bodydat = {
-      screenkey: 'FRELDECOMISO',
-      toolbar_user: useri,
-      clave_decom: clave,
-      money: moneda,
-      no_bien: no_bien,
-      fec_transferencia: fec_transferencia,
-      fec_sentencia: fec_sentencia,
-      intereses: intereses,
-      fec_of_tesofe: fec_of_tesofe,
-      causa_penal: causa_penal,
-      autoridad: autoridad,
-      oficio_tesofe: tesofeFolio,
-    };
-    console.log(bodydat);
+    this.goodIds.map((item: any) => {
+      item['screenkey'] = 'FRELDECOMISO';
+      item['toolbar_user'] = useri;
+      item['clave_decom'] = clave;
+    });
 
     let insertBody = {
-      data: [bodydat],
+      data: this.goodIds,
     };
 
     console.log(insertBody);
@@ -792,34 +810,36 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     const duplicateNumbers = [];
     const mon: any = [];
     const data1: any = [];
+    for (let i = 0; i < this.dataOnly2.length; i++) {
+      data1.push([this.goodIds]);
+      const data = this.goodIds[i].no_bien;
+      // mon.push([this.dataExcel[i].money]);
 
-    data1.push([bodydat]);
-    const data = bodydat.no_bien;
-    // mon.push([this.dataExcel[i].money]);
+      let body = {
+        goodNumber: data,
+      };
+      console.log(body);
 
-    let body = {
-      goodNumber: data,
-    };
-    console.log(body);
+      try {
+        const resp = await this.detRelationConfiscationService
+          .getById(body)
+          .toPromise();
+        console.log(resp);
 
-    try {
-      const resp = await this.detRelationConfiscationService
-        .getById(body)
-        .toPromise();
-      console.log(resp);
-
-      // Verificar si el número de bien ya existe en la respuesta
-      if (resp || resp['exists']) {
-        duplicateNumbers.push(data); // Agregar el número de bien duplicado al arreglo
-        console.log(duplicateNumbers);
-      }
-    } catch (err) {}
+        // Verificar si el número de bien ya existe en la respuesta
+        if (resp || resp['exists']) {
+          duplicateNumbers.push(data); // Agregar el número de bien duplicado al arreglo
+          console.log(duplicateNumbers);
+        }
+      } catch (err) {}
+    }
 
     let insertResp;
     try {
       insertResp = await this.detRelationConfiscationService
         .Insert(insertBody)
         .toPromise();
+      this.file.get('recordRead').patchValue(this.dataOnly2.length);
       this.file.get('recordsProcessed').patchValue(insertResp['total']);
       this.file.get('processed').patchValue(insertResp['sucess']);
       this.file.get('wrong').patchValue(insertResp['error']);
