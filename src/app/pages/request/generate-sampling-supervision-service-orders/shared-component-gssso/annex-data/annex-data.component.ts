@@ -1,8 +1,9 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
+import * as moment from 'moment';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { BasePage } from 'src/app/core/shared';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 
 @Component({
@@ -14,6 +15,8 @@ export class AnnexDataComponent extends BasePage implements OnInit {
   @Input() dataAnnex: any;
   @Input() sampleOrderForm: ModelForm<any>;
   @Input() SampleOrderId: number = null;
+  @Input() typeComponent: string = null;
+  readonly: boolean = false;
 
   private orderService = inject(OrderServiceService);
 
@@ -24,16 +27,41 @@ export class AnnexDataComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     //this.initForm();
     console.log(this.sampleOrderForm);
+    if (this.typeComponent != 'generate-query') {
+      this.readonly = true;
+    }
+
+    this.getSampleOrder();
   }
 
   initForm() {
-    this.sampleOrderForm = this.fb.group({
+    /* this.sampleOrderForm = this.fb.group({
       factsrelevant: [null, [Validators.pattern(STRING_PATTERN)]],
       downloadbreaches: [null, [Validators.pattern(STRING_PATTERN)]],
-      datenoncompliance: [null],
+      datebreaches: [null],
       agreements: [null, [Validators.pattern(STRING_PATTERN)]],
       daterepService: [null],
       nameManagersoul: [null, [Validators.pattern(STRING_PATTERN)]],
+    }); */
+  }
+
+  getSampleOrder() {
+    const params = new ListParams();
+    params['filter.idSamplingOrder'] = `$eq:${this.SampleOrderId}`;
+    this.orderService.getAllSampleOrder(params).subscribe({
+      next: resp => {
+        console.log(resp.data[0]);
+        this.sampleOrderForm.patchValue(resp.data[0]);
+
+        if (resp.data[0].datebreaches && resp.data[0].daterepService) {
+          this.sampleOrderForm
+            .get('datebreaches')
+            .setValue(this.parseDateNoOffset(resp.data[0].datebreaches));
+          this.sampleOrderForm
+            .get('daterepService')
+            .setValue(this.parseDateNoOffset(resp.data[0].daterepService));
+        }
+      },
     });
   }
 
@@ -43,6 +71,8 @@ export class AnnexDataComponent extends BasePage implements OnInit {
       return;
     }
     const form = this.sampleOrderForm.getRawValue();
+    form.datebreaches = moment(form.datebreaches).format('YYYY-MM-DD');
+    form.daterepService = moment(form.daterepService).format('YYYY-MM-DD');
     form.idSamplingOrder = this.SampleOrderId;
 
     this.orderService.updateSampleOrder(form).subscribe({
@@ -53,5 +83,12 @@ export class AnnexDataComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'No se pudo guardar el formulario');
       },
     });
+  }
+
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() + dateLocal.getTimezoneOffset() * 60 * 1000
+    );
   }
 }

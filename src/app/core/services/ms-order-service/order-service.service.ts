@@ -107,7 +107,7 @@ export class OrderServiceService extends HttpService {
 
   getAllSampleOrder(params: ListParams) {
     const route = OrderServiceEndpoint.SampleOrders;
-    return this.get(route);
+    return this.get(route, params);
   }
 
   getSampleOrderById(id: number) {
@@ -121,8 +121,8 @@ export class OrderServiceService extends HttpService {
   }
 
   updateSampleOrder(body: any) {
-    const route = `${OrderServiceEndpoint.SampleOrders}/${body.id}`;
-    return this.delete(route, body);
+    const route = `${OrderServiceEndpoint.SampleOrders}/${body.idSamplingOrder}`;
+    return this.put(route, body);
   }
 
   private makeParams(params: ListParams): HttpParams {

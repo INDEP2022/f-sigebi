@@ -21,70 +21,76 @@
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
-            [control]="sampleOrderForm.get('factsrelevant')"
+            [control]="sampleOrderForm?.get('factsrelevant')"
             label="Hechos Relevantes">
             <input
               type="text"
               class="form-control"
-              formControlName="factsrelevant" />
+              formControlName="factsrelevant"
+              [readOnly]="readonly" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="sampleOrderForm.get('downloadbreaches')"
+            [control]="sampleOrderForm?.get('downloadbreaches')"
             label="Descripci&oacute;n Incumplimiento">
             <input
               type="text"
               class="form-control"
-              formControlName="downloadbreaches" />
+              formControlName="downloadbreaches"
+              [readOnly]="readonly" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
-            [control]="sampleOrderForm.get('datenoncompliance')"
+            [control]="sampleOrderForm?.get('datebreaches')"
             label="Fecha Incumplimiento">
             <input
               type="text"
               class="form-control"
-              formControlName="datenoncompliance"
+              formControlName="datebreaches"
               placeholder=""
-              bsDatepicker />
+              bsDatepicker
+              [isDisabled]="readonly" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="sampleOrderForm.get('agreements')"
+            [control]="sampleOrderForm?.get('agreements')"
             label="Acuerdos">
             <input
               type="text"
               class="form-control"
-              formControlName="agreements" />
+              formControlName="agreements"
+              [readOnly]="readonly" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
-            [control]="sampleOrderForm.get('daterepService')"
+            [control]="sampleOrderForm?.get('daterepService')"
             label="Fecha reposici&oacute;n servicios">
             <input
               type="text"
               class="form-control"
               formControlName="daterepService"
               placeholder=""
-              bsDatepicker />
+              bsDatepicker
+              [isDisabled]="readonly" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="sampleOrderForm.get('nameManagersoul')"
+            [control]="sampleOrderForm?.get('nameManagersoul')"
             label="Gerente almac&eacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="nameManagersoul" />
+              formControlName="nameManagersoul"
+              [readOnly]="readonly" />
           </form-field>
         </div>
       </div>

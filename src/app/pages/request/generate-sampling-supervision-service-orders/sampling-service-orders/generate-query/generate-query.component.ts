@@ -97,7 +97,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.required],
       ],
-      datenoncompliance: [null, [Validators.required]],
+      datebreaches: [null, [Validators.required]],
       agreements: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.required],
@@ -281,6 +281,7 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
       next: resp => {
         debugger;
         console.log(resp);
+        this.SampleOrderId = resp.data.id;
       },
       error: error => {
         debugger;

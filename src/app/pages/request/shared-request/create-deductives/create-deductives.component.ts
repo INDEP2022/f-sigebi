@@ -7,6 +7,8 @@ import {
   Output,
 } from '@angular/core';
 import * as moment from 'moment';
+import { catchError, of } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISamplingDeductive } from 'src/app/core/models/ms-sampling-good/sampling-deductive.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SamplingGoodService } from 'src/app/core/services/ms-sampling-good/sampling-good.service';
@@ -60,6 +62,9 @@ export class CreateDeductivesComponent extends BasePage implements OnInit {
     console.log(this.deductives);
 
     this.setInputs();
+    if (this.typeComponent == 'generate-query') {
+      this.getDeductives();
+    }
   }
 
   setInputs() {
@@ -90,7 +95,10 @@ export class CreateDeductivesComponent extends BasePage implements OnInit {
   }
 
   save() {
-    //el sampleDeductiveId no parece
+    /**
+     * el campo sampleDeductiveId o Id no parece
+     * validar traer los datos por el sampleDeductiveId
+     * */
     this.loading = true;
     const user = this.authService.decodeToken();
     this.paragraphs.map(async (item: any, _i: number) => {
@@ -106,7 +114,6 @@ export class CreateDeductivesComponent extends BasePage implements OnInit {
         version: 1,
         observations: item.observation == null ? ' ' : item.observation,
       };
-      debugger;
       const created = await this.createSampleDeductive(body);
       if (this.paragraphs.length == index) {
         this.onLoadToast(
@@ -132,5 +139,39 @@ export class CreateDeductivesComponent extends BasePage implements OnInit {
         },
       });
     });
+  }
+
+  getDeductives() {
+    const params = new ListParams();
+    params['filter.orderSampleId'] = `$eq:${this.SampleOrderId}`;
+    this.samplinggoodService
+      .getAllSampleDeductives(params)
+      .pipe(
+        catchError((e: any) => {
+          if (e.status == 400) {
+            return of({ data: [], count: 0 });
+          }
+          throw e;
+        })
+      )
+      .subscribe({
+        next: resp => {
+          if (resp.count > 0) {
+            console.log(resp.data[0]);
+            resp.data.map((item: any) => {
+              for (let index = 0; index < this.paragraphs.length; index++) {
+                const element = this.paragraphs[index];
+                if (item.deductiveVerificationId == element.id) {
+                  this.paragraphs[index].observation = item.observations;
+                  this.paragraphs[index].selected =
+                    item.indDedictiva == 'Y' ? true : false;
+                  break;
+                }
+              }
+              this.paragraphs = [...this.paragraphs];
+            });
+          }
+        },
+      });
   }
 }

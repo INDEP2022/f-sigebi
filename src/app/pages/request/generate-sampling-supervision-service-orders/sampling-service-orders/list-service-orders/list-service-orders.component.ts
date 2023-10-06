@@ -197,7 +197,6 @@ export class ListServiceOrdersComponent
             requestId: ordServ.applicationId,
             costService: ordServ.serviceCost,
           });
-          console.log(body);
         });
 
         Promise.all(result).then(() => {
