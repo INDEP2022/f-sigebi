@@ -54,3 +54,11 @@ export interface IGoodDonation {
   closeHcDate: string;
   registreNumber: number;
 }
+export interface IDetailDonation {
+  recordId: number;
+  goodId: number;
+  amount: number;
+  received: string;
+  exchangeValue: number;
+  registrationId: number;
+}
