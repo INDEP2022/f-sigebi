@@ -210,16 +210,16 @@ export class DonationAuthorizationRequestComponent
     this.form.reset();
     this.proposeDefault = null;
     this.dataFacRequest.load([]);
-    localStorage.setItem('proposal', '');
-    localStorage.setItem('request', '');
+    localStorage.removeItem('proposal');
+    localStorage.removeItem('request');
   }
 
   cleanForm() {
     this.form.reset();
     this.file = [];
     this.dataFacRequest.load([]);
-    localStorage.setItem('proposal', '');
-    localStorage.setItem('request', '');
+    localStorage.removeItem('proposal');
+    localStorage.removeItem('request');
   }
   async getProposalId(params: ListParams) {
     this.proposelServiceService.getIdPropose(params).subscribe({

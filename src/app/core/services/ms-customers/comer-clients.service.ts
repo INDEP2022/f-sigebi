@@ -137,4 +137,9 @@ export class ComerClientsService extends HttpService {
     const route = `${CustomersEndpoints.cursorAptFolio}`;
     return this.post(route, params);
   }
+
+  getCursor1(good: any) {
+    const route = `${CustomersEndpoints.cursor1}/${good}`;
+    return this.get(route);
+  }
 }

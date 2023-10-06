@@ -1,0 +1,10 @@
+.reload {
+  position: absolute;
+  top: 101px;
+  right: 10px;
+  @media screen and (max-width: 576px) {
+    span {
+      display: none;
+    }
+  }
+}
