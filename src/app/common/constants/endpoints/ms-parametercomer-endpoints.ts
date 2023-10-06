@@ -14,4 +14,6 @@ export enum ParameterComerEndpoints {
   ApplicationUser = 'aplication/get-lval-usu',
   ApplicationSigna = 'aplication/get-full-signatories',
   ComerStatusVta = 'comer-status-vta',
+  ChargeGoods = 'aplication/pup-charge-goods',
+  ChargeValidateGoods = 'aplication/pup-charge-validate-goods',
 }
