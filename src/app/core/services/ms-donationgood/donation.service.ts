@@ -7,6 +7,7 @@ import { DonationRepository } from 'src/app/common/repository/repositories/ms-do
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
+  IDetailDonation,
   IDonationGood,
   IFilterDonation,
   IGoodDonation,
@@ -135,7 +136,13 @@ export class DonationService
   getGoodsDonation(params: ListParams) {
     return this.get(DonationEndPoint.GoodsForDonation, params);
   }
-  getGoodRequest(parmas: ListParams) {
-    return this.get(route, parmas);
+  getGoodRequest(requestId: number, parmas: ListParams) {
+    return this.get(
+      `donac-request-good?filter.requestId.id=$eq:${requestId}`,
+      parmas
+    );
+  }
+  createDetail(body: IDetailDonation) {
+    return this.post(DonationEndPoint.DetailEventComDon, body);
   }
 }
