@@ -8,7 +8,12 @@ import { Component, Input, OnInit } from '@angular/core';
 export class PhotosTabsComponent implements OnInit {
   @Input() goodNumber: string;
   @Input() disabled: boolean;
+  refreshCount = 0;
   constructor() {}
 
   ngOnInit() {}
+
+  refresh() {
+    this.refreshCount++;
+  }
 }
