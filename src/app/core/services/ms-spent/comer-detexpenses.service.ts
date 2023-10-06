@@ -87,7 +87,7 @@ export class ComerDetexpensesService extends HttpService {
   }
 
   create(body: IComerDetExpense) {
-    return this.post(SpentEndpoints.ExpenseComerDet, body);
+    return this.post(SpentEndpoints.ExpenseComerDet + '/insert-custom', body);
   }
 
   edit(body: IComerDetExpense) {

@@ -102,11 +102,27 @@
             </button>
             <button
               type="button"
+              class="btn btn-success btn-sm active mr-3"
+              [disabled]="!showFilters"
+              (click)="file.click()">
+              Cargar Excel/CSV
+              <i aria-hidden="true" class="fa fa-upload"></i>
+            </button>
+            <input
+              #file
+              type="file"
+              name="file"
+              class="d-none"
+              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              (change)="loadGoods($event)" />
+
+            <!-- <button
+              type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
               [disabled]="!showFilters"
               (click)="loadExcel()">
               Cargar Bienes Excel
-            </button>
+            </button> -->
             <button
               type="button"
               class="btn btn-sm btn-primary mr-2 mt-2 active"
