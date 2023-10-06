@@ -230,4 +230,9 @@ export class UsersService extends HttpService {
       `${UserEndpoints.GetAllSegUser}?filter.user=$ilike:${name}`
     );
   }
+
+  getBtnViewPrev(no_ofice: any) {
+    const route = `${UserEndpoints.viewPrev}/${no_ofice}`;
+    return this.get(route);
+  }
 }
