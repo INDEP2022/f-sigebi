@@ -168,4 +168,11 @@ export class GoodsJobManagementService extends HttpService {
     const route = `${GoodsJobManagementEndpoints.mJobManagement}?filter.refersTo=$ilike:OFCOMER&filter.managementNumber=$eq:${managementNumber}`;
     return this.get(route);
   }
+
+  getAllFilteredV2(params: _Params) {
+    return this.get<IListResponse<IGoodJobManagement>>(
+      GoodsJobManagementEndpoints.getallV2,
+      params
+    );
+  }
 }

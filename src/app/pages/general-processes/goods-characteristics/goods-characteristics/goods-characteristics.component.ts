@@ -76,7 +76,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   goodChange: number = 0;
   bodyGoodCharacteristics: ICharacteristicsGoodDTO = {};
   showPhoto = false;
-  loadTypes = false;
+  loadTypes = true;
   actualGoodNumber: number = null;
   errorMessage: string;
   get data() {
@@ -282,8 +282,10 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       this.count++;
     });
     this.prepareForm();
+    let params = new FilterParams();
+    params.limit = 100;
     this.strategyService
-      .getUnitsMedXConv2()
+      .getUnitsMedXConv2(params.getParams())
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
@@ -970,6 +972,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   }
 
   private setQuantity(item: any) {
+    // debugger;
     if (
       this.goodQuantity.hasValidator(
         Validators.pattern(DOUBLE_POSITIVE_PATTERN)
@@ -1038,7 +1041,9 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     return this.medFilters
       ? this.medFilters.length > 0
         ? this.medFilters[0].tpUnitGreater === 'N'
-          ? this.good.quantity
+          ? this.good
+            ? this.good.quantity
+            : 9999999
           : 9999999
         : 9999999
       : 9999999;
@@ -1061,7 +1066,6 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.subtype.setValue(item.no_subtipo);
     this.form.get('ssubtype').setValue(item.no_ssubtipo);
     this.form.get('sssubtype').setValue(item.no_sssubtipo);
-    this.loadTypes = true;
     const delegacion = item.delegationnumber;
     if (delegacion) {
       this.delegacion = delegacion;

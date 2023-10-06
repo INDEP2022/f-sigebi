@@ -310,4 +310,9 @@ export class GoodprocessService extends HttpService {
     const route = `${GoodprocessEndpoints.blokOffice3}`;
     return this.post(route, params);
   }
+
+  postPupPortafolio(params: any) {
+    const route = `${GoodprocessEndpoints.pupPortafolio}`;
+    return this.post(route, params);
+  }
 }

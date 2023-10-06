@@ -2,11 +2,20 @@
   <tab heading="Actual">
     <div class="row">
       <app-photos-list
+        [refreshData]="refreshCount"
         [goodNumber]="goodNumber"
         [disabled]="disabled"></app-photos-list>
     </div>
   </tab>
   <tab heading="Histórico">
-    <app-photos-historic [goodNumber]="goodNumber"></app-photos-historic>
+    <app-photos-historic
+      [refreshData]="refreshCount"
+      [goodNumber]="goodNumber"></app-photos-historic>
   </tab>
 </tabset>
+<button
+  class="btn btn-primary btn-sm active mr-3 reload"
+  (click)="refresh()"
+  [disabled]="!goodNumber">
+  <span>Recargar</span> <i class="fas fa-sync-alt"> </i>
+</button>

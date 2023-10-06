@@ -153,9 +153,10 @@
             <form-field [control]="form.get('monto2')" label="Monto Total">
               <input
                 [readOnly]="true"
-                type="number"
+                type="text"
                 class="form-control pl-2"
                 formControlName="monto2"
+                currencyMask
                 min="1" />
             </form-field>
           </div>
@@ -285,10 +286,11 @@
             <div style="margin-top: 30px">
               <form-field [control]="form.get('total')" label="Monto Total">
                 <input
-                  type="number"
+                  type="text"
                   formControlName="total"
                   class="form-control"
                   min="0"
+                  currencyMask
                   oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
               </form-field>
             </div>

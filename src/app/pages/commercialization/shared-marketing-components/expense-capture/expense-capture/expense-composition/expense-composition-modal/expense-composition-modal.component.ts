@@ -29,10 +29,11 @@ export class ExpenseCompositionModalComponent
     private service: ComerDetexpensesService
   ) {
     super();
-    this.prepareForm();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.prepareForm();
+  }
 
   private prepareForm() {
     this.form = this.fb.group({
@@ -138,7 +139,7 @@ export class ExpenseCompositionModalComponent
       +body.vatWithholding
     ).toFixed(2);
     console.log(total);
-    return;
+    // return;
     if (body) {
       this.service
         .edit({
@@ -176,15 +177,17 @@ export class ExpenseCompositionModalComponent
       +body.isrWithholding -
       +body.vatWithholding
     ).toFixed(2);
-    console.log(total);
-    return;
+    delete body.expenseDetailNumber;
+    let newBody = {
+      ...body,
+      expenseNumber: this.expenseNumber,
+      total,
+    };
+    console.log(total, this.expenseNumber, newBody);
+    // return;
     if (body) {
       this.service
-        .create({
-          ...body,
-          expenseNumber: this.expenseNumber,
-          total,
-        })
+        .create(newBody)
         .pipe(take(1))
         .subscribe({
           next: response => {
@@ -198,6 +201,7 @@ export class ExpenseCompositionModalComponent
             // this.getData();
           },
           error: err => {
+            console.log(err);
             this.alert(
               'error',
               'Creación Composición de Gasto',
