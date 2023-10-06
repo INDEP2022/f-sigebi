@@ -19,6 +19,20 @@ export class ComerDetailInvoiceService extends HttpService {
     );
   }
 
+  getAllCustom(params: _Params | string) {
+    return this.get<IListResponse<any>>(
+      ENDPOINT_INVOICE.ComerDetFacturaLimit,
+      params
+    );
+  }
+
+  getAllPostQuery(params: _Params | string) {
+    return this.get<IListResponse<any>>(
+      ENDPOINT_INVOICE.ComerDetFacturaPostQuery,
+      params
+    );
+  }
+
   create(data: any) {
     return this.post(ENDPOINT_INVOICE.ComerDetFactura, data);
   }

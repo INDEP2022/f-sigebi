@@ -427,6 +427,13 @@ export class GoodService extends HttpService {
     return this.get<IListResponse<IGoodSami>>(route, params);
   }
 
+  getByExpedientAndParams_(
+    params?: ListParams
+  ): Observable<IListResponse<any>> {
+    const route = GoodEndpoints.Good;
+    return this.get<IListResponse<any>>(route, params);
+  }
+
   getByExpedientAndParamsExport(id?: string | number) {
     return this.get<{ base64File: string }>(
       `good/get-export?filter.goodClassNumber=$in:` + id
